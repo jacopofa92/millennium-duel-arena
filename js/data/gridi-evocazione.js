@@ -36,9 +36,7 @@
         { chi: FARAONE, carta: 2, grido: 'Mago Nero, ti chiamo! Scatena la Magia Nera!' },
         { chi: YUGI, carta: 2, grido: 'Mago Nero, scendi in campo! Credo in te!' },
         { chi: FARAONE.concat(YUGI), carta: 188, grido: 'Maga Oscura, rispondi alla mia chiamata!' },
-        { chi: FARAONE.concat(YUGI), carta: 22, grido: 'Kuriboh, ti affido il mio cuore!' },
         { chi: FARAONE.concat(YUGI), carta: 14, grido: 'Gaia il Cavaliere Feroce, carica!' },
-        { chi: FARAONE.concat(YUGI), carta: 4, grido: 'Guerriero Celtico, spada alta!' },
         { chi: FARAONE.concat(YUGI, ['solomonMuto']), carta: 15, grido: 'Maledizione del Drago, soffia la tua fiamma!' },
         { chi: FARAONE, carta: 31, grido: 'Slifer, Drago del Cielo! Risveglia il tuo ruggito!' },
         { chi: FARAONE, carta: 854, grido: 'Mago del Caos Nero, spezza le tenebre!' },
@@ -53,7 +51,6 @@
         { chi: KAIBA, carta: 29, grido: 'Tre teste, un solo ruggito: Drago Bianco Definitivo!' },
         { chi: KAIBA, carta: 511, grido: 'Fusione! Cannone Drago XY, fuoco a volontà!' },
         { chi: KAIBA, carta: 512, grido: 'Cannone Drago XYZ! Nessuno può fermarmi!' },
-        { chi: KAIBA, carta: 353, grido: 'Signore dei D., il mio comando è legge!' },
         { chi: KAIBA, carta: 864, grido: 'Drago Armato LV7, la tua evoluzione è completa!' },
         { chi: KAIBA, carta: 320, grido: 'Kaiser Glider, spazza via il campo!' },
 
@@ -71,6 +68,25 @@
 
         // --- Gli altri duellanti dell'anime ---
         { chi: ['yamiMarik'], carta: 472, grido: 'Drago Alato di Ra, Dio del Sole! Brucia i miei nemici!' },
+        { chi: ['yamiMarik'], carta: 1123, grido: 'Helpoemer, porta il Regno delle Ombre su di loro!' },
+        { chi: ['yamiMarik'], carta: 265, grido: 'Gil Garth, ruggisci dall\'oscurità!' },
+        { chi: ['yamiMarik'], carta: 1086, grido: 'Newdoria, divora la loro speranza!' },
+        { chi: ['yamiMarik'], carta: 129, grido: 'Bowganian, scocca la freccia nell\'ombra!' },
+        { chi: ['yamiMarik'], carta: 186, grido: 'Jeroid Oscuro, a me il tuo sguardo gelido!' },
+        { chi: ['yamiMarik'], carta: 564, grido: 'Titano Oscuro del Terrore, schiaccia i miei nemici!' },
+        { chi: ['yamiMarik'], carta: 914, grido: 'Re della Nebbia, avvolgili nel buio!' },
+        // --- Ishizu Ishtar: la guardiana della Collana ---
+        { chi: ['ishizuIshtar'], carta: 562, grido: 'Gyakutenno Megami, guida il destino con la tua luce!' },
+        { chi: ['ishizuIshtar'], carta: 217, grido: 'Strega Oscura Dunames, mostra ciò che vedi!' },
+        { chi: ['ishizuIshtar'], carta: 1092, grido: 'Senju delle Mille Mani, proteggi il Faraone!' },
+        { chi: ['ishizuIshtar'], carta: 1001, grido: 'Sacerdote di Asura, la profezia si compie!' },
+        { chi: ['ishizuIshtar'], carta: 949, grido: 'Ocubeam, vedi oltre il tempo!' },
+        // --- Noah Kaiba: gli dei del mondo virtuale ---
+        { chi: ['noah'], carta: 1004, grido: 'Hino-Kagu-Tsuchi, brucia il mio mondo virtuale!' },
+        { chi: ['noah'], carta: 1008, grido: 'Drago Yamata, otto teste per un solo comando!' },
+        { chi: ['noah'], carta: 1006, grido: 'Otohime, sorgi dalle onde digitali!' },
+        { chi: ['noah'], carta: 1002, grido: 'Fushi No Tori, rinasci dalle fiamme!' },
+        { chi: ['noah'], carta: 884, grido: 'Yata-Garasu, vola e portami la vittoria!' },
         { chi: ['maiValentine'], carta: 290, grido: 'Sorelle Lady Arpia, cantate la mia vittoria!' },
         { chi: ['maiValentine'], carta: 293, grido: 'Drago da Compagnia delle Arpie, all\'attacco!' },
         { chi: ['rexRaptor'], carta: 801, grido: 'Tiranno Nero! Il re dei dinosauri è qui!' },

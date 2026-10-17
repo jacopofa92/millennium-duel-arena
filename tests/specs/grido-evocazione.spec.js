@@ -45,11 +45,11 @@ module.exports = {
                 window.GRIDO_EVOCAZIONE_FORZA = true;
                 DuelSession.player = { ...DuelSession.player, name: 'Yugi Muto', image: 'images/characters/yugiMuto.jpg' };
                 DuelSession.opponent = { ...DuelSession.opponent, name: 'Seto Kaiba', image: 'images/characters/setoKaiba.jpg' };
-                const kuriboh = { ...cardDatabase.find((c) => c.id === 22), uid: 'k1' };
-                gameState.playerHand.push(kuriboh);
-                summonMonster(kuriboh, 0, 'attack', gameState.playerHand.length - 1);
+                const maga = { ...cardDatabase.find((c) => c.id === 188), uid: 'k1' };
+                gameState.playerHand.push(maga);
+                summonMonster(maga, 0, 'attack', gameState.playerHand.length - 1);
                 await new Promise((r) => setTimeout(r, 900));
-                const durante = { scena: !!document.getElementById('gridoEvocazione'), inCampo: !!gameState.playerMonsterField[0], inMano: gameState.playerHand.includes(kuriboh) };
+                const durante = { scena: !!document.getElementById('gridoEvocazione'), inCampo: !!gameState.playerMonsterField[0], inMano: gameState.playerHand.includes(maga) };
                 // Si vede il personaggio giusto col suo grido.
                 durante.testo = (document.querySelector('#gridoEvocazione .ge-grido') || {}).textContent;
                 await new Promise((r) => setTimeout(r, 2800));
@@ -57,13 +57,13 @@ module.exports = {
             });
             assert(normale.durante.scena, 'durante l\'Evocazione Normale la scena del grido deve essere a schermo');
             assert(normale.durante.inMano && !normale.durante.inCampo, 'la carta deve restare in mano finché dura il grido');
-            assert(normale.durante.testo === 'Kuriboh, ti affido il mio cuore!', `grido sbagliato: ${normale.durante.testo}`);
+            assert(normale.durante.testo === 'Maga Oscura, rispondi alla mia chiamata!', `grido sbagliato: ${normale.durante.testo}`);
             assert(!normale.dopo.scena && normale.dopo.inCampo, 'finito il grido la carta deve arrivare in campo col flusso standard');
 
             // --- Stessa carta una seconda volta: niente scena ---
             const secondo = await page.evaluate(async () => {
                 let fatto = false;
-                GridoEvocazione.mostra({ posto: 'player', carta: { ...cardDatabase.find((c) => c.id === 22), uid: 'k2' } }, () => { fatto = true; });
+                GridoEvocazione.mostra({ posto: 'player', carta: { ...cardDatabase.find((c) => c.id === 188), uid: 'k2' } }, () => { fatto = true; });
                 await new Promise((r) => setTimeout(r, 200));
                 return { fatto, scena: !!document.getElementById('gridoEvocazione') };
             });
