@@ -2089,11 +2089,14 @@
     // ================================================================
     CardEffects.register(595, {
         canActivate(ctx) {
+            if (!Decisioni.rispondeUnaPersona(ctx.owner)) {
+                return ctx.field(ctx.owner).some((s) => s && s.card && !s.isFaceDown);
+            }
             return Tavolo.ordine().some((owner) => ctx.field(owner).some((s) => s && s.card && !s.isFaceDown));
         },
         activate(ctx) {
             const candidates = [];
-            Tavolo.ordine().forEach((owner) => {
+            [ctx.owner, ctx.opponent].forEach((owner) => {
                 ctx.field(owner).forEach((s) => { if (s && s.card && !s.isFaceDown) candidates.push(s.card); });
             });
             const boost = (card) => {
@@ -2246,6 +2249,9 @@
     // ================================================================
     CardEffects.register(143, {
         canActivate(ctx) {
+            if (!Decisioni.rispondeUnaPersona(ctx.owner)) {
+                return ctx.field(ctx.owner).some((s) => s && !s.isFaceDown);
+            }
             return Tavolo.ordine().some((owner) => ctx.field(owner).some((s) => s && !s.isFaceDown));
         },
         activate(ctx) {

@@ -9,7 +9,7 @@ module.exports = {
         const risultato = await t.evaluate(() => {
             resetGameState();
             const carta = (id, uid) => ({ ...cardDatabase.find((c) => c.id === id), uid });
-            const controller = carta(845, 'controller');
+            const controller = carta(226, 'controller');
             const bersaglio = carta(4, 'bersaglio');
             gameState.currentPlayer = 'bot';
             // Il test chiama direttamente la definizione senza attraversare
@@ -26,7 +26,7 @@ module.exports = {
             const originale = console.error;
             console.error = (...args) => errori.push(args.map(String).join(' '));
             try {
-                DuelEngine.getDefinition(845).activate(DuelEngine.makeContext('bot', { card: controller }));
+                DuelEngine.getDefinition(226).activate(DuelEngine.makeContext('bot', { card: controller }));
             } finally {
                 console.error = originale;
             }

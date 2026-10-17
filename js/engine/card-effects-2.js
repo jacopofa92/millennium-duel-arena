@@ -172,7 +172,7 @@
     // esaurisce da solo al prossimo cambio turno). Il blocco è consultato
     // SOLO da changeMonsterPosition (actions.js, il click manuale del
     // giocatore) — un ricambio via Magia/Trappola/effetto Mostro (es.
-    // Controllore Nemico id 845) muta slot.position direttamente e non
+    // Controllore del Nemico id 226) muta slot.position direttamente e non
     // passa mai da lì, quindi resta sempre esente per costruzione, esattamente
     // come richiede il testo reale.
     // ================================================================
@@ -2796,6 +2796,12 @@
     // resta in data/cards.json (`legacyOfficialEffect`), non mostrato UI.
     CardEffects.register(487, {
         continuous: true,
+        // Una seconda copia scoperta e' lecita, ma per l'IA e' soltanto
+        // uno spreco. Il contratto e' condiviso da tutti i livelli IA.
+        aiCanActivate(ctx) {
+            return !Tavolo.magieTrappole(ctx.owner).some((slot) => slot
+                && !slot.isFaceDown && slot.card && slot.card.id === 487);
+        },
         // Anche un effetto puramente continuo deve esporre `activate`: è il
         // contratto usato da DuelEngine.canActivate per distinguere una
         // carta giocabile da una carta priva di implementazione. Il corpo è

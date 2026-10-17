@@ -351,63 +351,6 @@
     });
 
     // ================================================================
-    // 845 — Controllore Nemico / Enemy Controller (Magia Rapida)
-    // Due modalità: cambia Posizione di 1 mostro avversario, OPPURE
-    // sacrifica 1 mostro e prendi il controllo di 1 mostro avversario
-    // fino alla End Phase (ctx.takeControl, come Cambio di Cuore id 147).
-    // SEMPLIFICAZIONE: sceglie sempre la modalità "prendi il controllo"
-    // se può sacrificare un mostro, altrimenti la modalità "cambia
-    // Posizione", invece di lasciar scegliere.
-    // ================================================================
-    CardEffects.register(845, {
-        declaredTargeting: { count: 1, cardType: 'monster' },
-        canActivate(ctx) {
-            return ctx.field(ctx.opponent).some((s) => s && !s.isFaceDown);
-        },
-        activate(ctx) {
-            // Il BERSAGLIO ora lo sceglie il giocatore. La MODALITÀ no:
-            // resta automatica (prende il controllo se ha un mostro da
-            // sacrificare, altrimenti cambia Posizione), come da
-            // SEMPLIFICAZIONE dichiarata qui sopra — sono due scelte
-            // distinte, e impilare un secondo popover sopra il picker è
-            // un cambiamento a sé.
-            const candidati = collectFieldTargets(ctx, { zone: 'monster', owner: 'opponent' });
-            if (candidati.length === 0) return;
-            chooseFieldCardTarget(ctx, candidati, {
-                title: '⚙️ Controllore Nemico',
-                text: 'Scegli quale mostro avversario bersagliare.',
-                dichiara: true
-            }, (scelto) => {
-                if (window.FX && typeof FX.playEnemyController === 'function') FX.playEnemyController(scelto.owner, scelto.index, 'controllo');
-                const ownField = ctx.field(ctx.owner);
-                const sacIndex = ownField.findIndex((s) => s);
-                if (sacIndex !== -1) {
-                    const targetSlot = ctx.field(scelto.owner)[scelto.index];
-                    if (targetSlot) {
-                        const sacrificed = ownField[sacIndex].card;
-                        ctx.graveyard(ctx.owner).push(sacrificed);
-                        ownField[sacIndex] = null;
-                        const stolen = targetSlot.card;
-                        if (ctx.takeControl(ctx.owner, scelto.owner, scelto.index)) {
-                            ctx.log(`⚙️ Controllore Nemico sacrifica ${sacrificed.name} e prende il controllo di ${stolen.name}!`);
-                            return;
-                        }
-                    }
-                }
-                // `decl` apparteneva alla vecchia implementazione anteriore
-                // al picker ed era fuori scope: la modalità cambio Posizione
-                // esplodeva ogni volta che non c'era un mostro da offrire.
-                // `scelto` è già il bersaglio dichiarato e validato dal
-                // checkpoint condiviso, quindi è l'unica fonte corretta.
-                const targetSlot = ctx.field(scelto.owner)[scelto.index];
-                if (!targetSlot) return;
-                targetSlot.position = targetSlot.position === 'attack' ? 'defense' : 'attack';
-                ctx.log(`⚙️ Controllore Nemico cambia la Posizione di ${targetSlot.card.name}!`);
-            });
-        }
-    });
-
-    // ================================================================
     // 846 — Cambio d'Arma / Weapon Change (Magia Continua)
     // "Una volta per ciascuna delle tue Standby Phase: puoi pagare 700 LP,
     // poi scegliere come bersaglio 1 mostro Tipo Guerriero o Macchina che

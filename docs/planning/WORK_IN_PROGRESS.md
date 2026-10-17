@@ -494,3 +494,11 @@ Decisioni aperte dell'utente: i 6 PNG di avatar non usati; le regole del
 
 - [x] Pedine verificate: i 20 personaggi che possono comparire hanno il loro
       PNG col nome dell'avatar, nessun ripiego sulla pedina generica.
+## Correzioni decisioni IA condivise (2026-10-18)
+
+- L'IA non attiva una seconda copia di `Mondo dei Toon` mentre ne controlla già una scoperta.
+- `Fusione` non viene consumata per evocare `Restrizione dai Mille Occhi` a 0/0 se manca un mostro avversario scoperto da assorbire; con un bersaglio valido il piano resta disponibile.
+- `Controllore del Nemico` confronta ora il valore effettivo del sacrificio con l'ATK del controllo temporaneo: conserva, per esempio, `Kaiser Glider` contro un 1900 e usa il cambio di Posizione, ma può ancora offrire un mostro debole per rubarne uno molto più forte o chiudere il duello.
+- I buff difensivi mirati `Il Guardiano Affidabile` e `Mura del Castello` non vengono attivati dal bot se l'unico bersaglio disponibile è avversario.
+- Eliminato il doppione `Controllore Nemico` ID 845: deck e Starter/Structure usano l'unico record canonico `Controllore del Nemico` ID 226.
+- Regressione: `tests/specs/ia-risorse-e-bersagli.spec.js`, più gli spec Toon e Controllore esistenti.

@@ -213,6 +213,11 @@
         const setCount = usedThisTurn.setCount || (usedThisTurn.setDone ? 1 : 0);
         const worthwhile = (card) => {
             if (!window.AI_SHARED) return true;
+            const definition = window.DuelEngine && DuelEngine.getDefinition(card.id);
+            if (definition && typeof definition.aiCanActivate === 'function') {
+                const context = DuelEngine.makeContext(io, { card, zone: 'hand' });
+                if (!definition.aiCanActivate(context)) return false;
+            }
             // Una carta-combo che Evoca Specialmente dalla mano (es.
             // Dimensione Magica) non è prima di tutto una rimozione. Il
             // suo "poi puoi distruggere" è facoltativo: classificarla solo

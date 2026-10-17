@@ -411,8 +411,19 @@
         canActivate(ctx) {
             return DuelEngine.getFusableExtraDeckMonsters(ctx.owner).length > 0;
         },
+        // Restrizione dai Mille Occhi parte da 0/0: l'IA non consuma
+        // Fusione e i materiali senza un mostro scoperto da assorbire.
+        aiCanActivate(ctx) {
+            const hasAbsorbTarget = ctx.field(ctx.opponent).some((slot) => slot && !slot.isFaceDown);
+            return DuelEngine.getFusableExtraDeckMonsters(ctx.owner)
+                .some((option) => option.card.id !== 476 || hasAbsorbTarget);
+        },
         activate(ctx) {
-            const options = DuelEngine.getFusableExtraDeckMonsters(ctx.owner);
+            let options = DuelEngine.getFusableExtraDeckMonsters(ctx.owner);
+            if (!Decisioni.rispondeUnaPersona(ctx.owner)) {
+                const hasAbsorbTarget = ctx.field(ctx.opponent).some((slot) => slot && !slot.isFaceDown);
+                options = options.filter((option) => option.card.id !== 476 || hasAbsorbTarget);
+            }
             if (options.length === 0) return;
             const owner = ctx.owner;
             const summon = (option) => {
@@ -2276,17 +2287,27 @@
     // sceglie il giocatore (chooseOption): prima lo decideva il motore,
     // perché mancava una scelta fra due effetti. Ordine del testo reale:
     // prima l'effetto, poi il costo (il Sacrificio), poi il bersaglio.
-    // Il bot sacrifica il suo mostro più debole e prende il controllo
-    // quando può, come faceva prima (ma prima sacrificava il primo
-    // mostro trovato, anche il più forte).
+    // Il bot confronta il valore effettivo del sacrificio più debole col
+    // miglior bersaglio: usa il controllo temporaneo solo per un guadagno
+    // netto rilevante (o letale), altrimenti cambia semplicemente Posizione.
     CardEffects.register(226, {
         declaredTargeting: { count: 1, cardType: 'monster' },
         canActivate(ctx) {
             return ctx.field(ctx.opponent).some((s) => s && !s.isFaceDown);
         },
         activate(ctx) {
+            const valore = (card) => Math.max(DuelEngine.getEffectiveAtk(card), DuelEngine.getEffectiveDef(card));
             const sacrificabili = collectFieldTargets(ctx, { zone: 'monster', owner: 'self', includiCoperte: true })
-                .sort((a, b) => (a.card.attack || 0) - (b.card.attack || 0));
+                .sort((a, b) => valore(a.card) - valore(b.card));
+            const avversari = collectFieldTargets(ctx, { zone: 'monster', owner: 'opponent' })
+                .sort((a, b) => DuelEngine.getEffectiveAtk(b.card) - DuelEngine.getEffectiveAtk(a.card));
+            const convieneControllo = () => {
+                if (sacrificabili.length === 0 || avversari.length === 0) return false;
+                const costo = valore(sacrificabili[0].card);
+                const guadagno = DuelEngine.getEffectiveAtk(avversari[0].card);
+                const letale = guadagno >= Tavolo.lp(ctx.opponent, gameState);
+                return letale || guadagno >= costo + 400;
+            };
             chooseOption(ctx, {
                 title: '🎮 Controllore del Nemico',
                 text: 'Quale effetto attivi?',
@@ -2294,7 +2315,7 @@
                     { value: 'posizione', label: 'Cambia la Posizione di un mostro', icon: '🔄' },
                     sacrificabili.length > 0 ? { value: 'controllo', label: 'Sacrifica 1 mostro e prendine uno', icon: '💫' } : null
                 ],
-                pickForBot: () => (sacrificabili.length > 0 ? 'controllo' : 'posizione')
+                pickForBot: () => (convieneControllo() ? 'controllo' : 'posizione')
             }, (ramo) => {
                 if (ramo !== 'controllo') { scegliBersaglioControllore(ctx, 'posizione'); return; }
                 chooseFieldCardTarget(ctx, sacrificabili, {

@@ -1043,7 +1043,7 @@ const starterStructureDeckDatabase = [
             { id: 607, qty: 1 }, // SD10-EN024 Tifone dello Spazio Mistico / Mystical Space Typhoon
             { id: 350, qty: 1 }, // SD10-EN025 Rimozione del Limitatore / Limiter Removal
             { id: 646, qty: 1 }, // SD10-EN026 Tempesta Pesante / Heavy Storm
-            { id: 845, qty: 1 }, // SD10-EN027 Controllore Nemico / Enemy Controller
+            { id: 226, qty: 1 }, // SD10-EN027 Controllore del Nemico / Enemy Controller
             { id: 846, qty: 1 }, // SD10-EN028 Cambio d'Arma / Weapon Change
             { id: 847, qty: 1 }, // SD10-EN029 Duplicazione Meccanica / Machine Duplication
             { id: 848, qty: 1 }, // SD10-EN030 Vaso dell'Avarizia / Pot of Avarice

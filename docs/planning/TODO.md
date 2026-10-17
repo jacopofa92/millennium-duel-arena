@@ -19,7 +19,7 @@ Falliscono su `main` anche senza il lavoro grafico e di sync del 9 ottobre
 commit dell'audit dei duellanti (Toon, Pegasus, Yami Yugi, audit della serie
 principale).
 
-- [x] `duello-gemello` — sistemato: Controllore Nemico (845) usava una
+- [x] `duello-gemello` — sistemato: Controllore del Nemico (oggi ID 226; il vecchio doppione 845 è stato rimosso) usava una
       variabile inesistente nella modalità "cambia Posizione"; a passo comune
       gli uid dei Token dipendevano dal generatore di tutta la partita.
 - [x] `duello-senza-testa` — sistemato: la partita d'esempio (seme 473) non

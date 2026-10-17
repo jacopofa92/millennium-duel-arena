@@ -1890,7 +1890,7 @@
     //     comportamento di questa carta prima di questo fix.
     // Sceglie da sola la modalità ① (gratis) quando disponibile, altrimenti
     // la ② — stesso spirito "preferisci l'opzione più forte/gratuita"
-    // già usato per Controllore Nemico (id 226/845) in questo file,
+    // già usato per Controllore del Nemico (id 226) in questo file,
     // invece di un'interfaccia di scelta dedicata.
     // ================================================================
     CardEffects.register(689, {

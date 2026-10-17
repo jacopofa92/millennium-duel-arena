@@ -309,7 +309,7 @@ const characterDeckDatabase = {
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 69, qty: 1 }, // Stop Difesa
-                { id: 845, qty: 1 }, // Controllore Nemico
+                { id: 226, qty: 1 }, // Controllore del Nemico
                 { id: 35, qty: 1 }, // Rinascita del Mostro
                 { id: 36, qty: 1 }, // Vaso dell'Avidità
                 { id: 312, qty: 1 }, // Trasportatore di Materia Interdimensionale
@@ -346,7 +346,7 @@ const characterDeckDatabase = {
                 { id: 38, qty: 1 }, // Fusione
                 { id: 35, qty: 1 }, // Rinascita del Mostro
                 { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 845, qty: 2 }, // Controllore Nemico
+                { id: 226, qty: 2 }, // Controllore del Nemico
                 { id: 69, qty: 1 }, // Stop Difesa
                 { id: 646, qty: 1 }, // Tempesta Pesante
                 { id: 631, qty: 1 }, // Megamorfosi
@@ -381,7 +381,7 @@ const characterDeckDatabase = {
                 { id: 38, qty: 1 }, // Fusione
                 { id: 35, qty: 1 }, // Rinascita del Mostro
                 { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 845, qty: 2 }, // Controllore Nemico
+                { id: 226, qty: 2 }, // Controllore del Nemico
                 { id: 69, qty: 1 }, // Stop Difesa
                 { id: 646, qty: 1 }, // Tempesta Pesante
                 { id: 631, qty: 1 }, // Megamorfosi
@@ -3326,7 +3326,7 @@ const characterDeckDatabase = {
                 { id: 38, qty: 1 }, // Fusione
                 { id: 646, qty: 1 }, // Tempesta Pesante
                 { id: 69, qty: 1 }, // Stop Difesa
-                { id: 845, qty: 1 } // Controllore Nemico
+                { id: 226, qty: 1 } // Controllore del Nemico
             ],
             extra: [
                 { id: 29, qty: 1 } // Drago Bianco Definitivo
@@ -3360,7 +3360,7 @@ const characterDeckDatabase = {
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 38, qty: 1 }, // Fusione
                 { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 845, qty: 1 }, // Controllore Nemico
+                { id: 226, qty: 1 }, // Controllore del Nemico
                 { id: 382, qty: 1 }, // Forza dello Specchio
                 { id: 37, qty: 1 } // Folgore Fulminante
             ],

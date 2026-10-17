@@ -9506,15 +9506,6 @@ const cardDatabase = [
     "artOnly": true
   },
   {
-    "id": 845,
-    "origin": "yu-gi-oh",
-    "name": "Controllore Nemico",
-    "type": "spell",
-    "subtype": "quick-play",
-    "effect": "Attiva 1 di questi effetti. ● Scegli come bersaglio 1 mostro scoperto controllato dal tuo avversario; cambia la sua Posizione di Battaglia. ● Sacrifica 1 mostro, poi scegli come bersaglio 1 mostro scoperto controllato dal tuo avversario; prendine il controllo fino alla End Phase.",
-    "artOnly": true
-  },
-  {
     "id": 846,
     "origin": "yu-gi-oh",
     "name": "Cambio d'Arma",
