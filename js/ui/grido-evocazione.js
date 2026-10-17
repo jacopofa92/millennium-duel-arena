@@ -20,10 +20,10 @@
  * aspetta comunque grazie al contatore delle cinematiche (FX.begin/
  * endSummonCinematic, lo stesso dei filmati di Evocazione).
  *
- * LA SCENA (3 secondi): velo e raggi del colore dell'Attributo, la
+ * LA SCENA (3 secondi): velo del colore dell'Attributo, la
  * sagoma trasparente del duellante che entra dal suo lato spinta dal
- * vento (strisce e pulviscolo che attraversano lo schermo), la frase e il
- * nome della carta. Un tocco la salta. Si chiude da sola anche se si apre
+ * vento (strisce e pulviscolo che attraversano lo schermo senza fermarsi
+ * per tutta la scena), e la frase in una sola banda. Un tocco la salta. Si chiude da sola anche se si apre
  * una scelta a schermo (una finestra di risposta): non deve mai stare
  * sopra una decisione. Rispetta l'interruttore "filmati di Evocazione" e
  * il movimento ridotto; con i Dettagli video su "Alti" ha più vento.
@@ -164,8 +164,46 @@
         }
     }
 
+    /**
+     * Il grido in frasi, una per riga: si spezza dopo ! ? . e, se la frase è
+     * una sola, dopo la prima virgola ("Mago Nero, / scendi in campo!").
+     * Il segno di punteggiatura resta con la frase che chiude.
+     * @param {string} testo
+     * @returns {string[]}
+     */
+    function frasi(testo) {
+        const pulita = String(testo || '').trim();
+        let parti = pulita.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [pulita];
+        if (parti.length === 1) parti = pulita.match(/[^,]+,|[^,]+$/g) || [pulita];
+        // Solo la prima virgola: una frase con tre virgole non diventa quattro righe.
+        if (parti.length > 2) parti = [parti[0], parti.slice(1).join('')];
+        return parti.map((p) => p.trim()).filter(Boolean);
+    }
+
+    /**
+     * Rimpicciolisce il testo finché ogni frase sta su UNA riga (fino a un
+     * minimo leggibile): meglio un carattere un po' più piccolo che una
+     * frase spezzata a metà. Si misura prima di mostrare la scena (è ancora
+     * a opacità 0), così a schermo il testo ha già la sua forma definitiva e
+     * non cambia numero di righe mentre entra.
+     * @param {HTMLElement} scena
+     */
+    function adatta(scena) {
+        const grido = scena.querySelector('.ge-grido');
+        if (!grido) return;
+        const righe = Array.from(grido.querySelectorAll('.ge-riga'));
+        const base = parseFloat(getComputedStyle(grido).fontSize) || 32;
+        const minimo = Math.max(15, base * 0.55);
+        let corpo = base;
+        const troppoLunga = () => righe.some((r) => r.offsetHeight > corpo * 1.1 * 1.5);
+        while (corpo > minimo && troppoLunga()) {
+            corpo -= 1;
+            grido.style.fontSize = corpo + 'px';
+        }
+    }
+
     function avvia(dati, chi, grido, src, chiudiAttesa) {
-        const { carta, posto, speciale } = dati;
+        const { carta, posto } = dati;
         const rid = ridotto();
         const durata = rid ? DURATA_RIDOTTA_MS : DURATA_MS;
         const direzione = posto === 'player' ? 1 : -1; // il vento soffia da dove entra il duellante
@@ -179,20 +217,24 @@
         scena.setAttribute('role', 'presentation');
         scena.innerHTML = `
             <div class="ge-velo"></div>
-            <div class="ge-raggi"></div>
             <div class="ge-lampo"></div>
             <div class="ge-vento" aria-hidden="true"></div>
             <div class="ge-onda"></div>
-            <div class="ge-banda ge-banda--alta"><strong class="ge-grido"></strong></div>
-            <div class="ge-banda ge-banda--bassa"><small class="ge-kicker"></small><em class="ge-carta"></em></div>
+            <div class="ge-banda"><strong class="ge-grido"></strong></div>
             <img class="ge-figura" alt="" ${src ? `src="${src}"` : 'hidden'}>
             <span class="ge-salta">Tocca per saltare</span>`;
         // Il testo non passa da innerHTML: il nome di una carta personalizzata è libero.
-        scena.querySelector('.ge-kicker').textContent = (speciale ? 'Evocazione Speciale' : 'Evocazione') + ' · ' + (chi.name || '');
-        scena.querySelector('.ge-grido').textContent = grido;
-        scena.querySelector('.ge-carta').textContent = '⚔ ' + carta.name;
+        // Una riga per frase, mai spezzata a metà: solo una frase troppo lunga per
+        // lo schermo va a capo da sola. Il testo resta fuori da innerHTML.
+        frasi(grido).forEach((f) => {
+            const riga = document.createElement('span');
+            riga.className = 'ge-riga';
+            riga.textContent = f + ' '; // lo spazio tiene il testo leggibile per chi lo copia o lo legge a voce
+            scena.querySelector('.ge-grido').appendChild(riga);
+        });
         if (!rid) costruisciVento(scena, direzione, dettagliAlti());
         document.body.appendChild(scena);
+        adatta(scena);
 
         if (window.FX && typeof FX.beginSummonCinematic === 'function') FX.beginSummonCinematic();
         if (window.SFX && typeof SFX.wind === 'function' && !rid) SFX.wind();
@@ -234,6 +276,7 @@
         DURATA_MS,
         /** Per i test: dimentica i gridi già mostrati in questo duello. */
         azzera() { giaMostrati.clear(); },
-        mostra
+        mostra,
+        frasi
     };
 })();

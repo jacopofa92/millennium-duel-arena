@@ -51,7 +51,7 @@ module.exports = {
                 await new Promise((r) => setTimeout(r, 900));
                 const durante = { scena: !!document.getElementById('gridoEvocazione'), inCampo: !!gameState.playerMonsterField[0], inMano: gameState.playerHand.includes(maga) };
                 // Si vede il personaggio giusto col suo grido.
-                durante.testo = (document.querySelector('#gridoEvocazione .ge-grido') || {}).textContent;
+                durante.testo = ((document.querySelector('#gridoEvocazione .ge-grido') || {}).textContent || '').trim();
                 await new Promise((r) => setTimeout(r, 2800));
                 return { durante, dopo: { scena: !!document.getElementById('gridoEvocazione'), inCampo: !!gameState.playerMonsterField[0] } };
             });
@@ -76,7 +76,7 @@ module.exports = {
                 const subito = { inCampo: !!gameState.botMonsterField[0] };
                 await new Promise((r) => setTimeout(r, 800));
                 const scena = document.getElementById('gridoEvocazione');
-                const out = { ...subito, scena: !!scena, titolo: scena && scena.querySelector('.ge-kicker').textContent, contatore: FX.isCinematicPlaying() };
+                const out = { ...subito, scena: !!scena, contatore: FX.isCinematicPlaying() };
                 // Un tocco la salta.
                 scena.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
                 await new Promise((r) => setTimeout(r, 400));
@@ -84,7 +84,7 @@ module.exports = {
                 return out;
             });
             assert(speciale.inCampo, 'nella Special Summon lo stato è già cambiato quando parte il grido');
-            assert(speciale.scena && /Speciale/.test(speciale.titolo), 'la Special Summon deve mostrare il grido');
+            assert(speciale.scena, 'la Special Summon deve mostrare il grido');
             assert(speciale.contatore, 'la scena deve segnarsi come cinematica in corso (il bot aspetta)');
             assert(!speciale.dopoTocco, 'un tocco deve saltare la scena');
 
