@@ -96,7 +96,7 @@
 .cd-schermo-intero--aperto { opacity: 1; }
 .cd-schermo-intero--esce { opacity: 0; pointer-events: none; }
 .cd-schermo-intero .card {
-    --card-w: min(94vw, calc(94dvh * var(--card-ratio)));
+    --card-w: var(--carta-schermo-intero);
     --card-h: calc(var(--card-w) / var(--card-ratio));
     cursor: zoom-out;
     touch-action: manipulation;

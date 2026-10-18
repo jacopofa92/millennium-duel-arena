@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * topbar.js — Genera il markup della topbar condivisa (vedi
  * js/ui/topbar.css per lo stile) invece di farlo scrivere a mano, quasi
@@ -52,7 +53,9 @@
      *   sta per duellare (Duello Libero, Tornei): altrove il ritratto da
      *   solo basta, e il mazzo sarebbe un'informazione fuori contesto.
      *   Richiede js/ui/deck-switcher.js caricato dalla pagina.
-     * @param {function} [opts.onProfile] - cosa fare al tocco sul ritratto,
+     * @param {string} [opts.profileHref] - destinazione del ritratto se non c'è onProfile
+ *   (vedi js/ui/deck-switcher.js).
+ * @param {function} [opts.onProfile] - cosa fare al tocco sul ritratto,
      *   per le viste SPA dove il Profilo non è un file ma una vista.
      * @param {function} [opts.onBack] - handler onclick personalizzato per
      *   una destinazione calcolata a runtime (es. showMenuFromView() per
@@ -88,7 +91,7 @@
         // l'ordine non cambia il comportamento di navigazione/onBack.
         backBtn.addEventListener('click', () => { if (window.NativeHaptics) NativeHaptics.light(); });
         if (opts && typeof opts.onBack === 'function') {
-            backBtn.onclick = opts.onBack;
+            backBtn.onclick = /** @type {any} */ (opts.onBack);
         }
         // Nessun else: senza onBack, il click naviga semplicemente verso
         // backHref via il normale href dell'ancora — nessun handler JS

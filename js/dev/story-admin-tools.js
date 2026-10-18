@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Strumenti amministrativi per collaudare le campagne senza attraversare
  * manualmente centinaia di nodi. Non assegna premi: modifica soltanto la

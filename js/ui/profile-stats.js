@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * profile-stats.js — Le statistiche del giocatore nel Profilo.
  * =====================================================================

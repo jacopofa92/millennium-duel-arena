@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * mode-unlocks.js — requisiti di accesso alle modalità extra.
  *

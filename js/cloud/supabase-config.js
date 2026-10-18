@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * supabase-config.js — Credenziali del TUO progetto Supabase.
  * =====================================================================

@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Cerimonia per una carta GUADAGNATA (drop, Storia o Sfida).
  * Non decide né accredita nulla: visualizza un premio già persistito.

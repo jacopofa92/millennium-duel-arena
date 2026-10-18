@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * missions-db.js — Il pool delle MISSIONI a rotazione (sfide.html).
  * =====================================================================
@@ -180,4 +181,4 @@ const missionsDatabase = [
     }
 ];
 
-window.missionsDatabase = missionsDatabase;
+/** @type {any} */ (window).missionsDatabase = missionsDatabase;

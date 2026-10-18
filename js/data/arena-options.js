@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * arena-options.js — Catalogo delle Arene (sfondi) e delle Colonne
  * Sonore selezionabili prima di un duello.

@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * haptics.js — feedback tattile (vibrazione) tramite @capacitor/haptics,
  * SOLO dentro l'APK nativo — su web ogni funzione qui sotto è un no-op

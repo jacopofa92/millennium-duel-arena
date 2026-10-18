@@ -1,3 +1,4 @@
+// @ts-check
 // GENERATO dall'Editor Mappa (js/dev/story-map-editor.js, "📂 Collega file").
 // Le modifiche fatte dall'editor ai nodi delle storie, rispetto al catalogo
 // js/data/story-campaigns.js: le applica js/story/story-ritocchi.js.

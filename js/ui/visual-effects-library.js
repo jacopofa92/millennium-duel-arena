@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * visual-effects-library.js — Libreria di effetti visivi NOMINATI,
  * riutilizzabili da qualunque carta senza scrivere codice — pensata per

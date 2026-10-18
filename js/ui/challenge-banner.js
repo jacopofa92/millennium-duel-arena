@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * challenge-banner.js — Banner "Sfida completata" in alto a destra,
  * condiviso da ogni pagina che lo include (vedi js/ui/challenge-banner.css
@@ -60,7 +61,7 @@
         // Le voci sono già accreditate a monte (Rewards.forChallenge) e
         // arrivano qui solo per essere mostrate: questo file non tocca
         // mai le valute.
-        const premiEl = el.querySelector('.challenge-banner-rewards');
+        const premiEl = /** @type {HTMLElement} */ (el.querySelector('.challenge-banner-rewards'));
         const voci = def.rewards || [];
         // Testo costruito qui da valori di nostri file di dati (icona,
         // nome valuta, importo numerico), mai da input dell'utente.

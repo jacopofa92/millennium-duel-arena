@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * keep-awake.js — impedisce allo schermo di spegnersi/dimmerare durante
  * un duello (via @capacitor-community/keep-awake), SOLO dentro l'APK

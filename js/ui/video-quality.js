@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * video-quality.js — Livello di DETTAGLI VIDEO scelto dal giocatore.
  * ------------------------------------------------------------------

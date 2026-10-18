@@ -1,3 +1,4 @@
+// @ts-check
 // GENERATO da uno script (vedi js/ui/tinta-campo.js): il colore che caratterizza
 // ogni arena, letto dalla sua immagine in images/fields/mobile/. Serve alle
 // caselle del campo per prendere il colore dell'arena anche aprendo il gioco

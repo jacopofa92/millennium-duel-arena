@@ -13,7 +13,7 @@ const { execFileSync } = require('child_process');
 // IL TRINCEA: quanti file di js/ portano // @ts-check. Il numero può solo SALIRE:
 // se scende, un file ha perso il controllo senza che nessuno l'abbia deciso.
 // Quando ne accendi uno nuovo, alza il numero qui (è l'unico posto da toccare).
-const MINIMO_FILE_CONTROLLATI = 12;
+const MINIMO_FILE_CONTROLLATI = 52;
 
 function fileJs(dir) {
     const out = [];

@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * gridi-evocazione.js — i "gridi di battaglia" dei duellanti per le loro
  * carte simbolo (Kaiba col Drago Bianco Occhi Blu, Yugi col Mago Nero...).

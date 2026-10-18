@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * auth-gate.js — Punto d'accesso OBBLIGATORIO condiviso da OGNI pagina
  * del gioco (menu escluso: index.html mostra lei stessa la schermata di

@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * multiplayer.js — stato della connessione DURANTE un duello.
  * =====================================================================

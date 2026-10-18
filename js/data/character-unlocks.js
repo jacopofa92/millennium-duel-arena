@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * character-unlocks.js — quali Duellanti si possono sfidare in Duello
  * Libero, e come si guadagnano gli altri.

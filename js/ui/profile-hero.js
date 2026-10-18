@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * profile-hero.js — La parte alta del Profilo: chi sei, come stai andando,
  * cosa hai in tasca, con quali mazzi giochi.

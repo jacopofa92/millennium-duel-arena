@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * pwa-register.js — Registra sw.js (vedi il commento lì per la strategia
  * di cache) su ogni pagina che lo include. Percorso RELATIVO ('sw.js',

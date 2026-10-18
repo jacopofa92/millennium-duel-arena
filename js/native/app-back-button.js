@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * app-back-button.js — Intercetta il tasto Indietro hardware/gesture di
  * Android (via @capacitor/app, plugin App.addListener('backButton', ...))

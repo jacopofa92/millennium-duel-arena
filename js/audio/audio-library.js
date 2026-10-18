@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * audio-library.js — Sistema audio modulare con Howler.js (js/vendor/howler.min.js).
  * =====================================================================

@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * native-save-backup.js — backup RESILIENTE del salvataggio (vedi
  * js/save-manager.js) su storage nativo (@capacitor/preferences), SOLO

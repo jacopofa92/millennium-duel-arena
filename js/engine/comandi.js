@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * comandi.js — le mosse dei giocatori come COMANDI.
  * =====================================================================

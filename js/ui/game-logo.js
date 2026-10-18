@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * game-logo.js — Il logo del gioco, uno solo per tutte le schermate.
  * =====================================================================

@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * deck-legality.js — "questo mazzo può scendere in campo in questo
  * duello?", rispondibile PRIMA di entrare nell'arena.

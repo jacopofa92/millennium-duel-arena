@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * story-ritocchi.js — le modifiche dell'Editor Mappa, applicate al catalogo.
  * =====================================================================

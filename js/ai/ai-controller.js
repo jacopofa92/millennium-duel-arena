@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * ai-controller.js — Punto d'accesso UNICO alle decisioni del bot.
  * js/ai/bot.js (l'ESECUTORE: animazioni, timer, applica la decisione al

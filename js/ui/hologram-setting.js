@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * hologram-setting.js — "Visualizzazione ologramma" acceso o spento.
  * ------------------------------------------------------------------

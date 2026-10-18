@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * error-recovery.js — ultima rete di sicurezza VISIBILE per un errore
  * JS non gestito da nient'altro: senza questo, l'unico segnale che

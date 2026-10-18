@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * inclinazione.js — da che parte "pende" la scena: mouse o giroscopio.
  * =====================================================================

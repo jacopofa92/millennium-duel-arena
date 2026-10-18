@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * bot-speed.js — Velocità del bot scelta dal giocatore.
  * ------------------------------------------------------------------

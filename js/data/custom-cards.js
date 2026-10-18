@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * custom-cards.js — Carte create dall'utente, dati per un futuro Card
  * Maker (nessuna UI qui: solo l'API che una futura schermata "Crea

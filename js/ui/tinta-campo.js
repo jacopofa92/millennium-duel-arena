@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * tinta-campo.js — il colore dell'arena, per le caselle del campo.
  * =====================================================================

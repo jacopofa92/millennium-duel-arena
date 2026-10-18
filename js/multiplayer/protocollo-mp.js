@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * protocollo-mp.js — la FORMA dei messaggi del Multiplayer.
  * =====================================================================
@@ -20,7 +21,7 @@
  * di server/server.js (lo sorveglia tests/specs/guardrail-protocollo-mp.spec.js),
  * e il server si ridistribuisce.
  */
-(function (radice, fabbrica) {
+(function (/** @type {any} */ radice, fabbrica) {
     if (typeof module === 'object' && module.exports) module.exports = fabbrica();
     else radice.ProtocolloMP = fabbrica();
 })(typeof self !== 'undefined' ? self : this, function () {

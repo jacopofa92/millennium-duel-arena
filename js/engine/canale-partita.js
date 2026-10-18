@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * canale-partita.js — le cinque funzioni con cui le regole avvisano
  * l'interfaccia, chiamate da centinaia di punti.

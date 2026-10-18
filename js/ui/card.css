@@ -103,6 +103,9 @@
     --carta-modello: 220px;
     /* La scheda di dettaglio carta (js/ui/card-detail.css). */
     --carta-anteprima: min(46vh, clamp(180px, 26vw, 280px));
+    /* La carta a tutto schermo aperta dalla scheda (js/ui/card-detail.css): la
+       più grande che sta nella finestra, mantenendo le proporzioni. */
+    --carta-schermo-intero: min(94vw, calc(94dvh * var(--card-ratio)));
 }
 @media (max-width: 600px) {
     :root { --carta-striscia: clamp(82px, 24vw, 96px); }

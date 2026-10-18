@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.3.39 — Controllo dei tipi acceso su 40 file piccoli (@ts-check), globali dichiarati in types/globali.d.ts; la scala di card.css ha il nome --carta-schermo-intero.
  * 1.3.38 — Multiplayer: la forma dei messaggi (js/multiplayer/protocollo-mp.js) è controllata dal relay e dai client; un messaggio rotto si scarta.
  * 1.3.37 — Rinforzi: vocabolario chiuso degli effetti delle carte (guardrail) e forma del salvataggio controllata anche per cloud e backup, con tipi in types/salvataggio.d.ts.
  * 1.3.36 — Importa salvataggio: file controllati, riquadro di conferma con confronto e avvisi, salvataggio di prima conservato come copia di sicurezza.
@@ -754,4 +755,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.3.38';
+window.GAME_VERSION = '1.3.39';

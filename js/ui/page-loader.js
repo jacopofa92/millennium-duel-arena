@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * page-loader.js — schermata di caricamento condivisa per OGNI cambio
  * pagina del gioco (menu, Cartoteca, Creazione Deck, Duello Libero,

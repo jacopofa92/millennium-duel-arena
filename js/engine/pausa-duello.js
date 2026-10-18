@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * pausa-duello.js — pausa cooperativa del motore offline.
  * ======================================================
@@ -93,4 +94,4 @@ const PausaDuello = (function () {
     return { sospendi, riprendi, inPausa, dopo, annulla, ascolta };
 })();
 
-globalThis.PausaDuello = PausaDuello;
+/** @type {any} */ (globalThis).PausaDuello = PausaDuello;

@@ -42,7 +42,7 @@ module.exports = {
 
         // --- 3) Messaggi veri passano ---
         const buoni = [
-            { kind: 'room-config', field: 'images/fields/x.jpg', music: 'audio/x.mp3', origin: 'yu-gi-oh' },
+            { kind: 'room-config', field: 'industriaKaibaCorp.jpg', music: 'mainTheme.mp3', origin: 'yu-gi-oh' },
             { kind: 'ready', pronto: true },
             { kind: 'rps', scelta: 'roccia' },
             { kind: 'rps', iniziaChiManda: false },
