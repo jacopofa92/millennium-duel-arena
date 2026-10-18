@@ -10,7 +10,10 @@
    ============================================================ */
 .ge {
     --ge-dir: 1;            /* +1 il duellante entra da sinistra, -1 da destra */
-    --ge-obliqua: -3deg;    /* la stessa inclinazione dell'annuncio di turno */
+    /* L'inclinazione dell'annuncio di turno (-3deg) per chi entra da sinistra,
+       SPECULARE (+3deg) per chi entra da destra: banda e vento sono lo
+       specchio esatto della scena di sinistra, non la stessa scena spostata. */
+    --ge-obliqua: calc(-3deg * var(--ge-dir));
     position: fixed; inset: 0; z-index: 10075;
     overflow: hidden; opacity: 0;
     font-family: inherit;
@@ -88,7 +91,10 @@
    Il contenitore è specchiato per il duellante di destra (scaleX(-1)) e
    inclinato come le bande: le animazioni sono scritte una volta sola, da
    sinistra a destra. */
-.ge-vento { position: absolute; inset: 0; pointer-events: none; transform: scaleX(var(--ge-dir)) skewY(var(--ge-obliqua)); }
+/* ORDINE: prima lo specchio (scaleX), poi l'inclinazione (skewY, che si scrive per prima:
+   le trasformazioni si applicano da destra). Con l'ordine inverso le strisce di destra
+   scendevano dalla parte opposta della banda. */
+.ge-vento { position: absolute; inset: 0; pointer-events: none; transform: skewY(var(--ge-obliqua)) scaleX(var(--ge-dir)); }
 .ge-vento i {
     position: absolute; left: 0; height: 2px; border-radius: 2px;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .95) 55%, color-mix(in srgb, var(--ge-colore) 70%, #fff) 85%, transparent);

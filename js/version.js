@@ -32,6 +32,8 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.4.9 — Grido di Evocazione: per chi entra da destra banda e vento sono lo specchio esatto della scena di sinistra.
+ * 1.4.8 — rifinite le pose di esclamazione di Atem, Barbero, Ishizu, Yami Marik, Yami Yugi e Yugi Muto.
  * 1.4.7 — pose di esclamazione dedicate ai gridi di Evocazione dei duellanti.
  * 1.4.6 — Alberto Angela diventa Imperator Alberto Angela, Signore dell'Eterna Roma.
  * 1.4.5 — Alessandro Barbero si chiama ora Ser Alessandro Barbero.
@@ -763,4 +765,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.4.7';
+window.GAME_VERSION = '1.4.9';

@@ -496,8 +496,8 @@
 // v278: passaggio morra-arena mobile senza layer e animazioni concorrenti.
 // v279: nomi compatti e invito all'azione rendono leggibili le fasi.
 // v282: miniature WebP lazy per Duellanti e anteprime delle Arene.
-// v316: pose di esclamazione dedicate ai gridi di Evocazione.
-const CACHE_NAME = 'ygo-duel-arena-v316';
+// v317: pose di esclamazione rifinite senza ritagli laterali.
+const CACHE_NAME = 'ygo-duel-arena-v318';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
