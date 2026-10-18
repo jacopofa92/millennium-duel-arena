@@ -107,7 +107,30 @@
         { chi: ['gozaburo'], carta: 230, grido: 'Exodia Necross, risorgi dal Cimitero!' },
         { chi: ['gozaburo'], carta: 467, grido: 'Demone Megacyber, esegui il mio ordine!' },
         { chi: ['espaRoba', 'heishin'], carta: 17, grido: 'Jinzo! Nessuna trappola sopravvive!' },
-        { chi: ['arkana'], carta: 2, grido: 'Il mio Mago Nero! La vera illusione comincia ora!' }
+        { chi: ['arkana'], carta: 2, grido: 'Il mio Mago Nero! La vera illusione comincia ora!' },
+
+        // --- I tre Duellanti Extra: le loro frasi di sempre, portate nel duello ---
+        // Roberto Giacobbo (Voyager, "ai confini della conoscenza"): file rg.jpg.
+        { chi: ['rg'], carta: 472, grido: 'Benvenuti a Voyager: ai confini della conoscenza!' },
+        { chi: ['rg'], carta: 660, grido: 'Un mistero che la scienza ufficiale non sa spiegare!' },
+        { chi: ['rg'], carta: 1116, grido: 'L\'Occhio di Horus vede ciò che nessuno ha mai visto!' },
+        { chi: ['rg'], carta: 1109, grido: 'Anubi custodisce l\'ultimo segreto!' },
+        { chi: ['rg'], carta: 1, grido: 'Chi ha costruito le piramidi? Ora lo scoprirete!' },
+        { chi: ['rg'], carta: 17, grido: 'Nessuna trappola resiste alla verità nascosta!' },
+        // Alberto Angela (Ulisse, "il piacere della scoperta", viaggi nel tempo).
+        { chi: ['albertoAngela'], carta: 709, grido: 'Ulisse, il piacere della scoperta: avanti, Gilford!' },
+        { chi: ['albertoAngela'], carta: 888, grido: 'Un generale dell\'Impero marcia verso la gloria!' },
+        { chi: ['albertoAngela'], carta: 267, grido: 'Come un fulmine, la Storia irrompe nel presente!' },
+        { chi: ['albertoAngela'], carta: 14, grido: 'Un viaggio nel tempo: ecco Gaia il Cavaliere Feroce!' },
+        { chi: ['albertoAngela'], carta: 865, grido: 'Dai secoli passati, una lama che non si spezza!' },
+        { chi: ['albertoAngela'], carta: 713, grido: 'Il comandante guida le legioni di Roma!' },
+        // Alessandro Barbero (le fonti, "il Medioevo non era buio").
+        { chi: ['alessandroBarbero'], carta: 1280, grido: 'Le fonti sono chiare: il Re non arretra mai!' },
+        { chi: ['alessandroBarbero'], carta: 1279, grido: 'La Regina comanda, e la storia si piega!' },
+        { chi: ['alessandroBarbero'], carta: 1281, grido: 'Il Jack: l\'audacia di un Medioevo tutt\'altro che buio!' },
+        { chi: ['alessandroBarbero'], carta: 1282, grido: 'Tutto quello che sapevate è sbagliato: ecco il Joker!' },
+        { chi: ['alessandroBarbero'], carta: 888, grido: 'Un condottiero, e le fonti ne parlano a lungo!' },
+        { chi: ['alessandroBarbero'], carta: 14, grido: 'Il Medioevo era più vivo di quanto pensiate!' }
     ];
 
     /**

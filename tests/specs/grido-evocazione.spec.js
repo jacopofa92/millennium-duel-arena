@@ -31,7 +31,9 @@ module.exports = {
                 return {
                     manca, lunghe, doppie,
                     kaiba: ['setoKaiba.jpg', 'setoKaiba_duelist_Kingdom.png', 'kaibaV2.png'].map((f) => trovaGridoEvocazione('images/characters/' + f, 1)),
-                    nessuno: trovaGridoEvocazione('images/characters/mirror.jpg', 1)
+                    nessuno: trovaGridoEvocazione('images/characters/mirror.jpg', 1),
+                    // I tre Duellanti Extra hanno la voce per la loro carta simbolo.
+                    extra: [['rg.jpg', 472], ['albertoAngela.jpg', 709], ['alessandroBarbero.jpg', 1280]].map(([file, carta]) => trovaGridoEvocazione('images/characters/' + file, carta))
                 };
             });
             assert(dati.manca.length === 0, `gridi che puntano a carte inesistenti: ${dati.manca}`);
@@ -39,6 +41,7 @@ module.exports = {
             assert(dati.doppie.length === 0, `due gridi per lo stesso duellante e la stessa carta: ${dati.doppie}`);
             assert(dati.kaiba.every((g) => g && g === dati.kaiba[0]), 'Kaiba deve avere lo stesso grido in tutti i suoi aspetti');
             assert(dati.nessuno === null, 'un duellante senza voce non deve avere un grido');
+            assert(dati.extra.every((g) => !!g), 'Giacobbo, Angela e Barbero devono avere il grido della loro carta simbolo: ' + JSON.stringify(dati.extra));
 
             // --- Evocazione Normale ---
             const normale = await page.evaluate(async () => {
