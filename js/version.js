@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.4.4 — Grido di Giacobbo: Freedom al posto di Voyager; Barbero con la spranga.
  * 1.4.3 — Grido di Evocazione anche per Roberto Giacobbo, Alberto Angela e Alessandro Barbero.
  * 1.4.2 — Il bot dà la precedenza a QUALUNQUE scelta del giocatore: nessuna sua mossa (Magie, Set, Evocazioni, Fusioni, Posizioni, attacchi) parte con una scelta aperta, e prima di attaccare ricontrolla attaccante e campo.
  * 1.4.1 — Evocazione Tributo sempre scoperta in Attacco; Drago Mascherato fa scegliere la Posizione (Difesa scoperta); il bot aspetta le scelte del giocatore e decide il bersaglio dopo; pausa visibile fra le mosse del bot.
@@ -759,4 +760,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.4.3';
+window.GAME_VERSION = '1.4.4';
