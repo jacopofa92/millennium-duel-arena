@@ -146,7 +146,7 @@ const characterDatabase = [
     // js/engine/game-flow.js, che riconosce questo id come caso speciale.
     { id: 'mirror', name: 'Te Stesso', title: 'Il Tuo Riflesso', image: 'images/characters/mirror.jpg', series: 'main' },
     { id: 'robertoGiacobbo', name: 'Roberto Giacobbo I', title: 'Divinità egizia', image: 'images/characters/rg.jpg', series: 'extra' },
-    { id: 'albertoAngela', name: 'Alberto Angela', title: 'Custode dell\'Impero', image: 'images/characters/albertoAngela.jpg', series: 'extra' },
+    { id: 'albertoAngela', name: 'Imperator Alberto Angela', title: 'Signore dell\'Eterna Roma', image: 'images/characters/albertoAngela.jpg', series: 'extra' },
     { id: 'alessandroBarbero', name: 'Ser Alessandro Barbero', title: 'Maestro delle Cronache', image: 'images/characters/alessandroBarbero.jpg', series: 'extra' },
 
     // ===== Grande Guerra — comandi austro-ungarici =====

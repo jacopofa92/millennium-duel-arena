@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.4.6 — Alberto Angela diventa Imperator Alberto Angela, Signore dell'Eterna Roma.
  * 1.4.5 — Alessandro Barbero si chiama ora Ser Alessandro Barbero.
  * 1.4.4 — Grido di Giacobbo: Freedom al posto di Voyager; Barbero con la spranga.
  * 1.4.3 — Grido di Evocazione anche per Roberto Giacobbo, Alberto Angela e Alessandro Barbero.
@@ -761,4 +762,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.4.5';
+window.GAME_VERSION = '1.4.6';
