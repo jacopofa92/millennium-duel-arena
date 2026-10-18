@@ -1784,7 +1784,13 @@
             field[slotIndex] = {
                 card: card,
                 position: position,
-                isFaceDown: position === 'defense',
+                // 'defense' = coperto, per convenzione di questo motore (Momonga,
+                // Mago Apprendista... lo dicono nel testo). Quando la Posizione la
+                // sceglie il giocatore e la carta non dice nulla (Drago Mascherato,
+                // Rinascita del Mostro, le Special Summon dalla mano) il mostro
+                // resta SCOPERTO in Difesa, come da regolamento: lo chiede
+                // isualOptions.faceUp.
+                isFaceDown: position === 'defense' && !(visualOptions && visualOptions.faceUp),
                 hasAttacked: false,
                 canChangePosition: false,
                 // Jowgen lo Spiritualista (id 1075): "distruggi tutti i
@@ -3092,7 +3098,8 @@
         // Attacco, comportamento invariato.
         const position = gameState.pendingSpecialSummonPosition || 'attack';
         gameState.pendingSpecialSummonPosition = null;
-        ACTIONS.specialSummon(destinationOwner, card, slotIndex, position, 'hand');
+        // La Posizione la sceglie chi controlla la Summon: in Difesa resta scoperto.
+        ACTIONS.specialSummon(destinationOwner, card, slotIndex, position, 'hand', { faceUp: true });
         if (def.specialSummonToOpponentField) {
             const summonedSlot = fieldOf(destinationOwner)[slotIndex];
             if (summonedSlot) summonedSlot.originalOwner = owner;

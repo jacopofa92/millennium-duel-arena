@@ -135,6 +135,10 @@ function eseguiTributo(posto, c, extra) {
             // Il numero reale di Tributi non si può ricostruire dal Livello:
             // alcune carte distinguono proprio "3 Tributi".
             perCarta._tributeCountForSummon = indices.length;
+            // Segna che QUESTA Evocazione ha pagato dei Tributi: lo legge (e lo
+            // toglie) eseguiEvocazioneNormale per la regola 'un'Evocazione
+            // Tributo non si Setta'.
+            perCarta._tributoPerEvocazione = true;
         }
         if (suMagieTrappole && perCarta) {
             addToLog(perChi(posto,
@@ -247,7 +251,22 @@ function eseguiEvocazioneNormale(posto, c, extra) {
     // carta; sul client che riceve il comando, è il comando a portarla.
     if (c.pagaLpRa !== undefined) card._raPayLp = c.pagaLpRa;
     const slotIndex = c.casella;
-    const position = c.posizione;
+    let position = c.posizione;
+    // REGOLA GENERALE: un'Evocazione Tributo si fa sempre scoperta in Attacco.
+    // Non si può pagare il Tributo e Settare il mostro (coperto in Difesa),
+    // a meno che il testo della carta non lo dica (def.canTributeSet: oggi
+    // nessuna). Vale per la persona, per l'IA e per un comando arrivato
+    // dall'altro client, perché questo è l'unico punto da cui passa
+    // l'Evocazione Normale. Il marcatore lo mette 'tributa' (eseguiTributo).
+    const eraTributo = card._tributoPerEvocazione === true;
+    delete card._tributoPerEvocazione;
+    if (eraTributo && position === 'defense') {
+        const defTributo = window.DuelEngine && DuelEngine.getDefinition(card.id);
+        if (!(defTributo && defTributo.canTributeSet)) {
+            position = 'attack';
+            addToLog(`🔺 Un'Evocazione Tributo non si può Settare: ${card.name} viene Evocata scoperta in Posizione di Attacco.`);
+        }
+    }
     const fromRect = extra && extra.partenza ? extra.partenza : null;
     const dellaPersona = posto === 'player';
     // Fuori dalle regole del turno, questa via non si percorre: la mano

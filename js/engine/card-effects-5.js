@@ -560,8 +560,25 @@
             }, (card) => {
                 const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
                 if (slotIndex === -1) return;
-                ctx.specialSummon(ctx.owner, card, slotIndex, 'attack', 'deck');
-                ctx.log(`🐲 Drago Mascherato Special Summona ${card.name} dal Deck!`);
+                const evoca = (posizione) => {
+                    // Può essersi riempita una casella nel frattempo: si ricalcola.
+                    const casella = ctx.findEmptyMonsterSlot(ctx.owner);
+                    if (casella === -1) return;
+                    ctx.specialSummon(ctx.owner, card, casella, posizione, 'deck', { faceUp: true });
+                    ctx.log(`🐲 Drago Mascherato Special Summona ${card.name} dal Deck in Posizione di ${posizione === 'attack' ? 'Attacco' : 'Difesa'}!`);
+                };
+                // Il testo non fissa la Posizione: la sceglie chi controlla la
+                // Special Summon (stesso schema di Rinascita del Mostro, id 35).
+                // L'IA resta in Attacco.
+                if (!Decisioni.rispondeUnaPersona(ctx.owner)) { evoca('attack'); return; }
+                const boardId = ctx.owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard';
+                const ancora = PortaUI.query(`#${boardId} .field-slot[data-owner="${ctx.owner}"][data-type="monster"][data-index="${slotIndex}"]`);
+                Decisioni.chiedi({
+                    chi: ctx.owner,
+                    tipo: 'posizione',
+                    ancora: ancora,
+                    titolo: `${card.name}: Attacco o Difesa?`
+                }, (posizione) => evoca(posizione === 'defense' ? 'defense' : 'attack'));
             });
         }
     });

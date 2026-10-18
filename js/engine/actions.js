@@ -618,7 +618,7 @@ function handleSlotClick(owner, type, index) {
             gameState.pendingTributePlacement = null;
             setPlacementPrompt(false);
             document.querySelectorAll('.field-slot.action-highlight').forEach((el) => el.classList.remove('action-highlight'));
-            openSummonModal(card, index, handIndex, fromRect);
+            openSummonModal(card, index, handIndex, fromRect, { dopoTributo: true });
         }
         return;
     }
@@ -1032,7 +1032,7 @@ function resolveTributeSummonPlacement(card, handIndex, fromRect) {
         return;
     }
     if (eligible.length === 1) {
-        openSummonModal(card, eligible[0], handIndex, fromRect);
+        openSummonModal(card, eligible[0], handIndex, fromRect, { dopoTributo: true });
         return;
     }
     gameState.pendingTributePlacement = { card, handIndex, fromRect };
@@ -1211,9 +1211,23 @@ function closeQuickPopover() {
     if (catcher) catcher.remove();
 }
 
-function openSummonModal(card, slotIndex, handIndex, fromRect) {
+function openSummonModal(card, slotIndex, handIndex, fromRect, opzioni) {
     if (card.type === 'monster' && !canUseNormalSummonQuota('player', card)) {
         addToLog('❌ Hai già effettuato un\'Evocazione Normale in questo turno.');
+        return;
+    }
+
+    // Dopo un Tributo non c'è nulla da scegliere sulla Posizione: un'Evocazione
+    // Tributo si fa sempre scoperta in Attacco (regola in eseguiEvocazioneNormale,
+    // evocazioni.js), a meno che la carta non dica il contrario (def.canTributeSet).
+    // Chiedere "Attacco o Difesa" per poi ignorare la Difesa sarebbe una scelta finta.
+    const defTributo = window.DuelEngine && DuelEngine.getDefinition(card.id);
+    if (opzioni && opzioni.dopoTributo && !(defTributo && defTributo.canTributeSet)) {
+        gameState.pendingSummon = { card, slotIndex, handIndex, fromRect };
+        const slotElTributo = document.querySelector(`.field-slot[data-owner="player"][data-type="monster"][data-index="${slotIndex}"]`);
+        maybeAskRaLpChoice(card, slotElTributo, () => {
+            summonMonster(card, slotIndex, 'attack', handIndex, gameState.pendingSummon && gameState.pendingSummon.fromRect);
+        });
         return;
     }
 

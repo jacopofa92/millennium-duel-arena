@@ -30,12 +30,17 @@ module.exports = {
 
         await t.evaluate(() => { handleTributeSelectClick(0); });
         await t.page.waitForTimeout(900);
-        const beforeClick = await t.evaluate(() => !!document.getElementById('quickPopover'));
-        t.assert(beforeClick, 'Dopo il Sacrificio (1 sola casella libera) deve aprirsi subito il popover Attacco/Difesa');
-
-        await t.page.click('#qpSummonAttack');
-        await t.page.waitForTimeout(700);
-        const final = await t.evaluate(() => gameState.playerMonsterField[0] && gameState.playerMonsterField[0].card.uid === 'big-1');
+        // Dopo un Tributo la Posizione non si sceglie più: un'Evocazione Tributo si
+        // fa sempre scoperta in Attacco (vedi eseguiEvocazioneNormale, evocazioni.js),
+        // quindi nessun popover Attacco/Difesa e la carta arriva da sola.
+        const popover = await t.evaluate(() => !!document.getElementById('quickPopover'));
+        t.assert(!popover, 'Dopo il Sacrificio non deve chiedere Attacco/Difesa: un Tributo si Evoca sempre in Attacco');
+        await t.page.waitForTimeout(1500);
+        const final = await t.evaluate(() => {
+            const s = gameState.playerMonsterField[0];
+            return s && s.card.uid === 'big-1' ? { posizione: s.position, coperto: s.isFaceDown } : null;
+        });
         t.assert(final, 'La carta evocata deve finire nella casella liberata dal Sacrificio');
+        t.assert(final.posizione === 'attack' && !final.coperto, 'e deve essere scoperta in Attacco: ' + JSON.stringify(final));
     }
 };

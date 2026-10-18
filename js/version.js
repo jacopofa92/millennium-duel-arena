@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.4.1 — Evocazione Tributo sempre scoperta in Attacco; Drago Mascherato fa scegliere la Posizione (Difesa scoperta); il bot aspetta le scelte del giocatore e decide il bersaglio dopo; pausa visibile fra le mosse del bot.
  * 1.4.0 — Alberto Angela e Alessandro Barbero entrano nei Duellanti Extra con tre deck tematici, pedine e dialoghi completi.
  * 1.3.39 — Controllo dei tipi acceso su 40 file piccoli (@ts-check), globali dichiarati in types/globali.d.ts; la scala di card.css ha il nome --carta-schermo-intero.
  * 1.3.38 — Multiplayer: la forma dei messaggi (js/multiplayer/protocollo-mp.js) è controllata dal relay e dai client; un messaggio rotto si scarta.
@@ -756,4 +757,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.4.0';
+window.GAME_VERSION = '1.4.1';

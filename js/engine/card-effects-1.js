@@ -1454,7 +1454,8 @@
                     // sbagliato).
                     if (ctx.graveyardMoveNegated(choice.graveyardOwner)) return;
                     gy.splice(realIndex, 1);
-                    ctx.specialSummon(owner, choice.card, slotIndex, position, 'graveyard');
+                    // Posizione scelta da chi controlla la Summon: in Difesa, scoperto.
+                    ctx.specialSummon(owner, choice.card, slotIndex, position, 'graveyard', { faceUp: true });
                     ctx.log(`🌟 Rinascita del Mostro riporta in campo ${choice.card.name} in Posizione di ${position === 'attack' ? 'Attacco' : 'Difesa'}!`);
                 };
                 if (window.FX && typeof FX.playMonsterReborn === 'function') {
