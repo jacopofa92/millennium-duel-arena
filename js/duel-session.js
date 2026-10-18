@@ -262,7 +262,7 @@
         }
         if (!p || !p.name) return io;
         return {
-            id: p.id || ({ 'Yugi Muto': 'yugiMuto', 'Yami Yugi': 'yamiYugi', 'Atem': 'yamiYugi', 'Roberto Giacobbo': 'robertoGiacobbo' }[p.name]) || 'player',
+            id: p.id || ({ 'Yugi Muto': 'yugiMuto', 'Yami Yugi': 'yamiYugi', 'Atem': 'yamiYugi', 'Roberto Giacobbo': 'robertoGiacobbo', 'Roberto Giacobbo I': 'robertoGiacobbo', 'Alberto Angela': 'albertoAngela', 'Alessandro Barbero': 'alessandroBarbero' }[p.name]) || 'player',
             name: p.name,
             title: p.title || io.title,
             image: p.image || io.image,

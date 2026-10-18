@@ -1,6 +1,24 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
-Ultimo aggiornamento verificato: 2026-10-17.
+Ultimo aggiornamento verificato: 2026-10-18.
+
+## Duellanti Extra storici (2026-10-18)
+
+Alberto Angela e Alessandro Barbero sono duellanti completi della sezione
+Extra, subito disponibili perché non appartengono a un percorso di sblocco in
+Storia o Torneo. Ognuno dispone di ritratto, avatar trasparente e pedina, tre
+mazzi da 40 carte e battute contestuali complete. Alberto usa una legione di
+Guerrieri, comandanti e difese imperiali guidata da Gilford la Leggenda;
+Barbero usa una corte cavalleresca Re/Regina/Jack che nei livelli superiori
+converge nel Cavaliere Joker Arcano. Tutte le carte provengono dal database
+Yu-Gi-Oh già implementato.
+
+Il guardrail `duellanti-extra-storici` verifica risorse, collocazione nel
+roster, disponibilità, tre livelli, origine delle carte, Extra Deck e dialoghi.
+Il controllo globale `mazzi-livello-facile` resta verde. Una matrice mirata di
+30 duelli Hard per personaggio non ha rilevato stalli o invarianti rotte e ha
+osservato realmente sia i comandanti di Alberto sia la fusione Joker di
+Barbero.
 
 ## Pausa lifecycle dei duelli offline (2026-10-17)
 

@@ -5456,6 +5456,108 @@ const characterDeckDatabase = {
     // ESATTAMENTE quelli che il gioco produceva prima di questa riscrittura,
     // e le regole dei livelli qui sotto non si applicano. Non ritoccarli
     // senza una richiesta esplicita.
+    // Alberto Angela: una legione imperiale ordinata attorno a comandanti,
+    // veterani e difese monumentali. Facile rappresenta le reclute e le mura;
+    // Medio schiera una vera formazione; Difficile combina ricerca, recupero
+    // dei Guerrieri ed equipaggiamenti sotto Gilford la Leggenda.
+    albertoAngela: {
+        flagship: 709, // Gilford la Leggenda
+        easy: {
+            main: [
+                { id: 709, qty: 1 }, { id: 714, qty: 3 }, { id: 713, qty: 2 },
+                { id: 369, qty: 3 }, { id: 296, qty: 3 }, { id: 108, qty: 3 },
+                { id: 710, qty: 2 }, { id: 957, qty: 2 }, { id: 1090, qty: 2 },
+                { id: 580, qty: 1 }, { id: 465, qty: 1 }, { id: 344, qty: 2 },
+                { id: 148, qty: 1 }, { id: 8, qty: 1 }, { id: 820, qty: 2 },
+                { id: 503, qty: 3 }, { id: 143, qty: 2 }, { id: 595, qty: 1 },
+                { id: 546, qty: 1 }, { id: 35, qty: 1 }, { id: 36, qty: 1 },
+                { id: 40, qty: 1 }, { id: 875, qty: 1 }
+            ],
+            extra: []
+        },
+        medium: {
+            main: [
+                { id: 709, qty: 1 }, { id: 888, qty: 1 }, { id: 714, qty: 3 },
+                { id: 713, qty: 2 }, { id: 16, qty: 2 }, { id: 504, qty: 2 },
+                { id: 957, qty: 1 }, { id: 1090, qty: 1 }, { id: 710, qty: 2 },
+                { id: 712, qty: 2 }, { id: 119, qty: 1 }, { id: 115, qty: 1 },
+                { id: 580, qty: 1 }, { id: 465, qty: 2 }, { id: 724, qty: 1 },
+                { id: 725, qty: 1 }, { id: 344, qty: 1 }, { id: 722, qty: 1 },
+                { id: 148, qty: 1 }, { id: 8, qty: 1 }, { id: 820, qty: 1 },
+                { id: 503, qty: 1 }, { id: 143, qty: 1 }, { id: 819, qty: 1 },
+                { id: 35, qty: 1 }, { id: 36, qty: 1 }, { id: 272, qty: 1 },
+                { id: 40, qty: 1 }, { id: 793, qty: 1 }, { id: 646, qty: 1 },
+                { id: 875, qty: 1 }, { id: 559, qty: 1 }
+            ],
+            extra: []
+        },
+        hard: {
+            main: [
+                { id: 709, qty: 1 }, { id: 888, qty: 2 }, { id: 267, qty: 1 },
+                { id: 714, qty: 3 }, { id: 713, qty: 2 }, { id: 16, qty: 2 },
+                { id: 504, qty: 2 }, { id: 719, qty: 2 }, { id: 718, qty: 2 },
+                { id: 865, qty: 1 }, { id: 115, qty: 1 }, { id: 119, qty: 2 },
+                { id: 710, qty: 1 }, { id: 580, qty: 1 }, { id: 465, qty: 2 },
+                { id: 724, qty: 2 }, { id: 725, qty: 1 }, { id: 722, qty: 1 },
+                { id: 726, qty: 1 }, { id: 35, qty: 1 }, { id: 36, qty: 1 },
+                { id: 272, qty: 1 }, { id: 40, qty: 1 }, { id: 793, qty: 1 },
+                { id: 382, qty: 1 }, { id: 646, qty: 1 }, { id: 503, qty: 1 },
+                { id: 875, qty: 1 }, { id: 820, qty: 1 }
+            ],
+            extra: []
+        }
+    },
+
+    // Alessandro Barbero: un ordine cavalleresco costruito sulla corte di
+    // Regina, Re e Jack. Salendo di difficoltà aumentano coesione, armi e
+    // accesso alla fusione del Cavaliere Joker Arcano, senza perdere il tema.
+    alessandroBarbero: {
+        flagship: 1280, // Cavaliere del Re
+        easy: {
+            main: [
+                { id: 1280, qty: 2 }, { id: 1279, qty: 2 }, { id: 389, qty: 1 },
+                { id: 4, qty: 1 }, { id: 712, qty: 1 }, { id: 369, qty: 3 },
+                { id: 294, qty: 3 }, { id: 108, qty: 3 }, { id: 296, qty: 2 },
+                { id: 1100, qty: 2 }, { id: 344, qty: 2 },
+                { id: 580, qty: 1 }, { id: 465, qty: 1 }, { id: 8, qty: 1 },
+                { id: 820, qty: 2 }, { id: 503, qty: 3 }, { id: 143, qty: 2 },
+                { id: 595, qty: 1 }, { id: 148, qty: 1 }, { id: 35, qty: 1 },
+                { id: 36, qty: 1 }, { id: 272, qty: 1 }, { id: 40, qty: 1 },
+                { id: 875, qty: 1 }, { id: 546, qty: 1 }
+            ],
+            extra: []
+        },
+        medium: {
+            main: [
+                { id: 1280, qty: 2 }, { id: 1279, qty: 3 }, { id: 1281, qty: 2 },
+                { id: 888, qty: 1 }, { id: 713, qty: 2 }, { id: 714, qty: 2 },
+                { id: 119, qty: 2 }, { id: 6, qty: 1 }, { id: 14, qty: 1 },
+                { id: 115, qty: 1 }, { id: 712, qty: 2 }, { id: 38, qty: 2 },
+                { id: 724, qty: 2 }, { id: 725, qty: 1 }, { id: 580, qty: 1 },
+                { id: 465, qty: 1 }, { id: 344, qty: 1 }, { id: 726, qty: 1 },
+                { id: 8, qty: 1 }, { id: 820, qty: 1 }, { id: 503, qty: 1 },
+                { id: 819, qty: 1 }, { id: 35, qty: 1 }, { id: 36, qty: 1 },
+                { id: 272, qty: 1 }, { id: 40, qty: 1 }, { id: 793, qty: 1 },
+                { id: 646, qty: 1 }, { id: 875, qty: 1 }, { id: 559, qty: 1 }
+            ],
+            extra: [{ id: 1282, qty: 2 }]
+        },
+        hard: {
+            main: [
+                { id: 1280, qty: 2 }, { id: 1279, qty: 3 }, { id: 1281, qty: 3 },
+                { id: 888, qty: 2 }, { id: 713, qty: 2 }, { id: 714, qty: 2 },
+                { id: 119, qty: 2 }, { id: 16, qty: 2 }, { id: 14, qty: 1 },
+                { id: 267, qty: 1 }, { id: 38, qty: 3 }, { id: 724, qty: 2 },
+                { id: 725, qty: 2 }, { id: 580, qty: 1 }, { id: 465, qty: 1 },
+                { id: 726, qty: 1 }, { id: 722, qty: 1 }, { id: 503, qty: 2 },
+                { id: 35, qty: 1 }, { id: 36, qty: 1 }, { id: 272, qty: 1 },
+                { id: 40, qty: 1 }, { id: 793, qty: 1 }, { id: 382, qty: 1 },
+                { id: 646, qty: 1 }
+            ],
+            extra: [{ id: 1282, qty: 3 }]
+        }
+    },
+
     ww1_kaiserjager: {
         congelato: true,
         easy: {

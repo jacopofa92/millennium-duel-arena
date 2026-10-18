@@ -43,6 +43,11 @@
      */
     const INIZIALI = ['yugiMuto', 'solomonMuto'];
 
+    // Ospiti della sezione Extra che non appartengono a un percorso Storia
+    // o Torneo: devono poter essere sfidati subito, altrimenti non esisterebbe
+    // alcun modo legittimo per guadagnarne lo sblocco.
+    const EXTRA_DISPONIBILI = ['albertoAngela', 'alessandroBarbero'];
+
     /**
      * Le modalità in cui una vittoria vale uno sblocco. Elenco e non
      * "tutto tranne il Duello Libero": una modalità nuova non deve
@@ -68,6 +73,7 @@
         if (!characterId) return true;
         if (!attivo()) return true;
         if (INIZIALI.indexOf(characterId) !== -1) return true;
+        if (EXTRA_DISPONIBILI.indexOf(characterId) !== -1) return true;
         return sbloccatiSalvati().indexOf(characterId) !== -1;
     }
 
@@ -191,6 +197,7 @@
 
     window.CharacterUnlocks = {
         INIZIALI: INIZIALI.slice(),
+        EXTRA_DISPONIBILI: EXTRA_DISPONIBILI.slice(),
         attivo: attivo,
         sbloccato: sbloccato,
         sblocca: sblocca,

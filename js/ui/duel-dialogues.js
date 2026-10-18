@@ -85,6 +85,7 @@
         oceanMage: 'mystic', highMageSecmeton: 'proud', forestMage: 'mystic', highMageAnubisius: 'dark', mountainMage: 'warrior', highMageAtenza: 'proud',
         desertMage: 'mystic', highMageMartis: 'dark', meadowMage: 'warrior', highMageKepura: 'proud', labyrinthMage: 'trickster', sebek: 'warrior', neku: 'cold',
         heishin: 'dark', darkNite: 'dark', nitemare: 'dark', mirror: 'cold', robertoGiacobbo: 'mystic',
+        albertoAngela: 'mystic', alessandroBarbero: 'warrior',
         ww1_boroevic: 'warrior', ww1_conrad: 'cold', ww1_eugenio: 'warrior', ww1_brumowski: 'wild', ww1_arigi: 'wild', ww1_kaiserjager: 'warrior'
     };
 
@@ -131,6 +132,22 @@
             turnStart: ['L’ombra torna a muoversi.', 'È tempo di un altro sacrificio.', 'La maschera osserva.'],
             damaged: ['Pagherai questo affronto!', 'La mia ombra resiste.', 'Non hai ancora visto la Bestia.'],
             activate: ['La maledizione della maschera!', 'Il sigillo oscuro si chiude.', 'Offro i miei mostri alla Bestia!']
+        },
+        albertoAngela: {
+            battleStart: ['Entriamo insieme nella storia.', 'Ogni carta custodisce un frammento del passato.', 'Oggi rivivremo la grandezza di Roma.'],
+            victory: ['La storia premia chi sa comprenderla.', 'L\'Impero ha retto alla prova.', 'Un viaggio nel passato davvero memorabile.'],
+            attack: ['Legione, avanzate!', 'La formazione si mette in marcia!', 'Roma non arretra!'],
+            turnStart: ['Apriamo un nuovo capitolo.', 'Osserviamo con attenzione.', 'Il passato ha ancora molto da raccontare.'],
+            damaged: ['Anche gli imperi conoscono battute d\'arresto.', 'Un colpo duro, ma istruttivo.', 'La legione mantiene la posizione.'],
+            activate: ['Ricostruiamo la strategia.', 'Le fonti rivelano una nuova possibilità.', 'È il momento della manovra decisiva.']
+        },
+        alessandroBarbero: {
+            battleStart: ['Vediamo come si combatte davvero una battaglia.', 'Schieriamo gli uomini e leggiamo il terreno.', 'La storia militare non ammette improvvisazioni.'],
+            victory: ['La battaglia si è decisa nella preparazione.', 'Ecco perché la strategia conta.', 'Le cronache ricorderanno questo scontro.'],
+            attack: ['Cavalieri, alla carica!', 'La linea avanza!', 'Colpite il fianco scoperto!'],
+            turnStart: ['Riorganizziamo lo schieramento.', 'Adesso cambia il ritmo della battaglia.', 'È il momento di prendere l\'iniziativa.'],
+            damaged: ['Una breccia, non una disfatta.', 'Le perdite fanno parte della battaglia.', 'Ricompattiamo le linee.'],
+            activate: ['Ecco la manovra che cambia lo scontro.', 'La riserva entra in campo.', 'La tattica viene prima della forza.']
         }
     };
 
@@ -145,7 +162,15 @@
         seeker: { 'Testa Proibita': 'Un pezzo ancora... Exodia sarà completo!' },
         strings: { 'Slifer il Drago del Cielo': 'Slifer... il padrone ha tirato i fili.', 'Melma Rediviva': 'La Melma Rediviva tornerà ancora.' },
         lumis: { 'La Bestia Mascherata': 'La Maschera della Luce libera la Bestia!' },
-        umbra: { 'La Bestia Mascherata': 'Sorgi dall’oscurità, Bestia Mascherata!' }
+        umbra: { 'La Bestia Mascherata': 'Sorgi dall’oscurità, Bestia Mascherata!' },
+        albertoAngela: {
+            'Gilford la Leggenda': 'Gilford la Leggenda: il comandante guida la legione!',
+            'Gilford il Fulmine': 'Gilford il Fulmine: Roma scatena tutta la sua potenza!'
+        },
+        alessandroBarbero: {
+            'Cavaliere del Re': 'Il Cavaliere del Re chiama a raccolta la corte!',
+            'Cavaliere Joker Arcano': 'La corte è riunita: avanza, Cavaliere Joker Arcano!'
+        }
     };
 
     const timers = { player: null, bot: null };
