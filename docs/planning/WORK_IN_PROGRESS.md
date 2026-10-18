@@ -2,6 +2,22 @@
 
 Elenco di lavori consigliati, in ordine di valore. Spuntare `[x]` quando fatto.
 
+## Distruzione di una carta: la copia reale resta visibile sotto l'effetto — appunto del 18 ottobre 2026
+
+Segnalato dall'utente: durante l'effetto di scomparsa c'è anche la carta ferma
+sul terreno (due carte). Riprodotto SOLO per i **mostri**: `FX.playCardToGraveyard`
+(js/ui/effects.js) fa volare una copia verso il Cimitero ma non nasconde la carta
+vera, che resta visibile (opacità 1 → 0,25 in ~0,5 s) finché il render successivo
+non la toglie. Per Magie/Trappole (`playSpellTrapDestroyEffect`) la carta vera è
+nascosta subito: nessun doppione, provato con distruzione singola, Piumino delle
+Arpie su 3 carte, entrambi i lati, coperte e scoperte. Un duello completo col mazzo
+Custom contro Giacobbo (IA su entrambi i lati, 2 partite) non ha mai prodotto un
+effetto Magia/Trappola.
+
+- [ ] Decidere con l'utente se nascondere la carta vera appena parte la copia che
+      vola (stessa tecnica di `fx-st-source-vanish`), o se il doppione sui mostri è voluto.
+- [ ] Se il caso segnalato era una Magia/Trappola, serve la carta e l'effetto che l'ha distrutta.
+
 ## Sincronizzazione tra dispositivi — appunto del 17 ottobre 2026
 
 Il rischio di sovrascrittura tra due dispositivi è chiuso (versione 1.3.29:
