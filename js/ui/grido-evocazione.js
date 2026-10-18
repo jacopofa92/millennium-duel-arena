@@ -98,6 +98,20 @@
         // setoKaiba_duelist_Kingdom), non come la chiave breve dei gridi.
         const nome = String(image || '').split(/[\\/]/).pop().replace(/\.[a-z0-9]+(?:\?.*)?$/i, '');
         if (!nome) return null;
+
+        // Prima usa la posa dedicata al grido. Gli aspetti contestuali
+        // (es. setoKaiba_duelist_Kingdom) ricadono sulla variante canonica.
+        const chiaveBase = window.chiavePersonaggio ? chiavePersonaggio(image) : nome.replace(/_.*$/, '').replace(/V2$/, '');
+        const canonica = chiaveBase === 'kaiba' ? 'setoKaiba' : chiaveBase;
+        const nomiEsclamazione = Array.from(new Set([nome, canonica].filter(Boolean)));
+        // Le prove partono insieme: un costume privo di asset dedicato non
+        // aggiunge un secondo timeout prima del fallback canonico.
+        const esclamazioni = await Promise.all(nomiEsclamazione.map((n) =>
+            carica('images/characters/pedine-esclamazione/' + n + '.png', ATTESA_IMMAGINE_MS)
+        ));
+        const esclamazione = esclamazioni.find(Boolean);
+        if (esclamazione) return esclamazione.src;
+
         const pedina = 'images/characters/pedine/' + nome + '.png';
         if (window.innerWidth > 900) {
             const grande = await carica('images/characters/avatarTrasparenza/' + nome + '.png', ATTESA_IMMAGINE_MS);

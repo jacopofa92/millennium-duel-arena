@@ -2,6 +2,20 @@
 
 Ultimo aggiornamento verificato: 2026-10-18.
 
+## Pedine-esclamazione per i gridi di Evocazione (2026-10-18)
+
+I 26 duellanti che possiedono almeno un grido di Evocazione hanno una posa
+trasparente dedicata in `images/characters/pedine-esclamazione/`: bocca aperta,
+gesto e silhouette piu' energici rispetto alla pedina ordinaria. La scena
+`js/ui/grido-evocazione.js` prova prima questa variante sia su desktop sia su
+mobile; gli aspetti alternativi dello stesso personaggio ricadono sulla posa
+canonica (per esempio tutte le versioni di Kaiba usano `setoKaiba.png`). Se un
+asset non esiste o non si carica, la scena usa automaticamente il precedente
+avatar trasparente/pedina e il flusso del duello non resta mai bloccato.
+
+Il test `grido-evocazione` verifica che ogni chiave realmente presente nei dati
+dei gridi abbia il proprio asset e che la scena selezioni la nuova posa.
+
 ## Duellanti Extra storici (2026-10-18)
 
 Alberto Angela e Alessandro Barbero sono duellanti completi della sezione
