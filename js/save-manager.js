@@ -274,6 +274,12 @@
         return { credits: 0, starChips: 0, locatorCards: 0, millenniumCards: 0 };
     }
 
+    // I contenitori del salvataggio, per forma. Un campo nuovo di quel tipo va
+    // elencato qui (lo sorveglia tests/specs/salvataggio-forma.spec.js): load() li
+    // ripara, motivoRifiuto li controlla nei salvataggi che arrivano da fuori.
+    const CONTENITORI_OGGETTO = ['challenges', 'missions', 'economyProgress', 'tournaments', 'tournamentStats', 'millenniumItems', 'story', 'settings', 'dailyEconomy', 'tutorial', 'modalita', 'cardAcquisition'];
+    const CONTENITORI_ELENCO = ['ownedPacks', 'unlockedCharacters'];
+
     /**
      * AZZERAMENTO DELLE STORIE PER TUTTI (richiesta dell'utente, 2026-10-09:
      * "resettare tutte le storie a tutti e salvare su cloud, così si
@@ -316,6 +322,16 @@
         if (!save) save = migrateLegacyIfNeeded();
         if (!save) return save;
         let dirty = false;
+        // Contenitori della forma sbagliata (oggetto al posto di un elenco, una
+        // stringa...): si riportano vuoti invece di lasciarli rompere ogni lettura.
+        CONTENITORI_OGGETTO.forEach((nome) => {
+            const v = save[nome];
+            if (v != null && (typeof v !== 'object' || Array.isArray(v))) { delete save[nome]; dirty = true; }
+        });
+        CONTENITORI_ELENCO.forEach((nome) => {
+            if (save[nome] != null && !Array.isArray(save[nome])) { delete save[nome]; dirty = true; }
+        });
+        if (save.currency != null && (typeof save.currency !== 'object' || Array.isArray(save.currency))) { delete save.currency; dirty = true; }
         if (!save.currency) { save.currency = makeDefaultCurrency(); dirty = true; }
         // Backfill delle SINGOLE voci, non solo dell'oggetto intero: un
         // salvataggio creato prima che esistesse una valuta ha già
@@ -324,7 +340,7 @@
         // somma che la tocca). Vale per millenniumCards, e varrà da sé per
         // qualunque valuta futura.
         Object.keys(makeDefaultCurrency()).forEach((voce) => {
-            if (typeof save.currency[voce] !== 'number') { save.currency[voce] = 0; dirty = true; }
+            if (!Number.isFinite(save.currency[voce])) { save.currency[voce] = 0; dirty = true; }
         });
         // Starter/Structure Deck posseduti (js/data/starter-structure-decks.js):
         // array di packId, vuoto finché il Negozio non vende davvero
@@ -1169,9 +1185,10 @@
      * salvataggio valido, così chi chiama può mostrarlo com'è.
      */
     function applyExternalSave(parsed, opzioni) {
-        if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.decks)) {
-            throw new Error('Il file non è un salvataggio valido.');
-        }
+        // Il controllo è quello dei file importati: un salvataggio rovinato (dal
+        // cloud, dal backup nativo, da un file) non deve sostituirne uno buono.
+        const motivo = motivoRifiuto(parsed);
+        if (motivo) throw new Error(motivo);
         parsed.player = parsed.player || { name: 'Giocatore' };
         // `mantieniData`: chi scarica dal CLOUD tiene la data vera di quel
         // salvataggio (l'ultima modifica, fatta su un altro dispositivo).
@@ -1250,6 +1267,14 @@
             if (!Object.keys(s.currency).every((k) => Number.isFinite(Number(s.currency[k])))) return 'Le valute nel file contengono valori non validi.';
         }
         if (s.records != null && !oggetto(s.records)) return 'I record dei duelli nel file sono rovinati.';
+        // Ogni altro contenitore, se c'è, deve avere la forma giusta: un salvataggio
+        // con challenges a stringa romperebbe ogni lettura che lo tocca.
+        for (const nome of CONTENITORI_OGGETTO) {
+            if (s[nome] != null && !oggetto(s[nome])) return 'Nel file la voce «' + nome + '» è rovinata.';
+        }
+        for (const nome of CONTENITORI_ELENCO) {
+            if (s[nome] != null && !Array.isArray(s[nome])) return 'Nel file la voce «' + nome + '» è rovinata.';
+        }
         return null;
     }
 
@@ -1352,6 +1377,7 @@
         exportToFile: exportToFile,
         importFromFile: importFromFile,
         readFile: readFile,
+        motivoRifiuto: motivoRifiuto,
         applyExternalSave: applyExternalSave,
         deleteSave: deleteSave,
         makeStarterDeck: makeStarterDeck
