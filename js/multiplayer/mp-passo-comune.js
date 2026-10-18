@@ -81,6 +81,11 @@ const MpPassoComune = (function () {
             // primi messaggi) possono arrivare PRIMA che di qua la morra
             // cinese sia finita e configura() sia stata chiamata. Si tengono.
             if (!azione) return;
+            // Un messaggio con la forma sbagliata si scarta: non deve rompere il duello.
+            if (window.ProtocolloMP && ProtocolloMP.KINDS.has(azione.kind)) {
+                const motivo = ProtocolloMP.motivoRifiuto(azione);
+                if (motivo) { console.warn('Multiplayer: messaggio "' + azione.kind + '" scartato (' + motivo + ')'); return; }
+            }
             if (azione.kind === 'mazzo') { riceviMazzo(azione); return; }
             if (azione.kind === 'passo') { consegna(azione.messaggi); return; }
             if (azione.kind === 'passo-riprendi') { rimanda(azione.ultimo); return; }

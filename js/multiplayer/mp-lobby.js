@@ -598,6 +598,11 @@
     net.on('game-action', (msg) => {
         const azione = msg && msg.action;
         if (!azione) return;
+        // Un messaggio con la forma sbagliata si scarta (vedi protocollo-mp.js).
+        if (window.ProtocolloMP && ProtocolloMP.KINDS.has(azione.kind)) {
+            const motivo = ProtocolloMP.motivoRifiuto(azione);
+            if (motivo) { console.warn('Multiplayer: messaggio "' + azione.kind + '" scartato (' + motivo + ')'); return; }
+        }
 
         if (azione.kind === 'ready') {
             riceviPronto(azione.pronto);

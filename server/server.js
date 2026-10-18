@@ -280,6 +280,12 @@ function isRateLimited(socket) {
 // vecchio di riattivare il protocollo a mosse raccontate.
 // ------------------------------------------------------------
 
+// La FORMA dei messaggi (campi e limiti) sta in js/multiplayer/protocollo-mp.js,
+// lo stesso file che usano i client. Se per qualche motivo non fosse accanto al
+// server (copia parziale), il relay controlla solo il tipo, come prima.
+let ProtocolloMP = null;
+try { ProtocolloMP = require('../js/multiplayer/protocollo-mp.js'); } catch (e) { /* controllo del solo tipo */ }
+
 const GAME_ACTION_KINDS = new Set([
     'room-config', 'ready', 'rps',
     'mazzo', 'passo', 'passo-riprendi',
@@ -296,6 +302,9 @@ function validateGameAction(room, senderId, action) { // eslint-disable-line no-
     if (!action || typeof action !== 'object' || Array.isArray(action)) return 'azione non valida';
     const kind = action.kind;
     if (typeof kind !== 'string' || !GAME_ACTION_KINDS.has(kind)) return 'azione sconosciuta';
+    // Il tipo è noto: ora si guarda cosa c'è dentro. Un messaggio con i campi
+    // sbagliati non va inoltrato: potrebbe rompere l'altro client a metà partita.
+    if (ProtocolloMP && ProtocolloMP.KINDS.has(kind)) return ProtocolloMP.motivoRifiuto(action);
     return null;
 }
 
