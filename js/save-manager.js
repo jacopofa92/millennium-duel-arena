@@ -1226,20 +1226,59 @@
         return parsed;
     }
 
-    /** Legge un file scelto dall'utente (es. da un <input type="file">) e lo rende il salvataggio attivo. */
-    function importFromFile(file) {
+    /**
+     * Il file è davvero un salvataggio? Torna il motivo del rifiuto (una frase
+     * per l'utente) oppure null se va bene. Solo per i file scelti a mano:
+     * un file corrotto non deve sostituire un salvataggio buono. Controlla la
+     * FORMA (mazzi, collezione, valute, record), non il contenuto: una carta
+     * con un id che non esiste più non è un motivo per rifiutare un backup.
+     * @param {any} s
+     * @returns {string | null}
+     */
+    function motivoRifiuto(s) {
+        const oggetto = (v) => v && typeof v === 'object' && !Array.isArray(v);
+        if (!oggetto(s)) return 'Il file non contiene un salvataggio.';
+        if (!Array.isArray(s.decks) || s.decks.length === 0) return 'Nel file non c\'è nessun mazzo: non sembra un salvataggio di questo gioco.';
+        if (!s.decks.every((d) => oggetto(d) && Array.isArray(d.main))) return 'I mazzi nel file sono incompleti o rovinati.';
+        if (s.player != null && !oggetto(s.player)) return 'I dati del giocatore nel file sono rovinati.';
+        if (s.collection != null) {
+            if (!oggetto(s.collection)) return 'La collezione di carte nel file è rovinata.';
+            if (!Object.keys(s.collection).every((id) => Number.isFinite(Number(s.collection[id])))) return 'La collezione di carte nel file contiene valori non validi.';
+        }
+        if (s.currency != null) {
+            if (!oggetto(s.currency)) return 'Le valute nel file sono rovinate.';
+            if (!Object.keys(s.currency).every((k) => Number.isFinite(Number(s.currency[k])))) return 'Le valute nel file contengono valori non validi.';
+        }
+        if (s.records != null && !oggetto(s.records)) return 'I record dei duelli nel file sono rovinati.';
+        return null;
+    }
+
+    /**
+     * Legge e controlla un file di salvataggio SENZA applicarlo. Chi importa
+     * deve prima far vedere all'utente cosa sta per sostituire (vedi
+     * js/ui/recupero-copia.js, RecuperoCopia.importa) e solo poi chiamare
+     * applyExternalSave.
+     * @param {File} file
+     * @returns {Promise<any>} il salvataggio letto, non ancora applicato
+     */
+    function readFile(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => {
-                try {
-                    resolve(applyExternalSave(JSON.parse(reader.result)));
-                } catch (e) {
-                    reject(e instanceof SyntaxError ? new Error('Il file non è un JSON valido.') : e);
-                }
+                let parsed;
+                try { parsed = JSON.parse(reader.result); } catch (e) { return reject(new Error('Il file non è un JSON valido.')); }
+                const motivo = motivoRifiuto(parsed);
+                if (motivo) return reject(new Error(motivo));
+                resolve(parsed);
             };
             reader.onerror = () => reject(new Error('Impossibile leggere il file.'));
             reader.readAsText(file);
         });
+    }
+
+    /** Legge un file scelto dall'utente e lo rende il salvataggio attivo, SUBITO (vedi readFile per la via con conferma). */
+    function importFromFile(file) {
+        return readFile(file).then((parsed) => applyExternalSave(parsed));
     }
 
     function deleteSave() {
@@ -1312,6 +1351,7 @@
         addOwnedPack: addOwnedPack,
         exportToFile: exportToFile,
         importFromFile: importFromFile,
+        readFile: readFile,
         applyExternalSave: applyExternalSave,
         deleteSave: deleteSave,
         makeStarterDeck: makeStarterDeck

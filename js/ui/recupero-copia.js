@@ -1,23 +1,28 @@
 /**
- * recupero-copia.js — "Recupera le modifiche non sincronizzate".
+ * recupero-copia.js — "Recupera le modifiche" e "Importa un salvataggio".
  * =====================================================================
- * Quando due dispositivi giocano sullo stesso account e uno è rimasto
- * indietro, il cloud vince (CloudSync.risolviConflittoCloud) e le modifiche
- * fatte sul dispositivo rimasto indietro restano in una copia di sicurezza
- * (CloudSync.copiaDivergente). Questo componente la rende raggiungibile:
- * un pulsante nel Profilo (visibile SOLO se la copia esiste) che apre un
- * riquadro con la differenza fra il salvataggio di adesso e la copia, e
- * lascia scegliere se ripristinarla o scartarla.
+ * Due momenti in cui il salvataggio di questo dispositivo sta per essere
+ * SOSTITUITO da un altro, e in cui l'utente deve vedere cosa succede prima
+ * di scegliere:
+ *
+ *  1) RECUPERO (RecuperoCopia.monta/apri). Quando due dispositivi giocano
+ *     sullo stesso account e uno è rimasto indietro, il cloud vince
+ *     (CloudSync.risolviConflittoCloud) e le modifiche del dispositivo
+ *     rimasto indietro restano in una copia di sicurezza
+ *     (CloudSync.copiaDivergente). Un pulsante nel Profilo (visibile SOLO se
+ *     la copia esiste) apre il confronto e lascia ripristinare o scartare.
+ *
+ *  2) IMPORTAZIONE (RecuperoCopia.importa). Scelto un file di backup NON lo
+ *     si applica subito: si legge e si controlla (SaveManager.readFile), poi
+ *     lo stesso confronto "adesso / file", con gli avvisi del caso (nome
+ *     giocatore diverso, file più vecchio). Se si conferma, il salvataggio
+ *     di adesso viene CONSERVATO come copia di sicurezza (si recupera dal
+ *     pulsante del punto 1) e il file diventa il salvataggio.
  *
  * Condiviso da profilo.html e dalla vista Profilo di index.html (stesso
  * principio di profile-stats.js: mai due copie da tenere allineate).
- * Uso: RecuperoCopia.monta(<elemento contenitore>) — ogni chiamata ridisegna
- * il contenitore (lo svuota se non c'è nessuna copia).
- *
- * Il ripristino è ANNULLABILE: il salvataggio di adesso prende il posto
- * della copia (vedi CloudSync.ripristinaCopiaDivergente), quindi ripristinare
- * una seconda volta riporta indietro. Per questo il testo del riquadro non
- * promette "perderai": spiega cosa succede davvero.
+ * Il ripristino/l'importazione si possono ANNULLARE: il salvataggio di prima
+ * resta sempre da qualche parte, per questo i testi non promettono "perderai".
  */
 (function () {
     'use strict';
@@ -37,7 +42,7 @@
         const records = save.records || {};
         return {
             salvato: save.player && save.player.lastSaved,
-            nome: (save.player && save.player.name) || '—',
+            nome: (save.player && save.player.name) || '',
             crediti: Number(save.currency && save.currency.credits) || 0,
             stelle: Number(save.currency && save.currency.starChips) || 0,
             carte: Object.keys(collezione).reduce((n, id) => n + (Number(collezione[id]) || 0), 0),
@@ -63,6 +68,139 @@
         return e;
     }
 
+    /**
+     * Il riquadro generico: titolo, paragrafi, avvisi, tabella di confronto,
+     * azioni. Ogni azione con `doppio` chiede un secondo tocco (il bottone
+     * stesso cambia testo per 4 secondi). `esegui` riceve { esito, azioni,
+     * chiudi, disabilita(on) } per scrivere il risultato nel riquadro.
+     *
+     * @param {{
+     *   titolo: string, paragrafi: string[], avvisi?: string[], nota?: string,
+     *   etichettaA: string, etichettaB: string, a: any, b: any,
+     *   azioni: { testo: string, classe?: string, doppio?: string, esegui?: Function }[],
+     *   alChiudere?: Function
+     * }} o
+     */
+    function riquadro(o) {
+        if (document.getElementById('recuperoCopia')) return null;
+        const velo = el('div', 'rc-velo');
+        velo.id = 'recuperoCopia';
+        const box = el('div', 'rc-box');
+        box.setAttribute('role', 'dialog');
+        box.setAttribute('aria-modal', 'true');
+        box.setAttribute('aria-labelledby', 'rcTitolo');
+        velo.appendChild(box);
+
+        const testa = el('div', 'rc-testa');
+        const titolo = el('h2', 'rc-titolo', o.titolo);
+        titolo.id = 'rcTitolo';
+        const x = el('button', 'rc-x', '✕');
+        x.type = 'button';
+        x.setAttribute('aria-label', 'Chiudi');
+        testa.appendChild(titolo);
+        testa.appendChild(x);
+        box.appendChild(testa);
+
+        const corpo = el('div', 'rc-corpo');
+        box.appendChild(corpo);
+        o.paragrafi.forEach((p) => corpo.appendChild(el('p', 'rc-testo', p)));
+        (o.avvisi || []).forEach((p) => {
+            const a = el('p', 'rc-attenzione', '⚠️ ' + p);
+            a.setAttribute('role', 'alert');
+            corpo.appendChild(a);
+        });
+
+        // Tabella a tre colonne su schermo largo; a blocchi su telefono (CSS: le etichette arrivano da data-et).
+        const tabella = el('div', 'rc-tabella');
+        tabella.setAttribute('role', 'table');
+        const testaT = el('div', 'rc-riga rc-riga--testa');
+        testaT.appendChild(el('span', 'rc-voce', ''));
+        testaT.appendChild(el('span', 'rc-col', o.etichettaA));
+        testaT.appendChild(el('span', 'rc-col', o.etichettaB));
+        tabella.appendChild(testaT);
+        const quando = el('div', 'rc-riga rc-riga--data');
+        quando.appendChild(el('span', 'rc-voce', 'Ultima modifica'));
+        [[o.a, o.etichettaA], [o.b, o.etichettaB]].forEach(([r, et]) => {
+            const c = el('span', 'rc-col', r ? fmtData(r.salvato) : '—');
+            c.dataset.et = et;
+            quando.appendChild(c);
+        });
+        tabella.appendChild(quando);
+        RIGHE.forEach((r) => {
+            const va = o.a ? o.a[r.chiave] : 0;
+            const vb = o.b ? o.b[r.chiave] : 0;
+            const riga = el('div', 'rc-riga' + (vb > va ? ' rc-riga--piu' : vb < va ? ' rc-riga--meno' : ''));
+            riga.appendChild(el('span', 'rc-voce', r.etichetta));
+            const ca = el('span', 'rc-col', fmtNum.format(va));
+            ca.dataset.et = o.etichettaA;
+            const cb = el('span', 'rc-col', fmtNum.format(vb));
+            cb.dataset.et = o.etichettaB;
+            if (vb !== va) cb.appendChild(el('small', 'rc-delta', (vb > va ? ' +' : ' −') + fmtNum.format(Math.abs(vb - va))));
+            riga.appendChild(ca);
+            riga.appendChild(cb);
+            tabella.appendChild(riga);
+        });
+        corpo.appendChild(tabella);
+        if (o.nota) corpo.appendChild(el('p', 'rc-nota', o.nota));
+        const esito = el('p', 'rc-esito');
+        esito.setAttribute('role', 'status');
+        corpo.appendChild(esito);
+
+        const azioni = el('div', 'rc-azioni');
+        box.appendChild(azioni);
+
+        document.body.appendChild(velo);
+        document.body.classList.add('rc-aperto');
+
+        const chiudi = () => {
+            document.removeEventListener('keydown', suTasto, true);
+            document.body.classList.remove('rc-aperto');
+            velo.remove();
+            if (o.alChiudere) o.alChiudere();
+        };
+        const suTasto = (e) => { if (e.key === 'Escape') { e.stopPropagation(); chiudi(); } };
+        document.addEventListener('keydown', suTasto, true);
+        x.addEventListener('click', chiudi);
+        velo.addEventListener('pointerdown', (e) => { if (e.target === velo) chiudi(); });
+
+        const bottoni = [];
+        const disabilita = (on) => bottoni.forEach((b) => { b.disabled = on; });
+        const contesto = { esito, azioni, chiudi, disabilita };
+        o.azioni.forEach((a) => {
+            const b = el('button', 'rc-btn' + (a.classe ? ' ' + a.classe : ''), a.testo);
+            b.type = 'button';
+            bottoni.push(b);
+            azioni.appendChild(b);
+            let armato = null;
+            b.addEventListener('click', () => {
+                if (a.doppio && !armato) {
+                    b.textContent = a.doppio;
+                    b.classList.add('rc-btn--conferma');
+                    armato = setTimeout(() => { armato = null; b.textContent = a.testo; b.classList.remove('rc-btn--conferma'); }, 4000);
+                    return;
+                }
+                clearTimeout(armato);
+                armato = null;
+                b.classList.remove('rc-btn--conferma');
+                b.textContent = a.testo;
+                if (a.esegui) a.esegui(contesto); else chiudi();
+            });
+        });
+        return contesto;
+    }
+
+    /** Sostituisce i pulsanti con un solo "Fatto" che esegue `fine`. */
+    function soloFatto(ctx, fine) {
+        ctx.azioni.textContent = '';
+        const f = el('button', 'rc-btn rc-btn--ok', 'Fatto');
+        f.type = 'button';
+        f.addEventListener('click', () => { ctx.chiudi(); if (fine) fine(); });
+        ctx.azioni.appendChild(f);
+    }
+
+    // ------------------------------------------------------------------
+    // 1) Recupero della copia di sicurezza
+    // ------------------------------------------------------------------
     /** Il pulsante nel Profilo, o niente se non c'è una copia da recuperare. */
     function monta(contenitore) {
         if (!contenitore) return;
@@ -77,141 +215,121 @@
         contenitore.appendChild(bottone);
     }
 
-    /** Il riquadro: spiegazione, confronto, azioni. `alCambio` ridisegna il pulsante dopo ripristino/scarto. */
+    /** Il riquadro di recupero. `alCambio` ridisegna il pulsante dopo ripristino/scarto. */
     function apri(alCambio) {
-        if (document.getElementById('recuperoCopia')) return;
-        const copia = CloudSync.copiaDivergente();
+        const copia = window.CloudSync && CloudSync.copiaDivergente ? CloudSync.copiaDivergente() : null;
         if (!copia || !copia.data) return;
-        const adesso = riassunto(window.SaveManager && SaveManager.hasSave() ? SaveManager.load() : null);
-        const conservata = riassunto(copia.data);
-
-        const velo = el('div', 'rc-velo');
-        velo.id = 'recuperoCopia';
-        const box = el('div', 'rc-box');
-        box.setAttribute('role', 'dialog');
-        box.setAttribute('aria-modal', 'true');
-        box.setAttribute('aria-labelledby', 'rcTitolo');
-        velo.appendChild(box);
-
-        const testa = el('div', 'rc-testa');
-        const titolo = el('h2', 'rc-titolo', 'Modifiche non sincronizzate');
-        titolo.id = 'rcTitolo';
-        const chiudi = el('button', 'rc-x', '✕');
-        chiudi.type = 'button';
-        chiudi.setAttribute('aria-label', 'Chiudi');
-        testa.appendChild(titolo);
-        testa.appendChild(chiudi);
-        box.appendChild(testa);
-
-        const corpo = el('div', 'rc-corpo');
-        box.appendChild(corpo);
-
-        corpo.appendChild(el('p', 'rc-testo', 'Hai giocato su questo dispositivo mentre il cloud veniva aggiornato da un altro. Per non perdere i progressi di quell\'altro dispositivo, qui è stata caricata la sua versione, e quello che avevi fatto qui è rimasto in una copia di sicurezza.'));
-        corpo.appendChild(el('p', 'rc-testo', 'Qui sotto vedi la differenza. Se ripristini la copia, diventa il tuo salvataggio e viene caricata sul cloud al posto di quello attuale.'));
-
-        // Il confronto: una tabella a tre colonne su schermo largo, a blocchi su telefono (CSS).
-        const tabella = el('div', 'rc-tabella');
-        tabella.setAttribute('role', 'table');
-        const intestazione = el('div', 'rc-riga rc-riga--testa');
-        intestazione.appendChild(el('span', 'rc-voce', ''));
-        intestazione.appendChild(el('span', 'rc-col', 'Adesso'));
-        intestazione.appendChild(el('span', 'rc-col', 'Copia conservata'));
-        tabella.appendChild(intestazione);
-        const quando = el('div', 'rc-riga rc-riga--data');
-        quando.appendChild(el('span', 'rc-voce', 'Ultima modifica'));
-        quando.appendChild(el('span', 'rc-col', adesso ? fmtData(adesso.salvato) : '—'));
-        quando.appendChild(el('span', 'rc-col', conservata ? fmtData(conservata.salvato) : '—'));
-        tabella.appendChild(quando);
-        RIGHE.forEach((r) => {
-            const a = adesso ? adesso[r.chiave] : 0;
-            const c = conservata ? conservata[r.chiave] : 0;
-            const riga = el('div', 'rc-riga' + (c > a ? ' rc-riga--piu' : c < a ? ' rc-riga--meno' : ''));
-            riga.appendChild(el('span', 'rc-voce', r.etichetta));
-            riga.appendChild(el('span', 'rc-col', fmtNum.format(a)));
-            const col = el('span', 'rc-col', fmtNum.format(c));
-            if (c !== a) col.appendChild(el('small', 'rc-delta', (c > a ? ' +' : ' −') + fmtNum.format(Math.abs(c - a))));
-            riga.appendChild(col);
-            tabella.appendChild(riga);
-        });
-        corpo.appendChild(tabella);
-        corpo.appendChild(el('p', 'rc-nota', 'Il ripristino si può annullare: il salvataggio di adesso prende il posto della copia, e basta ripristinare di nuovo per tornare indietro.'));
-        const esito = el('p', 'rc-esito');
-        esito.setAttribute('role', 'status');
-        corpo.appendChild(esito);
-
-        const azioni = el('div', 'rc-azioni');
-        const ripristina = el('button', 'rc-btn rc-btn--ok', 'Ripristina la copia');
-        const scarta = el('button', 'rc-btn rc-btn--no', 'Scarta la copia');
-        const annulla = el('button', 'rc-btn', 'Chiudi');
-        [ripristina, scarta, annulla].forEach((b) => { b.type = 'button'; azioni.appendChild(b); });
-        box.appendChild(azioni);
-
-        document.body.appendChild(velo);
-        document.body.classList.add('rc-aperto');
-
-        const chiudiTutto = () => {
-            document.removeEventListener('keydown', suTasto, true);
-            document.body.classList.remove('rc-aperto');
-            velo.remove();
-            if (alCambio) alCambio();
-        };
-        const suTasto = (e) => { if (e.key === 'Escape') { e.stopPropagation(); chiudiTutto(); } };
-        document.addEventListener('keydown', suTasto, true);
-        chiudi.addEventListener('click', chiudiTutto);
-        annulla.addEventListener('click', chiudiTutto);
-        velo.addEventListener('pointerdown', (e) => { if (e.target === velo) chiudiTutto(); });
-
-        // Due passaggi per le azioni che cambiano il salvataggio: il primo tocco
-        // chiede conferma nel bottone stesso, il secondo esegue.
-        function conDoppioTocco(bottone, testoConferma, esegui) {
-            const originale = bottone.textContent;
-            let armato = null;
-            bottone.addEventListener('click', () => {
-                if (!armato) {
-                    bottone.textContent = testoConferma;
-                    bottone.classList.add('rc-btn--conferma');
-                    armato = setTimeout(() => { armato = null; bottone.textContent = originale; bottone.classList.remove('rc-btn--conferma'); }, 4000);
-                    return;
-                }
-                clearTimeout(armato);
-                armato = null;
-                bottone.classList.remove('rc-btn--conferma');
-                bottone.textContent = originale;
-                esegui();
-            });
-        }
-
-        conDoppioTocco(ripristina, 'Tocca ancora per confermare', () => {
-            [ripristina, scarta].forEach((b) => { b.disabled = true; });
-            esito.textContent = 'Ripristino in corso…';
-            CloudSync.ripristinaCopiaDivergente()
-                .then(() => {
-                    // Il salvataggio ora è la copia: si carica sul cloud (la base di
-                    // sincronizzazione è ancora quella dell'ultimo allineamento).
-                    const carica = window.AutoSync && AutoSync.caricaOra ? AutoSync.caricaOra() : Promise.resolve();
-                    return Promise.resolve(carica).catch(() => null);
-                })
-                .then(() => {
-                    esito.textContent = '✅ Copia ripristinata. Il salvataggio di prima è stato conservato: se cambi idea puoi tornare indietro da qui.';
-                    esito.classList.add('rc-esito--ok');
-                    azioni.textContent = '';
-                    const fine = el('button', 'rc-btn rc-btn--ok', 'Fatto');
-                    fine.type = 'button';
-                    // La pagina del Profilo mostra ancora i dati di prima: si ricarica.
-                    fine.addEventListener('click', () => { window.location.reload(); });
-                    azioni.appendChild(fine);
-                })
-                .catch((e) => {
-                    esito.textContent = 'Non sono riuscito a ripristinare: ' + (e && e.message ? e.message : 'errore sconosciuto');
-                    [ripristina, scarta].forEach((b) => { b.disabled = false; });
-                });
-        });
-
-        conDoppioTocco(scarta, 'Tocca ancora: la copia sparisce', () => {
-            CloudSync.scartaCopiaDivergente();
-            chiudiTutto();
+        riquadro({
+            titolo: 'Modifiche non sincronizzate',
+            paragrafi: [
+                'Hai giocato su questo dispositivo mentre il cloud veniva aggiornato da un altro. Per non perdere i progressi di quell\'altro dispositivo, qui è stata caricata la sua versione, e quello che avevi fatto qui è rimasto in una copia di sicurezza.',
+                'Qui sotto vedi la differenza. Se ripristini la copia, diventa il tuo salvataggio e viene caricata sul cloud al posto di quello attuale.'
+            ],
+            etichettaA: 'Adesso',
+            etichettaB: 'Copia',
+            a: riassunto(window.SaveManager && SaveManager.hasSave() ? SaveManager.load() : null),
+            b: riassunto(copia.data),
+            nota: 'Il ripristino si può annullare: il salvataggio di adesso prende il posto della copia, e basta ripristinare di nuovo per tornare indietro.',
+            alChiudere: alCambio,
+            azioni: [
+                {
+                    testo: 'Ripristina la copia', classe: 'rc-btn--ok', doppio: 'Tocca ancora per confermare',
+                    esegui: (ctx) => {
+                        ctx.disabilita(true);
+                        ctx.esito.textContent = 'Ripristino in corso…';
+                        CloudSync.ripristinaCopiaDivergente()
+                            .then(() => {
+                                // Il salvataggio ora è la copia: si carica sul cloud (la base di
+                                // sincronizzazione è ancora quella dell'ultimo allineamento).
+                                const carica = window.AutoSync && AutoSync.caricaOra ? AutoSync.caricaOra() : Promise.resolve();
+                                return Promise.resolve(carica).catch(() => null);
+                            })
+                            .then(() => {
+                                ctx.esito.textContent = '✅ Copia ripristinata. Il salvataggio di prima è stato conservato: se cambi idea puoi tornare indietro da qui.';
+                                ctx.esito.classList.add('rc-esito--ok');
+                                ctx.azioni.textContent = '';
+                                const fine = el('button', 'rc-btn rc-btn--ok', 'Fatto');
+                                fine.type = 'button';
+                                // La pagina del Profilo mostra ancora i dati di prima: si ricarica.
+                                fine.addEventListener('click', () => { window.location.reload(); });
+                                ctx.azioni.appendChild(fine);
+                            })
+                            .catch((e) => {
+                                ctx.esito.textContent = 'Non sono riuscito a ripristinare: ' + (e && e.message ? e.message : 'errore sconosciuto');
+                                ctx.disabilita(false);
+                            });
+                    }
+                },
+                {
+                    testo: 'Scarta la copia', classe: 'rc-btn--no', doppio: 'Tocca ancora: la copia sparisce',
+                    esegui: (ctx) => { CloudSync.scartaCopiaDivergente(); ctx.chiudi(); }
+                },
+                { testo: 'Chiudi' }
+            ]
         });
     }
 
-    window.RecuperoCopia = { monta, apri, riassunto };
+    // ------------------------------------------------------------------
+    // 2) Importazione di un file di salvataggio
+    // ------------------------------------------------------------------
+    /**
+     * Importa un file scelto dall'utente, ma solo dopo averglielo fatto vedere.
+     * @param {File} file
+     * @param {{ alFinito?: Function, avviso?: (testo: string) => void }} [opzioni]
+     *        alFinito: la pagina ridisegna il Profilo; avviso: un messaggio breve (toast)
+     */
+    function importa(file, opzioni) {
+        const op = opzioni || {};
+        const dillo = (t) => { if (op.avviso) op.avviso(t); };
+        return SaveManager.readFile(file).then((letto) => {
+            const attuale = SaveManager.hasSave() ? SaveManager.load() : null;
+            const a = riassunto(attuale);
+            const b = riassunto(letto);
+            const avvisi = [];
+            if (a && b && a.nome && b.nome && a.nome.trim().toLowerCase() !== b.nome.trim().toLowerCase()) {
+                avvisi.push('Il file appartiene a «' + b.nome + '», mentre qui giochi come «' + a.nome + '»: controlla di aver scelto il file giusto.');
+            }
+            if (a && b && a.salvato && b.salvato && Date.parse(b.salvato) < Date.parse(a.salvato)) {
+                avvisi.push('Il file è più vecchio del salvataggio di adesso: i progressi fatti dopo il ' + fmtData(b.salvato) + ' non ci sono. Restano nella copia di sicurezza.');
+            }
+            riquadro({
+                titolo: 'Importare questo salvataggio?',
+                paragrafi: [
+                    'Stai per sostituire il salvataggio di questo dispositivo con quello del file «' + (file && file.name ? file.name : 'salvataggio') + '». Dopo l\'importazione verrà caricato anche sul cloud, e gli altri tuoi dispositivi lo scaricheranno.',
+                    'Il salvataggio di adesso non va perso: viene conservato come copia di sicurezza e lo ritrovi nel pulsante «Recupera le modifiche» del Profilo.'
+                ],
+                avvisi: avvisi,
+                etichettaA: 'Adesso',
+                etichettaB: 'File',
+                a: a,
+                b: b,
+                alChiudere: null,
+                azioni: [
+                    {
+                        testo: 'Importa il file', classe: 'rc-btn--ok', doppio: 'Tocca ancora per importare',
+                        esegui: (ctx) => {
+                            ctx.disabilita(true);
+                            try {
+                                // Prima si conserva quello di adesso, poi si applica il file:
+                                // se il file viene rifiutato non si è toccato niente.
+                                const prima = attuale ? JSON.parse(JSON.stringify(attuale)) : null;
+                                SaveManager.applyExternalSave(letto);
+                                if (prima && window.CloudSync && CloudSync.conservaCopiaDi) CloudSync.conservaCopiaDi(prima);
+                                ctx.esito.textContent = '✅ Salvataggio importato. Quello di prima è conservato: lo ritrovi in «Recupera le modifiche».';
+                                ctx.esito.classList.add('rc-esito--ok');
+                                dillo('⬆️ Salvataggio importato!');
+                                soloFatto(ctx, op.alFinito);
+                            } catch (e) {
+                                ctx.esito.textContent = 'Importazione non riuscita: ' + (e && e.message ? e.message : 'errore sconosciuto');
+                                ctx.disabilita(false);
+                            }
+                        }
+                    },
+                    { testo: 'Annulla' }
+                ]
+            });
+        }).catch((e) => { dillo('⚠️ ' + (e && e.message ? e.message : 'Importazione non riuscita.')); });
+    }
+
+    window.RecuperoCopia = { monta, apri, importa, riassunto };
 })();

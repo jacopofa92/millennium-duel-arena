@@ -772,6 +772,12 @@
     function copiaDivergente() {
         try { return JSON.parse(localStorage.getItem(CHIAVE_COPIA_DIVERGENTE)); } catch (e) { return null; }
     }
+    /** Tiene da parte un salvataggio (quello di adesso, prima di una sostituzione voluta come l'importazione di un file): si recupera dal Profilo. */
+    function conservaCopiaDi(salvataggio) {
+        if (!salvataggio) return false;
+        conservaCopiaDivergente(salvataggio);
+        return true;
+    }
     /** L'utente rinuncia alle modifiche conservate: la copia si butta. */
     function scartaCopiaDivergente() {
         try { localStorage.removeItem(CHIAVE_COPIA_DIVERGENTE); } catch (e) { /* noop */ }
@@ -1228,6 +1234,7 @@
         copiaDivergente: copiaDivergente,
         ultimoDispositivo: ultimoDispositivo,
         scartaCopiaDivergente: scartaCopiaDivergente,
+        conservaCopiaDi: conservaCopiaDi,
         ripristinaCopiaDivergente: ripristinaCopiaDivergente,
         msDallUltimaRiconciliazione: msDallUltimaRiconciliazione,
         adminListProfiles: adminListProfiles,

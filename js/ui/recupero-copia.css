@@ -64,6 +64,10 @@ body.rc-aperto { overflow: hidden; }
 .rc-riga--meno .rc-col:last-child { color: #ffb08a; }
 .rc-delta { font-size: .78rem; opacity: .95; }
 
+.rc-attenzione {
+    margin: 0; padding: 10px 12px; font-size: .88rem; line-height: 1.45; overflow-wrap: anywhere;
+    color: #ffd9b8; background: rgba(255, 138, 92, .12); border: 1px solid rgba(255, 138, 92, .5); border-radius: 10px;
+}
 .rc-esito { margin: 0; min-height: 1.2em; font-size: .88rem; line-height: 1.4; color: #ffb08a; }
 .rc-esito--ok { color: #8be8a6; }
 
@@ -86,9 +90,7 @@ body.rc-aperto { overflow: hidden; }
     .rc-riga--testa { display: none; }
     .rc-riga { grid-template-columns: 1fr 1fr; row-gap: 2px; }
     .rc-voce { grid-column: 1 / -1; font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; }
-    .rc-col::before { display: block; font-size: .68rem; opacity: .6; letter-spacing: .08em; text-transform: uppercase; }
-    .rc-col:nth-of-type(2)::before { content: 'Adesso'; }
-    .rc-col:nth-of-type(3)::before { content: 'Copia'; }
+    .rc-col::before { content: attr(data-et); display: block; font-size: .68rem; opacity: .6; letter-spacing: .08em; text-transform: uppercase; }
     .rc-azioni { flex-direction: column-reverse; }
     .rc-btn { width: 100%; }
 }

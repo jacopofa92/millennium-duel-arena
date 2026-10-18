@@ -1955,13 +1955,16 @@
             const file = event.target.files[0];
             event.target.value = '';
             if (!file) return;
-            try {
-                await SaveManager.importFromFile(file);
-                showToast('⬆️ Salvataggio importato!');
-                renderProfile();
-            } catch (e) {
-                showToast(`⚠️ ${e.message}`);
-            }
+            // Prima si legge e si fa vedere cosa verrebbe sostituito; solo dopo
+            // la conferma il file diventa il salvataggio (js/ui/recupero-copia.js).
+            if (!window.RecuperoCopia) { showToast('⚠️ Riprova tra un istante: il Profilo si sta ancora caricando.'); return; }
+            RecuperoCopia.importa(file, {
+                avviso: showToast,
+                alFinito: () => {
+                    renderProfile();
+                    RecuperoCopia.monta(document.getElementById('profilo-recuperoCopiaMount'));
+                }
+            });
         });
 
         renderProfile();
