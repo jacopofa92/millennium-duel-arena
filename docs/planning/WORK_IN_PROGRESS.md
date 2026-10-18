@@ -8,7 +8,7 @@ Il rischio di sovrascrittura tra due dispositivi è chiuso (versione 1.3.29:
 base di sincronizzazione + caricamento atomico + copia di sicurezza, vedi la
 nota in CLAUDE.md). Restano da decidere, per ora SOLO segnalati dall'utente:
 
-- [ ] **Recuperare la copia di sicurezza**: oggi, dopo un conflitto, le
+- [x] (fatto in 1.3.35: pulsante "Recupera le modifiche" nel Profilo con riquadro di confronto, ripristino annullabile e scarto, js/ui/recupero-copia.js) **Recuperare la copia di sicurezza**: oggi, dopo un conflitto, le
       modifiche fatte su un dispositivo rimasto indietro stanno in
       `CloudSync.copiaDivergente()` (localStorage `ygoSalvataggioDivergente`) ma
       non c'è nessun pulsante per ripristinarle o esportarle. Idea: "Recupera le

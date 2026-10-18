@@ -1,0 +1,100 @@
+/* Recupero delle modifiche non sincronizzate — vedi js/ui/recupero-copia.js.
+   Oro e fondo scuro come il resto del gioco. Il riquadro non esce mai dallo
+   schermo: l'altezza si ferma al 90% e il corpo scorre da solo; su telefono
+   il confronto diventa un elenco di blocchi (una voce per volta). */
+
+.rc-avviso {
+    margin: 0 0 8px; font-size: .85rem; line-height: 1.4;
+    color: #f7d774; opacity: .95; overflow-wrap: anywhere;
+}
+.rc-apri {
+    font: inherit; font-weight: 700; cursor: pointer;
+    padding: 10px 16px; min-height: 44px; border-radius: 10px;
+    color: #1a1204; background: linear-gradient(180deg, #ffe58a, #f3b03a);
+    border: 1px solid #fff2b8; box-shadow: 0 2px 10px rgba(243, 176, 58, .3);
+}
+.rc-apri:active { transform: translateY(1px); }
+
+.rc-velo {
+    position: fixed; inset: 0; z-index: 100200;
+    display: flex; align-items: center; justify-content: center;
+    padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    background: rgba(3, 5, 12, .78); backdrop-filter: blur(3px);
+}
+body.rc-aperto { overflow: hidden; }
+
+.rc-box {
+    display: flex; flex-direction: column;
+    width: min(640px, 100%); max-height: 90vh; max-height: 90dvh;
+    background: linear-gradient(180deg, #1c1830, #11101c);
+    color: #efe8d2;
+    border: 1px solid #c9a24a; border-radius: 14px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .6), 0 20px 60px rgba(0, 0, 0, .7), 0 0 28px rgba(247, 215, 116, .18);
+    overflow: hidden;
+}
+.rc-testa {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 16px; border-bottom: 1px solid rgba(201, 162, 74, .45);
+}
+.rc-titolo { margin: 0; font-size: clamp(1.05rem, 4.4vw, 1.3rem); color: #f7d774; letter-spacing: .02em; }
+.rc-x {
+    flex: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+    font: inherit; color: #f7d774; background: transparent; border: 1px solid rgba(201, 162, 74, .55);
+}
+.rc-corpo { padding: 14px 16px; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 10px; }
+.rc-testo { margin: 0; font-size: .92rem; line-height: 1.5; }
+.rc-nota { margin: 0; font-size: .8rem; line-height: 1.45; opacity: .75; }
+
+/* Nel corpo che scorre nessun blocco si schiaccia: la tabella resta intera e a scorrere è il corpo. */
+.rc-corpo > * { flex-shrink: 0; }
+
+/* Tabella: voce | adesso | copia */
+.rc-tabella { display: flex; flex-direction: column; border: 1px solid rgba(201, 162, 74, .35); border-radius: 10px; overflow: hidden; }
+.rc-riga {
+    display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 8px;
+    padding: 9px 12px; align-items: baseline; font-size: .9rem;
+    border-top: 1px solid rgba(255, 255, 255, .06);
+}
+.rc-riga:first-child { border-top: 0; }
+.rc-riga--testa { background: rgba(247, 215, 116, .1); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: #f7d774; }
+.rc-riga--data { font-size: .8rem; }
+.rc-voce { opacity: .8; }
+.rc-col { font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.rc-riga--piu .rc-col:last-child { color: #8be8a6; }
+.rc-riga--meno .rc-col:last-child { color: #ffb08a; }
+.rc-delta { font-size: .78rem; opacity: .95; }
+
+.rc-esito { margin: 0; min-height: 1.2em; font-size: .88rem; line-height: 1.4; color: #ffb08a; }
+.rc-esito--ok { color: #8be8a6; }
+
+.rc-azioni {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end;
+    padding: 12px 16px; border-top: 1px solid rgba(201, 162, 74, .45);
+}
+.rc-btn {
+    font: inherit; font-weight: 700; cursor: pointer; min-height: 44px; padding: 10px 16px;
+    border-radius: 10px; color: #efe8d2; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .22);
+}
+.rc-btn--ok { color: #1a1204; background: linear-gradient(180deg, #ffe58a, #f3b03a); border-color: #fff2b8; }
+.rc-btn--no { border-color: rgba(255, 140, 110, .55); color: #ffb08a; }
+.rc-btn--conferma { outline: 2px solid #ff8a5c; outline-offset: 2px; }
+.rc-btn:disabled { opacity: .5; cursor: default; }
+.rc-x:focus-visible, .rc-btn:focus-visible, .rc-apri:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+/* Telefono: ogni voce diventa un blocco "etichetta, poi adesso / copia", niente colonne strette. */
+@media (max-width: 520px) {
+    .rc-riga--testa { display: none; }
+    .rc-riga { grid-template-columns: 1fr 1fr; row-gap: 2px; }
+    .rc-voce { grid-column: 1 / -1; font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; }
+    .rc-col::before { display: block; font-size: .68rem; opacity: .6; letter-spacing: .08em; text-transform: uppercase; }
+    .rc-col:nth-of-type(2)::before { content: 'Adesso'; }
+    .rc-col:nth-of-type(3)::before { content: 'Copia'; }
+    .rc-azioni { flex-direction: column-reverse; }
+    .rc-btn { width: 100%; }
+}
+/* Telefono in orizzontale: poca altezza, il corpo scorre e i pulsanti restano visibili. */
+@media (max-height: 460px) and (orientation: landscape) {
+    .rc-box { max-height: 96vh; max-height: 96dvh; }
+    .rc-azioni { flex-direction: row; }
+    .rc-btn { width: auto; min-height: 40px; padding: 6px 12px; }
+}

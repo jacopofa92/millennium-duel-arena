@@ -496,7 +496,7 @@
 // v278: passaggio morra-arena mobile senza layer e animazioni concorrenti.
 // v279: nomi compatti e invito all'azione rendono leggibili le fasi.
 // v282: miniature WebP lazy per Duellanti e anteprime delle Arene.
-const CACHE_NAME = 'ygo-duel-arena-v300';
+const CACHE_NAME = 'ygo-duel-arena-v301';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
@@ -640,6 +640,8 @@ const APP_SHELL = [
     'js/ui/sfide-view.js',
     'js/ui/profile-stats.js',
     'js/ui/profile-hero.js',
+    'js/ui/recupero-copia.js',
+    'js/ui/recupero-copia.css',
     'js/ui/scelta-duellante.js',
     'js/ui/profile-stats.css',
     'js/ui/profile-hero.css',

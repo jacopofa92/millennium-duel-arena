@@ -1804,6 +1804,8 @@
             <div id="profilo-cloudLoggedIn" style="display:none;">
                 <div class="profile-meta">Connesso come <strong id="profilo-cloudUserEmail"></strong></div>
                 <div class="profile-meta" id="profilo-cloudUltimo" style="margin-top: 6px;"></div>
+                <!-- Compare solo se esistono modifiche conservate da un conflitto (js/ui/recupero-copia.js). -->
+                <div id="profilo-recuperoCopiaMount" style="display:none; margin-top: 10px;"></div>
                 <div class="profile-meta" style="margin-top: 6px;">Il tuo progresso (mazzi, record, valute) si salva da solo sul cloud quando esci dall'app o cambi account — non serve fare nulla per il normale utilizzo.</div>
                 <div class="actions-row" style="margin-top: 10px;">
                     <button type="button" class="action-btn import" id="profilo-cloudSignOutBtn"><span data-icon="exit"></span> Esci dall'account</button>
@@ -1911,9 +1913,9 @@
         // esistono; senza, la voce mostra il numero senza il totale.
         // Lo stesso per la testata (js/ui/profile-hero.js): finché non
         // arriva la parte alta resta vuota, poi si disegna da sola.
-        ensureViewStyles(['js/ui/profile-stats.css', 'js/ui/profile-hero.css']);
-        ensureViewScripts(['js/economy/card-acquisition.js', 'js/economy/rewards.js', 'js/ui/profile-stats.js', 'js/ui/profile-hero.js'])
-            .then(() => renderProfile())
+        ensureViewStyles(['js/ui/profile-stats.css', 'js/ui/profile-hero.css', 'js/ui/recupero-copia.css']);
+        ensureViewScripts(['js/economy/card-acquisition.js', 'js/economy/rewards.js', 'js/ui/profile-stats.js', 'js/ui/profile-hero.js', 'js/ui/recupero-copia.js'])
+            .then(() => { renderProfile(); RecuperoCopia.monta(document.getElementById('profilo-recuperoCopiaMount')); })
             .catch(() => { /* senza statistiche il resto del Profilo funziona uguale */ });
 
         let toastTimeout = null;
@@ -2039,6 +2041,7 @@
                 if (user) {
                     document.getElementById('profilo-cloudUserEmail').textContent = user.email || '(senza email)';
                     mostraUltimoDispositivo(document.getElementById('profilo-cloudUltimo'));
+                    if (window.RecuperoCopia) RecuperoCopia.monta(document.getElementById('profilo-recuperoCopiaMount'));
                 }
             }
             CloudSync.onAuthChange(renderCloudUI);

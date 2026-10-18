@@ -772,6 +772,31 @@
     function copiaDivergente() {
         try { return JSON.parse(localStorage.getItem(CHIAVE_COPIA_DIVERGENTE)); } catch (e) { return null; }
     }
+    /** L'utente rinuncia alle modifiche conservate: la copia si butta. */
+    function scartaCopiaDivergente() {
+        try { localStorage.removeItem(CHIAVE_COPIA_DIVERGENTE); } catch (e) { /* noop */ }
+    }
+    /**
+     * L'utente vuole le modifiche conservate: diventano il salvataggio di
+     * questo dispositivo. Il salvataggio di adesso NON va perso a sua volta:
+     * prende il posto della copia, così il ripristino si può annullare
+     * ripristinando di nuovo. Chi chiama fa poi partire il caricamento
+     * (AutoSync.caricaOra): la base di sincronizzazione è ancora quella
+     * dell'ultimo allineamento, quindi se nel frattempo nessun altro ha
+     * scritto sul cloud il caricamento riesce, altrimenti vince il cloud e
+     * la copia resta conservata come prima.
+     */
+    function ripristinaCopiaDivergente() {
+        const copia = copiaDivergente();
+        if (!copia || !copia.data) return Promise.reject(new Error('Non c\'è nessuna copia da ripristinare.'));
+        if (!window.SaveManager) return Promise.reject(new Error('js/save-manager.js non caricato in questa pagina.'));
+        const attuale = SaveManager.hasSave() ? SaveManager.load() : null;
+        // Prima si applica la copia (può rifiutarla se non è valida), poi si
+        // conserva l'attuale: mai restare senza nessuna delle due.
+        SaveManager.applyExternalSave(JSON.parse(JSON.stringify(copia.data)));
+        if (attuale) conservaCopiaDivergente(attuale); else scartaCopiaDivergente();
+        return Promise.resolve(true);
+    }
 
     /**
      * Il cloud è cambiato da un altro dispositivo mentre questo aveva
@@ -1202,6 +1227,8 @@
         /** La copia del salvataggio di questo dispositivo messa da parte dall'ultimo conflitto, o null. */
         copiaDivergente: copiaDivergente,
         ultimoDispositivo: ultimoDispositivo,
+        scartaCopiaDivergente: scartaCopiaDivergente,
+        ripristinaCopiaDivergente: ripristinaCopiaDivergente,
         msDallUltimaRiconciliazione: msDallUltimaRiconciliazione,
         adminListProfiles: adminListProfiles,
         adminSetProfileStatus: adminSetProfileStatus,

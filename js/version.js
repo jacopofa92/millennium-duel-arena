@@ -32,7 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
- * 1.3.34 — Profilo: \ di Evocazione: una sola banda senza raggi, vento continuo, una frase per riga, testo che si adatta, avatar mai tagliato.
+ * 1.3.35 — Profilo: pulsante \: \ di Evocazione: una sola banda senza raggi, vento continuo, una frase per riga, testo che si adatta, avatar mai tagliato.
  * 1.3.32 — Gridi di Evocazione: più per Yami Marik, nuovi per Ishizu e Noah; tolti Guerriero Celtico e Kuriboh a Yugi, Signore dei D. a Kaiba.
  * 1.3.31 — Il grido di Evocazione dura 3 secondi invece di 2,2.
  *
@@ -751,4 +751,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.3.34';
+window.GAME_VERSION = '1.3.35';
