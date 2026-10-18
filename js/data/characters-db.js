@@ -147,7 +147,7 @@ const characterDatabase = [
     { id: 'mirror', name: 'Te Stesso', title: 'Il Tuo Riflesso', image: 'images/characters/mirror.jpg', series: 'main' },
     { id: 'robertoGiacobbo', name: 'Roberto Giacobbo I', title: 'Divinità egizia', image: 'images/characters/rg.jpg', series: 'extra' },
     { id: 'albertoAngela', name: 'Alberto Angela', title: 'Custode dell\'Impero', image: 'images/characters/albertoAngela.jpg', series: 'extra' },
-    { id: 'alessandroBarbero', name: 'Alessandro Barbero', title: 'Maestro delle Cronache', image: 'images/characters/alessandroBarbero.jpg', series: 'extra' },
+    { id: 'alessandroBarbero', name: 'Ser Alessandro Barbero', title: 'Maestro delle Cronache', image: 'images/characters/alessandroBarbero.jpg', series: 'extra' },
 
     // ===== Grande Guerra — comandi austro-ungarici =====
     // Gli avversari della campagna WW1 (js/data/story-campaigns.js). Sono
