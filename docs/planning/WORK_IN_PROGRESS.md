@@ -13,8 +13,9 @@ nota in CLAUDE.md). Restano da decidere, per ora SOLO segnalati dall'utente:
       `CloudSync.copiaDivergente()` (localStorage `ygoSalvataggioDivergente`) ma
       non c'è nessun pulsante per ripristinarle o esportarle. Idea: "Recupera le
       modifiche" nel Profilo (sezione Backup), con anteprima di cosa contiene.
-- [ ] **"Ultimo accesso da un altro dispositivo"** nel Profilo, per rendere
-      visibile all'utente quando il cloud è stato scritto altrove.
+- [x] **"Ultimo salvataggio da un altro dispositivo"** nel Profilo (1.3.34): il
+      segno (id, nome, ora) viaggia dentro `data.ultimoDispositivo` del cloud,
+      nessuna migrazione. Dice chi ha SALVATO per ultimo, non chi ha aperto il gioco.
 - [ ] Facoltativo, più grosso: un **merge** dei dati monotoni (collezione, record,
       progressi) invece di "vince il cloud, il locale in copia". Da valutare solo
       se i conflitti reali si rivelano frequenti.

@@ -521,6 +521,7 @@
                  di confusione ("devo accedere di nuovo?"). -->
             <div id="cloudLoggedIn" style="display:none;">
                 <div class="profile-meta">Connesso come <strong id="cloudUserEmail"></strong></div>
+                <div class="profile-meta" id="cloudUltimo" style="margin-top: 6px;"></div>
                 <div class="profile-meta" style="margin-top: 6px;">Il tuo progresso (mazzi, record, valute) si salva da solo sul cloud quando esci dall'app o cambi account — non serve fare nulla per il normale utilizzo.</div>
                 <div class="actions-row" style="margin-top: 10px;">
                     <button type="button" class="action-btn import" id="cloudSignOutBtn"><span data-icon="exit"></span> Esci dall'account</button>
@@ -729,10 +730,28 @@
         // solo come rete di sicurezza per l'istante transitorio prima che
         // CloudSync risolva la sessione — niente form di login da mostrare
         // in quel caso (vive solo nel Gate di index.html).
+        /**
+         * "Ultimo salvataggio da ...": dice se l'ultima modifica sul cloud è di
+         * questo dispositivo o di un altro (CloudSync.ultimoDispositivo). Un
+         * altro dispositivo non è un errore: serve a sapere perché qui i dati
+         * possono essere cambiati. Senza rete o senza segno non scrive niente.
+         */
+        function mostraUltimoDispositivo(el) {
+            if (!el || !window.CloudSync || !CloudSync.ultimoDispositivo) return;
+            CloudSync.ultimoDispositivo().then((u) => {
+                if (!u) { el.textContent = ''; return; }
+                const quando = new Date(u.quando);
+                const data = isNaN(quando) ? '' : ' · ' + quando.toLocaleString('it-IT', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+                el.textContent = u.questo
+                    ? 'Ultimo salvataggio: da questo dispositivo' + data
+                    : '☁️ Ultimo salvataggio da un altro dispositivo (' + u.nome + ')' + data;
+            }).catch(() => { el.textContent = ''; });
+        }
         function renderCloudUI(user) {
             loggedInEl.style.display = user ? '' : 'none';
             if (user) {
                 document.getElementById('cloudUserEmail').textContent = user.email || '(senza email)';
+                mostraUltimoDispositivo(document.getElementById('cloudUltimo'));
                 if (!conflictCheckedThisSession) {
                     conflictCheckedThisSession = true;
                     checkCloudConflict();

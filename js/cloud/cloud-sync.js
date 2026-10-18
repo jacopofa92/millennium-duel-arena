@@ -800,6 +800,56 @@
     // ------------------------------------------------------------------
     // Salvataggio (public.saves — una riga per utente)
     // ------------------------------------------------------------------
+    // ------------------------------------------------------------------
+    // Chi ha scritto per ultimo il salvataggio cloud
+    // ------------------------------------------------------------------
+    /**
+     * Ogni dispositivo ha un identificativo casuale (localStorage) e un
+     * nome leggibile ('Android', 'Windows · Chrome'...). Ad ogni scrittura
+     * finiscono DENTRO il salvataggio (data.ultimoDispositivo), come già la
+     * tassonomia e la generazione: nessuna colonna nuova da creare sul
+     * database. Il Profilo li legge per dire all'utente se l'ultima
+     * modifica salvata è di questo dispositivo o di un altro.
+     * Ricorda: dice chi ha SALVATO per ultimo, non chi ha aperto il gioco
+     * per ultimo (un'apertura senza modifiche non scrive niente).
+     */
+    const CHIAVE_ID_DISPOSITIVO = 'ygoDispositivoId';
+    function idDispositivo() {
+        try {
+            let id = localStorage.getItem(CHIAVE_ID_DISPOSITIVO);
+            if (!id) {
+                id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+                localStorage.setItem(CHIAVE_ID_DISPOSITIVO, id);
+            }
+            return id;
+        } catch (e) { return 'sconosciuto'; }
+    }
+    function nomeDispositivo() {
+        const ua = (navigator.userAgent || '');
+        const app = !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform());
+        let os = 'Dispositivo';
+        if (/Android/i.test(ua)) os = 'Android';
+        else if (/iPhone|iPad|iPod/i.test(ua)) os = 'iPhone/iPad';
+        else if (/Windows/i.test(ua)) os = 'Windows';
+        else if (/Mac OS X|Macintosh/i.test(ua)) os = 'Mac';
+        else if (/Linux/i.test(ua)) os = 'Linux';
+        if (app) return os + ' (app)';
+        const browser = /Edg\//.test(ua) ? 'Edge' : /Firefox\//.test(ua) ? 'Firefox' : /Chrome\//.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : '';
+        return browser ? os + ' · ' + browser : os;
+    }
+    /**
+     * L'ultimo salvataggio sul cloud è di questo dispositivo o di un altro?
+     * Torna { questo, nome, quando } oppure null (nessun salvataggio, o scritto
+     * da una versione che non lasciava il segno).
+     */
+    function ultimoDispositivo() {
+        return leggiCloud().then(({ cloud }) => {
+            const u = cloud && cloud.data && cloud.data.ultimoDispositivo;
+            if (!u || !u.id) return null;
+            return { questo: u.id === idDispositivo(), nome: u.nome || 'un altro dispositivo', quando: u.quando || cloud.updatedAt };
+        });
+    }
+
     /**
      * Carica il salvataggio locale sul cloud — MA MAI sopra uno più recente.
      *
@@ -876,6 +926,7 @@
         const generazione = generazioneLocale(base);
         if (generazione) data.azzeratoIl = new Date(generazione).toISOString();
         const nuovo = new Date().toISOString();
+        data.ultimoDispositivo = { id: idDispositivo(), nome: nomeDispositivo(), quando: nuovo };
         const lastSaved = base && base.player ? base.player.lastSaved : null;
         const riuscita = () => { scriviBase({ updatedAt: nuovo, inVolo: null, lastSaved: lastSaved }); return data; };
         const conflitto = () => {
@@ -980,6 +1031,7 @@
             const data = Object.assign({}, cloud.data);
             const taxonomy = data.customTaxonomy;
             delete data.customTaxonomy;
+            delete data.ultimoDispositivo; // appartiene al cloud, non al salvataggio di gioco
             if (taxonomy && window.CustomTaxonomy && typeof CustomTaxonomy.importAll === 'function') {
                 CustomTaxonomy.importAll(taxonomy);
             }
@@ -1149,6 +1201,7 @@
         risolviConflittoCloud: risolviConflittoCloud,
         /** La copia del salvataggio di questo dispositivo messa da parte dall'ultimo conflitto, o null. */
         copiaDivergente: copiaDivergente,
+        ultimoDispositivo: ultimoDispositivo,
         msDallUltimaRiconciliazione: msDallUltimaRiconciliazione,
         adminListProfiles: adminListProfiles,
         adminSetProfileStatus: adminSetProfileStatus,
