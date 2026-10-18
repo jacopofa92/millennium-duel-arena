@@ -235,14 +235,31 @@ function waitForPriorityWindow() {
  * dell'IA offline non cambia di un millisecondo.
  */
 function aspettaDuelloFermo(fn) {
-    if (typeof PassoComune === 'undefined' || !PassoComune.attivo() || PassoComune.fermo()) { fn(); return; }
+    if (!sceltaDelGiocatoreAperta() && (typeof PassoComune === 'undefined' || !PassoComune.attivo() || PassoComune.fermo())) { fn(); return; }
     timerIA(() => aspettaDuelloFermo(fn), 50);
 }
 
 /** Come aspettaDuelloFermo, per una mossa che torna una Promise: subito se si può, nello stesso giro. */
 function quandoFermo(fn) {
-    if (typeof PassoComune === 'undefined' || !PassoComune.attivo() || PassoComune.fermo()) return Promise.resolve(fn());
+    if (!sceltaDelGiocatoreAperta() && (typeof PassoComune === 'undefined' || !PassoComune.attivo() || PassoComune.fermo())) return Promise.resolve(fn());
     return new Promise((fatto) => aspettaDuelloFermo(fatto)).then(fn);
+}
+
+/**
+ * La RISOLUZIONE DI UNA SCELTA DEL GIOCATORE HA LA PRECEDENZA su qualunque mossa
+ * dell'IA. Una scelta aperta (un modale, un popover, i Tributi da scegliere, uno
+ * scarto, una decisione in sospeso) può cambiare il campo — un mostro che
+ * compare, uno che sparisce, una Posizione che cambia — e quindi cambiare cosa
+ * conviene fare dopo: il bot non deve né decidere né agire finché non è chiusa.
+ * Vale per OGNI mossa che passa da aspettaDuelloFermo/quandoFermo (Magie, Set,
+ * Evocazioni, Fusioni, cambi di Posizione, attacchi), non solo per un effetto in
+ * particolare (segnalato con il Drago Mascherato, ma il difetto era generale).
+ * Chi aspetta qui non ha tetto: il giocatore ha il tempo che gli serve.
+ */
+function sceltaDelGiocatoreAperta() {
+    if (typeof isBlockingModalOpen === 'function' && isBlockingModalOpen()) return true;
+    if (window.Decisioni && typeof Decisioni.inSospeso === 'function' && Decisioni.inSospeso()) return true;
+    return !!(window.gameState && gameState.pendingTributePlacement);
 }
 
 /**
@@ -538,6 +555,14 @@ async function botPerformAttacks(giro = 0, soloUids = null, io = 'bot') {
         // stava ancora scegliendo il mostro che sarebbe comparso.
         await waitForSceneSettled();
         if (gameState.currentPlayer !== io || gameState.gameOver) return;
+        // La scelta appena risolta può aver cambiato anche il MIO campo e le regole
+        // d'attacco (un mostro tolto o girato in Difesa, "non puoi attaccare").
+        // L'elenco degli attaccanti era stato fatto all'inizio: si ricontrolla
+        // l'attaccante com'è ADESSO, invece di usarlo com'era.
+        if (window.DuelEngine && DuelEngine.cannotAttack(io)) return;
+        const slotAdesso = Tavolo.mostri(io)[attackerItem.index];
+        if (!slotAdesso || slotAdesso.card.uid !== attackerItem.slot.card.uid || slotAdesso.position !== 'attack' || slotAdesso.hasAttacked) continue;
+        attackerItem.slot = slotAdesso;
         // "Questa carta non può dichiarare un attacco a meno che tu non
         // sacrifichi 1 mostro" (es. Guerriero Pantera, id 399 —
         // def.requiresTributeToAttack): costo da pagare PRIMA di dichiarare
@@ -743,7 +768,7 @@ function waitForSummonCinematics() {
 function waitForNoBlockingModal() {
     return new Promise((resolve) => {
         const poll = () => {
-            if (typeof isBlockingModalOpen === 'function' && isBlockingModalOpen()) { timerIA(poll, 150); return; }
+            if (sceltaDelGiocatoreAperta()) { timerIA(poll, 150); return; }
             resolve();
         };
         poll();

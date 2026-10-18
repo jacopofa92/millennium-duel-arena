@@ -128,6 +128,62 @@ module.exports = {
             if (nuovo) assert(nuovo.pos === 'defense' && nuovo.coperto === false, 'il Drago Special Summonato in Difesa deve restare scoperto: ' + JSON.stringify(nuovo));
             // Il secondo attacco guarda il campo com'è ADESSO: c'è il nuovo mostro, quindi non è un attacco diretto.
             assert(r.attacchi[1].bersaglio !== -1 && r.attacchi[1].bersaglio !== null && r.attacchi[1].bersaglio !== undefined, 'il secondo attacco doveva colpire il mostro comparso, non il giocatore direttamente: ' + JSON.stringify(r.attacchi[1]));
+            // ---------- 4) Non solo il Drago Mascherato: QUALUNQUE scelta del giocatore ----------
+            // Il campo del giocatore è vuoto (il bot deciderebbe un attacco diretto) e, mentre
+            // il bot sta per attaccare, si apre una scelta qualsiasi che — risolta — fa
+            // comparire un mostro. Il bot deve aspettare e poi colpire QUEL mostro.
+            await page.evaluate(() => {
+                const mk = (id, uid) => ({ ...cardDatabase.find((c) => c.id === id), uid });
+                ['playerMonsterField', 'botMonsterField', 'playerSTField', 'botSTField'].forEach((k) => { gameState[k] = [null, null, null, null, null]; });
+                gameState.botMonsterField[0] = { card: mk(1, 'drago-bot'), position: 'attack', isFaceDown: false, hasAttacked: false };
+                gameState.playerLP = 8000;
+                gameState.turn = 7; gameState.currentPlayer = 'bot'; gameState.phase = 'battle';
+                window.__attacchi2 = [];
+                const precedente = window.resolveAttack;
+                window.resolveAttack = function (posto, attaccante, bersaglio) {
+                    window.__attacchi2.push({ posto, attaccante, bersaglio, sceltaAperta: !!document.querySelector('.modal-backdrop.open, #quickPopover') });
+                    return precedente.apply(this, arguments);
+                };
+                updateUI();
+                window.__fine2 = false;
+                botPerformAttacks(0, null, 'bot').then(() => { window.__fine2 = true; });
+                // Una scelta del giocatore qualsiasi si apre subito dopo (il bot è già "in pausa" prima di attaccare).
+                setTimeout(() => {
+                    Decisioni.chiedi({
+                        chi: 'player', candidati: [mk(4, 'scelto')], titolo: 'Scelta di prova', testo: 'Una scelta qualsiasi'
+                    }, (carta) => {
+                        if (!carta) return;
+                        gameState.playerMonsterField[3] = { card: carta, position: 'attack', isFaceDown: false, hasAttacked: false };
+                        updateUI();
+                    });
+                }, 300);
+            });
+            await page.waitForSelector('.modal-backdrop.open .card', { timeout: 10000 });
+            await page.waitForTimeout(3500);
+            const durante = await page.evaluate(() => window.__attacchi2.length);
+            assert(durante === 0, `il bot ha attaccato con una scelta del giocatore aperta (${durante} attacchi)`);
+            await page.locator('.modal-backdrop.open .card').first().click();
+            await page.waitForFunction(() => window.__fine2 === true, null, { timeout: 30000 });
+            const dopoScelta = await page.evaluate(() => window.__attacchi2);
+            assert(dopoScelta.length === 1, `doveva partire un attacco, ne sono partiti ${dopoScelta.length}`);
+            assert(dopoScelta[0].bersaglio === 3, `l'attacco doveva colpire il mostro comparso (casella 3), non ${dopoScelta[0].bersaglio}`);
+
+            // ---------- 5) Il punto unico: nessuna mossa dell'IA parte con una scelta aperta ----------
+            // aspettaDuelloFermo/quandoFermo sono il cancello di OGNI mossa (Magie, Set,
+            // Evocazioni, Fusioni, Posizioni): con una scelta del giocatore aperta non
+            // lasciano passare niente, e appena si chiude partono.
+            await page.evaluate(() => {
+                const mk = (id, uid) => ({ ...cardDatabase.find((c) => c.id === id), uid });
+                window.__passate = [];
+                Decisioni.chiedi({ chi: 'player', candidati: [mk(4, 'altra')], titolo: 'Altra scelta', testo: 'prova' }, () => {});
+                aspettaDuelloFermo(() => window.__passate.push('aspettaDuelloFermo'));
+                quandoFermo(() => { window.__passate.push('quandoFermo'); });
+            });
+            await page.waitForSelector('.modal-backdrop.open .card', { timeout: 10000 });
+            await page.waitForTimeout(1500);
+            assert((await page.evaluate(() => window.__passate.length)) === 0, 'una mossa dell\'IA è passata con una scelta del giocatore aperta');
+            await page.locator('.modal-backdrop.open .card').first().click();
+            await page.waitForFunction(() => window.__passate.length === 2, null, { timeout: 5000 });
         } finally {
             await context.close();
         }
