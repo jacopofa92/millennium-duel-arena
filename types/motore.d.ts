@@ -146,7 +146,7 @@ interface EngineActions {
     shuffleIntoDeck(owner: Owner, cards: Card[]): void;
     searchDeckToHand(owner: Owner, matchFn: (c: Card) => boolean, maxCount?: number): Card[] | void;
     fusionSummon(owner: Owner, extraDeckIndex: number, materialLocations: any[], options?: object): any;
-    banish(owner: Owner, card: Card): void;
+    banish(owner: Owner, card: Card, visualAlreadyStarted?: boolean): void;
     /** Necrovalley: vero se lo spostamento dal Cimitero di `graveyardOwner` è negato. Da chiamare prima di ogni splice a mano dal Cimitero. */
     graveyardMoveNegated(graveyardOwner: Owner): boolean;
     banishFromGraveyard(owner: Owner, card: Card, actor?: Owner): boolean;
@@ -158,6 +158,12 @@ interface EngineActions {
     discardChosenFromHand(owner: Owner, handIndex: number): Card | null | undefined;
     millCardFromDeck(owner: Owner, deckIndex: number): Card | null | undefined;
     returnMonsterToHand(owner: Owner, index: number): void;
+    /** Rimette un mostro dal Terreno nel Deck del vero proprietario. */
+    returnMonsterToDeck(owner: Owner, index: number, options?: object): void;
+    /** Manda un mostro dal Terreno al Cimitero SENZA distruggerlo (per i testi che dicono "manda"). */
+    sendMonsterToGraveyard(owner: Owner, index: number): void;
+    /** Manda dalla mano al Cimitero senza considerare la carta scartata. */
+    sendChosenFromHandToGraveyard(owner: Owner, handIndex: number): any;
     takeControl(newOwner: Owner, fromOwner: Owner, fromIndex: number, permanent?: boolean): void;
     swapControl(ownerA: Owner, indexA: number, ownerB: Owner, indexB: number, permanent?: boolean): void;
 }
