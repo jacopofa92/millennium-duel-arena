@@ -118,7 +118,7 @@ vec4 m_particelle(vec2 uv,float asp,float t,vec3 c,float vx,float vy,float dens,
     else s=min(abs(d.x),abs(d.y))*4.+length(d)*.6;
     float rr=dim*(.45+rnd*.75);
     float tw=lamp>.5?(.5+.5*sin(t*(1.3+rnd*2.5)+rnd*40.)):1.;
-    acc+=smoothstep(rr,rr*.15,s)*step(.52-.22*ev,ex)*tw*(1.-fi*.18);
+    acc+=smoothstep(rr,rr*.15,s)*step(.64-.26*ev,ex)*tw*(1.-fi*.18);
   }
   float al=clamp(acc*a,0.,1.);
   return vec4(c*al*1.3,al*.85);
@@ -279,6 +279,36 @@ vec4 m_fiamma(vec2 uv,float asp,float t,vec3 c1,vec3 c2,vec2 f,float s,float see
   return vec4(col*fl*a,al*fl*a);
 }`;
 
+    // Colonne generatrici di ologrammi delle Torri Kaiba: lo schermo in cima alla colonna
+    // pulsa e ogni tanto cade a vuoto, onde concentriche si allargano da lì, un fascio
+    // a righe di scansione corre verso il centro del campo e, a tratti, una barra di
+    // disturbo lo attraversa. Stessa regola cover delle fiamme per la posizione.
+    MOD.proiettori = `
+vec4 m_proiettore(vec2 uv,float asp,float t,vec3 c1,vec3 c2,vec2 f,float seed,float ia,float a,float ev){
+  vec2 sp=asp>ia?vec2(f.x,.5+(f.y-.5)*(asp/ia)):vec2(.5+(f.x-.5)*(ia/asp),f.y);
+  vec2 d=(uv-sp)*vec2(asp,1.);
+  float r=length(d);
+  float tt=floor(t*7.);
+  float drop=step(.94,h(vec2(tt,seed)));
+  float fl=(.78+.22*sin(t*(2.6+seed*.7)+seed*9.))*(1.-.7*drop);
+  float core=exp(-r*r*900.);
+  float rings=0.;
+  for(int k=0;k<3;k++){
+    float ph=fract(t*.3+seed*.31+float(k)/3.);
+    rings+=exp(-pow((r-ph*.22)*62.,2.))*(1.-ph)*(1.-ph);
+  }
+  vec2 to=vec2(.5*asp,.5)-sp*vec2(asp,1.);
+  vec2 dir=normalize(to);
+  float along=dot(d,dir);
+  float perp=length(d-dir*along);
+  float beam=step(0.,along)*smoothstep(.42,.0,along)*exp(-pow(perp/(.018+along*.09),2.))*(.55+.45*sin(along*150.-t*5.));
+  float bar=step(.9,h(vec2(floor(t*5.),seed+3.)))*exp(-pow((d.y-(fract(t*1.7)-.5)*.1)*70.,2.))*exp(-d.x*d.x*900.);
+  float L=(core*.9+rings*.8+bar*.9)*fl;
+  vec3 col=c1*L+c2*beam*.8*fl;
+  float al=clamp((core*.3+rings*.4+bar*.5)*fl+beam*.28*fl,0.,1.);
+  return vec4(col*a*(1.+.7*ev),al*a);
+}`;
+
     // Fronte di guerra, fondo: cannoneggiamento continuo. Niente evento a
     // scadenza: tre "canali" con cicli di durata diversa (4.3 / 6 / 7.7 s)
     // sorteggiano ognuno un punto d'impatto nuovo a ogni ciclo, quindi le
@@ -359,7 +389,7 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         nebbia: { def: { vel: 1, sc: 1.5, a: .2, y0: -.4, y1: 1.4 },
             call: (c, o) => `m_nebbia(uv,asp,t,${c},${f(o.vel)},${f(o.sc)},${f(o.a)},${f(o.y0)},${f(o.y1)},ev)` },
         particelle: { def: { vx: 0, vy: 0, dens: 10, dim: .12, lamp: 0, osc: .15, forma: 0, a: 1 },
-            call: (c, o) => `m_particelle(uv,asp,t,${c},${f(o.vx)},${f(o.vy)},${f(o.dens)},${f(o.dim)},${f(o.lamp)},${f(o.osc)},${f(o.forma)},${f(o.a)},ev)` },
+            call: (c, o) => `m_particelle(uv,asp,t,${c},${f(o.vx)},${f(o.vy)},${f(o.dens * .78)},${f(o.dim)},${f(o.lamp)},${f(o.osc)},${f(o.forma)},${f(o.a)},ev)` },
         raggi: { def: { ox: .5, ang: 0, cnt: 7, a: .3 },
             call: (c, o) => `m_raggi(uv,asp,t,${c},${f(o.ox)},${f(o.ang)},${f(o.cnt)},${f(o.a)},ev)` },
         caustiche: { def: { sc: 5, a: .5 },
@@ -383,6 +413,10 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         fiamme: { def: { pts: [], sz: 1, ia: 1.772, a: 1 },
             call: (c, o) => o.pts.reduce((e, p, i) =>
                 `over(m_fiamma(uv,asp,t,${o.c1 ? cost(o.c1) : 'A'},${o.c2 ? cost(o.c2) : 'B'},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)}),${e})`, 'vec4(0.)') },
+        // Un proiettore di ologrammi per ogni punto di pts ([x, y], nell'immagine del campo, y verso l'alto).
+        proiettori: { def: { pts: [], ia: 1.773, a: 1 },
+            call: (c, o) => o.pts.reduce((e, p, i) =>
+                `over(m_proiettore(uv,asp,t,${o.c1 ? cost(o.c1) : 'A'},${o.c2 ? cost(o.c2) : 'B'},vec2(${f(p[0])},${f(p[1])}),${f(i + 1)},${f(o.ia)},${f(o.a)},ev),${e})`, 'vec4(0.)') },
         // impatti usa la tavolozza intera: A = fuoco, B = fumo (il colore del modulo e' ignorato).
         impatti: { def: { a: 1 },
             call: (c, o) => `m_impatti(uv,asp,t,A,B,${f(o.a)})` },
@@ -426,6 +460,10 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         // I quattro bracieri agli angoli dei campi all'aperto (foresta, prato, montagna, acqua, ghiaccio).
         angoli: [[0.22,0.26,1],[0.78,0.26,1],[0.24,0.87,1],[0.76,0.88,1]]
     };
+    // Le quattro colonne con lo schermo olografico delle Torri Kaiba (cielo e ombra),
+    // negli angoli dell'immagine. [x, y], y verso l'alto.
+    const TORRE_PROIETTORI = [[0.22, 0.925], [0.785, 0.935], [0.172, 0.25], [0.83, 0.25]];
+    const HOLO = { c1: [.5, .92, 1], c2: [.72, .5, 1] };
     const FIAMMA_CALDA = { c1: [1, .86, .5], c2: [1, .42, .08] };
 
     /**
@@ -451,7 +489,7 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         'egitto-luna-blu': {
             pal: PAL.sabbiaNotte,
             fondo: [['raggi', 'C', { ox: .35, cnt: 5, a: .22 }], ['strisce', 'A', { vel: .8, a: .2, dens: 9, y0: -.3, y1: .7 }]],
-            primo: [['particelle', 'C', { vx: .9, vy: -.04, dens: 15, dim: .06, osc: .08, lamp: 1, a: .8 }]],
+            primo: [['strisce', 'C', { vel: 1.3, stretch: 2.2, a: .12, dens: 12, y0: -.2, y1: .6 }]],
             ev: { ogni: [6, 12], dur: 5 }
         },
         'nilo-notturno': {
@@ -476,7 +514,7 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         'rovine-edera': {
             pal: PAL.natura,
             fondo: [['raggi', 'B', { ox: .3, cnt: 6, a: .3 }], ['nebbia', 'C', { sc: 1.5, a: .1, y0: -.4, y1: .5 }]],
-            primo: [['particelle', 'A', { vx: .35, vy: -.18, dens: 9, dim: .13, osc: .45, forma: 2, a: .9 }], ['particelle', 'B', { vx: .05, vy: .04, dens: 14, dim: .05, lamp: 1, a: .8 }]],
+            primo: [['particelle', 'A', { vx: .35, vy: -.18, dens: 9, dim: .13, osc: .45, forma: 2, a: .9 }]],
             ev: { ogni: [6, 12], dur: 5 }
         },
         'rovine-spiriti': {
@@ -488,7 +526,7 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         'arena-bosco': {
             pal: PAL.natura,
             fondo: [['raggi', 'B', { ox: .68, cnt: 7, a: .36 }]],
-            primo: [['particelle', 'A', { vx: .3, vy: -.15, dens: 8, dim: .14, osc: .5, forma: 2, a: .9 }], ['particelle', 'B', { vx: .04, vy: .05, dens: 15, dim: .05, lamp: 1, a: .8 }]],
+            primo: [['particelle', 'A', { vx: .3, vy: -.15, dens: 8, dim: .14, osc: .5, forma: 2, a: .9 }]],
             ev: { ogni: [6, 12], dur: 5 }
         },
         'castello-candele': {
@@ -499,8 +537,8 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         },
         'torre-vento-verde': {
             pal: [rgb(220, 255, 220), rgb(180, 240, 190), rgb(255, 205, 225)],
-            fondo: [['nebbia', 'A', { sc: 1.1, a: .2, y0: -.3, y1: 1.3 }], ['strisce', 'B', { vel: 1.2, a: .2, dens: 9, y0: -.2, y1: 1.1 }]],
-            primo: [['particelle', 'C', { vx: 1.1, vy: -.12, dens: 9, dim: .12, osc: .4, forma: 2, a: .95 }]],
+            fondo: [['raggi', 'C', { ox: .3, cnt: 6, a: .2 }], ['nebbia', 'A', { sc: 1.1, a: .2, y0: -.3, y1: 1.3 }], ['strisce', 'B', { vel: 1.2, a: .2, dens: 9, y0: -.2, y1: 1.1 }]],
+            primo: [['nebbia', 'A', { sc: 2, vel: 1.6, a: .1, y0: -.4, y1: .5 }], ['strisce', 'A', { vel: 1.7, stretch: 2.4, dens: 13, a: .14, y0: 0, y1: 1 }]],
             ev: { ogni: [4, 8], dur: 5 }
         },
         // ---- Kaiba -------------------------------------------------------------------
@@ -513,25 +551,25 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         'dirigibile-alta-quota': {
             pal: PAL.vento,
             fondo: [['nebbia', 'A', { sc: 1.5, a: .17, y0: -.3, y1: 1.3 }], ['strisce', 'A', { vel: 1, a: .18, dens: 7, stretch: 1.1, y0: -.1, y1: 1 }]],
-            primo: [['strisce', 'B', { vel: 1.5, a: .32, dens: 13, stretch: 2.4, y0: 0, y1: 1 }], ['particelle', 'C', { vx: 2.2, vy: -.05, dens: 20, dim: .05, a: .7 }]],
+            primo: [['strisce', 'B', { vel: 1.5, a: .32, dens: 13, stretch: 2.4, y0: 0, y1: 1 }]],
             ev: { ogni: [3, 7], dur: 5 }
         },
         'torre-cielo': {
             pal: [rgb(255, 244, 206), rgb(255, 214, 130), rgb(255, 255, 240)],
-            fondo: [['raggi', 'A', { ox: .5, cnt: 8, a: .36 }], ['nebbia', 'C', { sc: 1.2, a: .2, y0: -.3, y1: .6 }]],
-            primo: [['strisce', 'B', { vel: 1.2, a: .22, dens: 10, stretch: 1.8, y0: 0, y1: 1 }]],
+            fondo: [['raggi', 'A', { ox: .5, cnt: 8, a: .3 }], ['nebbia', 'C', { sc: 1.2, a: .2, y0: -.3, y1: .6 }], ['proiettori', 'A', { pts: TORRE_PROIETTORI, c1: HOLO.c1, c2: HOLO.c2, a: 1 }]],
+            primo: [['strisce', 'B', { vel: 1.2, a: .2, dens: 10, stretch: 1.8, y0: 0, y1: 1 }]],
             ev: { ogni: [4, 9], dur: 5 }
         },
         'torre-colosseo': {
             pal: PAL.tech,
             fondo: [['scan', 'A', { a: .5 }], ['raggi', 'B', { ox: .5, cnt: 6, a: .16 }]],
-            primo: [['particelle', 'C', { vx: 0, vy: .2, dens: 14, dim: .05, lamp: 1, forma: 1, a: .9 }]],
+            primo: [['strisce', 'C', { vel: 1.4, stretch: 2.6, a: .1, dens: 14, y0: 0, y1: 1 }]],
             ev: { ogni: [5, 10], dur: 2.6 }
         },
         'torre-shadow': {
             pal: PAL.spiriti,
-            fondo: [['vortice', 'A', { a: .3 }], ['nebbia', 'B', { sc: 1.6, a: .45, y0: -.5, y1: .8 }]],
-            primo: [['particelle', 'C', { vx: 0, vy: -.16, dens: 10, dim: .09, lamp: 1, forma: 1, a: .9 }]],
+            fondo: [['vortice', 'A', { a: .26 }], ['nebbia', 'B', { sc: 1.6, a: .4, y0: -.5, y1: .8 }], ['proiettori', 'A', { pts: TORRE_PROIETTORI, c1: HOLO.c1, c2: HOLO.c2, a: 1.15 }]],
+            primo: [['nebbia', 'A', { sc: 2.2, vel: -1.3, a: .13, y0: -.4, y1: .6 }]],
             ev: { ogni: [5, 9], dur: 4 }
         },
         'gozaburo-glitch': {
@@ -580,7 +618,7 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         'montagna-nuvole': {
             pal: PAL.vento,
             fondo: [['fiamme', 'A', { pts: TORCE.angoli, c1: FIAMMA_CALDA.c1, c2: FIAMMA_CALDA.c2, sz: .8, a: .9 }], ['nebbia', 'A', { sc: 1.1, a: .3, y0: -.5, y1: .7 }], ['strisce', 'B', { vel: 1.1, a: .16, dens: 8, y0: -.2, y1: 1 }]],
-            primo: [['nebbia', 'B', { sc: 2, vel: 1.6, a: .12, y0: -.5, y1: .4 }], ['particelle', 'C', { vx: 1.4, vy: -.1, dens: 14, dim: .05, a: .7 }]],
+            primo: [['nebbia', 'B', { sc: 2, vel: 1.6, a: .12, y0: -.5, y1: .4 }]],
             ev: { ogni: [4, 8], dur: 5 }
         },
         // ---- Rovine, piazze, arene egizie ----------------------------------------------
