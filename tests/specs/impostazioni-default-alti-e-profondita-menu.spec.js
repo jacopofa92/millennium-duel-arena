@@ -58,6 +58,29 @@ module.exports = {
             }
         }
 
+        // Su un dispositivo touch (telefono, WebView dell'APK) il default è
+        // "Normali": gli strati di field-ambience.js pesano ~3x sulla GPU
+        // mobile (misurato). Una scelta esplicita vale comunque.
+        for (const caso of [
+            { nome: 'touch, mai scelto', storage: {}, atteso: 'normali' },
+            { nome: 'touch, "Alti" scelto dal giocatore', storage: { ygoVideoDetail: 'alti', ygoVideoDetailScelto: '1' }, atteso: 'alti' }
+        ]) {
+            const ctx = await browser.newContext({ viewport: { width: 844, height: 390 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
+            await ctx.addInitScript((s) => {
+                window.AUTH_GATE_SKIP = true;
+                Object.entries(s || {}).forEach(([k, v]) => localStorage.setItem(k, v));
+            }, caso.storage);
+            try {
+                const page = await ctx.newPage();
+                await page.goto(url('impostazioni.html'));
+                await page.waitForFunction(() => !!window.VideoQuality);
+                const livello = await page.evaluate(() => VideoQuality.get());
+                assert(livello === caso.atteso, `Dettagli video, ${caso.nome}: atteso ${caso.atteso}, trovato ${livello}`);
+            } finally {
+                await ctx.close();
+            }
+        }
+
         // Il vecchio default dentro un SALVATAGGIO (senza il segno di scelta)
         // non deve riportare "Normali"; una scelta salvata sì.
         const ctxSalv = await contesto(browser, {});

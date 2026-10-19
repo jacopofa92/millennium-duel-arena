@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.4.10 — Prestazioni: su telefono e APK i Dettagli video partono da Normali (gli strati dell'ambiente del campo pesavano ~3x); chi ha scelto Alti li tiene.
  * 1.4.9 — Grido di Evocazione: per chi entra da destra banda e vento sono lo specchio esatto della scena di sinistra.
  * 1.4.8 — rifinite le pose di esclamazione di Atem, Barbero, Ishizu, Yami Marik, Yami Yugi e Yugi Muto.
  * 1.4.7 — pose di esclamazione dedicate ai gridi di Evocazione dei duellanti.
@@ -765,4 +766,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.4.9';
+window.GAME_VERSION = '1.4.10';
