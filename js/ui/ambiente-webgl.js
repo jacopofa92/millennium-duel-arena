@@ -266,8 +266,10 @@ vec4 m_glitch(vec2 uv,float t,vec3 c,float a,float ev){
 vec4 m_fiamma(vec2 uv,float asp,float t,vec3 c1,vec3 c2,vec2 f,float s,float seed,float ia,float a){
   vec2 sp=asp>ia?vec2(f.x,.5+(f.y-.5)*(asp/ia)):vec2(.5+(f.x-.5)*(ia/asp),f.y);
   vec2 d=(uv-sp)*vec2(asp,1.);
-  float fl=.8+.12*sin(t*(2.1+seed*.35)+seed*40.)+.07*sin(t*(3.6+seed*.25)+seed*13.)+.06*n(vec2(t*.9,seed*9.));
   float r2=dot(d,d);
+  // Lontano dalla fiamma il contributo e' nullo: si esce subito (28 fiamme per arena, e ogni pixel le attraversa tutte).
+  if(r2>.09*s*s) return vec4(0.);
+  float fl=.8+.12*sin(t*(2.1+seed*.35)+seed*40.)+.07*sin(t*(3.6+seed*.25)+seed*13.)+.06*n(vec2(t*.9,seed*9.));
   float core=exp(-r2*(1100./(s*s)));
   float halo=exp(-r2*(75./(s*s)));
   float dy=d.y;
