@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.4.21 — Tutti gli spettacoli di carta in WebGL (shader per primitiva con scissor), Evocazione semplificata, icone Attacco/Difesa animate (spade che si incrociano, scudo), Buco Nero piu' grande e scuro, tolto il suggerimento 'passa il mouse'.
  * 1.4.20 — Buco Nero WebGL rifatto (orizzonte, anello di fotoni, disco di taglio, arco lensato) e carte risucchiate con sola transform (niente scatti).
  * 1.4.19 — Backend WebGL degli spettacoli di carta (Buco Nero, Spade Rivelatrici, Raigeki) senza GSAP; effects.js sceglie il backend per effetto.
  * 1.4.18 — Effetti ambientali WebGL su tutte le mappe della Storia (macromappa, sei archi, aree, Memorie Proibite, Freedom, Grande Guerra) e citta' che scorre sotto il Dirigibile.
@@ -776,4 +777,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.4.20';
+window.GAME_VERSION = '1.4.21';

@@ -4924,7 +4924,7 @@
             <h3 id="cardListPickerTitle">🃏 Scegli una carta</h3>
             <p id="cardListPickerText"></p>
             <div class="card-list-scroll" id="cardListPickerRow"></div>
-            <div class="card-list-info" id="cardListPickerInfo"><span class="card-list-info-hint">Passa il mouse su una carta per vedere il suo effetto.</span></div>
+            <div class="card-list-info" id="cardListPickerInfo"></div>
             <div class="modal-actions">
                 <button class="modal-btn cancel" id="cardListPickerCloseBtn">✖ Chiudi</button>
             </div>
@@ -5105,6 +5105,8 @@
 <script src="js/ui/fx-gsap.js"></script>
 <!-- Backend WebGL degli spettacoli piu' pesanti (Buco Nero, Spade Rivelatrici, Raigeki): va DOPO fx-gsap.js perche' effects.js sceglie il backend per effetto dall'ultimo registrato. -->
 <script src="js/ui/fx-webgl.js"></script>
+<script src="js/ui/fx-webgl-scena.js"></script>
+<script src="js/ui/icone-posizione-webgl.js"></script>
 <!-- Vita ambientale del Terreno, configurata individualmente per ogni
      field. Come fx-gsap.js qui sopra è un modulo a sé che si avvia da
      solo e aspetta GSAP: si accende SOLO con i Dettagli video su "Alti"

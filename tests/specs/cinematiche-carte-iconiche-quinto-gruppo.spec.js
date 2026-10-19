@@ -3,10 +3,13 @@ const path = require('path');
 module.exports = {
     name: 'Cinematiche iconiche V: Cerchio, Cappelli, Moltiplicazione, Controller e Dimensione',
     async run(t) {
+        // Questi spec provano le cinematiche in DOM/CSS (le versioni di base e il ripiego): gli spettacoli
+        // hanno anche una versione WebGL (js/ui/fx-webgl-scena.js), provata da fx-webgl-spettacoli.spec.js.
+        await t.page.evaluate(() => { window.FX_BACKEND = 'css'; });
         const root = path.join(__dirname, '..', '..');
         const js = fs.readFileSync(path.join(root, 'js/ui/effects.js'), 'utf8');
         const css = fs.readFileSync(path.join(root, 'js/ui/effects.css'), 'utf8');
-        ['playSpellbindingCircle','playMagicalHats','playMultiply','playEnemyController','playDimensionHole'].forEach((n)=>t.assert(js.includes(`function ${n}`)&&js.includes(`${n},`),`${n} deve essere esposto`));
+        ['playSpellbindingCircle','playMagicalHats','playMultiply','playEnemyController','playDimensionHole'].forEach((n)=>t.assert(js.includes(`function ${n}`)&&(js.includes(`${n},`) || js.includes(`${n}: viaBackend`)),`${n} deve essere esposto`));
         ['.fx-spellbinding-burst','.spellbinding-circle-link','.fx-magical-hats','.fx-multiply','.fx-enemy-controller','.fx-dimension-hole'].forEach((s)=>t.assert(css.includes(s),`${s} deve esistere`));
         const result = await t.evaluate(async()=>{
             const monster=cardDatabase.find(c=>c.type==='monster'&&!c.extraDeck&&(c.level||0)<=4); const a={...monster,uid:'five-a'},b={...monster,uid:'five-b'};

@@ -1151,6 +1151,9 @@ function openQuickPopover(anchorEl, innerHTML, { onDismiss, dismissible = true, 
     // Sostituisce ogni <span data-icon="..."> col vero SVG a tema (vedi
     // js/ui/icon-library.js) PRIMA della misura qui sotto, altrimenti
     // popRect userebbe ancora la dimensione del segnaposto vuoto.
+    // Le icone Attacco/Difesa diventano scene WebGL animate (spade che si incrociano, scudo che si forma):
+    // va PRIMA di hydrate, che altrimenti le sostituirebbe con l'SVG statico. Senza WebGL non fa nulla.
+    if (window.IconePosizione) IconePosizione.monta(pop);
     if (window.Icons) Icons.hydrate(pop);
 
     document.body.appendChild(catcher);
@@ -2090,7 +2093,8 @@ window.DuelEngineUI = {
         // serve una copia inline dello stesso contenuto — stessa struttura
         // di updateCardInfoPanel (game-flow.js), riusa le sue classi CSS.
         const infoEl = document.getElementById('cardListPickerInfo');
-        const HINT = '<span class="card-list-info-hint">Passa il mouse su una carta per vedere il suo effetto.</span>';
+        // Nessun suggerimento scritto: il pannello resta vuoto finche' non si passa su una carta.
+        const HINT = '';
         const showCardInfo = (card) => {
             if (!infoEl) return;
             // Una carta disegnata col retro (vedi __mostraCoperta più

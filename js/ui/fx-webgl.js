@@ -73,7 +73,7 @@
     }
 
     function adattaDimensioni() {
-        scala = window.innerWidth <= 900 ? 0.7 : 0.85;
+        scala = window.innerWidth <= 900 ? 0.55 : 0.65;
         canvas.width = Math.max(64, Math.round(window.innerWidth * scala));
         canvas.height = Math.max(64, Math.round(window.innerHeight * scala));
         gl.viewport(0, 0, canvas.width, canvas.height);
@@ -102,6 +102,41 @@
         fini.forEach((f) => { try { /** @type {Function} */ (f)(); } catch (e) { /* un effetto non rompe il duello */ } });
     }
 
+    /**
+     * Una passata a tutto schermo su un solo RIQUADRO (box in px CSS: [x0, y0, x1, y1], y dall'alto; null = tutto):
+     * lo scissor impedisce di sprecare pixel fuori dall'area che la primitiva puo' toccare.
+     */
+    function disegnaPassata(prog, t, bbox, imposta) {
+        gl.useProgram(prog.p);
+        const loc = gl.getAttribLocation(prog.p, 'p');
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.enableVertexAttribArray(loc);
+        gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+        gl.uniform2f(prog.u('r'), canvas.width, canvas.height);
+        gl.uniform1f(prog.u('k'), 1 / scala);
+        gl.uniform1f(prog.u('H'), window.innerHeight);
+        gl.uniform1f(prog.u('t'), t);
+        imposta(prog.u, gl);
+        if (bbox) {
+            const x0 = Math.max(0, Math.floor(bbox[0] * scala)); const x1 = Math.min(canvas.width, Math.ceil(bbox[2] * scala));
+            const yTop = Math.max(0, Math.floor(bbox[1] * scala)); const yBot = Math.min(canvas.height, Math.ceil(bbox[3] * scala));
+            if (x1 <= x0 || yBot <= yTop) return;
+            gl.enable(gl.SCISSOR_TEST);
+            gl.scissor(x0, canvas.height - yBot, x1 - x0, yBot - yTop);
+        } else {
+            gl.disable(gl.SCISSOR_TEST);
+        }
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+
+    /** Cio' che un effetto a disegno personalizzato puo' usare. */
+    const contestoDisegno = {
+        passata: function (chiave, frammento, t, bbox, imposta) {
+            const p = programma(chiave, frammento);
+            if (p) disegnaPassata(p, t, bbox, imposta);
+        }
+    };
+
     function ciclo(ora) {
         if (!gl || !canvas) return;
         gl.clearColor(0, 0, 0, 0);
@@ -109,6 +144,13 @@
         attivi = attivi.filter((a) => {
             const t = (typeof window.FX_WEBGL_T === 'number') ? window.FX_WEBGL_T : (ora - a.avvio) / 1000;
             if (t > a.durata) { if (a.fine) { try { a.fine(); } catch (e) { /* idem */ } } return false; }
+            // Disegno personalizzato: l'effetto decide quante passate fare e su quale riquadro
+            // (vedi js/ui/fx-webgl-scena.js: una passata piccola per ogni primitiva).
+            if (a.custom) {
+                try { a.custom(t, contestoDisegno); } catch (e) { console.warn('[FX webgl]', e); }
+                gl.disable(gl.SCISSOR_TEST);
+                return true;
+            }
             gl.useProgram(a.prog.p);
             const loc = gl.getAttribLocation(a.prog.p, 'p');
             gl.bindBuffer(gl.ARRAY_BUFFER, buf);
@@ -137,12 +179,12 @@
      * Lancia un errore se WebGL non c'e': il chiamante (effects.js) ricade
      * sul backend successivo.
      */
-    function lancia(chiave, frammento, durata, uniformi, fine) {
+    function lancia(chiave, frammento, durata, uniformi, fine, custom) {
         if (!assicuraCanvas()) throw new Error('webgl-non-disponibile');
         if (!attivi.length) { adattaDimensioni(); canvas.style.display = ''; }
-        const prog = programma(chiave, frammento);
-        if (!prog) throw new Error('shader-non-compilato');
-        const voce = { prog: prog, avvio: performance.now(), durata: durata, uniformi: uniformi, fine: fine };
+        const prog = custom ? null : programma(chiave, frammento);
+        if (!custom && !prog) throw new Error('shader-non-compilato');
+        const voce = { prog: prog, avvio: performance.now(), durata: durata, uniformi: uniformi, fine: fine, custom: custom };
         attivi.push(voce);
         if (!rid) rid = requestAnimationFrame(ciclo);
         return function interrompi() {
@@ -193,16 +235,16 @@ void main(){
   float ap=smoothstep(0.,.55,t);
   float fine=smoothstep(DUR-.35,DUR,t);
   float v=ap*(1.-fine);
-  float R=.062*mix(.3,1.,ap)*(1.-.35*fine);
+  float R=.1*mix(.3,1.,ap)*(1.-.35*fine);
 
   // Oscuramento: la scena si spegne attorno.
-  float buio=smoothstep(.8,.05,rr)*.74*v;
+  float buio=smoothstep(1.15,.08,rr)*.93*v;
 
   // Filamenti di materia che spiraleggiano verso il centro.
   float ang=atan(p.y,p.x);
   float lr=log(rr+.02);
-  float fil=pow(.5+.5*sin(5.*(ang+.55*lr)+t*5.5),6.)*(.4+.8*fbm(vec2(ang*3.,lr*5.+t*2.)));
-  fil*=smoothstep(.6,.2,rr)*smoothstep(R*1.3,R*3.,rr)*v;
+  float fil=pow(.5+.5*sin(9.*(ang+.55*lr)+t*5.5),10.)*(.4+.8*fbm(vec2(ang*3.,lr*5.+t*2.)));
+  fil*=smoothstep(.85,.25,rr)*smoothstep(R*1.3,R*3.,rr)*v;
 
   // Disco di accrescimento quasi di taglio, con rotazione differenziale.
   float tilt=.11;
@@ -210,7 +252,7 @@ void main(){
   float rd=length(d);
   float thd=atan(d.y,d.x);
   float rin=R*1.55;
-  float rout=R*5.6*mix(.6,1.,ap);
+  float rout=R*6.4*mix(.6,1.,ap);
   float band=smoothstep(rin,rin*1.12,rd)*smoothstep(rout,rout*.55,rd);
   float th2=thd-t*(1.2+3.5*R/max(rd,R));
   vec2 uu=vec2(cos(th2),sin(th2))*(rd/R)*.9;
@@ -227,7 +269,7 @@ void main(){
   float arco=(sopra+sotto)*(.5+.6*dop)*(.55+turb)*v;
 
   float foto=exp(-pow((rr-R*1.06)/(R*.045),2.))*v;
-  float alone=exp(-rr*rr/(R*R*30.))*.35*v;
+  float alone=exp(-rr*rr/(R*R*42.))*.5*v;
   float nero=smoothstep(R,R*.96,rr);
 
   // Collasso: onda d'urto e lampo.
@@ -235,7 +277,7 @@ void main(){
   float onda=exp(-pow((rr-ce*2.2)/.022,2.))*smoothstep(0.,.04,ce)*(1.-smoothstep(.1,.28,ce));
   float lampo=exp(-rr*rr*40.)*smoothstep(0.,.05,ce)*(1.-smoothstep(.05,.28,ce));
 
-  vec3 L=vec3(.62,.7,1.)*fil*.55
+  vec3 L=vec3(.45,.55,1.)*fil*.5
         +col*disco*dietro*1.6
         +col*arco*1.3
         +vec3(1.,.95,.85)*(foto*1.6+alone)
@@ -539,5 +581,17 @@ void main(){
     if (window.requestIdleCallback) window.requestIdleCallback(riscalda, { timeout: 4000 });
     else setTimeout(riscalda, 2500);
 
-    window.FxWebgl = { lancia: lancia, chiudi: chiudiTutto, attivi: () => attivi.length };
+    // `BASE` e `Z_INDEX` servono a js/ui/fx-webgl-scena.js, che costruisce sopra questo motore gli altri spettacoli.
+    /** Compila in anticipo uno shader (per i moduli che ne portano di propri). */
+    /** true se lo shader compila (e lo tiene in cache): serve a un effetto a passate multiple per decidere PRIMA di partire se puo' girare. */
+    function compilabile(chiave, frammento) {
+        if (!assicuraCanvas()) return false;
+        return !!programma(chiave, frammento);
+    }
+
+    function scalda(chiave, frammento) {
+        try { if (window.FxWebglPronto && assicuraCanvas()) { adattaDimensioni(); programma(chiave, frammento); } } catch (e) { /* ottimizzazione */ }
+    }
+
+    window.FxWebgl = { scalda: scalda, compilabile: compilabile, lancia: lancia, chiudi: chiudiTutto, attivi: () => attivi.length, BASE: BASE, Z_INDEX: Z_INDEX };
 })();

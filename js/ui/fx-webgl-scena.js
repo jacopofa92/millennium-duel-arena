@@ -1,0 +1,924 @@
+// @ts-check
+/**
+ * fx-webgl-scena.js — gli spettacoli di carta in WebGL, tutti sullo stesso motore.
+ * ------------------------------------------------------------------------
+ * Sta sopra js/ui/fx-webgl.js (che porta il canvas, il ciclo e i primi tre effetti) e si
+ * registra come parte dello stesso backend 'webgl'.
+ *
+ * L'IDEA. Invece di scrivere uno shader a mano per ognuno dei ~35 spettacoli, c'e' UNO shader
+ * "di scena" che sa disegnare un piccolo vocabolario di PRIMITIVE (lampo, anello d'urto, fulmine,
+ * scintille, sigillo magico, vortice, velo a tutto schermo, raggio fra due punti, colonna di luce,
+ * fumo, voragine, tromba d'aria, luna, cuore, occhio, cappello, sfera, pannello, moneta, dado), ognuna
+ * con un inizio, una durata e un colore. Ogni effetto e' allora una funzione JS corta che
+ * dice "a questo istante, in questo punto, metti questa primitiva" — la stessa descrizione
+ * temporale che prima stava dentro una timeline GSAP o dentro una pagina di CSS.
+ * Le CARTE vere (quelle che cadono in una voragine, volano dal Cimitero, si ribaltano) restano
+ * elementi della pagina, animati con la sola `transform` (WAAPI), perche' hanno la loro grafica:
+ * e' la parte che a suo tempo scattava.
+ *
+ * COSA RESTA IDENTICO A PRIMA, perche' il duello ne dipende: le firme, le callback d'impatto
+ * (chiamate allo stesso istante, una volta sola, con la rete di scorta alla fine), e il
+ * conteggio delle cinematiche (FX.beginSummonCinematic/endSummonCinematic: il bot aspetta).
+ * Se WebGL manca, `lancia` lancia un errore PRIMA che sia successo qualsiasi cosa e effects.js
+ * ripiega sul backend successivo.
+ *
+ * COME AGGIUNGERE UN EFFETTO. Una funzione che costruisce una `Scena`, un `esegui()` e una voce
+ * in `impls`; se la funzione non e' ancora avvolta da `viaBackend` in effects.js, avvolgerla.
+ */
+(function () {
+    'use strict';
+    if (!window.FX || !window.FxWebgl || typeof window.FX.registerBackend !== 'function') return;
+
+    const Z = window.FxWebgl.Z_INDEX;
+    const MAX = 40;
+
+    // Tipi di primitiva (devono coincidere con l'ordine delle `if` dello shader qui sotto).
+    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19 };
+    // Colori: indici nella tavolozza dello shader.
+    const C = { CALDO: 0, ORO: 1, ROSSO: 2, ARANCIO: 3, CIANO: 4, BLU: 5, VIOLA: 6, MAGENTA: 7, VERDE: 8, BIANCO: 9, SCURO: 10, GHIACCIO: 11 };
+
+    // =====================================================================
+    // Le primitive: un programma per tipo, disegnato in una passata ristretta al suo riquadro
+    // =====================================================================
+    // Prima c'era un solo shader con un ciclo su tutte le primitive: corretto, ma ogni pixel
+    // attraversava tutte le diramazioni e (misurato) un Tributo Torrenziale scendeva a 12 fps dove un
+    // Buco Nero a 60. Ora ogni primitiva e' un programma piccolo e disegnato SOLO sul rettangolo
+    // che puo' toccare (scissor): il costo e' proporzionale all'area, non al numero di primitive.
+
+    const COMUNE = window.FxWebgl.BASE + `
+uniform vec4 IA;    // x, y, a, b (dipende dal tipo)
+uniform vec4 IB;    // inizio (s), durata (s), -, parametro w
+uniform vec3 col;
+const float PI=3.14159265;
+float easeOut(float x){x=clamp(x,0.,1.);return 1.-pow(1.-x,3.);}
+float easeIO(float x){x=clamp(x,0.,1.);return x*x*(3.-2.*x);}
+float pop(float u){return (1.-u)*(1.-u)*smoothstep(0.,.08,u);}
+float campana(float u,float a,float b){return smoothstep(0.,a,u)*(1.-smoothstep(1.-b,1.,u));}
+float pip(vec2 q,vec2 c){return smoothstep(.13,.1,length(q-c));}
+float dado(vec2 q,float v){
+  float s=0.;
+  if(v>.5&&mod(v,2.)>.5) s+=pip(q,vec2(0.));
+  if(v>1.5) s+=pip(q,vec2(-.5,-.5))+pip(q,vec2(.5,.5));
+  if(v>3.5) s+=pip(q,vec2(.5,-.5))+pip(q,vec2(-.5,.5));
+  if(v>5.5) s+=pip(q,vec2(-.5,0.))+pip(q,vec2(.5,0.));
+  return clamp(s,0.,1.);
+}
+`;
+
+    const COLORI = [[1, .95, .8], [1, .8, .3], [1, .25, .2], [1, .55, .15], [.4, .9, 1], [.3, .5, 1], [.7, .4, 1], [1, .35, .8], [.4, 1, .55], [1, 1, 1], [.02, .01, .06], [.7, 1, 1]];
+
+    /** @type {Record<number,string>} */
+    const CORPI = {};
+
+    // LAMPO: alone morbido con nucleo caldo.
+    CORPI[T.FLASH] = `
+  vec2 d=(P-A.xy)/A.z; float r2=dot(d,d); float e=pop(u)*1.4;
+  s=vec4(c*(exp(-r2*2.5)*.7+exp(-r2*16.)*1.4)*e,clamp(exp(-r2*3.)*.7*e,0.,1.));`;
+
+    // ANELLO: onda d'urto che si allarga (B.w<0: si stringe).
+    CORPI[T.RING] = `
+  float inv=step(B.w,-.5);
+  float R0=A.z*mix(easeOut(u),1.-easeOut(u),inv);
+  float dd=abs(length(P-A.xy)-R0); float g=exp(-dd*dd/(A.w*A.w));
+  float e=mix(1.-u,campana(u,.2,.3),inv);
+  s=vec4(c*g*e*1.4,g*e*.85);`;
+
+    // FULMINE dall'alto fino a (x,y).
+    CORPI[T.BOLT] = `
+  float y01=clamp(P.y/max(A.y,1.),0.,1.);
+  float wob=(fbm(vec2(y01*7.,B.w))-.5)*70.+(fbm(vec2(y01*19.,B.w*2.3))-.5)*16.;
+  float dx=abs(P.x-(A.x+wob*(1.-y01*.6)));
+  float vive=step(P.y,A.y)*(1.-smoothstep(.5,.85,u))*smoothstep(0.,.08,u);
+  float fl=.7+.3*step(.5,fract(u*14.));
+  float nu=exp(-dx*dx/(A.z*A.z*.15)); float al=exp(-dx*dx/(A.z*A.z*12.));
+  s=vec4(mix(c,vec3(1.),.6)*(nu*1.5+al*.55)*fl*vive,clamp((nu+al*.4)*vive,0.,1.));`;
+
+    // SCINTILLE a raggiera (A.w: gravita' in px).
+    CORPI[T.BURST] = `
+  float acc=0.;
+  for(int j=0;j<14;j++){
+    float fj=float(j);
+    float ang=h(vec2(fj,B.w))*6.2832; float sp=.35+h(vec2(fj+9.,B.w))*.65;
+    vec2 pos=A.xy+vec2(cos(ang),sin(ang))*A.z*sp*easeOut(u); pos.y+=A.w*u*u;
+    acc+=smoothstep(2.8*(1.-u)+.6,0.,length(P-pos));
+  }
+  s=vec4(c*acc*1.3,clamp(acc,0.,1.)*(1.-u*.6));`;
+
+    // SIGILLO magico: anelli, tacche e due triangoli che girano (B.w: schiacciamento in prospettiva).
+    CORPI[T.SEAL] = `
+  vec2 q=(P-A.xy)/A.z; q.y/=max(B.w,.05); float rr=length(q); float ang=atan(q.y,q.x);
+  float e=campana(u,.18,.3); float rot=t*1.2;
+  float ra=exp(-pow((rr-1.)/.03,2.)); float rb=exp(-pow((rr-.84)/.02,2.));
+  float tk=step(.55,fract((ang+rot*.5)*12./(2.*PI)))*exp(-pow((rr-.93)/.05,2.))*.8;
+  float st=0.;
+  for(int j=0;j<2;j++){
+    float sg=1.-2.*float(j);
+    float a2=mod(ang+rot*.7*sg+float(j)*PI/3.,2.*PI/3.)-PI/3.;
+    float ed=rr*cos(a2)-.5; st+=exp(-ed*ed*600.)*step(rr,.78);
+  }
+  float g=ra+rb*.7+tk+st*.8+exp(-rr*rr*2.5)*.18;
+  s=vec4(c*g*e*1.4,clamp(g*e*.8,0.,1.));`;
+
+    // VORTICE a spirale.
+    CORPI[T.VORTEX] = `
+  vec2 q=(P-A.xy)/A.z; q.y/=max(B.w,.05); float rr=length(q); float ang=atan(q.y,q.x);
+  float arms=pow(.5+.5*sin(3.*(ang+4.*log(rr+.05))-t*5.),2.5);
+  float disc=smoothstep(1.,.75,rr)*smoothstep(0.,.15,rr); float core=exp(-rr*rr*30.);
+  float e=campana(u,.2,.3); float g=arms*disc*.9+core;
+  s=vec4(c*g*e*1.3,clamp(g*e*.8,0.,1.));`;
+
+    // VELO a tutto schermo: B.w = 0 uniforme, 1 dall'alto, 2 dal basso, 3 vignetta, 4 barra di scansione, 5 raffiche di vento.
+    CORPI[T.WASH] = `
+  float e=campana(u,.2,.35); float g=1.; float md=B.w;
+  if(md>.5&&md<1.5) g=1.-smoothstep(0.,R.y*.7,P.y);
+  else if(md>1.5&&md<2.5) g=smoothstep(R.y*.3,R.y,P.y);
+  else if(md>2.5&&md<3.5) g=smoothstep(.2,.95,length((P-R*.5)/R*1.5));
+  else if(md>3.5&&md<4.5){ float y0=u*R.y*1.2-R.y*.1; g=.15+exp(-pow((P.y-y0)/max(A.w,10.),2.))*1.6; }
+  else if(md>4.5){ g=smoothstep(.55,.85,fbm(vec2((P.x-t*700.)*.004,P.y*.05+1.3)))*1.4; }
+  float a=A.z*e*g;
+  s=vec4(c*a*(md>3.5?1.3:1.),md>3.5?a*.8:a);`;
+
+    // RAGGIO fra due punti, che cresce da (x,y) a (z,w); spessore B.w.
+    CORPI[T.LINE] = `
+  vec2 p1=A.xy; vec2 p2=A.zw; float gr=smoothstep(0.,.35,u);
+  vec2 pe=mix(p1,p2,gr); vec2 pa=P-p1; vec2 ba=pe-p1;
+  float hh=clamp(dot(pa,ba)/max(dot(ba,ba),1.),0.,1.); float d=length(pa-ba*hh);
+  float w=B.w; float core=exp(-d*d/(w*w*.25)); float glow=exp(-d*d/(w*w*8.));
+  float pul=.7+.3*sin(hh*30.-t*20.); float e=1.-smoothstep(.55,1.,u);
+  s=vec4(mix(c,vec3(1.),.5)*(core*1.5+glow*.6)*pul*e,clamp((core+glow*.5)*e,0.,1.));`;
+
+    // COLONNA di luce che sale da (x,y) fino al bordo alto.
+    CORPI[T.PILLAR] = `
+  float dx=abs(P.x-A.x); float len=max(A.y,1.); float rel=clamp((A.y-P.y)/len,0.,1.);
+  float body=smoothstep(A.z,A.z*.2,dx)*step(P.y,A.y)*(1.-rel*.8);
+  float stk=.7+.5*fbm(vec2(P.x*.05,P.y*.01-t*3.)); float e=campana(u,.15,.4);
+  s=vec4(c*body*stk*e*1.1,clamp(body*e*.7,0.,1.));`;
+
+    // FUMO: macchia che si dissolve (un colore scuro oscura invece di illuminare). A.w: opacita'.
+    CORPI[T.SMOKE] = `
+  float d=length(P-A.xy)/A.z; float nn=fbm(P*.02+vec2(u*1.5,0.));
+  float a=smoothstep(1.,.2,d+(nn-.5)*.9)*campana(u,.15,.6)*A.w;
+  s=vec4(c*a,a*.9);`;
+
+    // VORAGINE / varco: ellisse scura con bordo luminoso e spirale.
+    CORPI[T.PIT] = `
+  vec2 q=(P-A.xy)/A.z; q.y/=max(B.w,.05); float rr=length(q);
+  float e=campana(u,.2,.25); float hole=smoothstep(1.,.92,rr); float rim=exp(-pow((rr-1.)/.07,2.));
+  float sw=pow(.5+.5*sin(4.*(atan(q.y,q.x)+3.*rr)-t*6.),3.)*hole*.35*e;
+  vec4 d2=vec4(c*rim*e*1.4,rim*e*.8); vec4 d1=vec4(0.,0.,0.,hole*.95*e);
+  s=d2+d1*(1.-d2.a); s.rgb+=c*sw;`;
+
+    // TROMBA D'ARIA: imbuto che si allarga verso l'alto (base in (x,y), altezza A.w, semilarghezza in cima A.z).
+    CORPI[T.TWISTER] = `
+  float yy=(A.y-P.y)/A.w;
+  if(yy>0.&&yy<1.){
+    float hw=A.z*(.15+.85*yy); float dx=(P.x-A.x)/hw+sin(yy*8.-t*9.)*.15;
+    float body=smoothstep(1.,.5,abs(dx)); float strk=pow(.5+.5*sin(dx*5.+yy*14.-t*12.),2.);
+    float g=body*(.35+.65*strk); float e=campana(u,.2,.3);
+    s=vec4(c*g*e,clamp(g*.8*e,0.,1.));
+  }`;
+
+    // LUNA crescente con alone.
+    CORPI[T.MOON] = `
+  float d1=length(P-A.xy)/A.z; float d2=length(P-A.xy-vec2(A.z*.45,-A.z*.08))/A.z;
+  float moon=smoothstep(1.,.97,d1)*(1.-smoothstep(1.,.97,d2)); float halo=exp(-d1*d1*1.2)*.3; float e=campana(u,.2,.3);
+  s=vec4(c*(moon*1.3+halo)*e,clamp((moon+halo*.6)*e,0.,1.));`;
+
+    // CUORE che pulsa.
+    CORPI[T.HEART] = `
+  vec2 p=(P-A.xy)/(A.z*(1.+.08*sin(t*14.))); p.y=-p.y;
+  float x=p.x*1.25; float y=p.y*1.25+.15;
+  float f=pow(x*x+y*y-1.,3.)-x*x*y*y*y;
+  float box=step(abs(p.x),1.1)*step(abs(p.y),1.1);
+  float inn=smoothstep(.03,-.03,f)*box; float edge=exp(-f*f*60.)*box; float e=campana(u,.2,.3);
+  s=vec4(c*(inn*.7+edge*1.2)*e,clamp((inn*.8+edge*.5)*e,0.,1.));`;
+
+    // OCCHIO con pupilla a fessura.
+    CORPI[T.EYE] = `
+  vec2 q=(P-A.xy)/A.z; float lens=.45*(1.-q.x*q.x);
+  float ed=abs(abs(q.y)-lens)*step(abs(q.x),1.); float line=exp(-ed*ed*400.);
+  float inside=step(abs(q.y),lens)*step(abs(q.x),1.);
+  float iris=smoothstep(.3,.26,length(q))*inside; float pup=smoothstep(.07,.04,abs(q.x))*smoothstep(.3,.24,abs(q.y))*inside;
+  float e=campana(u,.2,.3); float gl=exp(-dot(q,q)*1.5)*.25;
+  s=vec4(c*(line*1.3+iris*.9-pup*.9+gl)*e,clamp((line+iris+gl*.5)*e,0.,1.));`;
+
+    // CAPPELLO a cono con tesa e fascia.
+    CORPI[T.HAT] = `
+  vec2 q=(P-A.xy)/A.z; float brim=smoothstep(1.,.92,length(vec2(q.x/.9,(q.y-.25)/.14)));
+  float hw=.5*(q.y+.85)/1.1; float cone=step(-.85,q.y)*step(q.y,.25)*smoothstep(hw,hw*.85,abs(q.x));
+  float band=step(.05,q.y)*step(q.y,.17)*cone;
+  float e=campana(u,.2,.3);
+  vec3 cc=mix(c,vec3(1.,.85,.3),band);
+  s=vec4(cc*(brim*.9+cone*.8)*e*1.2,clamp((brim+cone)*e,0.,1.));`;
+
+    // SFERA con coda che viaggia da (x,y) a (z,w); raggio B.w.
+    CORPI[T.ORB] = `
+  float acc=0.;
+  for(int j=0;j<6;j++){
+    float uu=clamp(u-float(j)*.025,0.,1.); float ee=easeIO(uu);
+    vec2 pos=mix(A.xy,A.zw,ee); pos.y-=sin(PI*ee)*60.;
+    float d=length(P-pos); acc+=exp(-d*d/(B.w*B.w*(1.+float(j)*.6)))*(1.-float(j)*.15);
+  }
+  float e=1.-smoothstep(.85,1.,u);
+  s=vec4(c*acc*1.4*e,clamp(acc*e,0.,1.));`;
+
+    // PANNELLO tecnologico: cornice e righe di scansione (semi-larghezza A.z, semi-altezza A.w).
+    CORPI[T.PANEL] = `
+  vec2 q=abs(P-A.xy)-vec2(A.z,A.w); float sd=max(q.x,q.y); float e=campana(u,.12,.2);
+  float fr=exp(-sd*sd/2.5); float fill=step(sd,0.)*(.12+.1*sin(P.y*.8-t*6.));
+  s=vec4(c*(fr*1.4+fill)*e,clamp((fr+fill)*e,0.,1.));`;
+
+    // MONETA che vola, gira e si ferma sulla faccia giusta (B.w: 1 = testa). A.w: altezza del lancio.
+    CORPI[T.COIN] = `
+  float f=clamp(u/.7,0.,1.);
+  float arc=sin(PI*f); vec2 pos=vec2(A.x,A.y-A.w*arc);
+  float th=f*PI*2.*5.+(B.w>.5?0.:PI); float cs=cos(th); float sq=max(abs(cs),.07);
+  float sh=exp(-pow(length((P-vec2(A.x,A.y+A.z*.9))/vec2(A.z*(1.-.4*arc),A.z*.25*(1.-.4*arc))),2.)*2.)*(.45-.3*arc);
+  vec2 q=(P-pos)/A.z; q.y/=sq; float rr=length(q);
+  float disc=smoothstep(1.,.96,rr); float rim=smoothstep(.8,.9,rr)*disc;
+  float sym=0.;
+  if(cs>0.){ sym=smoothstep(.05,.0,abs(rr-.42))+smoothstep(.2,.17,rr); }
+  else { sym=step(abs(q.x),.5)*(smoothstep(.07,.04,abs(q.y+.3))+smoothstep(.07,.04,abs(q.y))+smoothstep(.07,.04,abs(q.y-.3))); }
+  float spec=.5+.5*sin(q.x*3.+th*2.);
+  vec3 gold=mix(vec3(.75,.5,.12),vec3(1.,.9,.5),spec*.6+rim*.4)-sym*.35*vec3(1.,1.,.8);
+  float fade=1.-smoothstep(.9,1.,u);
+  vec4 coin=vec4(gold*disc*fade,disc*fade);
+  s=coin+vec4(0.,0.,0.,sh*fade)*(1.-coin.a);`;
+
+    // DADO che rotola e si ferma sul numero estratto (B.w). A.w: altezza del lancio.
+    CORPI[T.DIE] = `
+  float f=clamp(u/.7,0.,1.); float arc=sin(PI*f)*(1.-.35*f);
+  vec2 pos=vec2(A.x+(1.-f)*-40.,A.y-A.w*arc*.8);
+  float ang=(1.-easeOut(f))*PI*5.;
+  vec2 q=P-pos; q=vec2(cos(ang)*q.x+sin(ang)*q.y,-sin(ang)*q.x+cos(ang)*q.y)/A.z;
+  float sh=exp(-pow(length((P-vec2(A.x,A.y+A.z*.9))/vec2(A.z*1.1,A.z*.25)),2.)*2.)*(.4-.25*arc);
+  vec2 bq=abs(q)-vec2(.82); float sd=length(max(bq,0.))+min(max(bq.x,bq.y),0.)-.14;
+  float body=smoothstep(.02,-.02,sd);
+  float val=mix(floor(mod(f*24.,6.))+1.,B.w,step(.7,f));
+  float pp=dado(q/.82,val);
+  vec3 cc=mix(vec3(.95,.93,.88),vec3(.7,.68,.62),smoothstep(-.3,.8,q.y))*(1.-pp*.9)+vec3(.15,.02,.02)*pp;
+  float fade=1.-smoothstep(.9,1.,u);
+  vec4 dv=vec4(cc*body*fade,body*fade);
+  s=dv+vec4(0.,0.,0.,sh*fade)*(1.-dv.a);`;
+
+    /** Il programma di un tipo (costruito una volta sola e messo in cache dal motore). */
+    const SORGENTI = {};
+    function sorgente(tipo) {
+        if (!SORGENTI[tipo]) {
+            SORGENTI[tipo] = COMUNE + 'void main(){\n  vec2 P=css(); vec2 R=r*k; vec4 A=IA; vec4 B=IB; float u=(t-B.x)/B.y; vec3 c=col; vec4 s=vec4(0.);\n'
+                + '  if(u>=0.&&u<=1.){' + CORPI[tipo] + '\n  }\n  gl_FragColor=s;\n}\n';
+        }
+        return SORGENTI[tipo];
+    }
+
+    /** Il riquadro (px CSS, y dall'alto) che una primitiva puo' toccare; null = tutto lo schermo. */
+    function bbox(tipo, A, w) {
+        const x = A[0]; const y = A[1]; const z = A[2]; const q = A[3]; const tl = Math.max(w, 0.05); let e;
+        switch (tipo) {
+            case T.FLASH: e = z * 2.4; return [x - e, y - e, x + e, y + e];
+            case T.RING: e = z + q * 4 + 4; return [x - e, y - e, x + e, y + e];
+            case T.BOLT: e = 60 + z * 6; return [x - e, 0, x + e, y + 4];
+            case T.BURST: e = z + Math.abs(q) + 12; return [x - e, y - e, x + e, y + e];
+            case T.SEAL: case T.VORTEX: return [x - z * 1.15, y - z * 1.15 * tl - 4, x + z * 1.15, y + z * 1.15 * tl + 4];
+            case T.WASH: return null;
+            case T.LINE: e = w * 4 + 8; return [Math.min(x, z) - e, Math.min(y, q) - e, Math.max(x, z) + e, Math.max(y, q) + e];
+            case T.PILLAR: e = z * 1.2; return [x - e, 0, x + e, y];
+            case T.SMOKE: e = z * 1.5; return [x - e, y - e, x + e, y + e];
+            case T.PIT: return [x - z * 1.2, y - z * 1.2 * tl - 4, x + z * 1.2, y + z * 1.2 * tl + 4];
+            case T.TWISTER: e = z * 1.3; return [x - e, y - q, x + e, y + 2];
+            case T.MOON: e = z * 3; return [x - e, y - e, x + e, y + e];
+            case T.HEART: case T.EYE: case T.HAT: e = z * 1.5; return [x - e, y - e, x + e, y + e];
+            case T.ORB: e = w * 5 + 70; return [Math.min(x, z) - e, Math.min(y, q) - e, Math.max(x, z) + e, Math.max(y, q) + e];
+            case T.PANEL: return [x - z - 20, y - q - 20, x + z + 20, y + q + 20];
+            default: e = z * 3; return [x - e, y - q - e, x + e, y + e];   // moneta e dado
+        }
+    }
+    // =====================================================================
+    // Strumenti
+    // =====================================================================
+
+    const tavolo = (o) => (o === 'player' ? 'playerFieldBoard' : 'botFieldBoard');
+    const slotEl = (owner, tipo, i) => document.querySelector(`#${tavolo(owner)} .field-slot[data-owner="${owner}"][data-type="${tipo}"][data-index="${i}"]`);
+    const rectDi = (el) => { if (!el) return null; const r = el.getBoundingClientRect(); return r.width ? r : null; };
+    const cen = (r) => ({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
+    /** Rettangolo della carta (o, se non c'e', della casella) di un mostro. */
+    const rectMostro = (owner, i) => { const s = slotEl(owner, 'monster', i); return rectDi(s && s.querySelector('.card')) || rectDi(s); };
+    const rectSt = (owner, i) => { const s = slotEl(owner, 'st', i); return rectDi(s && s.querySelector('.card')) || rectDi(s); };
+    const rectZona = (owner, zona) => rectDi(document.querySelector(`#${tavolo(owner)} .field-slot[data-owner="${owner}"][data-zone="${zona}"]`));
+    const easeIO = (x) => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
+    const easeOut = (x) => 1 - Math.pow(1 - Math.max(0, Math.min(1, x)), 3);
+    const lerp = (a, b, k) => a + (b - a) * k;
+
+    function Scena() { this.v = []; this.cb = []; this.fan = []; }
+    /** Aggiunge una primitiva: tipo, colore, inizio e durata in secondi, parametri A=[x,y,a,b] e w. */
+    Scena.prototype.add = function (tipo, col, t0, dur, A, w) { if (this.v.length < MAX) this.v.push([tipo, col, t0, dur, A, w || 0]); return this; };
+    Scena.prototype.dopo = function (ms, fn) { this.cb.push([ms, fn]); return this; };
+
+    function sfx(nome, ms) {
+        setTimeout(() => { try { if (window.SFX && typeof window.SFX[nome] === 'function') window.SFX[nome](); } catch (e) { /* un suono non rompe il duello */ } }, ms || 0);
+    }
+
+    /** Una callback da cui dipende il duello: parte una volta sola, qualunque cosa succeda. */
+    function unaVolta(fn) { let fatto = false; return function () { if (fatto) return; fatto = true; if (typeof fn === 'function') fn(); }; }
+
+    /** I tipi di primitiva usati da una scena (ognuno e' un programma da compilare). */
+    const tipiDi = (sc) => Array.from(new Set(sc.v.map((e) => e[0])));
+
+    /** Disegna una scena al tempo `t`: una passata ristretta per ogni primitiva attiva. */
+    function disegnaScena(sc, t, ctx) {
+        sc.v.forEach((e) => {
+            const tipo = e[0]; const t0 = e[2]; const dur = e[3]; const A = e[4]; const w = e[5];
+            if (t < t0 || t > t0 + dur) return;
+            const c = COLORI[e[1]] || COLORI[0];
+            ctx.passata('scena-' + tipo, sorgente(tipo), t, bbox(tipo, A, w), (u, g) => {
+                g.uniform4f(u('IA'), A[0], A[1], A[2], A[3]); g.uniform4f(u('IB'), t0, dur, 0, w); g.uniform3f(u('col'), c[0], c[1], c[2]);
+            });
+        });
+    }
+
+    /**
+     * Lancia la scena. Se WebGL manca o uno dei programmi non compila, lancia PRIMA che cambi qualsiasi
+     * cosa (nessuna cinematica aperta, nessuna callback programmata) e effects.js passa al backend successivo.
+     */
+    function esegui(sc, durMs) {
+        verifica(sc);
+        window.FxWebgl.lancia('scena', null, durMs / 1000 + 0.1, null, null, (t, ctx) => disegnaScena(sc, t, ctx));
+        window.FX.beginSummonCinematic();
+        let chiuso = false;
+        setTimeout(() => { if (chiuso) return; chiuso = true; window.FX.endSummonCinematic(); }, durMs);
+        sc.cb.forEach((c) => setTimeout(() => { try { c[1](); } catch (e) { console.warn('[FX webgl]', e); } }, c[0]));
+        sc.fan.forEach((f) => { try { f(); } catch (e) { /* una carta fantasma non rompe nulla */ } });
+        return durMs;
+    }
+
+    /** Controlla che WebGL ci sia e che i programmi della scena compilino (e' lo stesso che li prepara in cache). */
+    function verifica(sc) {
+        tipiDi(sc).forEach((tipo) => { if (!window.FxWebgl.compilabile('scena-' + tipo, sorgente(tipo))) throw new Error('shader-non-compilato'); });
+    }
+    /** Una carta vera (elemento della pagina) animata con SOLA transform/opacita': f(u) -> {x,y,s,rot,rx,ry,op} (x,y = angolo alto-sinistro). */
+    function fantasma(card, rect, f, delayMs, durMs) {
+        if (!card || typeof window.createCardElement !== 'function') return;
+        const g = window.createCardElement(card);
+        Object.assign(g.style, {
+            position: 'fixed', left: '0px', top: '0px', width: `${rect.width}px`, height: `${rect.height}px`, margin: '0',
+            zIndex: String(Z + 6), pointerEvents: 'none', transition: 'none', filter: 'none', willChange: 'transform, opacity', transformOrigin: '50% 50%'
+        });
+        document.body.appendChild(g);
+        const N = 16; const frames = [];
+        for (let s = 0; s <= N; s++) {
+            const u = s / N; const q = f(u);
+            frames.push({
+                transform: `translate3d(${q.x.toFixed(1)}px, ${q.y.toFixed(1)}px, 0) perspective(800px) rotateX(${(q.rx || 0).toFixed(1)}deg) rotateY(${(q.ry || 0).toFixed(1)}deg) rotate(${(q.rot || 0).toFixed(1)}deg) scale(${(q.s == null ? 1 : q.s).toFixed(3)})`,
+                opacity: q.op == null ? 1 : q.op, offset: u
+            });
+        }
+        const a = g.animate(frames, { duration: durMs, delay: delayMs, easing: 'linear', fill: 'both' });
+        a.onfinish = () => g.remove();
+        setTimeout(() => g.remove(), delayMs + durMs + 500);
+    }
+
+    /** Scritta che compare, resta e svanisce (transform e opacita'). */
+    function testo(str, x, y, delayMs, durMs, opz) {
+        const o = opz || {};
+        const el = document.createElement('div');
+        el.textContent = str;
+        el.style.cssText = `position:fixed;left:${x}px;top:${y}px;z-index:${Z + 7};pointer-events:none;white-space:nowrap;`
+            + `font:900 ${o.size || 28}px system-ui,sans-serif;letter-spacing:.14em;color:${o.color || '#fff'};`
+            + `text-shadow:0 0 14px ${o.glow || '#fff'},0 2px 0 rgba(0,0,0,.6);opacity:0;will-change:transform,opacity;`;
+        document.body.appendChild(el);
+        const a = el.animate([
+            { opacity: 0, transform: 'translate(-50%,-50%) scale(.6)' },
+            { opacity: 1, transform: 'translate(-50%,-50%) scale(1.1)', offset: .15 },
+            { opacity: 1, transform: 'translate(-50%,-50%) scale(1)', offset: .75 },
+            { opacity: 0, transform: 'translate(-50%,-50%) scale(1.04)' }
+        ], { duration: durMs, delay: delayMs, fill: 'both' });
+        a.onfinish = () => el.remove();
+        setTimeout(() => el.remove(), delayMs + durMs + 500);
+    }
+
+    // =====================================================================
+    // Gli spettacoli
+    // =====================================================================
+
+    const imp = {};
+
+    /** Forza dello Specchio: lastra davanti al difensore e cinque raggi sui mostri in Attacco. */
+    imp.playMirrorForce = function (attackerOwner, attackIndices) {
+        const allowed = Array.isArray(attackIndices) ? new Set(attackIndices.map(Number)) : null;
+        const targets = Array.from(document.querySelectorAll(`#${tavolo(attackerOwner)} .field-slot[data-owner="${attackerOwner}"][data-type="monster"]`))
+            .filter((s) => !allowed || allowed.has(Number(s.dataset.index))).map((s) => rectDi(s.querySelector('.card'))).filter(Boolean);
+        if (!targets.length) return 0;
+        const W = innerWidth; const H = innerHeight; const mx = W / 2; const my = attackerOwner === 'player' ? H * 0.37 : H * 0.63; const m = Math.min(W, H);
+        const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 2.1, [0, 0, 0.5, 0], 3);
+        s.add(T.SEAL, C.CIANO, 0.05, 1.5, [mx, my, m * 0.2, 0], 0.5);
+        s.add(T.FLASH, C.BIANCO, 0.3, 0.5, [mx, my, m * 0.22, 0]);
+        s.add(T.RING, C.CIANO, 0.32, 0.8, [mx, my, m * 0.3, 6]);
+        targets.slice(0, 5).forEach((r, i) => {
+            const c = cen(r); const t0 = 0.76 + i * 0.055;
+            s.add(T.LINE, C.BIANCO, 0.36 + i * 0.055, 0.62, [mx, my, c.x, c.y], 8);
+            s.add(T.FLASH, C.CALDO, t0, 0.5, [c.x, c.y, r.width * 1.1, 0]);
+            s.add(T.RING, C.CIANO, t0, 0.6, [c.x, c.y, r.width * 1.2, 5]);
+            s.add(T.BURST, C.CALDO, t0, 0.8, [c.x, c.y, r.width * 1.2, 40], i + 1);
+        });
+        const d = esegui(s, 2200); sfx('activateTrap', 0); return d;
+    };
+
+    /** Cilindro Magico: due portali deviano il colpo verso la mano dell'attaccante. */
+    imp.playMagicCylinder = function (attackerOwner, attackerIndex, damagedOwner, damage) {
+        const attacker = rectDi(document.querySelector(`#${tavolo(attackerOwner)} .field-slot[data-owner="${attackerOwner}"][data-type="monster"][data-index="${attackerIndex}"] .card`));
+        const anchor = rectDi(document.querySelector(damagedOwner === 'player' ? '#playerHand' : '#botHand'));
+        if (!attacker || !anchor) return 0;
+        const from = cen(attacker); const to = cen(anchor);
+        const en = { x: from.x + (to.x - from.x) * 0.28, y: from.y + (to.y - from.y) * 0.24 };
+        const ex = { x: from.x + (to.x - from.x) * 0.64, y: from.y + (to.y - from.y) * 0.62 };
+        const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 2.1, [0, 0, 0.45, 0], 3);
+        s.add(T.VORTEX, C.CIANO, 0.1, 1.4, [en.x, en.y, 70, 0], 1);
+        s.add(T.VORTEX, C.VIOLA, 0.2, 1.4, [ex.x, ex.y, 70, 0], 1);
+        s.add(T.SEAL, C.VIOLA, 0.1, 1.6, [ex.x, ex.y, 105, 0], 0.5);
+        s.add(T.LINE, C.CIANO, 0.25, 0.55, [from.x, from.y, en.x, en.y], 9);
+        s.add(T.LINE, C.BIANCO, 0.55, 0.55, [en.x, en.y, ex.x, ex.y], 11);
+        s.add(T.LINE, C.MAGENTA, 0.95, 0.55, [ex.x, ex.y, to.x, to.y], 10);
+        s.add(T.FLASH, C.CALDO, 1.45, 0.6, [to.x, to.y, 90, 0]);
+        s.add(T.RING, C.ARANCIO, 1.45, 0.7, [to.x, to.y, 130, 6]);
+        s.add(T.BURST, C.ORO, 1.45, 0.8, [to.x, to.y, 130, 60], 3);
+        if (damage) testo(`-${damage} LP`, to.x, to.y, 1500, 900, { size: 34, color: '#ffd9d0', glow: '#ff5040' });
+        const d = esegui(s, 2200); sfx('directHit', 900); return d;
+    };
+
+    /** Rinascita del Mostro: l'Ankh estrae la carta dal Cimitero e la deposita sul Terreno (onImpact all'arrivo). */
+    imp.playMonsterReborn = function (graveyardOwner, card, targetOwner, targetIndex, onImpact) {
+        const target = rectDi(slotEl(targetOwner, 'monster', targetIndex));
+        if (!target || typeof window.createCardElement !== 'function') { if (typeof onImpact === 'function') onImpact(); return 0; }
+        const gr = rectZona(graveyardOwner, 'graveyard');
+        const sx = gr ? gr.left + gr.width / 2 : innerWidth / 2; const sy = gr ? gr.top + gr.height / 2 : innerHeight / 2;
+        const e = cen(target);
+        const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 1.8, [0, 0, 0.5, 0], 3);
+        s.add(T.VORTEX, C.ORO, 0, 1.2, [sx, sy, Math.max(60, target.width), 0], 0.8);
+        s.add(T.SEAL, C.ORO, 0.35, 1.5, [e.x, e.y, target.width * 1.5, 0], 0.5);
+        s.add(T.PILLAR, C.ORO, 0.7, 1.0, [e.x, e.y, target.width * 0.55, 0], 1);
+        s.add(T.LINE, C.ORO, 0.1, 0.7, [sx, sy, e.x, e.y], 5);
+        s.add(T.FLASH, C.CALDO, 1.0, 0.7, [e.x, e.y, target.width * 1.4, 0]);
+        s.add(T.RING, C.ORO, 1.1, 0.7, [e.x, e.y, target.width * 1.6, 5]);
+        s.add(T.BURST, C.ORO, 1.1, 0.9, [e.x, e.y, target.width * 1.4, -30], 7);
+        const w = Math.max(52, target.width); const h = w * (target.height / target.width);
+        fantasma(card, { width: w, height: h }, (u) => {
+            const k = easeIO(u);
+            return { x: lerp(sx - w / 2, e.x - w / 2, k), y: lerp(sy - h / 2, e.y - h / 2, k) - Math.sin(Math.PI * k) * 70, s: lerp(0.35, 1, k), rot: (1 - k) * 160, ry: (1 - k) * 80, op: u < 0.12 ? u / 0.12 : 1 };
+        }, 150, 950);
+        const imp1 = unaVolta(onImpact);
+        s.dopo(1120, imp1); s.dopo(1900, imp1);
+        const d = esegui(s, 1900); sfx('summon', 0); return d;
+    };
+
+    /** Buco Trappola: la casella si apre e il mostro cade nella voragine. */
+    imp.playTrapHole = function (owner, index, card) {
+        const rect = rectDi(slotEl(owner, 'monster', index)); if (!rect) return 0;
+        const c = cen(rect); const py = rect.top + rect.height * 0.72;
+        const s = new Scena();
+        s.add(T.PIT, C.ARANCIO, 0, 1.4, [c.x, py, rect.width * 0.85, 0], 0.4);
+        s.add(T.SMOKE, C.CALDO, 0.35, 1.0, [c.x, py, rect.width * 1.0, 0.45]);
+        s.add(T.BURST, C.ARANCIO, 0.55, 0.8, [c.x, py, rect.width * 0.9, 60], 2);
+        if (card) fantasma(card, rect, (u) => { const k = u * u; return { x: rect.left, y: rect.top + k * rect.height * 0.55, s: 1 - 0.7 * k, rot: k * 30, rx: k * 55, op: u > 0.8 ? (1 - u) / 0.2 : 1 }; }, 330, 800);
+        const d = esegui(s, 1450); sfx('destroy', 570); return d;
+    };
+
+    /** Tributo Torrenziale: un fronte d'acqua attraversa entrambi i campi. */
+    imp.playTorrentialTribute = function () {
+        const W = innerWidth; const H = innerHeight; const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 1.7, [0, 0, 0.5, 0], 3);
+        s.add(T.PILLAR, C.GHIACCIO, 0.1, 1.5, [W * 0.2, H, W * 0.16, 0], 1);
+        s.add(T.PILLAR, C.CIANO, 0.2, 1.4, [W * 0.5, H, W * 0.2, 0], 1);
+        s.add(T.PILLAR, C.GHIACCIO, 0.15, 1.5, [W * 0.8, H, W * 0.16, 0], 1);
+        s.add(T.WASH, C.CIANO, 0.25, 1.4, [0, 0, 0.35, 0], 2);
+        s.add(T.SMOKE, C.BIANCO, 0.5, 1.2, [W * 0.3, H * 0.55, W * 0.28, 0.5]);
+        s.add(T.SMOKE, C.BIANCO, 0.6, 1.1, [W * 0.7, H * 0.5, W * 0.26, 0.5]);
+        const d = esegui(s, 1800); sfx('destroy', 720); return d;
+    };
+
+    /** Anello della Distruzione: collare esplosivo e onda verso i LP. */
+    imp.playRingOfDestruction = function (owner, index, damage) {
+        const rect = rectMostro(owner, index); if (!rect) return 0;
+        const c = cen(rect); const W = innerWidth; const H = innerHeight;
+        const pl = { x: W * 0.88, y: H * 0.9 }; const bo = { x: W * 0.12, y: H * 0.1 };
+        const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 1.7, [0, 0, 0.45, 0], 3);
+        s.add(T.RING, C.ORO, 0.1, 0.55, [c.x, c.y, rect.width * 1.1, 4], -1);
+        s.add(T.SEAL, C.ARANCIO, 0.05, 1.0, [c.x, c.y, rect.width * 0.85, 0], 1);
+        s.add(T.FLASH, C.ROSSO, 0.62, 0.7, [c.x, c.y, rect.width * 1.8, 0]);
+        s.add(T.RING, C.ARANCIO, 0.62, 0.8, [c.x, c.y, rect.width * 2.4, 6]);
+        s.add(T.BURST, C.ORO, 0.62, 0.9, [c.x, c.y, rect.width * 2, 50], 4);
+        s.add(T.LINE, C.ARANCIO, 0.75, 0.6, [c.x, c.y, pl.x, pl.y], 9);
+        s.add(T.LINE, C.ARANCIO, 0.75, 0.6, [c.x, c.y, bo.x, bo.y], 9);
+        s.add(T.FLASH, C.ROSSO, 1.1, 0.5, [pl.x, pl.y, 90, 0]);
+        s.add(T.FLASH, C.ROSSO, 1.1, 0.5, [bo.x, bo.y, 90, 0]);
+        if (damage) { testo(`-${damage} LP`, pl.x, pl.y - 40, 1100, 600, { size: 30, color: '#ffd9d0', glow: '#ff3a2a' }); testo(`-${damage} LP`, bo.x, bo.y + 40, 1100, 600, { size: 30, color: '#ffd9d0', glow: '#ff3a2a' }); }
+        const d = esegui(s, 1750); sfx('destroy', 650); return d;
+    };
+
+    /** Tempesta Pesante: nubi e raffiche sulle file M/T, poi risolve il lotto. */
+    imp.playHeavyStorm = function (onImpact) {
+        const W = innerWidth; const H = innerHeight; const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 1.7, [0, 0, 0.6, 0], 1);
+        s.add(T.SMOKE, C.SCURO, 0, 1.6, [W * 0.3, H * 0.15, W * 0.35, 0.9]);
+        s.add(T.SMOKE, C.SCURO, 0.1, 1.5, [W * 0.75, H * 0.2, W * 0.35, 0.9]);
+        s.add(T.WASH, C.GHIACCIO, 0.1, 1.5, [0, 0, 0.55, 0], 5);
+        s.add(T.WASH, C.CIANO, 0.35, 1.3, [0, 0, 0.45, 0], 5);
+        s.add(T.BURST, C.BIANCO, 0.5, 1.2, [W * 0.3, H * 0.45, W * 0.3, 0], 2);
+        s.add(T.BURST, C.BIANCO, 0.6, 1.1, [W * 0.7, H * 0.55, W * 0.3, 0], 5);
+        s.add(T.FLASH, C.BIANCO, 1.05, 0.5, [W / 2, H / 2, Math.min(W, H) * 0.6, 0]);
+        s.add(T.RING, C.GHIACCIO, 1.05, 0.7, [W / 2, H / 2, Math.min(W, H) * 0.7, 8]);
+        const imp1 = unaVolta(onImpact); s.dopo(1050, imp1); s.dopo(1800, imp1);
+        const d = esegui(s, 1800); sfx('wind', 0); return d;
+    };
+
+    /** Tifone dello Spazio Mistico: un imbuto di vento solleva la carta e la strappa dal Terreno. */
+    imp.playMysticalSpaceTyphoon = function (owner, index, onImpact) {
+        const rect = rectDi(slotEl(owner, 'st', index));
+        if (!rect) { if (typeof onImpact === 'function') onImpact(); return 0; }
+        const c = cen(rect); const s = new Scena(); const sz = Math.max(rect.width * 2.7, 150);
+        s.add(T.SEAL, C.CIANO, 0, 1.5, [c.x, rect.bottom, sz * 0.5, 0], 0.3);
+        s.add(T.TWISTER, C.GHIACCIO, 0, 1.5, [c.x, rect.bottom, sz * 0.42, sz * 1.45]);
+        s.add(T.TWISTER, C.CIANO, 0.15, 1.3, [c.x, rect.bottom, sz * 0.3, sz * 1.2]);
+        s.add(T.FLASH, C.BIANCO, 0.78, 0.6, [c.x, c.y, rect.width * 1.5, 0]);
+        s.add(T.BURST, C.GHIACCIO, 0.82, 0.7, [c.x, c.y, sz * 0.5, 30], 6);
+        let carta = null;
+        try { const arr = owner === 'player' ? window.gameState.playerSTField : window.gameState.botSTField; carta = arr && arr[index] && arr[index].card; } catch (e) { carta = null; }
+        if (carta) fantasma(carta, rect, (u) => { const k = u * u; return { x: rect.left + Math.sin(u * 14) * rect.width * 0.18 * u, y: rect.top - k * rect.height * 1.4, rot: u * 720, s: 1 - 0.55 * k, op: u > 0.7 ? (1 - u) / 0.3 : 1 }; }, 150, 750);
+        const imp1 = unaVolta(onImpact); s.dopo(820, imp1); s.dopo(1540, imp1);
+        const d = esegui(s, 1540); sfx('wind', 0); return d;
+    };
+
+    /** Occhio/cuore sul bersaglio prima del normale viaggio di controllo. */
+    imp.playMindControl = function (card, owner, index, mode) {
+        const rect = rectMostro(owner, index); if (!rect) return 0;
+        const c = cen(rect); const s = new Scena(); const heart = mode === 'heart';
+        s.add(T.WASH, C.SCURO, 0, 1.2, [0, 0, 0.35, 0], 3);
+        s.add(T.SEAL, heart ? C.MAGENTA : C.VIOLA, 0.05, 1.1, [c.x, c.y, rect.width * 1.1, 0], 1);
+        s.add(T.VORTEX, heart ? C.MAGENTA : C.VIOLA, 0.1, 1.0, [c.x, c.y, rect.width * 0.9, 0], 1);
+        if (heart) s.add(T.HEART, C.MAGENTA, 0.15, 1.0, [c.x, c.y, rect.width * 0.6, 0]);
+        else s.add(T.EYE, C.VIOLA, 0.15, 1.0, [c.x, c.y, rect.width * 0.8, 0]);
+        s.add(T.RING, heart ? C.MAGENTA : C.VIOLA, 0.55, 0.6, [c.x, c.y, rect.width * 1.5, 5]);
+        const d = esegui(s, 1250); sfx('activateSpell', 0); return d;
+    };
+
+    /** Richiamo degli Infestati: nebbia, catene e il mostro che risale dal Cimitero. */
+    imp.playCallOfTheHaunted = function (owner, card, targetIndex, onImpact) {
+        const target = rectDi(slotEl(owner, 'monster', targetIndex));
+        if (!target || typeof window.createCardElement !== 'function') { if (typeof onImpact === 'function') onImpact(); return 0; }
+        const gr = rectZona(owner, 'graveyard');
+        const sx = gr ? gr.left + gr.width / 2 : innerWidth / 2; const sy = gr ? gr.top + gr.height / 2 : innerHeight / 2; const e = cen(target);
+        const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 1.7, [0, 0, 0.55, 0], 3);
+        s.add(T.SMOKE, C.VERDE, 0, 1.5, [sx, sy, Math.max(120, target.width * 2), 0.5]);
+        s.add(T.SEAL, C.VERDE, 0.05, 1.3, [sx, sy, Math.max(70, target.width), 0], 0.5);
+        s.add(T.LINE, C.VERDE, 0.2, 0.8, [sx - target.width * 0.5, sy, e.x - target.width * 0.4, e.y], 6);
+        s.add(T.LINE, C.VERDE, 0.28, 0.8, [sx + target.width * 0.5, sy, e.x + target.width * 0.4, e.y], 6);
+        s.add(T.SEAL, C.VIOLA, 0.6, 1.0, [e.x, e.y, target.width * 1.3, 0], 0.5);
+        s.add(T.FLASH, C.VERDE, 1.0, 0.7, [e.x, e.y, target.width * 1.4, 0]);
+        s.add(T.RING, C.VERDE, 1.05, 0.7, [e.x, e.y, target.width * 1.5, 5]);
+        const w = Math.max(52, target.width); const h = w * (target.height / target.width);
+        fantasma(card, { width: w, height: h }, (u) => { const k = easeIO(u); return { x: lerp(sx - w / 2, e.x - w / 2, k), y: lerp(sy - h / 2, e.y - h / 2, k) - Math.sin(Math.PI * k) * 50, s: lerp(0.4, 1, k), rot: (1 - k) * -120, op: u < 0.15 ? u / 0.15 : 1 }; }, 200, 900);
+        const imp1 = unaVolta(onImpact); s.dopo(1060, imp1); s.dopo(1750, imp1);
+        const d = esegui(s, 1750); sfx('activateTrap', 0); return d;
+    };
+
+    /** Buco Trappola senza Fondo: portale dimensionale viola. */
+    imp.playBottomlessTrapHole = function (owner, index, card) {
+        const rect = rectDi(slotEl(owner, 'monster', index)); if (!rect) return 0;
+        const c = cen(rect); const py = rect.top + rect.height * 0.72;
+        const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 1.5, [0, 0, 0.4, 0], 3);
+        s.add(T.PIT, C.VIOLA, 0, 1.5, [c.x, py, rect.width * 1.05, 0], 0.4);
+        s.add(T.VORTEX, C.MAGENTA, 0.1, 1.2, [c.x, py, rect.width * 1.0, 0], 0.4);
+        s.add(T.RING, C.VIOLA, 0.45, 0.8, [c.x, py, rect.width * 1.5, 5]);
+        if (card) fantasma(card, rect, (u) => { const k = u * u; return { x: lerp(rect.left, c.x - rect.width / 2, k), y: lerp(rect.top, py - rect.height / 2, k), s: 1 - 0.95 * k, rot: k * 420, rx: k * 60, op: u > 0.85 ? (1 - u) / 0.15 : 1 }; }, 300, 950);
+        const d = esegui(s, 1550); sfx('destroy', 620); return d;
+    };
+
+    /** Armatura Sakuretsu: piastre in prospettiva serrano l'attaccante e collassano. */
+    imp.playSakuretsuArmor = function (owner, index) {
+        const rect = rectMostro(owner, index); if (!rect) return 0;
+        const c = cen(rect); const w = rect.width; const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 1.4, [0, 0, 0.4, 0], 3);
+        [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([dx, dy], i) => s.add(T.LINE, C.ORO, 0.05 + i * 0.05, 0.5, [c.x + dx * w * 1.5, c.y + dy * w * 1.2, c.x + dx * w * 0.5, c.y + dy * w * 0.4], 12));
+        s.add(T.RING, C.ARANCIO, 0.25, 0.5, [c.x, c.y, w * 1.4, 5], -1);
+        s.add(T.SEAL, C.ORO, 0.2, 0.9, [c.x, c.y, w * 0.8, 0], 1);
+        s.add(T.FLASH, C.CALDO, 0.62, 0.6, [c.x, c.y, w * 1.6, 0]);
+        s.add(T.RING, C.ORO, 0.62, 0.7, [c.x, c.y, w * 2.2, 6]);
+        s.add(T.BURST, C.ORO, 0.62, 0.8, [c.x, c.y, w * 1.8, 60], 8);
+        const d = esegui(s, 1450); sfx('destroy', 650); return d;
+    };
+
+    /** Giudizio Solenne: tribunale celeste e sigillo che tronca l'azione negata. */
+    imp.playSolemnJudgment = function (owner, cost) {
+        const W = innerWidth; const H = innerHeight; const cy = owner === 'player' ? H * 0.66 : H * 0.34; const s = new Scena();
+        s.add(T.WASH, C.CALDO, 0, 1.7, [0, 0, 0.5, 0], 1);
+        s.add(T.PILLAR, C.ORO, 0.1, 1.4, [W / 2, H * 0.62, W * 0.12, 0], 1);
+        s.add(T.SEAL, C.ORO, 0.25, 1.35, [W / 2, cy, Math.min(W, H) * 0.24, 0], 0.55);
+        s.add(T.FLASH, C.CALDO, 0.45, 0.6, [W / 2, cy, Math.min(W, H) * 0.3, 0]);
+        s.add(T.RING, C.ORO, 0.45, 0.8, [W / 2, cy, Math.min(W, H) * 0.4, 6]);
+        testo('ANNULLATO', W / 2, H / 2, 450, 1200, { size: Math.min(54, W * 0.07), color: '#fff3c8', glow: '#ffb400' });
+        if (cost) testo(`-${cost} LP`, W / 2, H / 2 + 50, 650, 1000, { size: 26, color: '#ffd9d0', glow: '#ff5040' });
+        const d = esegui(s, 1750); sfx('activateTrap', 0); return d;
+    };
+
+    /** Libro della Luna: luna e sigillo sullo slot, la carta si ribalta. */
+    imp.playBookOfMoon = function (owner, index, card) {
+        const rect = rectMostro(owner, index); if (!rect) return 0;
+        const c = cen(rect); const w = rect.width; const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 1.25, [0, 0, 0.4, 0], 3);
+        s.add(T.SEAL, C.BLU, 0.05, 1.1, [c.x, c.y, w * 1.2, 0], 0.5);
+        s.add(T.MOON, C.GHIACCIO, 0.05, 1.2, [c.x, c.y - w * 0.95, w * 0.7, 0]);
+        s.add(T.PILLAR, C.BLU, 0.2, 0.9, [c.x, c.y, w * 0.4, 0], 1);
+        s.add(T.RING, C.GHIACCIO, 0.5, 0.6, [c.x, c.y, w * 1.4, 5]);
+        if (card) fantasma(card, rect, (u) => { const k = easeIO(u); return { x: rect.left, y: rect.top - Math.sin(Math.PI * k) * 18, ry: k * 180, s: 1 + 0.08 * Math.sin(Math.PI * k), op: u > 0.9 ? (1 - u) / 0.1 : 1 }; }, 200, 800);
+        const d = esegui(s, 1300); sfx('activateSpell', 0); return d;
+    };
+
+    /** Virus Distruggi-Carte: scansione infetta sugli slot colpiti. */
+    imp.playCrushCardVirus = function (owner, targetIndices) {
+        const victim = owner === 'player' ? 'bot' : 'player'; const allowed = new Set((targetIndices || []).map(Number));
+        const targets = Array.from(document.querySelectorAll(`#${tavolo(victim)} .field-slot[data-owner="${victim}"][data-type="monster"]`))
+            .filter((sl) => allowed.has(Number(sl.dataset.index))).map((sl) => rectDi(sl.querySelector('.card'))).filter(Boolean);
+        const W = innerWidth; const H = innerHeight; const s = new Scena();
+        s.add(T.WASH, C.VERDE, 0, 1.7, [0, 0, 0.3, 0], 3);
+        s.add(T.VORTEX, C.VERDE, 0.05, 1.4, [W / 2, H / 2, Math.min(W, H) * 0.25, 0], 0.7);
+        s.add(T.WASH, C.VERDE, 0.2, 1.1, [0, 0, 0.6, 38], 4);
+        targets.slice(0, 5).forEach((r, i) => { const c = cen(r); const t0 = 0.42 + i * 0.09;
+            s.add(T.PANEL, C.VERDE, t0, 0.9, [c.x, c.y, r.width * 0.72, r.height * 0.58]);
+            s.add(T.FLASH, C.VERDE, t0 + 0.2, 0.5, [c.x, c.y, r.width * 1.1, 0]);
+            s.add(T.BURST, C.VERDE, t0 + 0.2, 0.7, [c.x, c.y, r.width * 1.2, 30], i + 3); });
+        testo('VIRUS DISTRUGGI-CARTE', W / 2, H * 0.5, 250, 1400, { size: Math.min(34, W * 0.045), color: '#d4ffd8', glow: '#2eea58' });
+        const d = esegui(s, 1800); sfx('activateTrap', 0); return d;
+    };
+
+    /** Nega Attacco: un varco assorbe il colpo. */
+    imp.playNegateAttack = function (attackerOwner, attackerIndex) {
+        const rect = rectMostro(attackerOwner, attackerIndex); if (!rect) return 0;
+        const p = cen(rect); const W = innerWidth; const H = innerHeight; const gx = W / 2; const gy = H / 2; const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 1.5, [0, 0, 0.5, 0], 3);
+        s.add(T.VORTEX, C.BLU, 0.1, 1.3, [gx, gy, Math.min(W, H) * 0.16, 0], 0.55);
+        s.add(T.SEAL, C.CIANO, 0.1, 1.3, [gx, gy, Math.min(W, H) * 0.2, 0], 0.55);
+        s.add(T.LINE, C.ROSSO, 0.2, 0.6, [p.x, p.y, gx, gy], 10);
+        s.add(T.FLASH, C.CIANO, 0.7, 0.6, [gx, gy, Math.min(W, H) * 0.22, 0]);
+        s.add(T.RING, C.CIANO, 0.7, 0.7, [gx, gy, Math.min(W, H) * 0.35, 6]);
+        testo('ATTACCO NEGATO', gx, gy + Math.min(W, H) * 0.3, 350, 1100, { size: Math.min(40, W * 0.05), color: '#d8f4ff', glow: '#3fb6ff' });
+        const d = esegui(s, 1550); sfx('activateTrap', 0); return d;
+    };
+
+    /** Capro Espiatorio: spiriti sugli slot dei Token appena creati. */
+    imp.playScapegoat = function (owner, tokenIndices) {
+        const targets = (tokenIndices || []).map((i) => rectDi(slotEl(owner, 'monster', i))).filter(Boolean);
+        if (!targets.length) return 0;
+        const W = innerWidth; const H = innerHeight; const s = new Scena();
+        s.add(T.WASH, C.GHIACCIO, 0, 1.6, [0, 0, 0.25, 0], 3);
+        targets.slice(0, 5).forEach((r, i) => { const c = cen(r); const t0 = i * 0.105;
+            s.add(T.SMOKE, C.BIANCO, t0 + 0.1, 1.2, [c.x, c.y, r.width * 1.0, 0.3]);
+            s.add(T.FLASH, C.GHIACCIO, t0 + 0.25, 0.7, [c.x, c.y, r.width * 0.7, 0]);
+            s.add(T.RING, C.CIANO, t0 + 0.3, 0.7, [c.x, c.y, r.width * 1.3, 4]);
+            s.add(T.BURST, C.BIANCO, t0 + 0.3, 0.8, [c.x, c.y, r.width * 1.1, -25], i + 2); });
+        testo('CAPRO ESPIATORIO', W / 2, owner === 'player' ? H * 0.4 : H * 0.6, 200, 1350, { size: Math.min(34, W * 0.045), color: '#f0fbff', glow: '#7ee0ff' });
+        const d = esegui(s, 1650); sfx('activateSpell', 0); return d;
+    };
+
+    /** Scatola Mistica: due cabine, lama e passaggio di controllo. */
+    imp.playMysticBox = function (destroyedTarget, offeredTarget) {
+        if (!destroyedTarget || !offeredTarget) return 0;
+        const rd = rectDi(slotEl(destroyedTarget.owner, 'monster', destroyedTarget.index));
+        const ro = rectDi(slotEl(offeredTarget.owner, 'monster', offeredTarget.index));
+        if (!rd || !ro) return 0;
+        const a = cen(rd); const b = cen(ro); const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 1.7, [0, 0, 0.45, 0], 3);
+        s.add(T.PANEL, C.VIOLA, 0.1, 1.3, [a.x, a.y, rd.width * 0.8, rd.height * 0.65]);
+        s.add(T.PANEL, C.CIANO, 0.15, 1.3, [b.x, b.y, ro.width * 0.8, ro.height * 0.65]);
+        s.add(T.PILLAR, C.MAGENTA, 0.2, 1.1, [a.x, a.y, rd.width * 0.35, 0], 1);
+        s.add(T.LINE, C.BIANCO, 0.5, 0.6, [a.x - rd.width, a.y - rd.height, a.x + rd.width, a.y + rd.height], 7);
+        s.add(T.ORB, C.CIANO, 0.7, 0.8, [a.x, a.y, b.x, b.y], 16);
+        s.add(T.FLASH, C.CALDO, 0.9, 0.6, [a.x, a.y, rd.width * 1.3, 0]);
+        s.add(T.RING, C.CIANO, 1.4, 0.6, [b.x, b.y, ro.width * 1.4, 5]);
+        if (destroyedTarget.card) fantasma(destroyedTarget.card, rd, (u) => ({ x: rd.left + (u > 0.35 ? Math.sin(u * 60) * 4 : 0), y: rd.top, s: u > 0.5 ? Math.max(0.02, 1 - (u - 0.5) * 2) : 1, op: u > 0.5 ? 1 - (u - 0.5) * 2 : 1 }), 200, 1100);
+        const d = esegui(s, 1750); sfx('activateSpell', 0); return d;
+    };
+
+    /** Rimozione del Limitatore: sovraccarica solo le Macchine coinvolte. */
+    imp.playLimiterRemoval = function (owner, machineIndices) {
+        const targets = (machineIndices || []).map((i) => rectMostro(owner, i)).filter(Boolean);
+        if (!targets.length) return 0;
+        const W = innerWidth; const H = innerHeight; const s = new Scena();
+        s.add(T.WASH, C.ROSSO, 0, 1.5, [0, 0, 0.3, 0], 3);
+        s.add(T.WASH, C.ARANCIO, 0.1, 1.2, [0, 0, 0.4, 28], 4);
+        targets.slice(0, 5).forEach((r, i) => { const c = cen(r); const t0 = i * 0.08;
+            s.add(T.SEAL, C.ARANCIO, t0, 1.2, [c.x, c.y, r.width * 0.95, 0], 1);
+            s.add(T.FLASH, C.ORO, t0 + 0.2, 0.6, [c.x, c.y, r.width * 1.3, 0]);
+            s.add(T.RING, C.ROSSO, t0 + 0.3, 0.7, [c.x, c.y, r.width * 1.6, 5]);
+            s.add(T.BURST, C.ORO, t0 + 0.3, 0.8, [c.x, c.y, r.width * 1.5, 30], i + 1); });
+        testo('LIMITATORE RIMOSSO', W / 2, owner === 'player' ? H * 0.42 : H * 0.58, 250, 1250, { size: Math.min(34, W * 0.045), color: '#fff0d0', glow: '#ff7a1a' });
+        const d = esegui(s, 1600); sfx('activateSpell', 0); return d;
+    };
+
+    /** Incantesimo Ombra: catene d'ombra sull'attaccante. */
+    imp.playShadowSpell = function (owner, index) {
+        const rect = rectMostro(owner, index); if (!rect) return 0;
+        const c = cen(rect); const w = rect.width; const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 1.35, [0, 0, 0.5, 0], 3);
+        s.add(T.SMOKE, C.SCURO, 0, 1.3, [c.x, c.y, w * 1.4, 0.9]);
+        s.add(T.SEAL, C.VIOLA, 0.1, 1.1, [c.x, c.y, w * 0.95, 0], 1);
+        [[-1, -1], [1, -1], [0, 1.4]].forEach(([dx, dy], i) => s.add(T.LINE, C.VIOLA, 0.1 + i * 0.07, 0.8, [c.x + dx * w * 1.6, c.y + dy * w * 1.3, c.x, c.y], 7));
+        s.add(T.FLASH, C.VIOLA, 0.55, 0.6, [c.x, c.y, w * 1.1, 0]);
+        const d = esegui(s, 1400); sfx('activateTrap', 0); return d;
+    };
+
+    /** Cerchio Ammaliante: sigillo sull'attaccante (la catena persistente la disegna il renderer). */
+    imp.playSpellbindingCircle = function (owner, index) {
+        const rect = rectMostro(owner, index); if (!rect) return 0;
+        const c = cen(rect); const w = rect.width; const s = new Scena();
+        s.add(T.SEAL, C.ORO, 0, 1.3, [c.x, c.y, w * 1.05, 0], 1);
+        s.add(T.SEAL, C.MAGENTA, 0.12, 1.1, [c.x, c.y, w * 0.7, 0], 1);
+        s.add(T.RING, C.ORO, 0.4, 0.8, [c.x, c.y, w * 1.5, 5]);
+        s.add(T.FLASH, C.CALDO, 0.35, 0.6, [c.x, c.y, w * 1.0, 0]);
+        const d = esegui(s, 1350); sfx('activateTrap', 0); return d;
+    };
+
+    /** Cappelli Magici: tre cappelli si materializzano sopra gli slot. */
+    imp.playMagicalHats = function (owner, indices) {
+        const targets = (indices || []).map((i) => rectDi(slotEl(owner, 'monster', i))).filter(Boolean);
+        if (!targets.length) return 0;
+        const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 1.6, [0, 0, 0.35, 0], 3);
+        targets.slice(0, 5).forEach((r, i) => { const c = cen(r); const t0 = i * 0.1;
+            s.add(T.SMOKE, C.VIOLA, t0, 1.0, [c.x, c.y, r.width * 1.0, 0.6]);
+            s.add(T.HAT, C.VIOLA, t0 + 0.1, 1.3, [c.x, c.y, r.width * 0.75, 0]);
+            s.add(T.BURST, C.ORO, t0 + 0.3, 0.8, [c.x, c.y, r.width * 1.1, -25], i + 1); });
+        const d = esegui(s, 1650); sfx('activateTrap', 0); return d;
+    };
+
+    /** Moltiplicazione: il Kuriboh centrale si divide verso i Token. */
+    imp.playMultiply = function (owner, sourceIndex, tokenIndices) {
+        const src = rectDi(slotEl(owner, 'monster', sourceIndex)); if (!src) return 0;
+        const a = cen(src); const s = new Scena();
+        s.add(T.SEAL, C.CALDO, 0, 1.2, [a.x, a.y, src.width * 0.9, 0], 1);
+        (tokenIndices || []).slice(0, 5).forEach((i, k) => { const r = rectDi(slotEl(owner, 'monster', i)); if (!r) return; const b = cen(r); const t0 = 0.1 + k * 0.08;
+            s.add(T.ORB, C.MAGENTA, t0, 0.8, [a.x, a.y, b.x, b.y], 14);
+            s.add(T.FLASH, C.ORO, t0 + 0.75, 0.5, [b.x, b.y, r.width * 1.0, 0]);
+            s.add(T.RING, C.MAGENTA, t0 + 0.75, 0.5, [b.x, b.y, r.width * 1.2, 4]); });
+        const d = esegui(s, 1550); sfx('activateSpell', 0); return d;
+    };
+
+    /** Controllore del Nemico: pannello e comando scelto. */
+    imp.playEnemyController = function (owner, index, mode) {
+        const rect = rectMostro(owner, index); if (!rect) return 0;
+        const c = cen(rect); const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 1.3, [0, 0, 0.35, 0], 3);
+        s.add(T.PANEL, C.CIANO, 0.05, 1.25, [c.x, c.y, rect.width * 1.08, rect.height * 0.68]);
+        s.add(T.PANEL, C.BLU, 0.2, 1.05, [c.x, c.y, rect.width * 0.9, rect.height * 0.5]);
+        s.add(T.FLASH, C.CIANO, 0.6, 0.5, [c.x, c.y, rect.width * 1.2, 0]);
+        testo(mode === 'controllo' ? 'CONTROL' : 'POSITION', c.x, c.y - rect.height * 0.15, 300, 950, { size: 20, color: '#d8f4ff', glow: '#3fb6ff' });
+        testo('↑ ↓ ← → A B', c.x, c.y + rect.height * 0.15, 400, 850, { size: 16, color: '#bfe9ff', glow: '#3fb6ff' });
+        const d = esegui(s, 1350); sfx('activateSpell', 0); return d;
+    };
+
+    /** Buco Dimensionale: varco netto sul proprio slot prima del bando. */
+    imp.playDimensionHole = function (owner, index, card) {
+        const rect = rectDi(slotEl(owner, 'monster', index)); if (!rect) return 0;
+        const c = cen(rect); const w = rect.width; const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 1.45, [0, 0, 0.4, 0], 3);
+        s.add(T.PIT, C.CIANO, 0, 1.4, [c.x, c.y, w * 0.95, 0], 1);
+        s.add(T.VORTEX, C.VIOLA, 0.05, 1.3, [c.x, c.y, w * 0.95, 0], 1);
+        s.add(T.RING, C.CIANO, 0.4, 0.8, [c.x, c.y, w * 1.5, 5]);
+        if (card) fantasma(card, rect, (u) => { const k = u * u; return { x: rect.left, y: rect.top, s: 1 - 0.97 * k, rot: k * 360, op: u > 0.85 ? (1 - u) / 0.15 : 1 }; }, 300, 900);
+        const d = esegui(s, 1450); return d;
+    };
+
+    /** Tornado di Polvere sulla singola Magia/Trappola. */
+    imp.playDustTornado = function (owner, index, onImpact) {
+        const rect = rectDi(slotEl(owner, 'st', index));
+        if (!rect) { if (typeof onImpact === 'function') onImpact(); return 0; }
+        const c = cen(rect); const sz = Math.max(rect.width * 2.5, 130); const s = new Scena();
+        s.add(T.SMOKE, C.CALDO, 0, 1.3, [c.x, rect.bottom, rect.width * 1.1, 0.6]);
+        s.add(T.TWISTER, C.CALDO, 0, 1.3, [c.x, rect.bottom, sz * 0.36, sz * 1.1]);
+        s.add(T.TWISTER, C.ARANCIO, 0.1, 1.1, [c.x, rect.bottom, sz * 0.26, sz * 0.9]);
+        s.add(T.BURST, C.CALDO, 0.88, 0.7, [c.x, c.y, sz * 0.4, 20], 9);
+        const imp1 = unaVolta(onImpact); s.dopo(900, imp1); s.dopo(1330, imp1);
+        const d = esegui(s, 1330); sfx('wind', 0); return d;
+    };
+
+    /** Piumino delle Arpie: folata larga sull'intera fila Magie/Trappole. */
+    imp.playHarpiesFeatherDuster = function (owner, onImpact) {
+        const rects = Array.from(document.querySelectorAll(`#${tavolo(owner)} .field-slot[data-owner="${owner}"][data-type="st"]`)).map(rectDi).filter(Boolean);
+        if (!rects.length) { if (typeof onImpact === 'function') onImpact(); return 0; }
+        const left = Math.min(...rects.map((r) => r.left)); const right = Math.max(...rects.map((r) => r.right));
+        const top = Math.min(...rects.map((r) => r.top)); const bottom = Math.max(...rects.map((r) => r.bottom));
+        const cy = (top + bottom) / 2; const s = new Scena();
+        s.add(T.WASH, C.CALDO, 0.1, 1.3, [0, 0, 0.5, 0], 5);
+        s.add(T.WASH, C.GHIACCIO, 0.3, 1.0, [0, 0, 0.4, 0], 5);
+        s.add(T.LINE, C.BIANCO, 0.05, 0.7, [left - 40, cy - 14, right + 40, cy - 14], 10);
+        s.add(T.LINE, C.GHIACCIO, 0.15, 0.7, [left - 40, cy + 12, right + 40, cy + 12], 9);
+        [0.2, 0.4, 0.6, 0.8].forEach((f, i) => s.add(T.BURST, C.BIANCO, 0.9 + i * 0.03, 0.8, [lerp(left, right, f), cy, (right - left) * 0.12, -20], i + 1));
+        s.add(T.FLASH, C.CALDO, 1.05, 0.5, [(left + right) / 2, cy, (right - left) * 0.4, 0]);
+        const imp1 = unaVolta(onImpact); s.dopo(1050, imp1); s.dopo(1570, imp1);
+        const d = esegui(s, 1570); sfx('wind', 0); return d;
+    };
+
+    // ---------------------------------------------------------------------
+    // Gli effetti "di tutti i giorni" (gia' sostituiti da GSAP, qui rifatti)
+    // ---------------------------------------------------------------------
+
+    imp.playBattleDestroyEffect = function (el) {
+        const r = rectDi(el); if (!r) return;
+        const c = cen(r); const s = new Scena();
+        s.add(T.FLASH, C.CALDO, 0, 0.5, [c.x, c.y, r.width * 1.2, 0]);
+        s.add(T.RING, C.ARANCIO, 0.03, 0.55, [c.x, c.y, r.width * 1.5, 4]);
+        s.add(T.BURST, C.ORO, 0, 0.7, [c.x, c.y, r.width * 1.5, 60], 3);
+        s.add(T.BURST, C.ROSSO, 0.04, 0.7, [c.x, c.y, r.width * 1.0, 40], 11);
+        s.add(T.SMOKE, C.SCURO, 0.1, 0.7, [c.x, c.y, r.width * 0.8, 0.45]);
+        breve(s, 0.85);
+    };
+
+    imp.playSummonShockwave = function (el) {
+        const r = rectDi(el); if (!r) return;
+        const c = cen(r); const s = new Scena();
+        // Evocazione normale (anche coperta): un solo anello morbido e un lampo leggero, nient'altro.
+        s.add(T.RING, C.ORO, 0, 0.55, [c.x, c.y, r.width * 1.15, 4]);
+        s.add(T.FLASH, C.CALDO, 0, 0.4, [c.x, c.y, r.width * 0.65, 0]);
+        breve(s, 0.65);
+    };
+
+    imp.playSummonCircle = function (el) {
+        const r = rectDi(el); if (!r) return;
+        const c = cen(r); const sz = Math.max(r.width, r.height) * 1.3; const s = new Scena();
+        // Come sopra: semplice. Un sigillo solo, che appare e svanisce, con un lampo sotto.
+        s.add(T.SEAL, C.ORO, 0, 0.8, [c.x, c.y, sz * 0.85, 0], 0.55);
+        s.add(T.FLASH, C.CALDO, 0.05, 0.45, [c.x, c.y, sz * 0.45, 0]);
+        breve(s, 0.9);
+    };
+
+    imp.playBattleClashEpic = function (a, b) {
+        const ra = rectDi(a); const rb = rectDi(b); const r = rb || ra; if (!r) return;
+        const ca = ra ? cen(ra) : null; const cb = rb ? cen(rb) : null; const p = cb || ca;
+        const mx = ca && cb ? (ca.x + cb.x) / 2 : p.x; const my = ca && cb ? (ca.y + cb.y) / 2 : p.y; const s = new Scena();
+        s.add(T.FLASH, C.BIANCO, 0, 0.5, [mx, my, r.width * 1.6, 0]);
+        s.add(T.RING, C.ORO, 0.02, 0.55, [mx, my, r.width * 2, 5]);
+        s.add(T.BURST, C.CALDO, 0, 0.6, [mx, my, r.width * 2, 40], 2);
+        s.add(T.BURST, C.ROSSO, 0.03, 0.6, [mx, my, r.width * 1.4, 30], 8);
+        breve(s, 0.75);
+        const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+        const cont = document.querySelector('.game-container');
+        if (cont && !coarse) { cont.classList.add('fx-clash-shake'); setTimeout(() => cont.classList.remove('fx-clash-shake'), 500); }
+    };
+
+    imp.playDamageEffect = function (amount, opts) {
+        const o = opts || {};
+        const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+        const cont = document.querySelector('.game-container');
+        if (cont && !coarse) { cont.classList.add('fx-shake'); setTimeout(() => cont.classList.remove('fx-shake'), 450); }
+        const s = new Scena();
+        s.add(T.WASH, C.ROSSO, 0, 0.5, [0, 0, 0.6, 0], 3);
+        if (o.anchorEl) { const r = rectDi(o.anchorEl); if (r) { const c = cen(r);
+            s.add(T.FLASH, C.ROSSO, 0, 0.5, [c.x, c.y, 90, 0]); s.add(T.RING, C.ROSSO, 0, 0.5, [c.x, c.y, 100, 4]); s.add(T.BURST, C.ROSSO, 0, 0.6, [c.x, c.y, 110, 50], 4); } }
+        breve(s, 0.65);
+    };
+
+    imp.playDrawEffect = function (el) {
+        const r = rectDi(el); if (!r) return;
+        const c = cen(r); const s = new Scena();
+        s.add(T.FLASH, C.GHIACCIO, 0, 0.4, [c.x, c.y, r.width * 0.9, 0]);
+        s.add(T.BURST, C.CIANO, 0, 0.45, [c.x, c.y, r.width * 0.9, 0], 6);
+        breve(s, 0.55);
+    };
+
+    /** Lancio della moneta: vola, gira e si ferma sulla faccia estratta. */
+    imp.playCoinFlip = function (heads) {
+        const W = innerWidth; const H = innerHeight; const s = new Scena(); const R = Math.min(W, H) * 0.075;
+        s.add(T.WASH, C.SCURO, 0, 1.75, [0, 0, 0.35, 0], 3);
+        s.add(T.COIN, C.ORO, 0, 1.75, [W / 2, H * 0.58, R, H * 0.3], heads ? 1 : 0);
+        s.add(T.FLASH, C.ORO, 1.2, 0.5, [W / 2, H * 0.58, R * 1.6, 0]);
+        // Come la versione di base, non apre una cinematica: e' un attimo, e il bot non deve aspettarlo.
+        breve(s, 1.75);
+        testo(heads ? 'TESTA' : 'CROCE', W / 2, H * 0.58 + R * 2.2, 1150, 500, { size: Math.min(34, W * 0.05), color: '#fff3c8', glow: '#ffb400' });
+    };
+
+    /** Lancio del dado: rotola e si ferma sul numero estratto. */
+    imp.playDiceRoll = function (result) {
+        const W = innerWidth; const H = innerHeight; const s = new Scena(); const R = Math.min(W, H) * 0.075;
+        s.add(T.WASH, C.SCURO, 0, 1.75, [0, 0, 0.35, 0], 3);
+        s.add(T.DIE, C.CALDO, 0, 1.75, [W / 2, H * 0.58, R, H * 0.25], Math.max(1, Math.min(6, Number(result) || 1)));
+        s.add(T.FLASH, C.CALDO, 1.2, 0.5, [W / 2, H * 0.58, R * 1.6, 0]);
+        breve(s, 1.75);
+        testo('RISULTATO: ' + Math.max(1, Math.min(6, Number(result) || 1)), W / 2, H * 0.58 + R * 2.2, 1150, 500, { size: Math.min(30, W * 0.045), color: '#ffffff', glow: '#7ee0ff' });
+    };
+
+    /** Per gli effetti brevi che NON aprono una cinematica (non fermano il bot, nessuna callback): solo il disegno. */
+    function breve(sc, durS) {
+        verifica(sc);
+        window.FxWebgl.lancia('scena', null, durS, null, null, (t, ctx) => disegnaScena(sc, t, ctx));
+    }
+    window.FX.registerBackend('webgl', { requires: ['FxWebglPronto'], impls: imp });
+    // Lo shader di scena e' grande: lo si compila a pagina tranquilla, non al primo effetto.
+    const scaldaTutto = () => Object.keys(CORPI).forEach((tipo) => window.FxWebgl.scalda('scena-' + tipo, sorgente(Number(tipo))));
+    if (window.requestIdleCallback) window.requestIdleCallback(scaldaTutto, { timeout: 5000 });
+    else setTimeout(scaldaTutto, 3000);
+    window.FxWebglScena = { T: T, C: C, Scena: Scena, esegui: esegui, NOMI: Object.keys(imp) };
+})();

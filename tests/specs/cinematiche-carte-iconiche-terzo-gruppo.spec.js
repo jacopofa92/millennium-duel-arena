@@ -6,6 +6,9 @@ const path = require('path');
 module.exports = {
     name: 'Cinematiche iconiche III: Bottomless, Sakuretsu, Giudizio, Libro e Virus',
     async run(t) {
+        // Questi spec provano le cinematiche in DOM/CSS (le versioni di base e il ripiego): gli spettacoli
+        // hanno anche una versione WebGL (js/ui/fx-webgl-scena.js), provata da fx-webgl-spettacoli.spec.js.
+        await t.page.evaluate(() => { window.FX_BACKEND = 'css'; });
         const root = path.join(__dirname, '..', '..');
         const effects = fs.readFileSync(path.join(root, 'js', 'ui', 'effects.js'), 'utf8');
         const css = fs.readFileSync(path.join(root, 'js', 'ui', 'effects.css'), 'utf8');
@@ -18,7 +21,7 @@ module.exports = {
         ];
 
         ['playBottomlessTrapHole', 'playSakuretsuArmor', 'playSolemnJudgment', 'playBookOfMoon', 'playCrushCardVirus']
-            .forEach((name) => t.assert(effects.includes(`function ${name}`) && effects.includes(`${name},`), `${name} deve essere implementato ed esposto`));
+            .forEach((name) => t.assert(effects.includes(`function ${name}`) && (effects.includes(`${name},`) || effects.includes(`${name}: viaBackend`)), `${name} deve essere implementato ed esposto`));
         ['.fx-bottomless-hole', '.fx-sakuretsu-armor', '.fx-solemn-judgment', '.fx-book-moon', '.fx-crush-virus']
             .forEach((selector) => t.assert(css.includes(selector), `${selector} deve avere una resa dedicata`));
         integrations.forEach(([file, call]) => {

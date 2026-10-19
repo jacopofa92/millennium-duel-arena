@@ -1682,7 +1682,7 @@
                 return;
             }
             // Cerchio magico generico: dura un attimo, non blocca nulla.
-            playSummonCircle(monsterElement);
+            runSummonCircle(monsterElement);
             chiudi();
         };
 
@@ -2569,6 +2569,8 @@
      * Evocazione di Livello 7+ puo' essere rimpiazzata da un backend.
      */
     const runElementalConvergence = viaBackend('playElementalConvergence', playElementalConvergence);
+    /** Idem per il cerchio di Evocazione, chiamato anche da playMonsterSummonEffect qui dentro. */
+    const runSummonCircle = viaBackend('playSummonCircle', playSummonCircle);
 
     /**
      * Spade Rivelatrici via backend, ma con una RETE DI SICUREZZA: il
@@ -2650,31 +2652,31 @@
         playDrawEffect: viaBackend('playDrawEffect', playDrawEffect),
         playRaigeki: raigekiWithSafetyNet,
         playDarkHoleVortex: viaBackend('playDarkHoleVortex', playDarkHoleVortex),
-        playMirrorForce,
-        playMagicCylinder,
-        playMonsterReborn,
-        playTrapHole,
-        playTorrentialTribute,
-        playRingOfDestruction,
-        playHeavyStorm,
-        playMysticalSpaceTyphoon,
-        playMindControl,
-        playCallOfTheHaunted,
-        playBottomlessTrapHole,
-        playSakuretsuArmor,
-        playSolemnJudgment,
-        playBookOfMoon,
-        playCrushCardVirus,
-        playNegateAttack,
-        playScapegoat,
-        playMysticBox,
-        playLimiterRemoval,
-        playShadowSpell,
-        playSpellbindingCircle,
-        playMagicalHats,
-        playMultiply,
-        playEnemyController,
-        playDimensionHole,
+        playMirrorForce: viaBackend('playMirrorForce', playMirrorForce),
+        playMagicCylinder: viaBackend('playMagicCylinder', playMagicCylinder),
+        playMonsterReborn: viaBackend('playMonsterReborn', playMonsterReborn),
+        playTrapHole: viaBackend('playTrapHole', playTrapHole),
+        playTorrentialTribute: viaBackend('playTorrentialTribute', playTorrentialTribute),
+        playRingOfDestruction: viaBackend('playRingOfDestruction', playRingOfDestruction),
+        playHeavyStorm: viaBackend('playHeavyStorm', playHeavyStorm),
+        playMysticalSpaceTyphoon: viaBackend('playMysticalSpaceTyphoon', playMysticalSpaceTyphoon),
+        playMindControl: viaBackend('playMindControl', playMindControl),
+        playCallOfTheHaunted: viaBackend('playCallOfTheHaunted', playCallOfTheHaunted),
+        playBottomlessTrapHole: viaBackend('playBottomlessTrapHole', playBottomlessTrapHole),
+        playSakuretsuArmor: viaBackend('playSakuretsuArmor', playSakuretsuArmor),
+        playSolemnJudgment: viaBackend('playSolemnJudgment', playSolemnJudgment),
+        playBookOfMoon: viaBackend('playBookOfMoon', playBookOfMoon),
+        playCrushCardVirus: viaBackend('playCrushCardVirus', playCrushCardVirus),
+        playNegateAttack: viaBackend('playNegateAttack', playNegateAttack),
+        playScapegoat: viaBackend('playScapegoat', playScapegoat),
+        playMysticBox: viaBackend('playMysticBox', playMysticBox),
+        playLimiterRemoval: viaBackend('playLimiterRemoval', playLimiterRemoval),
+        playShadowSpell: viaBackend('playShadowSpell', playShadowSpell),
+        playSpellbindingCircle: viaBackend('playSpellbindingCircle', playSpellbindingCircle),
+        playMagicalHats: viaBackend('playMagicalHats', playMagicalHats),
+        playMultiply: viaBackend('playMultiply', playMultiply),
+        playEnemyController: viaBackend('playEnemyController', playEnemyController),
+        playDimensionHole: viaBackend('playDimensionHole', playDimensionHole),
         playCoinFlip: viaBackend('playCoinFlip', playCoinFlip),
         playDiceRoll: viaBackend('playDiceRoll', playDiceRoll),
         // ATTENZIONE per chi scrivera' un backend per questa: i chiamanti
@@ -2743,14 +2745,14 @@
         /** Per chi mostra una scena di Evocazione propria (js/ui/grido-evocazione.js): il bot aspetta finché il contatore non torna a zero. */
         beginSummonCinematic,
         endSummonCinematic,
-        playSummonCircle,
+        playSummonCircle: runSummonCircle,
         playElementalConvergence: runElementalConvergence,
         playVideoOverlay,
         playMonsterSummonEffect,
         playFusionMaterialEffect,
         playRitualSummon,
-        playDustTornado,
-        playHarpiesFeatherDuster,
+        playDustTornado: viaBackend('playDustTornado', playDustTornado),
+        playHarpiesFeatherDuster: viaBackend('playHarpiesFeatherDuster', playHarpiesFeatherDuster),
         FUSION_MATERIAL_EFFECT_MS,
         playInstantWinCinematic,
         playCardActivateEffect,

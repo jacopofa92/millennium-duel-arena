@@ -7,13 +7,16 @@ const path = require('path');
 module.exports = {
     name: 'Cinematiche iconiche: integrazione e sincronizzazione delle cinque carte',
     async run(t) {
+        // Questi spec provano le cinematiche in DOM/CSS (le versioni di base e il ripiego): gli spettacoli
+        // hanno anche una versione WebGL (js/ui/fx-webgl-scena.js), provata da fx-webgl-spettacoli.spec.js.
+        await t.page.evaluate(() => { window.FX_BACKEND = 'css'; });
         const root = path.join(__dirname, '..', '..');
         const effects = fs.readFileSync(path.join(root, 'js', 'ui', 'effects.js'), 'utf8');
         const css = fs.readFileSync(path.join(root, 'js', 'ui', 'effects.css'), 'utf8');
         [
             'playMirrorForce', 'playMagicCylinder', 'playMonsterReborn',
             'playTrapHole', 'playTorrentialTribute'
-        ].forEach((name) => t.assert(effects.includes(`function ${name}`) && effects.includes(`${name},`), `${name} deve essere implementato ed esposto da FX`));
+        ].forEach((name) => t.assert(effects.includes(`function ${name}`) && (effects.includes(`${name},`) || effects.includes(`${name}: viaBackend`)), `${name} deve essere implementato ed esposto da FX`));
         [
             '.fx-mirror-disc', '.fx-cylinder', '.fx-reborn-ankh',
             '.fx-trap-hole', '.fx-torrential-wave'

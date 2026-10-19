@@ -6,11 +6,14 @@ const path = require('path');
 module.exports = {
     name: 'Cinematiche iconiche IV: Nega Attacco, Capro, Scatola, Limitatore e Ombra',
     async run(t) {
+        // Questi spec provano le cinematiche in DOM/CSS (le versioni di base e il ripiego): gli spettacoli
+        // hanno anche una versione WebGL (js/ui/fx-webgl-scena.js), provata da fx-webgl-spettacoli.spec.js.
+        await t.page.evaluate(() => { window.FX_BACKEND = 'css'; });
         const root = path.join(__dirname, '..', '..');
         const effects = fs.readFileSync(path.join(root, 'js', 'ui', 'effects.js'), 'utf8');
         const css = fs.readFileSync(path.join(root, 'js', 'ui', 'effects.css'), 'utf8');
         ['playNegateAttack', 'playScapegoat', 'playMysticBox', 'playLimiterRemoval', 'playShadowSpell']
-            .forEach((name) => t.assert(effects.includes(`function ${name}`) && effects.includes(`${name},`), `${name} deve essere implementato ed esposto`));
+            .forEach((name) => t.assert(effects.includes(`function ${name}`) && (effects.includes(`${name},`) || effects.includes(`${name}: viaBackend`)), `${name} deve essere implementato ed esposto`));
         ['.fx-negate-attack', '.fx-scapegoat', '.fx-mystic-box', '.fx-limiter-removal', '.fx-shadow-bind', '.shadow-spell-link']
             .forEach((selector) => t.assert(css.includes(selector), `${selector} deve avere una resa dedicata`));
 
