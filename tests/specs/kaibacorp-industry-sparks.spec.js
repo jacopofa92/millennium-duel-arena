@@ -3,6 +3,8 @@ module.exports = {
     async run(t) {
         await t.page.waitForFunction(() => window.FieldAmbience && window.VideoQuality && window.gsap);
         const result = await t.evaluate(async () => {
+            // Questo spec prova il percorso DOM/GSAP (il ripiego di js/ui/ambiente-webgl.js).
+            window.AMBIENTE_WEBGL_OFF = true;
             VideoQuality.set('alti');
             FieldAmbience.avvia('industriaKaibaCorp.jpg');
             FieldAmbience.raffica();

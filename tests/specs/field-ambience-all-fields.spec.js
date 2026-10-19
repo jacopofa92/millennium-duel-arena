@@ -19,6 +19,8 @@ module.exports = {
             const coperti = ambienti.flatMap((a) => a.campi).sort();
             const nomi = ambienti.map((a) => a.nome);
 
+            // Questo spec prova il percorso DOM/GSAP (il ripiego di js/ui/ambiente-webgl.js).
+            window.AMBIENTE_WEBGL_OFF = true;
             VideoQuality.set('alti');
             const avviato = FieldAmbience.avvia('campoAcquatico.jpg');
             FieldAmbience.raffica();

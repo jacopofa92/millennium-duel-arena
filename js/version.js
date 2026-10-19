@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.4.13 — Tutti gli ambienti dei campi (tranne la Grande Guerra) ridisegnati con shader WebGL: vento a velocita' costante, particelle, raggi, caustiche, fulmini, scansioni, scintille, un evento caratteristico per arena; regolatore di fps.
  * 1.4.12 — Ambiente WebGL: rumore senza sin() e precisione alta (sui telefoni il vento risultava invisibile), vento piu' visibile.
  * 1.4.11 — Ambiente del Dirigibile disegnato da uno shader WebGL (17 -> 44 fps misurati a CPU x4), con ripiego sugli strati DOM.
  * 1.4.10 — Prestazioni: su telefono e APK i Dettagli video partono da Normali (gli strati dell'ambiente del campo pesavano ~3x); chi ha scelto Alti li tiene.
@@ -768,4 +769,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.4.12';
+window.GAME_VERSION = '1.4.13';

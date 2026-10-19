@@ -283,11 +283,6 @@
         coreografia: 'ventoContinuo',
         pausa: [60, 260],
         ritmoCasuale: 'vento-continuo',
-        // Disegnato da js/ui/ambiente-webgl.js (un solo shader, niente strati
-        // con mix-blend-mode). Gli `strati` qui sotto restano come ripiego per
-        // chi non ha WebGL: li usa il percorso DOM/GSAP di sempre.
-        webgl: 'vento',
-        webglTinta: [0.9, 0.96, 1],
         tinta: PROFILI.vento.tinta,
         strati: [
             { classe: 'fa-vento-nube', piano: 'fondo', quota: .38, durata: 10.5, ritardo: 0, deriva: 18 },
@@ -401,8 +396,9 @@
             tinta: profilo.tinta || (() => TINTE_PROFILO[profiloNome]),
             pausa: profilo.pausa.slice(),
             ritmoCasuale: profilo.ritmoCasuale || null,
-            webgl: profilo.webgl || null,
-            webglTinta: profilo.webglTinta || null,
+            // Se js/ui/ambiente-webgl.js ha una voce per questa arena, la disegna
+            // lui (un solo shader); gli strati qui sotto restano come ripiego.
+            webgl: (window.AmbienteWebGL && window.AmbienteWebGL.NOMI.indexOf(nome) >= 0) ? nome : null,
             strati
         };
     }
@@ -1344,7 +1340,7 @@
         ferma();
         // Percorso WebGL: un canvas per piano, nessuna timeline GSAP. Se non
         // parte (niente WebGL, shader rifiutato) si cade negli strati DOM.
-        if (conWebgl && AmbienteWebGL.avvia(ambiente.webgl, { tinta: ambiente.webglTinta })) {
+        if (conWebgl && AmbienteWebGL.avvia(ambiente.webgl)) {
             ambienteAttivo = ambiente;
             if (sospeso()) AmbienteWebGL.sospendi(true);
             return true;
