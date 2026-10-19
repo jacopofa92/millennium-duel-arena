@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.4.19 — Backend WebGL degli spettacoli di carta (Buco Nero, Spade Rivelatrici, Raigeki) senza GSAP; effects.js sceglie il backend per effetto.
  * 1.4.18 — Effetti ambientali WebGL su tutte le mappe della Storia (macromappa, sei archi, aree, Memorie Proibite, Freedom, Grande Guerra) e citta' che scorre sotto il Dirigibile.
  * 1.4.17 — Fiamme piu' lente e morbide, e tutti i bracieri principali dei templi notturni (fino a 28 per arena).
  * 1.4.16 — Meno puntini di particelle ovunque (e nessuno in Torre Shadow, Torre Pegasus, Luna Blu, Colosseo, Montagna); proiettori olografici sulle colonne delle Torri Kaiba.
@@ -774,4 +775,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.4.18';
+window.GAME_VERSION = '1.4.19';

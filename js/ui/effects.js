@@ -2539,12 +2539,21 @@
      */
     function viaBackend(name, builtin) {
         return function () {
-            const backend = fxActiveBackend;
-            if (backend && typeof backend.impls[name] === 'function' && !fxPrefersReducedMotion()) {
-                try {
-                    return backend.impls[name].apply(null, arguments);
-                } catch (e) {
-                    console.warn(`[FX] backend "${backend.name}" fallito su ${name}, uso l'animazione di base:`, e);
+            // Il backend si sceglie PER EFFETTO: dall'ultimo registrato al primo, il primo pronto che
+            // rimpiazza QUESTA animazione. Cosi' un backend specializzato (es. js/ui/fx-webgl.js, che
+            // rifa' solo gli spettacoli piu' pesanti) convive con quello generale (fx-gsap.js) invece
+            // di spegnerlo. Se uno fallisce si prova il precedente, e infine la base.
+            if (!fxPrefersReducedMotion() && window.FX_BACKEND !== 'css') {
+                for (let i = fxBackends.length - 1; i >= 0; i--) {
+                    const backend = fxBackends[i];
+                    if (window.FX_BACKEND && backend.name !== window.FX_BACKEND) continue;
+                    if (typeof backend.impls[name] !== 'function') continue;
+                    if (!(backend.requires || []).every((global) => !!window[global])) continue;
+                    try {
+                        return backend.impls[name].apply(null, arguments);
+                    } catch (e) {
+                        console.warn(`[FX] backend "${backend.name}" fallito su ${name}, provo il successivo:`, e);
+                    }
                 }
             }
             return builtin.apply(null, arguments);

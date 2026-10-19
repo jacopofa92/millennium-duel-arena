@@ -5103,6 +5103,8 @@
      facciata lo attiva solo quando c'e'. Per tornare alle animazioni CSS
      basta togliere questa riga, oppure window.FX_BACKEND = 'css'. -->
 <script src="js/ui/fx-gsap.js"></script>
+<!-- Backend WebGL degli spettacoli piu' pesanti (Buco Nero, Spade Rivelatrici, Raigeki): va DOPO fx-gsap.js perche' effects.js sceglie il backend per effetto dall'ultimo registrato. -->
+<script src="js/ui/fx-webgl.js"></script>
 <!-- Vita ambientale del Terreno, configurata individualmente per ogni
      field. Come fx-gsap.js qui sopra è un modulo a sé che si avvia da
      solo e aspetta GSAP: si accende SOLO con i Dettagli video su "Alti"
