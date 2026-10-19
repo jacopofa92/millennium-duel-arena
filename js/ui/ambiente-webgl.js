@@ -252,6 +252,77 @@ vec4 m_glitch(vec2 uv,float t,vec3 c,float a,float ev){
   return vec4(c*al,al*.9);
 }`;
 
+    // Fronte di guerra, fondo: cannoneggiamento continuo. Niente evento a
+    // scadenza: tre "canali" con cicli di durata diversa (4.3 / 6 / 7.7 s)
+    // sorteggiano ognuno un punto d'impatto nuovo a ogni ciclo, quindi le
+    // esplosioni si sovrappongono e non cadono mai a ritmo regolare. Ogni
+    // impatto e' un lampo secco, una palla di fuoco, un anello d'urto e una
+    // nube di fumo che sale e si dissolve. Usa A = fuoco, B = fumo.
+    MOD.impatti = `
+vec4 impatto(vec2 p,vec2 o,float ph,float seme,vec3 fuoco,vec3 fumo){
+  float d=length(p-o);
+  float flash=exp(-d*d*220.)*smoothstep(.07,.0,ph)*1.6;
+  float R=.03+ph*.22;
+  float palla=smoothstep(R,R*.35,d)*(1.-smoothstep(.0,.3,ph))*smoothstep(.0,.015,ph);
+  float onda=exp(-pow((d-ph*.9)*28.,2.))*(1.-smoothstep(.0,.25,ph))*smoothstep(.0,.01,ph);
+  vec2 q=p-o-vec2(0.,ph*.12);
+  float Rf=.05+ph*.16;
+  float fu=smoothstep(Rf,Rf*.2,length(q*vec2(1.,1.2))+(fbm3(q*9.+seme)-.5)*.05)
+    *smoothstep(.0,.08,ph)*(1.-smoothstep(.35,1.,ph));
+  float aF=clamp(flash*.7+palla*.8+onda*.4,0.,1.);
+  vec4 luce=vec4(fuoco*(flash+palla*1.2+onda*.5),aF*.6);
+  vec4 nube=vec4(fumo*fu*.6,fu*.6);
+  return over(luce,nube);
+}
+vec4 m_impatti(vec2 uv,float asp,float t,vec3 fuoco,vec3 fumo,float a){
+  vec2 p=vec2(uv.x*asp,uv.y);
+  vec4 acc=vec4(0.);
+  for(int i=0;i<3;i++){
+    float fi=float(i);
+    float cyc=t/(4.3+fi*1.7)+fi*.37;
+    float id=floor(cyc);
+    float ph=fract(cyc)/.6;
+    if(ph<1.){
+      vec2 o=vec2((.2+.6*h(vec2(id,fi+1.)))*asp,.25+.5*h(vec2(id,fi+7.)));
+      acc=over(impatto(p,o,ph,id*3.1+fi,fuoco,fumo),acc);
+    }
+  }
+  // Artiglieria lontana: un lampo sul bordo alto o basso, fuori campo.
+  float cl=t/3.1;
+  float pl=fract(cl);
+  float xl=(.1+.8*h(vec2(floor(cl),21.)))*asp;
+  float lont=exp(-pow((p.x-xl)*1.6,2.))*(exp(-uv.y*6.)+exp(-(1.-uv.y)*6.))*smoothstep(.06,.0,pl)*.6;
+  acc=over(vec4(fuoco*lont,lont*.4),acc);
+  return acc*a;
+}`;
+
+    // Fronte di guerra, primo piano: proiettili traccianti verticali, in
+    // entrambi i versi. Sei canali con periodi diversi, non ogni ciclo
+    // spara (step su un hash): grappoli e pause arrivano da soli.
+    MOD.traccianti = `
+vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
+  vec2 p=vec2(uv.x*asp,uv.y);
+  float acc=0.;
+  for(int i=0;i<6;i++){
+    float fi=float(i);
+    float cyc=t/(1.3+fi*.37)+fi*.53;
+    float id=floor(cyc);
+    float u=fract(cyc)/.28;
+    float on=step(.45,h(vec2(id,fi+3.)))*step(u,1.);
+    float x=(.2+.6*h(vec2(id,fi+11.)))*asp;
+    float dir=h(vec2(id,fi+5.))<.5?-1.:1.;
+    float y0=dir>0.?.15:.85;
+    float head=y0+dir*clamp(u,0.,1.)*.55;
+    float along=(p.y-head)*-dir;
+    float seg=step(0.,along)*smoothstep(.07,0.,along);
+    float line=smoothstep(.0035,.0,abs(p.x-x))*seg;
+    float glow=smoothstep(.012,.0,abs(p.x-x))*seg*.35;
+    acc+=(line+glow)*on*(.7+.3*sin(t*60.+fi));
+  }
+  float al=clamp(acc*a,0.,1.);
+  return vec4(c*al*1.4,al*.9);
+}`;
+
     // Come si scrive la chiamata di ogni modulo (c = 'A' | 'B' | 'C').
     const f = (x) => (Number.isInteger(x) ? x.toFixed(1) : String(x));
     /** @type {Record<string, { def: Record<string, number>, call: (c: string, o: any) => string }>} */
@@ -278,6 +349,11 @@ vec4 m_glitch(vec2 uv,float t,vec3 c,float a,float ev){
             call: (c, o) => `m_flash(uv,asp,t,${c},${f(o.a)},ev)` },
         vortice: { def: { a: .35 },
             call: (c, o) => `m_vortice(uv,asp,t,${c},${f(o.a)},ev)` },
+        // impatti usa la tavolozza intera: A = fuoco, B = fumo (il colore del modulo e' ignorato).
+        impatti: { def: { a: 1 },
+            call: (c, o) => `m_impatti(uv,asp,t,A,B,${f(o.a)})` },
+        traccianti: { def: { a: 1 },
+            call: (c, o) => `m_traccianti(uv,asp,t,${c},${f(o.a)})` },
         glitch: { def: { a: .5 },
             call: (c, o) => `m_glitch(uv,t,${c},${f(o.a)},ev)` }
     };
@@ -512,6 +588,19 @@ vec4 m_glitch(vec2 uv,float t,vec3 c,float a,float ev){
             fondo: [['raggi', 'A', { ox: .5, cnt: 7, a: .32 }], ['braciere', 'B', { a: .38 }]],
             primo: [['particelle', 'C', { vx: .02, vy: .12, dens: 13, dim: .06, lamp: 1, osc: .2, forma: 1, a: .9 }]],
             ev: { ogni: [5, 10], dur: 4 }
+        },
+        // ---- Grande Guerra: fronte di battaglia -----------------------------------------
+        // Cannoneggiamento continuo senza evento a scadenza (vedi MOD.impatti):
+        // A = fuoco, B = fumo, C = traccianti.
+        'guerra-fronte-diurno': {
+            pal: [rgb(255, 196, 96), rgb(105, 92, 76), rgb(255, 232, 150)],
+            fondo: [['nebbia', 'B', { sc: 1.2, vel: .6, a: .3, y0: -.4, y1: .7 }], ['impatti', 'A', { a: 1 }]],
+            primo: [['traccianti', 'C', { a: 1 }], ['particelle', 'B', { vx: .1, vy: -.1, dens: 12, dim: .05, osc: .3, a: .6 }]]
+        },
+        'guerra-fronte-notturno': {
+            pal: [rgb(255, 160, 60), rgb(34, 36, 46), rgb(255, 177, 59)],
+            fondo: [['nebbia', 'B', { sc: 1.3, vel: .5, a: .45, y0: -.4, y1: .8 }], ['impatti', 'A', { a: 1.1 }]],
+            primo: [['traccianti', 'C', { a: 1.1 }], ['particelle', 'A', { vx: .06, vy: .2, dens: 12, dim: .05, lamp: 1, a: .8 }]]
         },
         'tempio-bracieri-horus': {
             pal: [rgb(255, 151, 48), rgb(255, 84, 20), rgb(255, 230, 150)],

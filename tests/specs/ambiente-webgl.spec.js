@@ -6,8 +6,7 @@
 // diverso"); (3) il fondo sta dietro le carte e il primo piano davanti, e
 // nessuno dei due intercetta il tocco; (4) senza WebGL (o con
 // AMBIENTE_WEBGL_OFF) si ripiega sugli strati di sempre; (5) con "Normali"
-// non resta nulla nel DOM; (6) le due arene della Grande Guerra restano sul
-// percorso DOM (non toccate, per richiesta esplicita).
+// non resta nulla nel DOM.
 const { openDuel } = require('../helpers/harness');
 
 module.exports = {
@@ -34,13 +33,11 @@ module.exports = {
             return out;
         });
         const conWebgl = giro.filter((g) => g.webgl);
-        assert(conWebgl.length >= 34, `Devono avere lo shader tutte le arene tranne la Grande Guerra: ${conWebgl.length}`);
+        assert(conWebgl.length === giro.length, `Devono avere lo shader tutte le arene (Grande Guerra compresa): ${conWebgl.length}/${giro.length}`);
         const rotte = conWebgl.filter((g) => !g.ok || g.strati !== 0 || g.canvas < 1);
         assert(rotte.length === 0, `Arene con shader che non parte o con strati DOM residui: ${JSON.stringify(rotte.map((g) => [g.nome, g.err]))}`);
         const firme = new Set(conWebgl.map((g) => g.src));
         assert(firme.size === conWebgl.length, 'Ogni arena deve avere uno shader proprio (nessuna coppia identica)');
-        const guerra = giro.filter((g) => /^guerra-/.test(g.nome));
-        assert(guerra.length === 2 && guerra.every((g) => !g.webgl), 'Le arene della Grande Guerra restano sul percorso DOM');
 
         // 2) piani e tocco (sul Dirigibile, che ha entrambi i piani)
         await page.evaluate(() => { FieldAmbience.avvia('dirigibileKaibaCorp.jpg'); });
