@@ -107,7 +107,7 @@
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         attivi = attivi.filter((a) => {
-            const t = (ora - a.avvio) / 1000;
+            const t = (typeof window.FX_WEBGL_T === 'number') ? window.FX_WEBGL_T : (ora - a.avvio) / 1000;
             if (t > a.durata) { if (a.fine) { try { a.fine(); } catch (e) { /* idem */ } } return false; }
             gl.useProgram(a.prog.p);
             const loc = gl.getAttribLocation(a.prog.p, 'p');
@@ -177,54 +177,86 @@ vec2 css(){vec2 f=gl_FragCoord.xy*k;return vec2(f.x,H-f.y);}
     // Buco Nero
     // ---------------------------------------------------------------------
 
-    const DURATA_BH = 2.25;
+    const DURATA_BH = 2.6;
+    // Un buco nero visto quasi di taglio: orizzonte nero con anello di fotoni, disco di accrescimento
+    // sottile e turbolento (il lato che si avvicina e' piu' luminoso), l'immagine lensata del lato
+    // lontano del disco che si piega sopra e sotto l'orizzonte, filamenti di materia che
+    // spiraleggiano dentro, e un collasso finale con onda d'urto.
     const FS_BH = BASE + `
 uniform vec2 c;       // centro, px CSS
 void main(){
+  const float DUR=${DURATA_BH.toFixed(2)};
   vec2 q=css()-c;
   float m=min(r.x,r.y)*k;       // lato corto in px CSS: tutto e' in unita' di m
-  vec2 p=q/m;
+  vec2 p=q/m;                   // y verso il basso
   float rr=length(p);
-  float ap=smoothstep(0.,.42,t);                          // il buco nero si apre
-  float fine=smoothstep(${(DURATA_BH - 0.3).toFixed(2)},${DURATA_BH.toFixed(2)},t);  // collassa
+  float ap=smoothstep(0.,.55,t);
+  float fine=smoothstep(DUR-.35,DUR,t);
   float v=ap*(1.-fine);
-  // Oscuramento: il buco nero si mangia anche la luce attorno.
-  float buio=smoothstep(.85,.0,rr)*.9*v;
-  // Disco di accrescimento: ellisse schiacciata in prospettiva che gira sempre piu' in fretta.
-  float tilt=mix(.3,.14,smoothstep(0.,${DURATA_BH.toFixed(2)},t));
+  float R=.062*mix(.3,1.,ap)*(1.-.35*fine);
+
+  // Oscuramento: la scena si spegne attorno.
+  float buio=smoothstep(.8,.05,rr)*.74*v;
+
+  // Filamenti di materia che spiraleggiano verso il centro.
+  float ang=atan(p.y,p.x);
+  float lr=log(rr+.02);
+  float fil=pow(.5+.5*sin(5.*(ang+.55*lr)+t*5.5),6.)*(.4+.8*fbm(vec2(ang*3.,lr*5.+t*2.)));
+  fil*=smoothstep(.6,.2,rr)*smoothstep(R*1.3,R*3.,rr)*v;
+
+  // Disco di accrescimento quasi di taglio, con rotazione differenziale.
+  float tilt=.11;
   vec2 d=vec2(p.x,p.y/tilt);
   float rd=length(d);
-  float th=atan(d.y,d.x);
-  float spin=t*t*2.4+t*1.5;
-  float rin=.085, rout=.32*mix(.5,1.,ap)*(1.-.7*fine);
-  float banda=smoothstep(rin,rin+.03,rd)*smoothstep(rout,rout-.12,rd);
-  float tex=fbm(vec2(th*2.+spin*.9-rd*9.,rd*16.));
-  float stria=.55+.7*tex;
-  // Effetto Doppler: il lato che si avvicina e' piu' luminoso.
-  float dop=.65+.55*cos(th+.6);
-  float calore=smoothstep(rout,rin,rd);
-  vec3 col=mix(vec3(.55,.2,1.),vec3(1.,.8,.5),calore*calore);
-  float disco=banda*stria*dop*v;
-  // Il metà superiore del disco si "piega" sopra l'orizzonte (lente gravitazionale): arco sottile.
-  float arco=exp(-pow((length(vec2(p.x,p.y*.9+.0))-.12)*26.,2.))*smoothstep(-.25,.4,p.y)*v;
-  // Orizzonte degli eventi + anello di fotoni.
-  float R=.075*ap*(1.-.2*fine);
-  float nero=smoothstep(R+.004,R-.004,rr);
-  float fotone=exp(-pow((rr-R)*70.,2.))*v;
-  // Lente: anello tenue che pulsa.
-  float lente=exp(-pow((rr-.34*mix(.6,1.,ap)-.015*sin(t*4.))*22.,2.))*.35*v;
-  // Onda d'urto del collasso.
-  float ce=max(0.,t-${(DURATA_BH - 0.22).toFixed(2)});
-  float onda=exp(-pow((rr-ce*2.2)*14.,2.))*smoothstep(0.,.05,ce)*(1.-smoothstep(.1,.22,ce));
-  vec3 luce=col*disco*1.4+vec3(1.,.82,.6)*(fotone*1.3+arco*.7)+vec3(.6,.3,1.)*(lente+onda*1.2);
-  float a=clamp(buio+disco*.85+fotone+arco*.6+lente+onda,0.,1.);
-  // Il nero dell'orizzonte copre tutto cio' che sta dietro.
-  vec4 o=vec4(luce,a);
+  float thd=atan(d.y,d.x);
+  float rin=R*1.55;
+  float rout=R*5.6*mix(.6,1.,ap);
+  float band=smoothstep(rin,rin*1.12,rd)*smoothstep(rout,rout*.55,rd);
+  float th2=thd-t*(1.2+3.5*R/max(rd,R));
+  vec2 uu=vec2(cos(th2),sin(th2))*(rd/R)*.9;
+  float turb=.3+.9*fbm(uu*1.3);
+  float dop=.5+.9*smoothstep(-1.,1.,-cos(thd));
+  float heat=smoothstep(rout,rin,rd);
+  vec3 col=mix(vec3(.95,.3,.06),vec3(1.,.92,.75),heat*heat);
+  float disco=band*turb*dop*(.6+1.6*heat)*v;
+  float dietro=step(p.y,0.)*smoothstep(R*.98,R*1.06,rr);
+
+  // Immagine lensata del lato lontano del disco: arco sopra l'orizzonte, uno piu' debole sotto.
+  float sopra=exp(-pow((rr-R*1.38)/(R*.2),2.))*smoothstep(R*.2,-R*.9,p.y);
+  float sotto=exp(-pow((rr-R*1.18)/(R*.11),2.))*smoothstep(-R*.2,R*.9,p.y)*.35;
+  float arco=(sopra+sotto)*(.5+.6*dop)*(.55+turb)*v;
+
+  float foto=exp(-pow((rr-R*1.06)/(R*.045),2.))*v;
+  float alone=exp(-rr*rr/(R*R*30.))*.35*v;
+  float nero=smoothstep(R,R*.96,rr);
+
+  // Collasso: onda d'urto e lampo.
+  float ce=max(0.,t-(DUR-.28));
+  float onda=exp(-pow((rr-ce*2.2)/.022,2.))*smoothstep(0.,.04,ce)*(1.-smoothstep(.1,.28,ce));
+  float lampo=exp(-rr*rr*40.)*smoothstep(0.,.05,ce)*(1.-smoothstep(.05,.28,ce));
+
+  vec3 L=vec3(.62,.7,1.)*fil*.55
+        +col*disco*dietro*1.6
+        +col*arco*1.3
+        +vec3(1.,.95,.85)*(foto*1.6+alone)
+        +vec3(.7,.75,1.)*(onda*1.2+lampo*1.5);
+  float a=clamp(buio+fil*.4+disco*dietro*.9+arco*.9+foto+alone*.5+onda+lampo,0.,1.);
+  vec4 o=vec4(L,a);
   o=vec4(o.rgb*(1.-nero),mix(o.a,1.,nero*v));
+  // La meta' bassa del disco passa DAVANTI all'orizzonte.
+  float davanti=step(0.,p.y)*band*turb*dop*v;
+  float af=clamp(davanti*.95,0.,1.);
+  o=vec4(col*davanti*1.8,af)+o*(1.-af);
   gl_FragColor=o;
 }`;
 
-    /** Le carte risucchiate: elementi veri della pagina, con una transizione CSS (come la versione di base). */
+    /**
+     * Le carte risucchiate: elementi veri della pagina (hanno la loro grafica), animati SOLO con
+     * transform e opacita' — le uniche proprieta' che il browser anima sulla GPU senza ricalcolare
+     * il layout. La versione di base animava left/top/width/height con una transizione e un
+     * drop-shadow, ed era quella a scattare. Ogni carta segue una spirale che si stringe verso
+     * il centro, si inclina e si rimpicciolisce.
+     */
     function fantasmiRisucchiati(sucked, cx, cy) {
         if (!Array.isArray(sucked) || typeof window.createCardElement !== 'function') return;
         sucked.forEach(({ card, rect }, i) => {
@@ -232,19 +264,41 @@ void main(){
             const ghost = window.createCardElement(card);
             ghost.classList.add('fx-darkhole-sucked');
             Object.assign(ghost.style, {
-                position: 'fixed', left: `${rect.left}px`, top: `${rect.top}px`,
+                position: 'fixed', left: '0px', top: '0px',
                 width: `${rect.width}px`, height: `${rect.height}px`, margin: '0',
-                zIndex: String(Z_INDEX + 6), pointerEvents: 'none', transitionDelay: `${230 + i * 35}ms`
+                zIndex: String(Z_INDEX + 6), pointerEvents: 'none',
+                transition: 'none', filter: 'none', willChange: 'transform, opacity',
+                transformOrigin: '50% 50%'
             });
             document.body.appendChild(ghost);
-            void ghost.offsetWidth; // forza il reflow prima di animare la "caduta" verso il centro
-            ghost.style.left = `${cx}px`;
-            ghost.style.top = `${cy}px`;
-            ghost.style.width = '4px';
-            ghost.style.height = '4px';
-            ghost.style.opacity = '0';
-            ghost.style.transform = `translate(-50%, -50%) rotate(${(i % 2 === 0 ? 1 : -1) * 540}deg)`;
-            setTimeout(() => ghost.remove(), 1750 + i * 35);
+            const x0 = rect.left + rect.width / 2 - cx;
+            const y0 = rect.top + rect.height / 2 - cy;
+            const r0 = Math.hypot(x0, y0);
+            const a0 = Math.atan2(y0, x0);
+            const verso = i % 2 === 0 ? 1 : -1;
+            const giri = 1.3 + (i % 3) * 0.25;
+            const N = 18;
+            const frames = [];
+            for (let s = 0; s <= N; s++) {
+                const u = s / N;
+                const e = Math.pow(u, 2.3);                 // parte piano, accelera verso l'orizzonte
+                const r = r0 * (1 - e);
+                const a = a0 + verso * e * giri * Math.PI * 2;
+                const x = cx + r * Math.cos(a) - rect.width / 2;
+                const y = cy + r * Math.sin(a) - rect.height / 2;
+                const scala = 1 - 0.94 * e;
+                const rot = verso * e * 520;
+                const incl = 62 * e;
+                frames.push({
+                    transform: `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) perspective(700px) rotateX(${incl.toFixed(1)}deg) rotate(${rot.toFixed(1)}deg) scale(${scala.toFixed(3)})`,
+                    opacity: u > 0.84 ? 1 - (u - 0.84) / 0.16 : 1,
+                    offset: u
+                });
+            }
+            const anim = ghost.animate(frames, { duration: 1700, delay: 250 + i * 40, easing: 'linear', fill: 'both' });
+            // Prima dell'inizio la carta sta ferma dov'era (fill both applica il primo fotogramma).
+            anim.onfinish = () => ghost.remove();
+            setTimeout(() => ghost.remove(), 2400 + i * 40);
         });
     }
 
@@ -255,7 +309,6 @@ void main(){
         if (window.SFX && typeof window.SFX.darkHole === 'function') window.SFX.darkHole();
         fantasmiRisucchiati(sucked, cx, cy);
     }
-
     // ---------------------------------------------------------------------
     // Spade Rivelatrici
     // ---------------------------------------------------------------------
