@@ -93,6 +93,17 @@
             && ArenaOptions.FIELDS.some((field) => field.file === file);
     }
 
+    /**
+     * Fa partire subito l'evento caratteristico dell'ambiente acceso (un
+     * fulmine, una scansione, una folata...), senza aspettare la pausa
+     * casuale: in sandbox serve a vedere l'arena appena la si sceglie.
+     * Non fa nulla se gli effetti ambientali sono spenti.
+     */
+    function scattaEvento() {
+        if (window.AmbienteWebGL && AmbienteWebGL.attivo()) AmbienteWebGL.scatta();
+        else if (window.FieldAmbience && FieldAmbience.attivo()) FieldAmbience.raffica();
+    }
+
     /** Cambia insieme immagine e ambiente animato, senza ricaricare il duello. */
     function changeField(file, config) {
         if (!validField(file)) return false;
@@ -101,7 +112,10 @@
             : 'images/fields/';
         window.DUEL_ARENA_CUSTOM_FIELD = file;
         document.body.style.backgroundImage = `url('${folder}${file}')`;
-        if (window.FieldAmbience) FieldAmbience.avvia(file);
+        if (window.FieldAmbience) {
+            FieldAmbience.avvia(file);
+            scattaEvento();
+        }
         if (config) {
             config.field = file;
             saveConfig(config);
@@ -172,6 +186,41 @@
         };
         tools.appendChild(label);
         tools.appendChild(select);
+
+        // Interruttore degli effetti ambientali (i Dettagli video del gioco):
+        // su telefono partono da "Normali", quindi senza questo qui non si
+        // vedrebbe nulla di ciò che si sta provando. È la stessa impostazione
+        // delle Impostazioni, non una copia: scegliere qui vale anche fuori.
+        if (window.VideoQuality) {
+            const labelFx = document.createElement('label');
+            labelFx.htmlFor = 'sandboxFxSelect';
+            labelFx.textContent = 'Effetti ambientali';
+            labelFx.style.marginTop = '8px';
+            const fx = document.createElement('select');
+            fx.id = 'sandboxFxSelect';
+            VideoQuality.LIVELLI.forEach((livello) => {
+                const option = document.createElement('option');
+                option.value = livello.valore;
+                option.textContent = livello.valore === VideoQuality.ALTI ? 'Accesi (Alti)' : 'Spenti (Normali)';
+                fx.appendChild(option);
+            });
+            fx.value = VideoQuality.get();
+            fx.onchange = () => {
+                VideoQuality.set(fx.value);
+                // set() riavvia l'ambiente del campo corrente da solo.
+                scattaEvento();
+                if (typeof addToLog === 'function') addToLog('✨ Effetti ambientali: ' + (fx.value === VideoQuality.ALTI ? 'accesi' : 'spenti') + '.');
+            };
+            const evento = document.createElement('button');
+            evento.type = 'button';
+            evento.textContent = 'Scatena evento';
+            evento.style.cssText = 'width:100%;margin-top:8px;padding:7px 8px;color:#eefaff;background:#16324a;'
+                + 'border:1px solid rgba(157,223,255,0.35);border-radius:8px;font:700 0.7rem Arial,sans-serif;cursor:pointer;';
+            evento.onclick = scattaEvento;
+            tools.appendChild(labelFx);
+            tools.appendChild(fx);
+            tools.appendChild(evento);
+        }
         document.body.appendChild(tools);
         changeField(initialField, config);
     }

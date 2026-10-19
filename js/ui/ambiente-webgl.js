@@ -213,14 +213,17 @@ vec4 m_fulmine(vec2 uv,float asp,vec3 c,float a,float ev,float evp,float evs){
   return vec4(c*(bolt*1.6+glow*.45+.05)*f,clamp(bolt*f,0.,1.));
 }`;
 
-    // Flash di macchine fotografiche e luci dagli spalti.
+    // Flash di macchine fotografiche e luci dagli spalti (solo la gradinata, vedi `on`).
     MOD.flash = `
 vec4 m_flash(vec2 uv,float asp,float t,vec3 c,float a,float ev){
   vec2 g=vec2(uv.x*asp,uv.y)*vec2(26.,12.);
   vec2 id=floor(g);
   vec2 f=fract(g)-.5;
   float rn=h(id+floor(t*5.)*3.1);
-  float on=step(.985-.05*ev,rn)*step(.35,uv.y);
+  // Solo sugli spalti: la gradinata alta e le due laterali, mai sull'arena al centro ne' in basso (la mano).
+  float alta=step(.75,uv.y)*step(.12,uv.x)*step(uv.x,.88);
+  float lati=(step(uv.x,.16)+step(.84,uv.x))*step(.12,uv.y)*step(uv.y,.88);
+  float on=step(.985-.05*ev,rn)*clamp(alta+lati,0.,1.);
   float d=length(f);
   float croce=max(smoothstep(.05,0.,abs(f.x))*smoothstep(.5,0.,abs(f.y)),smoothstep(.05,0.,abs(f.y))*smoothstep(.5,0.,abs(f.x)));
   float s=(smoothstep(.2,0.,d)+croce*.8)*on*(1.-fract(t*5.));
@@ -250,6 +253,30 @@ vec4 m_glitch(vec2 uv,float t,vec3 c,float a,float ev){
   float w=.1+.35*h(vec2(row,tick+3.));
   float al=on*step(x0,uv.x)*step(uv.x,x0+w)*a;
   return vec4(c*al,al*.9);
+}`;
+
+    // Una fiamma di torcia o di braciere in un punto preciso del campo: lingua
+    // che ondeggia, nucleo caldo e alone che illumina attorno, con un tremolio
+    // proprio (il seme sfasa ogni fiamma dalle altre). `f` e' la posizione
+    // nell'IMMAGINE del campo (0..1, y verso l'alto); `ia` il suo rapporto
+    // d'aspetto: lo sfondo e' dipinto con `cover`, quindi su uno schermo piu'
+    // largo o piu' alto la stessa fiamma cade in un punto diverso dello
+    // schermo, e va ricalcolata (stessa regola dello sfondo, ritagli compresi).
+    MOD.fiamme = `
+vec4 m_fiamma(vec2 uv,float asp,float t,vec3 c1,vec3 c2,vec2 f,float s,float seed,float ia,float a){
+  vec2 sp=asp>ia?vec2(f.x,.5+(f.y-.5)*(asp/ia)):vec2(.5+(f.x-.5)*(ia/asp),f.y);
+  vec2 d=(uv-sp)*vec2(asp,1.);
+  float fl=.72+.2*sin(t*(6.+seed*4.)+seed*40.)+.12*sin(t*(11.+seed*3.)+seed*13.)+.1*n(vec2(t*3.,seed*9.));
+  float r2=dot(d,d);
+  float core=exp(-r2*(1100./(s*s)));
+  float halo=exp(-r2*(75./(s*s)));
+  float dy=d.y;
+  float w=.012*s*(1.-clamp(dy/(.07*s),0.,1.))+.002;
+  float wob=sin(t*(9.+seed*5.)+dy*60.)*.004*s;
+  float lingua=exp(-pow((d.x-wob)/w,2.))*smoothstep(-.01*s,.012*s,dy)*smoothstep(.075*s,.0,dy);
+  vec3 col=c1*(lingua*1.6+core*1.4)+c2*halo*.9;
+  float al=clamp(lingua*.7+core*.5+halo*.22,0.,1.);
+  return vec4(col*fl*a,al*fl*a);
 }`;
 
     // Fronte di guerra, fondo: cannoneggiamento continuo. Niente evento a
@@ -325,7 +352,7 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
 
     // Come si scrive la chiamata di ogni modulo (c = 'A' | 'B' | 'C').
     const f = (x) => (Number.isInteger(x) ? x.toFixed(1) : String(x));
-    /** @type {Record<string, { def: Record<string, number>, call: (c: string, o: any) => string }>} */
+    /** @type {Record<string, { def: Record<string, any>, call: (c: string, o: any) => string }>} */
     const CALL = {
         strisce: { def: { vel: 1, stretch: 1.6, dens: 9, a: .22, y0: -.2, y1: 1.2 },
             call: (c, o) => `m_strisce(uv,asp,t,${c},${f(o.vel)},${f(o.stretch)},${f(o.dens)},${f(o.a)},${f(o.y0)},${f(o.y1)},ev)` },
@@ -349,6 +376,13 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
             call: (c, o) => `m_flash(uv,asp,t,${c},${f(o.a)},ev)` },
         vortice: { def: { a: .35 },
             call: (c, o) => `m_vortice(uv,asp,t,${c},${f(o.a)},ev)` },
+        // Una fiamma per ogni punto di `pts` ([x, y, grandezza], posizioni nell'immagine
+        // del campo, y verso l'alto). Colori: `c1` nucleo, `c2` alone; se mancano valgono
+        // A e B della tavolozza. `sz` scala tutte le fiamme insieme, `ia` e' il rapporto
+        // d'aspetto dell'immagine del campo.
+        fiamme: { def: { pts: [], sz: 1, ia: 1.772, a: 1 },
+            call: (c, o) => o.pts.reduce((e, p, i) =>
+                `over(m_fiamma(uv,asp,t,${o.c1 ? cost(o.c1) : 'A'},${o.c2 ? cost(o.c2) : 'B'},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)}),${e})`, 'vec4(0.)') },
         // impatti usa la tavolozza intera: A = fuoco, B = fumo (il colore del modulo e' ignorato).
         impatti: { def: { a: 1 },
             call: (c, o) => `m_impatti(uv,asp,t,A,B,${f(o.a)})` },
@@ -379,8 +413,23 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         rosso: [rgb(255, 90, 110), rgb(150, 20, 60), rgb(255, 200, 210)]
     };
 
+    // Posizioni delle torce e dei bracieri nelle illustrazioni dei campi, trovate
+    // sulle immagini stesse (macchie calde luminose, raggruppate) e controllate
+    // a occhio. Coordinate 0..1 nell'immagine, y verso l'alto, [x, y, grandezza].
+    // Se si cambia un'illustrazione vanno rifatte.
+    const TORCE = {
+        tempioOscuro: [[0.794,0.693,0.8],[0.101,0.432,0.8],[0.899,0.432,0.8],[0.211,0.693,0.8],[0.923,0.18,0.8],[0.672,0.821,0.8],[0.266,0.634,0.8],[0.738,0.633,0.8],[0.26,0.392,0.8],[0.268,0.163,0.8],[0.737,0.16,0.8]],
+        piazzaNotte: [[0.734,0.355,1.6],[0.301,0.336,1.6],[0.731,0.542,1.6],[0.718,0.761,1.56],[0.267,0.363,1.52],[0.276,0.764,1.51],[0.269,0.543,1.47],[0.55,0.114,1.33],[0.557,0.297,1.31],[0.684,0.707,1.3],[0.438,0.298,1.3],[0.309,0.706,1.28],[0.443,0.117,1.17],[0.205,0.2,1.02],[0.01,0.16,0.98],[0.777,0.295,0.96]],
+        arenaNotte: [[0.257,0.302,1.1],[0.779,0.229,1.1],[0.74,0.301,1.04],[0.218,0.225,1.04],[0.249,0.817,1.02],[0.803,0.317,1],[0.75,0.816,0.96],[0.471,0.225,0.94],[0.409,0.076,0.94],[0.258,0.251,0.92],[0.587,0.076,0.89],[0.197,0.318,0.85],[0.428,0.25,0.85],[0.738,0.252,0.85]],
+        rovineNotte: [[0.223,0.268,1.08],[0.778,0.265,1.02],[0.76,0.868,0.98],[0.072,0.552,0.96],[0.029,0.286,0.89],[0.24,0.869,0.87],[0.174,0.804,0.69],[0.887,0.231,0.66],[0.43,0.151,0.66],[0.188,0.32,0.6],[0.202,0.452,0.6],[0.267,0.167,0.6],[0.573,0.155,0.6],[0.366,0.934,0.6],[0.804,0.428,0.6],[0.928,0.061,0.6]],
+        tempio: [[0.102,0.399,1.6],[0.896,0.403,1.6],[0.433,0.233,1.52],[0.791,0.712,1.5],[0.178,0.247,1.4],[0.567,0.238,1.39],[0.435,0.924,1.31],[0.712,0.376,1.28],[0.82,0.243,1.28],[0.201,0.73,1.22],[0.566,0.928,1.17],[0.606,0.784,1.17],[0.562,0.12,1.15],[0.222,0.649,1.13],[0.391,0.786,1.11],[0.776,0.652,1.11]],
+        // I quattro bracieri agli angoli dei campi all'aperto (foresta, prato, montagna, acqua, ghiaccio).
+        angoli: [[0.22,0.26,1],[0.78,0.26,1],[0.24,0.87,1],[0.76,0.88,1]]
+    };
+    const FIAMMA_CALDA = { c1: [1, .86, .5], c2: [1, .42, .08] };
+
     /**
-     * @typedef {[string, string, Record<string, number>?]} Mod  // [modulo, colore A|B|C, parametri]
+     * @typedef {[string, string, Record<string, any>?]} Mod  // [modulo, colore A|B|C, parametri]
      * @typedef {{ pal: number[][], fondo?: Mod[], primo?: Mod[], ev?: { ogni: number[], dur: number } }} Campo
      */
 
@@ -506,31 +555,31 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         },
         'prateria-pollini': {
             pal: PAL.natura,
-            fondo: [['raggi', 'B', { ox: .55, cnt: 7, a: .3 }]],
+            fondo: [['fiamme', 'A', { pts: TORCE.angoli, c1: FIAMMA_CALDA.c1, c2: FIAMMA_CALDA.c2, sz: .8, a: .9 }], ['raggi', 'B', { ox: .55, cnt: 7, a: .3 }]],
             primo: [['particelle', 'B', { vx: .25, vy: .06, dens: 13, dim: .06, lamp: 1, osc: .4, a: .9 }], ['particelle', 'A', { vx: .5, vy: -.08, dens: 7, dim: .12, osc: .5, forma: 2, a: .7 }]],
             ev: { ogni: [5, 10], dur: 5 }
         },
         'ghiaccio-nevicata': {
             pal: PAL.ghiaccio,
-            fondo: [['nebbia', 'B', { sc: 1.4, a: .2, y0: -.4, y1: .6 }], ['strisce', 'A', { vel: 1.4, a: .16, dens: 12, y0: -.2, y1: 1 }]],
+            fondo: [['fiamme', 'A', { pts: TORCE.angoli, c1: FIAMMA_CALDA.c1, c2: FIAMMA_CALDA.c2, sz: .8, a: .9 }], ['nebbia', 'B', { sc: 1.4, a: .2, y0: -.4, y1: .6 }], ['strisce', 'A', { vel: 1.4, a: .16, dens: 12, y0: -.2, y1: 1 }]],
             primo: [['particelle', 'A', { vx: .35, vy: -.35, dens: 13, dim: .08, osc: .35, a: .95 }], ['particelle', 'C', { vx: 0, vy: 0, dens: 16, dim: .04, lamp: 1, forma: 3, a: .8 }]],
             ev: { ogni: [5, 10], dur: 5 }
         },
         'acqua-caustiche': {
             pal: PAL.acqua,
-            fondo: [['caustiche', 'A', { sc: 5.5, a: .6 }], ['raggi', 'C', { ox: .5, cnt: 6, a: .26 }]],
+            fondo: [['fiamme', 'A', { pts: TORCE.angoli, c1: FIAMMA_CALDA.c1, c2: FIAMMA_CALDA.c2, sz: .8, a: .9 }], ['caustiche', 'A', { sc: 5.5, a: .6 }], ['raggi', 'C', { ox: .5, cnt: 6, a: .26 }]],
             primo: [['particelle', 'C', { vx: .03, vy: .28, dens: 11, dim: .09, osc: .3, a: .65 }]],
             ev: { ogni: [6, 12], dur: 5 }
         },
         'foresta-lucciole': {
             pal: [rgb(255, 245, 150), rgb(150, 240, 130), rgb(190, 255, 190)],
-            fondo: [['raggi', 'C', { ox: .3, cnt: 5, a: .24 }], ['nebbia', 'B', { sc: 1.6, a: .14, y0: -.5, y1: .5 }]],
+            fondo: [['fiamme', 'A', { pts: TORCE.angoli, c1: FIAMMA_CALDA.c1, c2: FIAMMA_CALDA.c2, sz: .8, a: .9 }], ['raggi', 'C', { ox: .3, cnt: 5, a: .24 }], ['nebbia', 'B', { sc: 1.6, a: .14, y0: -.5, y1: .5 }]],
             primo: [['particelle', 'A', { vx: .03, vy: .04, dens: 9, dim: .1, lamp: 1, osc: .5, a: 1 }]],
             ev: { ogni: [5, 10], dur: 5 }
         },
         'montagna-nuvole': {
             pal: PAL.vento,
-            fondo: [['nebbia', 'A', { sc: 1.1, a: .3, y0: -.5, y1: .7 }], ['strisce', 'B', { vel: 1.1, a: .16, dens: 8, y0: -.2, y1: 1 }]],
+            fondo: [['fiamme', 'A', { pts: TORCE.angoli, c1: FIAMMA_CALDA.c1, c2: FIAMMA_CALDA.c2, sz: .8, a: .9 }], ['nebbia', 'A', { sc: 1.1, a: .3, y0: -.5, y1: .7 }], ['strisce', 'B', { vel: 1.1, a: .16, dens: 8, y0: -.2, y1: 1 }]],
             primo: [['nebbia', 'B', { sc: 2, vel: 1.6, a: .12, y0: -.5, y1: .4 }], ['particelle', 'C', { vx: 1.4, vy: -.1, dens: 14, dim: .05, a: .7 }]],
             ev: { ogni: [4, 8], dur: 5 }
         },
@@ -549,7 +598,7 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         },
         'rovine-egizie-luna': {
             pal: [rgb(255, 170, 90), rgb(255, 90, 30), rgb(190, 215, 255)],
-            fondo: [['braciere', 'A', { a: .45 }], ['raggi', 'C', { ox: .7, cnt: 5, a: .18 }]],
+            fondo: [['fiamme', 'A', { pts: TORCE.rovineNotte, sz: .75, a: .9 }], ['raggi', 'C', { ox: .7, cnt: 5, a: .18 }]],
             primo: [['particelle', 'A', { vx: .08, vy: .32, dens: 11, dim: .06, lamp: 1, osc: .2, a: .95 }]],
             ev: { ogni: [5, 10], dur: 3 }
         },
@@ -560,8 +609,8 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
             ev: { ogni: [6, 11], dur: 4 }
         },
         'arena-egizia-torce': {
-            pal: [rgb(110, 190, 255), rgb(60, 110, 255), rgb(200, 230, 255)],
-            fondo: [['braciere', 'A', { a: .55 }], ['nebbia', 'B', { sc: 1.5, a: .16, y0: -.5, y1: .5 }]],
+            pal: [rgb(255, 214, 140), rgb(255, 120, 40), rgb(255, 235, 190)],
+            fondo: [['fiamme', 'A', { pts: TORCE.arenaNotte, sz: .7, a: .9 }], ['nebbia', 'B', { sc: 1.5, a: .12, y0: -.5, y1: .5 }]],
             primo: [['particelle', 'C', { vx: .05, vy: .3, dens: 11, dim: .06, lamp: 1, a: .95 }]],
             ev: { ogni: [5, 10], dur: 3 }
         },
@@ -579,13 +628,13 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         },
         'piazza-torce': {
             pal: PAL.fuoco,
-            fondo: [['braciere', 'A', { a: .55 }], ['raggi', 'C', { ox: .5, cnt: 5, a: .12 }]],
+            fondo: [['fiamme', 'A', { pts: TORCE.piazzaNotte, sz: .55, a: .8 }], ['raggi', 'C', { ox: .5, cnt: 5, a: .1 }]],
             primo: [['particelle', 'A', { vx: .06, vy: .34, dens: 11, dim: .06, lamp: 1, osc: .2, a: .95 }]],
             ev: { ogni: [5, 10], dur: 3 }
         },
         'tempio-fiamme': {
             pal: PAL.oro,
-            fondo: [['raggi', 'A', { ox: .5, cnt: 7, a: .32 }], ['braciere', 'B', { a: .38 }]],
+            fondo: [['raggi', 'A', { ox: .5, cnt: 7, a: .26 }], ['fiamme', 'A', { pts: TORCE.tempio, sz: .6, a: .8 }]],
             primo: [['particelle', 'C', { vx: .02, vy: .12, dens: 13, dim: .06, lamp: 1, osc: .2, forma: 1, a: .9 }]],
             ev: { ogni: [5, 10], dur: 4 }
         },
@@ -604,7 +653,7 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         },
         'tempio-bracieri-horus': {
             pal: [rgb(255, 151, 48), rgb(255, 84, 20), rgb(255, 230, 150)],
-            fondo: [['braciere', 'A', { a: .7 }], ['nebbia', 'B', { sc: 1.4, a: .2, y0: -.5, y1: .55 }]],
+            fondo: [['fiamme', 'A', { pts: TORCE.tempioOscuro, sz: 1.15, a: 1 }], ['nebbia', 'B', { sc: 1.4, a: .16, y0: -.5, y1: .55 }]],
             primo: [['particelle', 'C', { vx: .08, vy: .36, dens: 10, dim: .07, lamp: 1, osc: .2, a: 1 }]],
             ev: { ogni: [4, 8], dur: 2.5 }
         }
@@ -882,6 +931,8 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         canvas: () => piani.map((p) => p.canvas),
         /** Congela l'evento a un avanzamento 0..1 (null: torna al ritmo normale). Serve a prove e screenshot. */
         fissaEvento: (p) => { evFisso = p; if (p !== null) evSeme = 42.5; },
+        /** Fa scattare subito l'evento del campo (la sandbox lo usa per provare un'arena senza aspettare). */
+        scatta: () => { evInizio = -1; evProssimo = 0; },
         /** Il sorgente GLSL di un piano, per le verifiche (distinte, senza segnaposto). */
         sorgente: (nome, piano) => (CAMPI[nome] ? componi(CAMPI[nome], piano) : null),
         errore: () => ultimoErrore,

@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.4.15 — Fiamme di torce e bracieri dei templi e delle arene notturne come luci vere nei punti delle illustrazioni; flash dello Stadio Kaiba solo sugli spalti; sandbox: interruttore effetti ambientali e evento al cambio field.
  * 1.4.14 — Anche i due fronti della Grande Guerra in WebGL: cannoneggiamento continuo con impatti, fumo e traccianti.
  * 1.4.13 — Tutti gli ambienti dei campi (tranne la Grande Guerra) ridisegnati con shader WebGL: vento a velocita' costante, particelle, raggi, caustiche, fulmini, scansioni, scintille, un evento caratteristico per arena; regolatore di fps.
  * 1.4.12 — Ambiente WebGL: rumore senza sin() e precisione alta (sui telefoni il vento risultava invisibile), vento piu' visibile.
@@ -770,4 +771,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.4.14';
+window.GAME_VERSION = '1.4.15';
