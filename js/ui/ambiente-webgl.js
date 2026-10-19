@@ -31,13 +31,19 @@
 
     // Rumore a valori + fbm: il minimo che serve a un vento che si torce.
     const COMUNE = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
 precision mediump float;
+#endif
 uniform vec2 r;      // dimensione del canvas in pixel
 uniform float t;     // secondi
 uniform float raff;  // 0..1: intensità della folata del momento
 uniform float dir;   // +1 / -1: verso del vento
 uniform vec3 tinta;
-float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+// Hash senza sin(): su GPU mobili sin() di numeri grandi e' impreciso e il
+// rumore diventa piatto (nessun effetto visibile).
+float h(vec2 p){vec3 q=fract(vec3(p.xyx)*.1031);q+=dot(q,q.yzx+33.33);return fract((q.x+q.y)*q.z);}
 float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
   return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}
 float fbm(vec2 p){float a=.5,s=0.;for(int i=0;i<4;i++){s+=a*n(p);p=p*2.03+vec2(7.1,3.7);a*=.5;}return s;}
@@ -62,7 +68,7 @@ void main(){
   float k=smoothstep(soglia,soglia+.22,c);
   // Sfuma in alto e in basso: la corrente occupa una fascia, non tutto lo schermo.
   float fascia=smoothstep(.0,.28,uv.y)*smoothstep(1.,.62,uv.y);
-  float a=k*fascia*(PIANO>0.5?.30:.17)*(.55+.75*raff);
+  float a=k*fascia*(PIANO>0.5?.30:.17)*(.85+.7*raff);
   gl_FragColor=vec4(tinta*a,a);
 }`;
 
@@ -119,6 +125,10 @@ void main(){
             stencil: false, powerPreference: 'low-power', preserveDrawingBuffer: false
         }));
         if (!gl) return null;
+        // Senza highp nel fragment shader il rumore e' inaffidabile: meglio gli
+        // strati DOM che un canvas che non mostra nulla.
+        const prec = gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT);
+        if (!prec || prec.precision === 0) return null;
         const vs = compila(gl, gl.VERTEX_SHADER, VS);
         const fs = compila(gl, gl.FRAGMENT_SHADER, sorgente);
         if (!vs || !fs) return null;
