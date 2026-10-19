@@ -64,4 +64,5 @@ declare var TintaCampo: any;
 declare var TINTE_CAMPI: any;
 declare var trovaGridoEvocazione: any;
 declare var VideoQuality: any;
+declare var AmbienteWebGL: any;
 declare var VisualEffects: any;

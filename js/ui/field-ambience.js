@@ -283,6 +283,11 @@
         coreografia: 'ventoContinuo',
         pausa: [60, 260],
         ritmoCasuale: 'vento-continuo',
+        // Disegnato da js/ui/ambiente-webgl.js (un solo shader, niente strati
+        // con mix-blend-mode). Gli `strati` qui sotto restano come ripiego per
+        // chi non ha WebGL: li usa il percorso DOM/GSAP di sempre.
+        webgl: 'vento',
+        webglTinta: [0.9, 0.96, 1],
         tinta: PROFILI.vento.tinta,
         strati: [
             { classe: 'fa-vento-nube', piano: 'fondo', quota: .38, durata: 10.5, ritardo: 0, deriva: 18 },
@@ -396,6 +401,8 @@
             tinta: profilo.tinta || (() => TINTE_PROFILO[profiloNome]),
             pausa: profilo.pausa.slice(),
             ritmoCasuale: profilo.ritmoCasuale || null,
+            webgl: profilo.webgl || null,
+            webglTinta: profilo.webglTinta || null,
             strati
         };
     }
@@ -432,11 +439,13 @@
 
     function sospendi(motivo) {
         motiviSospensione.add(motivo || 'esterno');
+        if (window.AmbienteWebGL) AmbienteWebGL.sospendi(true);
         aggiornaSospensione();
     }
 
     function riprendi(motivo) {
         motiviSospensione.delete(motivo || 'esterno');
+        if (window.AmbienteWebGL && !sospeso()) AmbienteWebGL.sospendi(false);
         aggiornaSospensione();
     }
 
@@ -1307,6 +1316,7 @@
         clearTimeout(prossima);
         prossima = null;
         if (timeline) { timeline.kill(); timeline = null; }
+        if (window.AmbienteWebGL) AmbienteWebGL.ferma();
         rimuoviElementi();
         ambienteAttivo = null;
     }
@@ -1320,13 +1330,26 @@
         const campo = campoRichiesto || campoCorrente();
         const ambiente = trovaAmbiente(campo);
 
-        if (!ambiente || !dettagliAlti() || menoAnimazioni() || !window.gsap) {
+        if (!ambiente || !dettagliAlti() || menoAnimazioni()) {
             ferma();
             return false;
         }
-        if (ambienteAttivo === ambiente && elementi.length) return true;
+        const conWebgl = !!(ambiente.webgl && window.AmbienteWebGL);
+        if (!conWebgl && !window.gsap) {
+            ferma();
+            return false;
+        }
+        if (ambienteAttivo === ambiente && (elementi.length || (conWebgl && AmbienteWebGL.attivo()))) return true;
 
         ferma();
+        // Percorso WebGL: un canvas per piano, nessuna timeline GSAP. Se non
+        // parte (niente WebGL, shader rifiutato) si cade negli strati DOM.
+        if (conWebgl && AmbienteWebGL.avvia(ambiente.webgl, { tinta: ambiente.webglTinta })) {
+            ambienteAttivo = ambiente;
+            if (sospeso()) AmbienteWebGL.sospendi(true);
+            return true;
+        }
+        if (!window.gsap) return false;
         ambienteAttivo = ambiente;
         creaElementi(ambiente, campo);
         // La prima passata non parte subito: si entra in duello e la scena

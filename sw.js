@@ -497,7 +497,7 @@
 // v279: nomi compatti e invito all'azione rendono leggibili le fasi.
 // v282: miniature WebP lazy per Duellanti e anteprime delle Arene.
 // v317: pose di esclamazione rifinite senza ritagli laterali.
-const CACHE_NAME = 'ygo-duel-arena-v319';
+const CACHE_NAME = 'ygo-duel-arena-v320';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
@@ -693,6 +693,7 @@ const APP_SHELL = [
     'js/ui/story-cutscene.js',
     'js/ui/story-cutscene.css',
     'js/data/tournament-dialogues.js',
+    'js/ui/ambiente-webgl.js',
     'js/ui/field-ambience.js',
     'js/ui/field-ambience.css',
     'js/ui/monster-hologram.js',
