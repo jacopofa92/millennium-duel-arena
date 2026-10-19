@@ -66,6 +66,11 @@ float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
   return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}
 float fbm3(vec2 p){float a=.5,s=0.;for(int i=0;i<3;i++){s+=a*n(p);p=p*2.03+vec2(7.1,3.7);a*=.5;}return s;}
 vec4 over(vec4 top,vec4 bot){return top+bot*(1.-top.a);}
+// Limita un effetto a un rettangolo (x0,y0,x1,y1; y verso l'alto) con bordi morbidi.
+vec4 maschera(vec4 c,vec2 uv,vec4 r){
+  float m=smoothstep(r.x,r.x+.05,uv.x)*smoothstep(r.z,r.z-.05,uv.x)*smoothstep(r.y,r.y+.05,uv.y)*smoothstep(r.w,r.w-.05,uv.y);
+  return c*m;
+}
 `;
 
     /** @type {Record<string,string>} */
@@ -126,8 +131,8 @@ vec4 m_particelle(vec2 uv,float asp,float t,vec3 c,float vx,float vy,float dens,
 
     // Raggi di luce (sole, luna, riflettori) da un punto sopra lo schermo.
     MOD.raggi = `
-vec4 m_raggi(vec2 uv,float asp,float t,vec3 c,float ox,float ang,float cnt,float a,float ev){
-  vec2 p=(uv-vec2(ox,1.25))*vec2(asp,1.);
+vec4 m_raggi(vec2 uv,float asp,float t,vec3 c,float ox,float oy,float ang,float cnt,float a,float ev){
+  vec2 p=(uv-vec2(ox,oy))*vec2(asp,1.);
   float th=atan(p.x,-p.y)+ang;
   float r1=sin(th*cnt+t*.12)*.5+.5;
   float r2=sin(th*cnt*1.7-t*.09+1.3)*.5+.5;
@@ -311,6 +316,41 @@ vec4 m_proiettore(vec2 uv,float asp,float t,vec3 c1,vec3 c2,vec2 f,float seed,fl
   return vec4(col*a*(1.+.7*ev),al*a);
 }`;
 
+    // La citta' sotto il Dirigibile che scorre: tre strati di luci con parallasse (il piu' lontano
+    // e' lento e piccolo, il piu' vicino veloce e grande), con una rete di strade appena
+    // accennata. Compare solo FUORI dallo scafo: la maschera e' una forma approssimata dello
+    // scafo nell'immagine (bordo alto e basso a V verso la prua a sinistra), con bordo morbido.
+    // La nave va verso sinistra, quindi il suolo scorre verso destra. Posizione con la regola
+    // `cover` dello sfondo.
+    MOD.citta = `
+vec4 m_citta(vec2 uv,float asp,float t,vec3 c1,vec3 c2,float ia,float a,float ev){
+  vec2 iuv=asp>ia?vec2(uv.x,.5+(uv.y-.5)*(ia/asp)):vec2(.5+(uv.x-.5)*(asp/ia),uv.y);
+  float yi=1.-iuv.y;
+  float ytop=max(.085,.28-.5*iuv.x);
+  float ybot=min(.9,.68+.55*iuv.x);
+  float fuori=max(ytop-yi,yi-ybot);
+  float m=smoothstep(-.01,.035,fuori);
+  if(m<=0.) return vec4(0.);
+  float luci=0.;
+  float strade=0.;
+  for(int i=0;i<3;i++){
+    float fi=float(i);
+    float sc=10.+fi*9.;
+    vec2 p=vec2(iuv.x*ia,iuv.y)*sc-vec2(t*(.18+fi*.22),0.);
+    vec2 id=floor(p);
+    vec2 f=fract(p);
+    float rnd=h(id+fi*13.7);
+    vec2 pos=.2+.6*h2(id+fi*3.3);
+    float punto=smoothstep(.16-.04*fi,0.,length(f-pos))*step(.42,rnd);
+    float tw=.65+.35*sin(t*(.8+rnd*2.)+rnd*30.);
+    luci+=punto*tw*(1.-fi*.2);
+    strade+=max(smoothstep(.05,0.,abs(f.x-.5)),smoothstep(.05,0.,abs(f.y-.5)))*step(.55,h(id+fi*7.1))*.12;
+  }
+  float al=clamp((luci+strade)*m*a*(.9+.3*ev),0.,1.);
+  vec3 col=mix(c1,c2,step(.8,h(floor(iuv*vec2(ia,1.)*30.))));
+  return vec4(col*al*1.4,al*.8);
+}`;
+
     // Fronte di guerra, fondo: cannoneggiamento continuo. Niente evento a
     // scadenza: tre "canali" con cicli di durata diversa (4.3 / 6 / 7.7 s)
     // sorteggiano ognuno un punto d'impatto nuovo a ogni ciclo, quindi le
@@ -392,8 +432,8 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
             call: (c, o) => `m_nebbia(uv,asp,t,${c},${f(o.vel)},${f(o.sc)},${f(o.a)},${f(o.y0)},${f(o.y1)},ev)` },
         particelle: { def: { vx: 0, vy: 0, dens: 10, dim: .12, lamp: 0, osc: .15, forma: 0, a: 1 },
             call: (c, o) => `m_particelle(uv,asp,t,${c},${f(o.vx)},${f(o.vy)},${f(o.dens * .78)},${f(o.dim)},${f(o.lamp)},${f(o.osc)},${f(o.forma)},${f(o.a)},ev)` },
-        raggi: { def: { ox: .5, ang: 0, cnt: 7, a: .3 },
-            call: (c, o) => `m_raggi(uv,asp,t,${c},${f(o.ox)},${f(o.ang)},${f(o.cnt)},${f(o.a)},ev)` },
+        raggi: { def: { ox: .5, oy: 1.25, ang: 0, cnt: 7, a: .3 },
+            call: (c, o) => `m_raggi(uv,asp,t,${c},${f(o.ox)},${f(o.oy)},${f(o.ang)},${f(o.cnt)},${f(o.a)},ev)` },
         caustiche: { def: { sc: 5, a: .5 },
             call: (c, o) => `m_caustiche(uv,asp,t,${c},${f(o.sc)},${f(o.a)},ev)` },
         braciere: { def: { a: .55 },
@@ -419,6 +459,9 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         proiettori: { def: { pts: [], ia: 1.773, a: 1 },
             call: (c, o) => o.pts.reduce((e, p, i) =>
                 `over(m_proiettore(uv,asp,t,${o.c1 ? cost(o.c1) : 'A'},${o.c2 ? cost(o.c2) : 'B'},vec2(${f(p[0])},${f(p[1])}),${f(i + 1)},${f(o.ia)},${f(o.a)},ev),${e})`, 'vec4(0.)') },
+        // La citta' sotto il Dirigibile (vedi MOD.citta). c1 luci calde, c2 luci fredde.
+        citta: { def: { ia: 1.773, a: 1 },
+            call: (c, o) => `m_citta(uv,asp,t,${o.c1 ? cost(o.c1) : 'A'},${o.c2 ? cost(o.c2) : 'B'},${f(o.ia)},${f(o.a)},ev)` },
         // impatti usa la tavolozza intera: A = fuoco, B = fumo (il colore del modulo e' ignorato).
         impatti: { def: { a: 1 },
             call: (c, o) => `m_impatti(uv,asp,t,A,B,${f(o.a)})` },
@@ -552,7 +595,7 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         },
         'dirigibile-alta-quota': {
             pal: PAL.vento,
-            fondo: [['nebbia', 'A', { sc: 1.5, a: .17, y0: -.3, y1: 1.3 }], ['strisce', 'A', { vel: 1, a: .18, dens: 7, stretch: 1.1, y0: -.1, y1: 1 }]],
+            fondo: [['citta', 'A', { c1: [1, .74, .4], c2: [.8, .9, 1], a: .75 }], ['nebbia', 'A', { sc: 1.5, a: .17, y0: -.3, y1: 1.3 }], ['strisce', 'A', { vel: 1, a: .18, dens: 7, stretch: 1.1, y0: -.1, y1: 1 }]],
             primo: [['strisce', 'B', { vel: 1.5, a: .32, dens: 13, stretch: 2.4, y0: 0, y1: 1 }]],
             ev: { ogni: [3, 7], dur: 5 }
         },
@@ -713,8 +756,12 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         const righe = lista.map((m) => {
             const def = CALL[m[0]];
             usati[m[0]] = true;
-            const o = Object.assign({}, def.def, m[2] || {});
-            return `  acc=over(${def.call(m[1], o)},acc);`;
+            const o = Object.assign({}, def.def, campo.ia ? { ia: campo.ia } : {}, m[2] || {});
+            const espr = def.call(m[1], o);
+            // Il parametro 'area' [x0, yAlto0, x1, yAlto1] limita l'effetto a un rettangolo dell'immagine (y misurata dall'alto, come nei programmi di grafica).
+            const ar = o.area;
+            const dentro = ar ? `maschera(${espr},uv,vec4(${f(ar[0])},${f(1 - ar[3])},${f(ar[2])},${f(1 - ar[1])}))` : espr;
+            return `  acc=over(${dentro},acc);`;
         });
         const pal = campo.pal;
         return COMUNE
@@ -728,7 +775,7 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
     // Esecuzione
     // =================================================================
 
-    /** @typedef {{ canvas: HTMLCanvasElement, gl: WebGLRenderingContext, uni: Record<string, WebGLUniformLocation|null> }} Piano */
+    /** @typedef {{ canvas: HTMLCanvasElement, gl: WebGLRenderingContext, uni: Record<string, WebGLUniformLocation|null>, dim: () => number[] }} Piano */
     /** @type {Piano[]} */
     let piani = [];
     /** @type {Campo|null} */
@@ -774,14 +821,18 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
      * strati DOM di field-ambience.css: il fondo (z-index 1) sta DIETRO le
      * carte, il primo piano (z-index 3) davanti.
      */
-    function creaPiano(piano, sorgente, scala) {
+    function creaPiano(piano, sorgente, scala, dim, contenitore) {
         const canvas = document.createElement('canvas');
         canvas.className = 'aw-canvas aw-canvas--' + piano;
         canvas.setAttribute('aria-hidden', 'true');
-        canvas.width = Math.max(64, Math.round(window.innerWidth * scala));
-        canvas.height = Math.max(64, Math.round(window.innerHeight * scala));
-        canvas.style.cssText = 'position:fixed;left:0;top:0;width:100vw;height:100vh;'
-            + 'pointer-events:none;z-index:' + (piano === 'fondo' ? 1 : 3) + ';';
+        const [dw, dh] = dim();
+        canvas.width = Math.max(64, Math.round(dw * scala));
+        canvas.height = Math.max(64, Math.round(dh * scala));
+        // In duello il canvas e' fisso sullo schermo; in una mappa riempie il proprio contenitore
+        // (il mondo della mappa, che scorre e si ingrandisce con lei).
+        canvas.style.cssText = contenitore
+            ? 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;'
+            : 'position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:' + (piano === 'fondo' ? 1 : 3) + ';';
         const gl = /** @type {WebGLRenderingContext|null} */ (canvas.getContext('webgl', {
             alpha: true, premultipliedAlpha: true, antialias: false, depth: false,
             stencil: false, powerPreference: 'low-power', preserveDrawingBuffer: false
@@ -814,8 +865,8 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         const uni = {};
         ['r', 't', 'ev', 'evp', 'evs'].forEach((n) => { uni[n] = gl.getUniformLocation(prog, n); });
         canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); perso = true; });
-        document.body.appendChild(canvas);
-        return { canvas: canvas, gl: gl, uni: uni };
+        (contenitore || document.body).insertBefore(canvas, contenitore ? contenitore.firstChild : null);
+        return { canvas: canvas, gl: gl, uni: uni, dim: dim };
     }
 
     /** Inviluppo dell'evento: sale in fretta, scende piano. */
@@ -848,8 +899,9 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
     function ridimensiona(scala) {
         scalaAttuale = scala;
         piani.forEach((p) => {
-            p.canvas.width = Math.max(64, Math.round(window.innerWidth * scala));
-            p.canvas.height = Math.max(64, Math.round(window.innerHeight * scala));
+            const [dw, dh] = p.dim();
+            p.canvas.width = Math.max(64, Math.round(dw * scala));
+            p.canvas.height = Math.max(64, Math.round(dh * scala));
             p.gl.viewport(0, 0, p.canvas.width, p.canvas.height);
         });
     }
@@ -929,7 +981,7 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         for (const piano of ['fondo', 'primo']) {
             const src = componi(campo, piano);
             if (!src) continue;
-            const p = creaPiano(piano === 'primo' ? 'primopiano' : 'fondo', src, scala);
+            const p = creaPiano(piano === 'primo' ? 'primopiano' : 'fondo', src, scala, () => [window.innerWidth, window.innerHeight], null);
             if (!p) { nuovi.forEach((x) => x.canvas.remove()); return false; }
             nuovi.push(p);
         }
@@ -942,6 +994,44 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         evInizio = -1; evFisso = null;
         const prima = campo.ev ? campo.ev.ogni[0] : 5;
         evProssimo = t0 + Math.min(2500, prima * 400); // il primo evento arriva presto: si vede subito che c'e' vita
+        sospeso = false;
+        rid = requestAnimationFrame(disegna);
+        return true;
+    }
+
+    /** @type {Record<string, any>} */
+    const MAPPE = {};
+
+    /**
+     * Accende l'ambiente di una MAPPA della Storia dentro il suo mondo
+     * (contenitore, il livello che scorre e si ingrandisce con la mappa):
+     * il canvas vi sta incollato, quindi pan e zoom sono gratis e un effetto
+     * puo'' essere ancorato a un punto del disegno. Una sola passata (fondo):
+     * i nodi e le linee stanno sopra, nell'ordine del DOM.
+     * @param {string} nome  chiave di MAPPE (nome del file dell'immagine senza estensione)
+     * @param {HTMLElement} contenitore
+     * @param {{ larghezza: number, altezza: number, scala?: number }} op
+     */
+    function avviaMappa(nome, contenitore, op) {
+        ferma();
+        const campo = MAPPE[nome];
+        if (!campo || !contenitore || menoAnimazioni() || window.AMBIENTE_WEBGL_OFF) return false;
+        if (!(window.VideoQuality && window.VideoQuality.isAlti())) return false;
+        const larghezza = op.larghezza || contenitore.clientWidth || 1672;
+        const altezza = op.altezza || contenitore.clientHeight || 941;
+        const scala = op.scala || Math.min(0.5, 760 / larghezza);
+        const c = Object.assign({}, campo, { ia: larghezza / altezza });
+        const src = componi(c, 'fondo');
+        if (!src) return false;
+        const p = creaPiano('fondo', src, scala, () => [larghezza, altezza], contenitore);
+        if (!p) return false;
+        piani = [p];
+        campoAttivo = campo;
+        scalaAttuale = scala;
+        t0 = performance.now();
+        ultimoDisegno = 0; ultimoRaf = 0; mediaFrame = 16; lentoDa = 0;
+        evInizio = -1; evFisso = null;
+        evProssimo = t0 + (campo.ev ? Math.min(2500, campo.ev.ogni[0] * 400) : 0);
         sospeso = false;
         rid = requestAnimationFrame(disegna);
         return true;
@@ -962,11 +1052,23 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
 
     window.addEventListener('resize', () => { if (piani.length) ridimensiona(scalaAttuale); });
 
+    // Una mappa della Storia a scheda nascosta non deve consumare GPU (i duelli lo fanno
+    // da field-ambience.js, con i suoi motivi di sospensione).
+    document.addEventListener('visibilitychange', () => {
+        if (piani.length && campoAttivo && piani[0].canvas.parentElement !== document.body) sospendi(document.hidden);
+    });
+
     window.AmbienteWebGL = {
         avvia: avvia,
         ferma: ferma,
         sospendi: sospendi,
         attivo: () => piani.length > 0,
+        avviaMappa: avviaMappa,
+        /** Registra le voci delle mappe (vedi js/ui/ambiente-mappe-storia.js). */
+        registraMappe: (voci) => { Object.assign(MAPPE, voci); },
+        haMappa: (nome) => !!MAPPE[nome],
+        NOMI_MAPPE: () => Object.keys(MAPPE),
+        sorgenteMappa: (nome) => (MAPPE[nome] ? componi(Object.assign({}, MAPPE[nome], { ia: 1.77 }), 'fondo') : null),
         /** Per le verifiche: i canvas attualmente accesi. */
         canvas: () => piani.map((p) => p.canvas),
         /** Congela l'evento a un avanzamento 0..1 (null: torna al ritmo normale). Serve a prove e screenshot. */

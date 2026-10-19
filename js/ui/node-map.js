@@ -124,6 +124,16 @@
                 canvas.style.backgroundSize = '100% 100%, 100% 100%';
                 canvas.style.backgroundRepeat = 'no-repeat, no-repeat';
             }
+            // Gli effetti ambientali WebGL della mappa disegnata (nebbia, luci, vento...):
+            // un canvas dentro il mondo, tra lo sfondo e le linee, che scorre e si ingrandisce
+            // con la mappa. Solo per la mappa disegnata (candidato 0), mai per le texture di
+            // ripiego, e solo se la mappa ha una voce in js/ui/ambiente-mappe-storia.js.
+            if (esito.indice === 0 && window.AmbienteWebGL && typeof window.AmbienteWebGL.haMappa === 'function') {
+                const nomeMappa = String(esito.src).split('?')[0].split('/').pop().replace(/\.[a-z0-9]+$/i, '');
+                if (window.AmbienteWebGL.haMappa(nomeMappa)) {
+                    window.AmbienteWebGL.avviaMappa(nomeMappa, canvas, { larghezza: larghezza, altezza: altezza });
+                }
+            }
         });
 
         // Le linee stanno in un SVG con viewBox uguale al mondo IN PX:

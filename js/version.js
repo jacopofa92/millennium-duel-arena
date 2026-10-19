@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.4.18 — Effetti ambientali WebGL su tutte le mappe della Storia (macromappa, sei archi, aree, Memorie Proibite, Freedom, Grande Guerra) e citta' che scorre sotto il Dirigibile.
  * 1.4.17 — Fiamme piu' lente e morbide, e tutti i bracieri principali dei templi notturni (fino a 28 per arena).
  * 1.4.16 — Meno puntini di particelle ovunque (e nessuno in Torre Shadow, Torre Pegasus, Luna Blu, Colosseo, Montagna); proiettori olografici sulle colonne delle Torri Kaiba.
  * 1.4.15 — Fiamme di torce e bracieri dei templi e delle arene notturne come luci vere nei punti delle illustrazioni; flash dello Stadio Kaiba solo sugli spalti; sandbox: interruttore effetti ambientali e evento al cambio field.
@@ -773,4 +774,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.4.17';
+window.GAME_VERSION = '1.4.18';
