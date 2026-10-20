@@ -1,8 +1,8 @@
 {
   "manutenzione": false,
   "messaggio": "",
-  "versioneMinimaApk": 1,
-  "versioneConsigliataApk": 1,
-  "messaggioAggiornamento": "",
-  "urlAggiornamento": ""
+  "versioneMinimaApk": 99,
+  "versioneConsigliataApk": 99,
+  "messaggioAggiornamento": "Questa versione è vecchia: scarica quella nuova.",
+  "urlAggiornamento": "https://example.com/apk"
 }
