@@ -450,6 +450,19 @@
     100% { opacity: 0; }
 }
 
+/* Console KaibaCorp v3: sfondo WebGL (js/multiplayer/mp-term-fx.js), flusso esadecimale, esito "accesso concesso"/"rifiutato". */
+.mp-term-gl { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; mix-blend-mode: screen; transition: opacity .5s ease; }
+.mp-term-hex { position: relative; display: flex; overflow: hidden; margin: 0 0 6px; height: 1em; font: 500 .55rem/1 ui-monospace, Consolas, monospace; letter-spacing: .12em; color: rgba(110, 221, 255, .38); white-space: nowrap; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+.mp-term-hex span { flex: none; animation: mpTermHex 7s linear infinite; }
+@keyframes mpTermHex { to { transform: translateX(-100%); } }
+.mp-term.is-ok { box-shadow: 0 18px 40px rgba(0, 0, 0, .42), 0 0 38px rgba(80, 255, 190, .3), inset 0 0 0 1px rgba(150, 255, 215, .6), inset 0 -35px 60px rgba(0, 77, 55, .22); }
+.mp-term.is-ok .mp-term-state { color: #aaffdf; }
+.mp-term.is-ok .mp-term-state i { background: #7dffc8; box-shadow: 0 0 12px #7dffc8; }
+.mp-term.is-ok .mp-term-bar span { background: #7dffc8; }
+.mp-term.is-err { box-shadow: 0 18px 40px rgba(0, 0, 0, .42), 0 0 34px rgba(255, 70, 90, .3), inset 0 0 0 1px rgba(255, 130, 140, .55); }
+.mp-term.is-err .mp-term-state { color: #ff9aa6; }
+.mp-term.is-err .mp-term-state i { background: #ff5b6b; box-shadow: 0 0 12px #ff5b6b; }
+
 /* Console KaibaCorp v2: il terminale resta nella pagina, ma assume la
    profondità e la gerarchia di una vera console di collegamento. */
 .mp-term {
@@ -531,7 +544,7 @@
 @media (prefers-reduced-motion: reduce) {
     .mp-term, .mp-term::after, .mp-term-bar span, .mp-term-line.is-attiva::after,
     .mp-term-title.is-glitch::before, .mp-term-title.is-glitch::after,
-    .mp-term-emblem::before, .mp-term-emblem::after, .mp-term-state i { animation: none; }
+    .mp-term-emblem::before, .mp-term-emblem::after, .mp-term-state i, .mp-term-hex span { animation: none; }
 }
 
 /* ---------------------------------------------------------------

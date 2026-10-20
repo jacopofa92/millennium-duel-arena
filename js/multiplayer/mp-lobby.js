@@ -176,10 +176,12 @@
             await net.connect(url);
             fermaAttesaServer();
             rememberServerUrl(url);
+            try { await accessoConcesso(); } catch (e) { /* la scenetta non deve mai far fallire il collegamento */ }
             showStatus('✅ Connesso al server.');
             return true;
         } catch (err) {
             fermaAttesaServer();
+            try { await connessioneRifiutata(); } catch (e) { /* idem */ }
             showStatus('❌ Impossibile connettersi: ' + err.message, true);
             return false;
         }
@@ -228,15 +230,20 @@
     // righe che si scrivono lettera per lettera e una barra senza fine.
     // Vive solo finché dura l'attesa: il prossimo `showStatus` sostituisce
     // tutto col suo testo, quindi non serve mai "chiuderlo".
+    // Le prime quattro scorrono veloci (sono il collegamento vero, di solito una frazione di secondo); le altre
+    // compaiono solo se il server dorme e ci mette a svegliarsi.
     const FRASI_ATTESA = [
-        'COLLEGAMENTO AL NODO DUELARENA',
+        'INIZIALIZZO IL MODULO KC-NET',
+        'RISOLVO IL NODO DUELARENA',
+        'HANDSHAKE TLS · CANALE CIFRATO',
+        'APRO IL CANALE WEBSOCKET',
         'SERVER IN STAND-BY: AVVIO IN CORSO',
         'ALLOCO LA SALA DUELLO',
         'SINCRONIZZO I DUEL DISK',
         'CONTROLLO DI INTEGRITÀ DEL CANALE',
         'ANCORA UN ISTANTE'
     ];
-    const attesa = { timer: null, inizio: 0, risveglio: false, tentativo: 0, righe: 0, digitazione: null };
+    const attesa = { timer: null, inizio: 0, risveglio: false, visibile: false, tentativo: 0, righe: 0, digitazione: null, fx: null };
     const riduciMovimento = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     /** Scrive `testo` dentro `el` una lettera alla volta (subito intero se il movimento è ridotto). */
@@ -263,7 +270,8 @@
                             <span class="mp-term-title" data-glitch="KAIBACORP NETWORK">KAIBACORP NETWORK</span>
                             <span class="mp-term-clock" id="mpTermClock">T+00:00</span>
                         </div>
-                        <div class="mp-term-state"><i></i><span>UPLINK // HANDSHAKE REMOTO</span></div>
+                        <div class="mp-term-state"><i></i><span id="mpTermStato">UPLINK // HANDSHAKE REMOTO</span></div>
+                        <div class="mp-term-hex" aria-hidden="true"><span>${flussoEsadecimale()}</span><span>${flussoEsadecimale()}</span></div>
                         <div class="mp-term-body" id="mpTermBody"></div>
                     </div>
                 </div>
@@ -274,19 +282,60 @@
                 <div class="mp-term-meta"><span id="mpTermFoot"></span><b>KC-NET // TLS</b></div>
             </div>`;
         attesa.righe = 0;
+        // Sfondo WebGL "KaibaCorp System" dietro la console (js/multiplayer/mp-term-fx.js): niente se manca WebGL.
+        if (attesa.fx) attesa.fx.ferma();
+        attesa.fx = window.MpTermFx ? MpTermFx.monta(el.querySelector('.mp-term')) : null;
+    }
+
+    /** Una riga di byte in esadecimale, per il flusso di dati che scorre sotto il titolo (solo decorazione). */
+    function flussoEsadecimale() {
+        let s = '';
+        for (let i = 0; i < 48; i++) s += Math.floor(Math.random() * 256).toString(16).toUpperCase().padStart(2, '0') + ' ';
+        return s;
+    }
+
+    /** Collegamento riuscito: la console lo dice ("accesso concesso") prima di lasciare il posto al messaggio normale. */
+    function accessoConcesso() {
+        const term = document.querySelector('#mpStatus .mp-term');
+        if (!term) return Promise.resolve();
+        term.classList.add('is-ok');
+        const stato = $('mpTermStato'); if (stato) stato.textContent = 'ACCESSO CONCESSO // UPLINK STABILE';
+        const stages = $('mpTermStages'); if (stages) stages.querySelectorAll('i').forEach((n) => n.classList.add('is-on'));
+        const corpo = $('mpTermBody');
+        if (corpo) {
+            const prec = corpo.lastElementChild; if (prec) prec.classList.remove('is-attiva');
+            const riga = document.createElement('div'); riga.className = 'mp-term-line is-attiva'; corpo.appendChild(riga);
+            scriviLentamente(riga, '> CANALE STABILITO · BENVENUTO, DUELLANTE');
+        }
+        const titolo = term.querySelector('.mp-term-title');
+        if (titolo) { titolo.classList.remove('is-glitch'); void titolo.offsetWidth; titolo.classList.add('is-glitch'); }
+        if (attesa.fx) attesa.fx.ok();
+        if (window.NativeHaptics) NativeHaptics.medium();
+        return new Promise((resolve) => setTimeout(resolve, riduciMovimento ? 0 : 850));
+    }
+
+    /** Collegamento fallito: un attimo di "rifiutato" in rosso prima del messaggio d'errore. */
+    function connessioneRifiutata() {
+        const term = document.querySelector('#mpStatus .mp-term');
+        if (!term) return Promise.resolve();
+        term.classList.add('is-err');
+        const stato = $('mpTermStato'); if (stato) stato.textContent = 'CONNESSIONE RIFIUTATA // UPLINK PERSO';
+        if (attesa.fx) attesa.fx.errore();
+        return new Promise((resolve) => setTimeout(resolve, riduciMovimento ? 0 : 600));
     }
 
     function mostraAttesaServer() {
-        if (!attesa.risveglio) return;
+        if (!attesa.risveglio && !attesa.visibile) return;
         const el = $('mpStatus');
         if (!el) return;
         if (!el.querySelector('.mp-term')) costruisciTerminaleAttesa(el);
-        const secondi = Math.max(0, Math.round((Date.now() - attesa.inizio) / 1000));
+        const ms = Math.max(0, Date.now() - attesa.inizio);
+        const secondi = Math.round(ms / 1000);
         const mm = String(Math.floor(secondi / 60)).padStart(2, '0');
         const ss = String(secondi % 60).padStart(2, '0');
         $('mpTermClock').textContent = `T+${mm}:${ss}`;
-        // Una riga nuova ogni 4 secondi, fino all'ultima, che resta.
-        const attese = Math.min(FRASI_ATTESA.length, Math.floor(secondi / 4) + 1);
+        // Le prime quattro righe (il collegamento vero) una ogni 0,7 secondi; poi, se il server dorme, una ogni 4.
+        const attese = Math.min(FRASI_ATTESA.length, ms < 3000 ? 1 + Math.floor(ms / 700) : 4 + Math.floor((ms - 3000) / 4000) + 1);
         const avanzamento = Math.min(5, Math.max(1, Math.ceil(attese * 5 / FRASI_ATTESA.length)));
         const stages = $('mpTermStages');
         if (stages) stages.querySelectorAll('i').forEach((nodo, indice) => nodo.classList.toggle('is-on', indice < avanzamento));
@@ -310,12 +359,15 @@
         fermaAttesaServer();
         attesa.inizio = Date.now();
         attesa.risveglio = false;
+        attesa.visibile = true;     // la console compare subito, non solo quando il server dorme
         attesa.tentativo = 0;
-        attesa.timer = setInterval(mostraAttesaServer, 1000);
+        mostraAttesaServer();
+        attesa.timer = setInterval(mostraAttesaServer, 250);
     }
     function fermaAttesaServer() {
         if (attesa.timer) { clearInterval(attesa.timer); attesa.timer = null; }
         attesa.risveglio = false;
+        attesa.visibile = false;
     }
 
     // ============================================================

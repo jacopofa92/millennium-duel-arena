@@ -15,6 +15,10 @@ module.exports = {
             'La sequenza di handshake deve avanzare insieme ai messaggi reali di attesa');
         ['.mp-term-console', '.mp-term-emblem', '.mp-term-stages', '@media (max-width: 540px)', 'orientation: landscape', 'prefers-reduced-motion']
             .forEach((marker) => t.assert(css.includes(marker), `${marker} deve essere coperto dallo stile`));
+        const fx = fs.readFileSync(path.join(root, 'js/multiplayer/mp-term-fx.js'), 'utf8');
+        t.assert(fx.includes('MpTermFx') && fx.includes('WEBGL_lose_context') && fx.includes('prefers-reduced-motion'), 'Lo sfondo WebGL della console si spegne da solo e rispetta il movimento ridotto');
+        t.assert(js.includes('accessoConcesso') && js.includes('connessioneRifiutata') && js.includes('MpTermFx.monta'), 'La console annuncia accesso concesso / rifiutato e monta lo sfondo');
+        t.assert(css.includes('.mp-term.is-ok') && css.includes('.mp-term.is-err') && css.includes('.mp-term-gl'), 'Stili di esito e di sfondo presenti');
         t.assert(!js.includes('class="modal') && !js.includes('showModal'), 'Il risveglio del server non deve tornare a essere un modale');
     }
 };
