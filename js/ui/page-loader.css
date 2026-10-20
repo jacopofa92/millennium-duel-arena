@@ -33,7 +33,6 @@
     perspective: 760px;
     transform-style: flat; /* piatto: cosi' il canvas WebGL resta sempre DIETRO la carta, senza tagliarla mentre gira */
 }
-.page-loader-gl { position: absolute; left: 50%; top: 45%; width: 300px; height: 340px; margin: -170px 0 0 -150px; pointer-events: none; }
 .page-loader-aura {
     position: absolute;
     left: 50%;

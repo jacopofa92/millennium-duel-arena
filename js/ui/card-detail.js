@@ -75,7 +75,12 @@
         chiudi.setAttribute('aria-label', 'Chiudi');
         chiudi.textContent = '×';
         chiudi.onclick = close;
-        scheda.appendChild(chiudi);
+        // La X sta in un'ancora che resta incollata in alto mentre la scheda scorre (prima era "absolute" dentro un
+        // contenitore che scrolla: su un telefono spariva appena si scorreva) e sopra la carta che si inclina.
+        const ancora = document.createElement('div');
+        ancora.className = 'cd-close-ancora';
+        ancora.appendChild(chiudi);
+        scheda.appendChild(ancora);
         scheda.appendChild(preview);
         scheda.appendChild(info);
         scheda.appendChild(azioniBox);

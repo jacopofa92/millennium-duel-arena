@@ -95,52 +95,10 @@
         document.body.insertBefore(el, document.body.firstChild);
     }
 
-    // Energia dorata in WebGL attorno alla carta (al posto dei raggi che giravano sul dorso): particelle che
-    // salgono a spirale verso la carta e un alone che respira. Un canvas piccolo, fermo quando il loader e'
-    // nascosto; se WebGL manca resta la sola carta CSS.
-    var glRaf = 0, glAttivo = null;
-    (function () {
-        try {
-            if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-            var stage = el.querySelector('.page-loader-stage');
-            var cv = document.createElement('canvas');
-            cv.width = 300; cv.height = 340; cv.className = 'page-loader-gl'; cv.style.opacity = '0'; // si mostra solo dopo il primo fotogramma disegnato
-            var gl = cv.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false });
-            if (!gl) return;
-            var vs = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
-            var fs = 'precision highp float;uniform vec2 r;uniform float t;' +
-                'float h(float n){return fract(n*43758.5453+.137*n*n);}' +
-                'void main(){vec2 uv=gl_FragCoord.xy/r;vec2 d=(uv-vec2(.5,.5))*vec2(r.x/r.y,1.);float rc=length(d);' +
-                'float res=.82+.18*sin(t*2.2);' +
-                'float al=exp(-rc*rc*18.)*.07*res;' +
-                'vec3 c=vec3(1.,.62,.14)*al;float a=al*.8;' +
-                'for(int i=0;i<22;i++){float fi=float(i);float ph=fract(t*.28+h(fi+1.)*1.);' +
-                'float rr=mix(.5,.1,ph);float an=h(fi+7.)*6.283+t*1.1*(.6+h(fi)*.8)+ph*4.;' +
-                'vec2 q=vec2(cos(an),sin(an))*rr;float s=smoothstep(.012+.008*h(fi+3.),0.,length(d-q))*sin(ph*3.1416)*.7;' +
-                'c+=vec3(1.,.9,.55)*s;a+=s;}' +
-                'float fin=smoothstep(.5,.3,abs(uv.x-.5))*smoothstep(.5,.3,abs(uv.y-.5));c*=fin;a*=fin;a=clamp(a,0.,1.);gl_FragColor=vec4(min(c,vec3(a)),a);}';
-            function sh(tp, src) { var o = gl.createShader(tp); gl.shaderSource(o, src); gl.compileShader(o); return o; }
-            var pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(pr);
-            if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return;
-            gl.useProgram(pr);
-            var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-            var loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-            var uR = gl.getUniformLocation(pr, 'r'), uT = gl.getUniformLocation(pr, 't');
-            gl.viewport(0, 0, cv.width, cv.height); gl.uniform2f(uR, cv.width, cv.height);
-            var t0 = performance.now();
-            function giro(now) {
-                gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
-                gl.uniform1f(uT, (now - t0) / 1000);
-                gl.drawArrays(gl.TRIANGLES, 0, 3);
-                if (cv.style.opacity === '0') cv.style.opacity = '1';
-                glRaf = requestAnimationFrame(giro);
-            }
-            stage.insertBefore(cv, stage.firstChild);
-            glAttivo = { via: function () { if (!glRaf) glRaf = requestAnimationFrame(giro); }, ferma: function () { cancelAnimationFrame(glRaf); glRaf = 0; } };
-            glAttivo.via();
-        } catch (e) { glAttivo = null; }
-    })();
+    // Nessun WebGL qui: il loader e' sul percorso critico di OGNI pagina (se un contesto GL fallisce su un telefono
+    // lo schermo resta nero). Solo CSS.
+    var glAttivo = null;
+
     var MIN_MS = 1000; // richiesta esplicita dell'utente: 1s invece di 2s
     var hidden = false;
     var hideTimer = null;

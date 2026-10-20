@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.4.33 — Loading generico di nuovo solo CSS (il canvas WebGL sul percorso critico di ogni pagina e' il sospetto principale dello schermo nero sull'APK). Scheda carta (Cartoteca): la X resta incollata in alto mentre si scorre e sta sopra la carta che si inclina.
  * 1.4.32 — Carte vive: via anche il bordo lucido (nessuna cornice). Loading: carta piatta (il canvas non la taglia piu'), bagliore giallo molto ridotto. Win/Lose: particelle ridotte di molto. Impatti di battaglia (danno ai LP, scontro, distruzione) in WebGL con carte e scossa su 	ranslate (WAAPI) invece di tween GSAP su x/filter.
  * 1.4.31 — Carte vive (Cartoteca, Negozio, scheda): lucido, laminato, arcobaleno e grana stanno solo sopra la finestra dell'illustrazione, non su tutta la carta; nome, stelle e ATK/DEF restano nitidi.
  * 1.4.30 — Annuncio di cambio turno: tolti i raggi ruotanti. Loading generico: via il riquadro giallo attorno alla carta (il canvas WebGL sfumava male ai bordi) e il dorso e' ora identico a quello delle carte coperte del duello.
@@ -787,4 +788,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.4.32';
+window.GAME_VERSION = '1.4.33';
