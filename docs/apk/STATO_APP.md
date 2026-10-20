@@ -15,5 +15,9 @@ repository e va online col normale push su `main`: **non serve ricompilare l'APK
 
 Se il file non si legge (rete assente, errore), l'app procede normalmente: un controllo che fallisce non blocca mai il
 gioco. La lettura è nativa (`MainActivity.controllaStato`), quindi non passa dal Service Worker né dalla cache.
-Le pagine locali dell'APK sono in `www/` (`errore.html`, `manutenzione.html`, `aggiornamento.html`) e il pulsante
-Riprova richiama `ApkControlli.riprova()`, che ripete lo stesso controllo.
+L'APK ha UNA sola pagina locale, `www/errore.html`, che mostra tre stati (errore di rete, manutenzione, aggiornamento necessario):
+con `server.url` Capacitor serve in locale solo l'`errorPath` esatto (niente query, niente altre pagine), quindi e'
+`MainActivity` a dire quale stato mostrare tramite `window.ApkControlli.modalita()`. Il pulsante Riprova richiama
+`ApkControlli.riprova()`, che ripete lo stesso controllo e, se tutto e' a posto, entra nel gioco.
+
+Provato sul telefono: partenza normale, errore di rete (Wi-Fi e dati spenti), manutenzione, versione sotto il minimo.
