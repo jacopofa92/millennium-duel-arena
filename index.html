@@ -250,32 +250,19 @@
         0%, 100% { opacity: 0.55; }
         50%      { opacity: 1; }
     }
-    /* BUG REALE segnalato dall'utente: con inset in percentuale, il
-       riquadro ruotante scala con lo STESSO rapporto d'aspetto del
-       contenitore — su uno schermo molto stretto/alto (mobile in
-       verticale) la diagonale del riquadro ruotato NON basta più a
-       coprire gli angoli reali dello schermo a certi angoli di
-       rotazione (a 45°, con un rapporto H/W molto alto, servirebbe un
-       fattore di crescita ben oltre 1.35/1.7 usato qui prima). Fisso a
-       250vmax (sempre più grande della diagonale reale, qualunque
-       rapporto d'aspetto) invece di una percentuale del contenitore, e
-       centrato via margini negativi (non transform, già usato per la
-       sola rotazione qui sotto). */
-    .menu-bg-rays {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 250vmax;
-        height: 250vmax;
-        margin-top: -125vmax;
-        margin-left: -125vmax;
-        background: repeating-conic-gradient(from 0deg, rgba(247,215,116,0.05) 0deg 4deg, transparent 4deg 14deg);
-        animation: menuRaysSpin 70s linear infinite;
-        mix-blend-mode: screen;
-    }
+    /* I raggi che giravano sono stati tolti (richiesta dell'utente): al loro posto c'e' l'ambiente WebGL dello
+       sfondo, js/ui/ambiente-menu.js, con elementi legati all'illustrazione (luna, nubi, stelle, torce, oro).
+       Il riquadro del canvas e' identico a quello della foto e ne segue la parallasse. */
+    /* (lo splash d'apertura usa ancora questa rotazione per i suoi raggi) */
     @keyframes menuRaysSpin {
         from { transform: rotate(0deg); }
         to   { transform: rotate(360deg); }
+    }
+    .menu-bg-gl {
+        position: absolute;
+        inset: -3vmax;
+        pointer-events: none;
+        translate: calc(var(--par-x, 0) * -1.4vmax) calc(var(--par-y, 0) * -1.05vmax);
     }
     .menu-particles {
         position: absolute;
@@ -306,7 +293,6 @@
         translate: calc(var(--par-x, 0) * -1.2vmax) calc(var(--par-y, 0) * -0.9vmax);
     }
     .menu-bg-flash { translate: calc(var(--par-x, 0) * -1.6vmax) calc(var(--par-y, 0) * -1.2vmax); }
-    .menu-bg-rays { translate: calc(var(--par-x, 0) * -2.4vmax) calc(var(--par-y, 0) * -1.8vmax); }
     .menu-particles { translate: calc(var(--par-x, 0) * -3.4vmax) calc(var(--par-y, 0) * -2.6vmax); }
     .menu-logo {
         transform: perspective(700px) rotateX(calc(var(--par-y, 0) * -8deg)) rotateY(calc(var(--par-x, 0) * 10deg));
@@ -1041,7 +1027,6 @@
     <div class="menu-bg">
         <div class="menu-bg-foto"></div>
         <div class="menu-bg-flash"></div>
-        <div class="menu-bg-rays"></div>
         <div class="menu-particles" id="menuParticles"></div>
     </div>
     <script>
@@ -5104,6 +5089,8 @@
     <script src="js/ui/challenge-banner.js"></script>
     <script src="js/ui/icon-library.js"></script>
     <script src="js/ui/video-quality.js"></script>
+<script src="js/ui/ambiente-webgl.js"></script>
+<script src="js/ui/ambiente-menu.js"></script>
     <script src="js/ui/bot-speed.js"></script>
     <!-- L'ologramma serve QUI solo alla vista Impostazioni, per leggere e
          scrivere la scelta: a disegnarlo è duelMonstersCore.html, che

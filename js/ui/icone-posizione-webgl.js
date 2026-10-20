@@ -28,7 +28,7 @@ precision highp float;
 precision mediump float;
 #endif
 uniform vec2 r; uniform float t; uniform float modo; uniform float fase;
-// modo: 0 spade, 1 scudo, 2 scintilla (Attiva effetto), 3 annulla, 4 conferma, 5 carta (seleziona), 6 evocazione.
+// modo: 0 spade, 1 scudo, 2 scintilla (Attiva effetto), 3 annulla, 4 conferma, 5 carta (seleziona), 6 evocazione, 7 spada di luce.
 // fase: 0..1 per una scena singola (sulla carta in campo); -1 = ciclo continuo che si ripete (pulsanti).
 const float PI=3.14159265;
 float easeOut(float x){x=clamp(x,0.,1.);return 1.-pow(1.-x,3.);}
@@ -99,27 +99,29 @@ void main(){
     float nasce=easeOut(ph/.22);
     float fuori=1.-smoothstep(.88,1.,ph);
     float resp=1.+.03*sin(t*3.2);
-    vec2 q=p/(.95*resp*mix(.6,1.,nasce)); q.y+=.04;
-    // forma a scudo: larga in alto, a punta in basso
-    float w=.78*(1.-.5*smoothstep(-.1,1.,q.y+.0)) ;
-    float yy=q.y;
-    float forma=max(abs(q.x)-mix(.78,.05,smoothstep(-.1,.95,yy)),max(-yy-.82,yy-.82+.0));
-    forma=max(forma,abs(q.x)-.78);
-    float inside=smoothstep(.03,-.03,forma);
-    float bordo=smoothstep(.09,.0,abs(forma+.045))*.9;
-    vec3 base=mix(vec3(.12,.5,.32),vec3(.35,.95,.6),.5+.5*q.y);
+    vec2 q=p/(1.02*resp*mix(.6,1.,nasce)); q.y+=.02;
+    // Scudo araldico ("heater"): bordo superiore appena arcuato, fianchi dritti, poi si stringe a punta in basso.
+    float hw=q.y>=0.?.72:.72*pow(max(1.-(-q.y)/.84,0.),.58);
+    float dTop=q.y-(.8-.14*q.x*q.x/.5184);
+    float forma=max(max(abs(q.x)-hw,dTop),-q.y-.86);
+    float inside=smoothstep(.025,-.025,forma);
+    float bordo=smoothstep(.07,.0,abs(forma+.045))*.95;          // cornice dorata
+    float incavo=smoothstep(-.1,-.15,forma)*inside;              // fascia scura subito dentro la cornice
     vec3 oro=vec3(1.,.82,.4);
-    // croce / emblema al centro
-    float croce=max(smoothstep(.07,.03,abs(q.x))*smoothstep(.5,.46,abs(q.y-.02)),smoothstep(.07,.03,abs(q.y-.02))*smoothstep(.42,.38,abs(q.x)))*inside;
-    float gem=smoothstep(.12,.07,length(q-vec2(0.,.02)));
-    vec3 col=base*inside*.85+oro*bordo+oro*croce*.8+vec3(.9,1.,.95)*gem*.5;
+    vec3 base=mix(vec3(.1,.4,.27),vec3(.3,.86,.55),clamp(.5+.55*q.y+.25*q.x,0.,1.));
+    // mezza arcata araldica: la meta' sinistra piu' chiara, quella destra piu' scura
+    base*=1.+.16*sign(q.x)*-1.;
+    // croce al centro + borchia
+    float croce=max(smoothstep(.06,.03,abs(q.x))*smoothstep(.44,.4,abs(q.y-.12)),smoothstep(.06,.03,abs(q.y-.12))*smoothstep(.36,.32,abs(q.x)))*inside;
+    float gem=smoothstep(.1,.06,length(q-vec2(0.,.12)));
+    vec3 col=base*inside*(.82-.35*incavo)+oro*bordo+oro*croce*.85+vec3(1.,.96,.8)*gem*.6;
     // riflesso diagonale
     float diag=q.x*.8+q.y*.6-(ph*3.2-1.6);
     float riflesso=exp(-diag*diag*28.)*inside*.9;
     col+=vec3(.9,1.,.95)*riflesso;
     // anello che si espande alla nascita
     float d=length(q);
-    float onda=exp(-pow((d-easeOut(ph/.5)*1.5)/.06,2.))*(1.-smoothstep(0.,.5,ph))*1.1;
+    float onda=exp(-pow((d-easeOut(ph/.5)*1.0)/.06,2.))*(1.-smoothstep(0.,.5,ph))*1.1;
     col+=vec3(.5,1.,.7)*onda;
     float a=clamp(inside+bordo+onda,0.,1.);
     // alone morbido
@@ -170,7 +172,7 @@ void main(){
       float riflesso=exp(-pow((q.x*.7+q.y*.5-(ph*2.6-1.3))/.12,2.))*body;
       vec3 col=vec3(.42,.17,.1)*body+vec3(1.,.78,.3)*bordo+vec3(1.,.7,.3)*ovale*body+vec3(1.,.95,.85)*riflesso*.8;
       o=vec4(col,clamp(body+bordo,0.,1.))*fuori;
-    } else {
+    } else if(modo<6.5){
       // EVOCAZIONE (triangolo): piramide che si accende, con un raggio che sale dalla punta.
       float sc=mix(.5,1.,nasce); vec2 q=p/sc;
       vec2 ap=vec2(0.,.55);
@@ -182,6 +184,13 @@ void main(){
       float glow=exp(-max(d,0.)*max(d,0.)*40.)*.35;
       vec3 col=base*fill*(.55+.35*pul)+vec3(1.,.85,.5)*edge+vec3(1.,.8,.45)*beam+vec3(1.,.4,.2)*glow*(1.-fill);
       o=vec4(col,clamp(fill+edge+beam*.7+glow*.5,0.,1.))*fuori;
+    } else {
+      // SPADA DI LUCE infilzata (marchio fisso di Spade Rivelatrici): punta in basso, verde-bianca, che respira.
+      vec2 q=vec2(p.x,-p.y)/1.9+vec2(0.,.135);
+      vec4 sw=spada(q,vec3(.86,1.,.9),vec3(.3,1.,.5));
+      float res=.84+.16*sin(t*3.3);
+      float dax=exp(-p.x*p.x*9.)*.22*res;
+      o=sw*res+vec4(vec3(.3,1.,.5)*dax,dax*.6)*(1.-sw.a);
     }
   }
   gl_FragColor=o;
@@ -235,7 +244,9 @@ void main(){
         gl.uniform1f(u.fase, ic.dur ? Math.min(1, t / ic.dur) : -1);
         gl.drawArrays(gl.TRIANGLES, 0, 3);
         ic.ctx.clearRect(0, 0, ic.cv.width, ic.cv.height);
-        ic.ctx.drawImage(off, 0, 0, ic.cv.width, ic.cv.height);
+        // La spada di luce e' lunga e stretta: si ritaglia la fascia centrale del quadrato invece di stirarlo.
+        if (ic.modo === 7) ic.ctx.drawImage(off, 38, 0, 52, LATO, 0, 0, ic.cv.width, ic.cv.height);
+        else ic.ctx.drawImage(off, 0, 0, ic.cv.width, ic.cv.height);
     }
 
     function ciclo(ora) {
@@ -310,5 +321,25 @@ void main(){
         return true;
     }
 
-    window.IconePosizione = { monta: monta, sullaCarta: sullaCarta, attive: () => icone.length };
+    /**
+     * Il marchio fisso delle Spade Rivelatrici dentro `el` (.field-sword-mark): una spada di luce in WebGL al
+     * posto delle quattro forme CSS. Torna false (e il chiamante tiene le forme CSS) se WebGL manca.
+     * @param {HTMLElement} el
+     */
+    function montaSpada(el) {
+        if (!el || window.ICONE_POSIZIONE_WEBGL_OFF || !prepara()) return false;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const cv = document.createElement('canvas');
+        cv.width = Math.round(54 * dpr); cv.height = Math.round(150 * dpr);
+        cv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;';
+        cv.setAttribute('aria-hidden', 'true');
+        const ctx = cv.getContext('2d'); if (!ctx) return false;
+        el.textContent = ''; el.appendChild(cv);
+        const ic = { cv: cv, ctx: ctx, modo: 7, t0: performance.now() };
+        icone.push(ic); disegna(ic, menoMovimento() ? 0.5 : 0);
+        if (!menoMovimento() && !rid) rid = requestAnimationFrame(ciclo);
+        return true;
+    }
+
+    window.IconePosizione = { monta: monta, montaSpada: montaSpada, sullaCarta: sullaCarta, attive: () => icone.length };
 })();

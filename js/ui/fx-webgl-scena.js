@@ -33,9 +33,9 @@
     const MAX = 40;
 
     // Tipi di primitiva (devono coincidere con l'ordine delle `if` dello shader qui sotto).
-    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19 };
+    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19, ANKH: 20, PORTAL: 21 };
     // Colori: indici nella tavolozza dello shader.
-    const C = { CALDO: 0, ORO: 1, ROSSO: 2, ARANCIO: 3, CIANO: 4, BLU: 5, VIOLA: 6, MAGENTA: 7, VERDE: 8, BIANCO: 9, SCURO: 10, GHIACCIO: 11 };
+    const C = { CALDO: 0, ORO: 1, ROSSO: 2, ARANCIO: 3, CIANO: 4, BLU: 5, VIOLA: 6, MAGENTA: 7, VERDE: 8, BIANCO: 9, SCURO: 10, GHIACCIO: 11, VERDE_SCURO: 12 };
 
     // =====================================================================
     // Le primitive: un programma per tipo, disegnato in una passata ristretta al suo riquadro
@@ -65,7 +65,7 @@ float dado(vec2 q,float v){
 }
 `;
 
-    const COLORI = [[1, .95, .8], [1, .8, .3], [1, .25, .2], [1, .55, .15], [.4, .9, 1], [.3, .5, 1], [.7, .4, 1], [1, .35, .8], [.4, 1, .55], [1, 1, 1], [.02, .01, .06], [.7, 1, 1]];
+    const COLORI = [[1, .95, .8], [1, .8, .3], [1, .25, .2], [1, .55, .15], [.4, .9, 1], [.3, .5, 1], [.7, .4, 1], [1, .35, .8], [.4, 1, .55], [1, 1, 1], [.02, .01, .06], [.7, 1, 1], [.0, .05, .035]];
 
     /** @type {Record<number,string>} */
     const CORPI = {};
@@ -261,6 +261,30 @@ float dado(vec2 q,float v){
   vec4 dv=vec4(cc*body*fade,body*fade);
   s=dv+vec4(0.,0.,0.,sh*fade)*(1.-dv.a);`;
 
+    // ANKH (Rinascita del Mostro): croce ansata di luce con anello, asta e braccia; A.z = mezza altezza.
+    // La stessa sagoma dell'originale in CSS: anello in alto, asta al centro, due braccia a meta'.
+    CORPI[T.ANKH] = `
+  vec2 q=(P-A.xy)/A.z; q.y=-q.y;
+  float sc=mix(.2,1.,easeOut(u/.28))*(1.+.25*smoothstep(.76,1.,u));
+  q/=sc; q.x/=1.-.0;
+  float dr=abs(length(q-vec2(0.,.46))-.3)-.075;
+  vec2 b1=abs(q-vec2(0.,-.36))-vec2(.07,.6);
+  vec2 b2=abs(q-vec2(0.,.0))-vec2(.46,.065);
+  float d=min(dr,min(max(b1.x,b1.y),max(b2.x,b2.y)));
+  float core=smoothstep(.025,-.025,d); float glow=exp(-max(d,0.)*10.)*.8; float glow2=exp(-max(d,0.)*3.)*.35;
+  float e=smoothstep(0.,.24,u)*(1.-smoothstep(.76,1.,u));
+  s=vec4((vec3(.9,1.,.96)*core+c*glow+c*glow2*.6)*e,clamp((core+glow*.7+glow2*.4)*e,0.,1.));`;
+
+    // PORTAL (Rinascita): ellisse piatta con il centro scuro, un anello verde luminoso e un alone morbido.
+    CORPI[T.PORTAL] = `
+  vec2 q=(P-A.xy)/A.z; q.y/=max(B.w,.05);
+  float sc=mix(.1,1.,easeOut(u/.3))*(1.-.7*smoothstep(.7,1.,u)); q/=sc;
+  float rr=length(q);
+  float e=smoothstep(0.,.3,u)*(1.-smoothstep(.7,1.,u));
+  float hole=smoothstep(.34,.3,rr); float ring=exp(-pow((rr-.46)/.12,2.)); float halo=smoothstep(1.,.3,rr)*.35;
+  vec3 col=c*(ring*1.5+halo)*e;
+  s=vec4(col*(1.-hole)+vec3(0.,.02,.012)*hole*e,clamp((ring+halo+hole*.95)*e,0.,1.));`;
+
     /** Il programma di un tipo (costruito una volta sola e messo in cache dal motore). */
     const SORGENTI = {};
     function sorgente(tipo) {
@@ -289,6 +313,8 @@ float dado(vec2 q,float v){
             case T.MOON: e = z * 3; return [x - e, y - e, x + e, y + e];
             case T.HEART: case T.EYE: case T.HAT: e = z * 1.5; return [x - e, y - e, x + e, y + e];
             case T.ORB: e = w * 5 + 70; return [Math.min(x, z) - e, Math.min(y, q) - e, Math.max(x, z) + e, Math.max(y, q) + e];
+            case T.ANKH: e = z * 1.6; return [x - e, y - e, x + e, y + e];
+            case T.PORTAL: return [x - z * 1.2, y - z * 1.2 * Math.max(w, 0.05) - 6, x + z * 1.2, y + z * 1.2 * Math.max(w, 0.05) + 6];
             case T.PANEL: return [x - z - 20, y - q - 20, x + z + 20, y + q + 20];
             default: e = z * 3; return [x - e, y - q - e, x + e, y + e];   // moneta e dado
         }
@@ -447,27 +473,31 @@ float dado(vec2 q,float v){
         const d = esegui(s, 2200); sfx('directHit', 900); return d;
     };
 
-    /** Rinascita del Mostro: l'Ankh estrae la carta dal Cimitero e la deposita sul Terreno (onImpact all'arrivo). */
+    /**
+     * Rinascita del Mostro, fedele alla versione originale (effects.css, "fx-monster-reborn"): scena scura e
+     * verdastra, il portale piatto verde sul Cimitero, l'Ankh di luce che si apre sul bersaglio, e la carta
+     * che sale inclinata dal Cimitero e si raddrizza sul Terreno. L'impatto cade a 1120 ms, come prima.
+     */
     imp.playMonsterReborn = function (graveyardOwner, card, targetOwner, targetIndex, onImpact) {
         const target = rectDi(slotEl(targetOwner, 'monster', targetIndex));
         if (!target || typeof window.createCardElement !== 'function') { if (typeof onImpact === 'function') onImpact(); return 0; }
         const gr = rectZona(graveyardOwner, 'graveyard');
         const sx = gr ? gr.left + gr.width / 2 : innerWidth / 2; const sy = gr ? gr.top + gr.height / 2 : innerHeight / 2;
-        const e = cen(target);
+        const e = cen(target); const W = innerWidth;
+        const ankhH = Math.max(165, Math.min(370, W * 0.23)); const portW = Math.max(100, Math.min(210, W * 0.14));
         const s = new Scena();
-        s.add(T.WASH, C.SCURO, 0, 1.8, [0, 0, 0.5, 0], 3);
-        s.add(T.VORTEX, C.ORO, 0, 1.2, [sx, sy, Math.max(60, target.width), 0], 0.8);
-        s.add(T.SEAL, C.ORO, 0.35, 1.5, [e.x, e.y, target.width * 1.5, 0], 0.5);
-        s.add(T.PILLAR, C.ORO, 0.7, 1.0, [e.x, e.y, target.width * 0.55, 0], 1);
-        s.add(T.LINE, C.ORO, 0.1, 0.7, [sx, sy, e.x, e.y], 5);
-        s.add(T.FLASH, C.CALDO, 1.0, 0.7, [e.x, e.y, target.width * 1.4, 0]);
-        s.add(T.RING, C.ORO, 1.1, 0.7, [e.x, e.y, target.width * 1.6, 5]);
-        s.add(T.BURST, C.ORO, 1.1, 0.9, [e.x, e.y, target.width * 1.4, -30], 7);
+        s.add(T.WASH, C.VERDE_SCURO, 0, 1.9, [0, 0, 0.82, 0], 3);
+        s.add(T.PORTAL, C.VERDE, 0, 1.6, [sx, sy, portW / 2, 0], 0.22);
+        s.add(T.ANKH, C.VERDE, 0, 1.85, [e.x, e.y - ankhH * 0.02, ankhH / 2, 0]);
         const w = Math.max(52, target.width); const h = w * (target.height / target.width);
         fantasma(card, { width: w, height: h }, (u) => {
-            const k = easeIO(u);
-            return { x: lerp(sx - w / 2, e.x - w / 2, k), y: lerp(sy - h / 2, e.y - h / 2, k) - Math.sin(Math.PI * k) * 70, s: lerp(0.35, 1, k), rot: (1 - k) * 160, ry: (1 - k) * 80, op: u < 0.12 ? u / 0.12 : 1 };
-        }, 150, 950);
+            // Keyframe dell'originale: invisibile fino al 18%, compare al 36%, arriva al 78%, svanisce al 100%.
+            const k = u < 0.18 ? 0 : easeIO(Math.min(1, (u - 0.18) / 0.6));
+            const tilt = u < 0.78 ? 68 * (1 - k) : 0;
+            const sc = u < 0.78 ? lerp(0.18, 1.08, k) : lerp(1.08, 1, (u - 0.78) / 0.22);
+            const op = u < 0.18 ? 0 : (u < 0.36 ? (u - 0.18) / 0.18 : (u > 0.78 ? 1 - (u - 0.78) / 0.22 : 1));
+            return { x: lerp(sx - w / 2, e.x - w / 2, k), y: lerp(sy - h / 2, e.y - h / 2, k), rx: tilt, s: sc, op: op };
+        }, 0, 1450);
         const imp1 = unaVolta(onImpact);
         s.dopo(1120, imp1); s.dopo(1900, imp1);
         const d = esegui(s, 1900); sfx('summon', 0); return d;
@@ -826,17 +856,6 @@ float dado(vec2 q,float v){
     // Gli effetti "di tutti i giorni" (gia' sostituiti da GSAP, qui rifatti)
     // ---------------------------------------------------------------------
 
-    imp.playBattleDestroyEffect = function (el) {
-        const r = rectDi(el); if (!r) return;
-        const c = cen(r); const s = new Scena();
-        s.add(T.FLASH, C.CALDO, 0, 0.5, [c.x, c.y, r.width * 1.2, 0]);
-        s.add(T.RING, C.ARANCIO, 0.03, 0.55, [c.x, c.y, r.width * 1.5, 4]);
-        s.add(T.BURST, C.ORO, 0, 0.7, [c.x, c.y, r.width * 1.5, 60], 3);
-        s.add(T.BURST, C.ROSSO, 0.04, 0.7, [c.x, c.y, r.width * 1.0, 40], 11);
-        s.add(T.SMOKE, C.SCURO, 0.1, 0.7, [c.x, c.y, r.width * 0.8, 0.45]);
-        breve(s, 0.85);
-    };
-
     imp.playSummonShockwave = function (el) {
         const r = rectDi(el); if (!r) return;
         const c = cen(r); const s = new Scena();
@@ -856,59 +875,37 @@ float dado(vec2 q,float v){
         breve(s, 0.6);
     };
 
-    imp.playBattleClashEpic = function (a, b) {
-        const ra = rectDi(a); const rb = rectDi(b); const r = rb || ra; if (!r) return;
-        const ca = ra ? cen(ra) : null; const cb = rb ? cen(rb) : null; const p = cb || ca;
-        const mx = ca && cb ? (ca.x + cb.x) / 2 : p.x; const my = ca && cb ? (ca.y + cb.y) / 2 : p.y; const s = new Scena();
-        s.add(T.FLASH, C.BIANCO, 0, 0.5, [mx, my, r.width * 1.6, 0]);
-        s.add(T.RING, C.ORO, 0.02, 0.55, [mx, my, r.width * 2, 5]);
-        s.add(T.BURST, C.CALDO, 0, 0.6, [mx, my, r.width * 2, 40], 2);
-        s.add(T.BURST, C.ROSSO, 0.03, 0.6, [mx, my, r.width * 1.4, 30], 8);
-        breve(s, 0.75);
-        const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-        const cont = document.querySelector('.game-container');
-        if (cont && !coarse) { cont.classList.add('fx-clash-shake'); setTimeout(() => cont.classList.remove('fx-clash-shake'), 500); }
-    };
-
-    imp.playDamageEffect = function (amount, opts) {
-        const o = opts || {};
-        const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-        const cont = document.querySelector('.game-container');
-        if (cont && !coarse) { cont.classList.add('fx-shake'); setTimeout(() => cont.classList.remove('fx-shake'), 450); }
-        const s = new Scena();
-        s.add(T.WASH, C.ROSSO, 0, 0.5, [0, 0, 0.6, 0], 3);
-        if (o.anchorEl) { const r = rectDi(o.anchorEl); if (r) { const c = cen(r);
-            s.add(T.FLASH, C.ROSSO, 0, 0.5, [c.x, c.y, 90, 0]); s.add(T.RING, C.ROSSO, 0, 0.5, [c.x, c.y, 100, 4]); s.add(T.BURST, C.ROSSO, 0, 0.6, [c.x, c.y, 110, 50], 4); } }
-        breve(s, 0.65);
-    };
-
-    imp.playDrawEffect = function (el) {
-        const r = rectDi(el); if (!r) return;
-        const c = cen(r); const s = new Scena();
-        s.add(T.FLASH, C.GHIACCIO, 0, 0.4, [c.x, c.y, r.width * 0.9, 0]);
-        s.add(T.BURST, C.CIANO, 0, 0.45, [c.x, c.y, r.width * 0.9, 0], 6);
-        breve(s, 0.55);
-    };
-
-    /** Lancio della moneta: vola, gira e si ferma sulla faccia estratta. */
-    imp.playCoinFlip = function (heads) {
-        const W = innerWidth; const H = innerHeight; const s = new Scena(); const R = Math.min(W, H) * 0.075;
-        s.add(T.WASH, C.SCURO, 0, 1.75, [0, 0, 0.35, 0], 3);
-        s.add(T.COIN, C.ORO, 0, 1.75, [W / 2, H * 0.58, R, H * 0.3], heads ? 1 : 0);
-        s.add(T.FLASH, C.ORO, 1.2, 0.5, [W / 2, H * 0.58, R * 1.6, 0]);
-        // Come la versione di base, non apre una cinematica: e' un attimo, e il bot non deve aspettarlo.
-        breve(s, 1.75);
-        testo(heads ? 'TESTA' : 'CROCE', W / 2, H * 0.58 + R * 2.2, 1150, 500, { size: Math.min(34, W * 0.05), color: '#fff3c8', glow: '#ffb400' });
-    };
-
-    /** Lancio del dado: rotola e si ferma sul numero estratto. */
-    imp.playDiceRoll = function (result) {
-        const W = innerWidth; const H = innerHeight; const s = new Scena(); const R = Math.min(W, H) * 0.075;
-        s.add(T.WASH, C.SCURO, 0, 1.75, [0, 0, 0.35, 0], 3);
-        s.add(T.DIE, C.CALDO, 0, 1.75, [W / 2, H * 0.58, R, H * 0.25], Math.max(1, Math.min(6, Number(result) || 1)));
-        s.add(T.FLASH, C.CALDO, 1.2, 0.5, [W / 2, H * 0.58, R * 1.6, 0]);
-        breve(s, 1.75);
-        testo('RISULTATO: ' + Math.max(1, Math.min(6, Number(result) || 1)), W / 2, H * 0.58 + R * 2.2, 1150, 500, { size: Math.min(30, W * 0.045), color: '#ffffff', glow: '#7ee0ff' });
+    /**
+     * Pescata, fedele alla versione GSAP: il dorso di una carta parte dal mazzo, inclinato di -10 gradi, e
+     * va sulla carta appena arrivata in mano (300 ms, ease inOut) mentre il mazzo manda un bagliore azzurro
+     * sul bordo. La carta vera NON si tocca (ha la sua entrata .deal-in). Qui niente GSAP: sola transform/opacita'.
+     */
+    imp.playDrawEffect = function (cardElement) {
+        if (!cardElement) return;
+        const arrivo = cardElement.getBoundingClientRect(); if (!arrivo.width) return;
+        const mazzo = document.querySelector('#playerFieldBoard .field-slot[data-zone="deck"]') || document.querySelector('.field-slot[data-zone="deck"]');
+        if (!mazzo) return;
+        const p = mazzo.getBoundingClientRect(); if (!p.width) return;
+        const raggio = getComputedStyle(cardElement).borderRadius || '6px';
+        const volante = document.createElement('div');
+        volante.className = 'fx-gsap-draw-card'; // lo stile del dorso sta in card.css
+        volante.style.cssText = 'position:fixed;left:' + p.left + 'px;top:' + p.top + 'px;width:' + p.width + 'px;height:' + p.height + 'px;'
+            + 'pointer-events:none;z-index:10040;border-radius:' + raggio + ';will-change:transform,opacity;transform-origin:0 0;'
+            + 'box-shadow:0 8px 24px rgba(0,0,0,0.55),0 0 18px rgba(125,211,252,0.45);';
+        document.body.appendChild(volante);
+        const dx = arrivo.left - p.left; const dy = arrivo.top - p.top; const sx = arrivo.width / p.width; const sy = arrivo.height / p.height;
+        const a = volante.animate([
+            { transform: 'translate(0px,0px) rotate(-10deg) scale(1,1)', opacity: 1, offset: 0 },
+            { transform: 'translate(' + dx + 'px,' + dy + 'px) rotate(0deg) scale(' + sx + ',' + sy + ')', opacity: 1, offset: 0.73 },
+            { transform: 'translate(' + dx + 'px,' + dy + 'px) rotate(0deg) scale(' + sx + ',' + sy + ')', opacity: 0, offset: 1 }
+        ], { duration: 300, easing: 'cubic-bezier(.45,.05,.55,.95)', fill: 'forwards' });
+        a.onfinish = () => volante.remove(); setTimeout(() => volante.remove(), 900);
+        const bag = document.createElement('div');
+        bag.style.cssText = 'position:fixed;left:' + p.left + 'px;top:' + p.top + 'px;width:' + p.width + 'px;height:' + p.height + 'px;pointer-events:none;z-index:10039;'
+            + 'border-radius:' + raggio + ';opacity:0;box-shadow:0 0 0 2px rgba(125,211,252,0.9),0 0 26px 6px rgba(125,211,252,0.55);';
+        document.body.appendChild(bag);
+        const b = bag.animate([{ opacity: 0 }, { opacity: 1, offset: 0.21 }, { opacity: 0 }], { duration: 430, fill: 'forwards' });
+        b.onfinish = () => bag.remove(); setTimeout(() => bag.remove(), 900);
     };
 
     /** Per gli effetti brevi che NON aprono una cinematica (non fermano il bot, nessuna callback): solo il disegno. */

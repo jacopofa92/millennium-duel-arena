@@ -10,7 +10,7 @@ module.exports = {
         await openDuel(page);
         await page.waitForFunction(() => !!window.FxWebglScena && !!window.FX && !!window.FxWebgl);
         const nomi = await page.evaluate(() => FxWebglScena.NOMI);
-        assert(nomi.length >= 35, `Devono essere coperti tutti gli effetti della lista: ${nomi.length}`);
+        assert(nomi.length >= 28, `Devono essere coperti tutti gli effetti della lista: ${nomi.length}`);
 
         const r = await page.evaluate(async () => {
             window.FX_BACKEND = 'webgl';

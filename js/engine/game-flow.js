@@ -1069,6 +1069,8 @@ function renderFields() {
                 const swordMark = document.createElement('div');
                 swordMark.className = 'field-sword-mark';
                 swordMark.innerHTML = '<span class="fx-sword-blade"></span><span class="fx-sword-guard"></span><span class="fx-sword-hilt"></span><span class="fx-sword-gem"></span>';
+                // Spada di luce in WebGL al posto delle forme CSS; senza WebGL restano quelle.
+                if (window.IconePosizione) IconePosizione.montaSpada(swordMark);
                 slotEl.appendChild(swordMark);
             }
             if (slot) {

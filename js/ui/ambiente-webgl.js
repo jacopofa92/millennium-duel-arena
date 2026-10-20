@@ -260,6 +260,30 @@ vec4 m_glitch(vec2 uv,float t,vec3 c,float a,float ev){
   return vec4(c*al,al*.9);
 }`;
 
+    // Bagliore morbido che pulsa in un punto dell'immagine (luna, lampade, oggetti lucenti). Stessa regola `cover`
+    // delle fiamme. Parametri: posizione [x, y, grandezza] nell'immagine, y verso l'alto.
+    MOD.alone = `
+vec4 m_alone(vec2 uv,float asp,float t,vec3 c,vec2 f,float s,float seed,float ia,float a){
+  vec2 sp=asp>ia?vec2(f.x,.5+(f.y-.5)*(asp/ia)):vec2(.5+(f.x-.5)*(ia/asp),f.y);
+  vec2 d=(uv-sp)*vec2(asp,1.); float r2=dot(d,d);
+  if(r2>9.*s*s) return vec4(0.);
+  float pul=.75+.25*sin(t*(.7+seed*.15)+seed*5.);
+  float g=exp(-r2/(s*s*.5))*pul; float core=exp(-r2/(s*s*.04))*pul;
+  return vec4(c*(g*.7+core*.8)*a,(g*.5+core*.5)*a);
+}`;
+
+    // Brillio a quattro punte che compare e svanisce (stelle, riflessi sull'oro). Un seme per ognuno sfasa i lampi.
+    MOD.brillo = `
+vec4 m_brillo(vec2 uv,float asp,float t,vec3 c,vec2 f,float s,float seed,float ia,float a){
+  vec2 sp=asp>ia?vec2(f.x,.5+(f.y-.5)*(asp/ia)):vec2(.5+(f.x-.5)*(ia/asp),f.y);
+  vec2 d=(uv-sp)*vec2(asp,1.)/s;
+  if(dot(d,d)>30.) return vec4(0.);
+  float tw=pow(max(0.,sin(t*(.9+seed*.37)+seed*7.3)),6.);
+  float st=1./(1.+abs(d.x*d.y)*80.)*exp(-dot(d,d)*2.2); float core=exp(-dot(d,d)*18.);
+  float al=(st*.8+core)*tw*a;
+  return vec4(c*(st*.9+core)*tw*a,al);
+}`;
+
     // Una fiamma di torcia o di braciere in un punto preciso del campo: lingua
     // che ondeggia, nucleo caldo e alone che illumina attorno, con un tremolio
     // proprio (il seme sfasa ogni fiamma dalle altre). `f` e' la posizione
@@ -452,6 +476,12 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         // del campo, y verso l'alto). Colori: `c1` nucleo, `c2` alone; se mancano valgono
         // A e B della tavolozza. `sz` scala tutte le fiamme insieme, `ia` e' il rapporto
         // d'aspetto dell'immagine del campo.
+        alone: { def: { pts: [], sz: 1, ia: 1.772, a: 1 },
+            call: (c, o) => o.pts.reduce((e, p, i) =>
+                `over(m_alone(uv,asp,t,${c},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)}),${e})`, 'vec4(0.)') },
+        brillo: { def: { pts: [], sz: 1, ia: 1.772, a: 1 },
+            call: (c, o) => o.pts.reduce((e, p, i) =>
+                `over(m_brillo(uv,asp,t,${c},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)}),${e})`, 'vec4(0.)') },
         fiamme: { def: { pts: [], sz: 1, ia: 1.772, a: 1 },
             call: (c, o) => o.pts.reduce((e, p, i) =>
                 `over(m_fiamma(uv,asp,t,${o.c1 ? cost(o.c1) : 'A'},${o.c2 ? cost(o.c2) : 'B'},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)}),${e})`, 'vec4(0.)') },
@@ -1010,7 +1040,7 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
      * i nodi e le linee stanno sopra, nell'ordine del DOM.
      * @param {string} nome  chiave di MAPPE (nome del file dell'immagine senza estensione)
      * @param {HTMLElement} contenitore
-     * @param {{ larghezza: number, altezza: number, scala?: number }} op
+     * @param {{ larghezza: number, altezza: number, scala?: number, ia?: number }} op
      */
     function avviaMappa(nome, contenitore, op) {
         ferma();
@@ -1020,7 +1050,8 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         const larghezza = op.larghezza || contenitore.clientWidth || 1672;
         const altezza = op.altezza || contenitore.clientHeight || 941;
         const scala = op.scala || Math.min(0.5, 760 / larghezza);
-        const c = Object.assign({}, campo, { ia: larghezza / altezza });
+        // `ia`: il rapporto d'aspetto dell'IMMAGINE sotto (default: quello del contenitore, che nelle mappe coincide).
+        const c = Object.assign({}, campo, { ia: op.ia || larghezza / altezza });
         const src = componi(c, 'fondo');
         if (!src) return false;
         const p = creaPiano('fondo', src, scala, () => [larghezza, altezza], contenitore);
