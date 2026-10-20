@@ -2021,8 +2021,14 @@ function showPositionEffect(owner, index, position) {
         cardEl.classList.remove('positioning', 'positioning-defense');
         void cardEl.offsetWidth;
         cardEl.classList.add(animClass);
-        if (position === 'attack' && window.FX) {
+        // Sempre (Attacco o Difesa): la versione WebGL e' un solo anello contenuto; senza WebGL resta quella di prima.
+        if (window.FX) {
             FX.playSummonShockwave(cardEl);
+        }
+        // Spade che si incrociano / scudo che si forma, in WebGL, sopra la carta. Se non si puo', il vecchio distintivo.
+        if (window.IconePosizione && IconePosizione.sullaCarta(cardEl, position)) {
+            setTimeout(() => cardEl.classList.remove(animClass), 700);
+            return;
         }
         const badge = document.createElement('div');
         badge.className = position === 'defense' ? 'position-badge badge-defense' : 'position-badge';

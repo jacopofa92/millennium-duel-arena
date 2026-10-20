@@ -1268,7 +1268,7 @@ function openSummonModal(card, slotIndex, handIndex, fromRect, opzioni) {
         <div class="quick-popover-actions">
             <button type="button" class="quick-popover-btn attack icon-round" id="qpSummonAttack" title="Scoperta in Attacco"><span data-icon="attackPos"></span></button>
             <button type="button" class="quick-popover-btn defense icon-round" id="qpSummonDefense" title="Coperta in Difesa"><span data-icon="defensePos"></span></button>
-            ${canCancel ? '<button type="button" class="quick-popover-btn cancel icon-round" id="qpSummonCancel" title="Annulla">✖</button>' : ''}
+            ${canCancel ? '<button type="button" class="quick-popover-btn cancel icon-round" id="qpSummonCancel" title="Annulla"><span data-ico="cancel">✖</span></button>' : ''}
         </div>
     `, { onDismiss: canCancel ? cancelSummon : undefined, dismissible: canCancel, bare: true });
 
@@ -1315,8 +1315,8 @@ function maybeAskRaLpChoice(card, slotEl, proceed) {
     const pop = openQuickPopover(slotEl, `
         <div class="quick-popover-title">Ra: pagare LP fino a 100 per +${wouldGain} ATK/DEF?</div>
         <div class="quick-popover-actions">
-            <button type="button" class="quick-popover-btn confirm icon-round" id="qpRaPayYes" title="Sì, paga i Life Points">✔</button>
-            <button type="button" class="quick-popover-btn cancel icon-round" id="qpRaPayNo" title="No, resta 0/0">✖</button>
+            <button type="button" class="quick-popover-btn confirm icon-round" id="qpRaPayYes" title="Sì, paga i Life Points"><span data-ico="ok">✔</span></button>
+            <button type="button" class="quick-popover-btn cancel icon-round" id="qpRaPayNo" title="No, resta 0/0"><span data-ico="cancel">✖</span></button>
         </div>
     `, { dismissible: false });
     pop.querySelector('#qpRaPayYes').onclick = () => {
@@ -1429,9 +1429,9 @@ function promptMonsterFieldAction(slotIndex) {
         buttons.push(`<button type="button" class="quick-popover-btn ${goingToDefense ? 'defense' : 'attack'} icon-round" id="qpPosConfirm" title="Cambia Posizione"><span data-icon="${goingToDefense ? 'defensePos' : 'attackPos'}"></span></button>`);
     }
     if (canActivateEffect) {
-        buttons.push(`<button type="button" class="quick-popover-btn confirm icon-round" id="qpMonsterActivate" title="Attiva Effetto">✨</button>`);
+        buttons.push(`<button type="button" class="quick-popover-btn confirm icon-round" id="qpMonsterActivate" title="Attiva Effetto"><span data-ico="spark">✨</span></button>`);
     }
-    buttons.push(`<button type="button" class="quick-popover-btn cancel icon-round" id="qpPosCancel" title="Annulla">✖</button>`);
+    buttons.push(`<button type="button" class="quick-popover-btn cancel icon-round" id="qpPosCancel" title="Annulla"><span data-ico="cancel">✖</span></button>`);
 
     const pop = openQuickPopover(slotEl, `
         <div class="quick-popover-actions">${buttons.join('')}</div>
@@ -1470,8 +1470,8 @@ function promptHandSpellActivation(card, handIndex) {
     // nulla e obbliga a disegnare un pannello sopra il campo.
     const pop = openQuickPopover(anchorEl, `
         <div class="quick-popover-actions">
-            <button type="button" class="quick-popover-btn attack icon-round" id="qpSpellActivate" title="Attiva subito">✨</button>
-            <button type="button" class="quick-popover-btn cancel icon-round" id="qpSpellCancel" title="Annulla">✖</button>
+            <button type="button" class="quick-popover-btn attack icon-round" id="qpSpellActivate" title="Attiva subito"><span data-ico="spark">✨</span></button>
+            <button type="button" class="quick-popover-btn cancel icon-round" id="qpSpellCancel" title="Annulla"><span data-ico="cancel">✖</span></button>
         </div>
     `, { bare: true });
 
@@ -1495,9 +1495,9 @@ function promptHandMonsterActivation(card, handIndex) {
 
     const pop = openQuickPopover(anchorEl, `
         <div class="quick-popover-actions">
-            <button type="button" class="quick-popover-btn attack icon-round" id="qpMonsterActivateEffect" title="Attiva l'effetto (scarta questa carta)">✨</button>
-            <button type="button" class="quick-popover-btn defense icon-round" id="qpMonsterSelectNormal" title="Seleziona per Evocarla">🂠</button>
-            <button type="button" class="quick-popover-btn cancel icon-round" id="qpMonsterActivateCancel" title="Annulla">✖</button>
+            <button type="button" class="quick-popover-btn attack icon-round" id="qpMonsterActivateEffect" title="Attiva l'effetto (scarta questa carta)"><span data-ico="spark">✨</span></button>
+            <button type="button" class="quick-popover-btn defense icon-round" id="qpMonsterSelectNormal" title="Seleziona per Evocarla"><span data-ico="card">🂠</span></button>
+            <button type="button" class="quick-popover-btn cancel icon-round" id="qpMonsterActivateCancel" title="Annulla"><span data-ico="cancel">✖</span></button>
         </div>
     `, { bare: true });
 
@@ -1738,9 +1738,9 @@ function promptHandMonsterSpecialSummon(card, handIndex) {
 
     const pop = openQuickPopover(anchorEl, `
         <div class="quick-popover-actions">
-            <button type="button" class="quick-popover-btn confirm icon-round" id="qpMonsterSpecialSummon" title="Special Summon">✨</button>
-            ${canNormalSummon ? '<button type="button" class="quick-popover-btn attack icon-round" id="qpMonsterNormalSummon" title="Evoca Normalmente">🔺</button>' : ''}
-            <button type="button" class="quick-popover-btn cancel icon-round" id="qpMonsterSummonCancel" title="Annulla">✖</button>
+            <button type="button" class="quick-popover-btn confirm icon-round" id="qpMonsterSpecialSummon" title="Special Summon"><span data-ico="spark">✨</span></button>
+            ${canNormalSummon ? '<button type="button" class="quick-popover-btn attack icon-round" id="qpMonsterNormalSummon" title="Evoca Normalmente"><span data-ico="summon">🔺</span></button>' : ''}
+            <button type="button" class="quick-popover-btn cancel icon-round" id="qpMonsterSummonCancel" title="Annulla"><span data-ico="cancel">✖</span></button>
         </div>
     `, { bare: true });
 

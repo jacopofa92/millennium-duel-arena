@@ -27,10 +27,14 @@ precision highp float;
 #else
 precision mediump float;
 #endif
-uniform vec2 r; uniform float t; uniform float modo;   // modo: 0 = spade, 1 = scudo
+uniform vec2 r; uniform float t; uniform float modo; uniform float fase;
+// modo: 0 spade, 1 scudo, 2 scintilla (Attiva effetto), 3 annulla, 4 conferma, 5 carta (seleziona), 6 evocazione.
+// fase: 0..1 per una scena singola (sulla carta in campo); -1 = ciclo continuo che si ripete (pulsanti).
 const float PI=3.14159265;
 float easeOut(float x){x=clamp(x,0.,1.);return 1.-pow(1.-x,3.);}
 float easeIO(float x){x=clamp(x,0.,1.);return x*x*(3.-2.*x);}
+float stella(vec2 q){return 1./(1.+abs(q.x*q.y)*70.)*exp(-dot(q,q)*3.2);}
+float seg(vec2 p,vec2 a,vec2 b){vec2 pa=p-a,ba=b-a;float h=clamp(dot(pa,ba)/dot(ba,ba),0.,1.);return length(pa-ba*h);}
 
 // Una spada con la punta in alto, centrata in (0,0): lama rastremata con nervatura, guardia, impugnatura, pomo.
 vec4 spada(vec2 p,vec3 acciaio,vec3 bagliore){
@@ -57,7 +61,7 @@ void main(){
   vec4 o=vec4(0.);
   if(modo<.5){
     // ---- SPADE: calano dai due lati, si incrociano con un lampo, restano, svaniscono ----
-    float ph=mod(t,2.6)/2.6;
+    float ph=fase>=0.?fase:mod(t,2.6)/2.6;
     float dentro=easeOut(ph/.24);
     float fuori=1.-smoothstep(.86,1.,ph);
     float ang=mix(1.35,.66,dentro);                 // da quasi orizzontale a una X
@@ -89,9 +93,9 @@ void main(){
         o+=vec4(vec3(1.,.8,.5)*s,s);
       }
     }
-  } else {
+  } else if(modo<1.5){
     // ---- SCUDO: si forma, respira, un riflesso lo attraversa ----
-    float ph=mod(t,2.6)/2.6;
+    float ph=fase>=0.?fase:mod(t,2.6)/2.6;
     float nasce=easeOut(ph/.22);
     float fuori=1.-smoothstep(.88,1.,ph);
     float resp=1.+.03*sin(t*3.2);
@@ -110,7 +114,7 @@ void main(){
     float gem=smoothstep(.12,.07,length(q-vec2(0.,.02)));
     vec3 col=base*inside*.85+oro*bordo+oro*croce*.8+vec3(.9,1.,.95)*gem*.5;
     // riflesso diagonale
-    float diag=q.x*.8+q.y*.6-(fract(t/2.6*1.0)*3.2-1.6);
+    float diag=q.x*.8+q.y*.6-(ph*3.2-1.6);
     float riflesso=exp(-diag*diag*28.)*inside*.9;
     col+=vec3(.9,1.,.95)*riflesso;
     // anello che si espande alla nascita
@@ -122,15 +126,75 @@ void main(){
     float alo=exp(-max(forma,0.)*max(forma,0.)*40.)*.3*nasce;
     col+=vec3(.3,1.,.6)*alo*(1.-a);
     o=vec4(col*(1.-0.),clamp(a+alo*.6,0.,1.))*fuori;
+  } else {
+    // ---- ALTRE ICONE FLOTTANTI (scintilla, annulla, conferma, carta, evocazione) ----
+    float ph=fase>=0.?fase:mod(t,2.6)/2.6;
+    float fuori=1.-smoothstep(.88,1.,ph);
+    float nasce=easeOut(ph/.2);
+    if(modo<2.5){
+      // SCINTILLA (Attiva effetto): stella a quattro punte che pulsa, con due piccole che brillano.
+      float pul=1.+.12*sin(t*5.);
+      float s1=stella(p/(.85*pul*mix(.35,1.,nasce)));
+      float s2=stella((p-vec2(.58,.52))/(.34*(.6+.4*sin(t*4.+1.))));
+      float s3=stella((p-vec2(-.6,-.48))/(.28*(.6+.4*sin(t*4.+3.))));
+      float s=s1+s2*.8+s3*.7;
+      float ring=exp(-pow((length(p)-easeOut(ph/.45)*.85)/.07,2.))*(1.-smoothstep(0.,.45,ph));
+      vec3 col=mix(vec3(1.,.78,.3),vec3(1.,.97,.85),clamp(s*s,0.,1.))*s+vec3(1.,.8,.4)*ring;
+      o=vec4(col,clamp(s*1.1+ring,0.,1.))*fuori;
+    } else if(modo<3.5){
+      // ANNULLA: una croce che si traccia e pulsa.
+      float k1=easeOut(ph/.16); float k2=easeOut((ph-.1)/.16);
+      vec2 a1=vec2(-.5,.5); vec2 a2=vec2(.5,.5);
+      float d=min(seg(p,a1,mix(a1,vec2(.5,-.5),k1)),seg(p,a2,mix(a2,vec2(-.5,-.5),k2)));
+      float pul=1.+.08*sin(t*5.);
+      float core=smoothstep(.095*pul,.06*pul,d); float glow=exp(-d*d*55.)*.7;
+      vec3 col=vec3(.88,.92,1.)*core+vec3(.55,.65,1.)*glow;
+      o=vec4(col,clamp(core+glow*.6,0.,1.))*fuori;
+    } else if(modo<4.5){
+      // CONFERMA: il segno di spunta si traccia e poi un anello si espande.
+      vec2 A=vec2(-.52,.02); vec2 B=vec2(-.16,-.4); vec2 C=vec2(.56,.5);
+      float k1=easeOut(ph/.18); float k2=easeOut((ph-.14)/.22);
+      float d=min(seg(p,A,mix(A,B,k1)),seg(p,B,mix(B,C,k2)));
+      float c=max(ph-.4,0.);
+      float ring=exp(-pow((length(p)-c*2.)/.07,2.))*exp(-c*4.)*step(.4,ph);
+      float core=smoothstep(.1,.065,d); float glow=exp(-d*d*50.)*.75;
+      vec3 col=vec3(.8,.97,1.)*core+vec3(.35,.7,1.)*glow+vec3(.5,.85,1.)*ring;
+      o=vec4(col,clamp(core+glow*.6+ring,0.,1.))*fuori;
+    } else if(modo<5.5){
+      // CARTA (seleziona): dorso di carta che fluttua con un riflesso che la attraversa.
+      vec2 q=p; q.y+=.04*sin(t*3.); float ang=-.22; float cs=cos(ang),sn=sin(ang); q=vec2(cs*q.x+sn*q.y,-sn*q.x+cs*q.y); q/=mix(.5,1.,nasce);
+      vec2 b=abs(q)-vec2(.44,.62); float sd=length(max(b,0.))+min(max(b.x,b.y),0.)-.06;
+      float body=smoothstep(.025,-.025,sd);
+      float bordo=smoothstep(.055,0.,abs(sd+.05));
+      float l=length(q/vec2(.26,.38)); float ovale=exp(-pow((l-1.)/.14,2.))*.8+exp(-l*l*3.)*.2;
+      float riflesso=exp(-pow((q.x*.7+q.y*.5-(ph*2.6-1.3))/.12,2.))*body;
+      vec3 col=vec3(.42,.17,.1)*body+vec3(1.,.78,.3)*bordo+vec3(1.,.7,.3)*ovale*body+vec3(1.,.95,.85)*riflesso*.8;
+      o=vec4(col,clamp(body+bordo,0.,1.))*fuori;
+    } else {
+      // EVOCAZIONE (triangolo): piramide che si accende, con un raggio che sale dalla punta.
+      float sc=mix(.5,1.,nasce); vec2 q=p/sc;
+      vec2 ap=vec2(0.,.55);
+      float d=max(max(-q.y-.4,dot(q-ap,vec2(.885,.466))),dot(q-ap,vec2(-.885,.466)));
+      float fill=smoothstep(.03,-.03,d); float edge=smoothstep(.06,0.,abs(d+.05));
+      float pul=.75+.25*sin(t*4.);
+      vec3 base=mix(vec3(.9,.2,.12),vec3(1.,.7,.3),clamp((q.y+.4)/.95,0.,1.));
+      float beam=exp(-q.x*q.x*45.)*smoothstep(.5,.62,q.y)*exp(-(q.y-.55)*1.4)*pul;
+      float glow=exp(-max(d,0.)*max(d,0.)*40.)*.35;
+      vec3 col=base*fill*(.55+.35*pul)+vec3(1.,.85,.5)*edge+vec3(1.,.8,.45)*beam+vec3(1.,.4,.2)*glow*(1.-fill);
+      o=vec4(col,clamp(fill+edge+beam*.7+glow*.5,0.,1.))*fuori;
+    }
   }
   gl_FragColor=o;
 }`;
+
+    /** Le altre icone flottanti, per nome (attributo data-ico). Il testo dentro lo span (l'emoji di prima) resta finche' non si monta. */
+    const MODI = { spark: 2, cancel: 3, ok: 4, card: 5, summon: 6 };
 
     /** @type {HTMLCanvasElement|null} */ let off = null;
     /** @type {WebGLRenderingContext|null} */ let gl = null;
     let prog = null; let u = {};
     let pronto = null;
-    /** @type {{ cv: HTMLCanvasElement, ctx: CanvasRenderingContext2D, modo: number, t0: number }[]} */
+    /** @type {{ cv: HTMLCanvasElement, ctx: CanvasRenderingContext2D, modo: number, t0: number, dur?: number }[]} */
     let icone = [];
     let rid = 0;
 
@@ -157,7 +221,7 @@ void main(){
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
             const loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
             gl.viewport(0, 0, LATO, LATO); gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-            ['r', 't', 'modo'].forEach((n) => { u[n] = gl.getUniformLocation(prog, n); });
+            ['r', 't', 'modo', 'fase'].forEach((n) => { u[n] = gl.getUniformLocation(prog, n); });
             gl.uniform2f(u.r, LATO, LATO);
             off.addEventListener('webglcontextlost', (e) => { e.preventDefault(); pronto = false; fermaCiclo(); });
             pronto = true;
@@ -168,13 +232,15 @@ void main(){
     function disegna(ic, t) {
         gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
         gl.uniform1f(u.t, t); gl.uniform1f(u.modo, ic.modo);
+        gl.uniform1f(u.fase, ic.dur ? Math.min(1, t / ic.dur) : -1);
         gl.drawArrays(gl.TRIANGLES, 0, 3);
         ic.ctx.clearRect(0, 0, ic.cv.width, ic.cv.height);
         ic.ctx.drawImage(off, 0, 0, ic.cv.width, ic.cv.height);
     }
 
     function ciclo(ora) {
-        icone = icone.filter((ic) => ic.cv.isConnected);
+        // Le scene singole (sulla carta) escono da sole alla fine della loro durata.
+        icone = icone.filter((ic) => ic.cv.isConnected && !(ic.dur && (ora - ic.t0) / 1000 > ic.dur + 0.05) || (ic.dur && ic.cv.remove(), false));
         if (!icone.length || !pronto) { rid = 0; return; }
         icone.forEach((ic) => disegna(ic, (ora - ic.t0) / 1000));
         rid = requestAnimationFrame(ciclo);
@@ -190,7 +256,8 @@ void main(){
         if (!radice || window.ICONE_POSIZIONE_WEBGL_OFF) return false;
         const spade = radice.querySelectorAll('[data-icon="attackPos"]');
         const scudi = radice.querySelectorAll('[data-icon="defensePos"]');
-        if (!spade.length && !scudi.length) return false;
+        const altre = radice.querySelectorAll('[data-ico]');
+        if (!spade.length && !scudi.length && !altre.length) return false;
         if (!prepara()) return false;
         const dpr = Math.min(window.devicePixelRatio || 1, 3);
         const crea = (el, modo) => {
@@ -202,6 +269,7 @@ void main(){
             const ctx = cv.getContext('2d');
             if (!ctx) return;
             el.removeAttribute('data-icon'); // cosi' icon-library non la sostituisce di nuovo
+            el.removeAttribute('data-ico');
             el.textContent = ''; el.appendChild(cv);
             const ic = { cv: cv, ctx: ctx, modo: modo, t0: performance.now() };
             if (menoMovimento()) { disegna(ic, 0.55); return; } // un solo fotogramma, fermo
@@ -209,9 +277,38 @@ void main(){
         };
         spade.forEach((el) => crea(el, 0));
         scudi.forEach((el) => crea(el, 1));
+        altre.forEach((el) => { const m = MODI[el.getAttribute('data-ico')]; if (m !== undefined) crea(el, m); });
         if (icone.length && !rid) rid = requestAnimationFrame(ciclo);
         return true;
     }
 
-    window.IconePosizione = { monta: monta, attive: () => icone.length };
+    /**
+     * Una scena singola di ~1,1 s SOPRA la carta appena messa in Attacco (due spade che si incrociano)
+     * o in Difesa (lo scudo che si forma). E' un canvas fisso sullo schermo, non figlio della carta:
+     * il Terreno viene ridisegnato di continuo e un nodo figlio sparirebbe a meta'.
+     * Torna false (e il chiamante usa il vecchio distintivo) se WebGL manca o c'e' meno movimento.
+     * @param {HTMLElement} cardEl @param {'attack'|'defense'} posizione
+     */
+    function sullaCarta(cardEl, posizione) {
+        if (!cardEl || window.ICONE_POSIZIONE_WEBGL_OFF || menoMovimento() || !prepara()) return false;
+        const r = cardEl.getBoundingClientRect();
+        if (!r.width) return false;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        // Una carta in Difesa e' ruotata: il suo rettangolo e' orizzontale, ma l'icona sta in un quadrato.
+        const lato = Math.max(r.width, r.height) * 1.25;
+        const cv = document.createElement('canvas');
+        cv.width = Math.round(lato * dpr); cv.height = Math.round(lato * dpr);
+        cv.style.cssText = 'position:fixed;left:' + (r.left + r.width / 2 - lato / 2) + 'px;top:' + (r.top + r.height / 2 - lato / 2)
+            + 'px;width:' + lato + 'px;height:' + lato + 'px;pointer-events:none;z-index:10040;';
+        cv.setAttribute('aria-hidden', 'true');
+        const ctx = cv.getContext('2d'); if (!ctx) return false;
+        document.body.appendChild(cv);
+        const ic = { cv: cv, ctx: ctx, modo: posizione === 'defense' ? 1 : 0, t0: performance.now(), dur: 1.1 };
+        icone.push(ic); disegna(ic, 0);
+        if (!rid) rid = requestAnimationFrame(ciclo);
+        setTimeout(() => cv.remove(), 1400);
+        return true;
+    }
+
+    window.IconePosizione = { monta: monta, sullaCarta: sullaCarta, attive: () => icone.length };
 })();

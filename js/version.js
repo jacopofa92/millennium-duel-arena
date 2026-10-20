@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.4.22 — Icone flottanti animate in WebGL (Attiva effetto, Annulla, Conferma, Seleziona, Evocazione), spade/scudo animati sopra la carta messa in Attacco/Difesa, Evocazione sul campo piu' contenuta e senza gialli.
  * 1.4.21 — Tutti gli spettacoli di carta in WebGL (shader per primitiva con scissor), Evocazione semplificata, icone Attacco/Difesa animate (spade che si incrociano, scudo), Buco Nero piu' grande e scuro, tolto il suggerimento 'passa il mouse'.
  * 1.4.20 — Buco Nero WebGL rifatto (orizzonte, anello di fotoni, disco di taglio, arco lensato) e carte risucchiate con sola transform (niente scatti).
  * 1.4.19 — Backend WebGL degli spettacoli di carta (Buco Nero, Spade Rivelatrici, Raigeki) senza GSAP; effects.js sceglie il backend per effetto.
@@ -777,4 +778,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.4.21';
+window.GAME_VERSION = '1.4.22';

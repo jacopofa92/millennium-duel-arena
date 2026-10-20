@@ -840,19 +840,20 @@ float dado(vec2 q,float v){
     imp.playSummonShockwave = function (el) {
         const r = rectDi(el); if (!r) return;
         const c = cen(r); const s = new Scena();
-        // Evocazione normale (anche coperta): un solo anello morbido e un lampo leggero, nient'altro.
-        s.add(T.RING, C.ORO, 0, 0.55, [c.x, c.y, r.width * 1.15, 4]);
-        s.add(T.FLASH, C.CALDO, 0, 0.4, [c.x, c.y, r.width * 0.65, 0]);
-        breve(s, 0.65);
+        // Carta evocata sul campo (in Attacco o in Difesa, scoperta o coperta): CONTENUTA. Un solo anello sottile e
+        // freddo che non esce dalla carta, e un lampo bianco appena accennato. Niente gialli, niente scintille.
+        s.add(T.RING, C.GHIACCIO, 0, 0.5, [c.x, c.y, Math.max(r.width, r.height) * 0.62, 2.2]);
+        s.add(T.FLASH, C.BIANCO, 0, 0.3, [c.x, c.y, Math.max(r.width, r.height) * 0.32, 0]);
+        breve(s, 0.55);
     };
 
     imp.playSummonCircle = function (el) {
         const r = rectDi(el); if (!r) return;
         const c = cen(r); const sz = Math.max(r.width, r.height) * 1.3; const s = new Scena();
-        // Come sopra: semplice. Un sigillo solo, che appare e svanisce, con un lampo sotto.
-        s.add(T.SEAL, C.ORO, 0, 0.8, [c.x, c.y, sz * 0.85, 0], 0.55);
-        s.add(T.FLASH, C.CALDO, 0.05, 0.45, [c.x, c.y, sz * 0.45, 0]);
-        breve(s, 0.9);
+        // Come sopra: un anello sottile e freddo attorno alla carta e un lampo tenue, nient'altro.
+        s.add(T.RING, C.GHIACCIO, 0, 0.55, [c.x, c.y, sz * 0.5, 2.2]);
+        s.add(T.FLASH, C.BIANCO, 0, 0.3, [c.x, c.y, sz * 0.26, 0]);
+        breve(s, 0.6);
     };
 
     imp.playBattleClashEpic = function (a, b) {
