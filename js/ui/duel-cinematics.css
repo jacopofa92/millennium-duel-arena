@@ -156,34 +156,8 @@
     #duelIntroOverlay.is-out { transform: none; }
 }
 
-/* BUG REALE segnalato dall'utente ("i raggi a volte non toccano il
-   bordo schermo"): un inset in percentuale scala con lo stesso rapporto
-   d'aspetto del contenitore — su uno schermo molto stretto/alto
-   (mobile in verticale) il riquadro ruotato non copriva più gli angoli
-   reali a certi angoli di rotazione. 250vmax (sempre più grande della
-   diagonale reale dello schermo, qualunque rapporto d'aspetto) invece
-   di una percentuale, centrato via margini negativi (non transform,
-   riservato alla sola rotazione dell'animazione). Stesso fix per
-   .do-rays più sotto (Vittoria/Sconfitta) e .menu-bg-rays in
-   index.html (stesso identico problema, 3 punti diversi). */
-.di-rays {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 250vmax;
-    height: 250vmax;
-    margin-top: -125vmax;
-    margin-left: -125vmax;
-    background: repeating-conic-gradient(from 0deg, rgba(247, 215, 116, 0.10) 0deg 3deg, transparent 3deg 11deg);
-    mix-blend-mode: screen;
-    opacity: 0;
-}
-#duelIntroOverlay.is-in .di-rays { animation: diRaysSpin 3200ms ease-out forwards; }
-@keyframes diRaysSpin {
-    0% { opacity: 0; transform: rotate(0deg) scale(0.9); }
-    20% { opacity: 0.75; }
-    100% { opacity: 0.35; transform: rotate(38deg) scale(1.05); }
-}
+/* I raggi ruotanti dietro la presentazione sono stati tolti (richiesta dell'utente): al loro posto c'e' lo sfondo
+   WebGL di js/ui/duel-fx-webgl.js (due fiumi di energia che convergono sul VS). */
 
 /* Griglia esagonale di sfondo, in lento scorrimento */
 .di-grid {
@@ -461,26 +435,7 @@
 }
 #duelOutcomeOverlay.is-in { opacity: 1; }
 
-.do-rays {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 250vmax;
-    height: 250vmax;
-    margin-top: -125vmax;
-    margin-left: -125vmax;
-    background: repeating-conic-gradient(from 0deg, rgba(247, 215, 116, 0.12) 0deg 3deg, transparent 3deg 12deg);
-    mix-blend-mode: screen;
-    animation: doRaysSpin 26s linear infinite;
-    pointer-events: none;
-}
-#duelOutcomeOverlay.lost .do-rays {
-    background: repeating-conic-gradient(from 0deg, rgba(120, 140, 170, 0.10) 0deg 3deg, transparent 3deg 14deg);
-}
-#duelOutcomeOverlay.draw .do-rays {
-    background: repeating-conic-gradient(from 0deg, rgba(180, 180, 180, 0.10) 0deg 3deg, transparent 3deg 14deg);
-}
-@keyframes doRaysSpin { to { transform: rotate(360deg); } }
+/* Dietro Vittoria/Sconfitta/Pareggio: sfondo WebGL (js/ui/duel-fx-webgl.js), niente piu' raggi che ruotano. */
 
 .do-content {
     position: relative;

@@ -81,9 +81,7 @@
 
         const grid = document.createElement('div');
         grid.className = 'di-grid';
-        const rays = document.createElement('div');
-        rays.className = 'di-rays';
-        overlay.append(grid, rays);
+        overlay.append(grid);
 
         const stage = document.createElement('div');
         stage.className = 'di-stage';
@@ -117,6 +115,8 @@
         overlay.append(flash, duelWord, skip);
 
         document.body.appendChild(overlay);
+        // Al posto dei raggi che giravano: due fiumi di energia che convergono sul VS, con onda d'urto su "DUEL!" (WebGL).
+        if (window.DuelFxWebgl) DuelFxWebgl.monta(overlay, 'intro', { impattoMs: INTRO_SHOW_MS - 640 });
         void overlay.offsetWidth;
         overlay.classList.add('is-in');
 
@@ -249,9 +249,8 @@
         overlay.id = 'duelOutcomeOverlay';
         overlay.className = isDraw ? 'draw' : (playerWon ? 'won' : 'lost');
 
-        const rays = document.createElement('div');
-        rays.className = 'do-rays';
-        overlay.appendChild(rays);
+        // Sfondo animato in WebGL (al posto dei raggi che ruotavano): oro che sale, cenere che cade, pulviscolo.
+        if (window.DuelFxWebgl) DuelFxWebgl.monta(overlay, isDraw ? 'draw' : (playerWon ? 'won' : 'lost'));
 
         const content = document.createElement('div');
         content.className = 'do-content';

@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.4.27 — Presentazione VS ("It's time to duel!") e schermate Vittoria/Sconfitta/Pareggio: tolti i raggi ruotanti, al loro posto uno sfondo WebGL per ogni scena (fiumi di energia blu/rossa con onda d'urto, colonne di luce e braci, nebbia e cenere, polvere neutra).
  * 1.4.26 — Carte vive: tolto il WebGL dei riflessi di rarita' (tornano gli strati CSS di prima). Menu principale: lo sfondo resta fermo (si muove solo il logo) e il velo di luce dell'ambiente e' molto piu' tenue.
  * 1.4.24 — Menu principale: bagliori sull'oro molto piu' rari e stelle un po' meno frequenti.
  * 1.4.23 — Scudo araldico vero, marchio fisso delle Spade Rivelatrici in WebGL, Rinascita del Mostro e Pescata fedeli agli originali (tolti gli override WebGL non fedeli di danno/scontro/distruzione/moneta/dado), menu principale: via i raggi che girano, ambiente WebGL legato allo sfondo (luna, nubi, stelle, torce, oro).
@@ -781,4 +782,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.4.26';
+window.GAME_VERSION = '1.4.27';
