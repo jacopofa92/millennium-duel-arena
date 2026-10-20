@@ -103,6 +103,16 @@
         return `images/cards/${card.id}.jpg`;
     }
 
+    /**
+     * Miniatura dell'illustrazione per le GRIGLIE (Cartoteca...): 256px WebP (~13KB) invece del JPG da 624px (~80KB).
+     * Generate da scripts/build-ui-thumbnails.js (lavoro "carte"). Le carte custom e quelle di altri set non ne hanno:
+     * tornano il percorso normale.
+     */
+    function getCardThumbPath(card) {
+        if (card.customImage || (card.origin && card.origin !== 'yu-gi-oh')) return getCardImagePath(card);
+        return `images/cards/thumbs/${card.id}.webp`;
+    }
+
     // Sottotipi di Magia/Trappola che vale la pena segnalare a colpo
     // d'occhio sulla carta (Continua/Terreno/Veloce/Equipaggiamento): gli
     // altri sottotipi (Normale, Rituale, Contatore) restano con la sola
@@ -279,7 +289,8 @@
      * @param {boolean} isFaceDown - true per un mostro/carta coperta.
      * @param {'attack'|'defense'} position - orientamento (solo mostri).
      */
-    function createCardElement(card, isFaceDown = false, position = 'attack') {
+    function createCardElement(card, isFaceDown = false, position = 'attack', opzioni) {
+        const miniatura = !!(opzioni && opzioni.miniatura);
         const el = document.createElement('div');
         el.className = 'card';
         if (card) {
@@ -347,8 +358,12 @@
                 el.classList.add('art-loaded');
                 if (artIcon) setTimeout(() => artIcon.remove(), 260);
             };
-            artImg.onerror = () => artImg.remove();
-            assegnaSorgenteImmagine(artImg, getCardImagePath(card));
+            // Se manca la miniatura si riprova UNA volta con l'illustrazione intera, poi si rinuncia.
+            artImg.onerror = () => {
+                if (miniatura && !artImg.dataset.piena) { artImg.dataset.piena = '1'; assegnaSorgenteImmagine(artImg, getCardImagePath(card)); return; }
+                artImg.remove();
+            };
+            assegnaSorgenteImmagine(artImg, miniatura ? getCardThumbPath(card) : getCardImagePath(card));
             // Vedi il commento gemello in applyCardBackVisual() più sopra:
             // stesso sfarfallio, stessa causa (ricreazione totale ad ogni
             // renderFields()), stesso rimedio — se il browser ha già
@@ -374,6 +389,7 @@
         img.onload = () => el.classList.add('has-image');
         img.onerror = () => img.remove();
         assegnaSorgenteImmagine(img, getCardImagePath(card));
+        img.decoding = 'async';
         // Vedi il commento gemello in applyCardBackVisual() più sopra.
         if (img.complete && img.naturalWidth > 0) el.classList.add('has-image');
         el.insertBefore(img, el.firstChild);
@@ -732,6 +748,7 @@
         TYPE_ICON,
         ATTRIBUTE_ICON,
         getCardImagePath,
+        getCardThumbPath,
         createCardElement,
         renderCardBack,
         appendDeckPile,

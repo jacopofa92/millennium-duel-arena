@@ -16,11 +16,20 @@ const { chromium } = require('playwright');
 const ROOT = path.join(__dirname, '..');
 const JOBS = [
     {
+        nome: 'carte',
+        source: path.join(ROOT, 'images', 'cards'),
+        output: path.join(ROOT, 'images', 'cards', 'thumbs'),
+        width: 256,
+        height: 256,
+        quality: 0.74
+    },
+    {
+        nome: 'personaggi',
         source: path.join(ROOT, 'images', 'characters'),
         output: path.join(ROOT, 'images', 'characters', 'thumbs'),
-        width: 512,
-        height: 512,
-        quality: 0.78
+        width: 400,   // le caselle dei Duellanti sono ~150px CSS: 400px bastano anche a 2.75x e pesano meta'
+        height: 400,
+        quality: 0.72
     },
     {
         source: path.join(ROOT, 'images', 'fields'),
@@ -60,7 +69,8 @@ async function converti(page, input, job) {
     const page = await browser.newPage();
     let count = 0;
     try {
-        for (const job of JOBS) {
+        const solo = process.argv[2];
+        for (const job of JOBS.filter((j) => !solo || j.nome === solo)) {
             fs.mkdirSync(job.output, { recursive: true });
             const files = fs.readdirSync(job.source)
                 .map((name) => path.join(job.source, name))

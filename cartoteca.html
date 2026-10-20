@@ -391,6 +391,17 @@
     .cartoteca-grid .card {
         touch-action: pan-y;
     }
+    /* Skeleton: le carte "vuote" che compaiono subito, mentre il database (oltre 1000 carte) viene letto e la
+       griglia si costruisce: il primo disegno non e' piu' una pagina vuota. Spariscono da sole al primo render. */
+    .card-skeleton {
+        background: linear-gradient(110deg, rgba(255,255,255,.05) 30%, rgba(255,255,255,.13) 50%, rgba(255,255,255,.05) 70%) 0 0 / 220% 100%;
+        border: 1px solid rgba(247,215,116,.14);
+        box-shadow: none;
+        animation: cardSkeleton 1.2s linear infinite;
+        pointer-events: none;
+    }
+    @keyframes cardSkeleton { to { background-position: -220% 0; } }
+    @media (prefers-reduced-motion: reduce) { .card-skeleton { animation: none; } }
     /* Badge "effetto implementato parzialmente" (richiesta esplicita
        dell'utente, per uso di sviluppo — non è un badge da titolo di
        gioco pubblicato): basato SOLO su card.missingEffectNote, l'unico
@@ -559,7 +570,7 @@
 
     <main class="cartoteca-main">
         <div class="cartoteca-pager top" id="pagerTop" hidden></div>
-        <div class="cartoteca-grid" id="cartotecaGrid"></div>
+        <div class="cartoteca-grid" id="cartotecaGrid"><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div></div>
         <div class="cartoteca-pager bottom" id="pagerBottom" hidden></div>
     </main>
 
@@ -647,7 +658,7 @@
     // 1000 carte nel database, creare TUTTE le tile in un colpo solo rende
     // pesante ogni singolo cambio di filtro, perché renderGrid() ricostruisce
     // la griglia da zero ogni volta.
-    const CARDS_PER_PAGE = 300;
+    const CARDS_PER_PAGE = 300;   // richiesta esplicita dell'utente: resta 300 anche su telefono (si costruiscono a blocchi, vedi renderGrid)
 
     const TYPE_LABELS = { monster: 'Mostro', spell: 'Magia', trap: 'Trappola' };
     const TYPE_ICON = { monster: '👑', spell: '✨', trap: '🌀' };
@@ -899,7 +910,7 @@
     }
 
     function createCardTile(card) {
-        const el = createCardElement(card);
+        const el = createCardElement(card, false, 'attack', { miniatura: true });
         el.onclick = () => openCardModal(card);
         // Riflesso per rarità e inclinazione sotto il mouse (js/ui/card-renderer.js).
         if (window.CartaViva) CartaViva.rendi(el, card, { modo: 'griglia' });
@@ -957,6 +968,7 @@
      * che è il comportamento giusto — restare a "pagina 7" dopo aver
      * ristretto i risultati a 30 carte mostrerebbe una griglia vuota.
      */
+    let renderGettone = 0;
     function renderGrid(keepPage) {
         const grid = document.getElementById('cartotecaGrid');
         const results = sortCards(cardDatabase.filter(cardMatchesFilters), state.sort);
@@ -967,6 +979,7 @@
         const firstIndex = (state.page - 1) * CARDS_PER_PAGE;
         const pageCards = results.slice(firstIndex, firstIndex + CARDS_PER_PAGE);
 
+        renderGettone++;   // interrompe una costruzione a blocchi ancora in corso
         grid.innerHTML = '';
         if (results.length === 0) {
             const empty = document.createElement('div');
@@ -974,7 +987,19 @@
             empty.textContent = '🔍 Nessuna carta corrisponde ai filtri selezionati.';
             grid.appendChild(empty);
         } else {
-            pageCards.forEach(card => grid.appendChild(createCardTile(card)));
+            // A blocchi, un fotogramma l'uno dall'altro: le prime carte compaiono subito e il resto si costruisce
+            // senza bloccare il telefono (un cambio filtro/pagina interrompe la costruzione precedente).
+            const gettone = ++renderGettone;
+            const PRIMO = 18; const BLOCCO = 24; let i = 0;
+            const blocco = () => {
+                if (gettone !== renderGettone) return;
+                const fine = Math.min(i + (i === 0 ? PRIMO : BLOCCO), pageCards.length);
+                const frag = document.createDocumentFragment();
+                for (; i < fine; i++) frag.appendChild(createCardTile(pageCards[i]));
+                grid.appendChild(frag);
+                if (i < pageCards.length) requestAnimationFrame(blocco);
+            };
+            blocco();
         }
         renderPager(document.getElementById('pagerTop'), totalPages, results.length, firstIndex, pageCards.length);
         renderPager(document.getElementById('pagerBottom'), totalPages, results.length, firstIndex, pageCards.length);
