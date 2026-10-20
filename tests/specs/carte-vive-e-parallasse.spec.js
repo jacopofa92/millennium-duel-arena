@@ -17,7 +17,7 @@ const url = (f) => 'file:///' + path.join(RADICE, f).replace(/\\/g, '/');
 
 async function apriCartoteca(browser, opzioni) {
     const ctx = await browser.newContext(Object.assign({ viewport: { width: 1280, height: 860 }, serviceWorkers: 'block' }, opzioni || {}));
-    await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
+    await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.CARTA_VIVA_WEBGL_OFF = true; /* questo spec prova gli strati DOM (il ripiego); il WebGL e' in carta-viva-webgl.spec.js */ });
     const page = await ctx.newPage();
     await page.goto(url('cartoteca.html'));
     await page.waitForFunction(() => window.CardDetail && window.CardRarity && typeof cardDatabase !== 'undefined'
