@@ -433,7 +433,7 @@
         if (playerWon && window.FX) {
             setTimeout(() => {
                 FX.spawnParticles(window.innerWidth / 2, window.innerHeight * 0.5, {
-                    count: 70, speed: 8, life: 1400, size: 4, spread: 360, gravity: 0.08,
+                    count: 14, speed: 6, life: 1100, size: 3, spread: 360, gravity: 0.08,
                     colors: ['#ffdf8c', '#f39c12', '#ffffff', '#fff6dc']
                 });
             }, 300);

@@ -557,7 +557,6 @@
     //                   acceso); leggendaria lo fa dorato;
     //   segreta         più una grana scintillante attorno alla luce;
     //   mitica          (le Divinità) tutto quanto, sull'intera carta.
-    const RARITA_CON_BORDO = new Set(['rare', 'super', 'ultra', 'legendary', 'secret', 'mythic']);
     const RARITA_ARCOBALENO = new Set(['super', 'ultra', 'legendary', 'secret', 'mythic']);
     const RARITA_GRANA = new Set(['secret', 'mythic']);
     /** Inclinazione massima per modo: più grande la carta, più si può osare. */
@@ -599,7 +598,6 @@
         const finestra = !el.querySelector('.card-image') && el.querySelector('.card-frame-art');
         const dove = finestra || el;
         dove.appendChild(strato('cv-riflesso'));
-        if (RARITA_CON_BORDO.has(rarita)) dove.appendChild(strato('cv-bordo'));
         if (RARITA_ARCOBALENO.has(rarita)) dove.appendChild(strato(finestra ? 'cv-olo' : 'cv-olo cv-olo--intera'));
         if (RARITA_GRANA.has(rarita)) dove.appendChild(strato('cv-grana'));
         const ridotto = window.Inclinazione
