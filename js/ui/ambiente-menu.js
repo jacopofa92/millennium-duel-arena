@@ -29,14 +29,13 @@
             pal: [rgb(205, 222, 255), rgb(255, 200, 110), rgb(255, 245, 215)],
             fondo: [
                 // Le nubi nel cielo, lente, e la foschia bassa nella valle fra le piramidi.
-                ['nebbia', 'A', { sc: 1.5, vel: .5, a: .14, y0: -.5, y1: .5, area: [0, 0, .62, .34] }],
-                ['nebbia', 'A', { sc: 2.2, vel: .35, a: .1, y0: -.5, y1: .55, area: [0, .46, .6, .64] }],
+                ['nebbia', 'A', { sc: 1.5, vel: .5, a: .05, y0: -.5, y1: .5, area: [0, 0, .62, .34] }],
                 // La luna: un alone morbido che respira.
-                ['alone', 'A', { pts: su([[.32, .145, .55]]), a: .55 }],
+                ['alone', 'A', { pts: su([[.32, .145, .4]]), a: .3 }],
                 // Stelle che brillano a turno nel cielo.
                 ['brillo', 'C', { pts: su([[.106, .314, .09], [.05, .06, .05], [.2, .1, .055], [.46, .07, .06], [.53, .21, .05], [.6, .1, .05], [.14, .24, .05], [.27, .3, .05], [.4, .3, .045], [.1, .12, .045]]), sz: .7, a: .7, ex: 9, vel: .8 }],
                 // Un respiro caldo sul Puzzle del Millennio e sui riflessi dell'oro.
-                ['alone', 'B', { pts: su([[.5, .64, .2], [.33, .7, .1], [.65, .7, .12], [.84, .67, .12]]), a: .32 }],
+                ['alone', 'B', { pts: su([[.5, .64, .14], [.33, .7, .08], [.65, .7, .09], [.84, .67, .09]]), a: .1 }],
                 ['brillo', 'C', { pts: su([[.495, .59, .075], [.34, .67, .06], [.41, .75, .06], [.64, .68, .07], [.84, .64, .07], [.16, .76, .06], [.25, .83, .055], [.56, .72, .05]]), sz: .8, a: .75, ex: 16, vel: .6 }],
                 // Le torce lontane.
                 ['fiamme', 'B', Object.assign({ pts: su([[.153, .505, 1.2], [.373, .478, .7], [.27, .476, .45]]), sz: .85, a: .85 }, CALDO)],

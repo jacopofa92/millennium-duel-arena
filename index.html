@@ -252,7 +252,7 @@
     }
     /* I raggi che giravano sono stati tolti (richiesta dell'utente): al loro posto c'e' l'ambiente WebGL dello
        sfondo, js/ui/ambiente-menu.js, con elementi legati all'illustrazione (luna, nubi, stelle, torce, oro).
-       Il riquadro del canvas e' identico a quello della foto e ne segue la parallasse. */
+       Il riquadro del canvas e' identico a quello della foto, cosi' le torce restano sulle torce. */
     /* (lo splash d'apertura usa ancora questa rotazione per i suoi raggi) */
     @keyframes menuRaysSpin {
         from { transform: rotate(0deg); }
@@ -262,7 +262,6 @@
         position: absolute;
         inset: -3vmax;
         pointer-events: none;
-        translate: calc(var(--par-x, 0) * -1.4vmax) calc(var(--par-y, 0) * -1.05vmax);
     }
     .menu-particles {
         position: absolute;
@@ -270,17 +269,13 @@
         overflow: hidden;
     }
 
-    /* PARALLASSE: muovendo il mouse o inclinando il telefono, i livelli
-       dello sfondo scivolano di quantità diverse — il più lontano (la
-       foto) poco, i più vicini (raggi, scintille) di più — e il logo
-       ruota appena verso chi guarda. È questo scarto fra livelli che fa
-       leggere la profondità. --par-x/--par-y (da -1 a 1) le scrive lo
-       script dopo .menu-bg, inseguendo js/ui/inclinazione.js con un
-       rallentamento morbido; con movimento ridotto restano a 0.
-       Si usa la proprietà `translate` e non `transform`: raggi e scintille
-       hanno già un transform animato (rotazione, salita) e le due cose si
-       sommano invece di sostituirsi. La lista del menu resta ferma: deve
-       stare sotto il dito. */
+    /* PARALLASSE: muovendo il mouse o inclinando il telefono si muove SOLO il
+       logo, che ruota appena verso chi guarda; lo sfondo (foto, ambiente WebGL,
+       scintille) resta fermo (richiesta dell'utente). --par-x/--par-y (da -1 a 1)
+       le scrive lo script dopo .menu-bg, inseguendo js/ui/inclinazione.js con un
+       rallentamento morbido; con movimento ridotto restano a 0. Si usa la
+       proprietà `translate` e non `transform` perché il logo ha già un
+       transform proprio. La lista del menu resta ferma: deve stare sotto il dito. */
     .menu-bg-foto {
         position: absolute;
         /* Più grande dello schermo di quanto scivola: i bordi non si
@@ -290,10 +285,7 @@
            contesto di impilamento, quindi -1 resta al suo interno. */
         z-index: -1;
         background: url('images/background/backgroundMainMenu.jpg') center/cover no-repeat;
-        translate: calc(var(--par-x, 0) * -1.2vmax) calc(var(--par-y, 0) * -0.9vmax);
     }
-    .menu-bg-flash { translate: calc(var(--par-x, 0) * -1.6vmax) calc(var(--par-y, 0) * -1.2vmax); }
-    .menu-particles { translate: calc(var(--par-x, 0) * -3.4vmax) calc(var(--par-y, 0) * -2.6vmax); }
     .menu-logo {
         transform: perspective(700px) rotateX(calc(var(--par-y, 0) * -8deg)) rotateY(calc(var(--par-x, 0) * 10deg));
         translate: calc(var(--par-x, 0) * 8px) calc(var(--par-y, 0) * 5px);
@@ -3042,7 +3034,7 @@
                 <div class="settings-row">
                     <div>
                         <div class="settings-row-label">Profondità del menu</div>
-                        <div class="settings-row-sub">Lo sfondo del menu principale si muove a strati seguendo il mouse o l'inclinazione del telefono.</div>
+                        <div class="settings-row-sub">Il logo del menu principale segue il mouse o l'inclinazione del telefono; lo sfondo resta fermo.</div>
                     </div>
                     <label class="switch">
                         <input type="checkbox" id="impostazioni-parallaxToggleInput">
