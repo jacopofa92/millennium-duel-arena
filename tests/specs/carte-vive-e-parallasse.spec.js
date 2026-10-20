@@ -34,7 +34,7 @@ function apriSchedaPerRarita(page, rarita) {
         return {
             rarita: el.dataset.rarita,
             modo: el.dataset.viva,
-            livelli: ['cv-riflesso', 'cv-olo', 'cv-grana'].filter((c) => el.querySelector('.' + c))
+            livelli: ['cv-riflesso', 'cv-bordo', 'cv-olo', 'cv-grana'].filter((c) => el.querySelector('.' + c))
         };
     }, rarita);
 }
@@ -59,9 +59,9 @@ module.exports = {
         try {
             const attesi = {
                 common: ['cv-riflesso'],
-                rare: ['cv-riflesso'],
-                super: ['cv-riflesso', 'cv-olo'],
-                secret: ['cv-riflesso', 'cv-olo', 'cv-grana']
+                rare: ['cv-riflesso', 'cv-bordo'],
+                super: ['cv-riflesso', 'cv-bordo', 'cv-olo'],
+                secret: ['cv-riflesso', 'cv-bordo', 'cv-olo', 'cv-grana']
             };
             for (const [rarita, livelli] of Object.entries(attesi)) {
                 const r = await apriSchedaPerRarita(page, rarita);

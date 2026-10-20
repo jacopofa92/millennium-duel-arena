@@ -116,7 +116,8 @@ void main(){
     float ring=exp(-pow((rc-t*.7)/.06,2.))*exp(-t*1.4)*1.1;
     o+=vec4(vec3(1.,.88,.55)*ring,clamp(ring,0.,1.));
     // braci
-    o=over(particelle(uv,asp,t,vec3(1.,.78,.32),.12,.0,4.,.05,1.,.16),o);
+    o=over(particelle(uv,asp,t,vec3(1.,.78,.32),.12,.0,9.,.07,1.,.35),o);
+    o=over(particelle(uv,asp,t+7.,vec3(1.,.95,.75),.2,.02,15.,.04,1.,.25),o);
   } else if(modo<2.5){
     // ---------- SCONFITTA: cenere e nebbia fredda ----------
     float nebbia=fbm(vec2(uv.x*asp*1.4-t*.04,uv.y*1.6+t*.02)+fbm(uv*2.+t*.03)*.8);
@@ -127,13 +128,15 @@ void main(){
     float dir=exp(-pow((uv.x-.78)*1.6,2.))*(1.-uv.y*.6);
     o+=vec4(vec3(.5,.62,.9)*lamp*dir*.35,lamp*dir*.2);
     // cenere che cade
-    o=over(particelle(uv,asp,t,vec3(.62,.66,.74),-.1,.015,4.,.045,0.,.18),o);
+    o=over(particelle(uv,asp,t,vec3(.62,.66,.74),-.1,.015,8.,.06,0.,.4),o);
+    o=over(particelle(uv,asp,t+11.,vec3(.8,.84,.92),-.18,.02,13.,.035,1.,.3),o);
   } else {
     // ---------- PAREGGIO: pulviscolo neutro ----------
     float nebbia=fbm(vec2(uv.x*asp*1.2+t*.03,uv.y*1.4)+t*.02);
     float nb=smoothstep(.45,.9,nebbia)*.2;
     o=over(vec4(vec3(.6)*nb,nb*.7),o);
-    o=over(particelle(uv,asp,t,vec3(.82,.82,.82),.03,.03,4.,.045,1.,.2),o);
+    o=over(particelle(uv,asp,t,vec3(.82,.82,.82),.03,.03,9.,.05,1.,.45),o);
+    o=over(particelle(uv,asp,t+5.,vec3(1.),.05,.02,14.,.035,1.,.3),o);
   }
   gl_FragColor=o;
 }`;
