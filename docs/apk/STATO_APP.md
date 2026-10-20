@@ -11,7 +11,6 @@ repository e va online col normale push su `main`: **non serve ricompilare l'APK
 | `versioneMinimaApk` (numero) | `versionCode` minimo dell'APK. Chi ha una versione più vecchia vede "Aggiornamento necessario" e non entra. Il `versionCode` attuale è in `android/app/build.gradle` (oggi 26). |
 | `versioneConsigliataApk` (numero) | Sopra la versione dell'APK in uso compare solo un avviso (toast) all'avvio, senza bloccare nulla. |
 | `messaggioAggiornamento` (testo) | Frase della schermata di aggiornamento. |
-| `urlAggiornamento` (https://…) | Dove scaricare il nuovo APK: se presente la schermata mostra il pulsante "Scarica l'aggiornamento". |
 
 Se il file non si legge (rete assente, errore), l'app procede normalmente: un controllo che fallisce non blocca mai il
 gioco. La lettura è nativa (`MainActivity.controllaStato`), quindi non passa dal Service Worker né dalla cache.
