@@ -46,7 +46,7 @@ const DIST = path.join(RADICE, 'dist');
 // tutte (sono il gioco); le cartelle qui sotto per intero. Tutto il resto
 // della radice (documenti, audit, test, strumenti, server, script di
 // sviluppo, APK, file di prova) resta fuori.
-const FILE_RADICE = ['manifest.json', 'sw.js'];
+const FILE_RADICE = ['manifest.json', 'sw.js', 'app-status.json'];   // app-status.json: lo legge l'APK all'avvio (manutenzione / versione minima), vedi docs/apk/STATO_APP.md
 const CARTELLE = ['js', 'images', 'audio', 'video', 'assets'];
 
 // File già minificati da chi li distribuisce: si copiano come sono.
