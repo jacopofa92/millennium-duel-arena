@@ -45,9 +45,9 @@
      * ricade sull'avatar tondo di sempre. Non si aspetta nulla: l'intro
      * parte comunque, l'immagine compare quando e' pronta.
      */
-    function figureFor(duelist) {
+    function figureFor(duelist, senzaCerchio) {
         const nome = String(duelist.image || '').split(/[\\/]/).pop().replace(/\.[a-z0-9]+(?:\?.*)?$/i, '');
-        if (!nome) return avatarFor(duelist);
+        if (!nome) return senzaCerchio ? null : avatarFor(duelist);
         const cerca = [];
         if (window.innerWidth > 900) cerca.push('images/characters/avatarTrasparenza/' + nome + '.png');
         cerca.push('images/characters/pedine/' + nome + '.png');
@@ -60,7 +60,7 @@
         img.onerror = () => {
             i += 1;
             if (i < cerca.length) { img.src = cerca[i]; return; }
-            box.replaceWith(avatarFor(duelist));
+            if (senzaCerchio) box.remove(); else box.replaceWith(avatarFor(duelist));
         };
         img.src = cerca[0];
         box.appendChild(img);
@@ -299,10 +299,17 @@
         intestazione.className = 'do-header';
         content.appendChild(intestazione);
 
-        const portrait = document.createElement('div');
-        portrait.className = 'do-portrait';
-        portrait.appendChild(avatarFor(opponent));
-        intestazione.appendChild(portrait);
+        // La pedina di chi ha vinto: la propria in Vittoria, quella dell'avversario in Sconfitta. Niente icona a
+        // cerchio (e niente figura in un Pareggio, o se il duellante non ha la pedina).
+        const chiFigura = isDraw ? null : (playerWon ? session.player : opponent);
+        const figura = chiFigura ? figureFor(chiFigura, true) : null;
+        if (figura) {
+            const portrait = document.createElement('div');
+            portrait.className = 'do-portrait do-figura-box';
+            figura.classList.add('do-figura');
+            portrait.appendChild(figura);
+            intestazione.appendChild(portrait);
+        }
 
         const title = document.createElement('div');
         title.className = 'do-title';

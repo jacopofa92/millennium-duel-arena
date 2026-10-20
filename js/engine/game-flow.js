@@ -1854,7 +1854,7 @@ function showBattleEffect(attackerEl, targetEl, directDirection) {
         attackerEl.style.setProperty('--charge-dy', `${dy}px`);
 
         attackerEl.classList.add('is-attacking');
-        setTimeout(() => attackerEl.classList.remove('is-attacking'), 650);
+        setTimeout(() => attackerEl.classList.remove('is-attacking'), 700);
 
         // La proiezione olografica segue lo SLOT, e si riposiziona solo
         // quando il Terreno viene ridisegnato — non fotogramma per
@@ -1863,7 +1863,7 @@ function showBattleEffect(attackerEl, targetEl, directDirection) {
         // per la durata della rincorsa si spegne. Vale anche per un
         // attacco a un mostro, non solo per quello diretto.
         if (window.MonsterHolograms && typeof MonsterHolograms.nascondiPer === 'function' && attackerEl.dataset.uid) {
-            MonsterHolograms.nascondiPer(attackerEl.dataset.uid, 650);
+            MonsterHolograms.nascondiPer(attackerEl.dataset.uid, 700);
         }
     }
 

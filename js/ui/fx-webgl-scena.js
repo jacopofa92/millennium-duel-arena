@@ -992,27 +992,18 @@ float dado(vec2 q,float v){
         if (!point) return;
         const both = !!(a && t);
         const midX = both ? (a.x + t.x) / 2 : point.x; const midY = both ? (a.y + t.y) / 2 : point.y;
-        const t0 = both ? 0.3 : 0;
+        const t0 = both ? 0.32 : 0;   // l'impatto della rincorsa CSS (chargeAttack, 46% di 700ms)
         const s = new Scena();
         s.add(T.FLASH, C.CALDO, t0, 0.46, [midX, midY, 120, 0]);
         // Il colpo sul bersaglio (prima .battle-hit, un riquadro con gradiente): lampo bianco-oro sulla carta.
         if (rt) s.add(T.FLASH, C.CALDO, both ? t0 : 0, 0.55, [t.x, t.y, Math.max(rt.width, rt.height) * 0.8, 0]);
         for (let i = 0; i < 3; i++) s.add(T.BURST, C.CALDO, t0, 0.8, [midX, midY, 120 + i * 30, 36], 3 + i * 7.3);
         verifica(s);
-        if (both && attackerEl.animate) {
-            const dx = (t.x - a.x) * 0.42; const dy = (t.y - a.y) * 0.42;
-            attackerEl.animate([
-                { translate: '0px 0px', offset: 0, easing: OUT_CUBICA },
-                { translate: `${-dx * 0.22}px ${-dy * 0.22}px`, offset: 0.14 / 0.65, easing: IN_CUBICA },
-                { translate: `${dx}px ${dy}px`, offset: 0.3 / 0.65, easing: 'linear' },
-                { translate: `${dx}px ${dy}px`, offset: 0.35 / 0.65, easing: OUT_CUBICA },
-                { translate: '0px 0px', offset: 1 }
-            ], { duration: 650 });
-        }
+        // La rincorsa dell'attaccante e' UNA sola, quella CSS (chargeAttack): qui solo l'impatto.
         if (targetEl && targetEl.animate) {
             const fr = []; for (let i = 0; i <= 6; i++) fr.push({ translate: (i % 2 ? '0px' : '6px') + ' 0px', offset: i / 6 });
             fr[0].translate = '0px 0px'; fr[1].translate = '6px 0px'; fr[2].translate = '0px 0px'; fr[3].translate = '6px 0px'; fr[4].translate = '0px 0px'; fr[5].translate = '6px 0px'; fr[6].translate = '0px 0px';
-            targetEl.animate(fr, { duration: 300, delay: both ? 320 : 20, easing: 'linear' });
+            targetEl.animate(fr, { duration: 300, delay: both ? 330 : 20, easing: 'linear' });
         }
         breve(s, t0 + 0.9);
     };
@@ -1023,14 +1014,20 @@ float dado(vec2 q,float v){
         const r = rectDi(cardElement); if (!r) return;
         const c = cen(r); const w = r.width;
         const s = new Scena();
-        s.add(T.FLASH, C.BIANCO, 0, 0.22, [c.x, c.y, w * 0.8, 0]);
-        s.add(T.FLASH, C.CALDO, 0, 0.5, [c.x, c.y, w * 1.1, 0]);
-        s.add(T.RING, C.ORO, 0, 0.55, [c.x, c.y, 120, 3.5]);
-        s.add(T.RING, C.ARANCIO, 0.12, 0.55, [c.x, c.y, 165, 2]);
-        s.add(T.FLASH, C.BIANCO, 0, 0.35, [c.x, c.y, w * 1.2, 0]);
-        for (let i = 0; i < 4; i++) s.add(T.SMOKE, C.SCURO, 0.06 + i * 0.04, 0.95, [c.x + (i * 17 % 40) - 20, c.y + (i * 11 % 24) - 12, 40, 0.7]);
-        s.add(T.BURST, C.CALDO, 0, 0.6, [c.x, c.y, 160, 50], 5.1);
-        s.add(T.BURST, C.ARANCIO, 0.11, 0.9, [c.x, c.y, 90, 200], 11.7);
+        // Vampata: grande, bianca al centro e rossa ai bordi, come il gradiente della versione GSAP (1.5 volte la carta).
+        s.add(T.FLASH, C.BIANCO, 0, 0.3, [c.x, c.y, w * 1.3, 0]);
+        s.add(T.FLASH, C.CALDO, 0, 0.6, [c.x, c.y, w * 1.7, 0]);
+        s.add(T.FLASH, C.ARANCIO, 0.04, 0.5, [c.x, c.y, w * 1.2, 0]);
+        // Due onde d'urto sfalsate, spesse come i bordi di prima (5px e 2px).
+        s.add(T.RING, C.ORO, 0, 0.6, [c.x, c.y, 130, 6]);
+        s.add(T.RING, C.ARANCIO, 0.12, 0.6, [c.x, c.y, 180, 3]);
+        // Nucleo incandescente.
+        s.add(T.FLASH, C.BIANCO, 0, 0.35, [c.x, c.y, w * 1.6, 0]);
+        // Fumo che sale dopo il botto.
+        for (let i = 0; i < 4; i++) s.add(T.SMOKE, C.SCURO, 0.06 + i * 0.04, 1.0, [c.x + (i * 17 % 40) - 20, c.y + (i * 11 % 24) - 12, 46, 0.8]);
+        // Due ondate di scintille: la prima secca e veloce (44), la seconda piu' lenta e pesante che ricade (26).
+        for (let i = 0; i < 4; i++) s.add(T.BURST, C.CALDO, 0, 0.6, [c.x, c.y, 150 + i * 22, 40 + i * 6], 5.1 + i * 3.7);
+        for (let i = 0; i < 3; i++) s.add(T.BURST, C.ARANCIO, 0.11, 0.95, [c.x, c.y, 80 + i * 18, 180 + i * 20], 11.7 + i * 4.3);
         verifica(s);
         if (cardElement.animate) {
             const T0 = 0.44; const o = (q) => q / T0;

@@ -43,7 +43,8 @@ module.exports = {
                 if (vecchio) vecchio.remove();
                 DuelCinematics.showOutcome({
                     playerWon: true,
-                    opponent: { name: 'Seto Kaiba', title: 'Il Presidente', image: null, icon: '🧊' },
+                    // Come nel gioco vero: sotto la schermata c'e' la pedina del vincitore (e il duello legge i duellanti da session).
+                    session: { player: { name: 'Tu', image: 'images/characters/yugiMuto.jpg' }, opponent: { name: 'Seto Kaiba', title: 'Il Presidente', image: 'images/characters/setoKaiba.jpg', icon: '🧊' } },
                     record: { wins: 12, losses: 3 },
                     rewards: d.premi.slice(0, d.quanti),
                     onContinue: () => {}

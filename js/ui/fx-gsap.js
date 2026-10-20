@@ -290,7 +290,8 @@
 
             const tl = gsap.timeline();
 
-            if (attackerEl && a && t) {
+            if (false && attackerEl && a && t) {
+                // (disattivato: la rincorsa e' UNA sola, quella CSS chargeAttack — due movimenti sommati facevano accelerare la carta)
                 // Rincula, poi carica verso il bersaglio fermandosi a meta'.
                 const dx = (t.x - a.x) * 0.42;
                 const dy = (t.y - a.y) * 0.42;

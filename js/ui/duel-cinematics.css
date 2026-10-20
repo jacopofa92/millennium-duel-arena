@@ -551,6 +551,17 @@
     gap: var(--do-gap);
 }
 
+/* La pedina scontornata (vincitore): grande, entra dal basso. */
+.do-figura { display: flex; justify-content: center; }
+.do-figura img {
+    height: clamp(110px, 22vh, 200px); width: auto; max-width: 60vw;
+    object-fit: contain; user-select: none;
+    filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .7));
+    opacity: 0;
+    animation: doPop 700ms cubic-bezier(0.16, 0.84, 0.44, 1) 120ms forwards;
+}
+#duelOutcomeOverlay.won .do-figura img { filter: drop-shadow(0 0 22px rgba(247, 215, 116, .55)) drop-shadow(0 10px 18px rgba(0, 0, 0, .7)); }
+#duelOutcomeOverlay.lost .do-figura img { filter: grayscale(.45) brightness(.88) drop-shadow(0 10px 18px rgba(0, 0, 0, .7)); }
 .do-portrait .duelist-avatar {
     width: clamp(80px, 14vw, 118px);
     height: clamp(80px, 14vw, 118px);
