@@ -51,26 +51,37 @@ void main(){
   vec2 uv=gl_FragCoord.xy/r; float asp=r.x/r.y; vec4 o=vec4(0.);
   if(modo<.5){
     // ---------- INTRO: due fiumi di energia che convergono al VS ----------
-    float cx=abs(uv.x-.5)*2.;                    // 0 al centro, 1 sul bordo
-    float lato=uv.x<.5?-1.:1.;
-    vec3 col=lato<0.?vec3(.25,.65,1.):vec3(1.,.32,.22);
-    float yc=.47+.085*sin(cx*7.-t*2.6*lato+lato)*cx+.03*sin(cx*17.+t*3.);
-    float w=.016+.065*cx;
-    float d=uv.y-yc;
-    float flusso=fbm(vec2(cx*9.+t*1.7*lato*-1.,uv.y*22.+lato*3.));
-    float core=exp(-d*d/(w*w*.4))*(.55+.9*flusso);
-    float alone=exp(-d*d/(w*w*9.))*.6;
-    // un secondo filamento sfasato
-    float yc2=.47-.07*sin(cx*9.+t*2.1*lato)*cx;
-    float d2=uv.y-yc2; float core2=exp(-d2*d2/(w*w*.25))*(.35+.8*fbm(vec2(cx*11.-t*1.4*lato,uv.y*27.)));
-    float conv=pow(1.-cx,1.6);                    // piu' luminoso verso il centro
-    float fade=smoothstep(1.,.88,cx);
-    float lum=(core+core2*.8+alone)*(.35+conv*1.5)*fade*smoothstep(0.,.6,t);
-    o=over(vec4(col*lum,clamp(lum*.5,0.,1.)),o);
+    // due fiumi che partono dai bordi, SI SPINGONO oltre il centro e si sovrappongono (i colori si sommano in un bianco-viola)
+    float lum=0.; vec3 acc3=vec3(0.);
+    for(int k=0;k<2;k++){
+      float s=k==0?1.:-1.;                          // +1 fiume di sinistra (blu), -1 di destra (rosso)
+      float p=s>0.?uv.x:1.-uv.x;                    // distanza dal proprio bordo, 0..1
+      float q=max(1.-p*2.,0.);                      // 1 sul bordo, 0 al centro (e oltre)
+      float avanza=smoothstep(0.,1.4,t)*.64;        // la testa del fiume avanza fino a oltre il centro
+      float testa=smoothstep(avanza,avanza-.16,p);
+      vec3 cl=s>0.?vec3(.22,.62,1.):vec3(1.,.3,.2);
+      float yc=.47+(.085*sin(q*7.-t*2.6*s+s)*q+.03*sin(q*17.+t*3.))*(.4+.6*q);
+      float w=.034+.06*q;
+      float d=uv.y-yc;
+      float fl=fbm(vec2(p*9.-t*1.7*s,uv.y*22.+s*3.));
+      float core=exp(-d*d/(w*w*.4))*(.55+.9*fl);
+      float alone=exp(-d*d/(w*w*9.))*.55;
+      float yc2=.47-.07*sin(q*9.+t*2.1*s)*q;
+      float d2=uv.y-yc2; float core2=exp(-d2*d2/(w*w*.25))*(.35+.8*fbm(vec2(p*11.+t*1.4*s,uv.y*27.)));
+      float conv=.55+pow(1.-q,1.4)*1.3;             // piu' luminoso verso il centro
+      float l=(core+core2*.8+alone)*conv*testa*smoothstep(1.,.9,q+.0)*smoothstep(0.,.5,t);
+      acc3+=cl*l; lum+=l;
+    }
+    o=over(vec4(acc3,clamp(lum*.5,0.,1.)),o);
+    // dove si incontrano si fondono: colonna d'energia che sale e scende
+    float xm=abs(uv.x-.5)*asp;
+    float fusione=smoothstep(1.1,2.1,t);
+    float colonna=exp(-xm*xm*520.)*(.5+.8*fbm(vec2(uv.y*14.-t*3.,t*.7)))*exp(-pow((uv.y-.47)/.34,2.))*fusione;
+    o=over(vec4(vec3(.95,.82,1.)*colonna*.95,clamp(colonna*.55,0.,1.)),o);
     // il centro: un nucleo che cresce e pulsa
     vec2 dc=(uv-vec2(.5,.47))*vec2(asp,1.);
     float rc=length(dc);
-    float nucleo=exp(-rc*rc*60.)*(.6+.4*sin(t*7.))*smoothstep(.3,1.6,t);
+    float nucleo=exp(-rc*rc*28.)*(.7+.3*sin(t*7.))*smoothstep(.3,1.6,t);
     o=over(vec4(vec3(1.,.95,.85)*nucleo,nucleo*.7),o);
     // scintille che schizzano dal centro verso i lati
     for(int j=0;j<10;j++){

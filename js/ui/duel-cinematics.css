@@ -175,54 +175,49 @@
     to { background-position: 92px 46px, -92px 46px; }
 }
 
-/* --- Palco con i due duellanti --- */
+/* --- Palco con i due duellanti ---
+   Due pedine scontornate, grandi, una per meta' schermo, che entrano dal
+   proprio lato (come la figura del grido di Evocazione) e si fermano sul
+   posto; il flusso WebGL dietro corre dall'una all'altra. */
 .di-stage {
     position: absolute;
-    top: 42%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: clamp(20px, 6vw, 80px);
-    width: min(96vw, 980px);
+    inset: 0;
+    pointer-events: none;
 }
-
 .di-duelist {
+    position: absolute;
+    bottom: 22%;
+    width: 50%;
+    height: min(66%, 640px);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    justify-content: flex-end;
+    gap: 6px;
     opacity: 0;
-    flex: 1;
-    min-width: 0;
-    /* Di quanto si muovono i due duellanti nelle tre fasi dell'intro:
-       entrata da fuori campo, "clash" (si scostano per lasciare il
-       centro a DUEL!) e uscita. Erano tre valori FISSI in px dentro le
-       keyframe, ed e' li' che nasceva l'artefatto segnalato su mobile:
-       su 1400px di larghezza 26px di scostamento non si notano, ma su
-       un telefono da 393px il palco e' gia' largo 377px — non c'e'
-       nessuno spazio da cui scostarsi, e i due pannelli finivano
-       FUORI dallo schermo proprio mentre sono a piena opacita'.
-       Misurato: giocatore a x=-15 e avversario fino a 408 su uno
-       schermo largo 393.
-       Ora scalano con la larghezza dello schermo (clamp su vw), quindi
-       su desktop il movimento resta esattamente quello di prima e su
-       mobile si riduce a quel poco che ci sta. */
-    --di-enter: clamp(60px, 10vw, 140px);
-    --di-clash: clamp(6px, 1.9vw, 26px);
+    --di-enter: clamp(24px, 8vw, 110px);
+    --di-clash: clamp(8px, 2.4vw, 34px);
     --di-exit: clamp(26px, 6.5vw, 90px);
 }
+.di-duelist--player { left: 0; }
+.di-duelist--opponent { right: 0; }
+.di-figura {
+    flex: 1; min-height: 0; width: 100%;
+    display: flex; align-items: flex-end;
+}
+.di-figura img {
+    width: 100%; height: 100%;
+    object-fit: contain; object-position: 50% 100%;
+    user-select: none;
+}
+.di-duelist--player .di-figura img { object-position: 78% 100%; filter: drop-shadow(0 0 24px rgba(52, 152, 219, .6)) drop-shadow(0 12px 20px rgba(0, 0, 0, .75)); }
+.di-duelist--opponent .di-figura img { object-position: 22% 100%; filter: drop-shadow(0 0 24px rgba(231, 76, 60, .6)) drop-shadow(0 12px 20px rgba(0, 0, 0, .75)); }
 .di-duelist .duelist-avatar {
     width: clamp(96px, 17vw, 170px);
     height: clamp(96px, 17vw, 170px);
     font-size: clamp(2.6rem, 6vw, 4.4rem);
     border-width: 3px;
-    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.6);
 }
-.di-duelist--player .duelist-avatar { border-color: rgba(52, 152, 219, 0.75); box-shadow: 0 18px 46px rgba(0,0,0,0.6), 0 0 32px rgba(52, 152, 219, 0.45); }
-.di-duelist--opponent .duelist-avatar { border-color: rgba(231, 76, 60, 0.75); box-shadow: 0 18px 46px rgba(0,0,0,0.6), 0 0 32px rgba(231, 76, 60, 0.45); }
-
 .di-duelist-name {
     font-size: clamp(1rem, 2.4vw, 1.5rem);
     font-weight: 900;
@@ -255,25 +250,30 @@
 .di-duelist--player .di-duelist-role { color: #bfe4ff; background: rgba(52, 152, 219, 0.2); border: 1px solid rgba(52, 152, 219, 0.45); }
 .di-duelist--opponent .di-duelist-role { color: #ffc9c2; background: rgba(231, 76, 60, 0.2); border: 1px solid rgba(231, 76, 60, 0.45); }
 
-#duelIntroOverlay.is-in .di-duelist--player { animation: diSlideFromLeft 2900ms cubic-bezier(0.16, 0.84, 0.44, 1) forwards; }
-#duelIntroOverlay.is-in .di-duelist--opponent { animation: diSlideFromRight 2900ms cubic-bezier(0.16, 0.84, 0.44, 1) forwards; }
+/* Il blocco resta fermo (e dentro lo schermo) e fa solo dissolvenza; il
+   movimento lo fanno la pedina (o l'avatar di ripiego) e il nome. */
+#duelIntroOverlay.is-in .di-duelist { animation: diBloccoOpacita 2900ms linear forwards; }
+@keyframes diBloccoOpacita { 0% { opacity: 0; } 6% { opacity: 1; } 76% { opacity: 1; } 100% { opacity: 0; } }
+#duelIntroOverlay.is-in .di-duelist--player > * { animation: diSlideFromLeft 2900ms cubic-bezier(0.16, 0.84, 0.44, 1) forwards; }
+#duelIntroOverlay.is-in .di-duelist--opponent > * { animation: diSlideFromRight 2900ms cubic-bezier(0.16, 0.84, 0.44, 1) forwards; }
+
 @keyframes diSlideFromLeft {
-    0% { opacity: 0; transform: translateX(calc(var(--di-enter) * -1)) scale(0.9); filter: blur(6px); }
-    16% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0); }
-    62% { opacity: 1; transform: translateX(0) scale(1); }
-    /* fase "clash": i duellanti si scostano per lasciare il centro a DUEL! */
-    76% { opacity: 1; transform: translateX(calc(var(--di-clash) * -1)) scale(0.96); }
-    100% { opacity: 0; transform: translateX(calc(var(--di-exit) * -1)) scale(0.9); }
+    0% { opacity: 0; transform: translateX(calc(var(--di-enter) * -1)) scale(1.06); filter: blur(10px) brightness(2); }
+    12% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0) brightness(1); }
+    62% { opacity: 1; transform: translateX(calc(var(--di-clash) * -.4)) scale(1); }
+    /* si piega verso il centro un istante prima dell'impatto, poi esce */
+    76% { opacity: 1; transform: translateX(var(--di-clash)) scale(1.02); }
+    100% { opacity: 0; transform: translateX(calc(var(--di-exit) * -1)) scale(.96); }
 }
 @keyframes diSlideFromRight {
-    0% { opacity: 0; transform: translateX(var(--di-enter)) scale(0.9); filter: blur(6px); }
-    16% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0); }
-    62% { opacity: 1; transform: translateX(0) scale(1); }
-    76% { opacity: 1; transform: translateX(var(--di-clash)) scale(0.96); }
-    100% { opacity: 0; transform: translateX(var(--di-exit)) scale(0.9); }
+    0% { opacity: 0; transform: translateX(var(--di-enter)) scale(1.06); filter: blur(10px) brightness(2); }
+    12% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0) brightness(1); }
+    62% { opacity: 1; transform: translateX(calc(var(--di-clash) * .4)) scale(1); }
+    76% { opacity: 1; transform: translateX(calc(var(--di-clash) * -1)) scale(1.02); }
+    100% { opacity: 0; transform: translateX(var(--di-exit)) scale(.96); }
 }
-
 .di-vs {
+    position: absolute; left: 50%; top: 42%; translate: -50% -50%; z-index: 3;
     font-size: clamp(1.8rem, 5vw, 3.4rem);
     font-weight: 900;
     font-style: italic;

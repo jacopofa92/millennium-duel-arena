@@ -148,14 +148,14 @@
     /* `translate`/`scale` portano l'entrata, `rotate` il lieve dondolio del
        vento: proprietà indipendenti, quindi le due animazioni non si
        sovrascrivono. Nessun rimbalzo: la figura si ferma e basta. */
-    animation: geFiguraEntra .72s .08s cubic-bezier(.16, .84, .3, 1) forwards, geFiguraVento 1.7s .8s ease-in-out infinite alternate;
+    animation: geFiguraEntra .72s .08s cubic-bezier(.16, .84, .3, 1) forwards, geFiguraVento 3s .8s linear forwards;
 }
 @keyframes geFiguraEntra {
     0% { opacity: 0; translate: calc(-46vw * var(--ge-dir)) 0; scale: 1.08; filter: blur(14px) brightness(2.2) drop-shadow(0 0 22px var(--ge-colore)) }
     45% { opacity: 1 }
     100% { opacity: 1; translate: 0 0; scale: 1; filter: blur(0) brightness(1) drop-shadow(0 0 22px color-mix(in srgb, var(--ge-colore) 60%, transparent)) drop-shadow(0 12px 20px rgba(0, 0, 0, .75)) }
 }
-@keyframes geFiguraVento { from { rotate: -.7deg } to { rotate: .7deg } }
+@keyframes geFiguraVento { from { transform: translateX(0) } to { transform: translateX(calc(2.2vw * var(--ge-dir))) } }
 
 .ge-salta {
     position: absolute; left: 0; right: 0; bottom: max(1.2vh, env(safe-area-inset-bottom)); text-align: center;

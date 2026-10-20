@@ -38,11 +38,40 @@
         return span;
     }
 
+    /**
+     * La pedina scontornata del duellante (niente cerchio): sugli schermi
+     * larghi l'originale grande di avatarTrasparenza, altrove la pedina da
+     * 320px; se un file manca si prova il successivo e, in ultimo, si
+     * ricade sull'avatar tondo di sempre. Non si aspetta nulla: l'intro
+     * parte comunque, l'immagine compare quando e' pronta.
+     */
+    function figureFor(duelist) {
+        const nome = String(duelist.image || '').split(/[\\/]/).pop().replace(/\.[a-z0-9]+(?:\?.*)?$/i, '');
+        if (!nome) return avatarFor(duelist);
+        const cerca = [];
+        if (window.innerWidth > 900) cerca.push('images/characters/avatarTrasparenza/' + nome + '.png');
+        cerca.push('images/characters/pedine/' + nome + '.png');
+        const box = document.createElement('div');
+        box.className = 'di-figura';
+        const img = document.createElement('img');
+        img.alt = '';
+        img.draggable = false;
+        let i = 0;
+        img.onerror = () => {
+            i += 1;
+            if (i < cerca.length) { img.src = cerca[i]; return; }
+            box.replaceWith(avatarFor(duelist));
+        };
+        img.src = cerca[0];
+        box.appendChild(img);
+        return box;
+    }
+
     function buildDuelistBlock(duelist, role, roleLabel) {
         const block = document.createElement('div');
         block.className = 'di-duelist di-duelist--' + role;
 
-        block.appendChild(avatarFor(duelist));
+        block.appendChild(figureFor(duelist));
 
         const name = document.createElement('div');
         name.className = 'di-duelist-name';
