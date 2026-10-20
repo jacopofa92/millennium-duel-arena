@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.4.29 — Loading generico: tolti i raggi che giravano sul dorso della carta; al loro posto un piccolo canvas WebGL con particelle dorate che salgono a spirale verso la carta e un alone che respira (si ferma a loader nascosto, assente con movimento ridotto o senza WebGL).
  * 1.4.28 — Presentazione VS: pedine scontornate grandi (niente avatar tondi) che entrano dal proprio lato, i due flussi WebGL si sovrappongono oltre il centro e si fondono in una colonna d'energia. Grido di Evocazione: la figura non dondola piu', continua molto piano a scivolare di lato fino a sparire.
  * 1.4.27 — Presentazione VS ("It's time to duel!") e schermate Vittoria/Sconfitta/Pareggio: tolti i raggi ruotanti, al loro posto uno sfondo WebGL per ogni scena (fiumi di energia blu/rossa con onda d'urto, colonne di luce e braci, nebbia e cenere, polvere neutra).
  * 1.4.26 — Carte vive: tolto il WebGL dei riflessi di rarita' (tornano gli strati CSS di prima). Menu principale: lo sfondo resta fermo (si muove solo il logo) e il velo di luce dell'ambiente e' molto piu' tenue.
@@ -783,4 +784,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.4.28';
+window.GAME_VERSION = '1.4.29';

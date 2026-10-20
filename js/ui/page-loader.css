@@ -33,6 +33,7 @@
     perspective: 760px;
     transform-style: preserve-3d;
 }
+.page-loader-gl { position: absolute; left: 50%; top: 45%; width: 300px; height: 340px; margin: -170px 0 0 -150px; pointer-events: none; }
 .page-loader-aura {
     position: absolute;
     left: 50%;
@@ -89,14 +90,6 @@
 }
 .page-loader-card-back {
     background: radial-gradient(ellipse at center, #050506 0 12%, #d67620 13% 15%, #1b0b06 17% 23%, #b94c18 25% 29%, #180906 32% 39%, #8d2e14 42% 48%, #110806 52% 100%);
-}
-.page-loader-card-back::before {
-    content: '';
-    position: absolute;
-    inset: -35%;
-    background: repeating-conic-gradient(from 15deg, rgba(255, 137, 35, 0.74) 0 5deg, rgba(25, 7, 3, 0.94) 7deg 15deg);
-    mix-blend-mode: screen;
-    animation: pageLoaderVortex 3.2s linear infinite;
 }
 .page-loader-card-back span {
     position: absolute;
@@ -202,7 +195,6 @@
     from { transform: rotateZ(0deg) rotateX(64deg); }
     to { transform: rotateZ(-360deg) rotateX(64deg); }
 }
-@keyframes pageLoaderVortex { to { transform: rotate(360deg); } }
 @keyframes pageLoaderShadow {
     0%, 100% { transform: scale(.76); opacity: .46; }
     50% { transform: scale(1.08); opacity: .8; }
@@ -247,7 +239,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
     .page-loader-card { animation: pageLoaderCardFloat 1.8s ease-in-out infinite; }
-    .page-loader-aura, .page-loader-card-back::before, .page-loader-spark { animation: none; }
+    .page-loader-aura, .page-loader-spark { animation: none; }
     .page-loader-shadow { animation-duration: 2.2s; }
     .page-loader-bar-fill { animation-duration: 1.8s; }
 }
