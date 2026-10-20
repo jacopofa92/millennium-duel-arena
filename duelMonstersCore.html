@@ -1783,8 +1783,10 @@
             height: 100%;
             /* Giallo/nero a strisce diagonali, come il cartello "ATTACCO
                DIRETTO" di Yu-Gi-Oh! Master Duel — non più rosso/nero. */
-            background:
-                repeating-linear-gradient(45deg, rgba(15,12,2,0.94) 0 14px, rgba(241,196,15,0.95) 14px 28px);
+            /* Le strisce NON stanno piu' sullo sfondo della barra (animare background-position ridipinge la barra, con maschera e
+               ombra, ad OGNI fotogramma, per tutto il trascinamento): stanno su ::before, piu' alto della barra e fatto scorrere con la
+               sola transform (compositor), tagliato da overflow:hidden. */
+            overflow: hidden;
             /* Copre l'intero lato (sopra-sotto) invece di una fascia
                centrale fissa, ma con una dissolvenza verso i due bordi
                (sopra e sotto) tramite mask, altrimenti il taglio netto in
@@ -1798,16 +1800,25 @@
             justify-content: center;
             opacity: 0;
         }
+        .daw-bar::before {
+            content: '';
+            position: absolute;
+            inset: -40px 0;
+            background: repeating-linear-gradient(45deg, rgba(15,12,2,0.94) 0 14px, rgba(241,196,15,0.95) 14px 28px);
+            animation: dawStripeScroll 650ms linear infinite;
+            will-change: transform;
+        }
+        .daw-bar > * { position: relative; z-index: 1; }
         .daw-bar--left {
             left: 0;
-            animation: dawSlideLeft 1400ms cubic-bezier(0.16, 0.84, 0.44, 1) forwards, dawStripeScroll 650ms linear infinite;
+            animation: dawSlideLeft 1400ms cubic-bezier(0.16, 0.84, 0.44, 1) forwards;
         }
         .daw-bar--right {
             right: 0;
             /* Stesso verso di scorrimento (alto -> basso) del lato
                sinistro, non più invertito: prima "reverse" faceva salire
                le strisce su questo lato invece di scendere come l'altro. */
-            animation: dawSlideRight 1400ms cubic-bezier(0.16, 0.84, 0.44, 1) forwards, dawStripeScroll 650ms linear infinite;
+            animation: dawSlideRight 1400ms cubic-bezier(0.16, 0.84, 0.44, 1) forwards;
         }
         .daw-bar-text {
             writing-mode: vertical-rl;
@@ -1839,18 +1850,19 @@
            ≈ 39.6px — usando quel valore lo scorrimento in giù è
            perfettamente senza cuciture (nessun "salto" visibile al loop). */
         @keyframes dawStripeScroll {
-            from { background-position: 0 0; }
-            to   { background-position: 0 39.6px; }
+            from { transform: translateY(0); }
+            to   { transform: translateY(39.6px); }
         }
         /* Varianti "anteprima": entrano e RESTANO (nessun fade-out nella
            keyframe) finché hideDirectAttackHint() non rimuove l'elemento
            di netto — usate durante il trascinamento dell'attacco. */
         .daw-bar--left.daw-bar--hint {
-            animation: dawSlideLeftHold 220ms ease-out forwards, dawStripeScroll 650ms linear infinite;
+            animation: dawSlideLeftHold 220ms ease-out forwards;
         }
         .daw-bar--right.daw-bar--hint {
-            animation: dawSlideRightHold 220ms ease-out forwards, dawStripeScroll 650ms linear infinite reverse;
+            animation: dawSlideRightHold 220ms ease-out forwards;
         }
+        .daw-bar--right.daw-bar--hint::before { animation-direction: reverse; }
         /* Attacco diretto POSSIBILE ma non ancora scelto (l'avversario ha
            mostri, ma questo mostro può comunque colpire i Life Point): le
            bande ci sono — dicono "puoi farlo" — ma più tenui. Tornano piene

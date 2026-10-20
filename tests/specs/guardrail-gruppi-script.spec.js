@@ -38,7 +38,9 @@ module.exports = {
             });
             if (fuori.length) problemi.push(`${nome}: file del motore caricati fuori dal gruppo "motore": ${fuori.map((r) => r.trim()).join(' | ')}`);
         });
-        t.assert(zone >= 6, `Attese almeno 6 zone del gruppo "motore" (5 pagine + sw.js), trovate ${zone}`);
+        // Il motore lo caricano ormai solo duelMonstersCore.html, crea-carta.html e sw.js (Cartoteca, Creazione Deck e la
+        // vista Cartoteca del menu usano l'elenco generato, vedi guardrail-elenco-effetti.spec.js): zone conta tutti i gruppi.
+        t.assert(zone >= 4, `Attese almeno 4 zone di gruppi di script nelle pagine e in sw.js, trovate ${zone}`);
         t.assert(problemi.length === 0, `Gruppi di script:\n  - ${problemi.join('\n  - ')}`);
     }
 };

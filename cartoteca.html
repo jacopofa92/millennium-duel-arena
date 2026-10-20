@@ -37,6 +37,7 @@
 <title>Yu-Gi-Oh! Millennium Duel Arena — Cartoteca</title>
 <link rel="stylesheet" href="js/ui/card.css">
 <link rel="stylesheet" href="js/ui/card-detail.css">
+<link rel="stylesheet" href="js/ui/fluido.css">
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     /* Niente selezione di testo/pressione lunga sul contenuto del gioco (nomi
@@ -583,29 +584,14 @@
 <!-- Anagrafica carte generata da data/cards.json (vedi scripts/build-cards-data.js):
      va caricata PRIMA di cards-db.js, che ora contiene solo le funzioni di supporto. -->
 <script src="js/data/cards-data.generated.js"></script>
+<!-- Niente motore del duello qui: il filtro "Categoria Mostro" legge l'elenco generato delle carte con effetto (scripts/build-card-effect-ids.js) invece di caricare circa 586KB di script. -->
+<script src="js/data/card-effect-ids.generated.js"></script>
 <script src="js/data/cards-db.js"></script>
 <script src="js/data/card-rarity.js"></script>
 <script src="js/economy/card-acquisition.js"></script>
 <script src="js/data/custom-cards.js"></script>
 <script src="js/data/custom-taxonomy.js"></script>
-<!-- gruppo-script:motore -->
-<script src="js/engine/casuale.js"></script>
-<script src="js/engine/porta-ui.js"></script>
-<script src="js/engine/eventi-duello.js"></script>
-<script src="js/engine/tavolo.js"></script>
-<script src="js/engine/duel-engine.js"></script>
-<script src="js/engine/decisioni.js"></script>
-<script src="js/engine/effect-templates.js"></script>
-<script src="js/engine/card-effects.js"></script>
-<script src="js/engine/card-effects-1.js"></script>
-<script src="js/engine/card-effects-2.js"></script>
-<script src="js/engine/card-effects-3.js"></script>
-<script src="js/engine/card-effects-4.js"></script>
-<script src="js/engine/card-effects-5.js"></script>
-<script src="js/engine/card-effects-6.js"></script>
-<script src="js/engine/card-effects-7.js"></script>
-<script src="js/engine/card-effects-8.js"></script>
-<!-- /gruppo-script:motore -->
+<script src="js/ui/fluido.js"></script>
 <script src="js/ui/inclinazione.js"></script>
 <script src="js/ui/card-renderer.js"></script>
 <!-- La scheda di dettaglio carta è quella condivisa da tutto il gioco. -->
@@ -995,7 +981,8 @@
                 if (gettone !== renderGettone) return;
                 const fine = Math.min(i + (i === 0 ? PRIMO : BLOCCO), pageCards.length);
                 const frag = document.createDocumentFragment();
-                for (; i < fine; i++) frag.appendChild(createCardTile(pageCards[i]));
+                const da = i;
+                for (; i < fine; i++) { const tile = createCardTile(pageCards[i]); if (window.Fluido) Fluido.rivela(tile, i - da); frag.appendChild(tile); }
                 grid.appendChild(frag);
                 if (i < pageCards.length) requestAnimationFrame(blocco);
             };

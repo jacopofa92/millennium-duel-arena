@@ -8,6 +8,8 @@
 module.exports = {
     name: 'Trappola Fasulla protegge OGNI Trappola dello stesso lotto, non solo la prima (id 600)',
     async run(t) {
+        // Lo spec guarda l'elemento DOM della folata: esiste solo nella versione di base (CSS), non in quella WebGL.
+        await t.page.evaluate(() => { window.FX_BACKEND = 'css'; });
         const start = await t.evaluate(() => {
             const fakeTrap = { ...cardDatabase.find((c) => c.id === 600), uid: 'faketrap-1' };
             const trapA = { ...cardDatabase.find((c) => c.type === 'trap' && c.id !== 600), uid: 'trapA-1' };

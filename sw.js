@@ -497,7 +497,7 @@
 // v279: nomi compatti e invito all'azione rendono leggibili le fasi.
 // v282: miniature WebP lazy per Duellanti e anteprime delle Arene.
 // v317: pose di esclamazione rifinite senza ritagli laterali.
-const CACHE_NAME = 'ygo-duel-arena-v351';
+const CACHE_NAME = 'ygo-duel-arena-v352';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
@@ -602,6 +602,7 @@ const APP_SHELL = [
     'js/story/story-progress.js',
     'js/dev/story-admin-tools.js',
     'js/data/cards-data.generated.js',
+    'js/data/card-effect-ids.generated.js',
     'js/data/cards-db.js',
     'js/data/challenges-db.js',
     'js/data/missions-db.js',
@@ -718,6 +719,8 @@ const APP_SHELL = [
     'js/data/deck-legality.js',
     'js/ui/card-detail.js',
     'js/ui/card-detail.css',
+    'js/ui/fluido.js',
+    'js/ui/fluido.css',
     'js/version.js',
     'js/vendor/gsap.min.js',
     'js/vendor/howler.min.js',

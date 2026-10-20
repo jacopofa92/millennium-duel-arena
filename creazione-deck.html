@@ -1392,27 +1392,11 @@
 <!-- Anagrafica carte generata da data/cards.json (vedi scripts/build-cards-data.js):
      va caricata PRIMA di cards-db.js, che ora contiene solo le funzioni di supporto. -->
 <script src="js/data/cards-data.generated.js"></script>
+<!-- Niente motore del duello qui: il filtro "Categoria Mostro" legge l'elenco generato delle carte con effetto (scripts/build-card-effect-ids.js) invece di caricare circa 586KB di script. -->
+<script src="js/data/card-effect-ids.generated.js"></script>
 <script src="js/data/cards-db.js"></script>
 <script src="js/data/custom-cards.js"></script>
 <script src="js/data/custom-taxonomy.js"></script>
-<!-- gruppo-script:motore -->
-<script src="js/engine/casuale.js"></script>
-<script src="js/engine/porta-ui.js"></script>
-<script src="js/engine/eventi-duello.js"></script>
-<script src="js/engine/tavolo.js"></script>
-<script src="js/engine/duel-engine.js"></script>
-<script src="js/engine/decisioni.js"></script>
-<script src="js/engine/effect-templates.js"></script>
-<script src="js/engine/card-effects.js"></script>
-<script src="js/engine/card-effects-1.js"></script>
-<script src="js/engine/card-effects-2.js"></script>
-<script src="js/engine/card-effects-3.js"></script>
-<script src="js/engine/card-effects-4.js"></script>
-<script src="js/engine/card-effects-5.js"></script>
-<script src="js/engine/card-effects-6.js"></script>
-<script src="js/engine/card-effects-7.js"></script>
-<script src="js/engine/card-effects-8.js"></script>
-<!-- /gruppo-script:motore -->
 <script src="js/ui/inclinazione.js"></script>
 <script src="js/ui/card-renderer.js"></script>
 <!-- La scheda di dettaglio carta è quella condivisa da tutto il gioco. -->

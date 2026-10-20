@@ -333,9 +333,12 @@ function getMonsterFilterCategory(card) {
     if (!card || card.type !== 'monster') return null;
     if (card.category === 'fusion') return 'fusion';
     if (card.category === 'ritual') return 'ritual';
-    if (window.DuelEngine && typeof DuelEngine.getDefinition === 'function' && DuelEngine.getDefinition(card.id)) {
-        return 'effect';
+    if (window.DuelEngine && typeof DuelEngine.getDefinition === 'function') {
+        return DuelEngine.getDefinition(card.id) ? 'effect' : 'normal';
     }
+    // Senza motore (Cartoteca, Creazione Deck: non lo caricano piu', vedi scripts/build-card-effect-ids.js) si usa
+    // l'elenco generato; una carta custom con un effetto composto/clonato conta come 'effect' anche se non e' nell'elenco.
+    if ((window.CARD_EFFECT_IDS && window.CARD_EFFECT_IDS.has(card.id)) || card.effectTemplate || card.cloneEffectOf) return 'effect';
     return 'normal';
 }
 

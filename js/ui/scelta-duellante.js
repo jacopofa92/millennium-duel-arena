@@ -191,8 +191,10 @@
                 sezione.innerHTML = `<div class="series-title"><span>${esc(g.nome)}</span><span class="series-count">${liberiQui}/${g.elenco.length}</span></div>`;
                 const grid = document.createElement('div');
                 grid.className = 'cube-grid';
-                g.elenco.forEach((c) => {
-                    grid.appendChild(creaCarta(c, opzioni, indiceRitratto < 8));
+                g.elenco.forEach((c, k) => {
+                    const cubo = creaCarta(c, opzioni, indiceRitratto < 8);
+                    if (window.Fluido && indiceRitratto < 28) Fluido.rivela(cubo, k);   // solo i primi (quelli in vista): il resto compare e basta
+                    grid.appendChild(cubo);
                     indiceRitratto++;
                 });
                 sezione.appendChild(grid);

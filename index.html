@@ -52,6 +52,7 @@
      invece di passare da ensureViewScripts (pesa poco, e averlo pronto
      evita che la griglia appaia per un istante senza stile). -->
 <link rel="stylesheet" href="js/ui/card.css">
+<link rel="stylesheet" href="js/ui/fluido.css">
 <title>Yu-Gi-Oh! Millennium Duel Arena — Menu</title>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -948,6 +949,7 @@
         })();
     </script>
     <script src="js/ui/page-loader.js"></script>
+    <script src="js/ui/fluido.js"></script>
 
     <!-- Splash screen d'apertura — vedi il commento CSS su .splash-screen
          più sopra in questo file. Nascosta subito (senza animazione) se
@@ -2442,13 +2444,17 @@
                 'js/data/arena-options.js',
                 'js/ui/duel-setup.js',
                 'js/ui/sfida-libera.js',
-                'js/data/story-campaigns.js',
-                'js/data/story-ritocchi.js',
-                'js/story/story-ritocchi.js',
                 'js/ui/scelta-duellante.js'
             ])
         ]);
-        vistaPronta.then(() => renderCubes()).catch(() => { /* la vista resta senza griglia, il resto funziona */ });
+        // La griglia compare appena ci sono i suoi script. Il catalogo della Storia (circa 134KB) serve solo a dire, al tocco su
+        // un Duellante bloccato, in quale campagna lo si incontra (CharacterUnlocks.comeSbloccare lo cerca al momento e, se manca
+        // ancora, non dice nulla): si carica DOPO, senza far aspettare il primo disegno.
+        vistaPronta.then(() => {
+            renderCubes();
+            const storia = () => ensureViewScripts(['js/data/story-campaigns.js', 'js/data/story-ritocchi.js', 'js/story/story-ritocchi.js']).catch(() => { /* resta senza l'indicazione della campagna */ });
+            if (window.requestIdleCallback) requestIdleCallback(storia, { timeout: 3000 }); else setTimeout(storia, 800);
+        }).catch(() => { /* la vista resta senza griglia, il resto funziona */ });
 
         let toastTimeout = null;
         function showToast(text) {
@@ -4330,6 +4336,13 @@
         .cartoteca-grid .card {
             touch-action: pan-y;
         }
+        /* Skeleton: carte vuote che compaiono subito, mentre il database si legge (spariscono al primo render). */
+        .card-skeleton {
+            background: linear-gradient(110deg, rgba(255,255,255,.05) 30%, rgba(255,255,255,.13) 50%, rgba(255,255,255,.05) 70%) 0 0 / 220% 100%;
+            border: 1px solid rgba(247,215,116,.14); box-shadow: none; animation: cardSkeleton 1.2s linear infinite; pointer-events: none;
+        }
+        @keyframes cardSkeleton { to { background-position: -220% 0; } }
+        @media (prefers-reduced-motion: reduce) { .card-skeleton { animation: none; } }
         /* Badge "effetto implementato parzialmente" (richiesta esplicita
            dell'utente, per uso di sviluppo — non è un badge da titolo di
            gioco pubblicato): basato SOLO su card.missingEffectNote, l'unico
@@ -4495,7 +4508,7 @@
 
         <main class="cartoteca-main">
             <div class="cartoteca-pager top" id="cartoteca-pagerTop" hidden></div>
-            <div class="cartoteca-grid" id="cartoteca-cartotecaGrid"></div>
+            <div class="cartoteca-grid" id="cartoteca-cartotecaGrid"><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div><div class="card card-skeleton" aria-hidden="true"></div></div>
             <div class="cartoteca-pager bottom" id="cartoteca-pagerBottom" hidden></div>
         </main>
 
@@ -4527,24 +4540,8 @@
          */
         const SCRIPT_CARTOTECA = [
             'js/data/cards-data.generated.js',
-            // gruppo-script:motore
-            'js/engine/casuale.js',
-            'js/engine/porta-ui.js',
-            'js/engine/eventi-duello.js',
-            'js/engine/tavolo.js',
-            'js/engine/duel-engine.js',
-            'js/engine/decisioni.js',
-            'js/engine/effect-templates.js',
-            'js/engine/card-effects.js',
-            'js/engine/card-effects-1.js',
-            'js/engine/card-effects-2.js',
-            'js/engine/card-effects-3.js',
-            'js/engine/card-effects-4.js',
-            'js/engine/card-effects-5.js',
-            'js/engine/card-effects-6.js',
-            'js/engine/card-effects-7.js',
-            'js/engine/card-effects-8.js',
-            // /gruppo-script:motore
+            // Niente motore del duello: il filtro "Categoria Mostro" usa l'elenco generato (scripts/build-card-effect-ids.js).
+            'js/data/card-effect-ids.generated.js',
             'js/ui/card-renderer.js',
             // Rarità e "Come si ottiene" nella scheda della carta: la pagina
             // cartoteca.html li carica, questa vista no — e la scheda del
@@ -4869,7 +4866,7 @@
             }
 
             function createCardTile(card) {
-                const el = createCardElement(card);
+                const el = createCardElement(card, false, 'attack', { miniatura: true });
                 el.onclick = () => openCardModal(card);
                 // Riflesso per rarità e inclinazione sotto il mouse (js/ui/card-renderer.js).
                 if (window.CartaViva) CartaViva.rendi(el, card, { modo: 'griglia' });
@@ -4927,6 +4924,7 @@
              * che è il comportamento giusto — restare a "pagina 7" dopo aver
              * ristretto i risultati a 30 carte mostrerebbe una griglia vuota.
              */
+            let renderGettone = 0;
             function renderGrid(keepPage) {
                 const grid = document.getElementById('cartoteca-cartotecaGrid');
                 const results = sortCards(cardDatabase.filter(cardMatchesFilters), state.sort);
@@ -4937,6 +4935,7 @@
                 const firstIndex = (state.page - 1) * CARDS_PER_PAGE;
                 const pageCards = results.slice(firstIndex, firstIndex + CARDS_PER_PAGE);
 
+                renderGettone++;   // interrompe una costruzione a blocchi ancora in corso
                 grid.innerHTML = '';
                 if (results.length === 0) {
                     const empty = document.createElement('div');
@@ -4944,7 +4943,19 @@
                     empty.textContent = '🔍 Nessuna carta corrisponde ai filtri selezionati.';
                     grid.appendChild(empty);
                 } else {
-                    pageCards.forEach(card => grid.appendChild(createCardTile(card)));
+                    // A blocchi, un fotogramma l'uno dall'altro (come cartoteca.html): le prime carte subito, il resto senza bloccare.
+                    const gettone = ++renderGettone;
+                    const PRIMO = 18; const BLOCCO = 24; let i = 0;
+                    const blocco = () => {
+                        if (gettone !== renderGettone) return;
+                        const fine = Math.min(i + (i === 0 ? PRIMO : BLOCCO), pageCards.length);
+                        const frag = document.createDocumentFragment();
+                        const da = i;
+                        for (; i < fine; i++) { const tile = createCardTile(pageCards[i]); if (window.Fluido) Fluido.rivela(tile, i - da); frag.appendChild(tile); }
+                        grid.appendChild(frag);
+                        if (i < pageCards.length) requestAnimationFrame(blocco);
+                    };
+                    blocco();
                 }
                 renderPager(document.getElementById('cartoteca-pagerTop'), totalPages, results.length, firstIndex, pageCards.length);
                 renderPager(document.getElementById('cartoteca-pagerBottom'), totalPages, results.length, firstIndex, pageCards.length);
