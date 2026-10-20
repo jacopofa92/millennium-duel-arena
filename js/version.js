@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.4.24 — Menu principale: bagliori sull'oro molto piu' rari e stelle un po' meno frequenti.
  * 1.4.23 — Scudo araldico vero, marchio fisso delle Spade Rivelatrici in WebGL, Rinascita del Mostro e Pescata fedeli agli originali (tolti gli override WebGL non fedeli di danno/scontro/distruzione/moneta/dado), menu principale: via i raggi che girano, ambiente WebGL legato allo sfondo (luna, nubi, stelle, torce, oro).
  * 1.4.22 — Icone flottanti animate in WebGL (Attiva effetto, Annulla, Conferma, Seleziona, Evocazione), spade/scudo animati sopra la carta messa in Attacco/Difesa, Evocazione sul campo piu' contenuta e senza gialli.
  * 1.4.21 — Tutti gli spettacoli di carta in WebGL (shader per primitiva con scissor), Evocazione semplificata, icone Attacco/Difesa animate (spade che si incrociano, scudo), Buco Nero piu' grande e scuro, tolto il suggerimento 'passa il mouse'.
@@ -779,4 +780,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.4.23';
+window.GAME_VERSION = '1.4.24';

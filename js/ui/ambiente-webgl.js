@@ -274,11 +274,11 @@ vec4 m_alone(vec2 uv,float asp,float t,vec3 c,vec2 f,float s,float seed,float ia
 
     // Brillio a quattro punte che compare e svanisce (stelle, riflessi sull'oro). Un seme per ognuno sfasa i lampi.
     MOD.brillo = `
-vec4 m_brillo(vec2 uv,float asp,float t,vec3 c,vec2 f,float s,float seed,float ia,float a){
+vec4 m_brillo(vec2 uv,float asp,float t,vec3 c,vec2 f,float s,float seed,float ia,float a,float ex,float vel){
   vec2 sp=asp>ia?vec2(f.x,.5+(f.y-.5)*(asp/ia)):vec2(.5+(f.x-.5)*(ia/asp),f.y);
   vec2 d=(uv-sp)*vec2(asp,1.)/s;
   if(dot(d,d)>30.) return vec4(0.);
-  float tw=pow(max(0.,sin(t*(.9+seed*.37)+seed*7.3)),6.);
+  float tw=pow(max(0.,sin(t*vel*(.9+seed*.37)+seed*7.3)),ex);   // ex alto = lampi piu' stretti e rari
   float st=1./(1.+abs(d.x*d.y)*80.)*exp(-dot(d,d)*2.2); float core=exp(-dot(d,d)*18.);
   float al=(st*.8+core)*tw*a;
   return vec4(c*(st*.9+core)*tw*a,al);
@@ -479,9 +479,9 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         alone: { def: { pts: [], sz: 1, ia: 1.772, a: 1 },
             call: (c, o) => o.pts.reduce((e, p, i) =>
                 `over(m_alone(uv,asp,t,${c},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)}),${e})`, 'vec4(0.)') },
-        brillo: { def: { pts: [], sz: 1, ia: 1.772, a: 1 },
+        brillo: { def: { pts: [], sz: 1, ia: 1.772, a: 1, ex: 6, vel: 1 },
             call: (c, o) => o.pts.reduce((e, p, i) =>
-                `over(m_brillo(uv,asp,t,${c},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)}),${e})`, 'vec4(0.)') },
+                `over(m_brillo(uv,asp,t,${c},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)},${f(o.ex)},${f(o.vel)}),${e})`, 'vec4(0.)') },
         fiamme: { def: { pts: [], sz: 1, ia: 1.772, a: 1 },
             call: (c, o) => o.pts.reduce((e, p, i) =>
                 `over(m_fiamma(uv,asp,t,${o.c1 ? cost(o.c1) : 'A'},${o.c2 ? cost(o.c2) : 'B'},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)}),${e})`, 'vec4(0.)') },
