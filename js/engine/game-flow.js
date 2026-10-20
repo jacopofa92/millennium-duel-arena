@@ -357,7 +357,6 @@ function showEpicSlamAnnouncement(wordLeft, wordRight, subtitle) {
     overlay.id = 'battleStartOverlay';
     overlay.innerHTML = `
         <div class="battle-start-flash"></div>
-        <div class="battle-start-rays"></div>
         <div class="battle-start-bar bar-top"></div>
         <div class="battle-start-bar bar-bottom"></div>
         <div class="battle-start-title">${wordsHtml}</div>

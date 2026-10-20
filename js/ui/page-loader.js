@@ -104,7 +104,7 @@
             if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
             var stage = el.querySelector('.page-loader-stage');
             var cv = document.createElement('canvas');
-            cv.width = 300; cv.height = 340; cv.className = 'page-loader-gl';
+            cv.width = 300; cv.height = 340; cv.className = 'page-loader-gl'; cv.style.opacity = '0'; // si mostra solo dopo il primo fotogramma disegnato
             var gl = cv.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false });
             if (!gl) return;
             var vs = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
@@ -118,7 +118,7 @@
                 'float rr=mix(.5,.1,ph);float an=h(fi+7.)*6.283+t*1.1*(.6+h(fi)*.8)+ph*4.;' +
                 'vec2 q=vec2(cos(an),sin(an))*rr;float s=smoothstep(.016+.012*h(fi+3.),0.,length(d-q))*sin(ph*3.1416);' +
                 'c+=vec3(1.,.9,.55)*s;a+=s;}' +
-                'a=clamp(a,0.,1.);gl_FragColor=vec4(min(c,vec3(a)),a);}';
+                'float fin=smoothstep(.5,.3,abs(uv.x-.5))*smoothstep(.5,.3,abs(uv.y-.5));c*=fin;a*=fin;a=clamp(a,0.,1.);gl_FragColor=vec4(min(c,vec3(a)),a);}';
             function sh(tp, src) { var o = gl.createShader(tp); gl.shaderSource(o, src); gl.compileShader(o); return o; }
             var pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(pr);
             if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return;
@@ -133,6 +133,7 @@
                 gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
                 gl.uniform1f(uT, (now - t0) / 1000);
                 gl.drawArrays(gl.TRIANGLES, 0, 3);
+                if (cv.style.opacity === '0') cv.style.opacity = '1';
                 glRaf = requestAnimationFrame(giro);
             }
             stage.insertBefore(cv, stage.firstChild);
