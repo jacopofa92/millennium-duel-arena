@@ -112,11 +112,11 @@
                 'float h(float n){return fract(n*43758.5453+.137*n*n);}' +
                 'void main(){vec2 uv=gl_FragCoord.xy/r;vec2 d=(uv-vec2(.5,.5))*vec2(r.x/r.y,1.);float rc=length(d);' +
                 'float res=.82+.18*sin(t*2.2);' +
-                'float al=exp(-rc*rc*14.)*.5*res+exp(-pow((rc-.3)/.05,2.))*.12*res;' +
+                'float al=exp(-rc*rc*18.)*.07*res;' +
                 'vec3 c=vec3(1.,.62,.14)*al;float a=al*.8;' +
                 'for(int i=0;i<22;i++){float fi=float(i);float ph=fract(t*.28+h(fi+1.)*1.);' +
                 'float rr=mix(.5,.1,ph);float an=h(fi+7.)*6.283+t*1.1*(.6+h(fi)*.8)+ph*4.;' +
-                'vec2 q=vec2(cos(an),sin(an))*rr;float s=smoothstep(.016+.012*h(fi+3.),0.,length(d-q))*sin(ph*3.1416);' +
+                'vec2 q=vec2(cos(an),sin(an))*rr;float s=smoothstep(.012+.008*h(fi+3.),0.,length(d-q))*sin(ph*3.1416)*.7;' +
                 'c+=vec3(1.,.9,.55)*s;a+=s;}' +
                 'float fin=smoothstep(.5,.3,abs(uv.x-.5))*smoothstep(.5,.3,abs(uv.y-.5));c*=fin;a*=fin;a=clamp(a,0.,1.);gl_FragColor=vec4(min(c,vec3(a)),a);}';
             function sh(tp, src) { var o = gl.createShader(tp); gl.shaderSource(o, src); gl.compileShader(o); return o; }

@@ -840,7 +840,6 @@ body[data-card-badges] .card { overflow: visible; }
 /* I riflessi (lucido, laminato, grana) stanno DENTRO la finestra dell'illustrazione (.card-frame-art):\n   la cornice, il nome e i numeri restano opachi. Solo su uno scan a carta intera coprono tutta la carta.\n   I livelli stanno sopra l'illustrazione e sotto i distintivi
    (copie possedute, limite: z-index 4), mai cliccabili. */
 .carta-viva .cv-riflesso,
-.carta-viva .cv-bordo,
 .carta-viva .cv-grana,
 .carta-viva .cv-olo {
     position: absolute;
@@ -859,14 +858,14 @@ body[data-card-badges] .card { overflow: visible; }
    scheda grande aperta dal tocco. Così lo scorrimento non trascina decine
    di superfici laminate invisibili alla volta. */
 @media (hover: hover) and (pointer: fine) {
-    .cv-inclina[data-viva="griglia"]:not(:hover) :is(.cv-riflesso, .cv-bordo, .cv-olo, .cv-grana),
-    .cv-inclina[data-viva="fila"]:not(:hover) :is(.cv-riflesso, .cv-bordo, .cv-olo, .cv-grana) {
+    .cv-inclina[data-viva="griglia"]:not(:hover) :is(.cv-riflesso, .cv-olo, .cv-grana),
+    .cv-inclina[data-viva="fila"]:not(:hover) :is(.cv-riflesso, .cv-olo, .cv-grana) {
         display: none;
     }
 }
 @media (hover: none), (pointer: coarse) {
-    .cv-inclina[data-viva="griglia"] :is(.cv-riflesso, .cv-bordo, .cv-olo, .cv-grana),
-    .cv-inclina[data-viva="fila"] :is(.cv-riflesso, .cv-bordo, .cv-olo, .cv-grana) {
+    .cv-inclina[data-viva="griglia"] :is(.cv-riflesso, .cv-olo, .cv-grana),
+    .cv-inclina[data-viva="fila"] :is(.cv-riflesso, .cv-olo, .cv-grana) {
         display: none;
     }
 }
@@ -880,25 +879,7 @@ body[data-card-badges] .card { overflow: visible; }
     opacity: calc(var(--forza) * 0.9);
 }
 
-/* Rara e superiori: un filo lucido sul bordo, che scorre con la luce. Un
-   anello ottenuto togliendo il riquadro interno (padding) da quello
-   esterno con una maschera. */
-.carta-viva .cv-bordo {
-    padding: 5%;
-    /* Una banda di luce che scorre sul bordo, dipinta SENZA fusione: su
-       una cornice già dorata (i mostri) una fusione "schiarisci" non si
-       vedeva affatto (verificato guardandola). Sotto, un velo chiaro
-       sottile che resta anche a carta ferma. */
-    background:
-        linear-gradient(115deg, transparent 30%, rgba(255, 253, 240, 0.9) 50%, transparent 70%)
-            var(--luce-x) var(--luce-y) / 220% 220% no-repeat,
-        linear-gradient(135deg, rgba(255, 250, 225, 0.32), rgba(255, 236, 170, 0.08) 50%, rgba(255, 250, 225, 0.32));
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-    opacity: calc(0.55 + var(--forza) * 0.45);
-}
-
+/* Niente cornice lucida: il lucido e' una luce sull'illustrazione, mai un contorno (richiesta esplicita). */
 /* Super e superiori: l'arcobaleno sull'illustrazione. Si vede anche a
    carta ferma (poco), e si accende quando si inclina. */
 .carta-viva .cv-olo {

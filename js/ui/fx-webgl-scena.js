@@ -908,6 +908,121 @@ float dado(vec2 q,float v){
         b.onfinish = () => bag.remove(); setTimeout(() => bag.remove(), 900);
     };
 
+    // ---------------------------------------------------------------------
+    // Gli impatti di battaglia (danno ai Life Point, scontro, distruzione). Identici a quelli GSAP nei tempi e
+    // nei movimenti; la differenza e' che i lampi, gli anelli, il fumo e le scintille sono disegnati sulla
+    // tela WebGL e le carte e la scossa del campo si muovono con la sola proprieta' `translate`/`scale`
+    // (compositor), invece di tween GSAP su `x`/`filter` che a ogni colpo facevano ridipingere il campo.
+    // ---------------------------------------------------------------------
+
+    /** Scossa orizzontale con la proprieta' `translate` (non tocca `transform`, quindi convive con le pose della carta/del campo). */
+    function scossa(el, passi, ritardoMs) {
+        if (!el || typeof el.animate !== 'function') return;
+        const tot = passi.reduce((a, q) => a + q[1], 0); let tt = 0;
+        const fr = [{ translate: '0px 0px', offset: 0 }];
+        passi.forEach((q) => { tt += q[1]; fr.push({ translate: `${q[0]}px 0px`, offset: Math.min(1, tt / tot) }); });
+        const prima = el.style.willChange; el.style.willChange = 'translate';
+        const a = el.animate(fr, { duration: tot * 1000, delay: ritardoMs || 0, easing: 'linear' });
+        const fine = () => { if (el.style.willChange === 'translate') el.style.willChange = prima; };
+        a.onfinish = fine; a.oncancel = fine;
+    }
+
+    const IN_CUBICA = 'cubic-bezier(.55,.05,.67,.19)';
+    const OUT_CUBICA = 'cubic-bezier(.215,.61,.355,1)';
+
+    /** Danno ai Life Point: scossa del campo, vignetta rossa, il numero che sale. */
+    imp.playDamageEffect = function (amount, opts) {
+        const container = document.querySelector('.game-container') || document.body;
+        const forza = Math.min(18, 6 + (Number(amount) || 0) / 260);
+        const touch = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+        const target = (opts && opts.anchorEl) || null;
+        const r = target ? rectDi(target) : null;
+        const p = r ? cen(r) : { x: window.innerWidth / 2, y: window.innerHeight * 0.42 };
+        const s = new Scena();
+        s.add(T.WASH, C.ROSSO, 0, 0.54, [0, 0, 0.55, 0], 3);
+        if (touch) s.add(T.RING, C.ROSSO, 0, 0.34, [p.x, p.y, 74, 3]);
+        verifica(s);
+        if (!touch && container !== document.body) scossa(container, [[-forza, 0.05], [forza * 0.8, 0.06], [-forza * 0.5, 0.06], [forza * 0.25, 0.06], [0, 0.08]]);
+        breve(s, 0.56);
+        // Il numero: 0.22s sale a 1.15, 0.1s si assesta, resta 0.25s, poi sale di 42px svanendo in 0.5s.
+        const el = document.createElement('div');
+        el.textContent = '-' + (Number(amount) || 0);
+        el.style.cssText = `position:fixed;left:${p.x}px;top:${p.y}px;z-index:${Z + 7};pointer-events:none;white-space:nowrap;`
+            + 'color:#ff5b5b;font-weight:900;font-size:clamp(1.6rem,5vw,3rem);will-change:transform,opacity;opacity:0;'
+            + 'text-shadow:0 0 12px rgba(255,0,0,.8),0 2px 6px rgba(0,0,0,.9);';
+        document.body.appendChild(el);
+        const T0 = 1.07; const f = (sc, y) => `translate(-50%, calc(-50% + ${y}px)) scale(${sc})`;
+        const an = el.animate([
+            { transform: f(0.4, 0), opacity: 0, offset: 0, easing: OUT_CUBICA },
+            { transform: f(1.15, 0), opacity: 1, offset: 0.22 / T0 },
+            { transform: f(1, 0), opacity: 1, offset: 0.32 / T0 },
+            { transform: f(1, 0), opacity: 1, offset: 0.57 / T0, easing: 'cubic-bezier(.11,0,.5,0)' },
+            { transform: f(1, -42), opacity: 0, offset: 1 }
+        ], { duration: T0 * 1000, fill: 'both' });
+        an.onfinish = () => el.remove(); setTimeout(() => el.remove(), T0 * 1000 + 600);
+    };
+
+    /** Scontro: l'attaccante rincula e carica, lampo al punto d'impatto, il bersaglio trema, scintille. */
+    imp.playBattleClashEpic = function (attackerEl, targetEl) {
+        const ra = attackerEl ? rectDi(attackerEl) : null; const rt = targetEl ? rectDi(targetEl) : null;
+        const a = ra ? cen(ra) : null; const t = rt ? cen(rt) : null; const point = t || a;
+        if (!point) return;
+        const both = !!(a && t);
+        const midX = both ? (a.x + t.x) / 2 : point.x; const midY = both ? (a.y + t.y) / 2 : point.y;
+        const t0 = both ? 0.3 : 0;
+        const s = new Scena();
+        s.add(T.FLASH, C.CALDO, t0, 0.46, [midX, midY, 120, 0]);
+        for (let i = 0; i < 3; i++) s.add(T.BURST, C.CALDO, t0, 0.8, [midX, midY, 120 + i * 30, 36], 3 + i * 7.3);
+        verifica(s);
+        if (both && attackerEl.animate) {
+            const dx = (t.x - a.x) * 0.42; const dy = (t.y - a.y) * 0.42;
+            attackerEl.animate([
+                { translate: '0px 0px', offset: 0, easing: OUT_CUBICA },
+                { translate: `${-dx * 0.22}px ${-dy * 0.22}px`, offset: 0.14 / 0.65, easing: IN_CUBICA },
+                { translate: `${dx}px ${dy}px`, offset: 0.3 / 0.65, easing: 'linear' },
+                { translate: `${dx}px ${dy}px`, offset: 0.35 / 0.65, easing: OUT_CUBICA },
+                { translate: '0px 0px', offset: 1 }
+            ], { duration: 650 });
+        }
+        if (targetEl && targetEl.animate) {
+            const fr = []; for (let i = 0; i <= 6; i++) fr.push({ translate: (i % 2 ? '0px' : '6px') + ' 0px', offset: i / 6 });
+            fr[0].translate = '0px 0px'; fr[1].translate = '6px 0px'; fr[2].translate = '0px 0px'; fr[3].translate = '6px 0px'; fr[4].translate = '0px 0px'; fr[5].translate = '6px 0px'; fr[6].translate = '0px 0px';
+            targetEl.animate(fr, { duration: 300, delay: both ? 320 : 20, easing: 'linear' });
+        }
+        breve(s, t0 + 0.9);
+    };
+
+    /** Distruzione in battaglia: colpo secco e collasso della carta, vampata, due onde d'urto, nucleo, fumo, scossa, braci. */
+    imp.playBattleDestroyEffect = function (cardElement) {
+        if (!cardElement) return;
+        const r = rectDi(cardElement); if (!r) return;
+        const c = cen(r); const w = r.width;
+        const s = new Scena();
+        s.add(T.FLASH, C.BIANCO, 0, 0.22, [c.x, c.y, w * 0.8, 0]);
+        s.add(T.FLASH, C.CALDO, 0, 0.5, [c.x, c.y, w * 1.1, 0]);
+        s.add(T.RING, C.ORO, 0, 0.55, [c.x, c.y, 120, 3.5]);
+        s.add(T.RING, C.ARANCIO, 0.12, 0.55, [c.x, c.y, 165, 2]);
+        s.add(T.FLASH, C.BIANCO, 0, 0.35, [c.x, c.y, w * 1.2, 0]);
+        for (let i = 0; i < 4; i++) s.add(T.SMOKE, C.SCURO, 0.06 + i * 0.04, 0.95, [c.x + (i * 17 % 40) - 20, c.y + (i * 11 % 24) - 12, 40, 0.7]);
+        s.add(T.BURST, C.CALDO, 0, 0.6, [c.x, c.y, 160, 50], 5.1);
+        s.add(T.BURST, C.ARANCIO, 0.11, 0.9, [c.x, c.y, 90, 200], 11.7);
+        verifica(s);
+        if (cardElement.animate) {
+            const T0 = 0.44; const o = (q) => q / T0;
+            cardElement.animate([
+                { translate: '0px 0px', scale: '1 1', opacity: 1, offset: 0 },
+                { translate: '-5px 0px', offset: o(0.035) },
+                { translate: '0px 0px', offset: o(0.07) },
+                { translate: '-5px 0px', offset: o(0.105) },
+                { translate: '0px 0px', offset: o(0.14) },
+                { scale: '1 1', opacity: 1, offset: o(0.26), easing: IN_CUBICA },
+                { scale: '1 0.2', opacity: 0, offset: 1 }
+            ], { duration: T0 * 1000 });
+        }
+        const campo = document.querySelector('.game-container');
+        scossa(campo, [[-6, 0.045], [5, 0.05], [-3, 0.05], [0, 0.07]]);
+        breve(s, 1.1);
+    };
     /** Per gli effetti brevi che NON aprono una cinematica (non fermano il bot, nessuna callback): solo il disegno. */
     function breve(sc, durS) {
         verifica(sc);

@@ -31,7 +31,7 @@
     width: 150px;
     height: 184px;
     perspective: 760px;
-    transform-style: preserve-3d;
+    transform-style: flat; /* piatto: cosi' il canvas WebGL resta sempre DIETRO la carta, senza tagliarla mentre gira */
 }
 .page-loader-gl { position: absolute; left: 50%; top: 45%; width: 300px; height: 340px; margin: -170px 0 0 -150px; pointer-events: none; }
 .page-loader-aura {
@@ -47,7 +47,7 @@
     height: 142px;
     margin: -71px;
     border: 1px solid rgba(247, 215, 116, 0.28);
-    box-shadow: 0 0 24px rgba(243, 156, 18, 0.16), inset 0 0 20px rgba(247, 215, 116, 0.08);
+    box-shadow: none;
     animation: pageLoaderRuneOrbit 3.8s linear infinite;
 }
 .page-loader-aura--outer::before,
@@ -77,7 +77,6 @@
     height: 105px;
     transform-style: preserve-3d;
     animation: pageLoaderCardTurn 1.75s cubic-bezier(.55,.08,.35,.95) infinite;
-    filter: drop-shadow(0 0 12px rgba(243, 156, 18, 0.32));
 }
 .page-loader-face {
     position: absolute;
@@ -191,7 +190,7 @@
     height: 3px;
     border-radius: 50%;
     background: #fff3bd;
-    box-shadow: 0 0 9px 2px #f39c12;
+    box-shadow: 0 0 4px 1px rgba(243, 156, 18, 0.55);
     animation: pageLoaderSpark 1.8s ease-in-out infinite;
 }
 .page-loader-spark--1 { left: 20px; top: 52px; }
