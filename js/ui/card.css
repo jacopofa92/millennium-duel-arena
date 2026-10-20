@@ -837,16 +837,16 @@ body[data-card-badges] .card { overflow: visible; }
     .cv-inclina.cv-ozio { animation: none; }
 }
 
-/* I riflessi: livelli sopra l'illustrazione e sotto i distintivi
+/* I riflessi (lucido, laminato, grana) stanno DENTRO la finestra dell'illustrazione (.card-frame-art):\n   la cornice, il nome e i numeri restano opachi. Solo su uno scan a carta intera coprono tutta la carta.\n   I livelli stanno sopra l'illustrazione e sotto i distintivi
    (copie possedute, limite: z-index 4), mai cliccabili. */
-.carta-viva > .cv-riflesso,
-.carta-viva > .cv-bordo,
-.carta-viva > .cv-grana,
+.carta-viva .cv-riflesso,
+.carta-viva .cv-bordo,
+.carta-viva .cv-grana,
 .carta-viva .cv-olo {
     position: absolute;
     inset: 0;
     z-index: 3;
-    border-radius: var(--card-raggio);
+    border-radius: inherit;
     pointer-events: none;
     transition: opacity 0.4s ease;
     backface-visibility: hidden;
@@ -873,7 +873,7 @@ body[data-card-badges] .card { overflow: visible; }
 
 /* La luce che passa: c'è su ogni carta, comuni comprese, ma solo quando
    la carta si inclina. */
-.carta-viva > .cv-riflesso {
+.carta-viva .cv-riflesso {
     background: radial-gradient(circle at var(--luce-x) var(--luce-y),
         rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.2) 28%, transparent 60%);
     mix-blend-mode: soft-light;
@@ -883,7 +883,7 @@ body[data-card-badges] .card { overflow: visible; }
 /* Rara e superiori: un filo lucido sul bordo, che scorre con la luce. Un
    anello ottenuto togliendo il riquadro interno (padding) da quello
    esterno con una maschera. */
-.carta-viva > .cv-bordo {
+.carta-viva .cv-bordo {
     padding: 5%;
     /* Una banda di luce che scorre sul bordo, dipinta SENZA fusione: su
        una cornice già dorata (i mostri) una fusione "schiarisci" non si
@@ -922,7 +922,7 @@ body[data-card-badges] .card { overflow: visible; }
 }
 
 /* Segreta e mitica: una grana di scintille, accesa solo attorno alla luce. */
-.carta-viva > .cv-grana {
+.carta-viva .cv-grana {
     background-image:
         radial-gradient(circle, rgba(255, 255, 255, 0.95) 0 0.6px, transparent 1.2px),
         radial-gradient(circle, rgba(255, 240, 200, 0.85) 0 0.5px, transparent 1px);

@@ -593,17 +593,15 @@
         el.dataset.rarita = rarita;
         bersaglio.classList.add('cv-inclina');
         bersaglio.dataset.viva = modo;
-        el.appendChild(strato('cv-riflesso'));
-        if (RARITA_CON_BORDO.has(rarita)) el.appendChild(strato('cv-bordo'));
-        if (RARITA_ARCOBALENO.has(rarita)) {
-            // Sull'illustrazione, dove c'è la sua finestra; su uno scan a
-            // carta intera (raro: di regola si usa il solo ritaglio) copre
-            // tutta la carta, più tenue.
-            const finestra = !el.querySelector('.card-image') && el.querySelector('.card-frame-art');
-            (finestra || el).appendChild(strato(finestra && rarita !== 'mythic' ? 'cv-olo' : 'cv-olo cv-olo--intera'));
-        }
-        if (RARITA_GRANA.has(rarita)) el.appendChild(strato('cv-grana'));
-
+        // Lucido, laminato e grana vanno SOPRA L'ILLUSTRAZIONE (la finestra .card-frame-art), non su tutta la
+        // carta: nome, stelle e ATK/DEF restano nitidi. Solo uno scan a carta intera, che non ha la finestra,
+        // li porta sull'intera carta.
+        const finestra = !el.querySelector('.card-image') && el.querySelector('.card-frame-art');
+        const dove = finestra || el;
+        dove.appendChild(strato('cv-riflesso'));
+        if (RARITA_CON_BORDO.has(rarita)) dove.appendChild(strato('cv-bordo'));
+        if (RARITA_ARCOBALENO.has(rarita)) dove.appendChild(strato(finestra ? 'cv-olo' : 'cv-olo cv-olo--intera'));
+        if (RARITA_GRANA.has(rarita)) dove.appendChild(strato('cv-grana'));
         const ridotto = window.Inclinazione
             ? Inclinazione.movimentoRidotto()
             : (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
