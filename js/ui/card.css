@@ -871,18 +871,6 @@ body[data-card-badges] .card { overflow: visible; }
     }
 }
 
-/* Il canvas WebGL dei riflessi (js/ui/carta-viva-webgl.js): prende il posto dei quattro strati qui sotto. */
-.carta-viva > .cv-gl {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 3;
-    border-radius: var(--card-raggio);
-    pointer-events: none;
-    transform: translateZ(0);
-}
-
 /* La luce che passa: c'è su ogni carta, comuni comprese, ma solo quando
    la carta si inclina. */
 .carta-viva > .cv-riflesso {

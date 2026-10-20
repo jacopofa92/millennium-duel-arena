@@ -19,7 +19,7 @@ module.exports = {
     async run({ browser, assert }) {
         for (const schermo of SCHERMI) {
             const ctx = await browser.newContext(Object.assign({ serviceWorkers: 'block' }, schermo.opzioni));
-            await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.CARTA_VIVA_WEBGL_OFF = true; /* questo spec prova gli strati DOM (il ripiego); il WebGL e' in carta-viva-webgl.spec.js */ });
+            await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
             const page = await ctx.newPage();
             try {
                 await page.goto(url('cartoteca.html'));

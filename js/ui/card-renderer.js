@@ -593,18 +593,16 @@
         el.dataset.rarita = rarita;
         bersaglio.classList.add('cv-inclina');
         bersaglio.dataset.viva = modo;
-        // I riflessi: UNO shader WebGL per carta (js/ui/carta-viva-webgl.js, stessa resa); senza WebGL, gli strati DOM di sempre.
-        const riflessiGL = !!(window.CartaVivaGL && CartaVivaGL.collega(el, rarita, { modo: modo, bersaglio: bersaglio, area: area }));
-        if (!riflessiGL) el.appendChild(strato('cv-riflesso'));
-        if (!riflessiGL && RARITA_CON_BORDO.has(rarita)) el.appendChild(strato('cv-bordo'));
-        if (!riflessiGL && RARITA_ARCOBALENO.has(rarita)) {
+        el.appendChild(strato('cv-riflesso'));
+        if (RARITA_CON_BORDO.has(rarita)) el.appendChild(strato('cv-bordo'));
+        if (RARITA_ARCOBALENO.has(rarita)) {
             // Sull'illustrazione, dove c'è la sua finestra; su uno scan a
             // carta intera (raro: di regola si usa il solo ritaglio) copre
             // tutta la carta, più tenue.
             const finestra = !el.querySelector('.card-image') && el.querySelector('.card-frame-art');
             (finestra || el).appendChild(strato(finestra && rarita !== 'mythic' ? 'cv-olo' : 'cv-olo cv-olo--intera'));
         }
-        if (!riflessiGL && RARITA_GRANA.has(rarita)) el.appendChild(strato('cv-grana'));
+        if (RARITA_GRANA.has(rarita)) el.appendChild(strato('cv-grana'));
 
         const ridotto = window.Inclinazione
             ? Inclinazione.movimentoRidotto()

@@ -497,7 +497,7 @@
 // v279: nomi compatti e invito all'azione rendono leggibili le fasi.
 // v282: miniature WebP lazy per Duellanti e anteprime delle Arene.
 // v317: pose di esclamazione rifinite senza ritagli laterali.
-const CACHE_NAME = 'ygo-duel-arena-v334';
+const CACHE_NAME = 'ygo-duel-arena-v333';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
@@ -616,7 +616,6 @@ const APP_SHELL = [
     'js/data/starter-structure-decks.js',
     'js/ui/inclinazione.js',
     'js/ui/card-renderer.js',
-    'js/ui/carta-viva-webgl.js',
     'js/ui/fx-gsap.js',
     'js/ui/fx-webgl.js',
     'js/ui/fx-webgl-scena.js',

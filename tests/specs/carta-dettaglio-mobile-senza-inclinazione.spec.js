@@ -14,7 +14,7 @@ module.exports = {
     standalone: true,
     async run({ browser, assert }) {
         const ctx = await browser.newContext({ viewport: { width: 393, height: 852 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
-        await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.CARTA_VIVA_WEBGL_OFF = true; /* questo spec prova gli strati DOM (il ripiego); il WebGL e' in carta-viva-webgl.spec.js */ });
+        await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
         const page = await ctx.newPage();
         try {
             await page.goto(url('cartoteca.html'));
@@ -62,7 +62,7 @@ module.exports = {
         // si muove piano da sola (solo luce, mai la carta).
         const spento = await browser.newContext({ viewport: { width: 393, height: 852 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
         await spento.addInitScript(() => {
-            window.AUTH_GATE_SKIP = true; window.CARTA_VIVA_WEBGL_OFF = true; /* questo spec prova gli strati DOM (il ripiego); il WebGL e' in carta-viva-webgl.spec.js */
+            window.AUTH_GATE_SKIP = true;
             try { localStorage.setItem('ygoGiroscopioCarte', 'off'); } catch (e) { /* storage non disponibile */ }
         });
         const pagina = await spento.newPage();
@@ -103,7 +103,7 @@ module.exports = {
         // --- L'interruttore nelle Impostazioni (pagina e vista del menu) ---
         for (const [file, id, apri] of [['impostazioni.html', 'cardGyroToggleInput', null], ['index.html', 'impostazioni-cardGyroToggleInput', "showView('impostazioni')"]]) {
             const c = await browser.newContext({ viewport: { width: 1280, height: 900 }, serviceWorkers: 'block' });
-            await c.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.CARTA_VIVA_WEBGL_OFF = true; /* questo spec prova gli strati DOM (il ripiego); il WebGL e' in carta-viva-webgl.spec.js */ });
+            await c.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
             const p = await c.newPage();
             try {
                 await p.goto(url(file));
