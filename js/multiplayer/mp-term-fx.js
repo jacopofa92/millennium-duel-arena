@@ -16,7 +16,7 @@
 
     const VS = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
     const FS = `precision highp float;
-uniform vec2 r; uniform float t; uniform float tok; uniform float terr;
+uniform vec2 r; uniform float t; uniform float tok; uniform float terr; uniform vec2 org;
 float h(float n){return fract(n*43758.5453+.137*n*n);}
 float h2(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 void main(){
@@ -26,15 +26,15 @@ void main(){
   vec3 base=mix(vec3(.25,.85,1.),vec3(.35,1.,.75),ok); base=mix(base,vec3(1.,.28,.32),err);
   vec3 col=vec3(0.); float a=0.;
   // pavimento a griglia in prospettiva (meta' bassa), che scorre verso chi guarda
-  float hor=.52;
+  float hor=.30;
   if(uv.y<hor){
     float d=hor-uv.y; float z=.09/d; float x=(uv.x-.5)*asp*z;
     float sp=t*(.9+ok*1.6);
     float gx=smoothstep(.06,0.,abs(fract(x*1.4)-.5)-.44);
     float gz=smoothstep(.06,0.,abs(fract(z*1.3-sp)-.5)-.44);
-    float fade=smoothstep(0.,.35,d)*(1.-smoothstep(.35,.52,d))+.15*smoothstep(0.,.1,d);
+    float fade=smoothstep(0.,.2,d)*(1.-smoothstep(.2,.3,d))+.12*smoothstep(0.,.08,d);
     float g=max(gx,gz)*fade;
-    col+=base*g*.55; a+=g*.5;
+    col+=base*g*.45; a+=g*.4;
   }
   // linea d'orizzonte
   float ho=exp(-pow((uv.y-hor)*70.,2.)); col+=base*ho*.6; a+=ho*.45;
@@ -48,7 +48,7 @@ void main(){
     col+=mix(base,vec3(1.,.9,.5),.5)*(cab*aY)+base*lin; a+=cab*aY*.7+lin;
   }
   // onde radar dall'emblema (sinistra)
-  vec2 e=vec2(.1,.5); vec2 dd2=(uv-e)*vec2(asp,1.);
+  vec2 dd2=(uv-org)*vec2(asp,1.);
   float rr=length(dd2);
   for(int j=0;j<2;j++){
     float ph=fract(t*.42+float(j)*.5); float R=ph*1.15;
@@ -62,7 +62,8 @@ void main(){
   vec2 gv=uv*vec2(46.,14.); vec2 cell=floor(gv); float rn=h2(cell); float punto=1.-smoothstep(.12,.26,length(fract(gv)-.5)); float tw=step(.965,rn)*(.5+.5*sin(t*4.+rn*40.))*punto; col+=base*tw*.5; a+=tw*.35;
   // rifiuto: barre di disturbo rosse
   if(err>0.){ float band=step(.86,h2(vec2(floor(uv.y*18.),floor(t*14.))))*err; col+=vec3(1.,.2,.25)*band*.5; a+=band*.4; col*=1.-.25*err; }
-  a=clamp(a,0.,1.); col=min(col,vec3(a)*1.4);
+  // l'atmosfera sta SOPRA la pagina intera: leggera, mai un velo (nessun box, nessuna finestra)
+  float gain=.62; a=clamp(a,0.,1.)*gain; col=min(col*gain,vec3(a)*1.4);
   gl_FragColor=vec4(min(col,vec3(1.)),a);
 }`;
 
@@ -78,7 +79,7 @@ void main(){
         if (!term || window.MP_TERM_FX_OFF || riduciMovimento()) return null;
         try {
             const cv = document.createElement('canvas');
-            cv.className = 'mp-term-gl';
+            cv.className = 'mp-term-gl';   // a pagina intera, fissa, senza tocco: e' l'atmosfera della connessione, non un riquadro
             cv.setAttribute('aria-hidden', 'true');
             cv.style.opacity = '0';
             const gl = /** @type {WebGLRenderingContext|null} */ (cv.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false }));
@@ -92,14 +93,15 @@ void main(){
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
             const loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
             const uR = gl.getUniformLocation(pr, 'r'); const uT = gl.getUniformLocation(pr, 't');
-            const uOk = gl.getUniformLocation(pr, 'tok'); const uErr = gl.getUniformLocation(pr, 'terr');
-            term.insertBefore(cv, term.firstChild);
+            const uOk = gl.getUniformLocation(pr, 'tok'); const uErr = gl.getUniformLocation(pr, 'terr'); const uOrg = gl.getUniformLocation(pr, 'org');
+            document.body.appendChild(cv);
 
-            let scala = Math.min(window.devicePixelRatio || 1, 1.5) * 0.8;
+            let scala = Math.min(window.devicePixelRatio || 1, 1.5) * 0.5;
             const adatta = () => {
-                const w = Math.max(2, Math.round(term.clientWidth * scala)); const h = Math.max(2, Math.round(term.clientHeight * scala));
+                const w = Math.max(2, Math.round(window.innerWidth * scala)); const h = Math.max(2, Math.round(window.innerHeight * scala));
                 if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; gl.viewport(0, 0, w, h); }
             };
+            let rcUltimo = null;
             const t0 = performance.now(); let tOk = -1; let tErr = -1; let raf = 0; let n = 0; let lento = 0; let ultimo = t0; let morto = false;
             const fine = () => {
                 morto = true; cancelAnimationFrame(raf);
@@ -107,7 +109,11 @@ void main(){
             };
             const giro = (now) => {
                 if (morto) return;
-                if (!cv.isConnected) { fine(); return; }
+                // La console sparisce appena il flusso va avanti (nessuno aspetta): l'atmosfera no — l'onda di "accesso concesso"
+                // (o il lampo rosso) finisce comunque di girare, poi il canvas si toglie da solo.
+                const tt = (now - t0) / 1000;
+                const esito = Math.max(tOk, tErr);
+                if (esito < 0 ? !term.isConnected : (tt - esito > 1.7)) { cv.remove(); fine(); return; }
                 // regolatore: se i fotogrammi sono lenti si scende di risoluzione, poi si spegne
                 const dt = now - ultimo; ultimo = now;
                 if (dt > 40) lento++; else lento = Math.max(0, lento - 1);
@@ -115,10 +121,14 @@ void main(){
                 if (n++ % 20 === 0) adatta();
                 const t = (now - t0) / 1000;
                 gl.uniform2f(uR, cv.width, cv.height); gl.uniform1f(uT, t);
+                // l'origine delle onde: dove sta la riga di stato, in coordinate dello schermo (y verso l'alto)
+                if (term.isConnected) rcUltimo = term.getBoundingClientRect();
+                const rc = rcUltimo || { left: 0, top: 0, width: 90, height: 20 };
+                gl.uniform2f(uOrg, Math.min(1, Math.max(0, (rc.left + Math.min(rc.width, 90) / 2) / window.innerWidth)), Math.min(1, Math.max(0, 1 - (rc.top + rc.height / 2) / window.innerHeight)));
                 gl.uniform1f(uOk, tOk < 0 ? -1 : tOk); gl.uniform1f(uErr, tErr < 0 ? -1 : tErr);
                 gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
                 gl.drawArrays(gl.TRIANGLES, 0, 3);
-                if (cv.style.opacity === '0') cv.style.opacity = '0.9';
+                if (cv.style.opacity === '0') cv.style.opacity = '1';
                 raf = requestAnimationFrame(giro);
             };
             adatta();

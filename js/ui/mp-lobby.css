@@ -451,7 +451,14 @@
 }
 
 /* Console KaibaCorp v3: sfondo WebGL (js/multiplayer/mp-term-fx.js), flusso esadecimale, esito "accesso concesso"/"rifiutato". */
-.mp-term-gl { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; mix-blend-mode: screen; transition: opacity .5s ease; }
+.mp-term-gl { position: fixed; inset: 0; width: 100vw; height: 100dvh; z-index: 6; pointer-events: none; mix-blend-mode: screen; transition: opacity .5s ease; }
+/* NESSUN riquadro: la connessione e' atmosfera sulla pagina (canvas a pagina intera) piu' poche righe di testo che
+   galleggiano. Qui sotto si toglie alla console di una volta tutto cio' che la faceva sembrare una finestra. */
+#mpStatus .mp-term { background: none; border: 0; clip-path: none; box-shadow: none !important; padding: 4px 0; transform: none; animation: none; max-width: none; }
+#mpStatus .mp-term::before, #mpStatus .mp-term::after, #mpStatus .mp-term-circuit { display: none; }
+#mpStatus .mp-term-emblem { background: none; border: 0; box-shadow: none; clip-path: none; }
+#mpStatus .mp-term-clock { background: none; box-shadow: none; color: #f7d774; padding: 0; }
+#mpStatus .mp-term-head { border-bottom: 0; }
 .mp-term-hex { position: relative; display: flex; overflow: hidden; margin: 0 0 6px; height: 1em; font: 500 .55rem/1 ui-monospace, Consolas, monospace; letter-spacing: .12em; color: rgba(110, 221, 255, .38); white-space: nowrap; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
 .mp-term-hex span { flex: none; animation: mpTermHex 7s linear infinite; }
 @keyframes mpTermHex { to { transform: translateX(-100%); } }

@@ -176,13 +176,16 @@
             await net.connect(url);
             fermaAttesaServer();
             rememberServerUrl(url);
-            try { await accessoConcesso(); } catch (e) { /* la scenetta non deve mai far fallire il collegamento */ }
-            showStatus('✅ Connesso al server.');
+            // NON si aspetta nulla: la scenetta "accesso concesso" gira mentre il flusso prosegue (crea/entra nella stanza),
+            // e il messaggio normale la sostituisce dopo un istante solo se la console e' ancora li'.
+            try { accessoConcesso(); } catch (e) { /* la scenetta non deve mai far fallire il collegamento */ }
+            setTimeout(() => { if (document.querySelector('#mpStatus .mp-term.is-ok')) showStatus('✅ Connesso al server.'); }, 850);
             return true;
         } catch (err) {
             fermaAttesaServer();
-            try { await connessioneRifiutata(); } catch (e) { /* idem */ }
-            showStatus('❌ Impossibile connettersi: ' + err.message, true);
+            try { connessioneRifiutata(); } catch (e) { /* idem */ }
+            // Il messaggio d'errore arriva subito dopo il lampo rosso; i pulsanti si riattivano senza aspettare.
+            setTimeout(() => showStatus('❌ Impossibile connettersi: ' + err.message, true), 600);
             return false;
         }
     }
