@@ -1,6 +1,6 @@
 {
-  "manutenzione": false,
-  "messaggio": "",
+  "manutenzione": true,
+  "messaggio": "Stiamo aggiornando il server: torna tra qualche minuto.",
   "versioneMinimaApk": 1,
   "versioneConsigliataApk": 1,
   "messaggioAggiornamento": "",
