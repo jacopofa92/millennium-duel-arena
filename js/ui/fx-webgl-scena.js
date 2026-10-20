@@ -130,13 +130,31 @@ float dado(vec2 q,float v){
     // VELO a tutto schermo: B.w = 0 uniforme, 1 dall'alto, 2 dal basso, 3 vignetta, 4 barra di scansione, 5 raffiche di vento.
     CORPI[T.WASH] = `
   float e=campana(u,.2,.35); float g=1.; float md=B.w;
+  if(md>5.5){
+    // IMPATTO A META' SCHERMO (6 = metà alta, 7 = metà bassa): lampo rosso, vignetta, crepe e filo di luce sul bordo interno
+    float yy=md<6.5?P.y:(R.y-P.y); float H=R.y*.52; float inn=clamp(yy/H,0.,1.)*step(yy,H);
+    float qx=(P.x/R.x-.5)*2.; float qy=yy/H;
+    float fl=.55*smoothstep(.1,1.,inn)*smoothstep(0.,.08,u)*(1.-smoothstep(.08,1.,u));
+    float vg=.5*(1.-smoothstep(0.,.95,length(vec2(qx*.55,qy))))*step(yy,H)*smoothstep(0.,.18,u)*(1.-smoothstep(.18,1.,u));
+    float gr=mix(.2,1.,easeOut(u/.22)); float env3=smoothstep(0.,.22,u)*(1.-smoothstep(.22,1.,u));
+    float xm=smoothstep(.88*gr,.7*gr,abs(qx));
+    float dEdge=yy-H;
+    float lin=(exp(-dEdge*dEdge/9.)*1.2+exp(-dEdge*dEdge/700.)*.6)*xm*env3*step(yy,H+40.);
+    float p1=fract((P.x*.906+P.y*.4226)/108.); float p2=fract((P.x*.906-P.y*.4226)/150.);
+    float cr=(step(.426,p1)*step(p1,.444)*.16+step(.467,p2)*step(p2,.48)*.1)*step(yy,H)*smoothstep(0.,.14,u)*(1.-smoothstep(.14,1.,u));
+    vec3 ec=mix(vec3(1.,.23,.23),vec3(1.),exp(-qx*qx*8.));
+    vec3 col2=vec3(.9,0.,0.)*fl+vec3(.47,0.,0.)*vg+ec*lin+vec3(1.,.86,.78)*cr;
+    float a2=clamp(fl+vg+lin*.8+cr,0.,1.);
+    s=vec4(min(col2,vec3(a2)),a2);
+  } else {
   if(md>.5&&md<1.5) g=1.-smoothstep(0.,R.y*.7,P.y);
   else if(md>1.5&&md<2.5) g=smoothstep(R.y*.3,R.y,P.y);
   else if(md>2.5&&md<3.5) g=smoothstep(.2,.95,length((P-R*.5)/R*1.5));
   else if(md>3.5&&md<4.5){ float y0=u*R.y*1.2-R.y*.1; g=.15+exp(-pow((P.y-y0)/max(A.w,10.),2.))*1.6; }
   else if(md>4.5){ g=smoothstep(.55,.85,fbm(vec2((P.x-t*700.)*.004,P.y*.05+1.3)))*1.4; }
   float a=A.z*e*g;
-  s=vec4(c*a*(md>3.5?1.3:1.),md>3.5?a*.8:a);`;
+  s=vec4(c*a*(md>3.5?1.3:1.),md>3.5?a*.8:a);
+  }`;
 
     // RAGGIO fra due punti, che cresce da (x,y) a (z,w); spessore B.w.
     CORPI[T.LINE] = `
@@ -940,6 +958,11 @@ float dado(vec2 q,float v){
         const p = r ? cen(r) : { x: window.innerWidth / 2, y: window.innerHeight * 0.42 };
         const s = new Scena();
         s.add(T.WASH, C.ROSSO, 0, 0.54, [0, 0, 0.55, 0], 3);
+        // Impatto a mezzo schermo (lampo, vignetta, crepe, filo sul bordo) e alone dietro il numero grande: prima erano
+        // strati DOM con gradienti, blend e filtri animati, i veri responsabili dei cali di frame al colpo.
+        const owner = opts && opts.owner;
+        if (owner) s.add(T.WASH, C.ROSSO, 0, 0.9, [0, 0, 1, 0], owner === 'bot' ? 6 : 7);
+        s.add(T.FLASH, C.ROSSO, 0, 1.1, [window.innerWidth / 2, window.innerHeight * 0.42, Math.min(window.innerWidth * 0.3, 190), 0]);
         if (touch) s.add(T.RING, C.ROSSO, 0, 0.34, [p.x, p.y, 74, 3]);
         verifica(s);
         if (!touch && container !== document.body) scossa(container, [[-forza, 0.05], [forza * 0.8, 0.06], [-forza * 0.5, 0.06], [forza * 0.25, 0.06], [0, 0.08]]);
@@ -972,6 +995,8 @@ float dado(vec2 q,float v){
         const t0 = both ? 0.3 : 0;
         const s = new Scena();
         s.add(T.FLASH, C.CALDO, t0, 0.46, [midX, midY, 120, 0]);
+        // Il colpo sul bersaglio (prima .battle-hit, un riquadro con gradiente): lampo bianco-oro sulla carta.
+        if (rt) s.add(T.FLASH, C.CALDO, both ? t0 : 0, 0.55, [t.x, t.y, Math.max(rt.width, rt.height) * 0.8, 0]);
         for (let i = 0; i < 3; i++) s.add(T.BURST, C.CALDO, t0, 0.8, [midX, midY, 120 + i * 30, 36], 3 + i * 7.3);
         verifica(s);
         if (both && attackerEl.animate) {

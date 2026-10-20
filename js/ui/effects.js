@@ -2626,6 +2626,18 @@
         registerBackend: registerBackend,
         /** Nome del backend attivo, o null se si stanno usando le animazioni di base — utile in console per capire cosa sta girando davvero. */
         activeBackend: function () { return fxActiveBackend ? fxActiveBackend.name : null; },
+        /** Nome del backend che eseguirebbe QUESTO effetto adesso (null = la versione di base). Serve a chi deve spegnere i propri strati DOM quando c'e' gia' la versione WebGL. */
+        backendFor: function (name) {
+            if (fxPrefersReducedMotion() || window.FX_BACKEND === 'css') return null;
+            for (let i = fxBackends.length - 1; i >= 0; i--) {
+                const b = fxBackends[i];
+                if (window.FX_BACKEND && b.name !== window.FX_BACKEND) continue;
+                if (typeof b.impls[name] !== 'function') continue;
+                if (!(b.requires || []).every((g) => !!window[g])) continue;
+                return b.name;
+            }
+            return null;
+        },
         /** Da richiamare se le dipendenze di un backend arrivano DOPO la sua registrazione (caricamento pigro). */
         refreshBackend: resolveFxBackend,
 

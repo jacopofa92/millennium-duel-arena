@@ -1514,7 +1514,7 @@
         @keyframes chargeAttack {
             0%   { transform: translate(0, 0) scale(1); }
             42%  { transform: translate(var(--charge-dx, 0px), var(--charge-dy, 0px)) scale(1.1); }
-            58%  { transform: translate(var(--charge-dx, 0px), var(--charge-dy, 0px)) scale(1.16); filter: brightness(1.35); }
+            58%  { transform: translate(var(--charge-dx, 0px), var(--charge-dy, 0px)) scale(1.16); }
             100% { transform: translate(0, 0) scale(1); }
         }
         /* Il bersaglio "incassa il colpo": un piccolo contraccolpo verso
@@ -1522,10 +1522,10 @@
            l'impatto in uno scontro mostro-contro-mostro. */
         .card.being-hit { animation: beingHit 0.5s ease-out; }
         @keyframes beingHit {
-            0%   { transform: scale(1); filter: brightness(1); }
-            25%  { transform: scale(0.92) rotate(2deg); filter: brightness(1.6) saturate(1.4); }
-            55%  { transform: scale(1.04); filter: brightness(1.1); }
-            100% { transform: scale(1); filter: brightness(1); }
+            0%   { transform: scale(1); }
+            25%  { transform: scale(0.92) rotate(2deg); }
+            55%  { transform: scale(1.04); }
+            100% { transform: scale(1); }
         }
         .card.positioning { animation: positionPop 0.7s ease; }
         /* Variante per la Posizione di Difesa: include la rotazione a 90°
@@ -1732,6 +1732,16 @@
             background-clip: text;
             color: transparent;
             filter: drop-shadow(0 0 30px rgba(46,204,113,0.7));
+        }
+        /* Con l'impatto WebGL l'alone sta sulla tela: niente drop-shadow ne' blur animati sul testo. */
+        #epicDamageBurst.epic-gl .epic-damage-value { filter: none !important; }
+        #epicDamageBurst.epic-gl.play { animation-name: epicDamagePlayGl; }
+        @keyframes epicDamagePlayGl {
+            0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.3) rotate(-6deg); }
+            12%  { opacity: 1; transform: translate(-50%, -50%) scale(1.18) rotate(2deg); }
+            26%  { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+            80%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.06) translateY(-18px); }
         }
         .epic-damage-label {
             margin-top: 2px;

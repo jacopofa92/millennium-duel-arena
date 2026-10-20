@@ -1867,7 +1867,8 @@ function showBattleEffect(attackerEl, targetEl, directDirection) {
         }
     }
 
-    if (targetEl) {
+    const glScontro = !!(window.FX && typeof FX.backendFor === 'function' && FX.backendFor('playBattleClashEpic') === 'webgl');
+    if (targetEl && !glScontro) {
         const rect = targetEl.getBoundingClientRect();
         const hitEl = document.createElement('div');
         hitEl.className = 'battle-hit';
@@ -1878,6 +1879,8 @@ function showBattleEffect(attackerEl, targetEl, directDirection) {
         document.body.appendChild(hitEl);
         setTimeout(() => hitEl.remove(), 550);
 
+    }
+    if (targetEl) {
         targetEl.classList.remove('being-hit');
         void targetEl.offsetWidth;
         targetEl.classList.add('being-hit');
@@ -1893,8 +1896,11 @@ function showBattleEffect(attackerEl, targetEl, directDirection) {
  * importo positivo (il danno appena calcolato).
  */
 function showFloatingDamage(value, anchorEl, owner) {
-    showEpicDamageNumber(value);
-    if (value > 0 && owner) showHalfScreenImpact(owner);
+    // Con la versione WebGL dell'impatto (lampo a mezzo schermo, crepe, alone del numero) gli strati DOM equivalenti
+    // non servono: erano gradienti, blend e filtri animati tutti insieme.
+    const glImpatto = !!(window.FX && typeof FX.backendFor === 'function' && FX.backendFor('playDamageEffect') === 'webgl');
+    showEpicDamageNumber(value, glImpatto);
+    if (value > 0 && owner && !glImpatto) showHalfScreenImpact(owner);
 
     if (!anchorEl) return;
     const rect = anchorEl.getBoundingClientRect();
@@ -1907,7 +1913,7 @@ function showFloatingDamage(value, anchorEl, owner) {
     setTimeout(() => el.remove(), 950);
 
     if (value > 0 && window.FX) {
-        FX.playDamageEffect(value, { anchorEl });
+        FX.playDamageEffect(value, { anchorEl, owner });
     }
     // Il suono dei Life Points NON parte da qui: lo scatena già
     // ACTIONS.dealDamage in duel-engine.js (unico punto per cui passa
@@ -1944,13 +1950,13 @@ function showHalfScreenImpact(owner) {
  * Points, in stile anime: il colpo si vede al centro della scena mentre il
  * contatore nel box LP scende con l'animazione di animateLifePoints().
  */
-function showEpicDamageNumber(value) {
+function showEpicDamageNumber(value, senzaFiltri) {
     const existing = document.getElementById('epicDamageBurst');
     if (existing) existing.remove();
 
     const el = document.createElement('div');
     el.id = 'epicDamageBurst';
-    el.className = value > 0 ? 'epic-damage-burst dmg' : 'epic-damage-burst heal';
+    el.className = (value > 0 ? 'epic-damage-burst dmg' : 'epic-damage-burst heal') + (senzaFiltri ? ' epic-gl' : '');
     el.innerHTML = `
         <div class="epic-damage-value">${value > 0 ? '−' : '+'}${Math.abs(value)}</div>
         <div class="epic-damage-label">${value > 0 ? 'Life Points' : 'Recupero'}</div>
