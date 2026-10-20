@@ -140,7 +140,7 @@
     // personaggio del database ma un generico Bot o un giocatore online.
     const GENERIC_OPPONENTS = {
         demo: { id: null, name: 'Bot', title: 'Avversario di allenamento', image: null, icon: '🤖' },
-        multiplayer: { id: null, name: 'Avversario', title: 'Duellante online', image: null, icon: '🌐' },
+        // Un avversario online e' un altro giocatore: come lui ha il ritratto del giocatore (lo specchio, vedi resolvePlayer)\n        // invece del globo, cosi' la presentazione VS, l'angolo e la schermata finale mostrano una pedina vera.\n        multiplayer: { id: null, name: 'Avversario', title: 'Duellante online', image: 'images/characters/mirror.jpg', icon: '🌐' },
         sandbox: { id: null, name: 'Bot', title: 'Campo di prova', image: null, icon: '🧪' }
     };
 
