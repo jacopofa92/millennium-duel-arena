@@ -104,6 +104,117 @@
         }, true);
     }
 
+    // La carta che l'anteprima mostra ADESSO: la stessa della scheda, o una sua copia con
+    // un'illustrazione alternativa che si sta solo guardando (vedi disegnaArtwork).
+    let cartaAnteprima = null;
+
+    /**
+     * Disegna la carta grande della scheda. `percorso` (facoltativo) la mostra con
+     * un'illustrazione precisa invece di quella in uso: serve all'anteprima delle
+     * illustrazioni alternative, anche di quelle ancora bloccate. Il percorso passa
+     * da `customImage`, che getCardImagePath legge prima di ogni altra cosa; la
+     * rarita' e il resto restano quelli della carta vera.
+     */
+    function mostraAnteprima(card, percorso) {
+        preview.innerHTML = '';
+        cartaAnteprima = percorso ? Object.assign({}, card, { customImage: percorso }) : card;
+        if (typeof window.createCardElement !== 'function') return;
+        const tile = window.createCardElement(cartaAnteprima);
+        tile.onclick = null;
+        // Un tocco sulla carta la mostra a tutto schermo (vedi sopra).
+        tile.addEventListener('click', apriSchermoIntero);
+        tile.title = 'Tocca per vederla a tutto schermo';
+        preview.appendChild(tile);
+        // La lente sta SULLA carta (non sul riquadro, che su un telefono
+        // è largo quanto la scheda), sull'illustrazione.
+        const indizio = document.createElement('span');
+        indizio.className = 'cd-ingrandisci';
+        indizio.setAttribute('aria-hidden', 'true');
+        indizio.textContent = '⤢';
+        tile.appendChild(indizio);
+        // La carta protagonista della scheda si inclina e riflette la
+        // luce secondo la sua rarità (js/ui/card-renderer.js): il mouse
+        // si ascolta su tutta l'anteprima, sul telefono il giroscopio.
+        if (window.CartaViva) CartaViva.rendi(tile, card, { modo: 'grande', area: preview });
+    }
+
+    // ------------------------------------------------------------------
+    // ILLUSTRAZIONI ALTERNATIVE (js/data/artwork-alternativi.js). Per le sole
+    // carte che ne hanno: una fila di miniature (l'originale piu' le
+    // alternative), un tocco ne mostra l'anteprima sulla carta grande — anche
+    // di quelle ancora bloccate, in grigio con lucchetto — e il pulsante
+    // sotto la fila la sceglie, se e' sbloccata. Dice sempre COME si sblocca
+    // quella che si sta guardando.
+    // ------------------------------------------------------------------
+    function disegnaArtwork(card, vista) {
+        const AA = window.ArtworkAlternativi;
+        const precedente = info.querySelector('.cd-artwork');
+        if (precedente) precedente.remove();
+        if (!AA || !card || typeof card.id !== 'number' || card.id < 0 || card.customImage || !AA.numero(card.id)) return;
+        const voci = AA.elenco(card.id);
+        const inUso = AA.scelta(card.id);
+        if (vista === undefined) vista = inUso;
+        const sezione = document.createElement('div');
+        sezione.className = 'cd-artwork';
+        const sbloccate = voci.filter((v) => v.sbloccata).length;
+        sezione.innerHTML = `<strong>Illustrazioni (${sbloccate}/${voci.length} sbloccate)</strong>`;
+
+        const fila = document.createElement('div');
+        fila.className = 'cd-art-fila';
+        const aggiungi = (n, percorsoMiniatura, bloccata, etichetta) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'cd-art-thumb' + (bloccata ? ' cd-art-thumb--bloccata' : '') + (n === inUso ? ' cd-art-thumb--in-uso' : '') + (n === vista ? ' cd-art-thumb--vista' : '');
+            b.setAttribute('aria-label', etichetta + (bloccata ? ' (bloccata)' : n === inUso ? ' (in uso)' : ''));
+            b.dataset.n = String(n);
+            const img = document.createElement('img');
+            img.src = percorsoMiniatura;
+            img.alt = '';
+            img.loading = 'lazy';
+            b.appendChild(img);
+            if (bloccata) { const l = document.createElement('span'); l.className = 'cd-art-lucchetto'; l.textContent = '🔒'; b.appendChild(l); }
+            b.onclick = () => {
+                // Il percorso dell'originale e' quello di sempre, ma NON passato da getCardImagePath
+                // (che darebbe l'alternativa in uso): per l'originale serve il file vero.
+                mostraAnteprima(card, n === 0 ? `images/cards/${card.id}.jpg` : voci[n - 1].percorso);
+                disegnaArtwork(card, n);
+            };
+            fila.appendChild(b);
+        };
+        aggiungi(0, `images/cards/thumbs/${card.id}.webp`, false, 'Illustrazione originale');
+        voci.forEach((v) => aggiungi(v.n, v.miniatura, !v.sbloccata, `Illustrazione alternativa ${v.n}`));
+        sezione.appendChild(fila);
+
+        const dettaglio = document.createElement('div');
+        dettaglio.className = 'cd-art-dettaglio';
+        const scelta = vista === 0 ? null : voci[vista - 1];
+        const azione = document.createElement('button');
+        azione.type = 'button';
+        azione.className = 'cd-art-usa';
+        if (vista === inUso) {
+            azione.textContent = '✓ In uso';
+            azione.disabled = true;
+            dettaglio.textContent = vista === 0 ? 'Stai usando l\'illustrazione originale.' : 'Stai usando questa illustrazione.';
+        } else if (scelta && !scelta.sbloccata) {
+            azione.textContent = '🔒 Bloccata';
+            azione.disabled = true;
+            dettaglio.textContent = 'Come si sblocca: ' + scelta.comeSiSblocca + '.';
+        } else {
+            azione.textContent = vista === 0 ? 'Torna all\'originale' : 'Usa questa illustrazione';
+            dettaglio.textContent = vista === 0 ? 'Rimette l\'illustrazione di sempre.' : 'Diventa l\'illustrazione di questa carta in tutto il gioco, duelli compresi.';
+            azione.onclick = () => {
+                if (!AA.scegli(card.id, vista)) return;
+                // Chi mostra carte (la griglia della Cartoteca...) le ridisegna.
+                window.dispatchEvent(new CustomEvent('artwork-cambiato', { detail: { cardId: card.id, n: vista } }));
+                mostraAnteprima(card, null);
+                disegnaArtwork(card, vista);
+            };
+        }
+        sezione.appendChild(dettaglio);
+        sezione.appendChild(azione);
+        info.appendChild(sezione);
+    }
+
     /**
      * Apre la scheda di `card`. `opzioni` (facoltativo) aggiunge in fondo
      * una barra d'azione, per le pagine in cui dalla scheda si FA qualcosa
@@ -123,26 +234,7 @@
         cartaCorrente = card;
         chiudiSchermoIntero();
 
-        preview.innerHTML = '';
-        if (typeof window.createCardElement === 'function') {
-            const tile = window.createCardElement(card);
-            tile.onclick = null;
-            // Un tocco sulla carta la mostra a tutto schermo (vedi sopra).
-            tile.addEventListener('click', apriSchermoIntero);
-            tile.title = 'Tocca per vederla a tutto schermo';
-            preview.appendChild(tile);
-            // La lente sta SULLA carta (non sul riquadro, che su un telefono
-            // è largo quanto la scheda), sull'illustrazione.
-            const indizio = document.createElement('span');
-            indizio.className = 'cd-ingrandisci';
-            indizio.setAttribute('aria-hidden', 'true');
-            indizio.textContent = '⤢';
-            tile.appendChild(indizio);
-            // La carta protagonista della scheda si inclina e riflette la
-            // luce secondo la sua rarità (js/ui/card-renderer.js): il mouse
-            // si ascolta su tutta l'anteprima, sul telefono il giroscopio.
-            if (window.CartaViva) CartaViva.rendi(tile, card, { modo: 'grande', area: preview });
-        }
+        mostraAnteprima(card, null);
 
         const terms = termsOf(card);
         const typeWord = card.type === 'monster' ? terms.monsterSingular
@@ -178,6 +270,7 @@
             ${window.CardAcquisition ? `<div class="cd-acquisition"><strong>Come si ottiene</strong><span>${escapeHtml(CardAcquisition.sourceFor(card.id))}</span>${CardAcquisition.progressFor && CardAcquisition.progressFor(card.id) ? `<small>Progresso: ${escapeHtml(CardAcquisition.progressFor(card.id))}</small>` : ''}</div>` : ''}
             ${card.missingEffectNote ? `<p class="cd-note">🟡 Effetto implementato parzialmente: ${escapeHtml(card.missingEffectNote)}</p>` : ''}
         `;
+        disegnaArtwork(card);
         aggiorna();
         backdrop.classList.add('open');
     }
@@ -241,7 +334,7 @@
         sfondo.className = 'cd-schermo-intero';
         sfondo.setAttribute('role', 'dialog');
         sfondo.setAttribute('aria-label', 'Carta a tutto schermo');
-        const tile = window.createCardElement(cartaCorrente);
+        const tile = window.createCardElement(cartaAnteprima || cartaCorrente);
         tile.onclick = null;
         tile.title = 'Tocca per tornare indietro';
         sfondo.appendChild(tile);
@@ -269,6 +362,7 @@
         if (backdrop) backdrop.classList.remove('open');
         opzioniCorrenti = null;
         cartaCorrente = null;
+        cartaAnteprima = null;
     }
 
     function isOpen() {

@@ -500,6 +500,9 @@
 
         initFilters();
         renderGrid();
+        // Una nuova illustrazione scelta dalla scheda della carta cambia anche la sua tessera in griglia
+        // (e il bollino delle illustrazioni sbloccate).
+        window.addEventListener('artwork-cambiato', () => renderGrid(true));
 
         return { refresh() { renderGrid(true); } };
     }

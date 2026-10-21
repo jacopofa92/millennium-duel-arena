@@ -64,6 +64,8 @@ interface SaveGame {
     tutorial?: Record<string, any>;
     modalita?: Record<string, any>;
     cardAcquisition?: Record<string, any>;
+    /** Illustrazioni alternative delle carte: sbloccate ('<idCarta>:<n>') e scelta per carta (vedi js/data/artwork-alternativi.js). */
+    artworks?: { sbloccati?: Record<string, boolean>; scelti?: Record<string, number> };
     /** Segno dell'azzeramento delle storie per tutti (vedi AZZERAMENTO_STORIE). */
     storieAzzerate?: string;
 }

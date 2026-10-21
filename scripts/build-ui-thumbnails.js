@@ -24,6 +24,15 @@ const JOBS = [
         quality: 0.74
     },
     {
+        // Illustrazioni alternative delle carte (js/data/artwork-alternativi.js): stessa miniatura delle carte.
+        nome: 'carte-alt',
+        source: path.join(ROOT, 'images', 'cards', 'alt'),
+        output: path.join(ROOT, 'images', 'cards', 'alt', 'thumbs'),
+        width: 256,
+        height: 256,
+        quality: 0.74
+    },
+    {
         nome: 'personaggi',
         source: path.join(ROOT, 'images', 'characters'),
         output: path.join(ROOT, 'images', 'characters', 'thumbs'),

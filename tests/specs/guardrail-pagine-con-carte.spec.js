@@ -20,6 +20,10 @@ const STILE = 'js/ui/card.css';
 // tramite js/ui/inclinazione.js: senza, non dà errore ma sul telefono la
 // carta grande smette di seguire l'inclinazione.
 const INCLINAZIONE = 'js/ui/inclinazione.js';
+// Il catalogo delle illustrazioni alternative: getCardImagePath lo interroga per
+// scegliere il file da mostrare. Senza, una pagina mostrerebbe sempre
+// l'originale e il bollino delle alternative non comparirebbe: nessun errore.
+const ARTWORK = 'js/data/artwork-alternativi.js';
 
 function caricatiDa(html) {
     const percorsi = new Set();
@@ -46,7 +50,7 @@ module.exports = {
             });
             if (!disegnano.length) continue;
             controllate++;
-            const mancano = [RENDERER, STILE, INCLINAZIONE].filter((p) => !caricati.has(p));
+            const mancano = [RENDERER, STILE, INCLINAZIONE, ARTWORK].filter((p) => !caricati.has(p));
             if (mancano.length) problemi.push(`${pagina}: disegna carte (${disegnano.join(', ')}) ma non carica ${mancano.join(' e ')}`);
         }
         // Erano 7 quando il controllo è nato (duello, Cartoteca, Creazione

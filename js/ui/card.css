@@ -604,7 +604,8 @@
    stati. Funziona a qualunque dimensione perché la sporgenza è metà del
    bollino, che è a sua volta proporzionale alla carta (cqw). */
 .card-limit-badge,
-.card-owned-badge {
+.card-owned-badge,
+.card-artwork-badge {
     display: none;
     position: absolute;
     bottom: 0;
@@ -641,6 +642,13 @@
 .card-owned-badge[data-owned="yes"] { background: linear-gradient(160deg, #2ecc71, #14683a); }
 .card-owned-badge[data-owned="no"] { background: linear-gradient(160deg, #6b7280, #2b3038); }
 
+/* Illustrazioni alternative: sull'angolo in ALTO a destra (gli altri due sono in basso), per meta' sporgente
+   come loro. Oro se ne hai sbloccata almeno una, grigio se nessuna. `bottom: auto` annulla quello della regola
+   condivisa qui sopra. */
+.card-artwork-badge { right: 0; bottom: auto; top: 0; transform: translate(50%, -50%); }
+.card-artwork-badge[data-sbloccate="yes"] { background: linear-gradient(160deg, #f7d774, #a8741a); color: #2b1a00; }
+.card-artwork-badge[data-sbloccate="no"] { background: linear-gradient(160deg, #6b7280, #2b3038); }
+
 /* Carta non posseduta (0 copie): in bianco e nero e leggermente spenta,
    per distinguerla a colpo d'occhio da quelle utilizzabili.
    Come i due bollini, vale SOLO nelle pagine che lo chiedono con
@@ -652,14 +660,15 @@
    sposterebbe i due bollini (stesso tranello già incontrato con #botInfo
    dentro .game-container). I bollini restano così anche a colori: sono
    informazione, non parte dell'illustrazione. */
-body[data-card-badges] .card--not-owned > *:not(.card-owned-badge):not(.card-limit-badge),
-body[data-card-badges] .card--not-owned .card-frame > *:not(.card-owned-badge):not(.card-limit-badge) {
+body[data-card-badges] .card--not-owned > *:not(.card-owned-badge):not(.card-limit-badge):not(.card-artwork-badge),
+body[data-card-badges] .card--not-owned .card-frame > *:not(.card-owned-badge):not(.card-limit-badge):not(.card-artwork-badge) {
     filter: grayscale(1) brightness(0.82);
 }
 /* Stesso interruttore per i due bollini, che il resto del file dichiara
    display:none per impostazione predefinita. */
 body[data-card-badges] .card-limit-badge,
-body[data-card-badges] .card-owned-badge { display: flex; }
+body[data-card-badges] .card-owned-badge,
+body[data-card-badges] .card-artwork-badge { display: flex; }
 /* I bollini sporgono dagli angoli, quindi la carta non deve ritagliarli.
    Solo dove si vedono: altrove .card continua a ritagliare come sempre.
    L'immagine a piena carta (.card-image) ha un border-radius proprio e

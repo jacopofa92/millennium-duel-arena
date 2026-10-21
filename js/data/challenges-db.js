@@ -615,6 +615,19 @@ const challengesDatabase = [
         target: 1,
         reward: { credits: 600, millenniumCards: 2 }
     },
+    // Tornei a difficolta' Difficile: oltre ai crediti regalano illustrazioni
+    // alternative di carte (js/data/artwork-alternativi.js, campo `sblocco`:
+    // chi le regala e' il catalogo, non queste voci).
+    ...[
+        ['duelistKingdom', 'duelistKingdom', '🏝️', 'Re del Regno, a testa alta', 'Completa il Regno dei Duellanti a difficoltà Difficile', 800],
+        ['battleCity', 'battleCity', '🏙️', 'Campione di Battle City, senza sconti', 'Completa Battle City a difficoltà Difficile', 800],
+        ['kaibaTournament', 'kaiba', '🎮', 'Il Campionato di Kaiba, per davvero', 'Completa il Torneo Kaiba a difficoltà Difficile', 800]
+    ].map(([tournamentId, slug, icon, label, description, credits]) => ({
+        id: `tournament-${slug}-difficile`,
+        icon, label, description,
+        type: 'completeTournament', match: { tournamentId, difficulty: 'Difficile' }, target: 1,
+        reward: { credits }
+    })),
     {
         id: 'tournament-any-5',
         icon: '🏟️',

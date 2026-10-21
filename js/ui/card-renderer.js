@@ -100,6 +100,10 @@
     function getCardImagePath(card) {
         if (card.customImage) return card.customImage;
         if (card.origin && card.origin !== 'yu-gi-oh') return `${NON_YGO_ART_DIR}/${card.id}.jpg`;
+        // Un'illustrazione alternativa scelta dal giocatore (js/data/artwork-alternativi.js, assente
+        // nelle pagine che non la caricano: allora vale sempre l'originale).
+        const alternativa = window.ArtworkAlternativi && window.ArtworkAlternativi.percorso(card.id);
+        if (alternativa) return alternativa;
         return `images/cards/${card.id}.jpg`;
     }
 
@@ -110,6 +114,8 @@
      */
     function getCardThumbPath(card) {
         if (card.customImage || (card.origin && card.origin !== 'yu-gi-oh')) return getCardImagePath(card);
+        const alternativa = window.ArtworkAlternativi && window.ArtworkAlternativi.miniatura(card.id);
+        if (alternativa) return alternativa;
         return `images/cards/thumbs/${card.id}.webp`;
     }
 
@@ -328,6 +334,7 @@
         requestAnimationFrame(() => compressCardNameIfNeeded(el));
         appendCopyLimitBadge(el, card);
         appendOwnedCountBadge(el, card);
+        appendArtworkBadge(el, card);
 
         if (card.artOnly) {
             // Solo l'illustrazione (card.artOnly, vedi js/data/cards-db.js): va
@@ -448,6 +455,29 @@
             ? `Ne possiedi ${owned} ${owned === 1 ? 'copia' : 'copie'}`
             : 'Non possiedi questa carta: non puoi usarla nei mazzi';
         if (owned === 0) el.classList.add('card--not-owned');
+        el.appendChild(badge);
+    }
+
+    /**
+     * Bollino "illustrazioni alternative" in ALTO a destra, per le sole carte
+     * che ne hanno (js/data/artwork-alternativi.js): il numero dice quante ce
+     * ne sono in tutto, e il colore se ne hai gia' sbloccata almeno una (oro)
+     * o nessuna (grigio). Come gli altri due bollini e' nascosto di default
+     * da js/ui/card.css e lo accendono solo Cartoteca e Creazione Deck.
+     * Tutto il dettaglio (quali, come sbloccarle, sceglierle) sta nella
+     * scheda della carta, js/ui/card-detail.js.
+     */
+    function appendArtworkBadge(el, card) {
+        const AA = window.ArtworkAlternativi;
+        if (!card || !AA || typeof card.id !== 'number' || card.id < 0 || card.customImage) return;
+        const totale = AA.numero(card.id);
+        if (!totale) return;
+        const sbloccate = AA.sbloccate(card.id);
+        const badge = document.createElement('div');
+        badge.className = 'card-artwork-badge';
+        badge.dataset.sbloccate = sbloccate > 0 ? 'yes' : 'no';
+        badge.textContent = '🖼' + totale;
+        badge.title = `${totale} ${totale === 1 ? 'illustrazione alternativa' : 'illustrazioni alternative'} (${sbloccate} ${sbloccate === 1 ? 'sbloccata' : 'sbloccate'}): aprila per sceglierla`;
         el.appendChild(badge);
     }
 

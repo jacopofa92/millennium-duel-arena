@@ -277,7 +277,7 @@
     // I contenitori del salvataggio, per forma. Un campo nuovo di quel tipo va
     // elencato qui (lo sorveglia tests/specs/salvataggio-forma.spec.js): load() li
     // ripara, motivoRifiuto li controlla nei salvataggi che arrivano da fuori.
-    const CONTENITORI_OGGETTO = ['challenges', 'missions', 'economyProgress', 'tournaments', 'tournamentStats', 'millenniumItems', 'story', 'settings', 'dailyEconomy', 'tutorial', 'modalita', 'cardAcquisition'];
+    const CONTENITORI_OGGETTO = ['challenges', 'missions', 'economyProgress', 'tournaments', 'tournamentStats', 'millenniumItems', 'story', 'settings', 'dailyEconomy', 'tutorial', 'modalita', 'cardAcquisition', 'artworks'];
     const CONTENITORI_ELENCO = ['ownedPacks', 'unlockedCharacters'];
 
     /**
@@ -510,6 +510,7 @@
             economyProgress: { freeWinsByDifficulty: {} },
             tournaments: {},
             tournamentStats: {},
+            artworks: {},
         millenniumItems: {},
         story: {},
             // Nato dopo l'azzeramento delle storie: non c'è niente da azzerare.
@@ -967,6 +968,57 @@
         return state;
     }
 
+    // ------------------------------------------------------------------
+    // Artwork alternativi (js/data/artwork-alternativi.js). Il salvataggio
+    // tiene solo DUE cose, e nient'altro: quali illustrazioni sono state
+    // sbloccate ('<idCarta>:<n>', n = 1.. nell'ordine del catalogo) e quale
+    // sta usando ogni carta (0/assente = quella originale). Da dove arrivano
+    // gli sblocchi, e quante illustrazioni ha una carta, e' del catalogo.
+    // ------------------------------------------------------------------
+    function isArtworkUnlocked(cardId, n) {
+        const save = load();
+        return !!(save && save.artworks && save.artworks.sbloccati && save.artworks.sbloccati[cardId + ':' + n]);
+    }
+
+    /** Una fotografia di sola lettura di { sbloccati, scelti }: serve a chi disegna carte e non puo' rileggere il salvataggio a ogni carta. */
+    function getArtworkState() {
+        const save = load();
+        const a = (save && save.artworks) || {};
+        // `completate`: le Sfide gia' vinte. Un'illustrazione si considera sbloccata anche se la sua Sfida e'
+        // stata completata PRIMA che esistesse il premio (o su una pagina che non carica il catalogo): senza
+        // questo, chi ha gia' vinto la Storia a Difficile non vedrebbe mai le illustrazioni che gli spettano.
+        const completate = {};
+        Object.keys((save && save.challenges) || {}).forEach((id) => { if (save.challenges[id] && save.challenges[id].completed) completate[id] = true; });
+        return { sbloccati: Object.assign({}, a.sbloccati), scelti: Object.assign({}, a.scelti), completate: completate };
+    }
+
+    /** Sblocca un'illustrazione. Torna true solo se era DAVVERO nuova (chi premia lo mostra una volta sola). */
+    function unlockArtwork(cardId, n) {
+        const save = load() || createNew();
+        save.artworks = save.artworks || {};
+        save.artworks.sbloccati = save.artworks.sbloccati || {};
+        const chiave = cardId + ':' + n;
+        if (save.artworks.sbloccati[chiave]) return false;
+        save.artworks.sbloccati[chiave] = true;
+        touch(save);
+        return true;
+    }
+
+    /** L'illustrazione scelta per una carta: 0 = l'originale. */
+    function getSelectedArtwork(cardId) {
+        const save = load();
+        return Number(save && save.artworks && save.artworks.scelti && save.artworks.scelti[cardId]) || 0;
+    }
+
+    /** Sceglie l'illustrazione di una carta (0 per tornare all'originale). Il controllo che sia sbloccata e' di chi chiama (ArtworkAlternativi.scegli). */
+    function setSelectedArtwork(cardId, n) {
+        const save = load() || createNew();
+        save.artworks = save.artworks || {};
+        save.artworks.scelti = save.artworks.scelti || {};
+        if (n > 0) save.artworks.scelti[cardId] = n; else delete save.artworks.scelti[cardId];
+        touch(save);
+    }
+
     /** Statistiche persistenti di UN torneo: { attempts, completions }, mai null — sopravvivono ad Abbandona/Ricomincia (vedi il commento su save.tournamentStats in load()). */
     function getTournamentStats(tournamentId) {
         const save = load();
@@ -1254,6 +1306,7 @@
         parsed.unlockedCharacters = Array.isArray(parsed.unlockedCharacters) ? parsed.unlockedCharacters : [];
         parsed.tournaments = parsed.tournaments || {};
         parsed.tournamentStats = parsed.tournamentStats || {};
+        parsed.artworks = parsed.artworks || {};
         parsed.millenniumItems = parsed.millenniumItems || {};
         parsed.story = parsed.story || {};
         parsed.settings = parsed.settings ? normalizeSettings(parsed.settings) : readCachedSettings();
@@ -1400,6 +1453,11 @@
         getTournamentState: getTournamentState,
         setTournamentState: setTournamentState,
         getTournamentStats: getTournamentStats,
+        isArtworkUnlocked: isArtworkUnlocked,
+        getArtworkState: getArtworkState,
+        unlockArtwork: unlockArtwork,
+        getSelectedArtwork: getSelectedArtwork,
+        setSelectedArtwork: setSelectedArtwork,
         getModeState: getModeState,
         setModeState: setModeState,
         getTutorial: getTutorial,
