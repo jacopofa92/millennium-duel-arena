@@ -236,6 +236,49 @@
     .topbar-subtitle { display: none; }
 }
 
+/* ---- INDIETRO IN BASSO A SINISTRA, SU MOBILE (verticale E orizzontale) ----
+   Richiesta dell'utente ("sinistra, e prevedi orientamento verticale e
+   orizzontale"): in alto a sinistra il pulsante e' l'angolo piu' lontano
+   dal pollice, e sul telefono si usa con una mano. Sugli stessi due
+   breakpoint di sopra (schermo stretto, oppure basso in orizzontale) il
+   medaglione esce dalla barra e resta FISSO nell'angolo in basso a sinistra,
+   sopra al contenuto; in alto restano icona e titolo. Desktop invariato.
+
+   L'ALTEZZA della barra non cambia (vedi il vincolo in cima): senza il
+   pulsante la barra si accorcerebbe, e le seconde barre sticky di Regole e
+   Creazione Deck, col loro `top:` in pixel, resterebbero scollate. Per
+   questo i min-height qui sotto sono le altezze MISURATE di prima (66px in
+   verticale, 52px in orizzontale basso).
+   Il contenuto non deve finire sotto il medaglione: la classe
+   `tb-indietro-basso` (la mette topbar.js sul body) gli lascia un margine. */
+@media (max-width: 480px), (max-height: 500px) and (orientation: landscape) {
+    .topbar .back-btn {
+        position: fixed;
+        left: max(14px, env(safe-area-inset-left));
+        bottom: max(14px, env(safe-area-inset-bottom));
+        width: 56px;
+        height: 56px;
+        /* Sta sopra al contenuto della pagina ma sotto a finestre e modali
+           (il z-index vale dentro la barra, che sta a 30). */
+        z-index: 2;
+        background: radial-gradient(circle at 50% 32%, #4a3a26 0%, #1f1810 62%, #120e0a 100%);
+        box-shadow:
+            inset 0 0 0 3px rgba(14, 11, 8, 0.9),
+            inset 0 0 0 4px rgba(247, 215, 116, 0.3),
+            0 6px 18px rgba(0, 0, 0, 0.65),
+            0 0 0 1px rgba(0, 0, 0, 0.5);
+    }
+    body.tb-indietro-basso { padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
+}
+@media (max-width: 480px) {
+    .topbar { min-height: 66px; box-sizing: border-box; }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+    .topbar { min-height: 52px; box-sizing: border-box; }
+    .topbar .back-btn { width: 50px; height: 50px; }
+    body.tb-indietro-basso { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .topbar, .back-btn, .back-btn svg { transition: none; }
 }

@@ -153,6 +153,9 @@
         }
 
         mount.replaceWith(topbar);
+        // Su mobile Indietro e' fisso in basso a sinistra (vedi topbar.css): il
+        // contenuto della pagina si lascia un margine in fondo.
+        document.body.classList.add('tb-indietro-basso');
         seguiScorrimento();
         // Tornata utile a chi ha bisogno di aggiungere QUALCOSA in più
         // nella topbar oltre a icona/titolo/sottotitolo (es. il badge
