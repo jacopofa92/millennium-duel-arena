@@ -98,6 +98,25 @@ module.exports = {
             assert(campoDopo.includes('forte-L7'), 'Il Rituale non deve sacrificare il mostro piu\' forte quando bastano due piu\' deboli: ' + JSON.stringify(campoDopo));
         }
 
+        // --- 3b) Le Continue "solo static" si possono attivare (prima restavano Set/in mano per sempre) ---
+        {
+            const { ex } = campo(44);
+            const esiti = ex(`(function () {
+                gameState.turn = 6; gameState.currentPlayer = 'bot'; gameState.phase = 'main1';
+                return [206, 212, 240, 371, 426, 634, 310, 221].map((id) => {
+                    const c = Object.assign({}, cardDatabase.find((x) => x.id === id), { uid: 'C' + id });
+                    gameState.botSTField = [null, null, null, null, null]; gameState.botHand = [];
+                    if (c.type === 'trap') gameState.botSTField[0] = { card: c, isFaceDown: true, setOnTurn: 1 }; else gameState.botHand.push(c);
+                    return id + ':' + DuelEngine.canActivate('bot', c.type === 'trap' ? 'st' : 'hand', 0);
+                });
+            })()`);
+            assert(esiti.every((e) => /:true$/.test(e)), 'Le Continue senza activate devono essere attivabili: ' + esiti.join(', '));
+            // ...ma l'IA le gioca solo quando le conviene: senza Draghi nemici Cattura-Draghi e' vetata
+            ex(`gameState.botSTField[0] = { card: Object.assign({}, cardDatabase.find((x) => x.id === 206), { uid: 'V206' }), isFaceDown: true, setOnTurn: 1 };
+                gameState.playerMonsterField = [window.__m(1500, 1000, 4, 'non-drago'), null, null, null, null];`);
+            assert(!ex("AI_SHARED.attivazioneSensata(gameState.botSTField[0].card, 'bot', 'st', 0)"), 'Cattura-Draghi non va giocata se il nemico non ha Draghi');
+        }
+
         // --- 4) L'audit a tappeto ----------------------------------------------------------
         let uscita = '';
         try {

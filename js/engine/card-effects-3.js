@@ -2820,6 +2820,9 @@
     // 133 qui sopra (solo la TUA End Phase, non anche quella avversaria).
     CardEffects.register(221, {
         continuous: true,
+        activate(ctx) { ctx.log('👻 Ectoplasmatore si attiva: a ogni End Phase chi e\' di turno sacrifica un mostro!'); },
+        // Colpisce anche chi la gioca (a ogni End Phase si sacrifica un mostro scoperto): l'IA non la usa.
+        aiCanActivate() { return false; },
         onEndPhase(ctx) {
             const field = ctx.field(ctx.owner);
             const index = field.findIndex((s) => s && !s.isFaceDown);
@@ -3254,6 +3257,8 @@
     // Tipo invece che a un solo bersaglio).
     CardEffects.register(310, {
         continuous: true,
+        activate(ctx) { ctx.log('🪲 Barriera per Insetti si attiva: gli Insetti avversari non possono attaccare!'); },
+        aiCanActivate(ctx) { return ctx.field(ctx.opponent).some((s) => s && !s.isFaceDown && s.card.race === 'Insetto'); },
         static(ctx) {
             ctx.field(ctx.opponent).forEach((slot) => {
                 if (slot && !slot.isFaceDown && slot.card.race === 'Insetto') gameState.cannotAttackUids[slot.card.uid] = true;
@@ -3297,6 +3302,8 @@
     // actions.js).
     CardEffects.register(212, {
         continuous: true,
+        activate(ctx) { ctx.log('🐉 Furia del Drago si attiva: i tuoi Draghi infliggono danno perforante!'); },
+        aiCanActivate(ctx) { return ctx.field(ctx.owner).some((s) => s && !s.isFaceDown && s.card.race === 'Drago'); },
         static(ctx) {
             gameState.piercingRacesFor[ctx.owner].add('Drago');
         }

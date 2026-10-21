@@ -638,6 +638,15 @@
     // entrambi i giocatori, vengono tenuti in Posizione di Difesa.
     // ================================================================
     CardEffects.register(206, {
+        continuous: true,
+        // Senza `activate` una Trappola Continua che agisce solo con `static` non si poteva mai girare: restava Set
+        // per sempre (ne' la persona ne' l'IA ne avevano un modo). Ora si attiva e resta in campo.
+        activate(ctx) { ctx.log('🐉 Cattura-Draghi si attiva: i Draghi scoperti vanno in Difesa!'); },
+        // Colpisce i Draghi di ENTRAMBI: all'IA conviene solo se il nemico ne ha e lei no.
+        aiCanActivate(ctx) {
+            const draghi = (owner) => ctx.field(owner).filter((s) => s && !s.isFaceDown && s.card.race === 'Drago').length;
+            return draghi(ctx.opponent) > 0 && draghi(ctx.owner) === 0;
+        },
         static(ctx) {
             Tavolo.ordine().forEach((owner) => {
                 ctx.field(owner).forEach((slot, i) => {
@@ -811,6 +820,14 @@
     // entrambi i giocatori invece che solo sui Tipo Drago).
     // ================================================================
     CardEffects.register(240, {
+        continuous: true,
+        activate(ctx) { ctx.log('⚔️ Ordini di Attacco Finale si attiva: tutti i mostri scoperti vanno in Attacco!'); },
+        // Costringe in Attacco i mostri di ENTRAMBI: conviene all'IA se ha piu' attacco totale e il nemico si difende.
+        aiCanActivate(ctx) {
+            const atk = (owner) => ctx.field(owner).reduce((s, slot) => (slot && !slot.isFaceDown ? s + DuelEngine.getEffectiveAtk(slot.card) : s), 0);
+            const nemicoInDifesa = ctx.field(ctx.opponent).some((slot) => slot && !slot.isFaceDown && slot.position === 'defense');
+            return nemicoInDifesa && atk(ctx.owner) >= atk(ctx.opponent) + 1000;
+        },
         static(ctx) {
             Tavolo.ordine().forEach((owner) => {
                 ctx.field(owner).forEach((slot, i) => {
@@ -2194,6 +2211,13 @@
     // entrambi i giocatori.
     // ================================================================
     CardEffects.register(426, {
+        continuous: true,
+        activate(ctx) { ctx.log('📜 Decreto Reale si attiva: gli altri effetti Trappola sono negati!'); },
+        // Nega le Trappole di ENTRAMBI: all'IA conviene solo se non ne ha altre e il nemico ne ha di Set.
+        aiCanActivate(ctx) {
+            const trappole = (owner) => ctx.stField(owner).filter((slot) => slot && slot.card.type === 'trap' && slot.card.id !== 426).length;
+            return trappole(ctx.owner) === 0 && trappole(ctx.opponent) >= 2;
+        },
         static(ctx) {
             gameState.trapsNegatedFor[ctx.owner] = true;
             gameState.trapsNegatedFor[ctx.opponent] = true;
@@ -2330,6 +2354,10 @@
     // findPetitMothReadyForCocoonSummon più in alto in questo file.
     // ================================================================
     CardEffects.register(371, {
+        continuous: true,
+        activate(ctx) { ctx.log('🚫 Maschera della Restrizione si attiva: nessuno puo\' piu\' sacrificare carte!'); },
+        // Vieta i Tributi a ENTRAMBI e non ha un uso che l'IA sappia valutare: la gioca solo una persona.
+        aiCanActivate() { return false; },
         static(ctx) {
             gameState.tributesBlocked = true;
         }
@@ -2363,6 +2391,10 @@
     // un'Evocazione scoperta, con un log che lo spiega.
     // ================================================================
     CardEffects.register(634, {
+        continuous: true,
+        activate(ctx) { ctx.log('💡 Luce dell\'Intervento si attiva: i mostri non si possono piu\' Settare!'); },
+        // Vieta il Set a ENTRAMBI e non ha un uso che l'IA sappia valutare: la gioca solo una persona.
+        aiCanActivate() { return false; },
         static(ctx) {
             gameState.monsterSetBlocked = true;
         }

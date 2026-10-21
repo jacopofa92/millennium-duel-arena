@@ -182,6 +182,16 @@ perde al prossimo build.
   `--mostri`: abilita' dei mostri ed Evocazioni Speciali; `--mai`: carte che nessun campo di prova rende
   attivabili) e lo sorveglia `tests/specs/ia-attivazioni-sensate.spec.js`. I falsi sospetti valutati a mano
   stanno elencati nel tool con il motivo: un nuovo sospetto va letto carta per carta, non silenziato.
+  **Copertura (1.4.53)**: il passo base prova anche campi costruiti sulle razze/attributi/nomi citati dal testo
+  della carta, un campo "pieno" (Cimiteri da 5+, Magie/Trappole scoperte avversarie, Deck da cercare) e la
+  Standby Phase; `--reattive` ha anche Flip Summon, Evocazione Speciale, Mostro Settato, effetto di un mostro,
+  Trappola del giocatore e Magia a bersaglio (`--non-scattate` elenca le Trappole mai viste in azione, `!!` se
+  nemmeno il passo base le attiva; `--log` stampa il registro dei casi peggiorativi). Restano fuori per
+  costruzione le carte che chiedono la Draw Phase avversaria (216), nomi/Terreni rari (482, 612, 817),
+  "nessuna carta in mano" (745), e le Spirit Message (867-870, solo via Tavola del Destino).
+  **Trovato dall'audit**: le Continue con solo `static` (206, 212, 240, 371, 426, 634, 310, 221) non avevano
+  `activate`, quindi nessuno poteva attivarle: ora ce l'hanno (e un `aiCanActivate`). Una Continua nuova senza
+  `activate` e senza un hook reattivo e' una carta morta.
 - **Bordo carta mobile "troppo spesso"**: quasi sempre un problema di
   rapporto arte/cornice, non della proprietà CSS `border` in sé.
 

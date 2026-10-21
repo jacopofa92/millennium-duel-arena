@@ -348,8 +348,21 @@
         canActivate(ctx) {
             return ctx.field(ctx.owner).some((s) => s);
         },
+        // Il Sacrificio e' il mostro PIU' DEBOLE (non "il primo trovato"), e all'IA conviene solo se il mostro appena
+        // Evocato vale nettamente piu' di quello che si perde.
+        aiCanActivate(ctx) {
+            const valore = (c) => DuelEngine.getEffectiveAtk(c) + 0.5 * DuelEngine.getEffectiveDef(c);
+            const propri = ctx.field(ctx.owner).filter(Boolean).map((s) => valore(s.card));
+            if (!propri.length || !ctx.summonedCard) return propri.length > 0;
+            return valore(ctx.summonedCard) >= Math.min.apply(null, propri) + 800;
+        },
         onOpponentSummon(ctx) {
-            const tributeIndex = ctx.field(ctx.owner).findIndex((s) => s);
+            let tributeIndex = -1;
+            ctx.field(ctx.owner).forEach((s, i) => {
+                if (!s) return;
+                const v = DuelEngine.getEffectiveAtk(s.card) + 0.5 * DuelEngine.getEffectiveDef(s.card);
+                if (tributeIndex === -1 || v < DuelEngine.getEffectiveAtk(ctx.field(ctx.owner)[tributeIndex].card) + 0.5 * DuelEngine.getEffectiveDef(ctx.field(ctx.owner)[tributeIndex].card)) tributeIndex = i;
+            });
             if (tributeIndex === -1) return;
             ctx.declareTargetWaiting(ctx.opponent, ctx.summonedSlotIndex, { totalTargetCount: 1 }, (decl) => {
                 if (!decl.allowed) return;

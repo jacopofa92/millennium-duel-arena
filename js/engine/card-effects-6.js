@@ -1880,6 +1880,18 @@
         canActivate(ctx) {
             return ctx.field(ctx.owner).some((s) => s && !s.isFaceDown && s.card.name && s.card.name.includes('Ninja'));
         },
+        // Scambia un Ninja con un Bestia/Bestia Alata/Insetto di Livello massimo +3: per l'IA ha senso solo se il
+        // sostituto (in mano, o nel Deck se la mano non ne ha) e' nettamente piu' forte del Ninja che si sacrifica.
+        aiCanActivate(ctx) {
+            const ninja = ctx.field(ctx.owner).find((s) => s && !s.isFaceDown && s.card.name && s.card.name.includes('Ninja'));
+            if (!ninja) return false;
+            const maxLevel = (ninja.card.level || 0) + 3;
+            const candidato = (c) => c.type === 'monster' && ['Bestia', 'Bestia Alata', 'Insetto'].includes(c.race) && (c.level || 0) <= maxLevel;
+            const inMano = ctx.hand(ctx.owner).filter(candidato);
+            const fonte = inMano.length ? inMano : (ctx.gameState[Tavolo.chiave(ctx.owner, 'Deck')] || []).filter(candidato);
+            const migliore = fonte.reduce((m, c) => Math.max(m, c.attack || 0), 0);
+            return migliore >= (ninja.card.attack || 0) + 500;
+        },
         activate(ctx) {
             const field = ctx.field(ctx.owner);
             const tributeIndex = field.findIndex((s) => s && !s.isFaceDown && s.card.name && s.card.name.includes('Ninja'));
@@ -2343,6 +2355,10 @@
         continuous: true,
         canActivate(ctx) {
             return ctx.field(ctx.owner).some((slot) => slot && !slot.isFaceDown && slot.card.race === 'Dinosauro');
+        },
+        // Sacrifica un Dinosauro: ha senso solo se in mano c'e' un Dinosauro di Livello 5+ da Evocare senza Tributi.
+        aiCanActivate(ctx) {
+            return ctx.hand(ctx.owner).some((c) => c.type === 'monster' && c.race === 'Dinosauro' && (c.level || 0) >= 5);
         },
         activate(ctx) {
             const ownField = ctx.field(ctx.owner);

@@ -772,6 +772,11 @@
     CardEffects.register(349, {
         continuous: true,
         canActivate(ctx) { return findEquipTarget(ctx, (c) => c.race === 'Guerriero') !== -1; },
+        // +800 a un Guerriero, ma -500 a OGNI mostro ACQUA scoperto: conviene solo se il malus colpisce il nemico piu' di noi.
+        aiCanActivate(ctx) {
+            const acqua = (owner) => ctx.field(owner).filter((s) => s && !s.isFaceDown && s.card.attribute === 'ACQUA').length;
+            return 800 + 500 * (acqua(ctx.opponent) - acqua(ctx.owner)) >= 300;
+        },
         activate(ctx) { equipToChosenTarget(ctx, (c) => c.race === 'Guerriero'); },
         isEquip: true,
         equipTargetFilter: (c) => c.race === 'Guerriero',

@@ -29,7 +29,12 @@ const VARIANTI = [
     { bot: ['Incantatore', 'OSCURITÀ'], gio: ['Zombie', 'OSCURITÀ'], lp: [2500, 8000] },
     { bot: ['Drago', 'VENTO'], gio: ['Macchina', 'FUOCO'], ricco: true, lp: [1500, 1500] },
     { bot: ['Pesce', 'ACQUA'], gio: ['Guerriero', 'FUOCO'], ricco: true },
-    { bot: ['Demone', 'OSCURITÀ'], gio: ['Incantatore', 'LUCE'], lp: [8000, 8000] }
+    { bot: ['Demone', 'OSCURITÀ'], gio: ['Incantatore', 'LUCE'], lp: [8000, 8000] },
+    // campo "pieno" (Cimiteri, Magie/Trappole scoperte avversarie, Deck da cercare) con razze miste
+    { bot: ['Guerriero', 'TERRA'], gio: ['Guerriero', 'TERRA'], ricco: true, pieno: true },
+    { bot: ['Incantatore', 'LUCE'], gio: ['Drago', 'FUOCO'], ricco: true, pieno: true, lp: [6000, 3000] },
+    // Standby Phase del bot (carte che si attivano solo li')
+    { bot: ['Guerriero', 'TERRA'], gio: ['Bestia', 'TERRA'], ricco: true, pieno: true, fase: 'standby' }
 ];
 
 function nuovaPartita(seme) {
@@ -48,7 +53,7 @@ function preparaCampo(esegui, variante, citate) {
         const base = cardDatabase.find((c) => c.type === 'monster' && !c.extraDeck && !DuelEngine.getDefinition(c.id) && c.level === 4);
         const mostro = (race, attr, atk, def, lvl, nome) => Object.assign({}, base, { uid: 'T' + (++n), race, attribute: attr, attack: atk, defense: def, level: lvl, name: nome });
         const slot = (c, pos) => ({ card: c, position: pos || 'attack', isFaceDown: false, hasAttacked: false, canChangePosition: true, summonedThisTurn: false });
-        gameState.turn = 6; gameState.currentPlayer = 'bot'; gameState.phase = 'main1';
+        gameState.turn = 6; gameState.currentPlayer = 'bot'; gameState.phase = ${JSON.stringify(variante.fase || 'main1')};
         // Situazioni diverse: pari / bot avanti / bot indietro / entrambi bassi (varia con la variante).
         const LP = ${JSON.stringify(variante.lp || [8000, 8000])};
         gameState.botLP = LP[0]; gameState.playerLP = LP[1];
@@ -75,6 +80,29 @@ function preparaCampo(esegui, variante, citate) {
             gameState.playerGraveyard.push(Object.assign({}, magia, { uid: 'SP' + (++n) }), Object.assign({}, trap, { uid: 'TP' + (++n) }));
             gameState.botHand.push(mostro(v.bot[0], v.bot[1], 2400, 1000, 6, 'mano-3'), Object.assign({}, magia, { uid: 'SP' + (++n) }));
         }
+        // Campo "pieno": le condizioni che molte carte chiedono e che il campo base non offre — Cimiteri con 5+ mostri
+        // (uno Normale per lato), Magie/Trappole SCOPERTE dell'avversario (continue, Equipaggiamento, Trappola), un
+        // mostro avversario in Difesa e uno coperto, una Magia Equipaggiamento nel Cimitero, un Deck da cui cercare.
+        if (${JSON.stringify(!!variante.pieno)}) {
+            const piena = (nome) => (cardDatabase.find((c) => c.type === 'spell' && c.subtype === nome) || cardDatabase.find((c) => c.type === 'spell'));
+            const trappolaCont = cardDatabase.find((c) => c.type === 'trap' && c.subtype === 'continuous') || cardDatabase.find((c) => c.type === 'trap');
+            for (let k = 0; k < 4; k++) {
+                gameState.botGraveyard.push(mostro(v.bot[0], v.bot[1], 1200 + k * 100, 1000, 4, 'cim-bot-' + k));
+                gameState.playerGraveyard.push(mostro(v.gio[0], v.gio[1], 1200 + k * 100, 1000, 4, 'cim-gio-' + k));
+            }
+            gameState.playerSTField[2] = { card: Object.assign({}, piena('continuous'), { uid: 'PS1' }), isFaceDown: false, setOnTurn: 1 };
+            gameState.playerSTField[3] = { card: Object.assign({}, trappolaCont, { uid: 'PS2' }), isFaceDown: false, setOnTurn: 1 };
+            gameState.playerSTField[4] = { card: Object.assign({}, piena('equip'), { uid: 'PS3' }), isFaceDown: false, setOnTurn: 1 };
+            gameState.botSTField[4] = { card: Object.assign({}, piena('continuous'), { uid: 'PS4' }), isFaceDown: false, setOnTurn: 1 };
+            gameState.playerMonsterField[1].position = 'defense';
+            gameState.playerMonsterField[3] = { card: mostro(v.gio[0], v.gio[1], 1000, 1000, 3, 'G-coperto'), position: 'defense', isFaceDown: true, hasAttacked: false, canChangePosition: true, summonedThisTurn: false };
+            gameState.botGraveyard.push(Object.assign({}, piena('equip'), { uid: 'PS5' }));
+            gameState.botDeck = [
+                mostro('Guerriero', 'TERRA', 1500, 1000, 4, 'deck-guerriero'), mostro(v.bot[0], v.bot[1], 1700, 1000, 4, 'deck-razza'),
+                Object.assign({}, piena('field'), { uid: 'PS6' }), Object.assign({}, piena('normal'), { uid: 'PS7' }),
+                Object.assign({}, trappolaCont, { uid: 'PS8' }), mostro('Dinosauro', 'TERRA', 1000, 1000, 3, 'deck-dino')
+            ];
+        }
         // Le carte che il testo della carta in prova CITA (un rituale vuole il suo mostro, "se controlli X" vuole X...):
         // una copia in mano, una nel Cimitero, una sul campo del bot (casella 3) — cosi' piu' carte diventano attivabili.
         citate.forEach((id) => {
@@ -82,7 +110,21 @@ function preparaCampo(esegui, variante, citate) {
             if (!c) return;
             gameState.botHand.push(Object.assign({}, c, { uid: 'CI-m' + (++n) }));
             gameState.botGraveyard.push(Object.assign({}, c, { uid: 'CI-g' + (++n) }));
-            if (!gameState.botMonsterField[3] && c.type === 'monster' && !c.extraDeck) gameState.botMonsterField[3] = slot(Object.assign({}, c, { uid: 'CI-c' + (++n) }));
+            gameState.botDeck = (gameState.botDeck || []).concat([Object.assign({}, c, { uid: 'CI-d' + (++n) })]);
+            if (c.type === 'monster' && !c.extraDeck) {
+                const libero = [3, 4].find((i) => !gameState.botMonsterField[i]);
+                if (libero !== undefined) gameState.botMonsterField[libero] = slot(Object.assign({}, c, { uid: 'CI-c' + (++n) }));
+            } else if (c.type === 'spell' && c.subtype === 'field') {
+                gameState[Tavolo.chiave('bot', 'FieldSpell')] = { card: Object.assign({}, c, { uid: 'CI-f' + (++n) }), isFaceDown: false };
+            } else if (c.type !== 'monster') {
+                const libero = [1, 2, 3].find((i) => !gameState.botSTField[i]);
+                if (libero !== undefined) gameState.botSTField[libero] = { card: Object.assign({}, c, { uid: 'CI-s' + (++n) }), isFaceDown: false, setOnTurn: 1 };
+            }
+        });
+        // Setup su misura per le carte che chiedono una composizione precisa (id -> cosa mettere dove)
+        (${JSON.stringify(variante.setup || [])}).forEach((id) => {
+            const c = cardDatabase.find((x) => x.id === id);
+            if (c) gameState.botGraveyard.push(Object.assign({}, c, { uid: 'SU-' + (++n) }));
         });
         // Un Extra Deck con Fusioni di vari Livelli (alcune carte ne chiedono uno dello stesso Livello di un mostro in campo).
         const fusioni = [];
@@ -148,7 +190,19 @@ const SCENARI_REATTIVI = [
     // il giocatore gioca una Magia di massa (Raigeki) / a bersaglio (Cambio di Cuore) / che pesca (Vaso dell'Avidita')
     { nome: 'Magia di massa (Raigeki)', fase: 'main1', magia: 409, comando: "{ tipo: 'attiva', zona: 'hand', indice: 0, carta: 'MAGIA' }" },
     { nome: 'Magia a bersaglio (Cambio di Cuore)', fase: 'main1', magia: 147, comando: "{ tipo: 'attiva', zona: 'hand', indice: 0, carta: 'MAGIA' }" },
-    { nome: 'Magia che pesca (Vaso dell\'Avidita\')', fase: 'main1', magia: 36, comando: "{ tipo: 'attiva', zona: 'hand', indice: 0, carta: 'MAGIA' }" }
+    { nome: 'Magia che pesca (Vaso dell\'Avidita\')', fase: 'main1', magia: 36, comando: "{ tipo: 'attiva', zona: 'hand', indice: 0, carta: 'MAGIA' }" },
+    // la distruzione mirata di un mostro del bot (Ruba-Anime): l'IA puo' rispondere a un bersaglio specifico
+    { nome: 'Magia che distrugge un mostro bersaglio (Ruba-Anime)', fase: 'main1', magia: 453, comando: "{ tipo: 'attiva', zona: 'hand', indice: 0, carta: 'MAGIA' }" },
+    // il giocatore gira scoperto un proprio mostro coperto (Flip Summon)
+    { nome: 'Flip Summon', fase: 'main1', preparazione: "gameState.playerMonsterField[3] = { card: Object.assign({}, gameState.playerMonsterField[1].card, { uid: 'COPERTO', attack: 1700, defense: 1000, level: 4, name: 'G-coperto' }), position: 'defense', isFaceDown: true, hasAttacked: false, canChangePosition: true, summonedOnTurn: 0 };", comando: "{ tipo: 'posizione', casella: 3 }" },
+    // il giocatore Setta un mostro coperto (Ombra degli Occhi...)
+    { nome: 'Mostro Settato', fase: 'main1', daMano: true, comando: "{ tipo: 'evoca', carta: 'NUOVO', mano: 0, casella: 3, posizione: 'defense' }" },
+    // il giocatore attiva l'effetto di un suo mostro (scelto a runtime fra quelli attivabili)
+    { nome: 'Effetto di un mostro', fase: 'main1', effettoMostro: true, comando: "{ tipo: 'attiva', zona: 'monster', indice: 4 }" },
+    // il giocatore attiva una propria Trappola (scelta a runtime fra quelle attivabili) in Battle Phase
+    { nome: 'Trappola attivata dal giocatore', fase: 'battle', trappolaGiocatore: true, comando: "{ tipo: 'attiva', zona: 'st', indice: 4 }" },
+    // il giocatore Evoca Specialmente un mostro dalla mano (la carta e' scelta a runtime fra quelle che lo permettono)
+    { nome: 'Evocazione Speciale dalla mano', fase: 'main1', speciale: true, comando: "{ tipo: 'specialeDaMano', carta: 'SPECIALE', mano: 0, posizione: 'attack' }" }
 ];
 
 async function passoReattive(PARTITE, ids, nomiCarte) {
@@ -165,6 +219,35 @@ async function passoReattive(PARTITE, ids, nomiCarte) {
             ${scenario.svuotaBot ? 'gameState.botMonsterField = [null, null, null, null, null];' : ''}
             gameState.playerMonsterField.forEach((s) => { if (s) { s.hasAttacked = false; s.summonedOnTurn = 0; } });
             ${scenario.daMano ? `gameState.playerHand.unshift(Object.assign({}, gameState.playerHand[0], { uid: 'NUOVO', attack: 1800, defense: 1000, level: 4, name: 'G-nuovo' }));` : ''}
+            ${scenario.preparazione || ''}
+            ${scenario.effettoMostro ? `(function () {
+                for (const c of cardDatabase) {
+                    const d = DuelEngine.getDefinition(c.id);
+                    if (c.type !== 'monster' || c.extraDeck || !d || typeof d.activate !== 'function') continue;
+                    if (/moneta|dado|a caso/i.test(String(c.effect))) continue; // un esito casuale falserebbe il confronto con/senza Trappola
+                    gameState.playerMonsterField[4] = { card: Object.assign({}, c, { uid: 'EFFETTO' }), position: 'attack', isFaceDown: false, hasAttacked: false, canChangePosition: true, summonedOnTurn: 0 };
+                    if (DuelEngine.canActivate('player', 'monster', 4)) return;
+                    gameState.playerMonsterField[4] = null;
+                }
+            })();` : ''}
+            ${scenario.trappolaGiocatore ? `(function () {
+                for (const c of cardDatabase) {
+                    const d = DuelEngine.getDefinition(c.id);
+                    if (c.type !== 'trap' || !d || typeof d.activate !== 'function') continue;
+                    gameState.playerSTField[4] = { card: Object.assign({}, c, { uid: 'TRAPPOLAG' }), isFaceDown: true, setOnTurn: 1 };
+                    if (DuelEngine.canActivate('player', 'st', 4)) return;
+                    gameState.playerSTField[4] = null;
+                }
+            })();` : ''}
+            ${scenario.speciale ? `(function () {
+                // il primo mostro con una Evocazione Speciale dalla mano che il motore concede subito
+                for (const c of cardDatabase) {
+                    if (c.type !== 'monster' || c.extraDeck || !DuelEngine.getDefinition(c.id)) continue;
+                    gameState.playerHand.unshift(Object.assign({}, c, { uid: 'SPECIALE' }));
+                    if (DuelEngine.canSpecialSummonFromHand('player', 0)) return;
+                    gameState.playerHand.shift();
+                }
+            })();` : ''}
             ${scenario.magia ? `gameState.playerHand.unshift(Object.assign({}, cardDatabase.find((c) => c.id === ${scenario.magia}), { uid: 'MAGIA' }));` : ''}
             ${trapId ? `gameState.botSTField[0] = { card: Object.assign({}, cardDatabase.find((c) => c.id === ${trapId}), { uid: 'TRAPPOLA' }), isFaceDown: true, setOnTurn: 1 };` : ''}
             DuelEngine.recomputeStaticEffects();
@@ -179,16 +262,18 @@ async function passoReattive(PARTITE, ids, nomiCarte) {
         const dopo = esegui(FOTO);
         const usata = esegui("__logDuello.some((r) => /Il bot ha attivato/.test(r))");
         const valore = (f) => f.bot.reduce((s, m) => s + m.atk + 0.5 * m.def, 0) - f.gio.reduce((s, m) => s + m.atk + 0.5 * m.def, 0) + 0.5 * (f.botLP - f.gioLP);
-        return { punteggio: valore(dopo), usata, prima: valore(prima) };
+        const registro = argv.includes('--log') ? esegui('__logDuello.slice()') : null;
+        return { punteggio: valore(dopo), usata, prima: valore(prima), registro, dopo };
     }
     for (const id of ids) {
         const peggiori = [];
         let usataUnaVolta = false;
-        for (let vi = 0; vi < 2; vi++) {
+        for (const vi of [0, 1, 6]) { // base, ricco, campo pieno
             for (const scenario of SCENARI_REATTIVI) {
                 let base, con;
                 try { base = await gioca(vi, scenario, null); con = await gioca(vi, scenario, id); } catch (e) { continue; }
                 if (con.usata) usataUnaVolta = true;
+                if (argv.includes('--log') && con.usata && con.punteggio < base.punteggio - 500) console.log(`--- #${id} ${scenario.nome} v${vi}\nBASE: ${(base.registro || []).join(' | ')}\nCON: ${(con.registro || []).join(' | ')}\n${JSON.stringify(base.dopo.bot.length)} vs ${JSON.stringify(con.dopo.bot.length)}`);
                 if (con.usata && con.punteggio < base.punteggio - 500) {
                     peggiori.push(`${scenario.nome} (${VARIANTI[vi].bot[0]}/${VARIANTI[vi].gio[0]}): senza la Trappola ${Math.round(base.punteggio)}, con la Trappola ${Math.round(con.punteggio)}`);
                 }
@@ -290,26 +375,52 @@ async function main() {
     const citateDa = (id) => {
         const testo = String((tutte.find((c) => c.id === id) || {}).effect || '');
         const ids = new Set();
-        for (const m of testo.matchAll(/"([^"]+)"/g)) { const c = perNome.get(m[1]); if (c && c.type === 'monster') ids.add(c.id); }
+        for (const m of testo.matchAll(/"([^"]+)"/g)) {
+            const c = perNome.get(m[1]);
+            if (c) { ids.add(c.id); continue; }
+            // un nome parziale ("Toon", "Amazzone", "LV", "Ingranaggio Antico"): qualche mostro che lo contiene
+            tutte.filter((x) => x.type === 'monster' && !x.extraDeck && x.name.includes(m[1])).slice(0, 2).forEach((x) => ids.add(x.id));
+        }
         const lungo = nomiMostri.find((c) => testo.includes(c.name));
         if (lungo) ids.add(lungo.id);
-        return [...ids].slice(0, 3);
+        return [...ids].slice(0, 4);
     };
+    // Carte che chiedono una composizione precisa: id -> id da mettere nel Cimitero del bot.
+    const exodia = base.esegui('EXODIA_PIECE_IDS');
+    const SETUP_PER_ID = { 161: [...exodia] };
     const nomiAll = perId; // per id: serve alla lista dei falsi sospetti piu' sotto
     const PARTITE = VARIANTI.map((v, i) => nuovaPartita(100 + i));
     const sospetti = [];
     const vetate = new Set();
     const mai = []; // carte mai attivabili sui campi di prova: il tool non le ha viste in azione
     let provate = 0, nonAttivabili = 0, errori = 0;
+    // Le varianti di UNA carta: quelle fisse, piu' (se il testo cita razze/attributi) campi costruiti apposta con quelle
+    // razze/attributi, cosi' i filtri "mostro Roccia", "mostro di ATTRIBUTO LUCE" trovano davvero qualcosa.
+    const RAZZE = ['Bestia Alata', 'Bestia-Guerriero', 'Guerriero Bestia', 'Serpente Marino', 'Serpente di Mare', 'Essere Divino', 'Guerriero', 'Bestia', 'Drago', 'Incantatore', 'Zombie', 'Macchina', 'Pesce', 'Demone', 'Roccia', 'Insetto', 'Tuono', 'Pianta', 'Fata', 'Dinosauro', 'Rettile', 'Acquatico', 'Piroico', 'Stregone'];
+    const ATTRIBUTI = ['LUCE', 'OSCURITÀ', 'TERRA', 'VENTO', 'FUOCO', 'ACQUA'];
+    const variantiDinamiche = (id) => {
+        const testo = String((perId.get(id) || {}).effect || '');
+        const razze = []; let resto = testo;
+        RAZZE.forEach((r) => { if (new RegExp('\\b' + r + '\\b', 'i').test(resto)) { razze.push(r); resto = resto.replace(new RegExp('\\b' + r + '\\b', 'ig'), ' '); } });
+        const attr = ATTRIBUTI.filter((a) => testo.includes(a));
+        if (!razze.length && !attr.length) return [];
+        const r = razze[0] || 'Guerriero', a = attr[0] || 'TERRA';
+        return [
+            { bot: [r, a], gio: ['Bestia', 'TERRA'], ricco: true, pieno: true, dinamica: true },
+            { bot: ['Guerriero', 'TERRA'], gio: [r, a], ricco: true, pieno: true, dinamica: true },
+            { bot: [r, a], gio: [r, a], ricco: true, pieno: true, lp: [8000, 3000], dinamica: true },
+            { bot: [razze[1] || r, attr[1] || a], gio: [r, a], ricco: true, pieno: true, lp: [3000, 8000], dinamica: true }
+        ];
+    };
     for (const id of ids) {
         const risultati = [];
-        for (let vi = 0; vi < VARIANTI.length; vi++) {
-            const variante = VARIANTI[vi];
+        const elencoVarianti = VARIANTI.map((v, i) => ({ v, i })).concat(argv.includes('--senza-dinamiche') ? [] : variantiDinamiche(id).map((v) => ({ v, i: 0 })));
+        for (const { v: variante, i: vi } of elencoVarianti) {
             const { esegui, orologio } = PARTITE[vi];
             // Una partita per variante, riusata: si riparte da zero con resetGameState e svuotando i timer rimasti.
             while (orologio.inCoda > 0 && orologio.passo()) { /* svuota */ }
             esegui('resetGameState(); Tavolo.imposta({ player: "ia", bot: "ia" }); gameState.livelloIA = { player: "hard", bot: "hard" };');
-            preparaCampo(esegui, variante, citateDa(id));
+            preparaCampo(esegui, SETUP_PER_ID[id] ? Object.assign({}, variante, { setup: SETUP_PER_ID[id] }) : variante, citateDa(id));
             const tipo = esegui(`cardDatabase.find((c) => c.id === ${id}).type`);
             const ok = esegui(`(function () {
                 const c = Object.assign({}, cardDatabase.find((x) => x.id === ${id}), { uid: 'CARTA' });
@@ -354,7 +465,13 @@ async function main() {
         //  80  Battito d'Ali: distrugge le Magie/Trappole avversarie (il filtro dell'IA vuole 2 in piu' di quelle del bot);
         //  356 Ninna Nanna / 460 Dado di Evocazione / 559 Ultima Offerta: pagano LP per un vantaggio di carte (il filtro
         //      dell'IA non le fa pagare se restano meno di 2000 LP).
-        if ([80, 356, 460, 559].includes(id)) continue;
+        //  788 Terreno di Caccia delle Arpie: Magia Terreno simmetrica, il filtro dell'IA la lascia passare solo se il bot
+        //      ne guadagna piu' del nemico (guadagnoRelativoCampo); il "buff al nemico" segnalato e' la parte simmetrica.
+        //  810 Pillola dell'Evoluzione Gigante: sacrifica un Dinosauro per Evocare senza Tributi un Dinosauro di Livello 5+
+        //      (il filtro dell'IA pretende che ce ne sia uno in mano); l'Evocazione non avviene dentro questa misura.
+        //  794 Arte della Trasformazione Ninjitsu: scambia un Ninja con un mostro di ATK >= +500 (veto dell'IA); la misura
+        //      conta anche la DEF, che nello scambio puo' calare di poco.
+        if ([80, 356, 460, 559, 788, 794, 810].includes(id)) continue;
         //  i Rituali: la nuova Evocazione viene dalla mano e il tool la conta come "carta scartata"; i Livelli sacrificati
         //      sono quelli della combinazione piu' economica (performRitualTribute), provato nel test della combinazione;
         //  1258 Servitore dell'Anima: rimette una carta in cima al Deck, non un costo.
@@ -383,9 +500,18 @@ async function main() {
         const trappole = ids.filter((id) => (nomi.get(id) || {}).type === 'trap');
         const peggiori = await passoReattive(PARTITE, trappole, nomi);
         console.log(`\nTrappole reattive provate: ${trappole.length}, attivate dal bot in almeno uno scenario: ${peggiori.usate.length} (${peggiori.usate.join(', ')}). Risposte che peggiorano la posizione del bot: ${peggiori.length}`);
+        if (argv.includes('--non-scattate')) {
+            console.log('Trappole che nessuno scenario ha fatto scattare:');
+            const scoperte = trappole.filter((id) => !peggiori.usate.includes(id) && mai.includes(id));
+            console.log(`(di cui NEMMENO il passo proattivo le ha mai viste attivarsi: ${scoperte.length})`);
+            trappole.filter((id) => !peggiori.usate.includes(id)).forEach((id) => { const c = nomi.get(id); console.log(`${mai.includes(id) ? '!!' : '  '} #${id} ${c.name} [${c.subtype || ''}] ${String(c.effect).slice(0, 150)}`); });
+        }
         // 276 Predatore delle Tombe: costa 2000 danni ma il bot (con piu' di 6000 LP e una Magia forte nel Cimitero del
         // giocatore) ci guadagna una Magia: il campo di prova non la rende utile, quindi sembra solo un costo.
-        peggiori.splice(0, peggiori.length, ...peggiori.filter((p) => p.id !== 276));
+        // 448 Giudizio Solenne / 599 Sette Attrezzi / 822 Malfunzionamento: annullano una carta che spazzerebbe via il
+        // campo del bot (Soffio Incendiario, Obelisk). Il confronto conta anche i mostri del giocatore che si salvano
+        // (l'annullamento li lascia vivi) e gli LP pagati: il campo del bot resta intero, e' il baratto voluto (rivisto a mano).
+        peggiori.splice(0, peggiori.length, ...peggiori.filter((p) => ![276, 448, 599, 822].includes(p.id)));
         peggiori.forEach((p) => {
             const c = nomi.get(p.id);
             console.log(`#${p.id} ${c.name} — ${String(c.effect).slice(0, 120)}`);
