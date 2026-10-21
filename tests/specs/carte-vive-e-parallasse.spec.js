@@ -48,12 +48,10 @@ module.exports = {
     name: 'Carte vive: riflessi per rarità, inclinazione col mouse e col telefono; parallasse del menu',
     standalone: true,
     async run({ browser, assert }) {
-        // La Cartoteca esiste sia standalone sia come vista integrata nel
-        // menu: il limite deve restare identico in entrambe.
-        for (const file of ['cartoteca.html', 'index.html']) {
-            const sorgente = fs.readFileSync(path.join(RADICE, file), 'utf8');
-            assert(/const CARDS_PER_PAGE = 300;/.test(sorgente), `${file} usa 300 carte per pagina`);
-        }
+        // La Cartoteca e' UNA sola implementazione (js/ui/cartoteca-view.js), usata dalla pagina autonoma e dalla vista
+        // del menu: il limite di 300 carte per pagina sta li' e vale per entrambe.
+        const sorgente = fs.readFileSync(path.join(RADICE, 'js/ui/cartoteca-view.js'), 'utf8');
+        assert(/const CARDS_PER_PAGE = 300;/.test(sorgente), 'la Cartoteca usa 300 carte per pagina');
         // --- Riflessi per rarità ----------------------------------------
         const { ctx, page } = await apriCartoteca(browser);
         try {
@@ -72,7 +70,7 @@ module.exports = {
             }
             await page.evaluate(() => CardDetail.close());
             const griglia = await page.evaluate(() => {
-                const tile = document.querySelector('#cartotecaGrid .card');
+                const tile = document.querySelector('[data-ct="cartotecaGrid"] .card');
                 const riflesso = tile && tile.querySelector('.cv-riflesso');
                 return tile ? {
                     modo: tile.dataset.viva,
@@ -82,7 +80,7 @@ module.exports = {
             assert(griglia && griglia.modo === 'griglia', 'le carte della Cartoteca sono vive in modo "griglia": ' + JSON.stringify(griglia));
             assert(griglia.riflessoARiposo === 'none', 'i livelli costosi della griglia riposano finché la carta non è osservata');
 
-            const ordineCatalogo = await page.evaluate(() => sortCards([
+            const ordineCatalogo = await page.evaluate(() => CartotecaView.ordina([
                 { id: 1240, name: 'WW1 prima', origin: 'ww1' },
                 { id: 40, name: 'YGO seconda', origin: 'yu-gi-oh' },
                 { id: 2, name: 'YGO prima', origin: 'yu-gi-oh' }
@@ -90,7 +88,7 @@ module.exports = {
             assert(JSON.stringify(ordineCatalogo) === JSON.stringify([2, 40, 1240]),
                 'il catalogo conserva gli ID, ordina Yu-Gi-Oh per ID e lascia WW1 in fondo: ' + JSON.stringify(ordineCatalogo));
 
-            const tile = page.locator('#cartotecaGrid .card').first();
+            const tile = page.locator('[data-ct="cartotecaGrid"] .card').first();
             await tile.scrollIntoViewIfNeeded();
             await tile.hover();
             await page.waitForTimeout(50);

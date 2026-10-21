@@ -1,0 +1,371 @@
+/**
+ * cartoteca-view.css — l'aspetto della Cartoteca (barra filtri, chip, griglia, paginazione, skeleton).
+ * Lo usano la pagina autonoma (cartoteca.html) e la vista del menu (index.html): UNA sola copia, vedi js/ui/cartoteca-view.js.
+ * Le regole stanno in `@scope (.cartoteca-view)`: valgono solo dentro la Cartoteca e non toccano il resto della pagina
+ * che le ospita. Fuori dallo scope restano solo i due pezzi che vivono nella TOPBAR dell'host (titolo e badge "N carte").
+ */
+
+/* Topbar: override SOLO per la Cartoteca (richiesta esplicita dell'utente): il titolo e' bianco pieno invece del
+   gradiente oro standard di PageTopbar; era stato messo nero in passato ma sul fondo scuro era quasi invisibile. */
+#cartotecaTopbar .topbar-title {
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    -webkit-text-fill-color: #fff;
+    color: #fff;
+    text-shadow: none;
+}
+.cartoteca-count {
+    margin-left: auto;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #cdd6ea;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 6px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+@media (max-width: 480px) { .cartoteca-count { font-size: 0.62rem; padding: 3px 8px; } }
+@media (max-height: 500px) and (orientation: landscape) { .cartoteca-count { font-size: 0.65rem; padding: 3px 9px; } }
+
+@scope (.cartoteca-view) {
+    :scope {
+        --card-w: var(--carta-griglia);
+        --card-h: calc(var(--card-w) / var(--card-ratio));
+        --gold: #f7d774;
+        --gold-strong: #f39c12;
+        --blue: #3498db;
+        --red: #e74c3c;
+        position: relative;
+        z-index: 1;
+        color: #fff;
+        font-family: 'Arial', sans-serif;
+    }
+    input, textarea, select { -webkit-user-select: text; user-select: text; }
+
+    /* ============================================================
+       Filtri
+       ============================================================ */
+    .cartoteca-filters {
+        position: sticky;
+        top: 69px;
+        z-index: 25;
+        background: linear-gradient(180deg, rgba(14,14,20,0.96), rgba(14,14,20,0.9));
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        padding: 14px 22px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    }
+    /* Barra sempre visibile: ricerca + ordinamento + interruttore filtri.
+       I filtri veri e propri (chip di tipo/livello/razza/...) stanno nel
+       pannello sotto, chiuso di default. */
+    .filter-bar-top {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+    }
+    .filter-sort {
+        flex-shrink: 0;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.18);
+        background: rgba(255,255,255,0.06);
+        color: #dfe7f7;
+        font-family: inherit;
+        font-size: 0.83rem;
+        outline: none;
+        cursor: pointer;
+    }
+    .filter-sort:focus { border-color: var(--gold-strong); }
+    .filter-toggle-btn {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.18);
+        background: rgba(255,255,255,0.06);
+        color: #dfe7f7;
+        font-family: inherit;
+        font-size: 0.83rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .filter-toggle-btn:hover { border-color: rgba(247,215,116,0.5); }
+    .filter-toggle-btn.has-active {
+        border-color: var(--gold-strong);
+        background: rgba(243,156,18,0.15);
+    }
+    .filter-toggle-badge {
+        display: none;
+        background: var(--gold-strong);
+        color: #1a1408;
+        font-size: 0.68rem;
+        font-weight: 800;
+        padding: 1px 7px;
+        border-radius: 999px;
+    }
+    .filter-toggle-badge.show { display: inline-block; }
+    .filter-toggle-arrow { font-size: 0.65rem; opacity: 0.7; transition: transform 0.25s ease; }
+    .filter-toggle-btn.open .filter-toggle-arrow { transform: rotate(180deg); }
+
+    /* Pannello filtri: chiuso di default (max-height:0), si apre solo su richiesta. max-height (non height:auto)
+       perche' e' l'unico modo per animare in CSS puro un contenuto di altezza non nota a priori. */
+    .filter-panel {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: max-height 0.3s cubic-bezier(0.16,0.84,0.44,1), opacity 0.25s ease, margin-top 0.3s ease;
+    }
+    .filter-panel.open {
+        max-height: 1000px;
+        opacity: 1;
+        margin-top: 14px;
+    }
+    .filter-search {
+        position: relative;
+        flex: 1 1 240px;
+        max-width: 480px;
+    }
+    .filter-search input {
+        width: 100%;
+        padding: 11px 16px 11px 40px;
+        border-radius: 999px;
+        border: 1px solid rgba(247,215,116,0.35);
+        background: rgba(255,255,255,0.06);
+        color: #fff;
+        font-size: 0.95rem;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .filter-search input::placeholder { color: rgba(255,255,255,0.45); }
+    .filter-search input:focus {
+        border-color: var(--gold-strong);
+        box-shadow: 0 0 0 3px rgba(243,156,18,0.18);
+    }
+    .filter-search-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    .filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        align-items: flex-start;
+    }
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .filter-group-label {
+        font-size: 0.68rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #9aa5bd;
+        font-weight: 700;
+    }
+    .filter-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        max-width: 480px;
+    }
+    .chip {
+        border: 1px solid rgba(255,255,255,0.18);
+        background: rgba(255,255,255,0.06);
+        color: #dfe7f7;
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+        white-space: nowrap;
+    }
+    .chip:hover { transform: translateY(-1px); border-color: rgba(247,215,116,0.5); }
+    .chip.active {
+        background: linear-gradient(135deg, rgba(243,156,18,0.9), rgba(192,57,43,0.6));
+        border-color: var(--gold-strong);
+        color: #1a1408;
+        box-shadow: 0 0 14px rgba(243,156,18,0.4);
+    }
+    .chip.attr-luce.active { background: linear-gradient(135deg, #fff6dc, #f7d774); color: #4a3a0a; }
+    .chip.attr-oscurità.active { background: linear-gradient(135deg, #6c4a9c, #3d2560); color: #f0e6ff; }
+    .chip.attr-terra.active { background: linear-gradient(135deg, #a97b3e, #6b4a1f); color: #fff3df; }
+    .chip.attr-vento.active { background: linear-gradient(135deg, #52c9a4, #1f8f72); color: #06251c; }
+    .chip.attr-acqua.active { background: linear-gradient(135deg, #4fa8e0, #1b6fb8); color: #06202f; }
+    .chip.attr-fuoco.active { background: linear-gradient(135deg, #f0793c, #c0392b); color: #2c0800; }
+    .chip.attr-divino.active { background: linear-gradient(135deg, #fff6c8, #f7d774, #f39c12); color: #402b00; }
+
+    .filter-range {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .filter-range input {
+        width: 74px;
+        padding: 7px 10px;
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.18);
+        background: rgba(255,255,255,0.06);
+        color: #fff;
+        font-family: inherit;
+        font-size: 0.85rem;
+        outline: none;
+    }
+    .filter-range input:focus { border-color: var(--gold-strong); }
+    .filter-range span { color: #9aa5bd; font-size: 0.8rem; }
+
+    .filter-reset {
+        align-self: flex-start;
+        margin-left: auto;
+        border: 1px solid rgba(231,76,60,0.4);
+        background: rgba(231,76,60,0.12);
+        color: #ffb3ab;
+        font-weight: 700;
+        font-size: 0.8rem;
+        padding: 8px 16px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        white-space: nowrap;
+    }
+    .filter-reset:hover { transform: translateY(-1px); box-shadow: 0 0 14px rgba(231,76,60,0.3); }
+
+    /* ============================================================
+       Griglia carte
+       ============================================================ */
+    .cartoteca-main {
+        position: relative;
+        z-index: 1;
+        padding: 26px 22px 60px;
+        max-width: 1500px;
+        margin: 0 auto;
+    }
+    .cartoteca-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr));
+        gap: 22px;
+        justify-items: center;
+    }
+    /* Paginazione (300 carte per pagina, richiesta esplicita dell'utente): una barra identica sopra e sotto la
+       griglia, cosi' con una pagina piena non serve risalire in cima per cambiare pagina. */
+    .cartoteca-pager {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 0 0 20px;
+    }
+    .cartoteca-pager.bottom { margin: 26px 0 0; }
+    .cartoteca-pager[hidden] { display: none; }
+    .pager-btn {
+        border: 1px solid rgba(247,215,116,0.35);
+        background: rgba(255,255,255,0.06);
+        color: #f7d774;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-family: inherit;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.15s ease;
+    }
+    .pager-btn:hover:not(:disabled) { background: rgba(247,215,116,0.16); transform: translateY(-1px); }
+    .pager-btn:active:not(:disabled) { transform: translateY(0); background: rgba(247,215,116,0.28); }
+    .pager-btn:disabled { opacity: 0.32; cursor: not-allowed; }
+    .pager-btn .pager-ico { font-size: 1rem; line-height: 1; }
+    .pager-btn .pager-lbl { margin: 0 4px; }
+    .pager-status {
+        text-align: center;
+        font-size: 0.82rem;
+        font-weight: 800;
+        color: #cdd6ea;
+        min-width: 150px;
+    }
+    .pager-status .range {
+        display: block;
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: #9aa5bd;
+        margin-top: 2px;
+    }
+    /* js/ui/card.css mette touch-action:none su .card per il trascinamento nel duello: qui le carte non si
+       trascinano mai, e quella regola bloccava anche lo scroll verticale col dito se il tocco iniziava su una carta. */
+    .cartoteca-grid .card {
+        touch-action: pan-y;
+    }
+    /* Skeleton: le carte "vuote" che compaiono subito, mentre il database (oltre 1000 carte) viene letto e la
+       griglia si costruisce. Spariscono da sole al primo render. */
+    .card-skeleton {
+        background: linear-gradient(110deg, rgba(255,255,255,.05) 30%, rgba(255,255,255,.13) 50%, rgba(255,255,255,.05) 70%) 0 0 / 220% 100%;
+        border: 1px solid rgba(247,215,116,.14);
+        box-shadow: none;
+        animation: cardSkeleton 1.2s linear infinite;
+        pointer-events: none;
+    }
+    @keyframes cardSkeleton { to { background-position: -220% 0; } }
+    @media (prefers-reduced-motion: reduce) { .card-skeleton { animation: none; } }
+    /* Badge "effetto implementato parzialmente" (richiesta esplicita dell'utente, per uso di sviluppo): basato SOLO
+       su card.missingEffectNote, l'unico segnale davvero affidabile al 100% in questo dataset. */
+    .partial-badge {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        font-size: clamp(11px, 15cqw, 20px);
+        line-height: 1;
+        filter: drop-shadow(0 1px 2px rgba(0,0,0,0.65));
+        z-index: 5;
+    }
+    .cartoteca-empty {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 60px 20px;
+        color: #9aa5bd;
+        font-size: 1.05rem;
+    }
+
+    /* L'aspetto della carta (.card/.card-frame/...) vive in js/ui/card.css, condiviso da tutte le pagine: qui resta
+       solo l'hover specifico di questa griglia. */
+    .cartoteca-grid .card:hover { transform: translateY(-8px) scale(1.045); box-shadow: 0 16px 34px rgba(0,0,0,0.4); }
+
+    /* La scheda di dettaglio carta e' quella condivisa da tutto il gioco: js/ui/card-detail.js + card-detail.css. */
+
+    /* Telefono: topbar e filtri dimensionati per desktop lasciavano spazio per UNA sola carta gigante per riga.
+       Qui si restringe tutto e si aggiorna l'offset "top" della barra filtri, che deve restare appena sotto la topbar. */
+    @media (max-width: 480px) {
+        /* Paginazione a misura di dito: solo frecce, pulsanti da 44px, riga di stato sopra su una riga tutta sua. */
+        .cartoteca-pager { gap: 6px; }
+        .pager-btn .pager-lbl { display: none; }
+        .pager-btn { min-width: 44px; min-height: 44px; padding: 6px 10px; }
+        .pager-status { flex: 1 0 100%; order: -1; min-width: 0; }
+        .cartoteca-filters { top: 45px; padding: 8px 10px; }
+        .filter-sort, .filter-toggle-btn { padding: 7px 10px; font-size: 0.72rem; }
+        .filter-search input { padding: 8px 12px 8px 34px; font-size: 0.82rem; }
+        .cartoteca-main { padding: 12px 8px 40px; }
+        .cartoteca-grid { gap: 8px; }
+    }
+
+    /* Telefono ruotato in orizzontale: poca altezza ma larghezza sopra i 480px, quindi la query sopra non scatta. */
+    @media (max-height: 500px) and (orientation: landscape) {
+        .cartoteca-filters { top: 41px; padding: 6px 14px; }
+        .filter-bar-top { gap: 6px; }
+        .filter-sort, .filter-toggle-btn { padding: 5px 10px; font-size: 0.7rem; }
+        .filter-search input { padding: 6px 12px 6px 32px; font-size: 0.78rem; }
+        .cartoteca-main { padding: 8px 14px 30px; }
+        .cartoteca-grid { gap: 8px; }
+    }
+}

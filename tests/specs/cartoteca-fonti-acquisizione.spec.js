@@ -22,7 +22,7 @@ module.exports = {
                 SaveManager.setChallengeProgress('carta-kaiba-drago-bianco-100', { count: 18, completed: false });
 
                 const leggi = (id) => {
-                    openCardModal(cardDatabase.find((c) => c.id === id));
+                    CardDetail.open(cardDatabase.find((c) => c.id === id));
                     // La scheda è quella condivisa (js/ui/card-detail.js).
                     const box = document.querySelector('.cd-backdrop.open .cd-acquisition');
                     return box ? box.innerText : '';
