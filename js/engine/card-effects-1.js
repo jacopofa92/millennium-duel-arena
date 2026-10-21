@@ -1374,6 +1374,10 @@
         canActivate(ctx) {
             return ctx.summonedVia !== 'special' && ctx.summonedPosition === 'attack' && ctx.summonedCard.attack >= 1000;
         },
+        // Il bot spende la Trappola solo su un mostro che vale la carta (1500+ ATK), non sul primo che arriva.
+        aiCanActivate(ctx) {
+            return !ctx.summonedCard || DuelEngine.getEffectiveAtk(ctx.summonedCard) >= 1500;
+        },
         onOpponentSummon(ctx) {
             ctx.declareTargetWaiting(ctx.opponent, ctx.summonedSlotIndex, { totalTargetCount: 1 }, (decl) => {
                 if (!decl.allowed) return;

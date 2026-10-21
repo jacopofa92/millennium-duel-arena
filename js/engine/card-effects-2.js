@@ -1109,14 +1109,22 @@
     CardEffects.register(272, {
         activate(ctx) {
             ctx.drawCards(ctx.owner, 3);
-            const hand = ctx.hand(ctx.owner);
-            let discarded = 0;
-            for (let i = 0; i < 2 && hand.length > 0; i++) {
-                const card = hand.pop();
-                ctx.graveyard(ctx.owner).push(card);
-                discarded++;
-            }
-            ctx.log(`💖 Carità Graziosa pesca 3 carte e scarta ${discarded}!`);
+            // QUALI due carte scartare lo decide chi gioca la Magia (prima scartava le ultime due della mano,
+            // cioe' proprio quelle appena pescate). Le due scelte sono in sequenza e asincrone: la seconda
+            // si apre dentro la callback della prima. Il bot scarta le due di minor valore.
+            const valore = (c) => (window.AI_SHARED ? AI_SHARED.scoreCardImpact(c) : (c.attack || 0) / 500);
+            const meno = (elenco) => elenco.reduce((m, c) => (valore(c) < valore(m) ? c : m), elenco[0]);
+            let scartate = 0;
+            const scarta = (restanti) => {
+                if (restanti === 0) { ctx.log('💖 Carità Graziosa pesca 3 carte e scarta 2!'); return; }
+                const ok = offerHandDiscardChoice(ctx, {
+                    title: '💖 Carità Graziosa',
+                    text: `Scegli la carta da scartare (${scartate + 1} di 2).`,
+                    pickForBot: meno
+                }, () => { scartate++; scarta(restanti - 1); });
+                if (!ok) ctx.log(`💖 Carità Graziosa pesca 3 carte e scarta ${scartate}!`);
+            };
+            scarta(2);
         }
     });
 
@@ -1764,6 +1772,12 @@
     // tutti i mostri in Posizione di Attacco controllati dall'avversario.
     // ================================================================
     CardEffects.register(382, {
+        // Distrugge TUTTI i mostri in Attacco avversari: il bot la usa se ne colpisce almeno due o se l'attaccante
+        // e' una vera minaccia (1700+ ATK), non contro un singolo mostro debole.
+        aiCanActivate(ctx) {
+            const attaccanti = ctx.field(ctx.opponent).filter((s) => s && !s.isFaceDown && s.position === 'attack');
+            return attaccanti.length >= 2 || (ctx.attackerAtk || 0) >= 1700;
+        },
         onAttackDeclare(ctx) {
             if (window.FX && typeof FX.playMirrorForce === 'function') {
                 const attackIndices = [];

@@ -169,7 +169,10 @@
     function chooseChainResponse(candidates, io = 'bot') {
         // Prima si scartano le risposte che al bot costerebbero piu' di quanto rendono (veto della carta,
         // vedi AI_SHARED.attivazioneSensata): rispondere "sempre con la prima" attivava anche quelle.
-        if (window.AI_SHARED) candidates = candidates.filter((c) => AI_SHARED.attivazioneSensata(c.card, io, c.zone, c.index));
+        // Una sola risposta per OGNI evento: dopo la prima Trappola il bot non ne accumula altre sulla stessa
+        // Evocazione/lo stesso attacco ("tutto in un colpo" non ha senso: la prima e' gia' in Catena).
+        candidates = candidates.filter((c) => !(c.round > 0));
+        if (window.AI_SHARED) candidates = candidates.filter((c) => AI_SHARED.attivazioneSensata(c.card, io, c.zone, c.index, c.evento));
         if (candidates.length === 0) return null;
         if (window.AI_SHARED) {
             const allPureRemoval = candidates.every((c) => AI_SHARED.isSingleTargetRemoval(c.card));

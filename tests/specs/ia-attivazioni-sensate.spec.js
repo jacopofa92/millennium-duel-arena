@@ -117,6 +117,47 @@ module.exports = {
             assert(!ex("AI_SHARED.attivazioneSensata(gameState.botSTField[0].card, 'bot', 'st', 0)"), 'Cattura-Draghi non va giocata se il nemico non ha Draghi');
         }
 
+        // --- 3c) Trappole reattive: il bot ragiona su COSA e' successo, e risponde una volta sola per evento ---
+        {
+            const prova = async (scenario, atkGiocatore, attaccantiExtra) => {
+                const { ex, orologio } = campo(70 + atkGiocatore);
+                ex(`(function () {
+                    gameState.turn = 6; gameState.currentPlayer = 'player'; gameState.phase = '${scenario === 'evoca' ? 'main1' : 'battle'}';
+                    gameState.playerLP = 8000; gameState.botLP = 8000;
+                    const slot = (s) => Object.assign(s, { hasAttacked: false, canChangePosition: true, summonedOnTurn: 1 });
+                    gameState.playerMonsterField = [slot(window.__m(${atkGiocatore}, 1000, 4, 'G-1')), ${attaccantiExtra ? 'slot(window.__m(1600, 1000, 4, "G-2"))' : 'null'}, null, null, null];
+                    gameState.botMonsterField = [slot(window.__m(1800, 1000, 4, 'B-1')), null, null, null, null];
+                    gameState.playerHand = [Object.assign({}, window.__m(${atkGiocatore}, 1000, 4, 'G-nuovo').card, { uid: 'G-nuovo' })];
+                    const t = (id, uid) => ({ card: Object.assign({}, cardDatabase.find((c) => c.id === id), { uid }), isFaceDown: true, setOnTurn: 1 });
+                    gameState.botSTField = [t(40, 'T40'), t(382, 'T382'), null, null, null];
+                    DuelEngine.recomputeStaticEffects();
+                    __logDuello.length = 0;
+                })()`);
+                ex(scenario === 'evoca'
+                    ? "Comandi.esegui('player', { tipo: 'evoca', carta: 'G-nuovo', mano: 0, casella: 3, posizione: 'attack' })"
+                    : "Comandi.esegui('player', { tipo: 'attacca', attaccante: 0, bersaglio: 0 })");
+                await lascia(orologio, ex);
+                return ex('__logDuello.join(" | ")');
+            };
+            const debole = await prova('evoca', 1200, false);
+            assert(!/Buco Trappola in risposta/.test(debole), 'Buco Trappola non si spende su un mostro Evocato da 1200 ATK: ' + debole);
+            const forte = await prova('evoca', 2200, false);
+            assert(/Buco Trappola in risposta/.test(forte), 'Buco Trappola si usa contro un mostro da 2200 ATK: ' + forte);
+            const attaccoDebole = await prova('attacca', 1400, false);
+            assert(!/Forza Riflessa in risposta/.test(attaccoDebole), 'Forza Riflessa non si spende contro un solo attaccante da 1400 ATK: ' + attaccoDebole);
+            const attaccoForte = await prova('attacca', 2400, false);
+            assert(/Forza Riflessa in risposta/.test(attaccoForte), 'Forza Riflessa si usa contro un attaccante da 2400 ATK: ' + attaccoForte);
+            // un mostro con 0 ATK (Idolo dai 1000 Occhi) non va mai in Attacco
+            const { ex } = campo(81);
+            const pos = ex(`(function () {
+                gameState.botMonsterField = [null, null, null, null, null];
+                gameState.playerMonsterField = [null, null, null, null, null];
+                const idolo = Object.assign({}, cardDatabase.find((c) => c.id === 475), { uid: 'IDOLO' });
+                return AI_SHARED.decideMonsterPosture(idolo, gameState, 'bot');
+            })()`);
+            assert(pos.position === 'defense', 'Idolo dai 1000 Occhi (0 ATK) va in Difesa, non in Attacco: ' + JSON.stringify(pos));
+        }
+
         // --- 4) L'audit a tappeto ----------------------------------------------------------
         let uscita = '';
         try {

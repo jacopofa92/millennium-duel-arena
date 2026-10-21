@@ -501,7 +501,7 @@
 // v359: pedine da 320 px rigenerate dagli avatarTrasparenza ad alta risoluzione (stessi nomi di file: senza nuova cache restano le vecchie).
 // v360: Indietro in basso a sinistra su mobile (topbar) e illustrazioni alternative a bacino/tappa fissa.
 // v361: IA che non attiva carte controproducenti (ai-shared, card-effects).
-const CACHE_NAME = 'ygo-duel-arena-v364';
+const CACHE_NAME = 'ygo-duel-arena-v365';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare

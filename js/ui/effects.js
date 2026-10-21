@@ -58,7 +58,7 @@
         if (fxCanvas) return;
         fxCanvas = document.createElement('canvas');
         fxCanvas.id = 'fxParticleCanvas';
-        Object.assign(fxCanvas.style, {
+        assegnaStile(fxCanvas.style, {
             position: 'fixed',
             inset: '0',
             width: '100vw',
@@ -200,7 +200,7 @@
         const kind = card && card.type === 'trap' ? 'trap' : 'spell';
         const scena = document.createElement('div');
         scena.className = `fx-st-shatter fx-st-shatter--${kind}` + (zone === 'fieldSpell' ? ' fx-st-shatter--field' : '');
-        Object.assign(scena.style, {
+        assegnaStile(scena.style, {
             left: rect.left + 'px', top: rect.top + 'px',
             width: rect.width + 'px', height: rect.height + 'px'
         });
@@ -385,7 +385,7 @@
             const bolt = document.createElement('div');
             bolt.className = 'fx-elemconv-bolt';
             applyThemeVars(bolt);
-            Object.assign(bolt.style, {
+            assegnaStile(bolt.style, {
                 left: `${x}px`,
                 top: `${y}px`,
                 width: `${length}px`,
@@ -763,7 +763,7 @@
         beginSummonCinematic();
         const vortex = document.createElement('div');
         vortex.className = 'fx-dust-tornado';
-        Object.assign(vortex.style, {
+        assegnaStile(vortex.style, {
             left: `${rect.left + rect.width / 2}px`, top: `${rect.top + rect.height / 2}px`,
             width: `${rect.width * 2.5}px`, height: `${rect.height * 2.15}px`
         });
@@ -795,7 +795,7 @@
         const bottom = Math.max(...rects.map((r) => r.bottom));
         const gust = document.createElement('div');
         gust.className = 'fx-harpie-gust';
-        Object.assign(gust.style, { left: `${left}px`, top: `${top}px`, width: `${right - left}px`, height: `${bottom - top}px` });
+        assegnaStile(gust.style, { left: `${left}px`, top: `${top}px`, width: `${right - left}px`, height: `${bottom - top}px` });
         gust.innerHTML = '<div class="fx-harpie-wind"><i></i><i></i><i></i><i></i><i></i></div><div class="fx-harpie-feathers"><b></b><b></b><b></b><b></b><b></b><b></b></div>';
         document.body.appendChild(gust);
         if (window.SFX && typeof SFX.wind === 'function') SFX.wind();
@@ -846,7 +846,7 @@
             const y = rect.top + rect.height / 2;
             const dx = x - mirrorX;
             const dy = y - mirrorY;
-            Object.assign(ray.style, { left: `${mirrorX}px`, top: `${mirrorY}px` });
+            assegnaStile(ray.style, { left: `${mirrorX}px`, top: `${mirrorY}px` });
             ray.style.setProperty('--ray-length', `${Math.hypot(dx, dy)}px`);
             ray.style.setProperty('--ray-angle', `${Math.atan2(dy, dx) * 180 / Math.PI}deg`);
             ray.style.setProperty('--ray-delay', `${360 + index * 55}ms`);
@@ -899,7 +899,7 @@
         const placeBeam = (el, a, b) => {
             const dx = b.x - a.x;
             const dy = b.y - a.y;
-            Object.assign(el.style, { left: `${a.x}px`, top: `${a.y}px`, width: `${Math.hypot(dx, dy)}px`, transform: `rotate(${Math.atan2(dy, dx) * 180 / Math.PI}deg)` });
+            assegnaStile(el.style, { left: `${a.x}px`, top: `${a.y}px`, width: `${Math.hypot(dx, dy)}px`, transform: `rotate(${Math.atan2(dy, dx) * 180 / Math.PI}deg)` });
         };
         const cylinders = scene.querySelectorAll('.fx-cylinder');
         Object.assign(cylinders[0].style, { left: `${entrance.x}px`, top: `${entrance.y}px` });
@@ -908,7 +908,7 @@
         placeBeam(scene.querySelector('.fx-cylinder-beam--bridge'), entrance, exit);
         placeBeam(scene.querySelector('.fx-cylinder-beam--out'), exit, { x: to.x, y: to.y });
         const impact = scene.querySelector('.fx-cylinder-impact');
-        Object.assign(impact.style, { left: `${to.x}px`, top: `${to.y}px` });
+        assegnaStile(impact.style, { left: `${to.x}px`, top: `${to.y}px` });
         for (let i = 0; i < 18; i++) {
             const spark = document.createElement('em');
             spark.style.setProperty('--spark-angle', `${i * 20 + Math.random() * 10}deg`);
@@ -918,7 +918,7 @@
         }
         const label = scene.querySelector('strong');
         label.textContent = damage ? `-${damage} LP` : '';
-        Object.assign(label.style, { left: `${to.x}px`, top: `${to.y}px` });
+        assegnaStile(label.style, { left: `${to.x}px`, top: `${to.y}px` });
         document.body.appendChild(scene);
         if (window.SFX && typeof SFX.directHit === 'function') setTimeout(() => SFX.directHit(), 900);
         setTimeout(() => {
@@ -953,12 +953,12 @@
         scene.setAttribute('aria-hidden', 'true');
         scene.innerHTML = '<div class="fx-reborn-darkness"></div><div class="fx-reborn-ankh"><i></i><b></b></div><div class="fx-reborn-portal"></div>';
         const ankh = scene.querySelector('.fx-reborn-ankh');
-        Object.assign(ankh.style, { left: `${endX}px`, top: `${endY}px` });
+        assegnaStile(ankh.style, { left: `${endX}px`, top: `${endY}px` });
         const portal = scene.querySelector('.fx-reborn-portal');
-        Object.assign(portal.style, { left: `${startX}px`, top: `${startY}px` });
+        assegnaStile(portal.style, { left: `${startX}px`, top: `${startY}px` });
         const ghost = createCardElement(card);
         ghost.classList.add('fx-reborn-card');
-        Object.assign(ghost.style, {
+        assegnaStile(ghost.style, {
             '--reborn-x': `${startX}px`, '--reborn-y': `${startY}px`,
             '--reborn-end-x': `${endX}px`, '--reborn-end-y': `${endY}px`,
             width: `${Math.max(52, targetRect.width)}px`
@@ -990,13 +990,13 @@
         beginSummonCinematic();
         const pit = document.createElement('div');
         pit.className = 'fx-trap-hole';
-        Object.assign(pit.style, { left: `${rect.left + rect.width / 2}px`, top: `${rect.top + rect.height * 0.72}px`, width: `${rect.width * 1.65}px`, height: `${rect.height * 0.62}px` });
+        assegnaStile(pit.style, { left: `${rect.left + rect.width / 2}px`, top: `${rect.top + rect.height * 0.72}px`, width: `${rect.width * 1.65}px`, height: `${rect.height * 0.62}px` });
         pit.innerHTML = '<i></i><b></b>';
         document.body.appendChild(pit);
         if (card && typeof window.createCardElement === 'function') {
             const ghost = createCardElement(card);
             ghost.classList.add('fx-trap-hole-card');
-            Object.assign(ghost.style, { left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` });
+            assegnaStile(ghost.style, { left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` });
             document.body.appendChild(ghost);
             setTimeout(() => ghost.remove(), 1350);
         }
@@ -1036,7 +1036,7 @@
         scene.setAttribute('aria-hidden', 'true');
         scene.innerHTML = '<div class="fx-ring-dim"></div><div class="fx-ring-collar"><i></i><i></i><i></i><i></i><i></i><i></i><b></b></div><span class="fx-ring-damage fx-ring-damage--player"></span><span class="fx-ring-damage fx-ring-damage--bot"></span>';
         const collar = scene.querySelector('.fx-ring-collar');
-        Object.assign(collar.style, { left: `${point.x}px`, top: `${point.y}px`, width: `${point.rect.width * 1.65}px`, height: `${point.rect.width * 1.65}px` });
+        assegnaStile(collar.style, { left: `${point.x}px`, top: `${point.y}px`, width: `${point.rect.width * 1.65}px`, height: `${point.rect.width * 1.65}px` });
         scene.querySelectorAll('.fx-ring-damage').forEach((label) => { label.textContent = damage ? `-${damage} LP` : ''; });
         document.body.appendChild(scene);
         if (window.SFX && typeof SFX.destroy === 'function') setTimeout(() => SFX.destroy(), 650);
@@ -1088,7 +1088,7 @@
         const scene = document.createElement('div');
         scene.className = 'fx-mst-scene';
         scene.setAttribute('aria-hidden', 'true');
-        Object.assign(scene.style, {
+        assegnaStile(scene.style, {
             left: `${rect.left + rect.width / 2}px`,
             top: `${rect.top + rect.height / 2}px`,
             '--mst-size': `${Math.max(rect.width * 2.7, 150)}px`
@@ -1100,7 +1100,7 @@
             if (cardSlot && cardSlot.card) {
                 const ghost = window.createCardElement(cardSlot.card);
                 ghost.classList.add('fx-mst-card');
-                Object.assign(ghost.style, {
+                assegnaStile(ghost.style, {
                     width: `${rect.width}px`, height: `${rect.height}px`,
                     left: `${-rect.width / 2}px`, top: `${-rect.height / 2}px`
                 });
@@ -1134,7 +1134,7 @@
         const mark = document.createElement('div');
         mark.className = `fx-control-mark fx-control-mark--${mode === 'heart' ? 'heart' : 'mind'}`;
         mark.setAttribute('aria-hidden', 'true');
-        Object.assign(mark.style, { left: `${point.x}px`, top: `${point.y}px`, width: `${point.rect.width * 1.65}px`, height: `${point.rect.height * 1.25}px` });
+        assegnaStile(mark.style, { left: `${point.x}px`, top: `${point.y}px`, width: `${point.rect.width * 1.65}px`, height: `${point.rect.height * 1.25}px` });
         mark.innerHTML = mode === 'heart'
             ? '<i class="fx-heart-half fx-heart-half--light"></i><i class="fx-heart-half fx-heart-half--dark"></i><b></b>'
             : '<i class="fx-control-eye"></i><i class="fx-control-orbit"></i><b></b>';
@@ -1171,10 +1171,10 @@
         scene.setAttribute('aria-hidden', 'true');
         scene.innerHTML = '<div class="fx-haunted-fog"></div><div class="fx-haunted-grave"></div><div class="fx-haunted-chain fx-haunted-chain--left"></div><div class="fx-haunted-chain fx-haunted-chain--right"></div>';
         const graveMark = scene.querySelector('.fx-haunted-grave');
-        Object.assign(graveMark.style, { left: `${startX}px`, top: `${startY}px` });
+        assegnaStile(graveMark.style, { left: `${startX}px`, top: `${startY}px` });
         const ghost = createCardElement(card);
         ghost.classList.add('fx-haunted-card');
-        Object.assign(ghost.style, { '--haunted-x': `${startX}px`, '--haunted-y': `${startY}px`, '--haunted-end-x': `${endX}px`, '--haunted-end-y': `${endY}px`, width: `${Math.max(52, targetRect.width)}px` });
+        assegnaStile(ghost.style, { '--haunted-x': `${startX}px`, '--haunted-y': `${startY}px`, '--haunted-end-x': `${endX}px`, '--haunted-end-y': `${endY}px`, width: `${Math.max(52, targetRect.width)}px` });
         scene.appendChild(ghost);
         document.body.appendChild(scene);
         if (window.SFX && typeof SFX.activateTrap === 'function') SFX.activateTrap();
@@ -1207,7 +1207,7 @@
         const scene = document.createElement('div');
         scene.className = 'fx-bottomless-hole';
         scene.setAttribute('aria-hidden', 'true');
-        Object.assign(scene.style, {
+        assegnaStile(scene.style, {
             left: `${rect.left + rect.width / 2}px`,
             top: `${rect.top + rect.height * 0.72}px`,
             width: `${rect.width * 2.15}px`,
@@ -1218,7 +1218,7 @@
         if (card && typeof window.createCardElement === 'function') {
             const ghost = createCardElement(card);
             ghost.classList.add('fx-bottomless-card');
-            Object.assign(ghost.style, {
+            assegnaStile(ghost.style, {
                 left: `${rect.left}px`, top: `${rect.top}px`,
                 width: `${rect.width}px`, height: `${rect.height}px`
             });
@@ -1243,7 +1243,7 @@
         const armor = document.createElement('div');
         armor.className = 'fx-sakuretsu-armor';
         armor.setAttribute('aria-hidden', 'true');
-        Object.assign(armor.style, {
+        assegnaStile(armor.style, {
             left: `${point.x}px`, top: `${point.y}px`,
             width: `${point.rect.width * 2.05}px`, height: `${point.rect.height * 1.55}px`
         });
@@ -1284,7 +1284,7 @@
         const moon = document.createElement('div');
         moon.className = 'fx-book-moon';
         moon.setAttribute('aria-hidden', 'true');
-        Object.assign(moon.style, {
+        assegnaStile(moon.style, {
             left: `${point.x}px`, top: `${point.y}px`,
             width: `${point.rect.width * 2.2}px`, height: `${point.rect.width * 2.2}px`
         });
@@ -1293,7 +1293,7 @@
         if (card && typeof window.createCardElement === 'function') {
             const ghost = createCardElement(card);
             ghost.classList.add('fx-book-moon-card');
-            Object.assign(ghost.style, {
+            assegnaStile(ghost.style, {
                 left: `${point.rect.left}px`, top: `${point.rect.top}px`,
                 width: `${point.rect.width}px`, height: `${point.rect.height}px`
             });
@@ -1325,7 +1325,7 @@
         targets.forEach((point, index) => {
             const mark = document.createElement('span');
             mark.className = 'fx-virus-target';
-            Object.assign(mark.style, {
+            assegnaStile(mark.style, {
                 left: `${point.x}px`, top: `${point.y}px`,
                 width: `${point.rect.width * 1.45}px`, height: `${point.rect.height * 1.15}px`,
                 '--virus-delay': `${420 + index * 90}ms`
@@ -1355,11 +1355,11 @@
         const gate = scene.querySelector('.fx-negate-gate');
         const gateX = window.innerWidth / 2;
         const gateY = window.innerHeight / 2;
-        Object.assign(gate.style, { left: `${gateX}px`, top: `${gateY}px` });
+        assegnaStile(gate.style, { left: `${gateX}px`, top: `${gateY}px` });
         const beam = scene.querySelector('.fx-negate-beam');
         const dx = gateX - point.x;
         const dy = gateY - point.y;
-        Object.assign(beam.style, {
+        assegnaStile(beam.style, {
             left: `${point.x}px`, top: `${point.y}px`,
             width: `${Math.hypot(dx, dy)}px`,
             transform: `rotate(${Math.atan2(dy, dx) * 180 / Math.PI}deg)`
@@ -1387,7 +1387,7 @@
         targets.forEach(({ rect }, index) => {
             const sheep = document.createElement('span');
             sheep.className = 'fx-sheep-spirit';
-            Object.assign(sheep.style, {
+            assegnaStile(sheep.style, {
                 left: `${rect.left + rect.width / 2}px`, top: `${rect.top + rect.height / 2}px`,
                 width: `${rect.width * 1.18}px`, height: `${rect.width * .9}px`,
                 '--sheep-delay': `${index * 105}ms`
@@ -1419,7 +1419,7 @@
         scene.innerHTML = '<div class="fx-mystic-shade"></div><div class="fx-mystic-cabinet fx-mystic-cabinet--destroy"><i></i><b></b></div><div class="fx-mystic-cabinet fx-mystic-cabinet--offer"><i></i><b></b></div><div class="fx-mystic-arc"></div>';
         const cabinets = scene.querySelectorAll('.fx-mystic-cabinet');
         [[cabinets[0], leftRect], [cabinets[1], rightRect]].forEach(([el, rect]) => {
-            Object.assign(el.style, {
+            assegnaStile(el.style, {
                 left: `${rect.left + rect.width / 2}px`, top: `${rect.top + rect.height / 2}px`,
                 width: `${rect.width * 1.45}px`, height: `${rect.height * 1.2}px`
             });
@@ -1427,7 +1427,7 @@
         if (destroyedTarget.card && typeof window.createCardElement === 'function') {
             const ghost = createCardElement(destroyedTarget.card);
             ghost.classList.add('fx-mystic-victim');
-            Object.assign(ghost.style, { left: `${leftRect.left}px`, top: `${leftRect.top}px`, width: `${leftRect.width}px`, height: `${leftRect.height}px` });
+            assegnaStile(ghost.style, { left: `${leftRect.left}px`, top: `${leftRect.top}px`, width: `${leftRect.width}px`, height: `${leftRect.height}px` });
             scene.appendChild(ghost);
         }
         document.body.appendChild(scene);
@@ -1452,7 +1452,7 @@
         targets.forEach((point, index) => {
             const surge = document.createElement('span');
             surge.className = 'fx-machine-surge';
-            Object.assign(surge.style, {
+            assegnaStile(surge.style, {
                 left: `${point.x}px`, top: `${point.y}px`,
                 width: `${point.rect.width * 1.5}px`, height: `${point.rect.height * 1.2}px`,
                 '--surge-delay': `${index * 80}ms`
@@ -1476,7 +1476,7 @@
         const bind = document.createElement('div');
         bind.className = 'fx-shadow-bind';
         bind.setAttribute('aria-hidden', 'true');
-        Object.assign(bind.style, {
+        assegnaStile(bind.style, {
             left: `${point.x}px`, top: `${point.y}px`,
             width: `${point.rect.width * 1.75}px`, height: `${point.rect.height * 1.35}px`
         });
@@ -1501,7 +1501,7 @@
             const slot = document.querySelector(`#${boardId} .field-slot[data-owner="${owner}"][data-type="monster"][data-index="${index}"]`);
             const rect = slot && slot.getBoundingClientRect(); if (!rect || !rect.width) return;
             const hat = document.createElement('span'); hat.className = 'fx-magic-hat';
-            Object.assign(hat.style, { left:`${rect.left + rect.width/2}px`, top:`${rect.top + rect.height/2}px`, width:`${rect.width*1.35}px`, height:`${rect.height*1.12}px`, '--hat-delay':`${order*100}ms` });
+            assegnaStile(hat.style, { left:`${rect.left + rect.width/2}px`, top:`${rect.top + rect.height/2}px`, width:`${rect.width*1.35}px`, height:`${rect.height*1.12}px`, '--hat-delay':`${order*100}ms` });
             hat.innerHTML = '<i></i><b></b>'; scene.appendChild(hat);
         });
         if (!scene.children.length) return 0;
@@ -1523,7 +1523,7 @@
             const slot = document.querySelector(`#${boardId} .field-slot[data-owner="${owner}"][data-type="monster"][data-index="${index}"]`);
             const rect = slot && slot.getBoundingClientRect(); if (!rect || !rect.width) return;
             const orb = document.createElement('span'); orb.className = 'fx-kuriboh-orb';
-            Object.assign(orb.style, { '--mul-x':`${sx}px`, '--mul-y':`${sy}px`, '--mul-end-x':`${rect.left+rect.width/2}px`, '--mul-end-y':`${rect.top+rect.height/2}px`, '--mul-delay':`${order*80}ms`, width:`${rect.width*.72}px`, height:`${rect.width*.72}px` });
+            assegnaStile(orb.style, { '--mul-x':`${sx}px`, '--mul-y':`${sy}px`, '--mul-end-x':`${rect.left+rect.width/2}px`, '--mul-end-y':`${rect.top+rect.height/2}px`, '--mul-delay':`${order*80}ms`, width:`${rect.width*.72}px`, height:`${rect.width*.72}px` });
             orb.innerHTML = '<i></i><b></b>'; scene.appendChild(orb);
         });
         document.body.appendChild(scene); if (window.SFX && typeof SFX.activateSpell === 'function') SFX.activateSpell();
@@ -1537,7 +1537,7 @@
         if (!cardEl) return 0;
         beginSummonCinematic(); const p = centerOf(cardEl);
         const panel = document.createElement('div'); panel.className = 'fx-enemy-controller'; panel.setAttribute('aria-hidden','true');
-        Object.assign(panel.style,{left:`${p.x}px`,top:`${p.y}px`,width:`${p.rect.width*2.15}px`,height:`${p.rect.height*1.35}px`});
+        assegnaStile(panel.style,{left:`${p.x}px`,top:`${p.y}px`,width:`${p.rect.width*2.15}px`,height:`${p.rect.height*1.35}px`});
         panel.innerHTML = `<i></i><b></b><span>${mode === 'controllo' ? 'CONTROL' : 'POSITION'}</span><strong>↑ ↓ ← → A B</strong>`;
         document.body.appendChild(panel); if (window.SFX && typeof SFX.activateSpell === 'function') SFX.activateSpell();
         setTimeout(() => { panel.remove(); endSummonCinematic(); }, 1350); return 1350;
@@ -1549,15 +1549,15 @@
         const slot = document.querySelector(`#${boardId} .field-slot[data-owner="${owner}"][data-type="monster"][data-index="${index}"]`);
         const rect = slot && slot.getBoundingClientRect(); if (!rect || !rect.width) return 0;
         beginSummonCinematic(); const hole = document.createElement('div'); hole.className = 'fx-dimension-hole';
-        Object.assign(hole.style,{left:`${rect.left+rect.width/2}px`,top:`${rect.top+rect.height/2}px`,width:`${rect.width*2}px`,height:`${rect.width*2}px`});
+        assegnaStile(hole.style,{left:`${rect.left+rect.width/2}px`,top:`${rect.top+rect.height/2}px`,width:`${rect.width*2}px`,height:`${rect.width*2}px`});
         hole.innerHTML='<i></i><i></i><b></b>'; document.body.appendChild(hole);
-        if (card && typeof window.createCardElement === 'function') { const ghost=createCardElement(card); ghost.classList.add('fx-dimension-card'); Object.assign(ghost.style,{left:`${rect.left}px`,top:`${rect.top}px`,width:`${rect.width}px`,height:`${rect.height}px`}); document.body.appendChild(ghost); setTimeout(()=>ghost.remove(),1350); }
+        if (card && typeof window.createCardElement === 'function') { const ghost=createCardElement(card); ghost.classList.add('fx-dimension-card'); assegnaStile(ghost.style,{left:`${rect.left}px`,top:`${rect.top}px`,width:`${rect.width}px`,height:`${rect.height}px`}); document.body.appendChild(ghost); setTimeout(()=>ghost.remove(),1350); }
         setTimeout(()=>{hole.remove();endSummonCinematic();},1450); return 1450;
     }
 
     function playTargetSigil(owner, index, className, soundKind) {
         const boardId=owner==='player'?'playerFieldBoard':'botFieldBoard'; const el=document.querySelector(`#${boardId} .field-slot[data-owner="${owner}"][data-type="monster"][data-index="${index}"] .card`); if(!el)return 0;
-        beginSummonCinematic(); const p=centerOf(el); const sigil=document.createElement('div'); sigil.className=className; Object.assign(sigil.style,{left:`${p.x}px`,top:`${p.y}px`,width:`${p.rect.width*1.8}px`,height:`${p.rect.width*1.8}px`}); sigil.innerHTML='<i></i><i></i><i></i><b></b>'; document.body.appendChild(sigil);
+        beginSummonCinematic(); const p=centerOf(el); const sigil=document.createElement('div'); sigil.className=className; assegnaStile(sigil.style,{left:`${p.x}px`,top:`${p.y}px`,width:`${p.rect.width*1.8}px`,height:`${p.rect.width*1.8}px`}); sigil.innerHTML='<i></i><i></i><i></i><b></b>'; document.body.appendChild(sigil);
         if(window.SFX){const fn=soundKind==='trap'?SFX.activateTrap:SFX.activateSpell;if(typeof fn==='function')fn.call(SFX);} setTimeout(()=>{sigil.remove();endSummonCinematic();},1350); return 1350;
     }
 
@@ -1960,7 +1960,7 @@
             sword.innerHTML = '<span class="fx-sword-blade"></span><span class="fx-sword-guard"></span><span class="fx-sword-hilt"></span><span class="fx-sword-gem"></span>';
             const distanzaDalCentro = Math.abs(i - (rects.length - 1) / 2);
             const ordine = Math.round(distanzaDalCentro * 2);
-            Object.assign(sword.style, {
+            assegnaStile(sword.style, {
                 left: `${cx}px`,
                 top: '-140px',
                 height: '140px',
@@ -1978,7 +1978,7 @@
         setTimeout(() => {
             const flash = document.createElement('div');
             flash.className = 'fx-swords-row-flash';
-            Object.assign(flash.style, {
+            assegnaStile(flash.style, {
                 left: `${rowLeft}px`,
                 top: `${rowTop}px`,
                 width: `${rowRight - rowLeft}px`,
@@ -2027,14 +2027,14 @@
             const bolt = document.createElement('div');
             bolt.className = 'fx-raigeki-bolt';
             bolt.innerHTML = '<span class="fx-raigeki-core"></span><span class="fx-raigeki-branch fx-raigeki-branch-a"></span><span class="fx-raigeki-branch fx-raigeki-branch-b"></span>';
-            Object.assign(bolt.style, { left: `${x}px`, top: '0px', height: `${Math.max(120, y)}px`, animationDelay: `${sequence * 75}ms` });
+            assegnaStile(bolt.style, { left: `${x}px`, top: '0px', height: `${Math.max(120, y)}px`, animationDelay: `${sequence * 75}ms` });
             document.body.appendChild(bolt);
             bolts.push(bolt);
 
             setTimeout(() => {
                 const hit = document.createElement('div');
                 hit.className = 'fx-raigeki-impact';
-                Object.assign(hit.style, { left: `${x}px`, top: `${y}px`, width: `${rect.width * 1.55}px`, height: `${rect.height * 1.15}px` });
+                assegnaStile(hit.style, { left: `${x}px`, top: `${y}px`, width: `${rect.width * 1.55}px`, height: `${rect.height * 1.15}px` });
                 document.body.appendChild(hit);
                 setTimeout(() => hit.remove(), 560);
             }, 330 + sequence * 75);
@@ -2071,7 +2071,7 @@
             if (!card || !rect || rect.width === 0) return;
             const ghost = window.createCardElement(card);
             ghost.classList.add('fx-darkhole-sucked');
-            Object.assign(ghost.style, {
+            assegnaStile(ghost.style, {
                 position: 'fixed',
                 left: `${rect.left}px`,
                 top: `${rect.top}px`,
@@ -2162,6 +2162,19 @@
      * un indice: il Cimitero è una casella sola, marcata `data-zone` da
      * createSlotElement (js/engine/game-flow.js).
      */
+    /**
+     * Come Object.assign(el.style, {...}), ma capisce anche le variabili CSS ('--x': ...): su uno stile
+     * Object.assign scrive una proprieta' JavaScript qualunque e le variabili NON arrivano al CSS (le
+     * animazioni partivano da un punto sbagliato, p. es. Mostro Resuscitato dal Cimitero errato).
+     */
+    function assegnaStile(stile, valori) {
+        Object.keys(valori).forEach((chiave) => {
+            if (chiave.indexOf('--') === 0) stile.setProperty(chiave, String(valori[chiave]));
+            else stile[chiave] = valori[chiave];
+        });
+        return stile;
+    }
+
     function zoneRect(owner, zone) {
         const boardId = owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard';
         const el = document.querySelector(`#${boardId} .field-slot[data-owner="${owner}"][data-zone="${zone}"]`);
@@ -2276,7 +2289,7 @@
         const durata = o.duration || 620;
         const ghost = window.createCardElement(card);
         ghost.classList.add('fx-card-travel');
-        Object.assign(ghost.style, {
+        assegnaStile(ghost.style, {
             position: 'fixed',
             left: `${from.left}px`,
             top: `${from.top}px`,

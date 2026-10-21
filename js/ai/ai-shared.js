@@ -151,6 +151,9 @@
         const previste = estimateSummonedStats(card, gameState, owner);
         const atk = previste.atk;
         const def = previste.def;
+        // Un mostro con 0 ATK (Idolo dai 1000 Occhi...) in Attacco non colpisce nulla e si fa solo distruggere:
+        // sempre in Difesa (coperto se e' di Livello basso). Prima, senza mostri avversari in campo, finiva in Attacco.
+        if (atk <= 0) return { position: 'defense', faceDown: (card.level || 0) <= 4 };
         const opponentField = Tavolo.mostri(Tavolo.avversario(owner), gameState);
         const hasFavorableTarget = (opponentField || []).some((slot) => {
             if (!slot || slot.isFaceDown) return false;
@@ -576,11 +579,14 @@
      * Prima ognuna di queste carte si attivava ad ogni occasione, perche' "le carte di risposta sono tutte
      * puro vantaggio": non e' vero (Kaiba che si sacrificava un mostro forte per una Fusione scarsa).
      */
-    function attivazioneSensata(card, io, zona, indice) {
+    function attivazioneSensata(card, io, zona, indice, evento) {
         if (!card) return false;
         const def = window.DuelEngine && DuelEngine.getDefinition(card.id);
         if (def && typeof def.aiCanActivate === 'function') {
             const ctx = DuelEngine.makeContext(io, { card: card, zone: zona || 'hand', index: indice });
+            // Una risposta a un evento (Evocazione, attacco...) puo' leggere i dati dell'evento: summonedCard,
+            // attackerIndex, attackerAtk... (owner/opponent/card restano quelli di chi risponde).
+            if (evento) Object.keys(evento).forEach((k) => { if (!(k in ctx)) ctx[k] = evento[k]; });
             try { if (!def.aiCanActivate(ctx)) return false; } catch (e) { return false; }
         }
         // Una Trappola che SOLO potenzia un proprio mostro (Rinforzi, Mura del Castello, Risucchio di Energia,

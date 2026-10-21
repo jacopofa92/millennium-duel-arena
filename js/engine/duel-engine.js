@@ -4354,6 +4354,10 @@
             const candidates = rounds < maxChainRounds()
                 ? findTriggerCandidates(handlerName, ctx, responderOwner, usedUids)
                 : [];
+            // L'IA ragiona su COSA e' successo (che mostro e' stato Evocato, chi attacca con quanto ATK) e su
+            // quante risposte ha gia' dato a questo stesso evento: glieli dice il candidato. Non cambiano nulla
+            // per la persona (il prompt legge solo carta/zona/indice).
+            candidates.forEach((c) => { c.evento = ctx; c.round = rounds; });
             chain.active = true;
             askResponder(responderOwner, candidates, (choice) => {
                 if (!choice) {

@@ -60,11 +60,16 @@ EventiDuello.ascolta('decisione', (r, rispondi) => {
                 const j = disegnate.findIndex((d) => d === card || (d && card && d.uid !== undefined && d.uid === card.uid));
                 return j === -1 ? null : r.candidati[j];
             };
-            ui.openCardListPicker(disegnate, {
+            // Una scelta NON annullabile e' parte di un effetto gia' attivato: chiudere il riquadro senza
+            // scegliere lascerebbe la carta "buttata" e la decisione appesa (bug segnalato su Mostro
+            // Resuscitato). Si riapre lo stesso elenco finche' non si sceglie; con l'elenco vuoto non c'e'
+            // nulla da scegliere e si chiude con "nessuna".
+            const apri = () => ui.openCardListPicker(disegnate, {
                 title: r.titolo, text: r.testo, emptyText: r.vuota,
                 onSelect: (card, i) => rispondi(candidatoDi(card, i)),
-                onCancel: annulla
+                onCancel: annulla || (disegnate.length === 0 ? () => rispondi(null) : () => setTimeout(apri, 0))
             });
+            apri();
             break;
         }
         case 'presa-visione':
