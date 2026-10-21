@@ -158,6 +158,18 @@
         try { localStorage.setItem(SERVER_URL_STORAGE_KEY, url); } catch (e) { /* vedi sopra */ }
     }
 
+    /**
+     * Quanto deve durare AL MINIMO la console di collegamento (ms), dall'avvio dell'attesa. 3 secondi: se il server
+     * risponde in un attimo l'animazione non deve sparire prima di essere stata vista (richiesta dell'utente).
+     * Con "riduci movimento" nessuna attesa artificiale. Nei test automatici (navigator.webdriver) si salta, per non
+     * allungare ogni connessione di 3 secondi: `window.MP_ATTESA_MINIMA_MS` lo imposta a mano (anche per provarla).
+     */
+    function durataMinimaAttesa() {
+        if (typeof window.MP_ATTESA_MINIMA_MS === 'number') return window.MP_ATTESA_MINIMA_MS;
+        if (riduciMovimento || navigator.webdriver) return 0;
+        return 3000;
+    }
+
     async function ensureConnected() {
         const typed = ($('mpServerUrl').value || '').trim();
         if (!typed) {
@@ -174,12 +186,17 @@
         avviaAttesaServer();
         try {
             await net.connect(url);
-            fermaAttesaServer();
             rememberServerUrl(url);
-            // NON si aspetta nulla: la scenetta "accesso concesso" gira mentre il flusso prosegue (crea/entra nella stanza),
-            // e il messaggio normale la sostituisce dopo un istante solo se la console e' ancora li'.
+            // L'animazione dura ALMENO 3 secondi anche se il server risponde subito: la console resta viva (le righe
+            // continuano a scorrere) fino a (minimo - durata della scenetta finale), poi "accesso concesso".
+            const minimo = durataMinimaAttesa();
+            const SCENETTA_MS = riduciMovimento ? 0 : 850;
+            const resto = Math.max(0, minimo - SCENETTA_MS - (Date.now() - attesa.inizio));
+            if (resto > 0) await new Promise((resolve) => setTimeout(resolve, resto));
+            fermaAttesaServer();
             try { accessoConcesso(); } catch (e) { /* la scenetta non deve mai far fallire il collegamento */ }
-            setTimeout(() => { if (document.querySelector('#mpStatus .mp-term.is-ok')) showStatus('✅ Connesso al server.'); }, 850);
+            if (SCENETTA_MS) await new Promise((resolve) => setTimeout(resolve, SCENETTA_MS));
+            if (document.querySelector('#mpStatus .mp-term.is-ok')) showStatus('✅ Connesso al server.');
             return true;
         } catch (err) {
             fermaAttesaServer();
