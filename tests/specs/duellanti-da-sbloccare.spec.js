@@ -45,8 +45,9 @@ module.exports = {
                 const sbloccati = characterDatabase.filter((c) => CharacterUnlocks.sbloccato(c.id)).map((c) => c.id);
                 return { sbloccati: sbloccati, totale: characterDatabase.length };
             });
-            assertUguali(t, inizio.sbloccati, ['yugiMuto', 'solomonMuto'],
-                'All\'inizio devono essere sfidabili solo Yugi Muto e Solomon Muto');
+            // Alberto Angela e Alessandro Barbero sono iniziali per scelta dell'utente (2026-10-21).
+            assertUguali(t, inizio.sbloccati, ['albertoAngela', 'alessandroBarbero', 'yugiMuto', 'solomonMuto'],
+                'All\'inizio devono essere sfidabili solo Yugi Muto, Solomon Muto, Alberto Angela e Alessandro Barbero');
             t.assert(inizio.totale > 10,
                 `Il roster deve essere molto più lungo dei due iniziali, altrimenti non c'è niente da sbloccare (${inizio.totale})`);
 
@@ -59,8 +60,8 @@ module.exports = {
             }));
             t.assert(griglia.totali === inizio.totale,
                 `Ogni Duellante deve comparire nella griglia, anche bloccato (${griglia.totali} su ${inizio.totale})`);
-            t.assert(griglia.bloccati === inizio.totale - 2,
-                `Tutti tranne i due iniziali devono risultare bloccati (${griglia.bloccati})`);
+            t.assert(griglia.bloccati === inizio.totale - inizio.sbloccati.length,
+                `Tutti tranne gli iniziali devono risultare bloccati (${griglia.bloccati})`);
 
             // --- Un bloccato non lancia un duello --------------------
             // Si clicca quello che il giocatore vedrebbe, e si controlla

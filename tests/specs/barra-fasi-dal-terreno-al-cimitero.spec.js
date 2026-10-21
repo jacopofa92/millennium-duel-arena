@@ -50,7 +50,17 @@ module.exports = {
 
                 if (schermo.nome === 'desktop') {
                     const colori = await page.evaluate(async () => {
-                        const accento = () => getComputedStyle(document.querySelector('#phaseStepper .phase-step .step-badge')).backgroundImage;
+                        // Il colore d'accento RISOLTO (non la proprieta' di un pulsante, che con lo stile
+                        // attuale puo' non avere sfondo): una sonda colorata con var(--fase-accento).
+                        const accento = () => {
+                            const barra = document.querySelector('#phaseStepper');
+                            const sonda = document.createElement('i');
+                            sonda.style.color = 'var(--fase-accento)';
+                            barra.appendChild(sonda);
+                            const colore = getComputedStyle(sonda).color;
+                            sonda.remove();
+                            return colore;
+                        };
                         const metti = async (file) => {
                             document.body.style.backgroundImage = `url('images/fields/${file}')`;
                             if (window.TintaCampo) window.TintaCampo.applica();

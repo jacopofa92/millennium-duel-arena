@@ -14,10 +14,18 @@ module.exports = {
         const ok = (r, id, a, msg) => t.assert(validateGameAction(r, id, a) === null, msg);
         const no = (r, id, a, msg) => t.assert(typeof validateGameAction(r, id, a) === 'string', msg);
 
-        [
-            'room-config', 'ready', 'rps',
-            'mazzo', 'passo', 'passo-riprendi', 'game-over'
-        ].forEach((kind) => ok(room(), A, { kind }, `${kind} appartiene al protocollo corrente`));
+        // Il relay controlla anche la FORMA (js/multiplayer/protocollo-mp.js):
+        // ogni tipo del protocollo corrente va provato con un corpo valido.
+        const validi = {
+            'room-config': { field: 'campo.jpg', music: 'musica.mp3' },
+            'ready': { pronto: true },
+            'rps': { scelta: 'sasso' },
+            'mazzo': { protocollo: 1, seme: 7, spec: { main: [{ id: 1, qty: 3 }] } },
+            'passo': { messaggi: [] },
+            'passo-riprendi': { ultimo: 0 },
+            'game-over': { opponentWon: false }
+        };
+        Object.keys(validi).forEach((kind) => ok(room(), A, { kind, ...validi[kind] }, `${kind} appartiene al protocollo corrente`));
 
         [
             'phase', 'summon', 'tribute', 'position', 'spelltrap',

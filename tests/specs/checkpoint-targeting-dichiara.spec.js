@@ -121,10 +121,12 @@ module.exports = {
         await prepara();
         const controllore = await t.evaluate(() => {
             const base = cardDatabase.find((c) => c.type === 'monster' && !c.extraDeck && !DuelEngine.getDefinition(c.id));
-            gameState.playerMonsterField[0] = { card: { ...base, attack: 1800, uid: 'mio-forte' }, position: 'attack', isFaceDown: false };
-            gameState.playerMonsterField[1] = { card: { ...base, attack: 300, uid: 'mio-debole' }, position: 'attack', isFaceDown: false };
-            gameState.botMonsterField[0] = { card: { ...base, attack: 1000, uid: 'suo-debole' }, position: 'attack', isFaceDown: false };
-            gameState.botMonsterField[1] = { card: { ...base, attack: 2500, uid: 'suo-forte' }, position: 'attack', isFaceDown: false };
+            // Anche la DEF va fissata: il bot valuta il sacrificio col massimo fra ATK e DEF, e quella
+            // della carta di base (qualunque sia) farebbe sembrare il costo troppo alto per convenire.
+            gameState.playerMonsterField[0] = { card: { ...base, attack: 1800, defense: 1000, uid: 'mio-forte' }, position: 'attack', isFaceDown: false };
+            gameState.playerMonsterField[1] = { card: { ...base, attack: 300, defense: 200, uid: 'mio-debole' }, position: 'attack', isFaceDown: false };
+            gameState.botMonsterField[0] = { card: { ...base, attack: 1000, defense: 1000, uid: 'suo-debole' }, position: 'attack', isFaceDown: false };
+            gameState.botMonsterField[1] = { card: { ...base, attack: 2500, defense: 1000, uid: 'suo-forte' }, position: 'attack', isFaceDown: false };
             gameState.playerGraveyard = [];
             DuelEngine.getDefinition(226).activate(DuelEngine.makeContext('player', { card: { ...cardDatabase.find((c) => c.id === 226), uid: 'contr' } }));
             return {

@@ -20,6 +20,9 @@ module.exports = {
     async run(t) {
         // --- 219 Tornado di Polvere: 1 Magia/Trappola dell'avversario ---
         const setupTornado = await t.evaluate(() => {
+            // Il vortice in DOM e' la versione "css" dell'effetto: col backend WebGL lo stesso
+            // vortice e' disegnato su canvas e nel DOM non c'e' nulla da trovare.
+            window.FX_BACKEND = 'css';
             const trappole = cardDatabase.filter((c) => c.type === 'trap').slice(0, 2);
             gameState.botSTField = [
                 { card: { ...trappole[0], uid: 'SUA-1' }, isFaceDown: true, setOnTurn: 1 },
