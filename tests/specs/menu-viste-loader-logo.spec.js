@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-    name: 'Menu: font locale del logo e loader nelle viste Negozio/Cartoteca',
+    name: 'Menu: font locale del logo e loader sulle pagine Negozio/Cartoteca',
     standalone: true,
     async run({ browser, assert }) {
         const root = path.join(__dirname, '..', '..');
@@ -15,7 +15,7 @@ module.exports = {
         const errors = [];
         page.on('pageerror', (error) => errors.push(error.message));
         await page.goto(url, { waitUntil: 'domcontentloaded' });
-        await page.waitForFunction(() => typeof showView === 'function' && window.PageLoader && customElements.get('game-logo'));
+        await page.waitForFunction(() => window.PageLoader && customElements.get('game-logo'));
 
         const logo = await page.evaluate(async () => {
             await document.fonts.load('900 32px "Duel Arena Inscription"');
@@ -28,19 +28,20 @@ module.exports = {
         assert(logo.family.includes('Duel Arena Inscription'), `Font del logo non applicato: ${logo.family}`);
         assert(logo.loaded, 'Il font locale del titolo non è stato caricato');
 
-        for (const name of ['negozio', 'cartoteca']) {
-            await page.evaluate((view) => {
-                PageLoader.hide();
-                showView(view);
-            }, name);
-            const visible = await page.locator('#pageLoader').evaluate((el) => !el.classList.contains('page-loader-hidden'));
-            assert(visible, `Il loader generale non parte entrando in ${name}`);
-            await page.waitForFunction(() => document.querySelector('#pageLoader').classList.contains('page-loader-hidden'),
+        // Negozio e Cartoteca sono pagine dedicate (non piu' viste del menu): il loader generale compare da solo ad
+        // ogni apertura e sparisce a pagina pronta.
+        for (const pagina of ['negozio.html', 'cartoteca.html']) {
+            const p2 = await context.newPage();
+            const errori2 = [];
+            p2.on('pageerror', (error) => errori2.push(error.message));
+            await p2.goto('file:///' + path.join(root, pagina).replace(/\\/g, '/'), { waitUntil: 'domcontentloaded' });
+            const compare = await p2.evaluate(() => !!document.getElementById('pageLoader'));
+            assert(compare, `Il loader generale non compare aprendo ${pagina}`);
+            await p2.waitForFunction(() => document.querySelector('#pageLoader').classList.contains('page-loader-hidden'),
                 null, { timeout: 30000 });
-            const viewReady = await page.locator('#view-' + name).evaluate((el) => getComputedStyle(el).display !== 'none');
-            assert(viewReady, `La vista ${name} non resta visibile dopo il caricamento`);
+            assert(errori2.length === 0, `Errori JS in ${pagina}: ${errori2.join(' | ')}`);
+            await p2.close();
         }
-
         assert(errors.length === 0, `Errori JS nel menu: ${errors.join(' | ')}`);
         await context.close();
     }

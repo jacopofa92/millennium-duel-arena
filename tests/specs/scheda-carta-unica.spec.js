@@ -48,7 +48,7 @@ module.exports = {
 
             // Il nome di una carta personalizzata è testo dell'utente.
             const xss = await page.evaluate(() => {
-                openCardModal({ id: -1, name: '<img src=x onerror="window.__xss=1">Carta', type: 'spell', effect: '<b>grassetto</b>' });
+                CardDetail.open({ id: -1, name: '<img src=x onerror="window.__xss=1">Carta', type: 'spell', effect: '<b>grassetto</b>' });
                 const b = document.querySelector('.cd-backdrop.open');
                 return { img: !!b.querySelector('.cd-name img'), grassetto: !!b.querySelector('.cd-effect b'), testo: b.querySelector('.cd-name').textContent };
             });
@@ -70,15 +70,13 @@ module.exports = {
             await page.keyboard.press('Escape');
             assert(!(await page.evaluate(() => document.getElementById('cardsModalBackdrop').classList.contains('open'))), 'il secondo Esc chiude la lista');
 
-            // --- La vista Cartoteca del menu -----------------------------
-            await page.goto(url('index.html'));
-            await page.waitForFunction(() => typeof showView === 'function' && !!window.SaveManager, null, { timeout: 20000 });
-            await page.evaluate(() => { if (!SaveManager.hasSave()) SaveManager.createNew('Tester'); showView('cartoteca'); });
-            await page.waitForSelector('#view-cartoteca .cartoteca-grid .card', { timeout: 30000 });
-            await page.click('#view-cartoteca .cartoteca-grid .card');
+            // --- La Cartoteca (pagina dedicata, usata anche dal menu) ------
+            await page.goto(url('cartoteca.html'));
+            await page.waitForSelector('.cartoteca-grid .card:not(.card-skeleton)', { timeout: 30000 });
+            await page.click('.cartoteca-grid .card:not(.card-skeleton)');
             await page.waitForSelector('.cd-backdrop.open', { timeout: 10000 });
             s = await scheda();
-            assert(s && s.comeSiOttiene, 'menu: la scheda ha il riquadro "Come si ottiene" (la vecchia copia l\'aveva perso): ' + JSON.stringify(s));
+            assert(s && s.comeSiOttiene, 'Cartoteca: la scheda ha il riquadro "Come si ottiene": ' + JSON.stringify(s));
         } finally {
             await context.close();
         }

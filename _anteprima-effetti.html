@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anteprima effetti (temporanea)</title>
+<link rel="stylesheet" href="js/ui/card.css">
+<link rel="stylesheet" href="js/ui/effects.css">
+<link rel="stylesheet" href="js/ui/duel-feedback.css">
+<style>
+    :root { --w: min(10.5vw, 15vh); --h: calc(var(--w) * 1.4); --gap: min(1.2vw, 1.6vh); }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #0b0d14 center / cover no-repeat; font-family: system-ui, sans-serif; color: #f7d774; }
+    .barra { position: fixed; left: 8px; top: 8px; z-index: 99999; display: flex; gap: 8px 12px; flex-wrap: wrap; align-items: center; background: rgba(0,0,0,.72); padding: 8px 10px; border-radius: 8px; font-size: 13px; max-width: calc(100vw - 32px); }
+    .barra select, .barra button { font: inherit; max-width: 52vw; }
+    .barra label { display: flex; gap: 5px; align-items: center; }
+    #stato { position: fixed; right: 8px; bottom: 8px; z-index: 99999; background: rgba(0,0,0,.7); padding: 6px 9px; border-radius: 8px; font-size: 12px; color: #cfc6a0; max-width: 40vw; }
+    /* Un campo finto, con la stessa struttura che gli effetti cercano nel duello vero. */
+    .campo { position: fixed; inset: 0; display: grid; align-content: center; justify-content: center; gap: var(--gap); padding-top: 48px; }
+    .board { display: grid; gap: var(--gap); }
+    .riga { display: grid; grid-template-columns: repeat(7, var(--w)); gap: var(--gap); }
+    .field-slot { width: var(--w); height: var(--h); border: 1px solid rgba(247,215,116,.25); border-radius: 6px; background: rgba(0,0,0,.28); position: relative; display: flex; align-items: center; justify-content: center; }
+    .field-slot .card { width: calc(var(--w) * .94) !important; height: calc(var(--h) * .94) !important; }
+    .vuota { visibility: hidden; border: 0; background: none; }
+</style>
+</head>
+<body>
+<div class="barra">
+    <label>Effetto <select id="effetto"></select></label>
+    <label>Lato <select id="lato"><option value="player">Mio</option><option value="bot">Avversario</option></select></label>
+    <label>Casella <select id="casella"><option>0</option><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
+    <label>Backend
+        <select id="backend">
+            <option value="">Come nel gioco</option>
+            <option value="webgl">Solo WebGL</option>
+            <option value="gsap">Solo GSAP</option>
+            <option value="css">Solo base (CSS)</option>
+        </select>
+    </label>
+    <label>Campo <select id="campo"></select></label>
+    <label><input type="checkbox" id="ciclo" checked> Ripeti</label>
+    <button id="lancia">Lancia</button>
+</div>
+<div id="stato">pronto</div>
+<div id="fps" style="position:fixed;left:8px;bottom:8px;z-index:99999;background:rgba(0,0,0,.7);padding:5px 9px;border-radius:8px;font:700 13px monospace;color:#7dff9a">-- fps</div>
+<div class="campo">
+    <div class="board" id="botFieldBoard">
+        <div class="riga" data-fila="st">
+            <div class="field-slot vuota"></div>
+            <div class="field-slot" data-owner="bot" data-type="st" data-index="0"></div><div class="field-slot" data-owner="bot" data-type="st" data-index="1"></div><div class="field-slot" data-owner="bot" data-type="st" data-index="2"></div><div class="field-slot" data-owner="bot" data-type="st" data-index="3"></div><div class="field-slot" data-owner="bot" data-type="st" data-index="4"></div>
+            <div class="field-slot" data-owner="bot" data-zone="graveyard"></div>
+        </div>
+        <div class="riga" data-fila="monster">
+            <div class="field-slot" data-owner="bot" data-zone="deck"></div>
+            <div class="field-slot" data-owner="bot" data-type="monster" data-index="0"></div><div class="field-slot" data-owner="bot" data-type="monster" data-index="1"></div><div class="field-slot" data-owner="bot" data-type="monster" data-index="2"></div><div class="field-slot" data-owner="bot" data-type="monster" data-index="3"></div><div class="field-slot" data-owner="bot" data-type="monster" data-index="4"></div>
+            <div class="field-slot vuota"></div>
+        </div>
+    </div>
+    <div class="board" id="playerFieldBoard">
+        <div class="riga" data-fila="monster">
+            <div class="field-slot vuota"></div>
+            <div class="field-slot" data-owner="player" data-type="monster" data-index="0"></div><div class="field-slot" data-owner="player" data-type="monster" data-index="1"></div><div class="field-slot" data-owner="player" data-type="monster" data-index="2"></div><div class="field-slot" data-owner="player" data-type="monster" data-index="3"></div><div class="field-slot" data-owner="player" data-type="monster" data-index="4"></div>
+            <div class="field-slot" data-owner="player" data-zone="deck"></div>
+        </div>
+        <div class="riga" data-fila="st">
+            <div class="field-slot" data-owner="player" data-zone="graveyard"></div>
+            <div class="field-slot" data-owner="player" data-type="st" data-index="0"></div><div class="field-slot" data-owner="player" data-type="st" data-index="1"></div><div class="field-slot" data-owner="player" data-type="st" data-index="2"></div><div class="field-slot" data-owner="player" data-type="st" data-index="3"></div><div class="field-slot" data-owner="player" data-type="st" data-index="4"></div>
+            <div class="field-slot vuota"></div>
+        </div>
+    </div>
+</div>
+
+<div id="botHand" style="position:fixed;left:50%;top:44px;width:30vw;height:6vh;transform:translateX(-50%);pointer-events:none"></div>
+<div id="playerHand" style="position:fixed;left:50%;bottom:8px;width:30vw;height:6vh;transform:translateX(-50%);pointer-events:none"></div>
+<script src="js/data/cards-data.generated.js"></script>
+<script src="js/data/cards-db.js"></script>
+<script src="js/data/arena-options.js"></script>
+<script src="js/ui/inclinazione.js"></script>
+<script src="js/ui/card-renderer.js"></script>
+<script src="js/audio/audio-manager.js"></script>
+<script src="js/audio/audio-library.js"></script>
+<script src="js/audio/sfx.js"></script>
+<script src="js/ui/video-quality.js"></script>
+<script src="js/ui/effects.js"></script>
+<script src="js/vendor/gsap.min.js"></script>
+<script src="js/ui/fx-gsap.js"></script>
+<script src="js/ui/fx-webgl.js"></script>
+<script src="js/ui/fx-webgl-scena.js"></script>
+<script src="js/ui/icone-posizione-webgl.js"></script>
+<script>
+    // Anteprima in ciclo degli effetti di carta. Il campo e' finto ma ha la stessa struttura che gli
+    // effetti cercano nel duello vero (#playerFieldBoard/#botFieldBoard con .field-slot[data-owner]
+    // [data-type][data-index]); le carte sono vere (createCardElement).
+    const el = (id) => document.getElementById(id);
+    const stato = (t) => { el('stato').textContent = t; };
+    window.addEventListener('error', (e) => stato('ERRORE: ' + e.message));
+
+    const mostri = cardDatabase.filter((c) => c.type === 'monster' && c.attack >= 1500).slice(0, 12);
+    const carta = (i, owner) => Object.assign({}, mostri[(i * 2 + (owner === 'bot' ? 1 : 0)) % mostri.length], { uid: owner + '-m' + i });
+    const quadrata = (owner, i) => document.querySelector(`#${owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard'} .field-slot[data-owner="${owner}"][data-type="monster"][data-index="${i}"]`);
+    const slotSt = (owner, i) => document.querySelector(`#${owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard'} .field-slot[data-owner="${owner}"][data-type="st"][data-index="${i}"]`);
+
+    function riempi() {
+        ['player', 'bot'].forEach((owner) => {
+            for (let i = 0; i < 5; i++) {
+                const s = quadrata(owner, i); s.innerHTML = '';
+                const c = carta(i, owner);
+                const e = createCardElement(c);
+                e.dataset.uid = c.uid;
+                s.appendChild(e);
+            }
+        });
+    }
+    const cartaDi = (owner, i) => carta(i, owner);
+    const tutti = () => ['player', 'bot'].flatMap((o) => [0, 1, 2, 3, 4].map((i) => ({ card: cartaDi(o, i), rect: quadrata(o, i).getBoundingClientRect() })));
+    const altro = (o) => (o === 'player' ? 'bot' : 'player');
+    const fine = () => {};
+
+    // [nome da mostrare, funzione che lancia l'effetto con (lato, casella)]
+    const EFFETTI = [
+        ['Buco Nero', (o, i) => FX.playDarkHoleVortex(tutti())],
+        ['Spade Rivelatrici', (o, i) => FX.playSwordsOfRevealingLight(o, (rm) => setTimeout(rm, 1200))],
+        ['Raigeki', (o, i) => FX.playRaigeki(o, fine)],
+        ['Forza dello Specchio', (o, i) => FX.playMirrorForce(altro(o), [0, 1, 2, 3, 4])],
+        ['Cilindro Magico', (o, i) => FX.playMagicCylinder(altro(o), i, o, 1800)],
+        ['Rinascita del Mostro', (o, i) => FX.playMonsterReborn(o, cartaDi(o, i), o, i, fine)],
+        ['Buco Trappola', (o, i) => FX.playTrapHole(o, i, cartaDi(o, i))],
+        ['Tributo Torrenziale', () => FX.playTorrentialTribute()],
+        ['Anello della Distruzione', (o, i) => FX.playRingOfDestruction(o, i, 1500)],
+        ['Tempesta Pesante', () => FX.playHeavyStorm(fine)],
+        ['Tifone dello Spazio Mistico', (o, i) => FX.playMysticalSpaceTyphoon(o, i, fine)],
+        ['Cambio di Cuore', (o, i) => FX.playMindControl(cartaDi(o, i), o, i, 'steal')],
+        ['Richiamo degli Infestati', (o, i) => FX.playCallOfTheHaunted(o, cartaDi(o, i), i, fine)],
+        ['Buco Trappola senza Fondo', (o, i) => FX.playBottomlessTrapHole(o, i, cartaDi(o, i))],
+        ['Armatura Sakuretsu', (o, i) => FX.playSakuretsuArmor(o, i)],
+        ['Giudizio Solenne', (o) => FX.playSolemnJudgment(o, 2000)],
+        ['Libro della Luna', (o, i) => FX.playBookOfMoon(o, i, cartaDi(o, i))],
+        ['Virus Distruggi-Carte', (o) => FX.playCrushCardVirus(o, [0, 2, 4])],
+        ['Nega Attacco', (o, i) => FX.playNegateAttack(altro(o), i)],
+        ['Capro Espiatorio', (o) => FX.playScapegoat(o, [1, 2, 3, 4])],
+        ['Scatola Mistica', (o, i) => FX.playMysticBox({ owner: altro(o), index: i, card: cartaDi(altro(o), i) }, { owner: o, index: (i + 1) % 5, card: cartaDi(o, (i + 1) % 5) })],
+        ['Rimozione del Limitatore', (o) => FX.playLimiterRemoval(o, [1, 3])],
+        ['Incantesimo Ombra', (o, i) => FX.playShadowSpell(o, i)],
+        ['Cerchio Ammaliante', (o, i) => FX.playSpellbindingCircle(o, i)],
+        ['Cappelli Magici', (o) => FX.playMagicalHats(o, [1, 2, 3])],
+        ['Moltiplicazione', (o, i) => FX.playMultiply(o, i, [0, 4])],
+        ['Controllore del Nemico', (o, i) => FX.playEnemyController(o, i, 'tribute')],
+        ['Buco Dimensionale', (o, i) => FX.playDimensionHole(o, i, cartaDi(o, i))],
+        ['Tornado di Polvere', (o, i) => FX.playDustTornado(o, i, fine)],
+        ['Piumino delle Arpie', (o) => FX.playHarpiesFeatherDuster(o, fine)],
+        ['Distruzione in battaglia', (o, i) => FX.playBattleDestroyEffect(quadrata(o, i).firstElementChild)],
+        ['Scontro epico', (o, i) => FX.playBattleClashEpic(quadrata(altro(o), i).firstElementChild, quadrata(o, i).firstElementChild)],
+        ['Danno', () => FX.playDamageEffect(1500)],
+        ['Pesca', (o, i) => FX.playDrawEffect(quadrata(o, i).firstElementChild)],
+        ['Moneta', () => FX.playCoinFlip(true)],
+        ['Dado', () => FX.playDiceRoll(5)],
+        ['Posizione: Attacco (sulla carta)', (o, i) => IconePosizione.sullaCarta(quadrata(o, i).firstElementChild, 'attack')],
+        ['Posizione: Difesa (sulla carta)', (o, i) => IconePosizione.sullaCarta(quadrata(o, i).firstElementChild, 'defense')],
+        ['Cerchio di Evocazione', (o, i) => FX.playSummonCircle(quadrata(o, i).firstElementChild)],
+        ['Onda d\'urto di Evocazione', (o, i) => FX.playSummonShockwave && FX.playSummonShockwave(quadrata(o, i).firstElementChild)]
+    ];
+
+    EFFETTI.forEach(([nome], i) => { const o = document.createElement('option'); o.value = i; o.textContent = nome; el('effetto').appendChild(o); });
+    ArenaOptions.FIELDS.forEach((f) => { const o = document.createElement('option'); o.value = f.file; o.textContent = f.nome; el('campo').appendChild(o); });
+    el('campo').value = 'dirigibileKaibaCorp.jpg';
+    const sfondo = () => { document.body.style.backgroundImage = `url('images/fields/${el('campo').value}')`; };
+
+    let timer = null;
+    function lancia() {
+        clearTimeout(timer);
+        window.FX_BACKEND = el('backend').value || undefined;
+        const [nome, fn] = EFFETTI[Number(el('effetto').value)];
+        riempi();
+        try {
+            fn(el('lato').value, Number(el('casella').value));
+            stato(`${nome} — backend: ${window.FX_BACKEND || 'auto'} (attivo: ${FX.activeBackend()})`);
+        } catch (e) { stato('ERRORE in ' + nome + ': ' + e.message); console.error(e); }
+        if (el('ciclo').checked) timer = setTimeout(lancia, 3600);
+    }
+    el('lancia').addEventListener('click', lancia);
+    ['effetto', 'lato', 'casella', 'backend'].forEach((id) => el(id).addEventListener('change', lancia));
+    el('campo').addEventListener('change', () => { sfondo(); lancia(); });
+    el('ciclo').addEventListener('change', () => { if (el('ciclo').checked) lancia(); else clearTimeout(timer); });
+    // Contatore di fps: serve a confrontare le versioni (Solo WebGL / Solo GSAP / Solo base) sul proprio dispositivo.
+    (function () { let n = 0, t0 = performance.now(), peggior = 0, l = t0; const tk = (now) => { n++; peggior = Math.max(peggior, now - l); l = now; if (now - t0 >= 1000) { el('fps').textContent = Math.round(n * 1000 / (now - t0)) + ' fps  (frame peggiore ' + Math.round(peggior) + ' ms)'; n = 0; peggior = 0; t0 = now; } requestAnimationFrame(tk); }; requestAnimationFrame(tk); })();
+    sfondo(); riempi();
+    window.addEventListener('load', () => setTimeout(() => { FX.refreshBackend && FX.refreshBackend(); lancia(); }, 700));
+</script>
+</body>
+</html>

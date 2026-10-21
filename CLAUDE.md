@@ -72,9 +72,10 @@ js/engine/   motore: duel-engine.js, actions.js, game-flow.js,
              effect-templates.js
 js/ai/       ai-controller.js (facciata) + ai-medium.js/ai-hard.js/ai-shared.js/bot.js
 js/ui/       card-renderer.js, effects.js, duel-cinematics.js, icon-library.js...
-             cartoteca-view.js (+ .css): LA Cartoteca, UNA sola implementazione montata sia da cartoteca.html sia dalla
-             vista del menu in index.html (stesso schema di SfideView/ShopUI). Una vista fusa NON va copiata a mano nella
-             pagina autonoma (o viceversa): estrarre un componente. Lo sorveglia cartoteca-funziona-in-entrambe-le-forme.spec.js.
+             cartoteca-view.js (+ .css): LA Cartoteca, UNA sola implementazione montata da cartoteca.html (pagina dedicata).
+             Dalla 1.4.47 index.html e' SOLO il menu: Cartoteca, Profilo, Impostazioni, Regole, Negozio, Sfide e Duello Libero
+             sono pagine dedicate raggiunte da link (niente piu' viste SPA/router: musica e loader restano coerenti, il menu e'
+             leggero). Una schermata nuova = una pagina nuova; la logica condivisa sta in componenti (js/ui/*-view.js).
 js/data/     cards-data.generated.js (NON editare a mano, vedi sotto), cards-db.js, deck/personaggi,
              challenges-db.js (catalogo Sfide, vedi sfide.html)
 js/challenges/  challenge-tracker.js — motore di tracking delle Sfide (recordProgress generico

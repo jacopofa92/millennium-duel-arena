@@ -101,7 +101,7 @@ module.exports = {
         }
 
         // --- L'interruttore nelle Impostazioni (pagina e vista del menu) ---
-        for (const [file, id, apri] of [['impostazioni.html', 'cardGyroToggleInput', null], ['index.html', 'impostazioni-cardGyroToggleInput', "showView('impostazioni')"]]) {
+        for (const [file, id, apri] of [['impostazioni.html', 'cardGyroToggleInput', null]]) {
             const c = await browser.newContext({ viewport: { width: 1280, height: 900 }, serviceWorkers: 'block' });
             await c.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
             const p = await c.newPage();

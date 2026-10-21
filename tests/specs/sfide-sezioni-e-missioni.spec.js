@@ -126,29 +126,8 @@ module.exports = {
             assert(orario.dice,
                 'Quando l\'orario non viene dal server va DETTO, come fa il Negozio, invece di fingere che sia tutto a posto');
 
-            // --- La vista Sfide del MENU è la stessa schermata ----------
-            // È quella che si apre davvero dal menu principale (index.html),
-            // e per mesi è stata una COPIA rimasta a prima delle missioni:
-            // sfide.html aveva le quattro sezioni, il menu no. Segnalato
-            // dall'utente ("la pagina sfide si vede ancora senza
-            // giornaliere, settimanali"). Ora entrambe montano
-            // js/ui/sfide-view.js, e questo controllo impedisce che una
-            // delle due torni a vivere di vita propria.
-            await page.addInitScript(() => {
-                try { sessionStorage.setItem('ygoSplashShown', '1'); } catch (e) { /* storage bloccato: pazienza */ }
-            });
-            await page.goto('file:///' + RADICE.replace(/\\/g, '/') + '/index.html');
-            await page.waitForFunction(() => typeof showView === 'function' && !!window.SaveManager, null, { timeout: 20000 });
-            await page.evaluate(() => { if (!SaveManager.hasSave()) SaveManager.createNew('Tester'); showView('sfide'); });
-            await page.waitForSelector('#view-sfide .sv-tab', { timeout: 20000 });
-            const menu = await page.evaluate(() => ({
-                schede: Array.from(document.querySelectorAll('#view-sfide .sv-tab')).map((b) => b.dataset.sezione),
-                riquadri: document.querySelectorAll('#view-sfide .sv-tile').length
-            }));
-            ['giornaliere', 'settimanali', 'generiche', 'storie'].forEach((nome) => {
-                assert(menu.schede.indexOf(nome) !== -1, `La vista Sfide del menu non ha la sezione "${nome}"`);
-            });
-            assert(menu.riquadri === 3, `Dal menu la prima sezione deve mostrare le 3 missioni di oggi (rilevati ${menu.riquadri})`);
+            // Il menu non ha piu' una copia della schermata: le Sfide sono UNA pagina (sfide.html, che monta SfideView).
+            assert(!require('fs').readFileSync(require('path').join(RADICE, 'index.html'), 'utf8').includes('id="view-sfide"'), 'index.html non deve contenere una seconda copia delle Sfide');
 
             assert(erroriPagina.length === 0, 'Errori JS in pagina: ' + erroriPagina.join(' | '));
         } finally {

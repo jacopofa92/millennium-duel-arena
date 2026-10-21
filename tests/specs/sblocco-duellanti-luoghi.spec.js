@@ -56,11 +56,12 @@ module.exports = {
             await page.waitForSelector('.sd-barra .sd-conta strong');
             const pagina = await page.evaluate(() => ({
                 conta: document.querySelector('.sd-conta strong').textContent,
+                attesi: String(CharacterUnlocks.INIZIALI.length + CharacterUnlocks.EXTRA_DISPONIBILI.length),
                 bonz: document.querySelector('.cube[data-id="bonz"] .cube-locked').textContent.replace(/\s+/g, ' ').trim(),
                 medaglia: (document.querySelector('.cube[data-id="yugiMuto"] .sd-medaglia') || {}).textContent || '',
                 bonzFrase: CharacterUnlocks.comeSbloccare(characterDatabase.find((c) => c.id === 'bonz'))
             }));
-            t.assert(pagina.conta === '2', `All'inizio sono sbloccati i due di partenza: ${pagina.conta}`);
+            t.assert(pagina.conta === pagina.attesi, `All'inizio sono sbloccati solo quelli di partenza (iniziali + extra disponibili = ${pagina.attesi}): ${pagina.conta}`);
             t.assert(/Storia:/.test(pagina.bonz), `Sulla carta di un bloccato c'è dove sbloccarlo, a cominciare dalla Storia: ${pagina.bonz}`);
             t.assert(/Regno dei Duellanti/.test(pagina.bonzFrase) && /Torneo Kaiba \(a sorteggio\)\.$/.test(pagina.bonzFrase),
                 `La frase completa elenca tutti i luoghi, il Torneo Kaiba per ultimo: ${pagina.bonzFrase}`);
@@ -74,16 +75,8 @@ module.exports = {
             const sezioni = await page.evaluate(() => [...document.querySelectorAll('.series-section:not([hidden])')].map((s) => s.dataset.serie));
             t.assert(sezioni.length === 1 && sezioni[0] === 'forbiddenMemories', `Il filtro per serie lascia solo quella serie: ${JSON.stringify(sezioni)}`);
 
-            // --- La vista del menu: stesso componente --------------------
-            await page.goto('file:///' + RADICE.replace(/\\/g, '/') + '/index.html');
-            await page.waitForFunction(() => typeof showView === 'function' && !!window.SaveManager, null, { timeout: 20000 });
-            await page.evaluate(() => showView('duello-libero'));
-            await page.waitForSelector('#libero-cubeGrid .sd-barra .sd-conta strong', { timeout: 20000 });
-            const vista = await page.evaluate(() => ({
-                conta: document.querySelector('#libero-cubeGrid .sd-conta strong').textContent,
-                bonz: (document.querySelector('#libero-cubeGrid .cube[data-id="bonz"] .cube-locked') || {}).textContent || ''
-            }));
-            t.assert(vista.conta === '2' && /Storia:/.test(vista.bonz), `La vista del menu usa la stessa griglia: ${JSON.stringify(vista)}`);
+            // Il menu non ha piu' una copia della schermata: Duello Libero e' UNA pagina (duello-libero.html).
+            t.assert(!require('fs').readFileSync(require('path').join(RADICE, 'index.html'), 'utf8').includes('id="view-duello-libero"'), 'index.html non deve contenere una seconda copia di Duello Libero');
             t.assert(errori.length === 0, `Nessun errore in pagina: ${JSON.stringify(errori)}`);
         } finally {
             await page.close();

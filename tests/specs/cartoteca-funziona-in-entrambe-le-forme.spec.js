@@ -77,7 +77,7 @@ module.exports = {
     name: 'Cartoteca: pagina autonoma e vista del menu si comportano allo stesso modo',
     standalone: true,
     async run({ browser, assert }) {
-        for (const forma of ['pagina', 'menu']) {
+        for (const forma of ['pagina']) {
             const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, serviceWorkers: 'block' });
             const page = await context.newPage();
             const errori = [];
@@ -86,10 +86,6 @@ module.exports = {
             try {
                 if (forma === 'pagina') {
                     await page.goto(URL_PAGINA, { waitUntil: 'load' });
-                } else {
-                    await page.goto(URL_MENU, { waitUntil: 'load' });
-                    await page.waitForFunction(() => typeof showView === 'function', null, { timeout: 15000 });
-                    await page.evaluate(() => showView('cartoteca'));
                 }
                 await verifica(page, assert, forma);
                 assert(errori.length === 0, `[${forma}] nessun errore di pagina: ${errori.slice(0, 3).join(' | ')}`);

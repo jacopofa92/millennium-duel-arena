@@ -12,7 +12,7 @@ const path = require('path');
 const { creaFintoCloud } = require('../helpers/finto-cloud.js');
 
 const RADICE = path.join(__dirname, '..', '..');
-const INDEX = 'file:///' + path.join(RADICE, 'index.html').replace(/\\/g, '/');
+const INDEX = 'file:///' + path.join(RADICE, 'profilo.html').replace(/\\/g, '/');
 const CHIAVE = 'ygoSalvataggioDivergente';
 
 const come = (testo, nome) => ({ name: nome || 'backup.json', mimeType: 'application/json', buffer: Buffer.from(testo) });
@@ -29,10 +29,10 @@ module.exports = {
         try {
             await page.goto(INDEX);
             await page.waitForFunction(() => !!(window.SaveManager && window.CloudSync));
-            await page.evaluate(() => { SaveManager.createNew('Jacopo'); SaveManager.addCurrency('credits', 500); localStorage.removeItem('ygoSalvataggioDivergente'); showView('profilo'); });
+            await page.evaluate(() => { SaveManager.createNew('Jacopo'); SaveManager.addCurrency('credits', 500); localStorage.removeItem('ygoSalvataggioDivergente'); });
             await page.waitForFunction(() => !!window.RecuperoCopia, null, { timeout: 15000 });
             const prima = await page.evaluate(() => SaveManager.load().currency.credits);
-            const input = page.locator('#profilo-importInput');
+            const input = page.locator('#importInput');
 
             // --- File rovinati: rifiutati, niente cambia ---
             const brutti = [
@@ -101,7 +101,7 @@ module.exports = {
             // --- Dopo "Fatto" il pulsante di recupero compare, e riporta indietro ---
             await page.locator('#recuperoCopia .rc-btn--ok').click();
             await page.waitForSelector('#recuperoCopia', { state: 'detached' });
-            const pulsante = page.locator('#profilo-recuperoCopiaMount .rc-apri');
+            const pulsante = page.locator('#recuperoCopiaMount .rc-apri');
             assert(await pulsante.isVisible(), 'dopo l\'importazione compare «Recupera le modifiche»');
         } finally {
             await ctx.close();

@@ -10,7 +10,7 @@ const path = require('path');
 const { creaFintoCloud } = require('../helpers/finto-cloud.js');
 
 const RADICE = path.join(__dirname, '..', '..');
-const INDEX = 'file:///' + path.join(RADICE, 'index.html').replace(/\\/g, '/');
+const INDEX = 'file:///' + path.join(RADICE, 'profilo.html').replace(/\\/g, '/');
 
 module.exports = {
     name: 'Sync: il Profilo dice se l\'ultimo salvataggio è di un altro dispositivo',
@@ -25,8 +25,7 @@ module.exports = {
         await collega(desktop);
         await collega(telefono);
         const aspettaMenu = (page) => page.waitForFunction(() => {
-            const m = document.getElementById('menuShell');
-            return m && getComputedStyle(m).display !== 'none';
+            return !!document.getElementById('cloudUltimo') && !!window.CloudSync;
         }, null, { timeout: 20000 });
         try {
             const tel = await telefono.newPage();
@@ -43,24 +42,15 @@ module.exports = {
             assert(dalTelefono && dalTelefono.questo === true, 'il telefono riconosce il proprio salvataggio');
 
             const desk = await desktop.newPage();
+            await desk.addInitScript(() => { window.__primoUltimo = null; new MutationObserver(() => { const e = document.getElementById('cloudUltimo'); if (e && e.textContent && !window.__primoUltimo) window.__primoUltimo = e.textContent; }).observe(document, { childList: true, subtree: true, characterData: true }); });
             await desk.goto(INDEX);
             await aspettaMenu(desk);
-            const dalDesktop = await desk.evaluate(() => CloudSync.ultimoDispositivo());
-            assert(dalDesktop && dalDesktop.questo === false && /Android/.test(dalDesktop.nome), 'il desktop vede un altro dispositivo: ' + JSON.stringify(dalDesktop));
-
             const locale = await desk.evaluate(() => JSON.stringify(SaveManager.load()));
             assert(!/ultimoDispositivo/.test(locale), 'il segno non entra nel salvataggio di gioco locale');
 
-            // La riga nel Profilo (vista del menu).
-            const testo = await desk.evaluate(async () => {
-                const el = document.getElementById('profilo-cloudUltimo');
-                if (!el) return null;
-                const cloudUi = window.CloudSync;
-                // Si forza il rendering come farebbe l'apertura della vista.
-                if (typeof showView === 'function') { try { showView('profilo'); } catch (e) { /* vista già aperta */ } }
-                await new Promise((r) => setTimeout(r, 1200));
-                return el.textContent;
-            });
+            // La riga nel Profilo: il PRIMO testo mostrato, prima che la pagina riallinei il salvataggio.
+            await desk.waitForFunction(() => !!window.__primoUltimo, null, { timeout: 20000 });
+            const testo = await desk.evaluate(() => window.__primoUltimo);
             assert(testo && /altro dispositivo/.test(testo) && /Android/.test(testo), 'il Profilo lo dice: ' + testo);
         } finally {
             await desktop.close();

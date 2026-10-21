@@ -13,7 +13,7 @@ const path = require('path');
 const { creaFintoCloud } = require('../helpers/finto-cloud.js');
 
 const RADICE = path.join(__dirname, '..', '..');
-const INDEX = 'file:///' + path.join(RADICE, 'index.html').replace(/\\/g, '/');
+const INDEX = 'file:///' + path.join(RADICE, 'profilo.html').replace(/\\/g, '/');
 const CHIAVE = 'ygoSalvataggioDivergente';
 
 module.exports = {
@@ -32,10 +32,10 @@ module.exports = {
             const prima = await page.evaluate(() => SaveManager.load().currency.credits);
 
             // --- Senza copia: nessun pulsante ---
-            await page.evaluate(() => { localStorage.removeItem('ygoSalvataggioDivergente'); showView('profilo'); });
+            await page.evaluate(() => { localStorage.removeItem('ygoSalvataggioDivergente'); });
             await page.waitForTimeout(800);
             const senza = await page.evaluate(() => {
-                const m = document.getElementById('profilo-recuperoCopiaMount');
+                const m = document.getElementById('recuperoCopiaMount');
                 return { esiste: !!m, visibile: !!m && getComputedStyle(m).display !== 'none' };
             });
             assert(senza.esiste && !senza.visibile, 'senza una copia di sicurezza il pulsante non si vede');
@@ -48,9 +48,9 @@ module.exports = {
                 copia.decks = copia.decks.concat([{ id: 'extra-prova', name: 'Prova', main: [], extra: [] }]);
                 copia.player.lastSaved = new Date(Date.now() - 3600 * 1000).toISOString();
                 localStorage.setItem(chiave, JSON.stringify({ conservataIl: new Date().toISOString(), data: copia }));
-                RecuperoCopia.monta(document.getElementById('profilo-recuperoCopiaMount'));
+                RecuperoCopia.monta(document.getElementById('recuperoCopiaMount'));
             }, CHIAVE);
-            const pulsante = page.locator('#profilo-recuperoCopiaMount .rc-apri');
+            const pulsante = page.locator('#recuperoCopiaMount .rc-apri');
             assert(await pulsante.isVisible(), 'con una copia il pulsante compare');
 
             // --- Il riquadro e i numeri ---
@@ -98,15 +98,15 @@ module.exports = {
             await page.evaluate(() => document.querySelector('#recuperoCopia .rc-azioni .rc-btn--ok').click && 0);
             await page.keyboard.press('Escape');
             await page.waitForSelector('#recuperoCopia', { state: 'detached' });
-            await page.evaluate(() => RecuperoCopia.monta(document.getElementById('profilo-recuperoCopiaMount')));
-            await page.locator('#profilo-recuperoCopiaMount .rc-apri').click();
+            await page.evaluate(() => RecuperoCopia.monta(document.getElementById('recuperoCopiaMount')));
+            await page.locator('#recuperoCopiaMount .rc-apri').click();
             const scarta = page.locator('#recuperoCopia .rc-btn--no');
             await scarta.click();
             assert(await page.evaluate((c) => !!localStorage.getItem(c), CHIAVE), 'il primo tocco non scarta');
             await scarta.click();
             await page.waitForSelector('#recuperoCopia', { state: 'detached' });
             assert(await page.evaluate((c) => !localStorage.getItem(c), CHIAVE), 'la copia è stata scartata');
-            const nascosto = await page.evaluate(() => getComputedStyle(document.getElementById('profilo-recuperoCopiaMount')).display === 'none');
+            const nascosto = await page.evaluate(() => getComputedStyle(document.getElementById('recuperoCopiaMount')).display === 'none');
             assert(nascosto, 'dopo lo scarto il pulsante sparisce');
         } finally {
             await ctx.close();

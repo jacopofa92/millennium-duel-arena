@@ -1,3 +1,4 @@
+const fs = require('fs');
 // La parte alta del Profilo (js/ui/profile-hero.js), condivisa da
 // profilo.html e dalla vista Profilo del menu (index.html):
 //  - c'è in ENTRAMBE le copie (le due sono già andate alla deriva in
@@ -61,13 +62,8 @@ module.exports = {
             await page.locator('.phr-mazzo').nth(1).click();
             t.assert(await page.evaluate(() => SaveManager.getActiveDeckId()) === 'secondo-mazzo', 'Un tocco su un mazzo lo rende quello attivo');
 
-            // La stessa testata nella vista del menu.
-            await page.goto('file:///' + RADICE.replace(/\\/g, '/') + '/index.html');
-            await page.waitForFunction(() => typeof showView === 'function' && !!window.SaveManager, null, { timeout: 20000 });
-            await page.evaluate(() => showView('profilo'));
-            await page.waitForSelector('#profilo-heroMount .phr-nome', { timeout: 15000 });
-            t.assert(await page.evaluate(() => document.querySelector('#profilo-heroMount .phr-nome').textContent) === 'Seto',
-                'La vista Profilo del menu deve mostrare la stessa testata');
+            // Il Profilo e' UNA sola pagina (profilo.html): il menu non ne ha piu' una copia come vista.
+            t.assert(!fs.readFileSync(path.join(RADICE, 'index.html'), 'utf8').includes('id="view-profilo"'), 'index.html non deve contenere una seconda copia del Profilo');
             t.assert(errori.length === 0, `Nessun errore in pagina: ${JSON.stringify(errori)}`);
         } finally {
             await page.close();
