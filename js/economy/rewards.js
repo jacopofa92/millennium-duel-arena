@@ -412,6 +412,11 @@
             ChallengeTracker.recordProgress('completeTournament', { tournamentId: tournamentId, difficulty: difficulty });
         }
         if (window.CardAcquisition) rewards.push(...CardAcquisition.onTournamentWin(tournamentId, difficulty));
+        // A Difficile ogni torneo completato regala UNA illustrazione alternativa a caso dal suo bacino
+        // (js/data/artwork-alternativi.js): ad ogni giro, finche' il bacino non e' finito.
+        if (difficulty === 'Difficile' && window.ArtworkAlternativi) {
+            rewards.push(...ArtworkAlternativi.premiaDaFonte('torneo:' + tournamentId, `Torneo vinto a difficoltà Difficile`));
+        }
         return rewards;
     }
 
@@ -491,24 +496,7 @@
             if (!window.CardAcquisition || !CardAcquisition.unlockPack(packId, def.id)) return;
             rewards.push({ amount: 1, icon: '🔓', nome: 'pacchetto sbloccato', rule: `${packId} — Sfida completata: ${def.label}` });
         });
-        // Illustrazioni alternative di carte: le regala il CATALOGO (sblocco = id di questa sfida),
-        // non il campo `reward` — cambiare dove si vince un'illustrazione non tocca le sfide.
-        // Una voce per ogni illustrazione davvero nuova, cosi' il giocatore sa cosa ha ottenuto.
-        artworksDellaSfida(def).forEach((a) => {
-            if (!SaveManager.unlockArtwork(a.cardId, a.n)) return;
-            rewards.push({ amount: 1, icon: '🖼️', nome: `illustrazione alternativa — ${nomeCarta(a.cardId)}`, rule: `Sfida completata — ${def.label}` });
-        });
         return rewards;
-    }
-
-    function nomeCarta(cardId) {
-        const carta = (window.cardDatabase || []).find((c) => c.id === cardId);
-        return carta ? carta.name : `Carta #${cardId}`;
-    }
-
-    /** [{ cardId, n }] regalate da una Sfida, secondo js/data/artwork-alternativi.js (vuoto se la pagina non lo carica). */
-    function artworksDellaSfida(def) {
-        return def && def.id && window.ArtworkAlternativi ? ArtworkAlternativi.dellaSfida(def.id) : [];
     }
 
     /**
@@ -527,7 +515,6 @@
             .map((currency) => voce(currency, def.reward[currency], `Premio di "${def.label}"`));
         (def.reward.cards || []).forEach((entry) => out.push({ cardId: entry.id || entry.cardId, amount: entry.qty || 1, icon: '🃏', nome: entry.nome || `Carta #${entry.id || entry.cardId}`, rule: `Premio di "${def.label}"` }));
         (def.reward.unlockPacks || []).forEach((packId) => out.push({ amount: 1, icon: '🔓', nome: 'pacchetto sbloccato', rule: `${packId} — Premio di "${def.label}"` }));
-        artworksDellaSfida(def).forEach((a) => out.push({ amount: 1, icon: '🖼️', nome: `illustrazione alternativa — ${nomeCarta(a.cardId)}`, rule: `Premio di "${def.label}"` }));
         return out;
     }
 

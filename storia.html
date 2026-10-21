@@ -61,6 +61,9 @@
        torni ad `auto` perché il figlio non sappia più quanto è alto e la
        mappa collassi. */
     body { display: flex; flex-direction: column; min-height: 100dvh; }
+    /* La mappa riempie lo schermo: il margine in fondo per il pulsante Indietro (topbar.css) le toglierebbe
+       altezza. Qui Indietro resta semplicemente sopra l'angolo della mappa. */
+    body.tb-indietro-basso { padding-bottom: 0; }
     .main {
         flex: 1;
         display: flex;

@@ -2,9 +2,10 @@
 // =====================================================================
 // Quattro cose da sorvegliare, nessuna delle quali dà un errore se si rompe:
 //   - il catalogo: ogni file esiste (originale escluso: sarebbe un doppione), ogni `sblocco` è
-//     una Sfida vera, e nessuna illustrazione è citata due volte;
-//   - lo sblocco: una Sfida completata sblocca le sue illustrazioni UNA volta sola, e lo dice
-//     (voce di premio con spiegazione); una Sfida già completata prima vale lo stesso;
+//     una fonte conosciuta con la sua frase, e nessuna illustrazione è citata due volte;
+//   - lo sblocco: i BACINI (Torre, Tornei a Difficile) danno UNA illustrazione a caso alla volta
+//     finché non finiscono, e lo dicono (voce di premio con spiegazione); le TAPPE FISSE della
+//     Storia (Memorie Proibite, Difficile) la danno una volta sola, e solo a Difficile;
 //   - la scelta: una bloccata non si può scegliere, una sbloccata cambia il percorso che
 //     getCardImagePath/getCardThumbPath danno OVUNQUE, e si può tornare all'originale;
 //   - la Cartoteca: il bollino compare, la scheda mostra la fila, una bloccata si vede in
@@ -27,10 +28,9 @@ module.exports = {
         try {
             await page.goto(URL_PAGINA);
             await page.waitForFunction(() => window.ArtworkAlternativi && window.SaveManager, null, { timeout: 20000 });
-            // La Cartoteca non carica il catalogo delle Sfide ne' i premi (non le servono): qui si'.
-            await page.addScriptTag({ path: path.join(RADICE, 'js', 'data', 'challenges-db.js') });
+            // La Cartoteca non carica i premi (non le servono): qui si'.
             await page.addScriptTag({ path: path.join(RADICE, 'js', 'economy', 'rewards.js') });
-            await page.waitForFunction(() => window.Rewards && window.challengesDatabase, null, { timeout: 10000 });
+            await page.waitForFunction(() => window.Rewards, null, { timeout: 10000 });
             await page.evaluate(() => {
                 if (!SaveManager.hasSave()) SaveManager.createNew('Tester');
                 // Il giocatore vero, non l'amministratore (che le ha tutte).
@@ -41,7 +41,6 @@ module.exports = {
             // --- 1) Il catalogo ----------------------------------------------
             const cat = await page.evaluate(() => {
                 const AA = ArtworkAlternativi;
-                const idsSfide = new Set(challengesDatabase.map((c) => c.id));
                 const problemi = [];
                 const viste = new Set();
                 const file = [];
@@ -49,7 +48,6 @@ module.exports = {
                     if (!cardDatabase.some((c) => c.id === cardId)) problemi.push(`carta ${cardId} non esiste`);
                     AA.elenco(cardId).forEach((v, i) => {
                         if (v.n !== i + 1) problemi.push(`${cardId}: i numeri non sono 1..N`);
-                        if (!idsSfide.has(v.sblocco)) problemi.push(`${cardId}:${v.n} sblocco "${v.sblocco}" non e' una Sfida`);
                         if (/non disponibile/.test(v.comeSiSblocca)) problemi.push(`${cardId}:${v.n} senza la frase che dice come si sblocca`);
                         const k = cardId + ':' + v.n;
                         if (viste.has(k)) problemi.push('doppione ' + k);
@@ -64,7 +62,7 @@ module.exports = {
             const mancanti = cat.file.filter((f) => !fs.existsSync(path.join(RADICE, f)));
             t.assert(mancanti.length === 0, `File di illustrazione mancanti: ${mancanti.slice(0, 5).join(', ')}`);
 
-            // --- 2) Lo sblocco dalle Sfide ------------------------------------
+            // --- 2) Lo sblocco: bacini a sorteggio e tappe fisse ------------------
             const prima = await page.evaluate(() => {
                 const AA = ArtworkAlternativi;
                 return {
@@ -76,36 +74,60 @@ module.exports = {
             t.assert(prima.sbloccate === 0 && prima.percorso === null, 'Un salvataggio nuovo non ha illustrazioni sbloccate');
             t.assert(prima.sceltaBloccata === false, 'Una illustrazione bloccata non si puo\' scegliere');
 
-            const voceDrago = await page.evaluate(() => ArtworkAlternativi.elenco(1)[0]);
-            const sfidaId = voceDrago.sblocco;
-            const premio = await page.evaluate((id) => {
-                const def = challengesDatabase.find((c) => c.id === id);
-                const r1 = Rewards.forChallenge(def).filter((v) => v.icon === '🖼️');
-                const r2 = Rewards.forChallenge(def).filter((v) => v.icon === '🖼️');
-                return {
-                    attese: ArtworkAlternativi.dellaSfida(id).length,
-                    prima: r1.map((v) => v.nome + ' | ' + v.rule), seconda: r2.length,
-                    anteprima: Rewards.previewChallenge(def).filter((v) => v.icon === '🖼️').length
-                };
-            }, sfidaId);
-            t.assert(premio.attese > 0 && premio.prima.length === premio.attese,
-                `La Sfida deve elencare tra i premi OGNI illustrazione che sblocca (attese ${premio.attese}, voci ${premio.prima.length})`);
-            t.assert(/illustrazione alternativa/.test(premio.prima[0]) && /Sfida completata/.test(premio.prima[0]),
-                'Ogni voce di premio deve dire cosa e perche\': ' + premio.prima[0]);
-            t.assert(premio.seconda === 0, 'Riscuotere di nuovo non deve rielencare illustrazioni gia\' sbloccate');
-            t.assert(premio.anteprima === premio.attese, 'La pagina Sfide deve mostrare il premio PRIMA di vincerlo');
-            t.assert(await page.evaluate(() => ArtworkAlternativi.sbloccata(1, 1)), 'Dopo la Sfida la prima alternativa del Drago Bianco e\' sbloccata');
-
-            // Una Sfida completata PRIMA (senza passare dal premio) vale lo stesso.
-            const retroattivo = await page.evaluate(() => {
-                const altra = ArtworkAlternativi.elenco(1).find((v) => !v.sbloccata);
-                const prima = ArtworkAlternativi.sbloccata(1, altra.n);
-                SaveManager.setChallengeProgress(altra.sblocco, { count: 1, completed: true, completedAt: new Date().toISOString() });
-                // lo stato e' in cache: lo invalida il salvataggio (SaveManager.onSaved)
-                return { prima, dopo: ArtworkAlternativi.sbloccata(1, altra.n) };
+            // BACINO: ogni giro dell'impresa regala UNA illustrazione, mai la stessa, finche' il bacino non e' finito.
+            const bacino = await page.evaluate(() => {
+                const AA = ArtworkAlternativi;
+                const fonte = 'torneo:duelistKingdom';
+                const totale = AA.vociDi(fonte).length;
+                const visti = new Set();
+                const giri = [];
+                for (let i = 0; i < totale; i++) {
+                    const voci = AA.premiaDaFonte(fonte, 'prova');
+                    const vere = voci.filter((v) => v.cardId);
+                    giri.push({ voci: voci.length, vere: vere.length, restanti: AA.restanti(fonte), rule: vere[0] && vere[0].rule, nome: vere[0] && vere[0].nome });
+                    vere.forEach((v) => visti.add(v.cardId + ':' + AA.vociDi(fonte).length));
+                }
+                const oltre = AA.premiaDaFonte(fonte, 'prova');
+                return { totale, giri, oltre: oltre.map((v) => ({ nota: !!v.nota, cardId: v.cardId || null, rule: v.rule })), restantiFinali: AA.restanti(fonte) };
             });
-            t.assert(retroattivo.prima === false && retroattivo.dopo === true,
-                'Una Sfida gia\' completata deve sbloccare le sue illustrazioni anche senza averle riscosse');
+            t.assert(bacino.totale >= 8, `Il bacino del Regno dei Duellanti deve avere un po' di illustrazioni (${bacino.totale})`);
+            t.assert(bacino.giri.every((g, i) => g.vere === 1 && g.voci === 1 && g.restanti === bacino.totale - 1 - i),
+                'Ogni giro deve dare ESATTAMENTE una illustrazione nuova e il bacino scendere di uno: ' + JSON.stringify(bacino.giri.slice(0, 3)));
+            t.assert(/illustrazione alternativa/.test(bacino.giri[0].nome) && !!bacino.giri[0].rule, 'Ogni voce di premio deve dire cosa e perche\': ' + JSON.stringify(bacino.giri[0]));
+            t.assert(bacino.restantiFinali === 0 && bacino.oltre.length === 1 && bacino.oltre[0].nota && !bacino.oltre[0].cardId,
+                'A bacino finito il giro non regala nulla ma lo DICE: ' + JSON.stringify(bacino.oltre));
+
+            // Il premio del torneo passa da Rewards.forTournament: solo a Difficile, e solo per quel torneo.
+            const torneo = await page.evaluate(() => {
+                const contaArte = (voci) => voci.filter((v) => v.icon === '🖼\uFE0F' && v.cardId).length;
+                const medio = contaArte(Rewards.forTournament('battleCity', false, 'Medio'));
+                const facile = contaArte(Rewards.forTournament('battleCity', false, 'Facile'));
+                const difficile = contaArte(Rewards.forTournament('battleCity', false, 'Difficile'));
+                return { medio, facile, difficile, restanti: ArtworkAlternativi.restanti('torneo:battleCity'), totale: ArtworkAlternativi.vociDi('torneo:battleCity').length };
+            });
+            t.assert(torneo.medio === 0 && torneo.facile === 0, 'Solo a Difficile un torneo regala illustrazioni');
+            t.assert(torneo.difficile === 1 && torneo.restanti === torneo.totale - 1, 'A Difficile un torneo completato regala UNA illustrazione del SUO bacino: ' + JSON.stringify(torneo));
+
+            // TAPPA FISSA: Memorie Proibite, capitolo "L'Ultimo Duello", solo a Difficile, una volta sola.
+            const tappa = await page.evaluate(() => {
+                const AA = ArtworkAlternativi;
+                const nome = (voci) => voci.map((v) => v.cardId + ':' + v.rule).join('|');
+                const facile = AA.premiaStoria('forbiddenMemories', 'facile', ['fm-nitemare']).length;
+                const normale = AA.premiaStoria('forbiddenMemories', 'normale', ['fm-nitemare']).length;
+                const animeDifficile = AA.premiaStoria('anime', 'difficile', ['anime-prologo', 'fm-nitemare']).length;
+                const altroCapitolo = AA.premiaStoria('forbiddenMemories', 'difficile', ['fm-principe']).length;
+                const prima = AA.premiaStoria('forbiddenMemories', 'difficile', ['fm-nitemare']);
+                const seconda = AA.premiaStoria('forbiddenMemories', 'difficile', ['fm-nitemare']).length;
+                return { facile, normale, animeDifficile, altroCapitolo, prima: prima.length, nome: nome(prima), seconda, sbloccata: AA.sbloccata(1, 1) };
+            });
+            t.assert(tappa.facile === 0 && tappa.normale === 0 && tappa.animeDifficile === 0 && tappa.altroCapitolo === 0,
+                'Le tappe fisse valgono solo per Memorie Proibite, a Difficile, e per il loro capitolo: ' + JSON.stringify(tappa));
+            t.assert(tappa.prima === 1 && /^1:/.test(tappa.nome) && tappa.seconda === 0 && tappa.sbloccata,
+                'La tappa fissa regala quella illustrazione, una volta sola: ' + JSON.stringify(tappa));
+
+            // Le due fonti della Torre (stesso meccanismo, fonti diverse).
+            const torre = await page.evaluate(() => ['torre-piano-15', 'torre-conquistata'].map((f) => ({ f, totale: ArtworkAlternativi.vociDi(f).length, dato: ArtworkAlternativi.premiaDaFonte(f, 'prova').filter((v) => v.cardId).length })));
+            t.assert(torre.every((r) => r.totale >= 8 && r.dato === 1), 'La Torre ha due bacini, ognuno dà una illustrazione per volta: ' + JSON.stringify(torre));
 
             // --- 3) La scelta ---------------------------------------------------
             const scelta = await page.evaluate(() => {

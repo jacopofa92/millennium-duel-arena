@@ -15,6 +15,7 @@ declare var AI_DEBUG: any;
 declare var AI_HARD: any;
 declare var AI_MEDIUM: any;
 declare var ArenaOptions: any;
+declare var ArtworkAlternativi: any;
 declare var AudioLibrary: any;
 declare var AUTH_GATE_SKIP: any;
 declare var AutoSync: any;

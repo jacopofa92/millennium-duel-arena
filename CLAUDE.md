@@ -146,10 +146,14 @@ perde al prossimo build.
 - **Illustrazioni alternative delle carte (2026-10-21)**: 43 carte hanno 73-74 illustrazioni ufficiali
   in più (`images/cards/alt/<id>-<n>.jpg` + miniature in `alt/thumbs/`, catalogo in
   `js/data/artwork-alternativi.js`, cernita in `docs/planning/ARTWORK_ALTERNATIVI_CERNITA.md`).
-  Ogni illustrazione ha uno `sblocco` = id di una Sfida a difficoltà Difficile (Storia Anime/Memorie
-  Proibite, i tre Tornei, Torre piano 15 e conquista); `Rewards.forChallenge` le sblocca e le elenca nel
-  premio, e una Sfida GIÀ completata vale lo stesso (lo stato si legge da `save.challenges`). Per cambiare
-  dove si vince una illustrazione si cambia solo il suo `sblocco`. La scelta è per carta
+  Ogni illustrazione ha uno `sblocco` = la FONTE che la regala, di due tipi (scelti dall'utente):
+  **bacino a sorteggio** (`torre-piano-15`, `torre-conquistata`, `torneo:<id>` a Difficile: ad ogni
+  riuscita si vince UNA sola illustrazione a caso fra quelle ancora da sbloccare, finché il bacino non è
+  vuoto; `ArtworkAlternativi.premiaDaFonte`, chiamata da `Rewards.forTournament` e da `chiudi()` di
+  `js/modes/torre-mode.js`) e **tappa fissa** (`storia:<campagna>:<capitolo>`: oggi 5 capitoli di Memorie
+  Proibite a Difficile, una volta sola; `premiaStoria`, chiamata da `avanza` in story-progress.js; il Regno
+  delle Ombre non ne dà di proposito). Nessuna Sfida le regala più (provato e tolto). Per spostare una
+  illustrazione si cambia solo il suo `sblocco`. La scelta è per carta
   (`save.artworks`, `ArtworkAlternativi.scegli`) e vale ovunque perché `getCardImagePath`/`getCardThumbPath`
   la leggono: **ogni pagina che carica `card-renderer.js` deve caricare anche `artwork-alternativi.js`**
   (lo sorveglia `guardrail-pagine-con-carte`). UI: bollino in alto a destra sulla tessera (solo dove c'è

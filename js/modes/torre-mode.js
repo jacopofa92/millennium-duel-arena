@@ -82,15 +82,23 @@
             if (r.boss) ChallengeTracker.recordProgress('torreBoss', { piano: r.piano });
             if (r.esito === 'conquistata') ChallengeTracker.recordProgress('torreCompleted', {});
         }
+        // Illustrazioni alternative (js/data/artwork-alternativi.js): ad OGNI scalata che supera il piano 15,
+        // e ad ogni conquista, se ne vince UNA dal bacino di quella fonte, finche' il bacino non e' finito.
+        /** @type {(fonte: string, perche: string) => VoceEsito[]} */
+        const arte = (fonte, perche) => (window.ArtworkAlternativi ? ArtworkAlternativi.premiaDaFonte(fonte, perche) : []);
         if (r.esito === 'conquistata') {
-            return [{ nota: true, icon: '🗼', rule: `Torre conquistata! Hai superato tutti i ${Torre.piani()} piani in una sola scalata.` }];
+            /** @type {VoceEsito[]} */
+            const voci = [{ nota: true, icon: '🗼', rule: `Torre conquistata! Hai superato tutti i ${Torre.piani()} piani in una sola scalata.` }];
+            return voci.concat(arte('torre-conquistata', 'Torre conquistata'));
         }
         if (r.esito === 'salito') {
-            return [{
+            /** @type {VoceEsito[]} */
+            const voci = [{
                 nota: true,
                 icon: '🗼',
                 rule: `Piano ${r.piano} superato: al piano ${r.piano + 1} riparti con ${Math.max(1, lp)} Life Point. Prima di salire scegli fra Ristoro e un oggetto.`
             }];
+            return voci.concat(r.piano === 15 ? arte('torre-piano-15', 'Piano 15 della Torre superato') : []);
         }
         return [{
             nota: true,

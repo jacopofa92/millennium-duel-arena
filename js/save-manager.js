@@ -984,12 +984,7 @@
     function getArtworkState() {
         const save = load();
         const a = (save && save.artworks) || {};
-        // `completate`: le Sfide gia' vinte. Un'illustrazione si considera sbloccata anche se la sua Sfida e'
-        // stata completata PRIMA che esistesse il premio (o su una pagina che non carica il catalogo): senza
-        // questo, chi ha gia' vinto la Storia a Difficile non vedrebbe mai le illustrazioni che gli spettano.
-        const completate = {};
-        Object.keys((save && save.challenges) || {}).forEach((id) => { if (save.challenges[id] && save.challenges[id].completed) completate[id] = true; });
-        return { sbloccati: Object.assign({}, a.sbloccati), scelti: Object.assign({}, a.scelti), completate: completate };
+        return { sbloccati: Object.assign({}, a.sbloccati), scelti: Object.assign({}, a.scelti) };
     }
 
     /** Sblocca un'illustrazione. Torna true solo se era DAVVERO nuova (chi premia lo mostra una volta sola). */

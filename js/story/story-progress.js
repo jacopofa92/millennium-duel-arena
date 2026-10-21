@@ -610,6 +610,16 @@
             const capitoli = capitoliCompletati(tappe, nuovo.completate);
             CardAcquisition.onStoryProgress(campaignId, getLivelloAttivo(campaignId), capitoli, nuovo.finita);
         }
+        // Illustrazioni alternative a TAPPA FISSA (js/data/artwork-alternativi.js): oggi solo Memorie
+        // Proibite a Difficile, un capitolo ciascuna. Una volta sola; va annunciata, altrimenti il
+        // giocatore non saprebbe da dove arriva (vedi challenge-banner.js).
+        if (window.ArtworkAlternativi) {
+            const livelloNome = getLivelloAttivo(campaignId);
+            const voci = ArtworkAlternativi.premiaStoria(campaignId, livelloNome, capitoliCompletati(tappe, nuovo.completate));
+            if (voci.length && window.ChallengeTracker && typeof ChallengeTracker.announce === 'function') {
+                ChallengeTracker.announce({ icon: '🖼️', label: 'Nuova illustrazione!', description: 'Premio della Storia a Difficile' }, voci);
+            }
+        }
         // Finire la storia a Facile apre gli altri livelli, per sempre.
         if (nuovo.finita && getLivelloAttivo(campaignId) === 'facile') segnaSblocco(campaignId);
         // Le Sfide delle storie (sezione 'storia' in

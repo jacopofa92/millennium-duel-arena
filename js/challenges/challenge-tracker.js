@@ -322,6 +322,8 @@
 
     window.ChallengeTracker = {
         recordProgress: recordProgress,
+        /** Annuncia un premio che non viene da una Sfida (es. una illustrazione di una Storia): { icon, label, description } + le voci. */
+        announce: announceCompletion,
         drainPendingBanners: drainPendingBanners,
         getAllWithProgress: getAllWithProgress,
         getSezioni: getSezioni,

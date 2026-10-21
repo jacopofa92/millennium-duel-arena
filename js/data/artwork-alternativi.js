@@ -7,15 +7,21 @@
  * catalogo qui sotto) con la miniatura in images/cards/alt/thumbs/<id>-<n>.webp
  * (scripts/build-ui-thumbnails.js, lavoro 'carte-alt').
  *
- * COME SI SBLOCCANO. Ogni illustrazione dichiara `sblocco`: l'id di una SFIDA
- * (js/data/challenges-db.js). Completandola, Rewards.forChallenge sblocca tutte
- * le illustrazioni che la nominano e le elenca fra i premi, con la loro
- * spiegazione. Vale anche all'indietro: una Sfida gia' completata prima che
- * questo catalogo esistesse sblocca comunque le sue illustrazioni (si legge
- * dal salvataggio, vedi `sbloccata`). Le fonti sono imprese a difficolta' Difficile: la Storia
- * (Anime, Memorie Proibite), i tre Tornei e la Torre dei Duellanti. Per
- * cambiare dove si vince un'illustrazione basta cambiare il suo `sblocco`:
- * nient'altro dipende da quel valore.
+ * COME SI VINCONO. Ogni illustrazione dichiara `sblocco`: la FONTE che la regala.
+ * Due tipi di fonte, scelti dall'utente (2026-10-21):
+ *  - BACINO A SORTEGGIO (`torre-piano-15`, `torre-conquistata`,
+ *    `torneo:<id>`): le illustrazioni che nominano quella fonte sono il suo
+ *    "bacino". Ogni volta che l'impresa riesce (Torre: superare il piano 15 o
+ *    conquistarla, a ogni scalata; Tornei: completarne uno a Difficile, a ogni
+ *    giro) se ne vince UNA SOLA, a caso fra quelle ancora da sbloccare. Finito
+ *    il bacino non si vince piu' niente da quella fonte. Le chiamano
+ *    Rewards.forTournament e chiudi() di js/modes/torre-mode.js, via
+ *    `premiaDaFonte`.
+ *  - TAPPA FISSA (`storia:<campagna>:<capitolo>`): l'illustrazione si vince, sempre
+ *    quella, alla prima volta che si completa quel capitolo al livello Difficile.
+ *    Oggi solo Memorie Proibite; il Regno delle Ombre (anime) non ne da' di proposito.
+ *    Le assegna js/story/story-progress.js (avanza), via `premiaStoria`.
+ * Per spostare un'illustrazione basta cambiarne il `sblocco`: nient'altro dipende da quel valore.
  *
  * L'amministratore le ha tutte (come per le valute, calcolato alla lettura:
  * non si scrive nulla nel salvataggio).
@@ -38,67 +44,68 @@
 
     /** id carta -> elenco delle illustrazioni alternative, nell'ordine di n. */
     const CATALOGO = {
-    1: [{ n: 1, sblocco: 'torre-piano-15' }, { n: 2, sblocco: 'tournament-duelistKingdom-difficile' }, { n: 3, sblocco: 'storia-anime-difficile' }, { n: 4, sblocco: 'tournament-battleCity-difficile' }, { n: 5, sblocco: 'storia-forbiddenMemories-difficile' }, { n: 6, sblocco: 'tournament-kaiba-difficile' }, { n: 7, sblocco: 'torre-conquistata' }], // Drago Bianco Occhi Blu
-    2: [{ n: 1, sblocco: 'tournament-duelistKingdom-difficile' }, { n: 2, sblocco: 'storia-anime-difficile' }, { n: 3, sblocco: 'tournament-battleCity-difficile' }, { n: 4, sblocco: 'storia-forbiddenMemories-difficile' }, { n: 5, sblocco: 'tournament-kaiba-difficile' }, { n: 6, sblocco: 'torre-conquistata' }, { n: 7, sblocco: 'torre-piano-15' }, { n: 8, sblocco: 'tournament-duelistKingdom-difficile' }], // Mago Nero
-    4: [{ n: 1, sblocco: 'storia-anime-difficile' }, { n: 2, sblocco: 'tournament-battleCity-difficile' }], // Guardiano Celtico
-    12: [{ n: 1, sblocco: 'tournament-battleCity-difficile' }, { n: 2, sblocco: 'storia-forbiddenMemories-difficile' }, { n: 3, sblocco: 'tournament-kaiba-difficile' }, { n: 4, sblocco: 'torre-conquistata' }, { n: 5, sblocco: 'torre-piano-15' }], // Drago Nero Occhi Rossi
-    13: [{ n: 1, sblocco: 'storia-forbiddenMemories-difficile' }, { n: 2, sblocco: 'tournament-kaiba-difficile' }, { n: 3, sblocco: 'torre-conquistata' }], // Teschio Evocato
-    14: [{ n: 1, sblocco: 'tournament-kaiba-difficile' }], // Gaia il Cavaliere
-    17: [{ n: 1, sblocco: 'torre-conquistata' }], // Jinzo
-    20: [{ n: 1, sblocco: 'torre-piano-15' }], // Combattente delle Lame
-    22: [{ n: 1, sblocco: 'tournament-duelistKingdom-difficile' }, { n: 2, sblocco: 'storia-anime-difficile' }], // Kuriboh
-    24: [{ n: 1, sblocco: 'storia-anime-difficile' }], // Elfi Gemelli
-    30: [{ n: 1, sblocco: 'tournament-battleCity-difficile' }, { n: 2, sblocco: 'storia-forbiddenMemories-difficile' }], // Obelisk il Tormentatore
-    31: [{ n: 1, sblocco: 'storia-forbiddenMemories-difficile' }, { n: 2, sblocco: 'tournament-kaiba-difficile' }], // Slifer il Drago del Cielo
-    58: [{ n: 1, sblocco: 'tournament-kaiba-difficile' }], // Spadaccino di Fuoco
-    104: [{ n: 1, sblocco: 'torre-conquistata' }], // Drago Revolver
-    165: [{ n: 1, sblocco: 'torre-piano-15' }], // Virus Distruggi-Carte
-    188: [{ n: 1, sblocco: 'tournament-duelistKingdom-difficile' }, { n: 2, sblocco: 'storia-anime-difficile' }, { n: 3, sblocco: 'tournament-battleCity-difficile' }, { n: 4, sblocco: 'storia-forbiddenMemories-difficile' }, { n: 5, sblocco: 'tournament-kaiba-difficile' }], // Ragazza Maga Nera
-    189: [{ n: 1, sblocco: 'storia-anime-difficile' }, { n: 2, sblocco: 'tournament-battleCity-difficile' }], // Paladino Oscuro
-    251: [{ n: 1, sblocco: 'tournament-battleCity-difficile' }, { n: 2, sblocco: 'storia-forbiddenMemories-difficile' }], // Sepoltura Sciocca
-    267: [{ n: 1, sblocco: 'storia-forbiddenMemories-difficile' }], // Gilford il Fulmine
-    291: [{ n: 1, sblocco: 'tournament-kaiba-difficile' }], // Spolverino dell'Arpia
+    1: [{ n: 1, sblocco: 'storia:forbiddenMemories:fm-nitemare' }, { n: 2, sblocco: 'torre-piano-15' }, { n: 3, sblocco: 'torneo:duelistKingdom' }, { n: 4, sblocco: 'torneo:battleCity' }, { n: 5, sblocco: 'torneo:kaibaTournament' }, { n: 6, sblocco: 'torre-conquistata' }, { n: 7, sblocco: 'torre-piano-15' }], // Drago Bianco Occhi Blu
+    2: [{ n: 1, sblocco: 'storia:forbiddenMemories:fm-caduta' }, { n: 2, sblocco: 'torneo:duelistKingdom' }, { n: 3, sblocco: 'torneo:battleCity' }, { n: 4, sblocco: 'torneo:kaibaTournament' }, { n: 5, sblocco: 'torre-conquistata' }, { n: 6, sblocco: 'torre-piano-15' }, { n: 7, sblocco: 'torneo:duelistKingdom' }, { n: 8, sblocco: 'torneo:battleCity' }], // Mago Nero
+    4: [{ n: 1, sblocco: 'torneo:kaibaTournament' }, { n: 2, sblocco: 'torre-conquistata' }], // Guardiano Celtico
+    12: [{ n: 1, sblocco: 'torre-piano-15' }, { n: 2, sblocco: 'torneo:duelistKingdom' }, { n: 3, sblocco: 'torneo:battleCity' }, { n: 4, sblocco: 'torneo:kaibaTournament' }, { n: 5, sblocco: 'torre-conquistata' }], // Drago Nero Occhi Rossi
+    13: [{ n: 1, sblocco: 'storia:forbiddenMemories:fm-labirinto' }, { n: 2, sblocco: 'torre-piano-15' }, { n: 3, sblocco: 'torneo:duelistKingdom' }], // Teschio Evocato
+    14: [{ n: 1, sblocco: 'storia:forbiddenMemories:fm-palazzo' }], // Gaia il Cavaliere
+    17: [{ n: 1, sblocco: 'torneo:battleCity' }], // Jinzo
+    20: [{ n: 1, sblocco: 'torneo:kaibaTournament' }], // Combattente delle Lame
+    22: [{ n: 1, sblocco: 'torre-conquistata' }, { n: 2, sblocco: 'torre-piano-15' }], // Kuriboh
+    24: [{ n: 1, sblocco: 'torneo:duelistKingdom' }], // Elfi Gemelli
+    30: [{ n: 1, sblocco: 'torneo:battleCity' }, { n: 2, sblocco: 'torneo:kaibaTournament' }], // Obelisk il Tormentatore
+    31: [{ n: 1, sblocco: 'torre-conquistata' }, { n: 2, sblocco: 'torre-piano-15' }], // Slifer il Drago del Cielo
+    58: [{ n: 1, sblocco: 'torneo:duelistKingdom' }], // Spadaccino di Fuoco
+    104: [{ n: 1, sblocco: 'torneo:battleCity' }], // Drago Revolver
+    165: [{ n: 1, sblocco: 'torneo:kaibaTournament' }], // Virus Distruggi-Carte
+    188: [{ n: 1, sblocco: 'storia:forbiddenMemories:fm-maghi' }, { n: 2, sblocco: 'torre-conquistata' }, { n: 3, sblocco: 'torre-piano-15' }, { n: 4, sblocco: 'torneo:duelistKingdom' }, { n: 5, sblocco: 'torneo:battleCity' }], // Ragazza Maga Nera
+    189: [{ n: 1, sblocco: 'torneo:kaibaTournament' }, { n: 2, sblocco: 'torre-conquistata' }], // Paladino Oscuro
+    251: [{ n: 1, sblocco: 'torre-piano-15' }, { n: 2, sblocco: 'torneo:duelistKingdom' }], // Sepoltura Sciocca
+    267: [{ n: 1, sblocco: 'torneo:battleCity' }], // Gilford il Fulmine
+    291: [{ n: 1, sblocco: 'torneo:kaibaTournament' }], // Spolverino dell'Arpia
     333: [{ n: 1, sblocco: 'torre-conquistata' }], // Kunai con Catena
     335: [{ n: 1, sblocco: 'torre-piano-15' }], // Genio della Lampada
-    342: [{ n: 1, sblocco: 'tournament-duelistKingdom-difficile' }], // Ragno Lancia-Missili
-    376: [{ n: 1, sblocco: 'storia-anime-difficile' }], // Metalmorfosi
-    390: [{ n: 1, sblocco: 'tournament-battleCity-difficile' }], // Pomodoro Mistico
-    399: [{ n: 1, sblocco: 'storia-forbiddenMemories-difficile' }], // Pantera Guerriera
-    401: [{ n: 1, sblocco: 'tournament-kaiba-difficile' }], // Macchina Pendolo
-    413: [{ n: 1, sblocco: 'torre-conquistata' }], // Drago Metallico Occhi Rossi
-    419: [{ n: 1, sblocco: 'torre-piano-15' }], // Anello della Distruzione
-    473: [{ n: 1, sblocco: 'tournament-duelistKingdom-difficile' }], // Drago Millenario
-    477: [{ n: 1, sblocco: 'storia-anime-difficile' }], // Ascia Tigre
-    487: [{ n: 1, sblocco: 'tournament-battleCity-difficile' }], // Mondo Toon
-    502: [{ n: 1, sblocco: 'storia-forbiddenMemories-difficile' }], // Predatore Vorse
-    512: [{ n: 1, sblocco: 'tournament-kaiba-difficile' }, { n: 2, sblocco: 'torre-conquistata' }], // XYZ-Cannone Drago
+    342: [{ n: 1, sblocco: 'torneo:duelistKingdom' }], // Ragno Lancia-Missili
+    376: [{ n: 1, sblocco: 'torneo:battleCity' }], // Metalmorfosi
+    390: [{ n: 1, sblocco: 'torneo:kaibaTournament' }], // Pomodoro Mistico
+    399: [{ n: 1, sblocco: 'torre-conquistata' }], // Pantera Guerriera
+    401: [{ n: 1, sblocco: 'torre-piano-15' }], // Macchina Pendolo
+    413: [{ n: 1, sblocco: 'torneo:duelistKingdom' }], // Drago Metallico Occhi Rossi
+    419: [{ n: 1, sblocco: 'torneo:battleCity' }], // Anello della Distruzione
+    473: [{ n: 1, sblocco: 'torneo:kaibaTournament' }], // Drago Millenario
+    477: [{ n: 1, sblocco: 'torre-conquistata' }], // Ascia Tigre
+    487: [{ n: 1, sblocco: 'torre-piano-15' }], // Mondo Toon
+    502: [{ n: 1, sblocco: 'torneo:duelistKingdom' }], // Predatore Vorse
+    512: [{ n: 1, sblocco: 'torneo:battleCity' }, { n: 2, sblocco: 'torneo:kaibaTournament' }], // XYZ-Cannone Drago
     546: [{ n: 1, sblocco: 'torre-conquistata' }], // Dian Keto il Curatore
     559: [{ n: 1, sblocco: 'torre-piano-15' }], // Ultima Offerta
-    562: [{ n: 1, sblocco: 'tournament-duelistKingdom-difficile' }], // Gyakutenno Megami
-    620: [{ n: 1, sblocco: 'storia-anime-difficile' }], // Cerchio Incantatore
-    712: [{ n: 1, sblocco: 'tournament-battleCity-difficile' }, { n: 2, sblocco: 'storia-forbiddenMemories-difficile' }], // Guardia Celtica Riaddestrata
-    901: [{ n: 1, sblocco: 'storia-forbiddenMemories-difficile' }], // La Vergine Clemente
-    1006: [{ n: 1, sblocco: 'tournament-kaiba-difficile' }], // Otohime
-    1092: [{ n: 1, sblocco: 'torre-conquistata' }], // Senju dalle 1000 Mani
-    1282: [{ n: 1, sblocco: 'torre-piano-15' }], // Cavaliere Joker Arcano
+    562: [{ n: 1, sblocco: 'torneo:duelistKingdom' }], // Gyakutenno Megami
+    620: [{ n: 1, sblocco: 'torneo:battleCity' }], // Cerchio Incantatore
+    712: [{ n: 1, sblocco: 'torneo:kaibaTournament' }, { n: 2, sblocco: 'torre-conquistata' }], // Guardia Celtica Riaddestrata
+    901: [{ n: 1, sblocco: 'torre-piano-15' }], // La Vergine Clemente
+    1006: [{ n: 1, sblocco: 'torneo:duelistKingdom' }], // Otohime
+    1092: [{ n: 1, sblocco: 'torneo:battleCity' }], // Senju dalle 1000 Mani
+    1282: [{ n: 1, sblocco: 'torneo:kaibaTournament' }], // Cavaliere Joker Arcano
     };
 
     const DIR = 'images/cards/alt';
 
-    /**
-     * Come si dice, al giocatore, l'impresa che sblocca. Sta qui e non si legge dal catalogo
-     * delle Sfide perche' la Cartoteca e la scheda della carta non lo caricano (e non serve
-     * che lo facciano): la coerenza con le Sfide vere la controlla
-     * tests/specs/artwork-alternativi.spec.js.
-     */
-    const COME = {
+    /** Come si dice, al giocatore, l'impresa che regala le illustrazioni di una fonte a BACINO. */
+    const COME_BACINO = {
         'torre-piano-15': 'Supera il piano 15 della Torre dei Duellanti',
         'torre-conquistata': 'Conquista la Torre dei Duellanti, tutti i piani in una sola scalata',
-        'tournament-duelistKingdom-difficile': 'Completa il Regno dei Duellanti a difficoltà Difficile',
-        'tournament-battleCity-difficile': 'Completa Battle City a difficoltà Difficile',
-        'tournament-kaiba-difficile': 'Completa il Torneo Kaiba a difficoltà Difficile',
-        'storia-anime-difficile': 'Completa la Storia "Il Regno delle Ombre" a livello Difficile',
-        'storia-forbiddenMemories-difficile': 'Completa la Storia "Memorie Proibite" a livello Difficile'
+        'torneo:duelistKingdom': 'Completa il Regno dei Duellanti a difficoltà Difficile',
+        'torneo:battleCity': 'Completa Battle City a difficoltà Difficile',
+        'torneo:kaibaTournament': 'Completa il Torneo Kaiba a difficoltà Difficile'
+    };
+    /** Le tappe fisse: capitolo -> come si dice. Le chiavi sono quelle dopo `storia:<campagna>:` del `sblocco`. */
+    const COME_TAPPA = {
+        'storia:forbiddenMemories:fm-caduta': 'Completa il capitolo "La Caduta" di Memorie Proibite a livello Difficile',
+        'storia:forbiddenMemories:fm-maghi': 'Completa il capitolo "I Cinque Maghi Guerrieri" di Memorie Proibite a livello Difficile',
+        'storia:forbiddenMemories:fm-labirinto': 'Completa il capitolo "Il Dungeon del Labirinto" di Memorie Proibite a livello Difficile',
+        'storia:forbiddenMemories:fm-palazzo': 'Completa il capitolo "Il Palazzo di Heishin" di Memorie Proibite a livello Difficile',
+        'storia:forbiddenMemories:fm-nitemare': 'Completa il capitolo "L\'Ultimo Duello" di Memorie Proibite a livello Difficile'
     };
 
     // Lo stato (sbloccate + scelte) si legge a OGNI disegno di una carta —
@@ -127,8 +134,7 @@
     function sbloccata(cardId, n) {
         if (!CATALOGO[cardId] || !CATALOGO[cardId][n - 1]) return false;
         if (amministratore()) return true;
-        const s = leggiStato();
-        return !!(s.sbloccati[cardId + ':' + n] || (s.completate && s.completate[CATALOGO[cardId][n - 1].sblocco]));
+        return !!leggiStato().sbloccati[cardId + ':' + n];
     }
 
     /** Quante delle alternative della carta sono sbloccate. */
@@ -169,9 +175,19 @@
         return true;
     }
 
-    /** Il testo che dice COME si sblocca un'illustrazione (dalla Sfida che la regala). */
-    function comeSiSblocca(sbloccoId) {
-        return COME[sbloccoId] || 'Impresa non disponibile';
+    /** Quante illustrazioni di un bacino sono ancora da vincere (l'amministratore non le consuma: conta il salvataggio). */
+    function restanti(fonte) {
+        const s = leggiStato();
+        return vociDi(fonte).filter((v) => !s.sbloccati[v.cardId + ':' + v.n]).length;
+    }
+
+    /** Il testo che dice COME si vince un'illustrazione. Per un bacino dice anche che si vince a sorte e quante ne restano. */
+    function comeSiSblocca(fonte) {
+        if (COME_TAPPA[fonte]) return COME_TAPPA[fonte];
+        const base = COME_BACINO[fonte];
+        if (!base) return 'Impresa non disponibile';
+        const k = restanti(fonte);
+        return `${base}: ad ogni volta ricevi una sola illustrazione a caso fra quelle ancora da sbloccare di questo gruppo (${k === 0 ? 'le hai già tutte' : (k === 1 ? 'ne resta 1' : 'ne restano ' + k)})`;
     }
 
     /** Le illustrazioni di una carta, nell'ordine, ognuna con tutto cio' che serve a mostrarla. */
@@ -188,24 +204,68 @@
         }));
     }
 
-    /** Le illustrazioni che una Sfida regala: [{ cardId, n }]. */
-    function dellaSfida(sfidaId) {
+    /** Le illustrazioni che una fonte regala: [{ cardId, n }]. */
+    function vociDi(fonte) {
         const out = [];
         Object.keys(CATALOGO).forEach((id) => {
-            CATALOGO[id].forEach((voce) => { if (voce.sblocco === sfidaId) out.push({ cardId: Number(id), n: voce.n }); });
+            CATALOGO[id].forEach((voce) => { if (voce.sblocco === fonte) out.push({ cardId: Number(id), n: voce.n }); });
         });
         return out;
     }
 
-    /** Gli id di Sfida citati dal catalogo (serve ai guardrail). */
-    function sfideCitate() {
+    /** Le fonti citate dal catalogo (serve ai guardrail). */
+    function fonti() {
         const insieme = new Set();
         Object.keys(CATALOGO).forEach((id) => CATALOGO[id].forEach((voce) => insieme.add(voce.sblocco)));
         return Array.from(insieme);
     }
 
+    function nomeCarta(cardId) {
+        const carta = (window.cardDatabase || (typeof cardDatabase !== 'undefined' ? cardDatabase : [])).find((c) => c.id === cardId);
+        return carta ? carta.name : `Carta #${cardId}`;
+    }
+
+    /** La voce di premio per una illustrazione appena sbloccata: cosa e' e perche' (stessa forma delle altre voci di Rewards). */
+    function voceDiPremio(v, perche) {
+        return { amount: 1, icon: '🖼️', nome: `illustrazione alternativa — ${nomeCarta(v.cardId)}`, rule: perche, cardId: v.cardId };
+    }
+
+    /**
+     * BACINO A SORTEGGIO: una impresa e' riuscita, se ne vince UNA a caso fra quelle ancora da sbloccare
+     * della fonte. Torna l'elenco delle voci di premio da mostrare: la nuova illustrazione, oppure (bacino
+     * gia' vuoto) una nota che lo dice, altrimenti il giocatore non saprebbe perche' stavolta non e' arrivato nulla.
+     * Non fa nulla per una fonte che non e' un bacino.
+     */
+    function premiaDaFonte(fonte, perche) {
+        if (!window.SaveManager || !COME_BACINO[fonte]) return [];
+        const stato = SaveManager.getArtworkState();
+        const libere = vociDi(fonte).filter((v) => !stato.sbloccati[v.cardId + ':' + v.n]);
+        if (!libere.length) return [{ nota: true, icon: '🖼️', rule: `${COME_BACINO[fonte]}: hai già tutte le illustrazioni di questo gruppo.` }];
+        const scelta = libere[Math.floor(Math.random() * libere.length)];
+        if (!SaveManager.unlockArtwork(scelta.cardId, scelta.n)) return [];
+        dimenticaStato();
+        return [voceDiPremio(scelta, perche || COME_BACINO[fonte])];
+    }
+
+    /**
+     * TAPPA FISSA: chiamata ad ogni avanzamento di una Storia con i capitoli ormai completati. Sblocca, una
+     * volta sola, le illustrazioni legate a `storia:<campagna>:<capitolo>` — solo al livello Difficile.
+     * Torna le voci di premio nuove (vuoto quasi sempre).
+     */
+    function premiaStoria(campagnaId, livello, capitoliCompletati) {
+        if (!window.SaveManager || livello !== 'difficile') return [];
+        const out = [];
+        (capitoliCompletati || []).forEach((cap) => {
+            vociDi(`storia:${campagnaId}:${cap}`).forEach((v) => {
+                if (SaveManager.unlockArtwork(v.cardId, v.n)) out.push(voceDiPremio(v, COME_TAPPA[`storia:${campagnaId}:${cap}`]));
+            });
+        });
+        if (out.length) dimenticaStato();
+        return out;
+    }
+
     window.ArtworkAlternativi = {
-        numero, sbloccata, sbloccate, scelta, percorso, miniatura, scegli, elenco, dellaSfida, sfideCitate,
+        numero, sbloccata, sbloccate, scelta, percorso, miniatura, scegli, elenco, vociDi, fonti, restanti, premiaDaFonte, premiaStoria,
         percorsoDi, miniaturaDi, carte: () => Object.keys(CATALOGO).map(Number), comeSiSblocca
     };
 })();

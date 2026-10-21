@@ -46,7 +46,9 @@ interface IdentitaDuellante {
  */
 type VoceEsito =
     | { currency: 'credits' | 'starChips' | 'locatorCards' | 'millenniumCards'; amount: number; icon: string; nome: string; rule: string }
-    | { nota: true; icon: string; rule: string };
+    | { nota: true; icon: string; rule: string }
+    /** Un premio che non e' una valuta: es. una illustrazione alternativa (js/data/artwork-alternativi.js). */
+    | { amount: number; icon: string; nome: string; rule: string; cardId?: number };
 
 /** Posizione di un mostro in un puzzle. */
 type PosizionePuzzle = 'attacco' | 'difesa' | 'coperto';
