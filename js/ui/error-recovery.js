@@ -162,6 +162,9 @@
         const message = reason.message || '';
         if (reason.name === 'AbortError' && /transition was skipped/i.test(message)) return true;
         if (reason.name === 'InvalidStateError' && /viewport size changed/i.test(message)) return true;
+        // 3) "Page already revealed": la pagina e' stata mostrata (o ricaricata) prima che la transizione fosse
+        //    pronta — succede quando il caricamento e' lento o la pagina viene riaperta dalla cache. Ambientale.
+        if (reason.name === 'InvalidStateError' && /page already revealed/i.test(message)) return true;
         return false;
     }
 

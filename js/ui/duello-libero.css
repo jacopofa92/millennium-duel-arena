@@ -38,7 +38,7 @@
         z-index: 0;
         background:
             linear-gradient(180deg, rgba(6,7,12,0.45) 0%, rgba(6,7,12,0.55) 60%, rgba(4,5,8,0.65) 100%),
-            url('images/background/obelisco.jpg') center/cover no-repeat;
+            url('../../images/background/obelisco.jpg') center/cover no-repeat;
         pointer-events: none;
     }
 
