@@ -1288,7 +1288,11 @@
             // Negozio e Cartoteca sono viste SPA ma caricano al primo ingresso
             // molti asset in modo lazy. Non avviene una navigazione HTML, quindi
             // il loader globale va riattivato esplicitamente dal router.
-            const usaLoader = name === 'negozio' || name === 'cartoteca';
+            // Duello Libero, Sfide e Profilo caricano anch'essi moduli lazy: il loader compare alla PRIMA apertura
+            // (poi la vista resta pronta e rientrarci e' istantaneo, nessun loader inutile). Funziona anche alla prima
+            // apertura dell'app: PageLoader esiste sempre, costruisce l'overlay al primo show() (vedi js/ui/page-loader.js).
+            const primaVolta = !viewsAlreadyInitialized.has(name);
+            const usaLoader = name === 'negozio' || name === 'cartoteca' || (primaVolta && (name === 'duello-libero' || name === 'sfide' || name === 'profilo'));
             if (usaLoader && window.PageLoader && typeof PageLoader.show === 'function') PageLoader.show();
             hideAllShells();
             const el = document.getElementById('view-' + name);

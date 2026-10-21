@@ -43,8 +43,25 @@
     // resta undefined). Ogni chiamante di PageLoader.hide()/hideWhenReady()
     // in questo progetto controlla già `if (window.PageLoader)` prima di
     // invocarla, quindi funziona senza altre modifiche.
-    if (window.PAGE_LOADER_SKIP) return;
+    // document.currentScript esiste solo MENTRE lo script gira: lo si prende subito, serve anche all'avvio ritardato qui sotto.
+    var currentScript = document.currentScript;
 
+    // PAGE_LOADER_SKIP: niente overlay ora (index.html alla PRIMISSIMA apertura mostra solo lo splash). Ma le viste del menu
+    // (Cartoteca, Negozio, Duello Libero...) non cambiano documento e vogliono comunque il loader quando caricano moduli
+    // pesanti: window.PageLoader esiste lo stesso, e l'overlay si costruisce al PRIMO show(). Prima, con lo skip,
+    // PageLoader restava undefined e quelle viste si aprivano senza alcun loader fino al primo ritorno da un'altra pagina.
+    if (window.PAGE_LOADER_SKIP) {
+        window.PageLoader = {
+            show: function () { avvia(true); window.PageLoader.show(); },
+            hide: function () { /* niente da nascondere: non e' mai stato mostrato */ },
+            hideWhenReady: function () { /* idem */ }
+        };
+        return;
+    }
+    avvia(false);
+
+    /** Costruisce l'overlay e il suo ciclo. `dopo`: la pagina e' gia' caricata (avvio ritardato da un show()). */
+    function avvia(dopo) {
     // Catturato SUBITO (primo statement eseguibile di questo script,
     // che è già il primissimo elemento del body): stesso identico scopo
     // di window.__splashStart in index.html, per garantire ALMENO 2
@@ -88,8 +105,7 @@
     // motivo: qui l'unico modo di restare un componente condiviso
     // (niente markup duplicato in ogni pagina) senza perdere quella
     // garanzia.
-    var currentScript = document.currentScript;
-    if (currentScript && currentScript.parentNode) {
+    if (!dopo && currentScript && currentScript.parentNode) {
         currentScript.parentNode.insertBefore(el, currentScript.nextSibling);
     } else if (document.body) {
         document.body.insertBefore(el, document.body.firstChild);
@@ -130,7 +146,9 @@
 
     window.PageLoader = { show: show, hide: hide, hideWhenReady: hideWhenReady };
 
-    if (!window.PAGE_LOADER_MANUAL_HIDE) {
+    if (dopo) {
+        // Avvio ritardato: la pagina c'e' gia' e a nascondere il loader ci pensa chi lo ha mostrato (hideWhenReady).
+    } else if (!window.PAGE_LOADER_MANUAL_HIDE) {
         // Se js/cloud/auth-gate.js è caricato in questa pagina e sta ancora
         // aspettando la conferma di sessione (window.__authGatePending),
         // non nascondersi al window.load come al solito: aspettare che
@@ -163,4 +181,5 @@
         // un'ultima ancora di salvezza.
         safetyTimer = setTimeout(hide, 10000);
     }
+    }   // fine di avvia()
 })();
