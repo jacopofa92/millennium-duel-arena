@@ -18,7 +18,7 @@
 
     // ================================================================
     // 110 — Drago Berserk / Berserk Dragon
-    // Deve essere Special Summonato tramite "Patto col Sovrano Oscuro"
+    // Deve essere Special Summonato tramite "Un Accordo con l'Arcidemone"
     // (id 78, già registrata: chiama ctx.specialSummon direttamente, non
     // bloccato da cannotBeSpecialSummoned qui sotto — stesso schema già
     // usato per Cavaliere del Miraggio id 381) e non può esserlo in
@@ -99,7 +99,7 @@
                 }
             }
             gameState[countKey] = deck.length;
-            ctx.log(`💀 Anima del Berserker scarta ${discarded.length} cart${discarded.length === 1 ? 'a' : 'e'} e scava ${monsters} mostr${monsters === 1 ? 'o' : 'i'} dal Deck: ${monsters * 500} danni!`);
+            ctx.log(`💀 Anima Furente scarta ${discarded.length} cart${discarded.length === 1 ? 'a' : 'e'} e scava ${monsters} mostr${monsters === 1 ? 'o' : 'i'} dal Deck: ${monsters * 500} danni!`);
         }
     });
 
@@ -178,7 +178,7 @@
     });
 
     // 145 — Spada Celeste - Eatos / Sky Sword - Eatos: +500 ATK, qualsiasi mostro.
-    // SEMPLIFICAZIONE: manca la clausola legata a "Guardian Eatos", non presente in questo database.
+    // SEMPLIFICAZIONE: manca la clausola legata a "Guardiano Eatos", non presente in questo database.
     CardEffects.register(145, {
         continuous: true,
         canActivate(ctx) { return findEquipTarget(ctx) !== -1; },
@@ -217,13 +217,13 @@
             const destroy = (choice) => {
                 ctx.graveyard(choice.owner).push(choice.card);
                 ctx.stField(choice.owner)[choice.index] = null;
-                ctx.log(`💥 Predone Cyber distrugge ${choice.card.name}!`);
+                ctx.log(`💥 Predone Cibernetico distrugge ${choice.card.name}!`);
             };
             const steal = (choice) => {
                 choice.card.equippedToOwner = ctx.owner;
                 choice.card.equippedToIndex = ctx.summonedSlotIndex;
                 choice.card.equippedToUid = ctx.summonedCard.uid;
-                ctx.log(`🔧 Predone Cyber ruba ${choice.card.name} e la equipaggia a sé stesso!`);
+                ctx.log(`🔧 Predone Cibernetico ruba ${choice.card.name} e la equipaggia a sé stesso!`);
             };
 
             if (!Decisioni.rispondeUnaPersona(ctx.owner)) {
@@ -237,7 +237,7 @@
             Decisioni.chiedi({
                 chi: ctx.owner,
                 candidati: candidates.map((c) => c.card),
-                titolo: '🤖 Predone Cyber',
+                titolo: '🤖 Predone Cibernetico',
                 testo: 'Scegli 1 Carta Equipaggiamento sul Terreno: poi decidi se distruggerla o rubarla.'
             }, (card) => {
                 if (card === null) return;
@@ -257,7 +257,7 @@
         }
     });
 
-    // 175 — Scudo Cyber / Cyber Shield: +500 ATK, solo "Lady Arpia" (id 288, incluso Arpia Cyber id 172 — vedi isHarpieLadySupport) o "Sorelle Lady Arpia" (id 290).
+    // 175 — Scudo Cyber / Cyber Shield: +500 ATK, solo "Lady Arpia" (id 288, incluso Arpia Cyber id 172 — vedi isHarpieLadySupport) o "Sorelle Arpie" (id 290).
     CardEffects.register(175, {
         continuous: true,
         canActivate(ctx) { return findEquipTarget(ctx, (c) => isHarpieLadySupport(c) || c.id === 290) !== -1; },
@@ -466,7 +466,7 @@
     // ================================================================
     // 285 — Guardiano Kay'est / Guardian Kay'est
     // Non può essere Evocata a meno che tu non controlli scoperta
-    // "Bastone del Silenzio - Kay'est" (id 423) — def.requiresFieldPresenceId,
+    // "Bacchetta del Silenzio - Kay'est" (id 423) — def.requiresFieldPresenceId,
     // stesso meccanismo di Guardiano Grarl qui sopra. Non può essere
     // scelta come bersaglio per gli attacchi (ma questo non impedisce
     // all'avversario di attaccare direttamente — cannotBeAttackTargetUids
@@ -530,7 +530,7 @@
                 const d = DuelEngine.getDefinition(c.id);
                 return !!(d && d.isEquip);
             }, {
-                title: '🗡️ Guardiana Elma',
+                title: '🗡️ Guardiano Elma',
                 text: 'Scegli quale Carta Equipaggiamento richiamare dal Cimitero.'
             }, (eqCard) => {
                 // La casella si ricontrolla QUI: fra l'apertura del picker
@@ -541,7 +541,7 @@
                 eqCard.equippedToIndex = slotEvocata;
                 eqCard.equippedToUid = evocata.uid;
                 ctx.stField(ctx.owner)[freeStSlot] = { card: eqCard, isFaceDown: false, setOnTurn: gameState.turn };
-                ctx.log(`🗡️ Guardiana Elma richiama ${eqCard.name} dal Cimitero e se lo equipaggia!`);
+                ctx.log(`🗡️ Guardiano Elma richiama ${eqCard.name} dal Cimitero e se lo equipaggia!`);
             });
         }
     });
@@ -757,7 +757,7 @@
             const index = Math.floor(ctx.random() * hand.length);
             const [card] = hand.splice(index, 1);
             ctx.banishFromHandWithCountdown(ctx.opponent, card, 4);
-            ctx.log(`🗡️ Spada della Forza di Luce bandisce coperta 1 carta a caso dalla mano ${ctx.opponent === 'player' ? 'tua' : 'del Bot'}: tornerà tra 4 Standby Phase!`);
+            ctx.log(`🗡️ Spada Forza di Luce bandisce coperta 1 carta a caso dalla mano ${ctx.opponent === 'player' ? 'tua' : 'del Bot'}: tornerà tra 4 Standby Phase!`);
         }
     });
 
@@ -800,8 +800,8 @@
     });
 
     // 411 — Falce del Mietitore - Falce del Terrore / Reaper's Scythe: +500 ATK per mostro nei
-    // Cimiteri di entrambi i giocatori, ma solo equipaggiabile a "Guardiano Falce del Terrore"
-    // (id 282) — che a sua volta non è Evocabile in questo motore (dipende da "Guardian Eatos",
+    // Cimiteri di entrambi i giocatori, ma solo equipaggiabile a "Falce del Terrore Guardiana"
+    // (id 282) — che a sua volta non è Evocabile in questo motore (dipende da "Guardiano Eatos",
     // non presente): la restrizione resta corretta, semplicemente non troverà mai un bersaglio.
     CardEffects.register(411, {
         continuous: true,
@@ -1003,7 +1003,7 @@
     // dalla zona Mostro)
     // Se equipaggiato con "Metalmorfosi" (id 376, qui sopra): puoi
     // mandare entrambe le carte al Cimitero per Special Summonare
-    // "Drago Nero Metallico Occhi Rossi" (id 413, qui sotto) dal Deck —
+    // "Drago Metallico Occhi Rossi" (id 413, qui sotto) dal Deck —
     // stesso identico schema di Zoa/Metalzoa (id 520/377) qui sopra.
     // ================================================================
     CardEffects.register(12, {
@@ -1031,7 +1031,7 @@
             const [redEyesMetal] = deck.splice(deckIndex, 1);
             gameState[Tavolo.chiave(ctx.owner, 'DeckCount')] = deck.length;
             ctx.specialSummon(ctx.owner, redEyesMetal, ownIndex, 'attack', 'deck');
-            ctx.log('🐉 Drago Nero Occhi Rossi e Metalmorfosi vanno al Cimitero: Drago Nero Metallico Occhi Rossi Special Summonato dal Deck!');
+            ctx.log('🐉 Drago Nero Occhi Rossi e Metalmorfosi vanno al Cimitero: Drago Metallico Occhi Rossi Special Summonato dal Deck!');
         }
     });
 
@@ -1093,7 +1093,7 @@
             if (selfIndex === -1) return;
             ctx.stField(ctx.owner)[selfIndex] = null;
             ctx.graveyard(ctx.owner).push(ctx.card);
-            ctx.log('Ala del Tiranno si autodistrugge: il mostro equipaggiato ha attaccato un mostro in questo turno!');
+            ctx.log('Ala Tiranna si autodistrugge: il mostro equipaggiato ha attaccato un mostro in questo turno!');
         }
     });
 
@@ -1291,19 +1291,19 @@
         hasDiceRollEffect: true,
         onAttackDeclare(ctx) {
             const roll = Math.floor(ctx.random() * 6) + 1;
-            ctx.log(`🎲 Ragno della Roulette lancia il dado: ${roll}!`);
+            ctx.log(`🎲 Ragno Roulette lancia il dado: ${roll}!`);
             const ownLpKey = Tavolo.chiave(ctx.owner, 'LP');
             switch (roll) {
                 case 1: {
                     const currentLp = ctx.gameState[ownLpKey];
                     const halved = Math.floor(currentLp / 2);
                     ctx.dealDamage(ctx.owner, currentLp - halved);
-                    ctx.log(`💔 Ragno della Roulette dimezza i tuoi LP a ${halved}!`);
+                    ctx.log(`💔 Ragno Roulette dimezza i tuoi LP a ${halved}!`);
                     break;
                 }
                 case 2:
                     ctx.forceDirectAttack();
-                    ctx.log('🎯 Ragno della Roulette rende l\'attacco diretto!');
+                    ctx.log('🎯 Ragno Roulette rende l\'attacco diretto!');
                     break;
                 case 3: {
                     const field = ctx.field(ctx.owner);
@@ -1313,7 +1313,7 @@
                         break;
                     }
                     ctx.redirectAttack(newIndex);
-                    ctx.log(`🔀 Ragno della Roulette ridirige l'attacco verso ${field[newIndex].card.name}!`);
+                    ctx.log(`🔀 Ragno Roulette ridirige l'attacco verso ${field[newIndex].card.name}!`);
                     break;
                 }
                 case 4: {
@@ -1324,19 +1324,19 @@
                         break;
                     }
                     ctx.redirectAttack(newIndex, ctx.opponent);
-                    ctx.log(`🔀 Ragno della Roulette ridirige l'attacco verso ${enemyField[newIndex].card.name} (fuoco amico)!`);
+                    ctx.log(`🔀 Ragno Roulette ridirige l'attacco verso ${enemyField[newIndex].card.name} (fuoco amico)!`);
                     break;
                 }
                 case 5:
                     ctx.cancelAttack();
                     ctx.dealDamage(ctx.opponent, ctx.attackerAtk);
-                    ctx.log(`🚫 Ragno della Roulette annulla l'attacco e infligge ${ctx.attackerAtk} danni!`);
+                    ctx.log(`🚫 Ragno Roulette annulla l'attacco e infligge ${ctx.attackerAtk} danni!`);
                     break;
                 case 6: {
                     const attackerSlot = ctx.field(ctx.opponent)[ctx.attackerIndex];
                     ctx.cancelAttack();
                     ctx.destroyMonster(ctx.opponent, ctx.attackerIndex);
-                    if (attackerSlot) ctx.log(`💥 Ragno della Roulette distrugge ${attackerSlot.card.name}!`);
+                    if (attackerSlot) ctx.log(`💥 Ragno Roulette distrugge ${attackerSlot.card.name}!`);
                     break;
                 }
             }
@@ -1380,7 +1380,7 @@
     CardEffects.register(36, {
         activate(ctx) {
             const drawn = ctx.drawCards(ctx.owner, 2);
-            ctx.log(`🍯 ${ctx.owner === 'player' ? 'Hai pescato' : 'Il bot ha pescato'} ${drawn} cart${drawn === 1 ? 'a' : 'e'} con Vaso dell'Avidità.`);
+            ctx.log(`🍯 ${ctx.owner === 'player' ? 'Hai pescato' : 'Il bot ha pescato'} ${drawn} cart${drawn === 1 ? 'a' : 'e'} con Anfora dell'Avidità.`);
         }
     });
 
@@ -1456,7 +1456,7 @@
                     gy.splice(realIndex, 1);
                     // Posizione scelta da chi controlla la Summon: in Difesa, scoperto.
                     ctx.specialSummon(owner, choice.card, slotIndex, position, 'graveyard', { faceUp: true });
-                    ctx.log(`🌟 Rinascita del Mostro riporta in campo ${choice.card.name} in Posizione di ${position === 'attack' ? 'Attacco' : 'Difesa'}!`);
+                    ctx.log(`🌟 Mostro Resuscitato riporta in campo ${choice.card.name} in Posizione di ${position === 'attack' ? 'Attacco' : 'Difesa'}!`);
                 };
                 if (window.FX && typeof FX.playMonsterReborn === 'function') {
                     FX.playMonsterReborn(choice.graveyardOwner, choice.card, owner, slotIndex, resolveRevival);
@@ -1473,7 +1473,7 @@
             Decisioni.chiedi({
                 chi: owner,
                 candidati: candidates.map((c) => c.card),
-                titolo: '🌟 Rinascita del Mostro',
+                titolo: '🌟 Mostro Resuscitato',
                 testo: 'Scegli quale mostro riportare in campo da uno dei due Cimiteri.'
             }, (card) => {
                 if (card === null) return;
@@ -1548,7 +1548,7 @@
             if (idx === -1) return;
             const name = ctx.opponentCard.name;
             ctx.returnMonsterToHand(ctx.opponent, idx);
-            ctx.log(`🧱 Muro d'Illusione rimanda ${name} in mano dopo il calcolo dei danni!`);
+            ctx.log(`🧱 Muro Illusorio rimanda ${name} in mano dopo il calcolo dei danni!`);
         }
     });
 
@@ -1586,17 +1586,17 @@
                 // Il Terreno è pieno: il mostro rituale finisce comunque
                 // nel Cimitero, invece di sparire nel nulla.
                 ctx.graveyard(ctx.owner).push(ritualCard);
-                ctx.log('⚠️ Il Terreno è pieno: Guerriero Nero Supremo finisce nel Cimitero.');
+                ctx.log('⚠️ Il Terreno è pieno: Glorioso Soldato Nero finisce nel Cimitero.');
                 return;
             }
             ctx.specialSummon(ctx.owner, ritualCard, slotIndex, 'attack', 'hand');
-            ctx.log('⚔️ Rito del Guerriero Nero evoca Guerriero Nero Supremo!');
+            ctx.log('⚔️ Rito della Gloria Nera evoca Glorioso Soldato Nero!');
         }
     });
 
     // ================================================================
     // 55 — Guerriero Nero Supremo / Supreme Dark Warrior: Evocabile
-    // Rituale solo tramite "Rito del Guerriero Nero" (id 56, qui sopra —
+    // Rituale solo tramite "Rito della Gloria Nera" (id 56, qui sopra —
     // GIÀ IMPLEMENTATA). Qui serve solo il divieto di Evocazione
     // Normale/Set e di Special Summon per ogni altra via
     // (cannotNormalSummon/cannotBeSpecialSummoned — stesso schema di 413).
@@ -1817,7 +1817,7 @@
     // 1) (Effetto Rapido, attivabile dalla mano) scarta questa carta; 1
     //    mostro "Kuriboh" controllato guadagna 1500 ATK.
     // 2) Sacrifica questa carta e 1 ciascuno degli altri 4 "fratelli
-    //    Kuriboh" (dalla mano e/o dal Terreno); cerca "Kuribandit" (id
+    //    Kuriboh" (dalla mano e/o dal Terreno); cerca "Kuribandito" (id
     //    334) nel Deck o nel Cimitero, poi puoi Evocare Normalmente 1
     //    mostro Demone dalla mano — implementata come branca aggiuntiva
     //    dentro la stessa activate() (preferita quando disponibile,
@@ -1944,7 +1944,7 @@
         ctx.dealDamage(ctx.owner, 1000 * summonedUids.length);
         gameState.skipBattlePhaseFor = gameState.skipBattlePhaseFor || {};
         gameState.skipBattlePhaseFor[ctx.owner] = true;
-        ctx.log(`👻 Carica dell'Anima riporta in campo ${summonedUids.join(', ')} e ti costa ${1000 * summonedUids.length} Life Points! Non puoi condurre la Battle Phase in questo turno.`);
+        ctx.log(`👻 Carica Anime riporta in campo ${summonedUids.join(', ')} e ti costa ${1000 * summonedUids.length} Life Points! Non puoi condurre la Battle Phase in questo turno.`);
     }
     function pickSoulChargeTargets(ctx, summonedUids) {
         const grave = ctx.graveyard(ctx.owner);
@@ -2054,7 +2054,7 @@
                 if (!slot) return;
                 ctx.changePosition(decl.targetOwner, decl.targetIndex, 'attack');
                 slot.isFaceDown = false;
-                ctx.log(`⚔️ Stop Difesa costringe ${slot.card.name} in Posizione di Attacco!`);
+                ctx.log(`⚔️ Blocca Difesa costringe ${slot.card.name} in Posizione di Attacco!`);
             });
         }
     });
@@ -2161,7 +2161,7 @@
                 victim.equippedToIndex = ctx.field(ctx.owner).findIndex((s) => s && s.card.uid === ctx.card.uid);
                 victim.equippedToUid = ctx.card.uid;
                 ctx.stField(ctx.owner)[freeStSlot] = { card: victim, isFaceDown: false, setOnTurn: gameState.turn };
-                ctx.log(`⚔️ Cacciatore di Spade equipaggia ${victim.name} dal Cimitero (+200 ATK)!`);
+                ctx.log(`⚔️ Cacciatore di Spada equipaggia ${victim.name} dal Cimitero (+200 ATK)!`);
             });
         },
         onDestroy(ctx) {
@@ -2210,7 +2210,7 @@
                 });
             });
             if (candidates.length === 0) {
-                ctx.log('🐛 Insetto Divoratore si rivela, ma non c\'è nessun mostro scoperto da distruggere.');
+                ctx.log('🐛 Insetto Mangia-Uomini si rivela, ma non c\'è nessun mostro scoperto da distruggere.');
                 return;
             }
             // Ritrova lo slot per uid al momento della distruzione vera (non
@@ -2224,7 +2224,7 @@
                 const finalSlot = ctx.field(decl.targetOwner)[decl.targetIndex];
                 if (!finalSlot) return;
                 ctx.destroyMonster(decl.targetOwner, decl.targetIndex);
-                ctx.log(`🐛 Insetto Divoratore, girato scoperto, distrugge ${finalSlot.card.name}!`);
+                ctx.log(`🐛 Insetto Mangia-Uomini, girato scoperto, distrugge ${finalSlot.card.name}!`);
             };
             if (!Decisioni.rispondeUnaPersona(ctx.owner)) {
                 let best = candidates[0];
@@ -2235,7 +2235,7 @@
             Decisioni.chiedi({
                 chi: ctx.owner,
                 candidati: candidates.map((c) => c.card),
-                titolo: '🐛 Insetto Divoratore',
+                titolo: '🐛 Insetto Mangia-Uomini',
                 testo: 'Scegli quale mostro scoperto sul Terreno distruggere.'
             }, (card) => {
                 if (card === null) return;
@@ -2304,8 +2304,8 @@
                 }
             });
             ctx.log(destroyedAny
-                ? '🐞 Coccinella della Rovina a 4 Stelle distrugge tutti i mostri scoperti di Livello 4 dell\'avversario!'
-                : '🐞 Coccinella della Rovina a 4 Stelle si rivela, ma l\'avversario non ha mostri scoperti di Livello 4.');
+                ? '🐞 Coccinella del Destino distrugge tutti i mostri scoperti di Livello 4 dell\'avversario!'
+                : '🐞 Coccinella del Destino si rivela, ma l\'avversario non ha mostri scoperti di Livello 4.');
         }
     });
 
@@ -2335,7 +2335,7 @@
                     }
                 });
             });
-            ctx.log(`🐉 Un Battito d'Ali del Drago Gigante riporta in mano ${returned.name} e distrugge tutte le Magie/Trappole sul Terreno!`);
+            ctx.log(`🐉 Il Battito d'Ali del Drago Gigante riporta in mano ${returned.name} e distrugge tutte le Magie/Trappole sul Terreno!`);
         }
     });
 
@@ -2365,7 +2365,7 @@
                 ctx.dealDamage(ctx.owner, 1500);
                 hand.splice(index, 1);
                 ctx.hand(ctx.owner).push(card);
-                ctx.log(`⛓️ Amazzone Maestra delle Catene paga 1500 LP e prende ${card.name} dalla mano dell'avversario!`);
+                ctx.log(`⛓️ Maestra delle Catene Amazoness paga 1500 LP e prende ${card.name} dalla mano dell'avversario!`);
                 if (typeof updateUI === 'function') updateUI();
             };
 
@@ -2373,7 +2373,7 @@
                 Decisioni.chiedi({
                     chi: ctx.owner,
                     candidati: opponentMonstersInHand,
-                    titolo: '⛓️ Amazzone Maestra delle Catene',
+                    titolo: '⛓️ Maestra delle Catene Amazoness',
                     testo: "Paga 1500 Life Points e scegli 1 mostro dalla mano dell'avversario da aggiungere alla tua mano."
                 }, (scelta) => {
                     if (scelta === null) return;
@@ -2474,7 +2474,7 @@
             // Il controllo (nome contiene "Amazzone") vale anche se il proprio
             // mostro è coperto: è il TUO mostro, ne conosci il nome anche
             // senza girarlo — solo i mostri dell'AVVERSARIO restano "ignoti".
-            if (!ctx.field(ctx.owner).some((slot) => slot && slot.card.name.includes('Amazzone'))) return;
+            if (!ctx.field(ctx.owner).some((slot) => slot && /Amazzone|(?<!Imboscata )Amazoness/.test(slot.card.name))) return;
             const field = ctx.field(ctx.opponent);
             const ownFieldUids = ctx.field(ctx.owner).filter((s) => s).map((s) => s.card.uid);
             let flippedAny = false;
@@ -2489,7 +2489,7 @@
                 gameState.mustAttackTargetUidsFor = gameState.mustAttackTargetUidsFor || {};
                 gameState.mustAttackTargetUidsFor[slot.card.uid] = new Set(ownFieldUids);
             });
-            if (flippedAny) ctx.log('🏹 Arciere delle Amazzoni costringe tutti i mostri dell\'avversario in Posizione di Attacco scoperta, con -500 ATK, e li obbliga ad attaccare in questo turno!');
+            if (flippedAny) ctx.log('🏹 Imboscata Amazoness costringe tutti i mostri dell\'avversario in Posizione di Attacco scoperta, con -500 ATK, e li obbliga ad attaccare in questo turno!');
         }
     });
 
@@ -2624,7 +2624,7 @@
             const card = hand[index];
             hand.splice(index, 1);
             ctx.specialSummon(ctx.owner, card, slotIndex, 'attack', 'hand');
-            ctx.log('👹 Patto col Sovrano Oscuro Special Summona Drago Berserk!');
+            ctx.log('👹 Un Accordo con l\'Arcidemone Special Summona Drago Berserk!');
         }
     });
 
@@ -2707,7 +2707,7 @@
             // `dichiara`: il bersaglio passa dal checkpoint di targeting
             // condiviso (testo: "scegli come bersaglio").
             chooseFieldCardTarget(ctx, candidati, {
-                title: '🔥 Spadaccino di Fiamma Blu',
+                title: '🔥 Spadaccino di Fuoco Blu',
                 text: 'Scegli un altro mostro Guerriero a cui trasferire 600 ATK (questa carta ne perde 600).',
                 dichiara: true
             }, (scelto) => {
@@ -2715,7 +2715,7 @@
                 ctx.markUsedOncePerTurn(`122:${ctx.card.uid}:${gameState.turn}`);
                 ctx.card.attack = Math.max(0, ctx.card.attack - 600);
                 target.attack += 600;
-                ctx.log(`🔥 Spadaccino di Fiamma Blu trasferisce 600 ATK a ${target.name}!`);
+                ctx.log(`🔥 Spadaccino di Fuoco Blu trasferisce 600 ATK a ${target.name}!`);
             });
         },
         onDestroy(ctx) {
@@ -2732,14 +2732,14 @@
                 const idx = grave.indexOf(target);
                 if (idx !== -1) grave.splice(idx, 1);
                 ctx.specialSummon(ctx.owner, target, ctx.slotIndex, 'attack', 'graveyard');
-                ctx.log(`🔥 Spadaccino di Fiamma Blu si bandisce dal Cimitero: Special Summon ${target.name}!`);
+                ctx.log(`🔥 Spadaccino di Fuoco Blu si bandisce dal Cimitero: Special Summon ${target.name}!`);
             };
             if (!Decisioni.rispondeUnaPersona(ctx.owner)) { revive(candidates[0]); return; }
             Decisioni.chiedi({
                 chi: ctx.owner,
                 candidati: candidates,
-                titolo: '🔥 Spadaccino di Fiamma Blu',
-                testo: 'Scegli 1 mostro Guerriero FUOCO dal Cimitero da Special Summonare (Spadaccino di Fiamma Blu si bandisce).'
+                titolo: '🔥 Spadaccino di Fuoco Blu',
+                testo: 'Scegli 1 mostro Guerriero FUOCO dal Cimitero da Special Summonare (Spadaccino di Fuoco Blu si bandisce).'
             }, (scelta) => {
                 if (scelta === null) return;
                 revive(scelta);
@@ -2776,7 +2776,7 @@
                 const targetSlot = ctx.field(decl.targetOwner)[decl.targetIndex];
                 if (!targetSlot) return;
                 targetSlot.position = 'defense';
-                ctx.log(`🛡️ Blocca Attacco costringe ${targetSlot.card.name} in Posizione di Difesa!`);
+                ctx.log(`🛡️ Blocca-Attacco costringe ${targetSlot.card.name} in Posizione di Difesa!`);
             });
         }
     });
@@ -2809,7 +2809,7 @@
                 }
                 target.card.mustBanishOnLeavingField = true;
                 ctx.destroyMonster(decl.targetOwner, decl.targetIndex);
-                ctx.log(`🕳️ Buco Trappola senza Fondo distrugge e bandisce ${target.card.name}!`);
+                ctx.log(`🕳️ Buco Trappola Senza Fine distrugge e bandisce ${target.card.name}!`);
             });
         }
     });
@@ -2886,7 +2886,7 @@
                     }
                 });
             });
-            ctx.log(`🔥 Soffio Esplosivo sacrifica ${tributeCard.name} e distrugge ${count} most${count === 1 ? 'ro' : 'ri'}!`);
+            ctx.log(`🔥 Soffio Incendiario sacrifica ${tributeCard.name} e distrugge ${count} most${count === 1 ? 'ro' : 'ri'}!`);
         }
     });
 
@@ -2909,7 +2909,7 @@
         acceptsSpellCounters: 'counters',
         onSummon(ctx) {
             ctx.summonedCard.counters = (ctx.summonedCard.counters || 0) + 1;
-            ctx.log('🔮 Distruttore, il Guerriero Magico riceve un Segnalino Magia!');
+            ctx.log('🔮 Breaker il Guerriero Magico riceve un Segnalino Magia!');
         },
         onSpecialSummon() {}, // il vero effetto scatta solo su Evocazione Normale
         static(ctx) {
@@ -2955,7 +2955,7 @@
             field[index] = null;
             ctx.graveyard(ctx.owner).push(sacrificed.card);
             ctx.dealDamage(ctx.opponent, 500);
-            ctx.log(`💣 Soldato Cannone sacrifica ${sacrificed.card.name} e infligge 500 danni!`);
+            ctx.log(`💣 Soldato-Cannone sacrifica ${sacrificed.card.name} e infligge 500 danni!`);
         }
     });
 
@@ -2974,7 +2974,7 @@
                 }
                 if (discarded > 0) ctx.drawCards(owner, discarded);
             });
-            ctx.log('🔥 Distruzione di Carte: entrambi i giocatori scartano la mano e ripescano lo stesso numero di carte!');
+            ctx.log('🔥 Distruggi-Carte: entrambi i giocatori scartano la mano e ripescano lo stesso numero di carte!');
         }
     });
 
@@ -2996,7 +2996,7 @@
     CardEffects.register(139, {
         onSummon(ctx) {
             ctx.summonedCard.counters = (ctx.summonedCard.counters || 0) + 1;
-            ctx.log('🛡️ Guardia di Carte riceve un Segnalino Guardia!');
+            ctx.log('🛡️ Guardia della Carta riceve un Segnalino Guardia!');
         },
         canActivate(ctx) {
             if (ctx.zone !== 'monster') return false;
@@ -3012,13 +3012,13 @@
             });
             if (candidati.length === 0) return;
             chooseFieldCardTarget(ctx, candidati, {
-                title: '🛡️ Guardia di Carte',
+                title: '🛡️ Guardia della Carta',
                 text: 'Scegli su quale tua carta scoperta spostare il Segnalino Guardia.'
             }, (scelto) => {
                 const target = scelto.card;
                 ctx.card.counters -= 1;
                 target.counters = (target.counters || 0) + 1;
-                ctx.log(`🛡️ Guardia di Carte sposta 1 Segnalino Guardia su ${target.name}!`);
+                ctx.log(`🛡️ Guardia della Carta sposta 1 Segnalino Guardia su ${target.name}!`);
             });
         },
         static(ctx) {
@@ -3049,13 +3049,13 @@
             grave.splice(index, 1);
             deck.push(ctx.card); // drawCardsToHand pesca con .pop(): push = "in cima al Deck"
             ctx.gameState[Tavolo.chiave(ctx.owner, 'DeckCount')] = deck.length;
-            ctx.log('🪳 Cavaliere Scarafaggio torna in cima al Deck!');
+            ctx.log('🪳 Cavaliere-Scarafaggio torna in cima al Deck!');
         }
     });
 
     // ================================================================
     // 157 — Bozzolo dell'Evoluzione / Cocoon of Evolution
-    // Si equipaggia dalla MANO (non dal campo) a "Falena Piccola" (id 522)
+    // Si equipaggia dalla MANO (non dal campo) a "Piccola Falena" (id 522)
     // scoperta sul proprio Terreno, la cui ATK/DEF diventa quella di
     // questa carta (0/2000) — non un bonus additivo come i normali Equip,
     // ma una SOSTITUZIONE. Usa comunque isEquip/continuous + findEquipTarget/
@@ -3110,7 +3110,7 @@
     // ================================================================
     // 50 — Larva Mostruosa / Larvae Moth
     // Non può essere Evocata Normalmente né Set. Special Summonabile solo
-    // sacrificando "Falena Piccola" durante il proprio 2° turno dopo che è
+    // sacrificando "Piccola Falena" durante il proprio 2° turno dopo che è
     // stata equipaggiata con "Bozzolo dell'Evoluzione" (id 157) — vedi
     // findPetitMothReadyForCocoonSummon qui sopra.
     // ================================================================
@@ -3123,7 +3123,7 @@
             const sacrificed = ctx.field(ctx.owner)[i];
             ctx.field(ctx.owner)[i] = null;
             ctx.graveyard(ctx.owner).push(sacrificed.card);
-            ctx.log(`🐛 Falena Piccola sacrificata per Special Summonare ${ctx.card.name}!`);
+            ctx.log(`🐛 Piccola Falena sacrificata per Special Summonare ${ctx.card.name}!`);
             return true;
         }
     });

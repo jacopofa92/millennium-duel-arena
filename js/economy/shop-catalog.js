@@ -282,23 +282,36 @@
         }
     ];
 
+    // Allineando i nomi a quelli ufficiali Konami alcune carte avrebbero cambiato pacchetto ("Cattura-Draghi" non contiene piu' "drago",
+    // "Magia Ombra" contiene "magia"...). Il Negozio sorteggia da questi pacchetti: la loro composizione non deve cambiare, quindi le
+    // differenze sono elencate qui per id. `dentro`: c'erano prima e restano; `fuori`: ora le troverebbe la regola, prima no.
+    // Sorvegliato da tests/specs/guardrail-nomi-carte.spec.js.
+    const ECCEZIONI_NOME = {
+        draghi: { dentro: [206], fuori: [491] },
+        maghi: { dentro: [150], fuori: [352, 370, 439, 455, 748] },
+        nonmorti: { dentro: [367], fuori: [] },
+        mare: { dentro: [], fuori: [871] },
+        arpie: { dentro: [], fuori: [88] }
+    };
+    const conEccezioni = (tema, test) => (c) => (ECCEZIONI_NOME[tema].dentro.includes(c.id) || (test(c) && !ECCEZIONI_NOME[tema].fuori.includes(c.id)));
+
     const TEMI = [
         // Le tematiche mostrano il mostro che le rappresenta davvero; gli
         // emblemi originali restano invece una peculiarità delle generiche.
-        { id: 'draghi', nome: 'Dominio dei Draghi', colore: '#3467a8', mostroSimboloId: 1, test: (c) => c.race === 'Drago' || /drago/i.test(c.name) },
-        { id: 'maghi', nome: 'Segreti degli Incantatori', colore: '#7046a8', mostroSimboloId: 2, test: (c) => c.race === 'Incantatore' || /mago|magia/i.test(c.name) },
+        { id: 'draghi', nome: 'Dominio dei Draghi', colore: '#3467a8', mostroSimboloId: 1, test: conEccezioni('draghi', (c) => c.race === 'Drago' || /drago/i.test(c.name)) },
+        { id: 'maghi', nome: 'Segreti degli Incantatori', colore: '#7046a8', mostroSimboloId: 2, test: conEccezioni('maghi', (c) => c.race === 'Incantatore' || /mago|magia/i.test(c.name)) },
         { id: 'macchine', nome: 'KaibaCorp: Acciaio', colore: '#607782', mostroSimboloId: 512, test: (c) => c.race === 'Macchina' },
-        { id: 'nonmorti', nome: 'Ombre dal Cimitero', colore: '#57406f', mostroSimboloId: 656, test: (c) => c.race === 'Zombie' || /vampir|cimitero/i.test((c.name || '') + ' ' + (c.effect || '')) },
+        { id: 'nonmorti', nome: 'Ombre dal Cimitero', colore: '#57406f', mostroSimboloId: 656, test: conEccezioni('nonmorti', (c) => c.race === 'Zombie' || /vampir|cimitero/i.test((c.name || '') + ' ' + (c.effect || ''))) },
         { id: 'guerrieri', nome: 'Leggende dei Guerrieri', colore: '#9a542d', mostroSimboloId: 14, test: (c) => c.race === 'Guerriero' },
-        { id: 'mare', nome: 'Furia dagli Abissi', colore: '#176d88', mostroSimboloId: 879, test: (c) => c.attribute === 'ACQUA' || /mare|oceano|acqua/i.test(c.name) },
-        { id: 'arpie', nome: 'Vento delle Arpie', colore: '#9b477b', mostroSimboloId: 288, test: (c) => /arpia|amazzone/i.test(c.name) },
+        { id: 'mare', nome: 'Furia dagli Abissi', colore: '#176d88', mostroSimboloId: 879, test: conEccezioni('mare', (c) => c.attribute === 'ACQUA' || /mare|oceano|acqua/i.test(c.name)) },
+        { id: 'arpie', nome: 'Vento delle Arpie', colore: '#9b477b', mostroSimboloId: 288, test: conEccezioni('arpie', (c) => /(?<!dell')arpia|amazzone|amazoness|sorelle arpie|cucciolo di drago delle arpie/i.test(c.name)) },
         { id: 'toon', nome: 'Mondo Toon', colore: '#b24b80', mostroSimboloId: 123, test: (c) => /toon/i.test((c.name || '') + ' ' + (c.effect || '')) },
         // Le Fusioni storiche appena completate non devono perdersi in un
         // pool generico di oltre mille carte. Il range 1141-1160 include
         // anche i quattro Materiali Normali aggiunti apposta per esse;
         // extraDeck/testo estendono il tema alle Fusioni già esistenti.
         { id: 'fusioni', nome: 'Forgia delle Fusioni', colore: '#8050a8', mostroSimboloId: 1155,
-            test: (c) => (c.id >= 1141 && c.id <= 1160) || !!c.extraDeck || /fusione|materiale da fusione/i.test((c.name || '') + ' ' + (c.effect || '')) }
+            test: (c) => (c.id >= 1141 && c.id <= 1160) || !!c.extraDeck || /fusione|polimerizzazione|materiale da fusione/i.test((c.name || '') + ' ' + (c.effect || '')) }
     ];
 
     // ================================================================

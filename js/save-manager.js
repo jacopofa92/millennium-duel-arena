@@ -132,9 +132,9 @@
     // da principianti), sostituiti da Dian Keto la Maestra delle Cure, un
     // semplice recupero di Life Points.
     const STARTER_DECK_MAIN = [
-        { id: 15, qty: 2 },  // Maledizione del Drago — Lv5, 2000 ATK
+        { id: 15, qty: 2 },  // Anatema del Drago — Lv5, 2000 ATK
         { id: 13, qty: 2 }, // Teschio Evocato — Lv6, 2500 ATK
-        { id: 317, qty: 1 }, // Uomo Giudice — Lv6, 2200 ATK
+        { id: 317, qty: 1 }, // Il Giudicatore — Lv6, 2200 ATK
         { id: 16, qty: 3 }, { id: 502, qty: 2 }, { id: 24, qty: 2 }, { id: 4, qty: 2 },
         { id: 237, qty: 2 }, { id: 261, qty: 2 }, { id: 391, qty: 2 }, { id: 27, qty: 2 },
         { id: 25, qty: 2 }, { id: 23, qty: 1 }, { id: 22, qty: 2 }, { id: 11, qty: 1 }, { id: 28, qty: 1 },

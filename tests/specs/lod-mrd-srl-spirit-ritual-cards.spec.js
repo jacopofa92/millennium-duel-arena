@@ -110,7 +110,7 @@ module.exports = {
         t.assert(handAfterDraw === 1, `Dopo lo scarto totale, il bot deve comunque pescare normalmente (attese 1 carta, rilevate ${handAfterDraw})`);
 
         // Coniglio Bianco di Inaba (1005) e Jinzo #7 (1009): possono attaccare direttamente anche se il bot controlla mostri.
-        for (const [id, name] of [[1005, 'Coniglio Bianco di Inaba'], [1009, 'Jinzo #7']]) {
+        for (const [id, name] of [[1005, 'Coniglio Bianco Inaba'], [1009, 'Jinzo #7']]) {
             const canHit = await t.evaluate((cardId) => {
                 const attacker = { ...cardDatabase.find((c) => c.id === cardId), uid: `direct-${cardId}` };
                 const blocker = { ...cardDatabase.find((c) => c.type === 'monster' && !c.extraDeck), uid: 'blocker-1', attack: 5000, defense: 5000 };

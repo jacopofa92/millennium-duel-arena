@@ -16,6 +16,12 @@
 
     const { chooseOption, chooseFieldCardTargetWaiting, attendiScelta, blockBanishFromField, isHarpieLadySupport, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchZoneWithChoice, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, collectFieldTargets, offerHandDiscardChoice, resolveSpecialSummonBanishCost, attachUnionMonster, selfFlipToFaceDownDefense, findLevel7SpellcasterTarget, grantAttackAllEnemiesOncEach, victimChoosesDiscard } = window.CardEffectsShared;
 
+    // Nomi dei mostri "Arpia" per il conteggio di Cucciolo di Drago delle Arpie (id 786). I nomi ufficiali non contengono
+    // sempre la parola "Arpia" ("Sorelle Arpie", "Cucciolo di Drago delle Arpie") e due Magie/Trappole hanno "dell'Arpia" nel
+    // nome: questa espressione ripete ESATTAMENTE le carte che il vecchio `includes('Arpia')` trovava prima di allineare i nomi
+    // a Konami (la guarda tests/specs/guardrail-nomi-carte.spec.js).
+    const NOME_ARPIA = /(?<!dell')Arpia|Sorelle Arpie|Cucciolo di Drago delle Arpie/;
+
     // ================================================================
     // 732 — Esplosione a Catena / Blast with Chain (Trappola Normale,
     // Equipaggiamento)
@@ -89,7 +95,7 @@
             if (index === -1) return false;
             ctx.graveyard(ctx.owner).push(field[index].card);
             field[index] = null;
-            ctx.log('🧙 Stregone Eradicatore Oscuro sacrifica Mago Nero per essere Special Summonato!');
+            ctx.log('🧙 Stregone Oscuro Eradicatore sacrifica Mago Nero per essere Special Summonato!');
             return true;
         },
         canActivateOnCardActivated(ctx) {
@@ -97,7 +103,7 @@
         },
         onCardActivated(ctx) {
             ctx.dealDamage(ctx.opponent, 1000);
-            ctx.log('🧙 Stregone Eradicatore Oscuro infligge 1000 danni!');
+            ctx.log('🧙 Stregone Oscuro Eradicatore infligge 1000 danni!');
         }
     });
 
@@ -123,7 +129,7 @@
         },
         onCardActivated(ctx) {
             ctx.card.counters = (ctx.card.counters || 0) + 1;
-            ctx.log(`🐺 Bestia Mitica Cerbero guadagna un Segnalino Magia (${ctx.card.counters})!`);
+            ctx.log(`🐺 Cerbero Mitica Bestia guadagna un Segnalino Magia (${ctx.card.counters})!`);
         },
         static(ctx) {
             const count = ctx.card.counters || 0;
@@ -136,7 +142,7 @@
             ctx.card.battledThisBattlePhase = false;
             if (!ctx.card.counters) return;
             ctx.card.counters = 0;
-            ctx.log('🐺 Bestia Mitica Cerbero ha combattuto: rimuove tutti i Segnalini Magia!');
+            ctx.log('🐺 Cerbero Mitica Bestia ha combattuto: rimuove tutti i Segnalini Magia!');
         }
     });
 
@@ -182,7 +188,7 @@
             const current = ctx.card.counters || 0;
             if (current >= 3) return;
             ctx.card.counters = current + 1;
-            ctx.log(`🧙 Abile Mago Oscuro guadagna un Segnalino Magia (${ctx.card.counters}/3)!`);
+            ctx.log(`🧙 Abile Mago Nero guadagna un Segnalino Magia (${ctx.card.counters}/3)!`);
         },
         // Attivabile solo se c'è davvero un Mago Nero da qualche parte:
         // prima con 3 Segnalini risultava attivabile anche senza, e non
@@ -218,12 +224,12 @@
                 const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
                 if (slotIndex === -1) { ctx.graveyard(ctx.owner).push(darkMagician); return; }
                 ctx.specialSummon(ctx.owner, darkMagician, slotIndex, 'attack', fonte.value);
-                ctx.log('🧙 Abile Mago Oscuro si sacrifica e Special Summona Mago Nero!');
+                ctx.log('🧙 Abile Mago Nero si sacrifica e Special Summona Mago Nero!');
                 if (typeof updateUI === 'function') updateUI();
             };
             if (fonti.length === 1) { procedi(fonti[0].value); return; }
             chooseOption(ctx, {
-                title: '🧙 Abile Mago Oscuro',
+                title: '🧙 Abile Mago Nero',
                 text: 'Da dove vuoi Special Summonare "Mago Nero"?',
                 options: fonti.map((f) => ({ value: f.value, label: f.label })),
                 pickForBot: () => (fonti.find((f) => f.value === 'deck') || fonti.find((f) => f.value === 'graveyard') || fonti[0]).value
@@ -357,7 +363,7 @@
             return resolveSpecialSummonBanishCost(ctx, [
                 (c) => c.type === 'monster' && c.attribute === 'LUCE',
                 (c) => c.type === 'monster' && c.attribute === 'OSCURITÀ'
-            ], '🔮 Stregone del Caos bandisce 1 mostro LUCE e 1 OSCURITÀ per essere Special Summonato!');
+            ], '🔮 Stregone del Chaos bandisce 1 mostro LUCE e 1 OSCURITÀ per essere Special Summonato!');
         },
         canActivate(ctx) {
             if (gameState.usedIgnitionThisTurn && gameState.usedIgnitionThisTurn[ctx.card.uid]) return false;
@@ -373,7 +379,7 @@
                 .concat(collectFieldTargets(ctx, { zone: 'monster', owner: 'self', filter: ammesso }));
             if (candidates.length === 0) return;
             chooseFieldCardTarget(ctx, candidates, {
-                title: '🔮 Stregone del Caos',
+                title: '🔮 Stregone del Chaos',
                 dichiara: true,
                 text: 'Scegli quale mostro scoperto bandire.'
             }, (choice) => {
@@ -385,7 +391,7 @@
                 ctx.field(choice.owner)[choice.index] = null;
                 ctx.banish(choice.owner, choice.card);
                 ctx.card._cannotAttackTurn = gameState.turn;
-                ctx.log(`🔮 Stregone del Caos bandisce ${choice.card.name}!`);
+                ctx.log(`🔮 Stregone del Chaos bandisce ${choice.card.name}!`);
             });
         },
         static(ctx) {
@@ -422,7 +428,7 @@
         },
         onCardActivated(ctx) {
             ctx.card.counters = (ctx.card.counters || 0) + 1;
-            ctx.log(`🎆 Mago dell'Esplosione guadagna un Segnalino Magia (${ctx.card.counters})!`);
+            ctx.log(`🎆 Mago del Sangue guadagna un Segnalino Magia (${ctx.card.counters})!`);
         },
         canActivate(ctx) {
             const count = ctx.card.counters || 0;
@@ -457,7 +463,7 @@
                     ctx.card.counters = Math.max(0, count - servono);
                     const finalName = scelto.card.name;
                     ctx.destroyMonster(scelto.owner, scelto.index);
-                    ctx.log(`🎆 Mago dell'Esplosione rimuove ${servono} Segnalini e distrugge ${finalName}!`);
+                    ctx.log(`🎆 Mago del Sangue rimuove ${servono} Segnalini e distrugge ${finalName}!`);
                 } finally {
                     fine();
                 }
@@ -475,7 +481,7 @@
             const count = ctx.field(ctx.opponent).filter((s) => s).length;
             if (count === 0) return;
             ctx.dealDamage(ctx.opponent, 300 * count);
-            ctx.log(`🧙 Maga Oscura Curran infligge ${300 * count} danni!`);
+            ctx.log(`🧙 Curran Maga d'Ebano infligge ${300 * count} danni!`);
         }
     });
 
@@ -489,7 +495,7 @@
         },
         onCardActivated(ctx) {
             ctx.dealDamage(ctx.opponent, 400);
-            ctx.log('🔥 Mago a Fuoco Rapido infligge 400 danni!');
+            ctx.log('🔥 Mago Fuoco-Rapido infligge 400 danni!');
         }
     });
 
@@ -595,7 +601,7 @@
                 ctx.destroySpellTrap(ctx.opponent, index, batchToken);
                 count++;
             });
-            ctx.log(`🧙 Attacco Magico Oscuro distrugge ${count} Magia/Trappola dell'avversario!`);
+            ctx.log(`🧙 Attacco Mago Nero distrugge ${count} Magia/Trappola dell'avversario!`);
         }
     });
 
@@ -674,7 +680,7 @@
         activate(ctx) {
             if (ctx.card.counters == null) {
                 ctx.card.counters = 3;
-                ctx.log('🔮 Pietra del Potere Nero Pece si attiva con 3 Segnalini Magia!');
+                ctx.log('🔮 Pietra del Potere Nero-Pece si attiva con 3 Segnalini Magia!');
                 return;
             }
             ctx.markUsedOncePerTurn(`751:${ctx.card.uid}`);
@@ -685,7 +691,7 @@
             });
             if (candidati.length === 0) return;
             chooseFieldCardTarget(ctx, candidati, {
-                title: '🔮 Pietra del Potere Nero Pece',
+                title: '🔮 Pietra del Potere Nero-Pece',
                 text: 'Scegli su quale carta scoperta spostare un Segnalino Magia.',
                 // Un mostro scelto passa dal checkpoint di targeting; una
                 // Magia/Trappola no (il checkpoint copre solo i mostri).
@@ -693,14 +699,14 @@
             }, (scelto) => {
                 ctx.card.counters -= 1;
                 scelto.card.counters = (scelto.card.counters || 0) + 1;
-                ctx.log(`🔮 Pietra del Potere Nero Pece sposta un Segnalino Magia su ${scelto.card.name}!`);
+                ctx.log(`🔮 Pietra del Potere Nero-Pece sposta un Segnalino Magia su ${scelto.card.name}!`);
                 // L'autodistruzione va controllata QUI, dentro la
                 // callback: il Segnalino se n'è andato solo adesso, e
                 // prima della scelta il conteggio era ancora quello di
                 // partenza.
                 if (ctx.card.counters <= 0) {
                     ctx.destroySpellTrap(ctx.owner, ctx.index);
-                    ctx.log('💥 Pietra del Potere Nero Pece si distrugge: nessun Segnalino Magia rimasto!');
+                    ctx.log('💥 Pietra del Potere Nero-Pece si distrugge: nessun Segnalino Magia rimasto!');
                 }
             });
         }
@@ -942,7 +948,7 @@
             const candidati = collectFieldTargets(ctx, { zone: 'monster', owner: 'opponent', includiCoperte: true });
             if (candidati.length === 0) return;
             chooseFieldCardTarget(ctx, candidati, {
-                title: '🗿 Sentinella Golem',
+                title: '🗿 Golem Guardiano',
                 text: 'Scegli quale mostro avversario rimandare in mano.'
             }, (scelto) => {
                 const decl = ctx.declareTarget(scelto.owner, scelto.index, { totalTargetCount: 1 });
@@ -951,7 +957,7 @@
                 if (!finalSlot) return;
                 const cardName = finalSlot.card.name;
                 ctx.returnMonsterToHand(decl.targetOwner, decl.targetIndex);
-                ctx.log(`🗿 Sentinella Golem rimanda ${cardName} in mano!`);
+                ctx.log(`🗿 Golem Guardiano rimanda ${cardName} in mano!`);
             });
         }
     });
@@ -1109,7 +1115,7 @@
             card.attack = card.defense;
             card.defense = originalAtk;
             ctx.specialSummon(ctx.owner, card, slotIndex, 'attack', 'graveyard');
-            ctx.log('🦋 Falena della Sabbia torna in campo con ATK e DEF scambiati!');
+            ctx.log('🦋 Falena di Sabbia torna in campo con ATK e DEF scambiati!');
         }
     });
 
@@ -1226,7 +1232,7 @@
                 [shuffledCards[i], shuffledCards[j]] = [shuffledCards[j], shuffledCards[i]];
             }
             indices.forEach((idx, k) => { field[idx].card = shuffledCards[k]; });
-            ctx.log('🌑 Ombre Mutevoli riordina le carte coperte in Posizione di Difesa!');
+            ctx.log('🌑 Ombre Danzanti riordina le carte coperte in Posizione di Difesa!');
         }
     });
 
@@ -1258,13 +1264,13 @@
             if (spellIndex !== -1) {
                 const [discarded] = oppHand.splice(spellIndex, 1);
                 ctx.graveyard(ctx.opponent).push(discarded);
-                ctx.log(`💧 ${ctx.opponent === 'player' ? 'Scarti' : 'Il bot scarta'} ${discarded.name} per annullare l'effetto di Drenaggio Magico!`);
+                ctx.log(`💧 ${ctx.opponent === 'player' ? 'Scarti' : 'Il bot scarta'} ${discarded.name} per annullare l'effetto di Risucchio Magico!`);
                 return;
             }
             if (ctx.negateActivation()) {
-                ctx.log('💧 Drenaggio Magico annulla e distrugge la Magia avversaria!');
+                ctx.log('💧 Risucchio Magico annulla e distrugge la Magia avversaria!');
             } else {
-                ctx.log('💧 Drenaggio Magico non trova più nulla da annullare.');
+                ctx.log('💧 Risucchio Magico non trova più nulla da annullare.');
             }
         }
     });
@@ -1293,10 +1299,10 @@
                 if (attackerSlot) {
                     const attackerCard = attackerSlot.card;
                     ctx.returnMonsterToHand(ctx.opponent, ctx.attackerIndex);
-                    ctx.log(`🎲 Prova del Viandante: l'avversario sbaglia e ${attackerCard.name} torna in mano!`);
+                    ctx.log(`🎲 Prova del Viaggiatore: l'avversario sbaglia e ${attackerCard.name} torna in mano!`);
                 }
             } else {
-                ctx.log("🎲 Prova del Viandante: l'avversario indovina, l'attacco prosegue.");
+                ctx.log("🎲 Prova del Viaggiatore: l'avversario indovina, l'attacco prosegue.");
             }
         }
     });
@@ -1392,11 +1398,11 @@
     CardEffects.register(778, {
         onDestroy(ctx) {
             searchDeckWithChoice(ctx, (c) => isHarpieLadySupport(c), {
-                title: '🐦 Faccia di Uccello',
+                title: '🐦 Faccia da Uccello',
                 text: 'Scegli quale carta "Lady Arpia" aggiungere alla mano dal Deck.'
             }, (card) => {
                 ctx.hand(ctx.owner).push(card);
-                ctx.log(`🐦 Faccia di Uccello aggiunge ${card.name} alla mano dal Deck!`);
+                ctx.log(`🐦 Faccia da Uccello aggiunge ${card.name} alla mano dal Deck!`);
             });
         }
     });
@@ -1539,7 +1545,7 @@
                     count++;
                 });
             });
-            ctx.log(`🦅 Joe l'Uomo Uccello Veloce rimette in mano ${count} Magia/Trappola!`);
+            ctx.log(`🦅 Joe Veloce Uomo Alato rimette in mano ${count} Magia/Trappola!`);
         }
     });
 
@@ -1552,14 +1558,14 @@
     // ================================================================
     CardEffects.register(786, {
         static(ctx) {
-            const harpieCount = ctx.field(ctx.owner).filter((s) => s && !s.isFaceDown && s.card.uid !== ctx.card.uid && s.card.name && s.card.name.includes('Arpia')).length;
+            const harpieCount = ctx.field(ctx.owner).filter((s) => s && !s.isFaceDown && s.card.uid !== ctx.card.uid && s.card.name && NOME_ARPIA.test(s.card.name)).length;
             if (harpieCount >= 1) {
                 // Protegge le ALTRE "Arpia" controllate, ECCETTO questa
                 // carta stessa (il testo reale la esclude esplicitamente
                 // dalla propria protezione) — stesso schema di Capitano
                 // Predone (id 714).
                 ctx.field(ctx.owner).forEach((slot) => {
-                    if (!slot || slot.isFaceDown || slot.card.uid === ctx.card.uid || !slot.card.name || !slot.card.name.includes('Arpia')) return;
+                    if (!slot || slot.isFaceDown || slot.card.uid === ctx.card.uid || !slot.card.name || !NOME_ARPIA.test(slot.card.name)) return;
                     gameState.cannotBeAttackTargetUids[slot.card.uid] = true;
                 });
             }
@@ -1569,7 +1575,7 @@
             }
         },
         canActivate(ctx) {
-            const harpieCount = ctx.field(ctx.owner).filter((s) => s && !s.isFaceDown && s.card.uid !== ctx.card.uid && s.card.name && s.card.name.includes('Arpia')).length;
+            const harpieCount = ctx.field(ctx.owner).filter((s) => s && !s.isFaceDown && s.card.uid !== ctx.card.uid && s.card.name && NOME_ARPIA.test(s.card.name)).length;
             if (harpieCount < 3) return false;
             return Tavolo.ordine().some((owner) => owner !== ctx.owner && (ctx.field(owner).some((s) => s) || ctx.stField(owner).some((s) => s)));
         },
@@ -1586,7 +1592,7 @@
                 if (scelto.zone === 'st') {
                     const nome = scelto.card.name;
                     ctx.destroySpellTrap(scelto.owner, scelto.index);
-                    ctx.log(`🐲 Cucciolo di Drago dell'Arpia distrugge ${nome}!`);
+                    ctx.log(`🐲 Cucciolo di Drago delle Arpie distrugge ${nome}!`);
                     return;
                 }
                 const decl = ctx.declareTarget(scelto.owner, scelto.index, { totalTargetCount: 1 });
@@ -1613,7 +1619,7 @@
             const hasHarpieLady = ctx.field(ctx.owner).some((s) => s && !s.isFaceDown && isHarpieLadySupport(s.card));
             if (!hasHarpieLady) return false;
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return false;
-            const evocabile = (c) => isHarpieLadySupport(c) || c.name === 'Sorelle Lady Arpia';
+            const evocabile = (c) => isHarpieLadySupport(c) || c.name === 'Sorelle Arpie';
             const deck = Tavolo.mazzo(ctx.owner, ctx.gameState);
             return ctx.hand(ctx.owner).some(evocabile) || (Array.isArray(deck) && deck.some(evocabile));
         },
@@ -1621,21 +1627,21 @@
             const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
             if (slotIndex === -1) return;
             const hand = ctx.hand(ctx.owner);
-            const handIdx = hand.findIndex((c) => isHarpieLadySupport(c) || c.name === 'Sorelle Lady Arpia');
+            const handIdx = hand.findIndex((c) => isHarpieLadySupport(c) || c.name === 'Sorelle Arpie');
             if (handIdx !== -1) {
                 const [card] = hand.splice(handIdx, 1);
                 ctx.specialSummon(ctx.owner, card, slotIndex, 'attack', 'hand');
-                ctx.log(`🦅 Egoista Elegante Special Summona ${card.name} dalla mano!`);
+                ctx.log(`🦅 Egotista Elegante Special Summona ${card.name} dalla mano!`);
                 return;
             }
-            searchDeckWithChoice(ctx, (c) => isHarpieLadySupport(c) || c.name === 'Sorelle Lady Arpia', {
-                title: '🦅 Egoista Elegante',
+            searchDeckWithChoice(ctx, (c) => isHarpieLadySupport(c) || c.name === 'Sorelle Arpie', {
+                title: '🦅 Egotista Elegante',
                 text: 'Scegli quale mostro Special Summonare dal Deck.'
             }, (card) => {
                 const freshSlot = ctx.findEmptyMonsterSlot(ctx.owner);
                 if (freshSlot === -1) return;
                 ctx.specialSummon(ctx.owner, card, freshSlot, 'attack', 'deck');
-                ctx.log(`🦅 Egoista Elegante Special Summona ${card.name} dal Deck!`);
+                ctx.log(`🦅 Egotista Elegante Special Summona ${card.name} dal Deck!`);
             });
         }
     });
@@ -1644,7 +1650,7 @@
     // 788 — Terreno di Caccia delle Arpie / Harpies' Hunting Ground
     // (Magia Terreno)
     // Tutti i mostri Tipo Bestia Alata: +200 ATK/DEF. Se una carta "Lady
-    // Arpia"/"Sorelle Lady Arpia" viene Evocata (onOwnMonsterSummoned,
+    // Arpia"/"Sorelle Arpie" viene Evocata (onOwnMonsterSummoned,
     // duel-engine.js): distruggi 1 Magia/Trappola sul Terreno
     // (SEMPLIFICAZIONE: la prima disponibile, priorità a quella
     // dell'avversario, stessa convenzione di targeting automatico usata
@@ -1666,7 +1672,7 @@
             });
         },
         onOwnMonsterSummoned(ctx) {
-            if (!(isHarpieLadySupport(ctx.summonedCard) || ctx.summonedCard.name === 'Sorelle Lady Arpia')) return;
+            if (!(isHarpieLadySupport(ctx.summonedCard) || ctx.summonedCard.name === 'Sorelle Arpie')) return;
             // Candidati ordinati con il retrocampo AVVERSARIO per primo,
             // che era la priorità della vecchia selezione automatica e
             // resta quella che il bot segue prendendo il primo.
@@ -1722,7 +1728,7 @@
             // "fino a fine turno" invece che continuo.
             gameState.trapsNegatedUntilEndOfTurnFor = gameState.trapsNegatedUntilEndOfTurnFor || {};
             gameState.trapsNegatedUntilEndOfTurnFor[ctx.opponent] = true;
-            ctx.log(`🎇 Scintilla dell'Estasi Triangolare porta l'ATK di ${count} Sorelle Lady Arpia a 2700, blocca le Trappole avversarie e annulla quelle già sul Terreno!`);
+            ctx.log(`🎇 Scintilla d'Estasi Triangolare porta l'ATK di ${count} Sorelle Arpie a 2700, blocca le Trappole avversarie e annulla quelle già sul Terreno!`);
         }
     });
 
@@ -1933,7 +1939,7 @@
                 ctx.card.targetOwner = ctx.owner;
                 ctx.card.targetIndex = slotIndex;
                 ctx.card.targetUid = summonedCard.uid;
-                ctx.log(`🥷 Arte Ninjitsu della Trasformazione sacrifica un Ninja e Special Summona ${summonedCard.name}!`);
+                ctx.log(`🥷 Arte della Trasformazione Ninjitsu sacrifica un Ninja e Special Summona ${summonedCard.name}!`);
             };
 
             // La mano ha priorità sul Deck (stesso ordine dell'originale) —
@@ -1942,13 +1948,13 @@
             const hand = ctx.hand(ctx.owner);
             if (hand.some(filterFn)) {
                 searchZoneWithChoice(ctx, hand, filterFn, {
-                    title: '🥷 Arte Ninjitsu della Trasformazione',
+                    title: '🥷 Arte della Trasformazione Ninjitsu',
                     text: 'Scegli quale mostro Special Summonare dalla mano.'
                 }, finishSummon('hand'));
                 return;
             }
             searchDeckWithChoice(ctx, filterFn, {
-                title: '🥷 Arte Ninjitsu della Trasformazione',
+                title: '🥷 Arte della Trasformazione Ninjitsu',
                 text: 'Scegli quale mostro Special Summonare dal Deck.'
             }, finishSummon('deck'));
         },
@@ -2037,7 +2043,7 @@
                     // non può essere scelta di nuovo.
                     const secondi = collectFieldTargets(ctx, { includiCoperte: true });
                     if (secondi.length === 0) {
-                        ctx.log(`🦅 Attacco d'Icaro distrugge ${distrutti} cart${distrutti === 1 ? 'a' : 'e'}!`);
+                        ctx.log(`🦅 Attacco Icaro distrugge ${distrutti} cart${distrutti === 1 ? 'a' : 'e'}!`);
                         return;
                     }
                     chooseFieldCardTarget(ctx, secondi, {
@@ -2047,7 +2053,7 @@
                         text: 'Scegli la seconda carta da distruggere.'
                     }, (secondo) => {
                         const totale = distrutti + (distruggi(secondo) ? 1 : 0);
-                        ctx.log(`🦅 Attacco d'Icaro sacrifica un mostro Bestia Alata e distrugge ${totale} cart${totale === 1 ? 'a' : 'e'}!`);
+                        ctx.log(`🦅 Attacco Icaro sacrifica un mostro Bestia Alata e distrugge ${totale} cart${totale === 1 ? 'a' : 'e'}!`);
                     });
                 });
             });
@@ -2074,7 +2080,7 @@
             field[index] = null;
             ctx.dealDamage(ctx.opponent, 1000);
             ctx.card._cannotAttackTurn = gameState.turn;
-            ctx.log(`🦖 Tiranno Superconduttore sacrifica ${sacrificed.name} e infligge 1000 danni!`);
+            ctx.log(`🦖 Tiranno Super Conduttore sacrifica ${sacrificed.name} e infligge 1000 danni!`);
         },
         static(ctx) {
             if (ctx.card._cannotAttackTurn === gameState.turn) gameState.cannotAttackUids[ctx.card.uid] = true;
@@ -2099,7 +2105,7 @@
             if (idx === -1) return;
             const name = ctx.opponentCard.name;
             ctx.returnMonsterToHand(ctx.opponent, idx);
-            ctx.log(`🔨 Testa di Martello Iper rimanda ${name} in mano!`);
+            ctx.log(`🔨 Iper Testa-Martello rimanda ${name} in mano!`);
         }
     });
 
@@ -2192,7 +2198,7 @@
             if (ctx.graveyardMoveNegated(ctx.owner)) return;
             grave.splice(index, 1);
             hand.push(ctx.card);
-            ctx.log('🦅 Ptera Nero ritorna in mano!');
+            ctx.log('🦅 Pterodattilo Nero ritorna in mano!');
         }
     });
 
@@ -2209,7 +2215,7 @@
             const index = field.findIndex((s) => s && s.card.uid === ctx.card.uid);
             if (index === -1 || field[index].position !== 'attack') return;
             field[index].position = 'defense';
-            ctx.log('🦕 Stego Nero cambia in Posizione di Difesa!');
+            ctx.log('🦕 Stegosauro Oscuro cambia in Posizione di Difesa!');
         }
     });
 
@@ -2392,7 +2398,7 @@
             ctx.graveyard(ctx.owner).push(tributeCard);
             gameState.pendingSelfDestructAtOpponentEndPhase = gameState.pendingSelfDestructAtOpponentEndPhase || [];
             gameState.pendingSelfDestructAtOpponentEndPhase.push({ cardUid: ctx.card.uid, owner: ctx.owner, endsRemaining: 3 });
-            ctx.log(`🦖 Grande Pillola Evolutiva sacrifica ${tributeCard.name}: ora puoi Evocare Normalmente mostri Dinosauro di Livello 5+ senza Sacrificio!`);
+            ctx.log(`🦖 Pillola dell'Evoluzione Gigante sacrifica ${tributeCard.name}: ora puoi Evocare Normalmente mostri Dinosauro di Livello 5+ senza Sacrificio!`);
         }
     });
 
@@ -2420,7 +2426,7 @@
             });
             if (dinosauri.length === 0) return;
             chooseFieldCardTarget(ctx, dinosauri, {
-                title: '🦖 Colpo di Coda',
+                title: '🦖 Spazzata di Coda',
                 text: 'Scegli il Dinosauro di Livello 5 o superiore: il suo Livello decide quali mostri puoi rimandare in mano.'
             }, (dino) => {
                 const dinoLevel = dino.card.level || 0;
@@ -2436,7 +2442,7 @@
                     });
                     if (bersagli.length === 0) return fine();
                     chooseFieldCardTarget(ctx, bersagli, {
-                        title: `🦖 Colpo di Coda (${bounced + 1}/2)`,
+                        title: `🦖 Spazzata di Coda (${bounced + 1}/2)`,
                         text: 'Scegli un mostro avversario da rimandare in mano.'
                     }, (b) => {
                         const decl = ctx.declareTarget(b.owner, b.index, { totalTargetCount: 2 });
@@ -2449,7 +2455,7 @@
                     });
                 };
                 const fine = () => {
-                    ctx.log(`🦖 Colpo di Coda rimanda ${bounced} mostr${bounced === 1 ? 'o' : 'i'} in mano!`);
+                    ctx.log(`🦖 Spazzata di Coda rimanda ${bounced} mostr${bounced === 1 ? 'o' : 'i'} in mano!`);
                 };
                 prossimo();
             });
@@ -2665,23 +2671,23 @@
             const emptyIndices = ctx.stField(ctx.opponent).map((slot, i) => (slot === null ? i : -1)).filter((i) => i !== -1).slice(0, 3);
             emptyIndices.forEach((i) => gameState.lockedSTZonesFor[ctx.opponent].add(i));
             ctx.card._sismicStandbyCount = 0;
-            ctx.log(`🌍 Onda Sismica blocca ${emptyIndices.length} Zone Magia/Trappola dell'avversario!`);
+            ctx.log(`🌍 Onda d'Urto Sismica blocca ${emptyIndices.length} Zone Magia/Trappola dell'avversario!`);
         },
         onStandbyPhase(ctx) {
             if (ctx.card._sismicStandbyCount == null) return;
             ctx.card._sismicStandbyCount += 1;
             if (ctx.card._sismicStandbyCount < 3) return;
             const opened = searchGraveyardWithChoice(ctx, ctx.owner, (c) => c.race === 'Dinosauro', {
-                title: '🌍 Onda Sismica',
+                title: '🌍 Onda d\'Urto Sismica',
                 text: 'Scegli quale mostro Dinosauro recuperare dal Cimitero.'
             }, (dino) => {
                 ctx.destroySpellTrap(ctx.owner, ctx.index);
                 ctx.hand(ctx.owner).push(dino);
-                ctx.log(`🌍 Onda Sismica si autodistrugge: recupera ${dino.name} dal Cimitero!`);
+                ctx.log(`🌍 Onda d'Urto Sismica si autodistrugge: recupera ${dino.name} dal Cimitero!`);
             });
             if (!opened) {
                 ctx.destroySpellTrap(ctx.owner, ctx.index);
-                ctx.log('🌍 Onda Sismica si autodistrugge!');
+                ctx.log('🌍 Onda d\'Urto Sismica si autodistrugge!');
             }
         },
         onSTDestroyed(ctx) {
@@ -2710,7 +2716,7 @@
                 filter: (card, owner, slot) => slot !== attackerSlot
             });
             chooseFieldCardTargetWaiting(ctx, candidati, {
-                title: '🛡️ Scudo con Braccio Magico',
+                title: '🛡️ Scudo da Braccio Magico',
                 text: 'Scegli il mostro dell\'avversario da prendere e mettere davanti all\'attacco.',
                 dichiara: true
             }, (scelto) => {
@@ -2725,7 +2731,7 @@
                 // takeControl mette il mostro nella prima casella libera:
                 // è quella letta qui sopra.
                 ctx.redirectAttack(freeIndex, ctx.owner);
-                ctx.log(`🛡️ Scudo con Braccio Magico prende il controllo di ${stolenName} e lo mette davanti all'attacco!`);
+                ctx.log(`🛡️ Scudo da Braccio Magico prende il controllo di ${stolenName} e lo mette davanti all'attacco!`);
             });
         }
     });
@@ -2752,7 +2758,7 @@
                 }
                 ctx.cancelAttack();
                 ctx.endBattlePhase();
-                ctx.log("🛡️ Nega Attacco annulla l'attacco e termina la Battle Phase!");
+                ctx.log("🛡️ Annulla Attacco annulla l'attacco e termina la Battle Phase!");
             });
         }
     });
@@ -2820,9 +2826,9 @@
             if (ctx.negateActivation()) {
                 removeNegatedCardFromCurrentZone(ctx, link);
                 ctx.hand(link.owner).push(link.card);
-                ctx.log('🔥 Goblin fuori dalla Padella paga 500 LP, annulla e rimanda in mano la Magia avversaria!');
+                ctx.log('🔥 Goblin Fuori dalla Padella paga 500 LP, annulla e rimanda in mano la Magia avversaria!');
             } else {
-                ctx.log('🔥 Goblin fuori dalla Padella paga 500 LP, ma non c\'era più nulla da annullare.');
+                ctx.log('🔥 Goblin Fuori dalla Padella paga 500 LP, ma non c\'era più nulla da annullare.');
             }
         }
     });
@@ -2986,13 +2992,13 @@
         onDealsBattleDamage(ctx) {
             if (ctx.card._gadjiltronRedGadget) {
                 ctx.dealDamage(ctx.opponent, 400);
-                ctx.log('⚙️ Drago Gadjiltron Ingranaggio Antico (Gadget Rosso): 400 danni extra!');
+                ctx.log('⚙️ Drago Gadjiltron-Ingranaggio Antico (Congegno Rosso): 400 danni extra!');
             }
         },
         onBattled(ctx) {
             if (ctx.card._gadjiltronYellowGadget && ctx.opponentSurvived === false) {
                 ctx.dealDamage(ctx.opponent, 600);
-                ctx.log('⚙️ Drago Gadjiltron Ingranaggio Antico (Gadget Giallo): 600 danni extra!');
+                ctx.log('⚙️ Drago Gadjiltron-Ingranaggio Antico (Congegno Giallo): 600 danni extra!');
             }
         }
     });
@@ -3033,13 +3039,13 @@
         onDealsBattleDamage(ctx) {
             if (ctx.card._gadjiltronRedGadget && ctx.targetIndex === -1) {
                 ctx.dealDamage(ctx.opponent, 500);
-                ctx.log('⚙️ Chimera Gadjiltron Ingranaggio Antico (Gadget Rosso): 500 danni extra!');
+                ctx.log('⚙️ Chimera Gadjiltron-Ingranaggio Antico (Congegno Rosso): 500 danni extra!');
             }
         },
         onBattled(ctx) {
             if (ctx.card._gadjiltronYellowGadget && ctx.opponentSurvived === false) {
                 ctx.dealDamage(ctx.opponent, 700);
-                ctx.log('⚙️ Chimera Gadjiltron Ingranaggio Antico (Gadget Giallo): 700 danni extra!');
+                ctx.log('⚙️ Chimera Gadjiltron-Ingranaggio Antico (Congegno Giallo): 700 danni extra!');
             }
         }
     });
@@ -3077,7 +3083,7 @@
             if (index === -1) return;
             const targetName = ctx.stField(ctx.opponent)[index].card.name;
             ctx.destroySpellTrap(ctx.opponent, index);
-            ctx.log(`⚙️ Ingegnere Ingranaggio Antico distrugge ${targetName} alla fine del Damage Step!`);
+            ctx.log(`⚙️ Ingegnere-Ingranaggio Antico distrugge ${targetName} alla fine del Damage Step!`);
         },
         canActivate(ctx) {
             if (ctx.zone !== 'monster') return false;
@@ -3128,16 +3134,16 @@
         ctx.log(`⚙️ ${ctx.card.name} aggiunge ${card.name} alla mano dal Deck!`);
     }
     CardEffects.register(828, {
-        onSummon(ctx) { searchGadgetToHand(ctx, 829, 'Gadget Rosso'); },
-        onSpecialSummon(ctx) { searchGadgetToHand(ctx, 829, 'Gadget Rosso'); }
+        onSummon(ctx) { searchGadgetToHand(ctx, 829, 'Congegno Rosso'); },
+        onSpecialSummon(ctx) { searchGadgetToHand(ctx, 829, 'Congegno Rosso'); }
     });
     CardEffects.register(829, {
-        onSummon(ctx) { searchGadgetToHand(ctx, 830, 'Gadget Giallo'); },
-        onSpecialSummon(ctx) { searchGadgetToHand(ctx, 830, 'Gadget Giallo'); }
+        onSummon(ctx) { searchGadgetToHand(ctx, 830, 'Congegno Giallo'); },
+        onSpecialSummon(ctx) { searchGadgetToHand(ctx, 830, 'Congegno Giallo'); }
     });
     CardEffects.register(830, {
-        onSummon(ctx) { searchGadgetToHand(ctx, 828, 'Gadget Verde'); },
-        onSpecialSummon(ctx) { searchGadgetToHand(ctx, 828, 'Gadget Verde'); }
+        onSummon(ctx) { searchGadgetToHand(ctx, 828, 'Congegno Verde'); },
+        onSpecialSummon(ctx) { searchGadgetToHand(ctx, 828, 'Congegno Verde'); }
     });
 
     // ================================================================

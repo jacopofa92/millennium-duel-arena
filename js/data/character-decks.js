@@ -39,107 +39,107 @@ const characterDeckDatabase = {
                 { id: 2, qty: 3 }, // Mago Nero
                 { id: 109, qty: 3 }, // Castoro Guerriero
                 { id: 444, qty: 2 }, // Zanna d'Argento
-                { id: 237, qty: 2 }, // Folletto Selvaggio Feroce
-                { id: 391, qty: 3 }, // Elfa Mistica
-                { id: 261, qty: 2 }, // Soldato di Pietra Gigante
+                { id: 237, qty: 2 }, // Demone Selvaggio
+                { id: 391, qty: 3 }, // Elfo Mistico
+                { id: 261, qty: 2 }, // Soldato di Pietra
                 { id: 22, qty: 3 }, // Kuriboh
-                { id: 115, qty: 1 }, // Gran Scudo Gardna
-                { id: 367, qty: 2 }, // Cimitero dei Mammut
-                { id: 4, qty: 1 }, // Guerriero Celtico
+                { id: 115, qty: 1 }, // Grande Scudo Custode
+                { id: 367, qty: 2 }, // Mammuth delle Tombe
+                { id: 4, qty: 1 }, // Guardiano Celtico
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 620, qty: 1 }, // Cerchio Ammaliante
+                { id: 620, qty: 1 }, // Cerchio Incantatore
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 434, qty: 2 }, // Capro Espiatorio
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
                 { id: 386, qty: 1 }, // Moltiplicazione
                 { id: 363, qty: 1 }, // Cappelli Magici
-                { id: 206, qty: 1 }, // Vaso Cattura-Drago
-                { id: 263, qty: 1 }, // Dono dell'Elfa Mistica
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 206, qty: 1 }, // Cattura-Draghi
+                { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 503, qty: 1 }, // Waboku
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 474, qty: 1 }, // Mille Coltelli
-                { id: 546, qty: 1 } // Dian Keto la Maestra delle Cure
+                { id: 546, qty: 1 } // Dian Keto il Curatore
             ],
             extra: []
         },
         medium: {
             main: [
                 { id: 2, qty: 3 }, // Mago Nero
-                { id: 4, qty: 2 }, // Guerriero Celtico
-                { id: 14, qty: 1 }, // Gaia il Cavaliere Feroce
-                { id: 15, qty: 1 }, // Maledizione del Drago
+                { id: 4, qty: 2 }, // Guardiano Celtico
+                { id: 14, qty: 1 }, // Gaia il Cavaliere
+                { id: 15, qty: 1 }, // Anatema del Drago
                 { id: 109, qty: 2 }, // Castoro Guerriero
-                { id: 237, qty: 1 }, // Folletto Selvaggio Feroce
-                { id: 391, qty: 2 }, // Elfa Mistica
-                { id: 261, qty: 1 }, // Soldato di Pietra Gigante
+                { id: 237, qty: 1 }, // Demone Selvaggio
+                { id: 391, qty: 2 }, // Elfo Mistico
+                { id: 261, qty: 1 }, // Soldato di Pietra
                 { id: 13, qty: 1 }, // Teschio Evocato
                 { id: 22, qty: 2 }, // Kuriboh
-                { id: 115, qty: 1 }, // Gran Scudo Gardna
-                { id: 28, qty: 1 }, // Mago del Tempo
-                { id: 41, qty: 1 }, // Testa Proibita
+                { id: 115, qty: 1 }, // Grande Scudo Custode
+                { id: 28, qty: 1 }, // Stregone del Tempo
+                { id: 41, qty: 1 }, // Exodia il Proibito
                 { id: 42, qty: 1 }, // Braccio Sx del Proibito
-                { id: 11, qty: 1 }, // Braccio Dx Del Proibito
+                { id: 11, qty: 1 }, // Braccio Dx del Proibito
                 { id: 44, qty: 1 }, // Gamba Sx del Proibito
                 { id: 43, qty: 1 }, // Gamba Dx del Proibito
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 620, qty: 1 }, // Cerchio Ammaliante
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 147, qty: 1 }, // Cambio di Cuore
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
+                { id: 620, qty: 1 }, // Cerchio Incantatore
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 147, qty: 1 }, // Cambiare Idea
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
                 { id: 386, qty: 1 }, // Moltiplicazione
                 { id: 363, qty: 1 }, // Cappelli Magici
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 206, qty: 1 }, // Vaso Cattura-Drago
+                { id: 206, qty: 1 }, // Cattura-Draghi
                 { id: 474, qty: 1 }, // Mille Coltelli
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 263, qty: 1 } // Dono dell'Elfa Mistica
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 263, qty: 1 } // Dono dell'Elfo Mistico
             ],
             extra: []
         },
         hard: {
             main: [
                 { id: 2, qty: 3 }, // Mago Nero
-                { id: 4, qty: 2 }, // Guerriero Celtico
-                { id: 14, qty: 1 }, // Gaia il Cavaliere Feroce
-                { id: 15, qty: 1 }, // Maledizione del Drago
+                { id: 4, qty: 2 }, // Guardiano Celtico
+                { id: 14, qty: 1 }, // Gaia il Cavaliere
+                { id: 15, qty: 1 }, // Anatema del Drago
                 { id: 109, qty: 1 }, // Castoro Guerriero
-                { id: 237, qty: 1 }, // Folletto Selvaggio Feroce
-                { id: 391, qty: 1 }, // Elfa Mistica
-                { id: 261, qty: 1 }, // Soldato di Pietra Gigante
+                { id: 237, qty: 1 }, // Demone Selvaggio
+                { id: 391, qty: 1 }, // Elfo Mistico
+                { id: 261, qty: 1 }, // Soldato di Pietra
                 { id: 13, qty: 1 }, // Teschio Evocato
                 { id: 22, qty: 2 }, // Kuriboh
-                { id: 28, qty: 1 }, // Mago del Tempo
-                { id: 41, qty: 1 }, // Testa Proibita
+                { id: 28, qty: 1 }, // Stregone del Tempo
+                { id: 41, qty: 1 }, // Exodia il Proibito
                 { id: 42, qty: 1 }, // Braccio Sx del Proibito
-                { id: 11, qty: 1 }, // Braccio Dx Del Proibito
+                { id: 11, qty: 1 }, // Braccio Dx del Proibito
                 { id: 44, qty: 1 }, // Gamba Sx del Proibito
                 { id: 43, qty: 1 }, // Gamba Dx del Proibito
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 620, qty: 1 }, // Cerchio Ammaliante
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 147, qty: 1 }, // Cambio di Cuore
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
+                { id: 620, qty: 1 }, // Cerchio Incantatore
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 147, qty: 1 }, // Cambiare Idea
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
                 { id: 386, qty: 1 }, // Moltiplicazione
                 { id: 363, qty: 1 }, // Cappelli Magici
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 206, qty: 1 }, // Vaso Cattura-Drago
+                { id: 206, qty: 1 }, // Cattura-Draghi
                 { id: 474, qty: 1 }, // Mille Coltelli
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 55, qty: 1 }, // Guerriero Nero Supremo
-                { id: 56, qty: 1 }, // Rito del Guerriero Nero
-                { id: 188, qty: 1 }, // Maga Oscura
-                { id: 382, qty: 1 } // Forza dello Specchio
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 55, qty: 1 }, // Glorioso Soldato Nero
+                { id: 56, qty: 1 }, // Rito della Gloria Nera
+                { id: 188, qty: 1 }, // Ragazza Maga Nera
+                { id: 382, qty: 1 } // Forza Riflessa
             ],
             extra: []
         }
@@ -156,125 +156,125 @@ const characterDeckDatabase = {
         easy: {
             main: [
                 { id: 2, qty: 1 }, // Mago Nero — Yugi ne possiede una sola copia nell'anime
-                { id: 261, qty: 2 }, // Soldato di Pietra Gigante
+                { id: 261, qty: 2 }, // Soldato di Pietra
                 { id: 22, qty: 3 }, // Kuriboh
-                { id: 115, qty: 2 }, // Gran Scudo Gardna
-                { id: 4, qty: 1 }, // Guerriero Celtico
-                { id: 391, qty: 3 }, // Elfa Mistica
+                { id: 115, qty: 2 }, // Grande Scudo Custode
+                { id: 4, qty: 1 }, // Guardiano Celtico
+                { id: 391, qty: 3 }, // Elfo Mistico
                 { id: 109, qty: 2 }, // Castoro Guerriero
                 { id: 532, qty: 1 }, // Gazelle, Re delle Bestie Mitiche
                 { id: 194, qty: 2 }, // Illusionista dagli Occhi Oscuri
-                { id: 237, qty: 2 }, // Folletto Selvaggio Feroce
+                { id: 237, qty: 2 }, // Demone Selvaggio
                 { id: 444, qty: 2 }, // Zanna d'Argento
                 { id: 8, qty: 2 }, // Spada Rivelatrice
                 { id: 363, qty: 1 }, // Cappelli Magici
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 386, qty: 1 }, // Moltiplicazione
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 620, qty: 1 }, // Cerchio Ammaliante
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 620, qty: 1 }, // Cerchio Incantatore
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 503, qty: 1 }, // Waboku
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 263, qty: 1 }, // Dono dell'Elfa Mistica
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
                 { id: 474, qty: 1 }, // Mille Coltelli
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 439, qty: 1 } // Incantesimo Ombra
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 439, qty: 1 } // Magia Ombra
             ],
             extra: []
         },
         medium: {
             main: [
                 { id: 2, qty: 1 }, // Mago Nero — una copia, sostenuta dalle carte dedicate sotto
-                { id: 261, qty: 1 }, // Soldato di Pietra Gigante
-                { id: 712, qty: 1 }, // Guardiano Celtico Sgradito
-                { id: 188, qty: 1 }, // Maga Oscura
-                { id: 20, qty: 1 }, // Buster Blader
+                { id: 261, qty: 1 }, // Soldato di Pietra
+                { id: 712, qty: 1 }, // Guardia Celtica Riaddestrata
+                { id: 188, qty: 1 }, // Ragazza Maga Nera
+                { id: 20, qty: 1 }, // Combattente delle Lame
                 { id: 532, qty: 1 }, // Gazelle, Re delle Bestie Mitiche
                 { id: 533, qty: 1 }, // Berfomet
                 { id: 22, qty: 2 }, // Kuriboh
-                { id: 115, qty: 1 }, // Gran Scudo Gardna
-                { id: 4, qty: 2 }, // Guerriero Celtico
-                { id: 85, qty: 1 }, // Alpha il Guerriero Magnetico
-                { id: 112, qty: 1 }, // Beta il Guerriero Magnetico
-                { id: 391, qty: 1 }, // Elfa Mistica
-                { id: 738, qty: 1 }, // Mago Comando del Caos
+                { id: 115, qty: 1 }, // Grande Scudo Custode
+                { id: 4, qty: 2 }, // Guardiano Celtico
+                { id: 85, qty: 1 }, // Guerriero Magnetico Alfa
+                { id: 112, qty: 1 }, // Guerriero Magnetico Beta
+                { id: 391, qty: 1 }, // Elfo Mistico
+                { id: 738, qty: 1 }, // Mago Ordine del Chaos
                 { id: 13, qty: 1 }, // Teschio Evocato
-                { id: 55, qty: 1 }, // Guerriero Nero Supremo
+                { id: 55, qty: 1 }, // Glorioso Soldato Nero
                 { id: 109, qty: 1 }, // Castoro Guerriero
                 { id: 194, qty: 1 }, // Illusionista dagli Occhi Oscuri
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 363, qty: 1 }, // Cappelli Magici
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 7, qty: 1 }, // Buco Nero
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 147, qty: 1 }, // Cambio di Cuore
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 147, qty: 1 }, // Cambiare Idea
                 { id: 474, qty: 1 }, // Mille Coltelli
-                { id: 748, qty: 1 }, // Attacco Magico Oscuro
+                { id: 748, qty: 1 }, // Attacco Mago Nero
                 { id: 362, qty: 1 }, // Dimensione Magica
                 { id: 386, qty: 1 }, // Moltiplicazione
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 430, qty: 1 }, // Pietra del Saggio
-                { id: 56, qty: 1 }, // Rito del Guerriero Nero
+                { id: 56, qty: 1 }, // Rito della Gloria Nera
                 { id: 38, qty: 1 }, // Fusione
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 419, qty: 1 }, // Anello della Distruzione
-                { id: 620, qty: 1 } // Cerchio Ammaliante
+                { id: 620, qty: 1 } // Cerchio Incantatore
             ],
             extra: [
                 { id: 189, qty: 1 }, // Paladino Oscuro
-                { id: 149, qty: 1 } // Chimera la Bestia Mitica Volante
+                { id: 149, qty: 1 } // Chimera, la Mitica Bestia Volante
             ]
         },
         hard: {
             main: [
                 { id: 2, qty: 1 }, // Mago Nero — una copia, come nell'anime
-                { id: 261, qty: 1 }, // Soldato di Pietra Gigante
-                { id: 712, qty: 1 }, // Guardiano Celtico Sgradito
-                { id: 188, qty: 1 }, // Maga Oscura
-                { id: 20, qty: 1 }, // Buster Blader
+                { id: 261, qty: 1 }, // Soldato di Pietra
+                { id: 712, qty: 1 }, // Guardia Celtica Riaddestrata
+                { id: 188, qty: 1 }, // Ragazza Maga Nera
+                { id: 20, qty: 1 }, // Combattente delle Lame
                 { id: 532, qty: 1 }, // Gazelle, Re delle Bestie Mitiche
                 { id: 533, qty: 1 }, // Berfomet
                 { id: 22, qty: 2 }, // Kuriboh
-                { id: 115, qty: 1 }, // Gran Scudo Gardna
-                { id: 85, qty: 1 }, // Alpha il Guerriero Magnetico
-                { id: 112, qty: 1 }, // Beta il Guerriero Magnetico
-                { id: 391, qty: 1 }, // Elfa Mistica
-                { id: 738, qty: 1 }, // Mago Comando del Caos
+                { id: 115, qty: 1 }, // Grande Scudo Custode
+                { id: 85, qty: 1 }, // Guerriero Magnetico Alfa
+                { id: 112, qty: 1 }, // Guerriero Magnetico Beta
+                { id: 391, qty: 1 }, // Elfo Mistico
+                { id: 738, qty: 1 }, // Mago Ordine del Chaos
                 { id: 13, qty: 1 }, // Teschio Evocato
-                { id: 55, qty: 1 }, // Guerriero Nero Supremo
+                { id: 55, qty: 1 }, // Glorioso Soldato Nero
                 { id: 109, qty: 1 }, // Castoro Guerriero
                 { id: 194, qty: 1 }, // Illusionista dagli Occhi Oscuri
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 363, qty: 1 }, // Cappelli Magici
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 7, qty: 1 }, // Buco Nero
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 147, qty: 1 }, // Cambio di Cuore
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 147, qty: 1 }, // Cambiare Idea
                 { id: 474, qty: 1 }, // Mille Coltelli
-                { id: 748, qty: 1 }, // Attacco Magico Oscuro
+                { id: 748, qty: 1 }, // Attacco Mago Nero
                 { id: 362, qty: 1 }, // Dimensione Magica
                 { id: 386, qty: 1 }, // Moltiplicazione
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 430, qty: 1 }, // Pietra del Saggio
-                { id: 56, qty: 1 }, // Rito del Guerriero Nero
+                { id: 56, qty: 1 }, // Rito della Gloria Nera
                 { id: 38, qty: 1 }, // Fusione
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 419, qty: 1 }, // Anello della Distruzione
-                { id: 620, qty: 1 }, // Cerchio Ammaliante
+                { id: 620, qty: 1 }, // Cerchio Incantatore
                 { id: 31, qty: 1 }, // Slifer il Drago del Cielo
-                { id: 854, qty: 1 }, // Mago del Caos Nero
-                { id: 382, qty: 1 }, // Forza dello Specchio
-                { id: 187, qty: 1 } // Rito della Magia Oscura
+                { id: 854, qty: 1 }, // Mago del Chaos Oscuro
+                { id: 382, qty: 1 }, // Forza Riflessa
+                { id: 187, qty: 1 } // Rito Magia Oscura
             ],
             extra: [
                 { id: 189, qty: 1 }, // Paladino Oscuro
-                { id: 149, qty: 1 } // Chimera la Bestia Mitica Volante
+                { id: 149, qty: 1 } // Chimera, la Mitica Bestia Volante
             ]
         }
     },
@@ -295,32 +295,32 @@ const characterDeckDatabase = {
         easy: {
             main: [
                 { id: 1, qty: 3 }, // Drago Bianco Occhi Blu
-                { id: 353, qty: 3 }, // Signore dei D.
-                { id: 431, qty: 3 }, // Saggi il Pagliaccio Oscuro
-                { id: 298, qty: 3 }, // Gigante Un Occhio
-                { id: 389, qty: 3 }, // Cavaliere Mistico
-                { id: 198, qty: 1 }, // Drago della Dimensione Diversa
-                { id: 106, qty: 2 }, // Bue da Battaglia
+                { id: 353, qty: 3 }, // Signore di D.
+                { id: 431, qty: 3 }, // Saggi, Clown Oscuro
+                { id: 298, qty: 3 }, // Gigante Hitotsu-Me
+                { id: 389, qty: 3 }, // Centauro Mistico
+                { id: 198, qty: 1 }, // Drago da un'Altra Dimensione
+                { id: 106, qty: 2 }, // Ascia da Guerra
                 { id: 428, qty: 1 }, // Ryu-Kishin Potenziato
-                { id: 321, qty: 1 }, // Kaiser Sea Horse
+                { id: 321, qty: 1 }, // Kaiser Cavalluccio Marino
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 69, qty: 1 }, // Stop Difesa
-                { id: 226, qty: 1 }, // Controllore del Nemico
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 312, qty: 1 }, // Trasportatore di Materia Interdimensionale
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 69, qty: 1 }, // Blocca Difesa
+                { id: 226, qty: 1 }, // Controlla-Avversario
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 312, qty: 1 }, // Teletrasportatore
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 631, qty: 1 }, // Megamorfosi
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 607, qty: 1 }, // Tifone dello Spazio Mistico
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 607, qty: 1 }, // Tifone Spaziale Mistico
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -328,77 +328,77 @@ const characterDeckDatabase = {
         medium: {
             main: [
                 { id: 1, qty: 3 }, // Drago Bianco Occhi Blu
-                { id: 353, qty: 2 }, // Signore dei D.
-                { id: 502, qty: 2 }, // Predone Vorse
-                { id: 431, qty: 1 }, // Saggi il Pagliaccio Oscuro
-                { id: 335, qty: 1 }, // La Jinn il Genio Mistico della Lampada
-                { id: 510, qty: 2 }, // Cannone Testa X
-                { id: 513, qty: 2 }, // Testa di Drago Y
-                { id: 515, qty: 2 }, // Carro Armato Metallico Z
-                { id: 321, qty: 1 }, // Kaiser Sea Horse
-                { id: 454, qty: 1 }, // Drago Lancia
-                { id: 198, qty: 1 }, // Drago della Dimensione Diversa
+                { id: 353, qty: 2 }, // Signore di D.
+                { id: 502, qty: 2 }, // Predatore Vorse
+                { id: 431, qty: 1 }, // Saggi, Clown Oscuro
+                { id: 335, qty: 1 }, // Genio della Lampada
+                { id: 510, qty: 2 }, // X-Testa Cannone
+                { id: 513, qty: 2 }, // Y-Testa Drago
+                { id: 515, qty: 2 }, // Z-Carro Armato Metallico
+                { id: 321, qty: 1 }, // Kaiser Cavalluccio Marino
+                { id: 454, qty: 1 }, // Drago Lanciere
+                { id: 198, qty: 1 }, // Drago da un'Altra Dimensione
                 { id: 320, qty: 1 }, // Kaiser Glider
-                { id: 298, qty: 1 }, // Gigante Un Occhio
-                { id: 389, qty: 1 }, // Cavaliere Mistico
-                { id: 317, qty: 1 }, // Uomo Giudice
-                { id: 578, qty: 2 }, // Il Flauto per Evocare Draghi
+                { id: 298, qty: 1 }, // Gigante Hitotsu-Me
+                { id: 389, qty: 1 }, // Centauro Mistico
+                { id: 317, qty: 1 }, // Il Giudicatore
+                { id: 578, qty: 2 }, // Flauto Evoca-Draghi
                 { id: 38, qty: 1 }, // Fusione
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 226, qty: 2 }, // Controllore del Nemico
-                { id: 69, qty: 1 }, // Stop Difesa
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 226, qty: 2 }, // Controlla-Avversario
+                { id: 69, qty: 1 }, // Blocca Difesa
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 631, qty: 1 }, // Megamorfosi
-                { id: 312, qty: 1 }, // Trasportatore di Materia Interdimensionale
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 312, qty: 1 }, // Teletrasportatore
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 607, qty: 1 } // Tifone dello Spazio Mistico
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 607, qty: 1 } // Tifone Spaziale Mistico
             ],
             extra: [
-                { id: 29, qty: 1 }, // Drago Bianco Definitivo
-                { id: 511, qty: 1 }, // Cannone Drago XY
-                { id: 512, qty: 1 } // Cannone Drago XYZ
+                { id: 29, qty: 1 }, // Drago Occhi Blu Finale
+                { id: 511, qty: 1 }, // XY-Cannone Drago
+                { id: 512, qty: 1 } // XYZ-Cannone Drago
             ]
         },
         hard: {
             main: [
                 { id: 1, qty: 3 }, // Drago Bianco Occhi Blu
-                { id: 353, qty: 2 }, // Signore dei D.
-                { id: 502, qty: 2 }, // Predone Vorse
-                { id: 335, qty: 1 }, // La Jinn il Genio Mistico della Lampada
-                { id: 510, qty: 2 }, // Cannone Testa X
-                { id: 513, qty: 2 }, // Testa di Drago Y
-                { id: 515, qty: 2 }, // Carro Armato Metallico Z
-                { id: 321, qty: 1 }, // Kaiser Sea Horse
-                { id: 454, qty: 1 }, // Drago Lancia
-                { id: 198, qty: 1 }, // Drago della Dimensione Diversa
+                { id: 353, qty: 2 }, // Signore di D.
+                { id: 502, qty: 2 }, // Predatore Vorse
+                { id: 335, qty: 1 }, // Genio della Lampada
+                { id: 510, qty: 2 }, // X-Testa Cannone
+                { id: 513, qty: 2 }, // Y-Testa Drago
+                { id: 515, qty: 2 }, // Z-Carro Armato Metallico
+                { id: 321, qty: 1 }, // Kaiser Cavalluccio Marino
+                { id: 454, qty: 1 }, // Drago Lanciere
+                { id: 198, qty: 1 }, // Drago da un'Altra Dimensione
                 { id: 320, qty: 1 }, // Kaiser Glider
-                { id: 1263, qty: 1 }, // Luce Autentica — promossa dall'audit finale: rende piu' presente il Drago Bianco senza caricare il deck di supporti moderni
-                { id: 578, qty: 2 }, // Il Flauto per Evocare Draghi
+                { id: 1263, qty: 1 }, // Vera Luce — promossa dall'audit finale: rende piu' presente il Drago Bianco senza caricare il deck di supporti moderni
+                { id: 578, qty: 2 }, // Flauto Evoca-Draghi
                 { id: 38, qty: 1 }, // Fusione
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 226, qty: 2 }, // Controllore del Nemico
-                { id: 69, qty: 1 }, // Stop Difesa
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 226, qty: 2 }, // Controlla-Avversario
+                { id: 69, qty: 1 }, // Blocca Difesa
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 631, qty: 1 }, // Megamorfosi
-                { id: 312, qty: 1 }, // Trasportatore di Materia Interdimensionale
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 312, qty: 1 }, // Teletrasportatore
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 607, qty: 1 }, // Tifone dello Spazio Mistico
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 607, qty: 1 }, // Tifone Spaziale Mistico
                 { id: 30, qty: 1 } // Obelisk il Tormentatore
             ],
             extra: [
-                { id: 29, qty: 1 }, // Drago Bianco Definitivo
-                { id: 511, qty: 1 }, // Cannone Drago XY
-                { id: 512, qty: 1 } // Cannone Drago XYZ
+                { id: 29, qty: 1 }, // Drago Occhi Blu Finale
+                { id: 511, qty: 1 }, // XY-Cannone Drago
+                { id: 512, qty: 1 } // XYZ-Cannone Drago
             ]
         }
     },
@@ -417,106 +417,106 @@ const characterDeckDatabase = {
             main: [
                 { id: 12, qty: 3 }, // Drago Nero Occhi Rossi
                 { id: 27, qty: 3 }, // Cucciolo di Drago
-                { id: 28, qty: 1 }, // Mago del Tempo
+                { id: 28, qty: 1 }, // Stregone del Tempo
                 { id: 463, qty: 2 }, // Spadaccino di Landstar
                 { id: 294, qty: 2 }, // Cavaliere Hayabusa
                 { id: 369, qty: 2 }, // Masaki lo Spadaccino Leggendario
                 { id: 539, qty: 2 }, // Signore delle Fiamme
                 { id: 108, qty: 2 }, // Guerriero da Battaglia
                 { id: 477, qty: 2 }, // Ascia Tigre
-                { id: 422, qty: 1 }, // Grotta dell'Orco di Roccia #1
-                { id: 83, qty: 1 }, // Spada di Alligatore
+                { id: 422, qty: 1 }, // Orco di Pietra #1
+                { id: 83, qty: 1 }, // Spada dell'Alligatore
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
-                { id: 232, qty: 1 }, // Scatola delle Fate
-                { id: 445, qty: 1 }, // Dado Teschio
+                { id: 232, qty: 1 }, // Scatola Fatata
+                { id: 445, qty: 1 }, // Dadi del Teschio
                 { id: 333, qty: 1 }, // Kunai con Catena
                 { id: 440, qty: 1 }, // Scudo e Spada
                 { id: 432, qty: 1 }, // Salamandra
                 { id: 38, qty: 1 }, // Fusione
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 273, qty: 1 }, // Dado Aggraziato
-                { id: 262, qty: 1 }, // Turbine Gigante
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 273, qty: 1 }, // Dadi Graziosi
+                { id: 262, qty: 1 }, // Ritorno Totale
                 { id: 276, qty: 1 }, // Tombarolo
                 { id: 503, qty: 1 }, // Waboku
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 143, qty: 1 } // Mura del Castello
             ],
             extra: [
-                { id: 84, qty: 1 } // Drago Spada di Alligatore
+                { id: 84, qty: 1 } // Drago Spada dell'Alligatore
             ]
         },
         medium: {
             main: [
                 { id: 12, qty: 3 }, // Drago Nero Occhi Rossi
                 { id: 16, qty: 2 }, // Gearfried il Cavaliere di Ferro
-                { id: 399, qty: 1 }, // Guerriero Pantera
-                { id: 101, qty: 2 }, // Assalitore con l'Ascia
-                { id: 879, qty: 1 }, // Il Pescatore Leggendario
+                { id: 399, qty: 1 }, // Pantera Guerriera
+                { id: 101, qty: 2 }, // Predone d'Ascia
+                { id: 879, qty: 1 }, // Pescatore Leggendario
                 { id: 17, qty: 1 }, // Jinzo
-                { id: 83, qty: 1 }, // Spada di Alligatore
+                { id: 83, qty: 1 }, // Spada dell'Alligatore
                 { id: 477, qty: 1 }, // Ascia Tigre
                 { id: 369, qty: 1 }, // Masaki lo Spadaccino Leggendario
                 { id: 539, qty: 1 }, // Signore delle Fiamme
                 { id: 27, qty: 2 }, // Cucciolo di Drago
-                { id: 28, qty: 1 }, // Mago del Tempo
+                { id: 28, qty: 1 }, // Stregone del Tempo
                 { id: 463, qty: 1 }, // Spadaccino di Landstar
                 { id: 294, qty: 1 }, // Cavaliere Hayabusa
                 { id: 269, qty: 1 }, // Forza d'Attacco Goblin
                 { id: 256, qty: 1 }, // Garoozis
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 38, qty: 1 }, // Fusione
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 262, qty: 1 }, // Turbine Gigante
+                { id: 262, qty: 1 }, // Ritorno Totale
                 { id: 440, qty: 1 }, // Scudo e Spada
                 { id: 432, qty: 1 }, // Salamandra
-                { id: 273, qty: 1 }, // Dado Aggraziato
-                { id: 445, qty: 1 }, // Dado Teschio
-                { id: 425, qty: 1 }, // Ragno della Roulette
+                { id: 273, qty: 1 }, // Dadi Graziosi
+                { id: 445, qty: 1 }, // Dadi del Teschio
+                { id: 425, qty: 1 }, // Ragno Roulette
                 { id: 333, qty: 1 }, // Kunai con Catena
                 { id: 255, qty: 1 }, // Azzardo
                 { id: 276, qty: 1 }, // Tombarolo
-                { id: 232, qty: 1 }, // Scatola delle Fate
+                { id: 232, qty: 1 }, // Scatola Fatata
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 } // Nega Attacco
+                { id: 820, qty: 1 } // Annulla Attacco
             ],
             extra: [
                 { id: 58, qty: 1 }, // Spadaccino di Fuoco
-                { id: 84, qty: 1 }, // Drago Spada di Alligatore
-                { id: 473, qty: 1 } // Drago dei Mille
+                { id: 84, qty: 1 }, // Drago Spada dell'Alligatore
+                { id: 473, qty: 1 } // Drago Millenario
             ]
         },
         hard: {
             main: [
                 { id: 12, qty: 3 }, // Drago Nero Occhi Rossi
-                { id: 1253, qty: 1 }, // Drago Metallo Nero — singola copia promossa dall'audit finale
+                { id: 1253, qty: 1 }, // Drago Metallico Nero — singola copia promossa dall'audit finale
                 { id: 16, qty: 2 }, // Gearfried il Cavaliere di Ferro
-                { id: 399, qty: 1 }, // Guerriero Pantera
-                { id: 101, qty: 2 }, // Assalitore con l'Ascia
-                { id: 879, qty: 1 }, // Il Pescatore Leggendario
+                { id: 399, qty: 1 }, // Pantera Guerriera
+                { id: 101, qty: 2 }, // Predone d'Ascia
+                { id: 879, qty: 1 }, // Pescatore Leggendario
                 { id: 17, qty: 1 }, // Jinzo
-                { id: 83, qty: 1 }, // Spada di Alligatore
+                { id: 83, qty: 1 }, // Spada dell'Alligatore
                 { id: 477, qty: 1 }, // Ascia Tigre
                 { id: 369, qty: 1 }, // Masaki lo Spadaccino Leggendario
                 { id: 539, qty: 1 }, // Signore delle Fiamme
                 { id: 27, qty: 2 }, // Cucciolo di Drago
-                { id: 28, qty: 2 }, // Mago del Tempo
+                { id: 28, qty: 2 }, // Stregone del Tempo
                 { id: 269, qty: 1 }, // Forza d'Attacco Goblin
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 38, qty: 1 }, // Fusione
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 262, qty: 1 }, // Turbine Gigante
+                { id: 262, qty: 1 }, // Ritorno Totale
                 { id: 440, qty: 1 }, // Scudo e Spada
                 { id: 432, qty: 1 }, // Salamandra
-                { id: 273, qty: 1 }, // Dado Aggraziato
-                { id: 445, qty: 1 }, // Dado Teschio
-                { id: 425, qty: 1 }, // Ragno della Roulette
+                { id: 273, qty: 1 }, // Dadi Graziosi
+                { id: 445, qty: 1 }, // Dadi del Teschio
+                { id: 425, qty: 1 }, // Ragno Roulette
                 { id: 333, qty: 1 }, // Kunai con Catena
                 { id: 255, qty: 1 }, // Azzardo
                 { id: 276, qty: 1 }, // Tombarolo
@@ -524,13 +524,13 @@ const characterDeckDatabase = {
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 267, qty: 1 }, // Gilford il Fulmine
-                { id: 258, qty: 1 }, // Gearfried il Maestro di Spada
-                { id: 415, qty: 1 } // Vincoli Recisi
+                { id: 258, qty: 1 }, // Spadaccino Sacro - Gearfried il Cavaliere di Ferro
+                { id: 415, qty: 1 } // Rimozione della Restrizione
             ],
             extra: [
                 { id: 58, qty: 1 }, // Spadaccino di Fuoco
-                { id: 84, qty: 1 }, // Drago Spada di Alligatore
-                { id: 473, qty: 1 } // Drago dei Mille
+                { id: 84, qty: 1 }, // Drago Spada dell'Alligatore
+                { id: 473, qty: 1 } // Drago Millenario
             ]
         }
     },
@@ -541,109 +541,109 @@ const characterDeckDatabase = {
     // Piumino delle Arpie; da Battle City le Amazzoni, Muro dello Specchio e Scudo con Braccio
     // Magico.
     mai: {
-        flagship: 290, // Sorelle Lady Arpia — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 290, // Sorelle Arpie — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 290, qty: 2 }, // Sorelle Lady Arpia
+                { id: 290, qty: 2 }, // Sorelle Arpie
                 { id: 288, qty: 3 }, // Lady Arpia
                 { id: 782, qty: 2 }, // Lady Arpia 1
                 { id: 783, qty: 2 }, // Lady Arpia 2
                 { id: 784, qty: 2 }, // Lady Arpia 3
                 { id: 775, qty: 3 }, // Ragazza Arpia
-                { id: 786, qty: 2 }, // Cucciolo di Drago dell'Arpia
+                { id: 786, qty: 2 }, // Cucciolo di Drago delle Arpie
                 { id: 916, qty: 2 }, // Kurama
-                { id: 90, qty: 1 }, // Amazzone Spadaccina
-                { id: 778, qty: 1 }, // Faccia di Uccello
-                { id: 787, qty: 2 }, // Egoista Elegante
-                { id: 175, qty: 1 }, // Scudo Cyber
+                { id: 90, qty: 1 }, // Spadaccina Amazoness
+                { id: 778, qty: 1 }, // Faccia da Uccello
+                { id: 787, qty: 2 }, // Egotista Elegante
+                { id: 175, qty: 1 }, // Cyber Scudo
                 { id: 788, qty: 1 }, // Terreno di Caccia delle Arpie
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
-                { id: 383, qty: 1 }, // Muro dello Specchio
-                { id: 819, qty: 1 }, // Scudo con Braccio Magico
+                { id: 820, qty: 2 }, // Annulla Attacco
+                { id: 383, qty: 1 }, // Muro a Specchio
+                { id: 819, qty: 1 }, // Scudo da Braccio Magico
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 292, qty: 1 }, // Tempesta di Piume delle Arpie
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 292, qty: 1 }, // Tempesta di Piume dell'Arpia
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 595, qty: 1 } // Il Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 595, qty: 1 } // Guardiano Affidabile
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 290, qty: 2 }, // Sorelle Lady Arpia
+                { id: 290, qty: 2 }, // Sorelle Arpie
                 { id: 288, qty: 3 }, // Lady Arpia
                 { id: 782, qty: 1 }, // Lady Arpia 1
                 { id: 783, qty: 1 }, // Lady Arpia 2
                 { id: 784, qty: 1 }, // Lady Arpia 3
-                { id: 293, qty: 1 }, // Drago da Compagnia delle Arpie
-                { id: 786, qty: 1 }, // Cucciolo di Drago dell'Arpia
-                { id: 172, qty: 2 }, // Arpia Cyber
-                { id: 90, qty: 2 }, // Amazzone Spadaccina
-                { id: 86, qty: 1 }, // Amazzone Maestra delle Catene
-                { id: 87, qty: 2 }, // Amazzone Combattente
+                { id: 293, qty: 1 }, // Draghetto delle Arpie
+                { id: 786, qty: 1 }, // Cucciolo di Drago delle Arpie
+                { id: 172, qty: 2 }, // Cyber Lady Arpia
+                { id: 90, qty: 2 }, // Spadaccina Amazoness
+                { id: 86, qty: 1 }, // Maestra delle Catene Amazoness
+                { id: 87, qty: 2 }, // Guerriera Amazoness
                 { id: 775, qty: 2 }, // Ragazza Arpia
-                { id: 778, qty: 1 }, // Faccia di Uccello
-                { id: 787, qty: 2 }, // Egoista Elegante
-                { id: 175, qty: 1 }, // Scudo Cyber
+                { id: 778, qty: 1 }, // Faccia da Uccello
+                { id: 787, qty: 2 }, // Egotista Elegante
+                { id: 175, qty: 1 }, // Cyber Scudo
                 { id: 788, qty: 1 }, // Terreno di Caccia delle Arpie
-                { id: 289, qty: 1 }, // Lady Arpia Formazione della Fenice
-                { id: 789, qty: 1 }, // Scintilla dell'Estasi Triangolare
-                { id: 291, qty: 1 }, // Piumino delle Arpie
-                { id: 383, qty: 1 }, // Muro dello Specchio
-                { id: 88, qty: 1 }, // Arciere delle Amazzoni
+                { id: 289, qty: 1 }, // Lady Arpia Formazione Fenice
+                { id: 789, qty: 1 }, // Scintilla d'Estasi Triangolare
+                { id: 291, qty: 1 }, // Spolverino dell'Arpia
+                { id: 383, qty: 1 }, // Muro a Specchio
+                { id: 88, qty: 1 }, // Imboscata Amazoness
                 { id: 790, qty: 1 }, // Festa Isterica
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
-                { id: 819, qty: 1 }, // Scudo con Braccio Magico
+                { id: 819, qty: 1 }, // Scudo da Braccio Magico
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 292, qty: 1 }, // Tempesta di Piume delle Arpie
+                { id: 292, qty: 1 }, // Tempesta di Piume dell'Arpia
                 { id: 434, qty: 1 } // Capro Espiatorio
             ],
             extra: []
         },
         hard: {
             main: [
-                { id: 290, qty: 2 }, // Sorelle Lady Arpia
+                { id: 290, qty: 2 }, // Sorelle Arpie
                 { id: 288, qty: 3 }, // Lady Arpia
                 { id: 782, qty: 1 }, // Lady Arpia 1
                 { id: 783, qty: 1 }, // Lady Arpia 2
                 { id: 784, qty: 1 }, // Lady Arpia 3
-                { id: 293, qty: 1 }, // Drago da Compagnia delle Arpie
-                { id: 786, qty: 1 }, // Cucciolo di Drago dell'Arpia
-                { id: 172, qty: 3 }, // Arpia Cyber
-                { id: 90, qty: 2 }, // Amazzone Spadaccina
-                { id: 86, qty: 1 }, // Amazzone Maestra delle Catene
-                { id: 87, qty: 1 }, // Amazzone Combattente
+                { id: 293, qty: 1 }, // Draghetto delle Arpie
+                { id: 786, qty: 1 }, // Cucciolo di Drago delle Arpie
+                { id: 172, qty: 3 }, // Cyber Lady Arpia
+                { id: 90, qty: 2 }, // Spadaccina Amazoness
+                { id: 86, qty: 1 }, // Maestra delle Catene Amazoness
+                { id: 87, qty: 1 }, // Guerriera Amazoness
                 { id: 775, qty: 1 }, // Ragazza Arpia
-                { id: 778, qty: 1 }, // Faccia di Uccello
-                { id: 787, qty: 3 }, // Egoista Elegante
-                { id: 175, qty: 1 }, // Scudo Cyber
+                { id: 778, qty: 1 }, // Faccia da Uccello
+                { id: 787, qty: 3 }, // Egotista Elegante
+                { id: 175, qty: 1 }, // Cyber Scudo
                 { id: 788, qty: 1 }, // Terreno di Caccia delle Arpie
-                { id: 289, qty: 1 }, // Lady Arpia Formazione della Fenice
-                { id: 789, qty: 1 }, // Scintilla dell'Estasi Triangolare
-                { id: 291, qty: 1 }, // Piumino delle Arpie
-                { id: 383, qty: 1 }, // Muro dello Specchio
-                { id: 88, qty: 1 }, // Arciere delle Amazzoni
+                { id: 289, qty: 1 }, // Lady Arpia Formazione Fenice
+                { id: 789, qty: 1 }, // Scintilla d'Estasi Triangolare
+                { id: 291, qty: 1 }, // Spolverino dell'Arpia
+                { id: 383, qty: 1 }, // Muro a Specchio
+                { id: 88, qty: 1 }, // Imboscata Amazoness
                 { id: 790, qty: 1 }, // Festa Isterica
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 292, qty: 1 }, // Tempesta di Piume delle Arpie
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 292, qty: 1 }, // Tempesta di Piume dell'Arpia
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 7, qty: 1 } // Buco Nero
             ],
             extra: []
@@ -663,25 +663,25 @@ const characterDeckDatabase = {
                 { id: 481, qty: 3 }, // Alligatore Toon
                 { id: 483, qty: 2 }, // Stregone Mascherato Toon
                 { id: 190, qty: 3 }, // Coniglio Oscuro
-                { id: 209, qty: 3 }, // Suonatore di Draghi
-                { id: 475, qty: 2 }, // Idolo dai Mille Occhi
+                { id: 209, qty: 3 }, // Pifferaio di Draghi
+                { id: 475, qty: 2 }, // Idolo dai 1000 Occhi
                 { id: 328, qty: 3 }, // Kiseitai
                 { id: 484, qty: 2 }, // Sirena Toon
-                { id: 202, qty: 1 }, // Bambola della Rovina
-                { id: 487, qty: 2 }, // Mondo dei Toon
+                { id: 202, qty: 1 }, // Malice Bambola del Testamento
+                { id: 487, qty: 2 }, // Mondo Toon
                 { id: 482, qty: 1 }, // Maschera Toon
-                { id: 485, qty: 1 }, // Riavvolgimento Toon
-                { id: 206, qty: 1 }, // Vaso Cattura-Drago
+                { id: 485, qty: 1 }, // Ritorno Toon
+                { id: 206, qty: 1 }, // Cattura-Draghi
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 595, qty: 1 }, // Guardiano Affidabile
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -695,31 +695,31 @@ const characterDeckDatabase = {
                 { id: 606, qty: 1 }, // Manga Ryu-Ran
                 { id: 483, qty: 2 }, // Stregone Mascherato Toon
                 { id: 190, qty: 3 }, // Coniglio Oscuro
-                { id: 475, qty: 1 }, // Idolo dai Mille Occhi
-                { id: 416, qty: 1 }, // Abbandonato
-                { id: 202, qty: 1 }, // Bambola della Rovina
+                { id: 475, qty: 1 }, // Idolo dai 1000 Occhi
+                { id: 416, qty: 1 }, // Abbandono
+                { id: 202, qty: 1 }, // Malice Bambola del Testamento
                 { id: 306, qty: 1 }, // Mago Senza Volto Illusionista
-                { id: 400, qty: 1 }, // Drago Pappagallo
-                { id: 487, qty: 3 }, // Mondo dei Toon
+                { id: 400, qty: 1 }, // Pappadragallo
+                { id: 487, qty: 3 }, // Mondo Toon
                 { id: 482, qty: 2 }, // Maschera Toon
-                { id: 485, qty: 1 }, // Riavvolgimento Toon
-                { id: 116, qty: 1 }, // Rito dell'Illusione Nera
-                { id: 206, qty: 1 }, // Vaso Cattura-Drago
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 485, qty: 1 }, // Ritorno Toon
+                { id: 116, qty: 1 }, // Rito Illusione Nera
+                { id: 206, qty: 1 }, // Cattura-Draghi
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 38, qty: 1 }, // Fusione
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 646, qty: 1 } // Tempesta Pesante
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 646, qty: 1 } // Tempesta Potente
             ],
             extra: [
-                { id: 476, qty: 1 } // Restrizione dai Mille Occhi
+                { id: 476, qty: 1 } // Limite dei 1000 Occhi
             ]
         },
         hard: {
@@ -731,30 +731,30 @@ const characterDeckDatabase = {
                 { id: 606, qty: 1 }, // Manga Ryu-Ran
                 { id: 483, qty: 2 }, // Stregone Mascherato Toon
                 { id: 190, qty: 2 }, // Coniglio Oscuro
-                { id: 475, qty: 2 }, // Idolo dai Mille Occhi
-                { id: 416, qty: 1 }, // Abbandonato
+                { id: 475, qty: 2 }, // Idolo dai 1000 Occhi
+                { id: 416, qty: 1 }, // Abbandono
                 { id: 306, qty: 1 }, // Mago Senza Volto Illusionista
-                { id: 487, qty: 3 }, // Mondo dei Toon
+                { id: 487, qty: 3 }, // Mondo Toon
                 { id: 1266, qty: 1 }, // Regno Toon — singola copia promossa dall'audit finale, senza sostituire il piano storico
                 { id: 482, qty: 2 }, // Maschera Toon
-                { id: 485, qty: 2 }, // Riavvolgimento Toon
-                { id: 116, qty: 1 }, // Rito dell'Illusione Nera
-                { id: 206, qty: 1 }, // Vaso Cattura-Drago
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 485, qty: 2 }, // Ritorno Toon
+                { id: 116, qty: 1 }, // Rito Illusione Nera
+                { id: 206, qty: 1 }, // Cattura-Draghi
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 38, qty: 1 }, // Fusione
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 466, qty: 1 }, // L'Occhio della Verità
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 820, qty: 1 } // Nega Attacco
+                { id: 820, qty: 1 } // Annulla Attacco
             ],
             extra: [
-                { id: 476, qty: 1 } // Restrizione dai Mille Occhi
+                { id: 476, qty: 1 } // Limite dei 1000 Occhi
             ]
         }
     },
@@ -765,111 +765,111 @@ const characterDeckDatabase = {
     // Ectoplasmatore, Venditore di Bare e Cambio di Cuore. Facile toglie la Destiny Board
     // (una vittoria alternativa non è da livello facile).
     bakura: {
-        flagship: 891, // Necropaura Oscura — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 891, // Paura Oscura — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 891, qty: 2 }, // Necropaura Oscura
-                { id: 984, qty: 3 }, // Spirito Legato alla Terra
-                { id: 591, qty: 3 }, // Cappello Magico Bianco
+                { id: 891, qty: 2 }, // Paura Oscura
+                { id: 984, qty: 3 }, // Spirito Terralegato
+                { id: 591, qty: 3 }, // Bianco Cappello Magico
                 { id: 259, qty: 3 }, // Germe Gigante
                 { id: 25, qty: 3 }, // Ryu Kishin
-                { id: 564, qty: 2 }, // Titano Oscuro del Terrore
-                { id: 299, qty: 2 }, // Diavoletto Cornuto
-                { id: 988, qty: 1 }, // Cavaliere Senza Testa
-                { id: 542, qty: 1 }, // Fantasma Arguto
+                { id: 564, qty: 2 }, // Titano del Terrore
+                { id: 299, qty: 2 }, // Demone Cornuto
+                { id: 988, qty: 1 }, // Il Cavaliere Senza Testa
+                { id: 542, qty: 1 }, // Spettro Oscuro
                 { id: 158, qty: 1 }, // Venditore di Bare
-                { id: 147, qty: 1 }, // Cambio di Cuore
+                { id: 147, qty: 1 }, // Cambiare Idea
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 136, qty: 1 }, // Richiamo degli Infestati
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 136, qty: 1 }, // Richiamo del Posseduto
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 875, qty: 1 }, // Libro della Luna
-                { id: 607, qty: 1 } // Tifone dello Spazio Mistico
+                { id: 607, qty: 1 } // Tifone Spaziale Mistico
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 891, qty: 2 }, // Necropaura Oscura
-                { id: 984, qty: 2 }, // Spirito Legato alla Terra
-                { id: 988, qty: 2 }, // Cavaliere Senza Testa
+                { id: 891, qty: 2 }, // Paura Oscura
+                { id: 984, qty: 2 }, // Spirito Terralegato
+                { id: 988, qty: 2 }, // Il Cavaliere Senza Testa
                 { id: 1041, qty: 1 }, // Demone Minore
-                { id: 591, qty: 2 }, // Cappello Magico Bianco
+                { id: 591, qty: 2 }, // Bianco Cappello Magico
                 { id: 259, qty: 2 }, // Germe Gigante
-                { id: 1118, qty: 1 }, // Sovrano Oscuro Ha Des
+                { id: 1118, qty: 1 }, // Ha Des Sovrano Oscuro
                 { id: 25, qty: 2 }, // Ryu Kishin
                 { id: 428, qty: 1 }, // Ryu-Kishin Potenziato
                 { id: 589, qty: 1 }, // Grande Occhio
-                { id: 542, qty: 1 }, // Fantasma Arguto
-                { id: 299, qty: 1 }, // Diavoletto Cornuto
-                { id: 564, qty: 1 }, // Titano Oscuro del Terrore
+                { id: 542, qty: 1 }, // Spettro Oscuro
+                { id: 299, qty: 1 }, // Demone Cornuto
+                { id: 564, qty: 1 }, // Titano del Terrore
                 { id: 433, qty: 1 }, // Sangan
-                { id: 866, qty: 1 }, // Destiny Board
-                { id: 867, qty: 1 }, // Spirit Message "I"
-                { id: 868, qty: 1 }, // Spirit Message "N"
-                { id: 869, qty: 1 }, // Spirit Message "A"
-                { id: 870, qty: 1 }, // Spirit Message "L"
+                { id: 866, qty: 1 }, // Tavola del Destino
+                { id: 867, qty: 1 }, // Messaggio dello Spirito "I"
+                { id: 868, qty: 1 }, // Messaggio dello Spirito "N"
+                { id: 869, qty: 1 }, // Messaggio dello Spirito "A"
+                { id: 870, qty: 1 }, // Messaggio dello Spirito "L"
                 { id: 192, qty: 1 }, // Santuario Oscuro
                 { id: 221, qty: 1 }, // Ectoplasmatore
                 { id: 158, qty: 1 }, // Venditore di Bare
-                { id: 147, qty: 1 }, // Cambio di Cuore
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
+                { id: 147, qty: 1 }, // Cambiare Idea
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 136, qty: 1 }, // Richiamo degli Infestati
-                { id: 272, qty: 1 } // Carità Aggraziata
+                { id: 136, qty: 1 }, // Richiamo del Posseduto
+                { id: 272, qty: 1 } // Carità Graziosa
             ],
             extra: []
         },
         hard: {
             main: [
-                { id: 891, qty: 2 }, // Necropaura Oscura
-                { id: 984, qty: 2 }, // Spirito Legato alla Terra
-                { id: 988, qty: 2 }, // Cavaliere Senza Testa
+                { id: 891, qty: 2 }, // Paura Oscura
+                { id: 984, qty: 2 }, // Spirito Terralegato
+                { id: 988, qty: 2 }, // Il Cavaliere Senza Testa
                 { id: 1041, qty: 2 }, // Demone Minore
-                { id: 591, qty: 2 }, // Cappello Magico Bianco
+                { id: 591, qty: 2 }, // Bianco Cappello Magico
                 { id: 259, qty: 2 }, // Germe Gigante
-                { id: 1118, qty: 2 }, // Sovrano Oscuro Ha Des
+                { id: 1118, qty: 2 }, // Ha Des Sovrano Oscuro
                 { id: 25, qty: 2 }, // Ryu Kishin
                 { id: 428, qty: 1 }, // Ryu-Kishin Potenziato
                 { id: 589, qty: 1 }, // Grande Occhio
-                { id: 542, qty: 1 }, // Fantasma Arguto
+                { id: 542, qty: 1 }, // Spettro Oscuro
                 { id: 433, qty: 1 }, // Sangan
-                { id: 866, qty: 1 }, // Destiny Board
-                { id: 867, qty: 1 }, // Spirit Message "I"
-                { id: 868, qty: 1 }, // Spirit Message "N"
-                { id: 869, qty: 1 }, // Spirit Message "A"
-                { id: 870, qty: 1 }, // Spirit Message "L"
+                { id: 866, qty: 1 }, // Tavola del Destino
+                { id: 867, qty: 1 }, // Messaggio dello Spirito "I"
+                { id: 868, qty: 1 }, // Messaggio dello Spirito "N"
+                { id: 869, qty: 1 }, // Messaggio dello Spirito "A"
+                { id: 870, qty: 1 }, // Messaggio dello Spirito "L"
                 { id: 192, qty: 1 }, // Santuario Oscuro
                 { id: 221, qty: 1 }, // Ectoplasmatore
                 { id: 158, qty: 1 }, // Venditore di Bare
-                { id: 147, qty: 1 }, // Cambio di Cuore
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
+                { id: 147, qty: 1 }, // Cambiare Idea
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 136, qty: 1 }, // Richiamo degli Infestati
-                { id: 382, qty: 1 }, // Forza dello Specchio
-                { id: 646, qty: 1 } // Tempesta Pesante
+                { id: 136, qty: 1 }, // Richiamo del Posseduto
+                { id: 382, qty: 1 }, // Forza Riflessa
+                { id: 646, qty: 1 } // Tempesta Potente
             ],
             extra: []
         }
@@ -889,27 +889,27 @@ const characterDeckDatabase = {
                 { id: 186, qty: 3 }, // Jeroid Oscuro
                 { id: 25, qty: 3 }, // Ryu Kishin
                 { id: 328, qty: 2 }, // Kiseitai
-                { id: 1054, qty: 2 }, // Tirapiedi Alato
-                { id: 564, qty: 2 }, // Titano Oscuro del Terrore
+                { id: 1054, qty: 2 }, // Servo Alato
+                { id: 564, qty: 2 }, // Titano del Terrore
                 { id: 914, qty: 2 }, // Re della Nebbia
                 { id: 390, qty: 1 }, // Pomodoro Mistico
-                { id: 1114, qty: 1 }, // Lupo Bicefalo
+                { id: 1114, qty: 1 }, // Lupo Bifronte
                 { id: 750, qty: 1 }, // Gabbia d'Acciaio dell'Incubo
-                { id: 130, qty: 1 }, // Controllo Mentale
+                { id: 130, qty: 1 }, // Controllo della Mente
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 136, qty: 1 }, // Richiamo degli Infestati
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 136, qty: 1 }, // Richiamo del Posseduto
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 439, qty: 1 }, // Incantesimo Ombra
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 559, qty: 1 }, // Offerta Suprema
+                { id: 439, qty: 1 }, // Magia Ombra
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 559, qty: 1 }, // Ultima Offerta
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -917,39 +917,39 @@ const characterDeckDatabase = {
         medium: {
             main: [
                 { id: 1123, qty: 2 }, // Helpoemer
-                { id: 265, qty: 2 }, // Gil Garth
+                { id: 265, qty: 2 }, // Gilgarth
                 { id: 1086, qty: 1 }, // Newdoria
                 { id: 129, qty: 2 }, // Bowganian
                 { id: 186, qty: 2 }, // Jeroid Oscuro
                 { id: 627, qty: 1 }, // Opticlops
                 { id: 390, qty: 1 }, // Pomodoro Mistico
-                { id: 1114, qty: 1 }, // Lupo Bicefalo
+                { id: 1114, qty: 1 }, // Lupo Bifronte
                 { id: 1041, qty: 1 }, // Demone Minore
-                { id: 991, qty: 1 }, // Il Conte della Fine
+                { id: 991, qty: 1 }, // Il Conte del Testamento
                 { id: 25, qty: 2 }, // Ryu Kishin
-                { id: 564, qty: 1 }, // Titano Oscuro del Terrore
-                { id: 1054, qty: 1 }, // Tirapiedi Alato
+                { id: 564, qty: 1 }, // Titano del Terrore
+                { id: 1054, qty: 1 }, // Servo Alato
                 { id: 328, qty: 1 }, // Kiseitai
-                { id: 542, qty: 1 }, // Fantasma Arguto
-                { id: 559, qty: 1 }, // Offerta Suprema
+                { id: 542, qty: 1 }, // Spettro Oscuro
+                { id: 559, qty: 1 }, // Ultima Offerta
                 { id: 750, qty: 1 }, // Gabbia d'Acciaio dell'Incubo
-                { id: 216, qty: 1 }, // Fuori Gioco
-                { id: 130, qty: 1 }, // Controllo Mentale
+                { id: 216, qty: 1 }, // Caduta
+                { id: 130, qty: 1 }, // Controllo della Mente
                 { id: 450, qty: 1 }, // Demolizione dell'Anima
-                { id: 136, qty: 1 }, // Richiamo degli Infestati
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 136, qty: 1 }, // Richiamo del Posseduto
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
                 { id: 451, qty: 1 } // Scambio di Anime
             ],
             extra: []
@@ -957,38 +957,38 @@ const characterDeckDatabase = {
         hard: {
             main: [
                 { id: 1123, qty: 2 }, // Helpoemer
-                { id: 265, qty: 2 }, // Gil Garth
+                { id: 265, qty: 2 }, // Gilgarth
                 { id: 1086, qty: 1 }, // Newdoria
                 { id: 129, qty: 2 }, // Bowganian
                 { id: 186, qty: 2 }, // Jeroid Oscuro
                 { id: 627, qty: 1 }, // Opticlops
                 { id: 390, qty: 1 }, // Pomodoro Mistico
-                { id: 1114, qty: 1 }, // Lupo Bicefalo
+                { id: 1114, qty: 1 }, // Lupo Bifronte
                 { id: 1041, qty: 2 }, // Demone Minore
-                { id: 991, qty: 1 }, // Il Conte della Fine
+                { id: 991, qty: 1 }, // Il Conte del Testamento
                 { id: 25, qty: 2 }, // Ryu Kishin
-                { id: 564, qty: 1 }, // Titano Oscuro del Terrore
-                { id: 542, qty: 1 }, // Fantasma Arguto
-                { id: 559, qty: 1 }, // Offerta Suprema
+                { id: 564, qty: 1 }, // Titano del Terrore
+                { id: 542, qty: 1 }, // Spettro Oscuro
+                { id: 559, qty: 1 }, // Ultima Offerta
                 { id: 750, qty: 1 }, // Gabbia d'Acciaio dell'Incubo
-                { id: 216, qty: 1 }, // Fuori Gioco
-                { id: 130, qty: 1 }, // Controllo Mentale
+                { id: 216, qty: 1 }, // Caduta
+                { id: 130, qty: 1 }, // Controllo della Mente
                 { id: 450, qty: 1 }, // Demolizione dell'Anima
-                { id: 136, qty: 1 }, // Richiamo degli Infestati
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 136, qty: 1 }, // Richiamo del Posseduto
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 1273, qty: 1 }, // Canto Antico — singola copia promossa dall'audit finale per rendere Ra realmente giocabile
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
                 { id: 472, qty: 1 }, // Il Drago Alato di Ra
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 7, qty: 1 } // Buco Nero
             ],
             extra: []
@@ -1005,68 +1005,68 @@ const characterDeckDatabase = {
                 { id: 252, qty: 2 }, // Balena Fortezza
                 { id: 314, qty: 3 }, // Medusa
                 { id: 247, qty: 3 }, // Pesce Volante
-                { id: 582, qty: 2 }, // Tartaruga Isola
+                { id: 582, qty: 2 }, // Tarta-Isola
                 { id: 907, qty: 2 }, // Sirena Incantatrice
                 { id: 250, qty: 2 }, // Pinguino Volante
-                { id: 904, qty: 2 }, // Stella Marina Corazzata
-                { id: 926, qty: 2 }, // Acqua Radicale
+                { id: 904, qty: 2 }, // Stella Corazzata
+                { id: 926, qty: 2 }, // Acqua di Radice
                 { id: 951, qty: 1 }, // Tongyo
-                { id: 279, qty: 1 }, // Grande Squalo Bianco
+                { id: 279, qty: 1 }, // Mega Squalo Bianco
                 { id: 253, qty: 2 }, // Giuramento della Balena Fortezza
                 { id: 497, qty: 1 }, // Umi
-                { id: 489, qty: 1 }, // Muro del Tornado
+                { id: 489, qty: 1 }, // Muro Tornado
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 595, qty: 1 }, // Guardiano Affidabile
                 { id: 704, qty: 1 }, // Salvataggio
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 875, qty: 1 }, // Libro della Luna
-                { id: 646, qty: 1 } // Tempesta Pesante
+                { id: 646, qty: 1 } // Tempesta Potente
             ],
             extra: []
         },
         medium: {
             main: [
                 { id: 252, qty: 2 }, // Balena Fortezza
-                { id: 879, qty: 1 }, // Il Pescatore Leggendario
+                { id: 879, qty: 1 }, // Pescatore Leggendario
                 { id: 319, qty: 1 }, // Kairyu-Shin
-                { id: 279, qty: 2 }, // Grande Squalo Bianco
-                { id: 583, qty: 1 }, // Pesce dai 7 Colori
+                { id: 279, qty: 2 }, // Mega Squalo Bianco
+                { id: 583, qty: 1 }, // Pesce dei 7 Colori
                 { id: 314, qty: 2 }, // Medusa
                 { id: 699, qty: 1 }, // Bugroth Anfibio MK-3
                 { id: 928, qty: 1 }, // Seadra Spinoso
                 { id: 247, qty: 2 }, // Pesce Volante
                 { id: 951, qty: 2 }, // Tongyo
-                { id: 701, qty: 1 }, // Cavaliere Sirena
+                { id: 701, qty: 1 }, // Sirena Cavaliere
                 { id: 692, qty: 1 }, // Guerriero del Serpente Marino dell'Oscurità
-                { id: 582, qty: 1 }, // Tartaruga Isola
+                { id: 582, qty: 1 }, // Tarta-Isola
                 { id: 907, qty: 1 }, // Sirena Incantatrice
-                { id: 260, qty: 1 }, // Gigantesco Serpente di Mare Rosso
+                { id: 260, qty: 1 }, // Serpente Marino Gigante Rosso
                 { id: 253, qty: 2 }, // Giuramento della Balena Fortezza
                 { id: 497, qty: 1 }, // Umi
-                { id: 489, qty: 1 }, // Muro del Tornado
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 489, qty: 1 }, // Muro Tornado
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 79, qty: 1 }, // Un Oceano Leggendario
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 704, qty: 1 } // Salvataggio
             ],
             extra: []
@@ -1074,35 +1074,35 @@ const characterDeckDatabase = {
         hard: {
             main: [
                 { id: 252, qty: 2 }, // Balena Fortezza
-                { id: 879, qty: 1 }, // Il Pescatore Leggendario
+                { id: 879, qty: 1 }, // Pescatore Leggendario
                 { id: 319, qty: 2 }, // Kairyu-Shin
-                { id: 279, qty: 2 }, // Grande Squalo Bianco
-                { id: 583, qty: 2 }, // Pesce dai 7 Colori
+                { id: 279, qty: 2 }, // Mega Squalo Bianco
+                { id: 583, qty: 2 }, // Pesce dei 7 Colori
                 { id: 314, qty: 2 }, // Medusa
                 { id: 699, qty: 1 }, // Bugroth Anfibio MK-3
                 { id: 928, qty: 1 }, // Seadra Spinoso
                 { id: 247, qty: 2 }, // Pesce Volante
                 { id: 951, qty: 2 }, // Tongyo
-                { id: 701, qty: 1 }, // Cavaliere Sirena
+                { id: 701, qty: 1 }, // Sirena Cavaliere
                 { id: 692, qty: 1 }, // Guerriero del Serpente Marino dell'Oscurità
-                { id: 260, qty: 1 }, // Gigantesco Serpente di Mare Rosso
+                { id: 260, qty: 1 }, // Serpente Marino Gigante Rosso
                 { id: 253, qty: 2 }, // Giuramento della Balena Fortezza
                 { id: 497, qty: 1 }, // Umi
-                { id: 489, qty: 1 }, // Muro del Tornado
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 489, qty: 1 }, // Muro Tornado
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 79, qty: 1 }, // Un Oceano Leggendario
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 91, qty: 1 } // Bestia Anfibia
             ],
             extra: []
@@ -1118,30 +1118,30 @@ const characterDeckDatabase = {
         easy: {
             main: [
                 { id: 52, qty: 2 }, // Grande Falena
-                { id: 522, qty: 3 }, // Falena Piccola
+                { id: 522, qty: 3 }, // Piccola Falena
                 { id: 157, qty: 2 }, // Bozzolo dell'Evoluzione
-                { id: 105, qty: 3 }, // Insetto di Base
-                { id: 325, qty: 2 }, // Ago Killer
+                { id: 105, qty: 3 }, // Insetto della Foresta
+                { id: 325, qty: 2 }, // Pungiglione Assassino
                 { id: 345, qty: 2 }, // Leghul
                 { id: 915, qty: 2 }, // Kumootoko
                 { id: 270, qty: 2 }, // Gokibore
-                { id: 156, qty: 2 }, // Cavaliere Scarafaggio
+                { id: 156, qty: 2 }, // Cavaliere-Scarafaggio
                 { id: 323, qty: 1 }, // Kamakiriman
                 { id: 248, qty: 1 }, // Kamakiri Volante #1
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 309, qty: 1 }, // Armatura Insetto con Cannone Laser
-                { id: 340, qty: 1 }, // Armatura Cannone Laser
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 340, qty: 1 }, // Armatura Laser
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -1149,34 +1149,34 @@ const characterDeckDatabase = {
         medium: {
             main: [
                 { id: 52, qty: 2 }, // Grande Falena
-                { id: 522, qty: 2 }, // Falena Piccola
+                { id: 522, qty: 2 }, // Piccola Falena
                 { id: 157, qty: 2 }, // Bozzolo dell'Evoluzione
-                { id: 50, qty: 1 }, // Larva Mostruosa
-                { id: 105, qty: 2 }, // Insetto di Base
-                { id: 325, qty: 2 }, // Ago Killer
-                { id: 295, qty: 1 }, // Scarabeo Ercole
-                { id: 23, qty: 1 }, // Insetto Divoratore
+                { id: 50, qty: 1 }, // Larva di Falena
+                { id: 105, qty: 2 }, // Insetto della Foresta
+                { id: 325, qty: 2 }, // Pungiglione Assassino
+                { id: 295, qty: 1 }, // Scarabeo Erculeo
+                { id: 23, qty: 1 }, // Insetto Mangia-Uomini
                 { id: 345, qty: 2 }, // Leghul
                 { id: 915, qty: 1 }, // Kumootoko
                 { id: 248, qty: 2 }, // Kamakiri Volante #1
                 { id: 270, qty: 1 }, // Gokibore
-                { id: 156, qty: 1 }, // Cavaliere Scarafaggio
-                { id: 403, qty: 1 }, // Cavalletta d'Emergenza
-                { id: 310, qty: 2 }, // Barriera d'Insetti
+                { id: 156, qty: 1 }, // Cavaliere-Scarafaggio
+                { id: 403, qty: 1 }, // Cavalletta Pungente
+                { id: 310, qty: 2 }, // Barriera per Insetti
                 { id: 309, qty: 2 }, // Armatura Insetto con Cannone Laser
-                { id: 340, qty: 1 }, // Armatura Cannone Laser
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 340, qty: 1 }, // Armatura Laser
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 820, qty: 1 }, // Annulla Attacco
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 503, qty: 1 }, // Waboku
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 143, qty: 1 } // Mura del Castello
             ],
             extra: []
@@ -1184,34 +1184,34 @@ const characterDeckDatabase = {
         hard: {
             main: [
                 { id: 52, qty: 2 }, // Grande Falena
-                { id: 522, qty: 2 }, // Falena Piccola
+                { id: 522, qty: 2 }, // Piccola Falena
                 { id: 157, qty: 2 }, // Bozzolo dell'Evoluzione
-                { id: 50, qty: 1 }, // Larva Mostruosa
-                { id: 105, qty: 1 }, // Insetto di Base
-                { id: 325, qty: 2 }, // Ago Killer
-                { id: 295, qty: 1 }, // Scarabeo Ercole
-                { id: 23, qty: 2 }, // Insetto Divoratore
+                { id: 50, qty: 1 }, // Larva di Falena
+                { id: 105, qty: 1 }, // Insetto della Foresta
+                { id: 325, qty: 2 }, // Pungiglione Assassino
+                { id: 295, qty: 1 }, // Scarabeo Erculeo
+                { id: 23, qty: 2 }, // Insetto Mangia-Uomini
                 { id: 345, qty: 2 }, // Leghul
                 { id: 915, qty: 1 }, // Kumootoko
                 { id: 248, qty: 2 }, // Kamakiri Volante #1
                 { id: 270, qty: 1 }, // Gokibore
-                { id: 403, qty: 1 }, // Cavalletta d'Emergenza
-                { id: 310, qty: 2 }, // Barriera d'Insetti
+                { id: 403, qty: 1 }, // Cavalletta Pungente
+                { id: 310, qty: 2 }, // Barriera per Insetti
                 { id: 309, qty: 2 }, // Armatura Insetto con Cannone Laser
-                { id: 340, qty: 1 }, // Armatura Cannone Laser
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 340, qty: 1 }, // Armatura Laser
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
-                { id: 439, qty: 1 }, // Incantesimo Ombra
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 1124, qty: 1 }, // Falena Perfetta
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 820, qty: 1 }, // Annulla Attacco
+                { id: 439, qty: 1 }, // Magia Ombra
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 1124, qty: 1 }, // Grande Falena Perfetta
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 218, qty: 1 } // Verme del Dungeon
             ],
             extra: []
@@ -1223,106 +1223,106 @@ const characterDeckDatabase = {
     // Waking the Dragons: Tiranno Nero, Driceratopo Oscuro, Testa di Martello Iper,
     // Gilasaurus, Bebè Cerasauro, Grande Pillola Evolutiva e Mondo Giurassico.
     rex: {
-        flagship: 801, // Tiranno Nero — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 801, // Tiranno Oscuro — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 801, qty: 2 }, // Tiranno Nero
+                { id: 801, qty: 2 }, // Tiranno Oscuro
                 { id: 809, qty: 3 }, // Bebè Cerasauro
                 { id: 491, qty: 3 }, // Trakodon
                 { id: 266, qty: 2 }, // Gilasaurus
-                { id: 367, qty: 2 }, // Cimitero dei Mammut
-                { id: 936, qty: 2 }, // Sovrano Oscuro Bibocca
-                { id: 805, qty: 2 }, // Ptera Nero
-                { id: 806, qty: 2 }, // Stego Nero
-                { id: 495, qty: 1 }, // Re Rex a Due Teste
+                { id: 367, qty: 2 }, // Mammuth delle Tombe
+                { id: 936, qty: 2 }, // Elettrosauro Doppiafauce
+                { id: 805, qty: 2 }, // Pterodattilo Nero
+                { id: 806, qty: 2 }, // Stegosauro Oscuro
+                { id: 495, qty: 1 }, // Tirannosauro Rex a Due Teste
                 { id: 561, qty: 1 }, // Uraby
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 812, qty: 1 }, // Mondo Giurassico
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 595, qty: 1 }, // Guardiano Affidabile
                 { id: 549, qty: 1 }, // Rinforzi
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 823, qty: 1 }, // Scavo Fossile
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 801, qty: 2 }, // Tiranno Nero
-                { id: 799, qty: 1 }, // Driceratopo Oscuro
-                { id: 436, qty: 1 }, // Drago Serpente della Notte
+                { id: 801, qty: 2 }, // Tiranno Oscuro
+                { id: 799, qty: 1 }, // Triceratopo Oscuro
+                { id: 436, qty: 1 }, // Drago Serpente Notturno
                 { id: 374, qty: 2 }, // Megazowler
-                { id: 495, qty: 2 }, // Re Rex a Due Teste
+                { id: 495, qty: 2 }, // Tirannosauro Rex a Due Teste
                 { id: 561, qty: 2 }, // Uraby
-                { id: 461, qty: 1 }, // Braccio di Spada del Drago
-                { id: 800, qty: 2 }, // Testa di Martello Iper
+                { id: 461, qty: 1 }, // Braccio Spada di Drago
+                { id: 800, qty: 2 }, // Iper Testa-Martello
                 { id: 266, qty: 2 }, // Gilasaurus
                 { id: 809, qty: 2 }, // Bebè Cerasauro
                 { id: 491, qty: 1 }, // Trakodon
                 { id: 798, qty: 1 }, // Sabersaurus
                 { id: 803, qty: 1 }, // Idrogeddon
-                { id: 810, qty: 2 }, // Grande Pillola Evolutiva
+                { id: 810, qty: 2 }, // Pillola dell'Evoluzione Gigante
                 { id: 812, qty: 1 }, // Mondo Giurassico
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 823, qty: 1 }, // Scavo Fossile
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 595, qty: 1 }, // Guardiano Affidabile
                 { id: 549, qty: 1 } // Rinforzi
             ],
             extra: []
         },
         hard: {
             main: [
-                { id: 801, qty: 2 }, // Tiranno Nero
-                { id: 799, qty: 2 }, // Driceratopo Oscuro
-                { id: 436, qty: 2 }, // Drago Serpente della Notte
+                { id: 801, qty: 2 }, // Tiranno Oscuro
+                { id: 799, qty: 2 }, // Triceratopo Oscuro
+                { id: 436, qty: 2 }, // Drago Serpente Notturno
                 { id: 374, qty: 2 }, // Megazowler
-                { id: 495, qty: 2 }, // Re Rex a Due Teste
+                { id: 495, qty: 2 }, // Tirannosauro Rex a Due Teste
                 { id: 561, qty: 2 }, // Uraby
-                { id: 461, qty: 1 }, // Braccio di Spada del Drago
-                { id: 800, qty: 2 }, // Testa di Martello Iper
+                { id: 461, qty: 1 }, // Braccio Spada di Drago
+                { id: 800, qty: 2 }, // Iper Testa-Martello
                 { id: 266, qty: 2 }, // Gilasaurus
                 { id: 809, qty: 1 }, // Bebè Cerasauro
                 { id: 798, qty: 1 }, // Sabersaurus
                 { id: 803, qty: 1 }, // Idrogeddon
-                { id: 810, qty: 2 }, // Grande Pillola Evolutiva
+                { id: 810, qty: 2 }, // Pillola dell'Evoluzione Gigante
                 { id: 812, qty: 1 }, // Mondo Giurassico
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 823, qty: 1 }, // Scavo Fossile
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 815, qty: 1 } // Istinto di Caccia
             ],
             extra: []
@@ -1335,112 +1335,112 @@ const characterDeckDatabase = {
     // del Tempo, Richiamo degli Infestati e i Sette Attrezzi del Bandito. I cannoni X/Y/Z non
     // sono suoi: sono di Kaiba.
     bandit_keith: {
-        flagship: 104, // Drago Barile — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 104, // Drago Revolver — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 104, qty: 2 }, // Drago Barile
-                { id: 264, qty: 3 }, // Lupo Giga-Tech
-                { id: 170, qty: 3 }, // Comandante Cyber
-                { id: 960, qty: 2 }, // Lumaca Meccanica
+                { id: 104, qty: 2 }, // Drago Revolver
+                { id: 264, qty: 3 }, // Lupo Tecnologico
+                { id: 170, qty: 3 }, // Cyber Comandante
+                { id: 960, qty: 2 }, // Mecha-Chiocciola
                 { id: 274, qty: 2 }, // Gradius
                 { id: 1122, qty: 2 }, // Scorpione d'Acciaio
-                { id: 257, qty: 2 }, // Golem Meccanico la Fortezza Mobile
+                { id: 257, qty: 2 }, // Golem-Ingranaggio, la Fortezza Movente
                 { id: 223, qty: 1 }, // Tartaruga Elettromagnetica
-                { id: 120, qty: 2 }, // Sfera Esplosiva
-                { id: 137, qty: 1 }, // Soldato Cannone
+                { id: 120, qty: 2 }, // Sfera di Distruzione
+                { id: 137, qty: 1 }, // Soldato-Cannone
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 358, qty: 1 }, // Fabbrica di Conversione Meccanica
-                { id: 350, qty: 1 }, // Rimozione del Limitatore
+                { id: 358, qty: 1 }, // Fabbrica di Macchine
+                { id: 350, qty: 1 }, // Rimozione di Limite
                 { id: 478, qty: 1 }, // Macchina del Tempo
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 439, qty: 1 }, // Incantesimo Ombra
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 439, qty: 1 }, // Magia Ombra
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 104, qty: 2 }, // Drago Barile
+                { id: 104, qty: 2 }, // Drago Revolver
                 { id: 447, qty: 1 }, // Slot Machine
                 { id: 34, qty: 1 }, // Ragno Lanciatore
                 { id: 520, qty: 1 }, // Zoa
                 { id: 377, qty: 1 }, // Metalzoa
-                { id: 177, qty: 1 }, // Alligatore Cyber-Tecnologico
-                { id: 120, qty: 2 }, // Sfera Esplosiva
-                { id: 401, qty: 1 }, // Macchina a Pendolo
+                { id: 177, qty: 1 }, // Cyber-Alligatech
+                { id: 120, qty: 2 }, // Sfera di Distruzione
+                { id: 401, qty: 1 }, // Macchina Pendolo
                 { id: 373, qty: 2 }, // MechanicalChaser
-                { id: 137, qty: 2 }, // Soldato Cannone
-                { id: 281, qty: 1 }, // Bugroth l'Assalitore Terrestre
+                { id: 137, qty: 2 }, // Soldato-Cannone
+                { id: 281, qty: 1 }, // Bugroth di Terra
                 { id: 394, qty: 1 }, // Carro Armato Oni T-34
-                { id: 264, qty: 2 }, // Lupo Giga-Tech
-                { id: 174, qty: 1 }, // Predone Cyber
-                { id: 176, qty: 1 }, // Soldato Cyber del Mondo Oscuro
+                { id: 264, qty: 2 }, // Lupo Tecnologico
+                { id: 174, qty: 1 }, // Predone Cibernetico
+                { id: 176, qty: 1 }, // Cyber-Soldato del Mondoscuro
                 { id: 376, qty: 1 }, // Metalmorfosi
-                { id: 350, qty: 1 }, // Rimozione del Limitatore
+                { id: 350, qty: 1 }, // Rimozione di Limite
                 { id: 478, qty: 1 }, // Macchina del Tempo
-                { id: 358, qty: 1 }, // Fabbrica di Conversione Meccanica
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 358, qty: 1 }, // Fabbrica di Macchine
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 136, qty: 1 }, // Richiamo degli Infestati
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 136, qty: 1 }, // Richiamo del Posseduto
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 577, qty: 1 } // Giusto Dessert
+                { id: 577, qty: 1 } // L'hai Voluto tu!
             ],
             extra: []
         },
         hard: {
             main: [
-                { id: 104, qty: 2 }, // Drago Barile
+                { id: 104, qty: 2 }, // Drago Revolver
                 { id: 447, qty: 2 }, // Slot Machine
                 { id: 34, qty: 2 }, // Ragno Lanciatore
                 { id: 520, qty: 1 }, // Zoa
                 { id: 377, qty: 1 }, // Metalzoa
-                { id: 177, qty: 2 }, // Alligatore Cyber-Tecnologico
-                { id: 120, qty: 2 }, // Sfera Esplosiva
-                { id: 401, qty: 1 }, // Macchina a Pendolo
+                { id: 177, qty: 2 }, // Cyber-Alligatech
+                { id: 120, qty: 2 }, // Sfera di Distruzione
+                { id: 401, qty: 1 }, // Macchina Pendolo
                 { id: 373, qty: 2 }, // MechanicalChaser
-                { id: 137, qty: 2 }, // Soldato Cannone
-                { id: 281, qty: 1 }, // Bugroth l'Assalitore Terrestre
+                { id: 137, qty: 2 }, // Soldato-Cannone
+                { id: 281, qty: 1 }, // Bugroth di Terra
                 { id: 394, qty: 1 }, // Carro Armato Oni T-34
-                { id: 174, qty: 1 }, // Predone Cyber
-                { id: 176, qty: 1 }, // Soldato Cyber del Mondo Oscuro
+                { id: 174, qty: 1 }, // Predone Cibernetico
+                { id: 176, qty: 1 }, // Cyber-Soldato del Mondoscuro
                 { id: 376, qty: 1 }, // Metalmorfosi
-                { id: 350, qty: 1 }, // Rimozione del Limitatore
+                { id: 350, qty: 1 }, // Rimozione di Limite
                 { id: 478, qty: 1 }, // Macchina del Tempo
-                { id: 358, qty: 1 }, // Fabbrica di Conversione Meccanica
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 358, qty: 1 }, // Fabbrica di Macchine
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 136, qty: 1 }, // Richiamo degli Infestati
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
-                { id: 382, qty: 1 } // Forza dello Specchio
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 136, qty: 1 }, // Richiamo del Posseduto
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
+                { id: 382, qty: 1 } // Forza Riflessa
             ],
             extra: []
         }
@@ -1462,25 +1462,25 @@ const characterDeckDatabase = {
                 { id: 563, qty: 2 }, // Terra il Terribile
                 { id: 914, qty: 2 }, // Re della Nebbia
                 { id: 355, qty: 2 }, // Signore di Zemia
-                { id: 237, qty: 1 }, // Folletto Selvaggio Feroce
+                { id: 237, qty: 1 }, // Demone Selvaggio
                 { id: 428, qty: 1 }, // Ryu-Kishin Potenziato
                 { id: 211, qty: 1 }, // Drago Zombie
                 { id: 557, qty: 2 }, // Yami
                 { id: 151, qty: 2 }, // Coro del Santuario
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 38, qty: 1 }, // Fusione
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
                 { id: 451, qty: 1 }, // Scambio di Anime
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 439, qty: 1 } // Incantesimo Ombra
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 439, qty: 1 } // Magia Ombra
             ],
             extra: [
                 { id: 103, qty: 1 } // Barox
@@ -1489,10 +1489,10 @@ const characterDeckDatabase = {
         medium: {
             main: [
                 { id: 142, qty: 2 }, // Castello delle Illusioni Oscure
-                { id: 410, qty: 1 }, // Mietitore delle Carte
-                { id: 406, qty: 1 }, // Pumpking il Re dei Fantasmi
+                { id: 410, qty: 1 }, // Mieti-Carte
+                { id: 406, qty: 1 }, // Re dei Fantasmi
                 { id: 182, qty: 1 }, // Chimera Oscura
-                { id: 375, qty: 1 }, // Guardiano di Metallo
+                { id: 375, qty: 1 }, // Guardiano Metallico
                 { id: 327, qty: 1 }, // Re di Yamimakai
                 { id: 25, qty: 2 }, // Ryu Kishin
                 { id: 428, qty: 2 }, // Ryu-Kishin Potenziato
@@ -1501,8 +1501,8 @@ const characterDeckDatabase = {
                 { id: 211, qty: 1 }, // Drago Zombie
                 { id: 180, qty: 1 }, // Assalitore Oscuro
                 { id: 355, qty: 1 }, // Signore di Zemia
-                { id: 237, qty: 1 }, // Folletto Selvaggio Feroce
-                { id: 299, qty: 1 }, // Diavoletto Cornuto
+                { id: 237, qty: 1 }, // Demone Selvaggio
+                { id: 299, qty: 1 }, // Demone Cornuto
                 { id: 563, qty: 1 }, // Terra il Terribile
                 { id: 914, qty: 1 }, // Re della Nebbia
                 { id: 557, qty: 2 }, // Yami
@@ -1510,14 +1510,14 @@ const characterDeckDatabase = {
                 { id: 38, qty: 1 }, // Fusione
                 { id: 151, qty: 2 }, // Coro del Santuario
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 793, qty: 1 } // Armatura Sakuretsu
             ],
@@ -1528,10 +1528,10 @@ const characterDeckDatabase = {
         hard: {
             main: [
                 { id: 142, qty: 2 }, // Castello delle Illusioni Oscure
-                { id: 410, qty: 1 }, // Mietitore delle Carte
-                { id: 406, qty: 2 }, // Pumpking il Re dei Fantasmi
+                { id: 410, qty: 1 }, // Mieti-Carte
+                { id: 406, qty: 2 }, // Re dei Fantasmi
                 { id: 182, qty: 1 }, // Chimera Oscura
-                { id: 375, qty: 1 }, // Guardiano di Metallo
+                { id: 375, qty: 1 }, // Guardiano Metallico
                 { id: 327, qty: 2 }, // Re di Yamimakai
                 { id: 25, qty: 2 }, // Ryu Kishin
                 { id: 428, qty: 2 }, // Ryu-Kishin Potenziato
@@ -1540,24 +1540,24 @@ const characterDeckDatabase = {
                 { id: 211, qty: 1 }, // Drago Zombie
                 { id: 180, qty: 1 }, // Assalitore Oscuro
                 { id: 355, qty: 1 }, // Signore di Zemia
-                { id: 237, qty: 1 }, // Folletto Selvaggio Feroce
-                { id: 299, qty: 1 }, // Diavoletto Cornuto
+                { id: 237, qty: 1 }, // Demone Selvaggio
+                { id: 299, qty: 1 }, // Demone Cornuto
                 { id: 557, qty: 2 }, // Yami
                 { id: 451, qty: 2 }, // Scambio di Anime
                 { id: 38, qty: 1 }, // Fusione
                 { id: 151, qty: 1 }, // Coro del Santuario
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
-                { id: 382, qty: 1 }, // Forza dello Specchio
-                { id: 646, qty: 1 } // Tempesta Pesante
+                { id: 382, qty: 1 }, // Forza Riflessa
+                { id: 646, qty: 1 } // Tempesta Potente
             ],
             extra: [
                 { id: 103, qty: 1 } // Barox
@@ -1574,116 +1574,116 @@ const characterDeckDatabase = {
         easy: {
             main: [
                 { id: 211, qty: 2 }, // Drago Zombie
-                { id: 526, qty: 3 }, // Skull Servant
-                { id: 155, qty: 2 }, // Zombie Pagliaccio
-                { id: 464, qty: 2 }, // La 13ª Tomba
+                { id: 526, qty: 3 }, // Servitore del Teschio
+                { id: 155, qty: 2 }, // Zombie Clown
+                { id: 464, qty: 2 }, // La Tredicesima Tomba
                 { id: 180, qty: 2 }, // Assalitore Oscuro
                 { id: 108, qty: 2 }, // Guerriero da Battaglia
                 { id: 531, qty: 2 }, // Clown del Sogno
-                { id: 547, qty: 2 }, // Fantasma Magico
-                { id: 1106, qty: 1 }, // Vampire Baby
-                { id: 1053, qty: 1 }, // Cavallo dell'Incubo
+                { id: 547, qty: 2 }, // Fatasma Magico
+                { id: 1106, qty: 1 }, // Bambino Vampiro
+                { id: 1053, qty: 1 }, // Cavallo Incubo
                 { id: 1052, qty: 1 }, // Des Lacooda
-                { id: 136, qty: 1 }, // Richiamo degli Infestati
+                { id: 136, qty: 1 }, // Richiamo del Posseduto
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 750, qty: 1 }, // Gabbia d'Acciaio dell'Incubo
                 { id: 38, qty: 1 }, // Fusione
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 251, qty: 1 }, // Sepoltura Sciocca
                 { id: 875, qty: 1 }, // Libro della Luna
-                { id: 439, qty: 1 } // Incantesimo Ombra
+                { id: 439, qty: 1 } // Magia Ombra
             ],
             extra: [
-                { id: 521, qty: 1 } // Guerriero Zombie
+                { id: 521, qty: 1 } // Zombie Guerriero
             ]
         },
         medium: {
             main: [
                 { id: 211, qty: 2 }, // Drago Zombie
                 { id: 99, qty: 2 }, // Zombie Corazzato
-                { id: 155, qty: 2 }, // Zombie Pagliaccio
+                { id: 155, qty: 2 }, // Zombie Clown
                 { id: 470, qty: 2 }, // Capelli di Serpente
-                { id: 406, qty: 1 }, // Pumpking il Re dei Fantasmi
+                { id: 406, qty: 1 }, // Re dei Fantasmi
                 { id: 164, qty: 1 }, // Drago Strisciante
                 { id: 516, qty: 1 }, // Zanki
                 { id: 531, qty: 1 }, // Clown del Sogno
-                { id: 526, qty: 2 }, // Skull Servant
+                { id: 526, qty: 2 }, // Servitore del Teschio
                 { id: 108, qty: 1 }, // Guerriero da Battaglia
-                { id: 464, qty: 1 }, // La 13ª Tomba
-                { id: 547, qty: 1 }, // Fantasma Magico
+                { id: 464, qty: 1 }, // La Tredicesima Tomba
+                { id: 547, qty: 1 }, // Fatasma Magico
                 { id: 437, qty: 1 }, // Spettro Ombra
                 { id: 657, qty: 1 }, // Maestro Kyonshee
                 { id: 180, qty: 1 }, // Assalitore Oscuro
-                { id: 136, qty: 2 }, // Richiamo degli Infestati
+                { id: 136, qty: 2 }, // Richiamo del Posseduto
                 { id: 750, qty: 1 }, // Gabbia d'Acciaio dell'Incubo
                 { id: 38, qty: 1 }, // Fusione
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 251, qty: 1 }, // Sepoltura Sciocca
                 { id: 503, qty: 1 }, // Waboku
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 669, qty: 1 } // Libro della Vita
             ],
             extra: [
-                { id: 278, qty: 1 }, // Grande Mammut di Goldfine
-                { id: 521, qty: 1 } // Guerriero Zombie
+                { id: 278, qty: 1 }, // Grande Mammuth di Goldfine
+                { id: 521, qty: 1 } // Zombie Guerriero
             ]
         },
         hard: {
             main: [
                 { id: 211, qty: 2 }, // Drago Zombie
                 { id: 99, qty: 2 }, // Zombie Corazzato
-                { id: 155, qty: 2 }, // Zombie Pagliaccio
+                { id: 155, qty: 2 }, // Zombie Clown
                 { id: 470, qty: 2 }, // Capelli di Serpente
-                { id: 406, qty: 2 }, // Pumpking il Re dei Fantasmi
+                { id: 406, qty: 2 }, // Re dei Fantasmi
                 { id: 164, qty: 1 }, // Drago Strisciante
                 { id: 516, qty: 1 }, // Zanki
-                { id: 526, qty: 2 }, // Skull Servant
+                { id: 526, qty: 2 }, // Servitore del Teschio
                 { id: 108, qty: 1 }, // Guerriero da Battaglia
-                { id: 464, qty: 1 }, // La 13ª Tomba
-                { id: 547, qty: 1 }, // Fantasma Magico
+                { id: 464, qty: 1 }, // La Tredicesima Tomba
+                { id: 547, qty: 1 }, // Fatasma Magico
                 { id: 437, qty: 1 }, // Spettro Ombra
                 { id: 657, qty: 1 }, // Maestro Kyonshee
-                { id: 136, qty: 3 }, // Richiamo degli Infestati
+                { id: 136, qty: 3 }, // Richiamo del Posseduto
                 { id: 750, qty: 1 }, // Gabbia d'Acciaio dell'Incubo
                 { id: 38, qty: 1 }, // Fusione
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 251, qty: 1 }, // Sepoltura Sciocca
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 669, qty: 1 }, // Libro della Vita
                 { id: 663, qty: 1 }, // Ryu Kokki
-                { id: 382, qty: 1 } // Forza dello Specchio
+                { id: 382, qty: 1 } // Forza Riflessa
             ],
             extra: [
-                { id: 278, qty: 1 }, // Grande Mammut di Goldfine
-                { id: 521, qty: 1 } // Guerriero Zombie
+                { id: 278, qty: 1 }, // Grande Mammuth di Goldfine
+                { id: 521, qty: 1 } // Zombie Guerriero
             ]
         }
     },
@@ -1693,106 +1693,106 @@ const characterDeckDatabase = {
     // recuperano Trappole (Maschera dell'Oscurità, Un Gatto di Malaugurio), la trappola-mostro
     // Roccaforte e Maschera della Restrizione. Il gioco non ha Apophis né Serket.
     odion: {
-        flagship: 326, // Soldato Cinetico — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 326, // Soldato Cipher — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 326, qty: 2 }, // Soldato Cinetico
+                { id: 326, qty: 2 }, // Soldato Cipher
                 { id: 764, qty: 3 }, // Statua Guardiana
                 { id: 602, qty: 3 }, // Maschera dell'Oscurità
-                { id: 1027, qty: 3 }, // Un Gatto di Malaugurio
-                { id: 759, qty: 3 }, // Sentinella Golem
-                { id: 556, qty: 2 }, // Maestro delle Trappole
-                { id: 375, qty: 1 }, // Guardiano di Metallo
-                { id: 1116, qty: 1 }, // Uomo con Wdjat
-                { id: 849, qty: 1 }, // Roccaforte la Fortezza Mobile
+                { id: 1027, qty: 3 }, // Un Gatto della Sfortuna
+                { id: 759, qty: 3 }, // Golem Guardiano
+                { id: 556, qty: 2 }, // Maestro di Trappola
+                { id: 375, qty: 1 }, // Guardiano Metallico
+                { id: 1116, qty: 1 }, // Un Uomo con Wdjat
+                { id: 849, qty: 1 }, // Roccaforte della Fortezza Movente
                 { id: 371, qty: 1 }, // Maschera della Restrizione
-                { id: 383, qty: 1 }, // Muro dello Specchio
+                { id: 383, qty: 1 }, // Muro a Specchio
                 { id: 478, qty: 1 }, // Macchina del Tempo
-                { id: 136, qty: 1 }, // Richiamo degli Infestati
-                { id: 819, qty: 1 }, // Scudo con Braccio Magico
+                { id: 136, qty: 1 }, // Richiamo del Posseduto
+                { id: 819, qty: 1 }, // Scudo da Braccio Magico
                 { id: 333, qty: 1 }, // Kunai con Catena
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 } // Dian Keto la Maestra delle Cure
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 } // Dian Keto il Curatore
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 326, qty: 2 }, // Soldato Cinetico
-                { id: 375, qty: 2 }, // Guardiano di Metallo
-                { id: 410, qty: 2 }, // Mietitore delle Carte
+                { id: 326, qty: 2 }, // Soldato Cipher
+                { id: 375, qty: 2 }, // Guardiano Metallico
+                { id: 410, qty: 2 }, // Mieti-Carte
                 { id: 764, qty: 2 }, // Statua Guardiana
-                { id: 556, qty: 2 }, // Maestro delle Trappole
+                { id: 556, qty: 2 }, // Maestro di Trappola
                 { id: 602, qty: 2 }, // Maschera dell'Oscurità
-                { id: 1027, qty: 2 }, // Un Gatto di Malaugurio
-                { id: 1116, qty: 1 }, // Uomo con Wdjat
-                { id: 759, qty: 1 }, // Sentinella Golem
-                { id: 849, qty: 1 }, // Roccaforte la Fortezza Mobile
+                { id: 1027, qty: 2 }, // Un Gatto della Sfortuna
+                { id: 1116, qty: 1 }, // Un Uomo con Wdjat
+                { id: 759, qty: 1 }, // Golem Guardiano
+                { id: 849, qty: 1 }, // Roccaforte della Fortezza Movente
                 { id: 371, qty: 1 }, // Maschera della Restrizione
                 { id: 792, qty: 1 }, // Bara Oscura
-                { id: 383, qty: 1 }, // Muro dello Specchio
+                { id: 383, qty: 1 }, // Muro a Specchio
                 { id: 478, qty: 1 }, // Macchina del Tempo
-                { id: 136, qty: 1 }, // Richiamo degli Infestati
-                { id: 819, qty: 1 }, // Scudo con Braccio Magico
+                { id: 136, qty: 1 }, // Richiamo del Posseduto
+                { id: 819, qty: 1 }, // Scudo da Braccio Magico
                 { id: 333, qty: 1 }, // Kunai con Catena
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
                 { id: 448, qty: 1 }, // Giudizio Solenne
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 434, qty: 1 } // Capro Espiatorio
             ],
             extra: []
         },
         hard: {
             main: [
-                { id: 326, qty: 2 }, // Soldato Cinetico
-                { id: 375, qty: 3 }, // Guardiano di Metallo
-                { id: 410, qty: 2 }, // Mietitore delle Carte
+                { id: 326, qty: 2 }, // Soldato Cipher
+                { id: 375, qty: 3 }, // Guardiano Metallico
+                { id: 410, qty: 2 }, // Mieti-Carte
                 { id: 764, qty: 1 }, // Statua Guardiana
-                { id: 556, qty: 2 }, // Maestro delle Trappole
+                { id: 556, qty: 2 }, // Maestro di Trappola
                 { id: 602, qty: 2 }, // Maschera dell'Oscurità
-                { id: 1027, qty: 2 }, // Un Gatto di Malaugurio
-                { id: 1116, qty: 2 }, // Uomo con Wdjat
-                { id: 849, qty: 1 }, // Roccaforte la Fortezza Mobile
+                { id: 1027, qty: 2 }, // Un Gatto della Sfortuna
+                { id: 1116, qty: 2 }, // Un Uomo con Wdjat
+                { id: 849, qty: 1 }, // Roccaforte della Fortezza Movente
                 { id: 371, qty: 1 }, // Maschera della Restrizione
                 { id: 792, qty: 1 }, // Bara Oscura
-                { id: 383, qty: 1 }, // Muro dello Specchio
+                { id: 383, qty: 1 }, // Muro a Specchio
                 { id: 478, qty: 1 }, // Macchina del Tempo
-                { id: 136, qty: 1 }, // Richiamo degli Infestati
-                { id: 819, qty: 1 }, // Scudo con Braccio Magico
+                { id: 136, qty: 1 }, // Richiamo del Posseduto
+                { id: 819, qty: 1 }, // Scudo da Braccio Magico
                 { id: 333, qty: 1 }, // Kunai con Catena
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
                 { id: 448, qty: 1 }, // Giudizio Solenne
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 419, qty: 1 } // Anello della Distruzione
             ],
             extra: []
@@ -1812,26 +1812,26 @@ const characterDeckDatabase = {
                 { id: 982, qty: 3 }, // Bio-Mago
                 { id: 443, qty: 2 }, // Amicizia Splendente
                 { id: 458, qty: 2 }, // Spirito dell'Arpa
-                { id: 391, qty: 2 }, // Elfa Mistica
-                { id: 402, qty: 2 }, // Piccola Angela
+                { id: 391, qty: 2 }, // Elfo Mistico
+                { id: 402, qty: 2 }, // Piccolo Angelo
                 { id: 1074, qty: 2 }, // Hoshiningen
                 { id: 442, qty: 1 }, // Abisso Splendente
                 { id: 234, qty: 1 }, // Dono della Fata
                 { id: 141, qty: 1 }, // Carta del Ritorno Sicuro
-                { id: 576, qty: 1 }, // Telescopio Antico
+                { id: 576, qty: 1 }, // Antico Telescopio
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 151, qty: 1 }, // Coro del Santuario
-                { id: 546, qty: 2 }, // Dian Keto la Maestra delle Cure
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 546, qty: 2 }, // Dian Keto il Curatore
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 148, qty: 1 }, // Scudo Lustro Giallo
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 148, qty: 1 }, // Scudo Giallo del Desiderio
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -1839,70 +1839,70 @@ const characterDeckDatabase = {
         medium: {
             main: [
                 { id: 562, qty: 2 }, // Gyakutenno Megami
-                { id: 217, qty: 2 }, // Strega Oscura Dunames
+                { id: 217, qty: 2 }, // Strega Oscura Dunares
                 { id: 442, qty: 2 }, // Abisso Splendente
                 { id: 443, qty: 2 }, // Amicizia Splendente
                 { id: 458, qty: 2 }, // Spirito dell'Arpa
                 { id: 234, qty: 2 }, // Dono della Fata
-                { id: 203, qty: 1 }, // Doma l'Angelo del Silenzio
+                { id: 203, qty: 1 }, // Doma Angelo Silente
                 { id: 949, qty: 1 }, // Ocubeam
-                { id: 1001, qty: 1 }, // Sacerdote di Asura
-                { id: 1092, qty: 2 }, // Senju delle Mille Mani
+                { id: 1001, qty: 1 }, // Prete Asura
+                { id: 1092, qty: 2 }, // Senju dalle 1000 Mani
                 { id: 925, qty: 1 }, // Raggio e Temperatura
                 { id: 982, qty: 1 }, // Bio-Mago
-                { id: 391, qty: 1 }, // Elfa Mistica
+                { id: 391, qty: 1 }, // Elfo Mistico
                 { id: 141, qty: 1 }, // Carta del Ritorno Sicuro
-                { id: 555, qty: 1 }, // Ultima Volontà
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 576, qty: 1 }, // Telescopio Antico
+                { id: 555, qty: 1 }, // Ultimo Desiderio
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 576, qty: 1 }, // Antico Telescopio
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 448, qty: 1 }, // Giudizio Solenne
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 503, qty: 2 }, // Waboku
                 { id: 151, qty: 1 }, // Coro del Santuario
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 595, qty: 1 } // Il Guardiano Affidabile
+                { id: 595, qty: 1 } // Guardiano Affidabile
             ],
             extra: []
         },
         hard: {
             main: [
                 { id: 562, qty: 2 }, // Gyakutenno Megami
-                { id: 217, qty: 2 }, // Strega Oscura Dunames
+                { id: 217, qty: 2 }, // Strega Oscura Dunares
                 { id: 442, qty: 2 }, // Abisso Splendente
                 { id: 443, qty: 2 }, // Amicizia Splendente
                 { id: 458, qty: 2 }, // Spirito dell'Arpa
                 { id: 234, qty: 2 }, // Dono della Fata
-                { id: 203, qty: 2 }, // Doma l'Angelo del Silenzio
+                { id: 203, qty: 2 }, // Doma Angelo Silente
                 { id: 949, qty: 1 }, // Ocubeam
-                { id: 1001, qty: 1 }, // Sacerdote di Asura
-                { id: 1092, qty: 2 }, // Senju delle Mille Mani
-                { id: 391, qty: 1 }, // Elfa Mistica
+                { id: 1001, qty: 1 }, // Prete Asura
+                { id: 1092, qty: 2 }, // Senju dalle 1000 Mani
+                { id: 391, qty: 1 }, // Elfo Mistico
                 { id: 141, qty: 1 }, // Carta del Ritorno Sicuro
-                { id: 555, qty: 1 }, // Ultima Volontà
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 576, qty: 1 }, // Telescopio Antico
+                { id: 555, qty: 1 }, // Ultimo Desiderio
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 576, qty: 1 }, // Antico Telescopio
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 448, qty: 1 }, // Giudizio Solenne
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 503, qty: 2 }, // Waboku
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 595, qty: 1 }, // Guardiano Affidabile
                 { id: 954, qty: 1 }, // Strega Oscura
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 7, qty: 1 } // Buco Nero
             ],
             extra: []
@@ -1919,31 +1919,31 @@ const characterDeckDatabase = {
             main: [
                 { id: 17, qty: 2 }, // Jinzo
                 { id: 1009, qty: 3 }, // Jinzo #7
-                { id: 963, qty: 3 }, // Kappa Psichico
-                { id: 960, qty: 2 }, // Lumaca Meccanica
-                { id: 170, qty: 2 }, // Comandante Cyber
-                { id: 264, qty: 2 }, // Lupo Giga-Tech
+                { id: 963, qty: 3 }, // Psi-Kappa
+                { id: 960, qty: 2 }, // Mecha-Chiocciola
+                { id: 170, qty: 2 }, // Cyber Comandante
+                { id: 264, qty: 2 }, // Lupo Tecnologico
                 { id: 274, qty: 2 }, // Gradius
                 { id: 223, qty: 1 }, // Tartaruga Elettromagnetica
                 { id: 941, qty: 1 }, // Mago del Disco
-                { id: 174, qty: 1 }, // Predone Cyber
+                { id: 174, qty: 1 }, // Predone Cibernetico
                 { id: 1122, qty: 1 }, // Scorpione d'Acciaio
                 { id: 92, qty: 1 }, // Amplificatore
-                { id: 576, qty: 1 }, // Telescopio Antico
-                { id: 575, qty: 1 }, // La Spia Inesperta
+                { id: 576, qty: 1 }, // Antico Telescopio
+                { id: 575, qty: 1 }, // Spia Inesperta
                 { id: 466, qty: 1 }, // L'Occhio della Verità
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 631, qty: 1 } // Megamorfosi
             ],
             extra: []
@@ -1952,36 +1952,36 @@ const characterDeckDatabase = {
             main: [
                 { id: 17, qty: 2 }, // Jinzo
                 { id: 1009, qty: 3 }, // Jinzo #7
-                { id: 963, qty: 2 }, // Kappa Psichico
-                { id: 174, qty: 2 }, // Predone Cyber
-                { id: 176, qty: 2 }, // Soldato Cyber del Mondo Oscuro
+                { id: 963, qty: 2 }, // Psi-Kappa
+                { id: 174, qty: 2 }, // Predone Cibernetico
+                { id: 176, qty: 2 }, // Cyber-Soldato del Mondoscuro
                 { id: 941, qty: 1 }, // Mago del Disco
                 { id: 373, qty: 1 }, // MechanicalChaser
-                { id: 401, qty: 1 }, // Macchina a Pendolo
+                { id: 401, qty: 1 }, // Macchina Pendolo
                 { id: 480, qty: 1 }, // Divoratempo
-                { id: 264, qty: 2 }, // Lupo Giga-Tech
+                { id: 264, qty: 2 }, // Lupo Tecnologico
                 { id: 394, qty: 1 }, // Carro Armato Oni T-34
                 { id: 223, qty: 1 }, // Tartaruga Elettromagnetica
-                { id: 171, qty: 1 }, // Falco Cyber
+                { id: 171, qty: 1 }, // Cyber-Falcone
                 { id: 92, qty: 1 }, // Amplificatore
-                { id: 576, qty: 1 }, // Telescopio Antico
-                { id: 575, qty: 1 }, // La Spia Inesperta
+                { id: 576, qty: 1 }, // Antico Telescopio
+                { id: 575, qty: 1 }, // Spia Inesperta
                 { id: 466, qty: 1 }, // L'Occhio della Verità
-                { id: 130, qty: 1 }, // Controllo Mentale
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 130, qty: 1 }, // Controllo della Mente
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 631, qty: 1 }, // Megamorfosi
-                { id: 358, qty: 1 }, // Fabbrica di Conversione Meccanica
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 599, qty: 1 } // Sette Attrezzi del Bandito
+                { id: 358, qty: 1 }, // Fabbrica di Macchine
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 599, qty: 1 } // I Sette Attrezzi del Bandito
             ],
             extra: []
         },
@@ -1989,36 +1989,36 @@ const characterDeckDatabase = {
             main: [
                 { id: 17, qty: 2 }, // Jinzo
                 { id: 1009, qty: 2 }, // Jinzo #7
-                { id: 963, qty: 2 }, // Kappa Psichico
-                { id: 174, qty: 2 }, // Predone Cyber
-                { id: 176, qty: 2 }, // Soldato Cyber del Mondo Oscuro
+                { id: 963, qty: 2 }, // Psi-Kappa
+                { id: 174, qty: 2 }, // Predone Cibernetico
+                { id: 176, qty: 2 }, // Cyber-Soldato del Mondoscuro
                 { id: 941, qty: 1 }, // Mago del Disco
                 { id: 373, qty: 1 }, // MechanicalChaser
-                { id: 401, qty: 2 }, // Macchina a Pendolo
+                { id: 401, qty: 2 }, // Macchina Pendolo
                 { id: 480, qty: 2 }, // Divoratempo
-                { id: 264, qty: 1 }, // Lupo Giga-Tech
+                { id: 264, qty: 1 }, // Lupo Tecnologico
                 { id: 394, qty: 1 }, // Carro Armato Oni T-34
                 { id: 223, qty: 1 }, // Tartaruga Elettromagnetica
-                { id: 171, qty: 1 }, // Falco Cyber
+                { id: 171, qty: 1 }, // Cyber-Falcone
                 { id: 92, qty: 1 }, // Amplificatore
-                { id: 576, qty: 1 }, // Telescopio Antico
+                { id: 576, qty: 1 }, // Antico Telescopio
                 { id: 466, qty: 1 }, // L'Occhio della Verità
-                { id: 130, qty: 1 }, // Controllo Mentale
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 130, qty: 1 }, // Controllo della Mente
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 631, qty: 1 }, // Megamorfosi
-                { id: 358, qty: 1 }, // Fabbrica di Conversione Meccanica
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 382, qty: 1 }, // Forza dello Specchio
-                { id: 350, qty: 1 } // Rimozione del Limitatore
+                { id: 358, qty: 1 }, // Fabbrica di Macchine
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 382, qty: 1 }, // Forza Riflessa
+                { id: 350, qty: 1 } // Rimozione di Limite
             ],
             extra: []
         }
@@ -2033,32 +2033,32 @@ const characterDeckDatabase = {
         easy: {
             main: [
                 { id: 2, qty: 2 }, // Mago Nero
-                { id: 431, qty: 3 }, // Saggi il Pagliaccio Oscuro
-                { id: 169, qty: 3 }, // Tenda degli Oscuri
+                { id: 431, qty: 3 }, // Saggi, Clown Oscuro
+                { id: 169, qty: 3 }, // Sipario degli Oscuri
                 { id: 924, qty: 2 }, // Nemuriko
                 { id: 1010, qty: 2 }, // Lampada Mistica
                 { id: 737, qty: 2 }, // Mago Apprendista
-                { id: 743, qty: 2 }, // Maga Oscura Curran
+                { id: 743, qty: 2 }, // Curran Maga d'Ebano
                 { id: 194, qty: 1 }, // Illusionista dagli Occhi Oscuri
-                { id: 346, qty: 2 }, // Legion il Giullare Demoniaco
+                { id: 346, qty: 2 }, // Legione Demone Giullare
                 { id: 554, qty: 1 }, // Stregone dei Dannati
                 { id: 474, qty: 1 }, // Mille Coltelli
                 { id: 363, qty: 1 }, // Cappelli Magici
-                { id: 607, qty: 1 }, // Tifone dello Spazio Mistico
-                { id: 138, qty: 1 }, // Distruzione di Carte
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
+                { id: 607, qty: 1 }, // Tifone Spaziale Mistico
+                { id: 138, qty: 1 }, // Distruggi-Carte
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 439, qty: 1 }, // Incantesimo Ombra
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 439, qty: 1 }, // Magia Ombra
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -2066,75 +2066,75 @@ const characterDeckDatabase = {
         medium: {
             main: [
                 { id: 2, qty: 2 }, // Mago Nero
-                { id: 346, qty: 2 }, // Legion il Giullare Demoniaco
-                { id: 431, qty: 2 }, // Saggi il Pagliaccio Oscuro
+                { id: 346, qty: 2 }, // Legione Demone Giullare
+                { id: 431, qty: 2 }, // Saggi, Clown Oscuro
                 { id: 306, qty: 1 }, // Mago Senza Volto Illusionista
                 { id: 554, qty: 2 }, // Stregone dei Dannati
                 { id: 995, qty: 1 }, // Il Gentiluomo Illusorio
-                { id: 733, qty: 1 }, // Stregone Eradicatore Oscuro
-                { id: 743, qty: 1 }, // Maga Oscura Curran
-                { id: 169, qty: 2 }, // Tenda degli Oscuri
+                { id: 733, qty: 1 }, // Stregone Oscuro Eradicatore
+                { id: 743, qty: 1 }, // Curran Maga d'Ebano
+                { id: 169, qty: 2 }, // Sipario degli Oscuri
                 { id: 924, qty: 1 }, // Nemuriko
-                { id: 744, qty: 1 }, // Mago a Fuoco Rapido
-                { id: 736, qty: 1 }, // Abile Mago Oscuro
+                { id: 744, qty: 1 }, // Mago Fuoco-Rapido
+                { id: 736, qty: 1 }, // Abile Mago Nero
                 { id: 194, qty: 1 }, // Illusionista dagli Occhi Oscuri
                 { id: 737, qty: 1 }, // Mago Apprendista
                 { id: 1010, qty: 1 }, // Lampada Mistica
                 { id: 474, qty: 1 }, // Mille Coltelli
                 { id: 363, qty: 1 }, // Cappelli Magici
-                { id: 607, qty: 1 }, // Tifone dello Spazio Mistico
-                { id: 146, qty: 1 }, // Catena di Distruzione
-                { id: 138, qty: 1 }, // Distruzione di Carte
+                { id: 607, qty: 1 }, // Tifone Spaziale Mistico
+                { id: 146, qty: 1 }, // Distruzione a Catena
+                { id: 138, qty: 1 }, // Distruggi-Carte
                 { id: 362, qty: 1 }, // Dimensione Magica
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 599, qty: 1 } // Sette Attrezzi del Bandito
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 599, qty: 1 } // I Sette Attrezzi del Bandito
             ],
             extra: []
         },
         hard: {
             main: [
                 { id: 2, qty: 2 }, // Mago Nero
-                { id: 346, qty: 2 }, // Legion il Giullare Demoniaco
-                { id: 431, qty: 2 }, // Saggi il Pagliaccio Oscuro
+                { id: 346, qty: 2 }, // Legione Demone Giullare
+                { id: 431, qty: 2 }, // Saggi, Clown Oscuro
                 { id: 306, qty: 1 }, // Mago Senza Volto Illusionista
                 { id: 554, qty: 2 }, // Stregone dei Dannati
                 { id: 995, qty: 1 }, // Il Gentiluomo Illusorio
-                { id: 733, qty: 2 }, // Stregone Eradicatore Oscuro
-                { id: 743, qty: 1 }, // Maga Oscura Curran
-                { id: 169, qty: 2 }, // Tenda degli Oscuri
-                { id: 744, qty: 1 }, // Mago a Fuoco Rapido
-                { id: 736, qty: 2 }, // Abile Mago Oscuro
+                { id: 733, qty: 2 }, // Stregone Oscuro Eradicatore
+                { id: 743, qty: 1 }, // Curran Maga d'Ebano
+                { id: 169, qty: 2 }, // Sipario degli Oscuri
+                { id: 744, qty: 1 }, // Mago Fuoco-Rapido
+                { id: 736, qty: 2 }, // Abile Mago Nero
                 { id: 194, qty: 1 }, // Illusionista dagli Occhi Oscuri
                 { id: 737, qty: 1 }, // Mago Apprendista
                 { id: 474, qty: 1 }, // Mille Coltelli
                 { id: 363, qty: 1 }, // Cappelli Magici
-                { id: 607, qty: 1 }, // Tifone dello Spazio Mistico
-                { id: 146, qty: 1 }, // Catena di Distruzione
-                { id: 138, qty: 1 }, // Distruzione di Carte
+                { id: 607, qty: 1 }, // Tifone Spaziale Mistico
+                { id: 146, qty: 1 }, // Distruzione a Catena
+                { id: 138, qty: 1 }, // Distruggi-Carte
                 { id: 362, qty: 1 }, // Dimensione Magica
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 439, qty: 1 }, // Incantesimo Ombra
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 439, qty: 1 }, // Magia Ombra
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 7, qty: 1 } // Buco Nero
             ],
             extra: []
@@ -2145,90 +2145,90 @@ const characterDeckDatabase = {
     // Suijin), il Muro del Labirinto con Labirinto Magico per il Wall Shadow, e Jirai Gumo —
     // il mazzo del duello nel labirinto del Regno dei Duellanti.
     paradoxBrothers: {
-        flagship: 33, // Il Guardiano del Cancello — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 33, // Guardiano del Cancello — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 33, qty: 1 }, // Il Guardiano del Cancello
+                { id: 33, qty: 1 }, // Guardiano del Cancello
                 { id: 538, qty: 1 }, // Sanga del Tuono
                 { id: 324, qty: 1 }, // Kazejin
                 { id: 71, qty: 1 }, // Suijin
                 { id: 535, qty: 3 }, // Guardia del Labirinto
                 { id: 536, qty: 3 }, // Protettrice del Trono
-                { id: 261, qty: 3 }, // Soldato di Pietra Gigante
+                { id: 261, qty: 3 }, // Soldato di Pietra
                 { id: 603, qty: 2 }, // Muka Muka
                 { id: 765, qty: 2 }, // Verme Medusa
-                { id: 54, qty: 2 }, // Muro d'Illusione
-                { id: 905, qty: 1 }, // Roccia Dissolvente
+                { id: 54, qty: 2 }, // Muro Illusorio
+                { id: 905, qty: 1 }, // Dissolviroccia
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 333, qty: 1 }, // Kunai con Catena
-                { id: 439, qty: 1 }, // Incantesimo Ombra
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 439, qty: 1 }, // Magia Ombra
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 38, qty: 1 }, // Fusione
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 875, qty: 1 }, // Libro della Luna
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 151, qty: 1 } // Coro del Santuario
             ],
             extra: [
-                { id: 268, qty: 1 } // Giltia il Cavaliere D.
+                { id: 268, qty: 1 } // Giltia il Cavaliere dei D.
             ]
         },
         medium: {
             main: [
-                { id: 33, qty: 1 }, // Il Guardiano del Cancello
+                { id: 33, qty: 1 }, // Guardiano del Cancello
                 { id: 538, qty: 1 }, // Sanga del Tuono
                 { id: 324, qty: 1 }, // Kazejin
                 { id: 71, qty: 1 }, // Suijin
-                { id: 337, qty: 2 }, // Muro del Labirinto
-                { id: 857, qty: 1 }, // Wall Shadow
+                { id: 337, qty: 2 }, // Mura Labirintiche
+                { id: 857, qty: 1 }, // Muro-Ombra
                 { id: 316, qty: 2 }, // Jirai Gumo
-                { id: 261, qty: 2 }, // Soldato di Pietra Gigante
+                { id: 261, qty: 2 }, // Soldato di Pietra
                 { id: 535, qty: 2 }, // Guardia del Labirinto
                 { id: 536, qty: 2 }, // Protettrice del Trono
                 { id: 603, qty: 2 }, // Muka Muka
                 { id: 765, qty: 1 }, // Verme Medusa
-                { id: 54, qty: 2 }, // Muro d'Illusione
+                { id: 54, qty: 2 }, // Muro Illusorio
                 { id: 364, qty: 1 }, // Labirinto Magico
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 333, qty: 1 }, // Kunai con Catena
-                { id: 439, qty: 1 }, // Incantesimo Ombra
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 439, qty: 1 }, // Magia Ombra
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 38, qty: 1 }, // Fusione
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 503, qty: 1 }, // Waboku
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 595, qty: 1 } // Il Guardiano Affidabile
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 595, qty: 1 } // Guardiano Affidabile
             ],
             extra: [
-                { id: 268, qty: 1 } // Giltia il Cavaliere D.
+                { id: 268, qty: 1 } // Giltia il Cavaliere dei D.
             ]
         },
         hard: {
             main: [
-                { id: 33, qty: 1 }, // Il Guardiano del Cancello
+                { id: 33, qty: 1 }, // Guardiano del Cancello
                 { id: 538, qty: 2 }, // Sanga del Tuono
                 { id: 324, qty: 2 }, // Kazejin
                 { id: 71, qty: 2 }, // Suijin
-                { id: 337, qty: 2 }, // Muro del Labirinto
-                { id: 857, qty: 1 }, // Wall Shadow
+                { id: 337, qty: 2 }, // Mura Labirintiche
+                { id: 857, qty: 1 }, // Muro-Ombra
                 { id: 316, qty: 2 }, // Jirai Gumo
-                { id: 261, qty: 2 }, // Soldato di Pietra Gigante
+                { id: 261, qty: 2 }, // Soldato di Pietra
                 { id: 535, qty: 2 }, // Guardia del Labirinto
                 { id: 536, qty: 2 }, // Protettrice del Trono
                 { id: 603, qty: 2 }, // Muka Muka
@@ -2236,23 +2236,23 @@ const characterDeckDatabase = {
                 { id: 364, qty: 1 }, // Labirinto Magico
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 333, qty: 1 }, // Kunai con Catena
-                { id: 439, qty: 1 }, // Incantesimo Ombra
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 439, qty: 1 }, // Magia Ombra
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 38, qty: 1 }, // Fusione
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 382, qty: 1 } // Forza dello Specchio
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 382, qty: 1 } // Forza Riflessa
             ],
             extra: [
-                { id: 268, qty: 1 } // Giltia il Cavaliere D.
+                { id: 268, qty: 1 } // Giltia il Cavaliere dei D.
             ]
         }
     },
@@ -2268,30 +2268,30 @@ const characterDeckDatabase = {
                 { id: 343, qty: 2 }, // Guardiano di Lava
                 { id: 527, qty: 3 }, // Roboyarou
                 { id: 528, qty: 3 }, // Robolady
-                { id: 170, qty: 3 }, // Comandante Cyber
-                { id: 264, qty: 2 }, // Lupo Giga-Tech
-                { id: 298, qty: 2 }, // Gigante Un Occhio
+                { id: 170, qty: 3 }, // Cyber Comandante
+                { id: 264, qty: 2 }, // Lupo Tecnologico
+                { id: 298, qty: 2 }, // Gigante Hitotsu-Me
                 { id: 274, qty: 2 }, // Gradius
-                { id: 176, qty: 1 }, // Soldato Cyber del Mondo Oscuro
-                { id: 171, qty: 1 }, // Falco Cyber
-                { id: 960, qty: 1 }, // Lumaca Meccanica
+                { id: 176, qty: 1 }, // Cyber-Soldato del Mondoscuro
+                { id: 171, qty: 1 }, // Cyber-Falcone
+                { id: 960, qty: 1 }, // Mecha-Chiocciola
                 { id: 38, qty: 1 }, // Fusione
-                { id: 358, qty: 1 }, // Fabbrica di Conversione Meccanica
+                { id: 358, qty: 1 }, // Fabbrica di Macchine
                 { id: 631, qty: 1 }, // Megamorfosi
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 875, qty: 1 }, // Libro della Luna
-                { id: 599, qty: 1 } // Sette Attrezzi del Bandito
+                { id: 599, qty: 1 } // I Sette Attrezzi del Bandito
             ],
             extra: [
                 { id: 73, qty: 1 } // Super Roboyarou
@@ -2300,37 +2300,37 @@ const characterDeckDatabase = {
         medium: {
             main: [
                 { id: 343, qty: 2 }, // Guardiano di Lava
-                { id: 74, qty: 2 }, // Guardiano della Palude
+                { id: 74, qty: 2 }, // Guardiano delle Paludi
                 { id: 527, qty: 2 }, // Roboyarou
                 { id: 528, qty: 2 }, // Robolady
-                { id: 170, qty: 2 }, // Comandante Cyber
-                { id: 176, qty: 2 }, // Soldato Cyber del Mondo Oscuro
+                { id: 170, qty: 2 }, // Cyber Comandante
+                { id: 176, qty: 2 }, // Cyber-Soldato del Mondoscuro
                 { id: 394, qty: 1 }, // Carro Armato Oni T-34
-                { id: 281, qty: 1 }, // Bugroth l'Assalitore Terrestre
-                { id: 171, qty: 1 }, // Falco Cyber
-                { id: 174, qty: 1 }, // Predone Cyber
-                { id: 298, qty: 1 }, // Gigante Un Occhio
-                { id: 101, qty: 1 }, // Assalitore con l'Ascia
-                { id: 264, qty: 1 }, // Lupo Giga-Tech
-                { id: 467, qty: 1 }, // Il Demone Megacyber
+                { id: 281, qty: 1 }, // Bugroth di Terra
+                { id: 171, qty: 1 }, // Cyber-Falcone
+                { id: 174, qty: 1 }, // Predone Cibernetico
+                { id: 298, qty: 1 }, // Gigante Hitotsu-Me
+                { id: 101, qty: 1 }, // Predone d'Ascia
+                { id: 264, qty: 1 }, // Lupo Tecnologico
+                { id: 467, qty: 1 }, // Demone Megacyber
                 { id: 38, qty: 1 }, // Fusione
                 { id: 631, qty: 1 }, // Megamorfosi
-                { id: 358, qty: 1 }, // Fabbrica di Conversione Meccanica
-                { id: 350, qty: 1 }, // Rimozione del Limitatore
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 358, qty: 1 }, // Fabbrica di Macchine
+                { id: 350, qty: 1 }, // Rimozione di Limite
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 2 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 503, qty: 1 }, // Waboku
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
-                { id: 646, qty: 1 } // Tempesta Pesante
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
+                { id: 646, qty: 1 } // Tempesta Potente
             ],
             extra: [
                 { id: 73, qty: 1 } // Super Roboyarou
@@ -2339,36 +2339,36 @@ const characterDeckDatabase = {
         hard: {
             main: [
                 { id: 343, qty: 2 }, // Guardiano di Lava
-                { id: 74, qty: 2 }, // Guardiano della Palude
+                { id: 74, qty: 2 }, // Guardiano delle Paludi
                 { id: 527, qty: 2 }, // Roboyarou
                 { id: 528, qty: 2 }, // Robolady
-                { id: 170, qty: 2 }, // Comandante Cyber
-                { id: 176, qty: 2 }, // Soldato Cyber del Mondo Oscuro
+                { id: 170, qty: 2 }, // Cyber Comandante
+                { id: 176, qty: 2 }, // Cyber-Soldato del Mondoscuro
                 { id: 394, qty: 1 }, // Carro Armato Oni T-34
-                { id: 281, qty: 1 }, // Bugroth l'Assalitore Terrestre
-                { id: 171, qty: 1 }, // Falco Cyber
-                { id: 174, qty: 1 }, // Predone Cyber
-                { id: 101, qty: 2 }, // Assalitore con l'Ascia
-                { id: 467, qty: 2 }, // Il Demone Megacyber
+                { id: 281, qty: 1 }, // Bugroth di Terra
+                { id: 171, qty: 1 }, // Cyber-Falcone
+                { id: 174, qty: 1 }, // Predone Cibernetico
+                { id: 101, qty: 2 }, // Predone d'Ascia
+                { id: 467, qty: 2 }, // Demone Megacyber
                 { id: 38, qty: 1 }, // Fusione
                 { id: 631, qty: 1 }, // Megamorfosi
-                { id: 358, qty: 1 }, // Fabbrica di Conversione Meccanica
-                { id: 350, qty: 1 }, // Rimozione del Limitatore
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 358, qty: 1 }, // Fabbrica di Macchine
+                { id: 350, qty: 1 }, // Rimozione di Limite
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 177, qty: 1 }, // Alligatore Cyber-Tecnologico
-                { id: 382, qty: 1 } // Forza dello Specchio
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 177, qty: 1 }, // Cyber-Alligatech
+                { id: 382, qty: 1 } // Forza Riflessa
             ],
             extra: [
                 { id: 73, qty: 1 } // Super Roboyarou
@@ -2381,102 +2381,102 @@ const characterDeckDatabase = {
     // Fede, Strega Oscura Dunames — con le sue carte d'affetto: Waboku, Spostamento, Dian Keto
     // e Scudo Lustro Giallo.
     tea: {
-        flagship: 188, // Maga Oscura — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 188, // Ragazza Maga Nera — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 188, qty: 2 }, // Maga Oscura
+                { id: 188, qty: 2 }, // Ragazza Maga Nera
                 { id: 443, qty: 3 }, // Amicizia Splendente
-                { id: 391, qty: 3 }, // Elfa Mistica
+                { id: 391, qty: 3 }, // Elfo Mistico
                 { id: 458, qty: 2 }, // Spirito dell'Arpa
-                { id: 402, qty: 3 }, // Piccola Angela
-                { id: 287, qty: 2 }, // Amante Felice
-                { id: 588, qty: 2 }, // Maga della Fede
+                { id: 402, qty: 3 }, // Piccolo Angelo
+                { id: 287, qty: 2 }, // Amore Felice
+                { id: 588, qty: 2 }, // Mago della Fede
                 { id: 1074, qty: 2 }, // Hoshiningen
                 { id: 442, qty: 1 }, // Abisso Splendente
                 { id: 234, qty: 1 }, // Dono della Fata
                 { id: 503, qty: 2 }, // Waboku
                 { id: 622, qty: 1 }, // Spostamento
-                { id: 546, qty: 2 }, // Dian Keto la Maestra delle Cure
-                { id: 148, qty: 1 }, // Scudo Lustro Giallo
+                { id: 546, qty: 2 }, // Dian Keto il Curatore
+                { id: 148, qty: 1 }, // Scudo Giallo del Desiderio
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
+                { id: 820, qty: 2 }, // Annulla Attacco
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
                 { id: 434, qty: 2 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 151, qty: 1 }, // Coro del Santuario
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 } // Il Guardiano Affidabile
+                { id: 595, qty: 1 } // Guardiano Affidabile
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 188, qty: 2 }, // Maga Oscura
-                { id: 217, qty: 2 }, // Strega Oscura Dunames
+                { id: 188, qty: 2 }, // Ragazza Maga Nera
+                { id: 217, qty: 2 }, // Strega Oscura Dunares
                 { id: 442, qty: 2 }, // Abisso Splendente
                 { id: 443, qty: 2 }, // Amicizia Splendente
-                { id: 391, qty: 2 }, // Elfa Mistica
+                { id: 391, qty: 2 }, // Elfo Mistico
                 { id: 458, qty: 2 }, // Spirito dell'Arpa
                 { id: 234, qty: 2 }, // Dono della Fata
-                { id: 402, qty: 2 }, // Piccola Angela
-                { id: 287, qty: 1 }, // Amante Felice
-                { id: 588, qty: 1 }, // Maga della Fede
+                { id: 402, qty: 2 }, // Piccolo Angelo
+                { id: 287, qty: 1 }, // Amore Felice
+                { id: 588, qty: 1 }, // Mago della Fede
                 { id: 1074, qty: 1 }, // Hoshiningen
-                { id: 203, qty: 1 }, // Doma l'Angelo del Silenzio
+                { id: 203, qty: 1 }, // Doma Angelo Silente
                 { id: 562, qty: 1 }, // Gyakutenno Megami
                 { id: 503, qty: 2 }, // Waboku
                 { id: 622, qty: 1 }, // Spostamento
-                { id: 546, qty: 2 }, // Dian Keto la Maestra delle Cure
-                { id: 148, qty: 1 }, // Scudo Lustro Giallo
+                { id: 546, qty: 2 }, // Dian Keto il Curatore
+                { id: 148, qty: 1 }, // Scudo Giallo del Desiderio
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
+                { id: 820, qty: 1 }, // Annulla Attacco
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 151, qty: 1 }, // Coro del Santuario
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
                 { id: 143, qty: 1 } // Mura del Castello
             ],
             extra: []
         },
         hard: {
             main: [
-                { id: 188, qty: 2 }, // Maga Oscura
-                { id: 217, qty: 2 }, // Strega Oscura Dunames
+                { id: 188, qty: 2 }, // Ragazza Maga Nera
+                { id: 217, qty: 2 }, // Strega Oscura Dunares
                 { id: 442, qty: 2 }, // Abisso Splendente
                 { id: 443, qty: 2 }, // Amicizia Splendente
-                { id: 391, qty: 2 }, // Elfa Mistica
+                { id: 391, qty: 2 }, // Elfo Mistico
                 { id: 458, qty: 2 }, // Spirito dell'Arpa
                 { id: 234, qty: 2 }, // Dono della Fata
-                { id: 402, qty: 2 }, // Piccola Angela
-                { id: 588, qty: 1 }, // Maga della Fede
-                { id: 203, qty: 1 }, // Doma l'Angelo del Silenzio
+                { id: 402, qty: 2 }, // Piccolo Angelo
+                { id: 588, qty: 1 }, // Mago della Fede
+                { id: 203, qty: 1 }, // Doma Angelo Silente
                 { id: 562, qty: 2 }, // Gyakutenno Megami
                 { id: 503, qty: 2 }, // Waboku
                 { id: 622, qty: 1 }, // Spostamento
-                { id: 546, qty: 2 }, // Dian Keto la Maestra delle Cure
-                { id: 148, qty: 1 }, // Scudo Lustro Giallo
+                { id: 546, qty: 2 }, // Dian Keto il Curatore
+                { id: 148, qty: 1 }, // Scudo Giallo del Desiderio
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
+                { id: 820, qty: 1 }, // Annulla Attacco
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
                 { id: 954, qty: 1 }, // Strega Oscura
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 448, qty: 1 } // Giudizio Solenne
             ],
             extra: []
@@ -2491,30 +2491,30 @@ const characterDeckDatabase = {
         easy: {
             main: [
                 { id: 562, qty: 1 }, // Gyakutenno Megami
-                { id: 391, qty: 3 }, // Elfa Mistica
-                { id: 402, qty: 3 }, // Piccola Angela
+                { id: 391, qty: 3 }, // Elfo Mistico
+                { id: 402, qty: 3 }, // Piccolo Angelo
                 { id: 443, qty: 2 }, // Amicizia Splendente
-                { id: 588, qty: 2 }, // Maga della Fede
-                { id: 338, qty: 2 }, // Dama della Fede
+                { id: 588, qty: 2 }, // Mago della Fede
+                { id: 338, qty: 2 }, // Signora della Fede
                 { id: 458, qty: 2 }, // Spirito dell'Arpa
-                { id: 287, qty: 2 }, // Amante Felice
+                { id: 287, qty: 2 }, // Amore Felice
                 { id: 1074, qty: 2 }, // Hoshiningen
                 { id: 234, qty: 1 }, // Dono della Fata
-                { id: 93, qty: 1 }, // Antico Elfo
-                { id: 546, qty: 2 }, // Dian Keto la Maestra delle Cure
+                { id: 93, qty: 1 }, // Elfo Antico
+                { id: 546, qty: 2 }, // Dian Keto il Curatore
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 819, qty: 1 }, // Scudo con Braccio Magico
-                { id: 148, qty: 1 }, // Scudo Lustro Giallo
+                { id: 819, qty: 1 }, // Scudo da Braccio Magico
+                { id: 148, qty: 1 }, // Scudo Giallo del Desiderio
                 { id: 151, qty: 1 }, // Coro del Santuario
-                { id: 263, qty: 1 }, // Dono dell'Elfa Mistica
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
+                { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 595, qty: 1 }, // Guardiano Affidabile
                 { id: 40, qty: 1 } // Buco Trappola
             ],
             extra: []
@@ -2522,32 +2522,32 @@ const characterDeckDatabase = {
         medium: {
             main: [
                 { id: 562, qty: 1 }, // Gyakutenno Megami
-                { id: 217, qty: 2 }, // Strega Oscura Dunames
+                { id: 217, qty: 2 }, // Strega Oscura Dunares
                 { id: 442, qty: 2 }, // Abisso Splendente
                 { id: 443, qty: 2 }, // Amicizia Splendente
-                { id: 391, qty: 3 }, // Elfa Mistica
-                { id: 93, qty: 2 }, // Antico Elfo
+                { id: 391, qty: 3 }, // Elfo Mistico
+                { id: 93, qty: 2 }, // Elfo Antico
                 { id: 234, qty: 2 }, // Dono della Fata
-                { id: 402, qty: 2 }, // Piccola Angela
-                { id: 588, qty: 1 }, // Maga della Fede
-                { id: 338, qty: 1 }, // Dama della Fede
+                { id: 402, qty: 2 }, // Piccolo Angelo
+                { id: 588, qty: 1 }, // Mago della Fede
+                { id: 338, qty: 1 }, // Signora della Fede
                 { id: 458, qty: 2 }, // Spirito dell'Arpa
                 { id: 878, qty: 1 }, // Angelo Splendente
                 { id: 1065, qty: 1 }, // Fata Danzante
-                { id: 546, qty: 2 }, // Dian Keto la Maestra delle Cure
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 35, qty: 1 }, // Rinascita del Mostro
+                { id: 546, qty: 2 }, // Dian Keto il Curatore
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
-                { id: 819, qty: 1 }, // Scudo con Braccio Magico
+                { id: 819, qty: 1 }, // Scudo da Braccio Magico
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 263, qty: 1 }, // Dono dell'Elfa Mistica
-                { id: 148, qty: 1 }, // Scudo Lustro Giallo
+                { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
+                { id: 148, qty: 1 }, // Scudo Giallo del Desiderio
                 { id: 151, qty: 1 } // Coro del Santuario
             ],
             extra: []
@@ -2555,33 +2555,33 @@ const characterDeckDatabase = {
         hard: {
             main: [
                 { id: 562, qty: 1 }, // Gyakutenno Megami
-                { id: 217, qty: 2 }, // Strega Oscura Dunames
+                { id: 217, qty: 2 }, // Strega Oscura Dunares
                 { id: 442, qty: 2 }, // Abisso Splendente
                 { id: 443, qty: 2 }, // Amicizia Splendente
-                { id: 391, qty: 3 }, // Elfa Mistica
-                { id: 93, qty: 2 }, // Antico Elfo
+                { id: 391, qty: 3 }, // Elfo Mistico
+                { id: 93, qty: 2 }, // Elfo Antico
                 { id: 234, qty: 2 }, // Dono della Fata
-                { id: 402, qty: 1 }, // Piccola Angela
-                { id: 588, qty: 1 }, // Maga della Fede
+                { id: 402, qty: 1 }, // Piccolo Angelo
+                { id: 588, qty: 1 }, // Mago della Fede
                 { id: 458, qty: 2 }, // Spirito dell'Arpa
                 { id: 878, qty: 1 }, // Angelo Splendente
                 { id: 1065, qty: 1 }, // Fata Danzante
-                { id: 546, qty: 2 }, // Dian Keto la Maestra delle Cure
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 35, qty: 1 }, // Rinascita del Mostro
+                { id: 546, qty: 2 }, // Dian Keto il Curatore
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
-                { id: 819, qty: 1 }, // Scudo con Braccio Magico
+                { id: 819, qty: 1 }, // Scudo da Braccio Magico
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 148, qty: 1 }, // Scudo Lustro Giallo
+                { id: 148, qty: 1 }, // Scudo Giallo del Desiderio
                 { id: 954, qty: 1 }, // Strega Oscura
-                { id: 203, qty: 1 }, // Doma l'Angelo del Silenzio
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 203, qty: 1 }, // Doma Angelo Silente
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 7, qty: 1 } // Buco Nero
             ],
             extra: []
@@ -2601,96 +2601,96 @@ const characterDeckDatabase = {
                 { id: 318, qty: 2 }, // Kagemusha della Fiamma Blu
                 { id: 586, qty: 2 }, // Uomo Karate
                 { id: 1120, qty: 3 }, // Il Cacciatore dalle 7 Armi
-                { id: 717, qty: 2 }, // Mataza il Fulminatore
+                { id: 717, qty: 2 }, // Mataza l'Assassino Fulmineo
                 { id: 604, qty: 2 }, // Ninja Armato
-                { id: 1022, qty: 2 }, // Scarpe Mordaci
-                { id: 459, qty: 1 }, // Ninja d'Assalto
-                { id: 988, qty: 1 }, // Cavaliere Senza Testa
-                { id: 273, qty: 2 }, // Dado Aggraziato
+                { id: 1022, qty: 2 }, // Scarpe Voraci
+                { id: 459, qty: 1 }, // Ninja Fulmineo
+                { id: 988, qty: 1 }, // Il Cavaliere Senza Testa
+                { id: 273, qty: 2 }, // Dadi Graziosi
                 { id: 460, qty: 1 }, // Dado di Evocazione
                 { id: 197, qty: 1 }, // Prigione dei Dadi
                 { id: 200, qty: 1 }, // Dado Dimensionale
-                { id: 445, qty: 2 }, // Dado Teschio
+                { id: 445, qty: 2 }, // Dadi del Teschio
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 546, qty: 1 } // Dian Keto la Maestra delle Cure
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 546, qty: 1 } // Dian Keto il Curatore
             ],
             extra: []
         },
         medium: {
             main: [
                 { id: 395, qty: 2 }, // Orgoth l'Implacabile
-                { id: 863, qty: 2 }, // Dicelops
-                { id: 459, qty: 2 }, // Ninja d'Assalto
-                { id: 720, qty: 1 }, // Gran Maestro Ninja Sasuke
+                { id: 863, qty: 2 }, // Dadociclope
+                { id: 459, qty: 2 }, // Ninja Fulmineo
+                { id: 720, qty: 1 }, // Sasuke Maestro Ninja
                 { id: 780, qty: 2 }, // Ninja Signora Yae
                 { id: 604, qty: 1 }, // Ninja Armato
                 { id: 613, qty: 2 }, // Lama Oscura
                 { id: 1055, qty: 1 }, // Samurai Sasuke
                 { id: 586, qty: 1 }, // Uomo Karate
                 { id: 318, qty: 1 }, // Kagemusha della Fiamma Blu
-                { id: 930, qty: 1 }, // Cavaliere Succubo
-                { id: 988, qty: 1 }, // Cavaliere Senza Testa
-                { id: 717, qty: 1 }, // Mataza il Fulminatore
+                { id: 930, qty: 1 }, // Cavaliere Terrificante
+                { id: 988, qty: 1 }, // Il Cavaliere Senza Testa
+                { id: 717, qty: 1 }, // Mataza l'Assassino Fulmineo
                 { id: 1120, qty: 2 }, // Il Cacciatore dalle 7 Armi
                 { id: 460, qty: 2 }, // Dado di Evocazione
-                { id: 273, qty: 2 }, // Dado Aggraziato
+                { id: 273, qty: 2 }, // Dadi Graziosi
                 { id: 200, qty: 1 }, // Dado Dimensionale
                 { id: 197, qty: 1 }, // Prigione dei Dadi
-                { id: 445, qty: 2 }, // Dado Teschio
-                { id: 794, qty: 1 }, // Arte Ninjitsu della Trasformazione
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
+                { id: 445, qty: 2 }, // Dadi del Teschio
+                { id: 794, qty: 1 }, // Arte della Trasformazione Ninjitsu
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 503, qty: 1 }, // Waboku
-                { id: 600, qty: 1 } // Trappola Fasulla
+                { id: 600, qty: 1 } // Trappola Finta
             ],
             extra: []
         },
         hard: {
             main: [
                 { id: 395, qty: 2 }, // Orgoth l'Implacabile
-                { id: 863, qty: 2 }, // Dicelops
-                { id: 459, qty: 2 }, // Ninja d'Assalto
-                { id: 720, qty: 2 }, // Gran Maestro Ninja Sasuke
+                { id: 863, qty: 2 }, // Dadociclope
+                { id: 459, qty: 2 }, // Ninja Fulmineo
+                { id: 720, qty: 2 }, // Sasuke Maestro Ninja
                 { id: 780, qty: 2 }, // Ninja Signora Yae
                 { id: 604, qty: 1 }, // Ninja Armato
                 { id: 613, qty: 2 }, // Lama Oscura
                 { id: 1055, qty: 1 }, // Samurai Sasuke
-                { id: 930, qty: 2 }, // Cavaliere Succubo
-                { id: 988, qty: 1 }, // Cavaliere Senza Testa
-                { id: 717, qty: 1 }, // Mataza il Fulminatore
+                { id: 930, qty: 2 }, // Cavaliere Terrificante
+                { id: 988, qty: 1 }, // Il Cavaliere Senza Testa
+                { id: 717, qty: 1 }, // Mataza l'Assassino Fulmineo
                 { id: 1120, qty: 2 }, // Il Cacciatore dalle 7 Armi
                 { id: 460, qty: 2 }, // Dado di Evocazione
-                { id: 273, qty: 2 }, // Dado Aggraziato
+                { id: 273, qty: 2 }, // Dadi Graziosi
                 { id: 200, qty: 1 }, // Dado Dimensionale
                 { id: 197, qty: 1 }, // Prigione dei Dadi
-                { id: 445, qty: 2 }, // Dado Teschio
-                { id: 794, qty: 1 }, // Arte Ninjitsu della Trasformazione
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
+                { id: 445, qty: 2 }, // Dadi del Teschio
+                { id: 794, qty: 1 }, // Arte della Trasformazione Ninjitsu
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 793, qty: 1 } // Armatura Sakuretsu
             ],
             extra: []
@@ -2701,34 +2701,34 @@ const characterDeckDatabase = {
     // (Gaia, Maledizione del Drago, Guerriero Celtico, Antico Elfo, Castoro Guerriero) e
     // Trappole prudenti. Niente Mago Nero ed Exodia: sono le carte che ha passato a Yugi.
     solomonMuto: {
-        flagship: 14, // Gaia il Cavaliere Feroce — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 14, // Gaia il Cavaliere — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 14, qty: 2 }, // Gaia il Cavaliere Feroce
+                { id: 14, qty: 2 }, // Gaia il Cavaliere
                 { id: 109, qty: 3 }, // Castoro Guerriero
                 { id: 444, qty: 2 }, // Zanna d'Argento
                 { id: 27, qty: 3 }, // Cucciolo di Drago
                 { id: 108, qty: 2 }, // Guerriero da Battaglia
-                { id: 261, qty: 2 }, // Soldato di Pietra Gigante
-                { id: 391, qty: 2 }, // Elfa Mistica
-                { id: 97, qty: 2 }, // Armaill
-                { id: 126, qty: 1 }, // Pinguino Fulmine
-                { id: 4, qty: 1 }, // Guerriero Celtico
-                { id: 93, qty: 1 }, // Antico Elfo
+                { id: 261, qty: 2 }, // Soldato di Pietra
+                { id: 391, qty: 2 }, // Elfo Mistico
+                { id: 97, qty: 2 }, // Armaill delle Lame
+                { id: 126, qty: 1 }, // Pinguino Fulminante
+                { id: 4, qty: 1 }, // Guardiano Celtico
+                { id: 93, qty: 1 }, // Elfo Antico
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 434, qty: 2 }, // Capro Espiatorio
-                { id: 820, qty: 1 }, // Nega Attacco
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 263, qty: 1 }, // Dono dell'Elfa Mistica
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 820, qty: 1 }, // Annulla Attacco
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 38, qty: 1 }, // Fusione
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 875, qty: 1 } // Libro della Luna
             ],
@@ -2736,84 +2736,84 @@ const characterDeckDatabase = {
         },
         medium: {
             main: [
-                { id: 14, qty: 2 }, // Gaia il Cavaliere Feroce
-                { id: 15, qty: 1 }, // Maledizione del Drago
-                { id: 4, qty: 2 }, // Guerriero Celtico
-                { id: 93, qty: 2 }, // Antico Elfo
-                { id: 260, qty: 1 }, // Gigantesco Serpente di Mare Rosso
+                { id: 14, qty: 2 }, // Gaia il Cavaliere
+                { id: 15, qty: 1 }, // Anatema del Drago
+                { id: 4, qty: 2 }, // Guardiano Celtico
+                { id: 93, qty: 2 }, // Elfo Antico
+                { id: 260, qty: 1 }, // Serpente Marino Gigante Rosso
                 { id: 98, qty: 1 }, // Lucertola Corazzata
-                { id: 83, qty: 1 }, // Spada di Alligatore
-                { id: 101, qty: 1 }, // Assalitore con l'Ascia
+                { id: 83, qty: 1 }, // Spada dell'Alligatore
+                { id: 101, qty: 1 }, // Predone d'Ascia
                 { id: 109, qty: 2 }, // Castoro Guerriero
                 { id: 444, qty: 1 }, // Zanna d'Argento
                 { id: 27, qty: 2 }, // Cucciolo di Drago
                 { id: 108, qty: 1 }, // Guerriero da Battaglia
-                { id: 337, qty: 1 }, // Muro del Labirinto
-                { id: 106, qty: 1 }, // Bue da Battaglia
-                { id: 261, qty: 1 }, // Soldato di Pietra Gigante
-                { id: 391, qty: 1 }, // Elfa Mistica
+                { id: 337, qty: 1 }, // Mura Labirintiche
+                { id: 106, qty: 1 }, // Ascia da Guerra
+                { id: 261, qty: 1 }, // Soldato di Pietra
+                { id: 391, qty: 1 }, // Elfo Mistico
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 38, qty: 1 }, // Fusione
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 263, qty: 1 }, // Dono dell'Elfa Mistica
-                { id: 820, qty: 1 }, // Nega Attacco
-                { id: 646, qty: 1 } // Tempesta Pesante
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
+                { id: 820, qty: 1 }, // Annulla Attacco
+                { id: 646, qty: 1 } // Tempesta Potente
             ],
             extra: [
-                { id: 254, qty: 1 }, // Gaia il Campione dei Draghi
-                { id: 84, qty: 1 } // Drago Spada di Alligatore
+                { id: 254, qty: 1 }, // Gaia il Dragone
+                { id: 84, qty: 1 } // Drago Spada dell'Alligatore
             ]
         },
         hard: {
             main: [
-                { id: 14, qty: 2 }, // Gaia il Cavaliere Feroce
-                { id: 15, qty: 2 }, // Maledizione del Drago
-                { id: 4, qty: 2 }, // Guerriero Celtico
-                { id: 93, qty: 2 }, // Antico Elfo
-                { id: 260, qty: 1 }, // Gigantesco Serpente di Mare Rosso
+                { id: 14, qty: 2 }, // Gaia il Cavaliere
+                { id: 15, qty: 2 }, // Anatema del Drago
+                { id: 4, qty: 2 }, // Guardiano Celtico
+                { id: 93, qty: 2 }, // Elfo Antico
+                { id: 260, qty: 1 }, // Serpente Marino Gigante Rosso
                 { id: 98, qty: 1 }, // Lucertola Corazzata
-                { id: 83, qty: 1 }, // Spada di Alligatore
-                { id: 101, qty: 1 }, // Assalitore con l'Ascia
+                { id: 83, qty: 1 }, // Spada dell'Alligatore
+                { id: 101, qty: 1 }, // Predone d'Ascia
                 { id: 109, qty: 2 }, // Castoro Guerriero
                 { id: 444, qty: 1 }, // Zanna d'Argento
                 { id: 27, qty: 2 }, // Cucciolo di Drago
-                { id: 337, qty: 1 }, // Muro del Labirinto
-                { id: 106, qty: 1 }, // Bue da Battaglia
-                { id: 261, qty: 1 }, // Soldato di Pietra Gigante
-                { id: 391, qty: 1 }, // Elfa Mistica
+                { id: 337, qty: 1 }, // Mura Labirintiche
+                { id: 106, qty: 1 }, // Ascia da Guerra
+                { id: 261, qty: 1 }, // Soldato di Pietra
+                { id: 391, qty: 1 }, // Elfo Mistico
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 38, qty: 1 }, // Fusione
-                { id: 820, qty: 1 }, // Nega Attacco
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 382, qty: 1 } // Forza dello Specchio
+                { id: 820, qty: 1 }, // Annulla Attacco
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 382, qty: 1 } // Forza Riflessa
             ],
             extra: [
-                { id: 254, qty: 1 }, // Gaia il Campione dei Draghi
-                { id: 84, qty: 1 } // Drago Spada di Alligatore
+                { id: 254, qty: 1 }, // Gaia il Dragone
+                { id: 84, qty: 1 } // Drago Spada dell'Alligatore
             ]
         }
     },
@@ -2822,103 +2822,103 @@ const characterDeckDatabase = {
     // che insegna (Maga Oscura, Elfa Mistica, Il Mistico Severo, Neo lo Spadaccino Magico) —
     // uno dei primi avversari di Forbidden Memories.
     simonMuran: {
-        flagship: 188, // Maga Oscura — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 188, // Ragazza Maga Nera — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 188, qty: 2 }, // Maga Oscura
-                { id: 391, qty: 3 }, // Elfa Mistica
+                { id: 188, qty: 2 }, // Ragazza Maga Nera
+                { id: 391, qty: 3 }, // Elfo Mistico
                 { id: 458, qty: 2 }, // Spirito dell'Arpa
-                { id: 54, qty: 3 }, // Muro d'Illusione
-                { id: 338, qty: 2 }, // Dama della Fede
+                { id: 54, qty: 3 }, // Muro Illusorio
+                { id: 338, qty: 2 }, // Signora della Fede
                 { id: 924, qty: 2 }, // Nemuriko
-                { id: 169, qty: 2 }, // Tenda degli Oscuri
+                { id: 169, qty: 2 }, // Sipario degli Oscuri
                 { id: 304, qty: 2 }, // Hurricail
-                { id: 93, qty: 1 }, // Antico Elfo
-                { id: 550, qty: 1 }, // Il Mistico Severo
+                { id: 93, qty: 1 }, // Elfo Antico
+                { id: 550, qty: 1 }, // Il Mistico
                 { id: 557, qty: 1 }, // Yami
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 263, qty: 1 }, // Dono dell'Elfa Mistica
-                { id: 546, qty: 2 }, // Dian Keto la Maestra delle Cure
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
+                { id: 546, qty: 2 }, // Dian Keto il Curatore
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 188, qty: 2 }, // Maga Oscura
-                { id: 391, qty: 3 }, // Elfa Mistica
+                { id: 188, qty: 2 }, // Ragazza Maga Nera
+                { id: 391, qty: 3 }, // Elfo Mistico
                 { id: 458, qty: 2 }, // Spirito dell'Arpa
-                { id: 54, qty: 2 }, // Muro d'Illusione
-                { id: 93, qty: 2 }, // Antico Elfo
-                { id: 550, qty: 2 }, // Il Mistico Severo
+                { id: 54, qty: 2 }, // Muro Illusorio
+                { id: 93, qty: 2 }, // Elfo Antico
+                { id: 550, qty: 2 }, // Il Mistico
                 { id: 551, qty: 2 }, // Neo lo Spadaccino Magico
                 { id: 234, qty: 1 }, // Dono della Fata
-                { id: 424, qty: 2 }, // Bambola Canaglia
-                { id: 338, qty: 1 }, // Dama della Fede
+                { id: 424, qty: 2 }, // Bambola Mortale
+                { id: 338, qty: 1 }, // Signora della Fede
                 { id: 306, qty: 1 }, // Mago Senza Volto Illusionista
                 { id: 554, qty: 1 }, // Stregone dei Dannati
                 { id: 557, qty: 1 }, // Yami
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 263, qty: 1 }, // Dono dell'Elfa Mistica
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 646, qty: 1 } // Tempesta Pesante
+                { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 646, qty: 1 } // Tempesta Potente
             ],
             extra: []
         },
         hard: {
             main: [
-                { id: 188, qty: 2 }, // Maga Oscura
-                { id: 391, qty: 3 }, // Elfa Mistica
+                { id: 188, qty: 2 }, // Ragazza Maga Nera
+                { id: 391, qty: 3 }, // Elfo Mistico
                 { id: 458, qty: 2 }, // Spirito dell'Arpa
-                { id: 54, qty: 2 }, // Muro d'Illusione
-                { id: 93, qty: 1 }, // Antico Elfo
-                { id: 550, qty: 2 }, // Il Mistico Severo
+                { id: 54, qty: 2 }, // Muro Illusorio
+                { id: 93, qty: 1 }, // Elfo Antico
+                { id: 550, qty: 2 }, // Il Mistico
                 { id: 551, qty: 2 }, // Neo lo Spadaccino Magico
                 { id: 234, qty: 1 }, // Dono della Fata
-                { id: 424, qty: 2 }, // Bambola Canaglia
+                { id: 424, qty: 2 }, // Bambola Mortale
                 { id: 306, qty: 2 }, // Mago Senza Volto Illusionista
                 { id: 554, qty: 1 }, // Stregone dei Dannati
                 { id: 557, qty: 1 }, // Yami
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 738, qty: 1 }, // Mago Comando del Caos
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 738, qty: 1 }, // Mago Ordine del Chaos
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 448, qty: 1 } // Giudizio Solenne
             ],
             extra: []
@@ -2929,109 +2929,109 @@ const characterDeckDatabase = {
     // più facili di Forbidden Memories, con Guerrieri e Bestie-Guerriero Normali di poco
     // conto (Bue da Battaglia, Castoro Guerriero, Ascia Tigre, Cavaliere Mistico).
     jono: {
-        flagship: 106, // Bue da Battaglia — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 106, // Ascia da Guerra — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 106, qty: 2 }, // Bue da Battaglia
+                { id: 106, qty: 2 }, // Ascia da Guerra
                 { id: 109, qty: 3 }, // Castoro Guerriero
                 { id: 108, qty: 3 }, // Guerriero da Battaglia
                 { id: 477, qty: 2 }, // Ascia Tigre
-                { id: 298, qty: 2 }, // Gigante Un Occhio
-                { id: 389, qty: 2 }, // Cavaliere Mistico
+                { id: 298, qty: 2 }, // Gigante Hitotsu-Me
+                { id: 389, qty: 2 }, // Centauro Mistico
                 { id: 318, qty: 2 }, // Kagemusha della Fiamma Blu
-                { id: 97, qty: 2 }, // Armaill
+                { id: 97, qty: 2 }, // Armaill delle Lame
                 { id: 296, qty: 1 }, // Eroe dell'Est
-                { id: 567, qty: 1 }, // Orco dell'Ombra Nera
-                { id: 101, qty: 1 }, // Assalitore con l'Ascia
+                { id: 567, qty: 1 }, // Orco delle Ombre Nere
+                { id: 101, qty: 1 }, // Predone d'Ascia
                 { id: 580, qty: 1 }, // Sogen
                 { id: 344, qty: 1 }, // Spada Leggendaria
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 2 }, // Dian Keto la Maestra delle Cure
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 2 }, // Dian Keto il Curatore
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 106, qty: 2 }, // Bue da Battaglia
+                { id: 106, qty: 2 }, // Ascia da Guerra
                 { id: 107, qty: 1 }, // Toro da Battaglia
                 { id: 109, qty: 2 }, // Castoro Guerriero
                 { id: 108, qty: 2 }, // Guerriero da Battaglia
                 { id: 477, qty: 2 }, // Ascia Tigre
-                { id: 298, qty: 2 }, // Gigante Un Occhio
-                { id: 389, qty: 2 }, // Cavaliere Mistico
+                { id: 298, qty: 2 }, // Gigante Hitotsu-Me
+                { id: 389, qty: 2 }, // Centauro Mistico
                 { id: 256, qty: 1 }, // Garoozis
                 { id: 318, qty: 1 }, // Kagemusha della Fiamma Blu
                 { id: 296, qty: 1 }, // Eroe dell'Est
-                { id: 97, qty: 1 }, // Armaill
+                { id: 97, qty: 1 }, // Armaill delle Lame
                 { id: 463, qty: 1 }, // Spadaccino di Landstar
-                { id: 567, qty: 1 }, // Orco dell'Ombra Nera
-                { id: 101, qty: 1 }, // Assalitore con l'Ascia
+                { id: 567, qty: 1 }, // Orco delle Ombre Nere
+                { id: 101, qty: 1 }, // Predone d'Ascia
                 { id: 580, qty: 1 }, // Sogen
                 { id: 344, qty: 1 }, // Spada Leggendaria
                 { id: 313, qty: 1 }, // Rinvigorimento
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 546, qty: 1 } // Dian Keto la Maestra delle Cure
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 546, qty: 1 } // Dian Keto il Curatore
             ],
             extra: []
         },
         hard: {
             main: [
-                { id: 106, qty: 2 }, // Bue da Battaglia
+                { id: 106, qty: 2 }, // Ascia da Guerra
                 { id: 107, qty: 2 }, // Toro da Battaglia
                 { id: 109, qty: 2 }, // Castoro Guerriero
                 { id: 108, qty: 2 }, // Guerriero da Battaglia
                 { id: 477, qty: 2 }, // Ascia Tigre
-                { id: 298, qty: 2 }, // Gigante Un Occhio
-                { id: 389, qty: 2 }, // Cavaliere Mistico
+                { id: 298, qty: 2 }, // Gigante Hitotsu-Me
+                { id: 389, qty: 2 }, // Centauro Mistico
                 { id: 256, qty: 2 }, // Garoozis
                 { id: 296, qty: 1 }, // Eroe dell'Est
                 { id: 463, qty: 1 }, // Spadaccino di Landstar
-                { id: 567, qty: 1 }, // Orco dell'Ombra Nera
-                { id: 101, qty: 1 }, // Assalitore con l'Ascia
+                { id: 567, qty: 1 }, // Orco delle Ombre Nere
+                { id: 101, qty: 1 }, // Predone d'Ascia
                 { id: 580, qty: 1 }, // Sogen
                 { id: 344, qty: 1 }, // Spada Leggendaria
                 { id: 313, qty: 1 }, // Rinvigorimento
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 382, qty: 1 }, // Forza dello Specchio
-                { id: 427, qty: 1 } // Rude Kaiser
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 382, qty: 1 }, // Forza Riflessa
+                { id: 427, qty: 1 } // Kaiser la Bestia
             ],
             extra: []
         }
@@ -3042,113 +3042,113 @@ const characterDeckDatabase = {
     // Guerrieri armati di magia, con Distruttore il Guerriero Magico come
     // carta simbolo. Stessa ossatura di Magie/Trappole dei mazzi del passato.
     mageSoldier: {
-        flagship: 131, // Distruttore, il Guerriero Magico — stessa quantità in tutti e tre i livelli
+        flagship: 131, // Breaker il Guerriero Magico — stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 131, qty: 2 }, // Distruttore, il Guerriero Magico
-                { id: 591, qty: 3 }, // Cappello Magico Bianco
-                { id: 242, qty: 2 }, // Stregone di Fuoco
-                { id: 338, qty: 3 }, // Dama della Fede
+                { id: 131, qty: 2 }, // Breaker il Guerriero Magico
+                { id: 591, qty: 3 }, // Bianco Cappello Magico
+                { id: 242, qty: 2 }, // Stregone del Fuoco
+                { id: 338, qty: 3 }, // Signora della Fede
                 { id: 508, qty: 2 }, // Strega della Foresta Nera
                 { id: 1038, qty: 2 }, // Evocatore di Illusioni
-                { id: 431, qty: 2 }, // Saggi il Pagliaccio Oscuro
+                { id: 431, qty: 2 }, // Saggi, Clown Oscuro
                 { id: 737, qty: 2 }, // Mago Apprendista
                 { id: 108, qty: 2 }, // Guerriero da Battaglia
                 { id: 304, qty: 1 }, // Hurricail
                 { id: 539, qty: 1 }, // Signore delle Fiamme
                 { id: 344, qty: 1 }, // Spada Leggendaria
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 2 }, // Dian Keto la Maestra delle Cure
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 2 }, // Dian Keto il Curatore
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: [
                 // Evocatore di Illusioni ha finalmente un bersaglio reale;
                 // i materiali sono gia' entrambi nel Main Deck.
-                { id: 387, qty: 1 } // Re dei Musicisti
+                { id: 387, qty: 1 } // Re Musicista
             ]
         },
         medium: {
             main: [
-                { id: 131, qty: 2 }, // Distruttore, il Guerriero Magico
-                { id: 744, qty: 1 }, // Mago a Fuoco Rapido
-                { id: 742, qty: 2 }, // Mago dell'Esplosione
+                { id: 131, qty: 2 }, // Breaker il Guerriero Magico
+                { id: 744, qty: 1 }, // Mago Fuoco-Rapido
+                { id: 742, qty: 2 }, // Mago del Sangue
                 { id: 554, qty: 1 }, // Stregone dei Dannati
                 { id: 551, qty: 2 }, // Neo lo Spadaccino Magico
-                { id: 591, qty: 2 }, // Cappello Magico Bianco
-                { id: 338, qty: 2 }, // Dama della Fede
+                { id: 591, qty: 2 }, // Bianco Cappello Magico
+                { id: 338, qty: 2 }, // Signora della Fede
                 { id: 508, qty: 2 }, // Strega della Foresta Nera
-                { id: 242, qty: 2 }, // Stregone di Fuoco
+                { id: 242, qty: 2 }, // Stregone del Fuoco
                 { id: 1038, qty: 1 }, // Evocatore di Illusioni
                 { id: 108, qty: 2 }, // Guerriero da Battaglia
-                { id: 431, qty: 1 }, // Saggi il Pagliaccio Oscuro
+                { id: 431, qty: 1 }, // Saggi, Clown Oscuro
                 { id: 304, qty: 1 }, // Hurricail
                 { id: 344, qty: 1 }, // Spada Leggendaria
                 { id: 313, qty: 1 }, // Rinvigorimento
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 546, qty: 1 } // Dian Keto la Maestra delle Cure
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 546, qty: 1 } // Dian Keto il Curatore
             ],
             extra: [
-                { id: 387, qty: 1 } // Re dei Musicisti
+                { id: 387, qty: 1 } // Re Musicista
             ]
         },
         hard: {
             main: [
-                { id: 131, qty: 2 }, // Distruttore, il Guerriero Magico
+                { id: 131, qty: 2 }, // Breaker il Guerriero Magico
                 { id: 551, qty: 2 }, // Neo lo Spadaccino Magico
-                { id: 744, qty: 2 }, // Mago a Fuoco Rapido
-                { id: 742, qty: 2 }, // Mago dell'Esplosione
-                { id: 1066, qty: 1 }, // Elfa Oscura
+                { id: 744, qty: 2 }, // Mago Fuoco-Rapido
+                { id: 742, qty: 2 }, // Mago del Sangue
+                { id: 1066, qty: 1 }, // Elfo Oscuro
                 // Abile Mago Oscuro senza Mago Nero era una linea morta.
                 // Cerbero conserva i Segnalini Magia e premia davvero le
                 // numerose Magie del livello Difficile.
-                { id: 734, qty: 2 }, // Bestia Mitica Cerbero
+                { id: 734, qty: 2 }, // Cerbero Mitica Bestia
                 { id: 554, qty: 2 }, // Stregone dei Dannati
-                { id: 550, qty: 1 }, // Il Mistico Severo
-                { id: 591, qty: 2 }, // Cappello Magico Bianco
-                { id: 338, qty: 2 }, // Dama della Fede
+                { id: 550, qty: 1 }, // Il Mistico
+                { id: 591, qty: 2 }, // Bianco Cappello Magico
+                { id: 338, qty: 2 }, // Signora della Fede
                 { id: 108, qty: 2 }, // Guerriero da Battaglia
-                { id: 242, qty: 2 }, // Stregone di Fuoco
+                { id: 242, qty: 2 }, // Stregone del Fuoco
                 { id: 344, qty: 1 }, // Spada Leggendaria
                 { id: 313, qty: 1 }, // Rinvigorimento
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 382, qty: 1 } // Forza dello Specchio
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 382, qty: 1 } // Forza Riflessa
             ],
             extra: []
         }
@@ -3162,28 +3162,28 @@ const characterDeckDatabase = {
         easy: {
             main: [
                 { id: 24, qty: 3 }, // Elfi Gemelli
-                { id: 391, qty: 3 }, // Elfa Mistica
+                { id: 391, qty: 3 }, // Elfo Mistico
                 { id: 458, qty: 2 }, // Spirito dell'Arpa
-                { id: 402, qty: 3 }, // Piccola Angela
+                { id: 402, qty: 3 }, // Piccolo Angelo
                 { id: 925, qty: 2 }, // Raggio e Temperatura
                 { id: 982, qty: 2 }, // Bio-Mago
-                { id: 338, qty: 2 }, // Dama della Fede
-                { id: 54, qty: 2 }, // Muro d'Illusione
-                { id: 93, qty: 1 }, // Antico Elfo
+                { id: 338, qty: 2 }, // Signora della Fede
+                { id: 54, qty: 2 }, // Muro Illusorio
+                { id: 93, qty: 1 }, // Elfo Antico
                 { id: 234, qty: 1 }, // Dono della Fata
                 { id: 151, qty: 1 }, // Coro del Santuario
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 546, qty: 2 }, // Dian Keto la Maestra delle Cure
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 546, qty: 2 }, // Dian Keto il Curatore
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
                 { id: 225, qty: 1 }, // Luce dell'Elfo
                 { id: 875, qty: 1 } // Libro della Luna
             ],
@@ -3192,32 +3192,32 @@ const characterDeckDatabase = {
         medium: {
             main: [
                 { id: 24, qty: 3 }, // Elfi Gemelli
-                { id: 391, qty: 2 }, // Elfa Mistica
+                { id: 391, qty: 2 }, // Elfo Mistico
                 { id: 458, qty: 2 }, // Spirito dell'Arpa
-                { id: 54, qty: 2 }, // Muro d'Illusione
-                { id: 93, qty: 2 }, // Antico Elfo
+                { id: 54, qty: 2 }, // Muro Illusorio
+                { id: 93, qty: 2 }, // Elfo Antico
                 { id: 234, qty: 2 }, // Dono della Fata
-                { id: 402, qty: 2 }, // Piccola Angela
+                { id: 402, qty: 2 }, // Piccolo Angelo
                 { id: 442, qty: 2 }, // Abisso Splendente
                 { id: 443, qty: 1 }, // Amicizia Splendente
-                { id: 338, qty: 1 }, // Dama della Fede
-                { id: 550, qty: 1 }, // Il Mistico Severo
+                { id: 338, qty: 1 }, // Signora della Fede
+                { id: 550, qty: 1 }, // Il Mistico
                 { id: 925, qty: 1 }, // Raggio e Temperatura
                 { id: 982, qty: 1 }, // Bio-Mago
                 { id: 151, qty: 1 }, // Coro del Santuario
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 225, qty: 1 } // Luce dell'Elfo
             ],
@@ -3226,33 +3226,33 @@ const characterDeckDatabase = {
         hard: {
             main: [
                 { id: 24, qty: 3 }, // Elfi Gemelli
-                { id: 391, qty: 2 }, // Elfa Mistica
+                { id: 391, qty: 2 }, // Elfo Mistico
                 { id: 458, qty: 2 }, // Spirito dell'Arpa
-                { id: 54, qty: 2 }, // Muro d'Illusione
-                { id: 93, qty: 2 }, // Antico Elfo
+                { id: 54, qty: 2 }, // Muro Illusorio
+                { id: 93, qty: 2 }, // Elfo Antico
                 { id: 234, qty: 2 }, // Dono della Fata
-                { id: 402, qty: 2 }, // Piccola Angela
+                { id: 402, qty: 2 }, // Piccolo Angelo
                 { id: 442, qty: 2 }, // Abisso Splendente
                 { id: 443, qty: 1 }, // Amicizia Splendente
-                { id: 338, qty: 1 }, // Dama della Fede
-                { id: 550, qty: 1 }, // Il Mistico Severo
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 338, qty: 1 }, // Signora della Fede
+                { id: 550, qty: 1 }, // Il Mistico
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
                 { id: 225, qty: 1 }, // Luce dell'Elfo
-                { id: 188, qty: 1 }, // Maga Oscura
+                { id: 188, qty: 1 }, // Ragazza Maga Nera
                 { id: 954, qty: 1 }, // Strega Oscura
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 448, qty: 1 } // Giudizio Solenne
             ],
             extra: []
@@ -3266,106 +3266,106 @@ const characterDeckDatabase = {
         easy: {
             main: [
                 { id: 1, qty: 3 }, // Drago Bianco Occhi Blu
-                { id: 353, qty: 3 }, // Signore dei D.
-                { id: 431, qty: 3 }, // Saggi il Pagliaccio Oscuro
+                { id: 353, qty: 3 }, // Signore di D.
+                { id: 431, qty: 3 }, // Saggi, Clown Oscuro
                 { id: 534, qty: 2 }, // Drago con Scudo
-                { id: 1050, qty: 2 }, // Drago della Truppa
+                { id: 1050, qty: 2 }, // Truppa-Drago
                 { id: 993, qty: 2 }, // Soldato Lucertola
-                { id: 404, qty: 2 }, // Drago Nero Pece
-                { id: 507, qty: 2 }, // Drago Alato, Guardiano della Fortezza #1
+                { id: 404, qty: 2 }, // Drago Nero-Pece
+                { id: 507, qty: 2 }, // Drago Alato #1
                 { id: 331, qty: 1 }, // Drago Koumori
                 { id: 596, qty: 1 }, // Montagna
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 597, qty: 1 }, // Tesoro del Drago
-                { id: 69, qty: 1 }, // Stop Difesa
+                { id: 69, qty: 1 }, // Blocca Difesa
                 { id: 875, qty: 1 }, // Libro della Luna
-                { id: 646, qty: 1 } // Tempesta Pesante
+                { id: 646, qty: 1 } // Tempesta Potente
             ],
             extra: []
         },
         medium: {
             main: [
                 { id: 1, qty: 3 }, // Drago Bianco Occhi Blu
-                { id: 15, qty: 2 }, // Maledizione del Drago
+                { id: 15, qty: 2 }, // Anatema del Drago
                 { id: 320, qty: 1 }, // Kaiser Glider
-                { id: 321, qty: 2 }, // Kaiser Sea Horse
-                { id: 502, qty: 2 }, // Predone Vorse
-                { id: 454, qty: 2 }, // Drago Lancia
+                { id: 321, qty: 2 }, // Kaiser Cavalluccio Marino
+                { id: 502, qty: 2 }, // Predatore Vorse
+                { id: 454, qty: 2 }, // Drago Lanciere
                 { id: 429, qty: 1 }, // Ryu-Ran
-                { id: 353, qty: 2 }, // Signore dei D.
-                { id: 507, qty: 2 }, // Drago Alato, Guardiano della Fortezza #1
+                { id: 353, qty: 2 }, // Signore di D.
+                { id: 507, qty: 2 }, // Drago Alato #1
                 { id: 331, qty: 1 }, // Drago Koumori
-                { id: 118, qty: 1 }, // Drago di Fuoco delle Terre Nere
-                { id: 431, qty: 1 }, // Saggi il Pagliaccio Oscuro
+                { id: 118, qty: 1 }, // Drago Infuocato della Terra Nera
+                { id: 431, qty: 1 }, // Saggi, Clown Oscuro
                 { id: 534, qty: 1 }, // Drago con Scudo
-                { id: 578, qty: 1 }, // Il Flauto per Evocare Draghi
+                { id: 578, qty: 1 }, // Flauto Evoca-Draghi
                 { id: 596, qty: 1 }, // Montagna
                 { id: 597, qty: 1 }, // Tesoro del Drago
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 38, qty: 1 }, // Fusione
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 69, qty: 1 }, // Stop Difesa
-                { id: 226, qty: 1 } // Controllore del Nemico
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 69, qty: 1 }, // Blocca Difesa
+                { id: 226, qty: 1 } // Controlla-Avversario
             ],
             extra: [
-                { id: 29, qty: 1 } // Drago Bianco Definitivo
+                { id: 29, qty: 1 } // Drago Occhi Blu Finale
             ]
         },
         hard: {
             main: [
                 { id: 1, qty: 3 }, // Drago Bianco Occhi Blu
-                { id: 15, qty: 2 }, // Maledizione del Drago
+                { id: 15, qty: 2 }, // Anatema del Drago
                 { id: 320, qty: 2 }, // Kaiser Glider
-                { id: 321, qty: 2 }, // Kaiser Sea Horse
-                { id: 502, qty: 2 }, // Predone Vorse
-                { id: 454, qty: 2 }, // Drago Lancia
+                { id: 321, qty: 2 }, // Kaiser Cavalluccio Marino
+                { id: 502, qty: 2 }, // Predatore Vorse
+                { id: 454, qty: 2 }, // Drago Lanciere
                 { id: 429, qty: 2 }, // Ryu-Ran
-                { id: 353, qty: 2 }, // Signore dei D.
-                { id: 507, qty: 2 }, // Drago Alato, Guardiano della Fortezza #1
+                { id: 353, qty: 2 }, // Signore di D.
+                { id: 507, qty: 2 }, // Drago Alato #1
                 { id: 331, qty: 1 }, // Drago Koumori
-                { id: 118, qty: 1 }, // Drago di Fuoco delle Terre Nere
-                { id: 578, qty: 1 }, // Il Flauto per Evocare Draghi
+                { id: 118, qty: 1 }, // Drago Infuocato della Terra Nera
+                { id: 578, qty: 1 }, // Flauto Evoca-Draghi
                 { id: 596, qty: 1 }, // Montagna
                 { id: 597, qty: 1 }, // Tesoro del Drago
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 38, qty: 1 }, // Fusione
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 226, qty: 1 }, // Controllore del Nemico
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 226, qty: 1 }, // Controlla-Avversario
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 37, qty: 1 } // Folgore Fulminante
             ],
             extra: [
-                { id: 29, qty: 1 } // Drago Bianco Definitivo
+                { id: 29, qty: 1 } // Drago Occhi Blu Finale
             ]
         }
     },
@@ -3379,29 +3379,29 @@ const characterDeckDatabase = {
             main: [
                 { id: 760, qty: 2 }, // Hieracosfinge
                 { id: 764, qty: 3 }, // Statua Guardiana
-                { id: 759, qty: 3 }, // Sentinella Golem
+                { id: 759, qty: 3 }, // Golem Guardiano
                 { id: 755, qty: 2 }, // Maharaghi
                 { id: 754, qty: 2 }, // Grande Spirito
-                { id: 261, qty: 2 }, // Soldato di Pietra Gigante
+                { id: 261, qty: 2 }, // Soldato di Pietra
                 { id: 765, qty: 2 }, // Verme Medusa
-                { id: 762, qty: 2 }, // Cannoni Intercettori Moai
-                { id: 1116, qty: 1 }, // Uomo con Wdjat
-                { id: 766, qty: 1 }, // Falena della Sabbia
+                { id: 762, qty: 2 }, // Cannoni d'Intercettazione Moai
+                { id: 1116, qty: 1 }, // Un Uomo con Wdjat
+                { id: 766, qty: 1 }, // Falena di Sabbia
                 { id: 767, qty: 1 }, // Canyon
-                { id: 769, qty: 1 }, // Ombre Mutevoli
+                { id: 769, qty: 1 }, // Ombre Danzanti
                 { id: 466, qty: 1 }, // L'Occhio della Verità
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 771, qty: 1 }, // Prova del Viandante
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 771, qty: 1 }, // Prova del Viaggiatore
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -3416,31 +3416,31 @@ const characterDeckDatabase = {
                 { id: 764, qty: 2 }, // Statua Guardiana
                 { id: 754, qty: 1 }, // Grande Spirito
                 { id: 755, qty: 1 }, // Maharaghi
-                { id: 759, qty: 1 }, // Sentinella Golem
+                { id: 759, qty: 1 }, // Golem Guardiano
                 { id: 758, qty: 1 }, // Statua di Pietra degli Aztechi
-                { id: 1116, qty: 1 }, // Uomo con Wdjat
-                { id: 261, qty: 2 }, // Soldato di Pietra Gigante
-                { id: 766, qty: 1 }, // Falena della Sabbia
-                { id: 762, qty: 1 }, // Cannoni Intercettori Moai
+                { id: 1116, qty: 1 }, // Un Uomo con Wdjat
+                { id: 261, qty: 2 }, // Soldato di Pietra
+                { id: 766, qty: 1 }, // Falena di Sabbia
+                { id: 762, qty: 1 }, // Cannoni d'Intercettazione Moai
                 { id: 767, qty: 1 }, // Canyon
-                { id: 769, qty: 1 }, // Ombre Mutevoli
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 769, qty: 1 }, // Ombre Danzanti
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 771, qty: 1 }, // Prova del Viandante
+                { id: 771, qty: 1 }, // Prova del Viaggiatore
                 { id: 466, qty: 1 }, // L'Occhio della Verità
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 503, qty: 1 }, // Waboku
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 426, qty: 1 }, // Decreto Reale
-                { id: 595, qty: 1 } // Il Guardiano Affidabile
+                { id: 595, qty: 1 } // Guardiano Affidabile
             ],
             extra: []
         },
@@ -3454,28 +3454,28 @@ const characterDeckDatabase = {
                 { id: 764, qty: 2 }, // Statua Guardiana
                 { id: 754, qty: 1 }, // Grande Spirito
                 { id: 755, qty: 1 }, // Maharaghi
-                { id: 759, qty: 1 }, // Sentinella Golem
-                { id: 1116, qty: 1 }, // Uomo con Wdjat
-                { id: 261, qty: 2 }, // Soldato di Pietra Gigante
-                { id: 762, qty: 1 }, // Cannoni Intercettori Moai
+                { id: 759, qty: 1 }, // Golem Guardiano
+                { id: 1116, qty: 1 }, // Un Uomo con Wdjat
+                { id: 261, qty: 2 }, // Soldato di Pietra
+                { id: 762, qty: 1 }, // Cannoni d'Intercettazione Moai
                 { id: 767, qty: 1 }, // Canyon
-                { id: 769, qty: 1 }, // Ombre Mutevoli
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 769, qty: 1 }, // Ombre Danzanti
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 771, qty: 1 }, // Prova del Viandante
+                { id: 771, qty: 1 }, // Prova del Viaggiatore
                 { id: 466, qty: 1 }, // L'Occhio della Verità
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 426, qty: 1 }, // Decreto Reale
-                { id: 382, qty: 1 } // Forza dello Specchio
+                { id: 382, qty: 1 } // Forza Riflessa
             ],
             extra: []
         }
@@ -3489,29 +3489,29 @@ const characterDeckDatabase = {
             main: [
                 { id: 954, qty: 2 }, // Strega Oscura
                 { id: 458, qty: 3 }, // Spirito dell'Arpa
-                { id: 391, qty: 3 }, // Elfa Mistica
-                { id: 402, qty: 3 }, // Piccola Angela
-                { id: 54, qty: 2 }, // Muro d'Illusione
-                { id: 338, qty: 2 }, // Dama della Fede
+                { id: 391, qty: 3 }, // Elfo Mistico
+                { id: 402, qty: 3 }, // Piccolo Angelo
+                { id: 54, qty: 2 }, // Muro Illusorio
+                { id: 338, qty: 2 }, // Signora della Fede
                 { id: 925, qty: 2 }, // Raggio e Temperatura
                 { id: 443, qty: 1 }, // Amicizia Splendente
-                { id: 93, qty: 1 }, // Antico Elfo
+                { id: 93, qty: 1 }, // Elfo Antico
                 { id: 442, qty: 1 }, // Abisso Splendente
                 { id: 151, qty: 1 }, // Coro del Santuario
                 { id: 141, qty: 1 }, // Carta del Ritorno Sicuro
-                { id: 576, qty: 1 }, // Telescopio Antico
+                { id: 576, qty: 1 }, // Antico Telescopio
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 546, qty: 2 }, // Dian Keto la Maestra delle Cure
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 546, qty: 2 }, // Dian Keto il Curatore
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 148, qty: 1 }, // Scudo Lustro Giallo
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 148, qty: 1 }, // Scudo Giallo del Desiderio
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -3519,69 +3519,69 @@ const characterDeckDatabase = {
         medium: {
             main: [
                 { id: 954, qty: 2 }, // Strega Oscura
-                { id: 217, qty: 2 }, // Strega Oscura Dunames
+                { id: 217, qty: 2 }, // Strega Oscura Dunares
                 { id: 458, qty: 3 }, // Spirito dell'Arpa
-                { id: 391, qty: 2 }, // Elfa Mistica
-                { id: 54, qty: 2 }, // Muro d'Illusione
-                { id: 93, qty: 2 }, // Antico Elfo
+                { id: 391, qty: 2 }, // Elfo Mistico
+                { id: 54, qty: 2 }, // Muro Illusorio
+                { id: 93, qty: 2 }, // Elfo Antico
                 { id: 234, qty: 2 }, // Dono della Fata
-                { id: 402, qty: 1 }, // Piccola Angela
+                { id: 402, qty: 1 }, // Piccolo Angelo
                 { id: 442, qty: 1 }, // Abisso Splendente
-                { id: 338, qty: 1 }, // Dama della Fede
+                { id: 338, qty: 1 }, // Signora della Fede
                 { id: 443, qty: 1 }, // Amicizia Splendente
                 { id: 949, qty: 1 }, // Ocubeam
                 { id: 151, qty: 1 }, // Coro del Santuario
                 { id: 141, qty: 1 }, // Carta del Ritorno Sicuro
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 448, qty: 1 }, // Giudizio Solenne
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 576, qty: 1 }, // Telescopio Antico
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 148, qty: 1 } // Scudo Lustro Giallo
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 576, qty: 1 }, // Antico Telescopio
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 148, qty: 1 } // Scudo Giallo del Desiderio
             ],
             extra: []
         },
         hard: {
             main: [
                 { id: 954, qty: 2 }, // Strega Oscura
-                { id: 217, qty: 2 }, // Strega Oscura Dunames
+                { id: 217, qty: 2 }, // Strega Oscura Dunares
                 { id: 458, qty: 3 }, // Spirito dell'Arpa
-                { id: 391, qty: 2 }, // Elfa Mistica
-                { id: 54, qty: 2 }, // Muro d'Illusione
-                { id: 93, qty: 2 }, // Antico Elfo
+                { id: 391, qty: 2 }, // Elfo Mistico
+                { id: 54, qty: 2 }, // Muro Illusorio
+                { id: 93, qty: 2 }, // Elfo Antico
                 { id: 234, qty: 2 }, // Dono della Fata
                 { id: 442, qty: 1 }, // Abisso Splendente
                 { id: 443, qty: 1 }, // Amicizia Splendente
                 { id: 949, qty: 1 }, // Ocubeam
                 { id: 141, qty: 1 }, // Carta del Ritorno Sicuro
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 448, qty: 1 }, // Giudizio Solenne
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 576, qty: 1 }, // Telescopio Antico
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 576, qty: 1 }, // Antico Telescopio
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 562, qty: 1 }, // Gyakutenno Megami
-                { id: 203, qty: 1 }, // Doma l'Angelo del Silenzio
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 203, qty: 1 }, // Doma Angelo Silente
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 7, qty: 1 } // Buco Nero
             ],
             extra: []
@@ -3598,28 +3598,28 @@ const characterDeckDatabase = {
                 { id: 592, qty: 2 }, // Soldato Pinguino
                 { id: 907, qty: 3 }, // Sirena Incantatrice
                 { id: 951, qty: 1 }, // Tongyo
-                { id: 989, qty: 2 }, // Grongo Fulminante
-                { id: 126, qty: 2 }, // Pinguino Fulmine
-                { id: 926, qty: 2 }, // Acqua Radicale
+                { id: 989, qty: 2 }, // Anguilla Fulmine
+                { id: 126, qty: 2 }, // Pinguino Fulminante
+                { id: 926, qty: 2 }, // Acqua di Radice
                 { id: 983, qty: 2 }, // Boneheimer
-                { id: 966, qty: 2 }, // Doppia Lunga Verga #2
-                { id: 703, qty: 1 }, // Pescatore Ispido
-                { id: 582, qty: 1 }, // Tartaruga Isola
+                { id: 966, qty: 2 }, // Frustacode Gemelle #2
+                { id: 703, qty: 1 }, // Rana-Pescatrice Barbuta
+                { id: 582, qty: 1 }, // Tarta-Isola
                 { id: 497, qty: 1 }, // Umi
                 { id: 79, qty: 1 }, // Un Oceano Leggendario
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 791, qty: 1 }, // Coro Acquatico
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 704, qty: 1 }, // Salvataggio
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -3627,36 +3627,36 @@ const characterDeckDatabase = {
         medium: {
             main: [
                 { id: 319, qty: 2 }, // Kairyu-Shin
-                { id: 940, qty: 2 }, // Abitante degli Abissi
+                { id: 940, qty: 2 }, // Abitatore degli Abissi
                 { id: 921, qty: 1 }, // Misairuzame
-                { id: 279, qty: 2 }, // Grande Squalo Bianco
-                { id: 703, qty: 2 }, // Pescatore Ispido
+                { id: 279, qty: 2 }, // Mega Squalo Bianco
+                { id: 703, qty: 2 }, // Rana-Pescatrice Barbuta
                 { id: 951, qty: 1 }, // Tongyo
                 { id: 907, qty: 2 }, // Sirena Incantatrice
                 { id: 592, qty: 2 }, // Soldato Pinguino
-                { id: 693, qty: 1 }, // Manta Perforante Strisciante
-                { id: 321, qty: 1 }, // Kaiser Sea Horse
-                { id: 583, qty: 1 }, // Pesce dai 7 Colori
+                { id: 693, qty: 1 }, // Manta del Fato Incedente
+                { id: 321, qty: 1 }, // Kaiser Cavalluccio Marino
+                { id: 583, qty: 1 }, // Pesce dei 7 Colori
                 { id: 945, qty: 1 }, // Hyosube
-                { id: 126, qty: 1 }, // Pinguino Fulmine
-                { id: 989, qty: 1 }, // Grongo Fulminante
+                { id: 126, qty: 1 }, // Pinguino Fulminante
+                { id: 989, qty: 1 }, // Anguilla Fulmine
                 { id: 497, qty: 1 }, // Umi
                 { id: 79, qty: 1 }, // Un Oceano Leggendario
                 { id: 871, qty: 1 }, // Terraformazione
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 503, qty: 1 }, // Waboku
                 { id: 791, qty: 1 }, // Coro Acquatico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 704, qty: 1 }, // Salvataggio
                 { id: 143, qty: 1 } // Mura del Castello
@@ -3666,36 +3666,36 @@ const characterDeckDatabase = {
         hard: {
             main: [
                 { id: 319, qty: 2 }, // Kairyu-Shin
-                { id: 940, qty: 2 }, // Abitante degli Abissi
+                { id: 940, qty: 2 }, // Abitatore degli Abissi
                 { id: 921, qty: 2 }, // Misairuzame
-                { id: 279, qty: 2 }, // Grande Squalo Bianco
-                { id: 703, qty: 2 }, // Pescatore Ispido
+                { id: 279, qty: 2 }, // Mega Squalo Bianco
+                { id: 703, qty: 2 }, // Rana-Pescatrice Barbuta
                 { id: 951, qty: 1 }, // Tongyo
                 { id: 907, qty: 2 }, // Sirena Incantatrice
                 { id: 592, qty: 2 }, // Soldato Pinguino
-                { id: 693, qty: 1 }, // Manta Perforante Strisciante
-                { id: 321, qty: 2 }, // Kaiser Sea Horse
-                { id: 583, qty: 1 }, // Pesce dai 7 Colori
-                { id: 126, qty: 1 }, // Pinguino Fulmine
+                { id: 693, qty: 1 }, // Manta del Fato Incedente
+                { id: 321, qty: 2 }, // Kaiser Cavalluccio Marino
+                { id: 583, qty: 1 }, // Pesce dei 7 Colori
+                { id: 126, qty: 1 }, // Pinguino Fulminante
                 { id: 497, qty: 1 }, // Umi
                 { id: 79, qty: 1 }, // Un Oceano Leggendario
                 { id: 871, qty: 1 }, // Terraformazione
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 791, qty: 1 }, // Coro Acquatico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 704, qty: 1 }, // Salvataggio
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 928, qty: 1 } // Seadra Spinoso
             ],
             extra: []
@@ -3712,28 +3712,28 @@ const characterDeckDatabase = {
                 { id: 907, qty: 3 }, // Sirena Incantatrice
                 { id: 250, qty: 2 }, // Pinguino Volante
                 { id: 314, qty: 2 }, // Medusa
-                { id: 582, qty: 2 }, // Tartaruga Isola
-                { id: 904, qty: 2 }, // Stella Marina Corazzata
-                { id: 926, qty: 2 }, // Acqua Radicale
-                { id: 931, qty: 2 }, // Il Furioso Re del Mare
-                { id: 703, qty: 1 }, // Pescatore Ispido
-                { id: 321, qty: 1 }, // Kaiser Sea Horse
+                { id: 582, qty: 2 }, // Tarta-Isola
+                { id: 904, qty: 2 }, // Stella Corazzata
+                { id: 926, qty: 2 }, // Acqua di Radice
+                { id: 931, qty: 2 }, // Furioso Re dei Mari
+                { id: 703, qty: 1 }, // Rana-Pescatrice Barbuta
+                { id: 321, qty: 1 }, // Kaiser Cavalluccio Marino
                 { id: 1088, qty: 1 }, // Cavaliere Pinguino
                 { id: 497, qty: 1 }, // Umi
-                { id: 489, qty: 1 }, // Muro del Tornado
+                { id: 489, qty: 1 }, // Muro Tornado
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 791, qty: 1 }, // Coro Acquatico
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 704, qty: 1 }, // Salvataggio
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -3742,38 +3742,38 @@ const characterDeckDatabase = {
             main: [
                 { id: 91, qty: 2 }, // Bestia Anfibia
                 { id: 319, qty: 1 }, // Kairyu-Shin
-                { id: 940, qty: 2 }, // Abitante degli Abissi
+                { id: 940, qty: 2 }, // Abitatore degli Abissi
                 { id: 921, qty: 2 }, // Misairuzame
-                { id: 702, qty: 1 }, // Mobius il Monarca del Gelo
-                { id: 279, qty: 2 }, // Grande Squalo Bianco
-                { id: 703, qty: 2 }, // Pescatore Ispido
-                { id: 321, qty: 2 }, // Kaiser Sea Horse
+                { id: 702, qty: 1 }, // Mobius il Monarca Glaciale
+                { id: 279, qty: 2 }, // Mega Squalo Bianco
+                { id: 703, qty: 2 }, // Rana-Pescatrice Barbuta
+                { id: 321, qty: 2 }, // Kaiser Cavalluccio Marino
                 { id: 1103, qty: 1 }, // Spirito dell'Acqua
-                { id: 701, qty: 1 }, // Cavaliere Sirena
+                { id: 701, qty: 1 }, // Sirena Cavaliere
                 { id: 692, qty: 1 }, // Guerriero del Serpente Marino dell'Oscurità
-                { id: 583, qty: 1 }, // Pesce dai 7 Colori
+                { id: 583, qty: 1 }, // Pesce dei 7 Colori
                 { id: 907, qty: 1 }, // Sirena Incantatrice
-                { id: 958, qty: 1 }, // Gyojin dell'Alta Marea
+                { id: 958, qty: 1 }, // Gyojin della Marea
                 { id: 497, qty: 1 }, // Umi
                 { id: 79, qty: 1 }, // Un Oceano Leggendario
                 { id: 871, qty: 1 }, // Terraformazione
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 489, qty: 1 }, // Muro del Tornado
+                { id: 489, qty: 1 }, // Muro Tornado
                 { id: 791, qty: 1 }, // Coro Acquatico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 704, qty: 1 }, // Salvataggio
-                { id: 646, qty: 1 } // Tempesta Pesante
+                { id: 646, qty: 1 } // Tempesta Potente
             ],
             extra: []
         },
@@ -3781,35 +3781,35 @@ const characterDeckDatabase = {
             main: [
                 { id: 91, qty: 2 }, // Bestia Anfibia
                 { id: 319, qty: 2 }, // Kairyu-Shin
-                { id: 940, qty: 2 }, // Abitante degli Abissi
+                { id: 940, qty: 2 }, // Abitatore degli Abissi
                 { id: 921, qty: 2 }, // Misairuzame
-                { id: 702, qty: 2 }, // Mobius il Monarca del Gelo
-                { id: 279, qty: 2 }, // Grande Squalo Bianco
-                { id: 703, qty: 2 }, // Pescatore Ispido
-                { id: 321, qty: 2 }, // Kaiser Sea Horse
+                { id: 702, qty: 2 }, // Mobius il Monarca Glaciale
+                { id: 279, qty: 2 }, // Mega Squalo Bianco
+                { id: 703, qty: 2 }, // Rana-Pescatrice Barbuta
+                { id: 321, qty: 2 }, // Kaiser Cavalluccio Marino
                 { id: 1103, qty: 1 }, // Spirito dell'Acqua
-                { id: 701, qty: 1 }, // Cavaliere Sirena
+                { id: 701, qty: 1 }, // Sirena Cavaliere
                 { id: 692, qty: 1 }, // Guerriero del Serpente Marino dell'Oscurità
-                { id: 583, qty: 2 }, // Pesce dai 7 Colori
+                { id: 583, qty: 2 }, // Pesce dei 7 Colori
                 { id: 497, qty: 1 }, // Umi
                 { id: 79, qty: 1 }, // Un Oceano Leggendario
                 { id: 871, qty: 1 }, // Terraformazione
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 489, qty: 1 }, // Muro del Tornado
+                { id: 489, qty: 1 }, // Muro Tornado
                 { id: 791, qty: 1 }, // Coro Acquatico
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 382, qty: 1 } // Forza dello Specchio
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 382, qty: 1 } // Forza Riflessa
             ],
             extra: []
         }
@@ -3818,111 +3818,111 @@ const characterDeckDatabase = {
     // Il Mago della Foresta: il terreno Foresta e i suoi mostri (Insetto, Bestia,
     // Pianta, Bestia-Guerriero). Prima era un mazzo Zombie, estraneo al suo santuario.
     forestMage: {
-        flagship: 953, // L'Antico della Foresta Profonda — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 953, // Antico della Foresta — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 953, qty: 2 }, // L'Antico della Foresta Profonda
-                { id: 368, qty: 3 }, // Pianta Mangiauomini
-                { id: 105, qty: 3 }, // Insetto di Base
+                { id: 953, qty: 2 }, // Antico della Foresta
+                { id: 368, qty: 3 }, // Pianta Mangia-Uomini
+                { id: 105, qty: 3 }, // Insetto della Foresta
                 { id: 444, qty: 2 }, // Zanna d'Argento
                 { id: 280, qty: 2 }, // Griffore
-                { id: 565, qty: 2 }, // Maestro e Allievo
+                { id: 565, qty: 2 }, // Maestro ed Esperto
                 { id: 917, qty: 2 }, // Larvas
                 { id: 923, qty: 2 }, // Pecora Mistica #2
-                { id: 909, qty: 1 }, // Erbafuoco
+                { id: 909, qty: 1 }, // Erba di Fuoco
                 { id: 532, qty: 1 }, // Gazelle, Re delle Bestie Mitiche
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 313, qty: 1 }, // Rinvigorimento
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 875, qty: 1 }, // Libro della Luna
-                { id: 646, qty: 1 } // Tempesta Pesante
+                { id: 646, qty: 1 } // Tempesta Potente
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 953, qty: 2 }, // L'Antico della Foresta Profonda
+                { id: 953, qty: 2 }, // Antico della Foresta
                 { id: 952, qty: 1 }, // Trent
                 { id: 347, qty: 2 }, // Leogun
                 { id: 532, qty: 2 }, // Gazelle, Re delle Bestie Mitiche
-                { id: 114, qty: 2 }, // Insetto Gigante
+                { id: 114, qty: 2 }, // Grande Insetto
                 { id: 248, qty: 2 }, // Kamakiri Volante #1
                 { id: 280, qty: 2 }, // Griffore
                 { id: 973, qty: 1 }, // Girochin Kuwagata
                 { id: 574, qty: 1 }, // Bestia Pallida
                 { id: 444, qty: 1 }, // Zanna d'Argento
-                { id: 368, qty: 1 }, // Pianta Mangiauomini
-                { id: 565, qty: 1 }, // Maestro e Allievo
-                { id: 325, qty: 1 }, // Ago Killer
-                { id: 996, qty: 1 }, // Lupo Portascure
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 368, qty: 1 }, // Pianta Mangia-Uomini
+                { id: 565, qty: 1 }, // Maestro ed Esperto
+                { id: 325, qty: 1 }, // Pungiglione Assassino
+                { id: 996, qty: 1 }, // Lupo con Ascia
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 503, qty: 1 }, // Waboku
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 309, qty: 1 }, // Armatura Insetto con Cannone Laser
                 { id: 313, qty: 1 }, // Rinvigorimento
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 595, qty: 1 } // Il Guardiano Affidabile
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 595, qty: 1 } // Guardiano Affidabile
             ],
             extra: []
         },
         hard: {
             main: [
-                { id: 953, qty: 2 }, // L'Antico della Foresta Profonda
+                { id: 953, qty: 2 }, // Antico della Foresta
                 { id: 952, qty: 2 }, // Trent
                 { id: 347, qty: 2 }, // Leogun
                 { id: 532, qty: 2 }, // Gazelle, Re delle Bestie Mitiche
-                { id: 114, qty: 2 }, // Insetto Gigante
+                { id: 114, qty: 2 }, // Grande Insetto
                 { id: 248, qty: 2 }, // Kamakiri Volante #1
                 { id: 280, qty: 2 }, // Griffore
                 { id: 973, qty: 2 }, // Girochin Kuwagata
                 { id: 574, qty: 1 }, // Bestia Pallida
                 { id: 444, qty: 1 }, // Zanna d'Argento
-                { id: 325, qty: 1 }, // Ago Killer
-                { id: 996, qty: 1 }, // Lupo Portascure
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 325, qty: 1 }, // Pungiglione Assassino
+                { id: 996, qty: 1 }, // Lupo con Ascia
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 309, qty: 1 }, // Armatura Insetto con Cannone Laser
                 { id: 313, qty: 1 }, // Rinvigorimento
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 985, qty: 1 }, // Imperatrice Mantide
-                { id: 382, qty: 1 } // Forza dello Specchio
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 985, qty: 1 }, // Mantide Imperatrice
+                { id: 382, qty: 1 } // Forza Riflessa
             ],
             extra: []
         }
@@ -3933,111 +3933,111 @@ const characterDeckDatabase = {
     // Foresta, insieme agli altri Insetti e Bestie. Prima era un mazzo di Guardiani della
     // Tomba, che non gli appartiene.
     highMageAnubisius: {
-        flagship: 1124, // Falena Perfetta — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 1124, // Grande Falena Perfetta — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 1124, qty: 1 }, // Falena Perfetta
-                { id: 522, qty: 3 }, // Falena Piccola
+                { id: 1124, qty: 1 }, // Grande Falena Perfetta
+                { id: 522, qty: 3 }, // Piccola Falena
                 { id: 157, qty: 3 }, // Bozzolo dell'Evoluzione
-                { id: 105, qty: 3 }, // Insetto di Base
+                { id: 105, qty: 3 }, // Insetto della Foresta
                 { id: 345, qty: 2 }, // Leghul
                 { id: 915, qty: 2 }, // Kumootoko
-                { id: 325, qty: 2 }, // Ago Killer
-                { id: 156, qty: 2 }, // Cavaliere Scarafaggio
-                { id: 114, qty: 1 }, // Insetto Gigante
+                { id: 325, qty: 2 }, // Pungiglione Assassino
+                { id: 156, qty: 2 }, // Cavaliere-Scarafaggio
+                { id: 114, qty: 1 }, // Grande Insetto
                 { id: 248, qty: 1 }, // Kamakiri Volante #1
                 { id: 309, qty: 1 }, // Armatura Insetto con Cannone Laser
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 313, qty: 1 }, // Rinvigorimento
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 1124, qty: 1 }, // Falena Perfetta
+                { id: 1124, qty: 1 }, // Grande Falena Perfetta
                 { id: 52, qty: 2 }, // Grande Falena
-                { id: 522, qty: 2 }, // Falena Piccola
+                { id: 522, qty: 2 }, // Piccola Falena
                 { id: 157, qty: 2 }, // Bozzolo dell'Evoluzione
-                { id: 50, qty: 1 }, // Larva Mostruosa
-                { id: 985, qty: 1 }, // Imperatrice Mantide
-                { id: 295, qty: 2 }, // Scarabeo Ercole
+                { id: 50, qty: 1 }, // Larva di Falena
+                { id: 985, qty: 1 }, // Mantide Imperatrice
+                { id: 295, qty: 2 }, // Scarabeo Erculeo
                 { id: 973, qty: 1 }, // Girochin Kuwagata
-                { id: 114, qty: 2 }, // Insetto Gigante
+                { id: 114, qty: 2 }, // Grande Insetto
                 { id: 248, qty: 2 }, // Kamakiri Volante #1
-                { id: 953, qty: 1 }, // L'Antico della Foresta Profonda
+                { id: 953, qty: 1 }, // Antico della Foresta
                 { id: 347, qty: 1 }, // Leogun
                 { id: 323, qty: 1 }, // Kamakiriman
                 { id: 270, qty: 1 }, // Gokibore
                 { id: 309, qty: 1 }, // Armatura Insetto con Cannone Laser
-                { id: 340, qty: 1 }, // Armatura Cannone Laser
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 340, qty: 1 }, // Armatura Laser
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 503, qty: 1 }, // Waboku
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 313, qty: 1 }, // Rinvigorimento
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 595, qty: 1 } // Il Guardiano Affidabile
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 595, qty: 1 } // Guardiano Affidabile
             ],
             extra: []
         },
         hard: {
             main: [
-                { id: 1124, qty: 1 }, // Falena Perfetta
+                { id: 1124, qty: 1 }, // Grande Falena Perfetta
                 { id: 52, qty: 2 }, // Grande Falena
-                { id: 522, qty: 2 }, // Falena Piccola
+                { id: 522, qty: 2 }, // Piccola Falena
                 { id: 157, qty: 2 }, // Bozzolo dell'Evoluzione
-                { id: 50, qty: 1 }, // Larva Mostruosa
-                { id: 985, qty: 2 }, // Imperatrice Mantide
-                { id: 295, qty: 2 }, // Scarabeo Ercole
+                { id: 50, qty: 1 }, // Larva di Falena
+                { id: 985, qty: 2 }, // Mantide Imperatrice
+                { id: 295, qty: 2 }, // Scarabeo Erculeo
                 { id: 973, qty: 1 }, // Girochin Kuwagata
-                { id: 114, qty: 2 }, // Insetto Gigante
+                { id: 114, qty: 2 }, // Grande Insetto
                 { id: 248, qty: 2 }, // Kamakiri Volante #1
-                { id: 953, qty: 2 }, // L'Antico della Foresta Profonda
+                { id: 953, qty: 2 }, // Antico della Foresta
                 { id: 347, qty: 1 }, // Leogun
                 { id: 309, qty: 1 }, // Armatura Insetto con Cannone Laser
-                { id: 340, qty: 1 }, // Armatura Cannone Laser
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 340, qty: 1 }, // Armatura Laser
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 313, qty: 1 }, // Rinvigorimento
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 23, qty: 1 }, // Insetto Divoratore
-                { id: 382, qty: 1 } // Forza dello Specchio
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 23, qty: 1 }, // Insetto Mangia-Uomini
+                { id: 382, qty: 1 } // Forza Riflessa
             ],
             extra: []
         }
@@ -4046,14 +4046,14 @@ const characterDeckDatabase = {
     // Il Mago della Montagna: il terreno Montagna e i suoi mostri (Drago, Bestia
     // Alata, Tuono). Prima era un mazzo di Rocce, che sono del Deserto.
     mountainMage: {
-        flagship: 400, // Drago Pappagallo — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 400, // Pappadragallo — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 400, qty: 2 }, // Drago Pappagallo
+                { id: 400, qty: 2 }, // Pappadragallo
                 { id: 916, qty: 3 }, // Kurama
-                { id: 946, qty: 3 }, // Megasfera di Tuono
+                { id: 946, qty: 3 }, // Mega-Sfera del Tuono
                 { id: 937, qty: 2 }, // Tyhone
-                { id: 934, qty: 2 }, // Bestia a Filo Teso
+                { id: 934, qty: 2 }, // Elettro-Bestia
                 { id: 534, qty: 2 }, // Drago con Scudo
                 { id: 181, qty: 2 }, // Pipistrello Oscuro
                 { id: 948, qty: 2 }, // Niwatori
@@ -4062,96 +4062,96 @@ const characterDeckDatabase = {
                 { id: 596, qty: 1 }, // Montagna
                 { id: 871, qty: 1 }, // Terraformazione
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 400, qty: 2 }, // Drago Pappagallo
-                { id: 629, qty: 1 }, // Drago Splendente #2
+                { id: 400, qty: 2 }, // Pappadragallo
+                { id: 629, qty: 1 }, // Drago Avido #2
                 { id: 964, qty: 2 }, // Uccello Regina
                 { id: 939, qty: 2 }, // Corona dalle Ali Blu
                 { id: 937, qty: 2 }, // Tyhone
                 { id: 331, qty: 2 }, // Drago Koumori
-                { id: 946, qty: 2 }, // Megasfera di Tuono
-                { id: 934, qty: 1 }, // Bestia a Filo Teso
-                { id: 118, qty: 1 }, // Drago di Fuoco delle Terre Nere
-                { id: 572, qty: 1 }, // Uccello Rosso Teschio
+                { id: 946, qty: 2 }, // Mega-Sfera del Tuono
+                { id: 934, qty: 1 }, // Elettro-Bestia
+                { id: 118, qty: 1 }, // Drago Infuocato della Terra Nera
+                { id: 572, qty: 1 }, // Uccello Teschio Rosso
                 { id: 916, qty: 1 }, // Kurama
-                { id: 585, qty: 1 }, // Esploratore del Cielo
+                { id: 585, qty: 1 }, // Scout del Cielo
                 { id: 967, qty: 1 }, // Tyhone #2
-                { id: 507, qty: 1 }, // Drago Alato, Guardiano della Fortezza #1
+                { id: 507, qty: 1 }, // Drago Alato #1
                 { id: 596, qty: 1 }, // Montagna
                 { id: 871, qty: 1 }, // Terraformazione
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 503, qty: 1 }, // Waboku
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 597, qty: 1 }, // Tesoro del Drago
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 212, qty: 1 } // Furia del Drago
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 212, qty: 1 } // Rabbia del Drago
             ],
             extra: []
         },
         hard: {
             main: [
-                { id: 400, qty: 2 }, // Drago Pappagallo
-                { id: 629, qty: 2 }, // Drago Splendente #2
+                { id: 400, qty: 2 }, // Pappadragallo
+                { id: 629, qty: 2 }, // Drago Avido #2
                 { id: 964, qty: 2 }, // Uccello Regina
                 { id: 939, qty: 2 }, // Corona dalle Ali Blu
                 { id: 937, qty: 2 }, // Tyhone
                 { id: 331, qty: 2 }, // Drago Koumori
-                { id: 946, qty: 1 }, // Megasfera di Tuono
-                { id: 934, qty: 1 }, // Bestia a Filo Teso
-                { id: 118, qty: 1 }, // Drago di Fuoco delle Terre Nere
-                { id: 572, qty: 1 }, // Uccello Rosso Teschio
-                { id: 585, qty: 2 }, // Esploratore del Cielo
+                { id: 946, qty: 1 }, // Mega-Sfera del Tuono
+                { id: 934, qty: 1 }, // Elettro-Bestia
+                { id: 118, qty: 1 }, // Drago Infuocato della Terra Nera
+                { id: 572, qty: 1 }, // Uccello Teschio Rosso
+                { id: 585, qty: 2 }, // Scout del Cielo
                 { id: 967, qty: 1 }, // Tyhone #2
-                { id: 507, qty: 1 }, // Drago Alato, Guardiano della Fortezza #1
+                { id: 507, qty: 1 }, // Drago Alato #1
                 { id: 596, qty: 1 }, // Montagna
                 { id: 871, qty: 1 }, // Terraformazione
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 597, qty: 1 }, // Tesoro del Drago
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 212, qty: 1 }, // Furia del Drago
-                { id: 785, qty: 1 }, // Joe l'Uomo Uccello Veloce
-                { id: 382, qty: 1 } // Forza dello Specchio
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 212, qty: 1 }, // Rabbia del Drago
+                { id: 785, qty: 1 }, // Joe Veloce Uomo Alato
+                { id: 382, qty: 1 } // Forza Riflessa
             ],
             extra: []
         }
@@ -4167,30 +4167,30 @@ const characterDeckDatabase = {
                 { id: 932, qty: 1 }, // Drago Tricorno
                 { id: 937, qty: 3 }, // Tyhone
                 { id: 534, qty: 2 }, // Drago con Scudo
-                { id: 1050, qty: 2 }, // Drago della Truppa
+                { id: 1050, qty: 2 }, // Truppa-Drago
                 { id: 993, qty: 2 }, // Soldato Lucertola
-                { id: 946, qty: 2 }, // Megasfera di Tuono
+                { id: 946, qty: 2 }, // Mega-Sfera del Tuono
                 { id: 916, qty: 2 }, // Kurama
-                { id: 404, qty: 2 }, // Drago Nero Pece
+                { id: 404, qty: 2 }, // Drago Nero-Pece
                 { id: 331, qty: 1 }, // Drago Koumori
-                { id: 507, qty: 1 }, // Drago Alato, Guardiano della Fortezza #1
-                { id: 198, qty: 1 }, // Drago della Dimensione Diversa
+                { id: 507, qty: 1 }, // Drago Alato #1
+                { id: 198, qty: 1 }, // Drago da un'Altra Dimensione
                 { id: 27, qty: 1 }, // Cucciolo di Drago
                 { id: 596, qty: 1 }, // Montagna
                 { id: 871, qty: 1 }, // Terraformazione
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 597, qty: 1 }, // Tesoro del Drago
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -4199,37 +4199,37 @@ const characterDeckDatabase = {
             main: [
                 { id: 932, qty: 1 }, // Drago Tricorno
                 { id: 12, qty: 2 }, // Drago Nero Occhi Rossi
-                { id: 629, qty: 1 }, // Drago Splendente #2
-                { id: 400, qty: 2 }, // Drago Pappagallo
-                { id: 785, qty: 1 }, // Joe l'Uomo Uccello Veloce
+                { id: 629, qty: 1 }, // Drago Avido #2
+                { id: 400, qty: 2 }, // Pappadragallo
+                { id: 785, qty: 1 }, // Joe Veloce Uomo Alato
                 { id: 939, qty: 2 }, // Corona dalle Ali Blu
                 { id: 331, qty: 2 }, // Drago Koumori
-                { id: 585, qty: 1 }, // Esploratore del Cielo
-                { id: 572, qty: 2 }, // Uccello Rosso Teschio
-                { id: 198, qty: 1 }, // Drago della Dimensione Diversa
+                { id: 585, qty: 1 }, // Scout del Cielo
+                { id: 572, qty: 2 }, // Uccello Teschio Rosso
+                { id: 198, qty: 1 }, // Drago da un'Altra Dimensione
                 { id: 937, qty: 2 }, // Tyhone
-                { id: 507, qty: 1 }, // Drago Alato, Guardiano della Fortezza #1
+                { id: 507, qty: 1 }, // Drago Alato #1
                 { id: 1125, qty: 1 }, // Drago Meteora
-                { id: 946, qty: 1 }, // Megasfera di Tuono
+                { id: 946, qty: 1 }, // Mega-Sfera del Tuono
                 { id: 596, qty: 1 }, // Montagna
                 { id: 871, qty: 1 }, // Terraformazione
-                { id: 80, qty: 1 }, // Un Battito d'Ali del Drago Gigante
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 80, qty: 1 }, // Il Battito d'Ali del Drago Gigante
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 597, qty: 1 }, // Tesoro del Drago
-                { id: 212, qty: 1 }, // Furia del Drago
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 212, qty: 1 }, // Rabbia del Drago
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 38, qty: 1 } // Fusione
             ],
             extra: [
@@ -4240,37 +4240,37 @@ const characterDeckDatabase = {
             main: [
                 { id: 932, qty: 1 }, // Drago Tricorno
                 { id: 12, qty: 2 }, // Drago Nero Occhi Rossi
-                { id: 629, qty: 2 }, // Drago Splendente #2
-                { id: 400, qty: 2 }, // Drago Pappagallo
-                { id: 785, qty: 1 }, // Joe l'Uomo Uccello Veloce
+                { id: 629, qty: 2 }, // Drago Avido #2
+                { id: 400, qty: 2 }, // Pappadragallo
+                { id: 785, qty: 1 }, // Joe Veloce Uomo Alato
                 { id: 939, qty: 2 }, // Corona dalle Ali Blu
                 { id: 331, qty: 2 }, // Drago Koumori
-                { id: 585, qty: 1 }, // Esploratore del Cielo
-                { id: 572, qty: 2 }, // Uccello Rosso Teschio
-                { id: 198, qty: 1 }, // Drago della Dimensione Diversa
+                { id: 585, qty: 1 }, // Scout del Cielo
+                { id: 572, qty: 2 }, // Uccello Teschio Rosso
+                { id: 198, qty: 1 }, // Drago da un'Altra Dimensione
                 { id: 937, qty: 1 }, // Tyhone
-                { id: 507, qty: 1 }, // Drago Alato, Guardiano della Fortezza #1
+                { id: 507, qty: 1 }, // Drago Alato #1
                 { id: 1125, qty: 1 }, // Drago Meteora
                 { id: 596, qty: 1 }, // Montagna
                 { id: 871, qty: 1 }, // Terraformazione
-                { id: 80, qty: 1 }, // Un Battito d'Ali del Drago Gigante
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 80, qty: 1 }, // Il Battito d'Ali del Drago Gigante
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 597, qty: 1 }, // Tesoro del Drago
-                { id: 212, qty: 1 }, // Furia del Drago
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 212, qty: 1 }, // Rabbia del Drago
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 38, qty: 1 }, // Fusione
                 { id: 1, qty: 1 }, // Drago Bianco Occhi Blu
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 37, qty: 1 } // Folgore Fulminante
             ],
             extra: [
@@ -4283,110 +4283,110 @@ const characterDeckDatabase = {
     // (Zombie, Dinosauro, Roccia) — mummie, spiriti della polvere, rocce. Prima era un mazzo
     // di Bestie Alate, che sono della Montagna.
     desertMage: {
-        flagship: 659, // Spirito della Polvere Oscura — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 659, // Spirito Polvere Oscura — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 659, qty: 2 }, // Spirito della Polvere Oscura
+                { id: 659, qty: 2 }, // Spirito Polvere Oscura
                 { id: 1052, qty: 3 }, // Des Lacooda
-                { id: 1020, qty: 3 }, // Mummia Velenosa
-                { id: 660, qty: 2 }, // Tartaruga della Piramide
+                { id: 1020, qty: 3 }, // Mummia Infetta
+                { id: 660, qty: 2 }, // Tartaruga Piramide
                 { id: 491, qty: 2 }, // Trakodon
-                { id: 936, qty: 2 }, // Sovrano Oscuro Bibocca
-                { id: 990, qty: 2 }, // Dama Sferica
-                { id: 905, qty: 2 }, // Roccia Dissolvente
+                { id: 936, qty: 2 }, // Elettrosauro Doppiafauce
+                { id: 990, qty: 2 }, // Lady Sphyra
+                { id: 905, qty: 2 }, // Dissolviroccia
                 { id: 1110, qty: 1 }, // Mummia Errante
-                { id: 1090, qty: 1 }, // Guardiano Reale
+                { id: 1090, qty: 1 }, // Custode Reale
                 { id: 670, qty: 1 }, // Richiamo della Mummia
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 769, qty: 1 }, // Ombre Mutevoli
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 769, qty: 1 }, // Ombre Danzanti
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 659, qty: 2 }, // Spirito della Polvere Oscura
-                { id: 1071, qty: 2 }, // Mummia dall'Ascia Gigante
+                { id: 659, qty: 2 }, // Spirito Polvere Oscura
+                { id: 1071, qty: 2 }, // Mummia con Ascia Gigante
                 { id: 1110, qty: 2 }, // Mummia Errante
-                { id: 1090, qty: 2 }, // Guardiano Reale
+                { id: 1090, qty: 2 }, // Custode Reale
                 { id: 1052, qty: 2 }, // Des Lacooda
                 { id: 927, qty: 1 }, // Pietra di Sabbia
                 { id: 571, qty: 2 }, // Golem Distruttore
                 { id: 561, qty: 2 }, // Uraby
                 { id: 491, qty: 1 }, // Trakodon
-                { id: 1020, qty: 1 }, // Mummia Velenosa
-                { id: 660, qty: 1 }, // Tartaruga della Piramide
+                { id: 1020, qty: 1 }, // Mummia Infetta
+                { id: 660, qty: 1 }, // Tartaruga Piramide
                 { id: 211, qty: 1 }, // Drago Zombie
-                { id: 936, qty: 1 }, // Sovrano Oscuro Bibocca
+                { id: 936, qty: 1 }, // Elettrosauro Doppiafauce
                 { id: 670, qty: 1 }, // Richiamo della Mummia
                 { id: 669, qty: 1 }, // Libro della Vita
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 503, qty: 1 }, // Waboku
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 769, qty: 1 }, // Ombre Mutevoli
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 136, qty: 1 } // Richiamo degli Infestati
+                { id: 769, qty: 1 }, // Ombre Danzanti
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 136, qty: 1 } // Richiamo del Posseduto
             ],
             extra: []
         },
         hard: {
             main: [
-                { id: 659, qty: 2 }, // Spirito della Polvere Oscura
-                { id: 1071, qty: 3 }, // Mummia dall'Ascia Gigante
+                { id: 659, qty: 2 }, // Spirito Polvere Oscura
+                { id: 1071, qty: 3 }, // Mummia con Ascia Gigante
                 { id: 1110, qty: 2 }, // Mummia Errante
-                { id: 1090, qty: 2 }, // Guardiano Reale
+                { id: 1090, qty: 2 }, // Custode Reale
                 { id: 1052, qty: 1 }, // Des Lacooda
                 { id: 927, qty: 1 }, // Pietra di Sabbia
                 { id: 571, qty: 2 }, // Golem Distruttore
                 { id: 561, qty: 2 }, // Uraby
                 { id: 491, qty: 1 }, // Trakodon
-                { id: 660, qty: 1 }, // Tartaruga della Piramide
+                { id: 660, qty: 1 }, // Tartaruga Piramide
                 { id: 211, qty: 1 }, // Drago Zombie
-                { id: 936, qty: 1 }, // Sovrano Oscuro Bibocca
+                { id: 936, qty: 1 }, // Elettrosauro Doppiafauce
                 { id: 670, qty: 1 }, // Richiamo della Mummia
                 { id: 669, qty: 1 }, // Libro della Vita
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 769, qty: 1 }, // Ombre Mutevoli
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 136, qty: 1 }, // Richiamo degli Infestati
-                { id: 799, qty: 1 }, // Driceratopo Oscuro
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 769, qty: 1 }, // Ombre Danzanti
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 136, qty: 1 }, // Richiamo del Posseduto
+                { id: 799, qty: 1 }, // Triceratopo Oscuro
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 374, qty: 1 } // Megazowler
             ],
             extra: []
@@ -4402,30 +4402,30 @@ const characterDeckDatabase = {
             main: [
                 { id: 662, qty: 1 }, // Disperazione dall'Oscurità
                 { id: 1052, qty: 3 }, // Des Lacooda
-                { id: 1020, qty: 3 }, // Mummia Velenosa
-                { id: 660, qty: 2 }, // Tartaruga della Piramide
+                { id: 1020, qty: 3 }, // Mummia Infetta
+                { id: 660, qty: 2 }, // Tartaruga Piramide
                 { id: 491, qty: 2 }, // Trakodon
-                { id: 990, qty: 2 }, // Dama Sferica
-                { id: 905, qty: 2 }, // Roccia Dissolvente
-                { id: 1106, qty: 2 }, // Vampire Baby
-                { id: 1053, qty: 1 }, // Cavallo dell'Incubo
+                { id: 990, qty: 2 }, // Lady Sphyra
+                { id: 905, qty: 2 }, // Dissolviroccia
+                { id: 1106, qty: 2 }, // Bambino Vampiro
+                { id: 1053, qty: 1 }, // Cavallo Incubo
                 { id: 1110, qty: 1 }, // Mummia Errante
-                { id: 1090, qty: 1 }, // Guardiano Reale
+                { id: 1090, qty: 1 }, // Custode Reale
                 { id: 670, qty: 1 }, // Richiamo della Mummia
                 { id: 669, qty: 1 }, // Libro della Vita
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -4434,11 +4434,11 @@ const characterDeckDatabase = {
             main: [
                 { id: 662, qty: 1 }, // Disperazione dall'Oscurità
                 { id: 663, qty: 2 }, // Ryu Kokki
-                { id: 659, qty: 1 }, // Spirito della Polvere Oscura
-                { id: 799, qty: 1 }, // Driceratopo Oscuro
+                { id: 659, qty: 1 }, // Spirito Polvere Oscura
+                { id: 799, qty: 1 }, // Triceratopo Oscuro
                 { id: 374, qty: 1 }, // Megazowler
-                { id: 1071, qty: 2 }, // Mummia dall'Ascia Gigante
-                { id: 1090, qty: 2 }, // Guardiano Reale
+                { id: 1071, qty: 2 }, // Mummia con Ascia Gigante
+                { id: 1090, qty: 2 }, // Custode Reale
                 { id: 1110, qty: 2 }, // Mummia Errante
                 { id: 571, qty: 2 }, // Golem Distruttore
                 { id: 757, qty: 1 }, // Gigantes
@@ -4448,23 +4448,23 @@ const characterDeckDatabase = {
                 { id: 1052, qty: 1 }, // Des Lacooda
                 { id: 670, qty: 1 }, // Richiamo della Mummia
                 { id: 669, qty: 1 }, // Libro della Vita
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 503, qty: 1 }, // Waboku
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
+                { id: 595, qty: 1 }, // Guardiano Affidabile
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 136, qty: 1 }, // Richiamo degli Infestati
-                { id: 769, qty: 1 }, // Ombre Mutevoli
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 136, qty: 1 }, // Richiamo del Posseduto
+                { id: 769, qty: 1 }, // Ombre Danzanti
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 478, qty: 1 } // Macchina del Tempo
             ],
             extra: []
@@ -4473,11 +4473,11 @@ const characterDeckDatabase = {
             main: [
                 { id: 662, qty: 1 }, // Disperazione dall'Oscurità
                 { id: 663, qty: 2 }, // Ryu Kokki
-                { id: 659, qty: 1 }, // Spirito della Polvere Oscura
-                { id: 799, qty: 2 }, // Driceratopo Oscuro
+                { id: 659, qty: 1 }, // Spirito Polvere Oscura
+                { id: 799, qty: 2 }, // Triceratopo Oscuro
                 { id: 374, qty: 1 }, // Megazowler
-                { id: 1071, qty: 2 }, // Mummia dall'Ascia Gigante
-                { id: 1090, qty: 2 }, // Guardiano Reale
+                { id: 1071, qty: 2 }, // Mummia con Ascia Gigante
+                { id: 1090, qty: 2 }, // Custode Reale
                 { id: 1110, qty: 2 }, // Mummia Errante
                 { id: 571, qty: 2 }, // Golem Distruttore
                 { id: 757, qty: 1 }, // Gigantes
@@ -4485,24 +4485,24 @@ const characterDeckDatabase = {
                 { id: 666, qty: 1 }, // Doppio Coston
                 { id: 670, qty: 1 }, // Richiamo della Mummia
                 { id: 669, qty: 1 }, // Libro della Vita
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 503, qty: 1 }, // Waboku
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
+                { id: 595, qty: 1 }, // Guardiano Affidabile
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 136, qty: 1 }, // Richiamo degli Infestati
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 136, qty: 1 }, // Richiamo del Posseduto
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 478, qty: 1 }, // Macchina del Tempo
-                { id: 801, qty: 1 }, // Tiranno Nero
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 801, qty: 1 }, // Tiranno Oscuro
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 419, qty: 1 } // Anello della Distruzione
             ],
             extra: []
@@ -4513,113 +4513,113 @@ const characterDeckDatabase = {
     // Bestie-Guerriero; nel gioco originale è anche quello che lascia cadere Gaia il
     // Cavaliere Feroce, la Maledizione del Drago e il Mago Nero. Prima era un mazzo di Fate.
     meadowMage: {
-        flagship: 14, // Gaia il Cavaliere Feroce — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 14, // Gaia il Cavaliere — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 14, qty: 2 }, // Gaia il Cavaliere Feroce
+                { id: 14, qty: 2 }, // Gaia il Cavaliere
                 { id: 109, qty: 3 }, // Castoro Guerriero
-                { id: 298, qty: 3 }, // Gigante Un Occhio
+                { id: 298, qty: 3 }, // Gigante Hitotsu-Me
                 { id: 477, qty: 2 }, // Ascia Tigre
-                { id: 573, qty: 2 }, // D. Human
+                { id: 573, qty: 2 }, // Guerriero D. Umano
                 { id: 108, qty: 2 }, // Guerriero da Battaglia
-                { id: 97, qty: 2 }, // Armaill
+                { id: 97, qty: 2 }, // Armaill delle Lame
                 { id: 296, qty: 2 }, // Eroe dell'Est
                 { id: 330, qty: 1 }, // Kojikocy
                 { id: 944, qty: 1 }, // Hibikime
                 { id: 580, qty: 1 }, // Sogen
                 { id: 871, qty: 1 }, // Terraformazione
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 344, qty: 1 }, // Spada Leggendaria
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 14, qty: 2 }, // Gaia il Cavaliere Feroce
-                { id: 15, qty: 2 }, // Maledizione del Drago
+                { id: 14, qty: 2 }, // Gaia il Cavaliere
+                { id: 15, qty: 2 }, // Anatema del Drago
                 { id: 2, qty: 1 }, // Mago Nero
                 { id: 256, qty: 2 }, // Garoozis
-                { id: 106, qty: 2 }, // Bue da Battaglia
+                { id: 106, qty: 2 }, // Ascia da Guerra
                 { id: 477, qty: 2 }, // Ascia Tigre
                 { id: 330, qty: 2 }, // Kojikocy
-                { id: 996, qty: 2 }, // Lupo Portascure
-                { id: 573, qty: 2 }, // D. Human
+                { id: 996, qty: 2 }, // Lupo con Ascia
+                { id: 573, qty: 2 }, // Guerriero D. Umano
                 { id: 109, qty: 1 }, // Castoro Guerriero
-                { id: 298, qty: 1 }, // Gigante Un Occhio
+                { id: 298, qty: 1 }, // Gigante Hitotsu-Me
                 { id: 944, qty: 1 }, // Hibikime
                 { id: 580, qty: 1 }, // Sogen
                 { id: 871, qty: 1 }, // Terraformazione
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 503, qty: 1 }, // Waboku
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 38, qty: 1 }, // Fusione
                 { id: 344, qty: 1 }, // Spada Leggendaria
-                { id: 646, qty: 1 } // Tempesta Pesante
+                { id: 646, qty: 1 } // Tempesta Potente
             ],
             extra: [
-                { id: 254, qty: 1 } // Gaia il Campione dei Draghi
+                { id: 254, qty: 1 } // Gaia il Dragone
             ]
         },
         hard: {
             main: [
-                { id: 14, qty: 2 }, // Gaia il Cavaliere Feroce
-                { id: 15, qty: 2 }, // Maledizione del Drago
+                { id: 14, qty: 2 }, // Gaia il Cavaliere
+                { id: 15, qty: 2 }, // Anatema del Drago
                 { id: 2, qty: 2 }, // Mago Nero
                 { id: 256, qty: 2 }, // Garoozis
-                { id: 106, qty: 2 }, // Bue da Battaglia
+                { id: 106, qty: 2 }, // Ascia da Guerra
                 { id: 477, qty: 2 }, // Ascia Tigre
                 { id: 330, qty: 2 }, // Kojikocy
-                { id: 996, qty: 2 }, // Lupo Portascure
-                { id: 573, qty: 2 }, // D. Human
+                { id: 996, qty: 2 }, // Lupo con Ascia
+                { id: 573, qty: 2 }, // Guerriero D. Umano
                 { id: 944, qty: 1 }, // Hibikime
                 { id: 580, qty: 1 }, // Sogen
                 { id: 871, qty: 1 }, // Terraformazione
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 38, qty: 1 }, // Fusione
                 { id: 344, qty: 1 }, // Spada Leggendaria
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 107, qty: 1 }, // Toro da Battaglia
-                { id: 382, qty: 1 }, // Forza dello Specchio
-                { id: 427, qty: 1 } // Rude Kaiser
+                { id: 382, qty: 1 }, // Forza Riflessa
+                { id: 427, qty: 1 } // Kaiser la Bestia
             ],
             extra: [
-                { id: 254, qty: 1 } // Gaia il Campione dei Draghi
+                { id: 254, qty: 1 } // Gaia il Dragone
             ]
         }
     },
@@ -4628,122 +4628,122 @@ const characterDeckDatabase = {
     // asso è il Guardiano del Cancello, con molti Draghi (Gaia, Maledizione del Drago, Drago
     // Meteora) e i Guerrieri del terreno Sogen. Prima era un mazzo di Fate.
     highMageKepura: {
-        flagship: 33, // Il Guardiano del Cancello — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 33, // Guardiano del Cancello — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 33, qty: 1 }, // Il Guardiano del Cancello
+                { id: 33, qty: 1 }, // Guardiano del Cancello
                 { id: 538, qty: 1 }, // Sanga del Tuono
                 { id: 324, qty: 1 }, // Kazejin
                 { id: 71, qty: 1 }, // Suijin
                 { id: 109, qty: 3 }, // Castoro Guerriero
-                { id: 298, qty: 3 }, // Gigante Un Occhio
+                { id: 298, qty: 3 }, // Gigante Hitotsu-Me
                 { id: 108, qty: 2 }, // Guerriero da Battaglia
-                { id: 97, qty: 2 }, // Armaill
+                { id: 97, qty: 2 }, // Armaill delle Lame
                 { id: 296, qty: 2 }, // Eroe dell'Est
-                { id: 573, qty: 2 }, // D. Human
+                { id: 573, qty: 2 }, // Guerriero D. Umano
                 { id: 477, qty: 1 }, // Ascia Tigre
                 { id: 330, qty: 1 }, // Kojikocy
                 { id: 944, qty: 1 }, // Hibikime
                 { id: 580, qty: 1 }, // Sogen
                 { id: 871, qty: 1 }, // Terraformazione
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 344, qty: 1 }, // Spada Leggendaria
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 } // Dian Keto la Maestra delle Cure
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 } // Dian Keto il Curatore
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 33, qty: 1 }, // Il Guardiano del Cancello
+                { id: 33, qty: 1 }, // Guardiano del Cancello
                 { id: 538, qty: 1 }, // Sanga del Tuono
                 { id: 324, qty: 1 }, // Kazejin
                 { id: 71, qty: 1 }, // Suijin
-                { id: 14, qty: 2 }, // Gaia il Cavaliere Feroce
-                { id: 15, qty: 2 }, // Maledizione del Drago
+                { id: 14, qty: 2 }, // Gaia il Cavaliere
+                { id: 15, qty: 2 }, // Anatema del Drago
                 { id: 1125, qty: 1 }, // Drago Meteora
-                { id: 996, qty: 2 }, // Lupo Portascure
+                { id: 996, qty: 2 }, // Lupo con Ascia
                 { id: 330, qty: 2 }, // Kojikocy
-                { id: 106, qty: 2 }, // Bue da Battaglia
+                { id: 106, qty: 2 }, // Ascia da Guerra
                 { id: 477, qty: 1 }, // Ascia Tigre
                 { id: 109, qty: 1 }, // Castoro Guerriero
-                { id: 573, qty: 1 }, // D. Human
+                { id: 573, qty: 1 }, // Guerriero D. Umano
                 { id: 944, qty: 1 }, // Hibikime
-                { id: 298, qty: 1 }, // Gigante Un Occhio
+                { id: 298, qty: 1 }, // Gigante Hitotsu-Me
                 { id: 580, qty: 1 }, // Sogen
                 { id: 871, qty: 1 }, // Terraformazione
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 38, qty: 1 }, // Fusione
                 { id: 344, qty: 1 }, // Spada Leggendaria
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 503, qty: 1 } // Waboku
             ],
             extra: [
-                { id: 254, qty: 1 } // Gaia il Campione dei Draghi
+                { id: 254, qty: 1 } // Gaia il Dragone
             ]
         },
         hard: {
             main: [
-                { id: 33, qty: 1 }, // Il Guardiano del Cancello
+                { id: 33, qty: 1 }, // Guardiano del Cancello
                 { id: 538, qty: 1 }, // Sanga del Tuono
                 { id: 324, qty: 1 }, // Kazejin
                 { id: 71, qty: 1 }, // Suijin
-                { id: 14, qty: 2 }, // Gaia il Cavaliere Feroce
-                { id: 15, qty: 2 }, // Maledizione del Drago
+                { id: 14, qty: 2 }, // Gaia il Cavaliere
+                { id: 15, qty: 2 }, // Anatema del Drago
                 { id: 1125, qty: 1 }, // Drago Meteora
-                { id: 996, qty: 2 }, // Lupo Portascure
+                { id: 996, qty: 2 }, // Lupo con Ascia
                 { id: 330, qty: 2 }, // Kojikocy
-                { id: 106, qty: 2 }, // Bue da Battaglia
+                { id: 106, qty: 2 }, // Ascia da Guerra
                 { id: 477, qty: 1 }, // Ascia Tigre
-                { id: 573, qty: 1 }, // D. Human
+                { id: 573, qty: 1 }, // Guerriero D. Umano
                 { id: 944, qty: 1 }, // Hibikime
                 { id: 580, qty: 1 }, // Sogen
                 { id: 871, qty: 1 }, // Terraformazione
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 38, qty: 1 }, // Fusione
                 { id: 344, qty: 1 }, // Spada Leggendaria
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 2, qty: 1 }, // Mago Nero
                 { id: 12, qty: 1 }, // Drago Nero Occhi Rossi
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 37, qty: 1 } // Folgore Fulminante
             ],
             extra: [
-                { id: 254, qty: 1 }, // Gaia il Campione dei Draghi
+                { id: 254, qty: 1 }, // Gaia il Dragone
                 { id: 1126, qty: 1 } // Drago Nero Meteora
             ]
         }
@@ -4753,112 +4753,112 @@ const characterDeckDatabase = {
     // Wall Shadow, Guardia del Labirinto e Protettrice del Trono, e gli Incantatori delle
     // tenebre sotto Yami.
     labyrinthMage: {
-        flagship: 857, // Wall Shadow — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 857, // Muro-Ombra — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 857, qty: 1 }, // Wall Shadow
+                { id: 857, qty: 1 }, // Muro-Ombra
                 { id: 535, qty: 3 }, // Guardia del Labirinto
                 { id: 536, qty: 3 }, // Protettrice del Trono
                 { id: 737, qty: 2 }, // Mago Apprendista
                 { id: 1111, qty: 2 }, // Apprendista Strega
                 { id: 194, qty: 2 }, // Illusionista dagli Occhi Oscuri
                 { id: 924, qty: 2 }, // Nemuriko
-                { id: 169, qty: 2 }, // Tenda degli Oscuri
-                { id: 337, qty: 1 }, // Muro del Labirinto
-                { id: 346, qty: 1 }, // Legion il Giullare Demoniaco
-                { id: 550, qty: 1 }, // Il Mistico Severo
+                { id: 169, qty: 2 }, // Sipario degli Oscuri
+                { id: 337, qty: 1 }, // Mura Labirintiche
+                { id: 346, qty: 1 }, // Legione Demone Giullare
+                { id: 550, qty: 1 }, // Il Mistico
                 { id: 364, qty: 1 }, // Labirinto Magico
                 { id: 557, qty: 1 }, // Yami
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 363, qty: 1 }, // Cappelli Magici
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 } // Dian Keto la Maestra delle Cure
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 } // Dian Keto il Curatore
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 857, qty: 1 }, // Wall Shadow
-                { id: 337, qty: 2 }, // Muro del Labirinto
+                { id: 857, qty: 1 }, // Muro-Ombra
+                { id: 337, qty: 2 }, // Mura Labirintiche
                 { id: 535, qty: 2 }, // Guardia del Labirinto
                 { id: 536, qty: 2 }, // Protettrice del Trono
                 { id: 306, qty: 1 }, // Mago Senza Volto Illusionista
-                { id: 736, qty: 2 }, // Abile Mago Oscuro
-                { id: 740, qty: 1 }, // Stregone del Caos
-                { id: 188, qty: 1 }, // Maga Oscura
-                { id: 346, qty: 2 }, // Legion il Giullare Demoniaco
+                { id: 736, qty: 2 }, // Abile Mago Nero
+                { id: 740, qty: 1 }, // Stregone del Chaos
+                { id: 188, qty: 1 }, // Ragazza Maga Nera
+                { id: 346, qty: 2 }, // Legione Demone Giullare
                 { id: 737, qty: 2 }, // Mago Apprendista
-                { id: 550, qty: 1 }, // Il Mistico Severo
+                { id: 550, qty: 1 }, // Il Mistico
                 { id: 194, qty: 1 }, // Illusionista dagli Occhi Oscuri
-                { id: 353, qty: 1 }, // Signore dei D.
-                { id: 1127, qty: 1 }, // Campanella Cerimoniale
+                { id: 353, qty: 1 }, // Signore di D.
+                { id: 1127, qty: 1 }, // Campana Cerimoniale
                 { id: 364, qty: 1 }, // Labirinto Magico
                 { id: 557, qty: 1 }, // Yami
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 503, qty: 1 }, // Waboku
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 363, qty: 1 } // Cappelli Magici
             ],
             extra: []
         },
         hard: {
             main: [
-                { id: 857, qty: 1 }, // Wall Shadow
-                { id: 337, qty: 2 }, // Muro del Labirinto
+                { id: 857, qty: 1 }, // Muro-Ombra
+                { id: 337, qty: 2 }, // Mura Labirintiche
                 { id: 535, qty: 2 }, // Guardia del Labirinto
                 { id: 536, qty: 2 }, // Protettrice del Trono
                 { id: 306, qty: 1 }, // Mago Senza Volto Illusionista
-                { id: 736, qty: 2 }, // Abile Mago Oscuro
-                { id: 740, qty: 1 }, // Stregone del Caos
-                { id: 188, qty: 1 }, // Maga Oscura
-                { id: 346, qty: 2 }, // Legion il Giullare Demoniaco
+                { id: 736, qty: 2 }, // Abile Mago Nero
+                { id: 740, qty: 1 }, // Stregone del Chaos
+                { id: 188, qty: 1 }, // Ragazza Maga Nera
+                { id: 346, qty: 2 }, // Legione Demone Giullare
                 { id: 737, qty: 2 }, // Mago Apprendista
-                { id: 550, qty: 1 }, // Il Mistico Severo
+                { id: 550, qty: 1 }, // Il Mistico
                 { id: 194, qty: 1 }, // Illusionista dagli Occhi Oscuri
                 { id: 364, qty: 2 }, // Labirinto Magico
                 { id: 557, qty: 1 }, // Yami
-                { id: 127, qty: 1 }, // Libro delle Arti Segrete
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 127, qty: 1 }, // Libro di Arti Ascose
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 363, qty: 1 }, // Cappelli Magici
                 { id: 2, qty: 1 }, // Mago Nero
-                { id: 738, qty: 1 }, // Mago Comando del Caos
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 738, qty: 1 }, // Mago Ordine del Chaos
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 448, qty: 1 } // Giudizio Solenne
             ],
             extra: []
@@ -4874,28 +4874,28 @@ const characterDeckDatabase = {
             main: [
                 { id: 284, qty: 2 }, // Guardiano Grarl
                 { id: 332, qty: 3 }, // Krokodilus
-                { id: 906, qty: 3 }, // Lucertola Sbavante
-                { id: 1117, qty: 2 }, // Cobraman Sakuzy
-                { id: 1030, qty: 2 }, // Barattolo Cobra
+                { id: 906, qty: 3 }, // Lucertola Affamata
+                { id: 1117, qty: 2 }, // Uomo Cobra Sakuzy
+                { id: 1030, qty: 2 }, // Giara Cobra
                 { id: 809, qty: 2 }, // Bebè Cerasauro
                 { id: 491, qty: 2 }, // Trakodon
-                { id: 806, qty: 2 }, // Stego Nero
+                { id: 806, qty: 2 }, // Stegosauro Oscuro
                 { id: 98, qty: 1 }, // Lucertola Corazzata
                 { id: 938, qty: 1 }, // Antico Guerriero Lucertola
-                { id: 277, qty: 2 }, // Ascia di Gravità - Grarl
+                { id: 277, qty: 2 }, // Ascia Gravitazionale - Grarl
                 { id: 813, qty: 1 }, // Benedizione di Sebek
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -4906,35 +4906,35 @@ const characterDeckDatabase = {
                 { id: 332, qty: 2 }, // Krokodilus
                 { id: 98, qty: 2 }, // Lucertola Corazzata
                 { id: 938, qty: 2 }, // Antico Guerriero Lucertola
-                { id: 1117, qty: 1 }, // Cobraman Sakuzy
-                { id: 1030, qty: 1 }, // Barattolo Cobra
-                { id: 495, qty: 2 }, // Re Rex a Due Teste
-                { id: 799, qty: 1 }, // Driceratopo Oscuro
-                { id: 801, qty: 1 }, // Tiranno Nero
+                { id: 1117, qty: 1 }, // Uomo Cobra Sakuzy
+                { id: 1030, qty: 1 }, // Giara Cobra
+                { id: 495, qty: 2 }, // Tirannosauro Rex a Due Teste
+                { id: 799, qty: 1 }, // Triceratopo Oscuro
+                { id: 801, qty: 1 }, // Tiranno Oscuro
                 { id: 798, qty: 2 }, // Sabersaurus
                 { id: 803, qty: 1 }, // Idrogeddon
                 { id: 561, qty: 1 }, // Uraby
                 { id: 266, qty: 1 }, // Gilasaurus
                 { id: 185, qty: 1 }, // Folletto Oscuro
-                { id: 277, qty: 2 }, // Ascia di Gravità - Grarl
+                { id: 277, qty: 2 }, // Ascia Gravitazionale - Grarl
                 { id: 812, qty: 1 }, // Mondo Giurassico
                 { id: 813, qty: 1 }, // Benedizione di Sebek
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 816, qty: 1 }, // Istinto di Sopravvivenza
-                { id: 646, qty: 1 } // Tempesta Pesante
+                { id: 646, qty: 1 } // Tempesta Potente
             ],
             extra: []
         },
@@ -4944,33 +4944,33 @@ const characterDeckDatabase = {
                 { id: 332, qty: 2 }, // Krokodilus
                 { id: 98, qty: 2 }, // Lucertola Corazzata
                 { id: 938, qty: 2 }, // Antico Guerriero Lucertola
-                { id: 495, qty: 2 }, // Re Rex a Due Teste
-                { id: 799, qty: 2 }, // Driceratopo Oscuro
-                { id: 801, qty: 2 }, // Tiranno Nero
+                { id: 495, qty: 2 }, // Tirannosauro Rex a Due Teste
+                { id: 799, qty: 2 }, // Triceratopo Oscuro
+                { id: 801, qty: 2 }, // Tiranno Oscuro
                 { id: 798, qty: 2 }, // Sabersaurus
                 { id: 803, qty: 1 }, // Idrogeddon
                 { id: 561, qty: 1 }, // Uraby
                 { id: 266, qty: 1 }, // Gilasaurus
                 { id: 185, qty: 1 }, // Folletto Oscuro
-                { id: 277, qty: 2 }, // Ascia di Gravità - Grarl
+                { id: 277, qty: 2 }, // Ascia Gravitazionale - Grarl
                 { id: 812, qty: 1 }, // Mondo Giurassico
                 { id: 813, qty: 1 }, // Benedizione di Sebek
-                { id: 848, qty: 1 }, // Vaso dell'Avarizia
-                { id: 635, qty: 1 }, // Vaso dell'Ingordigia
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 848, qty: 1 }, // Giara dell'Avarizia
+                { id: 635, qty: 1 }, // Giara della Cupidigia
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 382, qty: 1 }, // Forza dello Specchio
-                { id: 818, qty: 1 } // Onda Sismica
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 382, qty: 1 }, // Forza Riflessa
+                { id: 818, qty: 1 } // Onda d'Urto Sismica
             ],
             extra: []
         }
@@ -4984,13 +4984,13 @@ const characterDeckDatabase = {
         easy: {
             main: [
                 { id: 616, qty: 1 }, // Soldato del Fulgore Nero
-                { id: 710, qty: 3 }, // Guerriera delle Terre Desolate
-                { id: 714, qty: 3 }, // Capitano Predone
+                { id: 710, qty: 3 }, // Signora Guerriera delle Terre Desolate
+                { id: 714, qty: 3 }, // Capitano Saccheggiatore
                 { id: 369, qty: 2 }, // Masaki lo Spadaccino Leggendario
                 { id: 318, qty: 2 }, // Kagemusha della Fiamma Blu
                 { id: 296, qty: 2 }, // Eroe dell'Est
                 { id: 108, qty: 2 }, // Guerriero da Battaglia
-                { id: 912, qty: 2 }, // Armatura Dura
+                { id: 912, qty: 2 }, // Armatura Vivente
                 { id: 535, qty: 1 }, // Guardia del Labirinto
                 { id: 713, qty: 1 }, // Cavaliere Comandante
                 { id: 504, qty: 1 }, // Guerriero Dai Grepher
@@ -4998,17 +4998,17 @@ const characterDeckDatabase = {
                 { id: 580, qty: 1 }, // Sogen
                 { id: 344, qty: 1 }, // Spada Leggendaria
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -5016,39 +5016,39 @@ const characterDeckDatabase = {
         medium: {
             main: [
                 { id: 616, qty: 1 }, // Soldato del Fulgore Nero
-                { id: 888, qty: 1 }, // Freed il Generale Senza Rivali
+                { id: 888, qty: 1 }, // Freed il Generale Senza Avversari
                 { id: 613, qty: 2 }, // Lama Oscura
                 { id: 16, qty: 2 }, // Gearfried il Cavaliere di Ferro
-                { id: 258, qty: 1 }, // Gearfried il Maestro di Spada
-                { id: 6, qty: 1 }, // Cavaliere Oscuro
+                { id: 258, qty: 1 }, // Spadaccino Sacro - Gearfried il Cavaliere di Ferro
+                { id: 6, qty: 1 }, // Spada in Agguato
                 { id: 718, qty: 1 }, // Spadaccino Mistico LV2
                 { id: 719, qty: 1 }, // Spadaccino Mistico LV4
                 { id: 865, qty: 1 }, // Spadaccino Mistico LV6
                 { id: 504, qty: 3 }, // Guerriero Dai Grepher
                 { id: 713, qty: 1 }, // Cavaliere Comandante
-                { id: 639, qty: 2 }, // Drago Splendente
-                { id: 855, qty: 1 }, // Paladino del Drago Oscuro
-                { id: 710, qty: 1 }, // Guerriera delle Terre Desolate
-                { id: 714, qty: 1 }, // Capitano Predone
+                { id: 639, qty: 2 }, // Drago Avido
+                { id: 855, qty: 1 }, // Paladino del Drago Nero
+                { id: 710, qty: 1 }, // Signora Guerriera delle Terre Desolate
+                { id: 714, qty: 1 }, // Capitano Saccheggiatore
                 { id: 617, qty: 1 }, // Rito del Fulgore Nero
-                { id: 415, qty: 1 }, // Vincoli Recisi
+                { id: 415, qty: 1 }, // Rimozione della Restrizione
                 { id: 580, qty: 1 }, // Sogen
                 { id: 344, qty: 1 }, // Spada Leggendaria
-                { id: 724, qty: 1 }, // Rinforzo dell'Esercito
-                { id: 725, qty: 1 }, // Il Guerriero Ritorna in Vita
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 724, qty: 1 }, // Rinforzi dell'Esercito
+                { id: 725, qty: 1 }, // Il Guerriero Sopravvissuto
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 465, qty: 1 }, // Le Forze A.
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 465, qty: 1 }, // Le Truppe A.
                 { id: 503, qty: 1 } // Waboku
             ],
             extra: []
@@ -5056,38 +5056,38 @@ const characterDeckDatabase = {
         hard: {
             main: [
                 { id: 616, qty: 1 }, // Soldato del Fulgore Nero
-                { id: 888, qty: 1 }, // Freed il Generale Senza Rivali
+                { id: 888, qty: 1 }, // Freed il Generale Senza Avversari
                 { id: 613, qty: 2 }, // Lama Oscura
                 { id: 16, qty: 2 }, // Gearfried il Cavaliere di Ferro
-                { id: 258, qty: 1 }, // Gearfried il Maestro di Spada
-                { id: 6, qty: 2 }, // Cavaliere Oscuro
+                { id: 258, qty: 1 }, // Spadaccino Sacro - Gearfried il Cavaliere di Ferro
+                { id: 6, qty: 2 }, // Spada in Agguato
                 { id: 718, qty: 2 }, // Spadaccino Mistico LV2
                 { id: 719, qty: 1 }, // Spadaccino Mistico LV4
                 { id: 865, qty: 1 }, // Spadaccino Mistico LV6
                 { id: 504, qty: 3 }, // Guerriero Dai Grepher
                 { id: 713, qty: 1 }, // Cavaliere Comandante
-                { id: 639, qty: 2 }, // Drago Splendente
-                { id: 855, qty: 1 }, // Paladino del Drago Oscuro
+                { id: 639, qty: 2 }, // Drago Avido
+                { id: 855, qty: 1 }, // Paladino del Drago Nero
                 { id: 617, qty: 1 }, // Rito del Fulgore Nero
-                { id: 415, qty: 1 }, // Vincoli Recisi
+                { id: 415, qty: 1 }, // Rimozione della Restrizione
                 { id: 580, qty: 1 }, // Sogen
                 { id: 344, qty: 1 }, // Spada Leggendaria
-                { id: 724, qty: 1 }, // Rinforzo dell'Esercito
-                { id: 725, qty: 1 }, // Il Guerriero Ritorna in Vita
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 724, qty: 1 }, // Rinforzi dell'Esercito
+                { id: 725, qty: 1 }, // Il Guerriero Sopravvissuto
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 465, qty: 1 }, // Le Forze A.
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 465, qty: 1 }, // Le Truppe A.
                 { id: 267, qty: 1 }, // Gilford il Fulmine
-                { id: 382, qty: 1 } // Forza dello Specchio
+                { id: 382, qty: 1 } // Forza Riflessa
             ],
             extra: []
         }
@@ -5102,32 +5102,32 @@ const characterDeckDatabase = {
             main: [
                 { id: 13, qty: 2 }, // Teschio Evocato
                 { id: 25, qty: 3 }, // Ryu Kishin
-                { id: 237, qty: 2 }, // Folletto Selvaggio Feroce
+                { id: 237, qty: 2 }, // Demone Selvaggio
                 { id: 94, qty: 2 }, // Lampada Antica
                 { id: 355, qty: 2 }, // Signore di Zemia
                 { id: 334, qty: 2 }, // Kuribandit
-                { id: 564, qty: 2 }, // Titano Oscuro del Terrore
+                { id: 564, qty: 2 }, // Titano del Terrore
                 { id: 914, qty: 2 }, // Re della Nebbia
-                { id: 299, qty: 1 }, // Diavoletto Cornuto
+                { id: 299, qty: 1 }, // Demone Cornuto
                 { id: 428, qty: 1 }, // Ryu-Kishin Potenziato
-                { id: 542, qty: 1 }, // Fantasma Arguto
+                { id: 542, qty: 1 }, // Spettro Oscuro
                 { id: 557, qty: 1 }, // Yami
-                { id: 130, qty: 1 }, // Controllo Mentale
+                { id: 130, qty: 1 }, // Controllo della Mente
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 875, qty: 1 }, // Libro della Luna
-                { id: 646, qty: 1 } // Tempesta Pesante
+                { id: 646, qty: 1 } // Tempesta Potente
             ],
             extra: []
         },
@@ -5136,41 +5136,41 @@ const characterDeckDatabase = {
                 { id: 13, qty: 2 }, // Teschio Evocato
                 { id: 12, qty: 1 }, // Drago Nero Occhi Rossi
                 { id: 520, qty: 1 }, // Zoa
-                { id: 518, qty: 1 }, // Zera il Mant
-                { id: 237, qty: 2 }, // Folletto Selvaggio Feroce
+                { id: 518, qty: 1 }, // Zera la Manta
+                { id: 237, qty: 2 }, // Demone Selvaggio
                 { id: 428, qty: 2 }, // Ryu-Kishin Potenziato
-                { id: 502, qty: 2 }, // Predone Vorse
+                { id: 502, qty: 2 }, // Predatore Vorse
                 { id: 327, qty: 1 }, // Re di Yamimakai
-                { id: 6, qty: 1 }, // Cavaliere Oscuro
-                { id: 335, qty: 2 }, // La Jinn il Genio Mistico della Lampada
+                { id: 6, qty: 1 }, // Spada in Agguato
+                { id: 335, qty: 2 }, // Genio della Lampada
                 { id: 94, qty: 1 }, // Lampada Antica
                 { id: 355, qty: 1 }, // Signore di Zemia
                 { id: 627, qty: 1 }, // Opticlops
                 { id: 182, qty: 1 }, // Chimera Oscura
                 { id: 334, qty: 1 }, // Kuribandit
-                { id: 517, qty: 1 }, // Rituale di Zera
+                { id: 517, qty: 1 }, // Rito di Zera
                 { id: 38, qty: 1 }, // Fusione
                 { id: 557, qty: 1 }, // Yami
-                { id: 619, qty: 1 }, // Zona Plasma Mistica
-                { id: 130, qty: 1 }, // Controllo Mentale
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 619, qty: 1 }, // Zona Mistica del Plasma
+                { id: 130, qty: 1 }, // Controllo della Mente
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 376, qty: 1 } // Metalmorfosi
             ],
             extra: [
-                { id: 102, qty: 1 } // Drago Nero del Teschio
+                { id: 102, qty: 1 } // Drago Teschio Nero
             ]
         },
         hard: {
@@ -5178,40 +5178,40 @@ const characterDeckDatabase = {
                 { id: 13, qty: 2 }, // Teschio Evocato
                 { id: 12, qty: 2 }, // Drago Nero Occhi Rossi
                 { id: 520, qty: 1 }, // Zoa
-                { id: 518, qty: 1 }, // Zera il Mant
-                { id: 237, qty: 2 }, // Folletto Selvaggio Feroce
+                { id: 518, qty: 1 }, // Zera la Manta
+                { id: 237, qty: 2 }, // Demone Selvaggio
                 { id: 428, qty: 2 }, // Ryu-Kishin Potenziato
-                { id: 502, qty: 2 }, // Predone Vorse
+                { id: 502, qty: 2 }, // Predatore Vorse
                 { id: 327, qty: 1 }, // Re di Yamimakai
-                { id: 6, qty: 1 }, // Cavaliere Oscuro
-                { id: 335, qty: 2 }, // La Jinn il Genio Mistico della Lampada
+                { id: 6, qty: 1 }, // Spada in Agguato
+                { id: 335, qty: 2 }, // Genio della Lampada
                 { id: 355, qty: 1 }, // Signore di Zemia
                 { id: 627, qty: 1 }, // Opticlops
                 { id: 182, qty: 1 }, // Chimera Oscura
-                { id: 517, qty: 1 }, // Rituale di Zera
+                { id: 517, qty: 1 }, // Rito di Zera
                 { id: 38, qty: 1 }, // Fusione
                 { id: 557, qty: 1 }, // Yami
-                { id: 619, qty: 1 }, // Zona Plasma Mistica
-                { id: 130, qty: 1 }, // Controllo Mentale
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 619, qty: 1 }, // Zona Mistica del Plasma
+                { id: 130, qty: 1 }, // Controllo della Mente
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 439, qty: 1 }, // Incantesimo Ombra
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 439, qty: 1 }, // Magia Ombra
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 376, qty: 1 }, // Metalmorfosi
                 { id: 377, qty: 1 }, // Metalzoa
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 17, qty: 1 } // Jinzo
             ],
             extra: [
-                { id: 102, qty: 1 } // Drago Nero del Teschio
+                { id: 102, qty: 1 } // Drago Teschio Nero
             ]
         }
     },
@@ -5227,29 +5227,29 @@ const characterDeckDatabase = {
                 { id: 110, qty: 2 }, // Drago Berserk
                 { id: 932, qty: 1 }, // Drago Tricorno
                 { id: 534, qty: 3 }, // Drago con Scudo
-                { id: 1050, qty: 2 }, // Drago della Truppa
+                { id: 1050, qty: 2 }, // Truppa-Drago
                 { id: 993, qty: 2 }, // Soldato Lucertola
-                { id: 404, qty: 2 }, // Drago Nero Pece
-                { id: 642, qty: 2 }, // Cucciolo del Drago Nero
+                { id: 404, qty: 2 }, // Drago Nero-Pece
+                { id: 642, qty: 2 }, // Cucciolo di Occhi-Rossi
                 { id: 25, qty: 2 }, // Ryu Kishin
                 { id: 181, qty: 2 }, // Pipistrello Oscuro
-                { id: 493, qty: 1 }, // Behemoth a Due Teste
+                { id: 493, qty: 1 }, // Behemoth Bifronte
                 { id: 331, qty: 1 }, // Drago Koumori
-                { id: 78, qty: 1 }, // Patto col Sovrano Oscuro
+                { id: 78, qty: 1 }, // Un Accordo con l'Arcidemone
                 { id: 251, qty: 1 }, // Sepoltura Sciocca
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 600, qty: 1 }, // Trappola Fasulla
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 600, qty: 1 }, // Trappola Finta
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -5261,38 +5261,38 @@ const characterDeckDatabase = {
                 { id: 1125, qty: 1 }, // Drago Meteora
                 { id: 932, qty: 1 }, // Drago Tricorno
                 { id: 13, qty: 1 }, // Teschio Evocato
-                { id: 518, qty: 1 }, // Zera il Mant
-                { id: 436, qty: 1 }, // Drago Serpente della Notte
-                { id: 493, qty: 2 }, // Behemoth a Due Teste
+                { id: 518, qty: 1 }, // Zera la Manta
+                { id: 436, qty: 1 }, // Drago Serpente Notturno
+                { id: 493, qty: 2 }, // Behemoth Bifronte
                 { id: 331, qty: 2 }, // Drago Koumori
-                { id: 502, qty: 2 }, // Predone Vorse
-                { id: 335, qty: 2 }, // La Jinn il Genio Mistico della Lampada
-                { id: 642, qty: 1 }, // Cucciolo del Drago Nero
+                { id: 502, qty: 2 }, // Predatore Vorse
+                { id: 335, qty: 2 }, // Genio della Lampada
+                { id: 642, qty: 1 }, // Cucciolo di Occhi-Rossi
                 { id: 613, qty: 1 }, // Lama Oscura
                 { id: 428, qty: 1 }, // Ryu-Kishin Potenziato
-                { id: 78, qty: 2 }, // Patto col Sovrano Oscuro
-                { id: 517, qty: 1 }, // Rituale di Zera
+                { id: 78, qty: 2 }, // Un Accordo con l'Arcidemone
+                { id: 517, qty: 1 }, // Rito di Zera
                 { id: 38, qty: 1 }, // Fusione
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 600, qty: 1 }, // Trappola Fasulla
+                { id: 600, qty: 1 }, // Trappola Finta
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 251, qty: 1 }, // Sepoltura Sciocca
                 { id: 503, qty: 1 } // Waboku
             ],
             extra: [
                 { id: 1126, qty: 1 }, // Drago Nero Meteora
-                { id: 102, qty: 1 } // Drago Nero del Teschio
+                { id: 102, qty: 1 } // Drago Teschio Nero
             ]
         },
         hard: {
@@ -5302,37 +5302,37 @@ const characterDeckDatabase = {
                 { id: 1125, qty: 1 }, // Drago Meteora
                 { id: 932, qty: 2 }, // Drago Tricorno
                 { id: 13, qty: 1 }, // Teschio Evocato
-                { id: 518, qty: 1 }, // Zera il Mant
-                { id: 436, qty: 1 }, // Drago Serpente della Notte
-                { id: 493, qty: 2 }, // Behemoth a Due Teste
+                { id: 518, qty: 1 }, // Zera la Manta
+                { id: 436, qty: 1 }, // Drago Serpente Notturno
+                { id: 493, qty: 2 }, // Behemoth Bifronte
                 { id: 331, qty: 2 }, // Drago Koumori
-                { id: 502, qty: 2 }, // Predone Vorse
-                { id: 335, qty: 2 }, // La Jinn il Genio Mistico della Lampada
-                { id: 642, qty: 1 }, // Cucciolo del Drago Nero
-                { id: 78, qty: 2 }, // Patto col Sovrano Oscuro
-                { id: 517, qty: 1 }, // Rituale di Zera
+                { id: 502, qty: 2 }, // Predatore Vorse
+                { id: 335, qty: 2 }, // Genio della Lampada
+                { id: 642, qty: 1 }, // Cucciolo di Occhi-Rossi
+                { id: 78, qty: 2 }, // Un Accordo con l'Arcidemone
+                { id: 517, qty: 1 }, // Rito di Zera
                 { id: 38, qty: 1 }, // Fusione
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 439, qty: 1 }, // Incantesimo Ombra
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 439, qty: 1 }, // Magia Ombra
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 251, qty: 1 }, // Sepoltura Sciocca
                 { id: 503, qty: 1 }, // Waboku
-                { id: 638, qty: 1 }, // Drago Oscurità Occhi Rossi
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 638, qty: 1 }, // Drago Oscuro Occhi Rossi
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 409, qty: 1 } // Raigeki
             ],
             extra: [
                 { id: 1126, qty: 1 }, // Drago Nero Meteora
-                { id: 102, qty: 1 } // Drago Nero del Teschio
+                { id: 102, qty: 1 } // Drago Teschio Nero
             ]
         }
     },
@@ -5347,31 +5347,31 @@ const characterDeckDatabase = {
         easy: {
             main: [
                 { id: 472, qty: 1 }, // Il Drago Alato di Ra
-                { id: 660, qty: 3 }, // Tartaruga della Piramide
+                { id: 660, qty: 3 }, // Tartaruga Piramide
                 { id: 1052, qty: 3 }, // Des Lacooda
-                { id: 1020, qty: 3 }, // Mummia Velenosa
+                { id: 1020, qty: 3 }, // Mummia Infetta
                 { id: 764, qty: 2 }, // Statua Guardiana
                 { id: 754, qty: 2 }, // Grande Spirito
                 { id: 758, qty: 2 }, // Statua di Pietra degli Aztechi
-                { id: 762, qty: 2 }, // Cannoni Intercettori Moai
-                { id: 1116, qty: 1 }, // Uomo con Wdjat
-                { id: 321, qty: 1 }, // Kaiser Sea Horse
+                { id: 762, qty: 2 }, // Cannoni d'Intercettazione Moai
+                { id: 1116, qty: 1 }, // Un Uomo con Wdjat
+                { id: 321, qty: 1 }, // Kaiser Cavalluccio Marino
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 890, qty: 1 }, // Necrovalley
-                { id: 576, qty: 1 }, // Telescopio Antico
+                { id: 576, qty: 1 }, // Antico Telescopio
                 { id: 466, qty: 1 }, // L'Occhio della Verità
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 875, qty: 1 }, // Libro della Luna
-                { id: 439, qty: 1 } // Incantesimo Ombra
+                { id: 439, qty: 1 } // Magia Ombra
             ],
             extra: []
         },
@@ -5383,30 +5383,30 @@ const characterDeckDatabase = {
                 { id: 13, qty: 1 }, // Teschio Evocato
                 { id: 17, qty: 1 }, // Jinzo
                 { id: 2, qty: 1 }, // Mago Nero
-                { id: 1109, qty: 1 }, // Cavaliere Mistico di Sciacallo
-                { id: 502, qty: 2 }, // Predone Vorse
+                { id: 1109, qty: 1 }, // Cavaliere Mistico dello Sciacallo
+                { id: 502, qty: 2 }, // Predatore Vorse
                 { id: 16, qty: 2 }, // Gearfried il Cavaliere di Ferro
-                { id: 1116, qty: 2 }, // Uomo con Wdjat
-                { id: 321, qty: 2 }, // Kaiser Sea Horse
+                { id: 1116, qty: 2 }, // Un Uomo con Wdjat
+                { id: 321, qty: 2 }, // Kaiser Cavalluccio Marino
                 { id: 22, qty: 1 }, // Kuriboh
                 { id: 433, qty: 1 }, // Sangan
-                { id: 660, qty: 2 }, // Tartaruga della Piramide
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 660, qty: 2 }, // Tartaruga Piramide
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
                 { id: 890, qty: 1 }, // Necrovalley
-                { id: 576, qty: 1 }, // Telescopio Antico
+                { id: 576, qty: 1 }, // Antico Telescopio
                 { id: 466, qty: 1 }, // L'Occhio della Verità
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 559, qty: 1 }, // Offerta Suprema
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 559, qty: 1 }, // Ultima Offerta
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 503, qty: 1 } // Waboku
             ],
@@ -5420,31 +5420,31 @@ const characterDeckDatabase = {
                 { id: 13, qty: 1 }, // Teschio Evocato
                 { id: 17, qty: 1 }, // Jinzo
                 { id: 2, qty: 1 }, // Mago Nero
-                { id: 1109, qty: 1 }, // Cavaliere Mistico di Sciacallo
-                { id: 502, qty: 2 }, // Predone Vorse
+                { id: 1109, qty: 1 }, // Cavaliere Mistico dello Sciacallo
+                { id: 502, qty: 2 }, // Predatore Vorse
                 { id: 16, qty: 2 }, // Gearfried il Cavaliere di Ferro
-                { id: 1116, qty: 2 }, // Uomo con Wdjat
-                { id: 321, qty: 2 }, // Kaiser Sea Horse
+                { id: 1116, qty: 2 }, // Un Uomo con Wdjat
+                { id: 321, qty: 2 }, // Kaiser Cavalluccio Marino
                 { id: 22, qty: 1 }, // Kuriboh
                 { id: 433, qty: 1 }, // Sangan
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
-                { id: 599, qty: 1 }, // Sette Attrezzi del Bandito
+                { id: 599, qty: 1 }, // I Sette Attrezzi del Bandito
                 { id: 890, qty: 1 }, // Necrovalley
-                { id: 576, qty: 1 }, // Telescopio Antico
+                { id: 576, qty: 1 }, // Antico Telescopio
                 { id: 466, qty: 1 }, // L'Occhio della Verità
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 559, qty: 1 }, // Offerta Suprema
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 559, qty: 1 }, // Ultima Offerta
                 { id: 267, qty: 1 }, // Gilford il Fulmine
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 409, qty: 1 } // Raigeki
             ],
             extra: []
@@ -6001,30 +6001,30 @@ const characterDeckDatabase = {
         easy: {
             main: [
                 { id: 1004, qty: 1 }, // Hino-Kagu-Tsuchi
-                { id: 1005, qty: 3 }, // Coniglio Bianco di Inaba
+                { id: 1005, qty: 3 }, // Coniglio Bianco Inaba
                 { id: 1006, qty: 3 }, // Otohime
                 { id: 1002, qty: 3 }, // Fushi No Tori
                 { id: 884, qty: 2 }, // Yata-Garasu
-                { id: 367, qty: 2 }, // Cimitero dei Mammut
-                { id: 936, qty: 2 }, // Sovrano Oscuro Bibocca
-                { id: 805, qty: 2 }, // Ptera Nero
-                { id: 1001, qty: 1 }, // Sacerdote di Asura
-                { id: 806, qty: 1 }, // Stego Nero
+                { id: 367, qty: 2 }, // Mammuth delle Tombe
+                { id: 936, qty: 2 }, // Elettrosauro Doppiafauce
+                { id: 805, qty: 2 }, // Pterodattilo Nero
+                { id: 1001, qty: 1 }, // Prete Asura
+                { id: 806, qty: 1 }, // Stegosauro Oscuro
                 { id: 813, qty: 2 }, // Benedizione di Sebek
                 { id: 159, qty: 1 }, // Ondata Gelida
                 { id: 812, qty: 1 }, // Mondo Giurassico
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 546, qty: 2 }, // Dian Keto la Maestra delle Cure
-                { id: 611, qty: 1 }, // Giavellotto Incantato
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 546, qty: 2 }, // Dian Keto il Curatore
+                { id: 611, qty: 1 }, // Lancia Incantata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
+                { id: 595, qty: 1 }, // Guardiano Affidabile
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -6033,35 +6033,35 @@ const characterDeckDatabase = {
             main: [
                 { id: 1004, qty: 1 }, // Hino-Kagu-Tsuchi
                 { id: 1008, qty: 1 }, // Drago Yamata
-                { id: 1007, qty: 2 }, // Soldato di Susa
-                { id: 1001, qty: 2 }, // Sacerdote di Asura
+                { id: 1007, qty: 2 }, // Soldato Susa
+                { id: 1001, qty: 2 }, // Prete Asura
                 { id: 1003, qty: 1 }, // Grande Naso Lungo
                 { id: 1002, qty: 2 }, // Fushi No Tori
-                { id: 1005, qty: 2 }, // Coniglio Bianco di Inaba
+                { id: 1005, qty: 2 }, // Coniglio Bianco Inaba
                 { id: 1006, qty: 2 }, // Otohime
                 { id: 884, qty: 1 }, // Yata-Garasu
-                { id: 150, qty: 2 }, // Chiron il Mago
-                { id: 801, qty: 1 }, // Tiranno Nero
-                { id: 367, qty: 1 }, // Cimitero dei Mammut
+                { id: 150, qty: 2 }, // Chiron il Saggio
+                { id: 801, qty: 1 }, // Tiranno Oscuro
+                { id: 367, qty: 1 }, // Mammuth delle Tombe
                 { id: 266, qty: 2 }, // Gilasaurus
                 { id: 813, qty: 2 }, // Benedizione di Sebek
                 { id: 159, qty: 1 }, // Ondata Gelida
                 { id: 812, qty: 1 }, // Mondo Giurassico
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 611, qty: 1 }, // Giavellotto Incantato
-                { id: 646, qty: 1 } // Tempesta Pesante
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 611, qty: 1 }, // Lancia Incantata
+                { id: 646, qty: 1 } // Tempesta Potente
             ],
             extra: []
         },
@@ -6069,34 +6069,34 @@ const characterDeckDatabase = {
             main: [
                 { id: 1004, qty: 1 }, // Hino-Kagu-Tsuchi
                 { id: 1008, qty: 2 }, // Drago Yamata
-                { id: 1007, qty: 2 }, // Soldato di Susa
-                { id: 1001, qty: 2 }, // Sacerdote di Asura
+                { id: 1007, qty: 2 }, // Soldato Susa
+                { id: 1001, qty: 2 }, // Prete Asura
                 { id: 1003, qty: 2 }, // Grande Naso Lungo
                 { id: 1002, qty: 2 }, // Fushi No Tori
-                { id: 1005, qty: 1 }, // Coniglio Bianco di Inaba
+                { id: 1005, qty: 1 }, // Coniglio Bianco Inaba
                 { id: 1006, qty: 1 }, // Otohime
                 { id: 884, qty: 1 }, // Yata-Garasu
-                { id: 150, qty: 2 }, // Chiron il Mago
-                { id: 801, qty: 1 }, // Tiranno Nero
-                { id: 367, qty: 1 }, // Cimitero dei Mammut
+                { id: 150, qty: 2 }, // Chiron il Saggio
+                { id: 801, qty: 1 }, // Tiranno Oscuro
+                { id: 367, qty: 1 }, // Mammuth delle Tombe
                 { id: 266, qty: 2 }, // Gilasaurus
                 { id: 813, qty: 2 }, // Benedizione di Sebek
                 { id: 159, qty: 1 }, // Ondata Gelida
                 { id: 812, qty: 1 }, // Mondo Giurassico
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 611, qty: 1 }, // Giavellotto Incantato
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 611, qty: 1 }, // Lancia Incantata
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 490, qty: 1 } // Tributo Torrenziale
             ],
             extra: []
@@ -6112,108 +6112,108 @@ const characterDeckDatabase = {
         easy: {
             main: [
                 { id: 230, qty: 1 }, // Exodia Necross
-                { id: 41, qty: 1 }, // Testa Proibita
+                { id: 41, qty: 1 }, // Exodia il Proibito
                 { id: 42, qty: 1 }, // Braccio Sx del Proibito
-                { id: 11, qty: 1 }, // Braccio Dx Del Proibito
+                { id: 11, qty: 1 }, // Braccio Dx del Proibito
                 { id: 44, qty: 1 }, // Gamba Sx del Proibito
                 { id: 43, qty: 1 }, // Gamba Dx del Proibito
-                { id: 54, qty: 3 }, // Muro d'Illusione
+                { id: 54, qty: 3 }, // Muro Illusorio
                 { id: 433, qty: 3 }, // Sangan
                 { id: 508, qty: 2 }, // Strega della Foresta Nera
-                { id: 115, qty: 2 }, // Gran Scudo Gardna
-                { id: 984, qty: 2 }, // Spirito Legato alla Terra
+                { id: 115, qty: 2 }, // Grande Scudo Custode
+                { id: 984, qty: 2 }, // Spirito Terralegato
                 { id: 428, qty: 1 }, // Ryu-Kishin Potenziato
-                { id: 375, qty: 1 }, // Guardiano di Metallo
-                { id: 161, qty: 1 }, // Patto con Exodia
+                { id: 375, qty: 1 }, // Guardiano Metallico
+                { id: 161, qty: 1 }, // Contratto con Exodia
                 { id: 251, qty: 2 }, // Sepoltura Sciocca
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 750, qty: 1 }, // Gabbia d'Acciaio dell'Incubo
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 875, qty: 1 }, // Libro della Luna
-                { id: 646, qty: 1 } // Tempesta Pesante
+                { id: 646, qty: 1 } // Tempesta Potente
             ],
             extra: []
         },
         medium: {
             main: [
                 { id: 230, qty: 1 }, // Exodia Necross
-                { id: 41, qty: 1 }, // Testa Proibita
+                { id: 41, qty: 1 }, // Exodia il Proibito
                 { id: 42, qty: 1 }, // Braccio Sx del Proibito
-                { id: 11, qty: 1 }, // Braccio Dx Del Proibito
+                { id: 11, qty: 1 }, // Braccio Dx del Proibito
                 { id: 44, qty: 1 }, // Gamba Sx del Proibito
                 { id: 43, qty: 1 }, // Gamba Dx del Proibito
-                { id: 115, qty: 2 }, // Gran Scudo Gardna
-                { id: 54, qty: 2 }, // Muro d'Illusione
+                { id: 115, qty: 2 }, // Grande Scudo Custode
+                { id: 54, qty: 2 }, // Muro Illusorio
                 { id: 433, qty: 2 }, // Sangan
                 { id: 508, qty: 2 }, // Strega della Foresta Nera
-                { id: 337, qty: 2 }, // Muro del Labirinto
-                { id: 984, qty: 1 }, // Spirito Legato alla Terra
-                { id: 375, qty: 1 }, // Guardiano di Metallo
-                { id: 467, qty: 1 }, // Il Demone Megacyber
+                { id: 337, qty: 2 }, // Mura Labirintiche
+                { id: 984, qty: 1 }, // Spirito Terralegato
+                { id: 375, qty: 1 }, // Guardiano Metallico
+                { id: 467, qty: 1 }, // Demone Megacyber
                 { id: 428, qty: 1 }, // Ryu-Kishin Potenziato
-                { id: 161, qty: 1 }, // Patto con Exodia
+                { id: 161, qty: 1 }, // Contratto con Exodia
                 { id: 251, qty: 2 }, // Sepoltura Sciocca
-                { id: 138, qty: 1 }, // Distruzione di Carte
-                { id: 272, qty: 2 }, // Carità Aggraziata
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 35, qty: 1 }, // Rinascita del Mostro
+                { id: 138, qty: 1 }, // Distruggi-Carte
+                { id: 272, qty: 2 }, // Carità Graziosa
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 503, qty: 1 }, // Waboku
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 750, qty: 1 }, // Gabbia d'Acciaio dell'Incubo
-                { id: 595, qty: 1 } // Il Guardiano Affidabile
+                { id: 595, qty: 1 } // Guardiano Affidabile
             ],
             extra: []
         },
         hard: {
             main: [
                 { id: 230, qty: 1 }, // Exodia Necross
-                { id: 41, qty: 1 }, // Testa Proibita
+                { id: 41, qty: 1 }, // Exodia il Proibito
                 { id: 42, qty: 1 }, // Braccio Sx del Proibito
-                { id: 11, qty: 1 }, // Braccio Dx Del Proibito
+                { id: 11, qty: 1 }, // Braccio Dx del Proibito
                 { id: 44, qty: 1 }, // Gamba Sx del Proibito
                 { id: 43, qty: 1 }, // Gamba Dx del Proibito
-                { id: 115, qty: 2 }, // Gran Scudo Gardna
-                { id: 54, qty: 2 }, // Muro d'Illusione
+                { id: 115, qty: 2 }, // Grande Scudo Custode
+                { id: 54, qty: 2 }, // Muro Illusorio
                 { id: 433, qty: 2 }, // Sangan
                 { id: 508, qty: 2 }, // Strega della Foresta Nera
-                { id: 337, qty: 2 }, // Muro del Labirinto
-                { id: 375, qty: 2 }, // Guardiano di Metallo
-                { id: 467, qty: 2 }, // Il Demone Megacyber
-                { id: 161, qty: 1 }, // Patto con Exodia
+                { id: 337, qty: 2 }, // Mura Labirintiche
+                { id: 375, qty: 2 }, // Guardiano Metallico
+                { id: 467, qty: 2 }, // Demone Megacyber
+                { id: 161, qty: 1 }, // Contratto con Exodia
                 { id: 251, qty: 2 }, // Sepoltura Sciocca
-                { id: 138, qty: 1 }, // Distruzione di Carte
-                { id: 272, qty: 2 }, // Carità Aggraziata
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 35, qty: 1 }, // Rinascita del Mostro
+                { id: 138, qty: 1 }, // Distruggi-Carte
+                { id: 272, qty: 2 }, // Carità Graziosa
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 35, qty: 1 }, // Mostro Resuscitato
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 750, qty: 1 }, // Gabbia d'Acciaio dell'Incubo
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 382, qty: 1 }, // Forza dello Specchio
-                { id: 130, qty: 1 } // Controllo Mentale
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 382, qty: 1 }, // Forza Riflessa
+                { id: 130, qty: 1 } // Controllo della Mente
             ],
             extra: []
         }
@@ -6228,30 +6228,30 @@ const characterDeckDatabase = {
         easy: {
             main: [
                 { id: 1068, qty: 2 }, // Guerriero degli Abissi
-                { id: 239, qty: 3 }, // Piovra Demoniaca
+                { id: 239, qty: 3 }, // Kraken il Demone
                 { id: 314, qty: 3 }, // Medusa
-                { id: 582, qty: 2 }, // Tartaruga Isola
+                { id: 582, qty: 2 }, // Tarta-Isola
                 { id: 907, qty: 2 }, // Sirena Incantatrice
-                { id: 904, qty: 2 }, // Stella Marina Corazzata
-                { id: 935, qty: 2 }, // Tigre Tartaruga
+                { id: 904, qty: 2 }, // Stella Corazzata
+                { id: 935, qty: 2 }, // Tartaruga-Tigre
                 { id: 959, qty: 2 }, // Bestia Liquida
-                { id: 505, qty: 1 }, // Water Omotics
+                { id: 505, qty: 1 }, // Trasforma-Acque
                 { id: 955, qty: 1 }, // Kraken di Fuoco
                 { id: 497, qty: 1 }, // Umi
-                { id: 489, qty: 1 }, // Muro del Tornado
+                { id: 489, qty: 1 }, // Muro Tornado
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 704, qty: 1 }, // Salvataggio
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
@@ -6260,36 +6260,36 @@ const characterDeckDatabase = {
             main: [
                 { id: 1068, qty: 2 }, // Guerriero degli Abissi
                 { id: 955, qty: 2 }, // Kraken di Fuoco
-                { id: 958, qty: 2 }, // Gyojin dell'Alta Marea
-                { id: 279, qty: 2 }, // Grande Squalo Bianco
+                { id: 958, qty: 2 }, // Gyojin della Marea
+                { id: 279, qty: 2 }, // Mega Squalo Bianco
                 { id: 962, qty: 1 }, // Octoberser
-                { id: 940, qty: 1 }, // Abitante degli Abissi
-                { id: 239, qty: 2 }, // Piovra Demoniaca
+                { id: 940, qty: 1 }, // Abitatore degli Abissi
+                { id: 239, qty: 2 }, // Kraken il Demone
                 { id: 314, qty: 2 }, // Medusa
-                { id: 505, qty: 1 }, // Water Omotics
-                { id: 582, qty: 1 }, // Tartaruga Isola
+                { id: 505, qty: 1 }, // Trasforma-Acque
+                { id: 582, qty: 1 }, // Tarta-Isola
                 { id: 945, qty: 1 }, // Hyosube
                 { id: 692, qty: 1 }, // Guerriero del Serpente Marino dell'Oscurità
-                { id: 956, qty: 1 }, // Tartaruga Gigante che si Nutre di Fiamme
+                { id: 956, qty: 1 }, // Tartaruga Mangia-Fiamme
                 { id: 907, qty: 1 }, // Sirena Incantatrice
                 { id: 497, qty: 1 }, // Umi
-                { id: 489, qty: 1 }, // Muro del Tornado
+                { id: 489, qty: 1 }, // Muro Tornado
                 { id: 79, qty: 1 }, // Un Oceano Leggendario
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 704, qty: 1 }, // Salvataggio
-                { id: 595, qty: 1 } // Il Guardiano Affidabile
+                { id: 595, qty: 1 } // Guardiano Affidabile
             ],
             extra: []
         },
@@ -6297,33 +6297,33 @@ const characterDeckDatabase = {
             main: [
                 { id: 1068, qty: 2 }, // Guerriero degli Abissi
                 { id: 955, qty: 2 }, // Kraken di Fuoco
-                { id: 958, qty: 2 }, // Gyojin dell'Alta Marea
-                { id: 279, qty: 2 }, // Grande Squalo Bianco
+                { id: 958, qty: 2 }, // Gyojin della Marea
+                { id: 279, qty: 2 }, // Mega Squalo Bianco
                 { id: 962, qty: 2 }, // Octoberser
-                { id: 940, qty: 2 }, // Abitante degli Abissi
-                { id: 239, qty: 2 }, // Piovra Demoniaca
+                { id: 940, qty: 2 }, // Abitatore degli Abissi
+                { id: 239, qty: 2 }, // Kraken il Demone
                 { id: 314, qty: 2 }, // Medusa
-                { id: 505, qty: 1 }, // Water Omotics
+                { id: 505, qty: 1 }, // Trasforma-Acque
                 { id: 945, qty: 1 }, // Hyosube
                 { id: 692, qty: 2 }, // Guerriero del Serpente Marino dell'Oscurità
-                { id: 956, qty: 1 }, // Tartaruga Gigante che si Nutre di Fiamme
+                { id: 956, qty: 1 }, // Tartaruga Mangia-Fiamme
                 { id: 497, qty: 1 }, // Umi
-                { id: 489, qty: 1 }, // Muro del Tornado
+                { id: 489, qty: 1 }, // Muro Tornado
                 { id: 79, qty: 1 }, // Un Oceano Leggendario
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 704, qty: 1 }, // Salvataggio
-                { id: 382, qty: 1 } // Forza dello Specchio
+                { id: 382, qty: 1 } // Forza Riflessa
             ],
             extra: []
         }
@@ -6333,16 +6333,16 @@ const characterDeckDatabase = {
     // carte "da tribunale" — Giudizio Solenne, Decreto Reale, Maschera della Restrizione,
     // Maledizione di Anubis — per il processo a Joey nel Mondo Virtuale.
     johnson: {
-        flagship: 317, // Uomo Giudice — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 317, // Il Giudicatore — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 317, qty: 2 }, // Uomo Giudice
+                { id: 317, qty: 2 }, // Il Giudicatore
                 { id: 296, qty: 3 }, // Eroe dell'Est
                 { id: 108, qty: 3 }, // Guerriero da Battaglia
                 { id: 435, qty: 2 }, // Soldato della Scienza
                 { id: 369, qty: 2 }, // Masaki lo Spadaccino Leggendario
                 { id: 535, qty: 2 }, // Guardia del Labirinto
-                { id: 573, qty: 2 }, // D. Human
+                { id: 573, qty: 2 }, // Guerriero D. Umano
                 { id: 536, qty: 2 }, // Protettrice del Trono
                 { id: 330, qty: 1 }, // Kojikocy
                 { id: 944, qty: 1 }, // Hibikime
@@ -6350,33 +6350,33 @@ const characterDeckDatabase = {
                 { id: 655, qty: 1 }, // Maledizione di Anubis
                 { id: 580, qty: 1 }, // Sogen
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 344, qty: 1 }, // Spada Leggendaria
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 317, qty: 2 }, // Uomo Giudice
-                { id: 943, qty: 1 }, // Garnecia Elefantis
+                { id: 317, qty: 2 }, // Il Giudicatore
+                { id: 943, qty: 1 }, // Elefante Garnecia
                 { id: 504, qty: 2 }, // Guerriero Dai Grepher
                 { id: 330, qty: 2 }, // Kojikocy
                 { id: 516, qty: 1 }, // Zanki
                 { id: 541, qty: 1 }, // Ansatsu
-                { id: 573, qty: 2 }, // D. Human
+                { id: 573, qty: 2 }, // Guerriero D. Umano
                 { id: 944, qty: 2 }, // Hibikime
-                { id: 101, qty: 1 }, // Assalitore con l'Ascia
+                { id: 101, qty: 1 }, // Predone d'Ascia
                 { id: 296, qty: 2 }, // Eroe dell'Est
                 { id: 108, qty: 1 }, // Guerriero da Battaglia
                 { id: 435, qty: 1 }, // Soldato della Scienza
@@ -6386,35 +6386,35 @@ const characterDeckDatabase = {
                 { id: 426, qty: 1 }, // Decreto Reale
                 { id: 371, qty: 1 }, // Maschera della Restrizione
                 { id: 655, qty: 1 }, // Maledizione di Anubis
-                { id: 69, qty: 1 }, // Stop Difesa
+                { id: 69, qty: 1 }, // Blocca Difesa
                 { id: 580, qty: 1 }, // Sogen
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 344, qty: 1 }, // Spada Leggendaria
-                { id: 724, qty: 1 } // Rinforzo dell'Esercito
+                { id: 724, qty: 1 } // Rinforzi dell'Esercito
             ],
             extra: []
         },
         hard: {
             main: [
-                { id: 317, qty: 2 }, // Uomo Giudice
-                { id: 943, qty: 2 }, // Garnecia Elefantis
+                { id: 317, qty: 2 }, // Il Giudicatore
+                { id: 943, qty: 2 }, // Elefante Garnecia
                 { id: 504, qty: 2 }, // Guerriero Dai Grepher
                 { id: 330, qty: 2 }, // Kojikocy
                 { id: 516, qty: 1 }, // Zanki
                 { id: 541, qty: 2 }, // Ansatsu
-                { id: 573, qty: 2 }, // D. Human
+                { id: 573, qty: 2 }, // Guerriero D. Umano
                 { id: 944, qty: 2 }, // Hibikime
-                { id: 101, qty: 1 }, // Assalitore con l'Ascia
+                { id: 101, qty: 1 }, // Predone d'Ascia
                 { id: 296, qty: 2 }, // Eroe dell'Est
                 { id: 108, qty: 1 }, // Guerriero da Battaglia
                 { id: 369, qty: 1 }, // Masaki lo Spadaccino Leggendario
@@ -6423,19 +6423,19 @@ const characterDeckDatabase = {
                 { id: 371, qty: 1 }, // Maschera della Restrizione
                 { id: 655, qty: 1 }, // Maledizione di Anubis
                 { id: 580, qty: 1 }, // Sogen
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 344, qty: 1 }, // Spada Leggendaria
-                { id: 724, qty: 1 }, // Rinforzo dell'Esercito
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 724, qty: 1 }, // Rinforzi dell'Esercito
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 7, qty: 1 } // Buco Nero
             ],
             extra: []
@@ -6447,108 +6447,108 @@ const characterDeckDatabase = {
     // Ordini d'Attacco Finali a costringerli in Posizione d'Attacco (l'anime usa "Corto
     // Circuito", che il gioco non ha).
     nesbitt: {
-        flagship: 359, // Re Macchina — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 359, // Re delle Macchine — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 359, qty: 2 }, // Re Macchina
-                { id: 960, qty: 3 }, // Lumaca Meccanica
-                { id: 264, qty: 3 }, // Lupo Giga-Tech
-                { id: 170, qty: 3 }, // Comandante Cyber
+                { id: 359, qty: 2 }, // Re delle Macchine
+                { id: 960, qty: 3 }, // Mecha-Chiocciola
+                { id: 264, qty: 3 }, // Lupo Tecnologico
+                { id: 170, qty: 3 }, // Cyber Comandante
                 { id: 274, qty: 2 }, // Gradius
                 { id: 1122, qty: 2 }, // Scorpione d'Acciaio
-                { id: 257, qty: 2 }, // Golem Meccanico la Fortezza Mobile
-                { id: 137, qty: 1 }, // Soldato Cannone
+                { id: 257, qty: 2 }, // Golem-Ingranaggio, la Fortezza Movente
+                { id: 137, qty: 1 }, // Soldato-Cannone
                 { id: 994, qty: 1 }, // Cavaliere Robotico
                 { id: 223, qty: 1 }, // Tartaruga Elettromagnetica
                 { id: 153, qty: 1 }, // Notte Meccanica
-                { id: 358, qty: 1 }, // Fabbrica di Conversione Meccanica
-                { id: 350, qty: 1 }, // Rimozione del Limitatore
+                { id: 358, qty: 1 }, // Fabbrica di Macchine
+                { id: 350, qty: 1 }, // Rimozione di Limite
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 439, qty: 1 }, // Incantesimo Ombra
-                { id: 847, qty: 1 }, // Duplicazione Meccanica
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 439, qty: 1 }, // Magia Ombra
+                { id: 847, qty: 1 }, // Duplicazione di Macchine
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 359, qty: 2 }, // Re Macchina
+                { id: 359, qty: 2 }, // Re delle Macchine
                 { id: 994, qty: 2 }, // Cavaliere Robotico
-                { id: 957, qty: 1 }, // Guardiano della Sala del Trono
-                { id: 137, qty: 2 }, // Soldato Cannone
-                { id: 960, qty: 2 }, // Lumaca Meccanica
-                { id: 978, qty: 1 }, // Grotta dell'Orco d'Acciaio #2
-                { id: 929, qty: 1 }, // Grotta dell'Orco d'Acciaio #1
+                { id: 957, qty: 1 }, // Guardiano del Trono
+                { id: 137, qty: 2 }, // Soldato-Cannone
+                { id: 960, qty: 2 }, // Mecha-Chiocciola
+                { id: 978, qty: 1 }, // Orco d'Acciaio #2
+                { id: 929, qty: 1 }, // Orco d'Acciaio #1
                 { id: 975, qty: 2 }, // Overdrive
                 { id: 987, qty: 1 }, // Soldato Gadget
                 { id: 480, qty: 1 }, // Divoratempo
-                { id: 264, qty: 2 }, // Lupo Giga-Tech
+                { id: 264, qty: 2 }, // Lupo Tecnologico
                 { id: 997, qty: 1 }, // Inpachi
                 { id: 675, qty: 1 }, // Tartaruga UFO
                 { id: 394, qty: 1 }, // Carro Armato Oni T-34
                 { id: 153, qty: 2 }, // Notte Meccanica
-                { id: 358, qty: 1 }, // Fabbrica di Conversione Meccanica
-                { id: 350, qty: 1 }, // Rimozione del Limitatore
-                { id: 851, qty: 1 }, // Metalmorfosi Rara
-                { id: 847, qty: 1 }, // Duplicazione Meccanica
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 358, qty: 1 }, // Fabbrica di Macchine
+                { id: 350, qty: 1 }, // Rimozione di Limite
+                { id: 851, qty: 1 }, // Metamorfosi Rara
+                { id: 847, qty: 1 }, // Duplicazione di Macchine
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 240, qty: 1 }, // Ordini d'Attacco Finali
-                { id: 646, qty: 1 } // Tempesta Pesante
+                { id: 240, qty: 1 }, // Ordini di Attacco Finale
+                { id: 646, qty: 1 } // Tempesta Potente
             ],
             extra: []
         },
         hard: {
             main: [
-                { id: 359, qty: 2 }, // Re Macchina
+                { id: 359, qty: 2 }, // Re delle Macchine
                 { id: 994, qty: 2 }, // Cavaliere Robotico
-                { id: 957, qty: 1 }, // Guardiano della Sala del Trono
-                { id: 137, qty: 2 }, // Soldato Cannone
-                { id: 960, qty: 2 }, // Lumaca Meccanica
-                { id: 978, qty: 2 }, // Grotta dell'Orco d'Acciaio #2
-                { id: 929, qty: 1 }, // Grotta dell'Orco d'Acciaio #1
+                { id: 957, qty: 1 }, // Guardiano del Trono
+                { id: 137, qty: 2 }, // Soldato-Cannone
+                { id: 960, qty: 2 }, // Mecha-Chiocciola
+                { id: 978, qty: 2 }, // Orco d'Acciaio #2
+                { id: 929, qty: 1 }, // Orco d'Acciaio #1
                 { id: 975, qty: 2 }, // Overdrive
                 { id: 987, qty: 2 }, // Soldato Gadget
                 { id: 480, qty: 1 }, // Divoratempo
-                { id: 264, qty: 2 }, // Lupo Giga-Tech
+                { id: 264, qty: 2 }, // Lupo Tecnologico
                 { id: 997, qty: 1 }, // Inpachi
                 { id: 153, qty: 2 }, // Notte Meccanica
-                { id: 358, qty: 1 }, // Fabbrica di Conversione Meccanica
-                { id: 350, qty: 1 }, // Rimozione del Limitatore
-                { id: 851, qty: 1 }, // Metalmorfosi Rara
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 358, qty: 1 }, // Fabbrica di Macchine
+                { id: 350, qty: 1 }, // Rimozione di Limite
+                { id: 851, qty: 1 }, // Metamorfosi Rara
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 240, qty: 1 }, // Ordini d'Attacco Finali
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 382, qty: 1 }, // Forza dello Specchio
-                { id: 177, qty: 1 } // Alligatore Cyber-Tecnologico
+                { id: 240, qty: 1 }, // Ordini di Attacco Finale
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 382, qty: 1 }, // Forza Riflessa
+                { id: 177, qty: 1 } // Cyber-Alligatech
             ],
             extra: []
         }
@@ -6559,110 +6559,110 @@ const characterDeckDatabase = {
     // (che l'anime gli mostra potenziati dal Deck Master), Soldato Pinguino, Cavaliere Pinguino,
     // con Umi e l'Ondata Gelida del mare ghiacciato.
     crump: {
-        flagship: 260, // Gigantesco Serpente di Mare Rosso — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 260, // Serpente Marino Gigante Rosso — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 260, qty: 2 }, // Gigantesco Serpente di Mare Rosso
+                { id: 260, qty: 2 }, // Serpente Marino Gigante Rosso
                 { id: 1088, qty: 3 }, // Cavaliere Pinguino
-                { id: 126, qty: 3 }, // Pinguino Fulmine
+                { id: 126, qty: 3 }, // Pinguino Fulminante
                 { id: 250, qty: 3 }, // Pinguino Volante
                 { id: 592, qty: 1 }, // Soldato Pinguino
-                { id: 582, qty: 2 }, // Tartaruga Isola
-                { id: 935, qty: 2 }, // Tigre Tartaruga
-                { id: 904, qty: 1 }, // Stella Marina Corazzata
+                { id: 582, qty: 2 }, // Tarta-Isola
+                { id: 935, qty: 2 }, // Tartaruga-Tigre
+                { id: 904, qty: 1 }, // Stella Corazzata
                 { id: 247, qty: 1 }, // Pesce Volante
                 { id: 945, qty: 1 }, // Hyosube
-                { id: 958, qty: 1 }, // Gyojin dell'Alta Marea
+                { id: 958, qty: 1 }, // Gyojin della Marea
                 { id: 497, qty: 1 }, // Umi
                 { id: 159, qty: 1 }, // Ondata Gelida
                 { id: 791, qty: 1 }, // Coro Acquatico
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
                 { id: 704, qty: 1 }, // Salvataggio
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 875, qty: 1 } // Libro della Luna
             ],
             extra: []
         },
         medium: {
             main: [
-                { id: 260, qty: 2 }, // Gigantesco Serpente di Mare Rosso
+                { id: 260, qty: 2 }, // Serpente Marino Gigante Rosso
                 { id: 592, qty: 3 }, // Soldato Pinguino
                 { id: 1088, qty: 2 }, // Cavaliere Pinguino
                 { id: 250, qty: 2 }, // Pinguino Volante
-                { id: 126, qty: 2 }, // Pinguino Fulmine
-                { id: 956, qty: 1 }, // Tartaruga Gigante che si Nutre di Fiamme
-                { id: 702, qty: 1 }, // Mobius il Monarca del Gelo
-                { id: 582, qty: 2 }, // Tartaruga Isola
-                { id: 940, qty: 1 }, // Abitante degli Abissi
-                { id: 583, qty: 1 }, // Pesce dai 7 Colori
-                { id: 935, qty: 1 }, // Tigre Tartaruga
+                { id: 126, qty: 2 }, // Pinguino Fulminante
+                { id: 956, qty: 1 }, // Tartaruga Mangia-Fiamme
+                { id: 702, qty: 1 }, // Mobius il Monarca Glaciale
+                { id: 582, qty: 2 }, // Tarta-Isola
+                { id: 940, qty: 1 }, // Abitatore degli Abissi
+                { id: 583, qty: 1 }, // Pesce dei 7 Colori
+                { id: 935, qty: 1 }, // Tartaruga-Tigre
                 { id: 928, qty: 1 }, // Seadra Spinoso
-                { id: 958, qty: 1 }, // Gyojin dell'Alta Marea
+                { id: 958, qty: 1 }, // Gyojin della Marea
                 { id: 497, qty: 1 }, // Umi
                 { id: 159, qty: 1 }, // Ondata Gelida
                 { id: 79, qty: 1 }, // Un Oceano Leggendario
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 791, qty: 1 }, // Coro Acquatico
                 { id: 704, qty: 1 }, // Salvataggio
-                { id: 595, qty: 1 } // Il Guardiano Affidabile
+                { id: 595, qty: 1 } // Guardiano Affidabile
             ],
             extra: []
         },
         hard: {
             main: [
-                { id: 260, qty: 2 }, // Gigantesco Serpente di Mare Rosso
+                { id: 260, qty: 2 }, // Serpente Marino Gigante Rosso
                 { id: 592, qty: 3 }, // Soldato Pinguino
                 { id: 1088, qty: 2 }, // Cavaliere Pinguino
                 { id: 250, qty: 2 }, // Pinguino Volante
-                { id: 126, qty: 2 }, // Pinguino Fulmine
-                { id: 956, qty: 1 }, // Tartaruga Gigante che si Nutre di Fiamme
-                { id: 702, qty: 2 }, // Mobius il Monarca del Gelo
-                { id: 582, qty: 1 }, // Tartaruga Isola
-                { id: 940, qty: 1 }, // Abitante degli Abissi
-                { id: 583, qty: 1 }, // Pesce dai 7 Colori
+                { id: 126, qty: 2 }, // Pinguino Fulminante
+                { id: 956, qty: 1 }, // Tartaruga Mangia-Fiamme
+                { id: 702, qty: 2 }, // Mobius il Monarca Glaciale
+                { id: 582, qty: 1 }, // Tarta-Isola
+                { id: 940, qty: 1 }, // Abitatore degli Abissi
+                { id: 583, qty: 1 }, // Pesce dei 7 Colori
                 { id: 928, qty: 1 }, // Seadra Spinoso
-                { id: 958, qty: 1 }, // Gyojin dell'Alta Marea
+                { id: 958, qty: 1 }, // Gyojin della Marea
                 { id: 497, qty: 1 }, // Umi
                 { id: 159, qty: 1 }, // Ondata Gelida
                 { id: 79, qty: 1 }, // Un Oceano Leggendario
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
-                { id: 646, qty: 1 }, // Tempesta Pesante
+                { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 791, qty: 1 }, // Coro Acquatico
                 { id: 704, qty: 1 }, // Salvataggio
                 { id: 692, qty: 1 }, // Guerriero del Serpente Marino dell'Oscurità
-                { id: 382, qty: 1 }, // Forza dello Specchio
+                { id: 382, qty: 1 }, // Forza Riflessa
                 { id: 419, qty: 1 } // Anello della Distruzione
             ],
             extra: []
@@ -6680,29 +6680,29 @@ const characterDeckDatabase = {
             main: [
                 { id: 17, qty: 2 }, // Jinzo
                 { id: 1009, qty: 3 }, // Jinzo #7
-                { id: 960, qty: 3 }, // Lumaca Meccanica
+                { id: 960, qty: 3 }, // Mecha-Chiocciola
                 { id: 274, qty: 2 }, // Gradius
                 { id: 129, qty: 2 }, // Bowganian
-                { id: 170, qty: 2 }, // Comandante Cyber
+                { id: 170, qty: 2 }, // Cyber Comandante
                 { id: 1122, qty: 2 }, // Scorpione d'Acciaio
                 { id: 223, qty: 1 }, // Tartaruga Elettromagnetica
-                { id: 174, qty: 1 }, // Predone Cyber
+                { id: 174, qty: 1 }, // Predone Cibernetico
                 { id: 941, qty: 1 }, // Mago del Disco
-                { id: 264, qty: 1 }, // Lupo Giga-Tech
-                { id: 559, qty: 1 }, // Offerta Suprema
-                { id: 546, qty: 2 }, // Dian Keto la Maestra delle Cure
+                { id: 264, qty: 1 }, // Lupo Tecnologico
+                { id: 559, qty: 1 }, // Ultima Offerta
+                { id: 546, qty: 2 }, // Dian Keto il Curatore
                 { id: 297, qty: 1 }, // Hinotama
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 2 }, // Nega Attacco
+                { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 434, qty: 2 }, // Capro Espiatorio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 1 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 1 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
-                { id: 595, qty: 1 }, // Il Guardiano Affidabile
-                { id: 439, qty: 1 }, // Incantesimo Ombra
+                { id: 595, qty: 1 }, // Guardiano Affidabile
+                { id: 439, qty: 1 }, // Magia Ombra
                 { id: 631, qty: 1 }, // Megamorfosi
                 { id: 875, qty: 1 } // Libro della Luna
             ],
@@ -6712,37 +6712,37 @@ const characterDeckDatabase = {
             main: [
                 { id: 17, qty: 2 }, // Jinzo
                 { id: 889, qty: 2 }, // Iniezione della Fata Giglio
-                { id: 455, qty: 1 }, // Cancellatore di Magie
+                { id: 455, qty: 1 }, // Annullatore di Magia
                 { id: 1009, qty: 2 }, // Jinzo #7
                 { id: 480, qty: 1 }, // Divoratempo
-                { id: 960, qty: 2 }, // Lumaca Meccanica
-                { id: 174, qty: 2 }, // Predone Cyber
+                { id: 960, qty: 2 }, // Mecha-Chiocciola
+                { id: 174, qty: 2 }, // Predone Cibernetico
                 { id: 223, qty: 1 }, // Tartaruga Elettromagnetica
-                { id: 176, qty: 2 }, // Soldato Cyber del Mondo Oscuro
+                { id: 176, qty: 2 }, // Cyber-Soldato del Mondoscuro
                 { id: 941, qty: 1 }, // Mago del Disco
                 { id: 373, qty: 1 }, // MechanicalChaser
-                { id: 401, qty: 1 }, // Macchina a Pendolo
+                { id: 401, qty: 1 }, // Macchina Pendolo
                 { id: 274, qty: 1 }, // Gradius
                 { id: 129, qty: 1 }, // Bowganian
-                { id: 559, qty: 1 }, // Offerta Suprema
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 577, qty: 1 }, // Giusto Dessert
+                { id: 559, qty: 1 }, // Ultima Offerta
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 577, qty: 1 }, // L'hai Voluto tu!
                 { id: 297, qty: 1 }, // Hinotama
                 { id: 158, qty: 1 }, // Venditore di Bare
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 631, qty: 1 }, // Megamorfosi
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 880, qty: 1 } // Messaggero della Pace
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 880, qty: 1 } // Messaggero di Pace
             ],
             extra: []
         },
@@ -6750,36 +6750,36 @@ const characterDeckDatabase = {
             main: [
                 { id: 17, qty: 2 }, // Jinzo
                 { id: 889, qty: 2 }, // Iniezione della Fata Giglio
-                { id: 455, qty: 1 }, // Cancellatore di Magie
+                { id: 455, qty: 1 }, // Annullatore di Magia
                 { id: 1009, qty: 1 }, // Jinzo #7
                 { id: 480, qty: 2 }, // Divoratempo
-                { id: 960, qty: 2 }, // Lumaca Meccanica
-                { id: 174, qty: 2 }, // Predone Cyber
+                { id: 960, qty: 2 }, // Mecha-Chiocciola
+                { id: 174, qty: 2 }, // Predone Cibernetico
                 { id: 223, qty: 1 }, // Tartaruga Elettromagnetica
-                { id: 176, qty: 2 }, // Soldato Cyber del Mondo Oscuro
+                { id: 176, qty: 2 }, // Cyber-Soldato del Mondoscuro
                 { id: 941, qty: 1 }, // Mago del Disco
                 { id: 373, qty: 1 }, // MechanicalChaser
-                { id: 401, qty: 2 }, // Macchina a Pendolo
+                { id: 401, qty: 2 }, // Macchina Pendolo
                 { id: 129, qty: 1 }, // Bowganian
-                { id: 559, qty: 1 }, // Offerta Suprema
-                { id: 546, qty: 1 }, // Dian Keto la Maestra delle Cure
-                { id: 577, qty: 1 }, // Giusto Dessert
+                { id: 559, qty: 1 }, // Ultima Offerta
+                { id: 546, qty: 1 }, // Dian Keto il Curatore
+                { id: 577, qty: 1 }, // L'hai Voluto tu!
                 { id: 158, qty: 1 }, // Venditore di Bare
-                { id: 35, qty: 1 }, // Rinascita del Mostro
-                { id: 36, qty: 2 }, // Vaso dell'Avidità
-                { id: 272, qty: 1 }, // Carità Aggraziata
+                { id: 35, qty: 1 }, // Mostro Resuscitato
+                { id: 36, qty: 2 }, // Anfora dell'Avidità
+                { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
                 { id: 7, qty: 1 }, // Buco Nero
                 { id: 8, qty: 1 }, // Spada Rivelatrice
-                { id: 820, qty: 1 }, // Nega Attacco
+                { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 10, qty: 1 }, // Cilindro Magico
                 { id: 434, qty: 1 }, // Capro Espiatorio
                 { id: 631, qty: 1 }, // Megamorfosi
-                { id: 646, qty: 1 }, // Tempesta Pesante
-                { id: 880, qty: 1 }, // Messaggero della Pace
-                { id: 382, qty: 1 }, // Forza dello Specchio
-                { id: 707, qty: 1 } // Legame di Gravità
+                { id: 646, qty: 1 }, // Tempesta Potente
+                { id: 880, qty: 1 }, // Messaggero di Pace
+                { id: 382, qty: 1 }, // Forza Riflessa
+                { id: 707, qty: 1 } // Legame Gravitazionale
             ],
             extra: []
         }
@@ -7123,7 +7123,7 @@ function validaMazzoPersonaggio(personaggioId, livello, mazzo, flagshipId, cerca
     if (regole.deboliPrevalenti && forti > 0 && deboli <= forti) problemi.push(`mostri deboli non prevalenti (${deboli} deboli contro ${forti} più forti)`);
     if (origine === 'yu-gi-oh') {
         if (regole.serveSpadaRivelatrice && qty(SPADA_RIVELATRICE) === 0) problemi.push('manca la Spada Rivelatrice');
-        if (regole.serveUnaTra && !regole.serveUnaTra.some((id) => qty(id) > 0)) problemi.push('manca sia la Spada Rivelatrice sia Nega Attacco');
+        if (regole.serveUnaTra && !regole.serveUnaTra.some((id) => qty(id) > 0)) problemi.push('manca sia la Spada Rivelatrice sia Annulla Attacco');
     }
 
     return { problemi: problemi, stat: { totale, mostri, deboli, forti, grossi, distrugge, difensive, origine } };

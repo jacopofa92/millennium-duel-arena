@@ -254,7 +254,7 @@
             gameState[banishedKey] = (cfg.banished || []).map(buildLooseCard).filter(Boolean);
             // Mostri Fusione/Rituale (card.extraDeck === true, es. Drago
             // Bianco Definitivo id 29): vivono nell'Extra Deck, MAI in
-            // mano — solo così "Fusione"/id 38 (DuelEngine.getFusableExtraDeckMonsters)
+            // mano — solo così "Polimerizzazione"/id 38 (DuelEngine.getFusableExtraDeckMonsters)
             // li trova per una vera Evocazione Fusione, invece di finire
             // nel flusso di Evocazione Normale/Tributo (bloccato a parte
             // in attemptMonsterSummon, js/engine/actions.js, per card.extraDeck).

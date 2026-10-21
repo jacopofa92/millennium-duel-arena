@@ -2334,7 +2334,7 @@ function createSlotElement(owner, type, index, options = {}) {
     slotEl.onclick = () => {
         // Zona Extra Deck: normalmente solo consultabile (mai un bersaglio
         // di piazzamento — vi si arriva soprattutto tramite la Magia
-        // "Fusione", vedi ctx.fusionSummon in js/engine/duel-engine.js). MA
+        // "Polimerizzazione", vedi ctx.fusionSummon in js/engine/duel-engine.js). MA
         // alcuni Mostri Extra Deck (es. Cannone Drago XY/XYZ) si Special
         // Summonano bandendo materiali dal proprio Terreno SENZA passare
         // da nessuna Magia — per quelli, cliccare qui sulla propria zona

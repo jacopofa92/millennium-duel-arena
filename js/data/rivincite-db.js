@@ -72,7 +72,7 @@ const rivinciteDatabase = [
         giocatore: 'yamiYugi',
         avversario: 'pegasus',
         campo: 'arenaCastelloPegasus.jpg',
-        descrizione: 'Il Mondo dei Toon contro il Mago Nero, per l\'anima del nonno. Gioca come Yami Yugi.'
+        descrizione: 'Il Mondo Toon contro il Mago Nero, per l\'anima del nonno. Gioca come Yami Yugi.'
     },
     {
         id: 'kaiba-ishizu',

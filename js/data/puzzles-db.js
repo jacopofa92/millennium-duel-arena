@@ -39,8 +39,8 @@ const puzzlesDatabase = [
         descrizione: 'L\'avversario ha il campo vuoto e 2700 Life Point. Ti basta un attacco ben armato… o due.',
         suggerimento: 'Un\'Equipaggiamento rende più forte un mostro, ma ti resta anche l\'Evocazione Normale del turno.',
         lpAvversario: 2700,
-        mano: [618, 526],               // Ascia della Disperazione, Skull Servant
-        mostri: [[4, 'attacco']],       // Guerriero Celtico
+        mano: [618, 526],               // Ascia di Distruzione, Servitore del Teschio
+        mostri: [[4, 'attacco']],       // Guardiano Celtico
         avversario: {}
     },
     {
@@ -52,8 +52,8 @@ const puzzlesDatabase = [
         descrizione: 'Hai in mano due mostri troppo forti per essere evocati senza Tributi. L\'avversario ha 2600 Life Point.',
         suggerimento: 'Guarda il tuo Extra Deck: certi mostri non hanno bisogno di Tributi.',
         lpAvversario: 2600,
-        mano: [14, 15, 38],             // Gaia il Cavaliere Feroce, Maledizione del Drago, Fusione
-        extra: [254],                   // Gaia il Campione dei Draghi
+        mano: [14, 15, 38],             // Gaia il Cavaliere, Anatema del Drago, Fusione
+        extra: [254],                   // Gaia il Dragone
         avversario: {}
     },
     {
@@ -65,7 +65,7 @@ const puzzlesDatabase = [
         descrizione: 'Un Drago Bianco Occhi Blu ti sbarra la strada, e all\'avversario restano 2350 Life Point.',
         suggerimento: 'Il tuo mostro coperto ha un effetto FLIP: scoprilo con un\'Evocazione Flip.',
         lpAvversario: 2350,
-        mostri: [[23, 'coperto'], [24, 'attacco']],   // Insetto Divoratore, Elfi Gemelli
+        mostri: [[23, 'coperto'], [24, 'attacco']],   // Insetto Mangia-Uomini, Elfi Gemelli
         avversario: {
             mostri: [[1, 'attacco']]                  // Drago Bianco Occhi Blu
         }
@@ -79,7 +79,7 @@ const puzzlesDatabase = [
         descrizione: 'Il campo avversario è vuoto, se non fosse per una carta coperta. 2500 Life Point lo separano dalla sconfitta.',
         suggerimento: 'Attaccare alla cieca contro una Trappola coperta può costarti caro.',
         lpAvversario: 2500,
-        mano: [607],                    // Tifone dello Spazio Mistico
+        mano: [607],                    // Tifone Spaziale Mistico
         mostri: [[2, 'attacco']],       // Mago Nero
         avversario: {
             magieTrappole: [[10, 'coperta']]          // Cilindro Magico
@@ -94,7 +94,7 @@ const puzzlesDatabase = [
         descrizione: 'Non hai mostri, l\'avversario ne ha due e 3000 Life Point. In mano hai due Magie fortissime.',
         suggerimento: 'L\'ordine in cui giochi le carte conta quanto le carte stesse.',
         lpAvversario: 3000,
-        mano: [147, 409],               // Cambio di Cuore, Raigeki
+        mano: [147, 409],               // Cambiare Idea, Raigeki
         avversario: {
             mostri: [[1, 'attacco'], [24, 'attacco']] // Drago Bianco Occhi Blu, Elfi Gemelli
         }
@@ -105,14 +105,14 @@ const puzzlesDatabase = [
         emblema: '♻️',
         difficolta: 2,
         personaggio: 'kaiba',
-        descrizione: 'All\'avversario restano 3500 Life Point e un Guerriero Celtico. Nel tuo Cimitero riposa il Mago Nero.',
-        suggerimento: 'Rinascita del Mostro non guarda solo nel tuo Cimitero.',
+        descrizione: 'All\'avversario restano 3500 Life Point e un Guardiano Celtico. Nel tuo Cimitero riposa il Mago Nero.',
+        suggerimento: 'Mostro Resuscitato non guarda solo nel tuo Cimitero.',
         lpAvversario: 3500,
-        mano: [35],                     // Rinascita del Mostro
+        mano: [35],                     // Mostro Resuscitato
         mostri: [[24, 'attacco']],      // Elfi Gemelli
         cimitero: [2],                  // Mago Nero
         avversario: {
-            mostri: [[4, 'attacco']],   // Guerriero Celtico
+            mostri: [[4, 'attacco']],   // Guardiano Celtico
             cimitero: [1]               // Drago Bianco Occhi Blu
         }
     },
@@ -126,7 +126,7 @@ const puzzlesDatabase = [
         suggerimento: 'C\'è una carta che diventa più forte proprio quando sei in svantaggio.',
         lp: 1000,
         lpAvversario: 4000,
-        mano: [631, 618],               // Megamorfosi, Ascia della Disperazione
+        mano: [631, 618],               // Megamorfosi, Ascia di Distruzione
         mostri: [[2, 'attacco']],       // Mago Nero
         avversario: {}
     },
@@ -139,10 +139,10 @@ const puzzlesDatabase = [
         descrizione: 'Due carte coperte proteggono l\'avversario, che ha 3900 Life Point. Ti servono entrambi i tuoi attacchi.',
         suggerimento: 'Togliere una sola carta coperta non basta: l\'altra scatterebbe comunque.',
         lpAvversario: 3900,
-        mano: [607, 646],               // Tifone dello Spazio Mistico, Tempesta Pesante
-        mostri: [[2, 'attacco'], [4, 'attacco']],     // Mago Nero, Guerriero Celtico
+        mano: [607, 646],               // Tifone Spaziale Mistico, Tempesta Potente
+        mostri: [[2, 'attacco'], [4, 'attacco']],     // Mago Nero, Guardiano Celtico
         avversario: {
-            magieTrappole: [[382, 'coperta'], [10, 'coperta']]   // Forza dello Specchio, Cilindro Magico
+            magieTrappole: [[382, 'coperta'], [10, 'coperta']]   // Forza Riflessa, Cilindro Magico
         }
     },
     {
@@ -156,7 +156,7 @@ const puzzlesDatabase = [
     {
         id: 'tributo-dannati', titolo: 'Il prezzo della strada libera', emblema: '⚖️', difficolta: 2, personaggio: 'kaiba',
         descrizione: 'Il Drago Bianco domina il campo. Hai l\'attaccante per vincere, ma prima devi pagare il costo della rimozione.',
-        suggerimento: 'Tributo ai Dannati richiede una seconda carta da scartare prima di distruggere il bersaglio.',
+        suggerimento: 'Tributo al Dannato richiede una seconda carta da scartare prima di distruggere il bersaglio.',
         lpAvversario: 2500,
         mano: [492, 526],
         mostri: [[13, 'attacco']],

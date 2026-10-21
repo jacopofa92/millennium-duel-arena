@@ -12,12 +12,12 @@ const { giocaPartita } = require('./duello-senza-testa.js');
 
 const CAMPIONI = ['yamiYugi', 'joey', 'pegasus', 'mako', 'bakura'];
 const PIANI = {
-    priestSeto: ['Drago Bianco Definitivo'],
+    priestSeto: ['Drago Occhi Blu Finale'],
     highMageAtenza: ['Drago Nero Meteora'],
-    meadowMage: ['Gaia il Campione dei Draghi'],
-    highMageKepura: ['Gaia il Campione dei Draghi', 'Drago Nero Meteora'],
-    heishin: ['Drago Nero del Teschio'],
-    darkNite: ['Drago Nero Meteora', 'Drago Nero del Teschio']
+    meadowMage: ['Gaia il Dragone'],
+    highMageKepura: ['Gaia il Dragone', 'Drago Nero Meteora'],
+    heishin: ['Drago Teschio Nero'],
+    darkNite: ['Drago Nero Meteora', 'Drago Teschio Nero']
 };
 
 function argomento(nome, fallback) {

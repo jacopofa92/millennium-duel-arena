@@ -14,7 +14,7 @@
     const SIGNATURE_GATED = new Set([
         1, 2, 12, 123, 291,
         1133, // Golem di Lava: prima copia da Marik
-        1139, // Parassita Paracida: prima copia da Weevil
+        1139, // Insetto Parassita: prima copia da Weevil
         1250, 1251, 1252, 1253, 1254, 1255, 1256, 1257, 1258, 1259,
         1260, 1261, 1262, 1263, 1264, 1265, 1266, 1267, 1268, 1269,
         1270, 1271, 1272, 1273, 1274, 1275, 1276
@@ -405,7 +405,7 @@
                 ultra: 'rotazione settimanale (Ultra Rara) e Buste Leggendarie/tematiche',
                 legendary: 'rotazione ogni 2 settimane (Leggendaria) e fonti Premium o Busta Leggendaria al 5%'
             };
-            const fusionTheme = card && ((id >= 1141 && id <= 1160) || card.extraDeck || /fusione/i.test((card.name || '') + ' ' + (card.effect || '')))
+            const fusionTheme = card && ((id >= 1141 && id <= 1160) || card.extraDeck || /fusione|polimerizzazione/i.test((card.name || '') + ' ' + (card.effect || '')))
                 ? ' Può inoltre uscire dalla busta tematica Forgia delle Fusioni quando è in rotazione.' : '';
             return `Negozio: ${cadence[rarity] || 'fonte speciale indicata dalla rarità'}.${fusionTheme}`;
         }

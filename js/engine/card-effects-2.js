@@ -30,7 +30,7 @@
             const sacrificed = ctx.field(ctx.owner)[i];
             ctx.field(ctx.owner)[i] = null;
             ctx.graveyard(ctx.owner).push(sacrificed.card);
-            ctx.log(`🐛 Falena Piccola sacrificata per Special Summonare ${ctx.card.name}!`);
+            ctx.log(`🐛 Piccola Falena sacrificata per Special Summonare ${ctx.card.name}!`);
             return true;
         }
     });
@@ -63,7 +63,7 @@
             const sacrificed = ctx.field(ctx.owner)[i];
             ctx.field(ctx.owner)[i] = null;
             ctx.graveyard(ctx.owner).push(sacrificed.card);
-            ctx.log(`🐛 Falena Piccola sacrificata per Special Summonare ${ctx.card.name}!`);
+            ctx.log(`🐛 Piccola Falena sacrificata per Special Summonare ${ctx.card.name}!`);
             return true;
         }
     });
@@ -284,14 +284,14 @@
             if (targetIndex === -1) return;
             offerHandDiscardChoice(ctx, {
                 filter: (c) => c.type === 'spell',
-                title: '🔮 Chiron il Mago',
+                title: '🔮 Chiron il Saggio',
                 text: 'Scegli quale Magia scartare dalla mano.'
             }, (discarded) => {
                 const target = stField[targetIndex];
                 if (!target) return;
                 ctx.graveyard(ctx.opponent).push(target.card);
                 stField[targetIndex] = null;
-                ctx.log(`🔮 Chiron il Mago scarta ${discarded.name} e distrugge ${target.card.name} dell'avversario!`);
+                ctx.log(`🔮 Chiron il Saggio scarta ${discarded.name} e distrugge ${target.card.name} dell'avversario!`);
             });
         }
     });
@@ -299,7 +299,7 @@
     // ================================================================
     // 188 — Maga Oscura / Dark Magician Girl (buff continuo)
     // Guadagna 300 ATK per ogni "Mago Nero" nel Cimitero.
-    // SEMPLIFICAZIONE: l'effetto reale conta anche "Mago del Caos Nero",
+    // SEMPLIFICAZIONE: l'effetto reale conta anche "Mago del Chaos Oscuro",
     // carta non presente in questo database — qui conta solo "Mago Nero"
     // (id 2).
     // ================================================================
@@ -313,7 +313,7 @@
     // ================================================================
     // 191 — Saggio Oscuro / Dark Sage
     // Non può essere Evocato Normalmente/Set. Se hai indovinato il
-    // lancio di moneta dell'effetto di "Mago del Tempo" (id 28, già
+    // lancio di moneta dell'effetto di "Stregone del Tempo" (id 28, già
     // registrata — vedi gameState.timeWizardCoinResultFor lì, nuovo):
     // puoi sacrificare 1 "Mago Nero" (id 2) sul Terreno; Special Summon
     // questa carta dalla mano O DAL DECK — la parte "dal Deck" è
@@ -366,7 +366,7 @@
     // 'fieldSpell' in findTriggerCandidates (duel-engine.js), che prima
     // ne era del tutto priva — nessuna carta di questo dataset aveva mai
     // avuto bisogno di rispondere agli attacchi da lì.
-    // Prima clausola (interazione con "Destiny Board"/"Spirit Message")
+    // Prima clausola (interazione con "Tavola del Destino"/"Spirit Message")
     // ora implementata — vedi la registrazione di Destiny Board (id
     // 866) qui sotto in questo file, dove vive tutta la logica vera
     // (Santuario Oscuro stessa non ha bisogno di alcun hook proprio: è
@@ -438,15 +438,15 @@
                 if (!slot || slot.card.uid !== choice.card.uid) return;
                 if (slot.isFaceDown) {
                     slot.isFaceDown = false;
-                    ctx.log(`🔎 Rimuovi Magia rivela ${choice.card.name}!`);
+                    ctx.log(`🔎 Annulla Carta Magia rivela ${choice.card.name}!`);
                 }
                 if (choice.card.type !== 'spell') {
-                    ctx.log(`✨ Rimuovi Magia non ha effetto: ${choice.card.name} non è una Magia.`);
+                    ctx.log(`✨ Annulla Carta Magia non ha effetto: ${choice.card.name} non è una Magia.`);
                     return;
                 }
                 ctx.stField(choice.owner)[choice.index] = null;
                 ctx.graveyard(choice.owner).push(choice.card);
-                ctx.log(`✨ Rimuovi Magia distrugge ${choice.card.name}!`);
+                ctx.log(`✨ Annulla Carta Magia distrugge ${choice.card.name}!`);
             };
             if (!Decisioni.rispondeUnaPersona(ctx.owner)) {
                 // Euristica bot: preferisce un bersaglio SICURAMENTE una
@@ -459,7 +459,7 @@
             Decisioni.chiedi({
                 chi: ctx.owner,
                 candidati: candidates.map((c) => c.card),
-                titolo: '✨ Rimuovi Magia',
+                titolo: '✨ Annulla Carta Magia',
                 testo: 'Scegli 1 Magia scoperta, o 1 carta Set, da colpire.'
             }, (card) => {
                 if (card === null) return;
@@ -547,7 +547,7 @@
         activate(ctx) {
             const roll = 1 + Math.floor(ctx.random() * 6);
             if (window.FX) FX.playDiceRoll(roll);
-            ctx.log(`🎲 Dicelops lancia il dado: ${roll}!`);
+            ctx.log(`🎲 Dadociclope lancia il dado: ${roll}!`);
             if (roll === 1) {
                 if (ctx.hand(ctx.opponent).length > 0) {
                     const discarded = ctx.discardRandomFromHand(ctx.opponent);
@@ -679,7 +679,7 @@
             if (!finalSlot) return;
             const destroyedName = finalSlot.card.name;
             ctx.destroyMonster(decl.targetOwner, decl.targetIndex);
-            ctx.log(`🐉 Cacciatore di Draghi, evocato, distrugge ${destroyedName}!`);
+            ctx.log(`🐉 Cercatore di Draghi, evocato, distrugge ${destroyedName}!`);
         }
     });
 
@@ -762,7 +762,7 @@
                     }
                 });
             });
-            ctx.log(`💥 Aerosol Sterminatore distrugge ${count} most${count === 1 ? 'ro' : 'ri'} Tipo Insetto!`);
+            ctx.log(`💥 Spray distrugge ${count} most${count === 1 ? 'ro' : 'ri'} Tipo Insetto!`);
         }
     });
 
@@ -786,7 +786,7 @@
                     }
                 });
             });
-            ctx.log(`💥 Bandisci il Malvagio distrugge ${count} most${count === 1 ? 'ro' : 'ri'} Tipo Demone!`);
+            ctx.log(`💥 Esilio degli Spiriti distrugge ${count} most${count === 1 ? 'ro' : 'ri'} Tipo Demone!`);
         }
     });
 
@@ -922,7 +922,7 @@
             ctx.dealDamage(ctx.owner, 800);
             gameState.directAttackAllowedFor = gameState.directAttackAllowedFor || {};
             gameState.directAttackAllowedFor[ctx.card.uid] = true;
-            ctx.log('⚙️ Golem Meccanico la Fortezza Mobile paga 800 Life Points: può attaccare direttamente questo turno!');
+            ctx.log('⚙️ Golem-Ingranaggio, la Fortezza Movente paga 800 Life Points: può attaccare direttamente questo turno!');
         }
     });
 
@@ -994,7 +994,7 @@
                     }
                 });
             });
-            ctx.log(`🌪️ Turbine Gigante fa tornare in mano ${count} cart${count === 1 ? 'a' : 'e'} Magia/Trappola!`);
+            ctx.log(`🌪️ Ritorno Totale fa tornare in mano ${count} cart${count === 1 ? 'a' : 'e'} Magia/Trappola!`);
         }
     });
 
@@ -1024,7 +1024,7 @@
             const count = ctx.field('player').filter((s) => s).length + ctx.field('bot').filter((s) => s).length;
             const gain = count * 300;
             ctx.dealDamage(ctx.owner, -gain);
-            ctx.log(`👼 Dono dell'Elfa Mistica cura ${gain} Life Points (${count} mostri sul Terreno)!`);
+            ctx.log(`👼 Dono dell'Elfo Mistico cura ${gain} Life Points (${count} mostri sul Terreno)!`);
         }
     });
 
@@ -1085,14 +1085,14 @@
                 ctx.graveyard(ctx.owner).push(card);
                 discarded++;
             }
-            ctx.log(`💖 Carità Aggraziata pesca 3 carte e scarta ${discarded}!`);
+            ctx.log(`💖 Carità Graziosa pesca 3 carte e scarta ${discarded}!`);
         }
     });
 
     // ================================================================
     // 282 — Guardiano Falce del Terrore (Special Summon dalla mano)
     // Non può essere Evocata Normalmente/Set. Deve essere Special
-    // Summonata tramite il proprio effetto: se "Guardian Eatos" (id 523)
+    // Summonata tramite il proprio effetto: se "Guardiano Eatos" (id 523)
     // viene distrutta e mandata al tuo Cimitero, puoi Special Summonare
     // questa carta dalla mano.
     // SEMPLIFICAZIONE: la condizione diventa "hai Guardian Eatos nel tuo
@@ -1102,8 +1102,8 @@
     // Summonare altri mostri finché questa carta è in campo".
     // ================================================================
     // CORREZIONE di fedeltà: entrambe le dipendenze della nota precedente
-    // sono in realtà già presenti nel database ("Guardian Eatos" id 523,
-    // "Falce del Mietitore - Falce del Terrore" id 411) — nota obsoleta.
+    // sono in realtà già presenti nel database ("Guardiano Eatos" id 523,
+    // "Falce del Mietitore" id 411) — nota obsoleta.
     // Aggiunto l'effetto mancante "se Special Summonata: puoi equipaggiare
     // 1 Falce del Mietitore - Falce del Terrore dal Deck a questa carta"
     // (stesso schema di attachEquip/equippedTarget, id 411).
@@ -1128,7 +1128,7 @@
         if (!discarded) return;
         const [card] = grave.splice(index, 1);
         ctx.specialSummon(ctx.owner, card, slotIndex, 'attack', 'graveyard');
-        ctx.log(`🔪 Guardiano Falce del Terrore scarta ${discarded.name}: torna in campo dal Cimitero!`);
+        ctx.log(`🔪 Falce del Terrore Guardiana scarta ${discarded.name}: torna in campo dal Cimitero!`);
     }
     CardEffects.register(282, {
         cannotNormalSummon: true,
@@ -1151,7 +1151,7 @@
             scytheCard.equippedToIndex = ownIndex;
             scytheCard.equippedToUid = ctx.card.uid;
             ctx.stField(ctx.owner)[freeStSlot] = { card: scytheCard, isFaceDown: false, setOnTurn: gameState.turn };
-            ctx.log(`🔪 Guardiano Falce del Terrore equipaggia ${scytheCard.name} dal Deck!`);
+            ctx.log(`🔪 Falce del Terrore Guardiana equipaggia ${scytheCard.name} dal Deck!`);
         },
         onDestroy: guardianFalceReviveFromGraveyard,
         onSacrificedForTribute: guardianFalceReviveFromGraveyard
@@ -1181,7 +1181,7 @@
                         count++;
                     }
                 });
-                ctx.log(`🪶 Piumino delle Arpie distrugge ${count} cart${count === 1 ? 'a' : 'e'} Magia/Trappola dell'avversario!`);
+                ctx.log(`🪶 Spolverino dell'Arpia distrugge ${count} cart${count === 1 ? 'a' : 'e'} Magia/Trappola dell'avversario!`);
             };
             if (window.FX && typeof FX.playHarpiesFeatherDuster === 'function') {
                 FX.playHarpiesFeatherDuster(ctx.opponent, resolve);
@@ -1221,7 +1221,7 @@
         activate(ctx) {
             gameState.monsterEffectsNegatedUntilEndOfTurnFor = gameState.monsterEffectsNegatedUntilEndOfTurnFor || {};
             gameState.monsterEffectsNegatedUntilEndOfTurnFor[ctx.opponent] = true;
-            ctx.log('🌪️ Tempesta di Piume delle Arpie annulla tutti gli effetti Mostro dell\'avversario fino alla fine del turno!');
+            ctx.log('🌪️ Tempesta di Piume dell\'Arpia annulla tutti gli effetti Mostro dell\'avversario fino alla fine del turno!');
         },
         onSTDestroyed(ctx) {
             if (!ctx.wasFaceDown || !ctx.destroyedByOwner || ctx.destroyedByOwner === ctx.owner) return;
@@ -1297,7 +1297,7 @@
             const candidati = collectFieldTargets(ctx, { zone: 'monster', owner: 'self' });
             if (candidati.length === 0) return;
             chooseFieldCardTarget(ctx, candidati, {
-                title: '🌀 Trasportatore di Materia Interdimensionale',
+                title: '🌀 Teletrasportatore',
                 dichiara: true,
                 text: 'Scegli quale tuo mostro bandire fino alla End Phase.'
             }, (scelto) => {
@@ -1305,7 +1305,7 @@
                 if (blockBanishFromField(ctx, banished)) return;
                 ctx.field(scelto.owner)[scelto.index] = null;
                 ctx.banishTemporarily(scelto.owner, banished, 'endphase');
-                ctx.log(`🌀 Trasportatore di Materia Interdimensionale bandisce ${banished.name} fino alla End Phase!`);
+                ctx.log(`🌀 Teletrasportatore bandisce ${banished.name} fino alla End Phase!`);
             });
         }
     });
@@ -1339,7 +1339,7 @@
 
     // ================================================================
     // 322 — Kaitoptera
-    // Effetto Ignition: durante il proprio Main Phase, cerca "Fusione"
+    // Effetto Ignition: durante il proprio Main Phase, cerca "Polimerizzazione"
     // (id 38) dal Deck alla mano — stesso ctx.searchDeckToHand già usato
     // da id 533. "Se il tuo avversario controlla 2+ mostri scoperti
     // (eccetto VENTO), quei mostri non possono bersagliarla in attacco":
@@ -1501,7 +1501,7 @@
 
     // ================================================================
     // 343 — Guardiano di Lava / Lava Battleguard (buff continuo)
-    // Guadagna 500 ATK per ogni "Guardiano della Palude" (id 74) che
+    // Guadagna 500 ATK per ogni "Guardiano delle Paludi" (id 74) che
     // controlli — speculare dell'id 74 qui sopra.
     // ================================================================
     CardEffects.register(343, {
@@ -1576,19 +1576,19 @@
         onDestroy(ctx) {
             const isNormalSpellcaster = (c) => c.type === 'monster' && c.vanilla && c.race === 'Incantatore';
             const openedFromDeck = searchDeckWithChoice(ctx, isNormalSpellcaster, {
-                title: '🃏 Legion il Giullare Demoniaco',
+                title: '🃏 Legione Demone Giullare',
                 text: 'Scegli quale Incantatore Normale aggiungere alla mano dal Deck.'
             }, (card) => {
                 ctx.hand(ctx.owner).push(card);
-                ctx.log(`🃏 Legion il Giullare Demoniaco aggiunge ${card.name} alla mano dal Deck!`);
+                ctx.log(`🃏 Legione Demone Giullare aggiunge ${card.name} alla mano dal Deck!`);
             });
             if (openedFromDeck) return;
             searchGraveyardWithChoice(ctx, ctx.owner, isNormalSpellcaster, {
-                title: '🃏 Legion il Giullare Demoniaco',
+                title: '🃏 Legione Demone Giullare',
                 text: 'Scegli quale Incantatore Normale aggiungere alla mano dal Cimitero.'
             }, (card) => {
                 ctx.hand(ctx.owner).push(card);
-                ctx.log(`🃏 Legion il Giullare Demoniaco aggiunge ${card.name} alla mano dal Cimitero!`);
+                ctx.log(`🃏 Legione Demone Giullare aggiunge ${card.name} alla mano dal Cimitero!`);
             });
         },
         canActivate(ctx) {
@@ -1616,7 +1616,7 @@
             if (slotIndex === -1) return;
             hand.splice(handIndex, 1);
             field[slotIndex] = { card: summonedCard, position: 'attack', isFaceDown: false, hasAttacked: false, canChangePosition: true, summonedOnTurn: gameState.turn };
-            ctx.log(`🎭 Legion il Giullare Demoniaco: Evocazione Tributo extra di ${summonedCard.name}!`);
+            ctx.log(`🎭 Legione Demone Giullare: Evocazione Tributo extra di ${summonedCard.name}!`);
             DuelEngine.fireTrigger(DuelEngine.TRIGGER.ON_NORMAL_SUMMON, DuelEngine.makeContext(ctx.owner, { summonedCard: summonedCard, summonedSlotIndex: slotIndex, summonedPosition: 'attack' }));
         }
     });
@@ -1639,7 +1639,7 @@
                 }
             });
             if (count > 0) ctx.dealDamage(ctx.opponent, count * 500);
-            ctx.log(`🏹 Freccia Spezza-Magie distrugge ${count} Magi${count === 1 ? 'a' : 'e'} e infligge ${count * 500} danni!`);
+            ctx.log(`🏹 Freccia Spezza-Magia distrugge ${count} Magi${count === 1 ? 'a' : 'e'} e infligge ${count * 500} danni!`);
         }
     });
 
@@ -1720,7 +1720,7 @@
         },
         activate(ctx) {
             ctx.dealDamage(ctx.opponent, 1000);
-            ctx.log(`☄️ Meteora della Distruzione infligge 1000 danni!`);
+            ctx.log(`☄️ Meteora Della Morte infligge 1000 danni!`);
         }
     });
 
@@ -1745,7 +1745,7 @@
                     count++;
                 }
             });
-            ctx.log(`🔮 Forza dello Specchio distrugge ${count} mostr${count === 1 ? 'o' : 'i'} in Posizione di Attacco!`);
+            ctx.log(`🔮 Forza Riflessa distrugge ${count} mostr${count === 1 ? 'o' : 'i'} in Posizione di Attacco!`);
         }
     });
 
@@ -1772,7 +1772,7 @@
     CardEffects.register(383, {
         continuous: true,
         activate(ctx) {
-            ctx.log('🪞 Muro dello Specchio attivato: ogni mostro avversario che attacca da qui in poi avrà l\'ATK dimezzato finché resta in campo!');
+            ctx.log('🪞 Muro a Specchio attivato: ogni mostro avversario che attacca da qui in poi avrà l\'ATK dimezzato finché resta in campo!');
         },
         onAttackDeclare(ctx) {
             const attackerSlot = ctx.field(ctx.attackerOwner)[ctx.attackerIndex];
@@ -1794,11 +1794,11 @@
             const lpKey = Tavolo.chiave(ctx.owner, 'LP');
             if (gameState[lpKey] > 2000) {
                 gameState[lpKey] -= 2000;
-                ctx.log(`🪞 Muro dello Specchio: ${ctx.owner === 'player' ? 'paghi' : 'il bot paga'} 2000 Life Points per mantenerlo in campo.`);
+                ctx.log(`🪞 Muro a Specchio: ${ctx.owner === 'player' ? 'paghi' : 'il bot paga'} 2000 Life Points per mantenerlo in campo.`);
             } else {
                 ctx.stField(ctx.owner)[ctx.index] = null;
                 ctx.graveyard(ctx.owner).push(ctx.card);
-                ctx.log('🪞 Muro dello Specchio: Life Points insufficienti per il mantenimento, si autodistrugge.');
+                ctx.log('🪞 Muro a Specchio: Life Points insufficienti per il mantenimento, si autodistrugge.');
             }
         }
     });
@@ -1961,7 +1961,7 @@
     // ================================================================
     // 415 — Vincoli Recisi / Release Restraint (Magia Normale)
     // Sacrifica 1 "Gearfried il Cavaliere di Ferro" (id 16) scoperto;
-    // Special Summon 1 "Gearfried il Maestro di Spada" (id 258) dalla
+    // Special Summon 1 "Spadaccino Sacro - Gearfried il Cavaliere di Ferro" (id 258) dalla
     // mano o dal Deck.
     // SEMPLIFICAZIONE: la ricerca dal Deck funziona solo se esiste un
     // Deck reale — stesso limite di Sepoltura Sciocca (id 251).
@@ -2000,7 +2000,7 @@
                 ctx.gameState[countKey] = deck.length;
             }
             ctx.specialSummon(ctx.owner, card, slotIndex, 'attack', 'hand');
-            ctx.log('⚔️ Vincoli Recisi evoca Gearfried il Maestro di Spada!');
+            ctx.log('⚔️ Rimozione della Restrizione evoca Spadaccino Sacro - Gearfried il Cavaliere di Ferro!');
         }
     });
 
@@ -2013,7 +2013,7 @@
     // una Carta Equipaggiamento: distruggi 1 mostro dell'avversario
     // (onEquipped, riusabile — vedi attachEquip più in alto in questo
     // file). CORREZIONE: la nota precedente affermava erroneamente che
-    // "Vincoli Recisi" non fosse presente in questo database — falso,
+    // "Rimozione della Restrizione" non fosse presente in questo database — falso,
     // esiste già come id 415 (e la aveva già implementata per intero).
     // SEMPLIFICAZIONE: sceglie da sola il bersaglio da distruggere (il
     // più forte disponibile, priorità a quelli scoperti).
@@ -2037,13 +2037,13 @@
             if (!targetSlot) return;
             const name = targetSlot.isFaceDown ? 'una carta coperta' : targetSlot.card.name;
             ctx.destroyMonster(decl.targetOwner, decl.targetIndex);
-            ctx.log(`⚔️ Gearfried il Maestro di Spada, appena equipaggiata, distrugge ${name}!`);
+            ctx.log(`⚔️ Spadaccino Sacro - Gearfried il Cavaliere di Ferro, appena equipaggiata, distrugge ${name}!`);
         }
     });
 
     // ================================================================
     // 416 — Abbandonato / Relinquished
-    // Ritual Summonabile tramite "Rito dell'Illusione Nera" (id 116, già
+    // Ritual Summonabile tramite "Rito Illusione Nera" (id 116, già
     // registrata) — vedi anche fusionMaterials/ritualMaterials più in
     // basso in questo file per come 116 la evoca.
     // Effetto Ignition dalla zona Mostro (una volta per turno, come
@@ -2085,7 +2085,7 @@
             }
             if (candidati.length === 0) return;
             chooseFieldCardTarget(ctx, candidati, {
-                title: '🌀 Abbandonato',
+                title: '🌀 Abbandono',
                 text: 'Scegli quale mostro avversario assorbire: ne copierai ATK e DEF.'
             }, (scelto) => {
                 const decl = ctx.declareTarget(scelto.owner, scelto.index, { totalTargetCount: 1 });
@@ -2096,7 +2096,7 @@
                 ctx.field(decl.targetOwner)[decl.targetIndex] = null;
                 ctx.card._relinquishedTarget = absorbed;
                 ctx.card._relinquishedFromOwner = decl.targetOwner;
-                ctx.log(`🌀 Abbandonato assorbe ${absorbed.name} dal campo avversario!`);
+                ctx.log(`🌀 Abbandono assorbe ${absorbed.name} dal campo avversario!`);
             });
         },
         static(ctx) {
@@ -2137,7 +2137,7 @@
             ctx.graveyard(owner).push(absorbed);
             ctx.card._relinquishedTarget = null;
             ctx.card._redirectBattleDamageToOpponent = true;
-            ctx.log(`🌀 Abbandonato sopravvive: ${absorbed.name} viene distrutto al suo posto!`);
+            ctx.log(`🌀 Abbandono sopravvive: ${absorbed.name} viene distrutto al suo posto!`);
             return true;
         }
     });
@@ -2196,7 +2196,7 @@
     CardEffects.register(271, {
         activate(ctx) {
             gameState.defenseMonsterEffectsNegated = true;
-            ctx.log('👁️ Occhio di Gorgone annulla gli effetti di tutti i mostri in Posizione di Difesa fino a fine turno!');
+            ctx.log('👁️ L\'Occhio della Gorgone annulla gli effetti di tutti i mostri in Posizione di Difesa fino a fine turno!');
         }
     });
 
@@ -2239,7 +2239,7 @@
 
     // ================================================================
     // 482 — Maschera Toon / Toon Mask (Trappola Normale)
-    // Se controlli "Mondo dei Toon" scoperto: scegli 1 mostro scoperto
+    // Se controlli "Mondo Toon" scoperto: scegli 1 mostro scoperto
     // dell'avversario; Special Summon 1 mostro Toon (identificato dal nome
     // — nessun campo dedicato nel database, ma ogni vero mostro Toon di
     // questo dataset lo ha nel nome, es. "Alligatore Toon") dalla mano o
@@ -2353,7 +2353,7 @@
 
     // ================================================================
     // 430 — Pietra del Saggio / Sage's Stone (Magia Normale)
-    // Se controlli scoperta "Maga Oscura" (id 188): Special Summon 1
+    // Se controlli scoperta "Ragazza Maga Nera" (id 188): Special Summon 1
     // "Mago Nero" (id 2) dalla mano o dal Deck.
     // SEMPLIFICAZIONE: la ricerca dal Deck funziona solo se esiste un
     // Deck reale — stesso limite di Sepoltura Sciocca (id 251).
@@ -2487,7 +2487,7 @@
     CardEffects.register(446, {
         onDestroy(ctx) {
             ctx.dealDamage(ctx.owner, -1000); // dealDamage negativo = cura
-            ctx.log('🐞 Coccinella Marchio Teschio, mandata al Cimitero, cura 1000 Life Points!');
+            ctx.log('🐞 Coccinella dal Dorso a Teschio, mandata al Cimitero, cura 1000 Life Points!');
         }
     });
 
@@ -2517,7 +2517,7 @@
                     banished++;
                 }
             });
-            ctx.log(`👻 Rilascio dell'Anima bandisce ${banished} cart${banished === 1 ? 'a' : 'e'} dai Cimiteri!`);
+            ctx.log(`👻 Rilascio delle Anime bandisce ${banished} cart${banished === 1 ? 'a' : 'e'} dai Cimiteri!`);
         }
     });
 
@@ -2535,7 +2535,7 @@
             const candidati = collectFieldTargets(ctx, { zone: 'monster', owner: 'opponent' });
             if (candidati.length === 0) return;
             chooseFieldCardTarget(ctx, candidati, {
-                title: '💀 Cacciatore di Anime',
+                title: '💀 Ruba-Anime',
                 text: 'Scegli quale mostro avversario distruggere.'
             }, (scelto) => {
                 // declareTarget resta: e' il checkpoint condiviso che
@@ -2548,7 +2548,7 @@
                     const name = target ? target.card.name : scelto.card.name;
                     ctx.destroyMonster(decl.targetOwner, decl.targetIndex);
                     ctx.dealDamage(ctx.opponent, -1000);
-                    ctx.log(`💀 Cacciatore di Anime distrugge ${name}, l'avversario guadagna 1000 Life Points!`);
+                    ctx.log(`💀 Ruba-Anime distrugge ${name}, l'avversario guadagna 1000 Life Points!`);
                 });
             });
         }
@@ -2602,7 +2602,7 @@
             if (blockBanishFromField(ctx, banished)) return;
             field[ctx.index] = null;
             ctx.banishTemporarily(ctx.owner, banished, 'endphase');
-            ctx.log("🥷 Ninja d'Assalto bandisce 2 mostri OSCURITÀ dal Cimitero e si bandisce fino alla End Phase!");
+            ctx.log("🥷 Ninja Fulmineo bandisce 2 mostri OSCURITÀ dal Cimitero e si bandisce fino alla End Phase!");
         }
     });
 
@@ -2634,13 +2634,13 @@
             const index = field.findIndex((slot, i) => slot && i !== ctx.slotIndex);
             if (index === -1) {
                 ctx.destroyMonster(ctx.owner, ctx.slotIndex);
-                ctx.log("👸 L'Amazzone Ostile non ha nessun altro mostro da sacrificare: si distrugge da sola!");
+                ctx.log("👸 L'Amazzone Scorbutica non ha nessun altro mostro da sacrificare: si distrugge da sola!");
                 return;
             }
             const sacrificed = field[index];
             field[index] = null;
             ctx.graveyard(ctx.owner).push(sacrificed.card);
-            ctx.log(`👸 L'Amazzone Ostile sacrifica ${sacrificed.card.name} durante la Standby Phase!`);
+            ctx.log(`👸 L'Amazzone Scorbutica sacrifica ${sacrificed.card.name} durante la Standby Phase!`);
         }
     });
 
@@ -2921,7 +2921,7 @@
         },
         activate(ctx) {
             offerHandDiscardChoice(ctx, {
-                title: '⚰️ Tributo ai Dannati',
+                title: '⚰️ Tributo al Dannato',
                 text: 'Scegli quale carta scartare dalla mano.'
             }, (discarded) => {
                 const field = ctx.field(ctx.opponent);
@@ -2932,7 +2932,7 @@
                     const target = ctx.field(decl.targetOwner)[decl.targetIndex];
                     const name = target ? target.card.name : field[index].card.name;
                     ctx.destroyMonster(decl.targetOwner, decl.targetIndex);
-                    ctx.log(`⚰️ Tributo ai Dannati scarta ${discarded.name} e distrugge ${name}!`);
+                    ctx.log(`⚰️ Tributo al Dannato scarta ${discarded.name} e distrugge ${name}!`);
                 });
             });
         }

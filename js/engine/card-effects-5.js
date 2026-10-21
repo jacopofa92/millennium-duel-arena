@@ -78,8 +78,8 @@
             ctx.destroyMonster(decl.targetOwner, decl.targetIndex);
             const alsoBanished = ctx.banishFromGraveyard(decl.targetOwner, card);
             ctx.log(alsoBanished
-                ? `⚔️ Nobile del Depistaggio distrugge e bandisce ${card.name}!`
-                : `⚔️ Nobile del Depistaggio distrugge ${card.name}!`);
+                ? `⚔️ Nobiluomo dello Scambio distrugge e bandisce ${card.name}!`
+                : `⚔️ Nobiluomo dello Scambio distrugge ${card.name}!`);
             if (!wasFlipMonster) return;
             // Istantanea PRIMA del bando (per la rivelazione): il vero
             // testo mostra il Deck completo, poi bandisce quello che
@@ -96,7 +96,7 @@
                     if (idx !== -1) { deck.splice(idx, 1); ctx.banish(owner, c); }
                 });
                 gameState[Tavolo.chiave(owner, 'DeckCount')] = deck.length;
-                ctx.log(`⚔️ Nobile del Depistaggio bandisce ${matches.length} copi${matches.length === 1 ? 'a' : 'e'} di ${card.name} dal Deck ${owner === 'player' ? 'tuo' : 'del bot'}!`);
+                ctx.log(`⚔️ Nobiluomo dello Scambio bandisce ${matches.length} copi${matches.length === 1 ? 'a' : 'e'} di ${card.name} dal Deck ${owner === 'player' ? 'tuo' : 'del bot'}!`);
             });
             // I due box si mostrano IN SEQUENZA (il secondo si apre solo
             // alla chiusura del primo): openCardListPicker chiude sempre
@@ -109,7 +109,7 @@
                         chi: ctx.owner,
                         tipo: 'presa-visione',
                         candidati: revealSnapshots.bot,
-                        titolo: '⚔️ Nobile del Depistaggio',
+                        titolo: '⚔️ Nobiluomo dello Scambio',
                         testo: "Il Deck dell'avversario (rivelato per cercare altre copie).",
                         vuota: "Il Deck dell'avversario è vuoto."
                     }, () => {});
@@ -118,7 +118,7 @@
                     chi: ctx.owner,
                     tipo: 'presa-visione',
                     candidati: revealSnapshots.player,
-                    titolo: '⚔️ Nobile del Depistaggio',
+                    titolo: '⚔️ Nobiluomo dello Scambio',
                     testo: 'Il tuo Deck (rivelato per cercare altre copie).',
                     vuota: 'Il tuo Deck è vuoto.'
                 }, showBotDeck);
@@ -199,7 +199,7 @@
     // Pesca 1 carta. Corretta in questa sessione (audit generale sui
     // duplicati, stesso metodo che ha trovato id 392/820): una sessione
     // precedente l'aveva "corretta" da Trappola/pesca-1 a Magia/pesca-2,
-    // ragionando che il nome italiano "Vaso dell'Ingordigia" traduce
+    // ragionando che il nome italiano "Giara della Cupidigia" traduce
     // letteralmente "Pot of Greed" — ma "Vaso"/"Ingordigia" non
     // distinguono Pot da Jar in italiano, e i commenti nei vari mazzi
     // Structure Deck di questo stesso dataset (js/data/
@@ -213,7 +213,7 @@
     CardEffects.register(635, {
         activate(ctx) {
             ctx.drawCards(ctx.owner, 1);
-            ctx.log("🏺 Vaso dell'Ingordigia pesca 1 carta!");
+            ctx.log("🏺 Giara della Cupidigia pesca 1 carta!");
         }
     });
 
@@ -238,9 +238,9 @@
         },
         activate(ctx) {
             if (ctx.negateActivation()) {
-                ctx.log("⚡ Campo di Riryoku annulla e distrugge l'attivazione della Magia avversaria!");
+                ctx.log("⚡ Terreno Riryoku annulla e distrugge l'attivazione della Magia avversaria!");
             } else {
-                ctx.log('⚡ Campo di Riryoku non trova più nulla da annullare.');
+                ctx.log('⚡ Terreno Riryoku non trova più nulla da annullare.');
             }
         }
     });
@@ -267,7 +267,7 @@
             });
             gameState.raceOverrideFloodgateFor = gameState.raceOverrideFloodgateFor || {};
             gameState.raceOverrideFloodgateFor[ctx.owner] = 'Drago';
-            ctx.log(`🐲 Tribù dei D. rende ${count} mostr${count === 1 ? 'o' : 'i'} Tipo Drago!`);
+            ctx.log(`🐲 Tribù D. rende ${count} mostr${count === 1 ? 'o' : 'i'} Tipo Drago!`);
         }
     });
 
@@ -290,7 +290,7 @@
             if (index === -1) return false;
             ctx.graveyard(ctx.owner).push(field[index].card);
             field[index] = null;
-            ctx.log('🐉 Drago Oscurità Occhi Rossi sacrifica Drago Nero Occhi Rossi per essere Special Summonato!');
+            ctx.log('🐉 Drago Oscuro Occhi Rossi sacrifica Drago Nero Occhi Rossi per essere Special Summonato!');
             return true;
         },
         static(ctx) {
@@ -511,7 +511,7 @@
             // Dalla MANO: il Cimitero qui sopra riceve Cucciolo del Drago
             // Nero, cioe' il costo, non il Drago evocato.
             ctx.specialSummon(ctx.owner, redEyes, slotIndex, 'attack', 'hand');
-            ctx.log('🥚 Cucciolo del Drago Nero si sacrifica e Special Summona Drago Nero Occhi Rossi!');
+            ctx.log('🥚 Cucciolo di Occhi-Rossi si sacrifica e Special Summona Drago Nero Occhi Rossi!');
         }
     });
 
@@ -611,7 +611,7 @@
                 if (slot && !slot.isFaceDown) candidati.push({ owner: ctx.opponent, index, card: slot.card });
             });
             chooseFieldMonsterTarget(ctx, candidati, {
-                title: '🦹 Furto Improvviso',
+                title: '🦹 Strappa Possesso',
                 text: 'Scegli quale mostro avversario rubare (controllo permanente).',
                 dichiara: true
             }, (scelta) => {
@@ -620,14 +620,14 @@
                 const stolen = targetSlot.card;
                 if (ctx.takeControl(ctx.owner, scelta.owner, scelta.index, true)) {
                     ctx.card.snatchStealTargetUid = stolen.uid;
-                    ctx.log(`🦹 Furto Improvviso prende il controllo permanente di ${stolen.name}!`);
+                    ctx.log(`🦹 Strappa Possesso prende il controllo permanente di ${stolen.name}!`);
                 }
             });
         },
         onOpponentStandbyPhase(ctx) {
             if (!ctx.card.snatchStealTargetUid) return;
             ctx.dealDamage(ctx.standbyOwner, -1000);
-            ctx.log('🦹 Furto Improvviso: il proprietario originale guadagna 1000 Life Points!');
+            ctx.log('🦹 Strappa Possesso: il proprietario originale guadagna 1000 Life Points!');
         },
         static(ctx) {
             if (!ctx.card.snatchStealTargetUid) return;
@@ -635,7 +635,7 @@
             if (!stillControlled) {
                 ctx.stField(ctx.owner)[ctx.index] = null;
                 ctx.graveyard(ctx.owner).push(ctx.card);
-                ctx.log('🦹 Furto Improvviso va al Cimitero: il mostro rubato ha lasciato il Terreno.');
+                ctx.log('🦹 Strappa Possesso va al Cimitero: il mostro rubato ha lasciato il Terreno.');
             }
         }
     });
@@ -660,7 +660,7 @@
                         count++;
                     });
                 });
-                ctx.log(`🌪️ Tempesta Pesante distrugge ${count} cart${count === 1 ? 'a' : 'e'} Magia/Trappola!`);
+                ctx.log(`🌪️ Tempesta Potente distrugge ${count} cart${count === 1 ? 'a' : 'e'} Magia/Trappola!`);
             };
             if (window.FX && typeof FX.playHeavyStorm === 'function') {
                 FX.playHeavyStorm(resolveStorm);
@@ -695,7 +695,7 @@
             const candidati = collectFieldTargets(ctx, { zone: 'st', includiCoperte: true });
             if (candidati.length === 0) return;
             chooseFieldCardTarget(ctx, candidati, {
-                title: '🐾 Distruzione con Zampata',
+                title: '🐾 Distruzione Schiacciante',
                 text: 'Scegli quale Magia/Trappola distruggere: il suo controllore subisce 500 danni.'
             }, (scelto) => {
                 const slot = ctx.stField(scelto.owner)[scelto.index];
@@ -703,7 +703,7 @@
                 ctx.stField(scelto.owner)[scelto.index] = null;
                 ctx.graveyard(scelto.owner).push(scelto.card);
                 ctx.dealDamage(scelto.owner, 500);
-                ctx.log(`🐾 Distruzione con Zampata distrugge ${scelto.card.name} e infligge 500 danni!`);
+                ctx.log(`🐾 Distruzione Schiacciante distrugge ${scelto.card.name} e infligge 500 danni!`);
             });
         }
     });
@@ -750,12 +750,12 @@
             const oppCtx = DuelEngine.makeContext(ctx.opponent, { card: ctx.card });
 
             chooseFieldMonsterTarget(ownCtx, ownCandidates, {
-                title: '🔃 Scambio di Creature',
+                title: '🔃 Scambio-Creature',
                 text: 'Scegli quale dei TUOI mostri cedere all\'avversario.',
                 dichiara: true
             }, (ownChoice) => {
                 chooseFieldMonsterTarget(oppCtx, oppCandidates, {
-                    title: '🔃 Scambio di Creature',
+                    title: '🔃 Scambio-Creature',
                     text: 'Scegli quale dei TUOI mostri cedere all\'avversario.',
                     dichiara: true
                 }, (oppChoice) => {
@@ -789,7 +789,7 @@
                     const movedToOwn = ctx.field(ownChoice.owner)[ownIndex];
                     if (movedToOpp) movedToOpp.canChangePosition = false;
                     if (movedToOwn) movedToOwn.canChangePosition = false;
-                    ctx.log(`🔃 Scambio di Creature scambia ${ownChoice.card.name} con ${oppChoice.card.name}!`);
+                    ctx.log(`🔃 Scambio-Creature scambia ${ownChoice.card.name} con ${oppChoice.card.name}!`);
                     if (typeof updateUI === 'function') updateUI();
                 });
             });
@@ -904,9 +904,9 @@
             if (hand.length === 0) return;
             const discarded = ctx.discardChosenFromHand(ctx.owner, 0);
             if (ctx.negateActivation()) {
-                ctx.log(`🐲 La Perla del Drago scarta ${discarded.name} e annulla la Trappola!`);
+                ctx.log(`🐲 La Perla di Drago scarta ${discarded.name} e annulla la Trappola!`);
             } else {
-                ctx.log(`🐲 La Perla del Drago scarta ${discarded.name}, ma non c'era più nulla da annullare.`);
+                ctx.log(`🐲 La Perla di Drago scarta ${discarded.name}, ma non c'era più nulla da annullare.`);
             }
         }
     });
@@ -950,7 +950,7 @@
             ctx.drawCards(ctx.owner, 2);
             gameState.skipDrawFor = gameState.skipDrawFor || {};
             gameState.skipDrawFor[ctx.owner] = (gameState.skipDrawFor[ctx.owner] || 0) + 2;
-            ctx.log('🎲 Avidità Sconsiderata pesca 2 carte, ma salterai le prossime 2 Draw Phase!');
+            ctx.log('🎲 Cupidigia Insaziabile pesca 2 carte, ma salterai le prossime 2 Draw Phase!');
         }
     });
 
@@ -968,9 +968,9 @@
         },
         activate(ctx) {
             if (ctx.negateActivation()) {
-                ctx.log("⚡ Disturbatore di Trappole annulla e distrugge la Trappola avversaria!");
+                ctx.log("⚡ Disturba Trappola annulla e distrugge la Trappola avversaria!");
             } else {
-                ctx.log('⚡ Disturbatore di Trappole non trova più nulla da annullare.');
+                ctx.log('⚡ Disturba Trappola non trova più nulla da annullare.');
             }
         }
     });
@@ -1027,7 +1027,7 @@
             if (blockBanishFromField(ctx, banishedCard)) return false;
             field[index] = null;
             ctx.banish(ctx.owner, banishedCard);
-            ctx.log('🧛 Genesi del Vampiro bandisce Signore dei Vampiri per essere Special Summonata!');
+            ctx.log('🧛 Genesi Vampira bandisce Signore dei Vampiri per essere Special Summonata!');
             return true;
         },
         canActivate(ctx) {
@@ -1060,13 +1060,13 @@
                 const discarded = ctx.discardChosenFromHand(ctx.owner, handIndex);
                 if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return;
                 searchGraveyardWithChoice(ctx, ctx.owner, (c) => isZombie(c) && (c.level || 0) < discardLevel, {
-                    title: '🧛 Genesi del Vampiro',
+                    title: '🧛 Genesi Vampira',
                     text: 'Scegli quale mostro Zombie Special Summonare dal Cimitero.'
                 }, (revived) => {
                     const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
                     if (slotIndex === -1) { ctx.graveyard(ctx.owner).push(revived); return; }
                     ctx.specialSummon(ctx.owner, revived, slotIndex, 'attack', 'graveyard');
-                    ctx.log(`🧛 Genesi del Vampiro scarta ${discarded.name} e Special Summona ${revived.name} dal Cimitero!`);
+                    ctx.log(`🧛 Genesi Vampira scarta ${discarded.name} e Special Summona ${revived.name} dal Cimitero!`);
                 });
             };
 
@@ -1079,7 +1079,7 @@
             Decisioni.chiedi({
                 chi: ctx.owner,
                 candidati: validHandCandidates,
-                titolo: '🧛 Genesi del Vampiro',
+                titolo: '🧛 Genesi Vampira',
                 testo: 'Scegli quale mostro Zombie scartare dalla mano.'
             }, (scelta) => {
                 if (scelta === null) return;
@@ -1143,7 +1143,7 @@
             const index = field.findIndex((slot) => slot && slot.card.uid === ctx.card.uid);
             if (index === -1) return;
             ctx.returnMonsterToHand(ctx.owner, index);
-            ctx.log('👻 Spirito della Polvere Oscura ritorna in mano!');
+            ctx.log('👻 Spirito Polvere Oscura ritorna in mano!');
         }
     });
     function destroyAllOtherMonsters(ctx) {
@@ -1156,7 +1156,7 @@
                 count++;
             });
         });
-        ctx.log(`👻 Spirito della Polvere Oscura distrugge ${count} altr${count === 1 ? 'o mostro' : 'i mostri'}!`);
+        ctx.log(`👻 Spirito Polvere Oscura distrugge ${count} altr${count === 1 ? 'o mostro' : 'i mostri'}!`);
     }
 
     // ================================================================
@@ -1170,13 +1170,13 @@
         onDestroy(ctx) {
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return;
             searchDeckWithChoice(ctx, (c) => c.type === 'monster' && c.race === 'Zombie' && c.defense <= 2000, {
-                title: '🐢 Tartaruga della Piramide',
+                title: '🐢 Tartaruga Piramide',
                 text: 'Scegli quale mostro Zombie (2000 DEF o meno) Special Summonare dal Deck.'
             }, (card) => {
                 const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
                 if (slotIndex === -1) return;
                 ctx.specialSummon(ctx.owner, card, slotIndex, 'attack', 'deck');
-                ctx.log(`🐢 Tartaruga della Piramide Special Summona ${card.name} dal Deck!`);
+                ctx.log(`🐢 Tartaruga Piramide Special Summona ${card.name} dal Deck!`);
             });
         }
     });
@@ -1212,7 +1212,7 @@
             if (ctx.targetIndex !== -1) return;
             const discarded = ctx.discardRandomFromHand(ctx.opponent);
             if (!discarded) return;
-            ctx.log(`💀 Mietitore Spirituale forza l'avversario a scartare ${discarded.name}!`);
+            ctx.log(`💀 Spirito Mietitore forza l'avversario a scartare ${discarded.name}!`);
         }
     });
 
@@ -1293,7 +1293,7 @@
             const milled = deck.splice(Math.max(0, deck.length - 2), 2);
             gameState[Tavolo.chiave(ctx.opponent, 'DeckCount')] = deck.length;
             ctx.graveyard(ctx.opponent).push(...milled);
-            ctx.log(`💀 Torre d'Ossa Divora-Anime manda ${milled.length} cart${milled.length === 1 ? 'a' : 'e'} dal Deck dell'avversario al Cimitero!`);
+            ctx.log(`💀 Torre d'Ossa Assorbi-Anima manda ${milled.length} cart${milled.length === 1 ? 'a' : 'e'} dal Deck dell'avversario al Cimitero!`);
         }
     });
 
@@ -1303,9 +1303,9 @@
     // ================================================================
     CardEffects.register(665, {
         onDealsBattleDamage(ctx) {
-            searchDeckWithChoice(ctx, (c) => c.type === 'monster', { deckOwner: ctx.opponent, title: '🧛 Dama dei Vampiri', text: "Scegli quale mostro mandare al Cimitero dal Deck dell'avversario." }, (card) => {
+            searchDeckWithChoice(ctx, (c) => c.type === 'monster', { deckOwner: ctx.opponent, title: '🧛 Lady Vampira', text: "Scegli quale mostro mandare al Cimitero dal Deck dell'avversario." }, (card) => {
                 ctx.graveyard(ctx.opponent).push(card);
-                ctx.log(`🧛 Dama dei Vampiri manda ${card.name} dal Deck dell'avversario al Cimitero!`);
+                ctx.log(`🧛 Lady Vampira manda ${card.name} dal Deck dell'avversario al Cimitero!`);
             });
         }
     });
@@ -1465,7 +1465,7 @@
             // candidato trovato (l'avversario prima, poi il proprio Terreno),
             // mai una vera scelta — vedi chooseFieldMonsterTarget qui sopra.
             chooseFieldMonsterTarget(ctx, candidates, {
-                title: '🚪 Dispositivo di Evacuazione Forzata',
+                title: '🚪 Dispositivo di Salvataggio Obbligatorio',
                 text: 'Scegli 1 mostro scoperto sul Terreno da rimandare in mano.',
                 dichiara: true
             }, (choice) => {
@@ -1473,7 +1473,7 @@
                 if (!finalSlot) return;
                 const name = finalSlot.card.name;
                 ctx.returnMonsterToHand(choice.owner, choice.index);
-                ctx.log(`🚪 Dispositivo di Evacuazione Forzata rimanda ${name} in mano!`);
+                ctx.log(`🚪 Dispositivo di Salvataggio Obbligatorio rimanda ${name} in mano!`);
             });
         }
     });
@@ -1597,7 +1597,7 @@
         },
         onEndPhase(ctx) {
             ctx.dealDamage(ctx.opponent, 500);
-            ctx.log('🔥 Drago Vampata Solare infligge 500 danni!');
+            ctx.log('🔥 Drago Ondata Solare infligge 500 danni!');
         }
     });
 
@@ -1624,7 +1624,7 @@
             ctx.graveyard(ctx.owner).push(sent);
             field[index] = null;
             ctx.dealDamage(ctx.opponent, 500);
-            ctx.log(`⚾ Ragazzo del Baseball Estremo manda ${sent.name} al Cimitero e infligge 500 danni!`);
+            ctx.log(`⚾ Giovane Promessa del Baseball manda ${sent.name} al Cimitero e infligge 500 danni!`);
         }
     });
 
@@ -1641,7 +1641,7 @@
         onDealsBattleDamage(ctx) {
             if (ctx.targetIndex !== -1) return;
             ctx.card.attack = (ctx.card.attack || 0) + 1000;
-            ctx.log('🔥 Folletto della Fiamma Furente guadagna 1000 ATK!');
+            ctx.log('🔥 Folletto della Fiamma Infuriato guadagna 1000 ATK!');
         }
     });
 
@@ -1724,7 +1724,7 @@
             if (slotIndex === -1) return;
             const [revived] = grave.splice(index, 1);
             ctx.specialSummon(ctx.owner, revived, slotIndex, 'attack', 'graveyard');
-            ctx.log('🦊 Fuoco Fatuo risorge dal Cimitero!');
+            ctx.log('🦊 Volpe di Fuoco risorge dal Cimitero!');
         }
     });
 
@@ -1736,7 +1736,7 @@
     CardEffects.register(685, {
         continuous: true,
         activate(ctx) {
-            ctx.log('🌋 Distruzione Fusa attivata!');
+            ctx.log('🌋 Distruzione Infuocata attivata!');
         },
         static(ctx) {
             Tavolo.ordine().forEach((owner) => {
@@ -1761,7 +1761,7 @@
     CardEffects.register(686, {
         continuous: true,
         activate(ctx) {
-            ctx.log('🌑 Camera Oscura degli Incubi si attiva!');
+            ctx.log('🌑 Camera Oscura dell\'Incubo si attiva!');
         }
     });
 
@@ -1774,7 +1774,7 @@
     CardEffects.register(687, {
         continuous: true,
         activate(ctx) {
-            ctx.log('📉 Limite di Livello - Area B attivato!');
+            ctx.log('📉 Livello Limite - Area B attivato!');
         },
         static(ctx) {
             Tavolo.ordine().forEach((owner) => {
@@ -1819,7 +1819,7 @@
             card.equipInScelta = true;
             const sceltaChiusa = () => { delete card.equipInScelta; };
             chooseFieldCardTargetWaiting(ctx, candidati, {
-                title: '📿 Collana del Comando',
+                title: '📿 Amuleto del Comando',
                 text: 'Scegli a quale tuo mostro equipaggiare questa carta.',
                 dichiara: true,
                 onNegato: sceltaChiusa
@@ -1831,7 +1831,7 @@
                 card.targetIndex = scelto.index;
                 card.targetUid = slot.card.uid;
                 card._targetDestroyedInBattle = false;
-                ctx.log(`📿 Collana del Comando equipaggiata a ${slot.card.name}!`);
+                ctx.log(`📿 Amuleto del Comando equipaggiata a ${slot.card.name}!`);
             });
         },
         // "Quando un mostro che controlli equipaggiato con questa carta
@@ -1858,16 +1858,16 @@
             ctx.stField(ctx.owner)[ctx.index] = null;
             ctx.graveyard(ctx.owner).push(ctx.card);
             if (!ctx.card._targetDestroyedInBattle) {
-                ctx.log('📿 Collana del Comando va al Cimitero: il bersaglio equipaggiato non è più valido (nessuna distruzione in battaglia, nessun bonus).');
+                ctx.log('📿 Amuleto del Comando va al Cimitero: il bersaglio equipaggiato non è più valido (nessuna distruzione in battaglia, nessun bonus).');
                 return;
             }
             const drawOption = () => {
                 ctx.drawCards(ctx.owner, 1);
-                ctx.log('📿 Collana del Comando va al Cimitero e pesca 1 carta!');
+                ctx.log('📿 Amuleto del Comando va al Cimitero e pesca 1 carta!');
             };
             const discardOption = () => {
                 const discarded = ctx.discardRandomFromHand(ctx.opponent);
-                ctx.log(`📿 Collana del Comando va al Cimitero: ${ctx.opponent === 'player' ? 'scarti' : 'il bot scarta'}${discarded ? ` ${discarded.name}` : ''} a caso dalla mano!`);
+                ctx.log(`📿 Amuleto del Comando va al Cimitero: ${ctx.opponent === 'player' ? 'scarti' : 'il bot scarta'}${discarded ? ` ${discarded.name}` : ''} a caso dalla mano!`);
             };
             // Scelta reale tra le due opzioni (DuelEngineUI.openChoicePopover,
             // gia' usato altrove per scelte binarie) — SCOPERTA: la nota
@@ -1879,7 +1879,7 @@
                 Decisioni.chiedi({
                     chi: ctx.owner,
                     tipo: 'coppia',
-                    titolo: '📿 Collana del Comando',
+                    titolo: '📿 Amuleto del Comando',
                     candidati: [
                         { icon: '🃏', label: 'Pesca 1 carta', onSelect: drawOption },
                         { icon: '🗑️', label: "L'avversario scarta 1 carta a caso", onSelect: discardOption }
@@ -2058,7 +2058,7 @@
             gameState.noTrapActivationFor = gameState.noTrapActivationFor || {};
             gameState.noTrapActivationFor.player = true;
             gameState.noTrapActivationFor.bot = true;
-            ctx.log('🦇 Manta Perforante Strisciante blocca tutte le Trappole per il resto del turno!');
+            ctx.log('🦇 Manta del Fato Incedente blocca tutte le Trappole per il resto del turno!');
         }
     });
 
@@ -2280,7 +2280,7 @@
                 ctx.stField(c.owner)[c.index] = null;
                 destroyed++;
             }
-            if (destroyed > 0) ctx.log(`❄️ Mobius il Monarca del Gelo distrugge ${destroyed} Magia/Trappola!`);
+            if (destroyed > 0) ctx.log(`❄️ Mobius il Monarca Glaciale distrugge ${destroyed} Magia/Trappola!`);
         }
     });
 
@@ -2346,7 +2346,7 @@
                 if (!decl.allowed) return;
                 const target = ctx.field(decl.targetOwner)[decl.targetIndex];
                 ctx.destroyMonster(decl.targetOwner, decl.targetIndex);
-                ctx.log(`🔨 Colpo di Martello distrugge ${target ? target.card.name : best.card.name}!`);
+                ctx.log(`🔨 Lancio del Martello distrugge ${target ? target.card.name : best.card.name}!`);
             });
         }
     });
@@ -2385,7 +2385,7 @@
                 ctx.specialSummon(ctx.owner, card, slotIndex, 'attack', 'hand');
                 summoned++;
             }
-            ctx.log(`🌊 Grande Onda Piccola Onda distrugge ${destroyed} mostr${destroyed === 1 ? 'o' : 'i'} e ne Special Summona ${summoned}!`);
+            ctx.log(`🌊 Piccola Onda Grande Onda distrugge ${destroyed} mostr${destroyed === 1 ? 'o' : 'i'} e ne Special Summona ${summoned}!`);
         }
     });
 
@@ -2397,7 +2397,7 @@
     CardEffects.register(707, {
         continuous: true,
         activate(ctx) {
-            ctx.log('⛓️ Legame di Gravità attivato!');
+            ctx.log('⛓️ Legame Gravitazionale attivato!');
         },
         static(ctx) {
             Tavolo.ordine().forEach((owner) => {
@@ -2458,13 +2458,13 @@
         onDestroy(ctx) {
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return;
             searchDeckWithChoice(ctx, (c) => c.type === 'monster' && c.race === 'Guerriero' && c.attribute === 'TERRA' && c.attack <= 1500, {
-                title: '⚔️ Guerriera delle Terre Desolate',
+                title: '⚔️ Signora Guerriera delle Terre Desolate',
                 text: 'Scegli quale mostro Guerriero TERRA (1500 ATK o meno) Special Summonare dal Deck.'
             }, (card) => {
                 const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
                 if (slotIndex === -1) return;
                 ctx.specialSummon(ctx.owner, card, slotIndex, 'attack', 'deck');
-                ctx.log(`⚔️ Guerriera delle Terre Desolate Special Summona ${card.name} dal Deck!`);
+                ctx.log(`⚔️ Signora Guerriera delle Terre Desolate Special Summona ${card.name} dal Deck!`);
             });
         }
     });
@@ -2514,7 +2514,7 @@
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return;
             chooseCardFromHand(ctx, {
                 filter: (c) => c.type === 'monster' && (c.level || 0) <= 4,
-                title: '⚔️ Capitano Predone',
+                title: '⚔️ Capitano Saccheggiatore',
                 text: 'Scegli quale mostro di Livello 4 o inferiore Special Summonare dalla mano.'
             }, (card, index) => {
                 // La casella si ricontrolla QUI: fra l'apertura del picker
@@ -2523,7 +2523,7 @@
                 if (slotIndex === -1) return;
                 ctx.hand(ctx.owner).splice(index, 1);
                 ctx.specialSummon(ctx.owner, card, slotIndex, 'attack', 'hand');
-                ctx.log(`⚔️ Capitano Predone Special Summona ${card.name} dalla mano!`);
+                ctx.log(`⚔️ Capitano Saccheggiatore Special Summona ${card.name} dalla mano!`);
             });
         },
         static(ctx) {
@@ -2584,7 +2584,7 @@
                     const oppCard = oppField[oppIdx].card;
                     oppField[oppIdx] = null;
                     ctx.banish(ctx.opponent, oppCard);
-                    ctx.log(`⚔️ D.D. Guerriera bandisce ${ctx.opponentCard.name}!`);
+                    ctx.log(`⚔️ Signora Guerriera D.D. bandisce ${ctx.opponentCard.name}!`);
                 }
             }
             const ownField = ctx.field(ctx.owner);
@@ -2592,7 +2592,7 @@
             if (ownIdx !== -1 && !blockBanishFromField(ctx, ctx.card)) {
                 ownField[ownIdx] = null;
                 ctx.banish(ctx.owner, ctx.card);
-                ctx.log('⚔️ D.D. Guerriera bandisce se stessa dopo aver combattuto!');
+                ctx.log('⚔️ Signora Guerriera D.D. bandisce se stessa dopo aver combattuto!');
             }
         }
     });
@@ -2784,7 +2784,7 @@
                 const name = targetSlot.card.name;
                 ctx.destroyMonster(ctx.opponent, ctx.targetIndex);
                 ctx.cancelAttack();
-                ctx.log(`🥷 Gran Maestro Ninja Sasuke distrugge ${name} prima del combattimento!`);
+                ctx.log(`🥷 Sasuke Maestro Ninja distrugge ${name} prima del combattimento!`);
             }
         }
     });
@@ -2894,11 +2894,11 @@
         },
         activate(ctx) {
             searchDeckWithChoice(ctx, (c) => c.type === 'monster' && c.race === 'Guerriero' && (c.level || 0) <= 4, {
-                title: "⚔️ Rinforzo dell'Esercito",
+                title: "⚔️ Rinforzi dell'Esercito",
                 text: 'Scegli quale mostro Guerriero di Livello 4 o inferiore aggiungere alla mano dal Deck.'
             }, (card) => {
                 ctx.hand(ctx.owner).push(card);
-                ctx.log(`⚔️ Rinforzo dell'Esercito aggiunge ${card.name} alla mano dal Deck!`);
+                ctx.log(`⚔️ Rinforzi dell'Esercito aggiunge ${card.name} alla mano dal Deck!`);
             });
         }
     });
@@ -2915,11 +2915,11 @@
         },
         activate(ctx) {
             searchGraveyardWithChoice(ctx, ctx.owner, (c) => c.type === 'monster' && c.race === 'Guerriero', {
-                title: '⚔️ Il Guerriero Ritorna in Vita',
+                title: '⚔️ Il Guerriero Sopravvissuto',
                 text: 'Scegli quale mostro Guerriero recuperare dal Cimitero.'
             }, (card) => {
                 ctx.hand(ctx.owner).push(card);
-                ctx.log(`⚔️ Il Guerriero Ritorna in Vita recupera ${card.name} dal Cimitero!`);
+                ctx.log(`⚔️ Il Guerriero Sopravvissuto recupera ${card.name} dal Cimitero!`);
             });
         }
     });
@@ -3037,13 +3037,13 @@
         },
         activate(ctx) {
             searchGraveyardWithChoice(ctx, ctx.owner, (c) => c.type === 'spell' && c.subtype === 'equip', {
-                title: '🌸 Fata della Primavera',
+                title: '🌸 Fata della Sorgente',
                 text: 'Scegli quale Magia Equipaggiamento recuperare dal Cimitero.'
             }, (card) => {
                 ctx.hand(ctx.owner).push(card);
                 gameState.blockedCardUidsThisTurn = gameState.blockedCardUidsThisTurn || new Set();
                 gameState.blockedCardUidsThisTurn.add(card.uid);
-                ctx.log(`🌸 Fata della Primavera recupera ${card.name} dal Cimitero! Non può essere attivata in questo turno.`);
+                ctx.log(`🌸 Fata della Sorgente recupera ${card.name} dal Cimitero! Non può essere attivata in questo turno.`);
             });
         }
     });
@@ -3059,14 +3059,14 @@
         },
         activate(ctx) {
             offerHandDiscardChoice(ctx, {
-                title: '⚡ Vortice Fulmineo',
+                title: '⚡ Fulmine Boltex',
                 text: 'Scegli quale carta scartare dalla mano.'
             }, (discarded) => {
                 let destroyed = 0;
                 ctx.field(ctx.opponent).forEach((slot, index) => {
                     if (slot && !slot.isFaceDown) { ctx.destroyMonster(ctx.opponent, index); destroyed++; }
                 });
-                ctx.log(`⚡ Vortice Fulmineo scarta ${discarded.name} e distrugge ${destroyed} mostr${destroyed === 1 ? 'o' : 'i'}!`);
+                ctx.log(`⚡ Fulmine Boltex scarta ${discarded.name} e distrugge ${destroyed} mostr${destroyed === 1 ? 'o' : 'i'}!`);
             });
         }
     });
@@ -3090,7 +3090,7 @@
             ctx.field(ctx.opponent).forEach((s) => {
                 if (s && !s.isFaceDown) { s.isFaceDown = true; s.position = 'defense'; flipped++; }
             });
-            ctx.log(`🌑 Spade della Luce Occultante copre ${flipped} mostr${flipped === 1 ? 'o' : 'i'} dell'avversario in Difesa!`);
+            ctx.log(`🌑 Spade Mistificatrici copre ${flipped} mostr${flipped === 1 ? 'o' : 'i'} dell'avversario in Difesa!`);
         },
         static(ctx) {
             ctx.field(ctx.opponent).forEach((s) => {

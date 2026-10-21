@@ -159,8 +159,8 @@
         mai: { 'Signora Arpia': 'Signora Arpia, vola sul campo!' },
         pegasus: { 'Relinquished': 'Relinquished, assorbi il suo potere!' },
         marik: { 'Il Drago Alato di Ra': 'Ra! Incenerisci ogni speranza!' },
-        seeker: { 'Testa Proibita': 'Un pezzo ancora... Exodia sarà completo!' },
-        strings: { 'Slifer il Drago del Cielo': 'Slifer... il padrone ha tirato i fili.', 'Melma Rediviva': 'La Melma Rediviva tornerà ancora.' },
+        seeker: { 'Exodia il Proibito': 'Un pezzo ancora... Exodia sarà completo!' },
+        strings: { 'Slifer il Drago del Cielo': 'Slifer... il padrone ha tirato i fili.', 'Gelatina Rianimata': 'La Gelatina Rianimata tornerà ancora.' },
         lumis: { 'La Bestia Mascherata': 'La Maschera della Luce libera la Bestia!' },
         umbra: { 'La Bestia Mascherata': 'Sorgi dall’oscurità, Bestia Mascherata!' },
         albertoAngela: {

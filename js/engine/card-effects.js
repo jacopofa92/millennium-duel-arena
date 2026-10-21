@@ -62,7 +62,7 @@
  * Convenzione per l'EVOCAZIONE FUSIONE: un mostro nell'Extra Deck (vedi
  * card.extraDeck/category==='fusion' in cards-db.js) NON ha un `activate`/
  * `canActivate` propri — dichiara solo `fusionMaterials: [idA, idB, ...]`,
- * gli ID esatti delle carte richieste come Materiale. "Fusione" (id 38,
+ * gli ID esatti delle carte richieste come Materiale. "Polimerizzazione" (id 38,
  * Polymerization) e qualunque altra carta che Evochi per Fusione in futuro
  * usano DuelEngine.getFusableExtraDeckMonsters(owner) per trovare quali
  * mostri sono fondibili ORA (materiali già in mano/Terreno) e
@@ -71,7 +71,7 @@
  * per-carta finché il Mostro Fusione non ha ANCHE un effetto proprio oltre
  * alla condizione di Evocazione (in quel caso aggiungi pure `static`/
  * `onSummon`/ecc. nello stesso blocco, come qualunque altro mostro).
- * Variante SENZA la Magia "Fusione" (es. id 511/512 Cannone Drago XY/XYZ):
+ * Variante SENZA la Magia "Polimerizzazione" (es. id 511/512 Cannone Drago XY/XYZ):
  * `banishFusionMaterials: [idA, idB, ...]` invece di `fusionMaterials` —
  * il giocatore stesso attiva lo Special Summon cliccando la zona Fusion
  * (non serve nessuna carta Magia), e i materiali vanno bandendoli dal
@@ -487,7 +487,7 @@
     function isHarpieLadySupport(card) {
         if (!card) return false;
         if (card.id === 172) return true;
-        // Solo MOSTRI: "Lady Arpia Formazione della Fenice" (id 289) è una
+        // Solo MOSTRI: "Lady Arpia Formazione Fenice" (id 289) è una
         // Magia, ma il suo nome comincia anch'esso con "Lady Arpia". Senza
         // questo controllo Egoista Elegante (id 787) la Special Summonava
         // dalla mano come un mostro — senza ATK, quindi i Life Points di chi
@@ -495,7 +495,8 @@
         // confermato nel browser) — e ogni conteggio di "Lady Arpia sul
         // Terreno" o ricerca nel Deck/Cimitero poteva contarla.
         if (card.type !== 'monster') return false;
-        return !!(card.name && card.name.startsWith('Lady Arpia'));
+        // "Lady Arpia Toon" (id 1268) e' un'altra carta: col vecchio nome ("Signora Arpia Toon") non iniziava per "Lady Arpia".
+        return !!(card.name && card.name.startsWith('Lady Arpia') && !card.name.includes('Toon'));
     }
 
     /**
@@ -522,13 +523,19 @@
             .concat(def && Array.isArray(def.archetypes) ? def.archetypes : []);
         if (declared.some((value) => normalize(value) === wanted)) return true;
 
+        // Carte il cui nome UFFICIALE (Konami) contiene ora la parola dell'archetipo ("Drago Occhi Blu Finale", "Abile Mago
+        // Nero", "Attacco Mago Nero") ma che, col nome di prima della rinomina, NON entravano in questo controllo per nome:
+        // restano fuori per non cambiare il comportamento del gioco. Per farle contare come membri, basta toglierle da qui.
+        // La lista e' sorvegliata da tests/specs/guardrail-nomi-carte.spec.js.
+        const ESCLUSE_PER_NOME = { 'blue-eyes': [29], 'dark-magician': [736, 748] };
+        if ((ESCLUSE_PER_NOME[wanted] || []).includes(card.id)) return false;
         const name = normalize(card.name);
         if (wanted === 'toon') return !!(def && def.isToon) || name.includes('toon');
         if (wanted === 'red-eyes') return name.includes('occhi rossi') || name.includes('red-eyes');
         if (wanted === 'blue-eyes') return name.includes('occhi blu') || name.includes('blue-eyes');
         if (wanted === 'dark-magician') {
             return name.includes('mago nero') || name.includes('dark magician')
-                || name === 'maga oscura' || name === 'dark magician girl';
+                || name === 'ragazza maga nera' || name === 'dark magician girl';
         }
         return false;
     }
@@ -538,10 +545,21 @@
      * carta/definizione. Serve per testi come "il nome di questa carta viene
      * considerato ..." senza cambiare l'id, il nome mostrato o i salvataggi.
      */
+    // Nomi che alcune carte avevano PRIMA dell'allineamento ai nomi ufficiali Konami (2026-10-21). Le carte personalizzate create
+    // allora possono ancora citarli in `mentionsNames`/`treatedAsNames` o nel testo: si riconoscono come alias del nome nuovo.
+    // Chiavi e valori sono normalizzati (minuscolo).
+    const NOMI_PRECEDENTI = {
+        'ragazza maga nera': ['maga oscura'],
+        'mondo toon': ['mondo dei toon'],
+        'drago occhi blu finale': ['drago bianco definitivo'],
+        'drago finale alternativo occhi blu': ['drago bianco alternativo definitivo']
+    };
+
     function cardHasEffectiveName(card, requestedName, zone) {
         if (!card || !requestedName) return false;
         const normalize = (value) => String(value || '').trim().toLowerCase();
         const wanted = normalize(requestedName);
+        const accettati = [wanted].concat(NOMI_PRECEDENTI[wanted] || []);
         const def = window.DuelEngine && DuelEngine.getDefinition
             ? DuelEngine.getDefinition(card.id)
             : null;
@@ -555,7 +573,7 @@
         if (zone && def && def.treatedAsNamesByZone && Array.isArray(def.treatedAsNamesByZone[zone])) {
             names.push(...def.treatedAsNamesByZone[zone]);
         }
-        return names.some((value) => normalize(value) === wanted);
+        return names.some((value) => accettati.includes(normalize(value)));
     }
 
     /**
@@ -568,15 +586,16 @@
         if (!card || !requestedName) return false;
         const normalize = (value) => String(value || '').trim().toLowerCase();
         const wanted = normalize(requestedName);
+        const accettati = [wanted].concat(NOMI_PRECEDENTI[wanted] || []);
         const def = window.DuelEngine && DuelEngine.getDefinition
             ? DuelEngine.getDefinition(card.id)
             : null;
         const declared = []
             .concat(Array.isArray(card.mentionsNames) ? card.mentionsNames : [])
             .concat(def && Array.isArray(def.mentionsNames) ? def.mentionsNames : []);
-        if (declared.some((value) => normalize(value) === wanted)) return true;
+        if (declared.some((value) => accettati.includes(normalize(value)))) return true;
         const text = normalize(card.effect);
-        if (text.includes(wanted)) return true;
+        if (accettati.some((nome) => text.includes(nome))) return true;
         // Il dataset è italiano, ma le custom possono conservare il nome
         // TCG inglese nel testo pur cercando l'identità italiana.
         if (wanted === 'mago nero') return text.includes('dark magician');
@@ -1693,7 +1712,7 @@
 
 
     /**
-     * Vero se `owner` controlla una "Falena Piccola" (id 522) scoperta sul
+     * Vero se `owner` controlla una "Piccola Falena" (id 522) scoperta sul
      * proprio Terreno che è stata equipaggiata con "Bozzolo dell'Evoluzione"
      * (id 157, vedi qui sopra) esattamente `ownTurns` PROPRI turni fa — e se
      * è ADESSO il proprio turno (il testo reale dice "durante il tuo Nº
@@ -1824,5 +1843,5 @@
         return ctx.hand(ctx.owner).filter((c) => !selfUid || c.uid !== selfUid);
     }
 
-    window.CardEffectsShared = { chooseFieldTargetsInSequence, attendiScelta, chooseOption, chooseFieldCardTargetWaiting, dichiaraBersaglioScelto, dichiaraBersaglioSceltoWaiting, otherHandCards, blockBanishFromField, isHarpieLadySupport, cardHasArchetype, cardHasEffectiveName, cardMentionsName, findEquipTarget, collectEquipTargets, equipToChosenTarget, riprendiDalCimitero, attachEquip, equippedTarget, searchZoneWithChoice, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldMonsterTarget, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, chooseCardFromList, chooseUpToNFromList, destroyTargetingSpellIfItStays, victimChoosesDiscard, banishFromGraveyardWithChoice, resolveSpecialSummonBanishCost, resolveSpecialSummonTributeCost, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, findPetitMothReadyForCocoonSummon, releaseRelinquishedTarget, selfFlipToFaceDownDefense, findLevel7SpellcasterTarget, grantAttackAllEnemiesOncEach, returnSpellTrapToHand };
+    window.CardEffectsShared = { NOMI_PRECEDENTI, chooseFieldTargetsInSequence, attendiScelta, chooseOption, chooseFieldCardTargetWaiting, dichiaraBersaglioScelto, dichiaraBersaglioSceltoWaiting, otherHandCards, blockBanishFromField, isHarpieLadySupport, cardHasArchetype, cardHasEffectiveName, cardMentionsName, findEquipTarget, collectEquipTargets, equipToChosenTarget, riprendiDalCimitero, attachEquip, equippedTarget, searchZoneWithChoice, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldMonsterTarget, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, chooseCardFromList, chooseUpToNFromList, destroyTargetingSpellIfItStays, victimChoosesDiscard, banishFromGraveyardWithChoice, resolveSpecialSummonBanishCost, resolveSpecialSummonTributeCost, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, findPetitMothReadyForCocoonSummon, releaseRelinquishedTarget, selfFlipToFaceDownDefense, findLevel7SpellcasterTarget, grantAttackAllEnemiesOncEach, returnSpellTrapToHand };
 })();

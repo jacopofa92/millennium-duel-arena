@@ -88,7 +88,7 @@
                 if (slot) candidati.push({ owner: ctx.owner, index, card: slot.card });
             });
             chooseFieldMonsterTarget(ctx, candidati, {
-                title: '🔀 Recupero dei Mostri',
+                title: '🔀 Recupera-Mostri',
                 dichiara: true,
                 text: 'Scegli quale tuo mostro rimescolare nel Deck insieme alla tua mano.'
             }, (scelta) => {
@@ -117,7 +117,7 @@
             }
             ctx.field(ctx.owner)[index] = null;
             ctx.drawCards(ctx.owner, toShuffle.length);
-            ctx.log(`🔀 Recupero dei Mostri rimescola ${toShuffle.length} carte nel Deck e ne pesca altrettante!`);
+            ctx.log(`🔀 Recupera-Mostri rimescola ${toShuffle.length} carte nel Deck e ne pesca altrettante!`);
         }
     }
 
@@ -219,7 +219,7 @@
                     if (slot) ctx.destroyMonster(owner, index);
                 });
             });
-            ctx.log('🫙 Barattolo Cyber si rivela e distrugge tutti i mostri sul Terreno!');
+            ctx.log('🫙 Cyber Giara si rivela e distrugge tutti i mostri sul Terreno!');
             Tavolo.ordine().forEach((owner) => {
                 const deck = Tavolo.mazzo(owner);
                 if (!Array.isArray(deck) || deck.length === 0) {
@@ -252,7 +252,7 @@
             Tavolo.ordine().forEach((owner) => {
                 const deck = Tavolo.mazzo(owner);
                 if (!Array.isArray(deck)) {
-                    ctx.log(`🫙 ${owner === 'player' ? 'Non hai' : 'Il bot non ha'} un Deck reale in questa modalità: Barattolo di Fibra non ha effetto per questo lato.`);
+                    ctx.log(`🫙 ${owner === 'player' ? 'Non hai' : 'Il bot non ha'} un Deck reale in questa modalità: Giara di Fibra non ha effetto per questo lato.`);
                     return;
                 }
                 const hand = ctx.hand(owner);
@@ -438,7 +438,7 @@
             });
             if (!target) return;
             ctx.destroySpellTrap(target.owner, target.index);
-            ctx.log('❄️ Neve Battente distrugge 1 Magia/Trappola sul Terreno!');
+            ctx.log('❄️ Neve Sferzante distrugge 1 Magia/Trappola sul Terreno!');
         }
     });
 
@@ -460,7 +460,7 @@
             if (idx === -1) return;
             const drawnName = ctx.drawnCard.name;
             ctx.discardChosenFromHand(ctx.opponent, idx);
-            ctx.log(`🃏 Fuori Gioco scarta ${drawnName} dalla mano ${ctx.opponent === 'player' ? 'tua' : 'del bot'}, appena pescata!`);
+            ctx.log(`🃏 Caduta scarta ${drawnName} dalla mano ${ctx.opponent === 'player' ? 'tua' : 'del bot'}, appena pescata!`);
         }
     });
 
@@ -1063,7 +1063,7 @@
             });
         },
         activate(ctx) {
-            ctx.log('🌪️ Muro del Tornado si scopre sul Terreno: nessun danno da battaglia finché "Umi" resta scoperta!');
+            ctx.log('🌪️ Muro Tornado si scopre sul Terreno: nessun danno da battaglia finché "Umi" resta scoperta!');
         },
         static(ctx) {
             const umiPresent = ['playerFieldSpell', 'botFieldSpell'].some((key) => {
@@ -1073,7 +1073,7 @@
             if (!umiPresent) {
                 ctx.stField(ctx.owner)[ctx.index] = null;
                 ctx.graveyard(ctx.owner).push(ctx.card);
-                ctx.log('🌪️ Muro del Tornado va al Cimitero: "Umi" ha lasciato il Terreno.');
+                ctx.log('🌪️ Muro Tornado va al Cimitero: "Umi" ha lasciato il Terreno.');
             }
         }
     });
@@ -1151,7 +1151,7 @@
             });
             const finish = (chosenCard) => {
                 ctx.card.watchedSpellUid = chosenCard.uid;
-                ctx.log(`🎭 Maschera di Dissoluzione lega il suo effetto a ${chosenCard.name}!`);
+                ctx.log(`🎭 Maschera dell'Antimagia lega il suo effetto a ${chosenCard.name}!`);
             };
             if (!Decisioni.rispondeUnaPersona(ctx.owner)) {
                 finish(targets[0]);
@@ -1160,7 +1160,7 @@
             Decisioni.chiedi({
                 chi: ctx.owner,
                 candidati: targets,
-                titolo: '🎭 Maschera di Dissoluzione',
+                titolo: '🎭 Maschera dell\'Antimagia',
                 testo: 'Scegli 1 Magia scoperta sul Terreno da colpire.'
             }, (card) => {
                 if (card === null) return;
@@ -1174,7 +1174,7 @@
             if (!stillThere) {
                 ctx.stField(ctx.owner)[ctx.index] = null;
                 ctx.graveyard(ctx.owner).push(ctx.card);
-                ctx.log('🎭 Maschera di Dissoluzione va al Cimitero: la Magia bersaglio ha lasciato il Terreno.');
+                ctx.log('🎭 Maschera dell\'Antimagia va al Cimitero: la Magia bersaglio ha lasciato il Terreno.');
             }
         },
         onStandbyPhase(ctx) {
@@ -1188,7 +1188,7 @@
             });
             if (!controllerOwner) return;
             ctx.dealDamage(controllerOwner, 500);
-            ctx.log('🎭 Maschera di Dissoluzione infligge 500 danni!');
+            ctx.log('🎭 Maschera dell\'Antimagia infligge 500 danni!');
         }
     });
 
@@ -1318,7 +1318,7 @@
             ctx.gameState.noDamageFor[ctx.opponent] = true;
             ctx.gameState.discardHandAtEndPhaseFor = ctx.gameState.discardHandAtEndPhaseFor || {};
             ctx.gameState.discardHandAtEndPhaseFor[ctx.owner] = true;
-            ctx.log(`💀 Carta della Rovina: ${ctx.owner === 'player' ? 'peschi' : 'il bot pesca'} ${drawn} cart${drawn === 1 ? 'a' : 'e'} fino a 3 in mano. ${ctx.opponent === 'player' ? 'Non subisci' : 'Il bot non subisce'} danni per il resto del turno, ma a fine turno la mano finisce al Cimitero!`);
+            ctx.log(`💀 Carta dell'Oblio: ${ctx.owner === 'player' ? 'peschi' : 'il bot pesca'} ${drawn} cart${drawn === 1 ? 'a' : 'e'} fino a 3 in mano. ${ctx.opponent === 'player' ? 'Non subisci' : 'Il bot non subisce'} danni per il resto del turno, ma a fine turno la mano finisce al Cimitero!`);
         }
     });
 
@@ -1339,7 +1339,7 @@
     CardEffects.register(546, {
         activate(ctx) {
             ctx.dealDamage(ctx.owner, -1000);
-            ctx.log('💊 Dian Keto la Maestra delle Cure aumenta i tuoi Life Points di 1000 punti!');
+            ctx.log('💊 Dian Keto il Curatore aumenta i tuoi Life Points di 1000 punti!');
         }
     });
 
@@ -1361,9 +1361,9 @@
             const propri = () => collectFieldTargets(ctx, { zone: 'monster', owner: 'self', includiCoperte: true }).sort((a, b) => atk(a) - atk(b));
             const avversari = () => collectFieldTargets(ctx, { zone: 'monster', owner: 'opponent', includiCoperte: true }).sort((a, b) => atk(b) - atk(a));
             chooseFieldTargetsInSequence(ctx, [
-                { candidati: propri, title: '⚔️ Attacco a Doppia Punta', text: 'Scegli il primo dei tuoi 2 mostri da distruggere.' },
-                { candidati: propri, title: '⚔️ Attacco a Doppia Punta', text: 'Scegli il secondo dei tuoi mostri da distruggere.' },
-                { candidati: avversari, title: '⚔️ Attacco a Doppia Punta', text: 'Scegli il mostro avversario da distruggere.' }
+                { candidati: propri, title: '⚔️ Duplice Attacco', text: 'Scegli il primo dei tuoi 2 mostri da distruggere.' },
+                { candidati: propri, title: '⚔️ Duplice Attacco', text: 'Scegli il secondo dei tuoi mostri da distruggere.' },
+                { candidati: avversari, title: '⚔️ Duplice Attacco', text: 'Scegli il mostro avversario da distruggere.' }
             ], (finali) => {
                 try {
                     // Si distruggono per uid, non per indice: un mostro che
@@ -1373,7 +1373,7 @@
                         const idx = ctx.field(f.owner).findIndex((s) => s && s.card.uid === f.card.uid);
                         if (idx !== -1) ctx.destroyMonster(f.owner, idx);
                     });
-                    ctx.log('⚔️ Attacco a Doppia Punta sacrifica 2 tuoi mostri per distruggere un mostro avversario!');
+                    ctx.log('⚔️ Duplice Attacco sacrifica 2 tuoi mostri per distruggere un mostro avversario!');
                 } finally {
                     fine();
                 }
@@ -1437,7 +1437,7 @@
     // ================================================================
     CardEffects.register(550, {
         onFlip(ctx) {
-            ctx.log('🔮 Il Mistico Severo rivela per un istante tutte le carte coperte sul Terreno.');
+            ctx.log('🔮 Il Mistico rivela per un istante tutte le carte coperte sul Terreno.');
         }
     });
 
@@ -1463,7 +1463,7 @@
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) { ctx.log('⚠️ Il Terreno è pieno.'); return; }
             searchDeckWithChoice(ctx, (c) => c.type === 'monster' && c.attack <= 1500, {
                 noneFoundLog: '⚠️ Nessun mostro con 1500 ATK o meno nel Deck.',
-                title: '💐 Ultima Volontà',
+                title: '💐 Ultimo Desiderio',
                 text: 'Scegli quale mostro (1500 ATK o meno) Special Summonare dal Deck.'
             }, (card) => {
                 const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
@@ -1473,7 +1473,7 @@
                     const j = Math.floor(Casuale.random() * (i + 1));
                     [deck[i], deck[j]] = [deck[j], deck[i]];
                 }
-                ctx.log(`💐 Ultima Volontà Special Summona ${card.name} dal Deck e lo rimescola!`);
+                ctx.log(`💐 Ultimo Desiderio Special Summona ${card.name} dal Deck e lo rimescola!`);
             });
         }
     });
@@ -1490,13 +1490,13 @@
                     if (slot && slot.card.type === 'trap') candidates.push({ owner, index, card: slot.card });
                 });
             });
-            if (candidates.length === 0) { ctx.log('🪤 Maestro delle Trappole si rivela, ma non ci sono Trappole da distruggere.'); return; }
+            if (candidates.length === 0) { ctx.log('🪤 Maestro di Trappola si rivela, ma non ci sono Trappole da distruggere.'); return; }
             const destroy = (choice) => {
                 const slot = ctx.stField(choice.owner)[choice.index];
                 if (!slot || slot.card.uid !== choice.card.uid) return;
                 ctx.stField(choice.owner)[choice.index] = null;
                 ctx.graveyard(choice.owner).push(choice.card);
-                ctx.log(`🪤 Maestro delle Trappole distrugge ${choice.card.name}!`);
+                ctx.log(`🪤 Maestro di Trappola distrugge ${choice.card.name}!`);
             };
             if (!Decisioni.rispondeUnaPersona(ctx.owner)) {
                 destroy(candidates[0]);
@@ -1505,7 +1505,7 @@
             Decisioni.chiedi({
                 chi: ctx.owner,
                 candidati: candidates.map((c) => c.card),
-                titolo: '🪤 Maestro delle Trappole',
+                titolo: '🪤 Maestro di Trappola',
                 testo: 'Scegli quale Trappola distruggere.'
             }, (card) => {
                 if (card === null) return;
@@ -1558,7 +1558,7 @@
     CardEffects.register(558, {
         activate(ctx) {
             gameState.reverseAtkDefBonusUntilEndOfTurn = true;
-            ctx.log('🔄 Trappola Inversa: tutte le modifiche ATK/DEF sul Terreno sono invertite fino alla End Phase!');
+            ctx.log('🔄 Inverti Trappola: tutte le modifiche ATK/DEF sul Terreno sono invertite fino alla End Phase!');
         }
     });
 
@@ -1617,7 +1617,7 @@
             const lpKey = Tavolo.chiave(ctx.owner, 'LP');
             gameState[lpKey] -= 500;
             gameState.hasNormalSummoned = false;
-            ctx.log("💰 Offerta Suprema: paghi 500 LP e puoi Evocare Normalmente/Set un altro mostro!");
+            ctx.log("💰 Ultima Offerta: paghi 500 LP e puoi Evocare Normalmente/Set un altro mostro!");
         },
         onAttackDeclare(ctx) {
             const lpKey = Tavolo.chiave(ctx.owner, 'LP');
@@ -1636,7 +1636,7 @@
             const [card] = hand.splice(handIndex, 1);
             ctx.field(ctx.owner)[slotIndex] = { card: card, position: 'attack', isFaceDown: false, hasAttacked: false, canChangePosition: false, summonedOnTurn: gameState.turn };
             gameState.hasNormalSummoned = true;
-            ctx.log(`💰 Offerta Suprema: paghi 500 LP ed Evochi ${card.name} durante la Battle Phase avversaria!`);
+            ctx.log(`💰 Ultima Offerta: paghi 500 LP ed Evochi ${card.name} durante la Battle Phase avversaria!`);
             DuelEngine.fireTrigger(DuelEngine.TRIGGER.ON_NORMAL_SUMMON, DuelEngine.makeContext(ctx.owner, { summonedCard: card, summonedSlotIndex: slotIndex, summonedPosition: 'attack' }));
         }
     });
@@ -1659,7 +1659,7 @@
     CardEffects.register(560, {
         onEndPhase(ctx) {
             ctx.returnMonsterToHand(ctx.owner, ctx.slotIndex);
-            ctx.log('🪱 La Malvagia Bestia Verme torna in mano durante la End Phase!');
+            ctx.log('🪱 Verme Bestiale torna in mano durante la End Phase!');
         }
     });
 
@@ -1711,7 +1711,7 @@
                     chi: ctx.owner,
                     tipo: 'presa-visione',
                     candidati: [card],
-                    titolo: '🕵️ La Spia Inesperta',
+                    titolo: '🕵️ Spia Inesperta',
                     testo: 'Hai sbirciato questa carta nella mano del tuo avversario:'
                 }, () => {});
             }
@@ -1738,7 +1738,7 @@
                     chi: ctx.owner,
                     tipo: 'presa-visione',
                     candidati: top5,
-                    titolo: '🔭 Telescopio Antico',
+                    titolo: '🔭 Antico Telescopio',
                     testo: 'Le prime 5 carte del Deck del tuo avversario (rimesse a posto subito dopo averle viste):'
                 }, () => {});
             }
@@ -1756,7 +1756,7 @@
             const count = ctx.field(ctx.opponent).filter((s) => s).length;
             const damage = count * 500;
             ctx.dealDamage(ctx.opponent, damage);
-            ctx.log(`🍽️ Giusto Dessert infligge ${damage} danni (${count} mostri controllati)!`);
+            ctx.log(`🍽️ L'hai Voluto tu! infligge ${damage} danni (${count} mostri controllati)!`);
         }
     });
 
@@ -1786,7 +1786,7 @@
                 ctx.specialSummon(ctx.owner, card, slotIndex, 'attack', 'hand');
                 summonedCount++;
             });
-            ctx.log(`🎺 Il Flauto per Evocare Draghi Special Summona ${summonedCount} mostro${summonedCount === 1 ? '' : 'i'} Tipo Drago!`);
+            ctx.log(`🎺 Flauto Evoca-Draghi Special Summona ${summonedCount} mostro${summonedCount === 1 ? '' : 'i'} Tipo Drago!`);
         }
     });
 
@@ -1799,7 +1799,7 @@
     CardEffects.register(579, {
         onAnyNormalOrFlipSummon(ctx) {
             ctx.dealDamage(ctx.owner, -500);
-            ctx.log('🎭 Misterioso Burattinaio aumenta i tuoi Life Points di 500 punti!');
+            ctx.log('🎭 Burattinaio Misterioso aumenta i tuoi Life Points di 500 punti!');
         }
     });
 
@@ -1922,14 +1922,14 @@
         onFlip(ctx) {
             const grave = ctx.graveyard(ctx.owner);
             const candidates = grave.filter((c) => c.type === 'spell');
-            if (candidates.length === 0) { ctx.log('🔮 Maga della Fede si rivela, ma non ci sono Magie nel Cimitero.'); return; }
+            if (candidates.length === 0) { ctx.log('🔮 Mago della Fede si rivela, ma non ci sono Magie nel Cimitero.'); return; }
             const addToHand = (card) => {
                 const idx = grave.indexOf(card);
                 if (idx === -1) return;
                 if (ctx.graveyardMoveNegated(ctx.owner)) return;
                 grave.splice(idx, 1);
                 ctx.hand(ctx.owner).push(card);
-                ctx.log(`🔮 Maga della Fede aggiunge ${card.name} alla mano!`);
+                ctx.log(`🔮 Mago della Fede aggiunge ${card.name} alla mano!`);
             };
             if (!Decisioni.rispondeUnaPersona(ctx.owner)) {
                 addToHand(candidates[0]);
@@ -1938,7 +1938,7 @@
             Decisioni.chiedi({
                 chi: ctx.owner,
                 candidati: candidates,
-                titolo: '🔮 Maga della Fede',
+                titolo: '🔮 Mago della Fede',
                 testo: 'Scegli 1 Magia dal Cimitero da aggiungere alla mano.'
             }, (scelta) => {
                 if (scelta === null) return;
@@ -2001,7 +2001,7 @@
         onDealsBattleDamage(ctx) {
             const discarded = ctx.discardRandomFromHand(ctx.opponent);
             if (!discarded) return;
-            ctx.log(`🎩 Cappello Magico Bianco costringe ${ctx.opponent === 'player' ? 'te' : 'il bot'} a scartare 1 carta a caso!`);
+            ctx.log(`🎩 Bianco Cappello Magico costringe ${ctx.opponent === 'player' ? 'te' : 'il bot'} a scartare 1 carta a caso!`);
         }
     });
 
@@ -2105,7 +2105,7 @@
                 // alcuna carta valida da rinforzare.
                 if (!card) return;
                 ctx.grantTemporaryAtkDefBonus(card, 0, 700, false);
-                ctx.log(`🛡️ Il Guardiano Affidabile aumenta la DEF di ${card.name} di 700 punti!`);
+                ctx.log(`🛡️ Guardiano Affidabile aumenta la DEF di ${card.name} di 700 punti!`);
             };
             if (!Decisioni.rispondeUnaPersona(ctx.owner)) {
                 boost(candidates[0]);
@@ -2114,7 +2114,7 @@
             Decisioni.chiedi({
                 chi: ctx.owner,
                 candidati: candidates,
-                titolo: '🛡️ Il Guardiano Affidabile',
+                titolo: '🛡️ Guardiano Affidabile',
                 testo: 'Scegli quale mostro rinforzare.'
             }, (scelta) => {
                 if (scelta === null) return;
@@ -2210,9 +2210,9 @@
             const cost = 1000;
             ctx.dealDamage(ctx.owner, cost);
             if (ctx.negateActivation()) {
-                ctx.log(`✂️ Sette Attrezzi del Bandito paga ${cost} Life Points e annulla l'attivazione della Trappola!`);
+                ctx.log(`✂️ I Sette Attrezzi del Bandito paga ${cost} Life Points e annulla l'attivazione della Trappola!`);
             } else {
-                ctx.log(`✂️ Sette Attrezzi del Bandito paga ${cost} Life Points, ma non c'era più nulla da annullare.`);
+                ctx.log(`✂️ I Sette Attrezzi del Bandito paga ${cost} Life Points, ma non c'era più nulla da annullare.`);
             }
         }
     });
@@ -2311,11 +2311,11 @@
             const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
             if (slotIndex === -1) {
                 ctx.graveyard(ctx.owner).push(ritualCard);
-                ctx.log('⚠️ Il Terreno è pieno: Abbandonato finisce nel Cimitero.');
+                ctx.log('⚠️ Il Terreno è pieno: Abbandono finisce nel Cimitero.');
                 return;
             }
             ctx.specialSummon(ctx.owner, ritualCard, slotIndex, 'attack', 'hand');
-            ctx.log('👹 Rito dell\'Illusione Nera evoca Abbandonato!');
+            ctx.log('👹 Rito dell\'Illusione Nera evoca Abbandono!');
         }
     });
 
@@ -2496,14 +2496,14 @@
             const drawn = oppHand.slice(before);
             const spells = drawn.filter((c) => c.type === 'spell');
             if (spells.length === 0) {
-                ctx.log('👤 Esploratore Ombra di Hiro: nessuna Magia tra le carte pescate dall\'avversario.');
+                ctx.log('👤 Esploratore-Ombra di Hiro: nessuna Magia tra le carte pescate dall\'avversario.');
                 return;
             }
             spells.forEach((card) => {
                 const index = oppHand.indexOf(card);
                 if (index !== -1) ctx.discardChosenFromHand(ctx.opponent, index);
             });
-            ctx.log(`👤 Esploratore Ombra di Hiro scarta ${spells.length} Magi${spells.length === 1 ? 'a' : 'e'} pescat${spells.length === 1 ? 'a' : 'e'} dall'avversario!`);
+            ctx.log(`👤 Esploratore-Ombra di Hiro scarta ${spells.length} Magi${spells.length === 1 ? 'a' : 'e'} pescat${spells.length === 1 ? 'a' : 'e'} dall'avversario!`);
         }
     });
 
@@ -2538,11 +2538,11 @@
                     if (!current || current.card.uid !== choice.card.uid) return;
                     if (current.isFaceDown) {
                         current.isFaceDown = false;
-                        ctx.log(`🔎 Tifone dello Spazio Mistico rivela ${choice.card.name}!`);
+                        ctx.log(`🔎 Tifone Spaziale Mistico rivela ${choice.card.name}!`);
                     }
                     ctx.stField(choice.owner)[choice.index] = null;
                     ctx.graveyard(choice.owner).push(choice.card);
-                    ctx.log(`🌪️ Tifone dello Spazio Mistico distrugge ${choice.card.name}!`);
+                    ctx.log(`🌪️ Tifone Spaziale Mistico distrugge ${choice.card.name}!`);
                 };
                 if (window.FX && typeof FX.playMysticalSpaceTyphoon === 'function') {
                     FX.playMysticalSpaceTyphoon(choice.owner, choice.index, resolveTyphoon);
@@ -2558,7 +2558,7 @@
             Decisioni.chiedi({
                 chi: ctx.owner,
                 candidati: candidates.map((c) => c.card),
-                titolo: '🌪️ Tifone dello Spazio Mistico',
+                titolo: '🌪️ Tifone Spaziale Mistico',
                 testo: 'Scegli 1 Magia/Trappola, scoperta o Set, da distruggere.'
             }, (card) => {
                 if (card === null) return;
@@ -2589,14 +2589,14 @@
             const candidati = collectFieldTargets(ctx, { zone: 'monster' });
             if (candidati.length === 0) return;
             chooseFieldCardTarget(ctx, candidati, {
-                title: '💪 Assalto Sconsiderato',
+                title: '💪 Corsa Avventata',
                 text: 'Scegli il mostro che guadagna 700 ATK fino a fine turno.',
                 dichiara: true
             }, (scelto) => {
                 const slot = ctx.field(scelto.owner)[scelto.index];
                 if (!slot) return;
                 ctx.grantTemporaryAtkDefBonus(slot.card, 700, 0, false);
-                ctx.log(`💪 Assalto Sconsiderato aumenta l'ATK di ${slot.card.name} di 700 punti fino alla fine del turno!`);
+                ctx.log(`💪 Corsa Avventata aumenta l'ATK di ${slot.card.name} di 700 punti fino alla fine del turno!`);
             });
         }
     });
@@ -2672,13 +2672,13 @@
         onAttackDeclare(ctx) {
             const gain = ctx.attackerAtk || 0;
             ctx.dealDamage(ctx.owner, -gain);
-            ctx.log(`🏹 Giavellotto Incantato ti fa guadagnare ${gain} Life Points!`);
+            ctx.log(`🏹 Lancia Incantata ti fa guadagnare ${gain} Life Points!`);
         }
     });
 
     // ================================================================
     // 612 — Ala di Grifone / Gryphon Wing (Trappola Normale)
-    // Quando il tuo avversario attiva "Piumino delle Arpie" (id 291 —
+    // Quando il tuo avversario attiva "Spolverino dell'Arpia" (id 291 —
     // CORREZIONE: la nota precedente affermava erroneamente che "Turbina
     // delle Arpie"/Harpie's Feather Duster non fosse presente in questo
     // database — falso, esiste già come id 291): annulla il suo effetto
@@ -2701,9 +2701,9 @@
                     stField[i] = null;
                     destroyed++;
                 });
-                ctx.log(`🪽 Ala di Grifone annulla Piumino delle Arpie e distrugge ${destroyed} Magie/Trappole dell'avversario!`);
+                ctx.log(`🪽 Ali di Grifone annulla Spolverino dell'Arpia e distrugge ${destroyed} Magie/Trappole dell'avversario!`);
             } else {
-                ctx.log('🪽 Ala di Grifone: nessuna attivazione da annullare.');
+                ctx.log('🪽 Ali di Grifone: nessuna attivazione da annullare.');
             }
         }
     });
@@ -2761,7 +2761,7 @@
             const current = ctx.card.counters || 0;
             if (current >= 3) return;
             ctx.card.counters = current + 1;
-            ctx.log(`📚 Biblioteca Magica Reale guadagna un Segnalino Magia (${ctx.card.counters}/3)!`);
+            ctx.log(`📚 Biblioteca Reale Magica guadagna un Segnalino Magia (${ctx.card.counters}/3)!`);
         },
         canActivate(ctx) {
             return (ctx.card.counters || 0) >= 3;
@@ -2769,7 +2769,7 @@
         activate(ctx) {
             ctx.card.counters -= 3;
             ctx.drawCards(ctx.owner, 1);
-            ctx.log('📚 Biblioteca Magica Reale rimuove 3 Segnalini Magia e pesca 1 carta!');
+            ctx.log('📚 Biblioteca Reale Magica rimuove 3 Segnalini Magia e pesca 1 carta!');
         }
     });
 
@@ -2868,7 +2868,7 @@
     CardEffects.register(619, {
         continuous: true,
         activate(ctx) {
-            ctx.log('🌋 Zona Plasma Mistica attivata!');
+            ctx.log('🌋 Zona Mistica del Plasma attivata!');
         },
         static(ctx) {
             Tavolo.ordine().forEach((owner) => {
@@ -2902,7 +2902,7 @@
                 if (slot && !slot.isFaceDown) candidati.push({ owner: ctx.opponent, index, card: slot.card });
             });
             chooseFieldMonsterTarget(ctx, candidati, {
-                title: '⭕ Cerchio Ammaliante',
+                title: '⭕ Cerchio Incantatore',
                 text: 'Scegli quale mostro avversario legare (non può attaccare né cambiare Posizione).',
                 dichiara: true
             }, (scelta) => {
@@ -2912,7 +2912,7 @@
                 ctx.card.targetIndex = scelta.index;
                 ctx.card.targetUid = targetSlot.card.uid;
                 if (window.FX && typeof FX.playSpellbindingCircle === 'function') FX.playSpellbindingCircle(scelta.owner, scelta.index);
-                ctx.log(`⭕ Cerchio Ammaliante lega ${targetSlot.card.name}!`);
+                ctx.log(`⭕ Cerchio Incantatore lega ${targetSlot.card.name}!`);
             });
         },
         static(ctx) {
@@ -3065,7 +3065,7 @@
         },
         activate(ctx) {
             offerHandDiscardChoice(ctx, {
-                title: '⚡ Rottura di Raigeki',
+                title: '⚡ Frattura Raigeki',
                 text: 'Scegli quale carta scartare dalla mano.'
             }, (discarded) => {
                 const oppMonsterIndex = ctx.field(ctx.opponent).findIndex((s) => s && !s.isFaceDown);
@@ -3076,7 +3076,7 @@
                         if (!targetSlot) return;
                         const name = targetSlot.card.name;
                         ctx.destroyMonster(decl.targetOwner, decl.targetIndex);
-                        ctx.log(`⚡ Rottura di Raigeki scarta ${discarded.name} e distrugge ${name}!`);
+                        ctx.log(`⚡ Frattura Raigeki scarta ${discarded.name} e distrugge ${name}!`);
                     });
                     return;
                 }
@@ -3085,7 +3085,7 @@
                     if (monsterIndex !== -1) {
                         const name = ctx.field(owner)[monsterIndex].card.name;
                         ctx.destroyMonster(owner, monsterIndex);
-                        ctx.log(`⚡ Rottura di Raigeki scarta ${discarded.name} e distrugge ${name}!`);
+                        ctx.log(`⚡ Frattura Raigeki scarta ${discarded.name} e distrugge ${name}!`);
                         return;
                     }
                     const stIndex = ctx.stField(owner).findIndex((s) => s);
@@ -3093,7 +3093,7 @@
                         const stCard = ctx.stField(owner)[stIndex].card;
                         ctx.stField(owner)[stIndex] = null;
                         ctx.graveyard(owner).push(stCard);
-                        ctx.log(`⚡ Rottura di Raigeki scarta ${discarded.name} e distrugge ${stCard.name}!`);
+                        ctx.log(`⚡ Frattura Raigeki scarta ${discarded.name} e distrugge ${stCard.name}!`);
                         return;
                     }
                 }
@@ -3139,9 +3139,9 @@
             if (hand.length === 0) return;
             const discarded = ctx.discardChosenFromHand(ctx.owner, 0);
             if (ctx.negateActivation()) {
-                ctx.log(`🔇 Interferenza Magica scarta ${discarded.name} e annulla l'attivazione della Magia!`);
+                ctx.log(`🔇 Disturbo Magico scarta ${discarded.name} e annulla l'attivazione della Magia!`);
             } else {
-                ctx.log(`🔇 Interferenza Magica scarta ${discarded.name}, ma non c'era più nulla da annullare.`);
+                ctx.log(`🔇 Disturbo Magico scarta ${discarded.name}, ma non c'era più nulla da annullare.`);
             }
         }
     });
@@ -3180,7 +3180,7 @@
             if (index === -1) return;
             const discarded = ctx.discardChosenFromHand(ctx.owner, index);
             attackerCard._spiritRyuBoosted = true;
-            ctx.log(`🐉 Spirit Ryu scarta ${discarded.name}: guadagna 1000 ATK/DEF fino alla fine della Battle Phase!`);
+            ctx.log(`🐉 Spirito Ryu scarta ${discarded.name}: guadagna 1000 ATK/DEF fino alla fine della Battle Phase!`);
         },
         static(ctx) {
             if (!ctx.card._spiritRyuBoosted) return;

@@ -20,7 +20,7 @@ const FIRME = {
     joey: [{ id: 12, nome: 'Drago Nero Occhi Rossi' }],
     yamiYugi: [{ id: 2, nome: 'Mago Nero' }, { id: 31, nome: 'Slifer' }],
     kaiba: [{ id: 1, nome: 'Drago Bianco Occhi Blu' }],
-    pegasus: [{ id: 487, nome: 'Mondo dei Toon' }, { id: 416, nome: 'Abbandonato' }, { id: 476, nome: 'Restrizione dai Mille Occhi' }],
+    pegasus: [{ id: 487, nome: 'Mondo Toon' }, { id: 416, nome: 'Abbandono' }, { id: 476, nome: 'Limite dei 1000 Occhi' }],
     strings: [{ id: 31, nome: 'Slifer' }],
     marik: [{ id: 472, nome: 'Drago Alato di Ra' }]
 };

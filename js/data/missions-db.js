@@ -151,7 +151,7 @@ const missionsDatabase = [
     },
     {
         id: 'm-activate-mirror', icon: '🪞', scope: 'both',
-        label: 'Riflesso', description: 'Attiva {n} volte Forza dello Specchio',
+        label: 'Riflesso', description: 'Attiva {n} volte Forza Riflessa',
         type: 'activateCard', match: { cardId: 382 },
         target: 1, targetWeekly: 5,
         reward: { credits: 250 }, rewardWeekly: { credits: 800 }

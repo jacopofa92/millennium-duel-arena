@@ -40,7 +40,7 @@
     const MYTHIC_IDS = new Set([30, 31, 472]);
     const SECRET_IDS = new Set([
         11, 41, 42, 43, 44,          // Exodia il Proibito + i 4 arti
-        866, 867, 868, 869, 870,     // Destiny Board + Spirit Message I/N/A/L
+        866, 867, 868, 869, 870,     // Tavola del Destino + Spirit Message I/N/A/L
         246                          // Elefante Volante
     ]);
     const LOCKED_IDS = new Set([...MYTHIC_IDS, ...SECRET_IDS]);
@@ -62,16 +62,16 @@
      * "ultra".
      */
     const ULTRA_IDS = new Set([
-        36,   // Vaso dell'Avidità — pesca 2 carte, gratis
+        36,   // Anfora dell'Avidità — pesca 2 carte, gratis
         7,    // Buco Nero — distrugge tutti i mostri in campo
         8,    // Spada Rivelatrice — blocca gli attacchi per 3 turni
         10,   // Cilindro Magico — ribalta un attacco addosso a chi lo lancia
-        382,  // Forza dello Specchio — spazza via il campo che attacca
-        291,  // Piumino delle Arpie — cancella l'intero retrocampo
+        382,  // Forza Riflessa — spazza via il campo che attacca
+        291,  // Spolverino dell'Arpia — cancella l'intero retrocampo
         633,  // Sepoltura Prematura — rianima dal Cimitero
-        136,  // Richiamo degli Infestati — idem, dal proprio Cimitero
+        136,  // Richiamo del Posseduto — idem, dal proprio Cimitero
         886,  // Metamorfosi — trasforma un mostro in uno dall'Extra Deck
-        130,  // Controllo Mentale — ruba un mostro, in modo permanente
+        130,  // Controllo della Mente — ruba un mostro, in modo permanente
         874,  // Confisca — guarda la mano avversaria e ne scarta una carta
         1155, // Ryu Senshi — Fusione con doppia negazione
         1251, 1255, 1256, 1257, 1258, 1263, 1264, 1266, 1267, 1269,
@@ -81,9 +81,9 @@
 
     const SUPER_IDS = new Set([
         40, 128, 173, 238, 251, 272, 300, 371, 492, 624, 633, 669, 671, 725, 793, 820,
-        1131, // Esiliatore della Luce — floodgate globale
-        1137, // Giara Trasformante #2 — reset simultaneo dei Terreni
-        1139, // Parassita Paracida — carta firma di Weevil
+        1131, // Epuratore della Luce — floodgate globale
+        1137, // Giara della Mutazione #2 — reset simultaneo dei Terreni
+        1139, // Insetto Parassita — carta firma di Weevil
         1153, // Mietitore dell'Incubo — Fusione con protezione/scarto
         1250, 1252, 1253, 1254, 1259, 1261, 1268
     ]);
@@ -97,18 +97,18 @@
         40,   // Buco Trappola
         503,  // Waboku
         434,  // Capro Espiatorio
-        599,  // Sette Attrezzi del Bandito
+        599,  // I Sette Attrezzi del Bandito
         143,  // Mura del Castello
         793,  // Armatura Sakuretsu
-        439,  // Incantesimo Ombra
-        671,  // Dispositivo di Evacuazione Forzata
+        439,  // Magia Ombra
+        671,  // Dispositivo di Salvataggio Obbligatorio
         201,  // Buco Dimensionale
-        492,  // Tributo ai Dannati
-        624,  // Rottura di Raigeki
-        725,  // Il Guerriero Ritorna in Vita
+        492,  // Tributo al Dannato
+        624,  // Frattura Raigeki
+        725,  // Il Guerriero Sopravvissuto
         669,  // Libro della Vita
-        820,  // Nega Attacco
-        600,  // Trappola Fasulla
+        820,  // Annulla Attacco
+        600,  // Trappola Finta
         690,  // Ritorno di Fiamma
         // Nuovo lotto prima serie: utility situazionale e Fusioni che
         // richiedono comunque materiali specifici + una carta Fusione.

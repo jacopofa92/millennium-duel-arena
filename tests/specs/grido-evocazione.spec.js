@@ -67,7 +67,7 @@ module.exports = {
             });
             assert(normale.durante.scena, 'durante l\'Evocazione Normale la scena del grido deve essere a schermo');
             assert(normale.durante.inMano && !normale.durante.inCampo, 'la carta deve restare in mano finché dura il grido');
-            assert(normale.durante.testo === 'Maga Oscura, rispondi alla mia chiamata!', `grido sbagliato: ${normale.durante.testo}`);
+            assert(normale.durante.testo === 'Ragazza Maga Nera, rispondi alla mia chiamata!', `grido sbagliato: ${normale.durante.testo}`);
             assert(/pedine-esclamazione\/yugiMuto\.png$/.test(normale.durante.figura || ''), `il grido deve usare la posa di esclamazione: ${normale.durante.figura}`);
             assert(!normale.dopo.scena && normale.dopo.inCampo, 'finito il grido la carta deve arrivare in campo col flusso standard');
 

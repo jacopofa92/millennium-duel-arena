@@ -657,7 +657,7 @@ function attemptMonsterSummon(card, handIndex, slotIndex, fromRect) {
     // (recomputeStaticEffects, duel-engine.js). Stesso identico flag già
     // consultato da ACTIONS.specialSummon per le Evocazioni Speciali.
     if (gameState.otherMonsterSummonsBlockedFor && gameState.otherMonsterSummonsBlockedFor.player && card.id !== 282) {
-        addToLog(`🚫 Guardiano Falce del Terrore impedisce ogni altra Evocazione: non puoi Evocare ${card.name}.`);
+        addToLog(`🚫 Falce del Terrore Guardiana impedisce ogni altra Evocazione: non puoi Evocare ${card.name}.`);
         clearSelection();
         return;
     }
@@ -804,7 +804,7 @@ function attemptMonsterSummon(card, handIndex, slotIndex, fromRect) {
         if ((castleCard.counters || 0) >= tributesNeeded) {
             window.DuelEngineUI.openActivateModal(castleCard, {
                 title: "⚙️ Sacrificio alternativo",
-                text: `Puoi sacrificare Castello dell'Ingranaggio Antico (${castleCard.counters} Segnalini) al posto dei mostri per Evocare Tributo ${card.name}. Vuoi farlo?`,
+                text: `Puoi sacrificare Castello-Ingranaggio Antico (${castleCard.counters} Segnalini) al posto dei mostri per Evocare Tributo ${card.name}. Vuoi farlo?`,
                 onConfirm: () => performGearCastleTributeSacrifice(gearCastleIndex, card, handIndex, fromRect),
                 onCancel: () => continueNormalTributeFlow(card, handIndex, tributesNeeded, fromRect)
             });

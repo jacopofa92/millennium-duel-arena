@@ -69,7 +69,7 @@ module.exports = {
                 cambiaPosizione,
                 usaControlloConVantaggio,
                 buffAttivabileSulSoloNemico,
-                controllori: cardDatabase.filter((card) => /Controllore (?:del )?Nemico/.test(card.name)).map((card) => card.id)
+                controllori: cardDatabase.filter((card) => /Controllore (?:del )?Nemico|Controlla-Avversario/.test(card.name)).map((card) => card.id)
             };
         });
 

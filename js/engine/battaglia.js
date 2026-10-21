@@ -737,7 +737,7 @@ function resolveBattleDamage(attackerOwner, defenderOwner, attackerIndex, target
         if (umiOnField) {
             const ownerSTField = Tavolo.magieTrappole(owner);
             if (ownerSTField.some((slot) => slot && !slot.isFaceDown && slot.card.id === 489)) {
-                addToLog(`🌪️ Muro del Tornado protegge ${owner === 'player' ? 'te' : 'il bot'} dal danno da battaglia finché "Umi" resta sul Terreno!`);
+                addToLog(`🌪️ Muro Tornado protegge ${owner === 'player' ? 'te' : 'il bot'} dal danno da battaglia finché "Umi" resta sul Terreno!`);
                 return;
             }
         }

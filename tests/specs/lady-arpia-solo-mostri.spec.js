@@ -2,7 +2,7 @@
 //
 // Trovato dal duello senza testa (tools/duello-senza-testa.js) e confermato
 // nel browser: isHarpieLadySupport riconosceva le Lady Arpia dal solo nome,
-// e "Lady Arpia Formazione della Fenice" (id 289) è una Magia il cui nome
+// e "Lady Arpia Formazione Fenice" (id 289) è una Magia il cui nome
 // comincia allo stesso modo. Egoista Elegante (id 787) la Special
 // Summonava dalla mano come un mostro, senza ATK: i Life Points di chi la
 // attaccava diventavano NaN.

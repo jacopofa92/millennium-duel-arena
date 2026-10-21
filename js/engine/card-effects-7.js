@@ -22,7 +22,7 @@
     // Ingranaggio Antico id 832): puoi Special Summonarla dalla mano
     // scoperta in Posizione di Attacco. In inglese "Ancient Gear" è un
     // PREFISSO in ogni nome della famiglia; in italiano la traduzione lo
-    // rende un SUFFISSO ("Golem Ingranaggio Antico", non "Ingranaggio
+    // rende un SUFFISSO ("Golem-Ingranaggio Antico", non "Ingranaggio
     // Antico Golem") — .includes(), non .startsWith(), verifica
     // l'appartenenza all'archetipo indipendentemente dalla posizione.
     // ================================================================
@@ -54,7 +54,7 @@
             gameState.noTrapActivationFor = gameState.noTrapActivationFor || {};
             gameState.noTrapActivationFor.player = true;
             gameState.noTrapActivationFor.bot = true;
-            ctx.log('⚙️ Cannone Ingranaggio Antico si sacrifica, infligge 500 danni e blocca le Trappole!');
+            ctx.log('⚙️ Cannone-Ingranaggio Antico si sacrifica, infligge 500 danni e blocca le Trappole!');
         }
     });
 
@@ -73,7 +73,7 @@
                 text: 'Scegli quale mostro "Ingranaggio Antico" recuperare dal Cimitero.'
             }, (card) => {
                 ctx.hand(ctx.owner).push(card);
-                ctx.log(`⚙️ Officina dell'Ingranaggio Antico recupera ${card.name} dal Cimitero!`);
+                ctx.log(`⚙️ Laboratorio-Ingranaggio Antico recupera ${card.name} dal Cimitero!`);
             });
         }
     });
@@ -100,7 +100,7 @@
             card.equipInScelta = true;
             const sceltaChiusa = () => { delete card.equipInScelta; };
             chooseFieldCardTargetWaiting(ctx, candidati, {
-                title: '⚙️ Carro Armato Ingranaggio Antico',
+                title: '⚙️ Carro Armato-Ingranaggio Antico',
                 text: 'Scegli a quale tuo "Ingranaggio Antico" equipaggiare questa carta.',
                 dichiara: true,
                 onNegato: sceltaChiusa
@@ -111,7 +111,7 @@
                 card.targetOwner = scelto.owner;
                 card.targetIndex = scelto.index;
                 card.targetUid = slot.card.uid;
-                ctx.log(`⚙️ Carro Armato Ingranaggio Antico equipaggiato a ${slot.card.name}!`);
+                ctx.log(`⚙️ Carro Armato-Ingranaggio Antico equipaggiato a ${slot.card.name}!`);
             });
         },
         static(ctx) {
@@ -127,7 +127,7 @@
             ctx.stField(ctx.owner)[ctx.index] = null;
             ctx.graveyard(ctx.owner).push(ctx.card);
             ctx.dealDamage(ctx.opponent, 600);
-            ctx.log('⚙️ Carro Armato Ingranaggio Antico va al Cimitero e infligge 600 danni!');
+            ctx.log('⚙️ Carro Armato-Ingranaggio Antico va al Cimitero e infligge 600 danni!');
         }
     });
 
@@ -154,7 +154,7 @@
             }).sort((a, b) => (b.card.attack || 0) - (a.card.attack || 0));
             if (candidati.length === 0) return;
             chooseFieldCardTarget(ctx, candidati, {
-                title: '⚙️ Esplosivo Ingranaggio Antico',
+                title: '⚙️ Esplosivo-Ingranaggio Antico',
                 dichiara: true,
                 text: 'Scegli quale tuo "Ingranaggio Antico" far esplodere: il danno è metà del suo ATK.'
             }, (scelto) => {
@@ -162,7 +162,7 @@
                 const damage = Math.floor((card.attack || 0) / 2);
                 ctx.destroyMonster(scelto.owner, scelto.index);
                 ctx.dealDamage(ctx.opponent, damage);
-                ctx.log(`⚙️ Esplosivo Ingranaggio Antico distrugge ${card.name} e infligge ${damage} danni!`);
+                ctx.log(`⚙️ Esplosivo-Ingranaggio Antico distrugge ${card.name} e infligge ${damage} danni!`);
             });
         }
     });
@@ -186,7 +186,7 @@
             const idx = ctx.field(ctx.opponent).findIndex((s) => s && s.card.uid === ctx.opponentCard.uid);
             if (idx === -1) return;
             ctx.destroyMonster(ctx.opponent, idx);
-            ctx.log(`⚙️ Pugno Ingranaggio Antico distrugge ${ctx.opponentCard.name}!`);
+            ctx.log(`⚙️ Pugno-Ingranaggio Antico distrugge ${ctx.opponentCard.name}!`);
         }
     });
 
@@ -232,7 +232,7 @@
                 const banishNext = () => {
                     if (remaining <= 0) {
                         revealed._noTributeThisTurn = gameState.turn;
-                        ctx.log(`⚙️ Fabbrica dell'Ingranaggio Antico rivela ${revealed.name} e bandisce ${banishedNames.length} cart${banishedNames.length === 1 ? 'a' : 'e'} dal Cimitero: potrai Evocarlo Normalmente senza Sacrificio questo turno!`);
+                        ctx.log(`⚙️ Fabbrica-Ingranaggio Antico rivela ${revealed.name} e bandisce ${banishedNames.length} cart${banishedNames.length === 1 ? 'a' : 'e'} dal Cimitero: potrai Evocarlo Normalmente senza Sacrificio questo turno!`);
                         return;
                     }
                     // Necrovalley (id 890): se banishFromGraveyard fallisse,
@@ -285,11 +285,11 @@
         },
         activate(ctx) {
             offerHandDiscardChoice(ctx, {
-                title: '⚙️ Trapano Ingranaggio Antico',
+                title: '⚙️ Trivella-Ingranaggio Antico',
                 text: 'Scegli quale carta scartare dalla mano.'
             }, (discarded) => {
                 searchDeckWithChoice(ctx, (c) => c.type === 'spell', {
-                    title: '⚙️ Trapano Ingranaggio Antico',
+                    title: '⚙️ Trivella-Ingranaggio Antico',
                     text: 'Scegli quale Magia mettere Set dal Deck.'
                 }, (card) => {
                     const freeSlot = ctx.stField(ctx.owner).findIndex((s) => s === null);
@@ -297,7 +297,7 @@
                     ctx.stField(ctx.owner)[freeSlot] = { card: card, isFaceDown: true, setOnTurn: gameState.turn };
                     gameState.blockedCardUidsThisTurn = gameState.blockedCardUidsThisTurn || new Set();
                     gameState.blockedCardUidsThisTurn.add(card.uid);
-                    ctx.log(`⚙️ Trapano Ingranaggio Antico scarta ${discarded.name} e mette Set ${card.name} dal Deck! Non può essere attivata in questo turno.`);
+                    ctx.log(`⚙️ Trivella-Ingranaggio Antico scarta ${discarded.name} e mette Set ${card.name} dal Deck! Non può essere attivata in questo turno.`);
                 });
             });
         }
@@ -326,7 +326,7 @@
     CardEffects.register(843, {
         continuous: true,
         activate(ctx) {
-            ctx.log("⚙️ Castello dell'Ingranaggio Antico attivato!");
+            ctx.log("⚙️ Castello-Ingranaggio Antico attivato!");
         },
         static(ctx) {
             Tavolo.ordine().forEach((owner) => {
@@ -346,7 +346,7 @@
         onAnyNormalOrFlipSummon(ctx) {
             if (ctx.summonedVia !== 'normal') return;
             ctx.card.counters = (ctx.card.counters || 0) + 1;
-            ctx.log(`⚙️ Castello dell'Ingranaggio Antico guadagna 1 Segnalino (${ctx.card.counters} totali)!`);
+            ctx.log(`⚙️ Castello-Ingranaggio Antico guadagna 1 Segnalino (${ctx.card.counters} totali)!`);
         }
     });
 
@@ -380,12 +380,12 @@
         gameState.orgothActiveUidsFor = gameState.orgothActiveUidsFor || { player: new Set(), bot: new Set() };
         gameState.orgothAtkDefBonus[target.uid] = { atk: def - atk, def: atk - def };
         gameState.orgothActiveUidsFor[ctx.owner].add(target.uid);
-        ctx.log(`⚙️ Cambio d'Arma paga 700 LP e scambia ATK/DEF di ${target.name} fino a fine turno avversario!`);
+        ctx.log(`⚙️ Cambio-Arma paga 700 LP e scambia ATK/DEF di ${target.name} fino a fine turno avversario!`);
     }
     CardEffects.register(846, {
         continuous: true,
         activate(ctx) {
-            ctx.log("⚙️ Cambio d'Arma attivato!");
+            ctx.log("⚙️ Cambio-Arma attivato!");
         },
         onStandbyPhase(ctx) {
             if (ctx.hasUsedOncePerTurn(`weapon-change:${ctx.card.uid}`)) return;
@@ -400,7 +400,7 @@
             // come bersaglio"); con un solo candidato chooseFieldCardTarget
             // non apre nulla e sceglie da sé.
             const scegliEScambia = () => chooseFieldCardTarget(ctx, targets, {
-                title: "⚙️ Cambio d'Arma",
+                title: "⚙️ Cambio-Arma",
                 text: 'Scegli il mostro Guerriero/Macchina a cui scambiare ATK/DEF.',
                 dichiara: true
             }, (scelto) => applyWeaponChange(ctx, scelto.card));
@@ -409,7 +409,7 @@
             // e un "Non fare nulla" non lascia l'altro client ad aspettare.
             // Il bot paga sempre, come prima.
             chooseOption(ctx, {
-                title: "⚙️ Cambio d'Arma",
+                title: "⚙️ Cambio-Arma",
                 text: 'Paghi 700 Life Points per scambiare ATK e DEF di un tuo mostro Guerriero o Macchina?',
                 options: [
                     { value: 'paga', label: 'Paga 700 LP', icon: '✅' },
@@ -439,7 +439,7 @@
             });
             if (candidati.length === 0) return;
             chooseFieldCardTarget(ctx, candidati, {
-                title: '⚙️ Duplicazione Meccanica',
+                title: '⚙️ Duplicazione di Macchine',
                 dichiara: true,
                 text: 'Scegli quale Macchina duplicare: dal Deck arrivano fino a 2 copie con lo stesso nome.'
             }, (scelto) => duplicaMacchina(ctx, scelto.slot));
@@ -467,7 +467,7 @@
                 summoned++;
             }
             gameState[Tavolo.chiave(ctx.owner, 'DeckCount')] = deck.length;
-            ctx.log(`⚙️ Duplicazione Meccanica Special Summona ${summoned} copie di ${targetSlot.card.name}!`);
+            ctx.log(`⚙️ Duplicazione di Macchine Special Summona ${summoned} copie di ${targetSlot.card.name}!`);
     }
 
     // ================================================================
@@ -494,7 +494,7 @@
                     return;
                 }
                 ctx.drawCards(ctx.owner, 2);
-                ctx.log(`🏺 Vaso dell'Avarizia rimescola ${raccolti.length} mostri nel Deck e pesca 2 carte!`);
+                ctx.log(`🏺 Giara dell'Avarizia rimescola ${raccolti.length} mostri nel Deck e pesca 2 carte!`);
             };
             const prendi = (restanti) => {
                 if (restanti === 0) { concludi(); return; }
@@ -543,7 +543,7 @@
             const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
             if (slotIndex === -1) {
                 grave.push(ctx.card);
-                ctx.log('⚠️ Il Terreno è pieno: Roccaforte la Fortezza Mobile resta nel Cimitero.');
+                ctx.log('⚠️ Il Terreno è pieno: Roccaforte della Fortezza Movente resta nel Cimitero.');
                 return;
             }
             ctx.card.type = 'monster';
@@ -563,7 +563,7 @@
             // carta invece va Special Summonata SCOPERTA, va corretto qui.
             const newSlot = ctx.field(ctx.owner)[slotIndex];
             if (newSlot) newSlot.isFaceDown = false;
-            ctx.log('🐋 Roccaforte la Fortezza Mobile si Special Summona come Mostro in Posizione di Difesa!');
+            ctx.log('🐋 Roccaforte della Fortezza Movente si Special Summona come Mostro in Posizione di Difesa!');
         },
         static(ctx) {
             const gadgetIds = [828, 829, 830];
@@ -587,14 +587,14 @@
             const candidati = collectFieldTargets(ctx, { zone: 'monster' });
             if (candidati.length === 0) return;
             chooseFieldCardTarget(ctx, candidati, {
-                title: '🔫 Raggio Micro',
+                title: '🔫 Micro Raggio',
                 text: 'Scegli il mostro scoperto a cui azzerare la DEF.',
                 dichiara: true
             }, (scelto) => {
                 const finalSlot = ctx.field(scelto.owner)[scelto.index];
                 if (!finalSlot) return;
                 ctx.grantTemporaryAtkDefBonus(finalSlot.card, 0, -DuelEngine.getEffectiveDef(finalSlot.card), false);
-                ctx.log(`🔫 Raggio Micro azzera la DEF di ${finalSlot.card.name}!`);
+                ctx.log(`🔫 Micro Raggio azzera la DEF di ${finalSlot.card.name}!`);
             });
         }
     });
@@ -714,7 +714,7 @@
             // agganciarla, altrimenti una seconda scelta annullata la
             // lascerebbe fuori da ogni zona.
             chooseCardFromList(ctx, unioni, {
-                title: '⚙️ Avanti Tutta!',
+                title: '⚙️ Attaccati!',
                 text: 'Scegli quale mostro Union recuperare dal Cimitero.'
             }, (unionCard) => {
                 const d = DuelEngine.getDefinition(unionCard.id);
@@ -738,7 +738,7 @@
                     unionCard.equippedToIndex = scelto.index;
                     unionCard.equippedToUid = targetSlot.card.uid;
                     ctx.stField(ctx.owner)[freeStSlot] = { card: unionCard, isFaceDown: false, setOnTurn: gameState.turn };
-                    ctx.log(`⚙️ Avanti Tutta! recupera ${unionCard.name} dal Cimitero e lo aggancia a ${targetSlot.card.name}!`);
+                    ctx.log(`⚙️ Attaccati! recupera ${unionCard.name} dal Cimitero e lo aggancia a ${targetSlot.card.name}!`);
                 });
             });
         }
@@ -782,7 +782,7 @@
                 if (slot) candidati.push({ owner: ctx.opponent, index, card: slot.card });
             });
             chooseFieldMonsterTarget(ctx, candidati, {
-                title: '🧠 Controllo Mentale',
+                title: '🧠 Controllo della Mente',
                 text: 'Scegli quale mostro avversario prendere sotto controllo.'
             }, (scelta) => attivaControlloMentale(ctx, scelta));
         }
@@ -804,7 +804,7 @@
             gameState.cannotAttackUidsPermanent.add(stolen.uid);
             gameState.cannotBeTributedUids = gameState.cannotBeTributedUids || new Set();
             gameState.cannotBeTributedUids.add(stolen.uid);
-            ctx.log(`🧠 Controllo Mentale prende il controllo permanente di ${stolenName}!`);
+            ctx.log(`🧠 Controllo della Mente prende il controllo permanente di ${stolenName}!`);
         }
         });
     }
@@ -826,7 +826,7 @@
         activate(ctx) {
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return;
             searchGraveyardWithChoice(ctx, ctx.owner, (c) => c.type === 'monster', {
-                title: '⚰️ Richiamo degli Infestati',
+                title: '⚰️ Richiamo del Posseduto',
                 text: 'Scegli quale mostro Special Summonare dal Cimitero.'
             }, (revived) => {
                 const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
@@ -841,7 +841,7 @@
                     ctx.card.targetOwner = ctx.owner;
                     ctx.card.targetIndex = freeIndex;
                     ctx.card.targetUid = revived.uid;
-                    ctx.log(`⚰️ Richiamo degli Infestati Special Summona ${revived.name} dal Cimitero!`);
+                    ctx.log(`⚰️ Richiamo del Posseduto Special Summona ${revived.name} dal Cimitero!`);
                 };
                 if (window.FX && typeof FX.playCallOfTheHaunted === 'function') {
                     FX.playCallOfTheHaunted(ctx.owner, revived, slotIndex, resolveHaunting);
@@ -878,7 +878,7 @@
     CardEffects.register(232, {
         continuous: true,
         activate(ctx) {
-            ctx.log('🧚 Scatola delle Fate attivata: pronta a reagire al prossimo attacco avversario!');
+            ctx.log('🧚 Scatola Fatata attivata: pronta a reagire al prossimo attacco avversario!');
         },
         onAttackDeclare(ctx) {
             const attackerSlot = ctx.field(ctx.attackerOwner)[ctx.attackerIndex];
@@ -887,15 +887,15 @@
             if (window.FX) FX.playCoinFlip(guessed);
             if (guessed) {
                 ctx.grantTemporaryAtkDefBonus(attackerSlot.card, -DuelEngine.getEffectiveAtk(attackerSlot.card), 0, false);
-                ctx.log(`🧚 Scatola delle Fate indovina il lancio! ATK di ${attackerSlot.card.name} azzerato fino a fine turno!`);
+                ctx.log(`🧚 Scatola Fatata indovina il lancio! ATK di ${attackerSlot.card.name} azzerato fino a fine turno!`);
             } else {
-                ctx.log('🧚 Scatola delle Fate: lancio sbagliato, nessun effetto.');
+                ctx.log('🧚 Scatola Fatata: lancio sbagliato, nessun effetto.');
             }
         },
         onStandbyPhase(ctx) {
             const lpKey = Tavolo.chiave(ctx.owner, 'LP');
             gameState[lpKey] -= 500;
-            ctx.log(`🧚 Scatola delle Fate: ${ctx.owner === 'player' ? 'paghi' : 'il bot paga'} 500 Life Points per mantenerla in campo.`);
+            ctx.log(`🧚 Scatola Fatata: ${ctx.owner === 'player' ? 'paghi' : 'il bot paga'} 500 Life Points per mantenerla in campo.`);
         }
     });
 
@@ -988,7 +988,7 @@
             revived.defense = Math.floor((revived.defense || 0) / 2);
             revived._twinHeadedUsed = true;
             ctx.specialSummon(ctx.owner, revived, slotIndex, 'attack', 'graveyard');
-            ctx.log('🐉 Behemoth a Due Teste risorge con ATK/DEF dimezzati!');
+            ctx.log('🐉 Behemoth Bifronte risorge con ATK/DEF dimezzati!');
         }
     });
 
@@ -1008,7 +1008,7 @@
     // ------------------------------------------------------------------
     CardEffects.register(89, {
         canActivate(ctx) {
-            const hasAmazon = ctx.field(ctx.owner).some((s) => s && !s.isFaceDown && s.card.name && s.card.name.includes('Amazzone'));
+            const hasAmazon = ctx.field(ctx.owner).some((s) => s && !s.isFaceDown && s.card.name && /Amazzone|(?<!Imboscata )Amazoness/.test(s.card.name));
             if (!hasAmazon) return false;
             return ctx.field(ctx.opponent).some((s) => s && !s.isFaceDown);
         },
@@ -1018,7 +1018,7 @@
             // in campo la prima scelta cambia completamente il risultato.
             const mieAmazzoni = [];
             ctx.field(ctx.owner).forEach((slot, index) => {
-                if (slot && !slot.isFaceDown && slot.card.name && slot.card.name.includes('Amazzone')) {
+                if (slot && !slot.isFaceDown && slot.card.name && /Amazzone|(?<!Imboscata )Amazoness/.test(slot.card.name)) {
                     mieAmazzoni.push({ owner: ctx.owner, index, card: slot.card });
                 }
             });
@@ -1028,11 +1028,11 @@
             });
             if (mieAmazzoni.length === 0 || suoi.length === 0) return;
             chooseFieldMonsterTarget(ctx, mieAmazzoni, {
-                title: '⚔️ Amazzone Incantatrice',
+                title: '⚔️ Incantatrice Amazoness',
                 text: 'Scegli quale tua Amazzone deve scambiare l\'ATK.'
             }, (miaScelta) => {
                 chooseFieldMonsterTarget(ctx, suoi, {
-                    title: '⚔️ Amazzone Incantatrice',
+                    title: '⚔️ Incantatrice Amazoness',
                     text: 'Scegli con quale mostro avversario scambiare l\'ATK.'
                 }, (suaScelta) => {
                     const own = ctx.field(ctx.owner)[miaScelta.index];
@@ -1044,7 +1044,7 @@
                         const ownAtk = own.card.attack, oppAtk = opp.card.attack;
                         ctx.grantTemporaryAtkDefBonus(own.card, oppAtk - ownAtk, 0, false);
                         ctx.grantTemporaryAtkDefBonus(opp.card, ownAtk - oppAtk, 0, false);
-                        ctx.log(`⚔️ Amazzone Incantatrice scambia l'ATK di ${own.card.name} e ${opp.card.name}!`);
+                        ctx.log(`⚔️ Incantatrice Amazoness scambia l'ATK di ${own.card.name} e ${opp.card.name}!`);
                     });
                 });
             });
@@ -1129,7 +1129,7 @@
                 if (deck[i].name === name) { ctx.millCardFromDeck(controllore, i); count++; }
             }
         }
-        ctx.log(`⛓️ Catena di Distruzione manda ${count} copie di ${name} al Cimitero!`);
+        ctx.log(`⛓️ Distruzione a Catena manda ${count} copie di ${name} al Cimitero!`);
     }
     CardEffects.register(146, {
         canActivate(ctx) {
@@ -1226,7 +1226,7 @@
             }
             ctx.card._volstgalphBonus += 200;
             ctx.grantTemporaryAtkDefBonus(ctx.card, ctx.card._volstgalphBonus, 0, false);
-            ctx.log('🐴 Des Volstgalph guadagna 200 ATK fino a fine turno!');
+            ctx.log('🐴 Volstgalph Des guadagna 200 ATK fino a fine turno!');
         }
     });
 
@@ -1335,7 +1335,7 @@
                 if (!decl.allowed || decl.targetOwner !== ctx.owner) return;
                 const targetIndex = decl.targetIndex;
                 grantAttackAllEnemiesOncEach(ctx, targetIndex);
-                ctx.log(`🌊 Movimento d'Onda Diffuso: ${ctx.field(ctx.owner)[targetIndex].card.name} deve attaccare tutti i mostri avversari!`);
+                ctx.log(`🌊 Esplosione a Onde Soniche: ${ctx.field(ctx.owner)[targetIndex].card.name} deve attaccare tutti i mostri avversari!`);
             });
         }
     });
@@ -1463,18 +1463,18 @@
     // ------------------------------------------------------------------
     // 289 — Lady Arpia Formazione della Fenice / Harpie's Phoenix
     // Formation (Magia Normale)
-    // Se controlli 3+ "Lady Arpia"/"Sorelle Lady Arpia": distruggi
+    // Se controlli 3+ "Lady Arpia"/"Sorelle Arpie": distruggi
     // altrettanti mostri dell'avversario, poi infliggi danno pari
     // all'ATK originale più alto tra quelli distrutti.
     // ------------------------------------------------------------------
     CardEffects.register(289, {
         canActivate(ctx) {
-            const harpieCount = ctx.field(ctx.owner).filter((s) => s && !s.isFaceDown && (isHarpieLadySupport(s.card) || s.card.name === 'Sorelle Lady Arpia')).length;
+            const harpieCount = ctx.field(ctx.owner).filter((s) => s && !s.isFaceDown && (isHarpieLadySupport(s.card) || s.card.name === 'Sorelle Arpie')).length;
             if (harpieCount < 3) return false;
             return ctx.field(ctx.opponent).some((s) => s);
         },
         activate(ctx) {
-            const harpieCount = ctx.field(ctx.owner).filter((s) => s && !s.isFaceDown && (isHarpieLadySupport(s.card) || s.card.name === 'Sorelle Lady Arpia')).length;
+            const harpieCount = ctx.field(ctx.owner).filter((s) => s && !s.isFaceDown && (isHarpieLadySupport(s.card) || s.card.name === 'Sorelle Arpie')).length;
             // Quanti bersagli: tanti quante le Lady Arpia (o tutti i mostri
             // avversari, se sono di meno). Li sceglie il giocatore, uno alla
             // volta; il bot prende i più forti, che è anche la scelta che
@@ -1485,7 +1485,7 @@
             const quanti = Math.min(harpieCount, avversari().length);
             const passi = [];
             for (let n = 0; n < quanti; n++) {
-                passi.push({ candidati: avversari, title: '🦅 Lady Arpia Formazione della Fenice', text: `Scegli il mostro avversario da distruggere (${n + 1} di ${quanti}).` });
+                passi.push({ candidati: avversari, title: '🦅 Lady Arpia Formazione Fenice', text: `Scegli il mostro avversario da distruggere (${n + 1} di ${quanti}).` });
             }
             chooseFieldTargetsInSequence(ctx, passi, (finali) => {
                 try {
@@ -1498,7 +1498,7 @@
                         destroyed++;
                     });
                     if (maxAtk > 0) ctx.dealDamage(ctx.opponent, maxAtk);
-                    ctx.log(`🦅 Lady Arpia Formazione della Fenice distrugge ${destroyed} mostri e infligge ${maxAtk} danni!`);
+                    ctx.log(`🦅 Lady Arpia Formazione Fenice distrugge ${destroyed} mostri e infligge ${maxAtk} danni!`);
                 } finally {
                     fine();
                 }
@@ -1527,7 +1527,7 @@
     CardEffects.register(308, {
         continuous: true,
         activate(ctx) {
-            ctx.log('🚪 Congedo Infinito attivato!');
+            ctx.log('🚪 Radiazione Infinita attivato!');
         },
         onEndPhase(ctx) {
             let count = 0;
@@ -1540,7 +1540,7 @@
                     count++;
                 });
             });
-            if (count > 0) ctx.log(`🚪 Congedo Infinito distrugge ${count} mostr${count === 1 ? 'o' : 'i'} appena Evocat${count === 1 ? 'o' : 'i'}!`);
+            if (count > 0) ctx.log(`🚪 Radiazione Infinita distrugge ${count} mostr${count === 1 ? 'o' : 'i'} appena Evocat${count === 1 ? 'o' : 'i'}!`);
         }
     });
 
@@ -1560,7 +1560,7 @@
             if (!slot) return;
             slot.position = slot.position === 'attack' ? 'defense' : 'attack';
             if (slot.position === 'attack') slot.isFaceDown = false;
-            ctx.log(`🛡️ Piccola Guardia Alata cambia in Posizione di ${slot.position === 'attack' ? 'Attacco' : 'Difesa'}!`);
+            ctx.log(`🛡️ Piccola-Guardialata cambia in Posizione di ${slot.position === 'attack' ? 'Attacco' : 'Difesa'}!`);
         }
     });
 
@@ -1636,7 +1636,7 @@
             if (slotIndex === -1) return;
             const [card] = hand.splice(index, 1);
             ctx.specialSummon(ctx.owner, card, slotIndex, 'attack', 'hand');
-            ctx.log(`🦗 Cavalletta d'Emergenza Special Summona ${card.name} dalla mano!`);
+            ctx.log(`🦗 Cavalletta Pungente Special Summona ${card.name} dalla mano!`);
         }
     });
 
@@ -1652,12 +1652,12 @@
         activate(ctx) {
             offerHandDiscardChoice(ctx, {
                 filter: (c) => c.type === 'monster',
-                title: '⚰️ Ritorno dei Dannati',
+                title: '⚰️ Ritorno del Condannato',
                 text: 'Scegli quale mostro scartare dalla mano.'
             }, (discarded) => {
                 gameState._returnOfTheDoomedTurn = gameState._returnOfTheDoomedTurn || {};
                 gameState._returnOfTheDoomedTurn[ctx.owner] = gameState.turn;
-                ctx.log(`⚰️ Ritorno dei Dannati scarta ${discarded.name}!`);
+                ctx.log(`⚰️ Ritorno del Condannato scarta ${discarded.name}!`);
             });
         },
         onEndPhase(ctx) {
@@ -1668,7 +1668,7 @@
             if (ctx.graveyardMoveNegated(ctx.owner)) return;
             const card = grave.pop();
             ctx.hand(ctx.owner).push(card);
-            ctx.log(`⚰️ Ritorno dei Dannati riporta ${card.name} in mano!`);
+            ctx.log(`⚰️ Ritorno del Condannato riporta ${card.name} in mano!`);
         }
     });
 
@@ -1948,7 +1948,7 @@
                 chi: ctx.owner,
                 candidati: candidates,
                 mostra: (c) => c.card,
-                titolo: '🪞 Specchietto della Fata',
+                titolo: '🪞 Specchio Mano di Fata',
                 testo: 'Scegli il nuovo bersaglio valido della Magia.',
                 automatica: (elenco) => elenco.find((c) => c.owner === ctx.sourceOwner) || elenco[0],
                 automaticaSeUnica: true
@@ -2059,13 +2059,13 @@
                 swept++;
             }
         });
-        if (swept > 0) ctx.log('💀 Destiny Board si disperde: le carte Spirit Message rimanenti vanno al Cimitero!');
+        if (swept > 0) ctx.log('💀 Tavola del Destino si disperde: le carte Spirit Message rimanenti vanno al Cimitero!');
     }
 
     CardEffects.register(866, {
         continuous: true,
         activate(ctx) {
-            ctx.log('💀 Destiny Board si scopre sul Terreno...');
+            ctx.log('💀 Tavola del Destino si scopre sul Terreno...');
         },
         onOpponentEndPhase(ctx) {
             const owner = ctx.owner;
@@ -2091,12 +2091,12 @@
             const placeNormally = () => {
                 const freeSt = ctx.stField(owner).findIndex((s) => s === null);
                 if (freeSt === -1) {
-                    ctx.log('💀 Destiny Board: nessuna casella Magia/Trappola libera, la Spirit Message non viene piazzata questo turno.');
+                    ctx.log('💀 Tavola del Destino: nessuna casella Magia/Trappola libera, la Spirit Message non viene piazzata questo turno.');
                     return;
                 }
                 const card = takeCard();
                 ctx.stField(owner)[freeSt] = { card: card, isFaceDown: false, setOnTurn: gameState.turn };
-                ctx.log(`💀 Destiny Board piazza scoperta ${card.name} sulla zona Magia/Trappola!`);
+                ctx.log(`💀 Tavola del Destino piazza scoperta ${card.name} sulla zona Magia/Trappola!`);
             };
 
             // Santuario Oscuro (id 192): Magia Terreno scoperta dello
@@ -2137,7 +2137,7 @@
                 Decisioni.chiedi({
                     chi: owner,
                     tipo: 'coppia',
-                    titolo: '💀 Destiny Board',
+                    titolo: '💀 Tavola del Destino',
                     candidati: [
                         { icon: '💀', label: `Piazza ${previewName} normalmente`, onSelect: placeNormally },
                         { icon: '⚱️', label: 'Special Summonala con Santuario Oscuro', onSelect: summonAsMonster }
@@ -2225,13 +2225,13 @@
         activate(ctx) {
             ctx.dealDamage(ctx.owner, 1000);
             const first = ctx.discardRandomFromHand(ctx.opponent);
-            if (first) ctx.log(`🃏 Duo Delinquente: ${ctx.opponent === 'player' ? 'scarti' : 'il bot scarta'} una carta a caso!`);
+            if (first) ctx.log(`🃏 Due di Meno: ${ctx.opponent === 'player' ? 'scarti' : 'il bot scarta'} una carta a caso!`);
             if (ctx.hand(ctx.opponent).length === 0) return;
             victimChoosesDiscard(ctx, ctx.opponent, {
-                title: '🃏 Duo Delinquente',
+                title: '🃏 Due di Meno',
                 text: 'Scegli 1 carta della tua mano da scartare.'
             }, (scelta) => {
-                ctx.log(`🃏 Duo Delinquente: ${ctx.opponent === 'player' ? `scarti ${scelta.name}` : 'il bot scarta una carta a sua scelta'}.`);
+                ctx.log(`🃏 Due di Meno: ${ctx.opponent === 'player' ? `scarti ${scelta.name}` : 'il bot scarta una carta a sua scelta'}.`);
             });
         }
     });
@@ -2399,17 +2399,17 @@
     // ogni altra: il proprietario reale decide e il motore specchio aspetta.
     const messaggeroPaga = (ctx) => {
         ctx.dealDamage(ctx.owner, 100);
-        ctx.log('🕊️ Messaggero della Pace: pagati 100 Life Points per mantenerla attiva.');
+        ctx.log('🕊️ Messaggero di Pace: pagati 100 Life Points per mantenerla attiva.');
     };
     const messaggeroLasciaAndare = (ctx) => {
         const i = ctx.stField(ctx.owner).findIndex((s) => s && s.card.uid === ctx.card.uid);
         if (i === -1) return;
         ctx.destroySpellTrap(ctx.owner, i);
-        ctx.log('🕊️ Messaggero della Pace non viene mantenuta e viene distrutta.');
+        ctx.log('🕊️ Messaggero di Pace non viene mantenuta e viene distrutta.');
     };
     CardEffects.register(880, {
         continuous: true,
-        activate(ctx) { ctx.log('🕊️ Messaggero della Pace impedisce l\'attacco ai mostri più forti!'); },
+        activate(ctx) { ctx.log('🕊️ Messaggero di Pace impedisce l\'attacco ai mostri più forti!'); },
         static(ctx) {
             Tavolo.ordine().forEach((owner) => {
                 ctx.field(owner).forEach((slot) => {
@@ -2426,7 +2426,7 @@
                 Decisioni.chiedi({
                     chi: ctx.owner,
                     tipo: 'coppia',
-                    titolo: '🕊️ Messaggero della Pace',
+                    titolo: '🕊️ Messaggero di Pace',
                     candidati: [
                         { icon: '💰', label: 'Paga 100 Life Points e mantienila', onSelect: () => messaggeroPaga(ctx) },
                         { icon: '🗑️', label: 'Non pagare: viene distrutta', onSelect: () => messaggeroLasciaAndare(ctx) }
@@ -2461,7 +2461,7 @@
             if (candidati.length === 0) return;
             const fine = attendiScelta(ctx);
             chooseFieldCardTarget(ctx, candidati, {
-                title: '⚔️ Nobile dello Sterminio',
+                title: '⚔️ Nobiluomo dello Sterminio',
                 text: 'Scegli la Magia o Trappola coperta da distruggere e bandire.',
                 onCancel: () => fine()
             }, (scelto) => {
@@ -2482,7 +2482,7 @@
             const card = slot.card;
             card.mustBanishOnLeavingField = true;
             ctx.destroySpellTrap(targetOwner, targetIndex);
-            ctx.log(`⚔️ Nobile dello Sterminio bandisce ${card.name}!`);
+            ctx.log(`⚔️ Nobiluomo dello Sterminio bandisce ${card.name}!`);
             if (card.type === 'trap') {
                 ['playerDeck', 'botDeck'].forEach((deckKey) => {
                     const deck = gameState[deckKey];
@@ -2650,7 +2650,7 @@
             const deckKey = Tavolo.chiave(ctx.owner, 'Deck');
             const deck = gameState[deckKey];
             if (!Array.isArray(deck) || deck.length === 0) {
-                ctx.log('🎲 Quiz Inverso: il Deck è vuoto, nessuna carta in cima da dichiarare.');
+                ctx.log('🎲 Quiz Invertito: il Deck è vuoto, nessuna carta in cima da dichiarare.');
                 return;
             }
             // La categoria la dichiara il giocatore (chooseOption): la Chain
@@ -2663,7 +2663,7 @@
             const labels = { monster: 'Mostro', spell: 'Magia', trap: 'Trappola' };
             const fine = attendiScelta(ctx);
             chooseOption(ctx, {
-                title: '🎲 Quiz Inverso',
+                title: '🎲 Quiz Invertito',
                 text: 'Che tipo di carta c\'è in cima al tuo Deck? Se indovini, scambi i tuoi Life Points con quelli dell\'avversario.',
                 options: [
                     { value: 'monster', label: 'Mostro', icon: '🐉' },
@@ -2677,21 +2677,21 @@
                     // può essere cambiato.
                     const deckOra = gameState[deckKey];
                     if (!Array.isArray(deckOra) || deckOra.length === 0) {
-                        ctx.log('🎲 Quiz Inverso: il Deck è vuoto, nessuna carta in cima da dichiarare.');
+                        ctx.log('🎲 Quiz Invertito: il Deck è vuoto, nessuna carta in cima da dichiarare.');
                         return;
                     }
                     const topCard = deckOra[deckOra.length - 1];
                     const correct = topCard.type === guess;
-                    ctx.log(`🎲 Quiz Inverso: ${ctx.owner === 'player' ? 'dichiari' : 'il bot dichiara'} "${labels[guess]}" — la carta in cima è ${topCard.name} (${labels[topCard.type]})!`);
+                    ctx.log(`🎲 Quiz Invertito: ${ctx.owner === 'player' ? 'dichiari' : 'il bot dichiara'} "${labels[guess]}" — la carta in cima è ${topCard.name} (${labels[topCard.type]})!`);
                     if (correct) {
                         const lpKeyOwn = Tavolo.chiave(ctx.owner, 'LP');
                         const lpKeyOpp = ctx.owner === 'player' ? 'botLP' : 'playerLP';
                         const tmp = gameState[lpKeyOwn];
                         gameState[lpKeyOwn] = gameState[lpKeyOpp];
                         gameState[lpKeyOpp] = tmp;
-                        ctx.log('🎲 Quiz Inverso: indovinato! I Life Points si scambiano!');
+                        ctx.log('🎲 Quiz Invertito: indovinato! I Life Points si scambiano!');
                     } else {
-                        ctx.log('🎲 Quiz Inverso: sbagliato, nessun effetto.');
+                        ctx.log('🎲 Quiz Invertito: sbagliato, nessun effetto.');
                     }
                 } finally {
                     fine();
@@ -2778,7 +2778,7 @@
 
     // 887 — Cancello di Fusione / Fusion Gate (Magia Campo). Riusa
     // DuelEngine.getFusableExtraDeckMonsters/ctx.fusionSummon già esistenti
-    // per "Fusione" (id 38) — qui come Ignition ripetibile di un Continuo
+    // per "Polimerizzazione" (id 38) — qui come Ignition ripetibile di un Continuo
     // già scoperto (repeatableWhileContinuous, stesso schema di Offerta
     // Suprema id 559). I materiali vengono BANDITI (fusionSummon con
     // banishMaterials). "Il giocatore di turno" vuol dire chiunque sia di
@@ -2800,7 +2800,7 @@
         Decisioni.chiedi({
             chi: owner,
             candidati: options.map((o) => o.card),
-            titolo: '🔗 Cancello di Fusione: scegli il Mostro Fusione',
+            titolo: '🔗 Cancello della Fusione: scegli il Mostro Fusione',
             testo: 'Hai i materiali per più di un Mostro Fusione: scegline uno da Evocare (i materiali vengono banditi).'
         }, (card) => {
             if (card === null) return;
@@ -2851,7 +2851,7 @@
             if (!ctx.sourceCard || ctx.sourceType !== 'spell') return;
             ctx.cancel();
             const distrutta = destroyTargetingSpellIfItStays(ctx);
-            ctx.log(`⚔️ Freed il Generale Senza Rivali nega l'effetto di ${ctx.sourceCard.name}${distrutta ? ' e la distrugge' : ''}!`);
+            ctx.log(`⚔️ Freed il Generale Senza Avversari nega l'effetto di ${ctx.sourceCard.name}${distrutta ? ' e la distrugge' : ''}!`);
         }
     });
 
@@ -3009,7 +3009,7 @@
         const idx = ctx.field(ctx.owner).findIndex((s) => s && s.card.uid === uid);
         if (idx === -1) return; // il mostro controllato è già sparito per conto suo
         ctx.takeControl(ctx.opponent, ctx.owner, idx);
-        ctx.log('🃏 Necropaura Oscura lascia il campo: il controllo del mostro torna al suo proprietario.');
+        ctx.log('🃏 Paura Oscura lascia il campo: il controllo del mostro torna al suo proprietario.');
     }
     CardEffects.register(891, {
         cannotNormalSummon: true,
@@ -3023,7 +3023,7 @@
         },
         paySpecialSummonCost(ctx) {
             const isDemon = (c) => c.type === 'monster' && c.race === 'Demone';
-            return resolveSpecialSummonBanishCost(ctx, [isDemon, isDemon, isDemon], '👻 Necropaura Oscura bandisce 3 mostri Demone dal Cimitero per essere Evocata Specialmente!');
+            return resolveSpecialSummonBanishCost(ctx, [isDemon, isDemon, isDemon], '👻 Paura Oscura bandisce 3 mostri Demone dal Cimitero per essere Evocata Specialmente!');
         },
         onDestroy(ctx) {
             const byOpponent = !!ctx.destroyedByOpponentCard || (ctx.destroyedByOwner && ctx.destroyedByOwner !== ctx.owner);
@@ -3287,7 +3287,7 @@
         },
         activate(ctx) {
             searchGraveyardWithChoice(ctx, ctx.owner, (c) => c.type === 'monster' && c.uid !== ctx.card.uid && distruttoInBattagliaQuestoTurno(ctx.owner, c), {
-                title: '👼 La Fanciulla Indulgente',
+                title: '👼 La Vergine Clemente',
                 text: 'Scegli quale mostro far tornare in mano dal Cimitero.'
             }, (target) => {
                 const field = ctx.field(ctx.owner);
@@ -3297,7 +3297,7 @@
                 ctx.graveyard(ctx.owner).push(ctx.card);
                 DuelEngine.notifySacrificedForTribute(ctx.owner, ctx.card);
                 ctx.hand(ctx.owner).push(target);
-                ctx.log(`👼 La Fanciulla Indulgente si tributa: ${target.name} torna in mano dal Cimitero!`);
+                ctx.log(`👼 La Vergine Clemente si tributa: ${target.name} torna in mano dal Cimitero!`);
             });
         }
     });
@@ -3323,7 +3323,7 @@
         canTriggerFromGraveyard: true,
         onStandbyPhase(ctx) {
             ctx.dealDamage(ctx.owner, -200);
-            ctx.log('🖤 Darklord Marie guadagna 200 LP dal Cimitero!');
+            ctx.log('🖤 Signora Oscura Maria guadagna 200 LP dal Cimitero!');
         }
     });
 

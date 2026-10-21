@@ -53,7 +53,7 @@
     // ============================================================
     const TRIGGER = {
         ON_NORMAL_SUMMON: 'onNormalSummon',   // subito dopo un'Evocazione Normale (Tributo incluso)
-        ON_SPECIAL_SUMMON: 'onSpecialSummon', // subito dopo una Special Summon (es. da Rinascita del Mostro)
+        ON_SPECIAL_SUMMON: 'onSpecialSummon', // subito dopo una Special Summon (es. da Mostro Resuscitato)
         ON_FLIP: 'onFlip',                    // quando un mostro coperto viene girato scoperto
         ON_ATTACK_DECLARE: 'onAttackDeclare', // dopo che un attacco è stato dichiarato, PRIMA del calcolo danni
         ON_DESTROY: 'onDestroy',              // subito dopo che un mostro viene distrutto e va al Cimitero
@@ -776,7 +776,7 @@
         gameState.usedOncePerTurnEffect = gameState.usedOncePerTurnEffect || {};
         gameState.usedOncePerTurnEffect[key] = true;
         gameState[lpKey] -= 500;
-        addToLog(`📖 Mondo dei Toon protegge ${card.name}: ${owner === 'player' ? 'paghi' : 'il bot paga'} 500 LP!`);
+        addToLog(`📖 Mondo Toon protegge ${card.name}: ${owner === 'player' ? 'paghi' : 'il bot paga'} 500 LP!`);
         return true;
     }
 
@@ -1533,7 +1533,7 @@
                 const opponentOwner = opponentOf(owner);
                 const hasNightmareWheel = stFieldOf(opponentOwner).some((s) => s && !s.isFaceDown && s.card.id === 686);
                 if (hasNightmareWheel) {
-                    addToLog('🌑 Camera Oscura degli Incubi infligge 300 danni in più!');
+                    addToLog('🌑 Camera Oscura dell\'Incubo infligge 300 danni in più!');
                     ACTIONS.dealDamage(owner, 300);
                 }
             }
@@ -1641,7 +1641,7 @@
             // di questa stessa funzione, vedi il commento in cima), quindi
             // un semplice `return false` la farebbe sparire nel nulla.
             if (gameState.otherMonsterSummonsBlockedFor && gameState.otherMonsterSummonsBlockedFor[owner] && card.id !== 282) {
-                addToLog(`🚫 Guardiano Falce del Terrore impedisce ogni altra Evocazione: ${card.name} non può essere Special Summonata.`);
+                addToLog(`🚫 Falce del Terrore Guardiana impedisce ogni altra Evocazione: ${card.name} non può essere Special Summonata.`);
                 graveyardOf(owner).push(card);
                 return false;
             }
@@ -1650,7 +1650,7 @@
             // Special Summon, a differenza di 282 qui sopra (gameState.
             // specialSummonBlockedFor, ricalcolato ad ogni render).
             if (gameState.specialSummonBlockedFor && gameState.specialSummonBlockedFor[owner] && card.id !== 1045) {
-                addToLog(`🚫 L'Ultimo Guerriero di un Altro Pianeta impedisce le Special Summon: ${card.name} non può essere Special Summonata.`);
+                addToLog(`🚫 L'Ultimo Guerriero da un Altro Pianeta impedisce le Special Summon: ${card.name} non può essere Special Summonata.`);
                 graveyardOf(owner).push(card);
                 return false;
             }
@@ -2727,7 +2727,7 @@
             removeFromBanished(entry.owner, entry.card);
             animaTransizioneCarta(entry.card, { kind: 'banished', owner: entry.owner }, { kind: 'hand', owner: entry.owner }, 'hand');
             handOf(entry.owner).push(entry.card);
-            addToLog(`🗡️ ${entry.card.name} torna in mano dal bando di Spada della Forza di Luce!`);
+            addToLog(`🗡️ ${entry.card.name} torna in mano dal bando di Spada Forza di Luce!`);
         });
         gameState.delayedHandReturns = stillWaiting;
     }
@@ -3025,7 +3025,7 @@
     // ============================================================
     // Special Summon dalla mano su iniziativa del giocatore (es.
     // Gilasaurus, Il Demone Megacyber, i mostri Toon che dipendono da
-    // "Mondo dei Toon"): diverso dall'Evocazione Normale/Tributo E da un
+    // "Mondo Toon"): diverso dall'Evocazione Normale/Tributo E da un
     // Special Summon scatenato da un'ALTRA carta (es. Rinascita del
     // Mostro) — qui è il giocatore stesso, cliccando un mostro in mano,
     // a decidere di farlo entrare in campo tramite il proprio effetto.
@@ -3112,7 +3112,7 @@
     // Special Summon dall'EXTRA DECK bandendo materiali (es. Cannone
     // Drago XY/XYZ) — diverso dall'Evocazione Fusione vera e propria
     // (ACTIONS.fusionSummon/getFusableExtraDeckMonsters più sopra): qui
-    // non c'è nessuna Magia "Fusione" di mezzo, il mostro Extra Deck ha
+    // non c'è nessuna Magia "Polimerizzazione" di mezzo, il mostro Extra Deck ha
     // scritto sulla PROPRIA carta la condizione "bandisci questi materiali
     // che controlli", quindi il giocatore lo attiva da sé (click sulla
     // zona Fusion, vedi createSlotElement in game-flow.js) invece che

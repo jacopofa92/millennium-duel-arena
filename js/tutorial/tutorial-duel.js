@@ -41,12 +41,12 @@
     'use strict';
 
     const CARTE = {
-        celtico: 4,      // Guerriero Celtico, Lv4 1400
+        celtico: 4,      // Guardiano Celtico, Lv4 1400
         cilindro: 10,    // Cilindro Magico, Trappola
         teschio: 13,     // Teschio Evocato, Lv6 2500
         raigeki: 409,    // Raigeki, Magia
         elfi: 24,        // Elfi Gemelli, Lv4 1900 (del nonno)
-        servo: 526,      // Skull Servant, 300 (riempitivo)
+        servo: 526,      // Servitore del Teschio, 300 (riempitivo)
         robolady: 528    // Robolady, 450 (riempitivo)
     };
     const LP_NONNO = 3000;
@@ -162,7 +162,7 @@
             attesa: 'Un attimo, il turno si sta preparando…'
         },
         {
-            testo: 'Evochiamo il primo mostro. Tocca il Guerriero Celtico, poi una casella mostro libera, e scegli la posizione di Attacco. Puoi anche trascinarlo direttamente sulla casella.',
+            testo: 'Evochiamo il primo mostro. Tocca il Guardiano Celtico, poi una casella mostro libera, e scegli la posizione di Attacco. Puoi anche trascinarlo direttamente sulla casella.',
             bersaglio: () => bersaglioPiazzamento(CARTE.celtico, 'monster'),
             consenti: () => [selCartaInMano(CARTE.celtico), SEL_MOSTRI, SEL_POPOVER],
             fatto: () => inCampo('player', CARTE.celtico)
@@ -206,7 +206,7 @@
             fatto: () => nelCimitero('player', CARTE.raigeki) && mostriAvversari() === 0
         },
         {
-            testo: 'Il mio campo è vuoto! Ora un mostro più forte: il Teschio Evocato è di Livello 6, e per evocarlo devi sacrificare (Tributo) un tuo mostro. Tocca il Teschio, poi il tuo Guerriero Celtico, poi la casella dove metterlo.',
+            testo: 'Il mio campo è vuoto! Ora un mostro più forte: il Teschio Evocato è di Livello 6, e per evocarlo devi sacrificare (Tributo) un tuo mostro. Tocca il Teschio, poi il tuo Guardiano Celtico, poi la casella dove metterlo.',
             bersaglio: () => {
                 if (modaleAperto()) return document.querySelector('#activateModal .modal-btn.attack');
                 if (popoverAperto()) return popoverAperto();
@@ -244,9 +244,9 @@
     const ID = {
         drago: 1,          // Drago Bianco Occhi Blu, 3000
         celtico: 4,
-        gaia: 14,          // Gaia il Cavaliere Feroce
-        maledizione: 15,   // Maledizione del Drago
-        insetto: 23,       // Insetto Divoratore (FLIP)
+        gaia: 14,          // Gaia il Cavaliere
+        maledizione: 15,   // Anatema del Drago
+        insetto: 23,       // Insetto Mangia-Uomini (FLIP)
         elfi: 24,
         fusione: 38,
         gaiaCampione: 254, // Gaia il Drago Campione (Fusione di 14 + 15)
@@ -396,7 +396,7 @@
             attesa: 'Un attimo, il turno si sta preparando…'
         },
         {
-            testo: 'Questo è il tuo Extra Deck. Dentro c\'è Gaia il Drago Campione: per evocarlo servono Gaia il Cavaliere Feroce e Maledizione del Drago, i suoi materiali.',
+            testo: 'Questo è il tuo Extra Deck. Dentro c\'è Gaia il Drago Campione: per evocarlo servono Gaia il Cavaliere e Anatema del Drago, i suoi materiali.',
             bersaglio: () => document.querySelector(SEL_EXTRA),
             avanti: true
         },
@@ -440,7 +440,7 @@
             attesa: 'Un attimo, il turno si sta preparando…'
         },
         {
-            testo: 'Il tuo mostro coperto è un Insetto Divoratore. Il suo effetto FLIP: quando viene scoperto, distrugge 1 mostro sul Terreno. Io ho il mio Drago Bianco Occhi Blu, 3000 ATK…',
+            testo: 'Il tuo mostro coperto è un Insetto Mangia-Uomini. Il suo effetto FLIP: quando viene scoperto, distrugge 1 mostro sul Terreno. Io ho il mio Drago Bianco Occhi Blu, 3000 ATK…',
             bersaglio: () => casellaConMostro(ID.insetto),
             avanti: true
         },
@@ -475,7 +475,7 @@
     const PASSI_EQUIP = [
         { testo: 'Una Magia Equipaggiamento resta sul Terreno e potenzia il mostro a cui viene assegnata. Scegli bene il bersaglio: se quel mostro lascia il campo, anche il suo Equipaggiamento non servirà più.', avanti: true, pronto: () => gameState.phase === 'main1' && gameState.currentPlayer === 'player' },
         {
-            testo: 'Il tuo Guerriero Celtico ha 1400 ATK, meno dei miei Elfi Gemelli. Attiva Ascia della Disperazione e scegli il Guerriero: guadagnerà 1000 ATK.',
+            testo: 'Il tuo Guardiano Celtico ha 1400 ATK, meno dei miei Elfi Gemelli. Attiva Ascia di Distruzione e scegli il Guerriero: guadagnerà 1000 ATK.',
             bersaglio: () => (pickerAperto() ? elNelPicker(uidInCampo('player', ID.celtico)) : modaleAperto() ? document.getElementById('activateConfirmBtn') : popoverAperto() || elCartaInMano(ID.ascia)),
             consenti: () => [selCartaInMano(ID.ascia), SEL_POPOVER, '#activateConfirmBtn', '#activateModal', '#cardListPickerModal'],
             fatto: () => inMagieTrappole('player', ID.ascia)
@@ -490,7 +490,7 @@
     }
     const PASSI_RITUALE = [
         { testo: 'Un Mostro Rituale resta nel Main Deck, ma non può essere Evocato normalmente. Servono la sua Magia Rituale e mostri da offrire con un totale di Livelli sufficiente.', avanti: true, pronto: () => gameState.phase === 'main1' && gameState.currentPlayer === 'player' },
-        { testo: 'Soldato del Fulgore Nero è di Livello 8. Sul Terreno hai Gaia di Livello 7 e Skull Servant di Livello 1: insieme raggiungono esattamente 8.', bersaglio: () => document.getElementById('playerFieldBoard'), avanti: true },
+        { testo: 'Soldato del Fulgore Nero è di Livello 8. Sul Terreno hai Gaia di Livello 7 e Servitore del Teschio di Livello 1: insieme raggiungono esattamente 8.', bersaglio: () => document.getElementById('playerFieldBoard'), avanti: true },
         {
             testo: 'Attiva Rito del Fulgore Nero. I due mostri saranno offerti e il Soldato verrà Evocato dalla tua mano.',
             bersaglio: () => (modaleAperto() ? document.getElementById('activateConfirmBtn') : popoverAperto() || elCartaInMano(ID.ritoFulgore)),
@@ -526,11 +526,11 @@
     // ------------------------------------------------------------------
     const ID2 = {
         sogen: 580,          // Magia Terreno: Guerrieri +200 ATK/DEF
-        scudo: 148,          // Scudo Lustro Giallo, Magia Continua: +300 DEF
-        rinascita: 35,       // Rinascita del Mostro
-        testaX: 510,         // Cannone Testa X
-        testaY: 513,         // Testa di Drago Y
-        cannoneXY: 511       // Cannone Drago XY (Fusione senza Polimerizzazione)
+        scudo: 148,          // Scudo Giallo del Desiderio, Magia Continua: +300 DEF
+        rinascita: 35,       // Mostro Resuscitato
+        testaX: 510,         // X-Testa Cannone
+        testaY: 513,         // Y-Testa Drago
+        cannoneXY: 511       // XY-Cannone Drago (Fusione senza Polimerizzazione)
     };
     const selZona = (zona) => `#playerFieldBoard .field-slot[data-owner="player"][data-zone="${zona}"]`;
     const elZona = (zona) => document.querySelector(selZona(zona));
@@ -576,7 +576,7 @@
             attesa: 'Un attimo, il turno si sta preparando…'
         },
         {
-            testo: 'Guarda il mio campo: gli Elfi Gemelli sono in Attacco con 1900 ATK, lo Skull Servant è in Difesa con 200 DEF.',
+            testo: 'Guarda il mio campo: gli Elfi Gemelli sono in Attacco con 1900 ATK, lo Servitore del Teschio è in Difesa con 200 DEF.',
             bersaglio: () => document.getElementById('botFieldBoard'),
             avanti: true
         },
@@ -606,7 +606,7 @@
             pronto: () => gameState.botLP < 8000 && catenaVuota() && nessunaCinematica()
         },
         {
-            testo: 'Ora il Guerriero Celtico (1400 ATK) attacca il mio Skull Servant, che è in Difesa con 200 DEF. Trascina il Celtico sullo Skull Servant.',
+            testo: 'Ora il Guardiano Celtico (1400 ATK) attacca il mio Servitore del Teschio, che è in Difesa con 200 DEF. Trascina il Celtico sullo Servitore del Teschio.',
             bersaglio: () => document.querySelector(selCasellaMostro(ID.celtico)),
             trascina: () => casellaNonno(ID.servo),
             consenti: () => [selCasellaMostro(ID.celtico), '#botFieldBoard', '#botInfo', SEL_POPOVER],
@@ -649,13 +649,13 @@
             pronto: () => catenaVuota() && nessunaCinematica()
         },
         {
-            testo: 'Ora una Magia Continua: Scudo Lustro Giallo dà 300 DEF a tutti i tuoi mostri. Attivala: occuperà una zona Magia/Trappola.',
+            testo: 'Ora una Magia Continua: Scudo Giallo del Desiderio dà 300 DEF a tutti i tuoi mostri. Attivala: occuperà una zona Magia/Trappola.',
             bersaglio: () => bersaglioAttivazione(ID2.scudo),
             consenti: () => [selCartaInMano(ID2.scudo), SEL_POPOVER, '#activateConfirmBtn', '#activateModal'],
             fatto: () => inMagieTrappole('player', ID2.scudo)
         },
         {
-            testo: 'Finché Scudo Lustro Giallo resta lì, i tuoi mostri hanno più DEF. Ma una carta che resta è anche un bersaglio: se l\'avversario la distrugge, il bonus finisce. Le Trappole Continue funzionano allo stesso modo, solo che prima si mettono coperte.',
+            testo: 'Finché Scudo Giallo del Desiderio resta lì, i tuoi mostri hanno più DEF. Ma una carta che resta è anche un bersaglio: se l\'avversario la distrugge, il bonus finisce. Le Trappole Continue funzionano allo stesso modo, solo che prima si mettono coperte.',
             bersaglio: () => document.querySelector(`${SEL_MT}[data-index="${(Tavolo.magieTrappole('player') || []).findIndex((s) => s && s.card && s.card.id === ID2.scudo)}"]`),
             avanti: true,
             pronto: () => catenaVuota() && nessunaCinematica()
@@ -680,12 +680,12 @@
             attesa: 'Un attimo, il turno si sta preparando…'
         },
         {
-            testo: 'Nel tuo Cimitero c\'è Gaia il Cavaliere Feroce, distrutto in un duello passato. Il Cimitero raccoglie le carte distrutte o scartate: alcune carte le riportano in gioco.',
+            testo: 'Nel tuo Cimitero c\'è Gaia il Cavaliere, distrutto in un duello passato. Il Cimitero raccoglie le carte distrutte o scartate: alcune carte le riportano in gioco.',
             bersaglio: () => elZona('graveyard'),
             avanti: true
         },
         {
-            testo: 'Rinascita del Mostro riporta un mostro dal Cimitero sul Terreno. Toccala e attivala, poi scegli Gaia dalla lista.',
+            testo: 'Mostro Resuscitato riporta un mostro dal Cimitero sul Terreno. Toccala e attivala, poi scegli Gaia dalla lista.',
             bersaglio: () => {
                 if (pickerAperto()) {
                     const gaia = (gameState.playerGraveyard || []).find((c) => c && c.id === ID.gaia);
@@ -703,18 +703,18 @@
             pronto: () => catenaVuota() && nessunaCinematica()
         },
         {
-            testo: 'Ora guarda il tuo Extra Deck: pulsa in viola. Hai sul Terreno Cannone Testa X e Testa di Drago Y: sono i materiali per Cannone Drago XY, che si evoca anche senza la carta Fusione.',
+            testo: 'Ora guarda il tuo Extra Deck: pulsa in viola. Hai sul Terreno X-Testa Cannone e Y-Testa Drago: sono i materiali per XY-Cannone Drago, che si evoca anche senza la carta Fusione.',
             bersaglio: () => elZona('fusion'),
             avanti: true
         },
         {
-            testo: 'Tocca l\'Extra Deck: le carte evocabili sono evidenziate. Scegli Cannone Drago XY. I due materiali verranno BANDITI dal gioco, non mandati al Cimitero.',
+            testo: 'Tocca l\'Extra Deck: le carte evocabili sono evidenziate. Scegli XY-Cannone Drago. I due materiali verranno BANDITI dal gioco, non mandati al Cimitero.',
             bersaglio: () => (pickerAperto() ? elNelPicker((Tavolo.extraDeck('player')[0] || {}).uid) : elZona('fusion')),
             consenti: () => [SEL_EXTRA, '#cardListPickerModal', '#activateModal'],
             fatto: () => inCampo('player', ID2.cannoneXY)
         },
         {
-            testo: 'Ecco Cannone Drago XY, 2200 ATK. Controlla sempre cosa richiede un mostro dell\'Extra Deck: la Fusione con Polimerizzazione usa la mano e il Terreno, questa combinazione solo i mostri scoperti sul Terreno.',
+            testo: 'Ecco XY-Cannone Drago, 2200 ATK. Controlla sempre cosa richiede un mostro dell\'Extra Deck: la Fusione con Polimerizzazione usa la mano e il Terreno, questa combinazione solo i mostri scoperti sul Terreno.',
             bersaglio: () => document.querySelector(selCasellaMostro(ID2.cannoneXY)),
             avanti: true,
             pronto: () => catenaVuota() && nessunaCinematica()

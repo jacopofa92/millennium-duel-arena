@@ -122,6 +122,23 @@ perde al prossimo build.
   nascosti, invarianti, bug specifici aggirati) — il codice deve restare
   editabile a mano, senza assistenza AI, da chi lo legge dopo. Non
   spiegare il COSA quando i nomi già lo dicono.
+- **I nomi delle carte Yu-Gi-Oh sono i nomi ufficiali Konami in italiano**
+  (allineati il 2026-10-21, 625 carte rinominate: elenco "prima/ora" e carte
+  rimaste invariate col motivo in `docs/planning/NOMI_KONAMI_RINOMINA.md`).
+  **Il codice cerca molte carte PER NOME** (`name.includes('Amazzone')`,
+  `name === 'Sorelle Arpie'`, `startsWith('Lady Arpia')`, `mentionsNames`/
+  `treatedAsNames`, i pacchetti a tema del Negozio...): cambiare un nome, o
+  aggiungere una carta che una di queste ricerche troverebbe, cambia il
+  comportamento SENZA errori. Lo sorveglia `tests/specs/guardrail-nomi-carte.spec.js`
+  (registro congelato in `tests/data/ricerche-per-nome.json`): se fallisce,
+  guardare cosa trova ora la ricerca; se il cambiamento e' voluto,
+  `node tests/helpers/ricerche-per-nome.js --aggiorna`. **Una nuova ricerca per
+  nome nel motore va scritta cosi' che trovi le carte volute e poi registrata
+  col comando qui sopra**; per identificare una carta preferire `card.id` o
+  un campo (`archetypes`, `race`...) al nome. Le carte che il nuovo nome farebbe
+  entrare in una ricerca ma che prima ne erano fuori sono escluse a mano
+  (`ESCLUSE_PER_NOME` in `card-effects.js`, `ECCEZIONI_NOME` in `shop-catalog.js`).
+  Se un nuovo nome contiene un apostrofo, dentro una stringa `'...'` serve `\'`.
 - **Bordo carta mobile "troppo spesso"**: quasi sempre un problema di
   rapporto arte/cornice, non della proprietà CSS `border` in sé.
 

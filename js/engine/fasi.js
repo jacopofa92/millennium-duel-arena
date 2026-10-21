@@ -771,7 +771,7 @@ function enterDrawPhaseInner(autoAdvance = true, onComplete = null) {
     gameState.skipDrawFor = gameState.skipDrawFor || {};
     if (gameState.skipDrawFor[gameState.currentPlayer] > 0) {
         gameState.skipDrawFor[gameState.currentPlayer]--;
-        addToLog(`🚫 ${gameState.currentPlayer === 'player' ? 'Salti' : 'Il bot salta'} la Draw Phase (Avidità Sconsiderata)!`);
+        addToLog(`🚫 ${gameState.currentPlayer === 'player' ? 'Salti' : 'Il bot salta'} la Draw Phase (Cupidigia Insaziabile)!`);
         if (typeof onComplete === 'function') onComplete();
         else if (autoAdvance) schedulePhaseTransition(() => enterStandbyPhase(true), 500);
         return;
@@ -808,7 +808,7 @@ function enterDrawPhaseInner(autoAdvance = true, onComplete = null) {
                 freedDeck.splice(i, 1);
                 Tavolo.mano(freedOwner).push(scelta);
                 gameState[freedDeckKey === 'playerDeck' ? 'playerDeckCount' : 'botDeckCount'] = freedDeck.length;
-                addToLog(`⚔️ Freed il Generale Senza Rivali cerca ${freedOwner === 'player' ? scelta.name : 'un Guerriero'} dal Deck invece di pescare!`);
+                addToLog(`⚔️ Freed il Generale Senza Avversari cerca ${freedOwner === 'player' ? scelta.name : 'un Guerriero'} dal Deck invece di pescare!`);
                 updateUI();
                 prosegui();
             };
@@ -1089,7 +1089,7 @@ function startSecondBattlePhase(owner) {
         slot.extraAttacksUsedThisTurn = 0;
         slot.attackedEnemyUidsTurn = null;
     });
-    addToLog(`🌦️ ${owner === 'player' ? 'Conduci' : 'Il bot conduce'} una seconda Battle Phase (Bollettino Meteo)!`);
+    addToLog(`🌦️ ${owner === 'player' ? 'Conduci' : 'Il bot conduce'} una seconda Battle Phase (Previsioni Meteo)!`);
     enterBattlePhase();
     return true;
 }
@@ -1205,7 +1205,7 @@ function enterEndPhase() {
             if (!scegli) return;
             const ctx = DuelEngine.makeContext(owner, {});
             scegli(ctx, candidati, {
-                title: '🃏 Necropaura Oscura',
+                title: '🃏 Paura Oscura',
                 text: 'Scegli il mostro avversario da equipaggiare e di cui prendere il controllo.'
             }, (scelto) => {
                 // Tutto si ricontrolla QUI: fra l'apertura del picker e il
@@ -1227,7 +1227,7 @@ function enterEndPhase() {
                 // questa carta resta equipaggiata (vedi
                 // onSTDestroyed/onBanished/onReturnedToHandSelf, card-effects.js).
                 DuelEngine.actions.takeControl(owner, opponent, scelto.index, true);
-                addToLog(`🃏 Necropaura Oscura si equipaggia a ${targetCard.name} e ne prende il controllo!`);
+                addToLog(`🃏 Paura Oscura si equipaggia a ${targetCard.name} e ne prende il controllo!`);
             });
         });
     }
@@ -1293,7 +1293,7 @@ function enterEndPhase() {
         const graveyard = Tavolo.cimitero(owner);
         if (hand.length > 0) {
             graveyard.push(...hand.splice(0, hand.length));
-            addToLog(`🗑️ ${owner === 'player' ? 'Mandi' : 'Il bot manda'} l'intera mano al Cimitero (Carta della Rovina)!`);
+            addToLog(`🗑️ ${owner === 'player' ? 'Mandi' : 'Il bot manda'} l'intera mano al Cimitero (Carta dell'Oblio)!`);
         }
     }
     updateUI();
@@ -1420,7 +1420,7 @@ function hasDestinyBoardComplete(owner) {
 
 /**
  * Come hasExodiaAssembled() qui sopra, ma controlla il Cimitero invece
- * della mano — usata da "Patto con Exodia" (id 161, card-effects.js), che
+ * della mano — usata da "Contratto con Exodia" (id 161, card-effects.js), che
  * richiede tutti e 5 i pezzi nel Cimitero, non in mano. Non collegata a
  * checkGameOver(): la vittoria automatica resta SOLO per i pezzi in mano,
  * come da regola vera (id 161 li manda al Cimitero apposta per pagare il
@@ -1480,8 +1480,8 @@ function triggerExodiaWin(playerWon) {
  */
 function triggerDestinyBoardWin(playerWon) {
     triggerInstantWin('destinyboard', playerWon
-        ? '💀 Destiny Board è completo: "FINAL" è scritto sul tuo Terreno! Vittoria automatica!'
-        : '💀 Il bot ha completato Destiny Board: "FINAL" è scritto sul suo Terreno! Vittoria automatica!', playerWon);
+        ? '💀 Tavola del Destino è completo: "FINAL" è scritto sul tuo Terreno! Vittoria automatica!'
+        : '💀 Il bot ha completato Tavola del Destino: "FINAL" è scritto sul suo Terreno! Vittoria automatica!', playerWon);
 }
 
 /** Elefante Volante (id 246): una carta sola, nessun "insieme di pezzi". */

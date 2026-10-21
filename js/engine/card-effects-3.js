@@ -44,17 +44,17 @@
             const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
             if (slotIndex === -1) {
                 ctx.graveyard(ctx.owner).push(ritualCard);
-                ctx.log('⚠️ Il Terreno è pieno: Zera il Mant finisce nel Cimitero.');
+                ctx.log('⚠️ Il Terreno è pieno: Zera la Manta finisce nel Cimitero.');
                 return;
             }
             ctx.specialSummon(ctx.owner, ritualCard, slotIndex, 'attack', 'hand');
-            ctx.log('👹 Rituale di Zera evoca Zera il Mant!');
+            ctx.log('👹 Rito di Zera evoca Zera la Manta!');
         }
     });
 
     // ================================================================
     // 518 — Zera il Mant / Zera the Mant: Evocabile Rituale solo tramite
-    // "Rituale di Zera" (id 517, qui sopra — GIÀ IMPLEMENTATA). Qui serve
+    // "Rito di Zera" (id 517, qui sopra — GIÀ IMPLEMENTATA). Qui serve
     // solo il divieto di Evocazione Normale/Set e di Special Summon per
     // ogni altra via (cannotNormalSummon/cannotBeSpecialSummoned — stesso
     // schema di 413).
@@ -83,7 +83,7 @@
                     }
                 });
             });
-            ctx.log(`🔄 Gravità Zero cambia la Posizione di Battaglia di ${count} mostr${count === 1 ? 'o' : 'i'}!`);
+            ctx.log(`🔄 Assenza di Gravità cambia la Posizione di Battaglia di ${count} mostr${count === 1 ? 'o' : 'i'}!`);
         }
     });
 
@@ -123,7 +123,7 @@
             const equip = equipMagicheDiEatos(ctx);
             if (equip.length === 0) return;
             chooseCardFromList(ctx, equip.map((e) => e.card), {
-                title: '👼 Guardian Eatos',
+                title: '👼 Guardiano Eatos',
                 text: 'Scegli quale Magia Equipaggiamento mandare al Cimitero.'
             }, (scelta) => {
                 const voce = equipMagicheDiEatos(ctx).find((e) => e.card.uid === scelta.uid);
@@ -131,7 +131,7 @@
                 ctx.destroySpellTrap(ctx.owner, voce.index);
                 const candidati = mostriNelCimiteroAvversario(ctx);
                 chooseUpToNFromList(ctx, candidati, 3, {
-                    title: '👼 Guardian Eatos',
+                    title: '👼 Guardiano Eatos',
                     text: 'Scegli fino a 3 mostri del Cimitero avversario da bandire (+500 ATK ciascuno).'
                 }, (daBandire) => {
                     let banditi = 0;
@@ -141,7 +141,7 @@
                         const prec = (gameState.temporaryAtkDefBonus && gameState.temporaryAtkDefBonus[ctx.card.uid]) || { atk: 0, def: 0 };
                         ctx.grantTemporaryAtkDefBonus(ctx.card, (prec.atk || 0) + 500 * banditi, prec.def || 0);
                     }
-                    ctx.log(`👼 Guardian Eatos manda ${scelta.name} al Cimitero e bandisce ${banditi} mostr${banditi === 1 ? 'o' : 'i'}: +${500 * banditi} ATK fino a fine turno!`);
+                    ctx.log(`👼 Guardiano Eatos manda ${scelta.name} al Cimitero e bandisce ${banditi} mostr${banditi === 1 ? 'o' : 'i'}: +${500 * banditi} ATK fino a fine turno!`);
                 });
             });
         }
@@ -170,7 +170,7 @@
             gameState.timeWizardCoinResultFor = { owner: ctx.owner, heads: heads, turn: gameState.turn };
             if (window.FX) FX.playCoinFlip(heads);
             if (heads) {
-                ctx.log('🪙 Mago del Tempo lancia la moneta: Testa! Distrugge tutti i mostri dell\'avversario!');
+                ctx.log('🪙 Stregone del Tempo lancia la moneta: Testa! Distrugge tutti i mostri dell\'avversario!');
                 ctx.destroyAllMonsters(ctx.opponent);
                 // Saggio Oscuro (id 191): "Special Summon... dalla mano O
                 // DAL DECK" — la parte "dalla mano" è già coperta dal
@@ -230,7 +230,7 @@
                 ctx.destroyAllMonsters(ctx.owner);
                 const damage = Math.floor(totalAtk / 2);
                 ctx.dealDamage(ctx.owner, damage);
-                ctx.log(`🪙 Mago del Tempo lancia la moneta: Croce! Distrugge tutti i tuoi mostri e subisci ${damage} danni!`);
+                ctx.log(`🪙 Stregone del Tempo lancia la moneta: Croce! Distrugge tutti i tuoi mostri e subisci ${damage} danni!`);
             }
         }
     });
@@ -255,7 +255,7 @@
             const candidati = collectFieldTargets(ctx, { zone: 'monster', owner: 'opponent', includiCoperte: true });
             if (candidati.length === 0) return;
             chooseFieldCardTarget(ctx, candidati, {
-                title: '🪙 Drago Barile',
+                title: '🪙 Drago Revolver',
                 text: 'Scegli il mostro avversario da bersagliare, poi si lanciano 3 monete.'
             }, (scelto) => {
                 const flips = [ctx.random() < 0.5, ctx.random() < 0.5, ctx.random() < 0.5];
@@ -267,10 +267,10 @@
                     const decl = ctx.declareTarget(scelto.owner, scelto.index, { totalTargetCount: 1 });
                     if (!decl.allowed) return;
                     const targetSlot = ctx.field(decl.targetOwner)[decl.targetIndex];
-                    ctx.log(`🪙 Drago Barile lancia 3 monete (${heads} Testa): distrugge ${targetSlot ? targetSlot.card.name : scelto.card.name}!`);
+                    ctx.log(`🪙 Drago Revolver lancia 3 monete (${heads} Testa): distrugge ${targetSlot ? targetSlot.card.name : scelto.card.name}!`);
                     ctx.destroyMonster(decl.targetOwner, decl.targetIndex);
                 } else {
-                    ctx.log(`🪙 Drago Barile lancia 3 monete (solo ${heads} Testa): l'effetto fallisce.`);
+                    ctx.log(`🪙 Drago Revolver lancia 3 monete (solo ${heads} Testa): l'effetto fallisce.`);
                 }
             });
         }
@@ -334,7 +334,7 @@
             ];
             if (candidati.length === 0) return;
             chooseFieldCardTarget(ctx, candidati, {
-                title: '⚡ Potere Raccolto',
+                title: '⚡ Potere Riunito',
                 dichiara: true,
                 text: 'Scegli il mostro su cui far confluire TUTTE le Carte Equipaggiamento del Terreno.'
             }, (scelto) => {
@@ -356,7 +356,7 @@
                     }
                 });
             });
-            ctx.log(`⚡ Potere Raccolto equipaggia ${count} Magi${count === 1 ? 'a' : 'e'} Equipaggiamento a ${target.name}!`);
+            ctx.log(`⚡ Potere Riunito equipaggia ${count} Magi${count === 1 ? 'a' : 'e'} Equipaggiamento a ${target.name}!`);
             // "Se una di queste Magie Equipaggiamento è ora equipaggiata a
             // un bersaglio non corretto, distruggila" — usa il filtro di
             // bersaglio dichiarato da ogni Equip spostata:
@@ -390,7 +390,7 @@
     // ================================================================
     // EVOCAZIONE FUSIONE — meccanismo generico (vedi la convenzione
     // spiegata in cima a questo file). Solo il minimo indispensabile per
-    // farla funzionare: la Magia "Fusione" qui sotto, e un primo Mostro
+    // farla funzionare: la Magia "Polimerizzazione" qui sotto, e un primo Mostro
     // Fusione i cui DUE materiali sono già entrambi presenti nel database
     // (a differenza della maggior parte degli altri, che aspettano
     // ancora carte collegate mancanti — vedi l'audit delle carte non
@@ -452,9 +452,9 @@
     // ================================================================
     // 254 — Gaia il Campione dei Draghi / Gaia the Dragon Champion
     // (Mostro Fusione)
-    // Fusione di "Gaia il Cavaliere Feroce" (id 14) e "Maledizione del
+    // Fusione di "Gaia il Cavaliere" (id 14) e "Maledizione del
     // Drago" (id 15) — nessun effetto proprio oltre alla condizione di
-    // Evocazione, quindi basta dichiarare i materiali: vedi "Fusione"
+    // Evocazione, quindi basta dichiarare i materiali: vedi "Polimerizzazione"
     // (id 38) qui sopra per come viene davvero Evocato.
     // ================================================================
     CardEffects.register(254, {
@@ -585,7 +585,7 @@
     });
 
     // 84 — Drago Spada di Alligatore / Alligator's Sword Dragon: fusione
-    // di "Cucciolo di Drago" (id 27) e "Spada di Alligatore" (id 83).
+    // di "Cucciolo di Drago" (id 27) e "Spada dell'Alligatore" (id 83).
     // Può attaccare direttamente se gli unici mostri scoperti controllati
     // dall'avversario hanno Attributo TERRA, ACQUA o FUOCO
     // (gameState.directAttackAllowedUids, stesso meccanismo di Sparatore
@@ -620,7 +620,7 @@
     });
 
     // 189 — Paladino Oscuro / Dark Paladin: fusione di "Mago Nero" (id 2)
-    // e "Buster Blader" (id 20). +500 ATK per ogni mostro Tipo Drago sul
+    // e "Combattente delle Lame" (id 20). +500 ATK per ogni mostro Tipo Drago sul
     // Terreno E nei Cimiteri (di ENTRAMBI i giocatori, testo reale: "each
     // Dragon monster on the field and in the GY", nessuna distinzione di
     // proprietario). "Finché è scoperta in campo, puoi scartare 1 carta
@@ -665,8 +665,8 @@
     });
 
     // 207 — Cavaliere Maestro dei Draghi / Dragon Master Knight: fusione
-    // di "Guerriero Nero Supremo" (id 55) e "Drago Occhi Blu Definitivo"
-    // — quest'ultimo è id 29 "Drago Bianco Definitivo" in questo database
+    // di "Glorioso Soldato Nero" (id 55) e "Drago Occhi Blu Definitivo"
+    // — quest'ultimo è id 29 "Drago Occhi Blu Finale" in questo database
     // (stessa carta reale, Blue-Eyes Ultimate Dragon).
     CardEffects.register(207, {
         fusionMaterials: [55, 29],
@@ -688,19 +688,19 @@
     });
 
     // 303 — Drago Verme Umanoide / Humanoid Worm Drake: fusione di
-    // "Drago Verme" (id 509) e "Melma Umanoide" (id 302).
+    // "Drago-Verme" (id 509) e "Melma Umanoide" (id 302).
     CardEffects.register(303, {
         fusionMaterials: [509, 302]
     });
 
     // 336 — Carro Armato del Labirinto / Labyrinth Tank: fusione di
-    // "Lupo Giga-Tech" (id 264) e "Soldato Cannone" (id 137).
+    // "Lupo Tecnologico" (id 264) e "Soldato-Cannone" (id 137).
     CardEffects.register(336, {
         fusionMaterials: [264, 137]
     });
 
     // 387 — Re dei Musicisti / King of the Musicians: fusione di "Strega
-    // della Foresta Nera" (id 508) e "Dama della Fede" (id 338).
+    // della Foresta Nera" (id 508) e "Signora della Fede" (id 338).
     CardEffects.register(387, {
         fusionMaterials: [508, 338]
     });
@@ -712,7 +712,7 @@
     });
 
     // 476 — Restrizione dai Mille Occhi / Thousand-Eyes Restrict: fusione
-    // di "Abbandonato" (id 416) e "Idolo dai Mille Occhi" (id 475).
+    // di "Abbandono" (id 416) e "Idolo dai 1000 Occhi" (id 475).
     // "Gli altri mostri sul Terreno non possono cambiare Posizione di
     // Battaglia né attaccare" — un mostro alla volta, su ENTRAMBI i
     // giocatori, tramite i flag già esistenti cannotAttackUids/
@@ -754,7 +754,7 @@
             }
             if (candidati.length === 0) return;
             chooseFieldCardTarget(ctx, candidati, {
-                title: '👁️ Restrizione dai Mille Occhi',
+                title: '👁️ Limite dei 1000 Occhi',
                 text: 'Scegli quale mostro avversario equipaggiare: ne copierai ATK e DEF.'
             }, (scelto) => {
                 const decl = ctx.declareTarget(scelto.owner, scelto.index, { totalTargetCount: 1 });
@@ -765,7 +765,7 @@
                 ctx.field(decl.targetOwner)[decl.targetIndex] = null;
                 ctx.card._restrictTarget = absorbed;
                 ctx.card._restrictFromOwner = decl.targetOwner;
-                ctx.log(`👁️ Restrizione dai Mille Occhi equipaggia ${absorbed.name}, copiandone ATK/DEF!`);
+                ctx.log(`👁️ Limite dei 1000 Occhi equipaggia ${absorbed.name}, copiandone ATK/DEF!`);
             });
         },
         onDestroy: releaseThousandEyesTarget,
@@ -784,7 +784,7 @@
             const owner = ctx.card._restrictFromOwner;
             ctx.graveyard(owner).push(absorbed);
             ctx.card._restrictTarget = null;
-            ctx.log(`👁️ Restrizione dai Mille Occhi sopravvive: ${absorbed.name} viene distrutto al suo posto!`);
+            ctx.log(`👁️ Limite dei 1000 Occhi sopravvive: ${absorbed.name} viene distrutto al suo posto!`);
             return true;
         },
         static(ctx) {
@@ -810,7 +810,7 @@
     // esistente — vedi applyDamage in actions.js). Se distrutta IN
     // BATTAGLIA (ctx.destroyedByOpponentCard, presente solo per
     // distruzioni in battaglia — vedi Ossigeddon id 804 per lo stesso
-    // schema): Special Summon "Cavaliere del Miraggio" (id 381, qui
+    // schema): Special Summon "Cavaliere Miraggio" (id 381, qui
     // sotto) dalla mano o dal Deck. CORREZIONE: la nota precedente di
     // questa e di id 381 affermava erroneamente che l'altra carta non
     // fosse presente in questo database — falso, entrambe già esistono
@@ -844,7 +844,7 @@
                 gameState[Tavolo.chiave(owner, 'DeckCount')] = deck.length;
             }
             ctx.specialSummon(owner, card, slotIndex, 'attack', source);
-            ctx.log('🔥 Cavaliere della Fiamma Oscura, distrutta in battaglia, Special Summona Cavaliere del Miraggio!');
+            ctx.log('🔥 Cavaliere Fiamma Oscura, distrutta in battaglia, Special Summona Cavaliere Miraggio!');
         }
     });
 
@@ -874,12 +874,12 @@
             if (blockBanishFromField(ctx, ctx.card)) return;
             ctx.field(ctx.owner)[ctx.slotIndex] = null;
             ctx.banish(ctx.owner, ctx.card);
-            ctx.log('🌫️ Cavaliere del Miraggio bandito a fine turno!');
+            ctx.log('🌫️ Cavaliere Miraggio bandito a fine turno!');
         }
     });
 
     // 408 — Cavallerizzo Rabbioso / Rabid Horseman: fusione di "Bue da
-    // Battaglia" / Battle Ox (id 106, già presente) e "Cavaliere Mistico"
+    // Battaglia" / Battle Ox (id 106, già presente) e "Centauro Mistico"
     // (id 389).
     // CORREZIONE di fedeltà: aggiunto l'effetto mancante — "se un tuo
     // mostro Tipo Bestia, Guerriero Bestia o Bestia Alata attacca un
@@ -896,7 +896,7 @@
         }
     });
 
-    // 521 — Guerriero Zombie / Zombie Warrior: fusione di "Skull Servant"
+    // 521 — Guerriero Zombie / Zombie Warrior: fusione di "Servitore del Teschio"
     // (id 526, importata apposta) e "Guerriero da Battaglia" (id 108).
     CardEffects.register(521, {
         fusionMaterials: [526, 108]
@@ -943,18 +943,18 @@
             // non più la prima trovata.
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return;
             searchGraveyardWithChoice(ctx, ctx.owner, (c) => c.id === 532 || c.id === 533, {
-                title: '🦁 Chimera la Bestia Mitica Volante',
+                title: '🦁 Chimera, la Mitica Bestia Volante',
                 text: 'Scegli quale mostro Special Summonare dal Cimitero.'
             }, (card) => {
                 const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
                 if (slotIndex === -1) return;
                 ctx.specialSummon(ctx.owner, card, slotIndex, 'attack', 'graveyard');
-                ctx.log(`🦁 Chimera la Bestia Mitica Volante Special Summona ${card.name} dal Cimitero!`);
+                ctx.log(`🦁 Chimera, la Mitica Bestia Volante Special Summona ${card.name} dal Cimitero!`);
             });
         }
     });
 
-    // 213 — Dragoness la Cavaliera Malvagia: fusione di "Armaill" (id 97)
+    // 213 — Dragoness la Cavaliera Malvagia: fusione di "Armaill delle Lame" (id 97)
     // e "Drago con Scudo" (id 534).
     CardEffects.register(213, {
         fusionMaterials: [97, 534]
@@ -974,7 +974,7 @@
 
     // 33 — Il Guardiano del Cancello / Gate Guardian.
     // CORREZIONE di fedeltà: il vero Il Guardiano del Cancello NON si
-    // Evoca Fusione tramite "Fusione"/Polymerization (un tentativo
+    // Evoca Fusione tramite "Polimerizzazione"/Polymerization (un tentativo
     // precedente in questo file usava fusionMaterials — mai corretto
     // per questa carta) — è Special Summonabile SOLO sacrificando
     // "Sanga del Tuono" (id 538), "Kazejin" (id 324) e "Suijin" (id 71)
@@ -994,7 +994,7 @@
                 ctx.graveyard(ctx.owner).push(field[index].card);
                 field[index] = null;
             });
-            ctx.log('🚪 Il Guardiano del Cancello sacrifica Sanga del Tuono, Kazejin e Suijin per essere Special Summonato!');
+            ctx.log('🚪 Guardiano del Cancello sacrifica Sanga del Tuono, Kazejin e Suijin per essere Special Summonato!');
             return true;
         }
     });
@@ -1018,10 +1018,10 @@
 
     // ================================================================
     // 511/512 — Cannone Drago XY / Cannone Drago XYZ (Special Summon
-    // dall'Extra Deck BANDENDO materiali, non tramite la Magia "Fusione"
+    // dall'Extra Deck BANDENDO materiali, non tramite la Magia "Polimerizzazione"
     // — vedi la sezione "Special Summon dall'EXTRA DECK bandendo
     // materiali" in cima a js/engine/duel-engine.js per come funziona). 511 si
-    // ottiene bandendo "Cannone Testa X" (id 510) + "Testa di Drago Y"
+    // ottiene bandendo "X-Testa Cannone" (id 510) + "Y-Testa Drago"
     // (id 513); 512 bandendo lo stesso 511 già in campo + "Carro Armato
     // Metallico Z" (id 515).
     // Effetto attivabile (Ignition, dalla zona Mostro): "puoi scartare 1
@@ -1081,7 +1081,7 @@
         canActivate(ctx) {
             return ctx.hand(ctx.owner).length > 0 && bersagliCannoneDrago(ctx, false).length > 0;
         },
-        activate(ctx) { attivaCannoneDrago(ctx, 'Cannone Drago XY', false); }
+        activate(ctx) { attivaCannoneDrago(ctx, 'XY-Cannone Drago', false); }
     });
     CardEffects.register(512, {
         // Il testo TCG richiede direttamente X + Y + Z scoperti sul
@@ -1091,13 +1091,13 @@
         canActivate(ctx) {
             return ctx.hand(ctx.owner).length > 0 && bersagliCannoneDrago(ctx, true).length > 0;
         },
-        activate(ctx) { attivaCannoneDrago(ctx, 'Cannone Drago XYZ', true); }
+        activate(ctx) { attivaCannoneDrago(ctx, 'XYZ-Cannone Drago', true); }
     });
 
     // ================================================================
     // 513 — Testa di Drago Y / Y-Dragon Head (Mostro Union — vedi
     // attachUnionMonster/isUnion più in alto in questo file)
-    // Effetto Ignition dalla zona Mostro: si aggancia a "Cannone Testa X"
+    // Effetto Ignition dalla zona Mostro: si aggancia a "X-Testa Cannone"
     // (id 510) come Carta Equipaggiamento, dandogli +400 ATK/DEF.
     // ================================================================
     CardEffects.register(513, {
@@ -1128,7 +1128,7 @@
                 delete ctx.card.equippedToIndex;
                 delete ctx.card.equippedToUid;
                 ctx.specialSummon(ctx.owner, ctx.card, slotIndex, 'attack', 'field');
-                ctx.log('🐉 Testa di Drago Y si stacca e torna sul Terreno!');
+                ctx.log('🐉 Y-Testa Drago si stacca e torna sul Terreno!');
                 return;
             }
             attachUnionMonster(ctx, (c) => c.id === 510);
@@ -1143,8 +1143,8 @@
 
     // ================================================================
     // 515 — Carro Armato Metallico Z / Z-Metal Tank (Mostro Union)
-    // Effetto Ignition dalla zona Mostro: si aggancia a "Cannone Testa X"
-    // (id 510) o "Testa di Drago Y" (id 513), dando +600 ATK/DEF.
+    // Effetto Ignition dalla zona Mostro: si aggancia a "X-Testa Cannone"
+    // (id 510) o "Y-Testa Drago" (id 513), dando +600 ATK/DEF.
     // ================================================================
     CardEffects.register(515, {
         isUnion: true,
@@ -1174,7 +1174,7 @@
                 delete ctx.card.equippedToIndex;
                 delete ctx.card.equippedToUid;
                 ctx.specialSummon(ctx.owner, ctx.card, slotIndex, 'attack', 'field');
-                ctx.log('🛡️ Carro Armato Metallico Z si stacca e torna sul Terreno!');
+                ctx.log('🛡️ Z-Carro Armato Metallico si stacca e torna sul Terreno!');
                 return;
             }
             attachUnionMonster(ctx, (c) => c.id === 510 || c.id === 513);
@@ -1237,7 +1237,7 @@
                 delete ctx.card.equippedToIndex;
                 delete ctx.card.equippedToUid;
                 ctx.specialSummon(ctx.owner, ctx.card, slotIndex, 'attack', 'field');
-                ctx.log('🐺 Drago Nero Pece si stacca da Lama Oscura e torna sul Terreno scoperto in Posizione di Attacco!');
+                ctx.log('🐺 Drago Nero-Pece si stacca da Lama Oscura e torna sul Terreno scoperto in Posizione di Attacco!');
                 return;
             }
             attachUnionMonster(ctx, (c) => c.id === 613);
@@ -1450,14 +1450,14 @@
                 .sort((a, b) => (b.card.attack || 0) - (a.card.attack || 0));
             if (candidati.length === 0) return;
             chooseFieldCardTarget(ctx, candidati, {
-                title: '⚡ Drenaggio di Energia',
+                title: '⚡ Risucchio di Energia',
                 text: 'Scegli il tuo mostro che guadagna 200 ATK/DEF per ogni carta nella mano avversaria.',
                 dichiara: true
             }, (scelto) => {
                 const target = scelto.card;
                 const bonus = 200 * ctx.hand(ctx.opponent).length;
                 ctx.grantTemporaryAtkDefBonus(target, bonus, bonus);
-                ctx.log(`⚡ Drenaggio di Energia dà a ${target.name} +${bonus} ATK/DEF fino a fine turno!`);
+                ctx.log(`⚡ Risucchio di Energia dà a ${target.name} +${bonus} ATK/DEF fino a fine turno!`);
             });
         }
     });
@@ -1485,7 +1485,7 @@
             if (window.FX && typeof FX.playLimiterRemoval === 'function') {
                 FX.playLimiterRemoval(ctx.owner, machineIndices);
             }
-            ctx.log(`💥 Rimozione del Limitatore raddoppia l'ATK di ${count} most${count === 1 ? 'ro' : 'ri'} Macchina, distrutti in End Phase!`);
+            ctx.log(`💥 Rimozione di Limite raddoppia l'ATK di ${count} most${count === 1 ? 'ro' : 'ri'} Macchina, distrutti in End Phase!`);
         }
     });
 
@@ -1672,7 +1672,7 @@
 
     // ================================================================
     // 183 — Rito del Drago Oscuro / Dark Dragon Ritual (Magia Rituale)
-    // Ritual Summon di "Paladino del Drago Oscuro" (id 855, aggiunta ora:
+    // Ritual Summon di "Paladino del Drago Nero" (id 855, aggiunta ora:
     // la nota precedente la dava per assente dal database, corretto qui).
     // Stesso schema di Rito dell'Illusione Nera (id 116): sacrifica in
     // automatico dal proprio Terreno i mostri con Livello più alto finché
@@ -1713,11 +1713,11 @@
             const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
             if (slotIndex === -1) {
                 ctx.graveyard(ctx.owner).push(ritualCard);
-                ctx.log('⚠️ Il Terreno è pieno: Paladino del Drago Oscuro finisce nel Cimitero.');
+                ctx.log('⚠️ Il Terreno è pieno: Paladino del Drago Nero finisce nel Cimitero.');
                 return;
             }
             ctx.specialSummon(ctx.owner, ritualCard, slotIndex, 'attack', 'hand');
-            ctx.log('🐉 Rito del Drago Oscuro evoca Paladino del Drago Oscuro!');
+            ctx.log('🐉 Rituale del Drago Nero evoca Paladino del Drago Nero!');
         },
         canActivateFromGraveyardMainPhase(ctx) {
             if (ctx.card._sentToGraveyardOnTurn === gameState.turn) return false;
@@ -1735,18 +1735,18 @@
             if (!Array.isArray(deck) || !deck.some(isRedEyesSpellTrap)) return;
             if (!ctx.banishFromGraveyard(ctx.owner, grave[cardIndex])) return;
             searchDeckWithChoice(ctx, isRedEyesSpellTrap, {
-                title: '🐉 Rito del Drago Oscuro',
+                title: '🐉 Rituale del Drago Nero',
                 text: 'Scegli quale carta "Occhi Rossi" aggiungere alla mano dal Deck.'
             }, (card) => {
                 ctx.hand(ctx.owner).push(card);
-                ctx.log(`🐉 Rito del Drago Oscuro si bandisce dal Cimitero: aggiunge ${card.name} alla mano dal Deck!`);
+                ctx.log(`🐉 Rituale del Drago Nero si bandisce dal Cimitero: aggiunge ${card.name} alla mano dal Deck!`);
             });
         }
     });
 
     // ================================================================
     // 187 — Rito della Magia Oscura / Dark Magic Ritual (Magia Rituale)
-    // Ritual Summon di "Mago del Caos Nero" (id 854, aggiunta ora: la
+    // Ritual Summon di "Mago del Chaos Oscuro" (id 854, aggiunta ora: la
     // nota precedente la dava per assente dal database, corretto qui).
     // Stesso schema di Rito del Drago Oscuro (id 183) qui sopra, ma
     // Livello totale richiesto 8 invece di 4.
@@ -1772,17 +1772,17 @@
             const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
             if (slotIndex === -1) {
                 ctx.graveyard(ctx.owner).push(ritualCard);
-                ctx.log('⚠️ Il Terreno è pieno: Mago del Caos Nero finisce nel Cimitero.');
+                ctx.log('⚠️ Il Terreno è pieno: Mago del Chaos Oscuro finisce nel Cimitero.');
                 return;
             }
             ctx.specialSummon(ctx.owner, ritualCard, slotIndex, 'attack', 'hand');
-            ctx.log('🌑 Rito della Magia Oscura evoca Mago del Caos Nero!');
+            ctx.log('🌑 Rito Magia Oscura evoca Mago del Chaos Oscuro!');
         }
     });
 
     // ================================================================
     // 854 — Mago del Caos Nero / Dark Magician of Chaos: Evocabile
-    // Rituale solo tramite "Rito della Magia Oscura" (id 187, qui sopra —
+    // Rituale solo tramite "Rito Magia Oscura" (id 187, qui sopra —
     // GIÀ IMPLEMENTATA). Qui serve solo il divieto di Evocazione
     // Normale/Set e di Special Summon per ogni altra via
     // (cannotNormalSummon/cannotBeSpecialSummoned — stesso schema di 413).
@@ -1848,7 +1848,7 @@
             const emptySlot = ctx.findEmptyMonsterSlot(ctx.owner);
             const slotIndex = emptySlot !== -1 ? emptySlot : ownIndex;
             ctx.specialSummon(ctx.owner, redEyesCard, slotIndex, 'attack', fromZone);
-            ctx.log(`🐉 Paladino del Drago Oscuro si sacrifica per Special Summonare ${redEyesCard.name}!`);
+            ctx.log(`🐉 Paladino del Drago Nero si sacrifica per Special Summonare ${redEyesCard.name}!`);
         }
     });
 
@@ -2151,7 +2151,7 @@
 
     // ================================================================
     // 364 — Labirinto Magico / Magical Labyrinth (Magia Equipaggiamento)
-    // Equipaggiabile solo a "Muro del Labirinto" (id 337). Puoi
+    // Equipaggiabile solo a "Mura Labirintiche" (id 337). Puoi
     // sacrificare il mostro equipaggiato per Special Summonare "Wall
     // Shadow" (id 857, aggiunta ora — la nota precedente la dava per
     // assente dal database, corretto qui) dal Deck. def.repeatableWhileContinuous
@@ -2193,7 +2193,7 @@
             const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
             if (slotIndex === -1) { ctx.graveyard(ctx.owner).push(wallShadow); return; }
             ctx.specialSummon(ctx.owner, wallShadow, slotIndex, 'attack', 'deck');
-            ctx.log('🧱 Labirinto Magico sacrifica il mostro equipaggiato per Special Summonare Wall Shadow!');
+            ctx.log('🧱 Labirinto Magico sacrifica il mostro equipaggiato per Special Summonare Muro-Ombra!');
         }
     });
 
@@ -2229,7 +2229,7 @@
                 if (slot && !slot.isFaceDown) candidati.push({ owner: ctx.opponent, index, card: slot.card });
             });
             chooseFieldMonsterTarget(ctx, candidati, {
-                title: '💫 Cambio di Cuore',
+                title: '💫 Cambiare Idea',
                 text: 'Scegli quale mostro avversario prendere sotto controllo.',
                 dichiara: true
             }, (scelta) => {
@@ -2309,7 +2309,7 @@
                 return letale || guadagno >= costo + 400;
             };
             chooseOption(ctx, {
-                title: '🎮 Controllore del Nemico',
+                title: '🎮 Controlla-Avversario',
                 text: 'Quale effetto attivi?',
                 options: [
                     { value: 'posizione', label: 'Cambia la Posizione di un mostro', icon: '🔄' },
@@ -2319,7 +2319,7 @@
             }, (ramo) => {
                 if (ramo !== 'controllo') { scegliBersaglioControllore(ctx, 'posizione'); return; }
                 chooseFieldCardTarget(ctx, sacrificabili, {
-                    title: '🎮 Controllore del Nemico',
+                    title: '🎮 Controlla-Avversario',
                     text: 'Scegli quale tuo mostro sacrificare.'
                 }, (tributo) => {
                     // Il Sacrificio è un COSTO: niente checkpoint di
@@ -2341,7 +2341,7 @@
             .sort((a, b) => DuelEngine.getEffectiveAtk(b.card) - DuelEngine.getEffectiveAtk(a.card));
         if (candidati.length === 0) return;
         chooseFieldCardTarget(ctx, candidati, {
-            title: '🎮 Controllore del Nemico',
+            title: '🎮 Controlla-Avversario',
             text: ramo === 'controllo'
                 ? 'Scegli quale mostro avversario prendere sotto controllo fino alla End Phase.'
                 : 'Scegli a quale mostro avversario cambiare la Posizione di Battaglia.',
@@ -2391,7 +2391,7 @@
                     if (slot) miei.push({ owner: ctx.owner, index, card: slot.card });
                 });
                 chooseFieldMonsterTarget(ctx, miei, {
-                    title: '🎁 Scatola Mistica',
+                    title: '🎁 Scatola Magica',
                     text: 'Scegli quale TUO mostro cedere in cambio all\'avversario.',
                     // Anche il secondo bersaglio passa dal checkpoint, col
                     // conteggio totale: la carta ne bersaglia due.
@@ -2412,7 +2412,7 @@
             };
             if (suoi.length === 0) { cediUnProprioMostro(null); return; }
             chooseFieldMonsterTarget(ctx, suoi, {
-                title: '🎁 Scatola Mistica',
+                title: '🎁 Scatola Magica',
                 text: 'Scegli quale mostro avversario distruggere.'
             }, (suo) => {
                 // totalTargetCount 2: la carta bersaglia due mostri, quindi
@@ -2476,7 +2476,7 @@
             if (!castleOnField) return;
             if ((ctx.card.pumpkingStacks || 0) >= 4) return;
             ctx.card.pumpkingStacks = (ctx.card.pumpkingStacks || 0) + 1;
-            ctx.log(`👻 Pumpking il Re dei Fantasmi guadagna altri 100 ATK/DEF grazie a Castello delle Illusioni Oscure (${ctx.card.pumpkingStacks}/4)!`);
+            ctx.log(`👻 Re dei Fantasmi guadagna altri 100 ATK/DEF grazie a Castello delle Illusioni Oscure (${ctx.card.pumpkingStacks}/4)!`);
         }
     });
 
@@ -2492,7 +2492,7 @@
         piercing: true,
         onDealsBattleDamage(ctx) {
             ctx.drawCards(ctx.owner, 1);
-            ctx.log('⚔️ Parshath il Cavaliere Alato pesca 1 carta!');
+            ctx.log('⚔️ Parshath Cavaliere Volante pesca 1 carta!');
         }
     });
 
@@ -2529,7 +2529,7 @@
             if (ctx.summonedVia !== 'normal' || ctx.summonedPosition !== 'attack') return;
             const index = ctx.field(ctx.owner).findIndex((s) => s && s.card.uid === ctx.summonedCard.uid);
             if (index === -1) return;
-            ctx.log('🐗 Cinghiale Soldato può essere Evocato solo tramite Flip Summon: viene distrutto!');
+            ctx.log('🐗 Cinghiale Guerriero può essere Evocato solo tramite Flip Summon: viene distrutto!');
             ctx.destroyMonster(ctx.owner, index);
         },
         static(ctx) {
@@ -2714,7 +2714,7 @@
                 if (slot && !slot.isFaceDown) candidati.push({ owner: ctx.opponent, index, card: slot.card });
             });
             chooseFieldMonsterTarget(ctx, candidati, {
-                title: '👻 Incantesimo Ombra',
+                title: '👻 Magia Ombra',
                 text: 'Scegli quale mostro avversario legare (-700 ATK, non può attaccare né cambiare Posizione).',
                 dichiara: true
             }, (scelta) => {
@@ -2726,7 +2726,7 @@
                 if (window.FX && typeof FX.playShadowSpell === 'function') {
                     FX.playShadowSpell(scelta.owner, scelta.index);
                 }
-                ctx.log(`👻 Incantesimo Ombra lega ${targetSlot.card.name}!`);
+                ctx.log(`👻 Magia Ombra lega ${targetSlot.card.name}!`);
             });
         },
         static(ctx) {
@@ -2752,7 +2752,7 @@
             const roll = 1 + Math.floor(ctx.random() * 6);
             const amount = roll * 100;
             if (window.FX) FX.playDiceRoll(roll);
-            ctx.log(`🎲 Dado Teschio: hai lanciato un ${roll}!`);
+            ctx.log(`🎲 Dadi del Teschio: hai lanciato un ${roll}!`);
             ctx.field(ctx.opponent).forEach((slot) => {
                 if (slot) ctx.grantTemporaryAtkDefBonus(slot.card, -amount, -amount, false);
             });
@@ -2772,13 +2772,13 @@
                 const fs = Tavolo.magiaTerreno(o);
                 if (fs) {
                     ctx.destroyFieldSpell(o);
-                    ctx.log(`🔥 Terra in Fiamme distrugge ${fs.card.name}!`);
+                    ctx.log(`🔥 Terra Infuocata distrugge ${fs.card.name}!`);
                 }
             });
         },
         onStandbyPhase(ctx) {
             ctx.dealDamage(ctx.owner, 500);
-            ctx.log('🔥 Terra in Fiamme infligge 500 danni!');
+            ctx.log('🔥 Terra Infuocata infligge 500 danni!');
         }
     });
 
@@ -2863,7 +2863,7 @@
                     if (slot && !slot.isFaceDown && slot.card.race === 'Drago') ctx.changePosition(o, i, 'attack');
                 });
             });
-            ctx.log('🎵 Suonatore di Draghi distrugge tutti i Vaso Cattura-Drago e gira i Draghi in Attacco!');
+            ctx.log('🎵 Pifferaio di Draghi distrugge tutti i Cattura-Draghi e gira i Draghi in Attacco!');
         }
     });
 
@@ -2880,7 +2880,7 @@
                 ctx.banish(ctx.owner, banished);
             }
             ctx.dealDamage(ctx.opponent, 800);
-            ctx.log(`🔥 Stregone di Fuoco bandisce ${discardCount} carte a caso e infligge 800 danni!`);
+            ctx.log(`🔥 Stregone del Fuoco bandisce ${discardCount} carte a caso e infligge 800 danni!`);
         }
     });
 
@@ -2901,13 +2901,13 @@
             });
             if (candidati.length === 0) return;
             chooseFieldCardTarget(ctx, candidati, {
-                title: '✂️ Mietitore delle Carte',
+                title: '✂️ Mieti-Carte',
                 text: 'Scegli quale Trappola dell\'avversario distruggere.'
             }, (scelto) => {
                 const destroyed = scelto.card;
                 ctx.graveyard(scelto.owner).push(destroyed);
                 ctx.stField(scelto.owner)[scelto.index] = null;
-                ctx.log(`✂️ Mietitore delle Carte distrugge ${destroyed.name}!`);
+                ctx.log(`✂️ Mieti-Carte distrugge ${destroyed.name}!`);
             });
         }
     });
@@ -2922,7 +2922,7 @@
             const roll = 1 + Math.floor(ctx.random() * 6);
             const amount = roll * 100;
             if (window.FX) FX.playDiceRoll(roll);
-            ctx.log(`🎲 Dado Aggraziato: hai lanciato un ${roll}!`);
+            ctx.log(`🎲 Dadi Graziosi: hai lanciato un ${roll}!`);
             ctx.field(ctx.owner).forEach((slot) => {
                 if (slot) ctx.grantTemporaryAtkDefBonus(slot.card, amount, amount, false);
             });
@@ -3073,7 +3073,7 @@
     CardEffects.register(241, {
         onGainLifePoints(ctx) {
             ctx.dealDamage(ctx.opponent, 500);
-            ctx.log('🔥 Principessa di Fuoco infligge 500 danni per il guadagno di Life Points!');
+            ctx.log('🔥 Principessa del Fuoco infligge 500 danni per il guadagno di Life Points!');
         }
     });
 
@@ -3092,14 +3092,14 @@
                 filter: (card, owner, slot) => ctx.field(owner)[ctx.targetIndex] !== slot
             });
             chooseFieldCardTargetWaiting(ctx, candidati, {
-                title: '🌙 Spiritello dei Sogni',
+                title: '🌙 Folletto dei Sogni',
                 dichiara: true,
                 text: 'Scegli quale altro tuo mostro subirà l\'attacco.'
             }, (scelto) => {
                 // scelto.owner, non il default: il bersaglio dichiarato può
                 // essere stato ridiretto sull'altro Terreno.
                 ctx.redirectAttack(scelto.index, scelto.owner);
-                ctx.log(`🌙 Spiritello dei Sogni ridirige l'attacco verso ${scelto.card.name}!`);
+                ctx.log(`🌙 Folletto dei Sogni ridirige l'attacco verso ${scelto.card.name}!`);
             });
         }
     });
@@ -3378,14 +3378,14 @@
                 }
             });
             chooseFieldMonsterTarget(ctx, candidati, {
-                title: '🎪 Riavvolgimento Toon',
+                title: '🎪 Ritorno Toon',
                 dichiara: true,
                 text: 'Scegli a quale tuo mostro concedere un secondo attacco in questa Battle Phase.'
             }, (scelta) => {
                 const slot = ctx.field(scelta.owner)[scelta.index];
                 if (!slot) return;
                 slot.extraAttackGranted = true;
-                ctx.log(`🎪 Riavvolgimento Toon concede un secondo attacco a ${slot.card.name}!`);
+                ctx.log(`🎪 Ritorno Toon concede un secondo attacco a ${slot.card.name}!`);
             });
         }
     });

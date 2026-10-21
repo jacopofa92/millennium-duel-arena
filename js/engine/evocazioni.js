@@ -142,7 +142,7 @@ function eseguiTributo(posto, c, extra) {
         }
         if (suMagieTrappole && perCarta) {
             addToLog(perChi(posto,
-                `⚙️ Sacrifichi Castello dell'Ingranaggio Antico (invece dei mostri) per Evocare Tributo ${perCarta.name}!`,
+                `⚙️ Sacrifichi Castello-Ingranaggio Antico (invece dei mostri) per Evocare Tributo ${perCarta.name}!`,
                 '⚙️ L\'avversario sacrifica Castello dell\'Ingranaggio Antico (invece dei mostri) per un\'Evocazione Tributo!'));
         }
         indices.forEach(idx => {
@@ -471,7 +471,7 @@ function eseguiSetMagiaTrappola(posto, c, extra) {
     // Onda Sismica (id 818): la Zona bersagliata non può essere usata —
     // vedi DuelEngine.isSTZoneLocked/findFreeSTSlot (duel-engine.js).
     if (window.DuelEngine && DuelEngine.isSTZoneLocked(posto, slotIndex)) {
-        addToLog('❌ Quella Zona Magia/Trappola non può essere usata (Onda Sismica).');
+        addToLog('❌ Quella Zona Magia/Trappola non può essere usata (Onda d\'Urto Sismica).');
         chiudi();
         fine();
         return;

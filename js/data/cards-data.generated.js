@@ -41,7 +41,7 @@ const cardDatabase = [
   {
     "id": 4,
     "origin": "yu-gi-oh",
-    "name": "Guerriero Celtico",
+    "name": "Guardiano Celtico",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -54,7 +54,7 @@ const cardDatabase = [
   {
     "id": 6,
     "origin": "yu-gi-oh",
-    "name": "Cavaliere Oscuro",
+    "name": "Spada in Agguato",
     "type": "monster",
     "level": 6,
     "race": "Guerriero",
@@ -94,7 +94,7 @@ const cardDatabase = [
   {
     "id": 11,
     "origin": "yu-gi-oh",
-    "name": "Braccio Dx Del Proibito",
+    "name": "Braccio Dx del Proibito",
     "type": "monster",
     "level": 1,
     "race": "Incantatore",
@@ -136,7 +136,7 @@ const cardDatabase = [
   {
     "id": 14,
     "origin": "yu-gi-oh",
-    "name": "Gaia il Cavaliere Feroce",
+    "name": "Gaia il Cavaliere",
     "type": "monster",
     "level": 7,
     "race": "Guerriero",
@@ -150,7 +150,7 @@ const cardDatabase = [
   {
     "id": 15,
     "origin": "yu-gi-oh",
-    "name": "Maledizione del Drago",
+    "name": "Anatema del Drago",
     "type": "monster",
     "level": 5,
     "race": "Drago",
@@ -189,7 +189,7 @@ const cardDatabase = [
   {
     "id": 20,
     "origin": "yu-gi-oh",
-    "name": "Buster Blader",
+    "name": "Combattente delle Lame",
     "type": "monster",
     "level": 7,
     "race": "Guerriero",
@@ -215,7 +215,7 @@ const cardDatabase = [
   {
     "id": 23,
     "origin": "yu-gi-oh",
-    "name": "Insetto Divoratore",
+    "name": "Insetto Mangia-Uomini",
     "type": "monster",
     "level": 2,
     "race": "Insetto",
@@ -267,7 +267,7 @@ const cardDatabase = [
   {
     "id": 28,
     "origin": "yu-gi-oh",
-    "name": "Mago del Tempo",
+    "name": "Stregone del Tempo",
     "type": "monster",
     "level": 2,
     "race": "Incantatore",
@@ -280,7 +280,7 @@ const cardDatabase = [
   {
     "id": 29,
     "origin": "yu-gi-oh",
-    "name": "Drago Bianco Definitivo",
+    "name": "Drago Occhi Blu Finale",
     "type": "monster",
     "level": 12,
     "race": "Drago",
@@ -323,7 +323,7 @@ const cardDatabase = [
   {
     "id": 33,
     "origin": "yu-gi-oh",
-    "name": "Il Guardiano del Cancello",
+    "name": "Guardiano del Cancello",
     "type": "monster",
     "level": 11,
     "race": "Guerriero",
@@ -351,7 +351,7 @@ const cardDatabase = [
   {
     "id": 35,
     "origin": "yu-gi-oh",
-    "name": "Rinascita del Mostro",
+    "name": "Mostro Resuscitato",
     "type": "spell",
     "subtype": "normal",
     "effect": "Special Summon di un mostro da un Cimitero, tuo o dell'avversario.",
@@ -361,7 +361,7 @@ const cardDatabase = [
   {
     "id": 36,
     "origin": "yu-gi-oh",
-    "name": "Vaso dell'Avidità",
+    "name": "Anfora dell'Avidità",
     "type": "spell",
     "subtype": "normal",
     "effect": "Pesca 2 carte.",
@@ -380,7 +380,7 @@ const cardDatabase = [
   {
     "id": 38,
     "origin": "yu-gi-oh",
-    "name": "Fusione",
+    "name": "Polimerizzazione",
     "type": "spell",
     "subtype": "normal",
     "effect": "Fondi insieme i Materiali Fusione elencati su un Mostro Fusione.",
@@ -398,7 +398,7 @@ const cardDatabase = [
   {
     "id": 41,
     "origin": "yu-gi-oh",
-    "name": "Testa Proibita",
+    "name": "Exodia il Proibito",
     "type": "monster",
     "level": 3,
     "race": "Incantatore",
@@ -471,14 +471,14 @@ const cardDatabase = [
   {
     "id": 50,
     "origin": "yu-gi-oh",
-    "name": "Larva Mostruosa",
+    "name": "Larva di Falena",
     "type": "monster",
     "level": 2,
     "race": "Insetto",
     "attribute": "TERRA",
     "attack": 500,
     "defense": 400,
-    "effect": "Non può essere Evocata Normalmente né Set. Questa carta può essere Special Summonata solo sacrificando \"Falena Piccola\" durante il tuo 2° turno dopo che \"Falena Piccola\" è stata equipaggiata con \"Bozzolo dell'Evoluzione\".",
+    "effect": "Non può essere Evocata Normalmente né Set. Questa carta può essere Special Summonata solo sacrificando \"Piccola Falena\" durante il tuo 2° turno dopo che \"Piccola Falena\" è stata equipaggiata con \"Bozzolo dell'Evoluzione\".",
     "artOnly": true
   },
   {
@@ -491,13 +491,13 @@ const cardDatabase = [
     "attribute": "TERRA",
     "attack": 2600,
     "defense": 2500,
-    "effect": "Non può essere Evocata Normalmente né Set. Questa carta può essere Special Summonata solo sacrificando \"Falena Piccola\" durante il tuo 4° turno dopo che \"Falena Piccola\" è stata equipaggiata con \"Bozzolo dell'Evoluzione\".",
+    "effect": "Non può essere Evocata Normalmente né Set. Questa carta può essere Special Summonata solo sacrificando \"Piccola Falena\" durante il tuo 4° turno dopo che \"Piccola Falena\" è stata equipaggiata con \"Bozzolo dell'Evoluzione\".",
     "artOnly": true
   },
   {
     "id": 54,
     "origin": "yu-gi-oh",
-    "name": "Muro d'Illusione",
+    "name": "Muro Illusorio",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -510,7 +510,7 @@ const cardDatabase = [
   {
     "id": 55,
     "origin": "yu-gi-oh",
-    "name": "Guerriero Nero Supremo",
+    "name": "Glorioso Soldato Nero",
     "type": "monster",
     "level": 8,
     "race": "Guerriero",
@@ -518,16 +518,16 @@ const cardDatabase = [
     "attack": 3000,
     "defense": 2500,
     "category": "ritual",
-    "effect": "Evocabile solo tramite Rito del Guerriero Nero, sacrificando mostri per un Livello totale di almeno 8.",
+    "effect": "Evocabile solo tramite Rito della Gloria Nera, sacrificando mostri per un Livello totale di almeno 8.",
     "artOnly": true
   },
   {
     "id": 56,
     "origin": "yu-gi-oh",
-    "name": "Rito del Guerriero Nero",
+    "name": "Rito della Gloria Nera",
     "type": "spell",
     "subtype": "ritual",
-    "effect": "Sacrifica dal Terreno e/o dalla mano mostri per un Livello totale di almeno 8 per Special Summon Guerriero Nero Supremo dalla mano.",
+    "effect": "Sacrifica dal Terreno e/o dalla mano mostri per un Livello totale di almeno 8 per Special Summon Glorioso Soldato Nero dalla mano.",
     "artOnly": true
   },
   {
@@ -548,7 +548,7 @@ const cardDatabase = [
   {
     "id": 59,
     "origin": "yu-gi-oh",
-    "name": "Carica dell'Anima",
+    "name": "Carica Anime",
     "type": "spell",
     "subtype": "normal",
     "effect": "Special Summon di un qualsiasi numero di mostri dal tuo Cimitero; poi perdi 1000 Life Points per ogni mostro. Non puoi condurre la tua Battle Phase in questo turno.",
@@ -558,7 +558,7 @@ const cardDatabase = [
   {
     "id": 69,
     "origin": "yu-gi-oh",
-    "name": "Stop Difesa",
+    "name": "Blocca Difesa",
     "type": "spell",
     "subtype": "normal",
     "effect": "Cambia in Posizione di Attacco un mostro in Posizione di Difesa controllato dal tuo avversario.",
@@ -595,20 +595,20 @@ const cardDatabase = [
   {
     "id": 74,
     "origin": "yu-gi-oh",
-    "name": "Guardiano della Palude",
+    "name": "Guardiano delle Paludi",
     "type": "monster",
     "level": 5,
     "race": "Guerriero",
     "attribute": "TERRA",
     "attack": 1800,
     "defense": 1500,
-    "effect": "Guadagna 500 ATK per ogni Guardiano della Palude di Lava che controlli.",
+    "effect": "Guadagna 500 ATK per ogni Guardiano delle Paludi di Lava che controlli.",
     "artOnly": true
   },
   {
     "id": 77,
     "origin": "yu-gi-oh",
-    "name": "Coccinella della Rovina a 4 Stelle",
+    "name": "Coccinella del Destino",
     "type": "monster",
     "level": 3,
     "race": "Insetto",
@@ -621,7 +621,7 @@ const cardDatabase = [
   {
     "id": 78,
     "origin": "yu-gi-oh",
-    "name": "Patto col Sovrano Oscuro",
+    "name": "Un Accordo con l'Arcidemone",
     "type": "spell",
     "subtype": "quick-play",
     "effect": "Se un mostro con 8 o più Stelle Livello che controlli è stato mandato al Cimitero in questo turno: Special Summon 1 Drago Berserk dalla tua mano o dal tuo Deck.",
@@ -639,7 +639,7 @@ const cardDatabase = [
   {
     "id": 80,
     "origin": "yu-gi-oh",
-    "name": "Un Battito d'Ali del Drago Gigante",
+    "name": "Il Battito d'Ali del Drago Gigante",
     "type": "spell",
     "subtype": "normal",
     "effect": "Riporta in mano 1 mostro Tipo Drago di Livello 5+ che controlli; se lo fai, distruggi tutte le Magie/Trappole sul Terreno.",
@@ -648,7 +648,7 @@ const cardDatabase = [
   {
     "id": 82,
     "origin": "yu-gi-oh",
-    "name": "Parshath il Cavaliere Alato",
+    "name": "Parshath Cavaliere Volante",
     "type": "monster",
     "level": 5,
     "race": "Fata",
@@ -661,7 +661,7 @@ const cardDatabase = [
   {
     "id": 83,
     "origin": "yu-gi-oh",
-    "name": "Spada di Alligatore",
+    "name": "Spada dell'Alligatore",
     "type": "monster",
     "level": 4,
     "race": "Bestia",
@@ -675,7 +675,7 @@ const cardDatabase = [
   {
     "id": 84,
     "origin": "yu-gi-oh",
-    "name": "Drago Spada di Alligatore",
+    "name": "Drago Spada dell'Alligatore",
     "type": "monster",
     "level": 5,
     "race": "Drago",
@@ -684,13 +684,13 @@ const cardDatabase = [
     "defense": 1500,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Cucciolo di Drago e Spada di Alligatore. Può attaccare direttamente se gli unici mostri scoperti controllati dal tuo avversario sono TERRA, ACQUA o FUOCO.",
+    "effect": "Fusione di Cucciolo di Drago e Spada dell'Alligatore. Può attaccare direttamente se gli unici mostri scoperti controllati dal tuo avversario sono TERRA, ACQUA o FUOCO.",
     "artOnly": true
   },
   {
     "id": 85,
     "origin": "yu-gi-oh",
-    "name": "Alpha il Guerriero Magnetico",
+    "name": "Guerriero Magnetico Alfa",
     "type": "monster",
     "level": 4,
     "race": "Roccia",
@@ -704,7 +704,7 @@ const cardDatabase = [
   {
     "id": 86,
     "origin": "yu-gi-oh",
-    "name": "Amazzone Maestra delle Catene",
+    "name": "Maestra delle Catene Amazoness",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -717,7 +717,7 @@ const cardDatabase = [
   {
     "id": 87,
     "origin": "yu-gi-oh",
-    "name": "Amazzone Combattente",
+    "name": "Guerriera Amazoness",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -730,7 +730,7 @@ const cardDatabase = [
   {
     "id": 88,
     "origin": "yu-gi-oh",
-    "name": "Arciere delle Amazzoni",
+    "name": "Imboscata Amazoness",
     "type": "trap",
     "subtype": "normal",
     "effect": "Se controlli un mostro \"Amazzone\" quando il tuo avversario dichiara un attacco: gira scoperti in Posizione di Attacco tutti i mostri del tuo avversario (e ne riduce l'ATK di 500 finché restano scoperti). Quel turno, quei mostri devono attaccare, se possono.",
@@ -739,7 +739,7 @@ const cardDatabase = [
   {
     "id": 89,
     "origin": "yu-gi-oh",
-    "name": "Amazzone Incantatrice",
+    "name": "Incantatrice Amazoness",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro \"Amazzone\" che controlli e 1 mostro scoperto controllato dal tuo avversario; scambia l'ATK originale tra i due bersagli fino alla fine di questo turno.",
@@ -748,7 +748,7 @@ const cardDatabase = [
   {
     "id": 90,
     "origin": "yu-gi-oh",
-    "name": "Amazzone Spadaccina",
+    "name": "Spadaccina Amazoness",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -784,7 +784,7 @@ const cardDatabase = [
   {
     "id": 93,
     "origin": "yu-gi-oh",
-    "name": "Antico Elfo",
+    "name": "Elfo Antico",
     "type": "monster",
     "level": 4,
     "race": "Incantatore",
@@ -805,7 +805,7 @@ const cardDatabase = [
     "attribute": "VENTO",
     "attack": 900,
     "defense": 1400,
-    "effect": "Durante la tua Main Phase, se questa carta è scoperta sul campo, puoi Special Summon \"La Jinn il Genio Mistico della Lampada\" dalla tua mano. Se questa carta viene attaccata mentre è coperta, puoi ridirigere l'attacco verso un altro mostro che l'avversario controlla.",
+    "effect": "Durante la tua Main Phase, se questa carta è scoperta sul campo, puoi Special Summon \"Genio della Lampada\" dalla tua mano. Se questa carta viene attaccata mentre è coperta, puoi ridirigere l'attacco verso un altro mostro che l'avversario controlla.",
     "artOnly": true
   },
   {
@@ -820,7 +820,7 @@ const cardDatabase = [
   {
     "id": 96,
     "origin": "yu-gi-oh",
-    "name": "Aqua Madoor",
+    "name": "Mago delle Acque",
     "type": "monster",
     "level": 4,
     "race": "Incantatore",
@@ -834,7 +834,7 @@ const cardDatabase = [
   {
     "id": 97,
     "origin": "yu-gi-oh",
-    "name": "Armaill",
+    "name": "Armaill delle Lame",
     "type": "monster",
     "level": 3,
     "race": "Guerriero",
@@ -885,7 +885,7 @@ const cardDatabase = [
   {
     "id": 101,
     "origin": "yu-gi-oh",
-    "name": "Assalitore con l'Ascia",
+    "name": "Predone d'Ascia",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -899,7 +899,7 @@ const cardDatabase = [
   {
     "id": 102,
     "origin": "yu-gi-oh",
-    "name": "Drago Nero del Teschio",
+    "name": "Drago Teschio Nero",
     "type": "monster",
     "level": 9,
     "race": "Drago",
@@ -929,7 +929,7 @@ const cardDatabase = [
   {
     "id": 104,
     "origin": "yu-gi-oh",
-    "name": "Drago Barile",
+    "name": "Drago Revolver",
     "type": "monster",
     "level": 7,
     "race": "Macchina",
@@ -942,7 +942,7 @@ const cardDatabase = [
   {
     "id": 105,
     "origin": "yu-gi-oh",
-    "name": "Insetto di Base",
+    "name": "Insetto della Foresta",
     "type": "monster",
     "level": 2,
     "race": "Insetto",
@@ -956,7 +956,7 @@ const cardDatabase = [
   {
     "id": 106,
     "origin": "yu-gi-oh",
-    "name": "Bue da Battaglia",
+    "name": "Ascia da Guerra",
     "type": "monster",
     "level": 4,
     "race": "Bestia-Guerriero",
@@ -1019,13 +1019,13 @@ const cardDatabase = [
     "attribute": "OSCURITÀ",
     "attack": 3500,
     "defense": 0,
-    "effect": "Deve essere Special Summonato tramite \"Patto col Sovrano Oscuro\" e non può esserlo in altro modo. Può attaccare tutti i mostri dell'avversario, una volta ciascuno. Ad ogni tua End Phase, perde 500 ATK.",
+    "effect": "Deve essere Special Summonato tramite \"Un Accordo con l'Arcidemone\" e non può esserlo in altro modo. Può attaccare tutti i mostri dell'avversario, una volta ciascuno. Ad ogni tua End Phase, perde 500 ATK.",
     "artOnly": true
   },
   {
     "id": 111,
     "origin": "yu-gi-oh",
-    "name": "Anima del Berserker",
+    "name": "Anima Furente",
     "type": "spell",
     "subtype": "quick-play",
     "effect": "Quando un tuo mostro infligge 1500 o meno danni con un attacco diretto: scarta tutta la tua mano (min. 1); scopri la prima carta del tuo Deck e, se è un mostro, mandala al Cimitero e infliggi 500 danni, poi ripeti fino a 7 volte o finché non scopri una carta non-mostro.",
@@ -1034,7 +1034,7 @@ const cardDatabase = [
   {
     "id": 112,
     "origin": "yu-gi-oh",
-    "name": "Beta il Guerriero Magnetico",
+    "name": "Guerriero Magnetico Beta",
     "type": "monster",
     "level": 4,
     "race": "Roccia",
@@ -1063,7 +1063,7 @@ const cardDatabase = [
   {
     "id": 114,
     "origin": "yu-gi-oh",
-    "name": "Insetto Gigante",
+    "name": "Grande Insetto",
     "type": "monster",
     "level": 4,
     "race": "Insetto",
@@ -1077,7 +1077,7 @@ const cardDatabase = [
   {
     "id": 115,
     "origin": "yu-gi-oh",
-    "name": "Gran Scudo Gardna",
+    "name": "Grande Scudo Custode",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -1090,7 +1090,7 @@ const cardDatabase = [
   {
     "id": 116,
     "origin": "yu-gi-oh",
-    "name": "Rito dell'Illusione Nera",
+    "name": "Rito Illusione Nera",
     "type": "spell",
     "subtype": "ritual",
     "effect": "Usata per Ritual Summon \"Relinquished\": sacrifica anche un mostro di Livello 1 o superiore dalla mano o dal Terreno.",
@@ -1099,7 +1099,7 @@ const cardDatabase = [
   {
     "id": 117,
     "origin": "yu-gi-oh",
-    "name": "Ciondolo Nero",
+    "name": "Pendente Nero",
     "type": "spell",
     "subtype": "equip",
     "effect": "Il mostro equipaggiato guadagna 500 ATK. Quando questa carta viene mandata dal Terreno al Cimitero: infliggi 500 danni al tuo avversario.",
@@ -1108,7 +1108,7 @@ const cardDatabase = [
   {
     "id": 118,
     "origin": "yu-gi-oh",
-    "name": "Drago di Fuoco delle Terre Nere",
+    "name": "Drago Infuocato della Terra Nera",
     "type": "monster",
     "level": 4,
     "race": "Drago",
@@ -1121,7 +1121,7 @@ const cardDatabase = [
   {
     "id": 119,
     "origin": "yu-gi-oh",
-    "name": "Cavaliere della Lama",
+    "name": "Cavaliere Lama",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -1134,7 +1134,7 @@ const cardDatabase = [
   {
     "id": 120,
     "origin": "yu-gi-oh",
-    "name": "Sfera Esplosiva",
+    "name": "Sfera di Distruzione",
     "type": "monster",
     "level": 4,
     "race": "Macchina",
@@ -1147,7 +1147,7 @@ const cardDatabase = [
   {
     "id": 121,
     "origin": "yu-gi-oh",
-    "name": "Blocca Attacco",
+    "name": "Blocca-Attacco",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro scoperto in Posizione di Attacco controllato dal tuo avversario; cambialo in Posizione di Difesa scoperta.",
@@ -1156,7 +1156,7 @@ const cardDatabase = [
   {
     "id": 122,
     "origin": "yu-gi-oh",
-    "name": "Spadaccino di Fiamma Blu",
+    "name": "Spadaccino di Fuoco Blu",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -1176,14 +1176,14 @@ const cardDatabase = [
     "attribute": "LUCE",
     "attack": 3000,
     "defense": 2500,
-    "effect": "Può essere Evocato normalmente rispettandone il Livello. Se controlli \"Mondo dei Toon\", puoi invece Evocarlo Specialmente dalla mano sacrificando 1 mostro Toon. Finché controlli \"Mondo dei Toon\", può attaccare direttamente e nel turno in cui viene Evocato.",
-    "legacyOfficialEffect": "Special Summonabile dalla mano sacrificando 2 mostri, solo se controlli \"Mondo Toon\". Può attaccare direttamente. Non può attaccare il turno in cui viene Special Summonata; paga 500 Life Points per dichiarare un attacco. Se \"Mondo dei Toon\" sul Terreno viene distrutto, distruggi anche questa carta.",
+    "effect": "Può essere Evocato normalmente rispettandone il Livello. Se controlli \"Mondo Toon\", puoi invece Evocarlo Specialmente dalla mano sacrificando 1 mostro Toon. Finché controlli \"Mondo Toon\", può attaccare direttamente e nel turno in cui viene Evocato.",
+    "legacyOfficialEffect": "Special Summonabile dalla mano sacrificando 2 mostri, solo se controlli \"Mondo Toon\". Può attaccare direttamente. Non può attaccare il turno in cui viene Special Summonata; paga 500 Life Points per dichiarare un attacco. Se \"Mondo Toon\" sul Terreno viene distrutto, distruggi anche questa carta.",
     "artOnly": true
   },
   {
     "id": 125,
     "origin": "yu-gi-oh",
-    "name": "Cinghiale Soldato",
+    "name": "Cinghiale Guerriero",
     "type": "monster",
     "level": 4,
     "race": "Bestia-Guerriero",
@@ -1196,7 +1196,7 @@ const cardDatabase = [
   {
     "id": 126,
     "origin": "yu-gi-oh",
-    "name": "Pinguino Fulmine",
+    "name": "Pinguino Fulminante",
     "type": "monster",
     "level": 3,
     "race": "Tuono",
@@ -1210,7 +1210,7 @@ const cardDatabase = [
   {
     "id": 127,
     "origin": "yu-gi-oh",
-    "name": "Libro delle Arti Segrete",
+    "name": "Libro di Arti Ascose",
     "type": "spell",
     "subtype": "equip",
     "effect": "Un mostro Incantatore equipaggiato con questa carta guadagna 300 ATK e 300 DEF.",
@@ -1219,7 +1219,7 @@ const cardDatabase = [
   {
     "id": 128,
     "origin": "yu-gi-oh",
-    "name": "Buco Trappola senza Fondo",
+    "name": "Buco Trappola Senza Fine",
     "type": "trap",
     "subtype": "normal",
     "effect": "Quando l'avversario Evoca un mostro con 1500 o più ATK: distruggilo e bandiscilo.",
@@ -1241,7 +1241,7 @@ const cardDatabase = [
   {
     "id": 130,
     "origin": "yu-gi-oh",
-    "name": "Controllo Mentale",
+    "name": "Controllo della Mente",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro controllato dal tuo avversario; prendine il controllo. Quel mostro non può attaccare né essere sacrificato.",
@@ -1250,7 +1250,7 @@ const cardDatabase = [
   {
     "id": 131,
     "origin": "yu-gi-oh",
-    "name": "Distruttore, il Guerriero Magico",
+    "name": "Breaker il Guerriero Magico",
     "type": "monster",
     "level": 4,
     "race": "Incantatore",
@@ -1272,7 +1272,7 @@ const cardDatabase = [
   {
     "id": 133,
     "origin": "yu-gi-oh",
-    "name": "Terra in Fiamme",
+    "name": "Terra Infuocata",
     "type": "spell",
     "subtype": "continuous",
     "effect": "Quando questa carta viene attivata: se ci sono Magie Campo sul Terreno, distruggile. Durante la Standby Phase di ciascun giocatore: chi è di turno subisce 500 danni.",
@@ -1281,7 +1281,7 @@ const cardDatabase = [
   {
     "id": 134,
     "origin": "yu-gi-oh",
-    "name": "Soffio Esplosivo",
+    "name": "Soffio Incendiario",
     "type": "trap",
     "subtype": "normal",
     "effect": "Sacrifica 1 mostro Tipo Drago; distruggi tutti i mostri scoperti sul Terreno la cui DEF è minore o uguale all'ATK che aveva il mostro sacrificato.",
@@ -1290,7 +1290,7 @@ const cardDatabase = [
   {
     "id": 135,
     "origin": "yu-gi-oh",
-    "name": "Pugnale Farfalla - Elma",
+    "name": "Pugnale a Farfalla - Elma",
     "type": "spell",
     "subtype": "equip",
     "effect": "Il mostro equipaggiato guadagna 300 ATK. Quando questa carta viene mandata al Cimitero mentre è equipaggiata: puoi farla tornare in mano.",
@@ -1300,7 +1300,7 @@ const cardDatabase = [
   {
     "id": 136,
     "origin": "yu-gi-oh",
-    "name": "Richiamo degli Infestati",
+    "name": "Richiamo del Posseduto",
     "type": "trap",
     "subtype": "continuous",
     "effect": "Attivala scegliendo come bersaglio 1 mostro nel tuo Cimitero; Special Summonalo in Posizione di Attacco. Quando questa carta lascia il Terreno: distruggi quel mostro. Quando quel mostro viene distrutto: distruggi questa carta.",
@@ -1309,7 +1309,7 @@ const cardDatabase = [
   {
     "id": 137,
     "origin": "yu-gi-oh",
-    "name": "Soldato Cannone",
+    "name": "Soldato-Cannone",
     "type": "monster",
     "level": 4,
     "race": "Macchina",
@@ -1322,7 +1322,7 @@ const cardDatabase = [
   {
     "id": 138,
     "origin": "yu-gi-oh",
-    "name": "Distruzione di Carte",
+    "name": "Distruggi-Carte",
     "type": "spell",
     "subtype": "normal",
     "effect": "Entrambi i giocatori scartano quante più carte possono dalla mano, poi ciascuno pesca lo stesso numero di carte che ha scartato.",
@@ -1332,7 +1332,7 @@ const cardDatabase = [
   {
     "id": 139,
     "origin": "yu-gi-oh",
-    "name": "Guardia di Carte",
+    "name": "Guardia della Carta",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -1345,7 +1345,7 @@ const cardDatabase = [
   {
     "id": 140,
     "origin": "yu-gi-oh",
-    "name": "Carta della Rovina",
+    "name": "Carta dell'Oblio",
     "type": "spell",
     "subtype": "normal",
     "effect": "Pesca finché non hai 3 carte in mano; per il resto di questo turno il tuo avversario non subisce danni. Durante la End Phase di questo turno, manda tutta la tua mano al Cimitero. Non puoi Special Summonare nel turno in cui attivi questa carta.",
@@ -1400,16 +1400,16 @@ const cardDatabase = [
   {
     "id": 145,
     "origin": "yu-gi-oh",
-    "name": "Spada Celeste - Eatos",
+    "name": "Spada Celestiale - Eatos",
     "type": "spell",
     "subtype": "equip",
-    "effect": "Il mostro equipaggiato guadagna 500 ATK. Quando questa carta viene mandata dal Terreno al Cimitero, puoi scegliere come bersaglio 1 \"Guardian Eatos\" che controlli: guadagna 500 ATK per ogni mostro bandito.",
+    "effect": "Il mostro equipaggiato guadagna 500 ATK. Quando questa carta viene mandata dal Terreno al Cimitero, puoi scegliere come bersaglio 1 \"Guardiano Eatos\" che controlli: guadagna 500 ATK per ogni mostro bandito.",
     "artOnly": true
   },
   {
     "id": 146,
     "origin": "yu-gi-oh",
-    "name": "Catena di Distruzione",
+    "name": "Distruzione a Catena",
     "type": "trap",
     "subtype": "normal",
     "effect": "Quando viene Evocato un mostro con 2000 o meno ATK: scegli come bersaglio quel mostro; distruggi tutte le carte con lo stesso nome nella mano e nel Deck di chi lo controlla.",
@@ -1418,7 +1418,7 @@ const cardDatabase = [
   {
     "id": 147,
     "origin": "yu-gi-oh",
-    "name": "Cambio di Cuore",
+    "name": "Cambiare Idea",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro scoperto controllato dal tuo avversario; prendine il controllo fino alla End Phase.",
@@ -1427,7 +1427,7 @@ const cardDatabase = [
   {
     "id": 148,
     "origin": "yu-gi-oh",
-    "name": "Scudo Lustro Giallo",
+    "name": "Scudo Giallo del Desiderio",
     "type": "spell",
     "subtype": "continuous",
     "effect": "Finché questa carta è sul Terreno, tutti i mostri che controlli guadagnano 300 DEF.",
@@ -1436,7 +1436,7 @@ const cardDatabase = [
   {
     "id": 149,
     "origin": "yu-gi-oh",
-    "name": "Chimera la Bestia Mitica Volante",
+    "name": "Chimera, la Mitica Bestia Volante",
     "type": "monster",
     "level": 6,
     "race": "Bestia",
@@ -1451,7 +1451,7 @@ const cardDatabase = [
   {
     "id": 150,
     "origin": "yu-gi-oh",
-    "name": "Chiron il Mago",
+    "name": "Chiron il Saggio",
     "type": "monster",
     "level": 4,
     "race": "Bestia-Guerriero",
@@ -1473,7 +1473,7 @@ const cardDatabase = [
   {
     "id": 152,
     "origin": "yu-gi-oh",
-    "name": "Prescelto",
+    "name": "Il Prescelto",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli 1 Mostro e 2 carte non-Mostro dalla tua mano. Il tuo avversario ne sceglie 1 a caso: se è un Mostro, Special Summonalo e manda le altre due al Cimitero; altrimenti manda tutte e tre le carte al Cimitero.",
@@ -1500,7 +1500,7 @@ const cardDatabase = [
   {
     "id": 155,
     "origin": "yu-gi-oh",
-    "name": "Zombie Pagliaccio",
+    "name": "Zombie Clown",
     "type": "monster",
     "level": 2,
     "race": "Zombie",
@@ -1514,7 +1514,7 @@ const cardDatabase = [
   {
     "id": 156,
     "origin": "yu-gi-oh",
-    "name": "Cavaliere Scarafaggio",
+    "name": "Cavaliere-Scarafaggio",
     "type": "monster",
     "level": 3,
     "race": "Insetto",
@@ -1559,7 +1559,7 @@ const cardDatabase = [
   {
     "id": 160,
     "origin": "yu-gi-oh",
-    "name": "Potere Raccolto",
+    "name": "Potere Riunito",
     "type": "trap",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro scoperto sul Terreno; equipaggialo con tutte le Magie Equipaggiamento presenti sul Terreno. Se una di queste Magie Equipaggiamento è ora equipaggiata a un bersaglio non corretto, distruggila.",
@@ -1568,7 +1568,7 @@ const cardDatabase = [
   {
     "id": 161,
     "origin": "yu-gi-oh",
-    "name": "Patto con Exodia",
+    "name": "Contratto con Exodia",
     "type": "spell",
     "subtype": "normal",
     "effect": "Attivabile solo se hai \"Exodia il Proibito\" e le sue quattro parti nel Cimitero. Special Summon 1 \"Exodia Necross\" dalla mano.",
@@ -1658,7 +1658,7 @@ const cardDatabase = [
   {
     "id": 169,
     "origin": "yu-gi-oh",
-    "name": "Tenda degli Oscuri",
+    "name": "Sipario degli Oscuri",
     "type": "monster",
     "level": 2,
     "race": "Incantatore",
@@ -1672,7 +1672,7 @@ const cardDatabase = [
   {
     "id": 170,
     "origin": "yu-gi-oh",
-    "name": "Comandante Cyber",
+    "name": "Cyber Comandante",
     "type": "monster",
     "level": 2,
     "race": "Macchina",
@@ -1686,7 +1686,7 @@ const cardDatabase = [
   {
     "id": 171,
     "origin": "yu-gi-oh",
-    "name": "Falco Cyber",
+    "name": "Cyber-Falcone",
     "type": "monster",
     "level": 4,
     "race": "Macchina",
@@ -1700,7 +1700,7 @@ const cardDatabase = [
   {
     "id": 172,
     "origin": "yu-gi-oh",
-    "name": "Arpia Cyber",
+    "name": "Cyber Lady Arpia",
     "type": "monster",
     "level": 4,
     "race": "Bestia Alata",
@@ -1713,7 +1713,7 @@ const cardDatabase = [
   {
     "id": 173,
     "origin": "yu-gi-oh",
-    "name": "Barattolo Cyber",
+    "name": "Cyber Giara",
     "type": "monster",
     "level": 3,
     "race": "Roccia",
@@ -1726,7 +1726,7 @@ const cardDatabase = [
   {
     "id": 174,
     "origin": "yu-gi-oh",
-    "name": "Predone Cyber",
+    "name": "Predone Cibernetico",
     "type": "monster",
     "level": 4,
     "race": "Macchina",
@@ -1739,7 +1739,7 @@ const cardDatabase = [
   {
     "id": 175,
     "origin": "yu-gi-oh",
-    "name": "Scudo Cyber",
+    "name": "Cyber Scudo",
     "type": "spell",
     "subtype": "equip",
     "effect": "Equipaggiabile solo a \"Harpie Lady\" o \"Harpie Lady Sisters\". Il mostro equipaggiato guadagna 500 ATK.",
@@ -1748,7 +1748,7 @@ const cardDatabase = [
   {
     "id": 176,
     "origin": "yu-gi-oh",
-    "name": "Soldato Cyber del Mondo Oscuro",
+    "name": "Cyber-Soldato del Mondoscuro",
     "type": "monster",
     "level": 4,
     "race": "Macchina",
@@ -1761,7 +1761,7 @@ const cardDatabase = [
   {
     "id": 177,
     "origin": "yu-gi-oh",
-    "name": "Alligatore Cyber-Tecnologico",
+    "name": "Cyber-Alligatech",
     "type": "monster",
     "level": 5,
     "race": "Macchina",
@@ -1775,7 +1775,7 @@ const cardDatabase = [
   {
     "id": 178,
     "origin": "yu-gi-oh",
-    "name": "Laser Ciclone",
+    "name": "Laser Ciclonico",
     "type": "spell",
     "subtype": "equip",
     "effect": "Equipaggiabile solo a \"Gradius\". Il mostro equipaggiato guadagna 300 ATK; se attacca un mostro in Posizione di Difesa con ATK superiore alla sua DEF, infligge la differenza come danno.",
@@ -1838,16 +1838,16 @@ const cardDatabase = [
   {
     "id": 183,
     "origin": "yu-gi-oh",
-    "name": "Rito del Drago Oscuro",
+    "name": "Rituale del Drago Nero",
     "type": "spell",
     "subtype": "ritual",
-    "effect": "Usata per Ritual Summon \"Paladino del Drago Oscuro\": sacrifica dal Terreno o dalla mano mostri per un Livello totale di almeno 4. Durante la tua Main Phase, tranne il turno in cui questa carta è finita nel Cimitero: puoi bandirla dal Cimitero per aggiungere alla mano 1 Magia/Trappola \"Occhi Rossi\" dal Deck.",
+    "effect": "Usata per Ritual Summon \"Paladino del Drago Nero\": sacrifica dal Terreno o dalla mano mostri per un Livello totale di almeno 4. Durante la tua Main Phase, tranne il turno in cui questa carta è finita nel Cimitero: puoi bandirla dal Cimitero per aggiungere alla mano 1 Magia/Trappola \"Occhi Rossi\" dal Deck.",
     "artOnly": true
   },
   {
     "id": 184,
     "origin": "yu-gi-oh",
-    "name": "Cavaliere della Fiamma Oscura",
+    "name": "Cavaliere Fiamma Oscura",
     "type": "monster",
     "level": 6,
     "race": "Guerriero",
@@ -1856,7 +1856,7 @@ const cardDatabase = [
     "defense": 800,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Mago Nero e Spadaccino Fiammeggiante. Non subisci danno da battaglia dagli attacchi che coinvolgono questa carta. Quando questa carta viene distrutta in battaglia: Special Summon 1 Cavaliere del Miraggio dalla mano o dal Deck.",
+    "effect": "Fusione di Mago Nero e Spadaccino Fiammeggiante. Non subisci danno da battaglia dagli attacchi che coinvolgono questa carta. Quando questa carta viene distrutta in battaglia: Special Summon 1 Cavaliere Miraggio dalla mano o dal Deck.",
     "artOnly": true
   },
   {
@@ -1889,23 +1889,23 @@ const cardDatabase = [
   {
     "id": 187,
     "origin": "yu-gi-oh",
-    "name": "Rito della Magia Oscura",
+    "name": "Rito Magia Oscura",
     "type": "spell",
     "subtype": "ritual",
-    "effect": "Usata per Ritual Summon \"Mago del Caos Nero\": sacrifica dal Terreno o dalla mano mostri per un Livello totale di almeno 8.",
+    "effect": "Usata per Ritual Summon \"Mago del Chaos Oscuro\": sacrifica dal Terreno o dalla mano mostri per un Livello totale di almeno 8.",
     "artOnly": true
   },
   {
     "id": 188,
     "origin": "yu-gi-oh",
-    "name": "Maga Oscura",
+    "name": "Ragazza Maga Nera",
     "type": "monster",
     "level": 6,
     "race": "Incantatore",
     "attribute": "OSCURITÀ",
     "attack": 2000,
     "defense": 1700,
-    "effect": "Guadagna 300 ATK per ogni Mago Nero o Mago del Caos Nero nel Cimitero.",
+    "effect": "Guadagna 300 ATK per ogni Mago Nero o Mago del Chaos Oscuro nel Cimitero.",
     "artOnly": true
   },
   {
@@ -1920,7 +1920,7 @@ const cardDatabase = [
     "defense": 2400,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Mago Nero e Buster Blader. Non può essere Special Summonato se non tramite Fusion Summon. Finché è scoperta in campo, puoi scartare 1 carta per negare e distruggere l'attivazione di una Magia. Guadagna 500 ATK per ogni mostro Tipo Drago sul Terreno e nei Cimiteri.",
+    "effect": "Fusione di Mago Nero e Combattente delle Lame. Non può essere Special Summonato se non tramite Fusion Summon. Finché è scoperta in campo, puoi scartare 1 carta per negare e distruggere l'attivazione di una Magia. Guadagna 500 ATK per ogni mostro Tipo Drago sul Terreno e nei Cimiteri.",
     "artOnly": true
   },
   {
@@ -1947,7 +1947,7 @@ const cardDatabase = [
     "attribute": "OSCURITÀ",
     "attack": 2800,
     "defense": 3200,
-    "effect": "Non può essere Evocato Normalmente/Set. Se hai indovinato il lancio di moneta dell'effetto di \"Mago del Tempo\": puoi sacrificare 1 \"Mago Nero\" sul Terreno; Special Summon questa carta dalla mano o dal Deck. Se Special Summonata così: aggiungi 1 Magia dal Deck alla mano.",
+    "effect": "Non può essere Evocato Normalmente/Set. Se hai indovinato il lancio di moneta dell'effetto di \"Stregone del Tempo\": puoi sacrificare 1 \"Mago Nero\" sul Terreno; Special Summon questa carta dalla mano o dal Deck. Se Special Summonata così: aggiungi 1 Magia dal Deck alla mano.",
     "artOnly": true
   },
   {
@@ -1956,7 +1956,7 @@ const cardDatabase = [
     "name": "Santuario Oscuro",
     "type": "spell",
     "subtype": "field",
-    "effect": "Se una carta \"Spirit Message\" verrebbe piazzata sul Terreno con \"Destiny Board\": puoi Special Summonarla come Mostro Normale (Demone/OSCURITÀ/Livello 1/ATK 0/DEF 0) invece. Quando un mostro dell'avversario dichiara un attacco: lancia una moneta; se esce Testa, annulla l'attacco e infliggi danno pari a metà dell'ATK di quel mostro.",
+    "effect": "Se una carta \"Spirit Message\" verrebbe piazzata sul Terreno con \"Tavola del Destino\": puoi Special Summonarla come Mostro Normale (Demone/OSCURITÀ/Livello 1/ATK 0/DEF 0) invece. Quando un mostro dell'avversario dichiara un attacco: lancia una moneta; se esce Testa, annulla l'attacco e infliggi danno pari a metà dell'ATK di quel mostro.",
     "artOnly": true
   },
   {
@@ -1988,7 +1988,7 @@ const cardDatabase = [
   {
     "id": 195,
     "origin": "yu-gi-oh",
-    "name": "Rimuovi Magia",
+    "name": "Annulla Carta Magia",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 Magia scoperta, o 1 Magia/Trappola Set, sul Terreno; distruggila se è una Magia (se il bersaglio è coperto, rivelalo prima).",
@@ -1997,7 +1997,7 @@ const cardDatabase = [
   {
     "id": 196,
     "origin": "yu-gi-oh",
-    "name": "Des Volstgalph",
+    "name": "Volstgalph Des",
     "type": "monster",
     "level": 6,
     "race": "Drago",
@@ -2019,7 +2019,7 @@ const cardDatabase = [
   {
     "id": 198,
     "origin": "yu-gi-oh",
-    "name": "Drago della Dimensione Diversa",
+    "name": "Drago da un'Altra Dimensione",
     "type": "monster",
     "level": 5,
     "race": "Drago",
@@ -2032,7 +2032,7 @@ const cardDatabase = [
   {
     "id": 199,
     "origin": "yu-gi-oh",
-    "name": "Movimento d'Onda Diffuso",
+    "name": "Esplosione a Onde Soniche",
     "type": "spell",
     "subtype": "normal",
     "effect": "Se il tuo avversario controlla un mostro: paga 1000 Life Points, poi scegli come bersaglio 1 mostro Incantatore di Livello 7+ che controlli; in questo turno deve attaccare tutti i mostri dell'avversario, una volta ciascuno, e gli altri tuoi mostri non possono attaccare.",
@@ -2059,7 +2059,7 @@ const cardDatabase = [
   {
     "id": 202,
     "origin": "yu-gi-oh",
-    "name": "Bambola della Rovina",
+    "name": "Malice Bambola del Testamento",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -2072,7 +2072,7 @@ const cardDatabase = [
   {
     "id": 203,
     "origin": "yu-gi-oh",
-    "name": "Doma l'Angelo del Silenzio",
+    "name": "Doma Angelo Silente",
     "type": "monster",
     "level": 5,
     "race": "Fata",
@@ -2086,7 +2086,7 @@ const cardDatabase = [
   {
     "id": 204,
     "origin": "yu-gi-oh",
-    "name": "Sosia",
+    "name": "Sdoppiatore",
     "type": "trap",
     "subtype": "continuous",
     "effect": "Quando subisci danno dall'effetto di un mostro controllato dal tuo avversario: infliggi al tuo avversario lo stesso ammontare di danno.",
@@ -2095,7 +2095,7 @@ const cardDatabase = [
   {
     "id": 205,
     "origin": "yu-gi-oh",
-    "name": "Doppia Presa Magica",
+    "name": "Doppio Controllo Magico",
     "type": "trap",
     "subtype": "normal",
     "effect": "Sacrifica 2 mostri, poi scegli come bersaglio 2 mostri scoperti controllati dal tuo avversario; prendine il controllo fino alla tua End Phase.",
@@ -2104,7 +2104,7 @@ const cardDatabase = [
   {
     "id": 206,
     "origin": "yu-gi-oh",
-    "name": "Vaso Cattura-Drago",
+    "name": "Cattura-Draghi",
     "type": "trap",
     "subtype": "continuous",
     "effect": "Tutti i mostri Tipo Drago scoperti sul Terreno vengono cambiati in Posizione di Difesa e non possono cambiare Posizione, finché questa carta resta scoperta in campo.",
@@ -2113,7 +2113,7 @@ const cardDatabase = [
   {
     "id": 207,
     "origin": "yu-gi-oh",
-    "name": "Cavaliere Maestro dei Draghi",
+    "name": "Cavaliere Signore dei Draghi",
     "type": "monster",
     "level": 12,
     "race": "Drago",
@@ -2122,7 +2122,7 @@ const cardDatabase = [
     "defense": 5000,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Guerriero Nero Supremo e Drago Occhi Blu Definitivo. Non può essere Special Summonato se non tramite Fusion Summon. Guadagna 500 ATK per ogni mostro Tipo Drago che controlli, esclusa questa carta.",
+    "effect": "Fusione di Glorioso Soldato Nero e Drago Occhi Blu Definitivo. Non può essere Special Summonato se non tramite Fusion Summon. Guadagna 500 ATK per ogni mostro Tipo Drago che controlli, esclusa questa carta.",
     "artOnly": true
   },
   {
@@ -2137,20 +2137,20 @@ const cardDatabase = [
   {
     "id": 209,
     "origin": "yu-gi-oh",
-    "name": "Suonatore di Draghi",
+    "name": "Pifferaio di Draghi",
     "type": "monster",
     "level": 3,
     "race": "Piroico",
     "attribute": "FUOCO",
     "attack": 200,
     "defense": 1800,
-    "effect": "FLIP: distruggi tutti i \"Vaso Cattura-Drago\" scoperti sul Terreno. Se ne distruggi almeno uno: gira in Posizione di Attacco tutti i mostri Tipo Drago scoperti sul Terreno.",
+    "effect": "FLIP: distruggi tutti i \"Cattura-Draghi\" scoperti sul Terreno. Se ne distruggi almeno uno: gira in Posizione di Attacco tutti i mostri Tipo Drago scoperti sul Terreno.",
     "artOnly": true
   },
   {
     "id": 210,
     "origin": "yu-gi-oh",
-    "name": "Cacciatore di Draghi",
+    "name": "Cercatore di Draghi",
     "type": "monster",
     "level": 6,
     "race": "Demone",
@@ -2177,7 +2177,7 @@ const cardDatabase = [
   {
     "id": 212,
     "origin": "yu-gi-oh",
-    "name": "Furia del Drago",
+    "name": "Rabbia del Drago",
     "type": "trap",
     "subtype": "continuous",
     "effect": "I mostri Tipo Drago che controlli infliggono danno perforante quando attaccano un mostro in Posizione di Difesa.",
@@ -2186,7 +2186,7 @@ const cardDatabase = [
   {
     "id": 213,
     "origin": "yu-gi-oh",
-    "name": "Dragoness la Cavaliera Malvagia",
+    "name": "Dragonessa a Cavallo",
     "type": "monster",
     "level": 3,
     "race": "Guerriero",
@@ -2195,13 +2195,13 @@ const cardDatabase = [
     "defense": 900,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Armaill e Drago con Scudo.",
+    "effect": "Fusione di Armaill delle Lame e Drago con Scudo.",
     "artOnly": true
   },
   {
     "id": 214,
     "origin": "yu-gi-oh",
-    "name": "Spiritello dei Sogni",
+    "name": "Folletto dei Sogni",
     "type": "monster",
     "level": 2,
     "race": "Pianta",
@@ -2214,7 +2214,7 @@ const cardDatabase = [
   {
     "id": 215,
     "origin": "yu-gi-oh",
-    "name": "Neve Battente",
+    "name": "Neve Sferzante",
     "type": "trap",
     "subtype": "normal",
     "effect": "Attivabile solo quando 1 o più tue Trappole vengono distrutte e mandate dal Terreno al Cimitero da un effetto controllato dal tuo avversario. Distruggi 1 Magia o Trappola sul Terreno.",
@@ -2223,7 +2223,7 @@ const cardDatabase = [
   {
     "id": 216,
     "origin": "yu-gi-oh",
-    "name": "Fuori Gioco",
+    "name": "Caduta",
     "type": "trap",
     "subtype": "normal",
     "effect": "Quando il tuo avversario pesca per la sua pescata normale nella Draw Phase: il tuo avversario scarta la carta appena pescata.",
@@ -2232,7 +2232,7 @@ const cardDatabase = [
   {
     "id": 217,
     "origin": "yu-gi-oh",
-    "name": "Strega Oscura Dunames",
+    "name": "Strega Oscura Dunares",
     "type": "monster",
     "level": 4,
     "race": "Fata",
@@ -2269,7 +2269,7 @@ const cardDatabase = [
   {
     "id": 220,
     "origin": "yu-gi-oh",
-    "name": "Scuotiterra",
+    "name": "Scuoti-Terra",
     "type": "trap",
     "subtype": "normal",
     "effect": "Scegli 2 Attributi. Il tuo avversario ne sceglie 1 dei 2: distruggi tutti i mostri scoperti con quell'Attributo sul Terreno.",
@@ -2322,7 +2322,7 @@ const cardDatabase = [
   {
     "id": 226,
     "origin": "yu-gi-oh",
-    "name": "Controllore del Nemico",
+    "name": "Controlla-Avversario",
     "type": "spell",
     "subtype": "quick-play",
     "effect": "Attiva 1 di questi effetti: cambia la Posizione di battaglia di 1 mostro scoperto dell'avversario; oppure sacrifica 1 mostro, poi prendi il controllo di 1 mostro scoperto dell'avversario fino alla End Phase.",
@@ -2331,7 +2331,7 @@ const cardDatabase = [
   {
     "id": 227,
     "origin": "yu-gi-oh",
-    "name": "Drenaggio di Energia",
+    "name": "Risucchio di Energia",
     "type": "trap",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro scoperto che controlli; guadagna 200 ATK/DEF per ogni carta nella mano del tuo avversario, fino a fine turno.",
@@ -2340,7 +2340,7 @@ const cardDatabase = [
   {
     "id": 228,
     "origin": "yu-gi-oh",
-    "name": "Aerosol Sterminatore",
+    "name": "Spray",
     "type": "spell",
     "subtype": "normal",
     "effect": "Distruggi tutti i mostri Tipo Insetto scoperti sul Terreno.",
@@ -2349,7 +2349,7 @@ const cardDatabase = [
   {
     "id": 229,
     "origin": "yu-gi-oh",
-    "name": "Bandisci il Malvagio",
+    "name": "Esilio degli Spiriti",
     "type": "spell",
     "subtype": "normal",
     "effect": "Distruggi tutti i mostri Tipo Demone scoperti sul Terreno.",
@@ -2365,13 +2365,13 @@ const cardDatabase = [
     "attribute": "OSCURITÀ",
     "attack": 1800,
     "defense": 0,
-    "effect": "Deve essere Special Summonato tramite \"Patto con Exodia\" e non può esserlo in altro modo. Non può essere distrutta in battaglia né dall'effetto di una Magia/Trappola. Una volta per turno, durante la tua Standby Phase: se non controlli tutti e 5 i pezzi di Exodia il Proibito nel Cimitero, questa carta viene distrutta; altrimenti guadagna 500 ATK.",
+    "effect": "Deve essere Special Summonato tramite \"Contratto con Exodia\" e non può esserlo in altro modo. Non può essere distrutta in battaglia né dall'effetto di una Magia/Trappola. Una volta per turno, durante la tua Standby Phase: se non controlli tutti e 5 i pezzi di Exodia il Proibito nel Cimitero, questa carta viene distrutta; altrimenti guadagna 500 ATK.",
     "artOnly": true
   },
   {
     "id": 232,
     "origin": "yu-gi-oh",
-    "name": "Scatola delle Fate",
+    "name": "Scatola Fatata",
     "type": "trap",
     "subtype": "continuous",
     "effect": "Quando un mostro dell'avversario dichiara un attacco: lancia una moneta; se esce il risultato scelto, l'ATK del mostro attaccante diventa 0 fino alla fine della Battle Phase. Durante ciascuna tua Standby Phase: paga 500 Life Points o distruggi questa carta.",
@@ -2380,7 +2380,7 @@ const cardDatabase = [
   {
     "id": 233,
     "origin": "yu-gi-oh",
-    "name": "Impatto Meteora Fatato",
+    "name": "Pioggia di Meteore Fatate",
     "type": "spell",
     "subtype": "equip",
     "effect": "Se il mostro equipaggiato attacca un mostro in Posizione di Difesa: infligge danno perforante al tuo avversario.",
@@ -2403,7 +2403,7 @@ const cardDatabase = [
   {
     "id": 235,
     "origin": "yu-gi-oh",
-    "name": "Specchietto della Fata",
+    "name": "Specchio Mano di Fata",
     "type": "trap",
     "subtype": "normal",
     "effect": "Quando il tuo avversario attiva una Magia che ha come bersaglio esattamente 1 mostro sul Terreno (e nessun'altra carta): scegli un altro bersaglio valido; quella Magia ora ha come bersaglio la nuova carta.",
@@ -2412,7 +2412,7 @@ const cardDatabase = [
   {
     "id": 237,
     "origin": "yu-gi-oh",
-    "name": "Folletto Selvaggio Feroce",
+    "name": "Demone Selvaggio",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -2425,7 +2425,7 @@ const cardDatabase = [
   {
     "id": 238,
     "origin": "yu-gi-oh",
-    "name": "Barattolo di Fibra",
+    "name": "Giara di Fibra",
     "type": "monster",
     "level": 3,
     "race": "Pianta",
@@ -2439,7 +2439,7 @@ const cardDatabase = [
   {
     "id": 239,
     "origin": "yu-gi-oh",
-    "name": "Piovra Demoniaca",
+    "name": "Kraken il Demone",
     "type": "monster",
     "level": 4,
     "race": "Acquatico",
@@ -2453,7 +2453,7 @@ const cardDatabase = [
   {
     "id": 240,
     "origin": "yu-gi-oh",
-    "name": "Ordini d'Attacco Finali",
+    "name": "Ordini di Attacco Finale",
     "type": "trap",
     "subtype": "continuous",
     "effect": "Tutti i mostri scoperti sul Terreno vengono cambiati in Posizione di Attacco e non possono cambiare Posizione, finché questa carta resta scoperta in campo.",
@@ -2462,7 +2462,7 @@ const cardDatabase = [
   {
     "id": 241,
     "origin": "yu-gi-oh",
-    "name": "Principessa di Fuoco",
+    "name": "Principessa del Fuoco",
     "type": "monster",
     "level": 4,
     "race": "Piroico",
@@ -2475,7 +2475,7 @@ const cardDatabase = [
   {
     "id": 242,
     "origin": "yu-gi-oh",
-    "name": "Stregone di Fuoco",
+    "name": "Stregone del Fuoco",
     "type": "monster",
     "level": 4,
     "race": "Incantatore",
@@ -2488,7 +2488,7 @@ const cardDatabase = [
   {
     "id": 243,
     "origin": "yu-gi-oh",
-    "name": "Faglia",
+    "name": "Schiacciare",
     "type": "spell",
     "subtype": "normal",
     "effect": "Distruggi il mostro scoperto con l'ATK più basso controllato dal tuo avversario (a tua scelta in caso di parità).",
@@ -2605,7 +2605,7 @@ const cardDatabase = [
   {
     "id": 254,
     "origin": "yu-gi-oh",
-    "name": "Gaia il Campione dei Draghi",
+    "name": "Gaia il Dragone",
     "type": "monster",
     "level": 7,
     "race": "Drago",
@@ -2614,7 +2614,7 @@ const cardDatabase = [
     "defense": 2100,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Gaia il Cavaliere Feroce e Maledizione del Drago.",
+    "effect": "Fusione di Gaia il Cavaliere e Anatema del Drago.",
     "artOnly": true
   },
   {
@@ -2643,7 +2643,7 @@ const cardDatabase = [
   {
     "id": 257,
     "origin": "yu-gi-oh",
-    "name": "Golem Meccanico la Fortezza Mobile",
+    "name": "Golem-Ingranaggio, la Fortezza Movente",
     "type": "monster",
     "level": 4,
     "race": "Macchina",
@@ -2656,14 +2656,14 @@ const cardDatabase = [
   {
     "id": 258,
     "origin": "yu-gi-oh",
-    "name": "Gearfried il Maestro di Spada",
+    "name": "Spadaccino Sacro - Gearfried il Cavaliere di Ferro",
     "type": "monster",
     "level": 7,
     "race": "Guerriero",
     "attribute": "LUCE",
     "attack": 2600,
     "defense": 2200,
-    "effect": "Non può essere Evocato Normalmente/Set. Deve essere Special Summonato tramite \"Vincoli Recisi\". Ogni volta che questa carta viene equipaggiata con una Carta Equipaggiamento: scegli come bersaglio 1 mostro controllato dal tuo avversario; distruggilo.",
+    "effect": "Non può essere Evocato Normalmente/Set. Deve essere Special Summonato tramite \"Rimozione della Restrizione\". Ogni volta che questa carta viene equipaggiata con una Carta Equipaggiamento: scegli come bersaglio 1 mostro controllato dal tuo avversario; distruggilo.",
     "artOnly": true
   },
   {
@@ -2682,7 +2682,7 @@ const cardDatabase = [
   {
     "id": 260,
     "origin": "yu-gi-oh",
-    "name": "Gigantesco Serpente di Mare Rosso",
+    "name": "Serpente Marino Gigante Rosso",
     "type": "monster",
     "level": 4,
     "race": "Acquatico",
@@ -2695,7 +2695,7 @@ const cardDatabase = [
   {
     "id": 261,
     "origin": "yu-gi-oh",
-    "name": "Soldato di Pietra Gigante",
+    "name": "Soldato di Pietra",
     "type": "monster",
     "level": 3,
     "race": "Roccia",
@@ -2708,7 +2708,7 @@ const cardDatabase = [
   {
     "id": 262,
     "origin": "yu-gi-oh",
-    "name": "Turbine Gigante",
+    "name": "Ritorno Totale",
     "type": "spell",
     "subtype": "normal",
     "effect": "Fai tornare in mano tutte le Magie e Trappole sul Terreno, di entrambi i giocatori.",
@@ -2717,7 +2717,7 @@ const cardDatabase = [
   {
     "id": 263,
     "origin": "yu-gi-oh",
-    "name": "Dono dell'Elfa Mistica",
+    "name": "Dono dell'Elfo Mistico",
     "type": "trap",
     "subtype": "normal",
     "effect": "Aumenta i tuoi Life Points di 300 punti per ogni mostro sul Terreno, di entrambi i giocatori.",
@@ -2726,7 +2726,7 @@ const cardDatabase = [
   {
     "id": 264,
     "origin": "yu-gi-oh",
-    "name": "Lupo Giga-Tech",
+    "name": "Lupo Tecnologico",
     "type": "monster",
     "level": 4,
     "race": "Macchina",
@@ -2740,7 +2740,7 @@ const cardDatabase = [
   {
     "id": 265,
     "origin": "yu-gi-oh",
-    "name": "Gil Garth",
+    "name": "Gilgarth",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -2779,7 +2779,7 @@ const cardDatabase = [
   {
     "id": 268,
     "origin": "yu-gi-oh",
-    "name": "Giltia il Cavaliere D.",
+    "name": "Giltia il Cavaliere dei D.",
     "type": "monster",
     "level": 5,
     "race": "Guerriero",
@@ -2821,7 +2821,7 @@ const cardDatabase = [
   {
     "id": 271,
     "origin": "yu-gi-oh",
-    "name": "Occhio di Gorgone",
+    "name": "L'Occhio della Gorgone",
     "type": "trap",
     "subtype": "normal",
     "effect": "Fino alla fine di questo turno, tutti gli effetti dei mostri in Posizione di Difesa vengono annullati.",
@@ -2830,7 +2830,7 @@ const cardDatabase = [
   {
     "id": 272,
     "origin": "yu-gi-oh",
-    "name": "Carità Aggraziata",
+    "name": "Carità Graziosa",
     "type": "spell",
     "subtype": "normal",
     "effect": "Pesca 3 carte, poi scarta 2 carte.",
@@ -2840,7 +2840,7 @@ const cardDatabase = [
   {
     "id": 273,
     "origin": "yu-gi-oh",
-    "name": "Dado Aggraziato",
+    "name": "Dadi Graziosi",
     "type": "spell",
     "subtype": "quick-play",
     "effect": "Lancia un dado a sei facce. Tutti i mostri che controlli attualmente guadagnano ATK/DEF pari al risultato x100, fino alla fine di questo turno.",
@@ -2863,7 +2863,7 @@ const cardDatabase = [
   {
     "id": 275,
     "origin": "yu-gi-oh",
-    "name": "Grande Anziano Tiki",
+    "name": "Grande Antico Tiki",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -2877,7 +2877,7 @@ const cardDatabase = [
   {
     "id": 276,
     "origin": "yu-gi-oh",
-    "name": "Tombarolo",
+    "name": "Predatore delle Tombe",
     "type": "trap",
     "subtype": "normal",
     "effect": "Scegli 1 Magia dal Cimitero del tuo avversario. Puoi usarla come se fosse nella tua mano fino alla fine del turno. Se la usi, subisci 2000 danni.",
@@ -2886,7 +2886,7 @@ const cardDatabase = [
   {
     "id": 277,
     "origin": "yu-gi-oh",
-    "name": "Ascia di Gravità - Grarl",
+    "name": "Ascia Gravitazionale - Grarl",
     "type": "spell",
     "subtype": "equip",
     "effect": "Il mostro equipaggiato guadagna 500 ATK. I mostri controllati dal tuo avversario non possono cambiare Posizione di Battaglia.",
@@ -2895,7 +2895,7 @@ const cardDatabase = [
   {
     "id": 278,
     "origin": "yu-gi-oh",
-    "name": "Grande Mammut di Goldfine",
+    "name": "Grande Mammuth di Goldfine",
     "type": "monster",
     "level": 6,
     "race": "Zombie",
@@ -2910,7 +2910,7 @@ const cardDatabase = [
   {
     "id": 279,
     "origin": "yu-gi-oh",
-    "name": "Grande Squalo Bianco",
+    "name": "Mega Squalo Bianco",
     "type": "monster",
     "level": 4,
     "race": "Pesce",
@@ -2938,7 +2938,7 @@ const cardDatabase = [
   {
     "id": 281,
     "origin": "yu-gi-oh",
-    "name": "Bugroth l'Assalitore Terrestre",
+    "name": "Bugroth di Terra",
     "type": "monster",
     "level": 4,
     "race": "Macchina",
@@ -2952,20 +2952,20 @@ const cardDatabase = [
   {
     "id": 282,
     "origin": "yu-gi-oh",
-    "name": "Guardiano Falce del Terrore",
+    "name": "Falce del Terrore Guardiana",
     "type": "monster",
     "level": 8,
     "race": "Demone",
     "attribute": "OSCURITÀ",
     "attack": 2500,
     "defense": 2000,
-    "effect": "Non può essere Evocata Normalmente/Set. Deve essere Special Summonata tramite il proprio effetto. Se \"Guardian Eatos\" viene distrutta e mandata al tuo Cimitero: puoi Special Summonare questa carta dalla mano. Se Special Summonata: puoi equipaggiare 1 \"Falce del Mietitore - Falce del Terrore\" dal tuo Deck a questa carta. Non puoi Evocare Normalmente/Special Summonare altri mostri finché questa carta è in campo. Se mandata dal Terreno al Cimitero: scarta 1 carta, e se lo fai, Special Summona questa carta dal Cimitero.",
+    "effect": "Non può essere Evocata Normalmente/Set. Deve essere Special Summonata tramite il proprio effetto. Se \"Guardiano Eatos\" viene distrutta e mandata al tuo Cimitero: puoi Special Summonare questa carta dalla mano. Se Special Summonata: puoi equipaggiare 1 \"Falce del Mietitore\" dal tuo Deck a questa carta. Non puoi Evocare Normalmente/Special Summonare altri mostri finché questa carta è in campo. Se mandata dal Terreno al Cimitero: scarta 1 carta, e se lo fai, Special Summona questa carta dal Cimitero.",
     "artOnly": true
   },
   {
     "id": 283,
     "origin": "yu-gi-oh",
-    "name": "Guardiana Elma",
+    "name": "Guardiano Elma",
     "type": "monster",
     "level": 3,
     "race": "Fata",
@@ -2985,7 +2985,7 @@ const cardDatabase = [
     "attribute": "TERRA",
     "attack": 2500,
     "defense": 1000,
-    "effect": "Non può essere Evocata a meno che tu non controlli scoperta \"Ascia di Gravità - Grarl\". Se questa carta è l'unica nella tua mano, puoi Special Summonarla (dalla mano).",
+    "effect": "Non può essere Evocata a meno che tu non controlli scoperta \"Ascia Gravitazionale - Grarl\". Se questa carta è l'unica nella tua mano, puoi Special Summonarla (dalla mano).",
     "artOnly": true
   },
   {
@@ -2998,13 +2998,13 @@ const cardDatabase = [
     "attribute": "ACQUA",
     "attack": 1000,
     "defense": 1800,
-    "effect": "Non può essere Evocato a meno che tu non controlli scoperta \"Bastone del Silenzio - Kay'est\". Questa carta non è influenzata dagli effetti delle Magie e non può essere scelta come bersaglio per gli attacchi, ma questo non impedisce al tuo avversario di attaccarti direttamente.",
+    "effect": "Non può essere Evocato a meno che tu non controlli scoperta \"Bacchetta del Silenzio - Kay'est\". Questa carta non è influenzata dagli effetti delle Magie e non può essere scelta come bersaglio per gli attacchi, ma questo non impedisce al tuo avversario di attaccarti direttamente.",
     "artOnly": true
   },
   {
     "id": 286,
     "origin": "yu-gi-oh",
-    "name": "Ventaglio di Raffica",
+    "name": "Ventaglio Raffica",
     "type": "spell",
     "subtype": "equip",
     "effect": "Un mostro VENTO equipaggiato con questa carta guadagna 400 ATK e perde 200 DEF.",
@@ -3013,7 +3013,7 @@ const cardDatabase = [
   {
     "id": 287,
     "origin": "yu-gi-oh",
-    "name": "Amante Felice",
+    "name": "Amore Felice",
     "type": "monster",
     "level": 2,
     "race": "Fata",
@@ -3041,16 +3041,16 @@ const cardDatabase = [
   {
     "id": 289,
     "origin": "yu-gi-oh",
-    "name": "Lady Arpia Formazione della Fenice",
+    "name": "Lady Arpia Formazione Fenice",
     "type": "spell",
     "subtype": "normal",
-    "effect": "Se controlli 3 o più \"Lady Arpia\" e/o \"Sorelle Lady Arpia\": scegli come bersaglio un numero di mostri controllati dal tuo avversario pari al numero totale di \"Lady Arpia\" e \"Sorelle Lady Arpia\" che controlli; distruggili, poi infliggi al tuo avversario danno pari all'ATK originale più alto tra i mostri distrutti. Non puoi Special Summonare mostri né condurre la tua Battle Phase nel turno in cui attivi questa carta.",
+    "effect": "Se controlli 3 o più \"Lady Arpia\" e/o \"Sorelle Arpie\": scegli come bersaglio un numero di mostri controllati dal tuo avversario pari al numero totale di \"Lady Arpia\" e \"Sorelle Arpie\" che controlli; distruggili, poi infliggi al tuo avversario danno pari all'ATK originale più alto tra i mostri distrutti. Non puoi Special Summonare mostri né condurre la tua Battle Phase nel turno in cui attivi questa carta.",
     "artOnly": true
   },
   {
     "id": 290,
     "origin": "yu-gi-oh",
-    "name": "Sorelle Lady Arpia",
+    "name": "Sorelle Arpie",
     "type": "monster",
     "level": 6,
     "race": "Bestia Alata",
@@ -3063,7 +3063,7 @@ const cardDatabase = [
   {
     "id": 291,
     "origin": "yu-gi-oh",
-    "name": "Piumino delle Arpie",
+    "name": "Spolverino dell'Arpia",
     "type": "spell",
     "subtype": "normal",
     "effect": "Distruggi tutte le Magie e Trappole controllate dal tuo avversario.",
@@ -3073,17 +3073,17 @@ const cardDatabase = [
   {
     "id": 292,
     "origin": "yu-gi-oh",
-    "name": "Tempesta di Piume delle Arpie",
+    "name": "Tempesta di Piume dell'Arpia",
     "type": "trap",
     "subtype": "normal",
-    "effect": "Se controlli un mostro Bestia Alata VENTO: fino alla fine di questo turno, annulla tutti gli effetti dei mostri che il tuo avversario attiva. Se controlli un mostro \"Harpie\", puoi attivare questa carta dalla mano. Se questa carta, mentre è nella tua zona Magia/Trappola, viene distrutta da un effetto del tuo avversario: puoi aggiungere 1 \"Piumino delle Arpie\" dal tuo Deck o Cimitero alla mano.",
+    "effect": "Se controlli un mostro Bestia Alata VENTO: fino alla fine di questo turno, annulla tutti gli effetti dei mostri che il tuo avversario attiva. Se controlli un mostro \"Harpie\", puoi attivare questa carta dalla mano. Se questa carta, mentre è nella tua zona Magia/Trappola, viene distrutta da un effetto del tuo avversario: puoi aggiungere 1 \"Spolverino dell'Arpia\" dal tuo Deck o Cimitero alla mano.",
     "artOnly": true,
     "limit": 1
   },
   {
     "id": 293,
     "origin": "yu-gi-oh",
-    "name": "Drago da Compagnia delle Arpie",
+    "name": "Draghetto delle Arpie",
     "type": "monster",
     "level": 7,
     "race": "Drago",
@@ -3109,7 +3109,7 @@ const cardDatabase = [
   {
     "id": 295,
     "origin": "yu-gi-oh",
-    "name": "Scarabeo Ercole",
+    "name": "Scarabeo Erculeo",
     "type": "monster",
     "level": 5,
     "race": "Insetto",
@@ -3145,7 +3145,7 @@ const cardDatabase = [
   {
     "id": 298,
     "origin": "yu-gi-oh",
-    "name": "Gigante Un Occhio",
+    "name": "Gigante Hitotsu-Me",
     "type": "monster",
     "level": 4,
     "race": "Guerriero Bestia",
@@ -3159,7 +3159,7 @@ const cardDatabase = [
   {
     "id": 299,
     "origin": "yu-gi-oh",
-    "name": "Diavoletto Cornuto",
+    "name": "Demone Cornuto",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -3205,7 +3205,7 @@ const cardDatabase = [
   {
     "id": 303,
     "origin": "yu-gi-oh",
-    "name": "Drago Verme Umanoide",
+    "name": "Drago-Verme Umanoide",
     "type": "monster",
     "level": 7,
     "race": "Acquatico",
@@ -3214,7 +3214,7 @@ const cardDatabase = [
     "defense": 2000,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Drago Verme e Melma Umanoide.",
+    "effect": "Fusione di Drago-Verme e Melma Umanoide.",
     "artOnly": true
   },
   {
@@ -3271,7 +3271,7 @@ const cardDatabase = [
   {
     "id": 308,
     "origin": "yu-gi-oh",
-    "name": "Congedo Infinito",
+    "name": "Radiazione Infinita",
     "type": "trap",
     "subtype": "continuous",
     "effect": "I mostri di Livello 3 o inferiore vengono distrutti durante la End Phase del turno in cui sono stati Evocati Normalmente o tramite Flip Summon.",
@@ -3289,7 +3289,7 @@ const cardDatabase = [
   {
     "id": 310,
     "origin": "yu-gi-oh",
-    "name": "Barriera d'Insetti",
+    "name": "Barriera per Insetti",
     "type": "spell",
     "subtype": "continuous",
     "effect": "I mostri Tipo Insetto controllati dal tuo avversario non possono dichiarare un attacco.",
@@ -3298,7 +3298,7 @@ const cardDatabase = [
   {
     "id": 311,
     "origin": "yu-gi-oh",
-    "name": "Soldati Insetto del Cielo",
+    "name": "Soldati-Insetto del Cielo",
     "type": "monster",
     "level": 3,
     "race": "Insetto",
@@ -3311,7 +3311,7 @@ const cardDatabase = [
   {
     "id": 312,
     "origin": "yu-gi-oh",
-    "name": "Trasportatore di Materia Interdimensionale",
+    "name": "Teletrasportatore",
     "type": "trap",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro scoperto che controlli; bandiscilo fino alla End Phase.",
@@ -3369,7 +3369,7 @@ const cardDatabase = [
   {
     "id": 317,
     "origin": "yu-gi-oh",
-    "name": "Uomo Giudice",
+    "name": "Il Giudicatore",
     "type": "monster",
     "level": 6,
     "race": "Guerriero",
@@ -3424,7 +3424,7 @@ const cardDatabase = [
   {
     "id": 321,
     "origin": "yu-gi-oh",
-    "name": "Kaiser Sea Horse",
+    "name": "Kaiser Cavalluccio Marino",
     "type": "monster",
     "level": 4,
     "race": "Serpente di Mare",
@@ -3444,7 +3444,7 @@ const cardDatabase = [
     "attribute": "VENTO",
     "attack": 1400,
     "defense": 1000,
-    "effect": "Se il tuo avversario controlla 2 o più mostri scoperti (eccetto mostri VENTO), quei mostri non possono scegliere questa carta come bersaglio per gli attacchi. Durante il tuo Main Phase: puoi aggiungere 1 \"Fusione\" dal Deck alla mano. Se questa carta viene bandita: puoi Special Summonarla, poi puoi aggiungere 1 \"Fusione\" dal Cimitero alla mano.",
+    "effect": "Se il tuo avversario controlla 2 o più mostri scoperti (eccetto mostri VENTO), quei mostri non possono scegliere questa carta come bersaglio per gli attacchi. Durante il tuo Main Phase: puoi aggiungere 1 \"Polimerizzazione\" dal Deck alla mano. Se questa carta viene bandita: puoi Special Summonarla, poi puoi aggiungere 1 \"Polimerizzazione\" dal Cimitero alla mano.",
     "artOnly": true
   },
   {
@@ -3477,7 +3477,7 @@ const cardDatabase = [
   {
     "id": 325,
     "origin": "yu-gi-oh",
-    "name": "Ago Killer",
+    "name": "Pungiglione Assassino",
     "type": "monster",
     "level": 4,
     "race": "Insetto",
@@ -3491,7 +3491,7 @@ const cardDatabase = [
   {
     "id": 326,
     "origin": "yu-gi-oh",
-    "name": "Soldato Cinetico",
+    "name": "Soldato Cipher",
     "type": "monster",
     "level": 3,
     "race": "Macchina",
@@ -3568,7 +3568,7 @@ const cardDatabase = [
   {
     "id": 332,
     "origin": "yu-gi-oh",
-    "name": "Krokodilus",
+    "name": "Kokkodrillus",
     "type": "monster",
     "level": 4,
     "race": "Rettile",
@@ -3591,7 +3591,7 @@ const cardDatabase = [
   {
     "id": 334,
     "origin": "yu-gi-oh",
-    "name": "Kuribandit",
+    "name": "Kuribandito",
     "type": "monster",
     "level": 3,
     "race": "Demone",
@@ -3604,7 +3604,7 @@ const cardDatabase = [
   {
     "id": 335,
     "origin": "yu-gi-oh",
-    "name": "La Jinn il Genio Mistico della Lampada",
+    "name": "Genio della Lampada",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -3618,7 +3618,7 @@ const cardDatabase = [
   {
     "id": 336,
     "origin": "yu-gi-oh",
-    "name": "Carro Armato del Labirinto",
+    "name": "Carrarmato-Labirinto",
     "type": "monster",
     "level": 7,
     "race": "Macchina",
@@ -3627,13 +3627,13 @@ const cardDatabase = [
     "defense": 2400,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Lupo Giga-Tech e Soldato Cannone.",
+    "effect": "Fusione di Lupo Tecnologico e Soldato-Cannone.",
     "artOnly": true
   },
   {
     "id": 337,
     "origin": "yu-gi-oh",
-    "name": "Muro del Labirinto",
+    "name": "Mura Labirintiche",
     "type": "monster",
     "level": 5,
     "race": "Roccia",
@@ -3647,7 +3647,7 @@ const cardDatabase = [
   {
     "id": 338,
     "origin": "yu-gi-oh",
-    "name": "Dama della Fede",
+    "name": "Signora della Fede",
     "type": "monster",
     "level": 3,
     "race": "Incantatore",
@@ -3661,7 +3661,7 @@ const cardDatabase = [
   {
     "id": 340,
     "origin": "yu-gi-oh",
-    "name": "Armatura Cannone Laser",
+    "name": "Armatura Laser",
     "type": "spell",
     "subtype": "equip",
     "effect": "Equipaggiabile solo a un mostro Tipo Insetto. Guadagna 300 ATK e DEF.",
@@ -3680,7 +3680,7 @@ const cardDatabase = [
   {
     "id": 342,
     "origin": "yu-gi-oh",
-    "name": "Ragno Lanciarazzi",
+    "name": "Ragno Lancia-Missili",
     "type": "monster",
     "level": 7,
     "race": "Macchina",
@@ -3701,7 +3701,7 @@ const cardDatabase = [
     "attribute": "TERRA",
     "attack": 1550,
     "defense": 1800,
-    "effect": "Guadagna 500 ATK per ogni \"Guardiano della Palude\" che controlli.",
+    "effect": "Guadagna 500 ATK per ogni \"Guardiano delle Paludi\" che controlli.",
     "artOnly": true
   },
   {
@@ -3729,7 +3729,7 @@ const cardDatabase = [
   {
     "id": 346,
     "origin": "yu-gi-oh",
-    "name": "Legion il Giullare Demoniaco",
+    "name": "Legione Demone Giullare",
     "type": "monster",
     "level": 4,
     "race": "Incantatore",
@@ -3742,7 +3742,7 @@ const cardDatabase = [
   {
     "id": 347,
     "origin": "yu-gi-oh",
-    "name": "Leogun",
+    "name": "Leo-Cannone",
     "type": "monster",
     "level": 5,
     "race": "Bestia",
@@ -3756,7 +3756,7 @@ const cardDatabase = [
   {
     "id": 348,
     "origin": "yu-gi-oh",
-    "name": "Spada della Forza di Luce",
+    "name": "Spada Forza di Luce",
     "type": "trap",
     "subtype": "normal",
     "effect": "Bandisci 1 carta a caso dalla mano del tuo avversario, coperta. Durante la 4ª Standby Phase del tuo avversario dopo l'attivazione di questa carta: restituiscigliela.",
@@ -3765,7 +3765,7 @@ const cardDatabase = [
   {
     "id": 349,
     "origin": "yu-gi-oh",
-    "name": "Lama Fulminante",
+    "name": "Lama Accecante",
     "type": "spell",
     "subtype": "equip",
     "effect": "Equipaggiabile solo a un mostro Tipo Guerriero. Guadagna 800 ATK. Tutti i mostri ACQUA sul Terreno perdono 500 ATK.",
@@ -3774,7 +3774,7 @@ const cardDatabase = [
   {
     "id": 350,
     "origin": "yu-gi-oh",
-    "name": "Rimozione del Limitatore",
+    "name": "Rimozione di Limite",
     "type": "spell",
     "subtype": "quick-play",
     "effect": "Raddoppia l'ATK di tutti i mostri Tipo Macchina che controlli attualmente, fino alla fine di questo turno. Durante la End Phase di questo turno: distruggi quei mostri.",
@@ -3783,7 +3783,7 @@ const cardDatabase = [
   {
     "id": 351,
     "origin": "yu-gi-oh",
-    "name": "Piccola Guardia Alata",
+    "name": "Piccola-Guardialata",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -3796,7 +3796,7 @@ const cardDatabase = [
   {
     "id": 352,
     "origin": "yu-gi-oh",
-    "name": "Freccia Spezza-Magie",
+    "name": "Freccia Spezza-Magia",
     "type": "spell",
     "subtype": "quick-play",
     "effect": "Distruggi il maggior numero possibile di Magie scoperte controllate dal tuo avversario, e se lo fai, infliggi 500 danni al tuo avversario per ciascuna.",
@@ -3805,7 +3805,7 @@ const cardDatabase = [
   {
     "id": 353,
     "origin": "yu-gi-oh",
-    "name": "Signore dei D.",
+    "name": "Signore di D.",
     "type": "monster",
     "level": 4,
     "race": "Incantatore",
@@ -3855,7 +3855,7 @@ const cardDatabase = [
   {
     "id": 358,
     "origin": "yu-gi-oh",
-    "name": "Fabbrica di Conversione Meccanica",
+    "name": "Fabbrica di Macchine",
     "type": "spell",
     "subtype": "equip",
     "effect": "Equipaggiabile solo a un mostro Tipo Macchina. Guadagna 300 ATK e DEF.",
@@ -3864,7 +3864,7 @@ const cardDatabase = [
   {
     "id": 359,
     "origin": "yu-gi-oh",
-    "name": "Re Macchina",
+    "name": "Re delle Macchine",
     "type": "monster",
     "level": 6,
     "race": "Macchina",
@@ -3877,7 +3877,7 @@ const cardDatabase = [
   {
     "id": 360,
     "origin": "yu-gi-oh",
-    "name": "Bestia Spada Impazzita",
+    "name": "Bestia della Spada Folle",
     "type": "monster",
     "level": 4,
     "race": "Dinosauro",
@@ -3890,7 +3890,7 @@ const cardDatabase = [
   {
     "id": 361,
     "origin": "yu-gi-oh",
-    "name": "Interferenza Magica",
+    "name": "Disturbo Magico",
     "type": "trap",
     "subtype": "normal",
     "effect": "Quando una Magia viene attivata: scarta 1 carta; annulla l'attivazione, e se lo fai, distruggila.",
@@ -3920,7 +3920,7 @@ const cardDatabase = [
     "name": "Labirinto Magico",
     "type": "spell",
     "subtype": "equip",
-    "effect": "Equipaggiabile solo a \"Muro del Labirinto\". Puoi sacrificare il mostro equipaggiato; Special Summon \"Wall Shadow\" dal tuo Deck.",
+    "effect": "Equipaggiabile solo a \"Mura Labirintiche\". Puoi sacrificare il mostro equipaggiato; Special Summon \"Muro-Ombra\" dal tuo Deck.",
     "artOnly": true
   },
   {
@@ -3948,7 +3948,7 @@ const cardDatabase = [
   {
     "id": 367,
     "origin": "yu-gi-oh",
-    "name": "Cimitero dei Mammut",
+    "name": "Mammuth delle Tombe",
     "type": "monster",
     "level": 3,
     "race": "Dinosauro",
@@ -3962,7 +3962,7 @@ const cardDatabase = [
   {
     "id": 368,
     "origin": "yu-gi-oh",
-    "name": "Pianta Mangiauomini",
+    "name": "Pianta Mangia-Uomini",
     "type": "monster",
     "level": 2,
     "race": "Pianta",
@@ -3990,7 +3990,7 @@ const cardDatabase = [
   {
     "id": 370,
     "origin": "yu-gi-oh",
-    "name": "Maschera di Dissoluzione",
+    "name": "Maschera dell'Antimagia",
     "type": "spell",
     "subtype": "continuous",
     "effect": "Scegli 1 Magia scoperta sul Terreno. Il controllore di quella Magia subisce 500 danni durante ciascuna tua Standby Phase. Quando la carta scelta lascia il Terreno: distruggi questa carta.",
@@ -4017,14 +4017,14 @@ const cardDatabase = [
   {
     "id": 373,
     "origin": "yu-gi-oh",
-    "name": "MechanicalChaser",
+    "name": "Meccacciatore",
     "type": "monster",
     "level": 4,
     "race": "Macchina",
     "attribute": "OSCURITÀ",
     "attack": 1850,
     "defense": 800,
-    "effect": "Un cacciatore che insegue senza sosta il proprio bersaglio per ordine del Re Macchina.",
+    "effect": "Un cacciatore che insegue senza sosta il proprio bersaglio per ordine del Re delle Macchine.",
     "artOnly": true,
     "vanilla": true
   },
@@ -4045,7 +4045,7 @@ const cardDatabase = [
   {
     "id": 375,
     "origin": "yu-gi-oh",
-    "name": "Guardiano di Metallo",
+    "name": "Guardiano Metallico",
     "type": "monster",
     "level": 5,
     "race": "Demone",
@@ -4081,7 +4081,7 @@ const cardDatabase = [
   {
     "id": 378,
     "origin": "yu-gi-oh",
-    "name": "Meteora della Distruzione",
+    "name": "Meteora Della Morte",
     "type": "spell",
     "subtype": "normal",
     "effect": "Se i Life Points del tuo avversario sono superiori a 3000: infliggi 1000 danni al tuo avversario.",
@@ -4090,7 +4090,7 @@ const cardDatabase = [
   {
     "id": 379,
     "origin": "yu-gi-oh",
-    "name": "Meteorain",
+    "name": "Pioggia di Meteore",
     "type": "trap",
     "subtype": "normal",
     "effect": "In questo turno, quando i tuoi mostri attaccano con ATK superiore alla DEF del mostro dell'avversario in Posizione di Difesa: infliggi la differenza come danno da battaglia ai Life Points del tuo avversario.",
@@ -4108,7 +4108,7 @@ const cardDatabase = [
   {
     "id": 381,
     "origin": "yu-gi-oh",
-    "name": "Cavaliere del Miraggio",
+    "name": "Cavaliere Miraggio",
     "type": "monster",
     "level": 8,
     "race": "Guerriero",
@@ -4121,7 +4121,7 @@ const cardDatabase = [
   {
     "id": 382,
     "origin": "yu-gi-oh",
-    "name": "Forza dello Specchio",
+    "name": "Forza Riflessa",
     "type": "trap",
     "subtype": "normal",
     "effect": "Quando un mostro dell'avversario dichiara un attacco: distruggi tutti i mostri in Posizione di Attacco controllati dal tuo avversario.",
@@ -4130,7 +4130,7 @@ const cardDatabase = [
   {
     "id": 383,
     "origin": "yu-gi-oh",
-    "name": "Muro dello Specchio",
+    "name": "Muro a Specchio",
     "type": "trap",
     "subtype": "continuous",
     "effect": "Ogni mostro del tuo avversario che ha condotto un attacco mentre questa carta era scoperta sul Terreno ha l'ATK dimezzato finché questa carta resta scoperta. Durante ciascuna tua Standby Phase: paga 2000 Life Points o distruggi questa carta.",
@@ -4139,7 +4139,7 @@ const cardDatabase = [
   {
     "id": 384,
     "origin": "yu-gi-oh",
-    "name": "Recupero dei Mostri",
+    "name": "Recupera-Mostri",
     "type": "spell",
     "subtype": "quick-play",
     "effect": "Scegli come bersaglio 1 mostro che controlli; se è ancora sul Terreno, rimescolalo insieme a tutta la tua mano nel Deck, poi pesca un numero di carte pari a quelle rimescolate dalla mano.",
@@ -4162,7 +4162,7 @@ const cardDatabase = [
   {
     "id": 386,
     "origin": "yu-gi-oh",
-    "name": "Moltiplicazione",
+    "name": "Moltiplicare",
     "type": "spell",
     "subtype": "quick-play",
     "effect": "Sacrifica 1 \"Kuriboh\" scoperto; Special Summon quanti più possibile Token \"Kuriboh\" (Demone/OSCURITÀ/Livello 1/ATK 300/DEF 200) in Posizione di Difesa. Non possono essere sacrificati per un'Evocazione Tributo.",
@@ -4171,7 +4171,7 @@ const cardDatabase = [
   {
     "id": 387,
     "origin": "yu-gi-oh",
-    "name": "Re dei Musicisti",
+    "name": "Re Musicista",
     "type": "monster",
     "level": 5,
     "race": "Incantatore",
@@ -4180,13 +4180,13 @@ const cardDatabase = [
     "defense": 1500,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Strega della Foresta Nera e Dama della Fede.",
+    "effect": "Fusione di Strega della Foresta Nera e Signora della Fede.",
     "artOnly": true
   },
   {
     "id": 388,
     "origin": "yu-gi-oh",
-    "name": "Scatola Mistica",
+    "name": "Scatola Magica",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro controllato dal tuo avversario e 1 mostro che controlli; distruggi il primo bersaglio, poi dai il controllo del secondo bersaglio al tuo avversario.",
@@ -4195,7 +4195,7 @@ const cardDatabase = [
   {
     "id": 389,
     "origin": "yu-gi-oh",
-    "name": "Cavaliere Mistico",
+    "name": "Centauro Mistico",
     "type": "monster",
     "level": 4,
     "race": "Bestia",
@@ -4222,7 +4222,7 @@ const cardDatabase = [
   {
     "id": 391,
     "origin": "yu-gi-oh",
-    "name": "Elfa Mistica",
+    "name": "Elfo Mistico",
     "type": "monster",
     "level": 4,
     "race": "Incantatore",
@@ -4309,7 +4309,7 @@ const cardDatabase = [
   {
     "id": 399,
     "origin": "yu-gi-oh",
-    "name": "Guerriero Pantera",
+    "name": "Pantera Guerriera",
     "type": "monster",
     "level": 4,
     "race": "Guerriero Bestia",
@@ -4322,7 +4322,7 @@ const cardDatabase = [
   {
     "id": 400,
     "origin": "yu-gi-oh",
-    "name": "Drago Pappagallo",
+    "name": "Pappadragallo",
     "type": "monster",
     "level": 5,
     "race": "Drago",
@@ -4336,7 +4336,7 @@ const cardDatabase = [
   {
     "id": 401,
     "origin": "yu-gi-oh",
-    "name": "Macchina a Pendolo",
+    "name": "Macchina Pendolo",
     "type": "monster",
     "level": 6,
     "race": "Macchina",
@@ -4350,7 +4350,7 @@ const cardDatabase = [
   {
     "id": 402,
     "origin": "yu-gi-oh",
-    "name": "Piccola Angela",
+    "name": "Piccolo Angelo",
     "type": "monster",
     "level": 3,
     "race": "Fata",
@@ -4364,7 +4364,7 @@ const cardDatabase = [
   {
     "id": 403,
     "origin": "yu-gi-oh",
-    "name": "Cavalletta d'Emergenza",
+    "name": "Cavalletta Pungente",
     "type": "monster",
     "level": 4,
     "race": "Insetto",
@@ -4377,7 +4377,7 @@ const cardDatabase = [
   {
     "id": 404,
     "origin": "yu-gi-oh",
-    "name": "Drago Nero Pece",
+    "name": "Drago Nero-Pece",
     "type": "monster",
     "level": 3,
     "race": "Drago",
@@ -4403,7 +4403,7 @@ const cardDatabase = [
   {
     "id": 406,
     "origin": "yu-gi-oh",
-    "name": "Pumpking il Re dei Fantasmi",
+    "name": "Re dei Fantasmi",
     "type": "monster",
     "level": 6,
     "race": "Zombie",
@@ -4425,7 +4425,7 @@ const cardDatabase = [
   {
     "id": 408,
     "origin": "yu-gi-oh",
-    "name": "Cavallerizzo Rabbioso",
+    "name": "Cavaliere Rabbioso",
     "type": "monster",
     "level": 6,
     "race": "Guerriero Bestia",
@@ -4434,7 +4434,7 @@ const cardDatabase = [
     "defense": 1700,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Bue da Battaglia e Cavaliere Mistico. Se un tuo mostro Tipo Bestia, Guerriero Bestia o Bestia Alata attacca un mostro in Posizione di Difesa, infliggi danno perforante.",
+    "effect": "Fusione di Ascia da Guerra e Centauro Mistico. Se un tuo mostro Tipo Bestia, Guerriero Bestia o Bestia Alata attacca un mostro in Posizione di Difesa, infliggi danno perforante.",
     "artOnly": true
   },
   {
@@ -4449,7 +4449,7 @@ const cardDatabase = [
   {
     "id": 410,
     "origin": "yu-gi-oh",
-    "name": "Mietitore delle Carte",
+    "name": "Mieti-Carte",
     "type": "monster",
     "level": 5,
     "race": "Demone",
@@ -4462,16 +4462,16 @@ const cardDatabase = [
   {
     "id": 411,
     "origin": "yu-gi-oh",
-    "name": "Falce del Mietitore - Falce del Terrore",
+    "name": "Falce del Mietitore",
     "type": "spell",
     "subtype": "equip",
-    "effect": "Equipaggiabile solo a \"Guardiano Falce del Terrore\". Guadagna 500 ATK per ogni mostro nei Cimiteri.",
+    "effect": "Equipaggiabile solo a \"Falce del Terrore Guardiana\". Guadagna 500 ATK per ogni mostro nei Cimiteri.",
     "artOnly": true
   },
   {
     "id": 412,
     "origin": "yu-gi-oh",
-    "name": "Ragazza Arciera Rossa",
+    "name": "Ragazza Arciere",
     "type": "monster",
     "level": 4,
     "race": "Acquatico",
@@ -4485,7 +4485,7 @@ const cardDatabase = [
   {
     "id": 413,
     "origin": "yu-gi-oh",
-    "name": "Drago Nero Metallico Occhi Rossi",
+    "name": "Drago Metallico Occhi Rossi",
     "type": "monster",
     "level": 8,
     "race": "Macchina",
@@ -4507,16 +4507,16 @@ const cardDatabase = [
   {
     "id": 415,
     "origin": "yu-gi-oh",
-    "name": "Vincoli Recisi",
+    "name": "Rimozione della Restrizione",
     "type": "spell",
     "subtype": "normal",
-    "effect": "Sacrifica 1 \"Gearfried il Cavaliere di Ferro\"; Special Summon 1 \"Gearfried il Maestro di Spada\" dalla tua mano o dal Deck.",
+    "effect": "Sacrifica 1 \"Gearfried il Cavaliere di Ferro\"; Special Summon 1 \"Spadaccino Sacro - Gearfried il Cavaliere di Ferro\" dalla tua mano o dal Deck.",
     "artOnly": true
   },
   {
     "id": 416,
     "origin": "yu-gi-oh",
-    "name": "Abbandonato",
+    "name": "Abbandono",
     "type": "monster",
     "level": 1,
     "race": "Incantatore",
@@ -4539,7 +4539,7 @@ const cardDatabase = [
   {
     "id": 418,
     "origin": "yu-gi-oh",
-    "name": "Ritorno dei Dannati",
+    "name": "Ritorno del Condannato",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scarta 1 Mostro dalla mano al Cimitero. Riporta in mano, alla fine di questo turno, 1 tuo mostro distrutto e mandato al Cimitero in seguito a una battaglia avvenuta in questo turno.",
@@ -4557,7 +4557,7 @@ const cardDatabase = [
   {
     "id": 420,
     "origin": "yu-gi-oh",
-    "name": "Anello Magnetico",
+    "name": "Anello del Magnetismo",
     "type": "spell",
     "subtype": "equip",
     "effect": "Puoi equipaggiare questa carta solo a un mostro sul tuo Terreno. Il mostro equipaggiato perde 500 ATK/DEF. Inoltre, tutti i mostri sul Terreno del tuo avversario possono attaccare solo il mostro equipaggiato con questa carta, se attaccano.",
@@ -4575,7 +4575,7 @@ const cardDatabase = [
   {
     "id": 422,
     "origin": "yu-gi-oh",
-    "name": "Grotta dell'Orco di Roccia #1",
+    "name": "Orco di Pietra #1",
     "type": "monster",
     "level": 3,
     "race": "Roccia",
@@ -4589,7 +4589,7 @@ const cardDatabase = [
   {
     "id": 423,
     "origin": "yu-gi-oh",
-    "name": "Bastone del Silenzio - Kay'est",
+    "name": "Bacchetta del Silenzio - Kay'est",
     "type": "spell",
     "subtype": "equip",
     "effect": "Il mostro equipaggiato guadagna 500 DEF. Nega altri effetti Magia che scelgono come bersaglio il mostro equipaggiato, e se lo fai, distruggi quella Magia.",
@@ -4598,7 +4598,7 @@ const cardDatabase = [
   {
     "id": 424,
     "origin": "yu-gi-oh",
-    "name": "Bambola Canaglia",
+    "name": "Bambola Mortale",
     "type": "monster",
     "level": 4,
     "race": "Incantatore",
@@ -4612,7 +4612,7 @@ const cardDatabase = [
   {
     "id": 425,
     "origin": "yu-gi-oh",
-    "name": "Ragno della Roulette",
+    "name": "Ragno Roulette",
     "type": "spell",
     "subtype": "quick-play",
     "effect": "Quando un mostro dell'avversario dichiara un attacco: lancia un dado a sei facce e applica il risultato. 1: dimezza i tuoi LP. 2: rendi quell'attacco un attacco diretto. 3: scegli 1 mostro che controlli, cambia il bersaglio dell'attacco su di esso e calcola i danni. 4: scegli un altro mostro dell'avversario, cambia il bersaglio dell'attacco su di esso e calcola i danni. 5: annulla l'attacco e infliggi al tuo avversario danno pari all'ATK di quel mostro. 6: distruggi il mostro dell'avversario.",
@@ -4630,7 +4630,7 @@ const cardDatabase = [
   {
     "id": 427,
     "origin": "yu-gi-oh",
-    "name": "Rude Kaiser",
+    "name": "Kaiser la Bestia",
     "type": "monster",
     "level": 5,
     "race": "Guerriero Bestia",
@@ -4675,13 +4675,13 @@ const cardDatabase = [
     "name": "Pietra del Saggio",
     "type": "spell",
     "subtype": "normal",
-    "effect": "Se controlli scoperta \"Maga Oscura\": Special Summon 1 \"Mago Nero\" dalla tua mano o dal Deck.",
+    "effect": "Se controlli scoperta \"Ragazza Maga Nera\": Special Summon 1 \"Mago Nero\" dalla tua mano o dal Deck.",
     "artOnly": true
   },
   {
     "id": 431,
     "origin": "yu-gi-oh",
-    "name": "Saggi il Pagliaccio Oscuro",
+    "name": "Saggi, Clown Oscuro",
     "type": "monster",
     "level": 3,
     "race": "Incantatore",
@@ -4740,7 +4740,7 @@ const cardDatabase = [
   {
     "id": 436,
     "origin": "yu-gi-oh",
-    "name": "Drago Serpente della Notte",
+    "name": "Drago Serpente Notturno",
     "type": "monster",
     "level": 7,
     "race": "Drago",
@@ -4776,7 +4776,7 @@ const cardDatabase = [
   {
     "id": 439,
     "origin": "yu-gi-oh",
-    "name": "Incantesimo Ombra",
+    "name": "Magia Ombra",
     "type": "trap",
     "subtype": "continuous",
     "effect": "Attiva questa carta scegliendo come bersaglio 1 mostro scoperto controllato dal tuo avversario; perde 700 ATK, inoltre non può attaccare né cambiare la sua Posizione di Battaglia. Quando lascia il Terreno: distruggi questa carta.",
@@ -4794,7 +4794,7 @@ const cardDatabase = [
   {
     "id": 441,
     "origin": "yu-gi-oh",
-    "name": "Palazzo Splendente",
+    "name": "Palazzo Scintillante",
     "type": "spell",
     "subtype": "equip",
     "effect": "Equipaggiabile solo a un mostro LUCE. Guadagna 700 ATK.",
@@ -4845,7 +4845,7 @@ const cardDatabase = [
   {
     "id": 445,
     "origin": "yu-gi-oh",
-    "name": "Dado Teschio",
+    "name": "Dadi del Teschio",
     "type": "trap",
     "subtype": "normal",
     "effect": "Lancia un dado a sei facce. Tutti i mostri controllati dal tuo avversario perdono ATK/DEF pari al risultato x100, fino alla fine di questo turno.",
@@ -4854,7 +4854,7 @@ const cardDatabase = [
   {
     "id": 446,
     "origin": "yu-gi-oh",
-    "name": "Coccinella Marchio Teschio",
+    "name": "Coccinella dal Dorso a Teschio",
     "type": "monster",
     "level": 4,
     "race": "Insetto",
@@ -4891,7 +4891,7 @@ const cardDatabase = [
   {
     "id": 449,
     "origin": "yu-gi-oh",
-    "name": "Ancella Sonica",
+    "name": "Fanciulla Musicale",
     "type": "monster",
     "level": 3,
     "race": "Guerriero",
@@ -4923,7 +4923,7 @@ const cardDatabase = [
   {
     "id": 452,
     "origin": "yu-gi-oh",
-    "name": "Rilascio dell'Anima",
+    "name": "Rilascio delle Anime",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio fino a 5 carte in un Cimitero qualsiasi; bandiscile.",
@@ -4932,7 +4932,7 @@ const cardDatabase = [
   {
     "id": 453,
     "origin": "yu-gi-oh",
-    "name": "Cacciatore di Anime",
+    "name": "Ruba-Anime",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro scoperto controllato dal tuo avversario; distruggilo, poi il tuo avversario guadagna 1000 Life Points.",
@@ -4941,7 +4941,7 @@ const cardDatabase = [
   {
     "id": 454,
     "origin": "yu-gi-oh",
-    "name": "Drago Lancia",
+    "name": "Drago Lanciere",
     "type": "monster",
     "level": 4,
     "race": "Drago",
@@ -4954,7 +4954,7 @@ const cardDatabase = [
   {
     "id": 455,
     "origin": "yu-gi-oh",
-    "name": "Cancellatore di Magie",
+    "name": "Annullatore di Magia",
     "type": "monster",
     "level": 5,
     "race": "Macchina",
@@ -4967,7 +4967,7 @@ const cardDatabase = [
   {
     "id": 456,
     "origin": "yu-gi-oh",
-    "name": "Ragnatela",
+    "name": "Tela del Ragno",
     "type": "spell",
     "subtype": "field",
     "effect": "Se un mostro dichiara un attacco, viene cambiato in Posizione di Difesa alla fine del Damage Step. Non può cambiare la sua Posizione di Battaglia fino alla End Phase del turno successivo del suo controllore, finché questa carta resta sul Terreno.",
@@ -4976,7 +4976,7 @@ const cardDatabase = [
   {
     "id": 457,
     "origin": "yu-gi-oh",
-    "name": "Spikebot",
+    "name": "Robot Aculeo",
     "type": "monster",
     "level": 5,
     "race": "Macchina",
@@ -5004,7 +5004,7 @@ const cardDatabase = [
   {
     "id": 459,
     "origin": "yu-gi-oh",
-    "name": "Ninja d'Assalto",
+    "name": "Ninja Fulmineo",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -5026,7 +5026,7 @@ const cardDatabase = [
   {
     "id": 461,
     "origin": "yu-gi-oh",
-    "name": "Braccio di Spada del Drago",
+    "name": "Braccio Spada di Drago",
     "type": "monster",
     "level": 6,
     "race": "Dinosauro",
@@ -5040,7 +5040,7 @@ const cardDatabase = [
   {
     "id": 462,
     "origin": "yu-gi-oh",
-    "name": "Cacciatore di Spade",
+    "name": "Cacciatore di Spada",
     "type": "monster",
     "level": 7,
     "race": "Guerriero",
@@ -5067,7 +5067,7 @@ const cardDatabase = [
   {
     "id": 464,
     "origin": "yu-gi-oh",
-    "name": "La 13ª Tomba",
+    "name": "La Tredicesima Tomba",
     "type": "monster",
     "level": 3,
     "race": "Zombie",
@@ -5081,7 +5081,7 @@ const cardDatabase = [
   {
     "id": 465,
     "origin": "yu-gi-oh",
-    "name": "Le Forze A.",
+    "name": "Le Truppe A.",
     "type": "spell",
     "subtype": "continuous",
     "effect": "Tutti i mostri Tipo Guerriero che controlli guadagnano 200 ATK per ogni mostro Tipo Guerriero o Incantatore che controlli.",
@@ -5099,7 +5099,7 @@ const cardDatabase = [
   {
     "id": 467,
     "origin": "yu-gi-oh",
-    "name": "Il Demone Megacyber",
+    "name": "Demone Megacyber",
     "type": "monster",
     "level": 6,
     "race": "Guerriero",
@@ -5134,7 +5134,7 @@ const cardDatabase = [
   {
     "id": 471,
     "origin": "yu-gi-oh",
-    "name": "L'Amazzone Ostile",
+    "name": "L'Amazzone Scorbutica",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -5161,7 +5161,7 @@ const cardDatabase = [
   {
     "id": 473,
     "origin": "yu-gi-oh",
-    "name": "Drago dei Mille",
+    "name": "Drago Millenario",
     "type": "monster",
     "level": 7,
     "race": "Drago",
@@ -5170,7 +5170,7 @@ const cardDatabase = [
     "defense": 2000,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Mago del Tempo e Cucciolo di Drago.",
+    "effect": "Fusione di Stregone del Tempo e Cucciolo di Drago.",
     "artOnly": true
   },
   {
@@ -5185,7 +5185,7 @@ const cardDatabase = [
   {
     "id": 475,
     "origin": "yu-gi-oh",
-    "name": "Idolo dai Mille Occhi",
+    "name": "Idolo dai 1000 Occhi",
     "type": "monster",
     "level": 1,
     "race": "Incantatore",
@@ -5198,7 +5198,7 @@ const cardDatabase = [
   {
     "id": 476,
     "origin": "yu-gi-oh",
-    "name": "Restrizione dai Mille Occhi",
+    "name": "Limite dei 1000 Occhi",
     "type": "monster",
     "level": 1,
     "race": "Incantatore",
@@ -5207,7 +5207,7 @@ const cardDatabase = [
     "defense": 0,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Abbandonato e Idolo dai Mille Occhi. Una volta per turno, puoi scegliere come bersaglio 1 mostro controllato dal tuo avversario; equipaggia quel bersaglio a questa carta (massimo 1). L'ATK/DEF di questa carta diventano pari a quelli del mostro equipaggiato. Gli altri mostri sul Terreno non possono cambiare Posizione di Battaglia né attaccare.",
+    "effect": "Fusione di Abbandono e Idolo dai 1000 Occhi. Una volta per turno, puoi scegliere come bersaglio 1 mostro controllato dal tuo avversario; equipaggia quel bersaglio a questa carta (massimo 1). L'ATK/DEF di questa carta diventano pari a quelli del mostro equipaggiato. Gli altri mostri sul Terreno non possono cambiare Posizione di Battaglia né attaccare.",
     "artOnly": true
   },
   {
@@ -5245,7 +5245,7 @@ const cardDatabase = [
   {
     "id": 480,
     "origin": "yu-gi-oh",
-    "name": "Divoratempo",
+    "name": "Mangiatempo",
     "type": "monster",
     "level": 6,
     "race": "Macchina",
@@ -5275,7 +5275,7 @@ const cardDatabase = [
     "name": "Maschera Toon",
     "type": "trap",
     "subtype": "normal",
-    "effect": "Se controlli \"Mondo dei Toon\": scegli come bersaglio 1 mostro scoperto controllato dal tuo avversario; Special Summon 1 mostro Toon dalla tua mano o dal Deck con Livello pari o inferiore a quello del mostro bersaglio, ignorandone le condizioni di Evocazione.",
+    "effect": "Se controlli \"Mondo Toon\": scegli come bersaglio 1 mostro scoperto controllato dal tuo avversario; Special Summon 1 mostro Toon dalla tua mano o dal Deck con Livello pari o inferiore a quello del mostro bersaglio, ignorandone le condizioni di Evocazione.",
     "artOnly": true
   },
   {
@@ -5288,8 +5288,8 @@ const cardDatabase = [
     "attribute": "OSCURITÀ",
     "attack": 900,
     "defense": 1400,
-    "effect": "Finché controlli \"Mondo dei Toon\", può attaccare direttamente e può attaccare nel turno in cui viene Evocato. Una volta per turno, se infligge danno da battaglia all'avversario: pesca 1 carta.",
-    "legacyOfficialEffect": "Non può attaccare nel turno in cui viene Evocata. Se \"Mondo dei Toon\" scoperto sul Terreno viene distrutto, distruggi questa carta. Finché controlli \"Mondo dei Toon\" e il tuo avversario non controlla mostri Toon, questa carta può attaccare direttamente il tuo avversario. Se questa carta infligge danno da battaglia al tuo avversario: pesca 1 carta.",
+    "effect": "Finché controlli \"Mondo Toon\", può attaccare direttamente e può attaccare nel turno in cui viene Evocato. Una volta per turno, se infligge danno da battaglia all'avversario: pesca 1 carta.",
+    "legacyOfficialEffect": "Non può attaccare nel turno in cui viene Evocata. Se \"Mondo Toon\" scoperto sul Terreno viene distrutto, distruggi questa carta. Finché controlli \"Mondo Toon\" e il tuo avversario non controlla mostri Toon, questa carta può attaccare direttamente il tuo avversario. Se questa carta infligge danno da battaglia al tuo avversario: pesca 1 carta.",
     "artOnly": true
   },
   {
@@ -5302,14 +5302,14 @@ const cardDatabase = [
     "attribute": "ACQUA",
     "attack": 1400,
     "defense": 1500,
-    "effect": "Può essere Evocata Normalmente. Se controlli \"Mondo dei Toon\" e non controlli mostri, puoi invece Evocarla Specialmente dalla mano. Finché controlli \"Mondo dei Toon\", può attaccare direttamente e nel turno in cui viene Evocata.",
-    "legacyOfficialEffect": "Non può essere Evocata Normalmente/Set. Deve prima essere Special Summonata (dalla tua mano), mentre controlli \"Mondo dei Toon\". Non può attaccare nel turno in cui viene Special Summonata. Devi pagare 500 Life Points per dichiarare un attacco con questa carta. Se \"Mondo dei Toon\" scoperto sul Terreno viene distrutto, distruggi questa carta.",
+    "effect": "Può essere Evocata Normalmente. Se controlli \"Mondo Toon\" e non controlli mostri, puoi invece Evocarla Specialmente dalla mano. Finché controlli \"Mondo Toon\", può attaccare direttamente e nel turno in cui viene Evocata.",
+    "legacyOfficialEffect": "Non può essere Evocata Normalmente/Set. Deve prima essere Special Summonata (dalla tua mano), mentre controlli \"Mondo Toon\". Non può attaccare nel turno in cui viene Special Summonata. Devi pagare 500 Life Points per dichiarare un attacco con questa carta. Se \"Mondo Toon\" scoperto sul Terreno viene distrutto, distruggi questa carta.",
     "artOnly": true
   },
   {
     "id": 485,
     "origin": "yu-gi-oh",
-    "name": "Riavvolgimento Toon",
+    "name": "Ritorno Toon",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro Toon che controlli; può attaccare una seconda volta in questa Battle Phase.",
@@ -5325,14 +5325,14 @@ const cardDatabase = [
     "attribute": "OSCURITÀ",
     "attack": 2500,
     "defense": 1200,
-    "effect": "Può essere Evocato normalmente rispettandone il Livello. Se controlli \"Mondo dei Toon\", puoi invece Evocarlo Specialmente dalla mano sacrificando 1 mostro Toon. Finché controlli \"Mondo dei Toon\", può attaccare direttamente e nel turno in cui viene Evocato.",
-    "legacyOfficialEffect": "Non può essere Evocata Normalmente/Set. Deve prima essere Special Summonata (dalla tua mano) sacrificando 1 mostro, mentre controlli \"Mondo dei Toon\". Non può attaccare nel turno in cui viene Special Summonata. Devi pagare 500 Life Points per dichiarare un attacco con questa carta. Se \"Mondo dei Toon\" scoperto sul Terreno viene distrutto, distruggi questa carta.",
+    "effect": "Può essere Evocato normalmente rispettandone il Livello. Se controlli \"Mondo Toon\", puoi invece Evocarlo Specialmente dalla mano sacrificando 1 mostro Toon. Finché controlli \"Mondo Toon\", può attaccare direttamente e nel turno in cui viene Evocato.",
+    "legacyOfficialEffect": "Non può essere Evocata Normalmente/Set. Deve prima essere Special Summonata (dalla tua mano) sacrificando 1 mostro, mentre controlli \"Mondo Toon\". Non può attaccare nel turno in cui viene Special Summonata. Devi pagare 500 Life Points per dichiarare un attacco con questa carta. Se \"Mondo Toon\" scoperto sul Terreno viene distrutto, distruggi questa carta.",
     "artOnly": true
   },
   {
     "id": 487,
     "origin": "yu-gi-oh",
-    "name": "Mondo dei Toon",
+    "name": "Mondo Toon",
     "type": "spell",
     "subtype": "continuous",
     "effect": "I tuoi mostri Toon possono attaccare direttamente e nel turno in cui vengono Evocati. Se l'avversario controlla un Toon, devono prima attaccare i suoi Toon. Una volta per turno, se un tuo Toon sta per essere distrutto, puoi pagare 500 LP; non viene distrutto. Se questa carta lascia il Terreno, i tuoi Toon perdono questi vantaggi ma non vengono distrutti.",
@@ -5356,7 +5356,7 @@ const cardDatabase = [
   {
     "id": 489,
     "origin": "yu-gi-oh",
-    "name": "Muro del Tornado",
+    "name": "Muro Tornado",
     "type": "trap",
     "subtype": "continuous",
     "effect": "Attivabile solo mentre \"Umi\" è sul Terreno. Finché \"Umi\" è scoperta sul Terreno, non subisci danno da battaglia dai mostri che attaccano. Distruggi questa carta quando \"Umi\" lascia il Terreno.",
@@ -5374,7 +5374,7 @@ const cardDatabase = [
   {
     "id": 491,
     "origin": "yu-gi-oh",
-    "name": "Trakodon",
+    "name": "Drago Trakodon",
     "type": "monster",
     "level": 3,
     "race": "Dinosauro",
@@ -5388,7 +5388,7 @@ const cardDatabase = [
   {
     "id": 492,
     "origin": "yu-gi-oh",
-    "name": "Tributo ai Dannati",
+    "name": "Tributo al Dannato",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scarta 1 carta dalla mano, poi scegli come bersaglio 1 mostro sul Terreno; distruggilo.",
@@ -5397,20 +5397,20 @@ const cardDatabase = [
   {
     "id": 493,
     "origin": "yu-gi-oh",
-    "name": "Behemoth a Due Teste",
+    "name": "Behemoth Bifronte",
     "type": "monster",
     "level": 3,
     "race": "Drago",
     "attribute": "VENTO",
     "attack": 1500,
     "defense": 1200,
-    "effect": "Durante la End Phase, se questa carta è nel Cimitero perché distrutta sul Terreno e mandata lì in questo turno: puoi Special Summonarla, ma il suo ATK/DEF diventano 1000. Puoi usare questo effetto di \"Behemoth a Due Teste\" solo una volta per Duello.",
+    "effect": "Durante la End Phase, se questa carta è nel Cimitero perché distrutta sul Terreno e mandata lì in questo turno: puoi Special Summonarla, ma il suo ATK/DEF diventano 1000. Puoi usare questo effetto di \"Behemoth Bifronte\" solo una volta per Duello.",
     "artOnly": true
   },
   {
     "id": 494,
     "origin": "yu-gi-oh",
-    "name": "Drago del Tuono a Due Teste",
+    "name": "Drago di Tuono Bifronte",
     "type": "monster",
     "level": 7,
     "race": "Tuono",
@@ -5419,13 +5419,13 @@ const cardDatabase = [
     "defense": 2100,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di 2 \"Thunder Dragon\".",
+    "effect": "Fusione di 2 \"Drago del Tuono\".",
     "artOnly": true
   },
   {
     "id": 495,
     "origin": "yu-gi-oh",
-    "name": "Re Rex a Due Teste",
+    "name": "Tirannosauro Rex a Due Teste",
     "type": "monster",
     "level": 4,
     "race": "Dinosauro",
@@ -5439,7 +5439,7 @@ const cardDatabase = [
   {
     "id": 496,
     "origin": "yu-gi-oh",
-    "name": "Ala del Tiranno",
+    "name": "Ala Tiranna",
     "type": "trap",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro Tipo Drago sul Terreno; equipaggia questa carta a quel bersaglio. Guadagna 400 ATK/DEF, inoltre può effettuare fino a 2 attacchi contro mostri in ogni Battle Phase. Una volta per turno, durante la End Phase, se il mostro equipaggiato con questa carta tramite questo effetto ha attaccato un mostro dell'avversario in questo turno: distruggi questa carta.",
@@ -5488,7 +5488,7 @@ const cardDatabase = [
   {
     "id": 502,
     "origin": "yu-gi-oh",
-    "name": "Predone Vorse",
+    "name": "Predatore Vorse",
     "type": "monster",
     "level": 4,
     "race": "Guerriero Bestia",
@@ -5525,7 +5525,7 @@ const cardDatabase = [
   {
     "id": 505,
     "origin": "yu-gi-oh",
-    "name": "Water Omotics",
+    "name": "Trasforma-Acque",
     "type": "monster",
     "level": 4,
     "race": "Acquatico",
@@ -5548,7 +5548,7 @@ const cardDatabase = [
   {
     "id": 507,
     "origin": "yu-gi-oh",
-    "name": "Drago Alato, Guardiano della Fortezza #1",
+    "name": "Drago Alato #1",
     "type": "monster",
     "level": 4,
     "race": "Drago",
@@ -5575,7 +5575,7 @@ const cardDatabase = [
   {
     "id": 509,
     "origin": "yu-gi-oh",
-    "name": "Drago Verme",
+    "name": "Drago-Verme",
     "type": "monster",
     "level": 4,
     "race": "Rettile",
@@ -5589,7 +5589,7 @@ const cardDatabase = [
   {
     "id": 510,
     "origin": "yu-gi-oh",
-    "name": "Cannone Testa X",
+    "name": "X-Testa Cannone",
     "type": "monster",
     "level": 4,
     "race": "Macchina",
@@ -5603,7 +5603,7 @@ const cardDatabase = [
   {
     "id": 511,
     "origin": "yu-gi-oh",
-    "name": "Cannone Drago XY",
+    "name": "XY-Cannone Drago",
     "type": "monster",
     "level": 6,
     "race": "Macchina",
@@ -5612,13 +5612,13 @@ const cardDatabase = [
     "defense": 1900,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Deve prima essere Special Summonato (dal tuo Extra Deck) bandendo le carte sopra indicate che controlli (non stai usando \"Fusione\"). Non può essere Special Summonato dal Cimitero. Puoi scartare 1 carta, poi scegliere come bersaglio 1 Magia/Trappola scoperta controllata dal tuo avversario; distruggila.",
+    "effect": "Deve prima essere Special Summonato (dal tuo Extra Deck) bandendo le carte sopra indicate che controlli (non stai usando \"Polimerizzazione\"). Non può essere Special Summonato dal Cimitero. Puoi scartare 1 carta, poi scegliere come bersaglio 1 Magia/Trappola scoperta controllata dal tuo avversario; distruggila.",
     "artOnly": true
   },
   {
     "id": 512,
     "origin": "yu-gi-oh",
-    "name": "Cannone Drago XYZ",
+    "name": "XYZ-Cannone Drago",
     "type": "monster",
     "level": 8,
     "race": "Macchina",
@@ -5627,20 +5627,20 @@ const cardDatabase = [
     "defense": 2600,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Deve prima essere Special Summonato (dal tuo Extra Deck) bandendo le carte sopra indicate che controlli (non stai usando \"Fusione\"). Non può essere Special Summonato dal Cimitero. Puoi scartare 1 carta, poi scegliere come bersaglio 1 carta controllata dal tuo avversario; distruggila.",
+    "effect": "Deve prima essere Special Summonato (dal tuo Extra Deck) bandendo le carte sopra indicate che controlli (non stai usando \"Polimerizzazione\"). Non può essere Special Summonato dal Cimitero. Puoi scartare 1 carta, poi scegliere come bersaglio 1 carta controllata dal tuo avversario; distruggila.",
     "artOnly": true
   },
   {
     "id": 513,
     "origin": "yu-gi-oh",
-    "name": "Testa di Drago Y",
+    "name": "Y-Testa Drago",
     "type": "monster",
     "level": 4,
     "race": "Macchina",
     "attribute": "LUCE",
     "attack": 1500,
     "defense": 1600,
-    "effect": "Una volta per turno, puoi: scegliere come bersaglio 1 \"Cannone Testa X\" che controlli; equipaggia questa carta a quel bersaglio; oppure: staccala e Special Summonala. Il mostro equipaggiato guadagna 400 ATK/DEF. Se il mostro equipaggiato dovrebbe essere distrutto da battaglia o da un effetto Carta, questa carta viene distrutta al suo posto.",
+    "effect": "Una volta per turno, puoi: scegliere come bersaglio 1 \"X-Testa Cannone\" che controlli; equipaggia questa carta a quel bersaglio; oppure: staccala e Special Summonala. Il mostro equipaggiato guadagna 400 ATK/DEF. Se il mostro equipaggiato dovrebbe essere distrutto da battaglia o da un effetto Carta, questa carta viene distrutta al suo posto.",
     "artOnly": true
   },
   {
@@ -5660,14 +5660,14 @@ const cardDatabase = [
   {
     "id": 515,
     "origin": "yu-gi-oh",
-    "name": "Carro Armato Metallico Z",
+    "name": "Z-Carro Armato Metallico",
     "type": "monster",
     "level": 4,
     "race": "Macchina",
     "attribute": "LUCE",
     "attack": 1500,
     "defense": 1300,
-    "effect": "Una volta per turno, puoi: scegliere come bersaglio 1 \"Cannone Testa X\" o \"Testa di Drago Y\" che controlli; equipaggia questa carta a quel bersaglio; oppure: staccala e Special Summonala. Il mostro equipaggiato guadagna 600 ATK/DEF. Se il mostro equipaggiato dovrebbe essere distrutto da battaglia o da un effetto Carta, questa carta viene distrutta al suo posto.",
+    "effect": "Una volta per turno, puoi: scegliere come bersaglio 1 \"X-Testa Cannone\" o \"Y-Testa Drago\" che controlli; equipaggia questa carta a quel bersaglio; oppure: staccala e Special Summonala. Il mostro equipaggiato guadagna 600 ATK/DEF. Se il mostro equipaggiato dovrebbe essere distrutto da battaglia o da un effetto Carta, questa carta viene distrutta al suo posto.",
     "artOnly": true
   },
   {
@@ -5687,16 +5687,16 @@ const cardDatabase = [
   {
     "id": 517,
     "origin": "yu-gi-oh",
-    "name": "Rituale di Zera",
+    "name": "Rito di Zera",
     "type": "spell",
     "subtype": "ritual",
-    "effect": "Sacrifica dal Terreno o dalla mano mostri per un Livello totale di almeno 8 per Special Summon Zera il Mant dalla mano.",
+    "effect": "Sacrifica dal Terreno o dalla mano mostri per un Livello totale di almeno 8 per Special Summon Zera la Manta dalla mano.",
     "artOnly": true
   },
   {
     "id": 518,
     "origin": "yu-gi-oh",
-    "name": "Zera il Mant",
+    "name": "Zera la Manta",
     "type": "monster",
     "level": 8,
     "race": "Demone",
@@ -5704,13 +5704,13 @@ const cardDatabase = [
     "attack": 2800,
     "defense": 2300,
     "category": "ritual",
-    "effect": "Questa carta può essere Evocata Rituale solo tramite la Magia Rituale \"Rituale di Zera\".",
+    "effect": "Questa carta può essere Evocata Rituale solo tramite la Magia Rituale \"Rito di Zera\".",
     "artOnly": true
   },
   {
     "id": 519,
     "origin": "yu-gi-oh",
-    "name": "Gravità Zero",
+    "name": "Assenza di Gravità",
     "type": "trap",
     "subtype": "normal",
     "effect": "Cambia la Posizione di Battaglia di tutti i mostri scoperti sul Terreno.",
@@ -5733,7 +5733,7 @@ const cardDatabase = [
   {
     "id": 521,
     "origin": "yu-gi-oh",
-    "name": "Guerriero Zombie",
+    "name": "Zombie Guerriero",
     "type": "monster",
     "level": 3,
     "race": "Zombie",
@@ -5742,13 +5742,13 @@ const cardDatabase = [
     "defense": 900,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Skull Servant e Guerriero da Battaglia.",
+    "effect": "Fusione di Servitore del Teschio e Guerriero da Battaglia.",
     "artOnly": true
   },
   {
     "id": 522,
     "origin": "yu-gi-oh",
-    "name": "Falena Piccola",
+    "name": "Piccola Falena",
     "type": "monster",
     "level": 1,
     "race": "Insetto",
@@ -5762,7 +5762,7 @@ const cardDatabase = [
   {
     "id": 523,
     "origin": "yu-gi-oh",
-    "name": "Guardian Eatos",
+    "name": "Guardiano Eatos",
     "type": "monster",
     "level": 8,
     "race": "Fata",
@@ -5775,7 +5775,7 @@ const cardDatabase = [
   {
     "id": 526,
     "origin": "yu-gi-oh",
-    "name": "Skull Servant",
+    "name": "Servitore del Teschio",
     "type": "monster",
     "level": 1,
     "race": "Zombie",
@@ -5918,14 +5918,14 @@ const cardDatabase = [
   {
     "id": 537,
     "origin": "yu-gi-oh",
-    "name": "Thunder Dragon",
+    "name": "Drago del Tuono",
     "type": "monster",
     "level": 5,
     "race": "Tuono",
     "attribute": "LUCE",
     "attack": 1600,
     "defense": 1500,
-    "effect": "Puoi scartare questa carta; aggiungi fino a 2 \"Thunder Dragon\" dal tuo Deck alla tua mano.",
+    "effect": "Puoi scartare questa carta; aggiungi fino a 2 \"Drago del Tuono\" dal tuo Deck alla tua mano.",
     "artOnly": true
   },
   {
@@ -5957,7 +5957,7 @@ const cardDatabase = [
   {
     "id": 541,
     "origin": "yu-gi-oh",
-    "name": "Ansatsu",
+    "name": "Ansatsu l'Assassino",
     "type": "monster",
     "level": 5,
     "race": "Guerriero",
@@ -5971,7 +5971,7 @@ const cardDatabase = [
   {
     "id": 542,
     "origin": "yu-gi-oh",
-    "name": "Fantasma Arguto",
+    "name": "Spettro Oscuro",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -5985,7 +5985,7 @@ const cardDatabase = [
   {
     "id": 543,
     "origin": "yu-gi-oh",
-    "name": "Artiglio Raggiungente",
+    "name": "Sferra-Artigli",
     "type": "monster",
     "level": 3,
     "race": "Demone",
@@ -5999,7 +5999,7 @@ const cardDatabase = [
   {
     "id": 544,
     "origin": "yu-gi-oh",
-    "name": "Pagliaccio Mistico",
+    "name": "Clown Mistico",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -6013,7 +6013,7 @@ const cardDatabase = [
   {
     "id": 545,
     "origin": "yu-gi-oh",
-    "name": "Spada della Distruzione Oscura",
+    "name": "Spada Distruttrice",
     "type": "spell",
     "subtype": "equip",
     "effect": "Equipaggiabile solo a un mostro Tipo OSCURITÀ. Guadagna 400 ATK e perde 200 DEF.",
@@ -6022,7 +6022,7 @@ const cardDatabase = [
   {
     "id": 546,
     "origin": "yu-gi-oh",
-    "name": "Dian Keto la Maestra delle Cure",
+    "name": "Dian Keto il Curatore",
     "type": "spell",
     "subtype": "normal",
     "effect": "Aumenta i tuoi Life Points di 1000 punti.",
@@ -6031,7 +6031,7 @@ const cardDatabase = [
   {
     "id": 547,
     "origin": "yu-gi-oh",
-    "name": "Fantasma Magico",
+    "name": "Fatasma Magico",
     "type": "monster",
     "level": 4,
     "race": "Zombie",
@@ -6045,7 +6045,7 @@ const cardDatabase = [
   {
     "id": 548,
     "origin": "yu-gi-oh",
-    "name": "Attacco a Doppia Punta",
+    "name": "Duplice Attacco",
     "type": "trap",
     "subtype": "normal",
     "effect": "Scegli e distruggi 2 dei tuoi mostri e 1 mostro del tuo avversario.",
@@ -6063,7 +6063,7 @@ const cardDatabase = [
   {
     "id": 550,
     "origin": "yu-gi-oh",
-    "name": "Il Mistico Severo",
+    "name": "Il Mistico",
     "type": "monster",
     "level": 4,
     "race": "Incantatore",
@@ -6090,7 +6090,7 @@ const cardDatabase = [
   {
     "id": 552,
     "origin": "yu-gi-oh",
-    "name": "Barone della Spada Demoniaca",
+    "name": "Barone Malaspada",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -6104,7 +6104,7 @@ const cardDatabase = [
   {
     "id": 553,
     "origin": "yu-gi-oh",
-    "name": "Forziere Divoratore",
+    "name": "Forziere Mangia-Uomini",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -6132,7 +6132,7 @@ const cardDatabase = [
   {
     "id": 555,
     "origin": "yu-gi-oh",
-    "name": "Ultima Volontà",
+    "name": "Ultimo Desiderio",
     "type": "spell",
     "subtype": "normal",
     "effect": "Se un mostro sul tuo Terreno è stato mandato al tuo Cimitero: puoi Special Summonare 1 mostro con 1500 ATK o meno dal tuo Deck, una volta in questo turno. Poi rimescola il tuo Deck.",
@@ -6141,7 +6141,7 @@ const cardDatabase = [
   {
     "id": 556,
     "origin": "yu-gi-oh",
-    "name": "Maestro delle Trappole",
+    "name": "Maestro di Trappola",
     "type": "monster",
     "level": 3,
     "race": "Guerriero",
@@ -6163,7 +6163,7 @@ const cardDatabase = [
   {
     "id": 558,
     "origin": "yu-gi-oh",
-    "name": "Trappola Inversa",
+    "name": "Inverti Trappola",
     "type": "trap",
     "subtype": "normal",
     "effect": "Fino alla End Phase, inverti tutte le modifiche ad ATK/DEF sul Terreno: gli aumenti diventano diminuzioni e viceversa (le modifiche per moltiplicazione/divisione non sono interessate).",
@@ -6172,7 +6172,7 @@ const cardDatabase = [
   {
     "id": 559,
     "origin": "yu-gi-oh",
-    "name": "Offerta Suprema",
+    "name": "Ultima Offerta",
     "type": "trap",
     "subtype": "continuous",
     "effect": "Durante la tua Main Phase o la Battle Phase del tuo avversario: puoi pagare 500 Life Points; subito dopo che questo effetto si risolve, Evoca Normalmente/Set 1 mostro.",
@@ -6182,7 +6182,7 @@ const cardDatabase = [
   {
     "id": 560,
     "origin": "yu-gi-oh",
-    "name": "La Malvagia Bestia Verme",
+    "name": "Verme Bestiale",
     "type": "monster",
     "level": 3,
     "race": "Bestia",
@@ -6195,7 +6195,7 @@ const cardDatabase = [
   {
     "id": 561,
     "origin": "yu-gi-oh",
-    "name": "Uraby",
+    "name": "Urabysauro",
     "type": "monster",
     "level": 4,
     "race": "Dinosauro",
@@ -6237,7 +6237,7 @@ const cardDatabase = [
   {
     "id": 564,
     "origin": "yu-gi-oh",
-    "name": "Titano Oscuro del Terrore",
+    "name": "Titano del Terrore",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -6251,7 +6251,7 @@ const cardDatabase = [
   {
     "id": 565,
     "origin": "yu-gi-oh",
-    "name": "Maestro e Allievo",
+    "name": "Maestro ed Esperto",
     "type": "monster",
     "level": 4,
     "race": "Bestia",
@@ -6265,7 +6265,7 @@ const cardDatabase = [
   {
     "id": 566,
     "origin": "yu-gi-oh",
-    "name": "Guerriero Sconosciuto del Demone",
+    "name": "Guerriero Sconosciuto",
     "type": "monster",
     "level": 3,
     "race": "Guerriero",
@@ -6279,7 +6279,7 @@ const cardDatabase = [
   {
     "id": 567,
     "origin": "yu-gi-oh",
-    "name": "Orco dell'Ombra Nera",
+    "name": "Orco delle Ombre Nere",
     "type": "monster",
     "level": 4,
     "race": "Guerriero Bestia",
@@ -6325,7 +6325,7 @@ const cardDatabase = [
   {
     "id": 572,
     "origin": "yu-gi-oh",
-    "name": "Uccello Rosso Teschio",
+    "name": "Uccello Teschio Rosso",
     "type": "monster",
     "level": 4,
     "race": "Bestia Alata",
@@ -6339,7 +6339,7 @@ const cardDatabase = [
   {
     "id": 573,
     "origin": "yu-gi-oh",
-    "name": "D. Human",
+    "name": "Guerriero D. Umano",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -6367,7 +6367,7 @@ const cardDatabase = [
   {
     "id": 575,
     "origin": "yu-gi-oh",
-    "name": "La Spia Inesperta",
+    "name": "Spia Inesperta",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli e guarda 1 carta nella mano del tuo avversario.",
@@ -6376,7 +6376,7 @@ const cardDatabase = [
   {
     "id": 576,
     "origin": "yu-gi-oh",
-    "name": "Telescopio Antico",
+    "name": "Antico Telescopio",
     "type": "spell",
     "subtype": "normal",
     "effect": "Guarda le prime 5 carte del Deck del tuo avversario. Rimettile nel Deck nello stesso ordine.",
@@ -6385,7 +6385,7 @@ const cardDatabase = [
   {
     "id": 577,
     "origin": "yu-gi-oh",
-    "name": "Giusto Dessert",
+    "name": "L'hai Voluto tu!",
     "type": "trap",
     "subtype": "normal",
     "effect": "Infliggi 500 danni al tuo avversario per ogni mostro che controlla.",
@@ -6394,16 +6394,16 @@ const cardDatabase = [
   {
     "id": 578,
     "origin": "yu-gi-oh",
-    "name": "Il Flauto per Evocare Draghi",
+    "name": "Flauto Evoca-Draghi",
     "type": "spell",
     "subtype": "normal",
-    "effect": "Special Summon fino a 2 mostri Tipo Drago dalla tua mano. \"Signore dei D.\" deve essere sul Terreno per attivare e risolvere questo effetto.",
+    "effect": "Special Summon fino a 2 mostri Tipo Drago dalla tua mano. \"Signore di D.\" deve essere sul Terreno per attivare e risolvere questo effetto.",
     "artOnly": true
   },
   {
     "id": 579,
     "origin": "yu-gi-oh",
-    "name": "Misterioso Burattinaio",
+    "name": "Burattinaio Misterioso",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -6438,7 +6438,7 @@ const cardDatabase = [
   {
     "id": 582,
     "origin": "yu-gi-oh",
-    "name": "Tartaruga Isola",
+    "name": "Tarta-Isola",
     "type": "monster",
     "level": 4,
     "race": "Acquatico",
@@ -6452,7 +6452,7 @@ const cardDatabase = [
   {
     "id": 583,
     "origin": "yu-gi-oh",
-    "name": "Pesce dai 7 Colori",
+    "name": "Pesce dei 7 Colori",
     "type": "monster",
     "level": 4,
     "race": "Pesce",
@@ -6466,7 +6466,7 @@ const cardDatabase = [
   {
     "id": 584,
     "origin": "yu-gi-oh",
-    "name": "Soldato di Fuoco Oscuro #1",
+    "name": "Soldato di Fuoco #1",
     "type": "monster",
     "level": 4,
     "race": "Piroico",
@@ -6480,7 +6480,7 @@ const cardDatabase = [
   {
     "id": 585,
     "origin": "yu-gi-oh",
-    "name": "Esploratore del Cielo",
+    "name": "Scout del Cielo",
     "type": "monster",
     "level": 4,
     "race": "Bestia Alata",
@@ -6507,7 +6507,7 @@ const cardDatabase = [
   {
     "id": 587,
     "origin": "yu-gi-oh",
-    "name": "Milus Radiant",
+    "name": "Milus il Raggiante",
     "type": "monster",
     "level": 1,
     "race": "Bestia",
@@ -6520,7 +6520,7 @@ const cardDatabase = [
   {
     "id": 588,
     "origin": "yu-gi-oh",
-    "name": "Maga della Fede",
+    "name": "Mago della Fede",
     "type": "monster",
     "level": 1,
     "race": "Incantatore",
@@ -6559,7 +6559,7 @@ const cardDatabase = [
   {
     "id": 591,
     "origin": "yu-gi-oh",
-    "name": "Cappello Magico Bianco",
+    "name": "Bianco Cappello Magico",
     "type": "monster",
     "level": 3,
     "race": "Incantatore",
@@ -6585,7 +6585,7 @@ const cardDatabase = [
   {
     "id": 594,
     "origin": "yu-gi-oh",
-    "name": "Coccola Malevola",
+    "name": "Nuzzler Malevolo",
     "type": "spell",
     "subtype": "equip",
     "effect": "Il mostro equipaggiato guadagna 700 ATK. Quando questa carta viene mandata dal Terreno al Cimitero: puoi pagare 500 Life Points; metti questa carta in cima al tuo Deck.",
@@ -6594,7 +6594,7 @@ const cardDatabase = [
   {
     "id": 595,
     "origin": "yu-gi-oh",
-    "name": "Il Guardiano Affidabile",
+    "name": "Guardiano Affidabile",
     "type": "spell",
     "subtype": "quick-play",
     "effect": "Aumenta di 700 punti la DEF di 1 mostro scoperto, fino alla fine di questo turno.",
@@ -6630,7 +6630,7 @@ const cardDatabase = [
   {
     "id": 599,
     "origin": "yu-gi-oh",
-    "name": "Sette Attrezzi del Bandito",
+    "name": "I Sette Attrezzi del Bandito",
     "type": "trap",
     "subtype": "counter",
     "effect": "Quando una Trappola viene attivata: paga 1000 Life Points; annulla l'attivazione, e se lo fai, distruggila.",
@@ -6639,7 +6639,7 @@ const cardDatabase = [
   {
     "id": 600,
     "origin": "yu-gi-oh",
-    "name": "Trappola Fasulla",
+    "name": "Trappola Finta",
     "type": "trap",
     "subtype": "normal",
     "effect": "Attivabile solo quando il tuo avversario attiva una Magia, Trappola, o l'effetto di un Mostro Effetto che distruggerebbe una o più Trappole che controlli. Distruggi questa carta al loro posto (se le carte che sarebbero state distrutte sono coperte, puoi guardarle per confermare).",
@@ -6700,7 +6700,7 @@ const cardDatabase = [
   {
     "id": 605,
     "origin": "yu-gi-oh",
-    "name": "Esploratore Ombra di Hiro",
+    "name": "Esploratore-Ombra di Hiro",
     "type": "monster",
     "level": 2,
     "race": "Demone",
@@ -6720,14 +6720,14 @@ const cardDatabase = [
     "attribute": "FUOCO",
     "attack": 2200,
     "defense": 2600,
-    "effect": "Trattata sempre come una carta Toon. Può essere Evocata normalmente rispettandone il Livello. Se controlli \"Mondo dei Toon\", puoi invece Evocarla Specialmente dalla mano sacrificando 2 mostri. Finché controlli \"Mondo dei Toon\", può attaccare direttamente e nel turno in cui viene Evocata. Se l'avversario controlla un Toon, deve prima attaccare un suo Toon.",
-    "legacyOfficialEffect": "Trattata sempre come una carta \"Toon\". Non può essere Evocata Normalmente/Set. Deve prima essere Special Summonata dalla mano sacrificando 2 mostri, mentre controlli \"Mondo dei Toon\". Può attaccare direttamente, a meno che l'avversario controlli un mostro Toon, nel qual caso deve bersagliare un mostro Toon. Non può attaccare il turno in cui viene Special Summonata; paga 500 Life Points per dichiarare un attacco. Se \"Mondo dei Toon\" sul Terreno viene distrutto, distruggi anche questa carta.",
+    "effect": "Trattata sempre come una carta Toon. Può essere Evocata normalmente rispettandone il Livello. Se controlli \"Mondo Toon\", puoi invece Evocarla Specialmente dalla mano sacrificando 2 mostri. Finché controlli \"Mondo Toon\", può attaccare direttamente e nel turno in cui viene Evocata. Se l'avversario controlla un Toon, deve prima attaccare un suo Toon.",
+    "legacyOfficialEffect": "Trattata sempre come una carta \"Toon\". Non può essere Evocata Normalmente/Set. Deve prima essere Special Summonata dalla mano sacrificando 2 mostri, mentre controlli \"Mondo Toon\". Può attaccare direttamente, a meno che l'avversario controlli un mostro Toon, nel qual caso deve bersagliare un mostro Toon. Non può attaccare il turno in cui viene Special Summonata; paga 500 Life Points per dichiarare un attacco. Se \"Mondo Toon\" sul Terreno viene distrutto, distruggi anche questa carta.",
     "artOnly": true
   },
   {
     "id": 607,
     "origin": "yu-gi-oh",
-    "name": "Tifone dello Spazio Mistico",
+    "name": "Tifone Spaziale Mistico",
     "type": "spell",
     "subtype": "quick-play",
     "effect": "Scegli come bersaglio 1 Magia/Trappola sul Terreno; distruggila.",
@@ -6736,7 +6736,7 @@ const cardDatabase = [
   {
     "id": 608,
     "origin": "yu-gi-oh",
-    "name": "Assalto Sconsiderato",
+    "name": "Corsa Avventata",
     "type": "spell",
     "subtype": "quick-play",
     "effect": "Scegli come bersaglio 1 mostro scoperto sul Terreno; guadagna 700 ATK fino alla fine di questo turno.",
@@ -6763,7 +6763,7 @@ const cardDatabase = [
   {
     "id": 611,
     "origin": "yu-gi-oh",
-    "name": "Giavellotto Incantato",
+    "name": "Lancia Incantata",
     "type": "trap",
     "subtype": "normal",
     "effect": "Scegli 1 mostro attaccante; guadagni Life Points pari al suo ATK.",
@@ -6772,7 +6772,7 @@ const cardDatabase = [
   {
     "id": 612,
     "origin": "yu-gi-oh",
-    "name": "Ala di Grifone",
+    "name": "Ali di Grifone",
     "type": "trap",
     "subtype": "normal",
     "effect": "Quando il tuo avversario attiva \"Turbina delle Arpie\": annulla il suo effetto e, se lo fai, distruggi tutte le Magie/Trappole controllate dal tuo avversario.",
@@ -6809,7 +6809,7 @@ const cardDatabase = [
   {
     "id": 615,
     "origin": "yu-gi-oh",
-    "name": "Biblioteca Magica Reale",
+    "name": "Biblioteca Reale Magica",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -6846,7 +6846,7 @@ const cardDatabase = [
   {
     "id": 618,
     "origin": "yu-gi-oh",
-    "name": "Ascia della Disperazione",
+    "name": "Ascia di Distruzione",
     "type": "spell",
     "subtype": "equip",
     "effect": "Il mostro equipaggiato guadagna 1000 ATK.",
@@ -6855,7 +6855,7 @@ const cardDatabase = [
   {
     "id": 619,
     "origin": "yu-gi-oh",
-    "name": "Zona Plasma Mistica",
+    "name": "Zona Mistica del Plasma",
     "type": "spell",
     "subtype": "field",
     "effect": "Aumenta l'ATK di tutti i mostri di Attributo OSCURITÀ di 500 punti e ne diminuisce la DEF di 400 punti.",
@@ -6864,7 +6864,7 @@ const cardDatabase = [
   {
     "id": 620,
     "origin": "yu-gi-oh",
-    "name": "Cerchio Ammaliante",
+    "name": "Cerchio Incantatore",
     "type": "trap",
     "subtype": "continuous",
     "effect": "Attiva questa carta scegliendo come bersaglio 1 mostro controllato dal tuo avversario; non può attaccare né cambiare Posizione di Battaglia. Quando quel mostro viene distrutto, distruggi questa carta.",
@@ -6882,7 +6882,7 @@ const cardDatabase = [
   {
     "id": 622,
     "origin": "yu-gi-oh",
-    "name": "Spostamento",
+    "name": "Cambio",
     "type": "trap",
     "subtype": "normal",
     "effect": "Quando il tuo avversario designa esattamente 1 mostro che controlli (e nessun'altra carta) come bersaglio per un attacco, o con un effetto Magia/Trappola: scegli un altro mostro che controlli come nuovo bersaglio adatto; quell'attacco/effetto ora ha come bersaglio la nuova carta.",
@@ -6900,7 +6900,7 @@ const cardDatabase = [
   {
     "id": 624,
     "origin": "yu-gi-oh",
-    "name": "Rottura di Raigeki",
+    "name": "Frattura Raigeki",
     "type": "trap",
     "subtype": "normal",
     "effect": "Scarta 1 carta, poi scegli come bersaglio 1 carta sul Terreno; distruggila.",
@@ -6937,7 +6937,7 @@ const cardDatabase = [
   {
     "id": 628,
     "origin": "yu-gi-oh",
-    "name": "Il Drago che Vive nella Caverna",
+    "name": "Il Drago Abitante nella Caverna",
     "type": "monster",
     "level": 4,
     "race": "Drago",
@@ -6951,7 +6951,7 @@ const cardDatabase = [
   {
     "id": 629,
     "origin": "yu-gi-oh",
-    "name": "Drago Splendente #2",
+    "name": "Drago Avido #2",
     "type": "monster",
     "level": 6,
     "race": "Drago",
@@ -6965,7 +6965,7 @@ const cardDatabase = [
   {
     "id": 630,
     "origin": "yu-gi-oh",
-    "name": "Spirit Ryu",
+    "name": "Spirito Ryu",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -6988,7 +6988,7 @@ const cardDatabase = [
   {
     "id": 632,
     "origin": "yu-gi-oh",
-    "name": "Nobile del Depistaggio",
+    "name": "Nobiluomo dello Scambio",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro coperto sul Terreno; distruggilo e, se lo fai, bandiscilo. Se era un mostro Flip, entrambi i giocatori rivelano il proprio Deck e bandiscono tutte le copie con lo stesso nome.",
@@ -7016,7 +7016,7 @@ const cardDatabase = [
   {
     "id": 635,
     "origin": "yu-gi-oh",
-    "name": "Vaso dell'Ingordigia",
+    "name": "Giara della Cupidigia",
     "type": "trap",
     "subtype": "normal",
     "effect": "Pesca 1 carta.",
@@ -7025,7 +7025,7 @@ const cardDatabase = [
   {
     "id": 636,
     "origin": "yu-gi-oh",
-    "name": "Campo di Riryoku",
+    "name": "Terreno Riryoku",
     "type": "trap",
     "subtype": "counter",
     "effect": "Quando una Magia che ha come bersaglio esattamente 1 mostro sul Terreno (e nessun'altra carta) viene attivata: annulla la sua attivazione e, se lo fai, distruggila.",
@@ -7034,7 +7034,7 @@ const cardDatabase = [
   {
     "id": 637,
     "origin": "yu-gi-oh",
-    "name": "Tribù dei D.",
+    "name": "Tribù D.",
     "type": "trap",
     "subtype": "normal",
     "effect": "Tutti i mostri sul tuo Terreno sono considerati di Tipo Drago fino alla End Phase di questo turno.",
@@ -7043,7 +7043,7 @@ const cardDatabase = [
   {
     "id": 638,
     "origin": "yu-gi-oh",
-    "name": "Drago Oscurità Occhi Rossi",
+    "name": "Drago Oscuro Occhi Rossi",
     "type": "monster",
     "subtype": "effect",
     "level": 9,
@@ -7057,7 +7057,7 @@ const cardDatabase = [
   {
     "id": 639,
     "origin": "yu-gi-oh",
-    "name": "Drago Splendente",
+    "name": "Drago Avido",
     "type": "monster",
     "level": 4,
     "race": "Drago",
@@ -7099,7 +7099,7 @@ const cardDatabase = [
   {
     "id": 642,
     "origin": "yu-gi-oh",
-    "name": "Cucciolo del Drago Nero",
+    "name": "Cucciolo di Occhi-Rossi",
     "type": "monster",
     "subtype": "effect",
     "level": 1,
@@ -7141,7 +7141,7 @@ const cardDatabase = [
   {
     "id": 645,
     "origin": "yu-gi-oh",
-    "name": "Furto Improvviso",
+    "name": "Strappa Possesso",
     "type": "spell",
     "subtype": "equip",
     "effect": "Equipaggia solo a un mostro controllato dal tuo avversario. Prendi il controllo del mostro equipaggiato. Durante ciascuna delle Standby Phase del tuo avversario: guadagnano 1000 Life Points.",
@@ -7150,7 +7150,7 @@ const cardDatabase = [
   {
     "id": 646,
     "origin": "yu-gi-oh",
-    "name": "Tempesta Pesante",
+    "name": "Tempesta Potente",
     "type": "spell",
     "subtype": "normal",
     "effect": "Distruggi tutte le Carte Magia e Trappola sul Terreno.",
@@ -7160,7 +7160,7 @@ const cardDatabase = [
   {
     "id": 647,
     "origin": "yu-gi-oh",
-    "name": "Distruzione con Zampata",
+    "name": "Distruzione Schiacciante",
     "type": "spell",
     "subtype": "normal",
     "effect": "Se controlli un mostro Tipo Drago: scegli come bersaglio 1 Magia/Trappola sul Terreno; distruggila e, se lo fai, infliggi 500 danni al suo controllore.",
@@ -7169,7 +7169,7 @@ const cardDatabase = [
   {
     "id": 648,
     "origin": "yu-gi-oh",
-    "name": "Scambio di Creature",
+    "name": "Scambio-Creature",
     "type": "spell",
     "subtype": "normal",
     "effect": "Ciascun giocatore sceglie 1 mostro che controlla e ne scambia il controllo con l'altro. Quei mostri non possono cambiare la loro Posizione di Battaglia per il resto di questo turno.",
@@ -7205,7 +7205,7 @@ const cardDatabase = [
   {
     "id": 652,
     "origin": "yu-gi-oh",
-    "name": "La Perla del Drago",
+    "name": "La Perla di Drago",
     "type": "trap",
     "subtype": "continuous",
     "effect": "Scarta 1 carta dalla tua mano. Annulla l'effetto di una Carta Trappola che ha come bersaglio 1 mostro Tipo Drago scoperto e distruggi quella Carta Trappola.",
@@ -7214,7 +7214,7 @@ const cardDatabase = [
   {
     "id": 653,
     "origin": "yu-gi-oh",
-    "name": "Avidità Sconsiderata",
+    "name": "Cupidigia Insaziabile",
     "type": "trap",
     "subtype": "normal",
     "effect": "Pesca 2 carte e salta le tue prossime 2 Draw Phase.",
@@ -7223,7 +7223,7 @@ const cardDatabase = [
   {
     "id": 654,
     "origin": "yu-gi-oh",
-    "name": "Disturbatore di Trappole",
+    "name": "Disturba Trappola",
     "type": "trap",
     "subtype": "counter",
     "effect": "Quando il tuo avversario attiva una Carta Trappola durante la Battle Phase: annulla la sua attivazione e, se lo fai, distruggila.",
@@ -7241,7 +7241,7 @@ const cardDatabase = [
   {
     "id": 656,
     "origin": "yu-gi-oh",
-    "name": "Genesi del Vampiro",
+    "name": "Genesi Vampira",
     "type": "monster",
     "subtype": "effect",
     "level": 8,
@@ -7283,7 +7283,7 @@ const cardDatabase = [
   {
     "id": 659,
     "origin": "yu-gi-oh",
-    "name": "Spirito della Polvere Oscura",
+    "name": "Spirito Polvere Oscura",
     "type": "monster",
     "subtype": "spirit",
     "level": 6,
@@ -7297,7 +7297,7 @@ const cardDatabase = [
   {
     "id": 660,
     "origin": "yu-gi-oh",
-    "name": "Tartaruga della Piramide",
+    "name": "Tartaruga Piramide",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -7311,7 +7311,7 @@ const cardDatabase = [
   {
     "id": 661,
     "origin": "yu-gi-oh",
-    "name": "Mietitore Spirituale",
+    "name": "Spirito Mietitore",
     "type": "monster",
     "subtype": "effect",
     "level": 3,
@@ -7353,7 +7353,7 @@ const cardDatabase = [
   {
     "id": 664,
     "origin": "yu-gi-oh",
-    "name": "Torre d'Ossa Divora-Anime",
+    "name": "Torre d'Ossa Assorbi-Anima",
     "type": "monster",
     "subtype": "effect",
     "level": 3,
@@ -7367,7 +7367,7 @@ const cardDatabase = [
   {
     "id": 665,
     "origin": "yu-gi-oh",
-    "name": "Dama dei Vampiri",
+    "name": "Lady Vampira",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -7437,7 +7437,7 @@ const cardDatabase = [
   {
     "id": 671,
     "origin": "yu-gi-oh",
-    "name": "Dispositivo di Evacuazione Forzata",
+    "name": "Dispositivo di Salvataggio Obbligatorio",
     "type": "trap",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro sul Terreno; ritorna quel bersaglio in mano.",
@@ -7544,7 +7544,7 @@ const cardDatabase = [
   {
     "id": 679,
     "origin": "yu-gi-oh",
-    "name": "Drago Vampata Solare",
+    "name": "Drago Ondata Solare",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -7558,7 +7558,7 @@ const cardDatabase = [
   {
     "id": 680,
     "origin": "yu-gi-oh",
-    "name": "Ragazzo del Baseball Estremo",
+    "name": "Giovane Promessa del Baseball",
     "type": "monster",
     "subtype": "effect",
     "level": 3,
@@ -7572,7 +7572,7 @@ const cardDatabase = [
   {
     "id": 681,
     "origin": "yu-gi-oh",
-    "name": "Folletto della Fiamma Furente",
+    "name": "Folletto della Fiamma Infuriato",
     "type": "monster",
     "subtype": "effect",
     "level": 3,
@@ -7600,7 +7600,7 @@ const cardDatabase = [
   {
     "id": 683,
     "origin": "yu-gi-oh",
-    "name": "Anima di Gaia il Collettivo Combustibile",
+    "name": "L'Anima di Gaia il Combustibile Collettivo",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -7614,7 +7614,7 @@ const cardDatabase = [
   {
     "id": 684,
     "origin": "yu-gi-oh",
-    "name": "Fuoco Fatuo",
+    "name": "Volpe di Fuoco",
     "type": "monster",
     "subtype": "effect",
     "level": 2,
@@ -7628,7 +7628,7 @@ const cardDatabase = [
   {
     "id": 685,
     "origin": "yu-gi-oh",
-    "name": "Distruzione Fusa",
+    "name": "Distruzione Infuocata",
     "type": "spell",
     "subtype": "field",
     "effect": "Tutti i mostri di Attributo FUOCO guadagnano 500 ATK e perdono 400 DEF.",
@@ -7637,16 +7637,16 @@ const cardDatabase = [
   {
     "id": 686,
     "origin": "yu-gi-oh",
-    "name": "Camera Oscura degli Incubi",
+    "name": "Camera Oscura dell'Incubo",
     "type": "trap",
     "subtype": "continuous",
-    "effect": "Ogni volta che il tuo avversario subisce danno da un effetto Carta, eccetto \"Camera Oscura degli Incubi\": infliggigli 300 danni.",
+    "effect": "Ogni volta che il tuo avversario subisce danno da un effetto Carta, eccetto \"Camera Oscura dell'Incubo\": infliggigli 300 danni.",
     "artOnly": true
   },
   {
     "id": 687,
     "origin": "yu-gi-oh",
-    "name": "Limite di Livello - Area B",
+    "name": "Livello Limite - Area B",
     "type": "spell",
     "subtype": "continuous",
     "effect": "Cambia in Posizione di Difesa tutti i mostri scoperti di Livello 4 o superiore.",
@@ -7655,7 +7655,7 @@ const cardDatabase = [
   {
     "id": 688,
     "origin": "yu-gi-oh",
-    "name": "Collana del Comando",
+    "name": "Amuleto del Comando",
     "type": "spell",
     "subtype": "equip",
     "effect": "Quando un mostro che controlli equipaggiato con questa carta viene distrutto in battaglia, e questa carta va al Cimitero: pesca 1 carta, oppure il tuo avversario scarta 1 carta a caso dalla mano.",
@@ -7710,7 +7710,7 @@ const cardDatabase = [
   {
     "id": 693,
     "origin": "yu-gi-oh",
-    "name": "Manta Perforante Strisciante",
+    "name": "Manta del Fato Incedente",
     "type": "monster",
     "subtype": "effect",
     "level": 3,
@@ -7724,14 +7724,14 @@ const cardDatabase = [
   {
     "id": 694,
     "origin": "yu-gi-oh",
-    "name": "Mambo Spaziale",
+    "name": "Pesce Luna Spaziale",
     "type": "monster",
     "level": 4,
     "race": "Pesce",
     "attribute": "ACQUA",
     "attack": 1700,
     "defense": 1000,
-    "effect": "Un Mambo Spaziale che fluttua nel vasto universo. Questa reliquia vivente è stata trovata tra le rovine di una super civiltà su Alphard 4.",
+    "effect": "Un Pesce Luna Spaziale che fluttua nel vasto universo. Questa reliquia vivente è stata trovata tra le rovine di una super civiltà su Alphard 4.",
     "artOnly": true,
     "vanilla": true
   },
@@ -7752,7 +7752,7 @@ const cardDatabase = [
   {
     "id": 696,
     "origin": "yu-gi-oh",
-    "name": "Ragazzo Stella",
+    "name": "Stellone",
     "type": "monster",
     "subtype": "effect",
     "level": 2,
@@ -7822,7 +7822,7 @@ const cardDatabase = [
   {
     "id": 701,
     "origin": "yu-gi-oh",
-    "name": "Cavaliere Sirena",
+    "name": "Sirena Cavaliere",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -7836,7 +7836,7 @@ const cardDatabase = [
   {
     "id": 702,
     "origin": "yu-gi-oh",
-    "name": "Mobius il Monarca del Gelo",
+    "name": "Mobius il Monarca Glaciale",
     "type": "monster",
     "subtype": "effect",
     "level": 6,
@@ -7850,7 +7850,7 @@ const cardDatabase = [
   {
     "id": 703,
     "origin": "yu-gi-oh",
-    "name": "Pescatore Ispido",
+    "name": "Rana-Pescatrice Barbuta",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -7864,7 +7864,7 @@ const cardDatabase = [
   {
     "id": 704,
     "origin": "yu-gi-oh",
-    "name": "Salvataggio",
+    "name": "Recupero",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 2 mostri di Attributo ACQUA con 1500 o meno ATK nel tuo Cimitero; aggiungi quei bersagli alla tua mano.",
@@ -7873,7 +7873,7 @@ const cardDatabase = [
   {
     "id": 705,
     "origin": "yu-gi-oh",
-    "name": "Colpo di Martello",
+    "name": "Lancio del Martello",
     "type": "spell",
     "subtype": "normal",
     "effect": "Distruggi 1 mostro scoperto in Posizione di Attacco con l'ATK più alto (in caso di parità, scegli tu).",
@@ -7882,7 +7882,7 @@ const cardDatabase = [
   {
     "id": 706,
     "origin": "yu-gi-oh",
-    "name": "Grande Onda Piccola Onda",
+    "name": "Piccola Onda Grande Onda",
     "type": "spell",
     "subtype": "normal",
     "effect": "Distruggi tutti i mostri scoperti di Attributo ACQUA che controlli, poi puoi Special Summonare mostri ACQUA dalla tua mano, fino al numero di mostri distrutti da questo effetto.",
@@ -7891,7 +7891,7 @@ const cardDatabase = [
   {
     "id": 707,
     "origin": "yu-gi-oh",
-    "name": "Legame di Gravità",
+    "name": "Legame Gravitazionale",
     "type": "trap",
     "subtype": "continuous",
     "effect": "I mostri di Livello 4 o superiore non possono attaccare.",
@@ -7923,7 +7923,7 @@ const cardDatabase = [
   {
     "id": 710,
     "origin": "yu-gi-oh",
-    "name": "Guerriera delle Terre Desolate",
+    "name": "Signora Guerriera delle Terre Desolate",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -7937,7 +7937,7 @@ const cardDatabase = [
   {
     "id": 711,
     "origin": "yu-gi-oh",
-    "name": "Gaia il Cavaliere Feroce Rapido",
+    "name": "Gaia il Cavaliere del Vento Oscuro",
     "type": "monster",
     "subtype": "effect",
     "level": 7,
@@ -7951,7 +7951,7 @@ const cardDatabase = [
   {
     "id": 712,
     "origin": "yu-gi-oh",
-    "name": "Guardiano Celtico Sgradito",
+    "name": "Guardia Celtica Riaddestrata",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -7979,7 +7979,7 @@ const cardDatabase = [
   {
     "id": 714,
     "origin": "yu-gi-oh",
-    "name": "Capitano Predone",
+    "name": "Capitano Saccheggiatore",
     "type": "monster",
     "subtype": "effect",
     "level": 3,
@@ -8007,7 +8007,7 @@ const cardDatabase = [
   {
     "id": 716,
     "origin": "yu-gi-oh",
-    "name": "D.D. Guerriera",
+    "name": "Signora Guerriera D.D.",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -8021,7 +8021,7 @@ const cardDatabase = [
   {
     "id": 717,
     "origin": "yu-gi-oh",
-    "name": "Mataza il Fulminatore",
+    "name": "Mataza l'Assassino Fulmineo",
     "type": "monster",
     "subtype": "effect",
     "level": 3,
@@ -8063,7 +8063,7 @@ const cardDatabase = [
   {
     "id": 720,
     "origin": "yu-gi-oh",
-    "name": "Gran Maestro Ninja Sasuke",
+    "name": "Sasuke Maestro Ninja",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -8077,7 +8077,7 @@ const cardDatabase = [
   {
     "id": 721,
     "origin": "yu-gi-oh",
-    "name": "Samurai Armato - Ben Kei",
+    "name": "Ben Kei - Samurai Armato",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -8109,7 +8109,7 @@ const cardDatabase = [
   {
     "id": 724,
     "origin": "yu-gi-oh",
-    "name": "Rinforzo dell'Esercito",
+    "name": "Rinforzi dell'Esercito",
     "type": "spell",
     "subtype": "normal",
     "effect": "Aggiungi 1 mostro Tipo Guerriero di Livello 4 o inferiore dal tuo Deck alla tua mano.",
@@ -8119,7 +8119,7 @@ const cardDatabase = [
   {
     "id": 725,
     "origin": "yu-gi-oh",
-    "name": "Il Guerriero Ritorna in Vita",
+    "name": "Il Guerriero Sopravvissuto",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro Tipo Guerriero nel tuo Cimitero; aggiungilo alla tua mano.",
@@ -8128,7 +8128,7 @@ const cardDatabase = [
   {
     "id": 726,
     "origin": "yu-gi-oh",
-    "name": "Spada Fusione Lama Murasame",
+    "name": "Spada-Fusione Lama Murasame",
     "type": "spell",
     "subtype": "equip",
     "effect": "Equipaggia solo a un mostro Tipo Guerriero. Guadagna 800 ATK. Finché è equipaggiata a un mostro, questa carta non può essere distrutta da effetti Carta.",
@@ -8137,7 +8137,7 @@ const cardDatabase = [
   {
     "id": 727,
     "origin": "yu-gi-oh",
-    "name": "Flamberge del Male Infranto - Baou",
+    "name": "Flamberga Spezza-Malvagi - Baou",
     "type": "spell",
     "subtype": "equip",
     "effect": "Manda 1 carta dalla mano al Cimitero, poi scegli come bersaglio 1 mostro sul Terreno; equipaggia questa carta a quel bersaglio. Guadagna 500 ATK. Annulla gli effetti dei mostri dell'avversario distrutti in battaglia dal mostro equipaggiato.",
@@ -8146,7 +8146,7 @@ const cardDatabase = [
   {
     "id": 728,
     "origin": "yu-gi-oh",
-    "name": "Fata della Primavera",
+    "name": "Fata della Sorgente",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 Carta Magia Equipaggiamento nel tuo Cimitero; aggiungila alla tua mano. Quella Carta Magia Equipaggiamento non può essere attivata in questo turno.",
@@ -8155,7 +8155,7 @@ const cardDatabase = [
   {
     "id": 729,
     "origin": "yu-gi-oh",
-    "name": "Vortice Fulmineo",
+    "name": "Fulmine Boltex",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scarta 1 carta; distruggi tutti i mostri scoperti che controlla il tuo avversario.",
@@ -8164,7 +8164,7 @@ const cardDatabase = [
   {
     "id": 730,
     "origin": "yu-gi-oh",
-    "name": "Spade della Luce Occultante",
+    "name": "Spade Mistificatrici",
     "type": "spell",
     "subtype": "continuous",
     "effect": "Distruggi questa carta durante la tua 2ª Standby Phase dopo l'attivazione. Quando questa carta si risolve, cambia tutti i mostri dell'avversario in Posizione di Difesa coperta. I mostri dell'avversario non possono cambiare la loro Posizione di Battaglia.",
@@ -8182,7 +8182,7 @@ const cardDatabase = [
   {
     "id": 733,
     "origin": "yu-gi-oh",
-    "name": "Stregone Eradicatore Oscuro",
+    "name": "Stregone Oscuro Eradicatore",
     "type": "monster",
     "subtype": "effect",
     "level": 7,
@@ -8196,7 +8196,7 @@ const cardDatabase = [
   {
     "id": 734,
     "origin": "yu-gi-oh",
-    "name": "Bestia Mitica Cerbero",
+    "name": "Cerbero Mitica Bestia",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -8210,7 +8210,7 @@ const cardDatabase = [
   {
     "id": 736,
     "origin": "yu-gi-oh",
-    "name": "Abile Mago Oscuro",
+    "name": "Abile Mago Nero",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -8238,7 +8238,7 @@ const cardDatabase = [
   {
     "id": 738,
     "origin": "yu-gi-oh",
-    "name": "Mago Comando del Caos",
+    "name": "Mago Ordine del Chaos",
     "type": "monster",
     "subtype": "effect",
     "level": 6,
@@ -8266,7 +8266,7 @@ const cardDatabase = [
   {
     "id": 740,
     "origin": "yu-gi-oh",
-    "name": "Stregone del Caos",
+    "name": "Stregone del Chaos",
     "type": "monster",
     "subtype": "effect",
     "level": 6,
@@ -8294,7 +8294,7 @@ const cardDatabase = [
   {
     "id": 742,
     "origin": "yu-gi-oh",
-    "name": "Mago dell'Esplosione",
+    "name": "Mago del Sangue",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -8308,7 +8308,7 @@ const cardDatabase = [
   {
     "id": 743,
     "origin": "yu-gi-oh",
-    "name": "Maga Oscura Curran",
+    "name": "Curran Maga d'Ebano",
     "type": "monster",
     "subtype": "effect",
     "level": 2,
@@ -8322,7 +8322,7 @@ const cardDatabase = [
   {
     "id": 744,
     "origin": "yu-gi-oh",
-    "name": "Mago a Fuoco Rapido",
+    "name": "Mago Fuoco-Rapido",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -8364,7 +8364,7 @@ const cardDatabase = [
   {
     "id": 748,
     "origin": "yu-gi-oh",
-    "name": "Attacco Magico Oscuro",
+    "name": "Attacco Mago Nero",
     "type": "spell",
     "subtype": "normal",
     "effect": "Se controlli \"Mago Nero\": distruggi tutte le Magie/Trappole controllate dal tuo avversario.",
@@ -8391,7 +8391,7 @@ const cardDatabase = [
   {
     "id": 751,
     "origin": "yu-gi-oh",
-    "name": "Pietra del Potere Nero Pece",
+    "name": "Pietra del Potere Nero-Pece",
     "type": "trap",
     "subtype": "continuous",
     "effect": "Attiva questa carta posizionando 3 Segnalini Magia su di essa. Una volta per turno, durante il tuo turno: puoi scegliere come bersaglio 1 altra carta scoperta sul Terreno che può ricevere un Segnalino Magia; rimuovi 1 Segnalino Magia da questa carta e, se lo fai, posizionalo su quel bersaglio. Quando l'ultimo Segnalino Magia viene rimosso da questa carta, distruggila.",
@@ -8493,7 +8493,7 @@ const cardDatabase = [
   {
     "id": 759,
     "origin": "yu-gi-oh",
-    "name": "Sentinella Golem",
+    "name": "Golem Guardiano",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -8535,7 +8535,7 @@ const cardDatabase = [
   {
     "id": 762,
     "origin": "yu-gi-oh",
-    "name": "Cannoni Intercettori Moai",
+    "name": "Cannoni d'Intercettazione Moai",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -8591,7 +8591,7 @@ const cardDatabase = [
   {
     "id": 766,
     "origin": "yu-gi-oh",
-    "name": "Falena della Sabbia",
+    "name": "Falena di Sabbia",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -8623,7 +8623,7 @@ const cardDatabase = [
   {
     "id": 769,
     "origin": "yu-gi-oh",
-    "name": "Ombre Mutevoli",
+    "name": "Ombre Danzanti",
     "type": "spell",
     "subtype": "continuous",
     "effect": "Una volta per turno, pagando 300 Life Points, riordina i mostri coperti in Posizione di Difesa nelle tue Zone Mostro principali, poi rimettili coperti in Posizione di Difesa.",
@@ -8632,7 +8632,7 @@ const cardDatabase = [
   {
     "id": 770,
     "origin": "yu-gi-oh",
-    "name": "Drenaggio Magico",
+    "name": "Risucchio Magico",
     "type": "trap",
     "subtype": "counter",
     "effect": "Quando il tuo avversario attiva una Carta Magia: può scartare 1 Carta Magia per annullare l'effetto di questa carta, altrimenti annulla l'attivazione della sua Magia e, se lo fai, distruggila.",
@@ -8641,7 +8641,7 @@ const cardDatabase = [
   {
     "id": 771,
     "origin": "yu-gi-oh",
-    "name": "Prova del Viandante",
+    "name": "Prova del Viaggiatore",
     "type": "trap",
     "subtype": "continuous",
     "effect": "Quando un mostro dell'avversario dichiara un attacco: il tuo avversario sceglie 1 carta a caso nella tua mano e ne dichiara il tipo (Mostro, Magia o Trappola); se sbaglia, rimanda il mostro attaccante in mano.",
@@ -8650,7 +8650,7 @@ const cardDatabase = [
   {
     "id": 772,
     "origin": "yu-gi-oh",
-    "name": "Simorgh, Uccello della Divinità",
+    "name": "Simorgh, Volatile della Divinità",
     "type": "monster",
     "subtype": "effect",
     "level": 7,
@@ -8664,7 +8664,7 @@ const cardDatabase = [
   {
     "id": 773,
     "origin": "yu-gi-oh",
-    "name": "Sparatore Sonico",
+    "name": "Proiettile Sonico",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -8678,7 +8678,7 @@ const cardDatabase = [
   {
     "id": 774,
     "origin": "yu-gi-oh",
-    "name": "Anatra Sonica",
+    "name": "Papera Sonica",
     "type": "monster",
     "level": 3,
     "race": "Bestia Alata",
@@ -8720,7 +8720,7 @@ const cardDatabase = [
   {
     "id": 777,
     "origin": "yu-gi-oh",
-    "name": "Mosca Lama",
+    "name": "Volama",
     "type": "monster",
     "subtype": "effect",
     "level": 2,
@@ -8734,7 +8734,7 @@ const cardDatabase = [
   {
     "id": 778,
     "origin": "yu-gi-oh",
-    "name": "Faccia di Uccello",
+    "name": "Faccia da Uccello",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -8776,7 +8776,7 @@ const cardDatabase = [
   {
     "id": 781,
     "origin": "yu-gi-oh",
-    "name": "Roc dalla Valle della Foschia",
+    "name": "Roc dalla Valle della Nebbia",
     "type": "monster",
     "subtype": "effect",
     "level": 6,
@@ -8832,7 +8832,7 @@ const cardDatabase = [
   {
     "id": 785,
     "origin": "yu-gi-oh",
-    "name": "Joe l'Uomo Uccello Veloce",
+    "name": "Joe Veloce Uomo Alato",
     "type": "monster",
     "subtype": "effect",
     "level": 6,
@@ -8846,7 +8846,7 @@ const cardDatabase = [
   {
     "id": 786,
     "origin": "yu-gi-oh",
-    "name": "Cucciolo di Drago dell'Arpia",
+    "name": "Cucciolo di Drago delle Arpie",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -8860,10 +8860,10 @@ const cardDatabase = [
   {
     "id": 787,
     "origin": "yu-gi-oh",
-    "name": "Egoista Elegante",
+    "name": "Egotista Elegante",
     "type": "spell",
     "subtype": "normal",
-    "effect": "Se \"Lady Arpia\" è sul Terreno: Special Summon 1 \"Lady Arpia\" o \"Sorelle Lady Arpia\" dalla tua mano o dal tuo Deck.",
+    "effect": "Se \"Lady Arpia\" è sul Terreno: Special Summon 1 \"Lady Arpia\" o \"Sorelle Arpie\" dalla tua mano o dal tuo Deck.",
     "artOnly": true
   },
   {
@@ -8872,16 +8872,16 @@ const cardDatabase = [
     "name": "Terreno di Caccia delle Arpie",
     "type": "spell",
     "subtype": "field",
-    "effect": "Tutti i mostri Tipo Bestia Alata guadagnano 200 ATK/DEF. Se una carta \"Lady Arpia\" o \"Sorelle Lady Arpia\" viene Evocata Normalmente o Special Summonata: chi l'ha Evocata sceglie come bersaglio 1 Magia/Trappola sul Terreno e la distrugge.",
+    "effect": "Tutti i mostri Tipo Bestia Alata guadagnano 200 ATK/DEF. Se una carta \"Lady Arpia\" o \"Sorelle Arpie\" viene Evocata Normalmente o Special Summonata: chi l'ha Evocata sceglie come bersaglio 1 Magia/Trappola sul Terreno e la distrugge.",
     "artOnly": true
   },
   {
     "id": 789,
     "origin": "yu-gi-oh",
-    "name": "Scintilla dell'Estasi Triangolare",
+    "name": "Scintilla d'Estasi Triangolare",
     "type": "spell",
     "subtype": "normal",
-    "effect": "Fino alla fine di questo turno, l'ATK di tutte le \"Sorelle Lady Arpia\" attualmente sul Terreno diventa 2700, il tuo avversario non può attivare Carte Trappola, inoltre annulla tutti gli effetti Trappola dell'avversario sul Terreno.",
+    "effect": "Fino alla fine di questo turno, l'ATK di tutte le \"Sorelle Arpie\" attualmente sul Terreno diventa 2700, il tuo avversario non può attivare Carte Trappola, inoltre annulla tutti gli effetti Trappola dell'avversario sul Terreno.",
     "artOnly": true
   },
   {
@@ -8923,7 +8923,7 @@ const cardDatabase = [
   {
     "id": 794,
     "origin": "yu-gi-oh",
-    "name": "Arte Ninjitsu della Trasformazione",
+    "name": "Arte della Trasformazione Ninjitsu",
     "type": "trap",
     "subtype": "continuous",
     "effect": "Attiva questa carta sacrificando 1 mostro \"Ninja\" scoperto. Special Summon 1 mostro Tipo Bestia, Bestia Alata o Insetto dalla tua mano o dal tuo Deck il cui Livello sia minore o uguale al Livello che il mostro sacrificato aveva sul Terreno +3. Quando questa carta lascia il Terreno: distruggi quel mostro.",
@@ -8932,7 +8932,7 @@ const cardDatabase = [
   {
     "id": 795,
     "origin": "yu-gi-oh",
-    "name": "Attacco d'Icaro",
+    "name": "Attacco Icaro",
     "type": "trap",
     "subtype": "normal",
     "effect": "Sacrifica 1 mostro Tipo Bestia Alata, poi scegli come bersaglio 2 carte sul Terreno; distruggile.",
@@ -8941,7 +8941,7 @@ const cardDatabase = [
   {
     "id": 796,
     "origin": "yu-gi-oh",
-    "name": "Tiranno Superconduttore",
+    "name": "Tiranno Super Conduttore",
     "type": "monster",
     "subtype": "effect",
     "level": 8,
@@ -8969,7 +8969,7 @@ const cardDatabase = [
   {
     "id": 798,
     "origin": "yu-gi-oh",
-    "name": "Sabersaurus",
+    "name": "Sciabolasaurus",
     "type": "monster",
     "level": 4,
     "race": "Dinosauro",
@@ -8983,7 +8983,7 @@ const cardDatabase = [
   {
     "id": 799,
     "origin": "yu-gi-oh",
-    "name": "Driceratopo Oscuro",
+    "name": "Triceratopo Oscuro",
     "type": "monster",
     "subtype": "effect",
     "level": 6,
@@ -8997,7 +8997,7 @@ const cardDatabase = [
   {
     "id": 800,
     "origin": "yu-gi-oh",
-    "name": "Testa di Martello Iper",
+    "name": "Iper Testa-Martello",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -9011,7 +9011,7 @@ const cardDatabase = [
   {
     "id": 801,
     "origin": "yu-gi-oh",
-    "name": "Tiranno Nero",
+    "name": "Tiranno Oscuro",
     "type": "monster",
     "subtype": "effect",
     "level": 7,
@@ -9025,7 +9025,7 @@ const cardDatabase = [
   {
     "id": 802,
     "origin": "yu-gi-oh",
-    "name": "Tiranno Infinito",
+    "name": "Infinità Tiranno",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -9067,7 +9067,7 @@ const cardDatabase = [
   {
     "id": 805,
     "origin": "yu-gi-oh",
-    "name": "Ptera Nero",
+    "name": "Pterodattilo Nero",
     "type": "monster",
     "subtype": "effect",
     "level": 3,
@@ -9081,7 +9081,7 @@ const cardDatabase = [
   {
     "id": 806,
     "origin": "yu-gi-oh",
-    "name": "Stego Nero",
+    "name": "Stegosauro Oscuro",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -9095,7 +9095,7 @@ const cardDatabase = [
   {
     "id": 807,
     "origin": "yu-gi-oh",
-    "name": "Tiranno Definitivo",
+    "name": "Tirannosauro Finale",
     "type": "monster",
     "subtype": "effect",
     "level": 8,
@@ -9103,7 +9103,7 @@ const cardDatabase = [
     "attribute": "TERRA",
     "attack": 3000,
     "defense": 2200,
-    "effect": "Questa carta può attaccare tutti i mostri controllati dal tuo avversario, una volta ciascuno. Durante la tua Battle Phase, se controlli un \"Tiranno Definitivo\" che può attaccare, i mostri diversi da \"Tiranno Definitivo\" non possono attaccare.",
+    "effect": "Questa carta può attaccare tutti i mostri controllati dal tuo avversario, una volta ciascuno. Durante la tua Battle Phase, se controlli un \"Tirannosauro Finale\" che può attaccare, i mostri diversi da \"Tirannosauro Finale\" non possono attaccare.",
     "artOnly": true
   },
   {
@@ -9137,7 +9137,7 @@ const cardDatabase = [
   {
     "id": 810,
     "origin": "yu-gi-oh",
-    "name": "Grande Pillola Evolutiva",
+    "name": "Pillola dell'Evoluzione Gigante",
     "type": "spell",
     "subtype": "normal",
     "effect": "Dopo l'attivazione, questa carta resta sul Terreno, ma distruggila durante la 3ª End Phase del tuo avversario. Sacrifica 1 mostro Tipo Dinosauro per attivare questa carta; finché è scoperta sul Terreno, puoi Evocare Normalmente mostri Tipo Dinosauro di Livello 5 o superiore senza Sacrificio.",
@@ -9146,7 +9146,7 @@ const cardDatabase = [
   {
     "id": 811,
     "origin": "yu-gi-oh",
-    "name": "Colpo di Coda",
+    "name": "Spazzata di Coda",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro Tipo Dinosauro di Livello 5 o superiore che controlli; se è ancora scoperto sul Terreno, scegli fino a 2 mostri controllati dal tuo avversario con Livello inferiore al suo, o coperti, e rimandali in mano ai proprietari.",
@@ -9209,7 +9209,7 @@ const cardDatabase = [
   {
     "id": 818,
     "origin": "yu-gi-oh",
-    "name": "Onda Sismica",
+    "name": "Onda d'Urto Sismica",
     "type": "trap",
     "subtype": "continuous",
     "effect": "Distruggi questa carta durante la tua 3ª Standby Phase dopo l'attivazione. Attiva questa carta quando un mostro Tipo Dinosauro scoperto che controlli viene distrutto e mandato al Cimitero (tranne durante il Damage Step): scegli 3 Zone Magia/Trappola inutilizzate dell'avversario. Quelle Zone non possono essere usate. Se questa carta si autodistrugge: puoi scegliere come bersaglio 1 mostro Tipo Dinosauro nel Cimitero; aggiungilo alla tua mano.",
@@ -9218,7 +9218,7 @@ const cardDatabase = [
   {
     "id": 819,
     "origin": "yu-gi-oh",
-    "name": "Scudo con Braccio Magico",
+    "name": "Scudo da Braccio Magico",
     "type": "trap",
     "subtype": "normal",
     "effect": "Quando il tuo avversario dichiara un attacco mentre controlli un mostro: scegli come bersaglio 1 mostro scoperto controllato dal tuo avversario, eccetto quello attaccante; prendine il controllo fino alla fine della Battle Phase e, se lo fai, viene attaccato al suo posto, poi si procede al calcolo dei danni.",
@@ -9227,7 +9227,7 @@ const cardDatabase = [
   {
     "id": 820,
     "origin": "yu-gi-oh",
-    "name": "Nega Attacco",
+    "name": "Annulla Attacco",
     "type": "trap",
     "subtype": "normal",
     "effect": "Quando un mostro dell'avversario dichiara un attacco: scegli come bersaglio il mostro attaccante; annulla l'attacco, poi termina la Battle Phase.",
@@ -9236,7 +9236,7 @@ const cardDatabase = [
   {
     "id": 821,
     "origin": "yu-gi-oh",
-    "name": "Goblin fuori dalla Padella",
+    "name": "Goblin Fuori dalla Padella",
     "type": "trap",
     "subtype": "counter",
     "effect": "Paga 500 Life Points. Annulla l'attivazione di una Carta Magia e rimandala in mano al proprietario.",
@@ -9263,7 +9263,7 @@ const cardDatabase = [
   {
     "id": 824,
     "origin": "yu-gi-oh",
-    "name": "Drago Gadjiltron Ingranaggio Antico",
+    "name": "Drago Gadjiltron-Ingranaggio Antico",
     "type": "monster",
     "subtype": "effect",
     "level": 8,
@@ -9271,13 +9271,13 @@ const cardDatabase = [
     "attribute": "TERRA",
     "attack": 3000,
     "defense": 2000,
-    "effect": "Se questa carta attacca, il tuo avversario non può attivare Magie/Trappole fino alla fine del Damage Step. Guadagna gli effetti appropriati se la Evochi Normalmente sacrificando questi mostri: Gadget Verde (danno perforante) / Gadget Rosso (+400 danni per qualunque danno da battaglia inflitto) / Gadget Giallo (se distrugge un mostro dell'avversario in battaglia: +600 danni).",
+    "effect": "Se questa carta attacca, il tuo avversario non può attivare Magie/Trappole fino alla fine del Damage Step. Guadagna gli effetti appropriati se la Evochi Normalmente sacrificando questi mostri: Congegno Verde (danno perforante) / Congegno Rosso (+400 danni per qualunque danno da battaglia inflitto) / Congegno Giallo (se distrugge un mostro dell'avversario in battaglia: +600 danni).",
     "artOnly": true
   },
   {
     "id": 825,
     "origin": "yu-gi-oh",
-    "name": "Chimera Gadjiltron Ingranaggio Antico",
+    "name": "Chimera Gadjiltron-Ingranaggio Antico",
     "type": "monster",
     "subtype": "effect",
     "level": 6,
@@ -9285,13 +9285,13 @@ const cardDatabase = [
     "attribute": "TERRA",
     "attack": 2300,
     "defense": 1300,
-    "effect": "Guadagna gli effetti appropriati se la Evochi Normalmente sacrificando questi mostri: Gadget Verde (+300 ATK) / Gadget Rosso (se infligge danno da attacco diretto: +500 danni) / Gadget Giallo (se distrugge un mostro dell'avversario in battaglia: +700 danni).",
+    "effect": "Guadagna gli effetti appropriati se la Evochi Normalmente sacrificando questi mostri: Congegno Verde (+300 ATK) / Congegno Rosso (se infligge danno da attacco diretto: +500 danni) / Congegno Giallo (se distrugge un mostro dell'avversario in battaglia: +700 danni).",
     "artOnly": true
   },
   {
     "id": 826,
     "origin": "yu-gi-oh",
-    "name": "Ingegnere Ingranaggio Antico",
+    "name": "Ingegnere-Ingranaggio Antico",
     "type": "monster",
     "subtype": "effect",
     "level": 5,
@@ -9305,7 +9305,7 @@ const cardDatabase = [
   {
     "id": 827,
     "origin": "yu-gi-oh",
-    "name": "Soldato di Avvio - Dinamo del Terrore",
+    "name": "Soldato Accensione - Dinamo del Terrore",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -9319,7 +9319,7 @@ const cardDatabase = [
   {
     "id": 828,
     "origin": "yu-gi-oh",
-    "name": "Gadget Verde",
+    "name": "Congegno Verde",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -9327,13 +9327,13 @@ const cardDatabase = [
     "attribute": "TERRA",
     "attack": 1400,
     "defense": 600,
-    "effect": "Quando questa carta viene Evocata Normalmente o Special Summonata: puoi aggiungere 1 \"Gadget Rosso\" dal tuo Deck alla tua mano.",
+    "effect": "Quando questa carta viene Evocata Normalmente o Special Summonata: puoi aggiungere 1 \"Congegno Rosso\" dal tuo Deck alla tua mano.",
     "artOnly": true
   },
   {
     "id": 829,
     "origin": "yu-gi-oh",
-    "name": "Gadget Rosso",
+    "name": "Congegno Rosso",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -9341,13 +9341,13 @@ const cardDatabase = [
     "attribute": "TERRA",
     "attack": 1300,
     "defense": 1500,
-    "effect": "Quando questa carta viene Evocata Normalmente o Special Summonata: puoi aggiungere 1 \"Gadget Giallo\" dal tuo Deck alla tua mano.",
+    "effect": "Quando questa carta viene Evocata Normalmente o Special Summonata: puoi aggiungere 1 \"Congegno Giallo\" dal tuo Deck alla tua mano.",
     "artOnly": true
   },
   {
     "id": 830,
     "origin": "yu-gi-oh",
-    "name": "Gadget Giallo",
+    "name": "Congegno Giallo",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -9355,13 +9355,13 @@ const cardDatabase = [
     "attribute": "TERRA",
     "attack": 1200,
     "defense": 1200,
-    "effect": "Quando questa carta viene Evocata Normalmente o Special Summonata: puoi aggiungere 1 \"Gadget Verde\" dal tuo Deck alla tua mano.",
+    "effect": "Quando questa carta viene Evocata Normalmente o Special Summonata: puoi aggiungere 1 \"Congegno Verde\" dal tuo Deck alla tua mano.",
     "artOnly": true
   },
   {
     "id": 831,
     "origin": "yu-gi-oh",
-    "name": "Piattaforma di Supporto Mech Pesante",
+    "name": "Piattaforma di Supporto per Mezzi Pesanti",
     "type": "monster",
     "subtype": "union",
     "level": 3,
@@ -9375,7 +9375,7 @@ const cardDatabase = [
   {
     "id": 832,
     "origin": "yu-gi-oh",
-    "name": "Golem Ingranaggio Antico",
+    "name": "Golem-Ingranaggio Antico",
     "type": "monster",
     "subtype": "effect",
     "level": 8,
@@ -9389,7 +9389,7 @@ const cardDatabase = [
   {
     "id": 833,
     "origin": "yu-gi-oh",
-    "name": "Bestia Ingranaggio Antico",
+    "name": "Bestia-Ingranaggio Antico",
     "type": "monster",
     "subtype": "effect",
     "level": 6,
@@ -9403,7 +9403,7 @@ const cardDatabase = [
   {
     "id": 834,
     "origin": "yu-gi-oh",
-    "name": "Soldato Ingranaggio Antico",
+    "name": "Soldato-Ingranaggio Antico",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -9431,7 +9431,7 @@ const cardDatabase = [
   {
     "id": 836,
     "origin": "yu-gi-oh",
-    "name": "Cannone Ingranaggio Antico",
+    "name": "Cannone-Ingranaggio Antico",
     "type": "monster",
     "subtype": "effect",
     "level": 2,
@@ -9445,7 +9445,7 @@ const cardDatabase = [
   {
     "id": 837,
     "origin": "yu-gi-oh",
-    "name": "Officina dell'Ingranaggio Antico",
+    "name": "Laboratorio-Ingranaggio Antico",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro \"Ingranaggio Antico\" nel tuo Cimitero; aggiungilo alla tua mano.",
@@ -9454,7 +9454,7 @@ const cardDatabase = [
   {
     "id": 838,
     "origin": "yu-gi-oh",
-    "name": "Carro Armato Ingranaggio Antico",
+    "name": "Carro Armato-Ingranaggio Antico",
     "type": "spell",
     "subtype": "equip",
     "effect": "Equipaggia solo a un mostro \"Ingranaggio Antico\". Guadagna 600 ATK. Quando questa carta viene distrutta e mandata al Cimitero: infliggi 600 danni al tuo avversario.",
@@ -9463,7 +9463,7 @@ const cardDatabase = [
   {
     "id": 839,
     "origin": "yu-gi-oh",
-    "name": "Esplosivo Ingranaggio Antico",
+    "name": "Esplosivo-Ingranaggio Antico",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro \"Ingranaggio Antico\" che controlli; distruggilo e, se lo fai, infliggi danni al tuo avversario pari alla metà del suo ATK originale.",
@@ -9472,7 +9472,7 @@ const cardDatabase = [
   {
     "id": 840,
     "origin": "yu-gi-oh",
-    "name": "Pugno Ingranaggio Antico",
+    "name": "Pugno-Ingranaggio Antico",
     "type": "spell",
     "subtype": "equip",
     "effect": "Equipaggia solo a un mostro \"Ingranaggio Antico\". Alla fine del Damage Step, se il mostro equipaggiato ha combattuto e resta sul Terreno: distruggi il mostro contro cui ha combattuto.",
@@ -9481,7 +9481,7 @@ const cardDatabase = [
   {
     "id": 841,
     "origin": "yu-gi-oh",
-    "name": "Fabbrica dell'Ingranaggio Antico",
+    "name": "Fabbrica-Ingranaggio Antico",
     "type": "spell",
     "subtype": "normal",
     "effect": "Rivela 1 mostro \"Ingranaggio Antico\" di Livello 5 o superiore dalla tua mano, poi bandisci mostri \"Ingranaggio Antico\" dal tuo Cimitero il cui Livello totale sia il doppio di quello rivelato: se lo fai, se lo Evochi Normalmente in questo turno, devi farlo senza Sacrificio.",
@@ -9490,7 +9490,7 @@ const cardDatabase = [
   {
     "id": 842,
     "origin": "yu-gi-oh",
-    "name": "Trapano Ingranaggio Antico",
+    "name": "Trivella-Ingranaggio Antico",
     "type": "spell",
     "subtype": "normal",
     "effect": "Se controlli un mostro \"Ingranaggio Antico\": scarta 1 carta; Set 1 Carta Magia direttamente dal tuo Deck. In questo turno, quella Carta Magia non può essere attivata.",
@@ -9499,7 +9499,7 @@ const cardDatabase = [
   {
     "id": 843,
     "origin": "yu-gi-oh",
-    "name": "Castello dell'Ingranaggio Antico",
+    "name": "Castello-Ingranaggio Antico",
     "type": "spell",
     "subtype": "continuous",
     "effect": "Tutti i mostri \"Ingranaggio Antico\" guadagnano 300 ATK. Ogni volta che un mostro viene Evocato Normalmente/Set, posiziona 1 Segnalino su questa carta. Se Evochi Tributo un mostro \"Ingranaggio Antico\" scoperto, puoi sacrificare questa carta al posto dei mostri, se il numero dei suoi Segnalini è pari o superiore al numero di Sacrifici richiesti.",
@@ -9508,7 +9508,7 @@ const cardDatabase = [
   {
     "id": 846,
     "origin": "yu-gi-oh",
-    "name": "Cambio d'Arma",
+    "name": "Cambio-Arma",
     "type": "spell",
     "subtype": "continuous",
     "effect": "Una volta per ciascuna delle tue Standby Phase: puoi pagare 700 Life Points, poi scegliere come bersaglio 1 mostro Tipo Guerriero o Macchina che controlli; scambia l'ATK e la DEF attuali di quel bersaglio fino alla fine del prossimo turno del tuo avversario.",
@@ -9517,7 +9517,7 @@ const cardDatabase = [
   {
     "id": 847,
     "origin": "yu-gi-oh",
-    "name": "Duplicazione Meccanica",
+    "name": "Duplicazione di Macchine",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro Tipo Macchina che controlli con 500 o meno ATK; Special Summon fino a 2 mostri dal tuo Deck con lo stesso nome di quel mostro scoperto.",
@@ -9526,7 +9526,7 @@ const cardDatabase = [
   {
     "id": 848,
     "origin": "yu-gi-oh",
-    "name": "Vaso dell'Avarizia",
+    "name": "Giara dell'Avarizia",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 5 mostri nel tuo Cimitero; rimescolali tutti e 5 nel Deck, poi pesca 2 carte.",
@@ -9535,16 +9535,16 @@ const cardDatabase = [
   {
     "id": 849,
     "origin": "yu-gi-oh",
-    "name": "Roccaforte la Fortezza Mobile",
+    "name": "Roccaforte della Fortezza Movente",
     "type": "trap",
     "subtype": "continuous",
-    "effect": "Special Summon questa carta in Posizione di Difesa come un Mostro con Effetto (Macchina/TERRA/Livello 4/ATK 0/DEF 2000). (Questa carta resta anche una Trappola.) Finché controlli \"Gadget Verde\", \"Gadget Rosso\" e \"Gadget Giallo\", questa carta guadagna 3000 ATK.",
+    "effect": "Special Summon questa carta in Posizione di Difesa come un Mostro con Effetto (Macchina/TERRA/Livello 4/ATK 0/DEF 2000). (Questa carta resta anche una Trappola.) Finché controlli \"Congegno Verde\", \"Congegno Rosso\" e \"Congegno Giallo\", questa carta guadagna 3000 ATK.",
     "artOnly": true
   },
   {
     "id": 850,
     "origin": "yu-gi-oh",
-    "name": "Raggio Micro",
+    "name": "Micro Raggio",
     "type": "trap",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro scoperto sul Terreno; la sua DEF diventa 0 fino alla fine di questo turno.",
@@ -9553,7 +9553,7 @@ const cardDatabase = [
   {
     "id": 851,
     "origin": "yu-gi-oh",
-    "name": "Metalmorfosi Rara",
+    "name": "Metamorfosi Rara",
     "type": "trap",
     "subtype": "continuous",
     "effect": "Attiva questa carta scegliendo come bersaglio 1 mostro Tipo Macchina sul Terreno; guadagna 500 ATK. Una volta, annulla un effetto Magia che ha come bersaglio quel mostro. Quando quel mostro lascia il Terreno: distruggi questa carta.",
@@ -9571,7 +9571,7 @@ const cardDatabase = [
   {
     "id": 853,
     "origin": "yu-gi-oh",
-    "name": "Avanti Tutta!",
+    "name": "Attaccati!",
     "type": "trap",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro Union nel tuo Cimitero; equipaggialo a un mostro che controlli che sarebbe un bersaglio adatto per l'effetto di quel mostro Union.",
@@ -9580,7 +9580,7 @@ const cardDatabase = [
   {
     "id": 854,
     "origin": "yu-gi-oh",
-    "name": "Mago del Caos Nero",
+    "name": "Mago del Chaos Oscuro",
     "type": "monster",
     "category": "ritual",
     "level": 8,
@@ -9588,13 +9588,13 @@ const cardDatabase = [
     "attribute": "OSCURITÀ",
     "attack": 2800,
     "defense": 2600,
-    "effect": "Puoi Ritual Summonare questa carta con \"Rito della Magia Oscura\".",
+    "effect": "Puoi Ritual Summonare questa carta con \"Rito Magia Oscura\".",
     "artOnly": true
   },
   {
     "id": 855,
     "origin": "yu-gi-oh",
-    "name": "Paladino del Drago Oscuro",
+    "name": "Paladino del Drago Nero",
     "type": "monster",
     "category": "ritual",
     "level": 4,
@@ -9602,7 +9602,7 @@ const cardDatabase = [
     "attribute": "OSCURITÀ",
     "attack": 1900,
     "defense": 1200,
-    "effect": "Puoi Ritual Summonare questa carta con \"Rito del Drago Oscuro\". A inizio Damage Step, se questa carta attacca un mostro in Posizione di Difesa: distruggi quel mostro. Puoi sacrificare questa carta; Special Summon 1 mostro \"Occhi Rossi\" dalla mano o dal Deck, tranne \"Occhi Rossi B. Chick\". Puoi usare questo effetto di \"Paladino del Drago Oscuro\" una sola volta per turno.",
+    "effect": "Puoi Ritual Summonare questa carta con \"Rituale del Drago Nero\". A inizio Damage Step, se questa carta attacca un mostro in Posizione di Difesa: distruggi quel mostro. Puoi sacrificare questa carta; Special Summon 1 mostro \"Occhi Rossi\" dalla mano o dal Deck, tranne \"Occhi Rossi B. Chick\". Puoi usare questo effetto di \"Paladino del Drago Nero\" una sola volta per turno.",
     "artOnly": true
   },
   {
@@ -9621,7 +9621,7 @@ const cardDatabase = [
   {
     "id": 857,
     "origin": "yu-gi-oh",
-    "name": "Wall Shadow",
+    "name": "Muro-Ombra",
     "type": "monster",
     "level": 7,
     "race": "Guerriero",
@@ -9680,13 +9680,13 @@ const cardDatabase = [
     "attribute": "OSCURITÀ",
     "attack": 300,
     "defense": 200,
-    "effect": "(Questa carta è sempre considerata anche una carta \"Kuriboh\".) (Effetto Rapido): puoi scartare questa carta, poi scegli come bersaglio 1 mostro \"Kuriboh\" che controlli; guadagna 1500 ATK. Puoi sacrificare questa carta e 1 ciascuna di \"Kuribah\", \"Kuribee\", \"Kuriboo\" e \"Kuriboh\" dalla mano e/o dal Terreno; aggiungi alla mano 1 \"Kuribandit\" dal Deck o dal Cimitero, poi puoi Evocare Normalmente 1 mostro Demone dalla mano.",
+    "effect": "(Questa carta è sempre considerata anche una carta \"Kuriboh\".) (Effetto Rapido): puoi scartare questa carta, poi scegli come bersaglio 1 mostro \"Kuriboh\" che controlli; guadagna 1500 ATK. Puoi sacrificare questa carta e 1 ciascuna di \"Kuribah\", \"Kuribee\", \"Kuriboo\" e \"Kuriboh\" dalla mano e/o dal Terreno; aggiungi alla mano 1 \"Kuribandito\" dal Deck o dal Cimitero, poi puoi Evocare Normalmente 1 mostro Demone dalla mano.",
     "artOnly": true
   },
   {
     "id": 863,
     "origin": "yu-gi-oh",
-    "name": "Dicelops",
+    "name": "Dadociclope",
     "type": "monster",
     "level": 4,
     "race": "Macchina",
@@ -9727,55 +9727,55 @@ const cardDatabase = [
   {
     "id": 866,
     "origin": "yu-gi-oh",
-    "name": "Destiny Board",
+    "name": "Tavola del Destino",
     "type": "trap",
     "subtype": "continuous",
-    "effect": "Quando questa carta e tutte e 4 le carte \"Spirit Message\" con nomi diversi sono piazzate sul tuo campo, vinci il Duello. Una volta per turno, durante l'End Phase del tuo avversario: piazza scoperta 1 carta \"Spirit Message\" dalla tua mano o dal tuo Deck nella tua zona Magia/Trappola, nell'ordine \"I\", \"N\", \"A\", \"L\". Quando una carta \"Spirit Message\" o \"Destiny Board\" che controlli lascia il Terreno: manda al Cimitero tutte le carte \"Spirit Message\" e \"Destiny Board\" che controlli.",
+    "effect": "Quando questa carta e tutte e 4 le carte \"Spirit Message\" con nomi diversi sono piazzate sul tuo campo, vinci il Duello. Una volta per turno, durante l'End Phase del tuo avversario: piazza scoperta 1 carta \"Spirit Message\" dalla tua mano o dal tuo Deck nella tua zona Magia/Trappola, nell'ordine \"I\", \"N\", \"A\", \"L\". Quando una carta \"Spirit Message\" o \"Tavola del Destino\" che controlli lascia il Terreno: manda al Cimitero tutte le carte \"Spirit Message\" e \"Tavola del Destino\" che controlli.",
     "artOnly": true
   },
   {
     "id": 867,
     "origin": "yu-gi-oh",
-    "name": "Spirit Message \"I\"",
+    "name": "Messaggio dello Spirito \"I\"",
     "type": "spell",
     "subtype": "continuous",
-    "effect": "Può essere piazzata sul Terreno solo dall'effetto di \"Destiny Board\".",
+    "effect": "Può essere piazzata sul Terreno solo dall'effetto di \"Tavola del Destino\".",
     "artOnly": true
   },
   {
     "id": 868,
     "origin": "yu-gi-oh",
-    "name": "Spirit Message \"N\"",
+    "name": "Messaggio dello Spirito \"N\"",
     "type": "spell",
     "subtype": "continuous",
-    "effect": "Può essere piazzata sul Terreno solo dall'effetto di \"Destiny Board\".",
+    "effect": "Può essere piazzata sul Terreno solo dall'effetto di \"Tavola del Destino\".",
     "artOnly": true,
     "cloneEffectOf": 867
   },
   {
     "id": 869,
     "origin": "yu-gi-oh",
-    "name": "Spirit Message \"A\"",
+    "name": "Messaggio dello Spirito \"A\"",
     "type": "spell",
     "subtype": "continuous",
-    "effect": "Può essere piazzata sul Terreno solo dall'effetto di \"Destiny Board\".",
+    "effect": "Può essere piazzata sul Terreno solo dall'effetto di \"Tavola del Destino\".",
     "artOnly": true,
     "cloneEffectOf": 867
   },
   {
     "id": 870,
     "origin": "yu-gi-oh",
-    "name": "Spirit Message \"L\"",
+    "name": "Messaggio dello Spirito \"L\"",
     "type": "spell",
     "subtype": "continuous",
-    "effect": "Può essere piazzata sul Terreno solo dall'effetto di \"Destiny Board\".",
+    "effect": "Può essere piazzata sul Terreno solo dall'effetto di \"Tavola del Destino\".",
     "artOnly": true,
     "cloneEffectOf": 867
   },
   {
     "id": 871,
     "origin": "yu-gi-oh",
-    "name": "Terraformazione",
+    "name": "Terraformare",
     "type": "spell",
     "subtype": "normal",
     "effect": "Aggiungi 1 Magia Campo dal tuo Deck alla tua mano.",
@@ -9785,7 +9785,7 @@ const cardDatabase = [
   {
     "id": 872,
     "origin": "yu-gi-oh",
-    "name": "Wingweaver",
+    "name": "Indossatrice d'Ali",
     "type": "monster",
     "level": 7,
     "race": "Fata",
@@ -9799,7 +9799,7 @@ const cardDatabase = [
   {
     "id": 873,
     "origin": "yu-gi-oh",
-    "name": "Duo Delinquente",
+    "name": "Due di Meno",
     "type": "spell",
     "subtype": "normal",
     "effect": "Paga 1000 Life Points; il tuo avversario scarta 1 carta a caso dalla sua mano, poi, se gliene restano, ne scarta 1 a sua scelta.",
@@ -9837,7 +9837,7 @@ const cardDatabase = [
   {
     "id": 877,
     "origin": "yu-gi-oh",
-    "name": "Uniti Vinceremo",
+    "name": "Uniti Resistiamo",
     "type": "spell",
     "subtype": "equip",
     "effect": "Il mostro equipaggiato guadagna 800 ATK/DEF per ogni mostro scoperto che il suo controllore controlla.",
@@ -9860,7 +9860,7 @@ const cardDatabase = [
   {
     "id": 879,
     "origin": "yu-gi-oh",
-    "name": "Il Pescatore Leggendario",
+    "name": "Pescatore Leggendario",
     "type": "monster",
     "subtype": "effect",
     "level": 5,
@@ -9874,7 +9874,7 @@ const cardDatabase = [
   {
     "id": 880,
     "origin": "yu-gi-oh",
-    "name": "Messaggero della Pace",
+    "name": "Messaggero di Pace",
     "type": "spell",
     "subtype": "continuous",
     "effect": "I mostri con 1500 o più ATK non possono dichiarare un attacco. Una volta per turno, durante la tua Standby Phase, paga 100 Life Points o questa carta viene distrutta.",
@@ -9883,7 +9883,7 @@ const cardDatabase = [
   {
     "id": 881,
     "origin": "yu-gi-oh",
-    "name": "Nobile dello Sterminio",
+    "name": "Nobiluomo dello Sterminio",
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli, distruggi e bandisci 1 Magia o Trappola coperta. Se era una Trappola, entrambi i giocatori devono bandire dai propri Deck tutte le copie di quella carta.",
@@ -9930,7 +9930,7 @@ const cardDatabase = [
   {
     "id": 885,
     "origin": "yu-gi-oh",
-    "name": "Quiz Inverso",
+    "name": "Quiz Invertito",
     "type": "spell",
     "subtype": "normal",
     "effect": "Manda tutte le carte della tua mano e del tuo campo al Cimitero. Dichiara il tipo di carta (Magia, Trappola o Mostro) in cima al tuo Deck: se indovini, scambia i tuoi Life Points attuali con quelli del tuo avversario.",
@@ -9949,7 +9949,7 @@ const cardDatabase = [
   {
     "id": 887,
     "origin": "yu-gi-oh",
-    "name": "Cancello di Fusione",
+    "name": "Cancello della Fusione",
     "type": "spell",
     "subtype": "field",
     "effect": "Finché questa carta è sul Terreno: il giocatore di turno può Evocare per Fusione 1 Mostro Fusione dal proprio Extra Deck, bandendo i Materiali da Fusione elencati dalla propria mano o Terreno.",
@@ -9958,7 +9958,7 @@ const cardDatabase = [
   {
     "id": 888,
     "origin": "yu-gi-oh",
-    "name": "Freed il Generale Senza Rivali",
+    "name": "Freed il Generale Senza Avversari",
     "type": "monster",
     "subtype": "effect",
     "level": 5,
@@ -9986,7 +9986,7 @@ const cardDatabase = [
   {
     "id": 890,
     "origin": "yu-gi-oh",
-    "name": "Necrovalley",
+    "name": "Necrovalle",
     "type": "spell",
     "subtype": "field",
     "effect": "Tutti i mostri Guardiani della Tomba guadagnano 500 ATK e DEF. Le carte nel Cimitero non possono essere bandite. Nega ogni effetto Carta che sposterebbe una carta nel Cimitero in un posto diverso. Nega ogni effetto Carta che cambia Tipo o Attributo nel Cimitero.",
@@ -9995,7 +9995,7 @@ const cardDatabase = [
   {
     "id": 891,
     "origin": "yu-gi-oh",
-    "name": "Necropaura Oscura",
+    "name": "Paura Oscura",
     "type": "monster",
     "subtype": "effect",
     "level": 8,
@@ -10059,7 +10059,7 @@ const cardDatabase = [
     "attribute": "OSCURITÀ",
     "attack": 1500,
     "defense": 1500,
-    "effect": "Quando questa carta dichiara un attacco, mentre \"Necrovalley\" è sul Terreno: scegli come bersaglio 1 mostro scoperto che l'avversario controlla; cambia la Posizione di Battaglia di quel bersaglio.",
+    "effect": "Quando questa carta dichiara un attacco, mentre \"Necrovalle\" è sul Terreno: scegli come bersaglio 1 mostro scoperto che l'avversario controlla; cambia la Posizione di Battaglia di quel bersaglio.",
     "artOnly": true
   },
   {
@@ -10115,7 +10115,7 @@ const cardDatabase = [
     "attribute": "OSCURITÀ",
     "attack": 1900,
     "defense": 1200,
-    "effect": "Puoi controllare solo 1 \"Capo dei Guardiani della Tomba\" scoperto. Il tuo Cimitero non è influenzato da \"Necrovalley\". Quando questa carta viene Evocata Tributo: puoi scegliere come bersaglio 1 mostro Guardiani della Tomba nel tuo Cimitero; Evocalo Specialmente.",
+    "effect": "Puoi controllare solo 1 \"Capo dei Guardiani della Tomba\" scoperto. Il tuo Cimitero non è influenzato da \"Necrovalle\". Quando questa carta viene Evocata Tributo: puoi scegliere come bersaglio 1 mostro Guardiani della Tomba nel tuo Cimitero; Evocalo Specialmente.",
     "artOnly": true
   },
   {
@@ -10135,7 +10135,7 @@ const cardDatabase = [
   {
     "id": 901,
     "origin": "yu-gi-oh",
-    "name": "La Fanciulla Indulgente",
+    "name": "La Vergine Clemente",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -10149,7 +10149,7 @@ const cardDatabase = [
   {
     "id": 902,
     "origin": "yu-gi-oh",
-    "name": "Darklord Marie",
+    "name": "Signora Oscura Maria",
     "type": "monster",
     "subtype": "effect",
     "level": 5,
@@ -10172,13 +10172,13 @@ const cardDatabase = [
     "defense": 2000,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di \"La Fanciulla Indulgente\" e \"Darklord Marie\".",
+    "effect": "Fusione di \"La Vergine Clemente\" e \"Signora Oscura Maria\".",
     "artOnly": true
   },
   {
     "id": 904,
     "origin": "yu-gi-oh",
-    "name": "Stella Marina Corazzata",
+    "name": "Stella Corazzata",
     "type": "monster",
     "level": 4,
     "race": "Acquatico",
@@ -10192,7 +10192,7 @@ const cardDatabase = [
   {
     "id": 905,
     "origin": "yu-gi-oh",
-    "name": "Roccia Dissolvente",
+    "name": "Dissolviroccia",
     "type": "monster",
     "level": 3,
     "race": "Roccia",
@@ -10206,7 +10206,7 @@ const cardDatabase = [
   {
     "id": 906,
     "origin": "yu-gi-oh",
-    "name": "Lucertola Sbavante",
+    "name": "Lucertola Affamata",
     "type": "monster",
     "level": 3,
     "race": "Rettile",
@@ -10234,7 +10234,7 @@ const cardDatabase = [
   {
     "id": 908,
     "origin": "yu-gi-oh",
-    "name": "Riflesso Demoniaco #2",
+    "name": "Riflesso Evocatore #2",
     "type": "monster",
     "level": 4,
     "race": "Bestia Alata",
@@ -10248,7 +10248,7 @@ const cardDatabase = [
   {
     "id": 909,
     "origin": "yu-gi-oh",
-    "name": "Erbafuoco",
+    "name": "Erba di Fuoco",
     "type": "monster",
     "level": 2,
     "race": "Pianta",
@@ -10276,7 +10276,7 @@ const cardDatabase = [
   {
     "id": 911,
     "origin": "yu-gi-oh",
-    "name": "Re Fantasma Verde",
+    "name": "Re Verde degli Spettri",
     "type": "monster",
     "level": 3,
     "race": "Pianta",
@@ -10290,7 +10290,7 @@ const cardDatabase = [
   {
     "id": 912,
     "origin": "yu-gi-oh",
-    "name": "Armatura Dura",
+    "name": "Armatura Vivente",
     "type": "monster",
     "level": 3,
     "race": "Guerriero",
@@ -10304,7 +10304,7 @@ const cardDatabase = [
   {
     "id": 913,
     "origin": "yu-gi-oh",
-    "name": "Anima Hinotama",
+    "name": "Spirito Hinotama",
     "type": "monster",
     "level": 2,
     "race": "Piroico",
@@ -10346,7 +10346,7 @@ const cardDatabase = [
   {
     "id": 916,
     "origin": "yu-gi-oh",
-    "name": "Kurama",
+    "name": "Uccello Kurama",
     "type": "monster",
     "level": 3,
     "race": "Bestia Alata",
@@ -10360,7 +10360,7 @@ const cardDatabase = [
   {
     "id": 917,
     "origin": "yu-gi-oh",
-    "name": "Larvas",
+    "name": "Uccello-Larva",
     "type": "monster",
     "level": 3,
     "race": "Bestia",
@@ -10374,7 +10374,7 @@ const cardDatabase = [
   {
     "id": 918,
     "origin": "yu-gi-oh",
-    "name": "M-Guerriero #1",
+    "name": "Guerriero-M #1",
     "type": "monster",
     "level": 3,
     "race": "Guerriero",
@@ -10388,7 +10388,7 @@ const cardDatabase = [
   {
     "id": 919,
     "origin": "yu-gi-oh",
-    "name": "M-Guerriero #2",
+    "name": "Guerriero-M #2",
     "type": "monster",
     "level": 3,
     "race": "Guerriero",
@@ -10402,7 +10402,7 @@ const cardDatabase = [
   {
     "id": 920,
     "origin": "yu-gi-oh",
-    "name": "Meda Bat",
+    "name": "Pipistrello Meda",
     "type": "monster",
     "level": 2,
     "race": "Demone",
@@ -10416,7 +10416,7 @@ const cardDatabase = [
   {
     "id": 921,
     "origin": "yu-gi-oh",
-    "name": "Misairuzame",
+    "name": "Pesce Misairuzame",
     "type": "monster",
     "level": 5,
     "race": "Pesce",
@@ -10486,7 +10486,7 @@ const cardDatabase = [
   {
     "id": 926,
     "origin": "yu-gi-oh",
-    "name": "Acqua Radicale",
+    "name": "Acqua di Radice",
     "type": "monster",
     "level": 3,
     "race": "Pesce",
@@ -10528,7 +10528,7 @@ const cardDatabase = [
   {
     "id": 929,
     "origin": "yu-gi-oh",
-    "name": "Grotta dell'Orco d'Acciaio #1",
+    "name": "Orco d'Acciaio #1",
     "type": "monster",
     "level": 5,
     "race": "Macchina",
@@ -10542,7 +10542,7 @@ const cardDatabase = [
   {
     "id": 930,
     "origin": "yu-gi-oh",
-    "name": "Cavaliere Succubo",
+    "name": "Cavaliere Terrificante",
     "type": "monster",
     "level": 5,
     "race": "Guerriero",
@@ -10556,7 +10556,7 @@ const cardDatabase = [
   {
     "id": 931,
     "origin": "yu-gi-oh",
-    "name": "Il Furioso Re del Mare",
+    "name": "Furioso Re dei Mari",
     "type": "monster",
     "level": 3,
     "race": "Acquatico",
@@ -10584,7 +10584,7 @@ const cardDatabase = [
   {
     "id": 933,
     "origin": "yu-gi-oh",
-    "name": "Processo dell'Incubo",
+    "name": "La Prova dell'Incubo",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -10598,7 +10598,7 @@ const cardDatabase = [
   {
     "id": 934,
     "origin": "yu-gi-oh",
-    "name": "Bestia a Filo Teso",
+    "name": "Elettro-Bestia",
     "type": "monster",
     "level": 4,
     "race": "Tuono",
@@ -10612,7 +10612,7 @@ const cardDatabase = [
   {
     "id": 935,
     "origin": "yu-gi-oh",
-    "name": "Tigre Tartaruga",
+    "name": "Tartaruga-Tigre",
     "type": "monster",
     "level": 4,
     "race": "Acquatico",
@@ -10626,7 +10626,7 @@ const cardDatabase = [
   {
     "id": 936,
     "origin": "yu-gi-oh",
-    "name": "Sovrano Oscuro Bibocca",
+    "name": "Elettrosauro Doppiafauce",
     "type": "monster",
     "level": 3,
     "race": "Dinosauro",
@@ -10640,7 +10640,7 @@ const cardDatabase = [
   {
     "id": 937,
     "origin": "yu-gi-oh",
-    "name": "Tyhone",
+    "name": "Tyhone Alato",
     "type": "monster",
     "level": 4,
     "race": "Bestia Alata",
@@ -10682,7 +10682,7 @@ const cardDatabase = [
   {
     "id": 940,
     "origin": "yu-gi-oh",
-    "name": "Abitante degli Abissi",
+    "name": "Abitatore degli Abissi",
     "type": "monster",
     "level": 5,
     "race": "Pesce",
@@ -10710,7 +10710,7 @@ const cardDatabase = [
   {
     "id": 942,
     "origin": "yu-gi-oh",
-    "name": "Cerbero di Fiamme",
+    "name": "Cerbero Infuocato",
     "type": "monster",
     "level": 6,
     "race": "Piroico",
@@ -10724,7 +10724,7 @@ const cardDatabase = [
   {
     "id": 943,
     "origin": "yu-gi-oh",
-    "name": "Garnecia Elefantis",
+    "name": "Elefante Garnecia",
     "type": "monster",
     "level": 7,
     "race": "Guerriero Bestia",
@@ -10766,7 +10766,7 @@ const cardDatabase = [
   {
     "id": 946,
     "origin": "yu-gi-oh",
-    "name": "Megasfera di Tuono",
+    "name": "Mega-Sfera del Tuono",
     "type": "monster",
     "level": 2,
     "race": "Tuono",
@@ -10822,7 +10822,7 @@ const cardDatabase = [
   {
     "id": 950,
     "origin": "yu-gi-oh",
-    "name": "Ratto Prevenitore",
+    "name": "Corazzatopo",
     "type": "monster",
     "level": 4,
     "race": "Bestia",
@@ -10864,7 +10864,7 @@ const cardDatabase = [
   {
     "id": 953,
     "origin": "yu-gi-oh",
-    "name": "L'Antico della Foresta Profonda",
+    "name": "Antico della Foresta",
     "type": "monster",
     "level": 6,
     "race": "Bestia",
@@ -10906,7 +10906,7 @@ const cardDatabase = [
   {
     "id": 956,
     "origin": "yu-gi-oh",
-    "name": "Tartaruga Gigante che si Nutre di Fiamme",
+    "name": "Tartaruga Mangia-Fiamme",
     "type": "monster",
     "level": 5,
     "race": "Acquatico",
@@ -10920,7 +10920,7 @@ const cardDatabase = [
   {
     "id": 957,
     "origin": "yu-gi-oh",
-    "name": "Guardiano della Sala del Trono",
+    "name": "Guardiano del Trono",
     "type": "monster",
     "level": 4,
     "race": "Macchina",
@@ -10934,7 +10934,7 @@ const cardDatabase = [
   {
     "id": 958,
     "origin": "yu-gi-oh",
-    "name": "Gyojin dell'Alta Marea",
+    "name": "Gyojin della Marea",
     "type": "monster",
     "level": 4,
     "race": "Acquatico",
@@ -10962,7 +10962,7 @@ const cardDatabase = [
   {
     "id": 960,
     "origin": "yu-gi-oh",
-    "name": "Lumaca Meccanica",
+    "name": "Mecha-Chiocciola",
     "type": "monster",
     "level": 3,
     "race": "Macchina",
@@ -10976,7 +10976,7 @@ const cardDatabase = [
   {
     "id": 961,
     "origin": "yu-gi-oh",
-    "name": "Pesce di Metallo",
+    "name": "Pesce Metallico",
     "type": "monster",
     "level": 5,
     "race": "Macchina",
@@ -11004,7 +11004,7 @@ const cardDatabase = [
   {
     "id": 963,
     "origin": "yu-gi-oh",
-    "name": "Kappa Psichico",
+    "name": "Psi-Kappa",
     "type": "monster",
     "level": 2,
     "race": "Acquatico",
@@ -11032,7 +11032,7 @@ const cardDatabase = [
   {
     "id": 965,
     "origin": "yu-gi-oh",
-    "name": "Grotta dell'Orco di Pietra",
+    "name": "Orco di Pietra",
     "type": "monster",
     "level": 5,
     "race": "Roccia",
@@ -11046,7 +11046,7 @@ const cardDatabase = [
   {
     "id": 966,
     "origin": "yu-gi-oh",
-    "name": "Doppia Lunga Verga #2",
+    "name": "Frustacode Gemelle #2",
     "type": "monster",
     "level": 3,
     "race": "Acquatico",
@@ -11074,7 +11074,7 @@ const cardDatabase = [
   {
     "id": 968,
     "origin": "yu-gi-oh",
-    "name": "Corvo Codaflagello",
+    "name": "Corvo Coda-di-Frusta",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -11088,7 +11088,7 @@ const cardDatabase = [
   {
     "id": 969,
     "origin": "yu-gi-oh",
-    "name": "Bestia del Talwar",
+    "name": "Bestia di Talwar",
     "type": "monster",
     "level": 6,
     "race": "Demone",
@@ -11102,7 +11102,7 @@ const cardDatabase = [
   {
     "id": 970,
     "origin": "yu-gi-oh",
-    "name": "Soldato del Fuoco Oscuro #2",
+    "name": "Soldato di Fuoco #2",
     "type": "monster",
     "level": 4,
     "race": "Piroico",
@@ -11158,7 +11158,7 @@ const cardDatabase = [
   {
     "id": 974,
     "origin": "yu-gi-oh",
-    "name": "Mr. Volcano",
+    "name": "Mr Vulcano",
     "type": "monster",
     "level": 5,
     "race": "Piroico",
@@ -11172,7 +11172,7 @@ const cardDatabase = [
   {
     "id": 975,
     "origin": "yu-gi-oh",
-    "name": "Overdrive",
+    "name": "Marcia Inarrestabile",
     "type": "monster",
     "level": 4,
     "race": "Macchina",
@@ -11186,7 +11186,7 @@ const cardDatabase = [
   {
     "id": 976,
     "origin": "yu-gi-oh",
-    "name": "Marinaio Teschio",
+    "name": "Teschio Marino",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -11214,7 +11214,7 @@ const cardDatabase = [
   {
     "id": 978,
     "origin": "yu-gi-oh",
-    "name": "Grotta dell'Orco d'Acciaio #2",
+    "name": "Orco d'Acciaio #2",
     "type": "monster",
     "level": 6,
     "race": "Macchina",
@@ -11228,7 +11228,7 @@ const cardDatabase = [
   {
     "id": 979,
     "origin": "yu-gi-oh",
-    "name": "La Tigre Bianca Onniveggente",
+    "name": "Tigre Bianca Veggente",
     "type": "monster",
     "level": 3,
     "race": "Bestia",
@@ -11242,7 +11242,7 @@ const cardDatabase = [
   {
     "id": 980,
     "origin": "yu-gi-oh",
-    "name": "Geedo Tricefalo",
+    "name": "Geedo dalle Tre Teste",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -11256,7 +11256,7 @@ const cardDatabase = [
   {
     "id": 981,
     "origin": "yu-gi-oh",
-    "name": "Drago di Fuoco Bicefalo",
+    "name": "Drago di Fuoco Bifronte",
     "type": "monster",
     "level": 6,
     "race": "Piroico",
@@ -11284,7 +11284,7 @@ const cardDatabase = [
   {
     "id": 983,
     "origin": "yu-gi-oh",
-    "name": "Boneheimer",
+    "name": "Succhiaossa",
     "type": "monster",
     "level": 3,
     "race": "Acquatico",
@@ -11298,7 +11298,7 @@ const cardDatabase = [
   {
     "id": 984,
     "origin": "yu-gi-oh",
-    "name": "Spirito Legato alla Terra",
+    "name": "Spirito Terralegato",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -11312,7 +11312,7 @@ const cardDatabase = [
   {
     "id": 985,
     "origin": "yu-gi-oh",
-    "name": "Imperatrice Mantide",
+    "name": "Mantide Imperatrice",
     "type": "monster",
     "level": 6,
     "race": "Insetto",
@@ -11326,7 +11326,7 @@ const cardDatabase = [
   {
     "id": 986,
     "origin": "yu-gi-oh",
-    "name": "Danzatrice di Fiamme",
+    "name": "Danzatore della Fiamma",
     "type": "monster",
     "level": 2,
     "race": "Piroico",
@@ -11354,7 +11354,7 @@ const cardDatabase = [
   {
     "id": 988,
     "origin": "yu-gi-oh",
-    "name": "Cavaliere Senza Testa",
+    "name": "Il Cavaliere Senza Testa",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -11368,7 +11368,7 @@ const cardDatabase = [
   {
     "id": 989,
     "origin": "yu-gi-oh",
-    "name": "Grongo Fulminante",
+    "name": "Anguilla Fulmine",
     "type": "monster",
     "level": 3,
     "race": "Tuono",
@@ -11382,7 +11382,7 @@ const cardDatabase = [
   {
     "id": 990,
     "origin": "yu-gi-oh",
-    "name": "Dama Sferica",
+    "name": "Lady Sphyra",
     "type": "monster",
     "level": 3,
     "race": "Roccia",
@@ -11396,7 +11396,7 @@ const cardDatabase = [
   {
     "id": 991,
     "origin": "yu-gi-oh",
-    "name": "Il Conte della Fine",
+    "name": "Il Conte del Testamento",
     "type": "monster",
     "level": 5,
     "race": "Demone",
@@ -11410,7 +11410,7 @@ const cardDatabase = [
   {
     "id": 992,
     "origin": "yu-gi-oh",
-    "name": "L'Orrido Fantasma dei Sogni Fuggiti",
+    "name": "Il Fantasma dei Sogni Scomparsi",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -11466,7 +11466,7 @@ const cardDatabase = [
   {
     "id": 996,
     "origin": "yu-gi-oh",
-    "name": "Lupo Portascure",
+    "name": "Lupo con Ascia",
     "type": "monster",
     "level": 4,
     "race": "Guerriero Bestia",
@@ -11508,7 +11508,7 @@ const cardDatabase = [
   {
     "id": 999,
     "origin": "yu-gi-oh",
-    "name": "Shapesnatch",
+    "name": "Farfallino",
     "type": "monster",
     "level": 5,
     "race": "Macchina",
@@ -11522,7 +11522,7 @@ const cardDatabase = [
   {
     "id": 1000,
     "origin": "yu-gi-oh",
-    "name": "Divoratore d'Anime",
+    "name": "Mangianima",
     "type": "monster",
     "level": 4,
     "race": "Pesce",
@@ -11536,7 +11536,7 @@ const cardDatabase = [
   {
     "id": 1001,
     "origin": "yu-gi-oh",
-    "name": "Sacerdote di Asura",
+    "name": "Prete Asura",
     "type": "monster",
     "subtype": "spirit",
     "level": 4,
@@ -11592,7 +11592,7 @@ const cardDatabase = [
   {
     "id": 1005,
     "origin": "yu-gi-oh",
-    "name": "Coniglio Bianco di Inaba",
+    "name": "Coniglio Bianco Inaba",
     "type": "monster",
     "subtype": "spirit",
     "level": 3,
@@ -11620,7 +11620,7 @@ const cardDatabase = [
   {
     "id": 1007,
     "origin": "yu-gi-oh",
-    "name": "Soldato di Susa",
+    "name": "Soldato Susa",
     "type": "monster",
     "subtype": "spirit",
     "level": 4,
@@ -11690,7 +11690,7 @@ const cardDatabase = [
   {
     "id": 1012,
     "origin": "yu-gi-oh",
-    "name": "Sosia della Regina",
+    "name": "Doppio della Regina",
     "type": "monster",
     "subtype": "effect",
     "level": 1,
@@ -11704,7 +11704,7 @@ const cardDatabase = [
   {
     "id": 1013,
     "origin": "yu-gi-oh",
-    "name": "Fiore Arcobaleno",
+    "name": "Fiore dell'Arcobaleno",
     "type": "monster",
     "subtype": "effect",
     "level": 2,
@@ -11718,7 +11718,7 @@ const cardDatabase = [
   {
     "id": 1014,
     "origin": "yu-gi-oh",
-    "name": "Hamburger Famelico",
+    "name": "Hamburger Affamato",
     "type": "monster",
     "level": 6,
     "race": "Guerriero",
@@ -11735,13 +11735,13 @@ const cardDatabase = [
     "name": "Ricetta dell'Hamburger",
     "type": "spell",
     "subtype": "ritual",
-    "effect": "Sacrifica dal Terreno e/o dalla mano mostri per un Livello totale di almeno 6 per Special Summon Hamburger Famelico dalla mano.",
+    "effect": "Sacrifica dal Terreno e/o dalla mano mostri per un Livello totale di almeno 6 per Special Summon Hamburger Affamato dalla mano.",
     "artOnly": true
   },
   {
     "id": 1016,
     "origin": "yu-gi-oh",
-    "name": "Tartaruga Granchio",
+    "name": "Tartaruga-Granchio",
     "type": "monster",
     "level": 8,
     "race": "Acquatico",
@@ -11758,13 +11758,13 @@ const cardDatabase = [
     "name": "Giuramento della Tartaruga",
     "type": "spell",
     "subtype": "ritual",
-    "effect": "Sacrifica dal Terreno e/o dalla mano mostri per un Livello totale di almeno 8 per Special Summon Tartaruga Granchio dalla mano.",
+    "effect": "Sacrifica dal Terreno e/o dalla mano mostri per un Livello totale di almeno 8 per Special Summon Tartaruga-Granchio dalla mano.",
     "artOnly": true
   },
   {
     "id": 1018,
     "origin": "yu-gi-oh",
-    "name": "Spettacolo della Spada",
+    "name": "Prestazione della Spada",
     "type": "monster",
     "level": 6,
     "race": "Guerriero",
@@ -11772,22 +11772,22 @@ const cardDatabase = [
     "attack": 1950,
     "defense": 1850,
     "category": "ritual",
-    "effect": "Evocabile solo tramite Danza d'Apertura, sacrificando mostri per un Livello totale di almeno 6.",
+    "effect": "Evocabile solo tramite Inizio delle Danze, sacrificando mostri per un Livello totale di almeno 6.",
     "artOnly": true
   },
   {
     "id": 1019,
     "origin": "yu-gi-oh",
-    "name": "Danza d'Apertura",
+    "name": "Inizio delle Danze",
     "type": "spell",
     "subtype": "ritual",
-    "effect": "Sacrifica dal Terreno e/o dalla mano mostri per un Livello totale di almeno 6 per Special Summon Spettacolo della Spada dalla mano.",
+    "effect": "Sacrifica dal Terreno e/o dalla mano mostri per un Livello totale di almeno 6 per Special Summon Prestazione della Spada dalla mano.",
     "artOnly": true
   },
   {
     "id": 1020,
     "origin": "yu-gi-oh",
-    "name": "Mummia Velenosa",
+    "name": "Mummia Infetta",
     "type": "monster",
     "subtype": "flip",
     "level": 4,
@@ -11801,7 +11801,7 @@ const cardDatabase = [
   {
     "id": 1022,
     "origin": "yu-gi-oh",
-    "name": "Scarpe Mordaci",
+    "name": "Scarpe Voraci",
     "type": "monster",
     "subtype": "flip",
     "level": 2,
@@ -11815,7 +11815,7 @@ const cardDatabase = [
   {
     "id": 1023,
     "origin": "yu-gi-oh",
-    "name": "Parassita Bubbonico",
+    "name": "Criceto Bubbonico",
     "type": "monster",
     "subtype": "flip",
     "level": 3,
@@ -11823,7 +11823,7 @@ const cardDatabase = [
     "attribute": "TERRA",
     "attack": 900,
     "defense": 600,
-    "effect": "FLIP: puoi Special Summonare 1 \"Parassita Bubbonico\" dal tuo Deck in Posizione di Difesa coperta. Poi mescola il tuo Deck.",
+    "effect": "FLIP: puoi Special Summonare 1 \"Criceto Bubbonico\" dal tuo Deck in Posizione di Difesa coperta. Poi mescola il tuo Deck.",
     "artOnly": true
   },
   {
@@ -11843,7 +11843,7 @@ const cardDatabase = [
   {
     "id": 1025,
     "origin": "yu-gi-oh",
-    "name": "L'Immortale del Tuono",
+    "name": "Immortale del Tuono",
     "type": "monster",
     "subtype": "flip",
     "level": 4,
@@ -11857,7 +11857,7 @@ const cardDatabase = [
   {
     "id": 1026,
     "origin": "yu-gi-oh",
-    "name": "Un Gufo Fortunato",
+    "name": "Un Gufo della Fortuna",
     "type": "monster",
     "subtype": "flip",
     "level": 2,
@@ -11865,13 +11865,13 @@ const cardDatabase = [
     "attribute": "VENTO",
     "attack": 300,
     "defense": 500,
-    "effect": "FLIP: scegli 1 Magia Campo dal tuo Deck e mettila in cima al Deck. Se \"Necrovalley\" è sul Terreno, puoi aggiungerla alla mano invece.",
+    "effect": "FLIP: scegli 1 Magia Campo dal tuo Deck e mettila in cima al Deck. Se \"Necrovalle\" è sul Terreno, puoi aggiungerla alla mano invece.",
     "artOnly": true
   },
   {
     "id": 1027,
     "origin": "yu-gi-oh",
-    "name": "Un Gatto di Malaugurio",
+    "name": "Un Gatto della Sfortuna",
     "type": "monster",
     "subtype": "flip",
     "level": 2,
@@ -11879,13 +11879,13 @@ const cardDatabase = [
     "attribute": "OSCURITÀ",
     "attack": 500,
     "defense": 300,
-    "effect": "FLIP: scegli 1 Trappola dal tuo Deck e mettila in cima al Deck. Se \"Necrovalley\" è sul Terreno, puoi aggiungerla alla mano invece.",
+    "effect": "FLIP: scegli 1 Trappola dal tuo Deck e mettila in cima al Deck. Se \"Necrovalle\" è sul Terreno, puoi aggiungerla alla mano invece.",
     "artOnly": true
   },
   {
     "id": 1028,
     "origin": "yu-gi-oh",
-    "name": "Manipolatore di Draghi",
+    "name": "Manipola-Draghi",
     "type": "monster",
     "subtype": "flip",
     "level": 3,
@@ -11899,7 +11899,7 @@ const cardDatabase = [
   {
     "id": 1029,
     "origin": "yu-gi-oh",
-    "name": "Fauci dell'Oscura Dipartita",
+    "name": "Mascelle della Trattativa Oscura",
     "type": "monster",
     "subtype": "flip",
     "level": 2,
@@ -11913,7 +11913,7 @@ const cardDatabase = [
   {
     "id": 1030,
     "origin": "yu-gi-oh",
-    "name": "Barattolo Cobra",
+    "name": "Giara Cobra",
     "type": "monster",
     "subtype": "flip",
     "level": 2,
@@ -11927,7 +11927,7 @@ const cardDatabase = [
   {
     "id": 1031,
     "origin": "yu-gi-oh",
-    "name": "Domatore d'Ombre",
+    "name": "Domaombra",
     "type": "monster",
     "subtype": "flip",
     "level": 3,
@@ -11983,7 +11983,7 @@ const cardDatabase = [
   {
     "id": 1035,
     "origin": "yu-gi-oh",
-    "name": "Bollettino Meteo",
+    "name": "Previsioni Meteo",
     "type": "monster",
     "subtype": "flip",
     "level": 4,
@@ -11997,7 +11997,7 @@ const cardDatabase = [
   {
     "id": 1036,
     "origin": "yu-gi-oh",
-    "name": "Lanciere Sciocco",
+    "name": "Lancia Demente",
     "type": "monster",
     "subtype": "flip",
     "level": 2,
@@ -12011,7 +12011,7 @@ const cardDatabase = [
   {
     "id": 1037,
     "origin": "yu-gi-oh",
-    "name": "Assalitrice delle Fiamme",
+    "name": "Signora Assaltatrice delle Fiamme",
     "type": "monster",
     "subtype": "flip",
     "level": 4,
@@ -12053,7 +12053,7 @@ const cardDatabase = [
   {
     "id": 1040,
     "origin": "yu-gi-oh",
-    "name": "Drago della Caverna",
+    "name": "Drago delle Caverne",
     "type": "monster",
     "subtype": "effect",
     "level": 4,
@@ -12110,7 +12110,7 @@ const cardDatabase = [
   {
     "id": 1044,
     "origin": "yu-gi-oh",
-    "name": "Drago Teschio Demoniaco",
+    "name": "Drago Teschio-Demone",
     "type": "monster",
     "level": 5,
     "race": "Drago",
@@ -12119,13 +12119,13 @@ const cardDatabase = [
     "defense": 1200,
     "category": "fusion",
     "extraDeck": true,
-    "effect": "Evocabile per Fusione solo con \"Drago della Caverna\" e \"Demone Minore\". (Questa carta è sempre trattata come una carta \"Arcidemone\".) Nega gli effetti dei Mostri Flip Effetto. Nega gli effetti Trappola che la scelgono come bersaglio, e se lo fai, distruggi quella Trappola.",
+    "effect": "Evocabile per Fusione solo con \"Drago delle Caverne\" e \"Demone Minore\". (Questa carta è sempre trattata come una carta \"Arcidemone\".) Nega gli effetti dei Mostri Flip Effetto. Nega gli effetti Trappola che la scelgono come bersaglio, e se lo fai, distruggi quella Trappola.",
     "artOnly": true
   },
   {
     "id": 1045,
     "origin": "yu-gi-oh",
-    "name": "L'Ultimo Guerriero di un Altro Pianeta",
+    "name": "L'Ultimo Guerriero da un Altro Pianeta",
     "type": "monster",
     "level": 7,
     "race": "Guerriero",
@@ -12192,27 +12192,27 @@ const cardDatabase = [
   {
     "id": 1050,
     "origin": "yu-gi-oh",
-    "name": "Drago della Truppa",
+    "name": "Truppa-Drago",
     "type": "monster",
     "level": 2,
     "race": "Drago",
     "attribute": "VENTO",
     "attack": 700,
     "defense": 800,
-    "effect": "Se questa carta viene distrutta in battaglia e mandata al Cimitero: Special Summon 1 \"Drago della Truppa\" dal tuo Deck.",
+    "effect": "Se questa carta viene distrutta in battaglia e mandata al Cimitero: Special Summon 1 \"Truppa-Drago\" dal tuo Deck.",
     "artOnly": true
   },
   {
     "id": 1051,
     "origin": "yu-gi-oh",
-    "name": "Momonga Agile",
+    "name": "L'Agile Momonga",
     "type": "monster",
     "level": 2,
     "race": "Bestia",
     "attribute": "TERRA",
     "attack": 1000,
     "defense": 100,
-    "effect": "Quando questa carta viene distrutta in battaglia e mandata al Cimitero: guadagna 1000 Life Points, poi puoi Special Summonare un numero qualsiasi di \"Momonga Agile\" dal tuo Deck in Posizione di Difesa coperta.",
+    "effect": "Quando questa carta viene distrutta in battaglia e mandata al Cimitero: guadagna 1000 Life Points, poi puoi Special Summonare un numero qualsiasi di \"L'Agile Momonga\" dal tuo Deck in Posizione di Difesa coperta.",
     "artOnly": true
   },
   {
@@ -12231,7 +12231,7 @@ const cardDatabase = [
   {
     "id": 1053,
     "origin": "yu-gi-oh",
-    "name": "Cavallo dell'Incubo",
+    "name": "Cavallo Incubo",
     "type": "monster",
     "level": 2,
     "race": "Zombie",
@@ -12244,7 +12244,7 @@ const cardDatabase = [
   {
     "id": 1054,
     "origin": "yu-gi-oh",
-    "name": "Tirapiedi Alato",
+    "name": "Servo Alato",
     "type": "monster",
     "level": 2,
     "race": "Demone",
@@ -12270,7 +12270,7 @@ const cardDatabase = [
   {
     "id": 1056,
     "origin": "yu-gi-oh",
-    "name": "Servitore del Catabolismo",
+    "name": "Servo del Catabolismo",
     "type": "monster",
     "level": 3,
     "race": "Acquatico",
@@ -12283,7 +12283,7 @@ const cardDatabase = [
   {
     "id": 1057,
     "origin": "yu-gi-oh",
-    "name": "Nave di Yomi",
+    "name": "Nave Yomi",
     "type": "monster",
     "level": 3,
     "race": "Acquatico",
@@ -12309,7 +12309,7 @@ const cardDatabase = [
   {
     "id": 1059,
     "origin": "yu-gi-oh",
-    "name": "Amuleto di Shabti",
+    "name": "Malia di Shabti",
     "type": "monster",
     "level": 1,
     "race": "Roccia",
@@ -12348,7 +12348,7 @@ const cardDatabase = [
   {
     "id": 1062,
     "origin": "yu-gi-oh",
-    "name": "Sparajongler Esplosivo",
+    "name": "Giocoliere Devastante",
     "type": "monster",
     "level": 3,
     "race": "Macchina",
@@ -12361,7 +12361,7 @@ const cardDatabase = [
   {
     "id": 1063,
     "origin": "yu-gi-oh",
-    "name": "Sentinella Cremisi",
+    "name": "Sentinella Porpora",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -12400,7 +12400,7 @@ const cardDatabase = [
   {
     "id": 1066,
     "origin": "yu-gi-oh",
-    "name": "Elfa Oscura",
+    "name": "Elfo Oscuro",
     "type": "monster",
     "level": 4,
     "race": "Incantatore",
@@ -12413,7 +12413,7 @@ const cardDatabase = [
   {
     "id": 1067,
     "origin": "yu-gi-oh",
-    "name": "Scassinatori Scorpioni Oscuri",
+    "name": "Dark Scorpion-Scassinatori",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -12439,7 +12439,7 @@ const cardDatabase = [
   {
     "id": 1069,
     "origin": "yu-gi-oh",
-    "name": "Guardiana delle Fate",
+    "name": "Fata Guardiana",
     "type": "monster",
     "level": 3,
     "race": "Fata",
@@ -12465,7 +12465,7 @@ const cardDatabase = [
   {
     "id": 1071,
     "origin": "yu-gi-oh",
-    "name": "Mummia dall'Ascia Gigante",
+    "name": "Mummia con Ascia Gigante",
     "type": "monster",
     "level": 5,
     "race": "Zombie",
@@ -12491,7 +12491,7 @@ const cardDatabase = [
   {
     "id": 1073,
     "origin": "yu-gi-oh",
-    "name": "Ala Grigia",
+    "name": "Ali Grigie",
     "type": "monster",
     "level": 3,
     "race": "Drago",
@@ -12544,7 +12544,7 @@ const cardDatabase = [
   {
     "id": 1077,
     "origin": "yu-gi-oh",
-    "name": "Tigre Re Wanghu",
+    "name": "Tigre Reale Wanghu",
     "type": "monster",
     "level": 4,
     "race": "Bestia",
@@ -12583,7 +12583,7 @@ const cardDatabase = [
   {
     "id": 1080,
     "origin": "yu-gi-oh",
-    "name": "Kycoo Distruttore di Fantasmi",
+    "name": "Kycoo il Distruttore di Spettri",
     "type": "monster",
     "level": 4,
     "race": "Incantatore",
@@ -12596,7 +12596,7 @@ const cardDatabase = [
   {
     "id": 1081,
     "origin": "yu-gi-oh",
-    "name": "Pantera Signora",
+    "name": "Signora Pantera",
     "type": "monster",
     "level": 4,
     "race": "Bestia-Guerriero",
@@ -12609,7 +12609,7 @@ const cardDatabase = [
   {
     "id": 1082,
     "origin": "yu-gi-oh",
-    "name": "Ninfa dell'Acqua",
+    "name": "Vergine dell'Acqua",
     "type": "monster",
     "level": 4,
     "race": "Acquatico",
@@ -12648,7 +12648,7 @@ const cardDatabase = [
   {
     "id": 1085,
     "origin": "yu-gi-oh",
-    "name": "Mushroom Man #2",
+    "name": "Uomo-Fungo #2",
     "type": "monster",
     "level": 3,
     "race": "Guerriero",
@@ -12674,7 +12674,7 @@ const cardDatabase = [
   {
     "id": 1087,
     "origin": "yu-gi-oh",
-    "name": "Nuvia la Malvagia",
+    "name": "Nuvia lo Stregato",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -12700,7 +12700,7 @@ const cardDatabase = [
   {
     "id": 1089,
     "origin": "yu-gi-oh",
-    "name": "Melma Rediviva",
+    "name": "Gelatina Rianimata",
     "type": "monster",
     "level": 4,
     "race": "Acquatico",
@@ -12713,7 +12713,7 @@ const cardDatabase = [
   {
     "id": 1090,
     "origin": "yu-gi-oh",
-    "name": "Guardiano Reale",
+    "name": "Custode Reale",
     "type": "monster",
     "level": 4,
     "race": "Zombie",
@@ -12726,7 +12726,7 @@ const cardDatabase = [
   {
     "id": 1091,
     "origin": "yu-gi-oh",
-    "name": "Ryu-Kishin Pagliaccio",
+    "name": "Clown Ryu-Kishin",
     "type": "monster",
     "level": 2,
     "race": "Demone",
@@ -12739,7 +12739,7 @@ const cardDatabase = [
   {
     "id": 1092,
     "origin": "yu-gi-oh",
-    "name": "Senju delle Mille Mani",
+    "name": "Senju dalle 1000 Mani",
     "type": "monster",
     "level": 4,
     "race": "Fata",
@@ -12752,7 +12752,7 @@ const cardDatabase = [
   {
     "id": 1093,
     "origin": "yu-gi-oh",
-    "name": "Anima di Purezza e Luce",
+    "name": "Anima della Luce e della Purezza",
     "type": "monster",
     "level": 6,
     "race": "Fata",
@@ -12817,7 +12817,7 @@ const cardDatabase = [
   {
     "id": 1098,
     "origin": "yu-gi-oh",
-    "name": "Saggezza Corrotta",
+    "name": "Saggezza Infetta",
     "type": "monster",
     "level": 3,
     "race": "Demone",
@@ -12830,7 +12830,7 @@ const cardDatabase = [
   {
     "id": 1099,
     "origin": "yu-gi-oh",
-    "name": "Il Macellaio del Bistrot",
+    "name": "Il Macellaio da Bistrò",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -12843,7 +12843,7 @@ const cardDatabase = [
   {
     "id": 1100,
     "origin": "yu-gi-oh",
-    "name": "Il Piccolo Spadaccino di Aile",
+    "name": "Piccolo Spadaccino di Aile",
     "type": "monster",
     "level": 3,
     "race": "Guerriero",
@@ -12869,7 +12869,7 @@ const cardDatabase = [
   {
     "id": 1102,
     "origin": "yu-gi-oh",
-    "name": "Unità Scagliapietre",
+    "name": "Unità Scagliapietra",
     "type": "monster",
     "level": 4,
     "race": "Guerriero",
@@ -12882,7 +12882,7 @@ const cardDatabase = [
   {
     "id": 1118,
     "origin": "yu-gi-oh",
-    "name": "Sovrano Oscuro Ha Des",
+    "name": "Ha Des Sovrano Oscuro",
     "type": "monster",
     "level": 6,
     "race": "Demone",
@@ -12895,7 +12895,7 @@ const cardDatabase = [
   {
     "id": 1119,
     "origin": "yu-gi-oh",
-    "name": "Gradius' Option",
+    "name": "Opzione di Gradius",
     "type": "monster",
     "level": 1,
     "race": "Macchina",
@@ -12921,7 +12921,7 @@ const cardDatabase = [
   {
     "id": 1121,
     "origin": "yu-gi-oh",
-    "name": "Thunder Nyan Nyan",
+    "name": "Tuono Nyan Nyan",
     "type": "monster",
     "level": 4,
     "race": "Tuono",
@@ -12960,14 +12960,14 @@ const cardDatabase = [
   {
     "id": 1124,
     "origin": "yu-gi-oh",
-    "name": "Falena Perfetta",
+    "name": "Grande Falena Perfetta",
     "type": "monster",
     "level": 8,
     "race": "Insetto",
     "attribute": "TERRA",
     "attack": 3500,
     "defense": 3000,
-    "effect": "Non può essere Evocata Normalmente né Set. Questa carta può essere Special Summonata (dalla tua mano) solo sacrificando \"Falena Piccola\" durante il tuo 6° turno o successivo dopo che \"Falena Piccola\" è stata equipaggiata con \"Bozzolo dell'Evoluzione\".",
+    "effect": "Non può essere Evocata Normalmente né Set. Questa carta può essere Special Summonata (dalla tua mano) solo sacrificando \"Piccola Falena\" durante il tuo 6° turno o successivo dopo che \"Piccola Falena\" è stata equipaggiata con \"Bozzolo dell'Evoluzione\".",
     "artOnly": true
   },
   {
@@ -13002,7 +13002,7 @@ const cardDatabase = [
   {
     "id": 1127,
     "origin": "yu-gi-oh",
-    "name": "Campanella Cerimoniale",
+    "name": "Campana Cerimoniale",
     "type": "monster",
     "level": 3,
     "race": "Incantatore",
@@ -13015,20 +13015,20 @@ const cardDatabase = [
   {
     "id": 1128,
     "origin": "yu-gi-oh",
-    "name": "Skull Knight #2",
+    "name": "Teschio Cavaliere #2",
     "type": "monster",
     "level": 3,
     "race": "Demone",
     "attribute": "OSCURITÀ",
     "attack": 1000,
     "defense": 1200,
-    "effect": "Se Tributi questa carta per un'Evocazione Tributo di un mostro Tipo Demone: Special Summon 1 \"Skull Knight #2\" dal tuo Deck. Poi, rimescola il tuo Deck.",
+    "effect": "Se Tributi questa carta per un'Evocazione Tributo di un mostro Tipo Demone: Special Summon 1 \"Teschio Cavaliere #2\" dal tuo Deck. Poi, rimescola il tuo Deck.",
     "artOnly": true
   },
   {
     "id": 1129,
     "origin": "yu-gi-oh",
-    "name": "Great Dezard",
+    "name": "Grande Dezard",
     "type": "monster",
     "level": 6,
     "race": "Incantatore",
@@ -13048,7 +13048,7 @@ const cardDatabase = [
     "attribute": "OSCURITÀ",
     "attack": 2600,
     "defense": 2900,
-    "effect": "Non può essere Evocata Normalmente né Set. Questa carta può essere Special Summonata solo dalla tua mano o dal tuo Deck tributando 1 \"Great Dezard\" che ha soddisfatto la condizione. Puoi girare questa carta a faccia in giù in Posizione di Difesa una volta per turno, durante la tua Main Phase. Finché questo mostro resta scoperto in campo, annulla l'attivazione e gli effetti di ogni Magia/Trappola che bersaglia questa carta, poi distruggila. Quando questa carta viene girata scoperta: puoi Special Summonare 1 mostro Tipo Zombie dal tuo Cimitero.",
+    "effect": "Non può essere Evocata Normalmente né Set. Questa carta può essere Special Summonata solo dalla tua mano o dal tuo Deck tributando 1 \"Grande Dezard\" che ha soddisfatto la condizione. Puoi girare questa carta a faccia in giù in Posizione di Difesa una volta per turno, durante la tua Main Phase. Finché questo mostro resta scoperto in campo, annulla l'attivazione e gli effetti di ogni Magia/Trappola che bersaglia questa carta, poi distruggila. Quando questa carta viene girata scoperta: puoi Special Summonare 1 mostro Tipo Zombie dal tuo Cimitero.",
     "artOnly": true
   },
   {
@@ -13093,7 +13093,7 @@ const cardDatabase = [
   {
     "id": 1106,
     "origin": "yu-gi-oh",
-    "name": "Vampire Baby",
+    "name": "Bambino Vampiro",
     "type": "monster",
     "level": 3,
     "race": "Zombie",
@@ -13106,7 +13106,7 @@ const cardDatabase = [
   {
     "id": 1107,
     "origin": "yu-gi-oh",
-    "name": "Bazoo il Divora-Anime",
+    "name": "Bazoo il Mangia-Anima",
     "type": "monster",
     "level": 4,
     "race": "Bestia",
@@ -13119,7 +13119,7 @@ const cardDatabase = [
   {
     "id": 1108,
     "origin": "yu-gi-oh",
-    "name": "Falcos il Saggio Alato",
+    "name": "Saggio Falco Alato",
     "type": "monster",
     "level": 4,
     "race": "Bestia Alata",
@@ -13132,7 +13132,7 @@ const cardDatabase = [
   {
     "id": 1109,
     "origin": "yu-gi-oh",
-    "name": "Cavaliere Mistico di Sciacallo",
+    "name": "Cavaliere Mistico dello Sciacallo",
     "type": "monster",
     "level": 7,
     "race": "Bestia-Guerriero",
@@ -13171,7 +13171,7 @@ const cardDatabase = [
   {
     "id": 1112,
     "origin": "yu-gi-oh",
-    "name": "Spirito Silvano",
+    "name": "Spiritello Silvestre",
     "type": "monster",
     "level": 3,
     "race": "Pianta",
@@ -13197,7 +13197,7 @@ const cardDatabase = [
   {
     "id": 1114,
     "origin": "yu-gi-oh",
-    "name": "Lupo Bicefalo",
+    "name": "Lupo Bifronte",
     "type": "monster",
     "level": 4,
     "race": "Demone",
@@ -13210,7 +13210,7 @@ const cardDatabase = [
   {
     "id": 1115,
     "origin": "yu-gi-oh",
-    "name": "Scorpione dalle 8 Chele",
+    "name": "Scorpione 8 Artigli",
     "type": "monster",
     "level": 2,
     "race": "Insetto",
@@ -13223,7 +13223,7 @@ const cardDatabase = [
   {
     "id": 1116,
     "origin": "yu-gi-oh",
-    "name": "Uomo con Wdjat",
+    "name": "Un Uomo con Wdjat",
     "type": "monster",
     "level": 4,
     "race": "Incantatore",
@@ -13236,7 +13236,7 @@ const cardDatabase = [
   {
     "id": 1117,
     "origin": "yu-gi-oh",
-    "name": "Cobraman Sakuzy",
+    "name": "Uomo Cobra Sakuzy",
     "type": "monster",
     "level": 3,
     "race": "Rettile",
@@ -13249,7 +13249,7 @@ const cardDatabase = [
   {
     "id": 1131,
     "origin": "yu-gi-oh",
-    "name": "Esiliatore della Luce",
+    "name": "Epuratore della Luce",
     "type": "monster",
     "level": 3,
     "race": "Fata",
@@ -13262,14 +13262,14 @@ const cardDatabase = [
   {
     "id": 1132,
     "origin": "yu-gi-oh",
-    "name": "Insetto Perforatore",
+    "name": "Insetto-Trapano",
     "type": "monster",
     "level": 2,
     "race": "Insetto",
     "attribute": "TERRA",
     "attack": 1100,
     "defense": 200,
-    "effect": "Quando questa carta infligge danno da battaglia al tuo avversario: puoi mettere 1 \"Parassita Paracida\" dal tuo Deck in cima al Deck, poi rimescolare il resto del Deck.",
+    "effect": "Quando questa carta infligge danno da battaglia al tuo avversario: puoi mettere 1 \"Insetto Parassita\" dal tuo Deck in cima al Deck, poi rimescolare il resto del Deck.",
     "artOnly": true
   },
   {
@@ -13288,7 +13288,7 @@ const cardDatabase = [
   {
     "id": 1134,
     "origin": "yu-gi-oh",
-    "name": "Creatura dell'Umidità",
+    "name": "Creatura Umida",
     "type": "monster",
     "level": 9,
     "race": "Fata",
@@ -13301,7 +13301,7 @@ const cardDatabase = [
   {
     "id": 1135,
     "origin": "yu-gi-oh",
-    "name": "Patrizio dell'Oscurità",
+    "name": "Nobile dell'Oscurità",
     "type": "monster",
     "level": 5,
     "race": "Zombie",
@@ -13327,7 +13327,7 @@ const cardDatabase = [
   {
     "id": 1137,
     "origin": "yu-gi-oh",
-    "name": "Giara Trasformante #2",
+    "name": "Giara della Mutazione #2",
     "type": "monster",
     "level": 3,
     "race": "Roccia",
@@ -13353,7 +13353,7 @@ const cardDatabase = [
   {
     "id": 1139,
     "origin": "yu-gi-oh",
-    "name": "Parassita Paracida",
+    "name": "Insetto Parassita",
     "type": "monster",
     "level": 2,
     "race": "Insetto",
@@ -13388,13 +13388,13 @@ const cardDatabase = [
     "defense": 800,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Uovo Mostro e Anima Hinotama.",
+    "effect": "Fusione di Uovo Mostro e Spirito Hinotama.",
     "artOnly": true
   },
   {
     "id": 1142,
     "origin": "yu-gi-oh",
-    "name": "Cyber Saurus",
+    "name": "Cyber-Sauro",
     "type": "monster",
     "level": 5,
     "race": "Macchina",
@@ -13403,13 +13403,13 @@ const cardDatabase = [
     "defense": 1400,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Sparajongler Esplosivo e Re Rex a Due Teste.",
+    "effect": "Fusione di Giocoliere Devastante e Tirannosauro Rex a Due Teste.",
     "artOnly": true
   },
   {
     "id": 1143,
     "origin": "yu-gi-oh",
-    "name": "Drago Fuoconero",
+    "name": "Drago del Fuoco Nero",
     "type": "monster",
     "level": 4,
     "race": "Drago",
@@ -13418,7 +13418,7 @@ const cardDatabase = [
     "defense": 1250,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Erbafuoco e Piccolo Drago.",
+    "effect": "Fusione di Erba di Fuoco e Piccolo Drago.",
     "artOnly": true
   },
   {
@@ -13433,13 +13433,13 @@ const cardDatabase = [
     "defense": 1600,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Abitante degli Abissi e Tongyo.",
+    "effect": "Fusione di Abitatore degli Abissi e Tongyo.",
     "artOnly": true
   },
   {
     "id": 1145,
     "origin": "yu-gi-oh",
-    "name": "Imperatrice Giudice",
+    "name": "Giudice Imperatrice",
     "type": "monster",
     "level": 6,
     "race": "Guerriero",
@@ -13448,13 +13448,13 @@ const cardDatabase = [
     "defense": 1700,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Sosia della Regina e Hibikime.",
+    "effect": "Fusione di Doppio della Regina e Hibikime.",
     "artOnly": true
   },
   {
     "id": 1146,
     "origin": "yu-gi-oh",
-    "name": "Fantasma di Fiamma",
+    "name": "Fantasma di Fuoco",
     "type": "monster",
     "level": 3,
     "race": "Zombie",
@@ -13463,13 +13463,13 @@ const cardDatabase = [
     "defense": 800,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Skull Servant e Roccia Dissolvente.",
+    "effect": "Fusione di Servitore del Teschio e Dissolviroccia.",
     "artOnly": true
   },
   {
     "id": 1147,
     "origin": "yu-gi-oh",
-    "name": "Lupo dei Fiori",
+    "name": "Fiore di Lupo",
     "type": "monster",
     "level": 5,
     "race": "Bestia",
@@ -13478,7 +13478,7 @@ const cardDatabase = [
     "defense": 1400,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Zanna d'Argento e Spine del Mondo Oscuro.",
+    "effect": "Fusione di Zanna d'Argento e Aculei degli Abissi.",
     "artOnly": true
   },
   {
@@ -13493,7 +13493,7 @@ const cardDatabase = [
     "defense": 700,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Piccola Angela e Pecora Mistica #2.",
+    "effect": "Fusione di Piccolo Angelo e Pecora Mistica #2.",
     "artOnly": true
   },
   {
@@ -13508,7 +13508,7 @@ const cardDatabase = [
     "defense": 1400,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Ocubeam e Megasfera di Tuono.",
+    "effect": "Fusione di Ocubeam e Mega-Sfera del Tuono.",
     "artOnly": true
   },
   {
@@ -13523,13 +13523,13 @@ const cardDatabase = [
     "defense": 1200,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di M-Guerriero #1 e M-Guerriero #2.",
+    "effect": "Fusione di Guerriero-M #1 e Guerriero-M #2.",
     "artOnly": true
   },
   {
     "id": 1151,
     "origin": "yu-gi-oh",
-    "name": "Drago di Metallo",
+    "name": "Drago Metallico",
     "type": "monster",
     "level": 6,
     "race": "Macchina",
@@ -13538,7 +13538,7 @@ const cardDatabase = [
     "defense": 1700,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Grotta dell'Orco d'Acciaio #1 e Drago Minore.",
+    "effect": "Fusione di Orco d'Acciaio #1 e Drago Minore.",
     "artOnly": true
   },
   {
@@ -13568,13 +13568,13 @@ const cardDatabase = [
     "defense": 600,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Mietitore Spirituale e Cavallo dell'Incubo. Non può essere distrutto in battaglia. Se viene scelto come bersaglio dall'effetto di una carta: distruggilo. Può attaccare direttamente. Quando infligge danno da battaglia diretto: l'avversario scarta 1 carta a caso.",
+    "effect": "Fusione di Spirito Mietitore e Cavallo Incubo. Non può essere distrutto in battaglia. Se viene scelto come bersaglio dall'effetto di una carta: distruggilo. Può attaccare direttamente. Quando infligge danno da battaglia diretto: l'avversario scarta 1 carta a caso.",
     "artOnly": true
   },
   {
     "id": 1154,
     "origin": "yu-gi-oh",
-    "name": "Serpente Oceanico Ruggente",
+    "name": "Serpente Oceanico",
     "type": "monster",
     "level": 6,
     "race": "Acquatico",
@@ -13598,7 +13598,7 @@ const cardDatabase = [
     "defense": 1200,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Guerriero Dai Grepher e Spirit Ryu. Quando viene attivata una Trappola Normale, puoi pagare 1000 LP per negarne l'effetto. Nega e distrugge le Magie che lo scelgono come bersaglio.",
+    "effect": "Fusione di Guerriero Dai Grepher e Spirito Ryu. Quando viene attivata una Trappola Normale, puoi pagare 1000 LP per negarne l'effetto. Nega e distrugge le Magie che lo scelgono come bersaglio.",
     "artOnly": true
   },
   {
@@ -13613,7 +13613,7 @@ const cardDatabase = [
     "defense": 2250,
     "extraDeck": true,
     "category": "fusion",
-    "effect": "Fusione di Saggezza Corrotta e Cervello Antico.",
+    "effect": "Fusione di Saggezza Infetta e Antico Cervello.",
     "artOnly": true
   },
   {
@@ -13633,7 +13633,7 @@ const cardDatabase = [
   {
     "id": 1158,
     "origin": "yu-gi-oh",
-    "name": "Spine del Mondo Oscuro",
+    "name": "Aculei degli Abissi",
     "type": "monster",
     "level": 3,
     "race": "Pianta",
@@ -13661,7 +13661,7 @@ const cardDatabase = [
   {
     "id": 1160,
     "origin": "yu-gi-oh",
-    "name": "Cervello Antico",
+    "name": "Antico Cervello",
     "type": "monster",
     "level": 3,
     "race": "Demone",
@@ -13692,14 +13692,14 @@ const cardDatabase = [
   {
     "id": 1251,
     "origin": "yu-gi-oh",
-    "name": "Intuito Occhi Rossi",
+    "name": "Intuizione Occhi Rossi",
     "limit": 2,
     "type": "spell",
     "subtype": "normal",
     "archetypes": [
       "red-eyes"
     ],
-    "effect": "Manda 1 mostro \"Occhi Rossi\" dalla tua mano o Deck al Cimitero; aggiungi dal tuo Deck alla tua mano 1 Magia/Trappola \"Occhi Rossi\", eccetto \"Intuito Occhi Rossi\". Puoi attivare solo 1 \"Intuito Occhi Rossi\" per turno.",
+    "effect": "Manda 1 mostro \"Occhi Rossi\" dalla tua mano o Deck al Cimitero; aggiungi dal tuo Deck alla tua mano 1 Magia/Trappola \"Occhi Rossi\", eccetto \"Intuizione Occhi Rossi\". Puoi attivare solo 1 \"Intuizione Occhi Rossi\" per turno.",
     "artOnly": true
   },
   {
@@ -13718,7 +13718,7 @@ const cardDatabase = [
   {
     "id": 1253,
     "origin": "yu-gi-oh",
-    "name": "Drago Metallo Nero",
+    "name": "Drago Metallico Nero",
     "limit": 2,
     "type": "monster",
     "level": 1,
@@ -13735,7 +13735,7 @@ const cardDatabase = [
   {
     "id": 1254,
     "origin": "yu-gi-oh",
-    "name": "Bastone del Mago",
+    "name": "Verga del Mago",
     "limit": 2,
     "type": "monster",
     "level": 3,
@@ -13746,13 +13746,13 @@ const cardDatabase = [
     "archetypes": [
       "dark-magician"
     ],
-    "effect": "Quando questa carta viene Evocata Normalmente: puoi aggiungere dal tuo Deck alla tua mano 1 Magia/Trappola che cita \"Mago Nero\". Durante il turno del tuo avversario, se attivi una Carta Magia/Trappola o un suo effetto mentre questa carta è nel tuo Cimitero: puoi offrire come Tributo 1 mostro Incantatore; aggiungi questa carta alla tua mano. Puoi utilizzare ogni effetto di \"Bastone del Mago\" una sola volta per turno.",
+    "effect": "Quando questa carta viene Evocata Normalmente: puoi aggiungere dal tuo Deck alla tua mano 1 Magia/Trappola che cita \"Mago Nero\". Durante il turno del tuo avversario, se attivi una Carta Magia/Trappola o un suo effetto mentre questa carta è nel tuo Cimitero: puoi offrire come Tributo 1 mostro Incantatore; aggiungi questa carta alla tua mano. Puoi utilizzare ogni effetto di \"Verga del Mago\" una sola volta per turno.",
     "artOnly": true
   },
   {
     "id": 1255,
     "origin": "yu-gi-oh",
-    "name": "Cerchio Magico Oscuro",
+    "name": "Circolo Magico Nero",
     "limit": 2,
     "type": "spell",
     "subtype": "continuous",
@@ -13762,13 +13762,13 @@ const cardDatabase = [
     "mentionsNames": [
       "Mago Nero"
     ],
-    "effect": "Quando questa carta viene attivata: guarda le prime 3 carte del tuo Deck, poi puoi rivelare 1 \"Mago Nero\" o 1 Magia/Trappola che cita \"Mago Nero\" tra esse e aggiungerla alla tua mano, inoltre metti le carte rimanenti in cima al Deck in qualsiasi ordine. Se \"Mago Nero\" viene Evocato Normalmente o Specialmente sul tuo Terreno: puoi scegliere come bersaglio 1 carta controllata dal tuo avversario; bandiscila. Puoi utilizzare ogni effetto di \"Cerchio Magico Oscuro\" una sola volta per turno.",
+    "effect": "Quando questa carta viene attivata: guarda le prime 3 carte del tuo Deck, poi puoi rivelare 1 \"Mago Nero\" o 1 Magia/Trappola che cita \"Mago Nero\" tra esse e aggiungerla alla tua mano, inoltre metti le carte rimanenti in cima al Deck in qualsiasi ordine. Se \"Mago Nero\" viene Evocato Normalmente o Specialmente sul tuo Terreno: puoi scegliere come bersaglio 1 carta controllata dal tuo avversario; bandiscila. Puoi utilizzare ogni effetto di \"Circolo Magico Nero\" una sola volta per turno.",
     "artOnly": true
   },
   {
     "id": 1256,
     "origin": "yu-gi-oh",
-    "name": "Anima Eterna",
+    "name": "Anima Immortale",
     "limit": 2,
     "type": "trap",
     "subtype": "continuous",
@@ -13778,13 +13778,13 @@ const cardDatabase = [
     "mentionsNames": [
       "Mago Nero"
     ],
-    "effect": "Ogni \"Mago Nero\" nella tua Zona Mostri è immune agli effetti delle carte del tuo avversario. Una volta per turno: puoi attivare 1 di questi effetti; Evoca Specialmente 1 \"Mago Nero\" dalla tua mano o Cimitero; oppure aggiungi dal tuo Deck alla tua mano 1 \"Attacco Magico Oscuro\" o \"Mille Coltelli\". Se questa carta scoperta lascia il Terreno: distruggi tutti i mostri che controlli.",
+    "effect": "Ogni \"Mago Nero\" nella tua Zona Mostri è immune agli effetti delle carte del tuo avversario. Una volta per turno: puoi attivare 1 di questi effetti; Evoca Specialmente 1 \"Mago Nero\" dalla tua mano o Cimitero; oppure aggiungi dal tuo Deck alla tua mano 1 \"Attacco Mago Nero\" o \"Mille Coltelli\". Se questa carta scoperta lascia il Terreno: distruggi tutti i mostri che controlli.",
     "artOnly": true
   },
   {
     "id": 1257,
     "origin": "yu-gi-oh",
-    "name": "Salvezza del Mago",
+    "name": "Salvataggio del Mago",
     "limit": 1,
     "type": "spell",
     "subtype": "field",
@@ -13793,9 +13793,9 @@ const cardDatabase = [
     ],
     "mentionsNames": [
       "Mago Nero",
-      "Maga Oscura"
+      "Ragazza Maga Nera"
     ],
-    "effect": "Quando questa carta viene attivata: puoi Posizionare 1 \"Anima Eterna\" direttamente dal tuo Deck. Se Evochi Normalmente o Specialmente \"Mago Nero\" o \"Maga Oscura\": puoi scegliere come bersaglio 1 di quei mostri; Evoca Specialmente dal tuo Cimitero 1 \"Mago Nero\" o \"Maga Oscura\" con un nome diverso. Puoi utilizzare questo effetto di \"Salvezza del Mago\" una sola volta per turno. Puoi attivare solo 1 \"Salvezza del Mago\" per turno.",
+    "effect": "Quando questa carta viene attivata: puoi Posizionare 1 \"Anima Immortale\" direttamente dal tuo Deck. Se Evochi Normalmente o Specialmente \"Mago Nero\" o \"Ragazza Maga Nera\": puoi scegliere come bersaglio 1 di quei mostri; Evoca Specialmente dal tuo Cimitero 1 \"Mago Nero\" o \"Ragazza Maga Nera\" con un nome diverso. Puoi utilizzare questo effetto di \"Salvataggio del Mago\" una sola volta per turno. Puoi attivare solo 1 \"Salvataggio del Mago\" per turno.",
     "artOnly": true
   },
   {
@@ -13810,15 +13810,15 @@ const cardDatabase = [
     ],
     "mentionsNames": [
       "Mago Nero",
-      "Maga Oscura"
+      "Ragazza Maga Nera"
     ],
-    "effect": "Metti in cima al Deck dalla tua mano, Deck o Cimitero 1 carta che sia \"Mago Nero\" o che citi specificamente \"Mago Nero\" o \"Maga Oscura\", eccetto \"Servitore dell'Anima\". Durante la tua Main Phase: puoi bandire questa carta dal tuo Cimitero; pesca carte pari al numero di mostri \"Palladio\", \"Mago Nero\" e/o \"Maga Oscura\" con nomi diversi sul Terreno e nei Cimiteri. Puoi utilizzare questo effetto di \"Servitore dell'Anima\" una sola volta per turno.",
+    "effect": "Metti in cima al Deck dalla tua mano, Deck o Cimitero 1 carta che sia \"Mago Nero\" o che citi specificamente \"Mago Nero\" o \"Ragazza Maga Nera\", eccetto \"Servitore dell'Anima\". Durante la tua Main Phase: puoi bandire questa carta dal tuo Cimitero; pesca carte pari al numero di mostri \"Palladio\", \"Mago Nero\" e/o \"Ragazza Maga Nera\" con nomi diversi sul Terreno e nei Cimiteri. Puoi utilizzare questo effetto di \"Servitore dell'Anima\" una sola volta per turno.",
     "artOnly": true
   },
   {
     "id": 1259,
     "origin": "yu-gi-oh",
-    "name": "Segreti della Magia Oscura",
+    "name": "Segreti della Magia Nera",
     "limit": 2,
     "type": "spell",
     "subtype": "quick-play",
@@ -13827,9 +13827,9 @@ const cardDatabase = [
     ],
     "mentionsNames": [
       "Mago Nero",
-      "Maga Oscura"
+      "Ragazza Maga Nera"
     ],
-    "effect": "Attiva 1 di questi effetti; Evoca tramite Fusione 1 Mostro Fusione dal tuo Extra Deck, utilizzando mostri dalla tua mano o Terreno, compreso \"Mago Nero\" o \"Maga Oscura\"; oppure Evoca tramite Rituale 1 Mostro Rituale dalla tua mano, offrendo come Tributo mostri dalla tua mano o Terreno, compreso \"Mago Nero\" o \"Maga Oscura\", i cui Livelli totali siano pari o superiori al Livello del Mostro Rituale.",
+    "effect": "Attiva 1 di questi effetti; Evoca tramite Fusione 1 Mostro Fusione dal tuo Extra Deck, utilizzando mostri dalla tua mano o Terreno, compreso \"Mago Nero\" o \"Ragazza Maga Nera\"; oppure Evoca tramite Rituale 1 Mostro Rituale dalla tua mano, offrendo come Tributo mostri dalla tua mano o Terreno, compreso \"Mago Nero\" o \"Ragazza Maga Nera\", i cui Livelli totali siano pari o superiori al Livello del Mostro Rituale.",
     "artOnly": true
   },
   {
@@ -13850,9 +13850,9 @@ const cardDatabase = [
     ],
     "mentionsNames": [
       "Mago Nero",
-      "Maga Oscura"
+      "Ragazza Maga Nera"
     ],
-    "effect": "\"Mago Nero\" o \"Maga Oscura\" + 1 mostro Incantatore. Una volta per turno, se una Carta Magia/Trappola o un suo effetto viene attivato: puoi pescare 1 carta, poi, se era una Magia/Trappola, puoi Posizionarla e, se era una Trappola o una Magia Rapida, puoi attivarla in questo turno. Se questa carta viene distrutta: puoi Evocare Specialmente sia 1 \"Mago Nero\" che 1 \"Maga Oscura\" dalla tua mano, Deck e/o Cimitero.",
+    "effect": "\"Mago Nero\" o \"Ragazza Maga Nera\" + 1 mostro Incantatore. Una volta per turno, se una Carta Magia/Trappola o un suo effetto viene attivato: puoi pescare 1 carta, poi, se era una Magia/Trappola, puoi Posizionarla e, se era una Trappola o una Magia Rapida, puoi attivarla in questo turno. Se questa carta viene distrutta: puoi Evocare Specialmente sia 1 \"Mago Nero\" che 1 \"Ragazza Maga Nera\" dalla tua mano, Deck e/o Cimitero.",
     "artOnly": true
   },
   {
@@ -13888,7 +13888,7 @@ const cardDatabase = [
   {
     "id": 1263,
     "origin": "yu-gi-oh",
-    "name": "Luce Autentica",
+    "name": "Vera Luce",
     "limit": 2,
     "type": "trap",
     "subtype": "continuous",
@@ -13913,15 +13913,15 @@ const cardDatabase = [
     ],
     "mentionsNames": [
       "Drago Bianco Occhi Blu",
-      "Drago Bianco Definitivo"
+      "Drago Occhi Blu Finale"
     ],
-    "effect": "Durante la Main Phase: Evoca tramite Fusione 1 Mostro Fusione dal tuo Extra Deck che cita \"Drago Bianco Occhi Blu\" o \"Drago Bianco Definitivo\" come materiale, mischiando nel Deck i Materiali da Fusione indicati su di esso dalla tua mano, Terreno e/o Cimitero, compreso almeno 1 \"Drago Bianco Occhi Blu\" o \"Drago Bianco Definitivo\", poi puoi distruggere carte scoperte controllate dal tuo avversario, fino al numero di quei mostri utilizzati dal Terreno come materiale. Puoi attivare solo 1 \"Fusione Definitiva\" per turno.",
+    "effect": "Durante la Main Phase: Evoca tramite Fusione 1 Mostro Fusione dal tuo Extra Deck che cita \"Drago Bianco Occhi Blu\" o \"Drago Occhi Blu Finale\" come materiale, mischiando nel Deck i Materiali da Fusione indicati su di esso dalla tua mano, Terreno e/o Cimitero, compreso almeno 1 \"Drago Bianco Occhi Blu\" o \"Drago Occhi Blu Finale\", poi puoi distruggere carte scoperte controllate dal tuo avversario, fino al numero di quei mostri utilizzati dal Terreno come materiale. Puoi attivare solo 1 \"Fusione Definitiva\" per turno.",
     "artOnly": true
   },
   {
     "id": 1265,
     "origin": "yu-gi-oh",
-    "name": "Drago Bianco Alternativo Definitivo",
+    "name": "Drago Finale Alternativo Occhi Blu",
     "limit": 1,
     "type": "monster",
     "extraDeck": true,
@@ -13952,9 +13952,9 @@ const cardDatabase = [
       "toon"
     ],
     "treatedAsNames": [
-      "Mondo dei Toon"
+      "Mondo Toon"
     ],
-    "effect": "Quando questa carta viene attivata: bandisci le prime 3 carte del tuo Deck. Il nome di questa carta diventa \"Mondo dei Toon\" mentre è nella Zona Terreno. Il tuo avversario non può scegliere come bersaglio i mostri Toon che controlli con gli effetti delle carte. Se uno o più mostri Toon che controlli stanno per essere distrutti in battaglia o dall'effetto di una carta, puoi bandire la prima carta del tuo Deck per ognuno di quei mostri, invece.",
+    "effect": "Quando questa carta viene attivata: bandisci le prime 3 carte del tuo Deck. Il nome di questa carta diventa \"Mondo Toon\" mentre è nella Zona Terreno. Il tuo avversario non può scegliere come bersaglio i mostri Toon che controlli con gli effetti delle carte. Se uno o più mostri Toon che controlli stanno per essere distrutti in battaglia o dall'effetto di una carta, puoi bandire la prima carta del tuo Deck per ognuno di quei mostri, invece.",
     "legacyOfficialEffect": "Quando questa carta viene attivata: bandisci 3 carte dalla cima del tuo Deck, coperte. Il nome di questa carta diventa \"Mondo Toon\" mentre è nella Zona Terreno. Il tuo avversario non può scegliere come bersaglio i mostri Toon che controlli con gli effetti delle carte. Se uno o più mostri Toon che controlli stanno per essere distrutti in battaglia o dall'effetto di una carta, puoi bandire 1 carta dalla cima del tuo Deck, coperta, per ognuno di quei mostri, invece.",
     "artOnly": true
   },
@@ -13969,16 +13969,16 @@ const cardDatabase = [
       "toon"
     ],
     "mentionsNames": [
-      "Mondo dei Toon"
+      "Mondo Toon"
     ],
-    "effect": "Aggiungi dal tuo Deck alla tua mano 1 \"Mondo dei Toon\", oppure 1 carta che cita specificamente \"Mondo dei Toon\" nel suo testo, eccetto \"Segnalibro Toon\". Se un \"Mondo dei Toon\" che controlli sta per essere distrutto dall'effetto di una carta, puoi invece bandire questa carta dal tuo Cimitero. Puoi attivare solo 1 \"Segnalibro Toon\" per turno.",
+    "effect": "Aggiungi dal tuo Deck alla tua mano 1 \"Mondo Toon\", oppure 1 carta che cita specificamente \"Mondo Toon\" nel suo testo, eccetto \"Segnalibro Toon\". Se un \"Mondo Toon\" che controlli sta per essere distrutto dall'effetto di una carta, puoi invece bandire questa carta dal tuo Cimitero. Puoi attivare solo 1 \"Segnalibro Toon\" per turno.",
     "legacyOfficialEffect": "Aggiungi 1 \"Mondo Toon\", oppure 1 carta che indica specificamente la carta \"Mondo Toon\" nel suo testo, dal tuo Deck alla tua mano, eccetto \"Segnalibro Toon\". Se uno o più \"Mondo Toon\" che controlli stanno per essere distrutti dall'effetto di una carta, puoi invece bandire questa carta dal tuo Cimitero. Puoi attivare solo 1 \"Segnalibro Toon\" per turno.",
     "artOnly": true
   },
   {
     "id": 1268,
     "origin": "yu-gi-oh",
-    "name": "Signora Arpia Toon",
+    "name": "Lady Arpia Toon",
     "limit": 2,
     "type": "monster",
     "level": 4,
@@ -13991,10 +13991,10 @@ const cardDatabase = [
       "harpie"
     ],
     "mentionsNames": [
-      "Mondo dei Toon"
+      "Mondo Toon"
     ],
-    "effect": "Se controlli \"Mondo dei Toon\": puoi Evocare Specialmente questa carta dalla tua mano, poi, se controlli un altro mostro Toon, puoi distruggere 1 Magia/Trappola controllata dal tuo avversario. Puoi utilizzare questo effetto di \"Signora Arpia Toon\" una sola volta per turno. Finché controlli \"Mondo dei Toon\", questa carta può attaccare direttamente e nel turno in cui viene Evocata.",
-    "legacyOfficialEffect": "Non può attaccare nel turno in cui viene Evocata. Se controlli \"Mondo Toon\": puoi Evocare Specialmente questa carta dalla tua mano, poi, se controlli un altro mostro Toon, puoi distruggere 1 Magia/Trappola controllata dal tuo avversario. Puoi utilizzare questo effetto di \"Signora Arpia Toon\" una sola volta per turno. Mentre controlli \"Mondo Toon\" e il tuo avversario non controlla mostri Toon, questa carta può attaccare direttamente.",
+    "effect": "Se controlli \"Mondo Toon\": puoi Evocare Specialmente questa carta dalla tua mano, poi, se controlli un altro mostro Toon, puoi distruggere 1 Magia/Trappola controllata dal tuo avversario. Puoi utilizzare questo effetto di \"Lady Arpia Toon\" una sola volta per turno. Finché controlli \"Mondo Toon\", questa carta può attaccare direttamente e nel turno in cui viene Evocata.",
+    "legacyOfficialEffect": "Non può attaccare nel turno in cui viene Evocata. Se controlli \"Mondo Toon\": puoi Evocare Specialmente questa carta dalla tua mano, poi, se controlli un altro mostro Toon, puoi distruggere 1 Magia/Trappola controllata dal tuo avversario. Puoi utilizzare questo effetto di \"Lady Arpia Toon\" una sola volta per turno. Mentre controlli \"Mondo Toon\" e il tuo avversario non controlla mostri Toon, questa carta può attaccare direttamente.",
     "artOnly": true
   },
   {
@@ -14008,9 +14008,9 @@ const cardDatabase = [
       "toon"
     ],
     "mentionsNames": [
-      "Mondo dei Toon"
+      "Mondo Toon"
     ],
-    "effect": "Se controlli \"Mondo dei Toon\": rivela 3 mostri Toon con nomi diversi dal tuo Deck, poi il tuo avversario ne sceglie 1 a caso da farti Evocare Specialmente, ignorando le sue condizioni di Evocazione; rimescola gli altri nel Deck. Puoi attivare solo 1 \"Gira-Pagina Toon\" per turno.",
+    "effect": "Se controlli \"Mondo Toon\": rivela 3 mostri Toon con nomi diversi dal tuo Deck, poi il tuo avversario ne sceglie 1 a caso da farti Evocare Specialmente, ignorando le sue condizioni di Evocazione; rimescola gli altri nel Deck. Puoi attivare solo 1 \"Gira-Pagina Toon\" per turno.",
     "legacyOfficialEffect": "Se controlli \"Mondo Toon\": rivela 3 mostri Toon con nomi diversi dal tuo Deck, il tuo avversario ne prende 1 a caso da farti Evocare Specialmente, ignorando le sue condizioni di Evocazione, inoltre mischia il resto nel tuo Deck. Puoi attivare solo 1 \"Gira-Pagina Toon\" per turno.",
     "artOnly": true
   },
@@ -14029,9 +14029,9 @@ const cardDatabase = [
       "toon"
     ],
     "mentionsNames": [
-      "Mondo dei Toon"
+      "Mondo Toon"
     ],
-    "effect": "Non può essere Evocato Normalmente/Posizionato. Deve prima essere Evocato Specialmente dalla tua mano offrendo come Tributo dalla tua mano o Terreno mostri Toon con Livello totale pari o superiore a 8. Finché controlli \"Mondo dei Toon\", questa carta può attaccare direttamente e nel turno in cui viene Evocata. Una volta per turno, se controlli \"Mondo dei Toon\": puoi scegliere come bersaglio 1 carta sul Terreno; bandiscila, inoltre questa carta non può attaccare nel turno in cui questo effetto viene attivato.",
+    "effect": "Non può essere Evocato Normalmente/Posizionato. Deve prima essere Evocato Specialmente dalla tua mano offrendo come Tributo dalla tua mano o Terreno mostri Toon con Livello totale pari o superiore a 8. Finché controlli \"Mondo Toon\", questa carta può attaccare direttamente e nel turno in cui viene Evocata. Una volta per turno, se controlli \"Mondo Toon\": puoi scegliere come bersaglio 1 carta sul Terreno; bandiscila, inoltre questa carta non può attaccare nel turno in cui questo effetto viene attivato.",
     "legacyOfficialEffect": "Non può essere Evocato Normalmente/Posizionato. Deve prima essere Evocato Specialmente (dalla tua mano) offrendo come Tributo dalla tua mano o Terreno mostri Toon con Livello totale pari o superiore a 8. Mentre tu controlli \"Mondo Toon\" e il tuo avversario non controlla nessun mostro Toon, questa carta può attaccare direttamente. Una volta per turno, se controlli \"Mondo Toon\": puoi scegliere come bersaglio 1 carta sul Terreno; bandiscila, inoltre questa carta non può attaccare nel turno in cui questo effetto viene attivato.",
     "artOnly": true
   },
@@ -14149,11 +14149,11 @@ const cardDatabase = [
     "attack": 3500,
     "defense": 3850,
     "mentionsNames": [
-      "Alpha il Guerriero Magnetico",
-      "Beta il Guerriero Magnetico",
+      "Guerriero Magnetico Alfa",
+      "Guerriero Magnetico Beta",
       "Guerriero Magnetico Gamma"
     ],
-    "effect": "Non può essere Evocato Normalmente/Posizionato. Deve prima essere Evocato Specialmente (dalla tua mano) offrendo come Tributo 1 \"Alpha il Guerriero Magnetico\", \"Beta il Guerriero Magnetico\" e \"Guerriero Magnetico Gamma\" dalla tua mano e/o Terreno. Puoi offrire come Tributo questa carta, poi scegliere come bersaglio 1 \"Alpha il Guerriero Magnetico\", 1 \"Beta il Guerriero Magnetico\" e 1 \"Guerriero Magnetico Gamma\" nel tuo Cimitero; Evoca Specialmente quei bersagli.",
+    "effect": "Non può essere Evocato Normalmente/Posizionato. Deve prima essere Evocato Specialmente (dalla tua mano) offrendo come Tributo 1 \"Guerriero Magnetico Alfa\", \"Guerriero Magnetico Beta\" e \"Guerriero Magnetico Gamma\" dalla tua mano e/o Terreno. Puoi offrire come Tributo questa carta, poi scegliere come bersaglio 1 \"Guerriero Magnetico Alfa\", 1 \"Guerriero Magnetico Beta\" e 1 \"Guerriero Magnetico Gamma\" nel tuo Cimitero; Evoca Specialmente quei bersagli.",
     "artOnly": true
   },
   {
