@@ -68,7 +68,7 @@
     }
 
     window.AmbienteMenu = { avvia: avvia, ferma: ferma };
-    window.addEventListener('ygo:video-quality-change', (e) => { if (e.detail && e.detail.livello === 'alti') avvia(); else ferma(); });
+    window.addEventListener('ygo:video-quality-change', (e) => { const d = /** @type {CustomEvent} */ (e).detail; if (d && d.livello === 'alti') avvia(); else ferma(); });
     window.addEventListener('load', () => setTimeout(avvia, 400));
     // Con la scheda nascosta il ciclo non deve consumare niente.
     document.addEventListener('visibilitychange', () => { if (window.AmbienteWebGL) window.AmbienteWebGL.sospendi(document.hidden); });

@@ -34,11 +34,16 @@ module.exports = {
 
             // Scena sulla carta
             const card = document.querySelector('#playerFieldBoard .field-slot[data-type="monster"] .card') || document.querySelector('.card');
+            // Si segue il canvas della scena per identita': altri canvas WebGL del duello (ambiente, ologrammi)
+            // compaiono e spariscono da soli in body e falsavano il conteggio.
             const prima = document.querySelectorAll('body > canvas').length;
+            const gia = new Set(document.querySelectorAll('body > canvas'));
             const ok = IconePosizione.sullaCarta(card, 'attack');
-            const durante = document.querySelectorAll('body > canvas').length;
-            await new Promise((x) => setTimeout(x, 1700));
-            const dopo = document.querySelectorAll('body > canvas').length;
+            const scena = [...document.querySelectorAll('body > canvas')].find((c) => !gia.has(c));
+            const durante = prima + (scena && scena.isConnected ? 1 : 0);
+            // La scena dura ~1,4 s: si aspetta che sparisca, con un tetto.
+            for (let i = 0; i < 40 && scena && scena.isConnected; i++) await new Promise((x) => setTimeout(x, 100));
+            const dopo = prima + (scena && scena.isConnected ? 1 : 0);
 
             // Ripiego
             window.ICONE_POSIZIONE_WEBGL_OFF = true;

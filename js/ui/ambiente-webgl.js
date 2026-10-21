@@ -892,6 +892,7 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         gl.viewport(0, 0, canvas.width, canvas.height);
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+        /** @type {Record<string, WebGLUniformLocation|null>} */
         const uni = {};
         ['r', 't', 'ev', 'evp', 'evs'].forEach((n) => { uni[n] = gl.getUniformLocation(prog, n); });
         canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); perso = true; });

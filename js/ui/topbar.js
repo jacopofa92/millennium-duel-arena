@@ -55,11 +55,10 @@
      *   Richiede js/ui/deck-switcher.js caricato dalla pagina.
      * @param {string} [opts.profileHref] - destinazione del ritratto se non c'è onProfile
  *   (vedi js/ui/deck-switcher.js).
- * @param {function} [opts.onProfile] - cosa fare al tocco sul ritratto,
-     *   per le viste SPA dove il Profilo non è un file ma una vista.
+ * @param {function} [opts.onProfile] - cosa fare al tocco sul ritratto
+     *   (di norma si apre profilo.html).
      * @param {function} [opts.onBack] - handler onclick personalizzato per
-     *   una destinazione calcolata a runtime (es. showMenuFromView() per
-     *   le viste SPA fuse dentro index.html) invece di un href fisso —
+     *   una destinazione calcolata a runtime invece di un href fisso —
      *   deve tornare `false` per impedire la normale navigazione via
      *   href, come un onclick HTML qualunque.
      * @returns {HTMLElement|undefined} l'elemento .topbar appena creato

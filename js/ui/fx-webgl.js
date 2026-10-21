@@ -41,7 +41,7 @@
     let scala = 0.8;
     /** @type {WebGLBuffer|null} */ let buf = null;
     const programmi = {};
-    /** @type {{ prog: any, avvio: number, durata: number, uniformi: (t:number, u:(n:string)=>WebGLUniformLocation|null, g:WebGLRenderingContext)=>void, fine?: ()=>void }[]} */
+    /** @type {{ prog: any, avvio: number, durata: number, uniformi: (t:number, u:(n:string)=>WebGLUniformLocation|null, g:WebGLRenderingContext)=>void, fine?: ()=>void, custom?: (t:number, ctx:any)=>void }[]} */
     let attivi = [];
     let rid = 0;
     let pronto = null;

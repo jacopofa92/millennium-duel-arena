@@ -10,3 +10,7 @@ test-results/
 # Copia minificata da pubblicare (scripts/pubblica.js): si rigenera ogni
 # volta da zero, non va mai in git.
 dist/
+
+# Pagine di prova degli effetti: restano sul PC, mai nel repository ne' online
+_anteprima-*.html
+

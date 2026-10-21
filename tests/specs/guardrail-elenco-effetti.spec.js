@@ -1,4 +1,4 @@
-// Cartoteca, Creazione Deck e la vista Cartoteca del menu NON caricano piu' il motore del duello (circa 586KB di
+// Cartoteca e Creazione Deck NON caricano piu' il motore del duello (circa 586KB di
 // script): il filtro "Categoria Mostro" legge js/data/card-effect-ids.generated.js, generato da
 // scripts/build-card-effect-ids.js. Questo spec tiene vere tre cose:
 //   1) l'elenco generato coincide con quello che il motore dice davvero (se si aggiunge una carta registrata e ci si
@@ -37,16 +37,11 @@ module.exports = {
             `L'elenco generato non e' allineato col motore (mancano ${manca.slice(0, 8)}; in piu' ${inPiu.slice(0, 8)}): lancia node scripts/build-card-effect-ids.js`);
         t.assert(r.diversi.length === 0, `Senza motore il filtro risponde diverso per ${r.diversi.length} mostri: ${r.diversi.slice(0, 6).join(', ')}`);
 
-        ['cartoteca.html', 'creazione-deck.html', 'index.html'].forEach((nome) => {
+        // index.html e' solo il menu (nessuna vista Cartoteca): restano le due pagine che mostrano le carte.
+        ['cartoteca.html', 'creazione-deck.html'].forEach((nome) => {
             const html = fs.readFileSync(path.join(radice, nome), 'utf8');
-            if (nome === 'index.html') {
-                const blocco = html.slice(html.indexOf('const SCRIPT_CARTOTECA'), html.indexOf('function initcartoteca'));
-                t.assert(!/js\/engine\/duel-engine\.js/.test(blocco) && blocco.includes('card-effect-ids.generated.js'),
-                    'La vista Cartoteca del menu non deve caricare il motore e deve leggere l\'elenco');
-            } else {
-                t.assert(!/js\/engine\/duel-engine\.js/.test(html) && html.includes('card-effect-ids.generated.js'),
-                    `${nome} non deve caricare il motore e deve leggere l'elenco`);
-            }
+            t.assert(!/js\/engine\/duel-engine\.js/.test(html) && html.includes('card-effect-ids.generated.js'),
+                `${nome} non deve caricare il motore e deve leggere l'elenco`);
         });
     }
 };

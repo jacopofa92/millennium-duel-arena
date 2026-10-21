@@ -65,7 +65,8 @@ const GLOBAL_RICHIEDE = {
 };
 
 function pagineHtml() {
-    return fs.readdirSync(RADICE).filter((f) => f.endsWith('.html'));
+    // Le pagine che iniziano per "_" sono prove locali di sviluppo (ignorate da git, non pubblicate).
+    return fs.readdirSync(RADICE).filter((f) => f.endsWith('.html') && f.charAt(0) !== '_');
 }
 
 /** Gli <script src="..."> di una pagina, nell'ordine in cui compaiono. */

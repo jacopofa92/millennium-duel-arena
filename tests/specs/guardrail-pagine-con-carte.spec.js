@@ -9,8 +9,7 @@
 // cartella sbagliata. Questo controllo lo impedisce per ogni pagina,
 // comprese quelle che verranno.
 //
-// Le viste caricate al volo da index.html (ensureViewScripts/
-// ensureViewStyles) contano come caricate dalla pagina.
+// (index.html non ha più viste fuse: ogni schermata è una pagina propria.)
 const fs = require('fs');
 const path = require('path');
 

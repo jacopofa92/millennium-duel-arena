@@ -450,7 +450,7 @@ float dado(vec2 q,float v){
     imp.playMirrorForce = function (attackerOwner, attackIndices) {
         const allowed = Array.isArray(attackIndices) ? new Set(attackIndices.map(Number)) : null;
         const targets = Array.from(document.querySelectorAll(`#${tavolo(attackerOwner)} .field-slot[data-owner="${attackerOwner}"][data-type="monster"]`))
-            .filter((s) => !allowed || allowed.has(Number(s.dataset.index))).map((s) => rectDi(s.querySelector('.card'))).filter(Boolean);
+            .filter((s) => !allowed || allowed.has(Number(/** @type {HTMLElement} */ (s).dataset.index))).map((s) => rectDi(s.querySelector('.card'))).filter(Boolean);
         if (!targets.length) return 0;
         const W = innerWidth; const H = innerHeight; const mx = W / 2; const my = attackerOwner === 'player' ? H * 0.37 : H * 0.63; const m = Math.min(W, H);
         const s = new Scena();
@@ -690,7 +690,7 @@ float dado(vec2 q,float v){
     imp.playCrushCardVirus = function (owner, targetIndices) {
         const victim = owner === 'player' ? 'bot' : 'player'; const allowed = new Set((targetIndices || []).map(Number));
         const targets = Array.from(document.querySelectorAll(`#${tavolo(victim)} .field-slot[data-owner="${victim}"][data-type="monster"]`))
-            .filter((sl) => allowed.has(Number(sl.dataset.index))).map((sl) => rectDi(sl.querySelector('.card'))).filter(Boolean);
+            .filter((sl) => allowed.has(Number(/** @type {HTMLElement} */ (sl).dataset.index))).map((sl) => rectDi(sl.querySelector('.card'))).filter(Boolean);
         const W = innerWidth; const H = innerHeight; const s = new Scena();
         s.add(T.WASH, C.VERDE, 0, 1.7, [0, 0, 0.3, 0], 3);
         s.add(T.VORTEX, C.VERDE, 0.05, 1.4, [W / 2, H / 2, Math.min(W, H) * 0.25, 0], 0.7);

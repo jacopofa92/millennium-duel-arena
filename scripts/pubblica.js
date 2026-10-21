@@ -151,7 +151,8 @@ function main() {
     const inizio = Date.now();
     svuota(DIST);
     for (const f of fs.readdirSync(RADICE)) {
-        if (f.toLowerCase().endsWith('.html') || FILE_RADICE.indexOf(f) !== -1) {
+        // Le pagine che iniziano per "_" sono prove di sviluppo (senza gate di accesso): mai online.
+        if (f.charAt(0) !== '_' && (f.toLowerCase().endsWith('.html') || FILE_RADICE.indexOf(f) !== -1)) {
             elaboraFile(path.join(RADICE, f), path.join(DIST, f), f);
         }
     }

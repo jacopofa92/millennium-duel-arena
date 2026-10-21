@@ -26,32 +26,15 @@
      si vede — comparirebbe per un istante vuoto. Vedi js/ui/game-logo.js. -->
 <link rel="stylesheet" href="js/ui/game-logo.css">
 <script src="js/ui/game-logo.js"></script>
-<!-- Da che parte pende la scena (mouse o giroscopio): la parallasse del
-     menu qui sotto e le carte "vive" delle viste fuse. -->
+<!-- Da che parte pende la scena (mouse o giroscopio): la parallasse del menu qui sotto. -->
 <script src="js/ui/inclinazione.js"></script>
-<!-- Serve alle viste fuse (Profilo, Duello Libero — vedi il router SPA
-     più sotto), che riusano lo stesso componente topbar condiviso delle
-     pagine standalone. Mancava in questa pagina (js/ui/topbar.js era
-     incluso, ma non il suo CSS): la topbar risultava presente nel DOM
-     ma completamente senza stile. -->
-<link rel="stylesheet" href="js/ui/topbar.css">
-<!-- Ritratto del giocatore in fondo alla topbar (e mazzo, nella vista
-     Duello Libero): lo monta PageTopbar, vedi js/ui/deck-switcher.js. -->
-<link rel="stylesheet" href="js/ui/deck-switcher.css">
-<!-- Le scatole 3D dei mazzi: servono ormai a tre viste diverse (Profilo,
-     Duello Libero, Negozio) e alla barra in alto, quindi si caricano
-     subito invece che tre volte alla prima apertura di ciascuna. -->
+<!-- Le scatole 3D dei due mazzi del primo avvio (onboarding). -->
 <link rel="stylesheet" href="js/ui/deck-box.css">
 <!-- Primo avvio (il negozio del nonno) e le battute che lo accompagnano. -->
 <link rel="stylesheet" href="js/ui/story-cutscene.css">
 <link rel="stylesheet" href="js/ui/onboarding.css">
-<!-- Serve alla vista fusa "Sfide" (prima sfide.html a sé stante). -->
+<!-- Banner "Sfida completata" accodato da altre pagine. -->
 <link rel="stylesheet" href="js/ui/challenge-banner.css">
-<!-- Vestito della singola carta: serve alla vista fusa "Cartoteca". È un
-     foglio di stile, non uno script: si carica subito insieme agli altri
-     invece di passare da ensureViewScripts (pesa poco, e averlo pronto
-     evita che la griglia appaia per un istante senza stile). -->
-<link rel="stylesheet" href="js/ui/card.css">
 <title>Yu-Gi-Oh! Millennium Duel Arena — Menu</title>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1230,32 +1213,13 @@
 <script src="js/ui/ambiente-webgl.js"></script>
 <script src="js/ui/ambiente-menu.js"></script>
     <script src="js/ui/bot-speed.js"></script>
-    <!-- L'ologramma serve QUI solo alla vista Impostazioni, per leggere e
-         scrivere la scelta: a disegnarlo è duelMonstersCore.html, che
-         include il file per conto suo. Senza, l'interruttore resterebbe
-         muto — il suo gestore è scritto per non fare nulla se il modulo
-         manca, quindi non darebbe errore: semplicemente non salverebbe la
-         scelta. -->
-    <script src="js/ui/hologram-setting.js"></script>
-    <!-- PRIMA di topbar.js: è PageTopbar a montare il ritratto del
-         giocatore in fondo alla barra, e se questo file non è ancora
-         caricato quando la topbar si disegna, la barra nasce senza. -->
-    <script src="js/ui/deck-box.js"></script>
     <!-- Primo avvio: il negozio del nonno che accoglie il giocatore e gli
-         fa scegliere il mazzo iniziale. story-cutscene.js porta le battute
-         (lo stesso componente degli intermezzi dei tornei), onboarding.js
-         i due passaggi che una cutscene non sa fare — il nome e la scelta
-         fra due mazzi. deck-box.js va PRIMA: le scatole dei due mazzi sono
-         le sue. -->
+         fa scegliere il mazzo iniziale. story-cutscene.js porta le battute,
+         onboarding.js il nome e la scelta fra due mazzi. deck-box.js va PRIMA:
+         le scatole dei due mazzi sono sue. -->
+    <script src="js/ui/deck-box.js"></script>
     <script src="js/ui/story-cutscene.js"></script>
     <script src="js/ui/onboarding.js"></script>
-    <script src="js/ui/deck-switcher.js"></script>
-    <!-- js/ui/topbar.js: serve alle viste fuse (Negozio, Impostazioni,
-         ecc. — vedi il router SPA più sotto), che riusano lo stesso
-         componente topbar condiviso di quando erano pagine separate,
-         solo con onBack -> showMenuFromView() invece del normale
-         backHref (che farebbe una vera navigazione fuori da questo file). -->
-    <script src="js/ui/topbar.js"></script>
     <script>
         // Particelle luminose fluttuanti sullo sfondo del menu
         (function initMenuParticles() {

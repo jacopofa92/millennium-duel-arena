@@ -544,6 +544,11 @@ priorità o richiedono un refactor ampio):
   direttamente dentro `page.evaluate()` — verificare SEMPRE lasciando
   che sia lo script della PAGINA STESSA (quello che gira naturalmente
   al caricamento, non un comando iniettato da Playwright) a chiamarlo.
+- ⚠️ **SUPERATO dalla 1.4.47: `index.html` non ha più viste né router
+  (`registerView`/`showView`, `.app-view`, `@scope`, id prefissati): il
+  menu è solo un elenco di link a pagine dedicate, una copia per schermata.
+  Il testo qui sotto resta come cronologia e come elenco di insidie
+  (ordine degli `<script>`, id mancati dallo script di prefissazione).**
 - ✅ **Profilo e Duello Libero fusi dentro `index.html` come viste SPA**
   (richiesta esplicita dell'utente, con scope ridotto in corsa da "tutte
   le pagine menu" a solo queste 2 — le altre 8 pagine menu, Negozio/
@@ -3501,6 +3506,9 @@ priorità o richiedono un refactor ampio):
   e "DUEL ARENA" ha un tetto in `vw` oltre che in `vh`, perché su un
   telefono in verticale sbordava di 3px (misurato).
 
+- ⚠️ **SUPERATO (1.4.47): le viste fuse non esistono più**, la lezione
+  resta valida in forma diversa: la logica di una schermata sta in un
+  componente (`js/ui/*-view.js`) montato dalla sua pagina dedicata.
 - ✅ **Due viste fuse in `index.html` erano rimaste indietro rispetto
   alla loro pagina standalone, e l'utente vedeva quelle** (il menu apre
   la vista fusa, non la pagina `.html`). Sfide: `sfide.html` aveva le
