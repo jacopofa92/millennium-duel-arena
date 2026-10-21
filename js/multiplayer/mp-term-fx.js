@@ -2,7 +2,8 @@
 /**
  * mp-term-fx.js — lo sfondo "KaibaCorp System" della console di connessione al server Multiplayer.
  * ------------------------------------------------------------------------------------------
- * Un canvas WebGL dietro la console (js/multiplayer/mp-lobby.js, `.mp-term`): pavimento a griglia in prospettiva che
+ * Un canvas WebGL DENTRO la console, dietro le righe di testo e sfumato ai bordi (js/multiplayer/mp-lobby.js, `.mp-term`;
+ * mai a tutto schermo): pavimento a griglia in prospettiva che
  * scorre verso chi guarda, pacchetti di dati che corrono lungo le linee del circuito, onde radar che partono
  * dall'emblema KC e un fascio di scansione. Tre fasi:
  *   - collegamento (azzurro KaibaCorp),
@@ -62,8 +63,8 @@ void main(){
   vec2 gv=uv*vec2(46.,14.); vec2 cell=floor(gv); float rn=h2(cell); float punto=1.-smoothstep(.12,.26,length(fract(gv)-.5)); float tw=step(.965,rn)*(.5+.5*sin(t*4.+rn*40.))*punto; col+=base*tw*.5; a+=tw*.35;
   // rifiuto: barre di disturbo rosse
   if(err>0.){ float band=step(.86,h2(vec2(floor(uv.y*18.),floor(t*14.))))*err; col+=vec3(1.,.2,.25)*band*.5; a+=band*.4; col*=1.-.25*err; }
-  // l'atmosfera sta SOPRA la pagina intera: leggera, mai un velo (nessun box, nessuna finestra)
-  float gain=.62; a=clamp(a,0.,1.)*gain; col=min(col*gain,vec3(a)*1.4);
+  // l'atmosfera sta DIETRO le righe della console: tenue, perche' il testo resti leggibile
+  float gain=.5; a=clamp(a,0.,1.)*gain; col=min(col*gain,vec3(a)*1.4);
   gl_FragColor=vec4(min(col,vec3(1.)),a);
 }`;
 
@@ -94,14 +95,14 @@ void main(){
             const loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
             const uR = gl.getUniformLocation(pr, 'r'); const uT = gl.getUniformLocation(pr, 't');
             const uOk = gl.getUniformLocation(pr, 'tok'); const uErr = gl.getUniformLocation(pr, 'terr'); const uOrg = gl.getUniformLocation(pr, 'org');
-            document.body.appendChild(cv);
+            // DENTRO la console, non sulla pagina: l'atmosfera sta dietro le righe di testo, con i bordi sfumati.
+            term.insertBefore(cv, term.firstChild);
 
-            let scala = Math.min(window.devicePixelRatio || 1, 1.5) * 0.5;
+            let scala = Math.min(window.devicePixelRatio || 1, 2) * 0.7;
             const adatta = () => {
-                const w = Math.max(2, Math.round(window.innerWidth * scala)); const h = Math.max(2, Math.round(window.innerHeight * scala));
+                const w = Math.max(2, Math.round((cv.clientWidth || 300) * scala)); const h = Math.max(2, Math.round((cv.clientHeight || 120) * scala));
                 if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; gl.viewport(0, 0, w, h); }
             };
-            let rcUltimo = null;
             const t0 = performance.now(); let tOk = -1; let tErr = -1; let raf = 0; let n = 0; let lento = 0; let ultimo = t0; let morto = false;
             const fine = () => {
                 morto = true; cancelAnimationFrame(raf);
@@ -113,7 +114,7 @@ void main(){
                 // (o il lampo rosso) finisce comunque di girare, poi il canvas si toglie da solo.
                 const tt = (now - t0) / 1000;
                 const esito = Math.max(tOk, tErr);
-                if (esito < 0 ? !term.isConnected : (tt - esito > 1.7)) { cv.remove(); fine(); return; }
+                if (!term.isConnected || (esito >= 0 && tt - esito > 1.7)) { cv.remove(); fine(); return; }
                 // regolatore: se i fotogrammi sono lenti si scende di risoluzione, poi si spegne
                 const dt = now - ultimo; ultimo = now;
                 if (dt > 40) lento++; else lento = Math.max(0, lento - 1);
@@ -121,10 +122,13 @@ void main(){
                 if (n++ % 20 === 0) adatta();
                 const t = (now - t0) / 1000;
                 gl.uniform2f(uR, cv.width, cv.height); gl.uniform1f(uT, t);
-                // l'origine delle onde: dove sta la riga di stato, in coordinate dello schermo (y verso l'alto)
-                if (term.isConnected) rcUltimo = term.getBoundingClientRect();
-                const rc = rcUltimo || { left: 0, top: 0, width: 90, height: 20 };
-                gl.uniform2f(uOrg, Math.min(1, Math.max(0, (rc.left + Math.min(rc.width, 90) / 2) / window.innerWidth)), Math.min(1, Math.max(0, 1 - (rc.top + rc.height / 2) / window.innerHeight)));
+                // l'origine delle onde: l'emblema KC, in coordinate della tela (y verso l'alto)
+                const emb = term.querySelector('.mp-term-emblem');
+                const cr = cv.getBoundingClientRect();
+                const er = emb ? emb.getBoundingClientRect() : null;
+                const ox = er && cr.width ? (er.left + er.width / 2 - cr.left) / cr.width : 0.12;
+                const oy = er && cr.height ? 1 - (er.top + er.height / 2 - cr.top) / cr.height : 0.5;
+                gl.uniform2f(uOrg, Math.min(1, Math.max(0, ox)), Math.min(1, Math.max(0, oy)));
                 gl.uniform1f(uOk, tOk < 0 ? -1 : tOk); gl.uniform1f(uErr, tErr < 0 ? -1 : tErr);
                 gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
                 gl.drawArrays(gl.TRIANGLES, 0, 3);
