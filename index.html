@@ -4412,7 +4412,9 @@
                 icon: 'cards', label: 'Carte', action: 'submenu',
                 children: [
                     { icon: 'shop', label: 'Negozio', action: 'view', view: 'negozio' },
-                    { icon: 'collection', label: 'Cartoteca', action: 'view', view: 'cartoteca' },
+                    // PROVA: la Cartoteca si apre come pagina dedicata (cartoteca.html), non come vista del menu. La vista resta
+                    // in index.html finche' la prova non e' confermata: per tornare indietro basta rimettere action:'view'.
+                    { icon: 'collection', label: 'Cartoteca', action: 'link', href: 'cartoteca.html' },
                     { icon: 'deckBuilder', label: 'Creazione Deck', action: 'link', href: 'creazione-deck.html' },
                     { icon: 'cardMaker', label: 'Creazione', action: 'link', href: 'crea-carta.html' }
                 ]

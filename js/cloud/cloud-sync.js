@@ -80,8 +80,20 @@
     // account viene rifiutato/revocato DOPO il primo accesso resta
     // bloccato al prossimo controllo online, non per sempre offline.
     const APPROVED_UID_KEY = 'ygoApprovedUserId';
+    // Quando e' stata l'ULTIMA conferma online. Serve a non rifare il controllo in rete ad OGNI cambio pagina: con le
+    // schermate come pagine dedicate ogni apertura passava da qui (fino a 6 secondi di attesa su una rete lenta).
+    const APPROVED_AT_KEY = 'ygoApprovedAt';
+    const VERIFICA_FRESCA_MS = 10 * 60 * 1000;
     function rememberApproved(userId) {
-        try { localStorage.setItem(APPROVED_UID_KEY, userId); } catch (e) { /* noop */ }
+        try { localStorage.setItem(APPROVED_UID_KEY, userId); localStorage.setItem(APPROVED_AT_KEY, String(Date.now())); } catch (e) { /* noop */ }
+    }
+    /** Vero se questo utente e' stato confermato online negli ultimi 10 minuti (marcatore valido e non nel futuro). */
+    function verificatoDiRecente(userId) {
+        try {
+            if (!wasApprovedOffline(userId)) return false;
+            const eta = Date.now() - Number(localStorage.getItem(APPROVED_AT_KEY) || 0);
+            return eta >= 0 && eta < VERIFICA_FRESCA_MS;
+        } catch (e) { return false; }
     }
     function forgetApproved() {
         try { localStorage.removeItem(APPROVED_UID_KEY); } catch (e) { /* noop */ }
@@ -321,6 +333,18 @@
         if (!available) return Promise.resolve(false);
         if (!cachedUser) return Promise.resolve(false);
         const userId = cachedUser.id;
+        // Confermato online da meno di 10 minuti: si entra SUBITO e la riconferma gira in sottofondo (aggiorna i marcatori:
+        // se nel frattempo l'account e' stato rifiutato, al cambio pagina successivo il marcatore non c'e' piu' e si viene
+        // fermati). Prima ogni cambio pagina aspettava la risposta del database prima di mostrare qualunque cosa.
+        if (verificatoDiRecente(userId)) {
+            verificaOnline(userId);
+            return Promise.resolve(true);
+        }
+        return verificaOnline(userId);
+    }
+
+    /** Il controllo vero: riconferma in rete lo stato dell'utente, con ripiego sul marcatore se la rete non risponde. */
+    function verificaOnline(userId) {
         return Promise.race([
             fetchProfile(userId),
             new Promise((resolve) => setTimeout(() => resolve(null), 6000))
