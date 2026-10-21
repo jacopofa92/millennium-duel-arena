@@ -363,24 +363,42 @@ uniform vec4 fila;               // sinistra, alto, destra, basso della fila (px
 uniform float alt;               // altezza di una spada
 uniform float tFlash;            // istante del lampo sulla fila
 
-// Una spada con la punta in basso: elsa, guardia, lama rastremata, gemma. Coordinate locali in px,
-// origine al centro, y verso il basso.
-vec4 spada(vec2 l,float alt){
+// Distanza (px) da un rettangolo centrato in c con mezze misure h.
+float scatola(vec2 p,vec2 c,vec2 h){vec2 q=abs(p-c)-h;return length(max(q,0.))+min(max(q.x,q.y),0.);}
+
+// Una spada al neon con la punta in basso: pomolo, impugnatura, guardia con le punte alzate, lama che si
+// rastrema solo verso la fine. TUTTE le misure derivano da W (mezza larghezza della lama, px) e da alt:
+// la spada resta proporzionata a qualunque schermo, invece di una lama filiforme di larghezza fissa.
+// Coordinate locali in px, origine al centro, y verso il basso.
+vec4 spada(vec2 l,float alt,float W,float respiro){
   float v=(l.y/alt)+.5;
-  if(v<-.02||v>1.04) return vec4(0.);
-  float hw;
-  if(v<.12) hw=3.6;
-  else if(v<.18) hw=15.;
-  else hw=11.*(1.-pow((v-.18)/.82,1.6));
-  float d=abs(l.x)-hw;
-  float corpo=1.-smoothstep(-.6,1.2,d);
-  float alone=exp(-max(d,0.)*max(d,0.)/150.)*.7;
-  float nucleo=1.-smoothstep(0.,1.,abs(l.x)/max(hw,.001));
-  vec3 verde=vec3(.41,1.,.56);
-  vec3 col=mix(verde,vec3(1.),nucleo*(v>.18?1.:.4));
-  float gemma=exp(-dot(l-vec2(0.,(.15-.5)*alt),l-vec2(0.,(.15-.5)*alt))/22.);
-  vec3 lum=col*corpo+verde*alone+vec3(.7,1.,.8)*gemma*1.4;
-  float al=clamp(corpo+alone*.6+gemma,0.,1.);
+  float ax=abs(l.x);
+  // pomolo e impugnatura
+  float dPom=length(vec2(l.x,l.y-(.032-.5)*alt))-W*.66;
+  float dImp=scatola(l,vec2(0.,(.115-.5)*alt),vec2(W*.3,.058*alt));
+  // guardia: barra con le estremita' che si alzano a falce
+  float curva=pow(ax/(W*2.1),2.)*alt*.035;
+  float dGua=scatola(vec2(l.x,l.y+curva),vec2(0.,(.205-.5)*alt),vec2(W*2.1,.02*alt));
+  // lama: larga fin quasi alla fine, poi si chiude a punta
+  float vb=clamp((v-.228)/.772,0.,1.);
+  float hw=W*(1.-pow(vb,2.6));
+  float dLam=max(max(ax-hw,(.228-v)*alt),(v-1.)*alt);
+  float d=min(min(dPom,dImp),min(dGua,dLam));
+  // corpo scuro-verde, bordo a tubo di neon, alone largo
+  float corpo=1.-smoothstep(-1.,.8,d);
+  float bordo=exp(-pow((d+1.1)*.62,2.));
+  float alone=exp(-max(d,0.)/(W*.75))*.62+exp(-max(d,0.)/(W*3.2))*.3;
+  // scanalatura centrale della lama e riflesso che la percorre
+  float inLama=step(.236,v)*(1.-smoothstep(-W*.2,W*.1,d));
+  float scan=exp(-ax*ax/(W*W*.045))*inLama*(.55+.45*sin(v*15.-t*7.));
+  float gemma=exp(-dot(l-vec2(0.,(.205-.5)*alt),l-vec2(0.,(.205-.5)*alt))/(W*W*.5))*1.3;
+  vec3 neon=vec3(.22,1.,.45);
+  vec3 lum=vec3(.01,.2,.07)*corpo
+          +neon*bordo*1.7*respiro
+          +vec3(.7,1.,.8)*scan*.75
+          +neon*alone*respiro
+          +vec3(.8,1.,.9)*gemma;
+  float al=clamp(corpo*.85+bordo+alone*.75+gemma*.6,0.,1.);
   return vec4(lum,al);
 }
 float outExpo(float x){x=clamp(x,0.,1.);return x>=1.?1.:1.-pow(2.,-10.*x);}
@@ -392,7 +410,7 @@ void main(){
   float inX=smoothstep(fila.x-60.,fila.x,P.x)*smoothstep(fila.z+60.,fila.z,P.x);
   float cielo=inX*(1.-smoothstep(0.,fila.w,P.y))*smoothstep(0.,.3,t);
   float fineCielo=1.-smoothstep(.9+ns*.095,1.5+ns*.095,t);
-  o+=vec4(vec3(1.,.97,.8)*cielo*.55*fineCielo,cielo*.4*fineCielo);
+  o+=vec4(vec3(.3,1.,.55)*cielo*.5*fineCielo,cielo*.36*fineCielo);
   for(int i=0;i<${MAX_SPADE};i++){
     if(float(i)>=ns) break;
     vec4 s=sp[i];
@@ -402,7 +420,7 @@ void main(){
     float ra=smoothstep(0.,.32,t-s.w*.4)*(1.-smoothstep(.82,1.4,t-s.w*.4));
     float semi=mix(s.z*.12,s.z*.72,smoothstep(0.,s.y,P.y));
     float colonna=smoothstep(semi,semi*.2,abs(P.x-cx))*smoothstep(0.,s.y,P.y)*ra;
-    o+=vec4(vec3(.7,1.,.8)*colonna*.3,colonna*.22);
+    o+=vec4(vec3(.25,1.,.5)*colonna*.34,colonna*.24);
     // La lama cade da lontano, inclinata, e si raddrizza all'impatto.
     float cad=outExpo(tt/.62);
     float lato=(float(i)<ns*.5)?-1.:1.;
@@ -413,12 +431,15 @@ void main(){
     vec2 l=P-centro;
     float cs=cos(ang),sn=sin(ang);
     l=vec2(cs*l.x+sn*l.y,-sn*l.x+cs*l.y)/sc;
-    vec4 sw=spada(l,alt);
+    // Mezza larghezza della lama: segue la casella (mai filiforme, mai tozza); a riposo la luce "respira".
+    float W=clamp(s.z*.3,5.,15.);
+    float respiro=.86+.14*sin(t*4.2+float(i)*1.3);
+    vec4 sw=spada(l,alt,W,respiro);
     float vis=smoothstep(0.,.12,tt);
     o=sw*vis+o*(1.-sw.a*vis);
     // Anello d'impatto alla punta.
     float imp=exp(-pow((length(P-vec2(cx,s.y))-(tt-.55)*260.)*.09,2.))*step(.55,tt)*(1.-smoothstep(.55,1.,tt));
-    o+=vec4(vec3(.8,1.,.85)*imp*.8,imp*.5);
+    o+=vec4(vec3(.35,1.,.6)*imp*.9,imp*.55);
   }
   // Lampo orizzontale sulla fila quando l'ultima e' atterrata.
   float lf=t-tFlash;
@@ -427,7 +448,7 @@ void main(){
     float x=smoothstep(fila.x-30.,fila.x,P.x)*smoothstep(fila.z+30.,fila.z,P.x);
     float e=sin(3.14159*lf/.65);
     float f=y*x*e;
-    o+=vec4(vec3(1.,.98,.85)*f*.45,f*.3);
+    o+=vec4(vec3(.45,1.,.65)*f*.5,f*.32);
   }
   gl_FragColor=o;
 }`;
@@ -441,7 +462,7 @@ void main(){
         const rowBottom = Math.max(...rects.map((r) => r.bottom));
         const rowLeft = Math.min(...rects.map((r) => r.left));
         const rowRight = Math.max(...rects.map((r) => r.right));
-        const altezza = Math.max(145, Math.min(205, (rowBottom - rowTop) * 1.16));
+        const altezza = Math.max(175, Math.min(270, (rowBottom - rowTop) * 1.65));
         const PASSO = 0.095;
         const CADUTA = 0.62;
         const n = rects.length;
