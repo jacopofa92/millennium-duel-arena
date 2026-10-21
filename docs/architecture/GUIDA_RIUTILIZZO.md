@@ -141,6 +141,10 @@ Il valore di riuso vero cambia molto in base a COSA vuoi costruire:
 10. **La carta come componente con una scala di misure (`js/ui/card-renderer.js` + `js/ui/card.css`).**
     `createCardElement` costruisce la carta; il CSS decide lo stile in base alla MISURA, non alla pagina: sotto una certa larghezza (`@container`, misurata sulla larghezza interna della carta) passa da sola allo stile compatto, ingrandita torna classica. Le misure fuori dal duello sono token con nome (`--carta-griglia`, `--carta-anteprima`, `--carta-premio`...) invece di formule ripetute in ogni pagina. Il dettaglio di una carta si apre ovunque con la stessa scheda, `CardDetail.open(card, { riepilogo, azioni })`.
 
+## Struttura delle pagine: menu = solo link
+
+Dalla 1.4.47 `index.html` è **solo il menu** (con accesso e primo avvio): ogni schermata (Cartoteca, Profilo, Impostazioni, Regole, Negozio, Sfide, Duello Libero...) è una **pagina dedicata** raggiunta da un link, con **una sola copia**. Niente viste SPA, router o id prefissati dentro `index.html`: musica e caricamento restano coerenti e il menu resta leggero. La logica condivisa di una schermata vive in un componente (`js/ui/*-view.js`, `SfideView`, `CartotecaView`, `ShopUI`, `SceltaDuellante`, `SfidaLibera`...) montato dalla sua pagina; il CSS in un file a parte (non inline) così il Service Worker lo mette in cache. Una schermata nuova = una pagina nuova + il suo componente, mai una copia dentro il menu. Le pagine di prova locali iniziano per `_` (ignorate da git e dalla pubblicazione).
+
 ## Cloud: account e salvataggio online
 
 Specifico di questo gioco, ma con regole che chi tocca `js/cloud/` deve conoscere:
