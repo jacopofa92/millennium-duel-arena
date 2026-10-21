@@ -663,7 +663,7 @@ function changeTurn() {
             slot.extraAttacksGrantedCount = 0;
         }
     });
-    // 199/747 — "deve attaccare tutti i mostri avversari": l'obbligo dura
+    // 199 — "deve attaccare tutti i mostri avversari": l'obbligo dura
     // solo il turno in cui è stato concesso, come extraAttacksGrantedCount
     // qui sopra.
     gameState.mustAttackTargetUidsFor = {};
@@ -1558,7 +1558,7 @@ function checkGameOver() {
 }
 
 /**
- * 199/747 — "deve attaccare tutti i mostri avversari, una volta ciascuno":
+ * 199 — "deve attaccare tutti i mostri avversari, una volta ciascuno":
  * vero se un attaccante con un obbligo ancora aperto (gameState.
  * mustAttackTargetUidsFor, popolato da grantAttackAllEnemiesOncEach in
  * card-effects.js) è ancora in campo E può ancora attaccare — in quel

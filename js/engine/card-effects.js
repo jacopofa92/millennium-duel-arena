@@ -1757,16 +1757,14 @@
 
     /**
      * Trova il primo mostro Incantatore di Livello 7+ scoperto sul proprio
-     * Terreno — bersaglio richiesto da 199 (Movimento d'Onda Diffuso) e 747
-     * (Onda di Diffusione) qui sotto, entrambe varianti quasi identiche
-     * dello stesso testo reale.
+     * Terreno — bersaglio richiesto da 199 (Esplosione a Onde Soniche).
      */
     function findLevel7SpellcasterTarget(ctx) {
         return ctx.field(ctx.owner).findIndex((slot) => slot && !slot.isFaceDown && slot.card.race === 'Incantatore' && slot.card.level >= 7);
     }
 
     /**
-     * Applica la parte comune di 199/747: concede al mostro bersaglio
+     * Applica la parte "deve attaccare tutti" di 199: concede al mostro bersaglio
      * abbastanza attacchi extra per colpire OGNI mostro avversario
      * attualmente in campo una volta ciascuno (slot.extraAttacksGrantedCount,
      * vedi il commento accanto a extraAttackGranted in actions.js) e

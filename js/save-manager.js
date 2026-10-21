@@ -317,6 +317,49 @@
         return true;
     }
 
+    /**
+     * CARTE ELIMINATE DAL GIOCO (2026-10-21): otto carte erano la STESSA carta reale di un'altra (due voci per Black Luster
+     * Soldier, Giant Trunade...) e sono state tolte. Chi le possedeva, o le aveva in un mazzo, le ritrova sulla carta che resta:
+     * `{ idEliminato: idChe Resta }`. L'id tolto non va mai riusato per un'altra carta, o questa mappa le scambierebbe.
+     * Vale per ogni salvataggio che entra (locale, cloud, file importato): e' idempotente.
+     */
+    const CARTE_ELIMINATE = { 616: 55, 617: 56, 163: 530, 747: 199, 668: 262, 1024: 315, 723: 349, 609: 452 };
+
+    function migraCarteEliminate(save) {
+        let cambiato = false;
+        const tetto = (id) => {
+            if (window.CardAcquisition && typeof CardAcquisition.copyCapFor === 'function') return CardAcquisition.copyCapFor(id);
+            return CARD_COPY_CAP;
+        };
+        if (save.collection && typeof save.collection === 'object') {
+            Object.keys(CARTE_ELIMINATE).forEach((vecchio) => {
+                const copie = Number(save.collection[vecchio]);
+                if (save.collection[vecchio] === undefined) return;
+                const nuovo = CARTE_ELIMINATE[vecchio];
+                if (Number.isFinite(copie) && copie > 0) {
+                    save.collection[nuovo] = Math.min(tetto(nuovo), (Number(save.collection[nuovo]) || 0) + copie);
+                }
+                delete save.collection[vecchio];
+                cambiato = true;
+            });
+        }
+        (save.decks || []).forEach((deck) => {
+            ['main', 'extra'].forEach((zona) => {
+                if (!Array.isArray(deck[zona]) || !deck[zona].some((e) => e && CARTE_ELIMINATE[e.id] !== undefined)) return;
+                const unite = new Map();
+                deck[zona].forEach((e) => {
+                    if (!e) return;
+                    const id = CARTE_ELIMINATE[e.id] !== undefined ? CARTE_ELIMINATE[e.id] : e.id;
+                    const q = (unite.has(id) ? unite.get(id).qty : 0) + (Number(e.qty) || 0);
+                    unite.set(id, Object.assign({}, e, { id: id, qty: Math.min(tetto(id), q) }));
+                });
+                deck[zona] = [...unite.values()];
+                cambiato = true;
+            });
+        });
+        return cambiato;
+    }
+
     function load() {
         let save = readRaw();
         if (!save) save = migrateLegacyIfNeeded();
@@ -436,6 +479,7 @@
             });
             dirty = true;
         }
+        if (migraCarteEliminate(save)) dirty = true;
         if (dirty) writeRaw(save);
         return save;
     }
@@ -1237,6 +1281,7 @@
             azzeramentoDaComunicare = true;
             setTimeout(comunicaAzzeramento, 0);
         }
+        migraCarteEliminate(parsed);
         writeRaw(parsed);
         syncSettingsCache(parsed.settings);
         window.dispatchEvent(new CustomEvent('ygo:settings-applied', { detail: { settings: { ...parsed.settings } } }));

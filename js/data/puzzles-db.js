@@ -176,7 +176,7 @@ const puzzlesDatabase = [
         descrizione: 'Il campo è libero, ma il guerriero decisivo non può essere Evocato normalmente.',
         suggerimento: 'Somma i Livelli dei tuoi due mostri e attiva la Magia Rituale corretta.',
         lpAvversario: 3000,
-        mano: [616, 617],
+        mano: [55, 56],
         mostri: [[14, 'attacco'], [526, 'difesa']],
         avversario: {}
     }

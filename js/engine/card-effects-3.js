@@ -1262,20 +1262,19 @@
     CardEffects.register(530, {
         onPositionChange(ctx) {
             if (ctx.fromPosition !== 'defense' || ctx.toPosition !== 'attack') return;
-            const field = ctx.field(ctx.opponent);
-            let targetIndex = -1;
-            let highestAtk = -1;
-            field.forEach((slot, i) => {
-                if (slot && !slot.isFaceDown && slot.card.attack > highestAtk) { highestAtk = slot.card.attack; targetIndex = i; }
+            const candidati = [];
+            ctx.field(ctx.opponent).forEach((slot, index) => {
+                if (slot) candidati.push({ owner: ctx.opponent, index, card: slot.card });
             });
-            if (targetIndex === -1) return;
-            const decl = ctx.declareTarget(ctx.opponent, targetIndex, { totalTargetCount: 1 });
-            if (!decl.allowed) return;
-            const finalSlot = ctx.field(decl.targetOwner)[decl.targetIndex];
-            if (!finalSlot) return;
-            const bouncedName = finalSlot.card.name;
-            ctx.returnMonsterToHand(decl.targetOwner, decl.targetIndex);
-            ctx.log(`🤡 Clown Stupido rimanda ${bouncedName} in mano!`);
+            chooseFieldMonsterTarget(ctx, candidati, {
+                title: '🤡 Clown Stupido',
+                text: 'Scegli quale mostro avversario rimandare in mano.'
+            }, (scelta) => {
+                const decl = ctx.declareTarget(scelta.owner, scelta.index, { totalTargetCount: 1 });
+                if (!decl.allowed) return;
+                ctx.returnMonsterToHand(decl.targetOwner, decl.targetIndex);
+                ctx.log('🤡 Clown Stupido rimanda in mano un mostro dell\'avversario!');
+            });
         }
     });
 
@@ -3212,29 +3211,6 @@
             }, (card) => {
                 if (card === null) return;
                 applyCopy(card);
-            });
-        }
-    });
-
-    // 163 — Pagliaccio Insolente: se passa da Difesa ad Attacco, rimanda
-    // in mano 1 mostro dell'avversario (onPositionChange, già esistente
-    // — vedi ACTIONS.changePosition in duel-engine.js). SEMPLIFICAZIONE:
-    // bersaglio auto-selezionato.
-    CardEffects.register(163, {
-        onPositionChange(ctx) {
-            if (ctx.fromPosition !== 'defense' || ctx.toPosition !== 'attack') return;
-            const candidati = [];
-            ctx.field(ctx.opponent).forEach((slot, index) => {
-                if (slot) candidati.push({ owner: ctx.opponent, index, card: slot.card });
-            });
-            chooseFieldMonsterTarget(ctx, candidati, {
-                title: '🤡 Pagliaccio Insolente',
-                text: 'Scegli quale mostro avversario rimandare in mano.'
-            }, (scelta) => {
-                const decl = ctx.declareTarget(scelta.owner, scelta.index, { totalTargetCount: 1 });
-                if (!decl.allowed) return;
-                ctx.returnMonsterToHand(decl.targetOwner, decl.targetIndex);
-                ctx.log('🤡 Pagliaccio Insolente rimanda in mano un mostro dell\'avversario!');
             });
         }
     });

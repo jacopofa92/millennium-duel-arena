@@ -14,7 +14,7 @@
 (function () {
     'use strict';
 
-    const { otherHandCards, blockBanishFromField, isHarpieLadySupport, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, findPetitMothReadyForCocoonSummon, releaseRelinquishedTarget } = window.CardEffectsShared;
+    const { chooseCardFromList, otherHandCards, blockBanishFromField, isHarpieLadySupport, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, findPetitMothReadyForCocoonSummon, releaseRelinquishedTarget } = window.CardEffectsShared;
 
     // ================================================================
     // 52 — Grande Falena / Great Moth
@@ -2503,21 +2503,33 @@
             return ctx.graveyard(ctx.owner).length > 0 || ctx.graveyard(ctx.opponent).length > 0;
         },
         activate(ctx) {
-            let banished = 0;
-            let blocked = false;
-            [ctx.owner, ctx.opponent].forEach((owner) => {
-                if (blocked) return;
-                const gy = ctx.graveyard(owner);
-                // Necrovalley (id 890): se il bando è bloccato, resta
-                // bloccato per OGNI carta di ENTRAMBI i Cimiteri (è un
-                // effetto di campo globale, non cambia a metà ciclo) — esce
-                // subito invece di ricontrollare invano ad ogni iterazione.
-                while (banished < 5 && gy.length > 0) {
-                    if (!ctx.banishFromGraveyard(owner, gy[gy.length - 1])) { blocked = true; break; }
-                    banished++;
-                }
-            });
-            ctx.log(`👻 Rilascio delle Anime bandisce ${banished} cart${banished === 1 ? 'a' : 'e'} dai Cimiteri!`);
+            let count = 0;
+            const fine = () => {
+                ctx.log(`👻 Rilascio delle Anime bandisce ${count} cart${count === 1 ? 'a' : 'e'} dai Cimiteri!`);
+            };
+            const prendi = (restanti) => {
+                if (restanti === 0) { fine(); return; }
+                // I candidati si ricalcolano AD OGNI giro: sono le carte
+                // che stanno nei due Cimiteri in questo momento.
+                const candidati = [...ctx.graveyard(ctx.owner), ...ctx.graveyard(ctx.opponent)];
+                if (candidati.length === 0) { fine(); return; }
+                // chooseCardFromList non rimuove nulla da sola: qui la
+                // rimozione la fa ctx.banishFromGraveyard, che sa anche
+                // rifiutarsi se Necrovalley (id 890) blocca il bando.
+                chooseCardFromList(ctx, candidati, {
+                    title: '👻 Rilascio delle Anime',
+                    text: `Scegli la carta da bandire dai Cimiteri (${count + 1} di 5).`
+                }, (scelta) => {
+                    const owner = ctx.graveyard(ctx.owner).includes(scelta) ? ctx.owner : ctx.opponent;
+                    // Necrovalley: se il bando è bloccato lo è per ogni
+                    // carta di entrambi i Cimiteri, quindi si chiude qui
+                    // invece di riprovare invano.
+                    if (!ctx.banishFromGraveyard(owner, scelta)) { fine(); return; }
+                    count++;
+                    prendi(restanti - 1);
+                });
+            };
+            prendi(5);
         }
     });
 

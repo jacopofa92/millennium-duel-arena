@@ -254,8 +254,8 @@
         giudizio: 448,     // Giudizio Solenne
         servo: 526,
         robolady: 528,
-        soldatoFulgore: 616,
-        ritoFulgore: 617,
+        soldatoFulgore: 55,
+        ritoFulgore: 56,
         ascia: 618,
         libroLuna: 875
     };

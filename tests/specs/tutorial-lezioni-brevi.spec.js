@@ -51,7 +51,7 @@ const LEZIONI = {
     },
     rituale: {
         verifica: () => ({
-            ok: gameState.playerMonsterField.some((s) => s && s.card.id === 616)
+            ok: gameState.playerMonsterField.some((s) => s && s.card.id === 55)
                 && gameState.playerGraveyard.some((c) => c.id === 14)
                 && gameState.playerGraveyard.some((c) => c.id === 526),
             dettaglio: { campo: gameState.playerMonsterField.filter(Boolean).map((s) => s.card.id), cimitero: gameState.playerGraveyard.map((c) => c.id) }

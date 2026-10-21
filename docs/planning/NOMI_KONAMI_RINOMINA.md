@@ -1,6 +1,6 @@
 # Allineamento dei nomi ai nomi ufficiali Konami in italiano (2026-10-21)
 
-Fonte: YGOPRODeck API v7 (nomi italiani Konami, `language=it`). Il gioco ha 1141 carte Yu-Gi-Oh: **625 rinominate**, 449 avevano gia' il nome ufficiale, **58 invariate** (motivo nella tabella piu' in basso). Le carte di altri set (WW1) non sono toccate.
+Fonte: YGOPRODeck API v7 (nomi italiani Konami, `language=it`). Il gioco ha 1133 carte Yu-Gi-Oh: **625 rinominate**, 449 avevano gia' il nome ufficiale, **50 invariate** (motivo nella tabella piu' in basso). Le carte di altri set (WW1) non sono toccate.
 
 ## Come sono state identificate
 
@@ -22,7 +22,24 @@ Per non cambiare il comportamento sono rimaste fuori dalle ricerche per nome alc
 
 **Protezione permanente**: `tests/specs/guardrail-nomi-carte.spec.js` congela, per ogni ricerca per nome del codice e per ogni funzione che identifica carte per nome, le carte che devono trovare (`tests/data/ricerche-per-nome.json`). Cambiare un nome o scrivere una nuova ricerca per nome fa fallire il test finche' non si verifica cosa succede e si aggiorna con `node tests/helpers/ricerche-per-nome.js --aggiorna`.
 
-## Carte NON rinominate (58)
+## Carte doppie ELIMINATE (8)
+
+Otto carte erano la stessa carta reale di un'altra (due voci nel gioco): sono state eliminate e al loro posto resta la carta indicata. Chi le possedeva o le aveva in un mazzo le ritrova sulla carta che resta (migrazione in `js/save-manager.js`, `CARTE_ELIMINATE`); mazzi dei Duellanti, Structure/Starter Deck, puzzle e Tutorial sono stati spostati. Le parti piu' fedeli al testo ufficiale degli alias sono state portate sulla carta che resta (clausola di annullamento di Esplosione a Onde Soniche, scelta delle carte di Rilascio delle Anime, scelta del bersaglio di Clown Stupido). Raigeki (409) e Folgore Fulminante (37) restano entrambe.
+
+| Eliminata | Resta |
+|---|---|
+| 163 Pagliaccio Insolente | 530 Clown Stupido |
+| 609 Liberazione dell'Anima | 452 Rilascio delle Anime |
+| 616 Soldato del Fulgore Nero | 55 Glorioso Soldato Nero |
+| 617 Rito del Fulgore Nero | 56 Rito della Gloria Nera |
+| 668 Grande Tornado | 262 Ritorno Totale |
+| 723 Lama Fulminea | 349 Lama Accecante |
+| 747 Onda di Diffusione | 199 Esplosione a Onde Soniche |
+| 1024 Bomba a Orologeria | 315 Bomba a Tempo |
+
+Nota: l'alias 1024 "Bomba a Orologeria" era la versione attivabile a mano; la 315 "Bomba a Tempo" esplode da sola alla Standby Phase.
+
+## Carte NON rinominate (50)
 
 | id | Nome nel gioco | Proposta ufficiale | Motivo |
 |---|---|---|---|
@@ -34,7 +51,6 @@ Per non cambiare il comportamento sono rimaste fuori dalle ricerche per nome alc
 | 132 | Soffio di Luce | — | Breath of Light non ha un nome italiano ufficiale (solo inglese) |
 | 153 | Notte Meccanica | — | carta non identificata con certezza (nessuna corrispondenza affidabile) |
 | 162 | Copione | — | carta non identificata con certezza (stat/testo non coincidono con Copycat) |
-| 163 | Pagliaccio Insolente | — | stessa carta reale della 530 (Clown Stupido): due voci nel gioco, resta l'alias |
 | 185 | Folletto Oscuro | — | nessuna carta ufficiale corrispondente trovata (carta del gioco o non tradotta) |
 | 197 | Prigione dei Dadi | — | carta non identificata con certezza |
 | 200 | Dado Dimensionale | — | carta non identificata con certezza |
@@ -51,16 +67,10 @@ Per non cambiare il comportamento sono rimaste fuori dalle ricerche per nome alc
 | 472 | Il Drago Alato di Ra | — | nessuna carta ufficiale corrispondente trovata (carta del gioco o non tradotta) |
 | 498 | Cerchio degli Inferi | — | carta non identificata con certezza |
 | 586 | Uomo Karate | Karate Man | il nome italiano ufficiale coincide con l'inglese (carta non tradotta): resta il nome del gioco |
-| 609 | Liberazione dell'Anima | — | stessa carta reale della 452 (Rilascio delle Anime): due voci nel gioco, resta l'alias |
-| 616 | Soldato del Fulgore Nero | — | stessa carta reale della 55 (Glorioso Soldato Nero): due voci nel gioco, resta l'alias |
-| 617 | Rito del Fulgore Nero | — | stessa carta reale della 56 (Rito della Gloria Nera): due voci nel gioco, resta l'alias |
 | 631 | Megamorfosi | Megamorph | il nome italiano ufficiale coincide con l'inglese (carta non tradotta): resta il nome del gioco |
-| 668 | Grande Tornado | Ritorno Totale | alias di un'altra carta del gioco (stessa carta reale): carta 262 |
 | 691 | Signore Drago Oceanico - Neo-Daedalus | — | nessuna carta ufficiale corrispondente trovata (carta del gioco o non tradotta) |
 | 692 | Guerriero del Serpente Marino dell'Oscurità | — | nessuna carta ufficiale corrispondente trovata (carta del gioco o non tradotta) |
 | 700 | Levia-Dragon - Daedalus | — | nessuna carta ufficiale corrispondente trovata (carta del gioco o non tradotta) |
-| 723 | Lama Fulminea | — | stessa carta reale della 349 (Lama Accecante): due voci nel gioco, resta l'alias |
-| 747 | Onda di Diffusione | — | stessa carta reale della 199 (Esplosione a Onde Soniche): due voci nel gioco, resta l'alias |
 | 780 | Ninja Signora Yae | Lady Ninja Yae | il nome italiano ufficiale coincide con l'inglese (carta non tradotta): resta il nome del gioco |
 | 803 | Idrogeddon | Hydrogeddon | il nome italiano ufficiale coincide con l'inglese (carta non tradotta): resta il nome del gioco |
 | 804 | Ossigeddon | Oxygeddon | il nome italiano ufficiale coincide con l'inglese (carta non tradotta): resta il nome del gioco |
@@ -78,7 +88,6 @@ Per non cambiare il comportamento sono rimaste fuori dalle ricerche per nome alc
 | 903 | Santa Giovanna | St. Joan | il nome italiano ufficiale coincide con l'inglese (carta non tradotta): resta il nome del gioco |
 | 928 | Seadra Spinoso | — | nessuna carta ufficiale corrispondente trovata (carta del gioco o non tradotta) |
 | 998 | Behemoth Fuso | — | nessuna carta ufficiale corrispondente trovata (carta del gioco o non tradotta) |
-| 1024 | Bomba a Orologeria | — | Jigen Bakudan non ha un nome italiano diverso dall'inglese; la 315 e' la stessa carta reale |
 | 1058 | Tuorlo Mucoso | Mucus Yolk | il nome italiano ufficiale coincide con l'inglese (carta non tradotta): resta il nome del gioco |
 | 1060 | Insetto dalle 8 Chele | — | nessuna carta ufficiale corrispondente trovata (carta del gioco o non tradotta) |
 | 1061 | Shock di Byser | Byser Shock | il nome italiano ufficiale coincide con l'inglese (carta non tradotta): resta il nome del gioco |

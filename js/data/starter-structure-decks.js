@@ -280,7 +280,7 @@ const starterStructureDeckDatabase = [
             { id: 608, qty: 1 }, // SDP-033 Corsa Avventata / Rush Recklessly
             { id: 417, qty: 1 }, // SDP-034 Rimuovi Trappola / Remove Trap
             { id: 35, qty: 1 },  // SDP-035 Mostro Resuscitato / Monster Reborn
-            { id: 609, qty: 1 }, // SDP-036 Liberazione dell'Anima / Soul Release
+            { id: 452, qty: 1 }, // SDP-036 Rilascio delle Anime / Soul Release
             { id: 557, qty: 1 }, // SDP-037 Yami
             { id: 116, qty: 1 }, // SDP-038 Rito Illusione Nera / Black Illusion Ritual
             { id: 420, qty: 1 }, // SDP-039 Anello del Magnetismo / Ring of Magnetism
@@ -328,8 +328,8 @@ const starterStructureDeckDatabase = [
             { id: 601, qty: 1 }, // SYE-021 Uccello Sonico / Sonic Bird
             { id: 625, qty: 1 }, // SYE-022 Zombyra l'Oscuro / Zombyra the Dark
             { id: 615, qty: 1 }, // SYE-023 Biblioteca Reale Magica / Royal Magical Library
-            { id: 616, qty: 1 }, // SYE-024 Soldato del Fulgore Nero / Black Luster Soldier
-            { id: 617, qty: 1 }, // SYE-025 Rito del Fulgore Nero / Black Luster Ritual
+            { id: 55, qty: 1 }, // SYE-024 Glorioso Soldato Nero / Black Luster Soldier
+            { id: 56, qty: 1 }, // SYE-025 Rito della Gloria Nera / Black Luster Ritual
             { id: 7, qty: 1 },   // SYE-026 Buco Nero / Dark Hole
             { id: 546, qty: 1 }, // SYE-027 Dian Keto il Curatore
             { id: 243, qty: 1 }, // SYE-028 Faglia / Fissure
@@ -630,7 +630,7 @@ const starterStructureDeckDatabase = [
             { id: 667, qty: 2 }, // SD2-EN012 Mummia Rigenerante / Regenerating Mummy
             { id: 645, qty: 1 }, // SD2-EN013 Strappa Possesso / Snatch Steal
             { id: 607, qty: 1 }, // SD2-EN014 Tifone Spaziale Mistico / Mystical Space Typhoon (quantità NON confermata, presunta 1x)
-            { id: 668, qty: 1 }, // SD2-EN015 Grande Tornado / Giant Trunade (quantità NON confermata, presunta 1x)
+            { id: 262, qty: 1 }, // SD2-EN015 Ritorno Totale / Giant Trunade (quantità NON confermata, presunta 1x)
             { id: 632, qty: 1 }, // SD2-EN016 Nobiluomo dello Scambio / Nobleman of Crossout (quantità NON confermata, presunta 1x)
             { id: 36, qty: 1 },  // SD2-EN017 Anfora dell'Avidità / Pot of Greed
             { id: 141, qty: 2 }, // SD2-EN018 Carta del Ritorno Sicuro / Card of Safe Return (quantità NON confermata, stimata per far quadrare il totale a 40)
@@ -776,8 +776,8 @@ const starterStructureDeckDatabase = [
             { id: 722, qty: 1 }, // SD5-EN018 Spada Divina - Lama della Fenice / Divine Sword - Phoenix Blade
             { id: 645, qty: 1 }, // SD5-EN019 Strappa Possesso / Snatch Steal
             { id: 607, qty: 1 }, // SD5-EN020 Tifone Spaziale Mistico / Mystical Space Typhoon
-            { id: 668, qty: 2 }, // SD5-EN021 Grande Tornado / Giant Trunade (quantità NON confermata, stimata per far quadrare il totale a 40)
-            { id: 723, qty: 1 }, // SD5-EN022 Lama Fulminea / Lightning Blade
+            { id: 262, qty: 2 }, // SD5-EN021 Ritorno Totale / Giant Trunade (quantità NON confermata, stimata per far quadrare il totale a 40)
+            { id: 349, qty: 1 }, // SD5-EN022 Lama Accecante / Lightning Blade
             { id: 646, qty: 1 }, // SD5-EN023 Tempesta Potente / Heavy Storm
             { id: 724, qty: 2 }, // SD5-EN024 Rinforzi dell'Esercito / Reinforcement of the Army (quantità NON confermata, stimata per far quadrare il totale a 40)
             { id: 725, qty: 1 }, // SD5-EN025 Il Guerriero Sopravvissuto / The Warrior Returning Alive
@@ -830,7 +830,7 @@ const starterStructureDeckDatabase = [
             { id: 8, qty: 1 },   // SD6-EN021 Spada Rivelatrice / Swords of Revealing Light
             { id: 746, qty: 1 }, // SD6-EN022 Potere del Mago / Mage Power
             { id: 646, qty: 1 }, // SD6-EN023 Tempesta Potente / Heavy Storm
-            { id: 747, qty: 1 }, // SD6-EN024 Onda di Diffusione / Diffusion Wave-Motion
+            { id: 199, qty: 1 }, // SD6-EN024 Esplosione a Onde Soniche / Diffusion Wave-Motion
             { id: 649, qty: 1 }, // SD6-EN025 Ricarica / Reload
             { id: 748, qty: 1 }, // SD6-EN026 Attacco Mago Nero / Dark Magic Attack
             { id: 749, qty: 1 }, // SD6-EN027 Assorbimento Magico / Spell Absorption

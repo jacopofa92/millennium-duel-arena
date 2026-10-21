@@ -131,10 +131,10 @@ const SOLUZIONI = {
         await attacca(page, 1, -1);
     },
     'rito-fulgore': async (page) => {
-        await attiva(page, 617);
+        await attiva(page, 56);
         await calma(page);
         await battaglia(page);
-        await attacca(page, await casellaDi(page, 616), -1);
+        await attacca(page, await casellaDi(page, 55), -1);
     }
 };
 

@@ -2602,49 +2602,6 @@
     });
 
     // ================================================================
-    // 609 — Liberazione dell'Anima / Soul Release (Magia Normale)
-    // Scegli come bersaglio fino a 5 carte in uno o più Cimiteri;
-    // bandiscile (ctx.banish, zona Bandite). Le 5 si scelgono UNA ALLA
-    // VOLTA, ognuna dentro la callback della precedente: i picker sono
-    // asincroni, e fra una scelta e l'altra il Cimitero cambia (la carta
-    // appena bandita non deve ricomparire nell'elenco successivo).
-    // ================================================================
-    CardEffects.register(609, {
-        canActivate(ctx) {
-            return ctx.graveyard(ctx.owner).length > 0 || ctx.graveyard(ctx.opponent).length > 0;
-        },
-        activate(ctx) {
-            let count = 0;
-            const fine = () => {
-                ctx.log(`👻 Liberazione dell'Anima bandisce ${count} cart${count === 1 ? 'a' : 'e'} dai Cimiteri!`);
-            };
-            const prendi = (restanti) => {
-                if (restanti === 0) { fine(); return; }
-                // I candidati si ricalcolano AD OGNI giro: sono le carte
-                // che stanno nei due Cimiteri in questo momento.
-                const candidati = [...ctx.graveyard(ctx.owner), ...ctx.graveyard(ctx.opponent)];
-                if (candidati.length === 0) { fine(); return; }
-                // chooseCardFromList non rimuove nulla da sola: qui la
-                // rimozione la fa ctx.banishFromGraveyard, che sa anche
-                // rifiutarsi se Necrovalley (id 890) blocca il bando.
-                chooseCardFromList(ctx, candidati, {
-                    title: '👻 Liberazione dell\'Anima',
-                    text: `Scegli la carta da bandire dai Cimiteri (${count + 1} di 5).`
-                }, (scelta) => {
-                    const owner = ctx.graveyard(ctx.owner).includes(scelta) ? ctx.owner : ctx.opponent;
-                    // Necrovalley: se il bando è bloccato lo è per ogni
-                    // carta di entrambi i Cimiteri, quindi si chiude qui
-                    // invece di riprovare invano.
-                    if (!ctx.banishFromGraveyard(owner, scelta)) { fine(); return; }
-                    count++;
-                    prendi(restanti - 1);
-                });
-            };
-            prendi(5);
-        }
-    });
-
-    // ================================================================
     // 610 — Goblin Ladro / Robbin' Goblin (Trappola Continua)
     // Ogni volta che un mostro controllato infligge danno da battaglia
     // all'avversario: l'avversario scarta 1 carta a caso. Riusa
@@ -2771,69 +2728,6 @@
             ctx.drawCards(ctx.owner, 1);
             ctx.log('📚 Biblioteca Reale Magica rimuove 3 Segnalini Magia e pesca 1 carta!');
         }
-    });
-
-    // ================================================================
-    // 617 — Rito del Fulgore Nero / Black Luster Ritual (Magia Rituale)
-    // Ritual Summon di Soldato del Fulgore Nero (id 616) dalla mano.
-    // Stesso identico schema di Rito del Guerriero Nero (id 56)/Rituale
-    // del Drago Bianco (id 506)/Rito dell'Illusione Nera (id 116).
-    // SEMPLIFICAZIONE: sacrifica in automatico dal proprio Terreno i
-    // mostri con Livello più alto, invece di lasciar scegliere anche tra
-    // mano e Terreno come da regola vera.
-    // ================================================================
-    CardEffects.register(617, {
-        canActivate(ctx) {
-            const hasRitualMonster = ctx.hand(ctx.owner).some((c) => c.id === 616);
-            if (!hasRitualMonster) return false;
-            const totalLevel = ctx.field(ctx.owner).reduce((sum, slot) => sum + (slot ? (slot.card.level || 0) : 0), 0);
-            return totalLevel >= 8;
-        },
-        activate(ctx) {
-            const field = ctx.field(ctx.owner);
-            const occupied = field
-                .map((slot, index) => (slot ? { index, level: slot.card.level || 0 } : null))
-                .filter(Boolean)
-                .sort((a, b) => b.level - a.level);
-
-            let remaining = 8;
-            const toSacrifice = [];
-            occupied.forEach((entry) => {
-                if (remaining <= 0) return;
-                toSacrifice.push(entry.index);
-                remaining -= entry.level;
-            });
-            toSacrifice.forEach((index) => {
-                ctx.graveyard(ctx.owner).push(field[index].card);
-                field[index] = null;
-            });
-
-            const hand = ctx.hand(ctx.owner);
-            const handIndex = hand.findIndex((c) => c.id === 616);
-            if (handIndex === -1) return;
-            const [ritualCard] = hand.splice(handIndex, 1);
-
-            const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
-            if (slotIndex === -1) {
-                ctx.graveyard(ctx.owner).push(ritualCard);
-                ctx.log('⚠️ Il Terreno è pieno: Soldato del Fulgore Nero finisce nel Cimitero.');
-                return;
-            }
-            ctx.specialSummon(ctx.owner, ritualCard, slotIndex, 'attack', 'hand');
-            ctx.log('⚔️ Rito del Fulgore Nero evoca Soldato del Fulgore Nero!');
-        }
-    });
-
-    // ================================================================
-    // 616 — Soldato del Fulgore Nero / Black Luster Soldier: Evocabile
-    // Rituale solo tramite "Rito del Fulgore Nero" (id 617, qui sopra —
-    // GIÀ IMPLEMENTATA). Qui serve solo il divieto di Evocazione
-    // Normale/Set e di Special Summon per ogni altra via
-    // (cannotNormalSummon/cannotBeSpecialSummoned — stesso schema di 413).
-    // ================================================================
-    CardEffects.register(616, {
-        cannotNormalSummon: true,
-        cannotBeSpecialSummoned: true
     });
 
     // ================================================================
@@ -3030,8 +2924,8 @@
     // ================================================================
     // 623 — Sparizione / Disappear (Trappola Normale)
     // Bandisci 1 carta dal Cimitero dell'avversario (ctx.banish, zona
-    // Bandite — vedi anche Demolizione dell'Anima id 450/Liberazione
-    // dell'Anima id 609, stesso schema). Sceglie da sola la più vecchia.
+    // Bandite — vedi anche Demolizione dell'Anima id 450/Rilascio
+    // delle Anime id 452, stesso schema). Sceglie da sola la più vecchia.
     // ================================================================
     CardEffects.register(623, {
         canActivate(ctx) {

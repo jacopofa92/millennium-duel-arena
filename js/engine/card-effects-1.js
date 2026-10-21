@@ -481,7 +481,7 @@
     // ACQUA-wide senza passare da declareTarget: il bonus/malus ATK/DEF
     // di Un Oceano Leggendario (id 79, anche la riduzione di Livello —
     // vedi il controllo su card.id === 285 dentro getEffectiveLevel,
-    // cards-db.js), Lama Fulminante (id 349), Lama Fulminea (id 723) e la
+    // cards-db.js), Lama Accecante (id 349) e la
     // distruzione di massa di Grande Onda Piccola Onda (id 706). Nessuna
     // Magia MOSTRO (es. Piccola Chimera id 676, Ragazzo Stella id 696: un
     // effetto continuo del MOSTRO stesso, non "della Magia") ne è
@@ -647,7 +647,7 @@
     // salvataggio).
     // "...e attacca il tuo mostro scelto": forzato per davvero tramite
     // gameState.mustAttackTargetUidsFor (vedi più sotto in activate()),
-    // lo stesso meccanismo costruito per 199/747 — se l'avversario non
+    // lo stesso meccanismo costruito per 199 — se l'avversario non
     // può comunque attaccare per qualche motivo, resta comunque coerente
     // con "in ogni altro caso è Pareggio" del testo reale.
     // ================================================================
@@ -702,7 +702,7 @@
                         ctx.log(`⏳ Ultimo Turno: l'avversario Special Summona ${oppMonster.name}!`);
                         // "...e attacca il tuo mostro scelto": obbligo vero
                         // e proprio (gameState.mustAttackTargetUidsFor,
-                        // stesso meccanismo di 199/747) — se il lato
+                        // stesso meccanismo di 199) — se il lato
                         // forzato è il bot, botPerformAttacks (bot.js) lo
                         // consulta e ignora la normale valutazione di
                         // convenienza; se è il giocatore, handlePhaseStepperClick
@@ -2457,12 +2457,12 @@
     // actions.js — nessuna carta di questo dataset alza di nuovo l'ATK di
     // un mostro dopo, quindi non c'è un revert reale da gestire), e
     // l'obbligo di attacco tramite gameState.mustAttackTargetUidsFor, lo
-    // STESSO meccanismo generico già usato da 199/747 (vedi
+    // STESSO meccanismo generico già usato da 199 (vedi
     // grantAttackAllEnemiesOncEach più sotto in questo file): letto sia da
     // bot.js (forza il bersaglio quando è il bot ad attaccare) sia da
     // hasUnfulfilledForcedAttack in game-flow.js (blocca il giocatore
     // dall'uscire dalla Battle Phase senza aver attaccato). A differenza
-    // di 199/747 (un solo attaccante deve colpire OGNI nemico una volta),
+    // di 199 (un solo attaccante deve colpire OGNI nemico una volta),
     // qui OGNI mostro appena girato deve attaccare UNA volta ciascuno:
     // basta dargli l'intero pool di bersagli nemici disponibili, la prima
     // scelta soddisfa già l'obbligo (hasUnfulfilledForcedAttack considera

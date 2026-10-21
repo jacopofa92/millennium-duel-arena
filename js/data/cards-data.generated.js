@@ -1588,19 +1588,6 @@ const cardDatabase = [
     "artOnly": true
   },
   {
-    "id": 163,
-    "origin": "yu-gi-oh",
-    "name": "Pagliaccio Insolente",
-    "type": "monster",
-    "level": 4,
-    "race": "Demone",
-    "attribute": "OSCURITÀ",
-    "attack": 1350,
-    "defense": 1400,
-    "effect": "Se questa carta viene cambiata da Posizione di Difesa a Posizione di Attacco: riporta in mano 1 mostro controllato dal tuo avversario.",
-    "artOnly": true
-  },
-  {
     "id": 164,
     "origin": "yu-gi-oh",
     "name": "Drago Strisciante",
@@ -6743,15 +6730,6 @@ const cardDatabase = [
     "artOnly": true
   },
   {
-    "id": 609,
-    "origin": "yu-gi-oh",
-    "name": "Liberazione dell'Anima",
-    "type": "spell",
-    "subtype": "normal",
-    "effect": "Scegli come bersaglio fino a 5 carte in uno o più Cimiteri; bandiscile.",
-    "artOnly": true
-  },
-  {
     "id": 610,
     "origin": "yu-gi-oh",
     "name": "Goblin Ladro",
@@ -6818,29 +6796,6 @@ const cardDatabase = [
     "attack": 0,
     "defense": 2000,
     "effect": "Ogni volta che una Magia viene attivata, posiziona 1 Segnalino Magia su questa carta quando quella Magia si risolve (massimo 3). Puoi rimuovere 3 Segnalini Magia da questa carta; pesca 1 carta.",
-    "artOnly": true
-  },
-  {
-    "id": 616,
-    "origin": "yu-gi-oh",
-    "name": "Soldato del Fulgore Nero",
-    "type": "monster",
-    "level": 8,
-    "race": "Guerriero",
-    "attribute": "TERRA",
-    "attack": 3000,
-    "defense": 2500,
-    "category": "ritual",
-    "effect": "Evocabile Rituale solo tramite \"Rito del Fulgore Nero\".",
-    "artOnly": true
-  },
-  {
-    "id": 617,
-    "origin": "yu-gi-oh",
-    "name": "Rito del Fulgore Nero",
-    "type": "spell",
-    "subtype": "ritual",
-    "effect": "Usata per Ritual Summon \"Soldato del Fulgore Nero\": sacrifica anche mostri dalla mano o dal Terreno per un Livello totale di 8 o superiore.",
     "artOnly": true
   },
   {
@@ -7405,16 +7360,6 @@ const cardDatabase = [
     "defense": 1500,
     "effect": "Quando questa carta viene mandata dalla tua mano al tuo Cimitero da un effetto del tuo avversario: ritorna questa carta in mano.",
     "artOnly": true
-  },
-  {
-    "id": 668,
-    "origin": "yu-gi-oh",
-    "name": "Grande Tornado",
-    "type": "spell",
-    "subtype": "normal",
-    "effect": "Rimetti in mano tutte le Magie/Trappole sul Terreno.",
-    "artOnly": true,
-    "limit": 1
   },
   {
     "id": 669,
@@ -8098,15 +8043,6 @@ const cardDatabase = [
     "artOnly": true
   },
   {
-    "id": 723,
-    "origin": "yu-gi-oh",
-    "name": "Lama Fulminea",
-    "type": "spell",
-    "subtype": "equip",
-    "effect": "Equipaggia solo a un mostro Tipo Guerriero. Guadagna 800 ATK. Tutti i mostri di Attributo ACQUA perdono 500 ATK.",
-    "artOnly": true
-  },
-  {
     "id": 724,
     "origin": "yu-gi-oh",
     "name": "Rinforzi dell'Esercito",
@@ -8350,15 +8286,6 @@ const cardDatabase = [
     "type": "spell",
     "subtype": "equip",
     "effect": "Il mostro equipaggiato guadagna 500 ATK e DEF per ogni Carta Magia/Trappola che controlli.",
-    "artOnly": true
-  },
-  {
-    "id": 747,
-    "origin": "yu-gi-oh",
-    "name": "Onda di Diffusione",
-    "type": "spell",
-    "subtype": "normal",
-    "effect": "Se il tuo avversario controlla un mostro: paga 1000 Life Points, poi scegli come bersaglio 1 mostro Tipo Incantatore di Livello 7 o superiore che controlli; in questo turno, deve attaccare tutti i mostri dell'avversario una volta ciascuno, inoltre gli altri tuoi mostri non possono attaccare. Gli effetti dei mostri distrutti da questi attacchi non possono attivarsi e vengono annullati.",
     "artOnly": true
   },
   {
@@ -11824,20 +11751,6 @@ const cardDatabase = [
     "attack": 900,
     "defense": 600,
     "effect": "FLIP: puoi Special Summonare 1 \"Criceto Bubbonico\" dal tuo Deck in Posizione di Difesa coperta. Poi mescola il tuo Deck.",
-    "artOnly": true
-  },
-  {
-    "id": 1024,
-    "origin": "yu-gi-oh",
-    "name": "Bomba a Orologeria",
-    "type": "monster",
-    "subtype": "flip",
-    "level": 2,
-    "race": "Piroico",
-    "attribute": "FUOCO",
-    "attack": 200,
-    "defense": 1000,
-    "effect": "Dopo essere stata girata scoperta, puoi tributarla durante la tua Standby Phase per distruggere tutti i mostri che controlli e infliggere all'avversario danni pari alla metà del totale ATK dei mostri distrutti (esclusa questa carta).",
     "artOnly": true
   },
   {

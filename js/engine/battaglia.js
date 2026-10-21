@@ -565,7 +565,7 @@ function resolveAttack(attackerOwner, attackerIndex, targetIndex, onComplete) {
             //     +1 concesso una tantum da un'altra carta, azzerato ogni
             //     turno in changeTurn()/game-flow.js.
             //   - slot.extraAttacksGrantedCount (es. Movimento d'Onda
-            //     Diffuso id 199/Onda di Diffusione id 747): +N concesso
+            //     Diffuso id 199): +N concesso
             //     una tantum da un'altra carta a un bersaglio SCELTO (non
             //     un effetto proprio del mostro come getExtraAttackCount
             //     qui sotto) — stesso schema di extraAttackGranted ma
@@ -793,10 +793,10 @@ function resolveBattleDamage(attackerOwner, defenderOwner, attackerIndex, target
     // chiamanti che già sanno la posizione (ognuno dei 6 punti sotto in
     // resolveBattleDamage), `undefined` altrove.
     const fireOnDestroy = (owner, index, card, opponentBattleCard, destroyedWasAttackPosition) => {
-        // 747 — Onda di Diffusione: "gli effetti dei mostri distrutti da
+        // 199 — Esplosione a Onde Soniche: "gli effetti dei mostri distrutti da
         // questi attacchi non possono attivarsi e vengono annullati" —
         // gameState.negatesEffectsOnForcedAttackFor (Set di uid attaccanti,
-        // concesso solo da 747, non da 199) marca il bersaglio PRIMA che il
+        // concesso da 199) marca il bersaglio PRIMA che il
         // suo ON_DESTROY scatti, stesso store/stesso schema di 833 Bestia
         // Ingranaggio Antico (monsterEffectsNegatedUidsFor per l'immediato,
         // negatedEffectsForeverUids per il Cimitero).
@@ -1206,7 +1206,7 @@ function resolveBattleDamage(attackerOwner, defenderOwner, attackerIndex, target
         addToLog(`${attackerPrefix}⚔️ ${attacker.name} attacca ${yourPrefix}${target.name}!`);
         if (attackerAtkZeroed) addToLog(`💧 L'ATK di ${attacker.name} è stato azzerato per questo scontro!`);
 
-        // 199/747 — "deve attaccare tutti i mostri avversari, una volta
+        // 199 — "deve attaccare tutti i mostri avversari, una volta
         // ciascuno": questo attacco appena dichiarato soddisfa l'obbligo
         // per `target` (a prescindere dall'esito — la regola vera chiede
         // solo di dichiarare l'attacco, non di distruggerlo), tolto dal

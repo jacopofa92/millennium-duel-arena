@@ -1331,30 +1331,6 @@
     });
 
     // ================================================================
-    // 668 — Grande Tornado / Giant Trunade (Magia Normale)
-    // Rimetti in mano tutte le Magie/Trappole sul Terreno, di entrambi i
-    // giocatori. Stesso schema di Tempesta Pesante (id 646), ma verso la
-    // mano invece del Cimitero.
-    // ================================================================
-    CardEffects.register(668, {
-        canActivate(ctx) {
-            return Tavolo.ordine().some((owner) => ctx.stField(owner).some((s) => s));
-        },
-        activate(ctx) {
-            let count = 0;
-            Tavolo.ordine().forEach((owner) => {
-                ctx.stField(owner).forEach((slot, index) => {
-                    if (!slot) return;
-                    ctx.hand(owner).push(slot.card);
-                    ctx.stField(owner)[index] = null;
-                    count++;
-                });
-            });
-            ctx.log(`🌀 Grande Tornado rimette in mano ${count} cart${count === 1 ? 'a' : 'e'} Magia/Trappola!`);
-        }
-    });
-
-    // ================================================================
     // 669 — Libro della Vita / Book of Life (Magia Normale)
     // Special Summon 1 mostro Zombie dal proprio Cimitero, poi bandisci
     // 1 mostro dal Cimitero dell'avversario.
@@ -2848,33 +2824,6 @@
                     const [card] = ctx.graveyard(ctx.owner).splice(cardIndex, 1);
                     ctx.hand(ctx.owner).push(card);
                     ctx.log('⚔️ Spada Divina - Lama della Fenice bandisce 2 Guerrieri e torna in mano dal Cimitero!');
-                });
-            });
-        }
-    });
-
-    // ================================================================
-    // 723 — Lama Fulminea / Lightning Blade (Equipaggiamento, solo
-    // Guerriero)
-    // +800 ATK al bersaglio equipaggiato. Tutti i mostri ACQUA sul
-    // Terreno: -500 ATK.
-    // ================================================================
-    CardEffects.register(723, {
-        continuous: true,
-        canActivate(ctx) { return findEquipTarget(ctx, (c) => c.race === 'Guerriero') !== -1; },
-        activate(ctx) { equipToChosenTarget(ctx, (c) => c.race === 'Guerriero'); },
-        isEquip: true,
-        equipTargetFilter: (c) => c.race === 'Guerriero',
-        static(ctx) {
-            const t = equippedTarget(ctx);
-            const e = gameState.atkDefBonus[t.uid] || { atk: 0, def: 0 };
-            gameState.atkDefBonus[t.uid] = { atk: e.atk + 800, def: e.def };
-            Tavolo.ordine().forEach((owner) => {
-                ctx.field(owner).forEach((slot) => {
-                    // Guardiano Kay'est (id 285): immune anche a questo malus.
-                    if (!slot || slot.isFaceDown || slot.card.attribute !== 'ACQUA' || DuelEngine.getDefinition(slot.card.id)?.unaffectedBySpellEffects) return;
-                    const e2 = gameState.atkDefBonus[slot.card.uid] || { atk: 0, def: 0 };
-                    gameState.atkDefBonus[slot.card.uid] = { atk: e2.atk - 500, def: e2.def };
                 });
             });
         }

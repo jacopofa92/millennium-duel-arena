@@ -541,45 +541,6 @@
     });
 
     // ================================================================
-    // 747 — Onda di Diffusione / Diffusion Wave-Motion (variante quasi
-    // identica di 199, Movimento d'Onda Diffuso — vedi
-    // findLevel7SpellcasterTarget/grantAttackAllEnemiesOncEach più in
-    // basso in questo file, condivisi tra le due). Seconda clausola
-    // propria di 747: "gli effetti dei mostri distrutti da questi
-    // attacchi non possono attivarsi e vengono annullati" —
-    // gameState.negatesEffectsOnForcedAttackFor, consultato da
-    // fireOnDestroy (actions.js).
-    // ================================================================
-    CardEffects.register(747, {
-        canActivate(ctx) {
-            const lpKey = Tavolo.chiave(ctx.owner, 'LP');
-            if (gameState[lpKey] < 1000) return false;
-            if (!ctx.field(ctx.opponent).some((s) => s)) return false;
-            return findLevel7SpellcasterTarget(ctx) !== -1;
-        },
-        activate(ctx) {
-            const lpKey = Tavolo.chiave(ctx.owner, 'LP');
-            const scelto = findLevel7SpellcasterTarget(ctx);
-            if (scelto === -1) return;
-            gameState[lpKey] -= 1000; // costo: si paga prima di scegliere il bersaglio
-            // Checkpoint di targeting, come Movimento d'Onda Diffuso (id 199).
-            ctx.declareTargetWaiting(ctx.owner, scelto, { totalTargetCount: 1 }, (decl) => {
-            if (!decl.allowed || decl.targetOwner !== ctx.owner) return;
-            const targetIndex = decl.targetIndex;
-            const targetSlot = ctx.field(ctx.owner)[targetIndex];
-            grantAttackAllEnemiesOncEach(ctx, targetIndex);
-            // Seconda clausola, propria di 747 (non di 199): "gli effetti
-            // dei mostri distrutti da questi attacchi non possono
-            // attivarsi e vengono annullati" — vedi fireOnDestroy
-            // (actions.js), che consulta questo Set.
-            gameState.negatesEffectsOnForcedAttackFor = gameState.negatesEffectsOnForcedAttackFor || new Set();
-            gameState.negatesEffectsOnForcedAttackFor.add(targetSlot.card.uid);
-            ctx.log(`🌊 Onda di Diffusione: ${targetSlot.card.name} deve attaccare tutti i mostri avversari, e i loro effetti non si attiveranno se distrutti!`);
-            });
-        }
-    });
-
-    // ================================================================
     // 748 — Attacco Magico Oscuro / Dark Magic Attack (Magia Normale)
     // Se controlli "Mago Nero" (id 2): distruggi tutte le Magie/Trappole
     // controllate dall'avversario.
@@ -2231,7 +2192,7 @@
     // quanti sono i mostri avversari meno 1 (il primo attacco è quello
     // "base"). SEMPLIFICAZIONE: nessun tracciamento di QUALE mostro
     // avversario sia già stato colpito in questo giro (stesso limite già
-    // accettato per Onda di Diffusione, id 747) — chi controlla la carta
+    // accettato per Esplosione a Onde Soniche, id 199) — chi controlla la carta
     // può scegliere liberamente il bersaglio ad ogni attacco extra,
     // potendo in teoria colpire due volte lo stesso mostro invece di uno
     // ciascuno. Il conteggio nemici viene "fotografato" al MASSIMO visto

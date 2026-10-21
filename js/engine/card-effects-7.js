@@ -1334,8 +1334,16 @@
             ctx.declareTargetWaiting(ctx.owner, scelto, { totalTargetCount: 1 }, (decl) => {
                 if (!decl.allowed || decl.targetOwner !== ctx.owner) return;
                 const targetIndex = decl.targetIndex;
+                const targetSlot = ctx.field(ctx.owner)[targetIndex];
                 grantAttackAllEnemiesOncEach(ctx, targetIndex);
-                ctx.log(`🌊 Esplosione a Onde Soniche: ${ctx.field(ctx.owner)[targetIndex].card.name} deve attaccare tutti i mostri avversari!`);
+                // Seconda clausola del testo ufficiale: "gli effetti dei mostri
+                // distrutti da questi attacchi non possono attivarsi e vengono
+                // annullati" — vedi fireOnDestroy (actions.js), che consulta
+                // questo Set. (Clausola del testo ufficiale, prima presente solo
+                // nell'alias eliminato "Onda di Diffusione".)
+                gameState.negatesEffectsOnForcedAttackFor = gameState.negatesEffectsOnForcedAttackFor || new Set();
+                gameState.negatesEffectsOnForcedAttackFor.add(targetSlot.card.uid);
+                ctx.log(`🌊 Esplosione a Onde Soniche: ${targetSlot.card.name} deve attaccare tutti i mostri avversari, e i loro effetti non si attiveranno se distrutti!`);
             });
         }
     });

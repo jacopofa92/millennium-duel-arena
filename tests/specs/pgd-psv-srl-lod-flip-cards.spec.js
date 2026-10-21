@@ -5,28 +5,19 @@
 module.exports = {
     name: 'Terza ondata prima serie: Mostri Flip con Ignition/Deck/controllo temporaneo (id 1020-1030)',
     async run(t) {
-        // Bomba a Orologeria (1024): attivabile SOLO in Standby Phase, si tributa e infligge metà del totale ATK altrui.
-        const jigenOutsideStandby = await t.evaluate(() => {
-            const jigen = { ...cardDatabase.find((c) => c.id === 1024), uid: 'jigen-1' };
-            gameState.phase = 'main1';
-            const ctx = DuelEngine.makeContext('player', { card: jigen });
-            return DuelEngine.getDefinition(1024).canActivate(ctx);
-        });
-        t.assert(jigenOutsideStandby === false, 'Bomba a Orologeria non deve essere attivabile fuori dalla Standby Phase');
-
+        // Bomba a Tempo (315, Jigen Bakudan): esplode da sola alla Standby Phase del suo controllore — distrugge tutti i mostri
+        // che controlla (se stessa inclusa) e infligge metà del totale ATK degli altri. (Prima di eliminare l'alias "Bomba a
+        // Orologeria", id 1024, questo test provava la versione attivabile a mano di quella carta.)
         const jigenResult = await t.evaluate(() => {
-            const jigen = { ...cardDatabase.find((c) => c.id === 1024), uid: 'jigen-1' };
+            const jigen = { ...cardDatabase.find((c) => c.id === 315), uid: 'jigen-1' };
             const ally = { ...cardDatabase.find((c) => c.type === 'monster' && !c.extraDeck), uid: 'ally-1', attack: 1000 };
             gameState.playerMonsterField = [{ card: jigen, position: 'attack', isFaceDown: false }, { card: ally, position: 'attack', isFaceDown: false }, null, null, null];
-            gameState.phase = 'standby';
             gameState.botLP = 8000;
-            const ctx = DuelEngine.makeContext('player', { card: jigen });
-            const canActivate = DuelEngine.getDefinition(1024).canActivate(ctx);
-            DuelEngine.getDefinition(1024).activate(ctx);
-            return { canActivate: canActivate, fieldCleared: gameState.playerMonsterField.every((s) => s === null), botLP: gameState.botLP };
+            const ctx = DuelEngine.makeContext('player', { card: jigen, slotIndex: 0 });
+            DuelEngine.getDefinition(315).onStandbyPhase(ctx);
+            return { fieldCleared: gameState.playerMonsterField.every((s) => s === null), botLP: gameState.botLP };
         });
-        t.assert(jigenResult.canActivate, 'Bomba a Orologeria deve essere attivabile in Standby Phase');
-        t.assert(jigenResult.fieldCleared, 'Bomba a Orologeria deve distruggere tutti i mostri (se stessa inclusa)');
+        t.assert(jigenResult.fieldCleared, 'Bomba a Tempo deve distruggere tutti i mostri (se stessa inclusa)');
         t.assert(8000 - jigenResult.botLP === 500, `Il danno deve essere la metà dell'ATK dell'alleato (1000/2=500), rilevato ${8000 - jigenResult.botLP}`);
 
         // Parassita Bubbonico (1023): FLIP, cerca copia nel Deck, Special Summon in Difesa coperta, rimescola.

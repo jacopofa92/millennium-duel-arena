@@ -2,7 +2,7 @@
 // Magie" copriva finora solo il targeting diretto (cannotBeTargetedBySpells).
 // Verifica il nuovo unaffectedBySpellEffects contro i 4 punti concreti del
 // dataset dove una Magia la toccherebbe SENZA sceglierla come bersaglio:
-// bonus/malus ATK/DEF ACQUA-wide (id 79, 349, 723), riduzione di Livello
+// bonus/malus ATK/DEF ACQUA-wide (id 79, 349), riduzione di Livello
 // (id 79) e distruzione di massa (id 706) — e conferma che un mostro ACQUA
 // "normale" nello stesso scenario resta invece pienamente influenzato.
 module.exports = {

@@ -4976,14 +4976,14 @@ const characterDeckDatabase = {
         }
     },
 
-    // Il Guardiano Neku: Guerrieri pesanti — il Soldato del Fulgore Nero
+    // Il Guardiano Neku: Guerrieri pesanti — il Glorioso Soldato Nero
     // (rituale), Gearfried e il suo Maestro di Spada, Freed, gli Spadaccini Mistici, Lama
     // Oscura — con Sogen e le Forze A.
     neku: {
-        flagship: 616, // Soldato del Fulgore Nero — carta simbolo: stessa quantità in tutti e tre i livelli
+        flagship: 55, // Glorioso Soldato Nero — carta simbolo: stessa quantità in tutti e tre i livelli
         easy: {
             main: [
-                { id: 616, qty: 1 }, // Soldato del Fulgore Nero
+                { id: 55, qty: 1 }, // Glorioso Soldato Nero
                 { id: 710, qty: 3 }, // Signora Guerriera delle Terre Desolate
                 { id: 714, qty: 3 }, // Capitano Saccheggiatore
                 { id: 369, qty: 2 }, // Masaki lo Spadaccino Leggendario
@@ -4994,7 +4994,7 @@ const characterDeckDatabase = {
                 { id: 535, qty: 1 }, // Guardia del Labirinto
                 { id: 713, qty: 1 }, // Cavaliere Comandante
                 { id: 504, qty: 1 }, // Guerriero Dai Grepher
-                { id: 617, qty: 1 }, // Rito del Fulgore Nero
+                { id: 56, qty: 1 }, // Rito della Gloria Nera
                 { id: 580, qty: 1 }, // Sogen
                 { id: 344, qty: 1 }, // Spada Leggendaria
                 { id: 8, qty: 1 }, // Spada Rivelatrice
@@ -5015,7 +5015,7 @@ const characterDeckDatabase = {
         },
         medium: {
             main: [
-                { id: 616, qty: 1 }, // Soldato del Fulgore Nero
+                { id: 55, qty: 1 }, // Glorioso Soldato Nero
                 { id: 888, qty: 1 }, // Freed il Generale Senza Avversari
                 { id: 613, qty: 2 }, // Lama Oscura
                 { id: 16, qty: 2 }, // Gearfried il Cavaliere di Ferro
@@ -5030,7 +5030,7 @@ const characterDeckDatabase = {
                 { id: 855, qty: 1 }, // Paladino del Drago Nero
                 { id: 710, qty: 1 }, // Signora Guerriera delle Terre Desolate
                 { id: 714, qty: 1 }, // Capitano Saccheggiatore
-                { id: 617, qty: 1 }, // Rito del Fulgore Nero
+                { id: 56, qty: 1 }, // Rito della Gloria Nera
                 { id: 415, qty: 1 }, // Rimozione della Restrizione
                 { id: 580, qty: 1 }, // Sogen
                 { id: 344, qty: 1 }, // Spada Leggendaria
@@ -5055,7 +5055,7 @@ const characterDeckDatabase = {
         },
         hard: {
             main: [
-                { id: 616, qty: 1 }, // Soldato del Fulgore Nero
+                { id: 55, qty: 1 }, // Glorioso Soldato Nero
                 { id: 888, qty: 1 }, // Freed il Generale Senza Avversari
                 { id: 613, qty: 2 }, // Lama Oscura
                 { id: 16, qty: 2 }, // Gearfried il Cavaliere di Ferro
@@ -5068,7 +5068,7 @@ const characterDeckDatabase = {
                 { id: 713, qty: 1 }, // Cavaliere Comandante
                 { id: 639, qty: 2 }, // Drago Avido
                 { id: 855, qty: 1 }, // Paladino del Drago Nero
-                { id: 617, qty: 1 }, // Rito del Fulgore Nero
+                { id: 56, qty: 1 }, // Rito della Gloria Nera
                 { id: 415, qty: 1 }, // Rimozione della Restrizione
                 { id: 580, qty: 1 }, // Sogen
                 { id: 344, qty: 1 }, // Spada Leggendaria
@@ -6995,7 +6995,7 @@ const CARTE_CHE_DISTRUGGONO_MOSTRI = [
     7, 23, 28, 37, 40, 77, 100, 104, 128, 132, 134, 146, 173, 210, 220, 228, 229,
     243, 267, 289, 300, 315, 366, 382, 388, 409, 419, 448, 453, 474, 490, 492, 498,
     548, 598, 624, 632, 641, 663, 697, 705, 715, 718, 720, 729, 793, 795, 817,
-    1024, 1033, 1055, 1057, 1075, 1077, 1078, 1086, 1102, 1200, 1222, 1248
+    1033, 1055, 1057, 1075, 1077, 1078, 1086, 1102, 1200, 1222, 1248
 ];
 
 /**

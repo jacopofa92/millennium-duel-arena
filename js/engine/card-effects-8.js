@@ -451,24 +451,6 @@
         }
     });
 
-    // 1024 — Bomba a Orologeria / Jigen Bakudan: dopo il FLIP, Ignition
-    // attivabile SOLO durante la propria Standby Phase — si tributa da
-    // sola (destroyAllMonsters include anche lei) e infligge danni pari
-    // alla metà del totale ATK degli ALTRI mostri distrutti.
-    CardEffects.register(1024, {
-        canActivate(ctx) { return ctx.gameState.phase === 'standby'; },
-        activate(ctx) {
-            let totalAtk = 0;
-            ctx.field(ctx.owner).forEach((slot) => {
-                if (slot && slot.card.uid !== ctx.card.uid) totalAtk += DuelEngine.getEffectiveAtk(slot.card);
-            });
-            ctx.destroyAllMonsters(ctx.owner);
-            const damage = Math.floor(totalAtk / 2);
-            ctx.dealDamage(ctx.opponent, damage);
-            ctx.log(`💣 Bomba a Orologeria si tributa e distrugge tutti i tuoi mostri: ${damage} danni all'avversario!`);
-        }
-    });
-
     // 1025 — L'Immortale del Tuono / The Immortal of Thunder: FLIP,
     // +3000 LP; quando lascia il Terreno per il Cimitero (onDestroy),
     // -5000 LP. SEMPLIFICAZIONE: onDestroy copre distruzione da
@@ -3006,7 +2988,7 @@
     // gameState.negatesFiendBattleKillsFor (nuovo, per-owner,
     // ricalcolato ogni render qui sotto), consultato in fireOnDestroy
     // (actions.js) insieme a `opponentBattleCard.race === 'Demone'` —
-    // stesso identico schema/store di Onda di Diffusione (id 747), solo
+    // stesso identico schema/store di Esplosione a Onde Soniche (id 199), solo
     // con una condizione diversa al posto di un uid specifico.
     CardEffects.register(1118, {
         cannotBeSpecialSummonedFromGraveyard: true,

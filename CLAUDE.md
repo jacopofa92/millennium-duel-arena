@@ -139,6 +139,10 @@ perde al prossimo build.
   entrare in una ricerca ma che prima ne erano fuori sono escluse a mano
   (`ESCLUSE_PER_NOME` in `card-effects.js`, `ECCEZIONI_NOME` in `shop-catalog.js`).
   Se un nuovo nome contiene un apostrofo, dentro una stringa `'...'` serve `\'`.
+  **Carte doppie eliminate (2026-10-21)**: 8 carte erano la stessa carta reale di un'altra
+  (616, 617, 163, 747, 668, 1024, 723, 609): tolte da dati, effetti e immagini; i loro id NON si
+  riusano mai. Chi le possedeva le ritrova sulla carta che resta (`CARTE_ELIMINATE` in
+  `js/save-manager.js`, vale per ogni salvataggio che entra). Spec `carte-doppie-eliminate`.
 - **Bordo carta mobile "troppo spesso"**: quasi sempre un problema di
   rapporto arte/cornice, non della proprietà CSS `border` in sé.
 
