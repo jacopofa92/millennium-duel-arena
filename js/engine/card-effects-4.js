@@ -76,6 +76,9 @@
     // più l'intera mano nel Deck, poi pesca altrettante carte
     // (ACTIONS.shuffleIntoDeck).
     CardEffects.register(384, {
+        // Rimescola un proprio mostro e tutta la mano nel Deck: il bot non sa valutare "ho una mano da
+        // buttare", e l'attivava con una mano buona perdendo il mostro.
+        aiCanActivate() { return false; },
         canActivate(ctx) {
             return ctx.field(ctx.owner).some((s) => s);
         },
@@ -379,6 +382,16 @@
     // l'handler, quindi il suo effetto non accade mai davvero.
     // ================================================================
     CardEffects.register(448, {
+        // Paga META' dei LP: il bot annulla solo cio' che vale (una Magia/Trappola di impatto stimato alto, o una
+        // Evocazione), non una Magia qualunque come il Vaso dell'Avidita' (pagava meta' LP per fermare una pescata).
+        aiCanActivate(ctx) {
+            const links = (ctx.gameState.chain && ctx.gameState.chain.links) || [];
+            const ultima = links[links.length - 1];
+            if (!ultima || !ultima.card) return true; // nessuna catena: e' un'Evocazione
+            // Si ferma solo una carta che COLPISCE (distrugge, bandisce, ruba, infligge danni, annulla): non una
+            // pescata o un recupero, per i quali pagare meta' dei LP e' un pessimo affare.
+            return /distrugg|bandisc|prende\w* il controllo|infligg|dann[oi]|nega|annull/i.test(ultima.card.effect || '');
+        },
         canActivate(ctx) {
             const hasSummonToNegate = typeof ctx.summonedCard !== 'undefined';
             const hasChainToNegate = !!(ctx.gameState.chain && ctx.gameState.chain.links && ctx.gameState.chain.links.length > 0);
@@ -803,6 +816,9 @@
     // "scegli N carte" in questo file).
     // ================================================================
     CardEffects.register(501, {
+        // Sacrifica "un numero qualsiasi" di mostri propri: il bot ne sacrificava tutti (e non e' un costo
+        // che sa ripagare con un beneficio).
+        aiCanActivate() { return false; },
         canActivate(ctx) {
             return ctx.field(ctx.owner).some((s) => s && !s.card.isToken);
         },
@@ -1203,6 +1219,18 @@
     // subito, il resto succede dentro le callback annidate.
     // ================================================================
     CardEffects.register(362, {
+        // Il bot la attiva solo se l'Incantatore in mano e' DAVVERO piu' forte (500 ATK o piu') del mostro
+        // che sacrifica: prima tributava il primo mostro del campo, qualunque fosse.
+        aiCanActivate(ctx) {
+            const atk = (c) => DuelEngine.getEffectiveAtk(c);
+            const incantatori = ctx.hand(ctx.owner).filter((c) => c.type === 'monster' && c.race === 'Incantatore');
+            const propri = ctx.field(ctx.owner).filter((s) => s).map((s) => s.card);
+            if (!incantatori.length || !propri.length) return false;
+            const valore = (c) => atk(c) + 0.5 * DuelEngine.getEffectiveDef(c);
+            const migliore = Math.max.apply(null, incantatori.map((c) => (c.attack || 0) + 0.5 * (c.defense || 0)));
+            const piuDebole = Math.min.apply(null, propri.map(valore));
+            return migliore - piuDebole >= 500;
+        },
         canActivate(ctx) {
             return ctx.field(ctx.owner).some((s) => s && !s.isFaceDown && s.card.race === 'Incantatore')
                 && ctx.field(ctx.owner).some((s) => s)
@@ -1261,7 +1289,8 @@
                     });
                 };
                 if (!Decisioni.rispondeUnaPersona(owner) || spellcasters.length === 1) {
-                    chooseSummon(spellcasters[0]);
+                    // Il bot evoca l'Incantatore piu' forte, non il primo della mano.
+                    chooseSummon(spellcasters.reduce((m, c) => ((c.attack || 0) > (m.attack || 0) ? c : m), spellcasters[0]));
                     return;
                 }
                 Decisioni.chiedi({
@@ -1275,7 +1304,8 @@
                 });
             };
             if (!Decisioni.rispondeUnaPersona(owner) || tributeCandidates.length === 1) {
-                chooseTribute(tributeCandidates[0]);
+                // Il bot sacrifica il proprio mostro PIU' DEBOLE, non il primo del campo.
+                chooseTribute(tributeCandidates.reduce((m, c) => (DuelEngine.getEffectiveAtk(c) < DuelEngine.getEffectiveAtk(m) ? c : m), tributeCandidates[0]));
                 return;
             }
             Decisioni.chiedi({
@@ -1352,6 +1382,15 @@
     // deboli e il più forte dell'avversario (ordine dei candidati).
     // ================================================================
     CardEffects.register(548, {
+        // Due mostri propri per uno avversario: il bot lo fa solo se gliene restano altri (non si svuota il
+        // campo) e il mostro che distrugge vale piu' dei due che sacrifica.
+        aiCanActivate(ctx) {
+            const atk = (s) => DuelEngine.getEffectiveAtk(s.card);
+            const propri = ctx.field(ctx.owner).filter(Boolean).map(atk).sort((a, b) => a - b);
+            const loro = ctx.field(ctx.opponent).filter(Boolean).map(atk);
+            if (propri.length < 3 || !loro.length) return false;
+            return Math.max.apply(null, loro) > propri[0] + propri[1];
+        },
         canActivate(ctx) {
             return ctx.field(ctx.owner).filter((s) => s).length >= 2 && ctx.field(ctx.opponent).some((s) => s);
         },
@@ -1408,7 +1447,11 @@
                 });
             };
             if (!Decisioni.rispondeUnaPersona(ctx.owner)) {
-                boost(candidates[0]);
+                // L'elenco parte dal giocatore: il primo e' un suo mostro, e il bot si rinforzava il nemico.
+                // Il bot potenzia il proprio mostro piu' forte; se non ne ha, non fa niente.
+                const miei = candidates.filter((c) => ctx.field(ctx.owner).some((s) => s && s.card.uid === c.uid));
+                if (miei.length === 0) return;
+                boost(miei.reduce((m, c) => (DuelEngine.getEffectiveAtk(c) > DuelEngine.getEffectiveAtk(m) ? c : m), miei[0]));
                 return;
             }
             Decisioni.chiedi({
@@ -2168,6 +2211,15 @@
     // Distruggi tutti i mostri equipaggiati con Magie Equipaggiamento.
     // ================================================================
     CardEffects.register(598, {
+        // Distrugge i mostri equipaggiati di ENTRAMBI i lati: il bot la attiva solo se all'avversario ne toglie di piu'.
+        aiCanActivate(ctx) {
+            const equipaggiati = new Set();
+            Tavolo.ordine().forEach((owner) => ctx.stField(owner).forEach((s) => {
+                if (s && !s.isFaceDown && DuelEngine.getDefinition(s.card.id)?.isEquip) equipaggiati.add(s.card.equippedToUid);
+            }));
+            const somma = (owner) => ctx.field(owner).reduce((s, slot) => (slot && equipaggiati.has(slot.card.uid) ? s + DuelEngine.getEffectiveAtk(slot.card) : s), 0);
+            return somma(ctx.opponent) - somma(ctx.owner) >= 500;
+        },
         canActivate(ctx) {
             return Tavolo.ordine().some((owner) => ctx.stField(owner).some((s) => s && !s.isFaceDown && DuelEngine.getDefinition(s.card.id)?.isEquip));
         },

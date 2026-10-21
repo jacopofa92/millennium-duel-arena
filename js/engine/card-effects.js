@@ -894,6 +894,63 @@
      * solo candidato — stesso principio di searchZoneWithChoice qui
      * sopra.
      */
+    /**
+     * Cosa fa l'effetto di una carta a chi viene scelto come bersaglio, letto dal testo:
+     * 'alleato' (lo POTENZIA: guadagna ATK/DEF, equipaggiamento, protezione), 'nemico' (lo COLPISCE:
+     * distrugge, bandisce, perde statistiche, prende il controllo...) oppure null se il testo non
+     * lo dice in modo netto. Serve solo alla scelta automatica del bot (sceltaAutomaticaDelBot).
+     */
+    function direzioneDellEffetto(testo) {
+        const t = String(testo || '');
+        const colpisce = /distrugg|bandisc|prend\w* il controllo|rimand|rimesc|perd\w+ \d+|diminu|riduc|dimezz|nega |annull|sacrific|manda\w* [^.;]*Cimitero|cambia la Posizione/i.test(t);
+        const potenzia = /guadagn|aument|ottien|riceve|\+\s?\d+ (ATK|DEF)|protegg|non pu[oò] essere (distrutt|bersagli)|immune|equipaggia/i.test(t);
+        if (potenzia && !colpisce) return 'alleato';
+        if (colpisce && !potenzia) return 'nemico';
+        return null;
+    }
+
+    /**
+     * Cosa sceglie il BOT fra i candidati quando la carta non gli ha dato una regola sua
+     * (`options.pickForBot`). Prima prendeva SEMPRE il primo dell'elenco, e l'elenco parte dal giocatore:
+     * un "guadagna 500 ATK" (Rinforzi, Corsa Avventata...) finiva sul mostro dell'AVVERSARIO.
+     * Ora, se i candidati stanno su entrambi i lati, un effetto che potenzia va sul proprio mostro piu'
+     * forte e uno che colpisce sul mostro piu' forte dell'avversario; se il testo non e' netto, o se
+     * tutti i candidati stanno dallo stesso lato (e allora potrebbe essere un costo: non si regala il
+     * migliore), resta il primo come sempre.
+     */
+    function sceltaAutomaticaDelBot(ctx, elenco, options) {
+        if (options && typeof options.pickForBot === 'function') return options.pickForBot(elenco) || elenco[0];
+        // Solo per le carte con UN bersaglio ("scegli come bersaglio 1 mostro ..."): una carta a piu' passi
+        // (Riryoku: chi perde e chi guadagna; Scatola Magica: uno loro e uno tuo) chiama questa scelta
+        // piu' volte con scopi diversi, e il testo da solo non dice quale passo e' — quelle decidono da se'
+        // con `pickForBot`/`favorisce`.
+        const testo = ctx.card && ctx.card.effect;
+        const unBersaglio = /bersaglio 1 mostr/i.test(testo || '') && ((testo || '').match(/\b1 mostr/gi) || []).length === 1;
+        const dir = options && options.favorisce ? options.favorisce : (unBersaglio ? direzioneDellEffetto(testo) : null);
+        const lati = new Set(elenco.map((c) => c.owner));
+        if (lati.size < 2) {
+            // un lato solo: se potenzia e sono i miei, il migliore; altrimenti il primo (potrebbe essere un costo)
+            if (dir === 'alleato' && lati.has(ctx.owner)) return piuForte(elenco);
+            if (dir === 'nemico' && !lati.has(ctx.owner)) return piuForte(elenco);
+            return elenco[0];
+        }
+        if (dir === 'alleato') return piuForte(elenco.filter((c) => c.owner === ctx.owner));
+        if (dir === 'nemico') return piuForte(elenco.filter((c) => c.owner !== ctx.owner));
+        return elenco[0];
+    }
+
+    /** Il candidato con la potenza maggiore (ATK + metà DEF effettivi: conta di piu' chi attacca meglio); le carte non-mostro valgono 0 (resta il primo). */
+    function piuForte(candidati) {
+        let migliore = candidati[0];
+        let valore = -1;
+        candidati.forEach((c) => {
+            const v = c.card && c.card.type === 'monster' && window.DuelEngine
+                ? DuelEngine.getEffectiveAtk(c.card) + 0.5 * DuelEngine.getEffectiveDef(c.card) : 0;
+            if (v > valore) { valore = v; migliore = c; }
+        });
+        return migliore;
+    }
+
     function chooseFieldCardTarget(ctx, candidates, options, onChosenOriginale) {
         if (!candidates || candidates.length === 0) return false;
         // `options.dichiara`: il bersaglio scelto passa dal checkpoint di
@@ -934,6 +991,7 @@
         Decisioni.chiedi({
             chi: ctx.owner,
             candidati: candidates,
+            automatica: (elenco) => sceltaAutomaticaDelBot(ctx, elenco, options),
             mostra: (c) => {
                 const copertaAvversaria = !!(c.slot && c.slot.isFaceDown) && c.owner !== ctx.owner;
                 return copertaAvversaria ? Object.assign({}, c.card, { __mostraCoperta: true }) : c.card;
@@ -1681,16 +1739,22 @@
     function performRitualTribute(ctx, requiredLevel, ritualHandIndex) {
         const field = ctx.field(ctx.owner);
         const hand = ctx.hand(ctx.owner);
-        const pool = field.map((slot, index) => (slot ? { source: 'field', index: index, level: slot.card.level || 0 } : null)).filter(Boolean)
-            .concat(hand.map((c, index) => (index !== ritualHandIndex ? { source: 'hand', index: index, level: c.level || 0 } : null)).filter(Boolean))
-            .sort((a, b) => b.level - a.level);
-        let remaining = requiredLevel;
-        const toSacrifice = [];
-        pool.forEach((entry) => {
-            if (remaining <= 0) return;
-            toSacrifice.push(entry);
-            remaining -= entry.level;
-        });
+        // Il valore di quello che si sacrifica: ATK + metà DEF effettivi (quelli in mano valgono un po' meno:
+        // sono ancora carte non giocate). Prima si prendevano i mostri di Livello PIU' ALTO finche' bastava,
+        // cioe' quasi sempre i piu' forti: un Rituale poteva costare piu' di quanto rendeva.
+        const valore = (c) => (window.DuelEngine ? DuelEngine.getEffectiveAtk(c) + 0.5 * DuelEngine.getEffectiveDef(c) : (c.attack || 0));
+        const pool = field.map((slot, index) => (slot ? { source: 'field', index: index, level: slot.card.level || 0, costo: valore(slot.card) } : null)).filter(Boolean)
+            .concat(hand.map((c, index) => (index !== ritualHandIndex ? { source: 'hand', index: index, level: c.level || 0, costo: 0.8 * valore(c) } : null)).filter(Boolean))
+            .slice(0, 14);
+        // La combinazione che raggiunge il Livello richiesto al costo MINIMO (il pool e' piccolo: si provano tutte).
+        let migliore = null;
+        for (let maschera = 1; maschera < (1 << pool.length); maschera++) {
+            let livello = 0; let costo = 0; let quanti = 0;
+            for (let i = 0; i < pool.length; i++) if (maschera & (1 << i)) { livello += pool[i].level; costo += pool[i].costo; quanti++; }
+            if (livello < requiredLevel) continue;
+            if (!migliore || costo < migliore.costo || (costo === migliore.costo && quanti < migliore.quanti)) migliore = { maschera, costo, quanti };
+        }
+        const toSacrifice = migliore ? pool.filter((e, i) => migliore.maschera & (1 << i)) : [];
         // Conserva le carte PRIMA di rimuoverle: specialSummon() consuma
         // questo payload per la cinematica Rituale e soltanto dopo mette
         // il nuovo mostro sul Terreno. Il contesto e' specifico di questa
@@ -1841,5 +1905,5 @@
         return ctx.hand(ctx.owner).filter((c) => !selfUid || c.uid !== selfUid);
     }
 
-    window.CardEffectsShared = { NOMI_PRECEDENTI, chooseFieldTargetsInSequence, attendiScelta, chooseOption, chooseFieldCardTargetWaiting, dichiaraBersaglioScelto, dichiaraBersaglioSceltoWaiting, otherHandCards, blockBanishFromField, isHarpieLadySupport, cardHasArchetype, cardHasEffectiveName, cardMentionsName, findEquipTarget, collectEquipTargets, equipToChosenTarget, riprendiDalCimitero, attachEquip, equippedTarget, searchZoneWithChoice, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldMonsterTarget, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, chooseCardFromList, chooseUpToNFromList, destroyTargetingSpellIfItStays, victimChoosesDiscard, banishFromGraveyardWithChoice, resolveSpecialSummonBanishCost, resolveSpecialSummonTributeCost, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, findPetitMothReadyForCocoonSummon, releaseRelinquishedTarget, selfFlipToFaceDownDefense, findLevel7SpellcasterTarget, grantAttackAllEnemiesOncEach, returnSpellTrapToHand };
+    window.CardEffectsShared = { NOMI_PRECEDENTI, direzioneDellEffetto, sceltaAutomaticaDelBot, piuForte, chooseFieldTargetsInSequence, attendiScelta, chooseOption, chooseFieldCardTargetWaiting, dichiaraBersaglioScelto, dichiaraBersaglioSceltoWaiting, otherHandCards, blockBanishFromField, isHarpieLadySupport, cardHasArchetype, cardHasEffectiveName, cardMentionsName, findEquipTarget, collectEquipTargets, equipToChosenTarget, riprendiDalCimitero, attachEquip, equippedTarget, searchZoneWithChoice, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldMonsterTarget, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, chooseCardFromList, chooseUpToNFromList, destroyTargetingSpellIfItStays, victimChoosesDiscard, banishFromGraveyardWithChoice, resolveSpecialSummonBanishCost, resolveSpecialSummonTributeCost, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, findPetitMothReadyForCocoonSummon, releaseRelinquishedTarget, selfFlipToFaceDownDefense, findLevel7SpellcasterTarget, grantAttackAllEnemiesOncEach, returnSpellTrapToHand };
 })();

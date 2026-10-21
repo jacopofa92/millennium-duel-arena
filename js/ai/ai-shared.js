@@ -540,7 +540,76 @@
         return candidates[candidates.length - 1];
     }
 
+    /**
+     * Cosa cambia, per chi gioca, se `card` (una Magia Terreno) fosse scoperta ADESSO: { mio, loro } =
+     * quanto guadagnano (o perdono) i propri mostri e quanto i mostri avversari (ATK + metà DEF effettivi).
+     * Si prova davvero — la carta si mette un attimo nella zona, si ricalcolano i bonus continui, si
+     * misura, si rimette tutto com'era e si ricalcola di nuovo — cosi' vale per qualunque Magia Terreno
+     * (anche una nuova) senza leggerne il testo. Torna 0 se la carta non tocca le statistiche.
+     */
+    function guadagnoRelativoCampo(card, io) {
+        if (!window.DuelEngine || typeof DuelEngine.recomputeStaticEffects !== 'function') return { mio: 0, loro: 0 };
+        const chiave = Tavolo.chiave(io, 'FieldSpell');
+        const precedente = gameState[chiave];
+        const misura = () => {
+            const somma = (owner) => Tavolo.mostri(owner, gameState).reduce((s, slot) => (slot && !slot.isFaceDown ? s + effAtk(slot.card) + 0.5 * effDef(slot.card) : s), 0);
+            return { mio: somma(io), loro: somma(Tavolo.avversario(io)) };
+        };
+        try {
+            const prima = misura();
+            gameState[chiave] = { card: card, isFaceDown: false };
+            DuelEngine.recomputeStaticEffects();
+            const dopo = misura();
+            return { mio: dopo.mio - prima.mio, loro: dopo.loro - prima.loro };
+        } finally {
+            gameState[chiave] = precedente;
+            DuelEngine.recomputeStaticEffects();
+        }
+    }
+
+    /**
+     * L'UNICO controllo "ha senso attivarla?" che il bot fa per una Magia/Trappola, sia che la giochi
+     * dalla mano o da Settata sia che risponda in Catena:
+     *  1) il veto della carta stessa (`def.aiCanActivate(ctx)`, per le carte con un costo o una scelta che
+     *     il bot non sa valutare: Metamorfosi, Cannone Virus, Duplice Attacco...);
+     *  2) per una Magia Terreno, la prova qui sopra: se fa guadagnare piu' al nemico che a lui, no.
+     * Prima ognuna di queste carte si attivava ad ogni occasione, perche' "le carte di risposta sono tutte
+     * puro vantaggio": non e' vero (Kaiba che si sacrificava un mostro forte per una Fusione scarsa).
+     */
+    function attivazioneSensata(card, io, zona, indice) {
+        if (!card) return false;
+        const def = window.DuelEngine && DuelEngine.getDefinition(card.id);
+        if (def && typeof def.aiCanActivate === 'function') {
+            const ctx = DuelEngine.makeContext(io, { card: card, zone: zona || 'hand', index: indice });
+            try { if (!def.aiCanActivate(ctx)) return false; } catch (e) { return false; }
+        }
+        // Una Trappola che SOLO potenzia un proprio mostro (Rinforzi, Mura del Castello, Risucchio di Energia,
+        // le Carte Equipaggiamento-Trappola...) ha senso in battaglia, non in risposta a una Magia qualunque:
+        // fuori dalla Battle Phase il bot la sprecava (e spesso il mostro potenziato era proprio quello che
+        // l'avversario stava per rubargli). Misurato con tools/audit-attivazioni-ia.js --reattive.
+        if (card.type === 'trap' && gameState.phase !== 'battle') {
+            const testo = card.effect || '';
+            const dir = window.CardEffectsShared && CardEffectsShared.direzioneDellEffetto ? CardEffectsShared.direzioneDellEffetto(testo) : null;
+            if (/equipaggia questa carta/i.test(testo) || (dir === 'alleato' && /bersaglio/i.test(testo))) return false;
+        }
+        // Costi in Life Point scritti nel testo ("Paga 2000 Life Points", "paga la metà dei tuoi Life Points"):
+        // il bot non li paga se gli lasciano meno di 2000 LP (o, per la metà, se ne ha meno di 4000).
+        const lp = Tavolo.lp(io, gameState);
+        const costoLp = /Paga (\d+) Life Points?/i.exec(card.effect || '');
+        if (costoLp && lp - Number(costoLp[1]) < 2000) return false;
+        if (/paga la met[àa] dei tuoi Life Points/i.test(card.effect || '') && lp < 4000) return false;
+        if (card.type === 'spell' && card.subtype === 'field') {
+            const d = guadagnoRelativoCampo(card, io);
+            // Non tocca le statistiche (Cancello di Fusione, Necrovalley...): non si puo' misurare, si lascia passare.
+            // Le tocca: serve che ne guadagni piu' lui del nemico (a pari merito regalerebbe lo stesso al nemico).
+            if ((d.mio !== 0 || d.loro !== 0) && d.mio - d.loro <= 0) return false;
+        }
+        return true;
+    }
+
     window.AI_SHARED = {
+        attivazioneSensata: attivazioneSensata,
+        guadagnoRelativoCampo: guadagnoRelativoCampo,
         effAtk: effAtk,
         effDef: effDef,
         statRilevante: statRilevante,

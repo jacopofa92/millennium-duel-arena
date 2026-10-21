@@ -2250,6 +2250,16 @@
     // SEMPLIFICAZIONE: bersagli auto-selezionati (i primi trovati, stesso
     // stile di selezione automatica già usato altrove in questo file).
     CardEffects.register(205, {
+        // Il bot la attiva solo se i 2 mostri avversari piu' forti valgono nettamente piu' dei 2 propri
+        // piu' deboli che sacrifica (prima si privava dei primi due mostri del campo, qualunque fossero,
+        // anche con un solo bersaglio utile).
+        aiCanActivate(ctx) {
+            const atk = (s) => DuelEngine.getEffectiveAtk(s.card);
+            const propri = ctx.field(ctx.owner).filter(Boolean).map(atk).sort((a, b) => a - b);
+            const loro = ctx.field(ctx.opponent).filter((s) => s && !s.isFaceDown).map(atk).sort((a, b) => b - a);
+            if (propri.length < 2 || loro.length < 2) return false;
+            return loro[0] + loro[1] >= propri[0] + propri[1] + 800;
+        },
         canActivate(ctx) {
             const ownCount = ctx.field(ctx.owner).filter((s) => s).length;
             const oppTargets = ctx.field(ctx.opponent).filter((s) => s && !s.isFaceDown).length;
@@ -2257,13 +2267,23 @@
         },
         activate(ctx) {
             let sacrificed = 0;
-            ctx.field(ctx.owner).forEach((slot, index) => {
-                if (sacrificed >= 2 || !slot) return;
-                ctx.destroyMonster(ctx.owner, index);
-                sacrificed++;
-            });
+            // I 2 mostri propri PIU' DEBOLI (non i primi due della fila) vanno al Cimitero...
+            const atkEff = (slot) => DuelEngine.getEffectiveAtk(slot.card);
+            ctx.field(ctx.owner)
+                .map((slot, index) => ({ slot, index }))
+                .filter((x) => x.slot)
+                .sort((a, b) => atkEff(a.slot) - atkEff(b.slot))
+                .slice(0, 2)
+                .forEach((x) => { ctx.destroyMonster(ctx.owner, x.index); sacrificed++; });
+            // ...e si prendono per primi i 2 avversari PIU' FORTI.
+            const ordineAvversario = ctx.field(ctx.opponent)
+                .map((slot, index) => ({ slot, index }))
+                .filter((x) => x.slot && !x.slot.isFaceDown)
+                .sort((a, b) => atkEff(b.slot) - atkEff(a.slot))
+                .map((x) => x.index);
             let taken = 0;
-            for (let i = 0; i < ctx.field(ctx.opponent).length && taken < 2; i++) {
+            for (let k = 0; k < ordineAvversario.length && taken < 2; k++) {
+                const i = ordineAvversario[k];
                 const slot = ctx.field(ctx.opponent)[i];
                 if (slot && !slot.isFaceDown) {
                     const decl = ctx.declareTarget(ctx.opponent, i, { totalTargetCount: 2 });
@@ -2371,6 +2391,15 @@
     // coperta) e Specchietto della Fata (id 235, ridirige) possono
     // davvero reagire a QUESTA carta, non solo in test sintetici isolati.
     CardEffects.register(388, {
+        // Distrugge un mostro avversario ma ne regala uno proprio: il bot la usa solo se il suo mostro piu'
+        // debole vale molto meno di quello che distrugge (almeno 1500 di scarto in ATK + meta' DEF).
+        aiCanActivate(ctx) {
+            const valore = (s) => DuelEngine.getEffectiveAtk(s.card) + 0.5 * DuelEngine.getEffectiveDef(s.card);
+            const propri = ctx.field(ctx.owner).filter(Boolean).map(valore);
+            const loro = ctx.field(ctx.opponent).filter(Boolean).map(valore);
+            if (!propri.length || !loro.length) return false;
+            return Math.max.apply(null, loro) - Math.min.apply(null, propri) >= 1500;
+        },
         canActivate(ctx) {
             return ctx.field(ctx.opponent).some((s) => s) && ctx.field(ctx.owner).some((s) => s);
         },
@@ -2392,6 +2421,8 @@
                 chooseFieldMonsterTarget(ctx, miei, {
                     title: '🎁 Scatola Magica',
                     text: 'Scegli quale TUO mostro cedere in cambio all\'avversario.',
+                    // Il bot cede il proprio mostro PIU' DEBOLE (prima il primo del campo, spesso il migliore).
+                    pickForBot: (el) => el.reduce((m, c) => (DuelEngine.getEffectiveAtk(c.card) < DuelEngine.getEffectiveAtk(m.card) ? c : m), el[0]),
                     // Anche il secondo bersaglio passa dal checkpoint, col
                     // conteggio totale: la carta ne bersaglia due.
                     dichiara: true,
@@ -2412,7 +2443,9 @@
             if (suoi.length === 0) { cediUnProprioMostro(null); return; }
             chooseFieldMonsterTarget(ctx, suoi, {
                 title: '🎁 Scatola Magica',
-                text: 'Scegli quale mostro avversario distruggere.'
+                text: 'Scegli quale mostro avversario distruggere.',
+                // Il bot distrugge il mostro avversario PIU' FORTE.
+                pickForBot: (el) => el.reduce((m, c) => (DuelEngine.getEffectiveAtk(c.card) > DuelEngine.getEffectiveAtk(m.card) ? c : m), el[0])
             }, (suo) => {
                 // totalTargetCount 2: la carta bersaglia due mostri, quindi
                 // non scatenano le reazioni a un bersaglio singolo
@@ -3311,6 +3344,12 @@
     // due valori) tramite ctx.grantTemporaryAtkDefBonus, già esistente:
     // non serve mutare le statistiche originali condivise della carta.
     CardEffects.register(440, {
+        // Scambia ATK e DEF di TUTTI: conviene solo se i mostri propri ci guadagnano in ATK molto piu' di
+        // quelli avversari (altrimenti si regala potenza al nemico). Il bot misura la differenza.
+        aiCanActivate(ctx) {
+            const delta = (owner) => ctx.field(owner).reduce((s, slot) => (slot && !slot.isFaceDown ? s + (slot.card.defense - slot.card.attack) : s), 0);
+            return delta(ctx.owner) - delta(ctx.opponent) >= 800;
+        },
         activate(ctx) {
             Tavolo.ordine().forEach((o) => {
                 ctx.field(o).forEach((slot) => {

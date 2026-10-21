@@ -500,7 +500,8 @@
 // v358: illustrazioni alternative delle carte (js/data/artwork-alternativi.js, nuovo nell'APP_SHELL).
 // v359: pedine da 320 px rigenerate dagli avatarTrasparenza ad alta risoluzione (stessi nomi di file: senza nuova cache restano le vecchie).
 // v360: Indietro in basso a sinistra su mobile (topbar) e illustrazioni alternative a bacino/tappa fissa.
-const CACHE_NAME = 'ygo-duel-arena-v360';
+// v361: IA che non attiva carte controproducenti (ai-shared, card-effects).
+const CACHE_NAME = 'ygo-duel-arena-v361';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare

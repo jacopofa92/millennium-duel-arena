@@ -581,6 +581,9 @@
     // il posizionamento manuale via click/drag&drop — bug reale corretto:
     // bypassava il blocco cliccando direttamente sullo slot vuoto).
     CardEffects.register(201, {
+        // Bandire un proprio mostro fino alla prossima Standby serve solo a salvarlo da una minaccia
+        // precisa: attivata di propria iniziativa il bot si privava del mostro per niente.
+        aiCanActivate() { return false; },
         canActivate(ctx) {
             return ctx.field(ctx.owner).some((slot) => slot);
         },
@@ -749,6 +752,11 @@
     // con Tipo Insetto al posto di Tipo Roccia.
     // ================================================================
     CardEffects.register(228, {
+        // Distrugge gli Insetti di ENTRAMBI i lati: il bot la attiva solo se all'avversario ne toglie nettamente di piu'.
+        aiCanActivate(ctx) {
+            const somma = (owner) => ctx.field(owner).reduce((s, slot) => (slot && !slot.isFaceDown && slot.card.race === 'Insetto' ? s + DuelEngine.getEffectiveAtk(slot.card) : s), 0);
+            return somma(ctx.opponent) - somma(ctx.owner) >= 500;
+        },
         canActivate(ctx) {
             return Tavolo.ordine().some((owner) => ctx.field(owner).some((slot) => slot && !slot.isFaceDown && slot.card.race === 'Insetto'));
         },
@@ -773,6 +781,12 @@
     // con Tipo Demone al posto di Tipo Roccia.
     // ================================================================
     CardEffects.register(229, {
+        // Distrugge i Demoni di ENTRAMBI i lati: il bot la attiva solo se ne toglie di piu' (almeno 500 ATK in
+        // piu') all'avversario che a se stesso.
+        aiCanActivate(ctx) {
+            const somma = (owner) => ctx.field(owner).reduce((s, slot) => (slot && !slot.isFaceDown && slot.card.race === 'Demone' ? s + DuelEngine.getEffectiveAtk(slot.card) : s), 0);
+            return somma(ctx.opponent) - somma(ctx.owner) >= 500;
+        },
         canActivate(ctx) {
             return Tavolo.ordine().some((owner) => ctx.field(owner).some((slot) => slot && !slot.isFaceDown && slot.card.race === 'Demone'));
         },
@@ -1288,6 +1302,9 @@
     // fino alla End Phase.
     // ================================================================
     CardEffects.register(312, {
+        // Come Buco Dimensionale: bandire un proprio mostro e' una parata, non una mossa. Il bot non sa
+        // riconoscere la minaccia da cui parare, e senza quella si limitava a togliersi un mostro.
+        aiCanActivate() { return false; },
         canActivate(ctx) {
             return ctx.field(ctx.owner).some((slot) => slot && !slot.isFaceDown);
         },

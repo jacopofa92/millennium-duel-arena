@@ -1654,6 +1654,9 @@
     // proprio mostro distrutto in battaglia in questo turno.
     // ------------------------------------------------------------------
     CardEffects.register(418, {
+        // Il ritorno in mano e' una SEMPLIFICAZIONE (prende l'ultima carta del Cimitero, non "un mostro
+        // distrutto in questo turno"): il bot scarterebbe un mostro per riprendersi spesso la carta stessa.
+        aiCanActivate() { return false; },
         canActivate(ctx) {
             return ctx.hand(ctx.owner).some((c) => c.type === 'monster');
         },
@@ -2633,6 +2636,9 @@
     // campo al Cimitero, dichiara il tipo di carta in cima al proprio
     // Deck, scambia i Life Points se indovina.
     CardEffects.register(885, {
+        // Manda al Cimitero TUTTA la propria mano e il proprio campo su una scommessa: il bot non deve
+        // mai farlo di sua iniziativa.
+        aiCanActivate() { return false; },
         canActivate(ctx) {
             const deckKey = Tavolo.chiave(ctx.owner, 'Deck');
             return Array.isArray(gameState[deckKey]) && gameState[deckKey].length > 0;
@@ -2715,7 +2721,33 @@
     // mostro da tributare sia (quando più di uno condivide il Livello)
     // il Mostro Fusione da Special Summonare sono ora una vera scelta,
     // non più sempre il più debole/il primo trovato nell'Extra Deck.
+    /**
+     * La migliore coppia (mostro da tributare, Fusione da evocare) per chi gioca Metamorfosi: quella col
+     * maggior guadagno di ATK effettivo (Fusione - mostro tributato). Serve al bot, che altrimenti
+     * tributava il mostro piu' debole e prendeva la PRIMA Fusione dell'Extra Deck col Livello giusto:
+     * un Kaiba in vantaggio si toglieva un mostro forte per averne uno scarso. Torna null senza coppie.
+     */
+    function migliorCoppiaMetamorfosi(ctx) {
+        const extraDeck = Tavolo.extraDeck(ctx.owner) || [];
+        let migliore = null;
+        ctx.field(ctx.owner).forEach((slot) => {
+            if (!slot || !slot.card) return;
+            // Valore di un mostro: ATK + metà DEF (la Fusione piu' forte in ATK ma con DEF misera non e' un affare).
+            const perso = DuelEngine.getEffectiveAtk(slot.card) + 0.5 * DuelEngine.getEffectiveDef(slot.card);
+            extraDeck.filter((c) => c.level === slot.card.level).forEach((fusione) => {
+                const guadagno = (fusione.attack || 0) + 0.5 * (fusione.defense || 0) - perso;
+                if (!migliore || guadagno > migliore.guadagno) migliore = { tributo: slot.card, fusione: fusione, guadagno: guadagno };
+            });
+        });
+        return migliore;
+    }
+
     CardEffects.register(886, {
+        // Il bot la attiva solo se la Fusione e' DAVVERO piu' forte del mostro che sacrifica (di almeno 500 ATK).
+        aiCanActivate(ctx) {
+            const coppia = migliorCoppiaMetamorfosi(ctx);
+            return !!coppia && coppia.guadagno >= 500;
+        },
         canActivate(ctx) {
             const extraDeck = Tavolo.extraDeck(ctx.owner);
             if (!Array.isArray(extraDeck) || extraDeck.length === 0) return false;
@@ -2752,7 +2784,9 @@
             const tributeChosen = (tributedCard) => {
                 const fusionCandidates = extraDeck.filter((c) => c.level === tributedCard.level);
                 if (fusionCandidates.length === 1 || !Decisioni.rispondeUnaPersona(ctx.owner)) {
-                    summonFusion(tributedCard, fusionCandidates[0]);
+                    // Il bot prende la Fusione piu' forte, non la prima che l'Extra Deck ha per quel Livello.
+                    const piuForte = fusionCandidates.reduce((m, c) => ((c.attack || 0) > (m.attack || 0) ? c : m), fusionCandidates[0]);
+                    summonFusion(tributedCard, piuForte);
                     return;
                 }
                 Decisioni.chiedi({
@@ -2767,6 +2801,10 @@
             };
 
             if (tributeCandidates.length === 1 || !Decisioni.rispondeUnaPersona(ctx.owner)) {
+                // Il bot sceglie la coppia che guadagna di piu' (vedi migliorCoppiaMetamorfosi), non "il
+                // mostro piu' debole": il piu' debole puo' avere solo Fusioni peggiori di un altro mostro.
+                const coppia = migliorCoppiaMetamorfosi(ctx);
+                if (coppia) { summonFusion(coppia.tributo, coppia.fusione); return; }
                 let weakest = tributeCandidates[0];
                 tributeCandidates.forEach((c) => { if (c.attack < weakest.attack) weakest = c; });
                 tributeChosen(weakest);

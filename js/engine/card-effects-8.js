@@ -1708,6 +1708,12 @@
     // recomputeStaticEffects, resta vero anche dopo che questa carta
     // lascia il Terreno — corretto per il ruling ufficiale reale).
     CardEffects.register(1075, {
+        // Distrugge i mostri Special Summonati di ENTRAMBI i lati e vieta la Special Summon a tutti PER SEMPRE: il
+        // bot lo fa solo se all'avversario ne toglie nettamente di piu' (1500 ATK) di quanto ne perde lui.
+        aiCanActivate(ctx) {
+            const somma = (owner) => ctx.field(owner).reduce((s, slot) => (slot && !slot.isFaceDown && slot.wasSpecialSummoned ? s + DuelEngine.getEffectiveAtk(slot.card) : s), 0);
+            return somma(ctx.opponent) - somma(ctx.owner) >= 1500;
+        },
         canActivate(ctx) {
             if (gameState.specialSummonsPermanentlyBannedForBothSides) return false;
             return ctx.hand(ctx.owner).length > 0;

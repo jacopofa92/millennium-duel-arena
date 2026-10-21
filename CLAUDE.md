@@ -162,6 +162,26 @@ perde al prossimo build.
   originale NON compare fra le alternative**: l'originale è confrontata pixel per pixel con quelle
   ufficiali (per 251 Sepoltura Sciocca nessuna coincide, quindi entrambe le ufficiali sono alternative).
   Spec `artwork-alternativi`.
+- **L'IA non deve attivare carte che le fanno male (2026-10-22, segnalato giocando: Kaiba in vantaggio di
+  LP si sacrifica un mostro forte con Metamorfosi per una Fusione scarsa; i bot potenziano il mostro del
+  GIOCATORE).** Cause: il bot attivava ogni carta "attivabile" (il commento diceva "le carte di risposta
+  sono tutte puro vantaggio", falso) e dove una carta non dice come scegliere il bersaglio prendeva il
+  PRIMO dell'elenco, che parte dal giocatore. Rimedi, da riusare per ogni carta nuova:
+  `def.aiCanActivate(ctx)` (veto per-carta per carte con un costo o una scelta che il bot non sa
+  valutare) passa dal filtro unico `AI_SHARED.attivazioneSensata` (js/ai/ai-shared.js), che vale per la
+  mano, per le carte Set e per le risposte in Catena (`chooseChainResponse`) e in piu' prova davvero le
+  Magie Terreno (le mette un istante, ricalcola i bonus, misura chi guadagna), blocca i costi in LP che
+  lasciano meno di 2000 LP e le Trappole di solo potenziamento fuori dalla Battle Phase; la scelta del bot
+  fra i bersagli (`sceltaAutomaticaDelBot` in card-effects.js, usata da `chooseFieldCardTarget`) manda i
+  potenziamenti sul proprio mostro piu' forte e le rimozioni sul piu' forte avversario — SOLO per le carte
+  a bersaglio singolo ("bersaglio 1 mostro"): le carte a piu' passi (Riryoku, Scatola Magica) decidono con
+  `pickForBot`/`favorisce`; i Rituali sacrificano la combinazione di mostri che costa meno
+  (`performRitualTribute`), non i mostri di Livello piu' alto. **Il controllo a tappeto e'
+  `tools/audit-attivazioni-ia.js`** (passo base: ogni Magia/Trappola attivabile su campi di prova, deve dare
+  zero sospetti; `--reattive`: ogni Trappola in risposta a un attacco/Evocazione/Magia, con/senza la Trappola;
+  `--mostri`: abilita' dei mostri ed Evocazioni Speciali; `--mai`: carte che nessun campo di prova rende
+  attivabili) e lo sorveglia `tests/specs/ia-attivazioni-sensate.spec.js`. I falsi sospetti valutati a mano
+  stanno elencati nel tool con il motivo: un nuovo sospetto va letto carta per carta, non silenziato.
 - **Bordo carta mobile "troppo spesso"**: quasi sempre un problema di
   rapporto arte/cornice, non della proprietà CSS `border` in sé.
 

@@ -167,6 +167,9 @@
      * rimozione, risponde comunque con la prima come sempre.
      */
     function chooseChainResponse(candidates, io = 'bot') {
+        // Prima si scartano le risposte che al bot costerebbero piu' di quanto rendono (veto della carta,
+        // vedi AI_SHARED.attivazioneSensata): rispondere "sempre con la prima" attivava anche quelle.
+        if (window.AI_SHARED) candidates = candidates.filter((c) => AI_SHARED.attivazioneSensata(c.card, io, c.zone, c.index));
         if (candidates.length === 0) return null;
         if (window.AI_SHARED) {
             const allPureRemoval = candidates.every((c) => AI_SHARED.isSingleTargetRemoval(c.card));
@@ -213,11 +216,8 @@
         const setCount = usedThisTurn.setCount || (usedThisTurn.setDone ? 1 : 0);
         const worthwhile = (card) => {
             if (!window.AI_SHARED) return true;
-            const definition = window.DuelEngine && DuelEngine.getDefinition(card.id);
-            if (definition && typeof definition.aiCanActivate === 'function') {
-                const context = DuelEngine.makeContext(io, { card, zone: 'hand' });
-                if (!definition.aiCanActivate(context)) return false;
-            }
+            // Il veto della carta (aiCanActivate) e la prova delle Magie Terreno: vedi AI_SHARED.attivazioneSensata.
+            if (!AI_SHARED.attivazioneSensata(card, io, 'hand')) return false;
             // Una carta-combo che Evoca Specialmente dalla mano (es.
             // Dimensione Magica) non è prima di tutto una rimozione. Il
             // suo "poi puoi distruggere" è facoltativo: classificarla solo
@@ -323,6 +323,9 @@
             const slot = campo[index];
             if (!slot || slot.isFaceDown) continue;
             if (!/scart(?:a|are) 1 carta.*distrugg/i.test(slot.card.effect || '')) continue;
+            // Il veto della carta (aiCanActivate): il riconoscimento per testo prende anche carte come Jowgen,
+            // che distrugge i mostri Special Summonati di entrambi i lati.
+            if (window.AI_SHARED && !AI_SHARED.attivazioneSensata(slot.card, io, 'monster', index)) continue;
             if (window.DuelEngine && DuelEngine.canActivate(io, 'monster', index)) {
                 return { zone: 'monster', index, card: slot.card };
             }

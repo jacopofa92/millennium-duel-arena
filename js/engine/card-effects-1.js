@@ -387,6 +387,12 @@
     // Terreno, pensate per restare in campo, non per un uso singolo).
     // ================================================================
     CardEffects.register(276, {
+        // Costa 2000 LP: il bot la usa solo con LP abbondanti (almeno 6000) e se nel Cimitero avversario c'e'
+        // una Magia che vale davvero (impatto stimato alto), non per una qualunque.
+        aiCanActivate(ctx) {
+            if (Tavolo.lp(ctx.owner, gameState) < 6000) return false;
+            return ctx.graveyard(ctx.opponent).some((c) => c.type === 'spell' && window.AI_SHARED && AI_SHARED.scoreCardImpact(c) >= 3);
+        },
         canActivate(ctx) {
             const grave = ctx.graveyard(ctx.opponent);
             return grave.some((c) => {
@@ -825,6 +831,9 @@
     // Terreno" lo garantisce già la raccolta dei bersagli d'aggancio, che
     // guarda solo il proprio lato.
     CardEffects.register(420, {
+        // Toglie 500 ATK/DEF al proprio mostro per obbligare gli attacchi avversari su di lui: una
+        // trappola di tattica, che il bot usava solo per indebolirsi.
+        aiCanActivate() { return false; },
         continuous: true,
         canActivate(ctx) { return findEquipTarget(ctx) !== -1; },
         activate(ctx) { equipToChosenTarget(ctx); },
@@ -2318,6 +2327,12 @@
     // primo trovato), invece di un'interfaccia di selezione dedicata.
     // ================================================================
     CardEffects.register(80, {
+        // Riporta in mano un proprio Drago e distrugge TUTTE le Magie/Trappole, anche le proprie: ha senso solo
+        // se l'avversario ne ha nettamente di piu' (almeno 2 piu' del bot).
+        aiCanActivate(ctx) {
+            const conta = (owner) => ctx.stField(owner).filter(Boolean).length + (Tavolo.magiaTerreno(owner) ? 1 : 0);
+            return conta(ctx.opponent) - conta(ctx.owner) >= 2;
+        },
         canActivate(ctx) {
             return ctx.field(ctx.owner).some((slot) => slot && !slot.isFaceDown && slot.card.race === 'Drago' && slot.card.level >= 5);
         },
@@ -2833,6 +2848,11 @@
     // entrambi i giocatori.
     // ================================================================
     CardEffects.register(132, {
+        // Distrugge le Rocce di ENTRAMBI i lati: il bot la attiva solo se all'avversario ne toglie nettamente di piu'.
+        aiCanActivate(ctx) {
+            const somma = (owner) => ctx.field(owner).reduce((s, slot) => (slot && !slot.isFaceDown && slot.card.race === 'Roccia' ? s + DuelEngine.getEffectiveAtk(slot.card) : s), 0);
+            return somma(ctx.opponent) - somma(ctx.owner) >= 500;
+        },
         canActivate(ctx) {
             return Tavolo.ordine().some((owner) => ctx.field(owner).some((slot) => slot && !slot.isFaceDown && slot.card.race === 'Roccia'));
         },

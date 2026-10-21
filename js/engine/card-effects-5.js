@@ -25,6 +25,9 @@
     // (dipendente dal confronto LP ad ogni render) invece che fisso.
     // ================================================================
     CardEffects.register(631, {
+        // Raddoppia l'ATK solo finche' i propri LP sono INFERIORI a quelli dell'avversario (con LP superiori lo
+        // dimezza): il bot la equipaggia solo quando e' in svantaggio di LP.
+        aiCanActivate(ctx) { return Tavolo.lp(ctx.owner, gameState) < Tavolo.lp(ctx.opponent, gameState); },
         continuous: true,
         canActivate(ctx) { return findEquipTarget(ctx, () => true) !== -1; },
         activate(ctx) { equipToChosenTarget(ctx); },
@@ -2334,6 +2337,15 @@
     // Summon mostri ACQUA dalla mano fino a quel numero.
     // ================================================================
     CardEffects.register(706, {
+        // Distrugge i propri mostri ACQUA per rimpiazzarli con ACQUA dalla mano: il bot lo fa solo se quelli in mano
+        // (al massimo quanti ne distrugge) valgono nettamente piu' di quelli che perde.
+        aiCanActivate(ctx) {
+            const propri = ctx.field(ctx.owner).filter((s) => s && !s.isFaceDown && s.card.attribute === 'ACQUA').map((s) => DuelEngine.getEffectiveAtk(s.card)).sort((a, b) => a - b);
+            const inMano = ctx.hand(ctx.owner).filter((c) => c.type === 'monster' && c.attribute === 'ACQUA').map((c) => c.attack || 0).sort((a, b) => b - a).slice(0, propri.length);
+            const perso = propri.reduce((a, b) => a + b, 0);
+            const guadagnato = inMano.reduce((a, b) => a + b, 0);
+            return guadagnato - perso >= 500;
+        },
         canActivate(ctx) {
             return ctx.field(ctx.owner).some((s) => s && !s.isFaceDown && s.card.attribute === 'ACQUA');
         },
