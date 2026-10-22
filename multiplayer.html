@@ -193,7 +193,7 @@
 
                     <div class="mp-seats">
                         <div class="mp-seat mp-seat--you">
-                            <div class="mp-seat-avatar">🧑</div>
+                            <div class="mp-seat-avatar" id="mpSeatYouAvatar">🧑</div>
                             <div class="mp-seat-name" id="mpSeatYouName">Tu</div>
                             <div class="mp-seat-role" id="mpSeatYouRole">Pronto</div>
                         </div>
@@ -219,6 +219,16 @@
                          Libero. Restano separati perché hanno un padrone
                          diverso: il mazzo è personale, arena e musica le
                          decide chi ha creato la stanza. -->
+                    <!-- Anche la pedina e' personale: e' il ritratto con cui ti presenti, in sala e nel duello
+                         (js/multiplayer/mp-pedina.js). L'avversario la riceve nel messaggio "pronto". -->
+                    <div class="mp-own" id="mpPedinaGroup">
+                        <div class="mp-setup-head">
+                            <span class="mp-setup-title">La tua pedina</span>
+                            <span class="mp-setup-note">La vede anche l'avversario</span>
+                        </div>
+                        <div id="mpPedina"></div>
+                    </div>
+
                     <div class="mp-own" id="mpDeckGroup">
                         <div class="mp-setup-head">
                             <span class="mp-setup-title">Il tuo mazzo</span>
@@ -295,6 +305,7 @@
      può includere da solo (stessa nota in duello-libero.html). Quando
      l'arena verrà caricata, loadDuelArena salterà questi due file invece
      di rieseguirli — vedi il commento lì. -->
+<script src="js/data/characters-db.js"></script>
 <script src="js/data/cards-db.js"></script>
 <script src="js/data/custom-taxonomy.js"></script>
 <!-- Controllo "il mio mazzo rispetta le Carte ammesse?" mentre si è
@@ -311,6 +322,8 @@
 <script src="js/multiplayer/protocollo-mp.js"></script>
 <script src="js/multiplayer/network.js"></script>
 <script src="js/multiplayer/mp-passo-comune.js"></script>
+<script src="js/data/character-unlocks.js"></script>
+<script src="js/multiplayer/mp-pedina.js"></script>
 <script src="js/multiplayer/mp-term-fx.js"></script>
 <script src="js/multiplayer/mp-lobby.js"></script>
 </body>

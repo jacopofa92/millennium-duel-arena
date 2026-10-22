@@ -71,7 +71,12 @@
             if (a.origin !== undefined && !testo(a.origin)) return 'origine non valida';
             return null;
         },
-        'ready': (a) => (typeof a.pronto === 'boolean' ? null : 'pronto non è vero/falso'),
+        'ready': (a) => {
+            if (typeof a.pronto !== 'boolean') return 'pronto non è vero/falso';
+            // La pedina (id di un personaggio) e' facoltativa: un client piu' vecchio non la manda.
+            if (a.pedina !== undefined && !(typeof a.pedina === 'string' && a.pedina.length > 0 && a.pedina.length <= 40)) return 'pedina non valida';
+            return null;
+        },
         'rps': (a) => {
             if (typeof a.iniziaChiManda === 'boolean') return null;
             return testo(a.scelta) ? null : 'morra senza scelta';

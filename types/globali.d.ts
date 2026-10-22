@@ -69,6 +69,7 @@ declare var AmbienteWebGL: any;
 declare var VisualEffects: any;
 declare var MP_TERM_FX_OFF: any;
 declare var MpTermFx: any;
+declare var MpPedina: any;
 declare var AmbienteMenu: any;
 declare var AMBIENTE_WEBGL_OFF: any;
 declare var Fluido: any;

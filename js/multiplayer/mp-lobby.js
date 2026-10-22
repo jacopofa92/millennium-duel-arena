@@ -435,12 +435,37 @@
         if (setupArena) setupArena.setReadOnly(!sonoHost);
     }
 
+    // La pedina dell'avversario arriva col suo messaggio "pronto" (id del personaggio, mai un percorso: vedi mp-pedina.js).
+    let pedinaAvversario = null;
+
+    /** Mette una pedina nel tondo del posto; senza pedina rimette il segnaposto (emoji). */
+    function mostraPedinaNelPosto(idElemento, pedina, segnaposto) {
+        const el = $(idElemento);
+        if (!el) return;
+        if (pedina) {
+            el.textContent = '';
+            el.style.backgroundImage = `url("${pedina.image}")`;
+            el.classList.add('mp-seat-avatar--img');
+            el.title = pedina.name;
+        } else {
+            el.textContent = segnaposto || '🧑';
+            el.style.backgroundImage = '';
+            el.classList.remove('mp-seat-avatar--img');
+            el.removeAttribute('title');
+        }
+    }
+
+    /** Dice all'altro lato come siamo messi: pronti o no, e con quale pedina. Un solo messaggio, sempre completo. */
+    function annunciaStato() {
+        net.sendAction({ kind: 'ready', pronto: sonoPronto, pedina: MpPedina.scelta().id });
+    }
+
     function riempiPostoAvversario() {
         const posto = $('mpSeatOpponent');
         if (!posto) return;
         posto.classList.remove('mp-seat--empty');
         posto.classList.add('mp-seat--filled');
-        $('mpSeatOppAvatar').textContent = '🧑';
+        mostraPedinaNelPosto('mpSeatOppAvatar', pedinaAvversario || MpPedina.PREDEFINITA);
         $('mpSeatOppName').textContent = 'Avversario';
         // "In stanza", non "Pronto": da quando esiste la dichiarazione di
         // prontezza vera, scrivere "Pronto" qui appena l'altro entra è una
@@ -470,7 +495,8 @@
         if (!posto) return;
         posto.classList.remove('mp-seat--filled');
         posto.classList.add('mp-seat--empty');
-        $('mpSeatOppAvatar').textContent = '❔';
+        pedinaAvversario = null;
+        mostraPedinaNelPosto('mpSeatOppAvatar', null, '❔');
         $('mpSeatOppName').innerHTML = '<span class="mp-dots">In attesa</span>';
         $('mpSeatOppRole').textContent = 'Posto libero';
         $('mpOccupancy').textContent = '1';
@@ -497,6 +523,15 @@
 
     function costruisciSelettori() {
         if (setupArena) return;
+        // La pedina: personale come il mazzo. Cambiandola si aggiorna il proprio posto e, se l'avversario e' gia'
+        // in sala, glielo si dice subito (stesso messaggio del "pronto").
+        MpPedina.monta($('mpPedina'), {
+            onChange: (p) => {
+                mostraPedinaNelPosto('mpSeatYouAvatar', p);
+                if (avversarioInStanza) annunciaStato();
+            }
+        });
+        mostraPedinaNelPosto('mpSeatYouAvatar', MpPedina.scelta());
         setupMazzi = window.DuelSetup.mount($('mpDecks'), {
             decks: true,
             arena: false,
@@ -577,7 +612,8 @@
         // compare solo adesso, ma si può arrivare qui dopo un
         // rientro) lo ridichiara, così l'altro lo sa.
         mostraBarraPronto();
-        if (sonoPronto) net.sendAction({ kind: 'ready', pronto: true });
+        // Sempre, anche se non si e' ancora pronti: serve a far arrivare la propria pedina.
+        annunciaStato();
         aggiornaPronto();
     });
 
@@ -587,8 +623,13 @@
      * andrebbe gestito anche dal server, che invece è e resta un relay
      * cieco.
      */
-    function riceviPronto(pronto) {
-        avversarioPronto = !!pronto;
+    function riceviPronto(azione) {
+        avversarioPronto = !!azione.pronto;
+        // La pedina, se c'e' (un client piu' vecchio non la manda): si cerca nel PROPRIO elenco.
+        if (typeof azione.pedina === 'string') {
+            pedinaAvversario = MpPedina.risolvi(azione.pedina);
+            if (avversarioInStanza) mostraPedinaNelPosto('mpSeatOppAvatar', pedinaAvversario);
+        }
         aggiornaPronto();
     }
 
@@ -677,7 +718,7 @@
         }
 
         if (azione.kind === 'ready') {
-            riceviPronto(azione.pronto);
+            riceviPronto(azione);
             return;
         }
 
@@ -715,7 +756,7 @@
         btn.onclick = () => {
             if (duelloGiaAvviato) return;
             sonoPronto = !sonoPronto;
-            net.sendAction({ kind: 'ready', pronto: sonoPronto });
+            annunciaStato();
             if (window.NativeHaptics) NativeHaptics.light();
             aggiornaPronto();
         };
@@ -999,6 +1040,10 @@
         // regola condivisa — limite dichiarato: se il mazzo dell'ospite
         // non è ammesso se ne accorge solo qui, a stanza già formata.
         if (config.origin) params.set('origin', config.origin);
+        // Le due pedine: la mia e quella dell'avversario. js/duel-session.js le legge solo in Multiplayer
+        // (resolvePlayer/resolveOpponent) e le cerca nell'elenco dei personaggi.
+        params.set('pedina', MpPedina.scelta().id);
+        if (pedinaAvversario) params.set('pedinaAvv', pedinaAvversario.id); else params.delete('pedinaAvv');
         history.replaceState({}, '', window.location.pathname + '?' + params.toString());
         // Il fondale della lobby è su body::before ed è FISSO: resterebbe
         // davanti allo sfondo dell'arena, rendendo invisibile l'arena

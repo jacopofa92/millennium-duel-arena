@@ -195,7 +195,23 @@
                 };
             }
         }
+        // Multiplayer: l'avversario si presenta con la pedina che ha scelto in sala (?pedinaAvv=, id di un personaggio).
+        if (mode === 'multiplayer') {
+            const p = pedinaMultiplayer(params.get('pedinaAvv'));
+            if (p) return Object.assign({}, GENERIC_OPPONENTS.multiplayer, { image: p.image });
+        }
         return GENERIC_OPPONENTS[mode] || GENERIC_OPPONENTS.demo;
+    }
+
+    /**
+     * La pedina scelta in sala (js/multiplayer/mp-pedina.js) a partire dal suo id: il ritratto di quel personaggio.
+     * Si cerca SEMPRE nell'elenco locale, mai si fida di un percorso: un id sconosciuto (o "player", la pedina
+     * personale di sempre) torna null e resta il ritratto predefinito.
+     */
+    function pedinaMultiplayer(id) {
+        if (!id || id === 'player' || typeof characterDatabase === 'undefined') return null;
+        const c = characterDatabase.find((x) => x.id === id);
+        return c && c.image ? { id: c.id, name: c.name, image: c.image } : null;
     }
 
     /**
@@ -224,6 +240,11 @@
             image: 'images/characters/mirror.jpg',
             icon: '👤'
         };
+        // Multiplayer: la pedina scelta in sala (?pedina=). Cambia solo il ritratto, non il nome.
+        if (mode === 'multiplayer') {
+            const p = pedinaMultiplayer(params.get('pedina'));
+            if (p) io.image = p.image;
+        }
         // EXTRA modalità: nelle Rivincite giochi nei panni di qualcun altro.
         const altro = ModalitaExtra.giocatore();
         if (altro && altro.name) return Object.assign({}, io, altro);

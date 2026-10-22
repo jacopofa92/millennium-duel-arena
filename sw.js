@@ -501,7 +501,7 @@
 // v359: pedine da 320 px rigenerate dagli avatarTrasparenza ad alta risoluzione (stessi nomi di file: senza nuova cache restano le vecchie).
 // v360: Indietro in basso a sinistra su mobile (topbar) e illustrazioni alternative a bacino/tappa fissa.
 // v361: IA che non attiva carte controproducenti (ai-shared, card-effects).
-const CACHE_NAME = 'ygo-duel-arena-v367';
+const CACHE_NAME = 'ygo-duel-arena-v368';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
@@ -659,6 +659,7 @@ const APP_SHELL = [
     'js/ui/scelta-duellante.css',
     'js/ui/visual-effects-library.js',
     'js/multiplayer/mp-term-fx.js',
+    'js/multiplayer/mp-pedina.js',
     'js/multiplayer/mp-lobby.js',
     'js/multiplayer/mp-passo-comune.js',
     'js/multiplayer/multiplayer.js',
