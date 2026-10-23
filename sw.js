@@ -17,6 +17,10 @@
  *     numero di versione della cache per invalidarla (un errore classico
  *     nei Service Worker: dimenticarsi di farlo lascia gli utenti
  *     bloccati su una versione vecchia per sempre).
+ *     Con una rete LENTA (non assente) la fetch non fallisce mai e aspettarla
+ *     faceva pagare ad ogni pagina l'intera lentezza anche con tutto in cache:
+ *     se la copia c'e' e la rete non risponde entro ATTESA_RETE_APP_SHELL_MS
+ *     si parte dalla cache, e la rete continua in sottofondo ad aggiornarla.
  *   - MEDIA (immagini/audio, centinaia di MB in tutto — troppi per
  *     precaricarli tutti in un colpo solo): "cache-first" — una volta
  *     scaricato un file la prima volta, resta in cache e non viene
@@ -501,7 +505,8 @@
 // v359: pedine da 320 px rigenerate dagli avatarTrasparenza ad alta risoluzione (stessi nomi di file: senza nuova cache restano le vecchie).
 // v360: Indietro in basso a sinistra su mobile (topbar) e illustrazioni alternative a bacino/tappa fissa.
 // v361: IA che non attiva carte controproducenti (ai-shared, card-effects).
-const CACHE_NAME = 'ygo-duel-arena-v382';
+// v383: app shell con scadenza di rete (1,5 s) quando la copia in cache c'e' gia' (rete lenta).
+const CACHE_NAME = 'ygo-duel-arena-v383';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
@@ -778,6 +783,63 @@ function isAppShellRequest(url) {
     return /\.(html|css|js)$/.test(url.pathname) || url.pathname.endsWith('/');
 }
 
+/**
+ * Quanto si aspetta la RETE per un file dell'app shell che in cache c'e' gia'.
+ * Su una connessione lenta ma non assente la fetch non fallisce mai: resta in attesa, e il
+ * "network-first" puro faceva aspettare ogni pagina anche con tutto gia' in cache (misurato a
+ * 300 ms di latenza: duello pronto dopo 11 s sia a freddo sia con il Service Worker installato).
+ * Passato questo tempo, se la copia in cache c'e' si parte da quella, e la rete continua in
+ * sottofondo ad aggiornare la cache per la volta dopo. Conta solo l'ARRIVO DELLE INTESTAZIONI:
+ * una risposta che e' cominciata ad arrivare si aspetta fino in fondo. Senza copia in cache
+ * non c'e' scadenza: non c'e' niente di meglio da servire.
+ */
+const ATTESA_RETE_APP_SHELL_MS = 1500;
+
+/**
+ * App shell (HTML/CSS/JS): rete per prima, scadenza breve, poi la copia in cache.
+ *
+ * cache: 'reload' forza il bypass della cache HTTP del BROWSER (quella governata dagli header
+ * Cache-Control del server, uno strato SOTTO la Cache Storage di questo Service Worker):
+ * senza, un fetch() "network-first" può comunque tornare una risposta stantia se il browser la
+ * considera ancora valida per i suoi header — proprio il caso che questa strategia vuole
+ * escludere, un aggiornamento appena pubblicato deve arrivare SEMPRE al prossimo avvio online.
+ */
+function rispostaAppShell(event, req) {
+    const rete = fetch(req, { cache: 'reload' })
+        .then((response) => {
+            // Un 404/500 è comunque una fetch risolta: senza questo controllo sostituirebbe nella
+            // Cache Storage una copia buona, rendendo guasto anche il successivo avvio offline.
+            // La risposta di rete resta visibile online, ma non viene resa persistente.
+            if (!response || !response.ok) return response;
+            const copy = response.clone();
+            // La Promise di put fa parte della risposta: se la si lasciasse staccata, il worker
+            // potrebbe essere sospeso dopo aver consegnato `response` ma prima di aver
+            // terminato l'aggiornamento della cache.
+            return caches.open(CACHE_NAME)
+                .then((cache) => cache.put(req, copy).catch(() => {}))
+                .then(() => response);
+        });
+    // Se la rete arriva dopo la scadenza nessuno la sta piu' aspettando: tiene vivo il worker
+    // finche' la cache non e' aggiornata.
+    if (event && typeof event.waitUntil === 'function') event.waitUntil(rete.catch(() => {}));
+
+    return caches.match(req).then((inCache) => {
+        if (!inCache) return rete.catch(() => caches.match(req));
+        return new Promise((resolve) => {
+            let consegnata = false;
+            const consegna = (risposta) => {
+                if (consegnata) return;
+                consegnata = true;
+                clearTimeout(timer);
+                resolve(risposta);
+            };
+            const timer = setTimeout(() => consegna(inCache), ATTESA_RETE_APP_SHELL_MS);
+            // Una risposta d'errore (404/500) non batte una copia buona: si resta su quella.
+            rete.then((response) => consegna(response && response.ok ? response : inCache), () => consegna(inCache));
+        });
+    });
+}
+
 self.addEventListener('fetch', (event) => {
     const req = event.request;
     if (req.method !== 'GET') return; // niente cache per POST/ecc (qui non ce ne sono comunque)
@@ -797,36 +859,7 @@ self.addEventListener('fetch', (event) => {
     }
 
     if (isAppShellRequest(url)) {
-        event.respondWith(
-            // cache: 'reload' forza il bypass della cache HTTP del BROWSER
-            // (quella governata dagli header Cache-Control del server, uno
-            // strato SOTTO la Cache Storage di questo Service Worker):
-            // senza, un fetch() "network-first" può comunque tornare una
-            // risposta stantia se il browser la considera ancora valida
-            // per i suoi header (GitHub Pages ne manda con qualche minuto
-            // di validità) — proprio il caso che questa strategia vuole
-            // escludere, un aggiornamento appena pubblicato deve arrivare
-            // SEMPRE al prossimo avvio online, non "quando scade la cache
-            // HTTP".
-            fetch(req, { cache: 'reload' })
-                .then((response) => {
-                    // Un 404/500 è comunque una fetch risolta: senza questo
-                    // controllo sostituirebbe nella Cache Storage una copia
-                    // buona, rendendo guasto anche il successivo avvio
-                    // offline. La risposta di rete resta visibile online,
-                    // ma non viene resa persistente.
-                    if (!response || !response.ok) return response;
-                    const copy = response.clone();
-                    // La Promise di put fa parte di respondWith: se la si
-                    // lasciasse staccata, il worker potrebbe essere sospeso
-                    // dopo aver consegnato `response` ma prima di aver
-                    // terminato l'aggiornamento della cache.
-                    return caches.open(CACHE_NAME)
-                        .then((cache) => cache.put(req, copy).catch(() => {}))
-                        .then(() => response);
-                })
-                .catch(() => caches.match(req))
-        );
+        event.respondWith(rispostaAppShell(event, req));
         return;
     }
 

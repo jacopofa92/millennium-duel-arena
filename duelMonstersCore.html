@@ -38,8 +38,53 @@
          solo su schermi touch (pointer coarse, telefoni/tablet, dove il
          risparmio di banda/CPU conta davvero — vedi images/fields/mobile/,
          stessa ricompressione qualità 78 di images/characters). -->
-    <link rel="preload" as="image" href="images/fields/dirigibileKaibaCorp.jpg" media="(pointer: fine)">
-    <link rel="preload" as="image" href="images/fields/mobile/dirigibileKaibaCorp.jpg" media="(pointer: coarse)">
+    <!-- AVVIO SU CONNESSIONE LENTA. Il browser dipinge il <body> appena lo vede, ma lo
+         script del loader (js/ui/page-loader.js) sta DENTRO il body ed e' un file esterno:
+         con 300 ms di latenza il campo di default compariva per secondi, nudo, prima di
+         ogni loader (misurato: campo a 2,2 s, loader a 2,5 s, campo vero a 6,4 s).
+         Tre cose, tutte INLINE perche' non devono aspettare nessun file:
+         1) una copertura scura con un anello, sull'<html> (`avvio-in-corso`), che blocca
+            anche i tocchi; se la leva il loader vero (page-loader.js), che le subentra;
+         2) il campo RICHIESTO dall'URL (?field=) scritto subito come sfondo e scaricato
+            subito, al posto del campo di default scaricato a vuoto;
+         3) niente preload del dirigibile se il campo e' un altro. -->
+    <style>
+        html.avvio-in-corso::before { content: ''; position: fixed; inset: 0; z-index: 2147483000; background: #0b0d14; }
+        html.avvio-in-corso::after { content: ''; position: fixed; z-index: 2147483001; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; box-sizing: border-box; border: 3px solid rgba(247, 215, 116, .22); border-top-color: #f7d774; border-radius: 50%; animation: avvio-in-corso-giro .9s linear infinite; }
+        @keyframes avvio-in-corso-giro { to { transform: rotate(360deg); } }
+    </style>
+    <script>
+        (function () {
+            var radice = document.documentElement;
+            radice.classList.add('avvio-in-corso');
+            // Rete di sicurezza: se per qualunque motivo il loader non subentra, la copertura non resta per sempre.
+            setTimeout(function () { radice.classList.remove('avvio-in-corso'); }, 20000);
+            // Campi TOLTI dal gioco col loro sostituto: letti anche dallo script del corpo pagina.
+            window.CAMPI_RITIRATI = {
+                'dirigibileKaiba.jpg': 'dirigibileKaibaCorp.jpg',
+                'dirigibileKaibaCorp2.jpg': 'dirigibileKaibaCorp.jpg',
+                'kaibaStadium_1.jpg': 'stadioKaiba.jpg',
+                'kaibaStadium_2.jpg': 'stadioKaiba.jpg',
+                'castello_pegasus.jpg': 'arenaCastelloPegasus.jpg'
+            };
+            var chiesto = null;
+            try { chiesto = new URLSearchParams(location.search).get('field'); } catch (e) {}
+            var nome = chiesto ? chiesto.split('/').pop() : 'dirigibileKaibaCorp.jpg';
+            nome = window.CAMPI_RITIRATI[nome] || nome;
+            var cartella = window.matchMedia && window.matchMedia('(pointer: coarse)').matches ? 'images/fields/mobile/' : 'images/fields/';
+            var url = cartella + nome;
+            var link = document.createElement('link');
+            link.rel = 'preload'; link.as = 'image'; link.href = url;
+            document.head.appendChild(link);
+            if (chiesto) {
+                var st = document.createElement('style');
+                // `html body` batte il `body` del foglio qui sotto senza !important: lo stile inline
+                // impostato piu' tardi dalla pagina (stesso file) resta comunque l'ultima parola.
+                st.textContent = "html body { background-image: url('" + url.replace(/'/g, '%27') + "'); }";
+                document.head.appendChild(st);
+            }
+        })();
+    </script>
     <link rel="preload" as="image" href="images/characters/mirror.jpg">
     <script src="js/ui/error-recovery.js"></script>
     <!-- Accesso obbligatorio (js/cloud/auth-gate.js) — vedi il commento
@@ -4962,13 +5007,8 @@
         // vecchio o lo stato salvato di un torneo li può ancora chiedere, e
         // senza questo ponte comparirebbe uno sfondo mancante invece del
         // luogo giusto.
-        const CAMPI_RITIRATI = {
-            'dirigibileKaiba.jpg': 'dirigibileKaibaCorp.jpg',
-            'dirigibileKaibaCorp2.jpg': 'dirigibileKaibaCorp.jpg',
-            'kaibaStadium_1.jpg': 'stadioKaiba.jpg',
-            'kaibaStadium_2.jpg': 'stadioKaiba.jpg',
-            'castello_pegasus.jpg': 'arenaCastelloPegasus.jpg'
-        };
+        // (la tabella sta nell'<head>, dove serve anche al preload del campo)
+        const CAMPI_RITIRATI = window.CAMPI_RITIRATI || {};
         const nomeCampo = campoRichiesto ? campoRichiesto.split('/').pop() : null;
         window.DUEL_ARENA_CUSTOM_FIELD = nomeCampo ? (CAMPI_RITIRATI[nomeCampo] || nomeCampo) : null;
         const customMusic = urlParams.get('music');

@@ -110,6 +110,10 @@
     } else if (document.body) {
         document.body.insertBefore(el, document.body.firstChild);
     }
+    // Le pagine con la copertura inline nell'<head> (duelMonstersCore.html: `avvio-in-corso`) la tengono
+    // finche' questo loader non esiste: da qui in poi lo schermo e' coperto da lui, e la levano nello
+    // stesso istante per non lasciare ne' un vuoto ne' due strati sovrapposti.
+    document.documentElement.classList.remove('avvio-in-corso');
 
     // Nessun WebGL qui: il loader e' sul percorso critico di OGNI pagina (se un contesto GL fallisce su un telefono
     // lo schermo resta nero). Solo CSS.

@@ -47,7 +47,10 @@
     // Quanto l'ospite aspetta le impostazioni dell'host prima di partire
     // comunque con le proprie: meglio un duello che comincia in un'arena
     // diversa da quella scelta che un duello che non comincia mai.
-    const ATTESA_CONFIG_MS = 4000;
+    // 20 s e non 4: con 300 ms di latenza e un relay che si sveglia (Render) 4 s non bastano, e allo
+    // scadere l'ospite partiva con un'arena e una musica sue, diverse da quelle dell'host. L'host le
+    // riinvia ogni volta che l'ospite dice "pronto" (vedi riceviPronto), quindi l'attesa vera e' breve.
+    const ATTESA_CONFIG_MS = 20000;
 
     let sonoHost = false;
     let codiceStanza = null;
@@ -621,6 +624,8 @@
         iniziIoInAttesa = msg.youStart;
 
         if (sonoHost) inviaConfigHost();
+        // Da qui al "pronto" passano secondi in cui la rete e' ferma: li si usa per scaricare l'arena.
+        precaricaArena();
 
         // Chi era già pronto PRIMA che l'avversario entrasse (la barra
         // compare solo adesso, ma si può arrivare qui dopo un
@@ -639,6 +644,10 @@
      */
     function riceviPronto(azione) {
         avversarioPronto = !!azione.pronto;
+        // Chi si dichiara pronto senza aver ricevuto le impostazioni le sta aspettando: su una rete lenta
+        // il primo invio dell'host puo' essersi perso o essere in ritardo. Riinviarle e' innocuo (chi le
+        // ha gia' le rimette uguali) e costa un messaggio solo quando qualcuno dice "pronto".
+        if (sonoHost && azione.pronto && avversarioInStanza) inviaConfigHost();
         // La pedina, se c'e' (un client piu' vecchio non la manda): si cerca nel PROPRIO elenco.
         if (typeof azione.pedina === 'string') {
             pedinaAvversario = MpPedina.risolvi(azione.pedina);
@@ -1066,6 +1075,11 @@
     }
 
     async function startMultiplayerDuel(youStart, config) {
+        // Il caricamento dell'arena puo' durare molti secondi su una connessione lenta: se la lobby sparisce
+        // subito, in quel tempo si vede la pagina mezza costruita (campo di default, caselle senza stile...).
+        // La schermata di caricamento copre il passaggio; la nasconde DuelSession.start() quando l'intro
+        // del duello prende il suo posto.
+        if (window.PageLoader) PageLoader.show();
         window.MULTIPLAYER_MODE = true;
         window.MP_startingRole = youStart ? 'player' : 'bot';
         // Il passo comune è l'unico protocollo di duello supportato. Il
@@ -1098,10 +1112,59 @@
      * che duelMonstersCore.html non include più da sé (serve solo qui, per
      * applicare le mosse remote dell'avversario — vedi quel file).
      */
+    /**
+     * Il documento dell'arena, scaricato UNA volta sola (anche se lo chiedono due punti insieme).
+     * Lo scarica gia' la sala non appena l'avversario entra (`precaricaArena`), cosi' quando il
+     * duello parte il file e' in cache; il fallimento qui non e' un errore: lo ritenta il
+     * caricamento vero e proprio.
+     */
+    let arenaInCaricamento = null;
+    function scaricaDocumentoArena() {
+        if (!arenaInCaricamento) {
+            arenaInCaricamento = fetch('duelMonstersCore.html')
+                .then((res) => res.text())
+                .then((html) => new DOMParser().parseFromString(html, 'text/html'))
+                .catch((err) => { arenaInCaricamento = null; throw err; });
+        }
+        return arenaInCaricamento;
+    }
+
+    /**
+     * Chiede al browser di scaricare in PARALLELO tutti gli script e i fogli esterni dell'arena.
+     * Gli script restano eseguiti uno alla volta e in ordine (`loadScriptSequential`): prima, pero',
+     * ognuno partiva a scaricarsi solo dopo l'esecuzione del precedente, e con ~100 file e 300 ms
+     * di latenza per richiesta il solo caricamento durava decine di secondi. Un file ancora in
+     * volo quando serve viene semplicemente atteso, mai scaricato due volte.
+     */
+    function precaricaRisorseArena(doc) {
+        const visti = new Set();
+        const aggiungi = (href, tipo) => {
+            if (!href || visti.has(href)) return;
+            visti.add(href);
+            // Gia' presente nella pagina (la lobby ne carica alcuni per conto suo): niente da fare.
+            if (document.querySelector(`script[src="${href}"], link[rel="stylesheet"][href="${href}"], link[rel="preload"][href="${href}"]`)) return;
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            link.as = tipo;
+            link.href = href;
+            document.head.appendChild(link);
+        };
+        doc.querySelectorAll('body script[src]').forEach((s) => aggiungi(s.getAttribute('src'), 'script'));
+        doc.querySelectorAll('head link[rel="stylesheet"]').forEach((l) => aggiungi(l.getAttribute('href'), 'style'));
+        aggiungi('js/multiplayer/multiplayer.js', 'script');
+    }
+
+    let arenaPrecaricata = false;
+    /** Chiamata quando l'avversario entra in stanza: usa il tempo della scelta e del "pronto" per scaricare l'arena. */
+    function precaricaArena() {
+        if (arenaPrecaricata || duelloGiaAvviato) return;
+        arenaPrecaricata = true;
+        scaricaDocumentoArena().then(precaricaRisorseArena).catch(() => { arenaPrecaricata = false; });
+    }
+
     async function loadDuelArena() {
-        const res = await fetch('duelMonstersCore.html');
-        const html = await res.text();
-        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const doc = await scaricaDocumentoArena();
+        precaricaRisorseArena(doc);
 
         // TUTTI i <style> dell'arena, non il primo.
         //

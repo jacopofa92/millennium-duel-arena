@@ -2,6 +2,11 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<!-- Copertura d'avvio (identica in ogni pagina col loader: la sorveglia guardrail-copertura-avvio). Fino a quando
+     js/ui/page-loader.js -- che sta nel body e arriva dopo gli script bloccanti dell'head -- non prende il suo posto,
+     lo schermo restava vuoto e i tocchi cadevano nel nulla. La toglie page-loader.js; 15 s di rete di sicurezza. -->
+<style>html.avvio-in-corso::before{content:"";position:fixed;inset:0;z-index:2147483000;background:#0b0d14}html.avvio-in-corso::after{content:"";position:fixed;z-index:2147483001;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;box-sizing:border-box;border:3px solid rgba(247,215,116,.22);border-top-color:#f7d774;border-radius:50%;animation:avvio-in-corso-giro .9s linear infinite}@keyframes avvio-in-corso-giro{to{transform:rotate(360deg)}}</style>
+<script>(function(){var r=document.documentElement;r.classList.add("avvio-in-corso");setTimeout(function(){r.classList.remove("avvio-in-corso")},15000)})();</script>
 <!-- Opt-in STATICO alla View Transitions API — deve stare qui, non iniettato via JS in ritardo (vedi js/audio/audio-manager.js per la storia completa del bug che questo risolve). -->
 <style>@view-transition { navigation: auto; }</style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
