@@ -1,8 +1,8 @@
 // Gli ologrammi dei mostri in WebGL (js/ui/monster-hologram-webgl.js).
 //  - su un server (http) le texture sono ammesse: gli ologrammi stanno in UN canvas dentro #monsterHologramLayer
 //    e quelli CSS (.mh-item) non esistono; un mostro coperto non ne ha, uno che sparisce lo toglie;
-//  - su file:// il browser non lascia usare un'immagine come texture: il modulo si spegne da solo e
-//    MonsterHolograms ridisegna con il CSS di sempre, senza che il giocatore perda nulla;
+//  - su file:// il browser non lascia usare un'immagine come texture: il WebGL non si prova nemmeno e
+//    MonsterHolograms disegna subito con il CSS di sempre (un guasto a gioco avviato — contesto perso — fa lo stesso);
 //  - `window.OLOGRAMMA_WEBGL_OFF` forza il CSS.
 //
 // `standalone`: serve una pagina aperta in modi diversi (http e file://).
@@ -67,7 +67,8 @@ module.exports = {
             {
                 const { context, page, errori } = await apriDuello(browser, 'file:///' + RADICE.replace(/\\/g, '/') + '/duelMonstersCore.html');
                 await mettiMostri(page, false);
-                await page.waitForFunction(() => MonsterHologramGL.guasto() === true && document.querySelectorAll('.mh-item').length === 3, null, { timeout: 10000 });
+                // Su file:// il WebGL non si prova nemmeno (le texture sarebbero rifiutate): CSS subito, senza attesa.
+                await page.waitForFunction(() => document.querySelectorAll('.mh-item').length === 3, null, { timeout: 10000 });
                 const s = await page.evaluate(() => ({ dom: document.querySelectorAll('.mh-item').length, canvas: !!document.querySelector('#monsterHologramLayer > canvas') }));
                 assert(s.dom === 3 && !s.canvas, `Su file:// si ricade sul CSS: ${JSON.stringify(s)}`);
                 assert(errori.length === 0, `Errori di pagina nel ripiego: ${errori.join(' | ')}`);

@@ -313,6 +313,9 @@ void main(){
         /** Si può usare adesso? Crea il contesto alla prima richiesta. */
         disponibile() {
             if (guasto || window.OLOGRAMMA_WEBGL_OFF || menoMovimento()) return false;
+            // Su file:// le immagini non si possono usare come texture (origine diversa): inutile provare e aspettare
+            // il rifiuto, che ritarderebbe di un po' la comparsa dell'ologramma CSS. Si va dritti al CSS.
+            if (window.location && window.location.protocol === 'file:') return false;
             return assicura();
         },
         /**
