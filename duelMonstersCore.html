@@ -2632,6 +2632,53 @@
                    sbordava di 15px per lato (scrollWidth 426, scrollHeight 777), e si leggeva come uno scroll
                    diagonale di una frazione di secondo. Qui solo dissolvenza: niente inclinazione né spostamento. */
                 --camera-intro-shift: 0%;
+                /* Il contenitore non si muove e non ha filtri (blur/brightness su tutto lo schermo costano su
+                   telefono): solo una dissolvenza. La profondità la danno due cose a parte, più sotto: l'arena
+                   che arretra (body.intro-sfondo::after) e le righe del campo che entrano a cascata. */
+                animation: cameraIntroFadeMobile 1700ms ease-out both;
+                will-change: opacity;
+            }
+            @keyframes cameraIntroFadeMobile {
+                0%   { opacity: 0; }
+                30%  { opacity: 1; }
+                100% { opacity: 1; }
+            }
+            /* 1) ARENA CHE ARRETRA. Lo sfondo sta sul body (immagine impostata anche da JS): non si anima con
+               efficienza. Un livello fisso che lo COPIA (background: inherit) parte ingrandito e si riporta a 1x
+               con la sola transform. A fine animazione è identico allo sfondo vero, quindi togliere la classe non
+               produce alcuno scatto. Resta sotto la vignetta (z 1) e sotto il campo (z 2); HUD e bordi non si muovono. */
+            body.intro-sfondo::after {
+                content: '';
+                position: fixed;
+                inset: 0;
+                background: inherit;
+                z-index: 0;
+                pointer-events: none;
+                transform-origin: 50% 58%;
+                will-change: transform;
+                animation: introSfondoArretra 1500ms cubic-bezier(0.22, 0.7, 0.25, 1) both;
+            }
+            @keyframes introSfondoArretra {
+                from { transform: scale(1.13); }
+                to   { transform: scale(1); }
+            }
+            /* 2) CASELLE A CASCATA, dalla fila dell'avversario alla tua: ogni riga scivola giù di pochi pixel,
+               si distende e si accende col contorno luminoso già previsto per l'intro (.camera-intro .field-slot).
+               Nessuno spostamento globale: solo ciò che sta dentro ogni casella. */
+            .game-container.camera-intro .field-slot {
+                animation: introCasellaEntra 560ms cubic-bezier(0.22, 0.8, 0.25, 1) both;
+                animation-delay: 140ms;
+            }
+            .game-container.camera-intro .field-slot[data-owner="bot"][data-type="st"] { animation-delay: 140ms; }
+            .game-container.camera-intro .field-slot[data-owner="bot"][data-type="monster"] { animation-delay: 260ms; }
+            .game-container.camera-intro .field-slot[data-owner="player"][data-type="monster"] { animation-delay: 380ms; }
+            .game-container.camera-intro .field-slot[data-owner="player"][data-type="st"] { animation-delay: 500ms; }
+            @keyframes introCasellaEntra {
+                from { opacity: 0; transform: translateY(-12px) scale(0.93); }
+                to   { opacity: 1; transform: none; }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                body.intro-sfondo::after, .game-container.camera-intro .field-slot { animation: none; }
             }
         }
         .phase-step.clickable {
