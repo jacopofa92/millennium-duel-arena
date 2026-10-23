@@ -279,16 +279,63 @@
            dell'elemento, punta della freccia inclusa, non solo al tratto)
            e un flusso animato di trattini che scorre verso il bersaglio —
            suggerisce energia in movimento invece di un segmento statico. */
-        #attack-arrow-line {
+        /* Rifatta: tratto CURVO (un arco lieve, come la traiettoria di un colpo) con un alone largo sotto, i
+           trattini che scorrono verso il bersaglio, una punta nitida e, quando si aggancia un bersaglio,
+           un mirino che pulsa e colori più caldi. I colori sono variabili: lo stato "agganciato" li cambia. */
+        #attack-arrow-svg {
+            --freccia-c0: #fff0b8; --freccia-c1: #ff9d3f; --freccia-c2: #e74c3c;
+        }
+        #attack-arrow-svg.attack-arrow--locked {
+            --freccia-c0: #fff7d6; --freccia-c1: #ffcf5a; --freccia-c2: #ff4a2f;
+        }
+        #attack-arrow-glow {
+            fill: none;
             stroke: url(#attackArrowGradient);
-            stroke-width: 7;
+            stroke-width: 18;
             stroke-linecap: round;
-            stroke-dasharray: 15 11;
-            filter: drop-shadow(0 0 5px rgba(255, 170, 60, 0.85)) drop-shadow(0 0 14px rgba(231, 76, 60, 0.55));
-            animation: attackArrowFlow 0.55s linear infinite;
+            opacity: 0.22;
+            filter: blur(5px);
+        }
+        #attack-arrow-svg.attack-arrow--locked #attack-arrow-glow { opacity: 0.4; stroke-width: 24; }
+        #attack-arrow-line {
+            fill: none;
+            stroke: url(#attackArrowGradient);
+            stroke-width: 6;
+            stroke-linecap: round;
+            stroke-dasharray: 14 9;
+            filter: drop-shadow(0 0 4px rgba(255, 170, 60, 0.85)) drop-shadow(0 0 11px rgba(231, 76, 60, 0.5));
+            animation: attackArrowFlow 0.5s linear infinite;
+        }
+        #attack-arrow-svg.attack-arrow--locked #attack-arrow-line {
+            stroke-width: 8;
+            animation-duration: 0.32s;
         }
         @keyframes attackArrowFlow {
-            to { stroke-dashoffset: -26; }
+            to { stroke-dashoffset: -23; }
+        }
+        /* Mirino sul bersaglio agganciato. */
+        #attack-arrow-target {
+            fill: rgba(255, 90, 60, 0.12);
+            stroke: url(#attackArrowGradient);
+            stroke-width: 2.5;
+            stroke-dasharray: 7 6;
+            opacity: 0;
+            transform-box: fill-box;
+            transform-origin: center;
+            filter: drop-shadow(0 0 6px rgba(255, 120, 60, 0.85));
+            transition: opacity 0.12s ease-out;
+        }
+        #attack-arrow-svg.attack-arrow--locked #attack-arrow-target {
+            opacity: 1;
+            animation: attackArrowReticle 1.1s linear infinite;
+        }
+        @keyframes attackArrowReticle {
+            from { transform: rotate(0deg) scale(1); }
+            50%  { transform: rotate(180deg) scale(1.12); }
+            to   { transform: rotate(360deg) scale(1); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #attack-arrow-line, #attack-arrow-origin, #attack-arrow-svg.attack-arrow--locked #attack-arrow-target { animation: none; }
         }
         /* Anello pulsante nel punto di origine (il mostro che attacca) —
            JS lo posiziona una sola volta all'inizio del trascinamento
@@ -416,7 +463,7 @@
         }
         @keyframes cameraIntroZoomOut {
             0% {
-                transform: perspective(1500px) rotateX(var(--camera-intro-tilt)) scale(var(--camera-intro-scale)) translateY(4%);
+                transform: perspective(1500px) rotateX(var(--camera-intro-tilt)) scale(var(--camera-intro-scale)) translateY(var(--camera-intro-shift, 4%));
                 opacity: 0;
                 filter: brightness(1.3) blur(3px);
             }
@@ -1779,7 +1826,9 @@
         .daw-bar {
             position: absolute;
             top: 0;
-            width: clamp(70px, 9vw, 130px);
+            /* Più strette e più soft (richiesta dell'utente: "troppo evidenti e invasive"): erano 70-130px con
+               strisce piene e un bagliore forte; ora una presenza leggera che sfuma anche verso l'interno. */
+            width: clamp(44px, 6vw, 86px);
             height: 100%;
             /* Giallo/nero a strisce diagonali, come il cartello "ATTACCO
                DIRETTO" di Yu-Gi-Oh! Master Duel — non più rosso/nero. */
@@ -1792,9 +1841,12 @@
                (sopra e sotto) tramite mask, altrimenti il taglio netto in
                alto/basso sembrerebbe un rettangolo incollato allo schermo
                invece di una "presenza" che sfuma nell'ambiente. */
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 16%, black 84%, transparent 100%);
-            mask-image: linear-gradient(to bottom, transparent 0%, black 16%, black 84%, transparent 100%);
-            box-shadow: 0 0 40px rgba(241,196,15,0.55);
+            --daw-lato: to right;   /* verso l'interno dello schermo: la barra destra lo inverte */
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%), linear-gradient(var(--daw-lato), black 0%, rgba(0,0,0,.55) 55%, transparent 100%);
+            -webkit-mask-composite: source-in;
+            mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%), linear-gradient(var(--daw-lato), black 0%, rgba(0,0,0,.55) 55%, transparent 100%);
+            mask-composite: intersect;
+            box-shadow: 0 0 26px rgba(241,196,15,0.18);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1804,7 +1856,7 @@
             content: '';
             position: absolute;
             inset: -40px 0;
-            background: repeating-linear-gradient(45deg, rgba(15,12,2,0.94) 0 14px, rgba(241,196,15,0.95) 14px 28px);
+            background: repeating-linear-gradient(45deg, rgba(15,12,2,0.34) 0 14px, rgba(241,196,15,0.42) 14px 28px);
             animation: dawStripeScroll 650ms linear infinite;
             will-change: transform;
         }
@@ -1814,6 +1866,7 @@
             animation: dawSlideLeft 1400ms cubic-bezier(0.16, 0.84, 0.44, 1) forwards;
         }
         .daw-bar--right {
+            --daw-lato: to left;
             right: 0;
             /* Stesso verso di scorrimento (alto -> basso) del lato
                sinistro, non più invertito: prima "reverse" faceva salire
@@ -1823,13 +1876,13 @@
         .daw-bar-text {
             writing-mode: vertical-rl;
             transform: rotate(180deg);
-            font-size: clamp(1rem, 2.4vw, 1.5rem);
-            font-weight: 900;
-            letter-spacing: 0.25em;
-            /* Rosso acceso: il nero/scuro provato prima si perdeva contro le
-               strisce nere del pattern stesso, illeggibile. */
-            color: #e30d0d;
-            text-shadow: 0 1px 0 rgba(255,255,255,0.4), 0 0 10px rgba(0,0,0,0.55);
+            font-size: clamp(0.78rem, 1.8vw, 1.1rem);
+            font-weight: 800;
+            letter-spacing: 0.22em;
+            /* Chiaro e caldo, un po' trasparente: con le strisce ora tenui il rosso acceso di prima
+               sarebbe la cosa più rumorosa dello schermo. L'ombra scura lo tiene leggibile. */
+            color: rgba(255, 238, 196, 0.82);
+            text-shadow: 0 0 8px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.6);
         }
         @keyframes dawSlideLeft {
             0%   { opacity: 0; transform: translateX(-100%); }
@@ -1871,12 +1924,12 @@
            animazioni d'ingresso delle due barre. */
         #directAttackHint { transition: opacity 160ms ease-out; }
         #directAttackHint .daw-bar { transition: width 160ms ease-out; }
-        #directAttackHint.daw-in-attesa { opacity: 0.42; }
+        #directAttackHint.daw-in-attesa { opacity: 0.55; }
         /* In attesa anche più strette: su un telefono le bande piene
            coprono le colonne laterali del campo, e finché non hai scelto
            l'attacco diretto quei mostri ti servono ancora (visto in foto). */
-        #directAttackHint.daw-in-attesa .daw-bar { width: clamp(26px, 3.6vw, 56px); }
-        #directAttackHint.daw-in-attesa .daw-bar-text { font-size: clamp(0.62rem, 1.4vw, 0.95rem); }
+        #directAttackHint.daw-in-attesa .daw-bar { width: clamp(20px, 2.8vw, 42px); }
+        #directAttackHint.daw-in-attesa .daw-bar-text { font-size: clamp(0.56rem, 1.2vw, 0.82rem); }
         @keyframes dawSlideLeftHold {
             0%   { opacity: 0; transform: translateX(-100%); }
             100% { opacity: 1; transform: translateX(0); }
@@ -1920,8 +1973,13 @@
             z-index: 10000;
         }
         .drag-preview {
-            position: fixed; z-index: 100000; pointer-events: none; transform: rotate(3deg) scale(1.05); box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+            position: fixed; left: 0; top: 0; z-index: 100000; pointer-events: none; transform: rotate(3deg) scale(1.05); box-shadow: 0 10px 22px rgba(0,0,0,0.38);
             opacity: 0.95;
+            /* La posizione la scrive actions.js a ogni fotogramma via transform: una transizione ereditata da
+               .card la farebbe inseguire il dito con 0,3 s di ritardo ("carta nel miele"). */
+            transition: none !important;
+            will-change: transform;
+            margin: 0;
             /* Stessa dimensione della carta in mano (non var(--card-w) del
                .card di base, più piccola): senza questo il fantasma cambia
                taglia di scatto appena parte il trascinamento. */
@@ -2014,6 +2072,23 @@
            non toccare quegli altri contesti) e può finire sotto la riga
            Magie/Trappole del campo appena sopra. */
         .hand .card:hover { z-index: 80; }
+        /* FLUIDITÀ della mano. La regola di base (.card in card.css) anima transform E box-shadow per 0,3 s
+           con `ease`: l'ombra costringe a ridipingere la carta (con il suo container query e l'overflow)
+           a ogni fotogramma, e 0,3 s di curva simmetrica fa partire il sollevamento piano e fermare
+           lentamente. Qui, solo per la mano: transform sul compositor, durata breve, partenza decisa e
+           arrivo morbido (curva di decelerazione), ombra che cambia di colpo. */
+        .hand .card {
+            /* Sollevare e abbassare condividono la stessa curva morbida (partenza dolce, arrivo che si posa);
+               l'alone cambia con lo stesso ritmo invece di comparire di scatto. */
+            transition: transform 0.3s cubic-bezier(0.22, 0.8, 0.25, 1), box-shadow 0.3s ease;
+            will-change: transform;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Risposta immediata al tocco, prima ancora che la selezione si disegni. */
+        .hand .card:active:not(.selected):not(.dragging-source) {
+            transform: translateY(-6px) scale(1.04);
+            transition-duration: 0.12s;
+        }
         /* Mano del Bot: solo dorsi (renderBotHand() in game-flow.js ricrea
            tanti retro-carta quante sono le carte davvero in gameState.botHand),
            sopra il campo invece che sotto — specchiando la mano del
@@ -2552,7 +2627,11 @@
                    leggersi, quindi ci si ferma qui: resta la telecamera
                    che scende, senza niente di tagliato ai bordi. */
                 --camera-intro-scale: 1;
-                --camera-intro-tilt: 28deg;
+                --camera-intro-tilt: 0deg;
+                /* Misurato sul telefono vero (411x750): anche con 28deg il campo partiva 142px più in basso e
+                   sbordava di 15px per lato (scrollWidth 426, scrollHeight 777), e si leggeva come uno scroll
+                   diagonale di una frazione di secondo. Qui solo dissolvenza: niente inclinazione né spostamento. */
+                --camera-intro-shift: 0%;
             }
         }
         .phase-step.clickable {
@@ -2677,6 +2756,54 @@
             outline: 2px solid color-mix(in srgb, var(--fase-accento) 72%, #fff);
             outline-offset: 2px;
         }
+        /* LEGGIBILITÀ delle fasi (richiesta dell'utente: "minimal va bene, ma si vedono troppo poco"). Forme,
+           misure e bordi restano quelli di sempre; cambiano solo contrasto e peso: testo e icona più chiari
+           nelle fasi non attive e in quelle già fatte, un fondo scuro dietro l'icona perché stacchi dai campi
+           chiari, un'ombra sul testo, numeretti più grandi. La fase attiva resta la più forte. */
+        .phase-step { color: rgba(244,238,222,.92); }
+        .phase-step.completed { color: rgba(226,221,208,.74); }
+        .phase-step .step-label { font-weight: 800; text-shadow: 0 1px 3px rgba(0,0,0,.9), 0 0 6px rgba(0,0,0,.55); }
+        .phase-stepper .phase-step:not(.active) .step-badge {
+            color: color-mix(in srgb, var(--fase-accento) 55%, #fff);
+            background: radial-gradient(circle at 38% 30%, rgba(40,38,34,.62), rgba(6,7,11,.74) 72%);
+        }
+        .phase-stepper .phase-step.completed .step-badge { color: color-mix(in srgb, var(--fase-accento) 38%, #e8e3d4); }
+        .phase-step .step-icon svg { stroke-width: 2.1; filter: drop-shadow(0 1px 2px rgba(0,0,0,.75)); }
+        .phase-step .step-num {
+            min-width: 14px; height: 14px; font-size: 9px; font-weight: 800;
+            color: color-mix(in srgb, var(--fase-accento) 70%, #fff);
+            background: rgba(10,10,13,.9);
+        }
+        .phase-step.active .step-num { color: #fff; border-color: color-mix(in srgb, var(--fase-accento) 70%, transparent); }
+        /* FRECCE DI SEQUENZA (richiesta dell'utente): una doppia freccia "››" nel colore del campo fra una fase e
+           la successiva, per dire che le fasi si percorrono in ordine. Quelle già percorse e quella che parte
+           dalla fase attiva sono accese (l'attiva ondeggia piano verso la prossima), le future restano spente.
+           Disegnate con una maschera, così prendono da sole --fase-accento di ogni arena. Per avere spazio le
+           fasi si staccano un po' di più, e il pulsante non ritaglia più ciò che sporge (il testo ha già il suo
+           ritaglio con i puntini). */
+        .phase-stepper { gap: clamp(12px, 1.7vw, 22px); }
+        .phase-step { overflow: visible; }
+        .phase-step::after {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 50%; right: auto; left: 100%;
+            width: clamp(12px, 1.7vw, 22px);
+            height: 12px;
+            transform: translateY(-50%);
+            background: var(--fase-accento);
+            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M1.5 1l4 4-4 4M6.5 1l4 4-4 4' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 11px 9px no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M1.5 1l4 4-4 4M6.5 1l4 4-4 4' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 11px 9px no-repeat;
+            opacity: .32;
+            pointer-events: none;
+        }
+        .phase-step.completed::after { opacity: .75; }
+        .phase-step.active::after { opacity: 1; filter: drop-shadow(0 0 4px color-mix(in srgb, var(--fase-accento) 70%, transparent)); animation: faseFrecciaAvanti 1.5s ease-in-out infinite; }
+        @keyframes faseFrecciaAvanti {
+            0%, 100% { transform: translate(0, -50%); }
+            50% { transform: translate(3px, -50%); }
+        }
+        @media (prefers-reduced-motion: reduce) { .phase-step.active::after { animation: none; } }
         /* Promemoria Tributo: banda ben visibile in alto, non un semplice
            messaggio nel log — resta a schermo finché la selezione non è
            completa, con un contatore che segna quanti mostri mancano. */
@@ -4181,9 +4308,9 @@
                 display: grid;
                 right: -3px;
                 top: -4px;
-                min-width: 10px;
-                height: 10px;
-                font-size: 6px;
+                min-width: 13px;
+                height: 13px;
+                font-size: 8px;
             }
             .phase-step .step-icon {
                 display: inline-flex;
@@ -4213,7 +4340,7 @@
                distribuiti su tutta la fila non arriverebbero al vicino, e la
                linea sottile della barra (.phase-stepper::before) li collega
                già tutti. */
-            .phase-step::after { display: none; }
+            /* (Le frecce di sequenza fra le fasi, .phase-step::after, restano anche qui: vedi più in alto.) */
             /* Una sola forma per pulsante: qui il pulsante è grande poco più
                del quadratino dell'icona, e i due fondi uno dentro l'altro si
                leggevano come un doppio riquadro. Il pulsante resta l'area da
@@ -4355,6 +4482,22 @@
             .life-points { font-size: 0.6rem; padding: 2px 8px 2px 6px; }
         }
 
+        /* Telefono in VERTICALE: il box info non resta più centrato a metà schermo (copriva le mie caselle):
+           parte in alto, poco sotto Abbandona (il HUD arriva a ~59px su un 411x750 misurato sul telefono),
+           e il suo tetto d'altezza lo tiene sopra la mia fila di Mostri (che comincia a ~55% dello schermo);
+           se il testo è più lungo il pannello scorre al suo interno. */
+        /* Il box info sta DENTRO .battlefield-side.right (z-index 1), mentre le carte delle due mani hanno 5:
+           aperto, il suo bordo finiva sotto l'ultima carta della mano avversaria. Finché è visibile, il
+           contenitore che lo ospita passa sopra le mani (resta comunque sotto modali e popover, che stanno fuori). */
+        .battlefield-side:has(.card-info-panel.visible) { z-index: 90; }
+        @media (max-width: 900px) and (orientation: portrait) {
+            .card-info-panel {
+                top: calc(var(--duelist-box-offset) + 58px);
+                transform: translate(110%, 0);
+                max-height: 44dvh;
+            }
+            .card-info-panel.visible { transform: translate(0, 0); }
+        }
         /* Telefono in orizzontale: conserva il cassetto stretto che non
            copriva il terreno. Il tentativo di affiancare carta e testo lo
            rendeva largo fino al 72% del duello: più leggibile, ma troppo
@@ -4398,8 +4541,7 @@
            mentre ORA/VAI chiariscono lo stato e l'azione senza ricreare le
            vecchie pillole. Il colore deriva dal field tramite --fase-accento;
            nessuno stato modifica ingombro o posizione. */
-        .phase-stepper::before,
-        .phase-step::after {
+        .phase-stepper::before {
             display: none;
         }
         .phase-stepper .phase-step,
@@ -4867,20 +5009,27 @@
          cerchio d'origine posizionato da JS in startAttackDrag). -->
     <svg id="attack-arrow-svg">
         <defs>
-            <linearGradient id="attackArrowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#fff0b8" />
-                <stop offset="45%" stop-color="#ff9d3f" />
-                <stop offset="100%" stop-color="#e74c3c" />
+            <!-- userSpaceOnUse: con il riquadro dell'elemento (default) un tratto perfettamente verticale o
+                 orizzontale ha larghezza/altezza zero e il gradiente non si dipinge. Gli estremi li aggiorna
+                 aggiornaFrecciaAttacco (game-flow.js) insieme al percorso. I colori vengono da variabili CSS
+                 (--freccia-c0/1/2), così lo stato "agganciato" cambia solo il CSS. -->
+            <linearGradient id="attackArrowGradient" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" style="stop-color: var(--freccia-c0)" />
+                <stop offset="55%" style="stop-color: var(--freccia-c1)" />
+                <stop offset="100%" style="stop-color: var(--freccia-c2)" />
             </linearGradient>
-            <!-- Punta rimpicciolita (~25%) su richiesta esplicita dell'utente
-                 rispetto alla versione precedente — stessa forma a diamante,
-                 solo più contenuta. -->
-            <marker id="arrowhead" markerWidth="12" markerHeight="11" refX="1" refY="5.5" orient="auto">
-                <path d="M0 1 L11 5.5 L0 10 L3.5 5.5 Z" fill="url(#attackArrowGradient)" />
+            <!-- Punta a freccia con un piccolo intaglio dietro; orient=auto la gira lungo la tangente del tratto
+                 curvo, quindi guarda sempre dove sta andando l'attacco. -->
+            <marker id="arrowhead" markerUnits="userSpaceOnUse" markerWidth="30" markerHeight="30" refX="9" refY="15" orient="auto">
+                <path d="M0 1.5 L27 15 L0 28.5 L8 15 Z" fill="url(#attackArrowGradient)" />
             </marker>
         </defs>
         <circle id="attack-arrow-origin" cx="0" cy="0" r="9"></circle>
-        <line id="attack-arrow-line" x1="0" y1="0" x2="0" y2="0" marker-end="url(#arrowhead)"></line>
+        <!-- Sotto: l'alone largo e morbido; sopra: il tratto a trattini che scorre verso il bersaglio. -->
+        <path id="attack-arrow-glow" d="M0 0"></path>
+        <path id="attack-arrow-line" d="M0 0" marker-end="url(#arrowhead)"></path>
+        <!-- Mirino sul bersaglio: compare solo quando la freccia è agganciata a un mostro o alla mano. -->
+        <circle id="attack-arrow-target" cx="0" cy="0" r="22"></circle>
     </svg>
 
     <!-- Collegamento visivo permanente tra una Carta Equipaggiamento
@@ -4987,7 +5136,6 @@
             <div class="battlefield-side right">
                 <div class="right-panel-stack">
                     <div class="card-info-panel" id="cardInfoPanel">
-                        <button type="button" class="card-info-close" id="cardInfoCloseBtn" title="Chiudi" onclick="updateCardInfoPanel(null)">✖</button>
                         <div class="card-info-preview" id="cardInfoPreview"></div>
                         <div class="card-info-content" id="cardInfoContent">Clicca o passa il mouse su una carta per vedere il suo effetto.</div>
                     </div>

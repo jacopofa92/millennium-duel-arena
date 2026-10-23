@@ -1,5 +1,8 @@
 const attackArrowSVG = document.getElementById('attack-arrow-svg');
 const attackArrowLine = document.getElementById('attack-arrow-line');
+const attackArrowGlow = document.getElementById('attack-arrow-glow');
+const attackArrowTarget = document.getElementById('attack-arrow-target');
+const attackArrowGradient = document.getElementById('attackArrowGradient');
 const logToggleBtn = document.getElementById('logToggleBtn');
 const gameLogContainer = document.getElementById('gameLogContainer');
 let isDraggingAttack = false;
@@ -1420,6 +1423,45 @@ function trasferisciGestori(vecchio, nuovo) {
     }
 }
 
+/**
+ * Disegna la freccia d'attacco dal mostro che attacca (attackDragStart) al punto (x2, y2): un arco lieve
+ * (la traiettoria di un colpo) invece di una retta, sempre incurvato dallo stesso lato così la forma non
+ * "salta" mentre ci si muove. Aggiorna insieme tratto, alone, gradiente (userSpaceOnUse, vedi l'SVG) e mirino.
+ */
+function aggiornaFrecciaAttacco(x2, y2) {
+    const x1 = attackDragStart.x;
+    const y1 = attackDragStart.y;
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const len = Math.hypot(dx, dy);
+    let d = `M${x1} ${y1} L${x2} ${y2}`;
+    if (len > 6) {
+        const curva = Math.min(70, len * 0.16);
+        let nx = -dy / len;
+        let ny = dx / len;
+        if (nx < 0 || (nx === 0 && ny < 0)) { nx = -nx; ny = -ny; }
+        d = `M${x1} ${y1} Q${(x1 + x2) / 2 + nx * curva} ${(y1 + y2) / 2 + ny * curva} ${x2} ${y2}`;
+    }
+    attackArrowLine.setAttribute('d', d);
+    if (attackArrowGlow) attackArrowGlow.setAttribute('d', d);
+    if (attackArrowGradient) {
+        attackArrowGradient.setAttribute('x1', x1);
+        attackArrowGradient.setAttribute('y1', y1);
+        // Un gradiente a lunghezza zero non si dipinge: serve almeno un pixel di distanza.
+        attackArrowGradient.setAttribute('x2', len > 1 ? x2 : x1 + 1);
+        attackArrowGradient.setAttribute('y2', y2);
+    }
+    if (attackArrowTarget) {
+        attackArrowTarget.setAttribute('cx', x2);
+        attackArrowTarget.setAttribute('cy', y2);
+    }
+}
+
+/** Acceso quando la freccia è agganciata a un mostro o alla mano avversaria: colori più caldi e mirino. */
+function segnaFrecciaAgganciata(agganciata) {
+    if (attackArrowSVG) attackArrowSVG.classList.toggle('attack-arrow--locked', !!agganciata);
+}
+
 function startAttackDrag(event, attackerIndex) {
     event.preventDefault();
     event.stopPropagation();
@@ -1434,10 +1476,8 @@ function startAttackDrag(event, attackerIndex) {
     attackDragStart.x = rect.left + rect.width / 2;
     attackDragStart.y = rect.top + rect.height / 2;
 
-    attackArrowLine.setAttribute('x1', attackDragStart.x);
-    attackArrowLine.setAttribute('y1', attackDragStart.y);
-    attackArrowLine.setAttribute('x2', attackDragStart.x);
-    attackArrowLine.setAttribute('y2', attackDragStart.y);
+    segnaFrecciaAgganciata(false);
+    aggiornaFrecciaAttacco(attackDragStart.x, attackDragStart.y);
     // Anello pulsante nel punto di partenza (vedi #attack-arrow-origin in
     // duelMonstersCore.html) — posizionato una sola volta qui: a
     // differenza della punta, l'origine non segue mai il puntatore.
@@ -1483,9 +1523,18 @@ function dragAttackArrow(event) {
     // resta ancorata al bot: non segue il puntatore.
     if (attackDragStart.forcedDirect) return;
     if (aggiornaAggancioDiretto(event.clientX, event.clientY)) return;
-    attackArrowLine.setAttribute('x2', event.clientX);
-    attackArrowLine.setAttribute('y2', event.clientY);
     updateAttackTargetHighlight(event.clientX, event.clientY);
+    // Con un bersaglio agganciato e il dito già vicino, la punta si "attacca" al centro del mostro: è
+    // l'attacco che parte davvero, e la freccia lo dice senza dipendere dalla precisione del dito.
+    let x = event.clientX;
+    let y = event.clientY;
+    if (attackHoverTargetEl) {
+        const r = attackHoverTargetEl.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        if (Math.hypot(cx - x, cy - y) < Math.max(90, r.width * 1.4)) { x = cx; y = cy; }
+    }
+    aggiornaFrecciaAttacco(x, y);
 }
 
 /**
@@ -1511,10 +1560,10 @@ function puntaAllaManoAvversaria(x, y) {
 function agganciaFrecciaAllaMano(attivo) {
     const botHandEl = document.getElementById('botHand');
     if (botHandEl) botHandEl.classList.toggle('attack-target-hover', !!attivo);
-    if (!attivo || !botHandEl) return;
+    if (!attivo || !botHandEl) { if (!attackHoverTargetEl) segnaFrecciaAgganciata(false); return; }
+    segnaFrecciaAgganciata(true);
     const botRect = botHandEl.getBoundingClientRect();
-    attackArrowLine.setAttribute('x2', botRect.left + botRect.width / 2);
-    attackArrowLine.setAttribute('y2', botRect.top + botRect.height / 2);
+    aggiornaFrecciaAttacco(botRect.left + botRect.width / 2, botRect.top + botRect.height / 2);
 }
 
 /**
@@ -1556,6 +1605,7 @@ function updateAttackTargetHighlight(x, y) {
     if (nextEl === attackHoverTargetEl) return;
     if (attackHoverTargetEl) attackHoverTargetEl.classList.remove('attack-target-hover');
     attackHoverTargetEl = nextEl;
+    segnaFrecciaAgganciata(!!nextEl);
     if (attackHoverTargetEl) attackHoverTargetEl.classList.add('attack-target-hover');
 }
 function clearAttackTargetHighlight() {
@@ -2103,6 +2153,10 @@ function firmaRenderStabile(elemento) {
         el.classList.remove('has-image', 'art-loaded', 'has-pile-image');
     });
     copia.querySelectorAll('.card-name-text').forEach((el) => el.style.removeProperty('transform'));
+    // "Sollevata" è solo un aspetto: non deve far considerare la carta cambiata, altrimenti il nodo viene
+    // sostituito (immagine ricaricata e nessuna transizione, perché la carta nuova nasce già alzata).
+    // La classe si riallinea sul nodo esistente in reconcileHandCards.
+    copia.classList.remove('selected');
     // Un'immagine fallita viene rimossa da onerror; una appena costruita
     // esiste ancora fino a quel callback. In entrambi i casi la cornice
     // fallback descrive già interamente la carta e resta la firma stabile.
@@ -2125,6 +2179,9 @@ function reconcileHandCards(handEl, nuoveCarte) {
         if (vecchia && !usate.has(vecchia) && firmaVecchia === firmaNuova) {
             usate.add(vecchia);
             trasferisciGestori(vecchia, nuova);
+            // Stessa carta: si aggiorna solo se è sollevata o no, sul nodo che c'è, così la transizione CSS
+            // la alza/abbassa con dolcezza invece di sostituirla.
+            vecchia.classList.toggle('selected', nuova.classList.contains('selected'));
             return vecchia;
         }
         return nuova;

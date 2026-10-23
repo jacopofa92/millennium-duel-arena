@@ -152,7 +152,9 @@ module.exports = {
             const fm = atteso.get('forbiddenMemories');
             assert(inScena.nome === fm.nome,
                 `Nella cutscene deve parlare "${fm.nome}", non "${inScena.nome}"`);
-            assert(inScena.src === fm.img && inScena.caricata && !inScena.sigillo,
+            // Nelle conversazioni parla la PEDINA del personaggio (derivata dal suo ritratto), non l'avatar tondo.
+            const pedinaAttesa = await page.evaluate((img) => (typeof getCharacterPawnImage === 'function' ? getCharacterPawnImage(img) : img), fm.img);
+            assert((inScena.src === pedinaAttesa || inScena.src === fm.img) && inScena.caricata && !inScena.sigillo,
                 `Nella cutscene il protagonista deve avere la sua faccia, non il sigillo: ${JSON.stringify(inScena)}`);
 
             // --- Un CAPITOLO può cambiare chi sei -----------------------

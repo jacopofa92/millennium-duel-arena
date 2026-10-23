@@ -343,7 +343,11 @@ function attemptActivateCard(owner, zone, index) {
     window.DuelEngineUI.openActivateModal(card, {
         title: '✨ Attiva la carta',
         text: `Vuoi attivare ${card.name} adesso?`,
-        onConfirm: () => Comandi.esegui(owner, { tipo: 'attiva', zona: zone, indice: index, carta: zone === 'hand' && Tavolo.mano(owner)[index] ? Tavolo.mano(owner)[index].uid : undefined })
+        onConfirm: () => {
+            // Attivare un effetto chiude il box info eventualmente ancora aperto: copre il campo dove l'effetto agisce.
+            if (owner === 'player') suppressCardInspectionFor(900);
+            return Comandi.esegui(owner, { tipo: 'attiva', zona: zone, indice: index, carta: zone === 'hand' && Tavolo.mano(owner)[index] ? Tavolo.mano(owner)[index].uid : undefined });
+        }
     });
 }
 
@@ -403,15 +407,51 @@ function startHandCardDrag(event, card, sourceIndex, sourceOwner) {
  * esatta, qualunque sia la dimensione dello schermo.
  */
 function createDragPreview(card, x, y) {
-    const preview = createCardElement(card);
+    // Copia del nodo che si sta trascinando invece di una carta ricostruita da zero: le immagini sono
+    // già decodificate e il primo fotogramma del trascinamento non ha il "singhiozzo" della creazione.
+    const sorgente = dragState && dragState.sourceEl;
+    const preview = (sorgente && sorgente.cloneNode) ? sorgente.cloneNode(true) : createCardElement(card);
+    preview.classList.remove('dragging-source', 'selected', 'pending-deal');
     preview.classList.add('drag-preview');
+    preview.removeAttribute('id');
+    preview.style.visibility = '';
+    preview.onpointerdown = null; preview.onmouseenter = null;
     document.body.appendChild(preview);
-    const rect = preview.getBoundingClientRect();
-    dragState.previewHalfW = rect.width / 2;
-    dragState.previewHalfH = rect.height / 2;
-    preview.style.left = `${x - dragState.previewHalfW}px`;
-    preview.style.top = `${y - dragState.previewHalfH}px`;
+    // Misure della carta SENZA rotazione/scala: il centro visivo coincide con il punto di contatto.
+    dragState.previewHalfW = preview.offsetWidth / 2;
+    dragState.previewHalfH = preview.offsetHeight / 2;
+    // Dove si era afferrata la carta rispetto al suo centro: il fantasma nasce ESATTAMENTE sulla carta
+    // (stessa posizione, nessuna rotazione) e scivola verso il centro del dito mentre ruota e si ingrandisce.
+    // Prima nasceva già ruotato e centrato sul dito, ed era uno scatto.
+    if (dragState.sourceEl && dragState.sourceEl.getBoundingClientRect) {
+        const r = dragState.sourceEl.getBoundingClientRect();
+        dragState.presaX = (r.left + r.width / 2) - dragState.startX;
+        dragState.presaY = (r.top + r.height / 2) - dragState.startY;
+    } else { dragState.presaX = 0; dragState.presaY = 0; }
+    dragState.inizioAnteprima = performance.now();
+    posizionaAnteprimaTrascinamento(preview, x, y);
     return preview;
+}
+
+const DURATA_ATTACCO_TRASCINAMENTO_MS = 180;
+
+/**
+ * Sposta il fantasma con `transform` (compositor, nessun layout) invece di left/top: ad ogni movimento
+ * del dito il browser doveva ricalcolare la pagina intera, ed è ciò che rendeva il trascinamento "di legno".
+ * La rotazione/scala vivono nello stesso transform perché uno stile inline vincerebbe sul CSS della classe.
+ */
+function posizionaAnteprimaTrascinamento(preview, x, y) {
+    // p: 0 = carta ferma com'era, 1 = carta "in mano" (inclinata, un po' più grande, centrata sul dito).
+    const t = Math.min(1, (performance.now() - (dragState.inizioAnteprima || 0)) / DURATA_ATTACCO_TRASCINAMENTO_MS);
+    const p = 1 - Math.pow(1 - t, 3);
+    const px = x + (dragState.presaX || 0) * (1 - p) - dragState.previewHalfW;
+    const py = y + (dragState.presaY || 0) * (1 - p) - dragState.previewHalfH;
+    preview.style.transform = `translate3d(${px}px, ${py}px, 0) rotate(${(3 * p).toFixed(3)}deg) scale(${(1 + 0.05 * p).toFixed(4)})`;
+    // Se il dito sta fermo non arrivano pointermove: serve comunque un fotogramma per finire l'attacco.
+    if (t < 1 && dragState && !dragState.rafPendente) {
+        dragState.ultimoX = x; dragState.ultimoY = y;
+        dragState.rafPendente = requestAnimationFrame(applicaPosizioneTrascinamento);
+    }
 }
 
 /**
@@ -467,31 +507,36 @@ function flyCardToSlot(card, fromSource, toEl, onArrive, hideEl, isFaceDown = fa
     // duelMonstersCore.html) quando position è 'defense'.
     const ghost = createCardElement(card, isFaceDown, position);
     ghost.classList.add('card-fly-ghost');
+    // Il fantasma sta GIÀ nella casella d'arrivo (misure finali) e viene riportato visivamente sul punto di
+    // partenza con un transform: l'animazione cambia solo il transform (compositor), non left/top/width/height
+    // che a ogni fotogramma obbligavano il browser a ricalcolare il layout dell'intera pagina.
+    // Le due liste di funzioni (translate, scale, rotate) hanno la stessa forma, così si interpolano una a una.
+    const rotFinale = position === 'defense' ? 92 : 2;
+    const rotIniziale = position === 'defense' ? 90 : 0;
+    const dx = (fromRect.left + fromRect.width / 2) - (toRect.left + toRect.width / 2);
+    const dy = (fromRect.top + fromRect.height / 2) - (toRect.top + toRect.height / 2);
+    const sx = fromRect.width / toRect.width;
+    const sy = fromRect.height / toRect.height;
     Object.assign(ghost.style, {
         position: 'fixed',
-        left: `${fromRect.left}px`,
-        top: `${fromRect.top}px`,
-        width: `${fromRect.width}px`,
-        height: `${fromRect.height}px`,
+        left: `${toRect.left}px`,
+        top: `${toRect.top}px`,
+        width: `${toRect.width}px`,
+        height: `${toRect.height}px`,
         margin: '0',
         zIndex: '9500',
         pointerEvents: 'none',
-        transition: 'left 0.32s cubic-bezier(0.22, 0.61, 0.36, 1), top 0.32s cubic-bezier(0.22, 0.61, 0.36, 1), width 0.32s cubic-bezier(0.22, 0.61, 0.36, 1), height 0.32s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.32s ease'
+        willChange: 'transform',
+        transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy}) rotate(${rotIniziale}deg)`,
+        transition: 'transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1)'
     });
     document.body.appendChild(ghost);
-    // Forza il reflow prima di cambiare le proprietà animate, altrimenti
-    // il browser le applicherebbe insieme al posizionamento iniziale,
-    // senza transizione (nessun "salto" da animare).
+    // Forza il reflow prima di cambiare il transform, altrimenti il browser lo applicherebbe insieme al
+    // posizionamento iniziale, senza transizione (nessun "salto" da animare).
     void ghost.offsetWidth;
-    ghost.style.left = `${toRect.left}px`;
-    ghost.style.top = `${toRect.top}px`;
-    ghost.style.width = `${toRect.width}px`;
-    ghost.style.height = `${toRect.height}px`;
-    // Il leggero "tilt" di volo è impostato via style INLINE, quindi
-    // sovrascriverebbe del tutto la rotate(90deg) di .defense-pos (uno
-    // style inline vince sempre su una classe, qualunque specificità) se
-    // non venisse sommato qui apposta.
-    ghost.style.transform = position === 'defense' ? 'rotate(92deg)' : 'rotate(2deg)';
+    // Il leggero "tilt" di volo è via style INLINE: sovrascrive la rotate(90deg) di .defense-pos, per questo
+    // la rotazione è già dentro la lista del transform.
+    ghost.style.transform = `translate(0px, 0px) scale(1, 1) rotate(${rotFinale}deg)`;
 
     let done = false;
     const finish = () => {
@@ -504,7 +549,7 @@ function flyCardToSlot(card, fromSource, toEl, onArrive, hideEl, isFaceDown = fa
     // Rete di sicurezza se transitionend non scattasse mai (es. tab in
     // background che mette in pausa le animazioni): non deve bloccare il
     // piazzamento della carta per sempre.
-    setTimeout(finish, 380);
+    setTimeout(finish, 340);
 }
 
 function handleDragMove(event) {
@@ -525,11 +570,31 @@ function handleDragMove(event) {
         }
         const preview = createDragPreview(dragState.card, event.clientX, event.clientY);
         dragState.previewEl = preview;
+        // Il box info resta aperto dal tocco che ha preceduto il trascinamento e coprirebbe il campo.
+        if (typeof updateCardInfoPanel === 'function') updateCardInfoPanel(null);
+        // Stesse caselle verdi che si vedono toccando la carta: mostrano DOVE si può lasciarla.
+        if (typeof highlightEmptySlots === 'function') highlightEmptySlots(dragState.card);
     }
 
     if (dragState.previewEl) {
-        dragState.previewEl.style.left = `${event.clientX - dragState.previewHalfW}px`;
-        dragState.previewEl.style.top = `${event.clientY - dragState.previewHalfH}px`;
+        // Un solo aggiornamento per fotogramma: su telefono arrivano più pointermove per frame
+        // (120-240 Hz) e applicarli tutti non aggiunge nulla, costa solo.
+        dragState.ultimoX = event.clientX;
+        dragState.ultimoY = event.clientY;
+        if (!dragState.rafPendente) {
+            dragState.rafPendente = requestAnimationFrame(applicaPosizioneTrascinamento);
+        }
+    }
+}
+
+function applicaPosizioneTrascinamento() {
+    if (!dragState) return;
+    dragState.rafPendente = 0;
+    if (dragState.previewEl) posizionaAnteprimaTrascinamento(dragState.previewEl, dragState.ultimoX, dragState.ultimoY);
+    // Un ridisegno del Terreno a metà trascinamento (ne avviene circa uno al secondo) ricrea le caselle
+    // senza la classe: si rimette, solo se è sparita.
+    if (!document.querySelector('.field-slot.action-highlight') && typeof highlightEmptySlots === 'function') {
+        highlightEmptySlots(dragState.card);
     }
 }
 
@@ -551,11 +616,19 @@ function handleDragEnd(event) {
         // della mano (vedi flyCardToSlot) — così, se si è trascinata la
         // carta fin qui, il movimento prosegue da lì invece di "tornare
         // indietro" e ripartire dalla mano.
+        // Il rilascio parte dall'ultimo punto REALE del dito, non da quello dell'ultimo fotogramma disegnato.
+        if (dragState.rafPendente) { cancelAnimationFrame(dragState.rafPendente); dragState.rafPendente = 0; }
+        if (dragState.previewEl && dragState.ultimoX !== undefined) {
+            posizionaAnteprimaTrascinamento(dragState.previewEl, dragState.ultimoX, dragState.ultimoY);
+        }
         const releaseRect = (moved && dragState.previewEl)
             ? dragState.previewEl.getBoundingClientRect()
             : null;
         if (dragState.previewEl) {
             dragState.previewEl.remove();
+            // Fine del trascinamento: le caselle tornano normali (un piazzamento riuscito le ridisegna comunque).
+            document.querySelectorAll('.field-slot.action-highlight, .field-slot.tribute-highlight')
+                .forEach((el) => el.classList.remove('action-highlight', 'tribute-highlight'));
         }
         // La carta originale in mano è stata resa invisibile (.dragging-source,
         // vedi startHandCardDrag) per non vederne due copie mentre il
@@ -1207,6 +1280,21 @@ function openQuickPopover(anchorEl, innerHTML, { onDismiss, dismissible = true, 
         if (!dismissible) return;
         closeQuickPopover();
         if (typeof onDismiss === 'function') onDismiss();
+        // Il catcher copre anche la mano: il tap "su un'altra carta" arriva qui e non alla carta, che
+        // restava senza risposta (serviva un secondo tap) mentre la prima rimaneva sollevata. Ora si
+        // abbassa la prima e, se sotto il dito c'è una carta della mano, si tratta come un tap su di lei.
+        // stopPropagation: il gestore globale dei click esterni azzererebbe subito la nuova selezione.
+        event.stopPropagation();
+        if (typeof clearHandCardSelection === 'function') clearHandCardSelection();
+        const sotto = document.elementFromPoint(event.clientX, event.clientY);
+        const cartaSotto = sotto && sotto.closest ? sotto.closest('#playerHand .card') : null;
+        if (cartaSotto && !gameState.pendingTributeSummon && !gameState.pendingHandDiscard) {
+            const indice = Array.prototype.indexOf.call(document.querySelectorAll('#playerHand .card'), cartaSotto);
+            const carta = gameState.playerHand[indice];
+            if (carta) handleCardClick(carta, 'hand', indice, 'player');
+        } else if (typeof updateCardInfoPanel === 'function') {
+            updateCardInfoPanel(null);
+        }
     };
 
     return pop;
@@ -1351,7 +1439,16 @@ function chiudiSelezioneASchermo() {
  * Non ridisegna la UI: il popover deve poter restare ancorato allo stesso
  * nodo DOM appena toccato, senza essere rimosso sotto al dito.
  */
+function spegniEvidenziazioneCaselle() {
+    document.querySelectorAll('.field-slot.action-highlight, .field-slot.tribute-highlight')
+        .forEach((el) => el.classList.remove('action-highlight', 'tribute-highlight'));
+}
+
 function selectHandCardForInspection(card, index, owner = 'player') {
+    // Le caselle evidenziate appartengono alla carta selezionata PRIMA: una carta nuova (anche una che non ne
+    // evidenzia, come una Magia con i pulsanti "Attiva") non deve ereditarle, o si vedono insieme quelle di
+    // due carte diverse (Mostro + Magia/Trappola).
+    spegniEvidenziazioneCaselle();
     gameState.selectedCard = { type: 'hand', card, index, owner };
     document.querySelectorAll('#playerHand .card.selected').forEach((el) => el.classList.remove('selected'));
     const cardEl = document.querySelectorAll('#playerHand .card')[index];
@@ -1363,9 +1460,10 @@ function selectHandCardForInspection(card, index, owner = 'player') {
  * (Tributi/scarto) e senza un updateUI completo. Usata dal click esterno.
  */
 function clearHandCardSelection() {
+    // La classe si toglie SEMPRE: un handler può aver già azzerato selectedCard lasciando la carta sollevata.
+    document.querySelectorAll('#playerHand .card.selected').forEach((el) => el.classList.remove('selected'));
     if (!gameState.selectedCard || gameState.selectedCard.type !== 'hand') return;
     gameState.selectedCard = { type: null, card: null, index: -1 };
-    document.querySelectorAll('#playerHand .card.selected').forEach((el) => el.classList.remove('selected'));
     document.querySelectorAll('.field-slot.action-highlight, .field-slot.tribute-highlight')
         .forEach((el) => el.classList.remove('action-highlight', 'tribute-highlight'));
 }
@@ -1379,6 +1477,7 @@ function clearHandCardSelection() {
  * caselle st.
  */
 function highlightEmptySlots(card) {
+    spegniEvidenziazioneCaselle();
     if (card.type === 'spell' && card.subtype === 'field') {
         const el = document.querySelector('.field-slot[data-owner="player"][data-type="field-spell"]');
         if (el) el.classList.add('action-highlight');
@@ -1451,6 +1550,7 @@ function promptMonsterFieldAction(slotIndex) {
     if (canActivateEffect) {
         pop.querySelector('#qpMonsterActivate').onclick = () => {
             closeQuickPopover();
+            suppressCardInspectionFor(900);
             Comandi.esegui('player', { tipo: 'attiva', zona: 'monster', indice: slotIndex });
         };
     }
@@ -1482,6 +1582,7 @@ function promptHandSpellActivation(card, handIndex) {
 
     pop.querySelector('#qpSpellActivate').onclick = () => {
         closeQuickPopover();
+        suppressCardInspectionFor(900);
         Comandi.esegui('player', { tipo: 'attiva', zona: 'hand', indice: handIndex, carta: gameState.playerHand[handIndex] && gameState.playerHand[handIndex].uid });
     };
     pop.querySelector('#qpSpellCancel').onclick = () => closeQuickPopover();
@@ -1508,6 +1609,7 @@ function promptHandMonsterActivation(card, handIndex) {
 
     pop.querySelector('#qpMonsterActivateEffect').onclick = () => {
         closeQuickPopover();
+        suppressCardInspectionFor(900);
         Comandi.esegui('player', { tipo: 'attiva', zona: 'hand', indice: handIndex, carta: gameState.playerHand[handIndex] && gameState.playerHand[handIndex].uid });
     };
     pop.querySelector('#qpMonsterSelectNormal').onclick = () => {
