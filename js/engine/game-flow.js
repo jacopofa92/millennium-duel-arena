@@ -912,6 +912,8 @@ function renderChainStack(resolvingLink) {
     if (!chain || (!chain.active && !resolvingLink) || displayLinks.length === 0) {
         container.classList.remove('show');
         container.innerHTML = '';
+        chainStackUltimoConteggio = 0;
+        chainStackUltimoRisolto = null;
         return;
     }
     container.innerHTML = '';
@@ -998,7 +1000,32 @@ function renderChainStack(resolvingLink) {
         row.appendChild(item);
     });
     container.classList.add('show');
+
+    // Energia WebGL fra i Link: alla comparsa di un nuovo Link corre dal precedente, alla risoluzione si accende.
+    // Si legge il DOM dopo l'animazione d'ingresso (le miniature si assestano), non subito.
+    if (window.FX && typeof FX.playChainLink === 'function') {
+        const n = displayLinks.length;
+        if (resolvingLink) {
+            if (chainStackUltimoRisolto !== resolvingLink) {
+                chainStackUltimoRisolto = resolvingLink;
+                setTimeout(() => {
+                    const el = container.querySelector('.chain-stack-item.resolving');
+                    if (el) FX.playChainLink(null, el, 'risolve', resolvingLink.owner);
+                }, 150);
+            }
+        } else if (n > chainStackUltimoConteggio && n >= 2) {
+            const proprietario = displayLinks[n - 1].owner;
+            setTimeout(() => {
+                const items = container.querySelectorAll('.chain-stack-item');
+                if (items.length >= 2) FX.playChainLink(items[items.length - 2], items[items.length - 1], 'aggiunta', proprietario);
+            }, 220);
+        }
+        if (!resolvingLink) chainStackUltimoConteggio = n;
+    }
 }
+// Stato del solo disegno dell'energia fra i Link (renderChainStack): quanti Link c'erano all'ultimo giro, e l'ultimo risolto già mostrato.
+let chainStackUltimoConteggio = 0;
+let chainStackUltimoRisolto = null;
 
 function renderFields() {
     if (window.CardRenderer) CardRenderer.iniziaImmaginiDifferite();

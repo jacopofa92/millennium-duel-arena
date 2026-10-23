@@ -645,6 +645,8 @@ const APP_SHELL = [
     'js/ui/board-pieces.js',
     'js/ui/topbar.js',
     'js/ui/node-map.js',
+    'js/ui/mappa-percorso-webgl.js',
+    'js/ui/torre-ambiente-webgl.js',
     'js/ui/node-map.css',
     'js/ui/page-loader.js',
     'js/ui/game-logo.js',

@@ -144,6 +144,8 @@
         svg.setAttribute('class', 'nm-lines');
         svg.setAttribute('viewBox', `0 0 ${larghezza} ${altezza}`);
         svg.setAttribute('preserveAspectRatio', 'none');
+        // Le tratte percorse e quella verso la tappa corrente, per la luce WebGL del sentiero (vedi sotto).
+        const tratteLuce = [];
         for (let i = 1; i < nodi.length; i++) {
             const b = nodi[i];
             const a = b.collegaDa
@@ -164,8 +166,17 @@
             else if (b.stato === 'corrente' || b.stato === 'disponibile') classe += ' nm-line--prossima';
             linea.setAttribute('class', classe);
             svg.appendChild(linea);
+            if (b.stato === 'fatta') tratteLuce.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y, tipo: 'fatta' });
+            else if (b.stato === 'corrente' || b.stato === 'disponibile') tratteLuce.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y, tipo: 'prossima' });
         }
         canvas.appendChild(svg);
+        // La luce del sentiero e il faro sulla tappa corrente, in WebGL: sopra le linee, sotto i nodi (che si
+        // aggiungono dopo, quindi stanno sopra nell'ordine del DOM). Se non si puo' restano le sole linee SVG.
+        if (window.MappaPercorsoGL) {
+            const nodoCorrente = nodi.find((n) => n.stato === 'corrente');
+            const glPercorso = MappaPercorsoGL.crea({ larghezza: larghezza, altezza: altezza, tratte: tratteLuce, corrente: nodoCorrente ? { x: nodoCorrente.x, y: nodoCorrente.y } : null });
+            if (glPercorso) canvas.appendChild(glPercorso);
+        }
 
         const cliccabili = o.cliccabili || ['corrente'];
         nodi.forEach((nodo) => {

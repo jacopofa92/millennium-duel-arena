@@ -73,6 +73,8 @@
 <script src="js/native/native-save-backup.js"></script>
 <script src="js/ui/icon-library.js"></script>
 <script src="js/ui/deck-switcher.js"></script>
+<script src="js/ui/video-quality.js"></script>
+<script src="js/ui/torre-ambiente-webgl.js"></script>
 <script src="js/ui/topbar.js"></script>
 <script>
     PageTopbar.render('#topbarMount', { icon: 'tower', title: 'Torre dei Duellanti' });
@@ -93,11 +95,17 @@
         disegnaEsito(s);
         const box = document.getElementById('contenuto');
         box.innerHTML = '';
-        if (!s.inCorso) { box.appendChild(introduzione()); box.appendChild(torreGrafica(null)); return; }
+        if (!s.inCorso) { box.appendChild(introduzione()); box.appendChild(torreGrafica(null)); ambienteTorre(); return; }
         box.appendChild(pannelloScalata(s.inCorso));
         box.appendChild(torreGrafica(s.inCorso));
+        ambienteTorre();
         inquadraPianoAttuale();
         if (s.inCorso.sceltaInSospeso) apriPremio(s.inCorso);
+    }
+
+    /** La tempesta WebGL attorno alla torre (js/ui/torre-ambiente-webgl.js): solo con i Dettagli video Alti. */
+    function ambienteTorre() {
+        if (window.TorreAmbienteGL) TorreAmbienteGL.monta(document.querySelector('.tw'));
     }
 
     /** Com'è finita l'ultima scalata, una volta sola. */
