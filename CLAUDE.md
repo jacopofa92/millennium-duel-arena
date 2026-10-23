@@ -4628,3 +4628,36 @@ Mano, box info e frecce (1.4.62, branch `feature/fluidita-mano`, mergiato in `ma
   ricarica da solo (va ricaricato, o si vede il JS vecchio); `execFileSync` blocca gli intervalli del processo,
   quindi non si campiona mentre si lancia `adb shell input swipe`; l'utente usa lo stesso telefono per Claude, e
   un tap automatico può finire nella sua app: controllare cosa mostra lo schermo prima di toccare.
+  **Mai** pulire una copia di lavoro temporanea (`git worktree`) che contiene una giunzione a `node_modules`: la
+  rimozione ha seguito il collegamento e ha cancellato `node_modules/.bin` (ripristinato con `npm rebuild`).
+  Se serve provare `main` da solo, copiare i soli sorgenti o usare uno stash, non un worktree con la giunzione.
+
+WebGL di cerimonie, distruzione e ologrammi (1.4.67, branch `feature/webgl-buste-distruzione`, mergiato in `main`):
+- **Luce delle cerimonie** (`js/economy/pack-opening-webgl.js`, `window.PackOpeningGL`): un canvas AUTONOMO per
+  cerimonia (la pagina del Negozio non carica `effects.js`, quindi non c'è `FxWebgl`), creato all'apertura e
+  RILASCIATO alla chiusura (`distruggi()` fa anche `loseContext`: su telefono i contesti sono pochi). Un solo
+  shader con fino a 6 impulsi `{x, y, istante, tier}`: tier 0 strappo, 1-6 dalla comune alla segreta/mitica (per
+  fascia: colore, raggi, colonna di luce dalla super, scia anamorfica dall'ultra), **7 apertura del mazzo, 8
+  carica, 9 fontana**. I bianchi si comprimono con `1-exp(-c*1.1)`, non con un `min`: sommando nucleo, raggi e
+  alone un taglio netto faceva un disco bianco che copriva la carta. `crea()` torna `null` senza WebGL o con il
+  movimento ridotto, e `pack-opening.js` ripiega sulle scintille DOM.
+  Le fasce Super, Leggendaria, Segreta e Mitica prima cadevano nel valore delle comuni (tempo e festeggiamenti):
+  ora `MOSTRA_MS`, `TIER_LUCE` e `FASCE_ALTE` le coprono, e il riepilogo annuncia la migliore.
+- **Cerimonia del mazzo comprato** (`festeggiaMazzo`): tre atti — CARICA (0,9 s, la scatola trema:
+  `.po-scatola-carica`), APERTURA (flash, tre onde, sedici raggi, colonna, scia, fontana; il ventaglio esce SOLO
+  con `.po-deck-rivelato`, non alla creazione) e finale (alone oro + lampo sul sigillo). Un test che aspetta la
+  scatola aperta deve aspettare il fatto (`waitForFunction`), non un tempo: dipende da WebGL sì/no.
+- **Distruzione dei mostri** (`fx-webgl-scena.js`, primitiva `T.DUST`): ESPLOSIONE come prima + DISINTEGRAZIONE. La
+  carta originale si nasconde subito e resta una COPIA in un contenitore non ruotato fuori dal campo (un
+  ridisegno del Terreno non può farla sparire) con una maschera che scorre con la sola `mask-position`; i granelli
+  sono quadratini di brace, senza texture (su `file://` le immagini non si possono usare come texture).
+- **Ologrammi dei mostri in WebGL** (`js/ui/monster-hologram-webgl.js`): UN canvas dentro `#monsterHologramLayer`,
+  texture = illustrazione, con scanner d'ingresso, glitch a strisce, aberrazione cromatica, due strati di profondità,
+  scanline e base luminosa. `monster-hologram.js` calcola la lista (`calcolaRect`) e prova prima il WebGL
+  (`MonsterHologramGL.aggiorna`); se non c'è torna al CSS. **Su `file://` non si prova nemmeno** (texture
+  rifiutate): CSS subito. Un guasto a gioco avviato (contesto perso) spegne il modulo e `sync()` ridisegna in CSS.
+  **Bordi:** le illustrazioni sono rettangoli pieni, e non se ne possono fare senza bordo: la visibilità si calcola
+  SULL'IMMAGINE (ogni lato sfuma ~26%, gli effetti si moltiplicano agli angoli, un ovale li cancella), mai con un
+  taglio netto, e la base luminosa sfuma prima del bordo del riquadro.
+  `ologrammi-visibili.spec.js` è fragile sotto carico (la dimensione dell'ologramma si calcola dal riquadro della
+  carta mentre è in animazione): fallisce a intermittenza ANCHE su `main`, non è una regressione.

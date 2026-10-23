@@ -56,8 +56,18 @@
 (function () {
     'use strict';
 
-    /** Quanto resta in mostra una carta prima di scendere nella striscia. */
-    const MOSTRA_MS = { common: 620, rare: 900, ultra: 1900 };
+    /**
+     * Quanto resta in mostra una carta prima di scendere nella striscia. Super, leggendaria, segreta e mitica
+     * non avevano una voce (cadevano sul valore delle comuni, e nessuna luce): ora ogni fascia ha la sua.
+     */
+    const MOSTRA_MS = { common: 620, rare: 900, super: 1250, ultra: 1900, legendary: 2300, secret: 2600, mythic: 2600 };
+    /**
+     * Il TIER della luce WebGL (js/economy/pack-opening-webgl.js): 0 è lo strappo della busta, poi dalla comune
+     * (1) alla segreta/mitica (6). Una fascia sconosciuta vale come una comune.
+     */
+    const TIER_LUCE = { common: 1, rare: 2, super: 3, ultra: 4, legendary: 5, secret: 6, mythic: 6 };
+    /** Dall'ultra rara in su: sfondo che si accende, tocco di vibrazione, riga di riepilogo dedicata. */
+    const FASCE_ALTE = new Set(['ultra', 'legendary', 'secret', 'mythic']);
     const ATTESA_APERTURA_AUTOMATICA_MS = 2500;
 
     function menoMovimento() {
@@ -221,12 +231,17 @@
         document.body.appendChild(backdrop);
         requestAnimationFrame(() => backdrop.classList.add('po-in'));
 
+        // La luce WebGL della cerimonia (null se manca WebGL o c'è il movimento ridotto: allora restano le
+        // scintille di prima). Si rilascia SEMPRE alla chiusura: su telefono i contesti sono pochi.
+        const luce = window.PackOpeningGL ? PackOpeningGL.crea(backdrop) : null;
+
         let chiuso = false;
         const chiudi = () => {
             if (chiuso) return;
             chiuso = true;
             backdrop.classList.remove('po-in');
             setTimeout(() => {
+                if (luce) luce.distruggi();
                 backdrop.remove();
                 if (typeof onDone === 'function') onDone();
             }, 260);
@@ -248,7 +263,8 @@
 
             const c = centroDi(bustina);
             bustina.classList.add('po-bustina-strappata');
-            scintille(c.x, c.y, {
+            if (luce) luce.impulso(c.x, c.y, 0);
+            else scintille(c.x, c.y, {
                 count: 46, colors: ['#ffdf8c', '#f39c12', '#ffffff'], speed: 8, life: 950, spread: 360, gravity: 0.04, size: 4
             });
             if (window.SFX && typeof SFX.summon === 'function') SFX.summon('attack');
@@ -260,7 +276,7 @@
 
             setTimeout(() => {
                 bustina.remove();
-                sequenza(backdrop, scena, elenco, nuoveSet, chiudi, busta);
+                sequenza(backdrop, scena, elenco, nuoveSet, chiudi, busta, luce);
             }, 680);
         };
 
@@ -274,7 +290,7 @@
      * NESSUNA di loro scorre — è così che la scena sta sempre in schermo,
      * su qualunque formato, senza doverla misurare caso per caso.
      */
-    function sequenza(backdrop, scena, elenco, nuoveSet, chiudi, busta) {
+    function sequenza(backdrop, scena, elenco, nuoveSet, chiudi, busta, luce) {
         const testa = el('div', 'po-testa');
         testa.appendChild(el('div', 'po-titolo', (busta && busta.nome) || 'Bustina'));
         const contatore = el('div', 'po-contatore', `0 / ${elenco.length}`);
@@ -336,16 +352,21 @@
         function finisci() {
             saltato = true;
             clearTimeout(timer);
+            if (luce) luce.spegniAmbiente();
             palco.querySelectorAll('.po-mostra').forEach((n) => n.remove());
             mazzetto.style.display = 'none';
             while (striscia.children.length < elenco.length) {
                 aggiungiAllaStriscia(elenco[striscia.children.length]);
             }
             contatore.textContent = `${elenco.length} / ${elenco.length}`;
-            const conUltra = elenco.some((id) => rarita(id) === 'ultra');
+            // La fascia più alta trovata: dalla ultra rara in su il riepilogo la annuncia.
+            const ordine = ['ultra', 'legendary', 'secret', 'mythic'];
+            const migliore = elenco.map(rarita).filter((r) => FASCE_ALTE.has(r))
+                .sort((a, b) => ordine.indexOf(b) - ordine.indexOf(a))[0];
+            const nomiFascia = { ultra: 'ULTRA RARA', legendary: 'LEGGENDARIA', secret: 'SEGRETA', mythic: 'MITICA' };
             const quanteNuove = elenco.filter((id) => nuoveSet.has(id)).length;
             testa.appendChild(el('div', 'po-riepilogo',
-                (conUltra ? '✨ Hai trovato un\'ULTRA RARA! ' : '')
+                (migliore ? `✨ Hai trovato ${migliore === 'ultra' ? 'un\'' : 'una '}${nomiFascia[migliore]}! ` : '')
                 + (quanteNuove > 0 ? `${quanteNuove} mai avute prima su ${elenco.length}.` : 'Nessuna nuova questa volta.')));
             pulsante.classList.add('po-chiudi-pronto');
         }
@@ -380,13 +401,21 @@
 
             requestAnimationFrame(() => {
                 const c = centroDi(mostra);
-                if (r === 'ultra') {
+                const alta = FASCE_ALTE.has(r);
+                if (alta) {
                     backdrop.classList.add('po-ultra-attiva');
+                    if (window.NativeHaptics) NativeHaptics.success();
+                }
+                if (luce) {
+                    // La luce vera: un impulso alla comparsa (colore e forza dal tier) e, dalla rara in su,
+                    // un alone che resta dietro la carta finché è in mostra.
+                    luce.impulso(c.x, c.y, TIER_LUCE[r] || 1);
+                    if (r !== 'common') luce.ambiente(c.x, c.y, TIER_LUCE[r] || 1);
+                } else if (alta) {
                     scintille(c.x, c.y, {
                         count: 80, colors: ['#ffd700', '#fff6dc', '#ffffff', '#ffb347'],
                         speed: 10, life: 1300, spread: 360, gravity: 0.02, size: 5
                     });
-                    if (window.NativeHaptics) NativeHaptics.success();
                 } else if (r === 'rare') {
                     scintille(c.x, c.y, {
                         count: 28, colors: ['#8ad7ff', '#ffffff', '#c9e9ff'], speed: 5, life: 750, spread: 360, gravity: -0.02
@@ -397,6 +426,7 @@
             timer = setTimeout(() => {
                 if (saltato) return;
                 backdrop.classList.remove('po-ultra-attiva');
+                if (luce) luce.spegniAmbiente();
                 // La carta scende nella striscia: si toglie il nodo grande
                 // e si aggiunge la miniatura, che entra con un suo piccolo
                 // ingresso — il passaggio si legge come "riposta via"
@@ -525,7 +555,8 @@
             // numero dispari la carta di mezzo resta dritta, con uno pari
             // il ventaglio resta comunque simmetrico.
             c.style.setProperty('--i', k - (ids.length - 1) / 2);
-            c.style.animationDelay = (420 + k * 90) + 'ms';
+            // Il ritardo vale da quando la scatola si apre (vedi .po-deck-rivelato in pack-opening.css).
+            c.style.animationDelay = (240 + k * 100) + 'ms';
             c.appendChild(nodoCarta(id, 'var(--carta-ventaglio)'));
             ventaglio.appendChild(c);
         });
@@ -558,16 +589,50 @@
         document.body.appendChild(backdrop);
         requestAnimationFrame(() => backdrop.classList.add('po-in'));
 
+        // La luce WebGL (null senza WebGL o con il movimento ridotto: allora la cerimonia è quella di sempre,
+        // con le scintille DOM). Si rilascia alla chiusura.
+        const luce = window.PackOpeningGL ? PackOpeningGL.crea(backdrop) : null;
+        const timer = [];
+        const tra = (ms, fn) => { timer.push(setTimeout(fn, ms)); };
+        const centroScatola = () => {
+            const b = scatola.getBoundingClientRect();
+            return { x: b.left + b.width / 2, y: b.top + b.height * 0.42, alto: b.top + b.height * 0.2 };
+        };
+
         if (!menoMovimento()) {
-            setTimeout(() => {
+            // TRE ATTI. 1) CARICA: la luce si raccoglie sulla scatola mentre trema (0,9 s). 2) APERTURA: il
+            // colpo — flash, onde d'urto, raggi, colonna di luce, fontana di scintille — e il ventaglio esce.
+            // 3) L'alone oro resta dietro, e il sigillo arriva con un ultimo lampo.
+            const attesaCarica = luce ? 900 : 300;
+            if (luce) {
+                scatola.classList.add('po-scatola-carica');
+                requestAnimationFrame(() => { const c = centroScatola(); luce.impulso(c.x, c.y, 8); });
+                if (window.NativeHaptics) NativeHaptics.light();
+            }
+            tra(attesaCarica, () => {
+                scatola.classList.remove('po-scatola-carica');
                 scatola.classList.add('po-scatola-aperta');
                 scena.classList.add('po-deck-rivelato');
-                const b = scatola.getBoundingClientRect();
-                scintille(b.left + b.width / 2, b.top + b.height * 0.2, {
-                    count: 52, colors: ['#ffdf8c', '#f39c12', '#ffffff'], speed: 7, life: 1100, spread: 150, baseAngle: -90, gravity: 0.03
-                });
+                const c = centroScatola();
+                if (luce) {
+                    luce.impulso(c.x, c.y, 7);
+                    luce.impulso(c.x, c.alto, 9);
+                    luce.ambiente(c.x, c.y, 7);
+                } else {
+                    scintille(c.x, c.alto, {
+                        count: 52, colors: ['#ffdf8c', '#f39c12', '#ffffff'], speed: 7, life: 1100, spread: 150, baseAngle: -90, gravity: 0.03
+                    });
+                }
                 if (window.NativeHaptics) NativeHaptics.success();
-            }, 300);
+                if (luce) {
+                    tra(180, () => { if (window.NativeHaptics) NativeHaptics.light(); });
+                    // Il sigillo "MAZZO ACQUISITO" è il terzo atto: un lampo sopra di lui quando compare.
+                    tra(1200, () => {
+                        const s = sigillo.getBoundingClientRect();
+                        luce.impulso(s.left + s.width / 2, s.top + s.height / 2, 4);
+                    });
+                }
+            });
         } else {
             scatola.classList.add('po-scatola-aperta');
             scena.classList.add('po-deck-rivelato');
@@ -577,8 +642,9 @@
         pulsante.onclick = () => {
             if (via) return;
             via = true;
+            timer.forEach(clearTimeout);
             backdrop.classList.remove('po-in');
-            setTimeout(() => { backdrop.remove(); if (onDone) onDone(); }, 260);
+            setTimeout(() => { if (luce) luce.distruggi(); backdrop.remove(); if (onDone) onDone(); }, 260);
         };
     }
 

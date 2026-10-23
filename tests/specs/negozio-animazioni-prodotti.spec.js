@@ -33,7 +33,8 @@ module.exports = {
                 nome: 'Deck prova', packId: 'starter_sdy_yugi', coverCardId: 1
             }, [1, 2, 3, 4, 5]));
             await page.waitForSelector('.po-scatola .deck-box-art');
-            await page.waitForTimeout(450);
+            // La scatola si apre dopo l'atto di carica (circa 0,9 s con la luce WebGL, 0,3 s senza): si aspetta il fatto, non un tempo.
+            await page.waitForFunction(() => document.querySelector('.po-scatola').classList.contains('po-scatola-aperta'), null, { timeout: 5000 });
             const deck = await page.evaluate(() => ({
                 cover: !!document.querySelector('.po-scatola .dbx-cover'),
                 aperto: document.querySelector('.po-scatola').classList.contains('po-scatola-aperta'),

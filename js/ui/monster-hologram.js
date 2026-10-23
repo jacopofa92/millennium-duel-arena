@@ -147,13 +147,17 @@
         vivi.delete(uid);
     }
 
-    /** Riporta l'ologramma sopra la carta, senza toccarne le animazioni. */
-    function posiziona(item, cardEl) {
+    /**
+     * Dove sta l'ologramma di questa carta, in px dalla finestra: { left, top, w, h }, o null se la carta non è
+     * ancora disposta. Lo usano sia gli ologrammi CSS (posiziona) sia quelli WebGL
+     * (js/ui/monster-hologram-webgl.js), così le due versioni stanno sempre nello stesso punto.
+     */
+    function calcolaRect(cardEl) {
         const r = cardEl.getBoundingClientRect();
         // Un rect a 0x0 (carta non ancora disposta dal layout) darebbe un
         // ologramma grande zero in alto a sinistra: si salta, stesso
         // accorgimento di renderEquipLinks().
-        if (r.width === 0 && r.height === 0) return false;
+        if (r.width === 0 && r.height === 0) return null;
         const m = misure();
         // Un mostro in DIFESA è la stessa carta ruotata di 90°: il suo
         // riquadro a schermo è orizzontale. Misurato prima di questa
@@ -170,10 +174,22 @@
         const h = alta * m.altezza;
         // Centrato sulla carta e sollevato: la base del fascio resta
         // dentro la carta, così la figura sembra uscire DA LÌ.
-        item.style.left = `${Math.round(r.left + r.width / 2 - w / 2)}px`;
-        item.style.width = `${Math.round(w)}px`;
-        item.style.height = `${Math.round(h)}px`;
-        item.style.top = `${Math.round(r.bottom - h - r.height * m.sollevamento)}px`;
+        return {
+            left: Math.round(r.left + r.width / 2 - w / 2),
+            top: Math.round(r.bottom - h - r.height * m.sollevamento),
+            w: Math.round(w),
+            h: Math.round(h)
+        };
+    }
+
+    /** Riporta l'ologramma sopra la carta, senza toccarne le animazioni. */
+    function posiziona(item, cardEl) {
+        const q = calcolaRect(cardEl);
+        if (!q) return false;
+        item.style.left = `${q.left}px`;
+        item.style.width = `${q.w}px`;
+        item.style.height = `${q.h}px`;
+        item.style.top = `${q.top}px`;
         return true;
     }
 
@@ -216,11 +232,14 @@
         if (sospeso) return;
         if (!attivo()) {
             if (vivi.size) { vivi.forEach((_, uid) => rimuovi(uid)); }
+            if (window.MonsterHologramGL) MonsterHologramGL.aggiorna([]);
             return;
         }
         if (typeof gameState === 'undefined' || !gameState || !gameState.playerMonsterField || !gameState.botMonsterField) return;
 
         const attesi = new Set();
+        /** Gli ologrammi che devono esistere ora: li disegna il WebGL se c'è, altrimenti il CSS qui sotto. */
+        const trovati = [];
         ['player', 'bot'].forEach((owner) => {
             const campo = owner === 'player' ? gameState.playerMonsterField : gameState.botMonsterField;
             campo.forEach((slot) => {
@@ -241,18 +260,33 @@
                 // il giro non finisce (vedi cartaDaMisurare).
                 const daMisurare = cartaDaMisurare(cardEl, slot.card.uid);
                 if (daMisurare.gira) return;
-                let item = vivi.get(slot.card.uid);
-                if (!item) {
-                    item = creaOlogramma(slot.card, owner);
-                    vivi.set(slot.card.uid, item);
-                } else if (item.dataset.owner !== owner) {
-                    // Il mostro ha cambiato lato (Cambio di Cuore e
-                    // simili): cambia solo l'attributo, così l'inclinazione
-                    // si gira senza ricreare nulla.
-                    item.dataset.owner = owner;
-                }
-                if (posiziona(item, daMisurare.el)) attesi.add(slot.card.uid);
+                trovati.push({ card: slot.card, owner: owner, el: daMisurare.el });
             });
+        });
+
+        // WebGL, se si può (js/ui/monster-hologram-webgl.js): disegna tutto in un solo canvas e il CSS resta spento.
+        if (window.MonsterHologramGL) {
+            const lista = trovati.map((t) => ({ uid: t.card.uid, owner: t.owner, card: t.card, rect: calcolaRect(t.el) })).filter((x) => x.rect);
+            if (MonsterHologramGL.aggiorna(lista)) {
+                if (vivi.size) vivi.forEach((_, uid) => rimuovi(uid));
+                return;
+            }
+        }
+
+        // Altrimenti gli ologrammi CSS di sempre.
+        trovati.forEach((t) => {
+            const uid = t.card.uid;
+            let item = vivi.get(uid);
+            if (!item) {
+                item = creaOlogramma(t.card, t.owner);
+                vivi.set(uid, item);
+            } else if (item.dataset.owner !== t.owner) {
+                // Il mostro ha cambiato lato (Cambio di Cuore e
+                // simili): cambia solo l'attributo, così l'inclinazione
+                // si gira senza ricreare nulla.
+                item.dataset.owner = t.owner;
+            }
+            if (posiziona(item, t.el)) attesi.add(uid);
         });
 
         // Spariti dal Terreno (distrutti, tornati in mano, girati coperti).
@@ -283,6 +317,7 @@
      * spenga. E costa un'opacità, non un calcolo per fotogramma.
      */
     function nascondiPer(uid, durataMs) {
+        if (window.MonsterHologramGL) MonsterHologramGL.nascondiPer(uid, durataMs);
         const item = vivi.get(uid);
         if (!item) return;
         item.classList.add('mh-nascosto');
@@ -304,16 +339,20 @@
         sospeso = true;
         const el = document.getElementById(LAYER_ID);
         if (el) el.hidden = true;
+        if (window.MonsterHologramGL) MonsterHologramGL.sospendi();
     }
 
     function riprendi() {
         sospeso = false;
         const el = document.getElementById(LAYER_ID);
         if (el) el.hidden = false;
+        if (window.MonsterHologramGL) MonsterHologramGL.riprendi();
         sync();
     }
 
     window.MonsterHolograms = {
+        /** Il contenitore (creato se manca): ci disegna dentro anche il WebGL, ereditando opacità e nascondimenti. */
+        layer: layer,
         sync: sync, isAttivo: attivo, nascondiPer: nascondiPer,
         sospendi: sospendi, riprendi: riprendi, isSospeso: () => sospeso
     };
