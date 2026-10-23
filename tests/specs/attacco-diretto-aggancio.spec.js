@@ -46,12 +46,13 @@ module.exports = {
         });
         const stato = () => t.evaluate(() => {
             const bande = document.getElementById('directAttackHint');
-            const linea = document.getElementById('attack-arrow-line');
+            // La punta della freccia: il mirino sta sempre sul suo estremo (la linea è ora un percorso curvo).
+            const linea = document.getElementById('attack-arrow-target');
             return {
                 bande: !!bande, tenui: !!bande && bande.classList.contains('daw-in-attesa'),
                 manoAccesa: document.getElementById('botHand').classList.contains('attack-target-hover'),
                 mostroAcceso: !!document.querySelector('#botFieldBoard .field-slot.attack-target-hover'),
-                x2: +linea.getAttribute('x2'), y2: +linea.getAttribute('y2'),
+                x2: +linea.getAttribute('cx'), y2: +linea.getAttribute('cy'),
             };
         });
 
