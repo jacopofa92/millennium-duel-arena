@@ -21,6 +21,7 @@ module.exports = {
             const r = await page.evaluate(() => {
                 if (!SaveManager.hasSave()) SaveManager.createNew('Prova');
                 const stelle = () => SaveManager.getCurrency().starChips;
+                const crediti = () => SaveManager.getCurrency().credits;
                 const azzera = () => { const s = SaveManager.getCardAcquisitionState(); s.starArcs = {}; SaveManager.setCardAcquisitionState(s); };
                 const out = {};
                 azzera();
@@ -37,8 +38,10 @@ module.exports = {
                 st.sotto = Object.assign({}, st.sotto, { 'anime-area-prologo': totali - 1 });
                 SaveManager.setStoryState('anime', st);
                 const prima = stelle();
+                const prC = crediti();
                 StoryProgress.avanzaTorneo('anime', 'anime-area-prologo');
                 out.completamento = stelle() - prima;
+                out.creditiArco = crediti() - prC;
                 out.registro = !!SaveManager.getCardAcquisitionState().starArcs.prologo;
 
                 // 3) Una volta sola
@@ -67,6 +70,7 @@ module.exports = {
             });
             assert(r.ultimi.length === 6 && r.ultimi.every(Boolean), `Ogni arco ha un ultimo nodo: ${JSON.stringify(r.ultimi)}`);
             assert(r.completamento === 3 && r.registro, `Completare un arco la prima volta paga 3 Stelle e lo segna: ${JSON.stringify(r)}`);
+            assert(r.creditiArco === 350, `...e 350 Crediti: ${JSON.stringify(r)}`);
             assert(r.secondaVolta === 0, `Lo stesso arco non paga due volte: ${JSON.stringify(r)}`);
             assert(r.nodoQualunque === 0, `Rifare un nodo qualunque non paga: ${JSON.stringify(r)}`);
             assert(r.ultimoNodoStelle === 3 && r.ultimoNodoDuelloStelle === 3, `Rifare l'ultimo nodo (scena o duello) paga 3 Stelle: ${JSON.stringify(r)}`);

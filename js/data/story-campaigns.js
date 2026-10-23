@@ -2898,9 +2898,7 @@ const storyCampaignsDatabase = [
             { id: 'fm-seto-labirinto', dalla: 'tappe', nuove: ['fm-5-seto2'], prima: 'fm-5-sebek' },
             { id: 'fm-dentro-il-puzzle', dalla: 'principali-inserite', area: 'fm-3-torneo', ids: ['fm-3t-dentro-il-puzzle'] }
         ],
-        // Premio ridotto su richiesta dell'utente: 2000 Crediti, 2 Stelle e 1 Carta del Millennio (prima 3000 / 5 /
-        // 5 Carte Locazione / 4 Carte del Millennio). A Normale e Difficile vale il moltiplicatore del livello.
-        premioFinale: { credits: 2000, starChips: 2, millenniumCards: 1 }
+        premioFinale: { credits: 3000, starChips: 5, locatorCards: 5, millenniumCards: 4 }
     },
 
     {
@@ -3135,9 +3133,7 @@ const storyCampaignsDatabase = [
             { id: 'freedom-riflesso', dalla: 'tappe', nuove: ['freedom-4-riflesso'], prima: 'freedom-4-scena' },
             { id: 'freedom-incoronazione', dalla: 'tappe', nuove: ['freedom-4-incoronazione'], prima: 'freedom-4-giacobbo' }
         ],
-        // Premio ridotto su richiesta dell'utente: 1 Stella e 700 Crediti (prima 2500 / 4 / 4 Carte Locazione / 2 Carte
-        // del Millennio). A Normale e Difficile vale il moltiplicatore del livello, come per ogni campagna.
-        premioFinale: { credits: 700, starChips: 1 }
+        premioFinale: { credits: 2500, starChips: 4, locatorCards: 4, millenniumCards: 2 }
     },
 
     // Le campagne ancora da scrivere. Dichiarate qui, senza capitoli: la

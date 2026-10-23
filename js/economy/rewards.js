@@ -456,6 +456,8 @@
 
     /** Stelle dell'Esagono per ogni ARCO NARRATIVO della Storia anime completato la prima volta (a qualunque difficolta'). */
     const STELLE_PER_ARCO_STORIA = 3;
+    /** Crediti per ogni arco, insieme alle Stelle (richiesta dell'utente). */
+    const CREDITI_PER_ARCO_STORIA = 350;
 
     /**
      * Premio per un ARCO NARRATIVO (un capitolo/area della Storia anime) completato la prima volta, a qualunque livello.
@@ -465,9 +467,11 @@
     function forStoryArc(campagna, capitolo) {
         const rewards = [];
         if (!window.SaveManager) return rewards;
+        const spiegazione = `Arco narrativo completato — ${capitolo && capitolo.nome ? capitolo.nome : (campagna && campagna.nome) || 'Storia'}`;
         SaveManager.addCurrency('starChips', STELLE_PER_ARCO_STORIA);
-        rewards.push(voce('starChips', STELLE_PER_ARCO_STORIA,
-            `Arco narrativo completato — ${capitolo && capitolo.nome ? capitolo.nome : (campagna && campagna.nome) || 'Storia'}`));
+        rewards.push(voce('starChips', STELLE_PER_ARCO_STORIA, spiegazione));
+        SaveManager.addCurrency('credits', CREDITI_PER_ARCO_STORIA);
+        rewards.push(voce('credits', CREDITI_PER_ARCO_STORIA, spiegazione));
         return rewards;
     }
 
@@ -609,6 +613,7 @@
         forStoryCampaign: forStoryCampaign,
         forStoryArc: forStoryArc,
         STELLE_PER_ARCO_STORIA: STELLE_PER_ARCO_STORIA,
+        CREDITI_PER_ARCO_STORIA: CREDITI_PER_ARCO_STORIA,
         previewChallenge: previewChallenge,
         rulesSummary: rulesSummary,
         summaryHtml: summaryHtml,
