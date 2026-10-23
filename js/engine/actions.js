@@ -403,15 +403,32 @@ function startHandCardDrag(event, card, sourceIndex, sourceOwner) {
  * esatta, qualunque sia la dimensione dello schermo.
  */
 function createDragPreview(card, x, y) {
-    const preview = createCardElement(card);
+    // Copia del nodo che si sta trascinando invece di una carta ricostruita da zero: le immagini sono
+    // già decodificate e il primo fotogramma del trascinamento non ha il "singhiozzo" della creazione.
+    const sorgente = dragState && dragState.sourceEl;
+    const preview = (sorgente && sorgente.cloneNode) ? sorgente.cloneNode(true) : createCardElement(card);
+    preview.classList.remove('dragging-source', 'selected', 'pending-deal');
     preview.classList.add('drag-preview');
+    preview.removeAttribute('id');
+    preview.style.visibility = '';
+    preview.onpointerdown = null; preview.onmouseenter = null;
     document.body.appendChild(preview);
-    const rect = preview.getBoundingClientRect();
-    dragState.previewHalfW = rect.width / 2;
-    dragState.previewHalfH = rect.height / 2;
-    preview.style.left = `${x - dragState.previewHalfW}px`;
-    preview.style.top = `${y - dragState.previewHalfH}px`;
+    // Misure della carta SENZA rotazione/scala: il centro visivo coincide con il punto di contatto.
+    dragState.previewHalfW = preview.offsetWidth / 2;
+    dragState.previewHalfH = preview.offsetHeight / 2;
+    posizionaAnteprimaTrascinamento(preview, x, y);
     return preview;
+}
+
+/**
+ * Sposta il fantasma con `transform` (compositor, nessun layout) invece di left/top: ad ogni movimento
+ * del dito il browser doveva ricalcolare la pagina intera, ed è ciò che rendeva il trascinamento "di legno".
+ * La rotazione/scala vivono nello stesso transform perché uno stile inline vincerebbe sul CSS della classe.
+ */
+function posizionaAnteprimaTrascinamento(preview, x, y) {
+    const px = x - dragState.previewHalfW;
+    const py = y - dragState.previewHalfH;
+    preview.style.transform = `translate3d(${px}px, ${py}px, 0) rotate(3deg) scale(1.05)`;
 }
 
 /**
@@ -467,31 +484,36 @@ function flyCardToSlot(card, fromSource, toEl, onArrive, hideEl, isFaceDown = fa
     // duelMonstersCore.html) quando position è 'defense'.
     const ghost = createCardElement(card, isFaceDown, position);
     ghost.classList.add('card-fly-ghost');
+    // Il fantasma sta GIÀ nella casella d'arrivo (misure finali) e viene riportato visivamente sul punto di
+    // partenza con un transform: l'animazione cambia solo il transform (compositor), non left/top/width/height
+    // che a ogni fotogramma obbligavano il browser a ricalcolare il layout dell'intera pagina.
+    // Le due liste di funzioni (translate, scale, rotate) hanno la stessa forma, così si interpolano una a una.
+    const rotFinale = position === 'defense' ? 92 : 2;
+    const rotIniziale = position === 'defense' ? 90 : 0;
+    const dx = (fromRect.left + fromRect.width / 2) - (toRect.left + toRect.width / 2);
+    const dy = (fromRect.top + fromRect.height / 2) - (toRect.top + toRect.height / 2);
+    const sx = fromRect.width / toRect.width;
+    const sy = fromRect.height / toRect.height;
     Object.assign(ghost.style, {
         position: 'fixed',
-        left: `${fromRect.left}px`,
-        top: `${fromRect.top}px`,
-        width: `${fromRect.width}px`,
-        height: `${fromRect.height}px`,
+        left: `${toRect.left}px`,
+        top: `${toRect.top}px`,
+        width: `${toRect.width}px`,
+        height: `${toRect.height}px`,
         margin: '0',
         zIndex: '9500',
         pointerEvents: 'none',
-        transition: 'left 0.32s cubic-bezier(0.22, 0.61, 0.36, 1), top 0.32s cubic-bezier(0.22, 0.61, 0.36, 1), width 0.32s cubic-bezier(0.22, 0.61, 0.36, 1), height 0.32s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.32s ease'
+        willChange: 'transform',
+        transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy}) rotate(${rotIniziale}deg)`,
+        transition: 'transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1)'
     });
     document.body.appendChild(ghost);
-    // Forza il reflow prima di cambiare le proprietà animate, altrimenti
-    // il browser le applicherebbe insieme al posizionamento iniziale,
-    // senza transizione (nessun "salto" da animare).
+    // Forza il reflow prima di cambiare il transform, altrimenti il browser lo applicherebbe insieme al
+    // posizionamento iniziale, senza transizione (nessun "salto" da animare).
     void ghost.offsetWidth;
-    ghost.style.left = `${toRect.left}px`;
-    ghost.style.top = `${toRect.top}px`;
-    ghost.style.width = `${toRect.width}px`;
-    ghost.style.height = `${toRect.height}px`;
-    // Il leggero "tilt" di volo è impostato via style INLINE, quindi
-    // sovrascriverebbe del tutto la rotate(90deg) di .defense-pos (uno
-    // style inline vince sempre su una classe, qualunque specificità) se
-    // non venisse sommato qui apposta.
-    ghost.style.transform = position === 'defense' ? 'rotate(92deg)' : 'rotate(2deg)';
+    // Il leggero "tilt" di volo è via style INLINE: sovrascrive la rotate(90deg) di .defense-pos, per questo
+    // la rotazione è già dentro la lista del transform.
+    ghost.style.transform = `translate(0px, 0px) scale(1, 1) rotate(${rotFinale}deg)`;
 
     let done = false;
     const finish = () => {
@@ -504,7 +526,7 @@ function flyCardToSlot(card, fromSource, toEl, onArrive, hideEl, isFaceDown = fa
     // Rete di sicurezza se transitionend non scattasse mai (es. tab in
     // background che mette in pausa le animazioni): non deve bloccare il
     // piazzamento della carta per sempre.
-    setTimeout(finish, 380);
+    setTimeout(finish, 340);
 }
 
 function handleDragMove(event) {
@@ -528,9 +550,20 @@ function handleDragMove(event) {
     }
 
     if (dragState.previewEl) {
-        dragState.previewEl.style.left = `${event.clientX - dragState.previewHalfW}px`;
-        dragState.previewEl.style.top = `${event.clientY - dragState.previewHalfH}px`;
+        // Un solo aggiornamento per fotogramma: su telefono arrivano più pointermove per frame
+        // (120-240 Hz) e applicarli tutti non aggiunge nulla, costa solo.
+        dragState.ultimoX = event.clientX;
+        dragState.ultimoY = event.clientY;
+        if (!dragState.rafPendente) {
+            dragState.rafPendente = requestAnimationFrame(applicaPosizioneTrascinamento);
+        }
     }
+}
+
+function applicaPosizioneTrascinamento() {
+    if (!dragState) return;
+    dragState.rafPendente = 0;
+    if (dragState.previewEl) posizionaAnteprimaTrascinamento(dragState.previewEl, dragState.ultimoX, dragState.ultimoY);
 }
 
 function handleDragEnd(event) {
@@ -551,6 +584,11 @@ function handleDragEnd(event) {
         // della mano (vedi flyCardToSlot) — così, se si è trascinata la
         // carta fin qui, il movimento prosegue da lì invece di "tornare
         // indietro" e ripartire dalla mano.
+        // Il rilascio parte dall'ultimo punto REALE del dito, non da quello dell'ultimo fotogramma disegnato.
+        if (dragState.rafPendente) { cancelAnimationFrame(dragState.rafPendente); dragState.rafPendente = 0; }
+        if (dragState.previewEl && dragState.ultimoX !== undefined) {
+            posizionaAnteprimaTrascinamento(dragState.previewEl, dragState.ultimoX, dragState.ultimoY);
+        }
         const releaseRect = (moved && dragState.previewEl)
             ? dragState.previewEl.getBoundingClientRect()
             : null;

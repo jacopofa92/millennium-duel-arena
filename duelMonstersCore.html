@@ -1920,8 +1920,13 @@
             z-index: 10000;
         }
         .drag-preview {
-            position: fixed; z-index: 100000; pointer-events: none; transform: rotate(3deg) scale(1.05); box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+            position: fixed; left: 0; top: 0; z-index: 100000; pointer-events: none; transform: rotate(3deg) scale(1.05); box-shadow: 0 10px 22px rgba(0,0,0,0.38);
             opacity: 0.95;
+            /* La posizione la scrive actions.js a ogni fotogramma via transform: una transizione ereditata da
+               .card la farebbe inseguire il dito con 0,3 s di ritardo ("carta nel miele"). */
+            transition: none !important;
+            will-change: transform;
+            margin: 0;
             /* Stessa dimensione della carta in mano (non var(--card-w) del
                .card di base, più piccola): senza questo il fantasma cambia
                taglia di scatto appena parte il trascinamento. */
@@ -2014,6 +2019,21 @@
            non toccare quegli altri contesti) e può finire sotto la riga
            Magie/Trappole del campo appena sopra. */
         .hand .card:hover { z-index: 80; }
+        /* FLUIDITÀ della mano. La regola di base (.card in card.css) anima transform E box-shadow per 0,3 s
+           con `ease`: l'ombra costringe a ridipingere la carta (con il suo container query e l'overflow)
+           a ogni fotogramma, e 0,3 s di curva simmetrica fa partire il sollevamento piano e fermare
+           lentamente. Qui, solo per la mano: transform sul compositor, durata breve, partenza decisa e
+           arrivo morbido (curva di decelerazione), ombra che cambia di colpo. */
+        .hand .card {
+            transition: transform 0.16s cubic-bezier(0.2, 0.85, 0.25, 1);
+            will-change: transform;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Risposta immediata al tocco, prima ancora che la selezione si disegni. */
+        .hand .card:active:not(.selected):not(.dragging-source) {
+            transform: translateY(-6px) scale(1.04);
+            transition-duration: 0.07s;
+        }
         /* Mano del Bot: solo dorsi (renderBotHand() in game-flow.js ricrea
            tanti retro-carta quante sono le carte davvero in gameState.botHand),
            sopra il campo invece che sotto — specchiando la mano del
