@@ -2025,14 +2025,16 @@
            lentamente. Qui, solo per la mano: transform sul compositor, durata breve, partenza decisa e
            arrivo morbido (curva di decelerazione), ombra che cambia di colpo. */
         .hand .card {
-            transition: transform 0.16s cubic-bezier(0.2, 0.85, 0.25, 1);
+            /* Sollevare e abbassare condividono la stessa curva morbida (partenza dolce, arrivo che si posa);
+               l'alone cambia con lo stesso ritmo invece di comparire di scatto. */
+            transition: transform 0.3s cubic-bezier(0.22, 0.8, 0.25, 1), box-shadow 0.3s ease;
             will-change: transform;
             -webkit-tap-highlight-color: transparent;
         }
         /* Risposta immediata al tocco, prima ancora che la selezione si disegni. */
         .hand .card:active:not(.selected):not(.dragging-source) {
             transform: translateY(-6px) scale(1.04);
-            transition-duration: 0.07s;
+            transition-duration: 0.12s;
         }
         /* Mano del Bot: solo dorsi (renderBotHand() in game-flow.js ricrea
            tanti retro-carta quante sono le carte davvero in gameState.botHand),

@@ -2103,6 +2103,10 @@ function firmaRenderStabile(elemento) {
         el.classList.remove('has-image', 'art-loaded', 'has-pile-image');
     });
     copia.querySelectorAll('.card-name-text').forEach((el) => el.style.removeProperty('transform'));
+    // "Sollevata" è solo un aspetto: non deve far considerare la carta cambiata, altrimenti il nodo viene
+    // sostituito (immagine ricaricata e nessuna transizione, perché la carta nuova nasce già alzata).
+    // La classe si riallinea sul nodo esistente in reconcileHandCards.
+    copia.classList.remove('selected');
     // Un'immagine fallita viene rimossa da onerror; una appena costruita
     // esiste ancora fino a quel callback. In entrambi i casi la cornice
     // fallback descrive già interamente la carta e resta la firma stabile.
@@ -2125,6 +2129,9 @@ function reconcileHandCards(handEl, nuoveCarte) {
         if (vecchia && !usate.has(vecchia) && firmaVecchia === firmaNuova) {
             usate.add(vecchia);
             trasferisciGestori(vecchia, nuova);
+            // Stessa carta: si aggiorna solo se è sollevata o no, sul nodo che c'è, così la transizione CSS
+            // la alza/abbassa con dolcezza invece di sostituirla.
+            vecchia.classList.toggle('selected', nuova.classList.contains('selected'));
             return vecchia;
         }
         return nuova;
