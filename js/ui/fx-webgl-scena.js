@@ -424,7 +424,7 @@ float dado(vec2 q,float v){
      */
     const rettaCarta = (owner, tipo, i) => {
         const sl = slotEl(owner, tipo, i); if (!sl) return null;
-        const el = sl.querySelector('.card');
+        const el = /** @type {HTMLElement|null} */ (sl.querySelector('.card'));
         const rs = rectDi(sl);
         if (el && el.offsetWidth) {
             const rc = rectDi(el); if (!rc) return null;
@@ -436,7 +436,7 @@ float dado(vec2 q,float v){
         return { left: c.x - w / 2, top: c.y - h / 2, width: w, height: h };
     };
     /** Il modulo degli ologrammi WebGL, se questo mostro ne ha uno visibile (per farlo uscire di scena insieme alla carta). */
-    const olograma = (uid) => { const g = window.MonsterHologramGL; return uid && g && typeof g.disintegra === 'function' && g.visibile(uid) ? g : null; };
+    const olograma = (uid) => { const g = /** @type {any} */ (window).MonsterHologramGL; return uid && g && typeof g.disintegra === 'function' && g.visibile(uid) ? g : null; };
     const easeIO = (x) => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
     const easeOut = (x) => 1 - Math.pow(1 - Math.max(0, Math.min(1, x)), 3);
     const lerp = (a, b, k) => a + (b - a) * k;
@@ -1255,7 +1255,7 @@ float dado(vec2 q,float v){
         let r = rectDi(cardElement); if (!r) return;
         // Con l'ologramma WebGL e' LUI a disintegrarsi (la carta e' solo il portale e sparisce al colpo): la polvere
         // si centra sulla figura, il fronte e' lo stesso della polvere (sale in meta' della durata).
-        const GL = window.MonsterHologramGL;
+        const GL = /** @type {any} */ (window).MonsterHologramGL;
         const uid = cardElement.dataset && cardElement.dataset.uid;
         const rh = uid && GL && typeof GL.disintegra === 'function' && GL.visibile(uid)
             ? GL.disintegra(uid, DUST_RITARDO_S * 1000, DUST_DURATA_S * 550) : null;
