@@ -123,6 +123,64 @@
         return out;
     }
 
+    // =================================================================
+    // STELLE PER OGNI ARCO NARRATIVO (richiesta dell'utente)
+    // =================================================================
+    // Ogni capitolo della Storia anime e' un arco (un'area sulla mappa grande). Completarlo la PRIMA volta, a qualunque
+    // livello, paga 3 Stelle (Rewards.forStoryArc). Gli archi gia' pagati stanno nel registro della progressione
+    // delle carte (`cardAcquisition.starArcs`), non dentro `save.story`: l'azzeramento delle storie lo svuoterebbe e
+    // si pagherebbe di nuovo.
+    //
+    // PREGRESSO. Chi aveva gia' finito un arco prima di questa regola non lo riceve da solo: lo riceve rigiocando l'ULTIMO
+    // nodo dell'arco (rileggendo la scena, o rivincendo il duello, dall'area gia' superata), oppure completando l'arco a
+    // un altro livello. Per questo "ultimo nodo" e "arco nuovo completato" sono i due soli punti che pagano.
+
+    /** L'ultimo nodo (non parallelo) di un capitolo, scendendo dentro le aree; null se il capitolo non ne ha. */
+    function ultimoNodoDelCapitolo(campaignId, capitolo) {
+        let ultimo = null;
+        const scendi = (elenco) => {
+            (elenco || []).forEach((t) => {
+                if (t.parallelo === true) return;
+                if (Array.isArray(t.tappe) && t.tappe.length) { scendi(t.tappe); return; }
+                ultimo = t;
+            });
+        };
+        scendi(capitolo && capitolo.tappe);
+        return ultimo;
+    }
+
+    /** Paga le Stelle dell'arco `capitoloId` se non sono gia' state pagate. Torna le voci accreditate (vuoto se niente). */
+    function pagaStelleArco(campaignId, capitoloId) {
+        if (campaignId !== 'anime' || !window.SaveManager || !window.Rewards || typeof Rewards.forStoryArc !== 'function') return [];
+        const campagna = getCampaign(campaignId);
+        const capitolo = campagna && (campagna.capitoli || []).find((c) => c.id === capitoloId);
+        if (!capitolo) return [];
+        const stato = SaveManager.getCardAcquisitionState();
+        stato.starArcs = stato.starArcs || {};
+        if (stato.starArcs[capitoloId]) return [];
+        stato.starArcs[capitoloId] = true;
+        SaveManager.setCardAcquisitionState(stato);
+        const voci = Rewards.forStoryArc(campagna, capitolo);
+        if (voci.length && window.ChallengeTracker && typeof ChallengeTracker.announce === 'function') {
+            ChallengeTracker.announce({ icon: '⭐', label: 'Arco narrativo completato!', description: capitolo.nome }, voci);
+        }
+        return voci;
+    }
+
+    /**
+     * Un nodo GIA' superato e' stato rifatto (scena riletta, duello rivinto in un'area finita): se era l'ultimo nodo di un
+     * arco, e l'arco non era ancora stato pagato, paga. Torna le voci accreditate.
+     */
+    function rifattoNodo(campaignId, tappaId) {
+        const campagna = getCampaign(campaignId);
+        if (campaignId !== 'anime' || !campagna || !tappaId) return [];
+        const capitolo = (campagna.capitoli || []).find((c) => {
+            const u = ultimoNodoDelCapitolo(campaignId, c);
+            return u && u.id === tappaId;
+        });
+        return capitolo ? pagaStelleArco(campaignId, capitolo.id) : [];
+    }
+
     function capitoliCompletati(tappe, quante) {
         const ids = [...new Set(tappe.map((t) => t.capitoloId))];
         return ids.filter((id) => tappe
@@ -602,6 +660,13 @@
         };
         const appenaFinita = nuovo.finita && !progress.finita;
         setProgress(campaignId, nuovo);
+        // Un arco narrativo appena completato paga le sue Stelle (solo quelli NUOVI di questo passo: chi aveva gia' finito
+        // archi prima di questa regola li riscuote rifacendone l'ultimo nodo, vedi rifattoNodo).
+        {
+            const prima = capitoliCompletati(tappe, progress.completate);
+            capitoliCompletati(tappe, nuovo.completate).filter((id) => prima.indexOf(id) === -1)
+                .forEach((id) => pagaStelleArco(campaignId, id));
+        }
         // La progressione narrativa è anche la fonte delle ricompense
         // uniche di capitolo. Un capitolo è concluso quando tutte le sue
         // tappe esterne sono prima del cursore; le aree interne arrivano
@@ -747,6 +812,8 @@
             // principale"). Stesso difetto già chiuso per le scene rilette,
             // vedi apriProva in storia.html.
             if (rigiocato && getTorneo(campaignId, esito.torneoId).kind === 'area') {
+                // Rivincere l'ULTIMO nodo di un arco gia' superato paga le Stelle dell'arco, se non erano ancora state pagate.
+                if (esito.playerWon === true) rifattoNodo(campaignId, esito.tappaId);
                 return Object.assign(base, { vinta: true });
             }
             const salita = avanzaTorneo(campaignId, esito.torneoId, rigiocato);
@@ -1225,6 +1292,9 @@
         avanza: avanza,
         consumaEsitoDuello: consumaEsitoDuello,
         riscuotiPremioFinale: riscuotiPremioFinale,
+        pagaStelleArco: pagaStelleArco,
+        rifattoNodo: rifattoNodo,
+        ultimoNodoDelCapitolo: ultimoNodoDelCapitolo,
         ricomincia: ricomincia,
         urlDuello: urlDuello,
         // Tappe che sono a loro volta un percorso (kind: 'torneo').

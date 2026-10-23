@@ -1421,8 +1421,9 @@
             ritratti: tappa.avatar
         }).then(() => {
             // Una rilettura non tocca il progresso: si chiude la scena e
-            // si resta esattamente dov'eravamo.
-            if (rilettura) return;
+            // si resta esattamente dov'eravamo. Unica eccezione: rileggere l'ULTIMO nodo di un arco narrativo
+            // paga le Stelle dell'arco, se non erano ancora state pagate (chi lo aveva finito prima della regola).
+            if (rilettura) { StoryProgress.rifattoNodo(campaignId, tappa.id); return; }
             // Una scena DENTRO un torneo fa salire il torneo, non la
             // campagna: è una sua prova come le altre.
             if (torneoId) {

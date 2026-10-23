@@ -382,6 +382,8 @@
         // vincendo si sale, perdendo si ricomincia dal primo incontro —
         // e non alla tappa corrente della campagna.
         storiaTorneoId: mode === 'story' ? (params.get('torneo') || null) : null,
+        // QUALE nodo si e' giocato: serve a riconoscere l'ULTIMO nodo di un arco rigiocato (Stelle dell'arco).
+        storiaTappaId: mode === 'story' ? (params.get('tappa') || null) : null,
         // Un duello laterale appartiene alla mappa della Storia, ma la sua
         // vittoria non deve spostare il percorso principale di Yugi.
         storiaLateraleId: mode === 'story' ? (params.get('laterale') || null) : null,
@@ -876,6 +878,7 @@
                 rigiocata: session.storiaRigiocata === true,
                 torneoId: session.storiaTorneoId,
                 lateraleId: session.storiaLateraleId,
+                tappaId: session.storiaTappaId,
                 playerWon: playerWon,
                 opponentId: session.opponent.id,
                 timestamp: Date.now()
