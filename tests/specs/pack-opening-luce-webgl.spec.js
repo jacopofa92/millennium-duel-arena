@@ -46,10 +46,38 @@ module.exports = {
             assert(!dopo.backdrop, 'Alla chiusura la cerimonia sparisce');
             assert(dopo.canvas === 0, `Alla chiusura non resta alcun canvas (contesto rilasciato): ${dopo.canvas}`);
 
+            // --- Mazzo comprato: tre atti (carica, apertura, sigillo) con la luce WebGL.
+            await page.evaluate(() => {
+                window.__mazzoChiuso = false;
+                PackOpening.festeggiaMazzo({ nome: 'Mazzo prova', packId: 'prova' }, [4, 20, 33], () => { window.__mazzoChiuso = true; });
+            });
+            await page.waitForSelector('.po-scena-mazzo');
+            await page.waitForTimeout(350);
+            const carica = await page.evaluate(() => ({
+                canvas: !!document.querySelector('.po-backdrop > canvas'),
+                inCarica: !!document.querySelector('.po-scatola-carica'),
+                rivelato: !!document.querySelector('.po-deck-rivelato')
+            }));
+            assert(carica.canvas && carica.inCarica && !carica.rivelato, `Atto 1: la scatola si carica e non è ancora aperta: ${JSON.stringify(carica)}`);
+            await page.waitForFunction(() => !!document.querySelector('.po-deck-rivelato'), null, { timeout: 4000 });
+            const aperto = await page.evaluate(() => ({
+                carica: !!document.querySelector('.po-scatola-carica'),
+                aperta: !!document.querySelector('.po-scatola-aperta'),
+                canvas: !!document.querySelector('.po-backdrop > canvas')
+            }));
+            assert(!aperto.carica && aperto.aperta && aperto.canvas, `Atto 2: la scatola si apre e la luce resta accesa: ${JSON.stringify(aperto)}`);
+            await page.evaluate(() => document.querySelector('.po-chiudi').click());
+            await page.waitForFunction(() => window.__mazzoChiuso === true, null, { timeout: 5000 });
+            const finito = await page.evaluate(() => ({ backdrop: !!document.querySelector('.po-backdrop'), canvas: document.querySelectorAll('canvas').length }));
+            assert(!finito.backdrop && finito.canvas === 0, `Alla chiusura del mazzo non resta nulla (contesto rilasciato): ${JSON.stringify(finito)}`);
+
             // Movimento ridotto: nessuna luce, resta la cerimonia senza movimento.
             await page.emulateMedia({ reducedMotion: 'reduce' });
             const ridotto = await page.evaluate(() => PackOpeningGL.crea(document.body));
             assert(ridotto === null, 'Con il movimento ridotto la luce WebGL non si crea');
+            await page.evaluate(() => PackOpening.festeggiaMazzo({ nome: 'Mazzo prova', packId: 'prova' }, [4], () => {}));
+            const senzaMoto = await page.evaluate(() => ({ canvas: !!document.querySelector('.po-backdrop > canvas'), rivelato: !!document.querySelector('.po-deck-rivelato') }));
+            assert(!senzaMoto.canvas && senzaMoto.rivelato, `Movimento ridotto: mazzo subito aperto e senza luce: ${JSON.stringify(senzaMoto)}`);
             assert(errori.length === 0, `Errori di pagina: ${errori.join(' | ')}`);
         } finally {
             await context.close();

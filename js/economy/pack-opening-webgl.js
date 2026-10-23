@@ -46,6 +46,8 @@ uniform vec4 amb;       // x, y, intensita', tier: l'alone che resta dietro la c
 
 float h(float n){return fract(sin(n*91.345)*47453.5453);}
 
+vec3 arcobaleno(float a){return .5+.5*cos(6.2832*(a/6.2832+vec3(0.,.33,.67)));}
+
 // Il colore di un tier. 'a' e' l'angolo: serve solo ai tier che cambiano colore girando attorno.
 vec3 tinta(float tier,float a){
   if(tier<.5) return vec3(1.,.82,.45);
@@ -54,8 +56,10 @@ vec3 tinta(float tier,float a){
   if(tier<3.5) return vec3(.75,.5,1.);
   if(tier<4.5) return vec3(1.,.8,.3);
   if(tier<5.5) return mix(vec3(1.,.55,.85),vec3(1.,.9,.6),.5+.5*sin(a*3.));
-  vec3 arc=.5+.5*cos(6.2832*(a/6.2832+vec3(0.,.33,.67)));
-  return mix(arc,vec3(1.),.3);
+  if(tier<6.5) return mix(arcobaleno(a),vec3(1.),.3);
+  if(tier<7.5) return mix(vec3(1.,.82,.4),arcobaleno(a),.25);   // apertura del mazzo: oro con un velo d'iride
+  if(tier<8.5) return vec3(1.,.9,.62);                          // carica: oro-bianco
+  return vec3(1.,.78,.32);                                       // fontana: oro
 }
 
 void main(){
@@ -75,6 +79,79 @@ void main(){
     float rr=length(d);
     float an=atan(d.y,d.x);
     vec3 c=tinta(tier,an);
+
+    // ===== I TRE ATTI DEL MAZZO COMPRATO (tier 7, 8, 9) =====
+    if(tier>6.5){
+      float Lx=0.; float spx=0.; float wash=0.;
+      if(tier>8.5){
+        // FONTANA (tier 9): una sorgente al centro che spara scintille a ventaglio verso l'alto, per un paio di secondi.
+        Lx=exp(-rr*rr*40.)*.28*smoothstep(0.,.1,u)*(1.-smoothstep(1.2,2.2,u));
+        for(int j=0;j<40;j++){
+          float fj=float(j);
+          float ts=h(fj)*1.4;
+          float vita=.9+.5*h(fj+3.);
+          float uu=(u-ts)/vita;
+          if(uu<0.||uu>1.) continue;
+          float a2=-1.5708+(h(fj+1.)-.5)*1.1;
+          float v=.55+.7*h(fj+4.);
+          vec2 pos=vec2(cos(a2),sin(a2))*v*uu*(1.-.35*uu)+vec2(0.,.55*uu*uu);
+          float sz=.0065*(1.-.55*uu);
+          spx+=smoothstep(sz*1.8,0.,length(d-pos))*(1.-uu)*(.6+.4*sin(u*22.+fj));
+        }
+      } else if(tier>7.5){
+        // CARICA (tier 8): la luce si raccoglie. Particelle a spirale convergono sulla scatola, un anello si
+        // stringe e il nucleo cresce, fino al momento in cui la scatola si apre.
+        Lx=exp(-rr*rr*(60./(.4+u)))*u*u*1.6;
+        float R0=.55*(1.-pow(clamp(u/.9,0.,1.),2.));
+        Lx+=exp(-pow((rr-R0)/.012,2.))*smoothstep(0.,.15,u)*(.6+.8*u);
+        for(int j=0;j<26;j++){
+          float fj=float(j);
+          float ts=h(fj)*.45;
+          if(u<ts) continue;
+          float dir=h(fj+7.)>.5?1.:-1.;
+          for(int q=0;q<3;q++){
+            float pr=clamp((u-ts)/.45-.05*float(q),0.,1.);
+            float rad=(.35+.3*h(fj+2.))*pow(1.-pr,1.6);
+            float ang=h(fj+5.)*6.2832+(1.-pr)*3.2*dir;
+            vec2 pos=vec2(cos(ang),sin(ang))*rad;
+            spx+=smoothstep(.0065,0.,length(d-pos))*(1.-.3*float(q))*(.4+.6*pr)*step(pr,.995);
+          }
+        }
+      } else {
+        // APERTURA (tier 7): il colpo. Flash enorme, tre onde d'urto, sedici raggi, una colonna di luce che
+        // sfonda verso l'alto, una scia anamorfica da bordo a bordo e un ventaglio di scintille.
+        Lx=exp(-rr*rr*14.)*exp(-u*3.4)*1.6+exp(-rr*rr*120.)*exp(-u*2.2)*1.0;
+        for(int k=0;k<3;k++){
+          float fk=float(k);
+          float uk=u-fk*.14;
+          if(uk>0.){
+            float Rk=(.25+.5*fk)*(1.-pow(1.-clamp(uk/1.4,0.,1.),3.))*1.3;
+            Lx+=exp(-pow((rr-Rk)/(.02+.012*fk),2.))*(1.-smoothstep(.3,1.5,uk))*(1.2-.25*fk);
+          }
+        }
+        Lx+=pow(.5+.5*sin(an*16.+u*.7+h(I.z)*6.28),8.)*exp(-rr*1.5)*smoothstep(.04,.3,rr)
+            *smoothstep(0.,.1,u)*(1.-smoothstep(.6,2.4,u));
+        float su=step(d.y,.06);
+        Lx+=(exp(-d.x*d.x*70.)*.8+exp(-d.x*d.x*1500.)*1.2)*smoothstep(0.,.1,u)*(1.-smoothstep(.8,2.2,u))
+            *su*(.9-.4*smoothstep(0.,1.2,-d.y));
+        Lx+=exp(-d.y*d.y*1800.)*exp(-abs(d.x)*.9)*smoothstep(0.,.08,u)*(1.-smoothstep(.2,1.4,u))*1.2;
+        wash=(1.-smoothstep(0.,.35,u))*.25*smoothstep(1.4,0.,rr);
+        for(int j=0;j<24;j++){
+          float fj=float(j);
+          float a2=-1.5708+(h(fj)-.5)*1.7;
+          float v=.45+.7*h(fj+3.);
+          float vita=1.2+1.*h(fj+9.);
+          float uu=(u-.05-.3*h(fj+11.))/vita;
+          if(uu<0.||uu>1.) continue;
+          vec2 pos=vec2(cos(a2),sin(a2))*v*(1.-pow(1.-uu,2.))+vec2(0.,.5*uu*uu);
+          float sz=.007*(1.-.5*uu);
+          spx+=smoothstep(sz*1.8,0.,length(d-pos))*(1.-uu)*(.6+.4*sin(u*25.+fj));
+        }
+      }
+      col+=c*Lx+vec3(1.)*(spx*1.0+Lx*.12)+c*spx*.8+vec3(1.,.95,.8)*wash;
+      al=max(al,clamp(Lx*.7+spx+wash,0.,1.));
+      continue;
+    }
 
     // nucleo di luce, subito, che si spegne in fretta
     float core=exp(-rr*rr*(40.-4.*tier))*exp(-u*5.5)*(.8+.08*tier);

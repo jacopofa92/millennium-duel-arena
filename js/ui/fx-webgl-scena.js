@@ -320,7 +320,7 @@ float dado(vec2 q,float v){
   float bruc=smoothstep(0.,10.*sc,dE)*(1.-smoothstep(0.,Hh*.45,dE))*step(P.y,org.y+Hh)*inside*vivo;
   float brace=bruc*.4*(.7+.3*fbm(vec2(P.x*.2/sc,P.y*.2/sc-t*3.)));
   float acc=0.; vec3 cc=vec3(0.);
-  for(int j=0;j<56;j++){
+  for(int j=0;j<72;j++){
     float fj=float(j);
     float ts=h(vec2(fj,B.w))*.5;
     float v=(u-ts)/.55;
@@ -330,6 +330,9 @@ float dado(vec2 q,float v){
     float sp=.5+h(vec2(fj+13.,B.w));
     vec2 pos=vec2(px+(18.+30.*h(vec2(fj+3.,B.w)))*v*sp*sc+sin(v*6.+fj)*5.*sc,
                   py-(40.+90.*h(vec2(fj+5.,B.w)))*v*sp*(1.-.3*v)*sc);
+    // L'ESPLOSIONE: ogni granello viene prima spinto via dal centro della carta (frenando), e solo dopo sale.
+    vec2 dir=normalize(vec2(px,py)-A.xy+(vec2(h(vec2(fj+19.,B.w)),h(vec2(fj+23.,B.w)))-.5)*W*.6+vec2(.001));
+    pos+=dir*(25.+70.*h(vec2(fj+21.,B.w)))*(1.-pow(1.-clamp(v*1.6,0.,1.),3.))*sc;
     float sz=(2.6+3.4*h(vec2(fj+17.,B.w)))*(1.-.5*v)*sc;
     vec2 dd=abs(P-pos); float sq=max(dd.x,dd.y);
     float a=smoothstep(sz,sz*.5,sq)*(1.-v)*(.6+.4*sin(t*20.+fj));
@@ -371,7 +374,8 @@ float dado(vec2 q,float v){
             case T.PORTAL: return [x - z * 1.2, y - z * 1.2 * Math.max(w, 0.05) - 6, x + z * 1.2, y + z * 1.2 * Math.max(w, 0.05) + 6];
             case T.PANEL: return [x - z - 20, y - q - 20, x + z + 20, y + q + 20];
             // Disintegrazione: i granelli salgono fino a ~8 mezze larghezze e sbandano a destra.
-            case T.DUST: return [x - z * 2, y - q - z * 8, x + z * 5, y + q + z];
+            // (l'esplosione spinge i granelli anche di lato e verso il basso: ~90 px in scala della carta).
+            case T.DUST: return [x - z * 5, y - q - z * 8, x + z * 7, y + q + z * 5];
             default: e = z * 3; return [x - e, y - q - e, x + e, y + e];   // moneta e dado
         }
     }
@@ -1047,29 +1051,41 @@ float dado(vec2 q,float v){
     };
 
     /**
-     * Distruzione in battaglia: la carta si DISINTEGRA dal basso verso l'alto. Colpo secco (lampo, un'onda
-     * d'urto, scintille, scossa), poi un fronte di fuoco sale sulla carta mentre la parte bruciata si
-     * sfarina in braci che salgono e sbandano a destra (primitiva T.DUST). Prima la carta si schiacciava in
-     * verticale e spariva.
+     * Distruzione in battaglia: ESPLOSIONE + DISINTEGRAZIONE. Il colpo è quello di prima — vampata grande
+     * bianca e rossa, due onde d'urto, nucleo incandescente, fumo, due ondate di scintille, scossa piena —
+     * e la carta trema per un istante. Poi cede: un fronte di fuoco la mangia dal basso verso l'alto e la
+     * parte bruciata esplode in braci (T.DUST) che prima schizzano verso l'esterno e poi salgono sbandando a
+     * destra. Le due cose si sovrappongono: la carta non sparisce "dopo" lo scoppio, si consuma dentro.
      */
     imp.playBattleDestroyEffect = function (cardElement) {
         if (!cardElement) return;
         const r = rectDi(cardElement); if (!r) return;
         const c = cen(r); const w = r.width;
         const s = new Scena();
-        s.add(T.FLASH, C.BIANCO, 0, 0.22, [c.x, c.y, w * 1.0, 0]);
-        s.add(T.RING, C.ARANCIO, 0, 0.5, [c.x, c.y, w * 1.15, 4]);
-        // La disintegrazione parte appena dopo il colpo e dura 1,1 s: il fronte attraversa la carta in 0,55 s.
+        // Vampata: grande, bianca al centro e rossa ai bordi (1,5 volte la carta).
+        s.add(T.FLASH, C.BIANCO, 0, 0.3, [c.x, c.y, w * 1.3, 0]);
+        s.add(T.FLASH, C.CALDO, 0, 0.6, [c.x, c.y, w * 1.7, 0]);
+        s.add(T.FLASH, C.ARANCIO, 0.04, 0.5, [c.x, c.y, w * 1.2, 0]);
+        // Due onde d'urto sfalsate.
+        s.add(T.RING, C.ORO, 0, 0.6, [c.x, c.y, 130, 6]);
+        s.add(T.RING, C.ARANCIO, 0.12, 0.6, [c.x, c.y, 180, 3]);
+        // Nucleo incandescente.
+        s.add(T.FLASH, C.BIANCO, 0, 0.35, [c.x, c.y, w * 1.6, 0]);
+        // Fumo che sale dopo il botto.
+        for (let i = 0; i < 4; i++) s.add(T.SMOKE, C.SCURO, 0.06 + i * 0.04, 1.0, [c.x + (i * 17 % 40) - 20, c.y + (i * 11 % 24) - 12, 46, 0.8]);
+        // La disintegrazione parte subito dopo il colpo e dura 1,1 s: il fronte attraversa la carta in 0,55 s.
         s.add(T.DUST, C.ARANCIO, DUST_RITARDO_S, DUST_DURATA_S, [c.x, c.y, r.width / 2, r.height / 2], Math.random() * 50);
-        for (let i = 0; i < 3; i++) s.add(T.BURST, C.CALDO, 0, 0.6, [c.x, c.y, 110 + i * 20, 40 + i * 6], 5.1 + i * 3.7);
+        // Due ondate di scintille: la prima secca e veloce, la seconda più lenta e pesante che ricade.
+        for (let i = 0; i < 4; i++) s.add(T.BURST, C.CALDO, 0, 0.6, [c.x, c.y, 150 + i * 22, 40 + i * 6], 5.1 + i * 3.7);
+        for (let i = 0; i < 3; i++) s.add(T.BURST, C.ARANCIO, 0.11, 0.95, [c.x, c.y, 80 + i * 18, 180 + i * 20], 11.7 + i * 4.3);
         verifica(s);
         disintegraCarta(cardElement, r);
         const campo = document.querySelector('.game-container');
-        scossa(campo, [[-5, 0.045], [4, 0.05], [-2, 0.05], [0, 0.07]]);
+        scossa(campo, [[-6, 0.045], [5, 0.05], [-3, 0.05], [0, 0.07]]);
         breve(s, DUST_RITARDO_S + DUST_DURATA_S + 0.1);
     };
 
-    const DUST_RITARDO_S = 0.06;
+    const DUST_RITARDO_S = 0.1;
     const DUST_DURATA_S = 1.1;
 
     /**
@@ -1099,6 +1115,12 @@ float dado(vec2 q,float v){
         involucro.appendChild(copia);
         document.body.appendChild(involucro);
         cardElement.style.visibility = 'hidden';
+        if (involucro.animate) {
+            // Il colpo: la carta trema per un istante (come prima dell'esplosione) mentre il fronte non è ancora partito.
+            const tremito = []; for (let i = 0; i <= 6; i++) tremito.push({ translate: (i % 2 ? '5px' : '-5px') + ' 0px', offset: i / 6 });
+            tremito[0].translate = '0px 0px'; tremito[6].translate = '0px 0px';
+            involucro.animate(tremito, { duration: DUST_RITARDO_S * 1000 + 40, easing: 'linear' });
+        }
         if (involucro.animate) {
             // Il fronte e' al bordo alto a meta' corsa (p = .5): quindi la corsa intera dura il doppio del fronte.
             involucro.animate([

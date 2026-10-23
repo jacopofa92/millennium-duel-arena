@@ -555,7 +555,8 @@
             // numero dispari la carta di mezzo resta dritta, con uno pari
             // il ventaglio resta comunque simmetrico.
             c.style.setProperty('--i', k - (ids.length - 1) / 2);
-            c.style.animationDelay = (420 + k * 90) + 'ms';
+            // Il ritardo vale da quando la scatola si apre (vedi .po-deck-rivelato in pack-opening.css).
+            c.style.animationDelay = (240 + k * 100) + 'ms';
             c.appendChild(nodoCarta(id, 'var(--carta-ventaglio)'));
             ventaglio.appendChild(c);
         });
@@ -588,16 +589,50 @@
         document.body.appendChild(backdrop);
         requestAnimationFrame(() => backdrop.classList.add('po-in'));
 
+        // La luce WebGL (null senza WebGL o con il movimento ridotto: allora la cerimonia è quella di sempre,
+        // con le scintille DOM). Si rilascia alla chiusura.
+        const luce = window.PackOpeningGL ? PackOpeningGL.crea(backdrop) : null;
+        const timer = [];
+        const tra = (ms, fn) => { timer.push(setTimeout(fn, ms)); };
+        const centroScatola = () => {
+            const b = scatola.getBoundingClientRect();
+            return { x: b.left + b.width / 2, y: b.top + b.height * 0.42, alto: b.top + b.height * 0.2 };
+        };
+
         if (!menoMovimento()) {
-            setTimeout(() => {
+            // TRE ATTI. 1) CARICA: la luce si raccoglie sulla scatola mentre trema (0,9 s). 2) APERTURA: il
+            // colpo — flash, onde d'urto, raggi, colonna di luce, fontana di scintille — e il ventaglio esce.
+            // 3) L'alone oro resta dietro, e il sigillo arriva con un ultimo lampo.
+            const attesaCarica = luce ? 900 : 300;
+            if (luce) {
+                scatola.classList.add('po-scatola-carica');
+                requestAnimationFrame(() => { const c = centroScatola(); luce.impulso(c.x, c.y, 8); });
+                if (window.NativeHaptics) NativeHaptics.light();
+            }
+            tra(attesaCarica, () => {
+                scatola.classList.remove('po-scatola-carica');
                 scatola.classList.add('po-scatola-aperta');
                 scena.classList.add('po-deck-rivelato');
-                const b = scatola.getBoundingClientRect();
-                scintille(b.left + b.width / 2, b.top + b.height * 0.2, {
-                    count: 52, colors: ['#ffdf8c', '#f39c12', '#ffffff'], speed: 7, life: 1100, spread: 150, baseAngle: -90, gravity: 0.03
-                });
+                const c = centroScatola();
+                if (luce) {
+                    luce.impulso(c.x, c.y, 7);
+                    luce.impulso(c.x, c.alto, 9);
+                    luce.ambiente(c.x, c.y, 7);
+                } else {
+                    scintille(c.x, c.alto, {
+                        count: 52, colors: ['#ffdf8c', '#f39c12', '#ffffff'], speed: 7, life: 1100, spread: 150, baseAngle: -90, gravity: 0.03
+                    });
+                }
                 if (window.NativeHaptics) NativeHaptics.success();
-            }, 300);
+                if (luce) {
+                    tra(180, () => { if (window.NativeHaptics) NativeHaptics.light(); });
+                    // Il sigillo "MAZZO ACQUISITO" è il terzo atto: un lampo sopra di lui quando compare.
+                    tra(1200, () => {
+                        const s = sigillo.getBoundingClientRect();
+                        luce.impulso(s.left + s.width / 2, s.top + s.height / 2, 4);
+                    });
+                }
+            });
         } else {
             scatola.classList.add('po-scatola-aperta');
             scena.classList.add('po-deck-rivelato');
@@ -607,8 +642,9 @@
         pulsante.onclick = () => {
             if (via) return;
             via = true;
+            timer.forEach(clearTimeout);
             backdrop.classList.remove('po-in');
-            setTimeout(() => { backdrop.remove(); if (onDone) onDone(); }, 260);
+            setTimeout(() => { if (luce) luce.distruggi(); backdrop.remove(); if (onDone) onDone(); }, 260);
         };
     }
 
