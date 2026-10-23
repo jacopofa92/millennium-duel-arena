@@ -33,7 +33,7 @@
     const MAX = 40;
 
     // Tipi di primitiva (devono coincidere con l'ordine delle `if` dello shader qui sotto).
-    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19, ANKH: 20, PORTAL: 21 };
+    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19, ANKH: 20, PORTAL: 21, DUST: 22 };
     // Colori: indici nella tavolozza dello shader.
     const C = { CALDO: 0, ORO: 1, ROSSO: 2, ARANCIO: 3, CIANO: 4, BLU: 5, VIOLA: 6, MAGENTA: 7, VERDE: 8, BIANCO: 9, SCURO: 10, GHIACCIO: 11, VERDE_SCURO: 12 };
 
@@ -303,6 +303,42 @@ float dado(vec2 q,float v){
   vec3 col=c*(ring*1.5+halo)*e;
   s=vec4(col*(1.-hole)+vec3(0.,.02,.012)*hole*e,clamp((ring+halo+hole*.95)*e,0.,1.));`;
 
+    // DISINTEGRAZIONE di una carta (A: centro x, y e mezza larghezza, mezza altezza in z, w; B.w: seme).
+    // Il fronte di fuoco sale dal basso (u da 0 a .5) e la parte gia' bruciata e' trasparente: la carta
+    // vera la sfuma una maschera CSS sullo stesso fronte (vedi disintegraCarta). Qui si disegna solo la
+    // luce: il bordo incandescente, un velo di braci dietro il fronte e i granelli che nascono sul fronte,
+    // salgono e sbandano a destra spegnendosi. Niente texture: i granelli sono quadratini di brace, nel
+    // colore c e, per i piu' recenti, quasi bianchi.
+    CORPI[T.DUST] = `
+  vec2 org=A.xy-A.zw; float W=A.z*2.; float Hh=A.w*2.; float sc=A.z/26.;
+  float f=clamp(u/.5,0.,1.);
+  float yF=org.y+Hh*(1.-f);
+  float inside=step(org.x,P.x)*step(P.x,org.x+W);
+  float dE=P.y-yF;
+  float vivo=step(.001,f)*step(f,.999);
+  float edge=exp(-dE*dE/(5.*sc*sc+3.))*inside*vivo*(.6+.4*fbm(vec2(P.x*.15/sc,t*7.)));
+  float bruc=smoothstep(0.,10.*sc,dE)*(1.-smoothstep(0.,Hh*.45,dE))*step(P.y,org.y+Hh)*inside*vivo;
+  float brace=bruc*.4*(.7+.3*fbm(vec2(P.x*.2/sc,P.y*.2/sc-t*3.)));
+  float acc=0.; vec3 cc=vec3(0.);
+  for(int j=0;j<56;j++){
+    float fj=float(j);
+    float ts=h(vec2(fj,B.w))*.5;
+    float v=(u-ts)/.55;
+    if(v<0.||v>1.) continue;
+    float px=org.x+h(vec2(fj+7.,B.w))*W;
+    float py=org.y+Hh*(1.-ts/.5);
+    float sp=.5+h(vec2(fj+13.,B.w));
+    vec2 pos=vec2(px+(18.+30.*h(vec2(fj+3.,B.w)))*v*sp*sc+sin(v*6.+fj)*5.*sc,
+                  py-(40.+90.*h(vec2(fj+5.,B.w)))*v*sp*(1.-.3*v)*sc);
+    float sz=(2.6+3.4*h(vec2(fj+17.,B.w)))*(1.-.5*v)*sc;
+    vec2 dd=abs(P-pos); float sq=max(dd.x,dd.y);
+    float a=smoothstep(sz,sz*.5,sq)*(1.-v)*(.6+.4*sin(t*20.+fj));
+    float hot=1.-v;
+    cc+=mix(c,vec3(1.,.9,.6),hot*hot)*a;
+    acc+=a;
+  }
+  s=vec4(c*(edge*1.7+brace)+cc*1.2+vec3(1.,.9,.7)*edge*.5,clamp(edge+brace*.8+acc,0.,1.));`;
+
     /** Il programma di un tipo (costruito una volta sola e messo in cache dal motore). */
     const SORGENTI = {};
     function sorgente(tipo) {
@@ -334,6 +370,8 @@ float dado(vec2 q,float v){
             case T.ANKH: e = z * 1.6; return [x - e, y - e, x + e, y + e];
             case T.PORTAL: return [x - z * 1.2, y - z * 1.2 * Math.max(w, 0.05) - 6, x + z * 1.2, y + z * 1.2 * Math.max(w, 0.05) + 6];
             case T.PANEL: return [x - z - 20, y - q - 20, x + z + 20, y + q + 20];
+            // Disintegrazione: i granelli salgono fino a ~8 mezze larghezze e sbandano a destra.
+            case T.DUST: return [x - z * 2, y - q - z * 8, x + z * 5, y + q + z];
             default: e = z * 3; return [x - e, y - q - e, x + e, y + e];   // moneta e dado
         }
     }
@@ -1008,43 +1046,69 @@ float dado(vec2 q,float v){
         breve(s, t0 + 0.9);
     };
 
-    /** Distruzione in battaglia: colpo secco e collasso della carta, vampata, due onde d'urto, nucleo, fumo, scossa, braci. */
+    /**
+     * Distruzione in battaglia: la carta si DISINTEGRA dal basso verso l'alto. Colpo secco (lampo, un'onda
+     * d'urto, scintille, scossa), poi un fronte di fuoco sale sulla carta mentre la parte bruciata si
+     * sfarina in braci che salgono e sbandano a destra (primitiva T.DUST). Prima la carta si schiacciava in
+     * verticale e spariva.
+     */
     imp.playBattleDestroyEffect = function (cardElement) {
         if (!cardElement) return;
         const r = rectDi(cardElement); if (!r) return;
         const c = cen(r); const w = r.width;
         const s = new Scena();
-        // Vampata: grande, bianca al centro e rossa ai bordi, come il gradiente della versione GSAP (1.5 volte la carta).
-        s.add(T.FLASH, C.BIANCO, 0, 0.3, [c.x, c.y, w * 1.3, 0]);
-        s.add(T.FLASH, C.CALDO, 0, 0.6, [c.x, c.y, w * 1.7, 0]);
-        s.add(T.FLASH, C.ARANCIO, 0.04, 0.5, [c.x, c.y, w * 1.2, 0]);
-        // Due onde d'urto sfalsate, spesse come i bordi di prima (5px e 2px).
-        s.add(T.RING, C.ORO, 0, 0.6, [c.x, c.y, 130, 6]);
-        s.add(T.RING, C.ARANCIO, 0.12, 0.6, [c.x, c.y, 180, 3]);
-        // Nucleo incandescente.
-        s.add(T.FLASH, C.BIANCO, 0, 0.35, [c.x, c.y, w * 1.6, 0]);
-        // Fumo che sale dopo il botto.
-        for (let i = 0; i < 4; i++) s.add(T.SMOKE, C.SCURO, 0.06 + i * 0.04, 1.0, [c.x + (i * 17 % 40) - 20, c.y + (i * 11 % 24) - 12, 46, 0.8]);
-        // Due ondate di scintille: la prima secca e veloce (44), la seconda piu' lenta e pesante che ricade (26).
-        for (let i = 0; i < 4; i++) s.add(T.BURST, C.CALDO, 0, 0.6, [c.x, c.y, 150 + i * 22, 40 + i * 6], 5.1 + i * 3.7);
-        for (let i = 0; i < 3; i++) s.add(T.BURST, C.ARANCIO, 0.11, 0.95, [c.x, c.y, 80 + i * 18, 180 + i * 20], 11.7 + i * 4.3);
+        s.add(T.FLASH, C.BIANCO, 0, 0.22, [c.x, c.y, w * 1.0, 0]);
+        s.add(T.RING, C.ARANCIO, 0, 0.5, [c.x, c.y, w * 1.15, 4]);
+        // La disintegrazione parte appena dopo il colpo e dura 1,1 s: il fronte attraversa la carta in 0,55 s.
+        s.add(T.DUST, C.ARANCIO, DUST_RITARDO_S, DUST_DURATA_S, [c.x, c.y, r.width / 2, r.height / 2], Math.random() * 50);
+        for (let i = 0; i < 3; i++) s.add(T.BURST, C.CALDO, 0, 0.6, [c.x, c.y, 110 + i * 20, 40 + i * 6], 5.1 + i * 3.7);
         verifica(s);
-        if (cardElement.animate) {
-            const T0 = 0.44; const o = (q) => q / T0;
-            cardElement.animate([
-                { translate: '0px 0px', scale: '1 1', opacity: 1, offset: 0 },
-                { translate: '-5px 0px', offset: o(0.035) },
-                { translate: '0px 0px', offset: o(0.07) },
-                { translate: '-5px 0px', offset: o(0.105) },
-                { translate: '0px 0px', offset: o(0.14) },
-                { scale: '1 1', opacity: 1, offset: o(0.26), easing: IN_CUBICA },
-                { scale: '1 0.2', opacity: 0, offset: 1 }
-            ], { duration: T0 * 1000 });
-        }
+        disintegraCarta(cardElement, r);
         const campo = document.querySelector('.game-container');
-        scossa(campo, [[-6, 0.045], [5, 0.05], [-3, 0.05], [0, 0.07]]);
-        breve(s, 1.1);
+        scossa(campo, [[-5, 0.045], [4, 0.05], [-2, 0.05], [0, 0.07]]);
+        breve(s, DUST_RITARDO_S + DUST_DURATA_S + 0.1);
     };
+
+    const DUST_RITARDO_S = 0.06;
+    const DUST_DURATA_S = 1.1;
+
+    /**
+     * La carta vera che si sfarina. L'originale si nasconde subito e al suo posto resta una COPIA, fuori dal
+     * campo: così un ridisegno del Terreno nel mezzo non può farla sparire a metà (i nodi del campo si
+     * sostituiscono). La copia sta in un contenitore NON ruotato, grande quanto l'ingombro della carta, e la
+     * maschera (un gradiente verticale che scorre con la sola `mask-position`) vive lì: in Difesa la carta è
+     * ruotata, ma il fronte sale comunque in verticale sullo schermo, come la luce di T.DUST.
+     */
+    function disintegraCarta(cardElement, r) {
+        const cs = getComputedStyle(cardElement);
+        const copia = /** @type {HTMLElement} */ (cardElement.cloneNode(true));
+        copia.classList.remove('destroying', 'selected', 'attack-target-hover');
+        const larg = cardElement.offsetWidth || r.width;
+        const alt = cardElement.offsetHeight || r.height;
+        Object.assign(copia.style, {
+            position: 'absolute', left: '50%', top: '50%', margin: '0', width: larg + 'px', height: alt + 'px',
+            transform: 'translate(-50%, -50%) ' + (cs.transform && cs.transform !== 'none' ? cs.transform : ''),
+            transition: 'none', animation: 'none', pointerEvents: 'none', visibility: 'visible', opacity: '1'
+        });
+        const involucro = document.createElement('div');
+        // Sotto la luce (Z) e sopra il campo: il bordo che brucia e i granelli si sommano alla carta.
+        const grad = 'linear-gradient(to bottom, #000 0%, #000 33.3%, rgba(0,0,0,0) 40%, rgba(0,0,0,0) 100%)';
+        involucro.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;`
+            + `z-index:${Z - 1};pointer-events:none;-webkit-mask-image:${grad};mask-image:${grad};`
+            + '-webkit-mask-size:100% 300%;mask-size:100% 300%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;';
+        involucro.appendChild(copia);
+        document.body.appendChild(involucro);
+        cardElement.style.visibility = 'hidden';
+        if (involucro.animate) {
+            // Il fronte e' al bordo alto a meta' corsa (p = .5): quindi la corsa intera dura il doppio del fronte.
+            involucro.animate([
+                { webkitMaskPosition: '0% 0%', maskPosition: '0% 0%' },
+                { webkitMaskPosition: '0% 100%', maskPosition: '0% 100%' }
+            ], { duration: DUST_DURATA_S * 1000, delay: DUST_RITARDO_S * 1000, easing: 'linear', fill: 'both' });
+        }
+        // Dopo il fronte la carta e' interamente trasparente: la copia non serve piu'.
+        setTimeout(() => involucro.remove(), (DUST_RITARDO_S + DUST_DURATA_S * 0.55 + 0.1) * 1000);
+    }
     /** Per gli effetti brevi che NON aprono una cinematica (non fermano il bot, nessuna callback): solo il disegno. */
     function breve(sc, durS) {
         verifica(sc);

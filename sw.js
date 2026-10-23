@@ -688,6 +688,7 @@ const APP_SHELL = [
     'js/economy/shop-ui.js',
     'js/economy/shop.css',
     'js/economy/pack-opening.js',
+    'js/economy/pack-opening-webgl.js',
     'js/economy/pack-opening.css',
     'js/ui/deck-box.js',
     'js/ui/deck-box.css',
