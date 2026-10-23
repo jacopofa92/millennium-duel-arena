@@ -417,7 +417,9 @@
         const giaComprata = (id) => !!(window.SaveManager && SaveManager.hasBoughtDailyShopCard(giorno, id));
         const giorni = Math.floor(Date.parse(giorno + 'T00:00:00Z') / 86400000);
         const specs = [
-            ['common', 3, giorno, { credits: PREZZI.cartaComune, starChips: 1 }],
+            // Le comuni costano SOLO Crediti (richiesta dell'utente): le Stelle arrivano quasi solo dai tornei e
+            // sono per rare e superiori, mazzi e buste. Una carta da 150 Crediti non deve dipendere da loro.
+            ['common', 3, giorno, { credits: PREZZI.cartaComune }],
             ['rare', 2, giorno, { credits: PREZZI.cartaRara, starChips: 2 }],
             ['super', 1, String(Math.floor(giorni / 2)), { credits: PREZZI.cartaSuper, starChips: 4 }],
             ['ultra', 1, String(Math.floor(giorni / 7)), { credits: PREZZI.cartaUltra, starChips: 8 }],

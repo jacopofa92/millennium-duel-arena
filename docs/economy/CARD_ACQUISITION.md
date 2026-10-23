@@ -21,7 +21,7 @@ Le Sfide accettano premi dati come `cards: [{ id, qty }]` e
 Fasce: Comune, Rara, Super Rara, Ultra Rara, Leggendaria, Segreta e Mitica.
 Segrete e Mitiche non entrano nelle buste generiche.
 
-- 3 Comuni/giorno: 150 Crediti + 1 Stella.
+- 3 Comuni/giorno: 150 Crediti (solo Crediti, nessuna Stella).
 - 2 Rare/giorno: 450 + 2; 1 Super/2 giorni: 900 + 4.
 - 1 Ultra/settimana: 1800 + 8; 1 Leggendaria/2 settimane:
   3500 + 15 + 1 Carta del Millennio.
