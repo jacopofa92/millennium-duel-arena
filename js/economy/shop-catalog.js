@@ -418,11 +418,13 @@
         const giorni = Math.floor(Date.parse(giorno + 'T00:00:00Z') / 86400000);
         const specs = [
             // Le comuni costano SOLO Crediti (richiesta dell'utente): le Stelle arrivano quasi solo dai tornei e
-            // sono per rare e superiori, mazzi e buste. Una carta da 150 Crediti non deve dipendere da loro.
+            // sono per le carte di fascia alta, mazzi e buste. Una carta da 150 Crediti non deve dipendere da loro.
             ['common', 3, giorno, { credits: PREZZI.cartaComune }],
-            ['rare', 2, giorno, { credits: PREZZI.cartaRara, starChips: 2 }],
-            ['super', 1, String(Math.floor(giorni / 2)), { credits: PREZZI.cartaSuper, starChips: 4 }],
-            ['ultra', 1, String(Math.floor(giorni / 7)), { credits: PREZZI.cartaUltra, starChips: 8 }],
+            // Anche le rare solo Crediti (richiesta dell'utente): le Stelle restano per Super e oltre, buste e mazzi.
+            ['rare', 2, giorno, { credits: PREZZI.cartaRara }],
+            // Super 1 Stella, Ultra 3 (richiesta dell'utente; prima 4 e 8): la Leggendaria resta a 15 + 2 Carte del Millennio.
+            ['super', 1, String(Math.floor(giorni / 2)), { credits: PREZZI.cartaSuper, starChips: 1 }],
+            ['ultra', 1, String(Math.floor(giorni / 7)), { credits: PREZZI.cartaUltra, starChips: 3 }],
             ['legendary', 1, String(Math.floor(giorni / 14)), { credits: PREZZI.cartaLeggendaria, starChips: 15, millenniumCards: 2 }]
         ];
         return specs.flatMap(([rarity, count, periodo, costo]) =>

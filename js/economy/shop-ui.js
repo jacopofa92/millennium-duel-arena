@@ -173,7 +173,7 @@
         }
 
         const secCarte = sezione('🗓️ Carte in rotazione',
-            '<strong>3 comuni e 2 rare</strong> cambiano ogni giorno; Super, Ultra e Leggendaria hanno rotazioni più lunghe. Le <strong>comuni costano solo Crediti</strong>; dalle rare in su servono anche Stelle. Le carte firma compaiono soltanto dopo il primo sblocco.');
+            '<strong>3 comuni e 2 rare</strong> cambiano ogni giorno; Super, Ultra e Leggendaria hanno rotazioni più lunghe. Le <strong>comuni e le rare costano solo Crediti</strong>; dalle Super in su servono anche Stelle. Le carte firma compaiono soltanto dopo il primo sblocco.');
         const secBuste = sezione('📦 Buste della settimana',
             'Tre buste generiche e tre tematiche da <strong>10 carte</strong>. Nelle tematiche ogni carta rispetta il soggetto; alcune creature base mantengono l\'apertura equilibrata. I temi ruotano ogni lunedì.');
         secBuste.grid.classList.add('packs');
