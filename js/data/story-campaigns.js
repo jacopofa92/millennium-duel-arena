@@ -2898,7 +2898,9 @@ const storyCampaignsDatabase = [
             { id: 'fm-seto-labirinto', dalla: 'tappe', nuove: ['fm-5-seto2'], prima: 'fm-5-sebek' },
             { id: 'fm-dentro-il-puzzle', dalla: 'principali-inserite', area: 'fm-3-torneo', ids: ['fm-3t-dentro-il-puzzle'] }
         ],
-        premioFinale: { credits: 3000, starChips: 5, locatorCards: 5, millenniumCards: 4 }
+        // Premio ridotto su richiesta dell'utente: 2000 Crediti, 2 Stelle e 1 Carta del Millennio (prima 3000 / 5 /
+        // 5 Carte Locazione / 4 Carte del Millennio). A Normale e Difficile vale il moltiplicatore del livello.
+        premioFinale: { credits: 2000, starChips: 2, millenniumCards: 1 }
     },
 
     {
