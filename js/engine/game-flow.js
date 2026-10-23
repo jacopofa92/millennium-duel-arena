@@ -567,8 +567,12 @@ function playCameraIntro(onDone) {
     if (window.DUEL_FAST_OPENING) { completa(); return; }
     const DURATION = 1700;
     container.classList.add('camera-intro');
+    // Su schermi stretti l'ingresso è: arena che arretra (livello copia dello sfondo, solo CSS) + caselle a
+    // cascata. Il livello nasce con questa classe sul body; vedi @media (max-width: 900px) in duelMonstersCore.html.
+    document.body.classList.add('intro-sfondo');
     setTimeout(() => {
         container.classList.remove('camera-intro');
+        document.body.classList.remove('intro-sfondo');
         completa();
     }, DURATION);
 }
