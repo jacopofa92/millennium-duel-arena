@@ -416,9 +416,20 @@ function createDragPreview(card, x, y) {
     // Misure della carta SENZA rotazione/scala: il centro visivo coincide con il punto di contatto.
     dragState.previewHalfW = preview.offsetWidth / 2;
     dragState.previewHalfH = preview.offsetHeight / 2;
+    // Dove si era afferrata la carta rispetto al suo centro: il fantasma nasce ESATTAMENTE sulla carta
+    // (stessa posizione, nessuna rotazione) e scivola verso il centro del dito mentre ruota e si ingrandisce.
+    // Prima nasceva già ruotato e centrato sul dito, ed era uno scatto.
+    if (dragState.sourceEl && dragState.sourceEl.getBoundingClientRect) {
+        const r = dragState.sourceEl.getBoundingClientRect();
+        dragState.presaX = (r.left + r.width / 2) - dragState.startX;
+        dragState.presaY = (r.top + r.height / 2) - dragState.startY;
+    } else { dragState.presaX = 0; dragState.presaY = 0; }
+    dragState.inizioAnteprima = performance.now();
     posizionaAnteprimaTrascinamento(preview, x, y);
     return preview;
 }
+
+const DURATA_ATTACCO_TRASCINAMENTO_MS = 180;
 
 /**
  * Sposta il fantasma con `transform` (compositor, nessun layout) invece di left/top: ad ogni movimento
@@ -426,9 +437,17 @@ function createDragPreview(card, x, y) {
  * La rotazione/scala vivono nello stesso transform perché uno stile inline vincerebbe sul CSS della classe.
  */
 function posizionaAnteprimaTrascinamento(preview, x, y) {
-    const px = x - dragState.previewHalfW;
-    const py = y - dragState.previewHalfH;
-    preview.style.transform = `translate3d(${px}px, ${py}px, 0) rotate(3deg) scale(1.05)`;
+    // p: 0 = carta ferma com'era, 1 = carta "in mano" (inclinata, un po' più grande, centrata sul dito).
+    const t = Math.min(1, (performance.now() - (dragState.inizioAnteprima || 0)) / DURATA_ATTACCO_TRASCINAMENTO_MS);
+    const p = 1 - Math.pow(1 - t, 3);
+    const px = x + (dragState.presaX || 0) * (1 - p) - dragState.previewHalfW;
+    const py = y + (dragState.presaY || 0) * (1 - p) - dragState.previewHalfH;
+    preview.style.transform = `translate3d(${px}px, ${py}px, 0) rotate(${(3 * p).toFixed(3)}deg) scale(${(1 + 0.05 * p).toFixed(4)})`;
+    // Se il dito sta fermo non arrivano pointermove: serve comunque un fotogramma per finire l'attacco.
+    if (t < 1 && dragState && !dragState.rafPendente) {
+        dragState.ultimoX = x; dragState.ultimoY = y;
+        dragState.rafPendente = requestAnimationFrame(applicaPosizioneTrascinamento);
+    }
 }
 
 /**
@@ -547,6 +566,8 @@ function handleDragMove(event) {
         }
         const preview = createDragPreview(dragState.card, event.clientX, event.clientY);
         dragState.previewEl = preview;
+        // Stesse caselle verdi che si vedono toccando la carta: mostrano DOVE si può lasciarla.
+        if (typeof highlightEmptySlots === 'function') highlightEmptySlots(dragState.card);
     }
 
     if (dragState.previewEl) {
@@ -564,6 +585,11 @@ function applicaPosizioneTrascinamento() {
     if (!dragState) return;
     dragState.rafPendente = 0;
     if (dragState.previewEl) posizionaAnteprimaTrascinamento(dragState.previewEl, dragState.ultimoX, dragState.ultimoY);
+    // Un ridisegno del Terreno a metà trascinamento (ne avviene circa uno al secondo) ricrea le caselle
+    // senza la classe: si rimette, solo se è sparita.
+    if (!document.querySelector('.field-slot.action-highlight') && typeof highlightEmptySlots === 'function') {
+        highlightEmptySlots(dragState.card);
+    }
 }
 
 function handleDragEnd(event) {
@@ -594,6 +620,9 @@ function handleDragEnd(event) {
             : null;
         if (dragState.previewEl) {
             dragState.previewEl.remove();
+            // Fine del trascinamento: le caselle tornano normali (un piazzamento riuscito le ridisegna comunque).
+            document.querySelectorAll('.field-slot.action-highlight, .field-slot.tribute-highlight')
+                .forEach((el) => el.classList.remove('action-highlight', 'tribute-highlight'));
         }
         // La carta originale in mano è stata resa invisibile (.dragging-source,
         // vedi startHandCardDrag) per non vederne due copie mentre il
@@ -1245,6 +1274,21 @@ function openQuickPopover(anchorEl, innerHTML, { onDismiss, dismissible = true, 
         if (!dismissible) return;
         closeQuickPopover();
         if (typeof onDismiss === 'function') onDismiss();
+        // Il catcher copre anche la mano: il tap "su un'altra carta" arriva qui e non alla carta, che
+        // restava senza risposta (serviva un secondo tap) mentre la prima rimaneva sollevata. Ora si
+        // abbassa la prima e, se sotto il dito c'è una carta della mano, si tratta come un tap su di lei.
+        // stopPropagation: il gestore globale dei click esterni azzererebbe subito la nuova selezione.
+        event.stopPropagation();
+        if (typeof clearHandCardSelection === 'function') clearHandCardSelection();
+        const sotto = document.elementFromPoint(event.clientX, event.clientY);
+        const cartaSotto = sotto && sotto.closest ? sotto.closest('#playerHand .card') : null;
+        if (cartaSotto && !gameState.pendingTributeSummon && !gameState.pendingHandDiscard) {
+            const indice = Array.prototype.indexOf.call(document.querySelectorAll('#playerHand .card'), cartaSotto);
+            const carta = gameState.playerHand[indice];
+            if (carta) handleCardClick(carta, 'hand', indice, 'player');
+        } else if (typeof updateCardInfoPanel === 'function') {
+            updateCardInfoPanel(null);
+        }
     };
 
     return pop;
@@ -1401,9 +1445,10 @@ function selectHandCardForInspection(card, index, owner = 'player') {
  * (Tributi/scarto) e senza un updateUI completo. Usata dal click esterno.
  */
 function clearHandCardSelection() {
+    // La classe si toglie SEMPRE: un handler può aver già azzerato selectedCard lasciando la carta sollevata.
+    document.querySelectorAll('#playerHand .card.selected').forEach((el) => el.classList.remove('selected'));
     if (!gameState.selectedCard || gameState.selectedCard.type !== 'hand') return;
     gameState.selectedCard = { type: null, card: null, index: -1 };
-    document.querySelectorAll('#playerHand .card.selected').forEach((el) => el.classList.remove('selected'));
     document.querySelectorAll('.field-slot.action-highlight, .field-slot.tribute-highlight')
         .forEach((el) => el.classList.remove('action-highlight', 'tribute-highlight'));
 }

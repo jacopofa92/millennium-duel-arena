@@ -2697,6 +2697,25 @@
             outline: 2px solid color-mix(in srgb, var(--fase-accento) 72%, #fff);
             outline-offset: 2px;
         }
+        /* LEGGIBILITÀ delle fasi (richiesta dell'utente: "minimal va bene, ma si vedono troppo poco"). Forme,
+           misure e bordi restano quelli di sempre; cambiano solo contrasto e peso: testo e icona più chiari
+           nelle fasi non attive e in quelle già fatte, un fondo scuro dietro l'icona perché stacchi dai campi
+           chiari, un'ombra sul testo, numeretti più grandi. La fase attiva resta la più forte. */
+        .phase-step { color: rgba(244,238,222,.92); }
+        .phase-step.completed { color: rgba(226,221,208,.74); }
+        .phase-step .step-label { font-weight: 800; text-shadow: 0 1px 3px rgba(0,0,0,.9), 0 0 6px rgba(0,0,0,.55); }
+        .phase-stepper .phase-step:not(.active) .step-badge {
+            color: color-mix(in srgb, var(--fase-accento) 55%, #fff);
+            background: radial-gradient(circle at 38% 30%, rgba(40,38,34,.62), rgba(6,7,11,.74) 72%);
+        }
+        .phase-stepper .phase-step.completed .step-badge { color: color-mix(in srgb, var(--fase-accento) 38%, #e8e3d4); }
+        .phase-step .step-icon svg { stroke-width: 2.1; filter: drop-shadow(0 1px 2px rgba(0,0,0,.75)); }
+        .phase-step .step-num {
+            min-width: 14px; height: 14px; font-size: 9px; font-weight: 800;
+            color: color-mix(in srgb, var(--fase-accento) 70%, #fff);
+            background: rgba(10,10,13,.9);
+        }
+        .phase-step.active .step-num { color: #fff; border-color: color-mix(in srgb, var(--fase-accento) 70%, transparent); }
         /* Promemoria Tributo: banda ben visibile in alto, non un semplice
            messaggio nel log — resta a schermo finché la selezione non è
            completa, con un contatore che segna quanti mostri mancano. */
@@ -4201,9 +4220,9 @@
                 display: grid;
                 right: -3px;
                 top: -4px;
-                min-width: 10px;
-                height: 10px;
-                font-size: 6px;
+                min-width: 13px;
+                height: 13px;
+                font-size: 8px;
             }
             .phase-step .step-icon {
                 display: inline-flex;
@@ -5007,7 +5026,6 @@
             <div class="battlefield-side right">
                 <div class="right-panel-stack">
                     <div class="card-info-panel" id="cardInfoPanel">
-                        <button type="button" class="card-info-close" id="cardInfoCloseBtn" title="Chiudi" onclick="updateCardInfoPanel(null)">✖</button>
                         <div class="card-info-preview" id="cardInfoPreview"></div>
                         <div class="card-info-content" id="cardInfoContent">Clicca o passa il mouse su una carta per vedere il suo effetto.</div>
                     </div>
