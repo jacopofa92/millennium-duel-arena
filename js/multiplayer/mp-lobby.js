@@ -547,6 +547,8 @@
                 scelta.music = sel.music;
                 scelta.origin = sel.origin;
                 avvisaSeMazzoNonAmmesso(sel.origin);
+                // L'ospite e' gia' in sala: la nuova scelta gli deve arrivare (e vale per la partenza).
+                if (sonoHost && avversarioInStanza && !duelloGiaAvviato) inviaConfigHost();
             },
             onPreviewBlocked: () => showStatus('🔇 Il browser ha bloccato l\'anteprima: tocca lo schermo e riprova.', true)
         });
@@ -582,6 +584,33 @@
         showStatus('🕐 Condividi il codice e attendi il tuo avversario...');
     });
 
+    /**
+     * Le scelte dell'host, RISOLTE (un "casuale" diventa un file preciso) e trasmesse: da qui i due lati devono vedere
+     * la stessa arena e sentire la stessa musica. Va richiamata anche quando l'host CAMBIA scelta dopo che l'ospite e'
+     * gia' entrato: prima si inviava una volta sola, a `room-ready`, e quello che l'host sceglieva dopo (il caso
+     * normale: la stanza si riempie subito, i selettori si toccano mentre si aspetta) restava ignorato, cosi' il duello
+     * partiva con la scelta di default, cioe' un'arena e una musica CASUALI.
+     * Un "casuale" si estrae UNA volta e resta quello finche' resta casuale: altrimenti ogni ritocco ad altro cambierebbe
+     * anche la parte lasciata al caso.
+     */
+    const estrattoCasuale = { field: null, music: null };
+    function inviaConfigHost() {
+        const R = window.ArenaOptions.RANDOM;
+        if (scelta.field === R && !estrattoCasuale.field) estrattoCasuale.field = window.ArenaOptions.risolviCampo(R);
+        if (scelta.music === R && !estrattoCasuale.music) estrattoCasuale.music = window.ArenaOptions.risolviTraccia(R);
+        const config = {
+            kind: 'room-config',
+            field: scelta.field === R ? estrattoCasuale.field : window.ArenaOptions.risolviCampo(scelta.field),
+            music: scelta.music === R ? estrattoCasuale.music : window.ArenaOptions.risolviTraccia(scelta.music),
+            // Quali carte sono ammesse è una REGOLA, non un gusto:
+            // deve valere identica per i due mazzi, quindi viaggia con
+            // il resto invece di essere decisa da ciascuno per sé.
+            origin: scelta.origin
+        };
+        net.sendAction(config);
+        configRicevuta = config;
+    }
+
     net.on('room-ready', (msg) => {
         if (!codiceStanza) entraInSala(msg.code); // l'ospite arriva qui senza essere passato da 'room-created'
         riempiPostoAvversario();
@@ -591,22 +620,7 @@
         // serve molto più tardi, quando entrambi si dichiarano pronti.
         iniziIoInAttesa = msg.youStart;
 
-        if (sonoHost) {
-            // Le scelte si risolvono ORA (un eventuale "casuale" diventa un
-            // file preciso) e si trasmettono: da qui in poi i due lati
-            // devono vedere la stessa arena e sentire la stessa musica.
-            const config = {
-                kind: 'room-config',
-                field: window.ArenaOptions.risolviCampo(scelta.field),
-                music: window.ArenaOptions.risolviTraccia(scelta.music),
-                // Quali carte sono ammesse è una REGOLA, non un gusto:
-                // deve valere identica per i due mazzi, quindi viaggia con
-                // il resto invece di essere decisa da ciascuno per sé.
-                origin: scelta.origin
-            };
-            net.sendAction(config);
-            configRicevuta = config;
-        }
+        if (sonoHost) inviaConfigHost();
 
         // Chi era già pronto PRIMA che l'avversario entrasse (la barra
         // compare solo adesso, ma si può arrivare qui dopo un
