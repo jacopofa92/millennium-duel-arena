@@ -1439,7 +1439,16 @@ function chiudiSelezioneASchermo() {
  * Non ridisegna la UI: il popover deve poter restare ancorato allo stesso
  * nodo DOM appena toccato, senza essere rimosso sotto al dito.
  */
+function spegniEvidenziazioneCaselle() {
+    document.querySelectorAll('.field-slot.action-highlight, .field-slot.tribute-highlight')
+        .forEach((el) => el.classList.remove('action-highlight', 'tribute-highlight'));
+}
+
 function selectHandCardForInspection(card, index, owner = 'player') {
+    // Le caselle evidenziate appartengono alla carta selezionata PRIMA: una carta nuova (anche una che non ne
+    // evidenzia, come una Magia con i pulsanti "Attiva") non deve ereditarle, o si vedono insieme quelle di
+    // due carte diverse (Mostro + Magia/Trappola).
+    spegniEvidenziazioneCaselle();
     gameState.selectedCard = { type: 'hand', card, index, owner };
     document.querySelectorAll('#playerHand .card.selected').forEach((el) => el.classList.remove('selected'));
     const cardEl = document.querySelectorAll('#playerHand .card')[index];
@@ -1468,6 +1477,7 @@ function clearHandCardSelection() {
  * caselle st.
  */
 function highlightEmptySlots(card) {
+    spegniEvidenziazioneCaselle();
     if (card.type === 'spell' && card.subtype === 'field') {
         const el = document.querySelector('.field-slot[data-owner="player"][data-type="field-spell"]');
         if (el) el.classList.add('action-highlight');
