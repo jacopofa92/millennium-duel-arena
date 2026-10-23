@@ -566,6 +566,8 @@ function handleDragMove(event) {
         }
         const preview = createDragPreview(dragState.card, event.clientX, event.clientY);
         dragState.previewEl = preview;
+        // Il box info resta aperto dal tocco che ha preceduto il trascinamento e coprirebbe il campo.
+        if (typeof updateCardInfoPanel === 'function') updateCardInfoPanel(null);
         // Stesse caselle verdi che si vedono toccando la carta: mostrano DOVE si può lasciarla.
         if (typeof highlightEmptySlots === 'function') highlightEmptySlots(dragState.card);
     }
