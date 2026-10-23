@@ -506,7 +506,9 @@
 // v360: Indietro in basso a sinistra su mobile (topbar) e illustrazioni alternative a bacino/tappa fissa.
 // v361: IA che non attiva carte controproducenti (ai-shared, card-effects).
 // v383: app shell con scadenza di rete (1,5 s) quando la copia in cache c'e' gia' (rete lenta).
-const CACHE_NAME = 'ygo-duel-arena-v383';
+// v384: correzione di v383 — il redirect 307 del sito (.html -> senza estensione) veniva scambiato con la copia in cache,
+// che il browser rifiuta per una navigazione (net::ERR_FAILED su ogni pagina).
+const CACHE_NAME = 'ygo-duel-arena-v384';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
@@ -780,7 +782,10 @@ self.addEventListener('activate', (event) => {
 
 /** Vero per le richieste dell'app shell (HTML/CSS/JS) — vedi la strategia network-first sopra. */
 function isAppShellRequest(url) {
-    return /\.(html|css|js)$/.test(url.pathname) || url.pathname.endsWith('/');
+    // Un percorso senza estensione e' una pagina: il sito pubblicato gira `/pagina.html` a `/pagina`, e quella
+    // seconda richiesta finiva nel ramo "media" (cache-first), cioe' con la pagina servita dalla cache fino al
+    // rilascio successivo, senza mai provare la rete.
+    return /\.(html|css|js)$/.test(url.pathname) || url.pathname.endsWith('/') || !/\.[A-Za-z0-9]+$/.test(url.pathname);
 }
 
 /**
@@ -824,7 +829,7 @@ function rispostaAppShell(event, req) {
     if (event && typeof event.waitUntil === 'function') event.waitUntil(rete.catch(() => {}));
 
     return caches.match(req).then((inCache) => {
-        if (!inCache) return rete.catch(() => caches.match(req));
+        if (!inCache) return rete.catch(() => caches.match(req).then(senzaRedirect));
         return new Promise((resolve) => {
             let consegnata = false;
             const consegna = (risposta) => {
@@ -833,11 +838,36 @@ function rispostaAppShell(event, req) {
                 clearTimeout(timer);
                 resolve(risposta);
             };
-            const timer = setTimeout(() => consegna(inCache), ATTESA_RETE_APP_SHELL_MS);
-            // Una risposta d'errore (404/500) non batte una copia buona: si resta su quella.
-            rete.then((response) => consegna(response && response.ok ? response : inCache), () => consegna(inCache));
+            const dallaCache = () => consegna(senzaRedirect(inCache));
+            const timer = setTimeout(dallaCache, ATTESA_RETE_APP_SHELL_MS);
+            // Una risposta d'errore (404/500) non batte una copia buona: si resta su quella. Un REDIRECT
+            // invece e' una risposta valida e va consegnata cosi' com'e': il sito pubblicato risponde 307 a
+            // /pagina.html (verso /pagina) e il browser deve seguirlo da solo. Scambiarlo con la copia in cache
+            // (che e' proprio la pagina dopo il redirect) significava rispondere a una navigazione con una
+            // risposta "redirected", che il browser rifiuta: net::ERR_FAILED su ogni pagina (1.4.74, visto sul telefono).
+            rete.then((response) => (utilizzabile(response) ? consegna(response) : dallaCache()), dallaCache);
         });
     });
+}
+
+/** Una risposta che si puo' consegnare a chi ha chiesto il file: riuscita, oppure un redirect da seguire. */
+function utilizzabile(response) {
+    return !!response && (response.ok || response.type === 'opaqueredirect');
+}
+
+/**
+ * Cache Storage conserva le risposte COME ERANO, comprese quelle ottenute attraverso un redirect (l'installazione
+ * scarica `pagina.html` e il sito la gira a `/pagina`): `redirected` resta vero. Il browser rifiuta una risposta
+ * "redirected" per una richiesta di navigazione (che chiede i redirect in modo manuale) con ERR_FAILED. Si
+ * ricostruisce quindi la risposta senza quel segno, con lo stesso contenuto.
+ */
+function senzaRedirect(risposta) {
+    if (!risposta || !risposta.redirected) return risposta;
+    return risposta.clone().blob().then((corpo) => new Response(corpo, {
+        status: risposta.status,
+        statusText: risposta.statusText,
+        headers: risposta.headers
+    }));
 }
 
 self.addEventListener('fetch', (event) => {
