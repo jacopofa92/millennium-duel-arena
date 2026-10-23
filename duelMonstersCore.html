@@ -1826,7 +1826,9 @@
         .daw-bar {
             position: absolute;
             top: 0;
-            width: clamp(70px, 9vw, 130px);
+            /* Più strette e più soft (richiesta dell'utente: "troppo evidenti e invasive"): erano 70-130px con
+               strisce piene e un bagliore forte; ora una presenza leggera che sfuma anche verso l'interno. */
+            width: clamp(44px, 6vw, 86px);
             height: 100%;
             /* Giallo/nero a strisce diagonali, come il cartello "ATTACCO
                DIRETTO" di Yu-Gi-Oh! Master Duel — non più rosso/nero. */
@@ -1839,9 +1841,12 @@
                (sopra e sotto) tramite mask, altrimenti il taglio netto in
                alto/basso sembrerebbe un rettangolo incollato allo schermo
                invece di una "presenza" che sfuma nell'ambiente. */
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 16%, black 84%, transparent 100%);
-            mask-image: linear-gradient(to bottom, transparent 0%, black 16%, black 84%, transparent 100%);
-            box-shadow: 0 0 40px rgba(241,196,15,0.55);
+            --daw-lato: to right;   /* verso l'interno dello schermo: la barra destra lo inverte */
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%), linear-gradient(var(--daw-lato), black 0%, rgba(0,0,0,.55) 55%, transparent 100%);
+            -webkit-mask-composite: source-in;
+            mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%), linear-gradient(var(--daw-lato), black 0%, rgba(0,0,0,.55) 55%, transparent 100%);
+            mask-composite: intersect;
+            box-shadow: 0 0 26px rgba(241,196,15,0.18);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1851,7 +1856,7 @@
             content: '';
             position: absolute;
             inset: -40px 0;
-            background: repeating-linear-gradient(45deg, rgba(15,12,2,0.94) 0 14px, rgba(241,196,15,0.95) 14px 28px);
+            background: repeating-linear-gradient(45deg, rgba(15,12,2,0.34) 0 14px, rgba(241,196,15,0.42) 14px 28px);
             animation: dawStripeScroll 650ms linear infinite;
             will-change: transform;
         }
@@ -1861,6 +1866,7 @@
             animation: dawSlideLeft 1400ms cubic-bezier(0.16, 0.84, 0.44, 1) forwards;
         }
         .daw-bar--right {
+            --daw-lato: to left;
             right: 0;
             /* Stesso verso di scorrimento (alto -> basso) del lato
                sinistro, non più invertito: prima "reverse" faceva salire
@@ -1870,13 +1876,13 @@
         .daw-bar-text {
             writing-mode: vertical-rl;
             transform: rotate(180deg);
-            font-size: clamp(1rem, 2.4vw, 1.5rem);
-            font-weight: 900;
-            letter-spacing: 0.25em;
-            /* Rosso acceso: il nero/scuro provato prima si perdeva contro le
-               strisce nere del pattern stesso, illeggibile. */
-            color: #e30d0d;
-            text-shadow: 0 1px 0 rgba(255,255,255,0.4), 0 0 10px rgba(0,0,0,0.55);
+            font-size: clamp(0.78rem, 1.8vw, 1.1rem);
+            font-weight: 800;
+            letter-spacing: 0.22em;
+            /* Chiaro e caldo, un po' trasparente: con le strisce ora tenui il rosso acceso di prima
+               sarebbe la cosa più rumorosa dello schermo. L'ombra scura lo tiene leggibile. */
+            color: rgba(255, 238, 196, 0.82);
+            text-shadow: 0 0 8px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.6);
         }
         @keyframes dawSlideLeft {
             0%   { opacity: 0; transform: translateX(-100%); }
@@ -1918,12 +1924,12 @@
            animazioni d'ingresso delle due barre. */
         #directAttackHint { transition: opacity 160ms ease-out; }
         #directAttackHint .daw-bar { transition: width 160ms ease-out; }
-        #directAttackHint.daw-in-attesa { opacity: 0.42; }
+        #directAttackHint.daw-in-attesa { opacity: 0.55; }
         /* In attesa anche più strette: su un telefono le bande piene
            coprono le colonne laterali del campo, e finché non hai scelto
            l'attacco diretto quei mostri ti servono ancora (visto in foto). */
-        #directAttackHint.daw-in-attesa .daw-bar { width: clamp(26px, 3.6vw, 56px); }
-        #directAttackHint.daw-in-attesa .daw-bar-text { font-size: clamp(0.62rem, 1.4vw, 0.95rem); }
+        #directAttackHint.daw-in-attesa .daw-bar { width: clamp(20px, 2.8vw, 42px); }
+        #directAttackHint.daw-in-attesa .daw-bar-text { font-size: clamp(0.56rem, 1.2vw, 0.82rem); }
         @keyframes dawSlideLeftHold {
             0%   { opacity: 0; transform: translateX(-100%); }
             100% { opacity: 1; transform: translateX(0); }
