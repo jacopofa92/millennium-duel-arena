@@ -683,13 +683,15 @@ function animateLifePoints(el, newValue) {
         container.classList.remove('lp-hit', 'lp-heal');
         void container.offsetWidth;
         container.classList.add(newValue < oldValue ? 'lp-hit' : 'lp-heal');
-        setTimeout(() => container.classList.remove('lp-hit', 'lp-heal'), 1000);
+        setTimeout(() => container.classList.remove('lp-hit', 'lp-heal'), 1900);
     }
     // Conteggio quasi lineare (leggero ease-out solo in coda) invece che
     // una decelerazione immediata: si legge come i LP che "ticchettano"
     // verso il basso uno via l'altro, come nell'anime, non come un
     // semplice fade tra due numeri.
-    const duration = 1000;
+    // 1,9 s: il suono dei Life Point (audio/standard/lifePoints*.mp3) dura ~2 s, e a 1 s il
+    // contatore finiva ben prima della fine dell'audio.
+    const duration = 1900;
     const start = performance.now();
     const step = (now) => {
         const progress = Math.min((now - start) / duration, 1);
@@ -1428,9 +1430,7 @@ function trasferisciGestori(vecchio, nuovo) {
 }
 
 /**
- * Disegna la freccia d'attacco dal mostro che attacca (attackDragStart) al punto (x2, y2): un arco lieve
- * (la traiettoria di un colpo) invece di una retta, sempre incurvato dallo stesso lato così la forma non
- * "salta" mentre ci si muove. Aggiorna insieme tratto, alone, gradiente (userSpaceOnUse, vedi l'SVG) e mirino.
+ * Disegna la freccia d'attacco dal mostro che attacca (attackDragStart) al punto (x2, y2): una retta. Aggiorna insieme tratto, alone, gradiente (userSpaceOnUse, vedi l'SVG) e mirino.
  */
 function aggiornaFrecciaAttacco(x2, y2) {
     const x1 = attackDragStart.x;
@@ -1438,14 +1438,8 @@ function aggiornaFrecciaAttacco(x2, y2) {
     const dx = x2 - x1;
     const dy = y2 - y1;
     const len = Math.hypot(dx, dy);
-    let d = `M${x1} ${y1} L${x2} ${y2}`;
-    if (len > 6) {
-        const curva = Math.min(70, len * 0.16);
-        let nx = -dy / len;
-        let ny = dx / len;
-        if (nx < 0 || (nx === 0 && ny < 0)) { nx = -nx; ny = -ny; }
-        d = `M${x1} ${y1} Q${(x1 + x2) / 2 + nx * curva} ${(y1 + y2) / 2 + ny * curva} ${x2} ${y2}`;
-    }
+    // Retta, non arco: la curva dava una freccia che non puntava dritta al bersaglio (scelta dell'utente).
+    const d = `M${x1} ${y1} L${x2} ${y2}`;
     attackArrowLine.setAttribute('d', d);
     if (attackArrowGlow) attackArrowGlow.setAttribute('d', d);
     if (attackArrowGradient) {
@@ -1907,17 +1901,23 @@ function showBattleEffect(attackerEl, targetEl, directDirection) {
         attackerEl.style.setProperty('--charge-dx', `${dx}px`);
         attackerEl.style.setProperty('--charge-dy', `${dy}px`);
 
-        attackerEl.classList.add('is-attacking');
-        setTimeout(() => attackerEl.classList.remove('is-attacking'), 700);
+        // Con gli ologrammi WebGL e' LA FIGURA a partire (arco, scia, glitch al massimo) e a tornare: la carta
+        // resta ferma nel suo "portale", coerente con l'idea che la figura ne sia uscita.
+        const holoVola = !!(attackerEl.dataset.uid && window.MonsterHologramGL && typeof MonsterHologramGL.lancia === 'function'
+            && MonsterHologramGL.lancia(attackerEl.dataset.uid, dx, dy, 700));
+        if (!holoVola) {
+            attackerEl.classList.add('is-attacking');
+            setTimeout(() => attackerEl.classList.remove('is-attacking'), 700);
 
-        // La proiezione olografica segue lo SLOT, e si riposiziona solo
-        // quando il Terreno viene ridisegnato — non fotogramma per
-        // fotogramma. Mentre la carta si lancia resterebbe quindi
-        // indietro, leggendosi come un fantasma dimenticato a mezz'aria:
-        // per la durata della rincorsa si spegne. Vale anche per un
-        // attacco a un mostro, non solo per quello diretto.
-        if (window.MonsterHolograms && typeof MonsterHolograms.nascondiPer === 'function' && attackerEl.dataset.uid) {
-            MonsterHolograms.nascondiPer(attackerEl.dataset.uid, 700);
+            // La proiezione olografica segue lo SLOT, e si riposiziona solo
+            // quando il Terreno viene ridisegnato — non fotogramma per
+            // fotogramma. Mentre la carta si lancia resterebbe quindi
+            // indietro, leggendosi come un fantasma dimenticato a mezz'aria:
+            // per la durata della rincorsa si spegne. Vale anche per un
+            // attacco a un mostro, non solo per quello diretto.
+            if (window.MonsterHolograms && typeof MonsterHolograms.nascondiPer === 'function' && attackerEl.dataset.uid) {
+                MonsterHolograms.nascondiPer(attackerEl.dataset.uid, 700);
+            }
         }
     }
 
@@ -2085,6 +2085,14 @@ function showPositionEffect(owner, index, position) {
         // Sempre (Attacco o Difesa): la versione WebGL e' un solo anello contenuto; senza WebGL resta quella di prima.
         if (window.FX) {
             FX.playSummonShockwave(cardEl);
+        }
+        // Con gli effetti WebGL niente icone sulla carta: barriera esagonale in Difesa, carica luminosa in Attacco
+        // (scelta dell'utente: spade e scudo animati sulla carta erano "cringe"). Dove manca, le icone di sempre.
+        const nomeFx = position === 'defense' ? 'playPositionDefense' : 'playPositionAttack';
+        if (window.FX && typeof FX.backendFor === 'function' && FX.backendFor(nomeFx) === 'webgl') {
+            FX[nomeFx](cardEl, owner === 'player' ? 'up' : 'down');
+            setTimeout(() => cardEl.classList.remove(animClass), 700);
+            return;
         }
         // Spade che si incrociano / scudo che si forma, in WebGL, sopra la carta. Se non si puo', il vecchio distintivo.
         if (window.IconePosizione && IconePosizione.sullaCarta(cardEl, position)) {

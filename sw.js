@@ -501,7 +501,7 @@
 // v359: pedine da 320 px rigenerate dagli avatarTrasparenza ad alta risoluzione (stessi nomi di file: senza nuova cache restano le vecchie).
 // v360: Indietro in basso a sinistra su mobile (topbar) e illustrazioni alternative a bacino/tappa fissa.
 // v361: IA che non attiva carte controproducenti (ai-shared, card-effects).
-const CACHE_NAME = 'ygo-duel-arena-v376';
+const CACHE_NAME = 'ygo-duel-arena-v377';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
@@ -715,6 +715,7 @@ const APP_SHELL = [
     'js/ui/monster-hologram-webgl.js',
     'js/ui/monster-hologram.js',
     'js/ui/monster-hologram.css',
+    'js/ui/ologramma-vetrina.js',
 'js/ui/grido-evocazione.js',
 'js/ui/grido-evocazione.css',
 'js/data/gridi-evocazione.js',

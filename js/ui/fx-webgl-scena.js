@@ -33,7 +33,7 @@
     const MAX = 40;
 
     // Tipi di primitiva (devono coincidere con l'ordine delle `if` dello shader qui sotto).
-    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19, ANKH: 20, PORTAL: 21, DUST: 22 };
+    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19, ANKH: 20, PORTAL: 21, DUST: 22, SHIELD: 23 };
     // Colori: indici nella tavolozza dello shader.
     const C = { CALDO: 0, ORO: 1, ROSSO: 2, ARANCIO: 3, CIANO: 4, BLU: 5, VIOLA: 6, MAGENTA: 7, VERDE: 8, BIANCO: 9, SCURO: 10, GHIACCIO: 11, VERDE_SCURO: 12 };
 
@@ -342,6 +342,32 @@ float dado(vec2 q,float v){
   }
   s=vec4(c*(edge*1.7+brace)+cc*1.2+vec3(1.,.9,.7)*edge*.5,clamp(edge+brace*.8+acc,0.,1.));`;
 
+    // BARRIERA ESAGONALE (attacco respinto; A: centro e raggio del bersaglio, B.w: angolo verso chi ha attaccato).
+    // Una cupola di celle esagonali si forma attorno al bersaglio; dal punto in cui il colpo arriva parte un'onda
+    // che accende le celle in sequenza, poi la barriera si incrina e si dissolve. Niente texture: solo geometria.
+    CORPI[T.SHIELD] = `
+  vec2 q=(P-A.xy)/(A.z*1.15); float rr=length(q);
+  vec2 ip=vec2(cos(B.w),sin(B.w))*.92;
+  float dI=length(q-ip);
+  float form=smoothstep(0.,.1,u); float fade=1.-smoothstep(.5,1.,u);
+  // celle esagonali
+  vec2 g=q*4.2; vec2 sx=vec2(1.7320508,1.);
+  vec2 a1=mod(g,sx)-sx*.5; vec2 b1=mod(g-sx*.5,sx)-sx*.5;
+  vec2 gv=dot(a1,a1)<dot(b1,b1)?a1:b1; vec2 p2=abs(gv);
+  float hd=max(dot(p2,normalize(vec2(1.,1.7320508))),p2.x);
+  float bordo=smoothstep(.36,.47,hd);
+  vec2 cid=floor(g*.7);
+  float lampeggia=.55+.45*h(cid+floor(t*9.));
+  // l'onda d'urto che si allarga dal punto d'impatto
+  float onda=exp(-pow((dI-u*3.4)*3.2,2.));
+  float cupola=smoothstep(1.12,.9,rr);
+  float rim=exp(-pow((rr-1.04)/.07,2.))*(.6+.4*h(vec2(floor(atan(q.y,q.x)*6.),floor(t*14.))));
+  float flash=exp(-dI*dI*16.)*pop(u*1.8)*1.6;
+  float cell=bordo*cupola*(.28*lampeggia+onda*2.2);
+  float g2=(cell+rim*.8+flash)*form*fade;
+  vec3 caldo=mix(c,vec3(1.),clamp(onda*.7+flash*.5,0.,1.));
+  s=vec4(caldo*g2*1.3,clamp(g2*.85,0.,1.));`;
+
     /** Il programma di un tipo (costruito una volta sola e messo in cache dal motore). */
     const SORGENTI = {};
     function sorgente(tipo) {
@@ -376,6 +402,7 @@ float dado(vec2 q,float v){
             // Disintegrazione: i granelli salgono fino a ~8 mezze larghezze e sbandano a destra.
             // (l'esplosione spinge i granelli anche di lato e verso il basso: ~90 px in scala della carta).
             case T.DUST: return [x - z * 5, y - q - z * 8, x + z * 7, y + q + z * 5];
+            case T.SHIELD: e = z * 1.6; return [x - e, y - e, x + e, y + e];
             default: e = z * 3; return [x - e, y - q - e, x + e, y + e];   // moneta e dado
         }
     }
@@ -391,6 +418,25 @@ float dado(vec2 q,float v){
     const rectMostro = (owner, i) => { const s = slotEl(owner, 'monster', i); return rectDi(s && s.querySelector('.card')) || rectDi(s); };
     const rectSt = (owner, i) => { const s = slotEl(owner, 'st', i); return rectDi(s && s.querySelector('.card')) || rectDi(s); };
     const rectZona = (owner, zona) => rectDi(document.querySelector(`#${tavolo(owner)} .field-slot[data-owner="${owner}"][data-zone="${zona}"]`));
+    /**
+     * Il rettangolo "in piedi" di una carta sul Terreno (anche se in Difesa, dove il suo riquadro a schermo e' ruotato):
+     * stesso centro della carta, misure vere. Se la casella e' vuota (la carta sta per ARRIVARCI) si stima dalla casella.
+     */
+    const rettaCarta = (owner, tipo, i) => {
+        const sl = slotEl(owner, tipo, i); if (!sl) return null;
+        const el = /** @type {HTMLElement|null} */ (sl.querySelector('.card'));
+        const rs = rectDi(sl);
+        if (el && el.offsetWidth) {
+            const rc = rectDi(el); if (!rc) return null;
+            const c = { x: rc.left + rc.width / 2, y: rc.top + rc.height / 2 };
+            return { left: c.x - el.offsetWidth / 2, top: c.y - el.offsetHeight / 2, width: el.offsetWidth, height: el.offsetHeight };
+        }
+        if (!rs) return null;
+        const h = rs.height * 0.9; const w = h * 0.69; const c = { x: rs.left + rs.width / 2, y: rs.top + rs.height / 2 };
+        return { left: c.x - w / 2, top: c.y - h / 2, width: w, height: h };
+    };
+    /** Il modulo degli ologrammi WebGL, se questo mostro ne ha uno visibile (per farlo uscire di scena insieme alla carta). */
+    const olograma = (uid) => { const g = /** @type {any} */ (window).MonsterHologramGL; return uid && g && typeof g.disintegra === 'function' && g.visibile(uid) ? g : null; };
     const easeIO = (x) => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
     const easeOut = (x) => 1 - Math.pow(1 - Math.max(0, Math.min(1, x)), 3);
     const lerp = (a, b, k) => a + (b - a) * k;
@@ -1051,6 +1097,153 @@ float dado(vec2 q,float v){
     };
 
     /**
+     * L'attacco si infrange: il bersaglio ha retto (indistruttibile, o DEF piu' alta). Una barriera esagonale si
+     * forma attorno al bersaglio, il colpo la accende dal lato di chi ha attaccato, le scintille rimbalzano
+     * indietro verso l'attaccante e il bersaglio incassa con un lieve scossone. Solo luce: la regola e' gia' decisa.
+     */
+    imp.playAttackBlocked = function (attackerEl, targetEl) {
+        const rt = targetEl ? rectDi(targetEl) : null; if (!rt) return;
+        const ra = attackerEl ? rectDi(attackerEl) : null;
+        const t = cen(rt); const a = ra ? cen(ra) : null;
+        const ang = a ? Math.atan2(a.y - t.y, a.x - t.x) : -Math.PI / 2;
+        const raggio = Math.max(rt.width, rt.height) * 0.62;
+        const ix = t.x + Math.cos(ang) * raggio * 1.15 * 0.92; const iy = t.y + Math.sin(ang) * raggio * 1.15 * 0.92;
+        const s = new Scena();
+        s.add(T.SHIELD, C.CIANO, 0, 0.95, [t.x, t.y, raggio, 0], ang);
+        s.add(T.FLASH, C.BIANCO, 0, 0.3, [ix, iy, raggio * 0.7, 0]);
+        s.add(T.RING, C.GHIACCIO, 0, 0.45, [ix, iy, raggio * 0.9, 3]);
+        for (let i = 0; i < 3; i++) s.add(T.BURST, C.GHIACCIO, 0, 0.7, [ix, iy, 90 + i * 24, 30], 4 + i * 5.1);
+        verifica(s);
+        if (targetEl && targetEl.animate) {
+            const dx = Math.cos(ang + Math.PI) * 5; const dy = Math.sin(ang + Math.PI) * 5;
+            targetEl.animate([{ translate: '0px 0px' }, { translate: dx + 'px ' + dy + 'px' }, { translate: '0px 0px' }], { duration: 260, easing: 'ease-out' });
+        }
+        breve(s, 1.0);
+    };
+
+    /**
+     * Una carta lascia il Terreno e finisce nel Cimitero: un'anima di luce parte dalla carta e vola alla pila, che
+     * la "ingoia" con un lampo e un anello; la carta si rimpicciolisce e si dissolve lungo il percorso. Se il mostro ha
+     * un ologramma, si disintegra sul posto. Va chiamata PRIMA di svuotare la casella.
+     */
+    imp.playCardToGraveyard = function (card, fieldOwner, fieldIndex, graveOwner, type) {
+        const rf = rettaCarta(fieldOwner, type || 'monster', fieldIndex);
+        const rg = rectZona(graveOwner == null ? fieldOwner : graveOwner, 'graveyard');
+        if (!rf || !rg) return;
+        const a = cen(rf); const b = cen(rg);
+        const GL = olograma(card && card.uid); if (GL) GL.disintegra(card.uid, 60, 600);
+        const s = new Scena();
+        s.add(T.RING, C.GHIACCIO, 0, 0.4, [a.x, a.y, rf.width * 0.8, 3]);
+        s.add(T.ORB, C.GHIACCIO, 0.08, 0.55, [a.x, a.y, b.x, b.y], 7);
+        s.add(T.FLASH, C.GHIACCIO, 0.6, 0.35, [b.x, b.y, rg.width * 0.7, 0]);
+        s.add(T.RING, C.VIOLA, 0.6, 0.4, [b.x, b.y, rg.width * 0.9, 3]);
+        verifica(s);
+        fantasma(card, rf, (u) => { const k = easeIO(u); return { x: lerp(rf.left, b.x - rf.width / 2, k), y: lerp(rf.top, b.y - rf.height / 2, k) - Math.sin(Math.PI * k) * 30, s: 1 - 0.7 * k, rot: -14 * k, op: u > 0.5 ? 1 - (u - 0.5) / 0.5 : 1 }; }, 40, 560);
+        breve(s, 1.0);
+    };
+
+    /** Il contrario: un'anima viola esce dalla pila e la carta si compone sulla casella con un'onda (rianimazioni). */
+    imp.playCardFromGraveyard = function (card, graveOwner, toOwner, toIndex) {
+        const rg = rectZona(graveOwner, 'graveyard');
+        const rt = rettaCarta(toOwner, 'monster', toIndex);
+        if (!rg || !rt) return;
+        const a = cen(rg); const b = cen({ left: rt.left, top: rt.top, width: rt.width, height: rt.height });
+        const s = new Scena();
+        s.add(T.FLASH, C.VIOLA, 0, 0.35, [a.x, a.y, rg.width * 0.8, 0]);
+        s.add(T.ORB, C.VIOLA, 0.05, 0.55, [a.x, a.y, b.x, b.y], 8);
+        s.add(T.RING, C.VIOLA, 0.55, 0.5, [b.x, b.y, rt.width * 1.1, 4]);
+        s.add(T.FLASH, C.BIANCO, 0.55, 0.35, [b.x, b.y, rt.width * 0.9, 0]);
+        s.add(T.BURST, C.VIOLA, 0.55, 0.7, [b.x, b.y, rt.width * 1.3, -80], 3.3);
+        verifica(s);
+        // La carta arriva in primo piano e NON svanisce: la vera comparira' li' sotto al render successivo.
+        fantasma(card, rt, (u) => { const k = easeIO(u); return { x: lerp(a.x - rt.width / 2, b.x - rt.width / 2, k), y: lerp(a.y - rt.height / 2, b.y - rt.height / 2, k), s: 0.4 + 0.6 * k, op: u < 0.2 ? u / 0.2 : 1 }; }, 30, 600);
+        breve(s, 1.2);
+    };
+
+    /**
+     * Cambio di controllo (Cambio di Cuore, Controllo Mentale...): un sigillo si accende sul mostro, un filo di energia lo
+     * lega alla nuova casella e la carta ci viaggia girando su se' stessa. Viola all'andata, azzurro al ritorno.
+     */
+    imp.playControlSwitch = function (card, fromOwner, fromIndex, toOwner, toIndex, tornaIndietro) {
+        const rf = rettaCarta(fromOwner, 'monster', fromIndex);
+        const rt = rettaCarta(toOwner, 'monster', toIndex);
+        if (!rf || !rt || !card) return;
+        const a = cen({ left: rf.left, top: rf.top, width: rf.width, height: rf.height }); const b = cen({ left: rt.left, top: rt.top, width: rt.width, height: rt.height });
+        const col = tornaIndietro ? C.CIANO : C.VIOLA;
+        const s = new Scena();
+        s.add(T.SEAL, col, 0, 0.5, [a.x, a.y, rf.width * 0.9, 0], 0.55);
+        s.add(T.LINE, col, 0.1, 0.6, [a.x, a.y, b.x, b.y], 6);
+        s.add(T.ORB, col, 0.15, 0.5, [a.x, a.y, b.x, b.y], 9);
+        s.add(T.RING, col, 0.6, 0.5, [b.x, b.y, rt.width * 1.2, 4]);
+        s.add(T.FLASH, C.BIANCO, 0.6, 0.3, [b.x, b.y, rt.width, 0]);
+        verifica(s);
+        fantasma(card, rf, (u) => { const k = easeIO(u); return { x: lerp(rf.left, rt.left, k), y: lerp(rf.top, rt.top, k) - Math.sin(Math.PI * k) * 24, ry: k * 360, s: 1 + 0.08 * Math.sin(Math.PI * k) }; }, 60, 560);
+        breve(s, 1.2);
+    };
+
+    /**
+     * Sacrificio per Tributo: la carta si disintegra in polvere viola mentre una colonna di luce sale dal suo posto
+     * (verso il mostro che sta per essere Evocato). Un ologramma dello stesso mostro si disintegra con lei.
+     */
+    imp.playTributeSacrifice = function (cardEl) {
+        const r = cardEl ? rectDi(cardEl) : null; if (!r) return;
+        const uid = cardEl.dataset && cardEl.dataset.uid;
+        const GL = olograma(uid); const rh = GL ? GL.disintegra(uid, 60, 600) : null;
+        const rd = rh || r; const c = cen(r); const cd = cen(rd);
+        const s = new Scena();
+        s.add(T.PILLAR, C.VIOLA, 0, 0.8, [c.x, c.y + r.height / 2, r.width * 0.5, 0]);
+        s.add(T.FLASH, C.ORO, 0, 0.4, [c.x, c.y, r.width * 1.2, 0]);
+        s.add(T.DUST, C.VIOLA, DUST_RITARDO_S, DUST_DURATA_S, [cd.x, cd.y, rd.width / 2, rd.height / 2], Math.random() * 50);
+        verifica(s);
+        if (rh) setTimeout(() => { cardEl.style.visibility = 'hidden'; }, 160);
+        else disintegraCarta(cardEl, r);
+        breve(s, DUST_RITARDO_S + DUST_DURATA_S + 0.1);
+    };
+
+    /** Equip che si aggancia: una sfera d'oro corre dalla Carta Equipaggiamento al mostro, che si accende all'arrivo. */
+    imp.playEquipAttach = function (x1, y1, x2, y2, targetEl) {
+        const rt = targetEl ? rectDi(targetEl) : null; const w = rt ? rt.width : 60;
+        const s = new Scena();
+        s.add(T.FLASH, C.ORO, 0, 0.25, [x1, y1, 50, 0]);
+        s.add(T.ORB, C.ORO, 0, 0.5, [x1, y1, x2, y2], 7);
+        s.add(T.RING, C.ORO, 0.42, 0.5, [x2, y2, w * 0.9, 3]);
+        s.add(T.FLASH, C.CALDO, 0.42, 0.4, [x2, y2, w * 0.8, 0]);
+        s.add(T.BURST, C.ORO, 0.42, 0.6, [x2, y2, 60, 30], 7);
+        verifica(s);
+        breve(s, 1.0);
+    };
+
+    /**
+     * Mostro messo in DIFESA: la stessa barriera esagonale dell'attacco respinto si forma attorno alla carta e svanisce.
+     * `lato` = 'up' se l'avversario sta sopra (il lampo d'incontro parte da quel lato).
+     */
+    imp.playPositionDefense = function (cardEl, lato) {
+        const r = cardEl ? rectDi(cardEl) : null; if (!r) return;
+        const c = cen(r);
+        const lato2 = Math.max(r.width, r.height);
+        const s = new Scena();
+        s.add(T.SHIELD, C.CIANO, 0, 0.8, [c.x, c.y, lato2 * 0.62, 0], lato === 'down' ? Math.PI / 2 : -Math.PI / 2);
+        s.add(T.RING, C.GHIACCIO, 0, 0.5, [c.x, c.y, lato2 * 0.8, 3]);
+        verifica(s);
+        breve(s, 0.9);
+    };
+
+    /** Mostro messo in ATTACCO: un lampo caldo, un'onda sul terreno e scintille che salgono verso l'avversario. */
+    imp.playPositionAttack = function (cardEl, lato) {
+        const r = cardEl ? rectDi(cardEl) : null; if (!r) return;
+        const c = cen(r);
+        const lato2 = Math.max(r.width, r.height);
+        const su = lato !== 'down';
+        const s = new Scena();
+        s.add(T.FLASH, C.ARANCIO, 0, 0.45, [c.x, c.y, lato2 * 0.9, 0]);
+        s.add(T.RING, C.ORO, 0, 0.5, [c.x, c.y, lato2 * 0.95, 4]);
+        // Le scintille salgono (gravita' negativa) verso la meta' campo dell'avversario.
+        for (let i = 0; i < 3; i++) s.add(T.BURST, C.CALDO, 0.04, 0.7, [c.x, c.y, 50 + i * 16, su ? -(120 + i * 24) : 120 + i * 24], 2 + i * 6.3);
+        verifica(s);
+        breve(s, 0.8);
+    };
+
+    /**
      * Distruzione in battaglia: ESPLOSIONE + DISINTEGRAZIONE. Il colpo è quello di prima — vampata grande
      * bianca e rossa, due onde d'urto, nucleo incandescente, fumo, due ondate di scintille, scossa piena —
      * e la carta trema per un istante. Poi cede: un fronte di fuoco la mangia dal basso verso l'alto e la
@@ -1059,7 +1252,14 @@ float dado(vec2 q,float v){
      */
     imp.playBattleDestroyEffect = function (cardElement) {
         if (!cardElement) return;
-        const r = rectDi(cardElement); if (!r) return;
+        let r = rectDi(cardElement); if (!r) return;
+        // Con l'ologramma WebGL e' LUI a disintegrarsi (la carta e' solo il portale e sparisce al colpo): la polvere
+        // si centra sulla figura, il fronte e' lo stesso della polvere (sale in meta' della durata).
+        const GL = /** @type {any} */ (window).MonsterHologramGL;
+        const uid = cardElement.dataset && cardElement.dataset.uid;
+        const rh = uid && GL && typeof GL.disintegra === 'function' && GL.visibile(uid)
+            ? GL.disintegra(uid, DUST_RITARDO_S * 1000, DUST_DURATA_S * 550) : null;
+        if (rh) r = rh;
         const c = cen(r); const w = r.width;
         const s = new Scena();
         // Vampata: grande, bianca al centro e rossa ai bordi (1,5 volte la carta).
@@ -1079,7 +1279,8 @@ float dado(vec2 q,float v){
         for (let i = 0; i < 4; i++) s.add(T.BURST, C.CALDO, 0, 0.6, [c.x, c.y, 150 + i * 22, 40 + i * 6], 5.1 + i * 3.7);
         for (let i = 0; i < 3; i++) s.add(T.BURST, C.ARANCIO, 0.11, 0.95, [c.x, c.y, 80 + i * 18, 180 + i * 20], 11.7 + i * 4.3);
         verifica(s);
-        disintegraCarta(cardElement, r);
+        if (rh) setTimeout(() => { cardElement.style.visibility = 'hidden'; }, 160);
+        else disintegraCarta(cardElement, r);
         const campo = document.querySelector('.game-container');
         scossa(campo, [[-6, 0.045], [5, 0.05], [-3, 0.05], [0, 0.07]]);
         breve(s, DUST_RITARDO_S + DUST_DURATA_S + 0.1);

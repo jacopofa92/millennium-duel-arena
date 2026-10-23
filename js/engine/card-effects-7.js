@@ -837,7 +837,8 @@
                     // Terreno, quindi non può comparire prima della scena.
                     const freeIndex = ctx.field(ctx.owner)[slotIndex] ? ctx.findEmptyMonsterSlot(ctx.owner) : slotIndex;
                     if (freeIndex === -1) { ctx.graveyard(ctx.owner).push(revived); return; }
-                    ctx.specialSummon(ctx.owner, revived, freeIndex, 'attack', 'graveyard');
+                    // La scena di questa carta (FX.playCallOfTheHaunted) fa gia' emergere il mostro: niente secondo volo dal Cimitero.
+                    ctx.specialSummon(ctx.owner, revived, freeIndex, 'attack', 'graveyard', { skipGraveyardTravel: !!(window.FX && typeof FX.playCallOfTheHaunted === 'function') });
                     ctx.card.targetOwner = ctx.owner;
                     ctx.card.targetIndex = freeIndex;
                     ctx.card.targetUid = revived.uid;

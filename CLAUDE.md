@@ -4661,3 +4661,28 @@ WebGL di cerimonie, distruzione e ologrammi (1.4.67, branch `feature/webgl-buste
   taglio netto, e la base luminosa sfuma prima del bordo del riquadro.
   `ologrammi-visibili.spec.js` è fragile sotto carico (la dimensione dell'ologramma si calcola dal riquadro della
   carta mentre è in animazione): fallisce a intermittenza ANCHE su `main`, non è una regressione.
+1.4.68 (branch `feature/ologramma-lanciato`, mergiato in `main`) — WebGL: ologramma che si muove, effetti di carta e Cartoteca:
+- **L'ologramma vola e si disintegra** (`monster-hologram-webgl.js`): con gli ologrammi WebGL, in attacco parte LA FIGURA
+  (`MonsterHologramGL.lancia`: traiettoria DRITTA — l'utente non vuole archi, come la freccia d'attacco —, scia di 3 copie,
+  glitch/aberrazione al massimo; la carta resta ferma, niente `is-attacking`); all'ingresso scende componendosi con lo scanner;
+  in distruzione/Tributo/Cimitero `disintegra` fa salire un fronte con bordo incandescente e la figura sopravvive al mostro
+  uscito dal Terreno finche' ha finito (la polvere `DUST` si centra su di lei, niente `disintegraCarta`; una seconda chiamata
+  per lo stesso uid non rifa partire nulla). Senza ologramma WebGL tutto resta com'era. Spec `ologramma-volo-e-disintegrazione`.
+- **Bordi dell'ologramma**: la sfumatura si attenua dove il pixel e' chiaro o colorato (il soggetto, es. la testa del Drago
+  Bianco), cosi' non viene mangiato; fascia ~14%, ovale largo. **Insidia nota**: su una carta con lo sfondo CHIARO il
+  rettangolo puo' tornare a vedersi (rimedio possibile: maschere alpha offline).
+- **Attacco respinto** (`imp.playAttackBlocked`, primitiva `T.SHIELD`): barriera a celle esagonali con un'onda dal lato
+  dell'attaccante. La stessa barriera e' la **Difesa** (`playPositionDefense`), e l'**Attacco** e' una carica luminosa
+  (`playPositionAttack`): con WebGL niente piu' spade/scudo animati sulla carta (`showPositionEffect` in game-flow.js; senza
+  WebGL restano `IconePosizione`). Spec `attacco-respinto-barriera`.
+- **Movimenti di carta** (fx-webgl-scena.js, `rettaCarta`/`olograma` helper): Cimitero, rianimazione, cambio di controllo,
+  Tributo, aggancio Equip, con `T.ORB` (sfera con coda), `fantasma` e le primitive esistenti. Spec `movimenti-carta-webgl`.
+  **Niente doppio effetto**: una carta con una cinematica propria per la rianimazione (Mostro Resuscitato, Richiamo del
+  Posseduto) passa `skipGraveyardTravel` a `specialSummon`, o partirebbe anche il volo generico (`rianimazione-senza-doppio-effetto`).
+  Il cambio di controllo (Controllo Mentale/Cambio di Cuore: cinematica + viaggio di `takeControl`) NON e' stato verificato
+  per lo stesso doppione.
+- **Vetrina "Vedi ologramma"** (`js/ui/ologramma-vetrina.js`): pulsante nella scheda dei mostri (`card-detail.js`) SOLO nelle
+  pagine che la caricano (oggi la Cartoteca); riusa il WebGL del duello portando `#monsterHologramLayer` sopra la vetrina
+  (`layer()` lo crea se manca), ripiego CSS (`.ov-css`) su `file://`. Spec `cartoteca-vedi-ologramma`.
+- Conteggio dei Life Point a 1,9 s (il suono dura ~2 s, `animateLifePoints`); freccia d'attacco retta.
+  Non verificato su telefono ne' con 10 ologrammi insieme (con la scia fino a 40 riquadri).
