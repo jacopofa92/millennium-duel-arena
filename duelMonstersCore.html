@@ -4427,6 +4427,18 @@
             .life-points { font-size: 0.6rem; padding: 2px 8px 2px 6px; }
         }
 
+        /* Telefono in VERTICALE: il box info non resta più centrato a metà schermo (copriva le mie caselle):
+           parte in alto, poco sotto Abbandona (il HUD arriva a ~59px su un 411x750 misurato sul telefono),
+           e il suo tetto d'altezza lo tiene sopra la mia fila di Mostri (che comincia a ~55% dello schermo);
+           se il testo è più lungo il pannello scorre al suo interno. */
+        @media (max-width: 900px) and (orientation: portrait) {
+            .card-info-panel {
+                top: calc(var(--duelist-box-offset) + 58px);
+                transform: translate(110%, 0);
+                max-height: 44dvh;
+            }
+            .card-info-panel.visible { transform: translate(0, 0); }
+        }
         /* Telefono in orizzontale: conserva il cassetto stretto che non
            copriva il terreno. Il tentativo di affiancare carta e testo lo
            rendeva largo fino al 72% del duello: più leggibile, ma troppo

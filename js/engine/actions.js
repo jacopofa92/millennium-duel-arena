@@ -343,7 +343,11 @@ function attemptActivateCard(owner, zone, index) {
     window.DuelEngineUI.openActivateModal(card, {
         title: '✨ Attiva la carta',
         text: `Vuoi attivare ${card.name} adesso?`,
-        onConfirm: () => Comandi.esegui(owner, { tipo: 'attiva', zona: zone, indice: index, carta: zone === 'hand' && Tavolo.mano(owner)[index] ? Tavolo.mano(owner)[index].uid : undefined })
+        onConfirm: () => {
+            // Attivare un effetto chiude il box info eventualmente ancora aperto: copre il campo dove l'effetto agisce.
+            if (owner === 'player') suppressCardInspectionFor(900);
+            return Comandi.esegui(owner, { tipo: 'attiva', zona: zone, indice: index, carta: zone === 'hand' && Tavolo.mano(owner)[index] ? Tavolo.mano(owner)[index].uid : undefined });
+        }
     });
 }
 
@@ -1536,6 +1540,7 @@ function promptMonsterFieldAction(slotIndex) {
     if (canActivateEffect) {
         pop.querySelector('#qpMonsterActivate').onclick = () => {
             closeQuickPopover();
+            suppressCardInspectionFor(900);
             Comandi.esegui('player', { tipo: 'attiva', zona: 'monster', indice: slotIndex });
         };
     }
@@ -1567,6 +1572,7 @@ function promptHandSpellActivation(card, handIndex) {
 
     pop.querySelector('#qpSpellActivate').onclick = () => {
         closeQuickPopover();
+        suppressCardInspectionFor(900);
         Comandi.esegui('player', { tipo: 'attiva', zona: 'hand', indice: handIndex, carta: gameState.playerHand[handIndex] && gameState.playerHand[handIndex].uid });
     };
     pop.querySelector('#qpSpellCancel').onclick = () => closeQuickPopover();
@@ -1593,6 +1599,7 @@ function promptHandMonsterActivation(card, handIndex) {
 
     pop.querySelector('#qpMonsterActivateEffect').onclick = () => {
         closeQuickPopover();
+        suppressCardInspectionFor(900);
         Comandi.esegui('player', { tipo: 'attiva', zona: 'hand', indice: handIndex, carta: gameState.playerHand[handIndex] && gameState.playerHand[handIndex].uid });
     };
     pop.querySelector('#qpMonsterSelectNormal').onclick = () => {
