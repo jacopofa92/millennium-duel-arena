@@ -1059,7 +1059,14 @@ float dado(vec2 q,float v){
      */
     imp.playBattleDestroyEffect = function (cardElement) {
         if (!cardElement) return;
-        const r = rectDi(cardElement); if (!r) return;
+        let r = rectDi(cardElement); if (!r) return;
+        // Con l'ologramma WebGL e' LUI a disintegrarsi (la carta e' solo il portale e sparisce al colpo): la polvere
+        // si centra sulla figura, il fronte e' lo stesso della polvere (sale in meta' della durata).
+        const GL = window.MonsterHologramGL;
+        const uid = cardElement.dataset && cardElement.dataset.uid;
+        const rh = uid && GL && typeof GL.disintegra === 'function' && GL.visibile(uid)
+            ? GL.disintegra(uid, DUST_RITARDO_S * 1000, DUST_DURATA_S * 550) : null;
+        if (rh) r = rh;
         const c = cen(r); const w = r.width;
         const s = new Scena();
         // Vampata: grande, bianca al centro e rossa ai bordi (1,5 volte la carta).
@@ -1079,7 +1086,8 @@ float dado(vec2 q,float v){
         for (let i = 0; i < 4; i++) s.add(T.BURST, C.CALDO, 0, 0.6, [c.x, c.y, 150 + i * 22, 40 + i * 6], 5.1 + i * 3.7);
         for (let i = 0; i < 3; i++) s.add(T.BURST, C.ARANCIO, 0.11, 0.95, [c.x, c.y, 80 + i * 18, 180 + i * 20], 11.7 + i * 4.3);
         verifica(s);
-        disintegraCarta(cardElement, r);
+        if (rh) setTimeout(() => { cardElement.style.visibility = 'hidden'; }, 160);
+        else disintegraCarta(cardElement, r);
         const campo = document.querySelector('.game-container');
         scossa(campo, [[-6, 0.045], [5, 0.05], [-3, 0.05], [0, 0.07]]);
         breve(s, DUST_RITARDO_S + DUST_DURATA_S + 0.1);

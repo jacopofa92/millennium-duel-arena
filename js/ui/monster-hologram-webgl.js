@@ -45,6 +45,8 @@ uniform float uAsp;      // larghezza/altezza del riquadro
 uniform float uImgAsp;   // larghezza/altezza dell'illustrazione
 uniform float uAlpha;    // 0..1: per far sparire/riapparire senza scatti
 uniform float uPx;       // pixel CSS per pixel del canvas (le scanline sono in px CSS)
+uniform float uGlitch;   // 0..1: durante il volo glitch e aberrazione sono al massimo
+uniform float uDis;      // -1 = intero; 0..1 = disintegrazione dal basso verso l'alto
 
 float h(float n){return fract(sin(n*91.3458)*47453.5453);}
 
@@ -70,10 +72,10 @@ void main(){
   // GLITCH: ogni tanto, per una frazione di secondo, strisce orizzontali che scivolano e canali che si separano.
   float gt=uT*.45+uSeed*7.;
   float ev=floor(gt);
-  float gl=step(.94,fract(gt))*step(.55,h(ev+uSeed));
+  float gl=max(step(.94,fract(gt))*step(.55,h(ev+uSeed)),uGlitch);
   float banda=floor(uv.y*16.);
-  float sh=(h(banda*1.7+ev)-.5)*.10*gl;
-  float ca=.0035+gl*.012;
+  float sh=(h(banda*1.7+ev+floor(uT*30.)*uGlitch)-.5)*(.10+.08*uGlitch)*gl;
+  float ca=.0035+gl*.012+uGlitch*.016;
   vec2 u2=uv+vec2(sh,0.);
   vec4 a=campiona(u2+vec2(ca,0.));
   vec4 b=campiona(u2);
@@ -126,8 +128,16 @@ void main(){
             *smoothstep(1.,.84,uv.y)*smoothstep(0.,.1,uv.x)*smoothstep(1.,.9,uv.x);
   vec3 bc=vec3(.47,.84,1.);
 
-  float aa=clamp(alpha+base*.9+linea*m,0.,1.)*uAlpha;
-  vec3 rgb=(col*alpha+bc*base+vec3(.7,1.,1.)*linea*m)*uAlpha;
+  // DISINTEGRAZIONE: un fronte frastagliato sale dal basso e cio' che sta sotto sparisce; sul fronte, una linea incandescente.
+  float visD=1.,fuoco=0.;
+  if(uDis>=0.){
+    float lim=1.-uDis*1.12+(h(floor(uv.x*46.)+uSeed)-.5)*.07;
+    visD=1.-smoothstep(lim-.01,lim+.04,yb);
+    fuoco=exp(-pow((yb-lim)*22.,2.))*step(uDis,.995);
+  }
+  alpha*=visD; base*=visD;
+  float aa=clamp(alpha+base*.9+linea*m+fuoco*m,0.,1.)*uAlpha;
+  vec3 rgb=(col*alpha+bc*base+vec3(.7,1.,1.)*linea*m+vec3(1.,.55,.18)*fuoco*m*1.5)*uAlpha;
   gl_FragColor=vec4(min(rgb,vec3(aa+.3)),aa);
 }`;
 
@@ -182,7 +192,7 @@ void main(){
             if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error('link');
             gl.useProgram(prog);
             uni = {};
-            ['uRes', 'uTex', 'uT', 'uSeed', 'uBorn', 'uAsp', 'uImgAsp', 'uAlpha', 'uPx'].forEach((n) => { uni[n] = gl.getUniformLocation(prog, n); });
+            ['uRes', 'uTex', 'uT', 'uSeed', 'uBorn', 'uAsp', 'uImgAsp', 'uAlpha', 'uPx', 'uGlitch', 'uDis'].forEach((n) => { uni[n] = gl.getUniformLocation(prog, n); });
             bufPos = gl.createBuffer();
             gl.enable(gl.BLEND);
             gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
@@ -256,6 +266,53 @@ void main(){
         return typeof window.getCardImagePath === 'function' ? window.getCardImagePath(card) : '';
     }
 
+    const DISCESA_S = 0.7;
+
+    /**
+     * Il volo d'attacco: spostamento (ox, oy) e scala al tempo `ora`, o null fuori dal volo.
+     * Andata decelerata fino al bersaglio (impatto al 46%, come la rincorsa della carta), un attimo fermo,
+     * ritorno morbido; lungo il percorso una curva ad arco (perpendicolare alla direzione) e una scala che cresce
+     * avvicinandosi.
+     */
+    function posVolo(v, ora) {
+        const p = (ora - v.t0) / v.dur;
+        if (p < 0 || p > 1) return null;
+        let s;
+        if (p < 0.46) { const e = p / 0.46; s = 1 - Math.pow(1 - e, 2.2); }
+        else if (p < 0.58) s = 1;
+        else { const e = (p - 0.58) / 0.42; s = 1 - e * e * (3 - 2 * e); }
+        const len = Math.hypot(v.dx, v.dy) || 1;
+        const arco = Math.sin(Math.PI * s) * len * v.curva;
+        return { ox: v.dx * s + (-v.dy / len) * arco, oy: v.dy * s + (v.dx / len) * arco, sc: 1 + 0.25 * s };
+    }
+
+    /** Disegna UN riquadro di ologramma (anche una copia-scia o uno che si disintegra). */
+    function quad(o, voce, bob, ox, oy, sc, alpha, glitch, dis, nascita) {
+        const r = o.rect;
+        const cx = r.left + r.w / 2 + ox; const cy = r.top + r.h / 2 + bob + oy;
+        const hw = r.w / 2 * sc; const hh = r.h / 2 * sc;
+        const inset = r.w * 0.075 * sc;
+        const insTop = o.segno > 0 ? inset : 0;
+        const insBot = o.segno > 0 ? 0 : inset;
+        const v = new Float32Array([
+            cx - hw + insTop, cy - hh, 0, 0,
+            cx + hw - insTop, cy - hh, 1, 0,
+            cx - hw + insBot, cy + hh, 0, 1,
+            cx + hw - insBot, cy + hh, 1, 1
+        ]);
+        gl.bufferData(gl.ARRAY_BUFFER, v, gl.DYNAMIC_DRAW);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, voce.tex);
+        gl.uniform1f(uni.uSeed, o.seme);
+        gl.uniform1f(uni.uBorn, nascita);
+        gl.uniform1f(uni.uAsp, r.w / r.h);
+        gl.uniform1f(uni.uImgAsp, voce.w / voce.h);
+        gl.uniform1f(uni.uAlpha, alpha);
+        gl.uniform1f(uni.uGlitch, glitch);
+        gl.uniform1f(uni.uDis, dis);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+
     function disegna(ora) {
         rid = 0;
         if (!gl || guasto || !canvas) return;
@@ -283,25 +340,30 @@ void main(){
             const r = o.rect;
             // Galleggia come l'ologramma CSS (3,4 s, fino al -5% dell'altezza) e si inclina: il lato lontano e' piu' stretto.
             const bob = (0.5 - 0.5 * Math.cos(2 * Math.PI * (t / 3.4))) * -0.05 * r.h;
-            const inset = r.w * 0.075;
-            const insTop = o.segno > 0 ? inset : 0;
-            const insBot = o.segno > 0 ? 0 : inset;
-            const y0 = r.top + bob; const y1 = r.top + r.h + bob;
-            const v = new Float32Array([
-                r.left + insTop, y0, 0, 0,
-                r.left + r.w - insTop, y0, 1, 0,
-                r.left + insBot, y1, 0, 1,
-                r.left + r.w - insBot, y1, 1, 1
-            ]);
-            gl.bufferData(gl.ARRAY_BUFFER, v, gl.DYNAMIC_DRAW);
-            gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, voce.tex);
-            gl.uniform1f(uni.uSeed, o.seme);
-            gl.uniform1f(uni.uBorn, (ora - o.nato) / 1000);
-            gl.uniform1f(uni.uAsp, r.w / r.h);
-            gl.uniform1f(uni.uImgAsp, voce.w / voce.h);
-            gl.uniform1f(uni.uAlpha, 1);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+            const nascita = (ora - o.nato) / 1000;
+            // INGRESSO: scende dall'alto componendosi (lo scanner dello shader sale nello stesso tempo).
+            let ox = 0; let oy = 0; let sc = 1;
+            if (nascita < DISCESA_S) {
+                const e = 1 - Math.pow(1 - Math.max(0, nascita) / DISCESA_S, 3);
+                oy = -(1 - e) * 0.45 * r.h; sc = 0.78 + 0.22 * e;
+            }
+            // DISINTEGRAZIONE (se in corso): 0..1, o -1 se intero. Prima del ritardo resta intero.
+            let dis = -1;
+            if (o.morente) {
+                if (ora >= o.morente.t0 + o.morente.dur) { vivi.delete(o.uid); return; }
+                dis = ora < o.morente.t0 ? -1 : (ora - o.morente.t0) / o.morente.dur;
+            }
+            const volo = o.volo ? posVolo(o.volo, ora) : null;
+            if (o.volo && ora > o.volo.t0 + o.volo.dur) o.volo = null;
+            if (volo) {
+                // La scia: tre copie sbiadite dove l'ologramma era pochi istanti fa.
+                for (let k = 3; k >= 1; k--) {
+                    const g = posVolo(o.volo, ora - k * 42);
+                    if (g) quad(o, voce, bob, g.ox, g.oy, g.sc, 0.34 / k, 1, -1, 9);
+                }
+                ox = volo.ox; oy = volo.oy; sc = volo.sc;
+            }
+            quad(o, voce, bob, ox, oy, sc, 1, volo ? 1 : 0, dis, nascita);
             disegnati++;
         });
         if (vivi.size) rid = requestAnimationFrame(disegna);
@@ -332,13 +394,15 @@ void main(){
                 if (!o) {
                     const src = srcDi(e.card);
                     if (!src) return;
-                    o = { voce: caricaTexture(src), nato: ora, seme: Math.random() * 10, segno: 1, rect: e.rect, nascostoFinoA: 0 };
+                    o = { uid: e.uid, voce: caricaTexture(src), nato: ora, seme: Math.random() * 10, segno: 1, rect: e.rect, nascostoFinoA: 0, volo: null, morente: null };
                     vivi.set(e.uid, o);
                 }
+                if (o.morente) return;   // si sta disintegrando: resta dov'e', non lo si riposiziona
                 o.segno = e.owner === 'bot' ? -1 : 1;
                 o.rect = e.rect;
             });
-            vivi.forEach((_, uid) => { if (!attesi.has(uid)) vivi.delete(uid); });
+            // Un ologramma che si sta disintegrando sopravvive al mostro uscito dal Terreno: finisce da solo.
+            vivi.forEach((o, uid) => { if (!attesi.has(uid) && !o.morente) vivi.delete(uid); });
             if (guasto) return false;
             avvia();
             return true;
@@ -347,6 +411,36 @@ void main(){
         nascondiPer(uid, ms) {
             const o = vivi.get(uid);
             if (o) o.nascostoFinoA = performance.now() + ms;
+        },
+        /** Si vede adesso? (esiste, la texture e' pronta, non e' nascosto): serve a decidere se la carta deve restare ferma. */
+        visibile(uid) {
+            const o = vivi.get(uid);
+            return !!(o && !guasto && o.voce && o.voce.stato === 'pronta' && !(o.nascostoFinoA && performance.now() < o.nascostoFinoA));
+        },
+        /**
+         * L'ologramma parte dal suo slot verso il bersaglio (spostamento del CENTRO in px) e torna: arco, scia,
+         * glitch al massimo. Torna true se lo ha preso in carico (allora la carta non si muove), false altrimenti.
+         */
+        lancia(uid, dx, dy, durMs, curva) {
+            const o = vivi.get(uid);
+            if (!this.visibile(uid) || o.morente) return false;
+            // Il lato dell'arco alterna per non far sempre curvare allo stesso modo.
+            o.volo = { t0: performance.now(), dur: durMs || 700, dx, dy, curva: (curva == null ? 0.16 : curva) * (o.segno > 0 ? 1 : -1) };
+            avvia();
+            return true;
+        },
+        /**
+         * Il soggetto si disintegra: dopo `ritardoMs` il fronte sale dal basso in `durMs`. Torna il rettangolo
+         * dell'ologramma (per centrare la polvere) o null se non c'e' un ologramma da disintegrare.
+         */
+        disintegra(uid, ritardoMs, durMs) {
+            const o = vivi.get(uid);
+            if (!o || guasto || !o.voce || o.voce.stato !== 'pronta') return null;
+            o.nascostoFinoA = 0;
+            o.volo = null;
+            o.morente = { t0: performance.now() + (ritardoMs || 0), dur: durMs };
+            avvia();
+            return { left: o.rect.left, top: o.rect.top, width: o.rect.w, height: o.rect.h };
         },
         sospendi() { sospeso = true; },
         riprendi() { sospeso = false; avvia(); },

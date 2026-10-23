@@ -1907,17 +1907,23 @@ function showBattleEffect(attackerEl, targetEl, directDirection) {
         attackerEl.style.setProperty('--charge-dx', `${dx}px`);
         attackerEl.style.setProperty('--charge-dy', `${dy}px`);
 
-        attackerEl.classList.add('is-attacking');
-        setTimeout(() => attackerEl.classList.remove('is-attacking'), 700);
+        // Con gli ologrammi WebGL e' LA FIGURA a partire (arco, scia, glitch al massimo) e a tornare: la carta
+        // resta ferma nel suo "portale", coerente con l'idea che la figura ne sia uscita.
+        const holoVola = !!(attackerEl.dataset.uid && window.MonsterHologramGL && typeof MonsterHologramGL.lancia === 'function'
+            && MonsterHologramGL.lancia(attackerEl.dataset.uid, dx, dy, 700));
+        if (!holoVola) {
+            attackerEl.classList.add('is-attacking');
+            setTimeout(() => attackerEl.classList.remove('is-attacking'), 700);
 
-        // La proiezione olografica segue lo SLOT, e si riposiziona solo
-        // quando il Terreno viene ridisegnato — non fotogramma per
-        // fotogramma. Mentre la carta si lancia resterebbe quindi
-        // indietro, leggendosi come un fantasma dimenticato a mezz'aria:
-        // per la durata della rincorsa si spegne. Vale anche per un
-        // attacco a un mostro, non solo per quello diretto.
-        if (window.MonsterHolograms && typeof MonsterHolograms.nascondiPer === 'function' && attackerEl.dataset.uid) {
-            MonsterHolograms.nascondiPer(attackerEl.dataset.uid, 700);
+            // La proiezione olografica segue lo SLOT, e si riposiziona solo
+            // quando il Terreno viene ridisegnato — non fotogramma per
+            // fotogramma. Mentre la carta si lancia resterebbe quindi
+            // indietro, leggendosi come un fantasma dimenticato a mezz'aria:
+            // per la durata della rincorsa si spegne. Vale anche per un
+            // attacco a un mostro, non solo per quello diretto.
+            if (window.MonsterHolograms && typeof MonsterHolograms.nascondiPer === 'function' && attackerEl.dataset.uid) {
+                MonsterHolograms.nascondiPer(attackerEl.dataset.uid, 700);
+            }
         }
     }
 
