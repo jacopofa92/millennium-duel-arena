@@ -712,6 +712,7 @@ const APP_SHELL = [
     'js/ui/ambiente-menu.js',
     'js/ui/field-ambience.js',
     'js/ui/field-ambience.css',
+    'js/ui/monster-hologram-webgl.js',
     'js/ui/monster-hologram.js',
     'js/ui/monster-hologram.css',
 'js/ui/grido-evocazione.js',
