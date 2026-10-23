@@ -354,6 +354,8 @@
                 sigillo.textContent = simbolo || '✦';
             }
             ritrattoImg.addEventListener('error', () => {
+                const ripiego = ritrattoImg.dataset.ripiego;
+                if (ripiego) { ritrattoImg.dataset.ripiego = ''; ritrattoImg.src = ripiego; return; }
                 mostraSigillo(ritrattoImg.dataset.simbolo);
             });
 
@@ -450,7 +452,9 @@
                 // Duellanti non è il Kaiba di Battle City): vince sul roster
                 // ma non sul ritratto scritto a mano sulla riga.
                 const ritrattoContesto = opt.ritratti && riga.chi && opt.ritratti[riga.chi];
-                const fonteRitratto = riga.ritratto
+                // Anche il ritratto scritto a mano (il protagonista della campagna) passa dalla PEDINA: prima, vincendo
+                // "su tutto", restava l'avatar tondo mentre gli altri parlavano con la pedina scontornata.
+                const fonteRitratto = (riga.ritratto && typeof getCharacterPawnImage === 'function' ? getCharacterPawnImage(riga.ritratto) : riga.ritratto)
                     || (ritrattoContesto && typeof getCharacterPawnImage === 'function'
                         ? getCharacterPawnImage(ritrattoContesto) : ritrattoContesto)
                     || (chi && typeof getCharacterPawnImage === 'function' ? getCharacterPawnImage(chi.image) : (chi && chi.image)) || '';
@@ -482,6 +486,10 @@
                         // scatta molto dopo: va messo PRIMA di assegnare
                         // src, non dentro il ramo che segue.
                         ritrattoImg.dataset.simbolo = riga.icona || nome.trim().charAt(0).toUpperCase();
+                        // Se la pedina non esiste si prova l'immagine scritta a mano (un protagonista senza pedina),
+                        // e solo dopo il sigillo.
+                        const avatarOriginale = riga.ritratto || ritrattoContesto || (chi && chi.image) || '';
+                        ritrattoImg.dataset.ripiego = (avatarOriginale && avatarOriginale !== nuovaFonte) ? avatarOriginale : '';
                         if (nuovaFonte) ritrattoImg.src = nuovaFonte;
                         else mostraSigillo(ritrattoImg.dataset.simbolo);
                         ritratto.style.transition = 'none';

@@ -349,18 +349,24 @@
 
             playPromise.then(() => sfuma(volume, SFUMA_ENTRATA_MS)).catch(() => {
                 audio.volume = volume;
+                // I listener restano finché play() NON riesce davvero. Prima
+                // erano 'once' e si consumavano al primo evento, ma su un
+                // dispositivo touch 'pointerdown' e 'touchstart' non contano
+                // come gesto che sblocca l'audio (lo fanno solo 'pointerup',
+                // 'touchend' e 'click'): il primo tocco veniva rifiutato, i
+                // listener sparivano e la musica restava muta per sempre.
+                const eventiGesto = ['pointerdown', 'pointerup', 'mousedown', 'touchstart', 'touchend', 'click', 'keydown', 'wheel'];
+                let tentativoInCorso = false;
                 const startOnInteraction = () => {
+                    if (tentativoInCorso || !audio.paused) return;
+                    tentativoInCorso = true;
                     audio.volume = 0;
-                    audio.play().then(() => sfuma(volume, SFUMA_ENTRATA_MS)).catch(() => { audio.volume = volume; });
-                    document.removeEventListener('pointerdown', startOnInteraction, true);
-                    document.removeEventListener('keydown', startOnInteraction, true);
-                    document.removeEventListener('wheel', startOnInteraction, true);
-                    document.removeEventListener('touchstart', startOnInteraction, true);
+                    audio.play().then(() => {
+                        eventiGesto.forEach((nome) => document.removeEventListener(nome, startOnInteraction, true));
+                        sfuma(volume, SFUMA_ENTRATA_MS);
+                    }).catch(() => { audio.volume = volume; }).then(() => { tentativoInCorso = false; });
                 };
-                document.addEventListener('pointerdown', startOnInteraction, { once: true, passive: true, capture: true });
-                document.addEventListener('keydown', startOnInteraction, { once: true, capture: true });
-                document.addEventListener('wheel', startOnInteraction, { once: true, passive: true, capture: true });
-                document.addEventListener('touchstart', startOnInteraction, { once: true, passive: true, capture: true });
+                eventiGesto.forEach((nome) => document.addEventListener(nome, startOnInteraction, { passive: true, capture: true }));
             });
         }
 
