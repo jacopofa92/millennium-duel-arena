@@ -1473,7 +1473,9 @@
                     if (ctx.graveyardMoveNegated(choice.graveyardOwner)) return;
                     gy.splice(realIndex, 1);
                     // Posizione scelta da chi controlla la Summon: in Difesa, scoperto.
-                    ctx.specialSummon(owner, choice.card, slotIndex, position, 'graveyard', { faceUp: true });
+                    // skipGraveyardTravel: la cinematica di questa carta (FX.playMonsterReborn) porta GIA' il mostro
+                    // dal Cimitero alla casella; il volo generico delle rianimazioni sarebbe un secondo, doppio effetto.
+                    ctx.specialSummon(owner, choice.card, slotIndex, position, 'graveyard', { faceUp: true, skipGraveyardTravel: !!(window.FX && typeof FX.playMonsterReborn === 'function') });
                     ctx.log(`🌟 Mostro Resuscitato riporta in campo ${choice.card.name} in Posizione di ${position === 'attack' ? 'Attacco' : 'Difesa'}!`);
                 };
                 if (window.FX && typeof FX.playMonsterReborn === 'function') {
