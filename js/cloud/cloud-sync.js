@@ -764,6 +764,71 @@
     function dimenticaBase() {
         try { localStorage.removeItem(CHIAVE_BASE); } catch (e) { /* noop */ }
     }
+    // ------------------------------------------------------------------
+    // A CHI APPARTIENE il salvataggio di questo dispositivo
+    // ------------------------------------------------------------------
+    /**
+     * IL DIFETTO CHE CHIUDE (segnalato dall'utente, "ho perso tutti i deck"). Il salvataggio locale e' UNO solo per
+     * dispositivo, e non diceva di quale account fosse. Cambiando account (admin -> altro -> admin) il locale restava
+     * quello dell'account di prima; al rientro la regola "vince il piu' recente" confrontava la sua data con la riga
+     * cloud dell'account che stava entrando e, se era piu' nuova, la CARICAVA SOPRA: i deck di un account finivano
+     * nel cloud dell'altro, cancellando quelli veri (misurato sul database: due righe con lo stesso id di deck).
+     * La base di sincronizzazione non bastava: e' per utente, ma al cambio account viene sovrascritta, quindi al
+     * rientro non c'era piu' una base per l'account che tornava.
+     *
+     * Ora il dispositivo ricorda a CHI appartiene il salvataggio locale (`ygoProprietarioSalvataggio`, scritto
+     * quando lo si scarica o lo si carica). Se chi e' collegato NON e' il proprietario, quel salvataggio non viene
+     * mai confrontato ne' caricato: si TIENE DA PARTE in una copia (per account) e il dispositivo riparte dal cloud
+     * dell'account che entra (o da un profilo nuovo, se non ne ha). La copia si ritrova con `copieDiAltriAccount`.
+     * Un dispositivo che il marcatore non lo ha ancora (aggiornato da poco) lo ricava dall'ultima base: l'ultimo
+     * utente che ha sincronizzato qui e' quasi sempre il proprietario.
+     */
+    const CHIAVE_PROPRIETARIO = 'ygoProprietarioSalvataggio';
+    const CHIAVE_COPIE_ALTRI = 'ygoSalvataggiDiAltriAccount';
+
+    function proprietarioLocale() {
+        try {
+            const marcato = localStorage.getItem(CHIAVE_PROPRIETARIO);
+            if (marcato) return marcato;
+            const b = JSON.parse(localStorage.getItem(CHIAVE_BASE));
+            return b && b.uid ? b.uid : null;
+        } catch (e) { return null; }
+    }
+    /** Il salvataggio locale e' dell'utente collegato adesso: da qui in poi gli appartiene. */
+    function assegnaProprietario() {
+        if (!cachedUser) return;
+        try { localStorage.setItem(CHIAVE_PROPRIETARIO, cachedUser.id); } catch (e) { /* senza marcatore vale l'ultima base */ }
+    }
+    /** Il salvataggio di questo dispositivo e' di un ALTRO account rispetto a quello collegato? */
+    function salvataggioLocaleDiAltri() {
+        if (!cachedUser || !window.SaveManager || !SaveManager.hasSave()) return false;
+        const p = proprietarioLocale();
+        return !!p && p !== cachedUser.id;
+    }
+    function copieDiAltriAccount() {
+        try { return JSON.parse(localStorage.getItem(CHIAVE_COPIE_ALTRI)) || {}; } catch (e) { return {}; }
+    }
+    /**
+     * Se il salvataggio locale e' di un altro account lo conserva (una copia per account, l'ultima) e libera il
+     * dispositivo. Va chiamata PRIMA di qualunque confronto o caricamento (la chiama leggiCloud, l'unico punto da cui
+     * passano tutti). Torna true se ha messo da parte qualcosa.
+     */
+    function mettiDaParteSeDiAltri() {
+        if (!salvataggioLocaleDiAltri()) return false;
+        const di = proprietarioLocale();
+        const copie = copieDiAltriAccount();
+        try {
+            copie[di] = { conservataIl: new Date().toISOString(), data: SaveManager.load() };
+            localStorage.setItem(CHIAVE_COPIE_ALTRI, JSON.stringify(copie));
+        } catch (e) {
+            // Senza copia (spazio esaurito) NON si cancella: meglio un blocco che perdere i dati di qualcuno.
+            return false;
+        }
+        svuotaQuestoDispositivo();
+        try { localStorage.removeItem(CHIAVE_PROPRIETARIO); } catch (e) { /* noop */ }
+        return true;
+    }
+
     const stessoMomento = (a, b) => !!a && !!b && Date.parse(a) === Date.parse(b);
     /** Adotta come base la versione del cloud appena vista (dopo un download, o quando sono già uguali). */
     function adottaBase(cloud) {
@@ -930,6 +995,12 @@
         return leggiCloud().then(({ cloud, azzerato, segnoUpdatedAt }) => {
             // Il salvataggio si rilegge DOPO aver guardato il cloud: se il
             // profilo è stato azzerato altrove, leggiCloud l'ha appena tolto.
+            if (!azzerato && !SaveManager.hasSave()) {
+                // Il salvataggio di qui era di un altro account e leggiCloud l'ha messo da parte: niente da caricare.
+                const e = new Error('Il salvataggio di questo dispositivo era di un altro account: non lo carico su questo.');
+                e.code = 'SALVATAGGIO_DI_ALTRO_ACCOUNT';
+                throw e;
+            }
             if (azzerato || !SaveManager.hasSave()) {
                 const e = new Error('Il profilo è stato azzerato da un altro dispositivo: non ricarico i dati di prima.');
                 e.code = 'PROFILO_AZZERATO';
@@ -983,7 +1054,7 @@
         const nuovo = new Date().toISOString();
         data.ultimoDispositivo = { id: idDispositivo(), nome: nomeDispositivo(), quando: nuovo };
         const lastSaved = base && base.player ? base.player.lastSaved : null;
-        const riuscita = () => { scriviBase({ updatedAt: nuovo, inVolo: null, lastSaved: lastSaved }); return data; };
+        const riuscita = () => { scriviBase({ updatedAt: nuovo, inVolo: null, lastSaved: lastSaved }); assegnaProprietario(); return data; };
         const conflitto = () => {
             const e = new Error('Il cloud è stato aggiornato da un altro dispositivo nel frattempo: non lo sovrascrivo.');
             e.code = 'CLOUD_CAMBIATO';
@@ -1043,6 +1114,8 @@
     function leggiCloud() {
         if (!available) return rejectUnavailable();
         if (!cachedUser) return Promise.reject(new Error('Devi accedere prima di sincronizzare.'));
+        // Il salvataggio di un altro account non si confronta e non si carica MAI: si mette da parte prima di tutto.
+        mettiDaParteSeDiAltri();
         return client.from('saves').select('data, updated_at').eq('user_id', cachedUser.id).maybeSingle()
             .then(({ data, error }) => {
                 if (error) throw error;
@@ -1095,6 +1168,7 @@
             const applicato = SaveManager.applyExternalSave(data, { mantieniData: true });
             // Da qui questo dispositivo è allineato a QUESTA versione del cloud.
             adottaBase(cloud);
+            assegnaProprietario();
             return applicato;
         });
     }
@@ -1256,6 +1330,8 @@
         risolviConflittoCloud: risolviConflittoCloud,
         /** La copia del salvataggio di questo dispositivo messa da parte dall'ultimo conflitto, o null. */
         copiaDivergente: copiaDivergente,
+        copieDiAltriAccount: copieDiAltriAccount,
+        proprietarioLocale: proprietarioLocale,
         ultimoDispositivo: ultimoDispositivo,
         scartaCopiaDivergente: scartaCopiaDivergente,
         conservaCopiaDi: conservaCopiaDi,
