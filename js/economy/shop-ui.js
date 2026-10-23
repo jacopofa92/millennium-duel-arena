@@ -504,7 +504,8 @@
             secStarter.grid.innerHTML = '';
             secStructure.grid.innerHTML = '';
             ShopCatalog.mazziInVendita().forEach((deck) => {
-                const riacquistoAdmin = deck.posseduto && adminPuoRiacquistareMazzi();
+                // Un mazzo gratuito si prende UNA volta sola, anche per l'amministratore.
+                const riacquistoAdmin = deck.posseduto && adminPuoRiacquistareMazzi() && !deck.gratis;
                 const griglia = deck.kind === 'structure' ? secStructure.grid : secStarter.grid;
                 const item = el('div', 'shop-item deck-box'
                     + (deck.posseduto ? ' owned' : '')
@@ -556,7 +557,7 @@
                         // — addOwnedPack non aggiunge il duplicato, ma le
                         // Stelle e i Crediti sarebbero comunque spesi.
                         const giaPosseduto = SaveManager.ownsPack(deck.packId);
-                        const puoRiacquistare = giaPosseduto && adminPuoRiacquistareMazzi();
+                        const puoRiacquistare = giaPosseduto && adminPuoRiacquistareMazzi() && !deck.gratis;
                         if (giaPosseduto && !puoRiacquistare) {
                             // Niente messaggio da inventare: basta
                             // ridisegnare, e il mazzo si presenta come
@@ -593,7 +594,13 @@
                         refresh();
                     };
                     const base = { starChips: deck.costo.starChips, credits: deck.costo.credits };
-                    if (!deck.costo.richiedeExtra) {
+                    if (deck.gratis) {
+                        // Nessun costo: un solo pulsante che dice cosa succede (e che e' una volta sola).
+                        const prendi = el('button', 'buy-btn', '🎁 Gratis — una sola volta');
+                        prendi.type = 'button';
+                        prendi.onclick = () => compra({});
+                        riga.appendChild(prendi);
+                    } else if (!deck.costo.richiedeExtra) {
                         riga.appendChild(pulsanteComposto(base, '', false, compra));
                     } else {
                         // Quando il tipo lo chiede (extraDalNumero) servono
@@ -624,7 +631,7 @@
             const pack = ShopCatalog.mazzoCompleto(deck.packId);
             if (!pack) return;
             pullTitle.textContent = deck.nome;
-            pullSub.textContent = `${deck.carte} carte · costa ${deck.costo.starChips} ⭐`
+            pullSub.textContent = `${deck.carte} carte · ${deck.gratis ? 'gratis, una sola volta' : 'costa ' + deck.costo.starChips + ' ⭐'}`
                 + (deck.posseduto ? ' · già tuo' : '');
             pullGrid.innerHTML = '';
             [

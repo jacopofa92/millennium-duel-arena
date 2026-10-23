@@ -437,6 +437,7 @@ const starterStructureDeckDatabase = [
         // esattamente il comportamento voluto.
         packId: 'starter_ww1_regio_esercito',
         kind: 'starter',
+        gratis: true, // i mazzi della Grande Guerra sono gratuiti e si prendono una volta sola (vedi shop-catalog.js)
         name: 'Starter Deck: Regio Esercito (WW1)',
         year: 1918,
         description: 'Fanteria, Alpini e Arditi tengono la linea mentre la Squadriglia degli Assi domina il cielo, con Francesco Baracca a guidarla.',
@@ -504,6 +505,7 @@ const starterStructureDeckDatabase = [
         // Tipi condivisi coi reparti italiani.
         packId: 'starter_ww1_kuk',
         kind: 'starter',
+        gratis: true,
         name: 'Starter Deck: k.u.k. Armee (WW1)',
         year: 1917,
         description: 'Kaiserjäger e Landwehr trincerati nelle caverne del Carso, i mortai Skoda a martellare le linee e Brumowski a spazzare il cielo.',
@@ -1070,6 +1072,7 @@ const starterStructureDeckDatabase = [
     {
         packId: 'ww1_regio_esercito',
         kind: 'structure',
+        gratis: true,
         name: 'Regio Esercito (Grande Guerra)',
         year: 1918,
         coverCardId: 1205, // Armando Diaz, Duca della Vittoria

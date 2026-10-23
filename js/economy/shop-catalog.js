@@ -206,6 +206,8 @@
         const posseduti = window.SaveManager ? SaveManager.getOwnedPacks() : [];
         return elenco.filter((d) => d.kind === kind
             && posseduti.indexOf(d.packId) !== -1
+            // I mazzi GRATUITI (Grande Guerra) non sono acquisti: non devono rincarare lo scaffale.
+            && !d.gratis
             // Lo Starter Yugi viene assegnato alla creazione del profilo:
             // non e' un acquisto e non deve rincarare il primo prodotto
             // scelto davvero dal giocatore. Contarlo faceva partire lo
@@ -586,7 +588,12 @@
             // Costo composto e crescente — vedi costoMazzo qui sopra.
             // Uno Structure parte più caro di uno Starter: è più
             // specializzato e più utile a costruire un mazzo vero.
-            costo: costoMazzo(deck.kind),
+            // Un mazzo `gratis` (Grande Guerra) non costa niente e non chiede carte speciali; si prende UNA volta sola
+            // (posseduto) e non fa salire il prezzo degli altri (vedi possedutiDelTipo).
+            gratis: !!deck.gratis,
+            costo: deck.gratis
+                ? { starChips: 0, credits: 0, richiedeExtra: false, extraQuantita: 0, extraValute: [], giaPosseduti: 0 }
+                : costoMazzo(deck.kind),
             // SaveManager.ownsPack, non l'elenco grezzo: è l'unica
             // risposta a "il giocatore ce l'ha già?", la stessa che usa
             // Creazione Deck per decidere se un mazzo si può clonare. Le

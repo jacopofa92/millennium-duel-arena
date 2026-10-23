@@ -37,7 +37,10 @@ const MpPassoComune = (function () {
     /** Versione del protocollo deterministico scambiata insieme al mazzo. */
     const VERSIONE_PROTOCOLLO = 2;
     /** Quanto aspettare prima di dichiarare incompatibile/non raggiungibile l'altro client. */
-    const ATTESA_MAZZO_MS = 15000;
+    // 45 s e non 15: il mazzo dell'altro arriva solo quando il SUO telefono ha finito di caricare il duello, e su un
+    // telefono lento (cache da aggiornare dopo un rilascio, WebGL che parte) 15 s non bastavano — il giocatore leggeva
+    // "versione non compatibile" quando l'altro telefono era semplicemente ancora in caricamento.
+    const ATTESA_MAZZO_MS = 45000;
     /** Un lotto più grande di così si spezza: il relay accetta messaggi fino a 64 KB. */
     const LOTTO_MAX_CARATTERI = 40000;
 
@@ -148,7 +151,9 @@ const MpPassoComune = (function () {
                 rifiuta(new Error(motivo));
             };
             timerAttesaMazzo = setTimeout(() => {
-                if (rifiutaAttesaMazzo) rifiutaAttesaMazzo('L\'avversario non ha confermato una versione Multiplayer compatibile');
+                // Non e' un'incompatibilita' provata: l'altro client non ha risposto. Il messaggio lo dice, cosi' non si
+                // cerca un problema di versione dove c'e' solo un telefono lento o una connessione caduta.
+                if (rifiutaAttesaMazzo) rifiutaAttesaMazzo('L\'avversario non ha ancora caricato il duello (telefono lento o connessione persa). Torna al menu e riprova.');
             }, ATTESA_MAZZO_MS);
         });
     }

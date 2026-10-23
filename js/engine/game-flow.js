@@ -446,7 +446,9 @@ function initGame(opzioniAvvio) {
             avviaDuelloPreparato();
         }, (err) => {
             console.error('Duello Multiplayer non avviato:', err);
-            mostraErroreProtocolloMultiplayer('Impossibile avviare il duello: l\'avversario o il server usa una versione non compatibile.');
+            // Il motivo VERO, se lo sappiamo: prima ogni guasto (anche solo un telefono lento) diventava "versione non
+            // compatibile" e non si capiva dove cercare.
+            mostraErroreProtocolloMultiplayer(err && err.message ? err.message : 'Impossibile avviare il duello: l\'avversario o il server usa una versione non compatibile.');
         });
         return;
     }
