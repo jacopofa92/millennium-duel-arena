@@ -25,6 +25,18 @@ module.exports = {
             await new Promise((s) => setTimeout(s, 1500));
             return { durante, dopo: FxWebgl.attivi(), nascosta: bers.style.visibility === 'hidden' };
         });
+        // Posizione scelta: barriera in Difesa e carica in Attacco al posto delle icone sulla carta (spade/scudo).
+        for (const pos of ['defense', 'attack']) {
+            const p = await page.evaluate(async (pos) => {
+                showPositionEffect('player', 2, pos);
+                await new Promise((s) => setTimeout(s, 300));
+                const durante = FxWebgl.attivi();
+                const icone = window.IconePosizione ? IconePosizione.attive() : 0;
+                await new Promise((s) => setTimeout(s, 1200));
+                return { durante, icone, dopo: FxWebgl.attivi() };
+            }, pos);
+            assert(p.durante > 0 && p.icone === 0 && p.dopo === 0, `Posizione ${pos}: effetto WebGL e nessuna icona sulla carta: ${JSON.stringify(p)}`);
+        }
         assert(r.durante > 0, `La barriera e' in corso: ${JSON.stringify(r)}`);
         assert(r.dopo === 0 && !r.nascosta, `A fine effetto il motore torna a riposo e la carta e' intatta: ${JSON.stringify(r)}`);
     }

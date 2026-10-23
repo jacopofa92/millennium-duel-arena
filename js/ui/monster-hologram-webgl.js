@@ -60,9 +60,9 @@ vec4 campiona(vec2 uv){
   vec2 s=vec2(min(1.,uImgAsp/uAsp),min(1.,uAsp/uImgAsp));
   vec2 q=(uv-.5)/s+.5;
   vec2 e=min(q,1.-q);
-  float f=smoothstep(0.,.22,e.x)*smoothstep(0.,.22,e.y);
+  float f=smoothstep(0.,.14,e.x)*smoothstep(0.,.14,e.y);
   float r=length((q-.5)*2.);
-  f*=1.-smoothstep(.78,1.20,r);
+  f*=1.-smoothstep(.92,1.38,r);
   // Il soggetto (chiaro, saturo) a ridosso del bordo non va smussato: la sfumatura serve a nascondere lo SFONDO
   // (di solito scuro). Dove il pixel e' luminoso o colorato la sfumatura si attenua, e la testa resta intera.
   vec3 tx=texture2D(uTex,clamp(q,.002,.998)).rgb;
@@ -70,7 +70,7 @@ vec4 campiona(vec2 uv){
   float sat=max(tx.r,max(tx.g,tx.b))-min(tx.r,min(tx.g,tx.b));
   float soggetto=max(smoothstep(.38,.72,lum),smoothstep(.30,.60,sat)*.7);
   float inDentro=step(0.,q.x)*step(q.x,1.)*step(0.,q.y)*step(q.y,1.);
-  f=mix(f,max(f,.9),soggetto*.8)*inDentro;
+  f=mix(f,max(f,.95),soggetto*.9)*inDentro;
   if(f<=0.) return vec4(0.);
   return vec4(tx,f);
 }

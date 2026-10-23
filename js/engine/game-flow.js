@@ -2086,6 +2086,14 @@ function showPositionEffect(owner, index, position) {
         if (window.FX) {
             FX.playSummonShockwave(cardEl);
         }
+        // Con gli effetti WebGL niente icone sulla carta: barriera esagonale in Difesa, carica luminosa in Attacco
+        // (scelta dell'utente: spade e scudo animati sulla carta erano "cringe"). Dove manca, le icone di sempre.
+        const nomeFx = position === 'defense' ? 'playPositionDefense' : 'playPositionAttack';
+        if (window.FX && typeof FX.backendFor === 'function' && FX.backendFor(nomeFx) === 'webgl') {
+            FX[nomeFx](cardEl, owner === 'player' ? 'up' : 'down');
+            setTimeout(() => cardEl.classList.remove(animClass), 700);
+            return;
+        }
         // Spade che si incrociano / scudo che si forma, in WebGL, sopra la carta. Se non si puo', il vecchio distintivo.
         if (window.IconePosizione && IconePosizione.sullaCarta(cardEl, position)) {
             setTimeout(() => cardEl.classList.remove(animClass), 700);

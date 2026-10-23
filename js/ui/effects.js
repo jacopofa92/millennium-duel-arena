@@ -2663,6 +2663,10 @@
         playTributeSacrifice: viaBackend('playTributeSacrifice', playTributeSacrifice),
         playBattleClashEpic: viaBackend('playBattleClashEpic', playBattleClashEpic),
         playAttackBlocked: viaBackend('playAttackBlocked', playAttackBlocked),
+        // Posizione scelta per un mostro (barriera in Difesa, carica in Attacco): solo WebGL, senza base (chi chiama
+        // controlla backendFor e, se manca, usa le icone di sempre).
+        playPositionDefense: viaBackend('playPositionDefense', function () {}),
+        playPositionAttack: viaBackend('playPositionAttack', function () {}),
         playControlSwitch: viaBackend('playControlSwitch', playControlSwitch),
         // Spostamenti di carta fra zone. `playCardTravel` è il mattone
         // condiviso ed è esposto apposta: una zona nuova (bando, Extra

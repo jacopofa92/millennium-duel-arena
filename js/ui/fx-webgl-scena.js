@@ -1103,6 +1103,36 @@ float dado(vec2 q,float v){
     };
 
     /**
+     * Mostro messo in DIFESA: la stessa barriera esagonale dell'attacco respinto si forma attorno alla carta e svanisce.
+     * `lato` = 'up' se l'avversario sta sopra (il lampo d'incontro parte da quel lato).
+     */
+    imp.playPositionDefense = function (cardEl, lato) {
+        const r = cardEl ? rectDi(cardEl) : null; if (!r) return;
+        const c = cen(r);
+        const lato2 = Math.max(r.width, r.height);
+        const s = new Scena();
+        s.add(T.SHIELD, C.CIANO, 0, 0.8, [c.x, c.y, lato2 * 0.62, 0], lato === 'down' ? Math.PI / 2 : -Math.PI / 2);
+        s.add(T.RING, C.GHIACCIO, 0, 0.5, [c.x, c.y, lato2 * 0.8, 3]);
+        verifica(s);
+        breve(s, 0.9);
+    };
+
+    /** Mostro messo in ATTACCO: un lampo caldo, un'onda sul terreno e scintille che salgono verso l'avversario. */
+    imp.playPositionAttack = function (cardEl, lato) {
+        const r = cardEl ? rectDi(cardEl) : null; if (!r) return;
+        const c = cen(r);
+        const lato2 = Math.max(r.width, r.height);
+        const su = lato !== 'down';
+        const s = new Scena();
+        s.add(T.FLASH, C.ARANCIO, 0, 0.45, [c.x, c.y, lato2 * 0.9, 0]);
+        s.add(T.RING, C.ORO, 0, 0.5, [c.x, c.y, lato2 * 0.95, 4]);
+        // Le scintille salgono (gravita' negativa) verso la meta' campo dell'avversario.
+        for (let i = 0; i < 3; i++) s.add(T.BURST, C.CALDO, 0.04, 0.7, [c.x, c.y, 50 + i * 16, su ? -(120 + i * 24) : 120 + i * 24], 2 + i * 6.3);
+        verifica(s);
+        breve(s, 0.8);
+    };
+
+    /**
      * Distruzione in battaglia: ESPLOSIONE + DISINTEGRAZIONE. Il colpo è quello di prima — vampata grande
      * bianca e rossa, due onde d'urto, nucleo incandescente, fumo, due ondate di scintille, scossa piena —
      * e la carta trema per un istante. Poi cede: un fronte di fuoco la mangia dal basso verso l'alto e la
