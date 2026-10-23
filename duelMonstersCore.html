@@ -416,7 +416,7 @@
         }
         @keyframes cameraIntroZoomOut {
             0% {
-                transform: perspective(1500px) rotateX(var(--camera-intro-tilt)) scale(var(--camera-intro-scale)) translateY(4%);
+                transform: perspective(1500px) rotateX(var(--camera-intro-tilt)) scale(var(--camera-intro-scale)) translateY(var(--camera-intro-shift, 4%));
                 opacity: 0;
                 filter: brightness(1.3) blur(3px);
             }
@@ -2572,7 +2572,11 @@
                    leggersi, quindi ci si ferma qui: resta la telecamera
                    che scende, senza niente di tagliato ai bordi. */
                 --camera-intro-scale: 1;
-                --camera-intro-tilt: 28deg;
+                --camera-intro-tilt: 0deg;
+                /* Misurato sul telefono vero (411x750): anche con 28deg il campo partiva 142px più in basso e
+                   sbordava di 15px per lato (scrollWidth 426, scrollHeight 777), e si leggeva come uno scroll
+                   diagonale di una frazione di secondo. Qui solo dissolvenza: niente inclinazione né spostamento. */
+                --camera-intro-shift: 0%;
             }
         }
         .phase-step.clickable {
@@ -2716,6 +2720,35 @@
             background: rgba(10,10,13,.9);
         }
         .phase-step.active .step-num { color: #fff; border-color: color-mix(in srgb, var(--fase-accento) 70%, transparent); }
+        /* FRECCE DI SEQUENZA (richiesta dell'utente): una doppia freccia "››" nel colore del campo fra una fase e
+           la successiva, per dire che le fasi si percorrono in ordine. Quelle già percorse e quella che parte
+           dalla fase attiva sono accese (l'attiva ondeggia piano verso la prossima), le future restano spente.
+           Disegnate con una maschera, così prendono da sole --fase-accento di ogni arena. Per avere spazio le
+           fasi si staccano un po' di più, e il pulsante non ritaglia più ciò che sporge (il testo ha già il suo
+           ritaglio con i puntini). */
+        .phase-stepper { gap: clamp(12px, 1.7vw, 22px); }
+        .phase-step { overflow: visible; }
+        .phase-step::after {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 50%; right: auto; left: 100%;
+            width: clamp(12px, 1.7vw, 22px);
+            height: 12px;
+            transform: translateY(-50%);
+            background: var(--fase-accento);
+            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M1.5 1l4 4-4 4M6.5 1l4 4-4 4' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 11px 9px no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M1.5 1l4 4-4 4M6.5 1l4 4-4 4' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 11px 9px no-repeat;
+            opacity: .32;
+            pointer-events: none;
+        }
+        .phase-step.completed::after { opacity: .75; }
+        .phase-step.active::after { opacity: 1; filter: drop-shadow(0 0 4px color-mix(in srgb, var(--fase-accento) 70%, transparent)); animation: faseFrecciaAvanti 1.5s ease-in-out infinite; }
+        @keyframes faseFrecciaAvanti {
+            0%, 100% { transform: translate(0, -50%); }
+            50% { transform: translate(3px, -50%); }
+        }
+        @media (prefers-reduced-motion: reduce) { .phase-step.active::after { animation: none; } }
         /* Promemoria Tributo: banda ben visibile in alto, non un semplice
            messaggio nel log — resta a schermo finché la selezione non è
            completa, con un contatore che segna quanti mostri mancano. */
@@ -4252,7 +4285,7 @@
                distribuiti su tutta la fila non arriverebbero al vicino, e la
                linea sottile della barra (.phase-stepper::before) li collega
                già tutti. */
-            .phase-step::after { display: none; }
+            /* (Le frecce di sequenza fra le fasi, .phase-step::after, restano anche qui: vedi più in alto.) */
             /* Una sola forma per pulsante: qui il pulsante è grande poco più
                del quadratino dell'icona, e i due fondi uno dentro l'altro si
                leggevano come un doppio riquadro. Il pulsante resta l'area da
@@ -4437,8 +4470,7 @@
            mentre ORA/VAI chiariscono lo stato e l'azione senza ricreare le
            vecchie pillole. Il colore deriva dal field tramite --fase-accento;
            nessuno stato modifica ingombro o posizione. */
-        .phase-stepper::before,
-        .phase-step::after {
+        .phase-stepper::before {
             display: none;
         }
         .phase-stepper .phase-step,

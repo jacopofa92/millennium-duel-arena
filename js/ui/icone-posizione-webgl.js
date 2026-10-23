@@ -56,6 +56,37 @@ vec4 ruota(vec2 p,vec2 c,float ang,float s,vec3 ac,vec3 bag){
   return spada(q,ac,bag);
 }
 
+// Distanza (px) da un rettangolo centrato in c con mezze misure h.
+float scatola(vec2 p,vec2 c,vec2 h){vec2 q=abs(p-c)-h;return length(max(q,0.))+min(max(q.x,q.y),0.);}
+
+// La spada NEON delle Spade Rivelatrici (stessa di quella che cade nell'animazione, js/ui/fx-webgl.js):
+// pomolo, impugnatura, guardia con le punte alzate e lama a tubo di luce verde che si chiude a punta.
+// Coordinate in pixel del contesto (64 px = meta' del quadrato), origine al centro, y verso il basso; tutte
+// le misure derivano da W (mezza larghezza della lama) e alt (altezza), cosi' resta proporzionata.
+vec4 spadaNeon(vec2 l,float alt,float W,float respiro){
+  float v=(l.y/alt)+.5;
+  float ax=abs(l.x);
+  float dPom=length(vec2(l.x,l.y-(.032-.5)*alt))-W*.66;
+  float dImp=scatola(l,vec2(0.,(.115-.5)*alt),vec2(W*.3,.058*alt));
+  float curva=pow(ax/(W*2.1),2.)*alt*.035;
+  float dGua=scatola(vec2(l.x,l.y+curva),vec2(0.,(.205-.5)*alt),vec2(W*2.1,.02*alt));
+  float vb=clamp((v-.228)/.772,0.,1.);
+  float hw=W*(1.-pow(vb,2.6));
+  float dLam=max(max(ax-hw,(.228-v)*alt),(v-1.)*alt);
+  float d=min(min(dPom,dImp),min(dGua,dLam));
+  float corpo=1.-smoothstep(-1.,.8,d);
+  float bordo=exp(-pow((d+1.1)*.62,2.));
+  float alone=exp(-max(d,0.)/(W*.75))*.62+exp(-max(d,0.)/(W*3.2))*.3;
+  float inLama=step(.236,v)*(1.-smoothstep(-W*.2,W*.1,d));
+  float scan=exp(-ax*ax/(W*W*.045))*inLama*(.55+.45*sin(v*15.-t*7.));
+  vec2 gp=l-vec2(0.,(.205-.5)*alt);
+  float gemma=exp(-dot(gp,gp)/(W*W*.5))*1.3;
+  vec3 neon=vec3(.22,1.,.45);
+  vec3 lum=vec3(.01,.2,.07)*corpo+neon*bordo*1.7*respiro+vec3(.7,1.,.8)*scan*.75+neon*alone*respiro+vec3(.8,1.,.9)*gemma;
+  float al=clamp(corpo*.85+bordo+alone*.75+gemma*.6,0.,1.);
+  return vec4(lum,al);
+}
+
 void main(){
   vec2 p=(gl_FragCoord.xy/r)*2.-1.;
   vec4 o=vec4(0.);
@@ -185,12 +216,13 @@ void main(){
       vec3 col=base*fill*(.55+.35*pul)+vec3(1.,.85,.5)*edge+vec3(1.,.8,.45)*beam+vec3(1.,.4,.2)*glow*(1.-fill);
       o=vec4(col,clamp(fill+edge+beam*.7+glow*.5,0.,1.))*fuori;
     } else {
-      // SPADA DI LUCE infilzata (marchio fisso di Spade Rivelatrici): punta in basso, verde-bianca, che respira.
-      vec2 q=vec2(p.x,-p.y)/1.9+vec2(0.,.135);
-      vec4 sw=spada(q,vec3(.86,1.,.9),vec3(.3,1.,.5));
-      float res=.84+.16*sin(t*3.3);
-      float dax=exp(-p.x*p.x*9.)*.22*res;
-      o=sw*res+vec4(vec3(.3,1.,.5)*dax,dax*.6)*(1.-sw.a);
+      // SPADA DI LUCE infilzata (marchio fisso di Spade Rivelatrici): la spada neon verde dell'animazione,
+      // punta in basso, che respira. 64 = meta' del quadrato in pixel; 116 di altezza lascia un margine.
+      vec2 l=vec2(p.x,-p.y)*64.;
+      o=spadaNeon(l,120.,4.4,.86+.14*sin(t*4.2));
+      // Il bagliore si spegne prima dei bordi dell'area di disegno: senza, si vedeva il rettangolo del canvas.
+      // (Si ritaglia la fascia centrale del quadrato: |p.x| arriva a circa .4, |p.y| a 1.)
+      o*=(1.-smoothstep(.2,.4,abs(p.x)))*(1.-smoothstep(.84,.99,abs(p.y)));
     }
   }
   gl_FragColor=o;

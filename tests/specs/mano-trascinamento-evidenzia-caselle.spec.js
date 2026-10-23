@@ -15,9 +15,16 @@ module.exports = {
             const r = document.querySelector('#playerHand .card').getBoundingClientRect();
             return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
         });
+        // Box info aperto da un tocco precedente: deve chiudersi quando il trascinamento parte davvero.
+        await t.evaluate(() => updateCardInfoPanel(gameState.playerHand[0], { sourceType: 'hand', sourceOwner: 'player', isFaceDown: false }));
+        t.assert(await t.evaluate(() => document.getElementById('cardInfoPanel').classList.contains('visible')),
+            'Prerequisito: il box info deve essere aperto');
         await t.page.mouse.move(c.x, c.y);
         await t.page.mouse.down();
         await t.page.mouse.move(c.x + 40, c.y - 120, { steps: 6 });
+        await t.page.waitForTimeout(300);
+        t.assert(!(await t.evaluate(() => document.getElementById('cardInfoPanel').classList.contains('visible'))),
+            'Durante il trascinamento il box info deve essere chiuso');
         const durante = await t.evaluate(() => ({
             evidenziate: document.querySelectorAll('.field-slot.action-highlight').length,
             anteprima: !!document.querySelector('.drag-preview')
