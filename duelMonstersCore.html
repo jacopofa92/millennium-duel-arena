@@ -4431,6 +4431,10 @@
            parte in alto, poco sotto Abbandona (il HUD arriva a ~59px su un 411x750 misurato sul telefono),
            e il suo tetto d'altezza lo tiene sopra la mia fila di Mostri (che comincia a ~55% dello schermo);
            se il testo è più lungo il pannello scorre al suo interno. */
+        /* Il box info sta DENTRO .battlefield-side.right (z-index 1), mentre le carte delle due mani hanno 5:
+           aperto, il suo bordo finiva sotto l'ultima carta della mano avversaria. Finché è visibile, il
+           contenitore che lo ospita passa sopra le mani (resta comunque sotto modali e popover, che stanno fuori). */
+        .battlefield-side:has(.card-info-panel.visible) { z-index: 90; }
         @media (max-width: 900px) and (orientation: portrait) {
             .card-info-panel {
                 top: calc(var(--duelist-box-offset) + 58px);
