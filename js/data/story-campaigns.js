@@ -3133,7 +3133,9 @@ const storyCampaignsDatabase = [
             { id: 'freedom-riflesso', dalla: 'tappe', nuove: ['freedom-4-riflesso'], prima: 'freedom-4-scena' },
             { id: 'freedom-incoronazione', dalla: 'tappe', nuove: ['freedom-4-incoronazione'], prima: 'freedom-4-giacobbo' }
         ],
-        premioFinale: { credits: 2500, starChips: 4, locatorCards: 4, millenniumCards: 2 }
+        // Premio ridotto su richiesta dell'utente: 1 Stella e 700 Crediti (prima 2500 / 4 / 4 Carte Locazione / 2 Carte
+        // del Millennio). A Normale e Difficile vale il moltiplicatore del livello, come per ogni campagna.
+        premioFinale: { credits: 700, starChips: 1 }
     },
 
     // Le campagne ancora da scrivere. Dichiarate qui, senza capitoli: la
