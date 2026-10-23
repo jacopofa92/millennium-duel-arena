@@ -1214,6 +1214,50 @@ float dado(vec2 q,float v){
     };
 
     /**
+     * Accompagnamento WebGL della carta che compare a centro schermo (attivazione di Magia/Trappola/effetto): un lampo
+     * del colore del tipo, due onde che si allargano attorno alla carta e scintille. Non sostituisce la carta (quella e'
+     * del DOM e dura ACTIVATE_CENTER_DURATION_MS, da cui dipendono i chiamanti): le sta dietro come un'aura.
+     */
+    imp.playActivationAura = function (card) {
+        if (!card) return;
+        const W = innerWidth; const H = innerHeight;
+        const w = Math.max(160, Math.min(260, W * 0.22)); const h = w / 0.69;
+        const x = W / 2; const y = H / 2;
+        const col = card.type === 'trap' ? C.MAGENTA : card.type === 'spell' ? C.VERDE : C.ORO;
+        const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 1.9, [0, 0, 0.4, 0], 3);
+        s.add(T.FLASH, col, 0.12, 0.55, [x, y, w * 1.5, 0]);
+        s.add(T.RING, col, 0.12, 0.7, [x, y, h * 0.75, 4]);
+        s.add(T.RING, C.BIANCO, 0.3, 0.7, [x, y, h * 0.95, 2]);
+        for (let i = 0; i < 3; i++) s.add(T.BURST, col, 0.14, 0.8, [x, y, h * 0.55 + i * 22, 30 + i * 8], 1.7 + i * 4.4);
+        verifica(s);
+        breve(s, 2.0);
+    };
+
+    /**
+     * Un Link della Catena: all'AGGIUNTA un'energia corre dal Link precedente al nuovo (rossa se e' dell'avversario,
+     * azzurra se e' tua); alla RISOLUZIONE il Link si accende con un lampo oro e un anello.
+     */
+    imp.playChainLink = function (fromEl, toEl, tipo, owner) {
+        const rt = toEl ? rectDi(toEl) : null; if (!rt) return;
+        const b = cen(rt); const risolve = tipo === 'risolve';
+        const col = risolve ? C.ORO : (owner === 'bot' ? C.ROSSO : C.CIANO);
+        const s = new Scena();
+        const rf = !risolve && fromEl ? rectDi(fromEl) : null;
+        if (rf) {
+            const a = cen(rf);
+            s.add(T.LINE, col, 0, 0.5, [a.x, a.y, b.x, b.y], 5);
+            s.add(T.ORB, col, 0.04, 0.4, [a.x, a.y, b.x, b.y], 7);
+        }
+        const t0 = rf ? 0.3 : 0;
+        s.add(T.RING, col, t0, 0.45, [b.x, b.y, rt.width * 0.9, 3]);
+        s.add(T.FLASH, risolve ? C.BIANCO : col, t0, 0.35, [b.x, b.y, rt.width * 0.9, 0]);
+        if (risolve) s.add(T.BURST, C.ORO, 0, 0.7, [b.x, b.y, 90, 30], 6.1);
+        verifica(s);
+        breve(s, 1.0);
+    };
+
+    /**
      * Mostro messo in DIFESA: la stessa barriera esagonale dell'attacco respinto si forma attorno alla carta e svanisce.
      * `lato` = 'up' se l'avversario sta sopra (il lampo d'incontro parte da quel lato).
      */

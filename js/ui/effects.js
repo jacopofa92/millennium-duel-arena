@@ -2665,6 +2665,8 @@
         playAttackBlocked: viaBackend('playAttackBlocked', playAttackBlocked),
         // Posizione scelta per un mostro (barriera in Difesa, carica in Attacco): solo WebGL, senza base (chi chiama
         // controlla backendFor e, se manca, usa le icone di sempre).
+        playActivationAura: viaBackend('playActivationAura', function () {}),
+        playChainLink: viaBackend('playChainLink', function () {}),
         playPositionDefense: viaBackend('playPositionDefense', function () {}),
         playPositionAttack: viaBackend('playPositionAttack', function () {}),
         playControlSwitch: viaBackend('playControlSwitch', playControlSwitch),
@@ -2731,6 +2733,8 @@
             const alCentro = viaBackend('playCardActivateCenterScreen', playCardActivateCenterScreen);
             return function (card) {
                 alCentro(card);
+                // Aura WebGL dietro la carta (solo se c'e' il backend: altrimenti la funzione e' vuota).
+                if (card && window.FX && typeof FX.playActivationAura === 'function') FX.playActivationAura(card);
                 if (!card || !card.uid) return;
                 // Il ritardo serve: una Trappola coperta o una Magia
                 // attivata da un Set si SCOPRONO in questo stesso istante,
