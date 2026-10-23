@@ -232,10 +232,15 @@ void main(){
             gl.viewport(0, 0, LATO, LATO); gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
             ['r', 't', 'modo', 'fase'].forEach((n) => { u[n] = gl.getUniformLocation(prog, n); });
             gl.uniform2f(u.r, LATO, LATO);
-            off.addEventListener('webglcontextlost', (e) => { e.preventDefault(); pronto = false; fermaCiclo(); });
+            // Contesto perso (su telefono succede quando la pagina ne tiene aperti tanti): si torna a "da
+            // preparare", non a "non disponibile". Con `false` fisso ogni spada fissa successiva ricadeva
+            // per sempre sulle forme CSS vecchie; ora il prossimo montaggio ne crea uno nuovo.
+            off.addEventListener('webglcontextlost', (e) => { e.preventDefault(); pronto = null; fermaCiclo(); });
             pronto = true;
         } catch (e) { pronto = false; }
-        return pronto;
+        // Un tentativo fallito per mancanza di contesto (limite raggiunto) si riprova al montaggio dopo.
+        if (!pronto && !gl) pronto = null;
+        return !!pronto;
     }
 
     function disegna(ic, t) {
