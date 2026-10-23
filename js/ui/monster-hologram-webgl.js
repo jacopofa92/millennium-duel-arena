@@ -48,12 +48,21 @@ uniform float uPx;       // pixel CSS per pixel del canvas (le scanline sono in 
 
 float h(float n){return fract(sin(n*91.3458)*47453.5453);}
 
-// L'illustrazione 'contain' nel riquadro (come object-fit: contain): rgb + quanto il punto sta dentro l'immagine.
+// L'illustrazione 'contain' nel riquadro (come object-fit: contain): rgb + QUANTO il punto è visibile.
+// I BORDI NON SI DEVONO VEDERE (le illustrazioni sono rettangoli pieni, e non se ne possono rifare senza bordo):
+// la visibilità non è un sì/no al limite dell'immagine ma una SFUMATURA calcolata sull'immagine stessa —
+//   1) ogni lato sfuma per il ~26% verso l'esterno, e agli angoli i due effetti si MOLTIPLICANO: lì si perde di più;
+//   2) un ovale centrato sull'immagine mangia del tutto gli angoli, che sono la parte più dura da nascondere.
+// Il taglio netto "fuori dall'immagine" (che dava il bordo seghettato) non esiste più: si arriva a zero PRIMA.
 vec4 campiona(vec2 uv){
   vec2 s=vec2(min(1.,uImgAsp/uAsp),min(1.,uAsp/uImgAsp));
   vec2 q=(uv-.5)/s+.5;
-  if(q.x<0.||q.x>1.||q.y<0.||q.y>1.) return vec4(0.);
-  return vec4(texture2D(uTex,q).rgb,1.);
+  vec2 e=min(q,1.-q);
+  float f=smoothstep(0.,.26,e.x)*smoothstep(0.,.26,e.y);
+  float r=length((q-.5)*2.);
+  f*=1.-smoothstep(.70,1.10,r);
+  if(f<=0.) return vec4(0.);
+  return vec4(texture2D(uTex,clamp(q,.002,.998)).rgb,f);
 }
 
 void main(){
@@ -86,10 +95,12 @@ void main(){
   float coperto=max(cov,cb*.6);
 
   // La maschera: il centro pieno, i bordi che si perdono nell'aria (la stessa dell'ologramma CSS).
-  float d=length((uv-vec2(.5,.46))/vec2(.56,.64));
-  float m=1.-smoothstep(.44,1.,d);
+  // (La sfumatura vera dei bordi sta in campiona(); questa maschera sul riquadro resta solo per far svanire anche la
+  // base dell'ologramma e il galleggiamento verso l'aria, ed è più larga di prima: non fa più da bordo.)
+  float d=length((uv-vec2(.5,.46))/vec2(.62,.70));
+  float m=1.-smoothstep(.5,1.,d);
   m=m*(.6+.4*m);
-  float alpha=coperto*m*.88;
+  float alpha=coperto*m*.9;
 
   // Scanline fini che scorrono, e una banda di luce che sale attraversando la figura.
   float yPx=gl_FragCoord.y*uPx;
@@ -110,7 +121,9 @@ void main(){
   // LA BASE: il fascio che attacca la figura alla carta.
   float bx=(uv.x-.5)/.43;
   float by=(1.-uv.y)/.26;
-  float base=exp(-bx*bx*1.6)*exp(-by*by*1.3)*.62*(.75+.25*sin(uT*2.4+uSeed));
+  // La luce è al massimo in basso: senza una dissolvenza propria si taglierebbe in una riga netta sul bordo del riquadro.
+  float base=exp(-bx*bx*1.6)*exp(-by*by*1.3)*.62*(.75+.25*sin(uT*2.4+uSeed))
+            *smoothstep(1.,.84,uv.y)*smoothstep(0.,.1,uv.x)*smoothstep(1.,.9,uv.x);
   vec3 bc=vec3(.47,.84,1.);
 
   float aa=clamp(alpha+base*.9+linea*m,0.,1.)*uAlpha;
