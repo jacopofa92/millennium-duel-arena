@@ -49,7 +49,8 @@ const characterDeckDatabase = {
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 620, qty: 1 }, // Cerchio Incantatore
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 875, qty: 1 }, // Libro della Luna
                 { id: 35, qty: 1 }, // Mostro Resuscitato
                 { id: 36, qty: 1 }, // Anfora dell'Avidità
                 { id: 127, qty: 1 }, // Libro di Arti Ascose
@@ -168,7 +169,8 @@ const characterDeckDatabase = {
                 { id: 444, qty: 2 }, // Zanna d'Argento
                 { id: 8, qty: 2 }, // Spada Rivelatrice
                 { id: 363, qty: 1 }, // Cappelli Magici
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 875, qty: 1 }, // Libro della Luna
                 { id: 386, qty: 1 }, // Moltiplicazione
                 { id: 35, qty: 1 }, // Mostro Resuscitato
                 { id: 36, qty: 1 }, // Anfora dell'Avidità
@@ -432,7 +434,8 @@ const characterDeckDatabase = {
                 { id: 83, qty: 1 }, // Spada dell'Alligatore
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
                 { id: 232, qty: 1 }, // Scatola Fatata
                 { id: 445, qty: 1 }, // Dadi del Teschio
                 { id: 333, qty: 1 }, // Kunai con Catena
@@ -565,7 +568,8 @@ const characterDeckDatabase = {
                 { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 383, qty: 1 }, // Muro a Specchio
                 { id: 819, qty: 1 }, // Scudo da Braccio Magico
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 232, qty: 1 }, // Scatola Fatata
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
@@ -678,7 +682,8 @@ const characterDeckDatabase = {
                 { id: 206, qty: 1 }, // Cattura-Draghi
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 232, qty: 1 }, // Scatola Fatata
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
@@ -785,7 +790,8 @@ const characterDeckDatabase = {
                 { id: 147, qty: 1 }, // Cambiare Idea
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 819, qty: 1 }, // Scudo da Braccio Magico
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
@@ -902,7 +908,8 @@ const characterDeckDatabase = {
                 { id: 130, qty: 1 }, // Controllo della Mente
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 819, qty: 1 }, // Scudo da Braccio Magico
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
@@ -1134,7 +1141,8 @@ const characterDeckDatabase = {
                 { id: 248, qty: 1 }, // Kamakiri Volante #1
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 622, qty: 1 }, // Cambio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 309, qty: 1 }, // Armatura Insetto con Cannone Laser
@@ -1242,7 +1250,8 @@ const characterDeckDatabase = {
                 { id: 561, qty: 1 }, // Uraby
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 611, qty: 1 }, // Lancia Incantata
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 812, qty: 1 }, // Mondo Giurassico
@@ -1354,7 +1363,8 @@ const characterDeckDatabase = {
                 { id: 137, qty: 1 }, // Soldato-Cannone
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 148, qty: 1 }, // Scudo Giallo del Desiderio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 358, qty: 1 }, // Fabbrica di Macchine
@@ -1591,7 +1601,8 @@ const characterDeckDatabase = {
                 { id: 136, qty: 1 }, // Richiamo del Posseduto
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 622, qty: 1 }, // Cambio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 750, qty: 1 }, // Gabbia d'Acciaio dell'Incubo
@@ -1825,7 +1836,8 @@ const characterDeckDatabase = {
                 { id: 576, qty: 1 }, // Antico Telescopio
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 232, qty: 1 }, // Scatola Fatata
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 151, qty: 1 }, // Coro del Santuario
@@ -1938,7 +1950,8 @@ const characterDeckDatabase = {
                 { id: 466, qty: 1 }, // L'Occhio della Verità
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 611, qty: 1 }, // Lancia Incantata
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
@@ -2053,7 +2066,8 @@ const characterDeckDatabase = {
                 { id: 127, qty: 1 }, // Libro di Arti Ascose
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
@@ -2166,7 +2180,8 @@ const characterDeckDatabase = {
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 148, qty: 1 }, // Scudo Giallo del Desiderio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 333, qty: 1 }, // Kunai con Catena
                 { id: 439, qty: 1 }, // Magia Ombra
@@ -2284,7 +2299,8 @@ const characterDeckDatabase = {
                 { id: 631, qty: 1 }, // Megamorfosi
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
@@ -2406,7 +2422,8 @@ const characterDeckDatabase = {
                 { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 35, qty: 1 }, // Mostro Resuscitato
                 { id: 36, qty: 1 }, // Anfora dell'Avidità
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
                 { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 151, qty: 1 }, // Coro del Santuario
                 { id: 143, qty: 1 }, // Mura del Castello
@@ -2508,7 +2525,8 @@ const characterDeckDatabase = {
                 { id: 546, qty: 2 }, // Dian Keto il Curatore
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 611, qty: 1 }, // Lancia Incantata
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 819, qty: 1 }, // Scudo da Braccio Magico
@@ -2617,7 +2635,8 @@ const characterDeckDatabase = {
                 { id: 445, qty: 2 }, // Dadi del Teschio
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 611, qty: 1 }, // Lancia Incantata
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
@@ -2722,7 +2741,8 @@ const characterDeckDatabase = {
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 819, qty: 1 }, // Scudo da Braccio Magico
                 { id: 820, qty: 1 }, // Annulla Attacco
                 { id: 35, qty: 1 }, // Mostro Resuscitato
                 { id: 36, qty: 1 }, // Anfora dell'Avidità
@@ -2843,7 +2863,8 @@ const characterDeckDatabase = {
                 { id: 127, qty: 1 }, // Libro di Arti Ascose
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 622, qty: 1 }, // Cambio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
@@ -2951,7 +2972,8 @@ const characterDeckDatabase = {
                 { id: 344, qty: 1 }, // Spada Leggendaria
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
@@ -3063,7 +3085,8 @@ const characterDeckDatabase = {
                 { id: 344, qty: 1 }, // Spada Leggendaria
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 622, qty: 1 }, // Cambio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
@@ -3178,7 +3201,8 @@ const characterDeckDatabase = {
                 { id: 151, qty: 1 }, // Coro del Santuario
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 611, qty: 1 }, // Lancia Incantata
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 546, qty: 2 }, // Dian Keto il Curatore
@@ -3281,7 +3305,8 @@ const characterDeckDatabase = {
                 { id: 596, qty: 1 }, // Montagna
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 819, qty: 1 }, // Scudo da Braccio Magico
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
@@ -3396,7 +3421,8 @@ const characterDeckDatabase = {
                 { id: 466, qty: 1 }, // L'Occhio della Verità
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 232, qty: 1 }, // Scatola Fatata
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
@@ -3506,7 +3532,8 @@ const characterDeckDatabase = {
                 { id: 576, qty: 1 }, // Antico Telescopio
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 232, qty: 1 }, // Scatola Fatata
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 546, qty: 2 }, // Dian Keto il Curatore
@@ -3613,7 +3640,8 @@ const characterDeckDatabase = {
                 { id: 79, qty: 1 }, // Un Oceano Leggendario
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 148, qty: 1 }, // Scudo Giallo del Desiderio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 791, qty: 1 }, // Coro Acquatico
@@ -3727,7 +3755,8 @@ const characterDeckDatabase = {
                 { id: 489, qty: 1 }, // Muro Tornado
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 595, qty: 1 }, // Guardiano Affidabile
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 791, qty: 1 }, // Coro Acquatico
@@ -3837,7 +3866,8 @@ const characterDeckDatabase = {
                 { id: 532, qty: 1 }, // Gazelle, Re delle Bestie Mitiche
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 148, qty: 1 }, // Scudo Giallo del Desiderio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 600, qty: 1 }, // Trappola Finta
@@ -3953,7 +3983,8 @@ const characterDeckDatabase = {
                 { id: 309, qty: 1 }, // Armatura Insetto con Cannone Laser
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 232, qty: 1 }, // Scatola Fatata
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 600, qty: 1 }, // Trappola Finta
@@ -4067,7 +4098,8 @@ const characterDeckDatabase = {
                 { id: 871, qty: 1 }, // Terraformazione
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 148, qty: 1 }, // Scudo Giallo del Desiderio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 600, qty: 1 }, // Trappola Finta
@@ -4184,7 +4216,8 @@ const characterDeckDatabase = {
                 { id: 871, qty: 1 }, // Terraformazione
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 819, qty: 1 }, // Scudo da Braccio Magico
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 600, qty: 1 }, // Trappola Finta
@@ -4303,7 +4336,8 @@ const characterDeckDatabase = {
                 { id: 670, qty: 1 }, // Richiamo della Mummia
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 232, qty: 1 }, // Scatola Fatata
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 600, qty: 1 }, // Trappola Finta
@@ -4419,7 +4453,8 @@ const characterDeckDatabase = {
                 { id: 669, qty: 1 }, // Libro della Vita
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 232, qty: 1 }, // Scatola Fatata
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 600, qty: 1 }, // Trappola Finta
@@ -4534,7 +4569,8 @@ const characterDeckDatabase = {
                 { id: 871, qty: 1 }, // Terraformazione
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 148, qty: 1 }, // Scudo Giallo del Desiderio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 600, qty: 1 }, // Trappola Finta
@@ -4652,7 +4688,8 @@ const characterDeckDatabase = {
                 { id: 871, qty: 1 }, // Terraformazione
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 875, qty: 1 }, // Libro della Luna
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 600, qty: 1 }, // Trappola Finta
@@ -4776,7 +4813,8 @@ const characterDeckDatabase = {
                 { id: 127, qty: 1 }, // Libro di Arti Ascose
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 875, qty: 1 }, // Libro della Luna
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 600, qty: 1 }, // Trappola Finta
@@ -4890,7 +4928,8 @@ const characterDeckDatabase = {
                 { id: 813, qty: 1 }, // Benedizione di Sebek
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 622, qty: 1 }, // Cambio
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 600, qty: 1 }, // Trappola Finta
@@ -5003,7 +5042,8 @@ const characterDeckDatabase = {
                 { id: 344, qty: 1 }, // Spada Leggendaria
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 819, qty: 1 }, // Scudo da Braccio Magico
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 600, qty: 1 }, // Trappola Finta
@@ -5119,7 +5159,8 @@ const characterDeckDatabase = {
                 { id: 130, qty: 1 }, // Controllo della Mente
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 622, qty: 1 }, // Cambio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 600, qty: 1 }, // Trappola Finta
@@ -5243,7 +5284,8 @@ const characterDeckDatabase = {
                 { id: 251, qty: 1 }, // Sepoltura Sciocca
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 819, qty: 1 }, // Scudo da Braccio Magico
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 600, qty: 1 }, // Trappola Finta
@@ -5360,7 +5402,8 @@ const characterDeckDatabase = {
                 { id: 762, qty: 2 }, // Cannoni d'Intercettazione Moai
                 { id: 1116, qty: 1 }, // Un Uomo con Wdjat
                 { id: 321, qty: 1 }, // Kaiser Cavalluccio Marino
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 611, qty: 1 }, // Lancia Incantata
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 503, qty: 2 }, // Waboku
@@ -6019,7 +6062,8 @@ const characterDeckDatabase = {
                 { id: 812, qty: 1 }, // Mondo Giurassico
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 1 }, // Mura del Castello
                 { id: 546, qty: 2 }, // Dian Keto il Curatore
@@ -6132,7 +6176,8 @@ const characterDeckDatabase = {
                 { id: 251, qty: 2 }, // Sepoltura Sciocca
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 622, qty: 1 }, // Cambio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 750, qty: 1 }, // Gabbia d'Acciaio dell'Incubo
@@ -6245,7 +6290,8 @@ const characterDeckDatabase = {
                 { id: 489, qty: 1 }, // Muro Tornado
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 611, qty: 1 }, // Lancia Incantata
                 { id: 503, qty: 2 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
@@ -6355,7 +6401,8 @@ const characterDeckDatabase = {
                 { id: 580, qty: 1 }, // Sogen
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
@@ -6469,7 +6516,8 @@ const characterDeckDatabase = {
                 { id: 350, qty: 1 }, // Rimozione di Limite
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 148, qty: 1 }, // Scudo Giallo del Desiderio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
@@ -6582,7 +6630,8 @@ const characterDeckDatabase = {
                 { id: 791, qty: 1 }, // Coro Acquatico
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 819, qty: 1 }, // Scudo da Braccio Magico
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
@@ -6698,7 +6747,8 @@ const characterDeckDatabase = {
                 { id: 297, qty: 1 }, // Hinotama
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
-                { id: 434, qty: 2 }, // Capro Espiatorio
+                { id: 434, qty: 1 }, // Capro Espiatorio
+                { id: 622, qty: 1 }, // Cambio
                 { id: 503, qty: 1 }, // Waboku
                 { id: 143, qty: 2 }, // Mura del Castello
                 { id: 35, qty: 1 }, // Mostro Resuscitato
