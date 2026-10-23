@@ -4584,3 +4584,47 @@ guardare CHI fosse l'utente, quindi una sessione appena chiusa non si vedeva —
 `initGate` chiama sempre `waitForUser()`. Il finto cloud dei test ha l'opzione
 `collega(ctx, { ricordaUscita: true })` (signOut ricordato nel localStorage) usata da
 `sessione-48-ore.spec.js`. Versione 1.3.30, cache `v295`.
+
+Mano, box info e frecce (1.4.62, branch `feature/fluidita-mano`, mergiato in `main`):
+- **Fluidità della mano** (`duelMonstersCore.html`, `js/engine/actions.js`, `game-flow.js`). Il "legno" NON era un calo di
+  fps (misurato sul telefono vero: 60 fps prima e dopo): erano durate e proprietà sbagliate. Regole da non rompere:
+  il fantasma del trascinamento si muove con `transform` in un solo `requestAnimationFrame` per fotogramma (mai
+  `left/top`), nasce IDENTICO alla carta (posizione di presa, rotazione 0) e in 180 ms ruota/ingrandisce/si centra
+  sul dito (`DURATA_ATTACCO_TRASCINAMENTO_MS`); il volo verso la casella è FLIP (solo `transform`); `.hand .card`
+  ha transizione `transform .3s` con curva di decelerazione e niente bounce. **La classe `selected` NON fa parte
+  della firma di `firmaRenderStabile`** e `reconcileHandCards` la riallinea sul nodo esistente: prima la carta
+  toccata veniva sostituita (artwork ricaricato, nessuna transizione). Spec `mano-sollevamento-non-ridisegna`.
+- **Caselle verdi**: una sola carta alla volta (`spegniEvidenziazioneCaselle`, chiamata da
+  `selectHandCardForInspection` e `highlightEmptySlots`); durante il trascinamento si evidenziano come al tocco.
+  Il catcher dei popover copre la mano: un tap su un'altra carta ora la seleziona subito
+  (`mano-cambio-carta-con-popover`).
+- **Box info** (`cardInfoPanel`): niente (X), si chiude toccando fuori, all'inizio del trascinamento e attivando un
+  effetto dalla mano (`suppressCardInspectionFor`, che evita anche la riapertura da `mouseenter`). Su mobile
+  verticale parte in alto sotto Abbandona (`top: offset + 58px`, `max-height: 44dvh`, scorre dentro). Sta dentro
+  `.battlefield-side` (z-index 1) mentre le mani hanno 5: aperto, il contenitore sale a 90 (`:has`).
+- **Stepper**: stesso stile minimal con più contrasto, e frecce `››` tra le fasi (`.phase-step::after`, maschera SVG
+  nel colore `--fase-accento`; accese per fatte/attiva, spente per le future). Una regola vecchia più in basso le
+  nascondeva ancora: se spariscono, cercare `.phase-step::after { display: none }`.
+- **Freccia d'attacco** rifatta: percorso curvo (`aggiornaFrecciaAttacco`), alone, punta fissa 26 px, mirino sul
+  bersaglio agganciato (`segnaFrecciaAgganciata`), punta che si attacca al centro del mostro se il dito è vicino.
+  Il gradiente è `userSpaceOnUse`: sul riquadro dell'elemento un tratto verticale/orizzontale non si dipingeva.
+  La posizione della punta si legge da `#attack-arrow-target` (cx/cy), non più da `x2/y2`.
+  Le bande dell'attacco diretto sono molto più tenui (strisce a bassa opacità, sfumano anche verso l'interno).
+- **Intro del campo su mobile** (`max-width: 900px`): solo dissolvenza. Misurato sul telefono (411x750): anche con
+  28deg il campo partiva 142 px più in basso e sbordava di 15 px per lato, e si leggeva come uno scroll diagonale.
+  Desktop invariato (1.7x / 58deg). Spec `intro-duello-non-sborda-su-mobile`.
+- **Spade Rivelatrici fisse**: il marchio (`.field-sword-mark`, modo 7 in `icone-posizione-webgl.js`) usa la STESSA
+  spada neon verde dell'animazione (`fx-webgl.js`), con bagliore sfumato verso i bordi del canvas (senza si vedeva
+  il rettangolo). La perdita del contesto WebGL non blocca più `prepara()` per sempre (`pronto = null`): prima su
+  telefono le spade fisse ricadevano per sempre sulle forme CSS vecchie.
+- **Pedine** (1.4.59-1.4.60): in Multiplayer ognuno sceglie la propria pedina nella sala (`mp-pedina.js`, campo
+  facoltativo `pedina` nel messaggio `ready`); nelle conversazioni della Storia parla sempre la pedina, anche il
+  protagonista con ritratto scritto a mano (ripiego sull'avatar se la pedina manca). Il ripiego audio "parte al
+  primo gesto" resta attivo finché `play()` non riesce (su touch `pointerdown`/`touchstart` non sbloccano l'audio).
+- **Provare sul telefono vero** (nessuna APK da rifare): `adb reverse tcp:8080 tcp:8080`, un server statico senza
+  cache che inietta `window.AUTH_GATE_SKIP = true` nell'HTML (lo script usato sta nello scratchpad, va riscritto in
+  10 righe), Chrome su `http://localhost:8080/duelMonstersCore.html`; per misurare `adb forward tcp:9222
+  localabstract:chrome_devtools_remote` + Playwright `connectOverCDP`. **Insidie**: il tab già aperto NON si
+  ricarica da solo (va ricaricato, o si vede il JS vecchio); `execFileSync` blocca gli intervalli del processo,
+  quindi non si campiona mentre si lancia `adb shell input swipe`; l'utente usa lo stesso telefono per Claude, e
+  un tap automatico può finire nella sua app: controllare cosa mostra lo schermo prima di toccare.
