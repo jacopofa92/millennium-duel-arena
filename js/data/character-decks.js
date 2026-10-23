@@ -300,8 +300,11 @@ const characterDeckDatabase = {
                 { id: 298, qty: 3 }, // Gigante Hitotsu-Me
                 { id: 389, qty: 3 }, // Centauro Mistico
                 { id: 198, qty: 1 }, // Drago da un'Altra Dimensione
-                { id: 106, qty: 2 }, // Ascia da Guerra
-                { id: 428, qty: 1 }, // Ryu-Kishin Potenziato
+                // Facile troppo duro (richiesta dell'utente): i mostri fra 1600 e 1800 ATK che non sono il Kaiser
+                // (Ascia da Guerra x2, Ryu-Kishin Potenziato) sono diventati Draghi scarsi, nel tema del mazzo.
+                { id: 507, qty: 1 }, // Drago Alato #1 (1400/1200)
+                { id: 1159, qty: 1 }, // Drago Minore (1200/1000)
+                { id: 640, qty: 1 }, // Drago Armato LV3 (1200/900)
                 { id: 321, qty: 1 }, // Kaiser Cavalluccio Marino
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 820, qty: 2 }, // Annulla Attacco
