@@ -715,6 +715,7 @@ const APP_SHELL = [
     'js/ui/monster-hologram-webgl.js',
     'js/ui/monster-hologram.js',
     'js/ui/monster-hologram.css',
+    'js/ui/ologramma-vetrina.js',
 'js/ui/grido-evocazione.js',
 'js/ui/grido-evocazione.css',
 'js/data/gridi-evocazione.js',

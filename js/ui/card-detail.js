@@ -270,6 +270,15 @@
             ${window.CardAcquisition ? `<div class="cd-acquisition"><strong>Come si ottiene</strong><span>${escapeHtml(CardAcquisition.sourceFor(card.id))}</span>${CardAcquisition.progressFor && CardAcquisition.progressFor(card.id) ? `<small>Progresso: ${escapeHtml(CardAcquisition.progressFor(card.id))}</small>` : ''}</div>` : ''}
             ${card.missingEffectNote ? `<p class="cd-note">🟡 Effetto implementato parzialmente: ${escapeHtml(card.missingEffectNote)}</p>` : ''}
         `;
+        // "Vedi ologramma": solo per i mostri e solo dove la pagina carica la vetrina (oggi la Cartoteca).
+        if (card.type === 'monster' && window.OlogrammaVetrina) {
+            const olo = document.createElement('button');
+            olo.type = 'button';
+            olo.className = 'cd-olo';
+            olo.textContent = '🔮 Vedi ologramma';
+            olo.onclick = () => OlogrammaVetrina.apri(cartaAnteprima || card);
+            info.appendChild(olo);
+        }
         disegnaArtwork(card);
         aggiorna();
         backdrop.classList.add('open');

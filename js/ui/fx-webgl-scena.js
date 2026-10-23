@@ -33,7 +33,7 @@
     const MAX = 40;
 
     // Tipi di primitiva (devono coincidere con l'ordine delle `if` dello shader qui sotto).
-    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19, ANKH: 20, PORTAL: 21, DUST: 22 };
+    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19, ANKH: 20, PORTAL: 21, DUST: 22, SHIELD: 23 };
     // Colori: indici nella tavolozza dello shader.
     const C = { CALDO: 0, ORO: 1, ROSSO: 2, ARANCIO: 3, CIANO: 4, BLU: 5, VIOLA: 6, MAGENTA: 7, VERDE: 8, BIANCO: 9, SCURO: 10, GHIACCIO: 11, VERDE_SCURO: 12 };
 
@@ -342,6 +342,32 @@ float dado(vec2 q,float v){
   }
   s=vec4(c*(edge*1.7+brace)+cc*1.2+vec3(1.,.9,.7)*edge*.5,clamp(edge+brace*.8+acc,0.,1.));`;
 
+    // BARRIERA ESAGONALE (attacco respinto; A: centro e raggio del bersaglio, B.w: angolo verso chi ha attaccato).
+    // Una cupola di celle esagonali si forma attorno al bersaglio; dal punto in cui il colpo arriva parte un'onda
+    // che accende le celle in sequenza, poi la barriera si incrina e si dissolve. Niente texture: solo geometria.
+    CORPI[T.SHIELD] = `
+  vec2 q=(P-A.xy)/(A.z*1.15); float rr=length(q);
+  vec2 ip=vec2(cos(B.w),sin(B.w))*.92;
+  float dI=length(q-ip);
+  float form=smoothstep(0.,.1,u); float fade=1.-smoothstep(.5,1.,u);
+  // celle esagonali
+  vec2 g=q*4.2; vec2 sx=vec2(1.7320508,1.);
+  vec2 a1=mod(g,sx)-sx*.5; vec2 b1=mod(g-sx*.5,sx)-sx*.5;
+  vec2 gv=dot(a1,a1)<dot(b1,b1)?a1:b1; vec2 p2=abs(gv);
+  float hd=max(dot(p2,normalize(vec2(1.,1.7320508))),p2.x);
+  float bordo=smoothstep(.36,.47,hd);
+  vec2 cid=floor(g*.7);
+  float lampeggia=.55+.45*h(cid+floor(t*9.));
+  // l'onda d'urto che si allarga dal punto d'impatto
+  float onda=exp(-pow((dI-u*3.4)*3.2,2.));
+  float cupola=smoothstep(1.12,.9,rr);
+  float rim=exp(-pow((rr-1.04)/.07,2.))*(.6+.4*h(vec2(floor(atan(q.y,q.x)*6.),floor(t*14.))));
+  float flash=exp(-dI*dI*16.)*pop(u*1.8)*1.6;
+  float cell=bordo*cupola*(.28*lampeggia+onda*2.2);
+  float g2=(cell+rim*.8+flash)*form*fade;
+  vec3 caldo=mix(c,vec3(1.),clamp(onda*.7+flash*.5,0.,1.));
+  s=vec4(caldo*g2*1.3,clamp(g2*.85,0.,1.));`;
+
     /** Il programma di un tipo (costruito una volta sola e messo in cache dal motore). */
     const SORGENTI = {};
     function sorgente(tipo) {
@@ -376,6 +402,7 @@ float dado(vec2 q,float v){
             // Disintegrazione: i granelli salgono fino a ~8 mezze larghezze e sbandano a destra.
             // (l'esplosione spinge i granelli anche di lato e verso il basso: ~90 px in scala della carta).
             case T.DUST: return [x - z * 5, y - q - z * 8, x + z * 7, y + q + z * 5];
+            case T.SHIELD: e = z * 1.6; return [x - e, y - e, x + e, y + e];
             default: e = z * 3; return [x - e, y - q - e, x + e, y + e];   // moneta e dado
         }
     }
@@ -1048,6 +1075,31 @@ float dado(vec2 q,float v){
             targetEl.animate(fr, { duration: 300, delay: both ? 330 : 20, easing: 'linear' });
         }
         breve(s, t0 + 0.9);
+    };
+
+    /**
+     * L'attacco si infrange: il bersaglio ha retto (indistruttibile, o DEF piu' alta). Una barriera esagonale si
+     * forma attorno al bersaglio, il colpo la accende dal lato di chi ha attaccato, le scintille rimbalzano
+     * indietro verso l'attaccante e il bersaglio incassa con un lieve scossone. Solo luce: la regola e' gia' decisa.
+     */
+    imp.playAttackBlocked = function (attackerEl, targetEl) {
+        const rt = targetEl ? rectDi(targetEl) : null; if (!rt) return;
+        const ra = attackerEl ? rectDi(attackerEl) : null;
+        const t = cen(rt); const a = ra ? cen(ra) : null;
+        const ang = a ? Math.atan2(a.y - t.y, a.x - t.x) : -Math.PI / 2;
+        const raggio = Math.max(rt.width, rt.height) * 0.62;
+        const ix = t.x + Math.cos(ang) * raggio * 1.15 * 0.92; const iy = t.y + Math.sin(ang) * raggio * 1.15 * 0.92;
+        const s = new Scena();
+        s.add(T.SHIELD, C.CIANO, 0, 0.95, [t.x, t.y, raggio, 0], ang);
+        s.add(T.FLASH, C.BIANCO, 0, 0.3, [ix, iy, raggio * 0.7, 0]);
+        s.add(T.RING, C.GHIACCIO, 0, 0.45, [ix, iy, raggio * 0.9, 3]);
+        for (let i = 0; i < 3; i++) s.add(T.BURST, C.GHIACCIO, 0, 0.7, [ix, iy, 90 + i * 24, 30], 4 + i * 5.1);
+        verifica(s);
+        if (targetEl && targetEl.animate) {
+            const dx = Math.cos(ang + Math.PI) * 5; const dy = Math.sin(ang + Math.PI) * 5;
+            targetEl.animate([{ translate: '0px 0px' }, { translate: dx + 'px ' + dy + 'px' }, { translate: '0px 0px' }], { duration: 260, easing: 'ease-out' });
+        }
+        breve(s, 1.0);
     };
 
     /**
