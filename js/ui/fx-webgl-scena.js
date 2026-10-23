@@ -418,6 +418,25 @@ float dado(vec2 q,float v){
     const rectMostro = (owner, i) => { const s = slotEl(owner, 'monster', i); return rectDi(s && s.querySelector('.card')) || rectDi(s); };
     const rectSt = (owner, i) => { const s = slotEl(owner, 'st', i); return rectDi(s && s.querySelector('.card')) || rectDi(s); };
     const rectZona = (owner, zona) => rectDi(document.querySelector(`#${tavolo(owner)} .field-slot[data-owner="${owner}"][data-zone="${zona}"]`));
+    /**
+     * Il rettangolo "in piedi" di una carta sul Terreno (anche se in Difesa, dove il suo riquadro a schermo e' ruotato):
+     * stesso centro della carta, misure vere. Se la casella e' vuota (la carta sta per ARRIVARCI) si stima dalla casella.
+     */
+    const rettaCarta = (owner, tipo, i) => {
+        const sl = slotEl(owner, tipo, i); if (!sl) return null;
+        const el = sl.querySelector('.card');
+        const rs = rectDi(sl);
+        if (el && el.offsetWidth) {
+            const rc = rectDi(el); if (!rc) return null;
+            const c = { x: rc.left + rc.width / 2, y: rc.top + rc.height / 2 };
+            return { left: c.x - el.offsetWidth / 2, top: c.y - el.offsetHeight / 2, width: el.offsetWidth, height: el.offsetHeight };
+        }
+        if (!rs) return null;
+        const h = rs.height * 0.9; const w = h * 0.69; const c = { x: rs.left + rs.width / 2, y: rs.top + rs.height / 2 };
+        return { left: c.x - w / 2, top: c.y - h / 2, width: w, height: h };
+    };
+    /** Il modulo degli ologrammi WebGL, se questo mostro ne ha uno visibile (per farlo uscire di scena insieme alla carta). */
+    const olograma = (uid) => { const g = window.MonsterHologramGL; return uid && g && typeof g.disintegra === 'function' && g.visibile(uid) ? g : null; };
     const easeIO = (x) => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
     const easeOut = (x) => 1 - Math.pow(1 - Math.max(0, Math.min(1, x)), 3);
     const lerp = (a, b, k) => a + (b - a) * k;
@@ -1099,6 +1118,98 @@ float dado(vec2 q,float v){
             const dx = Math.cos(ang + Math.PI) * 5; const dy = Math.sin(ang + Math.PI) * 5;
             targetEl.animate([{ translate: '0px 0px' }, { translate: dx + 'px ' + dy + 'px' }, { translate: '0px 0px' }], { duration: 260, easing: 'ease-out' });
         }
+        breve(s, 1.0);
+    };
+
+    /**
+     * Una carta lascia il Terreno e finisce nel Cimitero: un'anima di luce parte dalla carta e vola alla pila, che
+     * la "ingoia" con un lampo e un anello; la carta si rimpicciolisce e si dissolve lungo il percorso. Se il mostro ha
+     * un ologramma, si disintegra sul posto. Va chiamata PRIMA di svuotare la casella.
+     */
+    imp.playCardToGraveyard = function (card, fieldOwner, fieldIndex, graveOwner, type) {
+        const rf = rettaCarta(fieldOwner, type || 'monster', fieldIndex);
+        const rg = rectZona(graveOwner == null ? fieldOwner : graveOwner, 'graveyard');
+        if (!rf || !rg) return;
+        const a = cen(rf); const b = cen(rg);
+        const GL = olograma(card && card.uid); if (GL) GL.disintegra(card.uid, 60, 600);
+        const s = new Scena();
+        s.add(T.RING, C.GHIACCIO, 0, 0.4, [a.x, a.y, rf.width * 0.8, 3]);
+        s.add(T.ORB, C.GHIACCIO, 0.08, 0.55, [a.x, a.y, b.x, b.y], 7);
+        s.add(T.FLASH, C.GHIACCIO, 0.6, 0.35, [b.x, b.y, rg.width * 0.7, 0]);
+        s.add(T.RING, C.VIOLA, 0.6, 0.4, [b.x, b.y, rg.width * 0.9, 3]);
+        verifica(s);
+        fantasma(card, rf, (u) => { const k = easeIO(u); return { x: lerp(rf.left, b.x - rf.width / 2, k), y: lerp(rf.top, b.y - rf.height / 2, k) - Math.sin(Math.PI * k) * 30, s: 1 - 0.7 * k, rot: -14 * k, op: u > 0.5 ? 1 - (u - 0.5) / 0.5 : 1 }; }, 40, 560);
+        breve(s, 1.0);
+    };
+
+    /** Il contrario: un'anima viola esce dalla pila e la carta si compone sulla casella con un'onda (rianimazioni). */
+    imp.playCardFromGraveyard = function (card, graveOwner, toOwner, toIndex) {
+        const rg = rectZona(graveOwner, 'graveyard');
+        const rt = rettaCarta(toOwner, 'monster', toIndex);
+        if (!rg || !rt) return;
+        const a = cen(rg); const b = cen({ left: rt.left, top: rt.top, width: rt.width, height: rt.height });
+        const s = new Scena();
+        s.add(T.FLASH, C.VIOLA, 0, 0.35, [a.x, a.y, rg.width * 0.8, 0]);
+        s.add(T.ORB, C.VIOLA, 0.05, 0.55, [a.x, a.y, b.x, b.y], 8);
+        s.add(T.RING, C.VIOLA, 0.55, 0.5, [b.x, b.y, rt.width * 1.1, 4]);
+        s.add(T.FLASH, C.BIANCO, 0.55, 0.35, [b.x, b.y, rt.width * 0.9, 0]);
+        s.add(T.BURST, C.VIOLA, 0.55, 0.7, [b.x, b.y, rt.width * 1.3, -80], 3.3);
+        verifica(s);
+        // La carta arriva in primo piano e NON svanisce: la vera comparira' li' sotto al render successivo.
+        fantasma(card, rt, (u) => { const k = easeIO(u); return { x: lerp(a.x - rt.width / 2, b.x - rt.width / 2, k), y: lerp(a.y - rt.height / 2, b.y - rt.height / 2, k), s: 0.4 + 0.6 * k, op: u < 0.2 ? u / 0.2 : 1 }; }, 30, 600);
+        breve(s, 1.2);
+    };
+
+    /**
+     * Cambio di controllo (Cambio di Cuore, Controllo Mentale...): un sigillo si accende sul mostro, un filo di energia lo
+     * lega alla nuova casella e la carta ci viaggia girando su se' stessa. Viola all'andata, azzurro al ritorno.
+     */
+    imp.playControlSwitch = function (card, fromOwner, fromIndex, toOwner, toIndex, tornaIndietro) {
+        const rf = rettaCarta(fromOwner, 'monster', fromIndex);
+        const rt = rettaCarta(toOwner, 'monster', toIndex);
+        if (!rf || !rt || !card) return;
+        const a = cen({ left: rf.left, top: rf.top, width: rf.width, height: rf.height }); const b = cen({ left: rt.left, top: rt.top, width: rt.width, height: rt.height });
+        const col = tornaIndietro ? C.CIANO : C.VIOLA;
+        const s = new Scena();
+        s.add(T.SEAL, col, 0, 0.5, [a.x, a.y, rf.width * 0.9, 0], 0.55);
+        s.add(T.LINE, col, 0.1, 0.6, [a.x, a.y, b.x, b.y], 6);
+        s.add(T.ORB, col, 0.15, 0.5, [a.x, a.y, b.x, b.y], 9);
+        s.add(T.RING, col, 0.6, 0.5, [b.x, b.y, rt.width * 1.2, 4]);
+        s.add(T.FLASH, C.BIANCO, 0.6, 0.3, [b.x, b.y, rt.width, 0]);
+        verifica(s);
+        fantasma(card, rf, (u) => { const k = easeIO(u); return { x: lerp(rf.left, rt.left, k), y: lerp(rf.top, rt.top, k) - Math.sin(Math.PI * k) * 24, ry: k * 360, s: 1 + 0.08 * Math.sin(Math.PI * k) }; }, 60, 560);
+        breve(s, 1.2);
+    };
+
+    /**
+     * Sacrificio per Tributo: la carta si disintegra in polvere viola mentre una colonna di luce sale dal suo posto
+     * (verso il mostro che sta per essere Evocato). Un ologramma dello stesso mostro si disintegra con lei.
+     */
+    imp.playTributeSacrifice = function (cardEl) {
+        const r = cardEl ? rectDi(cardEl) : null; if (!r) return;
+        const uid = cardEl.dataset && cardEl.dataset.uid;
+        const GL = olograma(uid); const rh = GL ? GL.disintegra(uid, 60, 600) : null;
+        const rd = rh || r; const c = cen(r); const cd = cen(rd);
+        const s = new Scena();
+        s.add(T.PILLAR, C.VIOLA, 0, 0.8, [c.x, c.y + r.height / 2, r.width * 0.5, 0]);
+        s.add(T.FLASH, C.ORO, 0, 0.4, [c.x, c.y, r.width * 1.2, 0]);
+        s.add(T.DUST, C.VIOLA, DUST_RITARDO_S, DUST_DURATA_S, [cd.x, cd.y, rd.width / 2, rd.height / 2], Math.random() * 50);
+        verifica(s);
+        if (rh) setTimeout(() => { cardEl.style.visibility = 'hidden'; }, 160);
+        else disintegraCarta(cardEl, r);
+        breve(s, DUST_RITARDO_S + DUST_DURATA_S + 0.1);
+    };
+
+    /** Equip che si aggancia: una sfera d'oro corre dalla Carta Equipaggiamento al mostro, che si accende all'arrivo. */
+    imp.playEquipAttach = function (x1, y1, x2, y2, targetEl) {
+        const rt = targetEl ? rectDi(targetEl) : null; const w = rt ? rt.width : 60;
+        const s = new Scena();
+        s.add(T.FLASH, C.ORO, 0, 0.25, [x1, y1, 50, 0]);
+        s.add(T.ORB, C.ORO, 0, 0.5, [x1, y1, x2, y2], 7);
+        s.add(T.RING, C.ORO, 0.42, 0.5, [x2, y2, w * 0.9, 3]);
+        s.add(T.FLASH, C.CALDO, 0.42, 0.4, [x2, y2, w * 0.8, 0]);
+        s.add(T.BURST, C.ORO, 0.42, 0.6, [x2, y2, 60, 30], 7);
+        verifica(s);
         breve(s, 1.0);
     };
 

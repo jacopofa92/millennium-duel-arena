@@ -453,6 +453,7 @@ void main(){
         disintegra(uid, ritardoMs, durMs) {
             const o = vivi.get(uid);
             if (!o || guasto || !o.voce || o.voce.stato !== 'pronta') return null;
+            if (o.morente) return { left: o.rect.left, top: o.rect.top, width: o.rect.w, height: o.rect.h };   // gia' in corso: una sola volta
             o.nascostoFinoA = 0;
             o.volo = null;
             o.morente = { t0: performance.now() + (ritardoMs || 0), dur: durMs };
