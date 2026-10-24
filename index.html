@@ -1085,6 +1085,9 @@
              menu completo altrimenti — vedi js/save-manager.js. -->
         <nav class="menu-list" id="menuList"></nav>
 
+        <!-- Stato del salvataggio (js/ui/stato-salvataggio.js): cloud / in arrivo / offline. -->
+        <div id="menuStatoSalvataggio" style="text-align:center;"></div>
+
         <!-- Popolato da js/version.js (window.GAME_VERSION) subito dopo
              renderMenu() più sotto — mai più un numero fisso scritto qui
              a mano, che sarebbe rimasto "1.0.0-beta.2" per sempre. -->
@@ -1208,6 +1211,7 @@
     <script src="js/data/challenges-db.js"></script>
     <script src="js/challenges/challenge-tracker.js"></script>
     <script src="js/ui/challenge-banner.js"></script>
+    <script src="js/ui/stato-salvataggio.js"></script>
     <script src="js/ui/icon-library.js"></script>
     <script src="js/ui/video-quality.js"></script>
 <script src="js/ui/ambiente-webgl.js"></script>
@@ -1242,6 +1246,7 @@
         if (window.GAME_VERSION) {
             document.getElementById('menuFooterVersion').textContent = GAME_VERSION;
         }
+        if (window.StatoSalvataggio) StatoSalvataggio.monta(document.getElementById('menuStatoSalvataggio'));
 
         // ============================================================
         // Musica di sottofondo (condivisa tra le pagine, vedi js/audio-manager.js)

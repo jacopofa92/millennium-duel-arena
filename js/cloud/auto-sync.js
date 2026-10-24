@@ -69,7 +69,27 @@
     function leggiChiave(chiave) {
         try { return localStorage.getItem(chiave) === '1'; } catch (e) { return false; }
     }
-    function segna(attivo) { segnaChiave(CHIAVE_IN_SOSPESO, attivo); }
+    function segna(attivo) { segnaChiave(CHIAVE_IN_SOSPESO, attivo); avvisaStato(); }
+
+    // --- Stato visibile (indicatore del menu, js/ui/stato-salvataggio.js) ---
+    // Non decide nulla: racconta soltanto. 'errore' = l'ultimo tentativo non è
+    // arrivato (rete o server); resta finché un tentativo non riesce.
+    let ultimoTentativoFallito = false;
+    const ascoltatoriStato = [];
+    function stato() {
+        if (!window.CloudSync || !CloudSync.available || !(CloudSync.getUser && CloudSync.getUser())) return 'nessun-account';
+        if (typeof navigator !== 'undefined' && navigator.onLine === false) return 'offline';
+        if (inCorso) return 'in-corso';
+        if (ultimoTentativoFallito) return 'errore';
+        if (timer || leggiChiave(CHIAVE_IN_SOSPESO) || leggiChiave(CHIAVE_CARTE_IN_SOSPESO)) return 'in-attesa';
+        return 'salvato';
+    }
+    function avvisaStato() {
+        const s = stato();
+        ascoltatoriStato.slice().forEach((f) => { try { f(s); } catch (e) { /* un ascoltatore guasto non ferma gli altri */ } });
+    }
+    window.addEventListener('online', avvisaStato);
+    window.addEventListener('offline', avvisaStato);
     function carteInSospeso() { return leggiChiave(CHIAVE_CARTE_IN_SOSPESO); }
     function inSospeso() { return leggiChiave(CHIAVE_IN_SOSPESO) || carteInSospeso(); }
 
@@ -91,7 +111,7 @@
         segna(true);
         const conCarte = carteInSospeso();
         const salvataggio = CloudSync.pushSave()
-            .then(() => { segna(false); return true; })
+            .then(() => { ultimoTentativoFallito = false; segna(false); return true; })
             // Silenzioso di proposito: questo gira mentre si gioca, e un
             // avviso a ogni sbalzo di rete sarebbe rumore su qualcosa che
             // si sistema da sé al tentativo successivo. Il segno resta, ed
@@ -102,6 +122,9 @@
             // vorrebbe dire ritentare all'infinito. Ci pensa la
             // riconciliazione a portare qui la copia buona.
             .catch((e) => {
+                // Rifiuti "di merito" (cloud più recente, profilo azzerato...) non
+                // sono un guasto di rete: non devono accendere l'avviso di errore.
+                ultimoTentativoFallito = !(e && (e.code === 'CLOUD_PIU_RECENTE' || e.code === 'PROFILO_AZZERATO' || e.code === 'CLOUD_CAMBIATO'));
                 // Stesso discorso se il profilo è stato azzerato altrove:
                 // i dati da mandare non esistono più.
                 if (e && (e.code === 'CLOUD_PIU_RECENTE' || e.code === 'PROFILO_AZZERATO')) segna(false);
@@ -125,6 +148,7 @@
         return tutto.then((esito) => {
             inCorso = false;
             if (ancoraDopo) { ancoraDopo = false; programma(); }
+            avvisaStato();
             return esito;
         });
     }
@@ -268,6 +292,10 @@
         /** Forza il caricamento adesso. Torna una Promise: usarla quando si DEVE sapere se è arrivato (es. prima di uscire). */
         caricaOra: caricaOra,
         inSospeso: inSospeso,
+        /** 'salvato' | 'in-attesa' | 'in-corso' | 'errore' | 'offline' | 'nessun-account' */
+        stato: stato,
+        /** Chiama f(stato) a ogni cambio; torna la funzione per smettere. */
+        onStato: function (f) { ascoltatoriStato.push(f); return function () { const i = ascoltatoriStato.indexOf(f); if (i >= 0) ascoltatoriStato.splice(i, 1); }; },
         cartePersonalizzateCambiate: cartePersonalizzateCambiate
     };
 })();
