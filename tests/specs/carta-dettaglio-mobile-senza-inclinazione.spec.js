@@ -96,6 +96,27 @@ module.exports = {
             const dopoSensore = await leggi();
             assert(dopoSensore.viva && dopoSensore.animazione === 'cvLuceOzio' && dopoSensore.transform === 'none',
                 `col giroscopio spento il sensore non guida la luce: ${JSON.stringify(dopoSensore)}`);
+
+            // Giroscopio spento = il riflesso segue il TOCCO: premendo in punti diversi della carta la luce arriva li',
+            // la carta resta dritta, e alzando il dito torna la luce che si muove da sola.
+            const cdp = await spento.newCDPSession(pagina);
+            const riquadro = await pagina.evaluate(() => { const r = document.querySelector('.cd-preview .card').getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height }; });
+            const punto = (frazione) => ({ x: riquadro.x + riquadro.w * frazione, y: riquadro.y + riquadro.h * 0.5 });
+            const leggiTocco = () => pagina.evaluate(() => { const el = document.querySelector('.cd-preview .card'); return { luceX: parseFloat(el.style.getPropertyValue('--luce-x')), attiva: el.classList.contains('cv-attiva'), transform: getComputedStyle(el).transform }; });
+            // Un solo dito che preme a sinistra e poi TRASCINA a destra, senza staccarsi (come farebbe una persona).
+            await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [punto(0.1)] });
+            await pagina.waitForTimeout(300);
+            const sinistra = await leggiTocco();
+            await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [punto(0.9)] });
+            await pagina.waitForTimeout(300);
+            const destra = await leggiTocco();
+            await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+            await pagina.waitForTimeout(250);
+            assert(sinistra.attiva && sinistra.luceX < 35, `premendo a sinistra il riflesso arriva a sinistra: ${JSON.stringify(sinistra)}`);
+            assert(destra.attiva && destra.luceX > 65, `premendo a destra il riflesso arriva a destra: ${JSON.stringify(destra)}`);
+            assert(sinistra.transform === 'none' && destra.transform === 'none', 'col tocco la carta resta dritta (si muove solo la luce)');
+            const alzato = await leggi();
+            assert(alzato.viva && alzato.animazione === 'cvLuceOzio', `alzando il dito torna la luce che si muove da sola: ${JSON.stringify(alzato)}`);
         } finally {
             await spento.close();
         }

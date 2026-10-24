@@ -253,10 +253,6 @@
         z-index: -1;
         background: url('images/background/backgroundMainMenu.jpg') center/cover no-repeat;
     }
-    .menu-logo {
-        transform: perspective(700px) rotateX(calc(var(--par-y, 0) * -8deg)) rotateY(calc(var(--par-x, 0) * 10deg));
-        translate: calc(var(--par-x, 0) * 8px) calc(var(--par-y, 0) * 5px);
-    }
     .menu-particle {
         position: absolute;
         bottom: -10px;
@@ -983,44 +979,6 @@
         <div class="menu-bg-flash"></div>
         <div class="menu-particles" id="menuParticles"></div>
     </div>
-    <script>
-        // Parallasse del menu (vedi .menu-bg-foto nello stile): insegue
-        // l'inclinazione con un rallentamento morbido, che arriva e si
-        // ferma senza rimbalzi. Il ciclo di disegno gira solo finché c'è
-        // strada da fare. Si può spegnere dalle Impostazioni ("Profondità
-        // del menu", Inclinazione.parallasseMenuAttiva): spenta, il menu
-        // torna dolcemente al centro e smette di ascoltare.
-        (function () {
-            if (!window.Inclinazione) return;
-            const radice = document.documentElement;
-            let meta = { x: 0, y: 0 };
-            let ora = { x: 0, y: 0 };
-            let giro = null;
-            let smetti = null;
-            function passo() {
-                ora.x += (meta.x - ora.x) * 0.08;
-                ora.y += (meta.y - ora.y) * 0.08;
-                radice.style.setProperty('--par-x', ora.x.toFixed(4));
-                radice.style.setProperty('--par-y', ora.y.toFixed(4));
-                giro = (Math.abs(meta.x - ora.x) > 0.001 || Math.abs(meta.y - ora.y) > 0.001)
-                    ? requestAnimationFrame(passo) : null;
-            }
-            function muovi(x, y) {
-                meta = { x: x, y: y };
-                if (!giro) giro = requestAnimationFrame(passo);
-            }
-            function aggiorna() {
-                if (Inclinazione.parallasseMenuAttiva()) {
-                    if (!smetti) smetti = Inclinazione.ascolta((l) => muovi(l.x, l.y));
-                } else {
-                    if (smetti) { smetti(); smetti = null; }
-                    muovi(0, 0);
-                }
-            }
-            window.addEventListener('ygo:parallasse-menu', aggiorna);
-            aggiorna();
-        })();
-    </script>
 
     <!-- Schermata "gate" (Accedi/Registrati/Continua in locale): mostrata
          PRIMA del menu, una volta per apertura del gioco (sessionStorage —

@@ -70,11 +70,13 @@ game-logo[variante="splash"] {
 .gl-piramide-corpo { stroke: #fff3c4; stroke-width: 2.2; stroke-linejoin: round; }
 .gl-giunture { fill: none; stroke: #5a3304; stroke-width: 1.4; opacity: 0.45; }
 .gl-lama { opacity: 0.9; }
-.gl-sopracciglio { fill: none; stroke: #2a1a05; stroke-width: 4; stroke-linecap: round; }
-.gl-palpebra { fill: #1c1206; stroke: #2a1a05; stroke-width: 2; }
-.gl-iride { fill: #f7d774; filter: drop-shadow(0 0 4px #fff3c4); }
-.gl-pupilla { fill: #1c1206; }
-.gl-segno { fill: none; stroke: #2a1a05; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+/* L'Occhio in rilievo (vedi il commento in game-logo.js): tre strati con la stessa geometria. Lo spessore delle linee e' quello di
+   sempre, ma il colore e' oro e non piu' nero. Fill e stroke si ereditano dai gruppi dentro i <use>. */
+.gl-rilievo { stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+.gl-rilievo--ombra { fill: rgba(40, 20, 0, 0.7); stroke: rgba(40, 20, 0, 0.7); }
+.gl-rilievo--corpo { fill: var(--gl-rilievo, #a86a0a); stroke: var(--gl-rilievo, #a86a0a); }
+.gl-rilievo--luce { fill: none; stroke: rgba(255, 226, 150, 0.55); stroke-width: 0.8; }
+.gl-iride { filter: drop-shadow(0 0 2px rgba(255, 220, 140, 0.6)); }
 .gl-onda { fill: none; stroke: #fff3c4; stroke-width: 2; opacity: 0; }
 
 /* --- Scritta -------------------------------------------------------- */

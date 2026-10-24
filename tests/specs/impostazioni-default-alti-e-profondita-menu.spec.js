@@ -108,45 +108,33 @@ module.exports = {
             await ctxSalv.close();
         }
 
-        // --- Profondità del menu -------------------------------------------
+        // --- "Carte lucide: giroscopio" (al posto di "Profondità del menu": la parallasse del logo è stata tolta) ----
         const ctxMenu = await contesto(browser, {});
         try {
             const page = await ctxMenu.newPage();
             await page.goto(url('index.html'));
             await page.waitForFunction(() => !!window.Inclinazione);
-            assert(await page.evaluate(() => Inclinazione.parallasseMenuAttiva()), 'la profondità del menu è accesa di default');
+            assert(await page.evaluate(() => Inclinazione.giroscopioCarteAttivo()), 'il giroscopio sulle carte è acceso di default');
+            assert(await page.evaluate(() => typeof Inclinazione.parallasseMenuAttiva === 'undefined'), 'la vecchia parallasse del menu non esiste più');
             await muoviVersoAngolo(page);
-            assert(await parX(page) > 0.5, 'accesa, il menu segue il mouse');
+            assert(Math.abs(await parX(page)) < 0.05, 'il logo del menu non segue il mouse: ' + await parX(page));
 
-            // Spenta (come fa l'interruttore della vista Impostazioni, nella
-            // stessa pagina): il menu torna al centro e smette di seguire.
-            await page.evaluate(() => Inclinazione.impostaParallasseMenu(false));
-            // Il rientro è un rallentamento per fotogramma, e senza finestra
-            // i fotogrammi sono più lenti: si aspetta il valore, non un tempo.
-            await page.waitForFunction(() => Math.abs(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--par-x')) || 0) < 0.05, null, { timeout: 8000 })
-                .catch(() => {});
-            assert(Math.abs(await parX(page)) < 0.05, 'spenta, il menu torna al centro: ' + await parX(page));
-            await page.mouse.move(5, 5, { steps: 8 });
-            await page.waitForTimeout(800);
-            assert(Math.abs(await parX(page)) < 0.05, 'spenta, il menu non segue più il mouse: ' + await parX(page));
-
-            // Resta spenta riaprendo il gioco, e l'interruttore lo mostra.
+            // Spento (= tocco): resta spento riaprendo il gioco, e l'interruttore lo mostra.
+            await page.evaluate(() => Inclinazione.impostaGiroscopioCarte(false));
             await page.reload();
             await page.waitForFunction(() => !!window.Inclinazione);
-            await muoviVersoAngolo(page);
-            assert(Math.abs(await parX(page)) < 0.05, 'riaprendo, resta spenta: ' + await parX(page));
             const impostazioni = await ctxMenu.newPage();
             await impostazioni.goto(url('impostazioni.html'));
             await impostazioni.waitForFunction(() => !!window.Inclinazione);
-            assert(await impostazioni.isChecked('#parallaxToggleInput') === false, 'l\'interruttore la mostra spenta');
+            assert(await impostazioni.isChecked('#cardGyroToggleInput') === false, 'l\'interruttore lo mostra spento');
+            assert(await impostazioni.evaluate(() => !document.getElementById('parallaxToggleInput')), 'la riga "Profondità del menu" non c\'è più');
             // Clic sull'elemento e non alle coordinate: per il primo secondo la
             // pagina ha sopra il velo di caricamento (js/ui/page-loader.js).
-            await impostazioni.$eval('#parallaxToggleInput', (el) => el.click());
-            assert(await impostazioni.evaluate(() => Inclinazione.parallasseMenuAttiva()), 'riaccesa dall\'interruttore');
+            await impostazioni.$eval('#cardGyroToggleInput', (el) => el.click());
+            assert(await impostazioni.evaluate(() => Inclinazione.giroscopioCarteAttivo()), 'riacceso dall\'interruttore');
             await page.reload();
             await page.waitForFunction(() => !!window.Inclinazione);
-            await muoviVersoAngolo(page);
-            assert(await parX(page) > 0.5, 'riaccesa, il menu torna a seguire il mouse');
+            assert(await page.evaluate(() => Inclinazione.giroscopioCarteAttivo()), 'riacceso, resta acceso dopo il ricaricamento');
         } finally {
             await ctxMenu.close();
         }

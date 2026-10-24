@@ -82,5 +82,14 @@ declare var FxWebgl: any;
 declare var FxWebglScena: any;
 declare var FxWebglPronto: any;
 declare var FX_WEBGL_T: any;
+declare var FX_WEBGL_VEL: any;
+// Evocazione epica di Livello 7+ e Fusione in WebGL (js/ui/evocazione-epica-webgl.js) e splash d'apertura (js/ui/splash-webgl.js).
+declare var EvocazioneEpica: any;
+declare var EVOCAZIONE_EPICA_OFF: any;
+declare var EVOCAZIONE_EPICA_ERRORE: any;
+declare var MonsterHologramGL: any;
+declare function getCardImagePath(card: any): string;
+declare var SplashWebgl: any;
+declare var SPLASH_WEBGL_ERRORE: any;
 declare var ICONE_POSIZIONE_WEBGL_OFF: any;
 declare var IconePosizione: any;

@@ -9,6 +9,7 @@ EventiDuello.ascolta('selezione-azzerata', chiudiSelezioneASchermo);
 EventiDuello.ascolta('prompt-tributo-chiuso', () => hideTributePrompt());
 EventiDuello.ascolta('prompt-scarto-chiuso', () => hideHandDiscardPrompt());
 EventiDuello.ascolta('evocazione-tributo-pronta', resolveTributeSummonPlacement);
+EventiDuello.ascolta('evocazione-in-sospeso', evocazioneTributoInSospeso);
 EventiDuello.ascolta('impatto-campo', triggerFieldImpact);
 EventiDuello.ascolta('distruzione', triggerDestroyEffect);
 EventiDuello.ascolta('attacco-bloccato', triggerBlockedEffect);
@@ -208,6 +209,10 @@ function handleCardClickInner(card, sourceType, sourceIndex, sourceOwner, isFace
         return;
     }
 
+    // Tributi gia' pagati, resta solo da scegliere la casella (handleSlotClick): ogni altro click sulle carte non deve fare altro, o
+    // una selezione/Evocazione diversa azzererebbe la scelta in corso (clearSelection) e il mostro sacrificato andrebbe perso.
+    if (gameState.pendingTributePlacement) return;
+
     // Un tap/click su una carta della propria mano la rende il riferimento
     // visivo corrente anche nei rami che aprono subito pulsanti flottanti
     // (Attiva, Special Summon, ecc.). Prima quei rami non impostavano
@@ -225,6 +230,10 @@ function handleCardClickInner(card, sourceType, sourceIndex, sourceOwner, isFace
         // comunque la carta su una casella Magia/Trappola libera (drag &
         // drop, vedi placeDraggedCard) — quella via resta sempre disponibile
         // e non passa da questo popover.
+        // Il box con la descrizione della carta si mostra COME per le altre carte della mano (ramo "hand + isMainPhase" qui sotto,
+        // che lo riapre di suo): senza, una Magia attivabile restava senza box ogni volta che la consultazione risultava sospesa
+        // (isGameplaySelectionActive) mentre una non attivabile lo mostrava comunque.
+        updateCardInfoPanel(card, { sourceType, sourceOwner, isFaceDown: false });
         promptHandSpellActivation(card, sourceIndex);
     } else if (sourceType === 'hand' && isMainPhase && card.type === 'monster' && window.DuelEngine && DuelEngine.canSpecialSummonFromHand('player', sourceIndex)) {
         // Mostro in mano Special Summonabile tramite il proprio effetto
@@ -232,6 +241,7 @@ function handleCardClickInner(card, sourceType, sourceIndex, sourceOwner, isFace
         // Toon"): offri la scelta tra Evocazione Normale (il vecchio
         // comportamento) e Special Summon, invece di forzare solo l'una o
         // solo l'altra.
+        updateCardInfoPanel(card, { sourceType, sourceOwner, isFaceDown: false });
         promptHandMonsterSpecialSummon(card, sourceIndex);
     } else if (sourceType === 'hand' && isMainPhase && card.type === 'monster' && window.DuelEngine && DuelEngine.canActivate('player', 'hand', sourceIndex)) {
         // Mostro in mano con un effetto attivabile DALLA MANO che non è
@@ -240,6 +250,7 @@ function handleCardClickInner(card, sourceType, sourceIndex, sourceOwner, isFace
         // promptHandSpellActivation qui sopra, ma con la scelta
         // "Attiva/Evoca" invece di "Attiva/Set" (un mostro non si mette
         // mai Coperto senza combattere prima una selezione Attacco/Difesa).
+        updateCardInfoPanel(card, { sourceType, sourceOwner, isFaceDown: false });
         promptHandMonsterActivation(card, sourceIndex);
     } else if (sourceType === 'hand' && isMainPhase) {
         gameState.selectedCard = { type: sourceType, card: card, index: sourceIndex, owner: sourceOwner };
@@ -354,6 +365,7 @@ function attemptActivateCard(owner, zone, index) {
 function startHandCardDrag(event, card, sourceIndex, sourceOwner) {
     if (isDraggingAttack) return;
     if (gameState.pendingTributeSummon) return;
+    if (gameState.pendingTributePlacement) return;   // Tributi gia' pagati: ora si sceglie solo la casella (vedi handleCardClickInner)
     const isMainPhase = gameState.phase === 'main1' || gameState.phase === 'main2';
 
     event.preventDefault();
@@ -1121,6 +1133,24 @@ function resolveTributeSummonPlacement(card, handIndex, fromRect) {
         const el = document.querySelector(`.field-slot[data-owner="player"][data-type="monster"][data-index="${index}"]`);
         if (el) el.classList.add('action-highlight');
     });
+}
+
+/**
+ * "Hai già pagato i Tributi e non hai finito l'Evocazione": un tuo mostro e' gia' nel Cimitero, e la carta da Evocare e' ancora in
+ * mano con il segno `_tributoPerEvocazione` (lo mette il comando 'tributa', lo toglie solo l'Evocazione vera). Bug segnalato giocando:
+ * dopo il Sacrificio, con piu' di una casella libera, si poteva premere un pulsante di fase (o "Fine turno") invece di scegliere la
+ * casella: il cambio di fase azzerava la scelta in corso e il mostro sacrificato andava perso senza Evocare niente.
+ * Torna true (e dice perche') finche' l'Evocazione non e' conclusa; se la scelta non e' piu' a schermo, la RIAPRE.
+ * Risponde alla domanda 'evocazione-in-sospeso' (eventi-duello.js), fatta da nextPhase/endTurn e dal comando 'fase'.
+ */
+function evocazioneTributoInSospeso() {
+    const indice = gameState.playerHand.findIndex((c) => c && c._tributoPerEvocazione === true);
+    if (indice === -1) return undefined;
+    const carta = gameState.playerHand[indice];
+    addToLog(`⛔ Hai già pagato i Tributi: completa prima l'Evocazione di ${carta.name}.`);
+    const sceltaAperta = gameState.pendingTributePlacement || document.getElementById('quickPopover');
+    if (!sceltaAperta) resolveTributeSummonPlacement(carta, indice, null);
+    return true;
 }
 
 function showHandDiscardPrompt(needed, selectedCount) {

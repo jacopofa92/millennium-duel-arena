@@ -83,6 +83,7 @@
         'scarto-fine-turno': '(eccesso, fatto) il giocatore sceglie cosa scartare a fine turno',
         // --- domande (chiedi) ---
         'interfaccia-occupata': '() → true se a schermo c\'è una scelta o una cinematica che il duello deve aspettare',
+        'evocazione-in-sospeso': '() → true se la persona ha GIA\' pagato i Tributi di un\'Evocazione e non l\'ha ancora completata: nessun cambio di fase finche\' non finisce',
         'decisioni-a-schermo': '(tipo) → false se l\'interfaccia non può mostrare adesso una decisione di quel tipo'
     });
 

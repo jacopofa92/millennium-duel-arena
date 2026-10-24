@@ -418,6 +418,9 @@ function nextPhase() {
     // nessun modale davanti mentre l'avversario decide, e avanzare di fase
     // in quel momento lascerebbe i due client su due fasi diverse.
     if (window.DuelEngine && DuelEngine.isPriorityWindowOpen && DuelEngine.isPriorityWindowOpen()) return;
+    // Tributi gia' pagati e Evocazione non finita: il cambio di fase (e il clearSelection qui sotto) la annullerebbe e il mostro
+    // sacrificato andrebbe perso. Vedi evocazioneTributoInSospeso in actions.js.
+    if (Tavolo.ePersona(gameState.currentPlayer) && EventiDuello.chiedi('evocazione-in-sospeso', false) === true) return;
     clearSelection();
     switch (gameState.phase) {
         case 'main1':
