@@ -350,7 +350,8 @@ void main(){
   -webkit-mask-image:radial-gradient(closest-side,#000 74%,transparent 100%);mask-image:radial-gradient(closest-side,#000 74%,transparent 100%)}
 .ee-stat{display:flex;justify-content:center;gap:1.6em;margin-top:.7em;font-family:Georgia,'Times New Roman',serif;font-weight:900;font-size:clamp(1rem,3.2vw,1.9rem);letter-spacing:.06em;color:#fff;text-shadow:0 0 12px var(--ee-c2),0 2px 8px rgba(0,0,0,.95)}
 .ee-stat b{font-size:.6em;letter-spacing:.2em;margin-right:.5em;color:var(--ee-c1);vertical-align:.18em}
-.ee-stelle{display:flex;justify-content:center;gap:.12em;margin-top:.5em;font-size:clamp(1rem,3.4vw,1.9rem);line-height:1;color:#ffd96b;text-shadow:0 0 10px #ff9d00,0 2px 6px rgba(0,0,0,.9)}
+.ee-stelle span{display:inline-block}
+.ee-stelle{display:flex;min-height:1em;justify-content:center;gap:.12em;margin-top:.5em;font-size:clamp(1rem,3.4vw,1.9rem);line-height:1;color:#ffd96b;text-shadow:0 0 10px #ff9d00,0 2px 6px rgba(0,0,0,.9)}
 `;
         document.head.appendChild(s);
     }
@@ -484,7 +485,8 @@ void main(){
         const uidCarta = card && card.uid ? String(card.uid).replace(/["\\]/g, '') : '';
         if (uidCarta) {
             const nascondi = aggiungi(document.createElement('style'));
-            nascondi.textContent = `[data-uid="${uidCarta}"]{opacity:0 !important}`;
+            // Anche il badge ATK/DEF sotto la carta (fratello della carta nella casella) resta spento fino all'impatto.
+            nascondi.textContent = `[data-uid="${uidCarta}"],.field-slot:has([data-uid="${uidCarta}"]) .field-stats-badge{opacity:0 !important}`;
             // L'ologramma WebGL del mostro (se acceso) nasce al primo ridisegno dopo la carta: lo si tiene spento fino all'impatto.
             const guardia = setInterval(() => {
                 if (chiusa || !window.MonsterHologramGL) { clearInterval(guardia); return; }
@@ -517,9 +519,9 @@ void main(){
             try {
                 const a = sp.animate([
                     { opacity: 0, transform: 'translateY(50px) scale(.55)', offset: 0, easing: 'cubic-bezier(.1,.7,.2,1)' },
-                    { opacity: 1, transform: 'translateY(-6px) scale(1.04)', offset: 0.18, easing: 'ease-out' },
-                    { opacity: 1, transform: 'translateY(-24px) scale(1.1)', offset: 0.72, easing: 'ease-in' },
-                    { opacity: 0, transform: 'translateY(-50px) scale(1.16)', offset: 1 }
+                    { opacity: 1, transform: 'translateY(0) scale(1)', offset: 0.18, easing: 'ease-out' },
+                    { opacity: 1, transform: 'translateY(-4px) scale(1.02)', offset: 0.72, easing: 'ease-in' },
+                    { opacity: 0, transform: 'translateY(-12px) scale(1.04)', offset: 1 }
                 ], { duration: 2400, delay: TI * 1000, fill: 'both' });
                 animazioni.push(a);
             } catch (e) { sp.remove(); }
@@ -535,7 +537,23 @@ void main(){
         const nome = document.createElement('span'); nome.className = 'ee-titolo-nome'; nome.textContent = String((card && card.name) || 'Evocazione');
         const sotto = document.createElement('span'); sotto.className = 'ee-titolo-sotto'; sotto.textContent = 'Evocazione';
         // Stelle del Livello e ATK/DEF, come nella presentazione di Master Duel: i valori sono quelli ATTUALI della carta in campo.
-        const st = document.createElement('div'); st.className = 'ee-stelle'; st.textContent = stelle(card && card.level);
+        const st = document.createElement('div'); st.className = 'ee-stelle';
+        // Le stelle compaiono UNA ALLA VOLTA (come in Master Duel), dopo il nome: un colpo di scala + lampo per ognuna.
+        const nStelle = Math.max(0, Math.min(13, ((card && card.level) | 0)));
+        for (let k = 0; k < nStelle; k++) {
+            const s = document.createElement('span');
+            s.textContent = '★';
+            s.style.opacity = '0';
+            st.appendChild(s);
+            try {
+                const a = s.animate([
+                    { opacity: 0, transform: 'scale(2.6)', filter: 'brightness(4) blur(3px)' },
+                    { opacity: 1, transform: 'scale(.9)', filter: 'brightness(2)', offset: 0.5 },
+                    { opacity: 1, transform: 'scale(1)', filter: 'brightness(1)' }
+                ], { duration: 260, delay: (TI + 0.55 + k * 0.12) * 1000, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'both' });
+                animazioni.push(a);
+            } catch (e) { s.style.opacity = '1'; }
+        }
         const valore = (nomeFn, grezzo) => {
             try {
                 const eng = window.DuelEngine;
@@ -554,6 +572,23 @@ void main(){
         const stat = document.createElement('div'); stat.className = 'ee-stat';
         stat.innerHTML = `<span><b>ATK</b>${Number.isFinite(atk) ? atk : '?'}</span><span><b>DEF</b>${Number.isFinite(dif) ? dif : '?'}</span>`;
         titolo.append(sotto, nome, st, stat);
+        // Disposizione a colonna: prima il blocco col nome, stelle e ATK/DEF, subito sotto l'illustrazione — mai una sopra l'altra.
+        // Se lo schermo e' basso l'illustrazione si rimpicciolisce quanto serve (il blocco di testo ha la sua altezza vera, misurata).
+        {
+            const hT = titolo.offsetHeight || 170;
+            const gap = 12;
+            const latoMax = Math.max(120, Math.min(H * 0.95 - hT - gap, W * 0.9));
+            const sp = document.querySelector('.ee-apparizione');
+            const latoF = sp ? Math.min(parseFloat(sp.style.width) || latoMax, latoMax) : 0;
+            const totale = hT + (sp ? gap + latoF : 0);
+            const alto = Math.max(4, (H - totale) / 2);
+            titolo.style.top = (alto + hT / 2) + 'px';
+            if (sp) {
+                sp.style.left = (W / 2 - latoF / 2) + 'px';
+                sp.style.top = (alto + hT + gap) + 'px';
+                sp.style.width = sp.style.height = latoF + 'px';
+            }
+        }
         try {
             const a = titolo.animate([
                 { opacity: 0, transform: 'translate(-50%,-50%) scale(1.25)', filter: 'blur(14px)', letterSpacing: '.7em', offset: 0, easing: 'cubic-bezier(.1,.7,.2,1)' },
