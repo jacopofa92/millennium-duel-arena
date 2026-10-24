@@ -10,7 +10,7 @@
  *   - il duello aspetta la durata che questa funzione RESTITUISCE (effects.js: `durata = runElementalConvergence(...)`).
  *
  * LA SCENA (tempi in secondi dall'avvio; TI = istante dell'impatto):
- *   0.0-0.5  il mondo si oscura, il bordo dello schermo si stringe; compaiono le due barre del formato cinematografico.
+ *   0.0-0.5  il mondo si oscura, il bordo dello schermo si stringe (niente bande nere: scelta dell'utente).
  *   0.1-1.0  sul pavimento sotto la carta si disegna un SIGILLO (anelli, tacche, esagramma, rune) visto in prospettiva.
  *   0.2-2.6  una spirale di particelle di energia converge sul mostro; da ~0.8 gli archi di energia (fulmini) lo cercano.
  *   1.0-2.6  dal sigillo sale una COLONNA di luce che si allarga; la carta si carica e svanisce nel suo nucleo.
@@ -40,7 +40,6 @@
     const DUR = 5.2;
     const Z_CANVAS = 10052;
     const Z_APPARIZIONE = 10049;
-    const Z_BARRE = 10053;
     const Z_TITOLO = 10054;
 
     const TIPI = { 'LUCE': 0, 'OSCURITÀ': 1, 'FUOCO': 2, 'ACQUA': 3, 'VENTO': 4, 'TERRA': 5, 'DIVINO': 6 };
@@ -342,10 +341,6 @@ void main(){
         const s = document.createElement('style');
         s.id = 'evocazioneEpicaStile';
         s.textContent = `
-.ee-barra{position:fixed;left:0;right:0;height:11vh;background:#000;z-index:${Z_BARRE};pointer-events:none;will-change:transform}
-.ee-barra--su{top:0;transform:translateY(-101%)}
-.ee-barra--giu{bottom:0;transform:translateY(101%)}
-.ee-barra--dentro{transform:translateY(0);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .ee-titolo{position:fixed;left:50%;z-index:${Z_TITOLO};pointer-events:none;text-align:center;white-space:nowrap;transform:translate(-50%,-50%);opacity:0}
 .ee-titolo-nome{display:block;font-family:Georgia,'Times New Roman',serif;font-weight:900;font-size:clamp(1.5rem,5.4vw,3.2rem);letter-spacing:.12em;text-transform:uppercase;color:#fff;
   text-shadow:0 0 14px var(--ee-c2),0 0 34px var(--ee-c3),0 3px 10px rgba(0,0,0,.9)}
@@ -480,11 +475,6 @@ void main(){
         const aggiungi = (el) => { document.body.appendChild(el); extra.push(el); return el; };
         const css3 = (c) => `rgb(${Math.round(c[0] * 255)},${Math.round(c[1] * 255)},${Math.round(c[2] * 255)})`;
 
-        // --- barre del formato cinematografico
-        const su = aggiungi(Object.assign(document.createElement('div'), { className: 'ee-barra ee-barra--su' }));
-        const giu = aggiungi(Object.assign(document.createElement('div'), { className: 'ee-barra ee-barra--giu' }));
-        requestAnimationFrame(() => { su.classList.add('ee-barra--dentro'); giu.classList.add('ee-barra--dentro'); });
-        setTimeout(() => { su.classList.remove('ee-barra--dentro'); giu.classList.remove('ee-barra--dentro'); }, (DUR - 0.55) * 1000);
 
         // --- la carta: si carica, svanisce nel nucleo e ricompare all'impatto
         try {

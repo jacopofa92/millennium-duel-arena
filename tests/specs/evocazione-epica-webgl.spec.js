@@ -41,7 +41,7 @@ module.exports = {
             assert(r.pronta && r.backend === 'webgl', `con Dettagli Alti e WebGL il backend deve essere attivo: ${JSON.stringify({ p: r.pronta, b: r.backend })}`);
             for (const [attr, v] of Object.entries(r.attributi)) {
                 assert(typeof v === 'object' && v.durata === 5200 && !v.errore, `${attr}: durata/errore inattesi ${JSON.stringify(v)}`);
-                assert(v.durante.canvas >= 1 && v.durante.barre >= 2, `${attr}: la scena deve avere il suo canvas e le due barre (le scene si sovrappongono: sette lanciate di fila) ${JSON.stringify(v.durante)}`);
+                assert(v.durante.canvas >= 1 && v.durante.barre === 0, `${attr}: la scena deve avere il suo canvas e nessuna banda nera ${JSON.stringify(v.durante)}`);
             }
 
             // Pulizia: a fine scena (durata + rete di sicurezza) non resta niente.
