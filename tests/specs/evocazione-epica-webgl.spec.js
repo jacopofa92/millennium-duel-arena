@@ -47,6 +47,24 @@ module.exports = {
             // Pulizia: a fine scena (durata + rete di sicurezza) non resta niente.
             await page.waitForFunction(() => !document.querySelector('.ee-barra, .ee-titolo, .ee-apparizione, canvas[style*="10052"]'), null, { timeout: 12000 });
 
+            // Fusione: vortice di materiali + seconda parte dell'Evocazione; il mostro entra (onDone) solo a fine scena, e il motore
+            // viene avvisato che la rivelazione c'e' gia' stata (niente secondo effetto di Evocazione).
+            const fus = await page.evaluate(async () => {
+                if (window.VideoQuality) VideoQuality.set('alti');
+                const base = cardDatabase.find((c) => c.type === 'monster' && c.level >= 7 && c.attribute === 'FUOCO');
+                const carta = { ...base, uid: 'fus-x' };
+                const mat = cardDatabase.filter((c) => c.type === 'monster' && !c.extraDeck).slice(0, 2).map((c, i) => ({ ...c, uid: 'm' + i }));
+                let fatto = false; const t0 = performance.now(); let tFatto = 0;
+                const durata = FX.playFusionMaterialEffect(mat, carta, 'player', () => { fatto = true; tFatto = performance.now() - t0; });
+                await new Promise((r) => setTimeout(r, 2500));
+                const meta = { fatto, titolo: !!document.querySelector('.ee-titolo'), cinematica: FX.isCinematicPlaying() };
+                await new Promise((r) => setTimeout(r, 4300));
+                return { durata, meta, fatto, tFatto, cinematicaDopo: FX.isCinematicPlaying(), rivelata: FX.rivelazioneFusioneFatta(carta), seconda: FX.rivelazioneFusioneFatta(carta) };
+            });
+            assert(fus.durata === 5200 && !fus.meta.fatto && fus.meta.cinematica, `Fusione WebGL: a meta' scena il mostro non deve essere entrato ${JSON.stringify(fus)}`);
+            assert(fus.fatto && fus.tFatto > 4500 && !fus.cinematicaDopo, `Fusione WebGL: a fine scena onDone una volta e cinematica liberata ${JSON.stringify(fus)}`);
+            assert(fus.rivelata === true && fus.seconda === false, 'rivelazioneFusioneFatta deve valere una volta sola');
+
             // Con "Normali" il backend non si attiva: vale la versione di sempre.
             const normali = await page.evaluate(() => { VideoQuality.set('normali'); return { pronta: !!window.EvocazioneEpicaPronta, backend: FX.backendFor('playElementalConvergence') }; });
             assert(!normali.pronta && normali.backend !== 'webgl' || normali.backend === null || normali.backend === 'gsap', `con Dettagli Normali non deve partire il Risveglio: ${JSON.stringify(normali)}`);

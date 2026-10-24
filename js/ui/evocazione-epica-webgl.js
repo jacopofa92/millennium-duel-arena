@@ -58,6 +58,7 @@ uniform vec3 c1;
 uniform vec3 c2;
 uniform vec3 c3;
 uniform float uSeed;
+uniform float uFus;
 const float PI=3.14159265;
 const float TI=${TI.toFixed(2)};
 const float DUR=${DUR.toFixed(2)};
@@ -80,7 +81,7 @@ void main(){
 
   // ---- il mondo si oscura (di piu' lontano dal centro), con un battito di buio totale prima del colpo
   float dimIn=ease(tt/.45);
-  float dimOut=1.-ease((tt-3.5)/1.5);
+  float dimOut=1.-ease((tt-4.4)/.8);
   dark=.9*dimIn*dimOut*(.72+.28*smoothstep(.8,9.,rr));
   dark=max(dark,.55*smoothstep(TI-.3,TI-.06,tt)*(1.-dopo));
 
@@ -144,6 +145,17 @@ void main(){
       acc+=exp(-(tang*tang+rad*rad*.18)/(sz*sz))*smoothstep(0.,.12,phase)*(.5+phase);
     }
     L+=mix(c1,c2,.35)*acc*inten*1.35;
+  }
+
+  // ---- FUSIONE: un vortice a bracci che si stringe e accelera attorno ai materiali, con un anello di raccolta
+  if(uFus>.5){
+    float vv=ease((tt-.1)/.7)*(1.-ease((imp+.05)/.25));
+    float spv=an+3.2*log(rr+.35)-tt*(2.+tt*1.3);
+    float arms=pow(.5+.5*cos(spv*3.),3.);
+    float fadeV=smoothstep(.0,.5,rr)*exp(-rr*.3);
+    L+=mix(c2,c1,arms)*arms*fadeV*vv*1.6;
+    L+=c2*exp(-rr*rr*1.1)*vv*.7;
+    L+=c1*gs(rr-mix(5.,.45,ease(tt/2.5)),.07)*vv*.9;
   }
 
   // ---- archi di energia che cercano il mostro
@@ -334,6 +346,9 @@ void main(){
         get() { return !window.EVOCAZIONE_EPICA_OFF && !menoMovimento() && dettagliAlti() && webglAdatto(); }
     });
 
+    /** Le carte il cui effetto di Evocazione e' gia' stato mostrato dalla scena della Fusione (vedi `rivelazioneFusioneFatta`). */
+    const fusioniMostrate = new WeakSet();
+
     let stileIniettato = false;
     function iniettaStile() {
         if (stileIniettato) return;
@@ -372,14 +387,24 @@ void main(){
      */
     function playElementalConvergence(monsterElement, card, theme) {
         if (!monsterElement || !theme) return 0;
+        return scena(monsterElement, card, theme, null);
+    }
+
+    /**
+     * La scena vera, per due usi: l'Evocazione di un mostro di Livello 7+ (`fus` nullo: c'e' la carta sul Terreno) e la Fusione
+     * (`fus` = { materiali, owner, onDone }: la carta NON c'e' ancora, i materiali girano in un vortice al centro dello schermo, e
+     * `onDone` fa entrare il mostro solo a fine scena). Nella Fusione dopo il vortice si riprende la stessa seconda parte
+     * dell'Evocazione (impatto, grande illustrazione, nome, stelle, ATK/DEF), sempre sul fondo scuro.
+     */
+    function scena(monsterElement, card, theme, fus) {
         iniettaStile();
 
-        const rect = monsterElement.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        const S = Math.max(80, Math.min(150, rect.height || 100));
         const W = window.innerWidth;
         const H = window.innerHeight;
+        const rect = monsterElement ? monsterElement.getBoundingClientRect() : null;
+        const cx = rect ? rect.left + rect.width / 2 : W / 2;
+        const cy = rect ? rect.top + rect.height / 2 : H * 0.5;
+        const S = rect ? Math.max(80, Math.min(150, rect.height || 100)) : Math.max(90, Math.min(150, H * 0.18));
         const tipo = Object.prototype.hasOwnProperty.call(TIPI, card && card.attribute) ? TIPI[card.attribute] : 0;
         // Il rosso del tema del FUOCO nella luce additiva vira al rosa: lo si scalda verso l'arancio.
         const midC = tipo === TIPI['FUOCO'] ? [1, .46, .12] : colore(theme.mid, [1, .8, .3]);
@@ -435,6 +460,7 @@ void main(){
         gl.uniform2f(u('uC'), cx, cy);
         gl.uniform1f(u('uS'), S);
         gl.uniform1f(u('uTipo'), tipo);
+        gl.uniform1f(u('uFus'), fus ? 1 : 0);
         gl.uniform3fv(u('c1'), rilievo(bright, .35));
         gl.uniform3fv(u('c2'), rilievo(mid, .3));
         gl.uniform3fv(u('c3'), rilievo(deep, .25));
@@ -454,9 +480,49 @@ void main(){
             cancelAnimationFrame(rid);
             animazioni.forEach((a) => { try { a.cancel(); } catch (e) { /* gia' finita */ } });
             extra.forEach((el) => el.remove());
-            monsterElement.style.removeProperty('--ee-c1');
             canvas.remove();
             rilascia(gl);
+            // Fusione: a scena finita il mostro entra davvero (la regola e' sincrona, il motore l'aveva solo rimandata) e il
+            // duello puo' riprendere. Una sola volta, qualunque strada abbia portato a chiudere.
+            if (fus) {
+                fusioniMostrate.add(card);
+                if (window.FX && typeof FX.endSummonCinematic === 'function') FX.endSummonCinematic();
+                if (typeof fus.onDone === 'function') { try { fus.onDone(); } catch (e) { console.error(e); } }
+            }
+        };
+
+        // --- Fusione: le carte dei materiali girano in un vortice in prospettiva e vengono risucchiate nel nucleo.
+        let orbita = [];
+        if (fus) {
+            const mat = (fus.materiali || []).slice(0, 8);
+            const larg = S * 0.72;
+            orbita = mat.map((m, i) => {
+                const guscio = document.createElement('div');
+                guscio.style.cssText = `position:fixed;left:0;top:0;width:${larg}px;height:${S}px;z-index:${Z_APPARIZIONE};pointer-events:none;will-change:transform,opacity;opacity:0;`;
+                if (typeof window.createCardElement === 'function') {
+                    const c = createCardElement(m, false, 'attack');
+                    c.style.cssText = 'width:100%!important;height:100%!important;margin:0!important;position:static!important;';
+                    guscio.appendChild(c);
+                }
+                document.body.appendChild(guscio); extra.push(guscio);
+                return { el: guscio, base: i * (Math.PI * 2 / Math.max(1, mat.length)), larg };
+            });
+        }
+        const R0 = Math.min(W, H) * 0.34;
+        const aggiornaOrbita = (tempo) => {
+            const f = (x) => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
+            orbita.forEach((o) => {
+                const ang = o.base + 2.0 * tempo + 0.95 * tempo * tempo;
+                const raggio = R0 * (1 - f((tempo - 0.3) / 2.25));
+                const fronte = Math.sin(ang);                       // +1 = davanti (piu' grande), -1 = dietro
+                const scala = (0.35 + 0.65 * (raggio / R0)) * (1 + 0.28 * fronte) * (0.9 + 0.1 * f(tempo / 0.5));
+                const x = cx + Math.cos(ang) * raggio;
+                const y = cy + fronte * raggio * 0.42;
+                const op = f(tempo / 0.45) * (1 - f((tempo - 2.35) / 0.3));
+                o.el.style.transform = `translate(${x - o.larg / 2}px,${y - S / 2}px) rotate(${(Math.cos(ang) * -14).toFixed(1)}deg) scale(${scala.toFixed(3)})`;
+                o.el.style.opacity = String(op);
+                o.el.style.zIndex = String(Z_APPARIZIONE + (fronte > 0 ? 1 : -1));
+            });
         };
 
         const ciclo = (ora) => {
@@ -465,6 +531,7 @@ void main(){
             const vel = typeof window.FX_WEBGL_VEL === 'number' ? window.FX_WEBGL_VEL : 1;
             const tempo = congelato ? window.FX_WEBGL_T : ((ora - t0) / 1000) * vel;
             if (!congelato && tempo > DUR) { chiudi(); return; }
+            if (orbita.length) aggiornaOrbita(tempo);
             if (!document.hidden) {
                 gl.clearColor(0, 0, 0, 0);
                 gl.clear(gl.COLOR_BUFFER_BIT);
@@ -483,7 +550,10 @@ void main(){
         // --- la carta evocata NON si vede finche' non scatta l'impatto: poi compare nel lampo. Il nascondiglio e' una regola
         //     per uid (non un'animazione sul nodo): un ridisegno del Terreno sostituisce il nodo, e la regola vale anche per il nuovo.
         const uidCarta = card && card.uid ? String(card.uid).replace(/["\\]/g, '') : '';
-        if (uidCarta) {
+        if (fus) {
+            // Fusione: il mostro non e' ancora sul Terreno, non c'e' niente da nascondere. A fine scena i materiali sono spariti
+            // e il mostro entra; il motore NON rifa' l'effetto di Evocazione (lo ha gia' visto: vedi `rivelazioneFusioneFatta`).
+        } else if (uidCarta) {
             const nascondi = aggiungi(document.createElement('style'));
             // Anche il badge ATK/DEF sotto la carta (fratello della carta nella casella) resta spento fino all'impatto.
             nascondi.textContent = `[data-uid="${uidCarta}"],.field-slot:has([data-uid="${uidCarta}"]) .field-stats-badge{opacity:0 !important}`;
@@ -504,7 +574,7 @@ void main(){
                     animazioni.push(a);
                 } catch (e) { /* senza WAAPI compare e basta */ }
             }, TI * 1000);
-        } else {
+        } else if (monsterElement) {
             monsterElement.style.visibility = 'hidden';
             setTimeout(() => { monsterElement.style.removeProperty('visibility'); }, TI * 1000);
         }
@@ -535,7 +605,7 @@ void main(){
         titolo.style.setProperty('--ee-c2', css3(rilievo(mid, .4)));
         titolo.style.setProperty('--ee-c3', css3(rilievo(deep, .35)));
         const nome = document.createElement('span'); nome.className = 'ee-titolo-nome'; nome.textContent = String((card && card.name) || 'Evocazione');
-        const sotto = document.createElement('span'); sotto.className = 'ee-titolo-sotto'; sotto.textContent = 'Evocazione';
+        const sotto = document.createElement('span'); sotto.className = 'ee-titolo-sotto'; sotto.textContent = fus ? 'Evocazione per Fusione' : 'Evocazione';
         // Stelle del Livello e ATK/DEF, come nella presentazione di Master Duel: i valori sono quelli ATTUALI della carta in campo.
         const st = document.createElement('div'); st.className = 'ee-stelle';
         // Le stelle compaiono UNA ALLA VOLTA (come in Master Duel), dopo il nome: un colpo di scala + lampo per ognuna.
@@ -616,6 +686,30 @@ void main(){
         try { const e = gl.getExtension('WEBGL_lose_context'); if (e) e.loseContext(); } catch (e) { /* gia' perso */ }
     }
 
-    window.EvocazioneEpica = { DURATA_MS: DUR * 1000, ISTANTE_IMPATTO_S: TI, esegui: playElementalConvergence, tipi: TIPI };
-    window.FX.registerBackend('webgl', { requires: ['EvocazioneEpicaPronta'], impls: { playElementalConvergence: playElementalConvergence } });
+    /** Fusione in WebGL: vortice di carte, poi la seconda parte dell'Evocazione epica. Torna la durata (ms) che il motore deve aspettare. */
+    function playFusionMaterialEffect(materiali, fusionCard, owner, onDone) {
+        if (!Array.isArray(materiali) || !materiali.length || !fusionCard) throw new Error('fusione-senza-dati');
+        const temi = window.FX && FX.summonThemes;
+        const theme = temi && (temi[fusionCard.attribute] || temi['LUCE']);
+        if (!theme) throw new Error('nessun-tema');
+        // Il suono di sempre della Fusione (file reale audio/standard/fusion.mp3 o ripiego sintetizzato).
+        if (window.SFX && typeof SFX.fusion === 'function') SFX.fusion();
+        // Se la scena non parte (WebGL assente), lancia PRIMA di aver toccato qualcosa e vale la versione di sempre.
+        const durata = (() => {
+            FX.beginSummonCinematic();
+            try { return scena(null, fusionCard, theme, { materiali, owner, onDone }); } catch (e) { FX.endSummonCinematic(); throw e; }
+        })();
+        return durata;
+    }
+
+    /** Il motore lo chiede quando una carta entra per Fusione: se questa scena l'ha gia' mostrata, niente secondo effetto di Evocazione. */
+    function rivelazioneFusioneFatta(card) {
+        const si = fusioniMostrate.has(card);
+        fusioniMostrate.delete(card);
+        return si;
+    }
+
+    window.EvocazioneEpica = { DURATA_MS: DUR * 1000, ISTANTE_IMPATTO_S: TI, esegui: playElementalConvergence, fusione: playFusionMaterialEffect, tipi: TIPI };
+    window.FX.rivelazioneFusioneFatta = rivelazioneFusioneFatta;
+    window.FX.registerBackend('webgl', { requires: ['EvocazioneEpicaPronta'], impls: { playElementalConvergence: playElementalConvergence, playFusionMaterialEffect: playFusionMaterialEffect } });
 })();

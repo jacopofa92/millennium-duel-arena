@@ -1823,8 +1823,10 @@
                             EventiDuello.emetti('impatto-campo', owner, slotIndex, 'monster');
                             EventiDuello.emetti('cambio-posizione', owner, slotIndex, position);
                             const cardEl = PortaUI.query(`#${owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard'} .field-slot[data-type="monster"][data-index="${slotIndex}"] .card`);
-                            if (cardEl && window.FX) FX.playMonsterSummonEffect(card, cardEl);
-                            if ((card.level || 0) < 7 && !(window.AudioLibrary && AudioLibrary.tryPlayCardSound(card, 'evocazioni')) && window.SFX) SFX.summon(position);
+                            // Una Fusione in WebGL ha gia' mostrato la sua seconda parte (illustrazione, nome, stelle, ATK/DEF): niente doppione.
+                            const giaMostrata = !!(window.FX && FX.rivelazioneFusioneFatta && FX.rivelazioneFusioneFatta(card));
+                            if (cardEl && window.FX && !giaMostrata) FX.playMonsterSummonEffect(card, cardEl);
+                            if (!giaMostrata && (card.level || 0) < 7 && !(window.AudioLibrary && AudioLibrary.tryPlayCardSound(card, 'evocazioni')) && window.SFX) SFX.summon(position);
                         };
                         // Il grido del duellante per la sua carta simbolo precede
                         // la parte VISIVA dell'Evocazione (lo stato è già

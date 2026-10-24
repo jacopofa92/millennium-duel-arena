@@ -2785,7 +2785,9 @@
         playElementalConvergence: runElementalConvergence,
         playVideoOverlay,
         playMonsterSummonEffect,
-        playFusionMaterialEffect,
+        playFusionMaterialEffect: viaBackend('playFusionMaterialEffect', playFusionMaterialEffect),
+        /** I temi per Attributo delle Evocazioni di Livello 7+ (colori): li riusa anche la Fusione in WebGL. */
+        summonThemes: ATTRIBUTE_SUMMON_THEMES,
         playRitualSummon,
         playDustTornado: viaBackend('playDustTornado', playDustTornado),
         playHarpiesFeatherDuster: viaBackend('playHarpiesFeatherDuster', playHarpiesFeatherDuster),
