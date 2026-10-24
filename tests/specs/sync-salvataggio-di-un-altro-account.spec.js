@@ -41,6 +41,8 @@ module.exports = {
             // 1) Il salvataggio locale diventa di un ALTRO account e piu' recente: non deve mai finire sul cloud.
             await page.evaluate(() => {
                 SaveManager.addCurrency('credits', 4000);
+                // Il salvataggio dice di essere di un altro account: l'etichetta e' DENTRO il salvataggio (ccountId).
+                SaveManager.impostaProprietario('altro-account', true);
                 localStorage.setItem('ygoProprietarioSalvataggio', 'altro-account');
             });
             const esito = await page.evaluate(() => CloudSync.pushSave().then(() => 'caricato', (e) => e.code || e.message));
@@ -61,6 +63,8 @@ module.exports = {
             // 2) Dispositivo senza marcatore: lo ricava dall'ultima base (qui di un altro utente).
             await page.evaluate(() => {
                 SaveManager.addCurrency('credits', 7000);
+                // Senza etichetta nel salvataggio e senza marcatore: resta solo l'ultima base di sincronizzazione.
+                const s = JSON.parse(localStorage.getItem('yugiohDuelArenaSave')); delete s.accountId; localStorage.setItem('yugiohDuelArenaSave', JSON.stringify(s));
                 localStorage.removeItem('ygoProprietarioSalvataggio');
                 localStorage.setItem('ygoCloudBase', JSON.stringify({ uid: 'altro-account', updatedAt: new Date().toISOString() }));
             });

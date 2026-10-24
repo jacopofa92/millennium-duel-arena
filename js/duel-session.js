@@ -613,9 +613,20 @@
         ));
     }
 
+    /** L'id dell'account collegato adesso, o null (nessuna sessione, o cloud non disponibile in questa pagina). */
+    function accountDelDuello() {
+        try {
+            const u = window.CloudSync && typeof CloudSync.getUser === 'function' ? CloudSync.getUser() : null;
+            return u && u.id ? u.id : null;
+        } catch (e) { return null; }
+    }
+
     function start() {
         if (session.started) return;
         session.started = true;
+        // Di chi e' questo duello: se a fine partita l'account collegato e' un altro (un'altra scheda ha fatto uscire
+        // e rientrare qualcuno mentre si giocava), il risultato NON si scrive nel salvataggio di chi c'e' adesso.
+        session.accountId = accountDelDuello();
 
         // Nasconde la schermata di caricamento condivisa (js/ui/page-loader.js,
         // PAGE_LOADER_MANUAL_HIDE=true in duelMonstersCore.html — al posto
@@ -733,6 +744,13 @@
     function finish(playerWon, opzioni) {
         if (session.finished) return;
         session.finished = true;
+        // Record, Sfide, premi e sblocchi scrivono nel salvataggio locale, che adesso potrebbe essere di un ALTRO account:
+        // meglio un risultato non registrato che le vittorie di uno finite nel profilo dell'altro.
+        if (session.accountId && accountDelDuello() !== session.accountId) {
+            try { sessionStorage.setItem('ygoAvvisoSync', 'accountCambiato'); } catch (e) { /* noop */ }
+            window.location.replace('index.html');
+            return;
+        }
         if (window.DuelDialogues) DuelDialogues.duelEnd(playerWon);
         // `opzioni.abbandono`: il giocatore si è ritirato invece di giocare
         // fino alla fine (vedi endDuel in js/engine/game-flow.js). Tocca

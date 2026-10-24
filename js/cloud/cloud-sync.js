@@ -454,6 +454,9 @@
         // Il marcatore di amministratore è per-utente e non deve
         // sopravvivere al cambio account su questo dispositivo.
         forgetAdmin();
+        // Si esce: il salvataggio che c'e' qui, se nessuno sa di chi sia, e' di chi esce (un'etichetta in piu' prima di
+        // lasciare il posto a un altro account, anche se questo dispositivo non e' mai riuscito a sincronizzarlo).
+        if (cachedUser && window.SaveManager && SaveManager.hasSave() && !proprietarioLocale()) assegnaProprietario();
         try { localStorage.removeItem(CHIAVE_SESSIONE); } catch (e) { /* noop */ }
         return client.auth.signOut().then(({ error }) => { if (error) throw error; });
     }
@@ -561,8 +564,10 @@
         if (!available) return rejectUnavailable();
         if (!cachedUser) return Promise.reject(new Error('Devi accedere prima di eliminare l\'account.'));
         forgetApproved();
+        const uidEliminato = cachedUser.id;
         return client.rpc('delete_own_account').then(({ error }) => {
             if (error) throw error;
+            dimenticaCopieDi(uidEliminato);
             return client.auth.signOut();
         });
     }
@@ -605,6 +610,8 @@
             .then(({ error }) => { if (error) throw error; })
             .then(() => {
                 svuotaQuestoDispositivo();
+                // Anche le copie di sicurezza di questo account: erano del profilo che si e' appena azzerato.
+                dimenticaCopieDi(uid);
                 // Questo dispositivo sa già dell'azzeramento: il profilo
                 // nuovo che si creerà qui dopo il rientro gli appartiene.
                 ricordaGenerazione(adesso);
@@ -807,18 +814,42 @@
     const CHIAVE_PROPRIETARIO = 'ygoProprietarioSalvataggio';
     const CHIAVE_COPIE_ALTRI = 'ygoSalvataggiDiAltriAccount';
 
+    /**
+     * Di chi e' il salvataggio di questo dispositivo, in ordine di affidabilita': 1) l'`accountId` scritto DENTRO il
+     * salvataggio (viaggia con lui: backup nativo, copie, scritture tardive di un'altra scheda); 2) il marcatore
+     * scritto a ogni sincronizzazione riuscita; 3) l'ultima base di sincronizzazione. Null = NESSUNO LO SA (salvataggio
+     * nato prima di queste regole e mai sincronizzato): vedi `leggiCloud`, che in quel caso non lo lascia mai
+     * sovrascrivere un cloud che esiste.
+     */
     function proprietarioLocale() {
         try {
+            const dentro = window.SaveManager && typeof SaveManager.getAccountId === 'function' ? SaveManager.getAccountId() : null;
+            if (dentro) return dentro;
             const marcato = localStorage.getItem(CHIAVE_PROPRIETARIO);
             if (marcato) return marcato;
             const b = JSON.parse(localStorage.getItem(CHIAVE_BASE));
             return b && b.uid ? b.uid : null;
         } catch (e) { return null; }
     }
-    /** Il salvataggio locale e' dell'utente collegato adesso: da qui in poi gli appartiene. */
+    /**
+     * Il proprietario da attribuire a un salvataggio che si sta scrivendo e non ne ha ancora uno (lo chiama
+     * SaveManager.touch): quello che il dispositivo gia' conosce (marcatore/base — anche se NON e' chi e' collegato:
+     * un salvataggio di A modificato mentre B sta entrando resta di A), altrimenti l'account collegato.
+     */
+    function proprietarioPresunto() {
+        try {
+            const marcato = localStorage.getItem(CHIAVE_PROPRIETARIO);
+            if (marcato) return marcato;
+            const b = JSON.parse(localStorage.getItem(CHIAVE_BASE));
+            if (b && b.uid) return b.uid;
+        } catch (e) { /* noop */ }
+        return cachedUser ? cachedUser.id : null;
+    }
+    /** Il salvataggio locale e' dell'utente collegato adesso: da qui in poi gli appartiene (marcatore E segno nel salvataggio). */
     function assegnaProprietario() {
         if (!cachedUser) return;
-        try { localStorage.setItem(CHIAVE_PROPRIETARIO, cachedUser.id); } catch (e) { /* senza marcatore vale l'ultima base */ }
+        try { localStorage.setItem(CHIAVE_PROPRIETARIO, cachedUser.id); } catch (e) { /* senza marcatore vale il segno nel salvataggio */ }
+        if (window.SaveManager && typeof SaveManager.impostaProprietario === 'function') SaveManager.impostaProprietario(cachedUser.id, true);
     }
     /** Il salvataggio di questo dispositivo e' di un ALTRO account rispetto a quello collegato? */
     function salvataggioLocaleDiAltri() {
@@ -826,30 +857,114 @@
         const p = proprietarioLocale();
         return !!p && p !== cachedUser.id;
     }
+    /**
+     * Le copie messe da parte, per account: { [uid]: { conservataIl, data, customCards, customTaxonomy, carteInSospeso,
+     * precedenti: [stesse cose, piu' vecchie] } }. Per `uid` 'sconosciuto': salvataggi di cui nessuno sapeva di chi fossero.
+     */
     function copieDiAltriAccount() {
         try { return JSON.parse(localStorage.getItem(CHIAVE_COPIE_ALTRI)) || {}; } catch (e) { return {}; }
     }
-    /**
-     * Se il salvataggio locale e' di un altro account lo conserva (una copia per account, l'ultima) e libera il
-     * dispositivo. Va chiamata PRIMA di qualunque confronto o caricamento (la chiama leggiCloud, l'unico punto da cui
-     * passano tutti). Torna true se ha messo da parte qualcosa.
-     */
-    function mettiDaParteSeDiAltri() {
-        if (!salvataggioLocaleDiAltri()) return false;
-        const di = proprietarioLocale();
+    const COPIE_PER_ACCOUNT = 3;
+    /** Le carte inventate e la terminologia personalizzata di questo dispositivo (non stanno nel salvataggio). */
+    function carteDelDispositivo() {
+        const r = { customCards: null, customTaxonomy: null };
+        try { if (window.CustomCards && typeof CustomCards.list === 'function') r.customCards = CustomCards.list(); } catch (e) { /* noop */ }
+        try { if (window.CustomTaxonomy && typeof CustomTaxonomy.exportAll === 'function') r.customTaxonomy = CustomTaxonomy.exportAll(); } catch (e) { /* noop */ }
+        return r;
+    }
+    /** Fotografa TUTTO cio' che e' di chi sta per lasciare il dispositivo: salvataggio, carte inventate, terminologia. */
+    function fotografiaDelDispositivo() {
+        let customCards = null;
+        let customTaxonomy = null;
+        try { if (window.CustomCards && typeof CustomCards.list === 'function') customCards = CustomCards.list(); } catch (e) { /* noop */ }
+        try { if (window.CustomTaxonomy && typeof CustomTaxonomy.exportAll === 'function') customTaxonomy = CustomTaxonomy.exportAll(); } catch (e) { /* noop */ }
+        let carteInSospeso = false;
+        try { carteInSospeso = !!localStorage.getItem('ygoSyncCarteInSospeso'); } catch (e) { /* noop */ }
+        // `generazione`: a quale azzeramento del profilo era arrivato questo dispositivo quando ha preso la copia (se il profilo
+        // viene azzerato altrove, una copia di PRIMA non deve risorgere quando l'account rientra).
+        return { conservataIl: new Date().toISOString(), generazione: generazioneNota(), data: SaveManager.load(), customCards: customCards, customTaxonomy: customTaxonomy, carteInSospeso: carteInSospeso };
+    }
+    /** Aggiunge una copia in testa all'elenco dell'account, tenendone al piu' COPIE_PER_ACCOUNT. Torna false se non c'e' posto. */
+    function registraCopia(di, copia) {
         const copie = copieDiAltriAccount();
-        try {
-            copie[di] = { conservataIl: new Date().toISOString(), data: SaveManager.load() };
-            localStorage.setItem(CHIAVE_COPIE_ALTRI, JSON.stringify(copie));
-        } catch (e) {
-            // Senza copia (spazio esaurito) NON si cancella: meglio un blocco che perdere i dati di qualcuno.
-            return false;
-        }
+        const prima = copie[di] || null;
+        const precedenti = prima ? [Object.assign({}, prima, { precedenti: undefined })].concat(prima.precedenti || []) : [];
+        copie[di] = Object.assign({}, copia, { precedenti: precedenti.slice(0, COPIE_PER_ACCOUNT - 1) });
+        try { localStorage.setItem(CHIAVE_COPIE_ALTRI, JSON.stringify(copie)); return true; } catch (e) { return false; }
+    }
+    /**
+     * Se il salvataggio locale e' di un altro account lo conserva (con le sue carte inventate) e libera il
+     * dispositivo. Va chiamata PRIMA di qualunque confronto o caricamento (la chiama leggiCloud, l'unico punto da cui
+     * passano tutti). Torna { fatto, bloccato }: `bloccato` = andava messo da parte ma non c'e' posto per la copia, e
+     * allora NON si cancella niente e chi chiama deve fermarsi (meglio un blocco che perdere i dati di qualcuno, o
+     * peggio caricarli sul cloud sbagliato).
+     */
+    function mettiDaParteSeDiAltri(comeSconosciuto) {
+        const nonSuo = comeSconosciuto ? !!(cachedUser && window.SaveManager && SaveManager.hasSave()) : salvataggioLocaleDiAltri();
+        if (!nonSuo) return { fatto: false, bloccato: false };
+        const di = comeSconosciuto ? 'sconosciuto' : proprietarioLocale();
+        if (!registraCopia(di, fotografiaDelDispositivo())) return { fatto: false, bloccato: true };
         svuotaQuestoDispositivo();
         try { localStorage.removeItem(CHIAVE_PROPRIETARIO); } catch (e) { /* noop */ }
+        return { fatto: true, bloccato: false };
+    }
+    /** Toglie da questo dispositivo ogni copia di sicurezza di un account (azzeramento/eliminazione del profilo: non devono risorgere). */
+    function dimenticaCopieDi(uid) {
+        if (!uid) return;
+        const copie = copieDiAltriAccount();
+        if (copie[uid]) { delete copie[uid]; try { localStorage.setItem(CHIAVE_COPIE_ALTRI, JSON.stringify(copie)); } catch (e) { /* noop */ } }
+        try {
+            const mappa = JSON.parse(localStorage.getItem('ygoSalvataggiDivergenti')) || {};
+            if (mappa[uid]) { delete mappa[uid]; localStorage.setItem('ygoSalvataggiDivergenti', JSON.stringify(mappa)); }
+        } catch (e) { /* noop */ }
+    }
+    function erroreDiSpazio() {
+        const e = new Error('Il salvataggio di questo dispositivo e\' di un altro account e non c\'e\' spazio per tenerne una copia: libera spazio (svuota i dati del sito) e riprova. Non e\' stato toccato niente.');
+        e.code = 'SPAZIO_ESAURITO';
+        return e;
+    }
+    /**
+     * L'account che rientra ritrova cio' che aveva lasciato su QUESTO dispositivo (progressi mai arrivati sul cloud,
+     * carte inventate): se il dispositivo e' libero, la sua copia piu' recente torna il salvataggio locale e il
+     * confronto normale per data decide col cloud. Se invece il cloud e' PIU' NUOVO della copia, la copia non si
+     * butta e non sostituisce niente: diventa la sua copia di sicurezza (Profilo > recupera), come per ogni altra
+     * divergenza. Chiamata da leggiCloud, con la riga cloud gia' letta (`cloud` puo' essere null).
+     */
+    function riportaCopiaDelProprietario(cloud, generazioneCloud) {
+        if (!cachedUser || !window.SaveManager || SaveManager.hasSave()) return false;
+        const copie = copieDiAltriAccount();
+        const mia = copie[cachedUser.id];
+        if (!mia || !mia.data || !mia.data.player) return false;
+        // Un azzeramento del profilo fatto dopo che la copia e' stata presa: la copia e' di un profilo che non esiste piu'.
+        // Anche la riga che porta SOLO il segno di azzeramento (nessun salvataggio dentro) fa fede: generazioneCloud.
+        const gCloud = Math.max(generazioneCloud || 0, cloud ? generazioneDi(cloud.data) : 0);
+        const gCopia = mia.generazione ? Date.parse(mia.generazione) || 0 : 0;
+        const quandoCopia = dataModifica(mia.data);
+        const quandoCloud = cloud ? dataModifica(cloud.data, cloud.updatedAt) : NaN;
+        const cloudPiuNuovo = !!cloud && !isNaN(quandoCloud) && (isNaN(quandoCopia) || quandoCloud > quandoCopia);
+        // Si toglie la copia dall'elenco SOLO dopo averla messa al sicuro altrove.
+        const togli = () => {
+            const resto = (mia.precedenti || []);
+            if (resto.length) copie[cachedUser.id] = Object.assign({}, resto[0], { precedenti: resto.slice(1) });
+            else delete copie[cachedUser.id];
+            try { localStorage.setItem(CHIAVE_COPIE_ALTRI, JSON.stringify(copie)); } catch (e) { /* resta in elenco: nessun danno */ }
+        };
+        if (gCloud && gCopia < gCloud) { togli(); return false; }
+        if (cloudPiuNuovo) {
+            if (!conservaCopiaDivergente(mia.data, mia)) return false;
+            togli();
+            return false;
+        }
+        try {
+            SaveManager.applyExternalSave(JSON.parse(JSON.stringify(mia.data)), { mantieniData: true, mantieniProprietario: true });
+        } catch (e) { return false; }
+        assegnaProprietario();
+        if (mia.customCards && window.CustomCards && typeof CustomCards.replaceAll === 'function') CustomCards.replaceAll(mia.customCards);
+        if (mia.customTaxonomy && window.CustomTaxonomy && typeof CustomTaxonomy.importAll === 'function') CustomTaxonomy.importAll(mia.customTaxonomy);
+        if (mia.carteInSospeso) { try { localStorage.setItem('ygoSyncCarteInSospeso', '1'); } catch (e) { /* noop */ } }
+        togli();
         return true;
     }
-
     const stessoMomento = (a, b) => !!a && !!b && Date.parse(a) === Date.parse(b);
     /** Adotta come base la versione del cloud appena vista (dopo un download, o quando sono già uguali). */
     function adottaBase(cloud) {
@@ -873,24 +988,70 @@
         return true;
     }
 
-    /** Tiene da parte una copia del salvataggio di QUESTO dispositivo, prima che il cloud lo sostituisca. */
-    function conservaCopiaDivergente(locale) {
+    /**
+     * Le copie di sicurezza DIVERGENTI (il cloud ha vinto su modifiche fatte qui, un file importato ha sostituito il
+     * salvataggio, ...) sono PER ACCOUNT: `{ [uid]: { uid, conservataIl, data, customCards, ... } }`. Prima era UNA copia
+     * sola per dispositivo, senza dire di chi: un account poteva ritrovarsi nel Profilo "recupera le modifiche" con
+     * il salvataggio di un altro, applicarlo come proprio e caricarlo sul proprio cloud. Una copia vecchia, scritta
+     * prima di questa regola e senza proprietario, la vede solo chi e' il proprietario del dispositivo.
+     */
+    const CHIAVE_COPIE_DIVERGENTI = 'ygoSalvataggiDivergenti';
+    function mappaCopieDivergenti() {
+        let mappa = {};
+        try { mappa = JSON.parse(localStorage.getItem(CHIAVE_COPIE_DIVERGENTI)) || {}; } catch (e) { mappa = {}; }
+        // Migrazione dell'unica copia di prima: la si attribuisce al proprietario noto del dispositivo; se non c'e', resta
+        // dov'era (nessuno la vede, nessuno la perde).
         try {
-            localStorage.setItem(CHIAVE_COPIA_DIVERGENTE, JSON.stringify({ conservataIl: new Date().toISOString(), data: locale }));
-        } catch (e) { /* spazio esaurito: la sostituzione avviene comunque, il cloud vince */ }
+            const vecchia = JSON.parse(localStorage.getItem(CHIAVE_COPIA_DIVERGENTE));
+            const di = vecchia && (vecchia.uid || proprietarioLocale() || (cachedUser && cachedUser.id));
+            if (vecchia && vecchia.data && di) {
+                if (!mappa[di]) mappa[di] = Object.assign({}, vecchia, { uid: di });
+                localStorage.setItem(CHIAVE_COPIE_DIVERGENTI, JSON.stringify(mappa));
+                localStorage.removeItem(CHIAVE_COPIA_DIVERGENTE);
+            }
+        } catch (e) { /* noop */ }
+        return mappa;
     }
+    function scriviMappaCopieDivergenti(mappa) {
+        try { localStorage.setItem(CHIAVE_COPIE_DIVERGENTI, JSON.stringify(mappa)); return true; } catch (e) { return false; }
+    }
+
+    /**
+     * Tiene da parte una copia del salvataggio dell'account collegato, prima che il cloud lo sostituisca. Torna false
+     * se non c'e' posto (chi chiama NON deve allora buttare l'originale). `extra`: carte inventate/terminologia che
+     * viaggiano con la copia.
+     */
+    function conservaCopiaDivergente(locale, extra) {
+        if (!cachedUser || !locale) return false;
+        const mappa = mappaCopieDivergenti();
+        const voce = { uid: cachedUser.id, conservataIl: new Date().toISOString(), data: locale };
+        if (extra) {
+            if (extra.customCards) voce.customCards = extra.customCards;
+            if (extra.customTaxonomy) voce.customTaxonomy = extra.customTaxonomy;
+        }
+        const prima = mappa[cachedUser.id];
+        // Una copia gia' presente non si perde: quella piu' vecchia resta come `precedente`.
+        if (prima && prima.data) voce.precedente = Object.assign({}, prima, { precedente: undefined });
+        mappa[cachedUser.id] = voce;
+        return scriviMappaCopieDivergenti(mappa);
+    }
+    /** La copia di sicurezza dell'account collegato (mai quella di un altro), o null. */
     function copiaDivergente() {
-        try { return JSON.parse(localStorage.getItem(CHIAVE_COPIA_DIVERGENTE)); } catch (e) { return null; }
+        if (!cachedUser) return null;
+        const voce = mappaCopieDivergenti()[cachedUser.id];
+        return voce && voce.data ? voce : null;
     }
     /** Tiene da parte un salvataggio (quello di adesso, prima di una sostituzione voluta come l'importazione di un file): si recupera dal Profilo. */
     function conservaCopiaDi(salvataggio) {
         if (!salvataggio) return false;
-        conservaCopiaDivergente(salvataggio);
-        return true;
+        return conservaCopiaDivergente(salvataggio);
     }
     /** L'utente rinuncia alle modifiche conservate: la copia si butta. */
     function scartaCopiaDivergente() {
-        try { localStorage.removeItem(CHIAVE_COPIA_DIVERGENTE); } catch (e) { /* noop */ }
+        if (!cachedUser) return;
+        const mappa = mappaCopieDivergenti();
+        delete mappa[cachedUser.id];
+        scriviMappaCopieDivergenti(mappa);
     }
     /**
      * L'utente vuole le modifiche conservate: diventano il salvataggio di
@@ -910,10 +1071,12 @@
         // Prima si applica la copia (può rifiutarla se non è valida), poi si
         // conserva l'attuale: mai restare senza nessuna delle due.
         SaveManager.applyExternalSave(JSON.parse(JSON.stringify(copia.data)));
+        assegnaProprietario();
+        if (copia.customCards && window.CustomCards && typeof CustomCards.replaceAll === 'function') CustomCards.replaceAll(copia.customCards);
+        if (copia.customTaxonomy && window.CustomTaxonomy && typeof CustomTaxonomy.importAll === 'function') CustomTaxonomy.importAll(copia.customTaxonomy);
         if (attuale) conservaCopiaDivergente(attuale); else scartaCopiaDivergente();
         return Promise.resolve(true);
     }
-
     /**
      * Il cloud è cambiato da un altro dispositivo mentre questo aveva
      * modifiche sue: vince il cloud (è l'unica copia che tutti i dispositivi
@@ -932,7 +1095,7 @@
             const b = leggiBase();
             const divergente = !!locale && !!locale.player
                 && (!b || !b.lastSaved || locale.player.lastSaved !== b.lastSaved);
-            if (divergente) conservaCopiaDivergente(locale);
+            if (divergente) conservaCopiaDivergente(locale, carteDelDispositivo());
             return Promise.all([pullSave(), pullCustomCards().catch(() => null)])
                 .then(() => ({ esito: 'scaricato', divergente: divergente }));
         });
@@ -1136,11 +1299,17 @@
         if (!available) return rejectUnavailable();
         if (!cachedUser) return Promise.reject(new Error('Devi accedere prima di sincronizzare.'));
         // Il salvataggio di un altro account non si confronta e non si carica MAI: si mette da parte prima di tutto.
-        mettiDaParteSeDiAltri();
+        // Se non si riesce a tenerne una copia ci si FERMA: andare avanti vorrebbe dire confrontarlo (e magari caricarlo)
+        // come se fosse di chi entra.
+        if (mettiDaParteSeDiAltri().bloccato) return Promise.reject(erroreDiSpazio());
         return client.from('saves').select('data, updated_at').eq('user_id', cachedUser.id).maybeSingle()
             .then(({ data, error }) => {
                 if (error) throw error;
-                if (!data) return { cloud: null, azzerato: false };
+                if (!data) {
+                    // Nessun salvataggio sul cloud di chi entra: se aveva lasciato qui qualcosa che non e' mai arrivato sul cloud, ritorna.
+                    riportaCopiaDelProprietario(null);
+                    return { cloud: null, azzerato: false };
+                }
                 let azzerato = false;
                 const generazioneCloud = generazioneDi(data.data);
                 if (generazioneCloud) {
@@ -1155,11 +1324,20 @@
                     ricordaGenerazione(data.data.azzeratoIl);
                 }
                 const soloSegno = !data.data || !data.data.player;
+                const cloudVero = soloSegno ? null : { data: data.data, updatedAt: data.updated_at };
+                // Un salvataggio di cui NESSUNO sa di chi sia (mai sincronizzato, senza etichetta) non puo' valere piu' del cloud
+                // di chi entra: se quel cloud esiste, vince lui e il locale resta in una copia ('sconosciuto'). Se il cloud non
+                // c'e', e' il primo accesso di questo account e il locale gli si assegna (il caso del vecchio salvataggio offline).
+                if (cloudVero && window.SaveManager && SaveManager.hasSave() && !proprietarioLocale()) {
+                    if (mettiDaParteSeDiAltri(true).bloccato) throw erroreDiSpazio();
+                }
+                // L'account che rientra ritrova quello che aveva lasciato su questo dispositivo.
+                riportaCopiaDelProprietario(cloudVero, generazioneCloud);
                 // `segnoUpdatedAt`: la riga ESISTE ma porta solo il segno di
                 // azzeramento. Chi vuole scriverci sopra deve aggiornarla (con
                 // la sua `updated_at` come condizione), non inserirne un'altra.
                 return {
-                    cloud: soloSegno ? null : { data: data.data, updatedAt: data.updated_at },
+                    cloud: cloudVero,
                     azzerato: azzerato,
                     segnoUpdatedAt: soloSegno ? data.updated_at : null
                 };
@@ -1353,6 +1531,8 @@
         copiaDivergente: copiaDivergente,
         copieDiAltriAccount: copieDiAltriAccount,
         proprietarioLocale: proprietarioLocale,
+        /** Il proprietario da attribuire a un salvataggio senza etichetta che si sta scrivendo (lo usa SaveManager.touch). */
+        proprietarioPresunto: proprietarioPresunto,
         ultimoDispositivo: ultimoDispositivo,
         scartaCopiaDivergente: scartaCopiaDivergente,
         conservaCopiaDi: conservaCopiaDi,

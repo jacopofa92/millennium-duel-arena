@@ -29,7 +29,7 @@ module.exports = {
         try {
             await page.goto(INDEX);
             await page.waitForFunction(() => !!(window.SaveManager && window.CloudSync));
-            await page.evaluate(() => { SaveManager.createNew('Jacopo'); SaveManager.addCurrency('credits', 500); localStorage.removeItem('ygoSalvataggioDivergente'); });
+            await page.evaluate(() => { SaveManager.createNew('Jacopo'); SaveManager.addCurrency('credits', 500); localStorage.removeItem('ygoSalvataggioDivergente'); localStorage.removeItem('ygoSalvataggiDivergenti'); });
             await page.waitForFunction(() => !!window.RecuperoCopia, null, { timeout: 15000 });
             const prima = await page.evaluate(() => SaveManager.load().currency.credits);
             const input = page.locator('#importInput');
@@ -48,7 +48,7 @@ module.exports = {
                 assert(await page.locator('#recuperoCopia').count() === 0, `file ${etichetta}: non deve aprirsi nessun riquadro d'importazione`);
                 assert(await crediti() === prima, `file ${etichetta}: il salvataggio non si tocca`);
             }
-            assert(await page.evaluate((c) => !localStorage.getItem(c), CHIAVE), 'i file rifiutati non lasciano nessuna copia');
+            assert(await page.evaluate(() => !CloudSync.copiaDivergente()), 'i file rifiutati non lasciano nessuna copia');
 
             // --- Un file valido, di un'altra persona e più vecchio ---
             const file = await page.evaluate(() => {
@@ -84,7 +84,7 @@ module.exports = {
             await page.locator('#recuperoCopia .rc-btn', { hasText: 'Annulla' }).click();
             await page.waitForSelector('#recuperoCopia', { state: 'detached' });
             assert(await crediti() === prima, 'annullando il salvataggio resta quello di prima');
-            assert(await page.evaluate((c) => !localStorage.getItem(c), CHIAVE), 'annullando non resta nessuna copia');
+            assert(await page.evaluate(() => !CloudSync.copiaDivergente()), 'annullando non resta nessuna copia');
 
             // --- Importa: due tocchi ---
             await input.setInputFiles(come(file, 'vecchio.json'));
@@ -95,7 +95,7 @@ module.exports = {
             await importa.click();
             await page.waitForSelector('#recuperoCopia .rc-esito--ok');
             assert(await crediti() === 3, 'il file è diventato il salvataggio: ' + await crediti());
-            const copia = await page.evaluate((c) => JSON.parse(localStorage.getItem(c)).data.currency.credits, CHIAVE);
+            const copia = await page.evaluate(() => CloudSync.copiaDivergente().data.currency.credits);
             assert(copia === prima, 'il salvataggio di prima è conservato come copia di sicurezza: ' + copia);
 
             // --- Dopo "Fatto" il pulsante di recupero compare, e riporta indietro ---

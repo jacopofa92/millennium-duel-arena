@@ -102,7 +102,7 @@ module.exports = {
             assert(copia === V1 + 10, 'le modifiche del telefono restano in una copia di sicurezza: ' + copia);
 
             // --- 2) Rimasto indietro SENZA modifiche: si aggiorna, nessuna copia -----
-            await tel.evaluate(() => { localStorage.removeItem('ygoSalvataggioDivergente'); });
+            await tel.evaluate(() => { localStorage.removeItem('ygoSalvataggioDivergente'); localStorage.removeItem('ygoSalvataggiDivergenti'); });
             await desk.evaluate(() => { SaveManager.addCurrency('credits', 500); });
             const V3 = V2 + 500;
             await desk.evaluate(() => AutoSync.caricaOra());

@@ -69,10 +69,13 @@ function creaFintoCloud() {
         // dispositivo) e getSession risponde senza sessione finché non si
         // rifà signInWithPassword. Spento di default: gli spec nati prima
         // contano su una sessione che torna sempre.
-        await context.addInitScript((ricordaUscita) => {
+        await context.addInitScript(({ ricordaUscita, utentiProva }) => {
             window.AUTH_GATE_SKIP = false;
             window.__fintoRicordaUscita = !!ricordaUscita;
-            const utente = { id: 'utente-prova', email: 'admin@prova.it' };
+            // Piu' account sullo stesso dispositivo: l'utente collegato e' quello scelto dall'ultimo signInWithPassword, ricordato
+            // nel localStorage del dispositivo come lo ricorderebbe Supabase. Senza utenti ce n'e' uno solo, come sempre.
+            const UTENTI = utentiProva && utentiProva.length ? utentiProva : [{ id: 'utente-prova', email: 'admin@prova.it' }];
+            const utenteCorrente = () => { const id = localStorage.getItem('__fintoUtente'); return UTENTI.find((x) => x.id === id) || UTENTI[0]; };
             function query(table) {
                 const q = { table, op: 'select', filters: {}, payload: null };
                 const b = {
@@ -95,11 +98,22 @@ function creaFintoCloud() {
                         auth: {
                             getSession: () => {
                                 const uscito = window.__fintoRicordaUscita && localStorage.getItem('__fintoUscito') === '1';
-                                return Promise.resolve({ data: { session: uscito ? null : { user: utente, access_token: 'finto' } } });
+                                return Promise.resolve({ data: { session: uscito ? null : { user: utenteCorrente(), access_token: 'finto' } } });
                             },
-                            onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } }),
-                            signInWithPassword: () => { localStorage.removeItem('__fintoUscito'); return Promise.resolve({ data: { user: utente }, error: null }); },
-                            signOut: () => { if (window.__fintoRicordaUscita) localStorage.setItem('__fintoUscito', '1'); return Promise.resolve({ error: null }); }
+                            // Come Supabase: chi si registra viene avvisato quando qualcuno entra o esce.
+                            onAuthStateChange: (cb) => { window.__fintoAuthCb = cb; return { data: { subscription: { unsubscribe() {} } } }; },
+                            signInWithPassword: (cred) => {
+                                localStorage.removeItem('__fintoUscito');
+                                const scelto = (cred && UTENTI.find((x) => x.email === cred.email)) || UTENTI[0];
+                                localStorage.setItem('__fintoUtente', scelto.id);
+                                if (window.__fintoAuthCb) window.__fintoAuthCb('SIGNED_IN', { user: scelto, access_token: 'finto' });
+                                return Promise.resolve({ data: { user: scelto }, error: null });
+                            },
+                            signOut: () => {
+                                if (window.__fintoRicordaUscita) localStorage.setItem('__fintoUscito', '1');
+                                if (window.__fintoAuthCb) window.__fintoAuthCb('SIGNED_OUT', null);
+                                return Promise.resolve({ error: null });
+                            }
                         },
                         from: query,
                         rpc: (nome) => window.__fintoCloud(JSON.stringify({ table: 'rpc', op: nome, filters: {}, payload: null })).then((r) => JSON.parse(r))
@@ -107,7 +121,7 @@ function creaFintoCloud() {
                 }
             };
             Object.defineProperty(window, 'supabase', { configurable: false, get: () => finto, set: () => { /* la libreria vera non passa */ } });
-        }, !!(opzioni && opzioni.ricordaUscita));
+        }, { ricordaUscita: !!(opzioni && opzioni.ricordaUscita), utentiProva: (opzioni && opzioni.utenti) || null });
     }
 
     return { cloud, collega };

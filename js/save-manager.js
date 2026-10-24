@@ -497,6 +497,9 @@
         const starterDeck = makeStarterDeck(starterPackId);
         const save = {
             player: { name: (playerName || '').trim() || 'Giocatore', lastSaved: new Date().toISOString() },
+            // Di chi e': il giocatore che l'ha appena creato (e' collegato, l'accesso e' obbligatorio). Il NOME non
+            // identifica nessuno: due account possono chiamarsi uguale, l'account e' questo.
+            ...(accountCollegato() ? { accountId: accountCollegato() } : {}),
             decks: [starterDeck],
             activeDeckId: starterDeck.id,
             records: {},
@@ -570,9 +573,54 @@
         });
     }
 
+    /**
+     * A QUALE ACCOUNT appartiene il salvataggio: `accountId`, scritto DENTRO il salvataggio e quindi presente
+     * ovunque lui vada (localStorage, backup nativo dell'APK, copie di sicurezza, scritture tardive di un'altra
+     * scheda). Il solo marcatore a parte (`ygoProprietarioSalvataggio`, cloud-sync.js) non bastava: restava
+     * assente per un salvataggio mai sincronizzato e non viaggiava col backup nativo, e un salvataggio senza
+     * proprietario veniva trattato come di chi entrava per primo — cioe' poteva finire sul cloud sbagliato.
+     * Lo decide cloud-sync.js (`CloudSync.proprietarioPresunto`): qui si legge soltanto.
+     */
+    function accountCollegato() {
+        try {
+            const u = window.CloudSync && typeof CloudSync.getUser === 'function' ? CloudSync.getUser() : null;
+            return u && u.id ? u.id : null;
+        } catch (e) { return null; }
+    }
+    function proprietarioPresunto() {
+        try {
+            return window.CloudSync && typeof CloudSync.proprietarioPresunto === 'function' ? CloudSync.proprietarioPresunto() : null;
+        } catch (e) { return null; }
+    }
+    /** L'account a cui il salvataggio dice di appartenere, o null (salvataggio nato prima di questa regola). */
+    function getAccountId() {
+        const s = readRaw();
+        return s && typeof s.accountId === 'string' && s.accountId ? s.accountId : null;
+    }
+    /**
+     * Scrive il proprietario nel salvataggio SENZA toccarne la data di modifica (non e' una modifica di gioco, e la
+     * data decide quale copia e' la piu' recente). Con `forza` lo cambia anche se c'e' gia'.
+     */
+    function impostaProprietario(uid, forza) {
+        if (!uid) return false;
+        const s = readRaw();
+        if (!s) return false;
+        if (s.accountId && !forza) return false;
+        if (s.accountId === uid) return false;
+        s.accountId = uid;
+        writeRaw(s);
+        return true;
+    }
+
     function touch(save) {
         save.player = save.player || {};
         save.player.lastSaved = new Date().toISOString();
+        // Un salvataggio senza proprietario che si modifica adesso prende quello che gli si presume (l'ultimo account che
+        // l'ha sincronizzato qui, altrimenti chi e' collegato): da qui in poi viaggia con la sua etichetta.
+        if (!save.accountId) {
+            const chi = proprietarioPresunto();
+            if (chi) save.accountId = chi;
+        }
         writeRaw(save);
         // Dopo la scrittura, mai prima: chi ascolta deve poter rileggere
         // il salvataggio e trovarci già dentro la modifica. E ognuno
@@ -1330,6 +1378,15 @@
             setTimeout(comunicaAzzeramento, 0);
         }
         migraCarteEliminate(parsed);
+        // DI CHI E' il salvataggio (vedi accountCollegato). Un salvataggio che entra da fuori — scaricato dal cloud,
+        // importato da un file, ripristinato da una copia — diventa di chi e' collegato ADESSO: il file di un altro
+        // account, importato apposta, non deve restare "di un altro" e farsi mettere da parte al controllo successivo.
+        // Solo chi sa gia' di chi e' (`mantieniProprietario`: il ripristino del backup nativo prima dell'accesso, la
+        // copia di un account che rientra) tiene il segno che porta.
+        if (!(opzioni && opzioni.mantieniProprietario)) {
+            const chi = accountCollegato();
+            if (chi) parsed.accountId = chi; else delete parsed.accountId;
+        }
         writeRaw(parsed);
         syncSettingsCache(parsed.settings);
         window.dispatchEvent(new CustomEvent('ygo:settings-applied', { detail: { settings: { ...parsed.settings } } }));
@@ -1410,6 +1467,8 @@
         hasSave: hasSave,
         load: load,
         createNew: createNew,
+        getAccountId: getAccountId,
+        impostaProprietario: impostaProprietario,
         touch: touch,
         onSaved: onSaved,
         getSettings: getSettings,

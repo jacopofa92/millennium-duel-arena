@@ -32,7 +32,7 @@ module.exports = {
             const prima = await page.evaluate(() => SaveManager.load().currency.credits);
 
             // --- Senza copia: nessun pulsante ---
-            await page.evaluate(() => { localStorage.removeItem('ygoSalvataggioDivergente'); });
+            await page.evaluate(() => { localStorage.removeItem('ygoSalvataggioDivergente'); localStorage.removeItem('ygoSalvataggiDivergenti'); });
             await page.waitForTimeout(800);
             const senza = await page.evaluate(() => {
                 const m = document.getElementById('recuperoCopiaMount');
@@ -88,7 +88,7 @@ module.exports = {
             await page.waitForFunction((n) => SaveManager.load().currency.credits === n, prima + 900, { timeout: 8000 });
             const dopo = await page.evaluate((chiave) => ({
                 carta7: SaveManager.load().collection[7],
-                copiaOra: JSON.parse(localStorage.getItem(chiave)).data.currency.credits
+                copiaOra: CloudSync.copiaDivergente().data.currency.credits
             }), CHIAVE);
             assert(dopo.carta7 === 2, 'la copia è diventata il salvataggio (la carta in più c\'è)');
             assert(dopo.copiaOra === prima, 'il salvataggio di prima è stato conservato al posto della copia: ' + dopo.copiaOra);
@@ -102,10 +102,10 @@ module.exports = {
             await page.locator('#recuperoCopiaMount .rc-apri').click();
             const scarta = page.locator('#recuperoCopia .rc-btn--no');
             await scarta.click();
-            assert(await page.evaluate((c) => !!localStorage.getItem(c), CHIAVE), 'il primo tocco non scarta');
+            assert(await page.evaluate(() => !!CloudSync.copiaDivergente()), 'il primo tocco non scarta');
             await scarta.click();
             await page.waitForSelector('#recuperoCopia', { state: 'detached' });
-            assert(await page.evaluate((c) => !localStorage.getItem(c), CHIAVE), 'la copia è stata scartata');
+            assert(await page.evaluate(() => !CloudSync.copiaDivergente()), 'la copia è stata scartata');
             const nascosto = await page.evaluate(() => getComputedStyle(document.getElementById('recuperoCopiaMount')).display === 'none');
             assert(nascosto, 'dopo lo scarto il pulsante sparisce');
         } finally {

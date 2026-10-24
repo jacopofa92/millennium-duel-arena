@@ -2041,6 +2041,8 @@
                 // Lasciato da CloudSync quando toglie i dati di un profilo
                 // azzerato altrove (in qualunque pagina sia successo).
                 if (avviso === 'azzerato') showMenuToast('🧹 Il profilo è stato azzerato da un altro dispositivo: si riparte da zero.');
+                // Un duello iniziato da un altro account: il risultato non e' stato scritto nel profilo di chi e' collegato adesso.
+                if (avviso === 'accountCambiato') showMenuToast('⚠️ Il duello apparteneva a un altro account ed è stato chiuso: il risultato non è stato registrato.');
             }
             function decide() {
                 // La parte di rete — chi sei, sei approvato, e ALLINEAMENTO
@@ -2119,7 +2121,7 @@
             if (!SaveManager.hasSave() && window.NativeSaveBackup) {
                 NativeSaveBackup.tryRecover().then((backup) => {
                     if (backup) {
-                        try { SaveManager.applyExternalSave(backup); } catch (e) { /* backup corrotto: si procede come nuovo giocatore */ }
+                        try { SaveManager.applyExternalSave(backup, { mantieniProprietario: true }); } catch (e) { /* backup corrotto: si procede come nuovo giocatore */ }
                     }
                     decide();
                 });
