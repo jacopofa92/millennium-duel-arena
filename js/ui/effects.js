@@ -1671,14 +1671,17 @@
                 // runElementalConvergence, non la funzione diretta: cosi'
                 // anche questa sequenza passa dal backend attivo (vedi il
                 // commento su quella costante).
-                runElementalConvergence(monsterElement, card, theme);
+                const durataVera = runElementalConvergence(monsterElement, card, theme);
                 // La convergenza non ha un callback di completamento (ne'
                 // quella CSS ne' quella GSAP): si sblocca a durata nota, ed
-                // e' per questo che OGNI implementazione deve stare dentro
-                // ELEMENTAL_CONVERGENCE_MS. Anche fosse sbagliata, il duello
-                // ripartirebbe un po' prima o un po' dopo — mai restando
-                // bloccato per sempre.
-                setTimeout(chiudi, ELEMENTAL_CONVERGENCE_MS);
+                // e' per questo che le versioni di base devono stare dentro
+                // ELEMENTAL_CONVERGENCE_MS. Una versione piu' lunga (il
+                // Risveglio in WebGL, js/ui/evocazione-epica-webgl.js) DICHIARA
+                // la sua durata tornandola in millisecondi. Anche fosse
+                // sbagliata, il duello ripartirebbe un po' prima o un po' dopo
+                // — mai restando bloccato per sempre.
+                const attesa = (typeof durataVera === 'number' && durataVera > 0 && durataVera < 12000) ? durataVera : ELEMENTAL_CONVERGENCE_MS;
+                setTimeout(chiudi, attesa);
                 return;
             }
             // Cerchio magico generico: dura un attimo, non blocca nulla.
@@ -2782,7 +2785,9 @@
         playElementalConvergence: runElementalConvergence,
         playVideoOverlay,
         playMonsterSummonEffect,
-        playFusionMaterialEffect,
+        playFusionMaterialEffect: viaBackend('playFusionMaterialEffect', playFusionMaterialEffect),
+        /** I temi per Attributo delle Evocazioni di Livello 7+ (colori): li riusa anche la Fusione in WebGL. */
+        summonThemes: ATTRIBUTE_SUMMON_THEMES,
         playRitualSummon,
         playDustTornado: viaBackend('playDustTornado', playDustTornado),
         playHarpiesFeatherDuster: viaBackend('playHarpiesFeatherDuster', playHarpiesFeatherDuster),
