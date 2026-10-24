@@ -1078,6 +1078,50 @@
         return Promise.resolve(true);
     }
     /**
+     * Le copie messe da parte che l'account collegato PUO' riprendersi dal Profilo: le sue (la piu' recente rientra da
+     * sola quando torna sul dispositivo vuoto; qui ci sono anche quelle piu' vecchie e quella che non e' rientrata
+     * perche' il cloud era piu' nuovo) e quelle di proprietario ignoto ('sconosciuto', salvataggi nati prima che
+     * il dispositivo sapesse di chi fossero). MAI quelle di un altro account: sono sue, e ripristinarle qui vorrebbe dire
+     * caricare i suoi progressi sul cloud di chi guarda.
+     */
+    function copieRecuperabili() {
+        const fuori = [];
+        if (!cachedUser) return fuori;
+        const copie = copieDiAltriAccount();
+        [['tua', cachedUser.id], ['sconosciuta', 'sconosciuto']].forEach((coppia) => {
+            const voce = copie[coppia[1]];
+            if (!voce) return;
+            [voce].concat(voce.precedenti || []).forEach((x, indice) => {
+                if (x && x.data && x.data.player) fuori.push({ uid: coppia[1], indice: indice, tipo: coppia[0], conservataIl: x.conservataIl, data: x.data });
+            });
+        });
+        return fuori;
+    }
+    /**
+     * Riprende una copia di `copieRecuperabili`. Come per la copia di sicurezza: prima si applica la copia (puo'
+     * essere rifiutata), poi il salvataggio di adesso prende il suo posto fra le copie di sicurezza (il ripristino si
+     * annulla ripristinando di nuovo), e solo alla fine la copia usata esce dall'elenco. Chi chiama fa poi partire AutoSync.caricaOra.
+     */
+    function ripristinaCopiaMessaDaParte(uid, indice) {
+        const ammessa = copieRecuperabili().find((c) => c.uid === uid && c.indice === indice);
+        if (!ammessa) return Promise.reject(new Error('Questa copia non è disponibile per il tuo account.'));
+        if (!window.SaveManager) return Promise.reject(new Error('js/save-manager.js non caricato in questa pagina.'));
+        const attuale = SaveManager.hasSave() ? SaveManager.load() : null;
+        SaveManager.applyExternalSave(JSON.parse(JSON.stringify(ammessa.data)));
+        assegnaProprietario();
+        const voceCompleta = [copieDiAltriAccount()[uid]].concat(copieDiAltriAccount()[uid].precedenti || [])[indice];
+        if (voceCompleta.customCards && window.CustomCards && typeof CustomCards.replaceAll === 'function') CustomCards.replaceAll(voceCompleta.customCards);
+        if (voceCompleta.customTaxonomy && window.CustomTaxonomy && typeof CustomTaxonomy.importAll === 'function') CustomTaxonomy.importAll(voceCompleta.customTaxonomy);
+        if (attuale) conservaCopiaDivergente(attuale);
+        const copie = copieDiAltriAccount();
+        const lista = [copie[uid]].concat(copie[uid].precedenti || []);
+        lista.splice(indice, 1);
+        if (lista.length) copie[uid] = Object.assign({}, lista[0], { precedenti: lista.slice(1) });
+        else delete copie[uid];
+        try { localStorage.setItem(CHIAVE_COPIE_ALTRI, JSON.stringify(copie)); } catch (e) { /* resta in elenco: nessun danno */ }
+        return Promise.resolve(true);
+    }
+    /**
      * Il cloud è cambiato da un altro dispositivo mentre questo aveva
      * modifiche sue: vince il cloud (è l'unica copia che tutti i dispositivi
      * possono ritrovare), e le modifiche di qui restano in una copia di
@@ -1530,6 +1574,8 @@
         /** La copia del salvataggio di questo dispositivo messa da parte dall'ultimo conflitto, o null. */
         copiaDivergente: copiaDivergente,
         copieDiAltriAccount: copieDiAltriAccount,
+        copieRecuperabili: copieRecuperabili,
+        ripristinaCopiaMessaDaParte: ripristinaCopiaMessaDaParte,
         proprietarioLocale: proprietarioLocale,
         /** Il proprietario da attribuire a un salvataggio senza etichetta che si sta scrivendo (lo usa SaveManager.touch). */
         proprietarioPresunto: proprietarioPresunto,

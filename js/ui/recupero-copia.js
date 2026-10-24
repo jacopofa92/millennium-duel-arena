@@ -206,13 +206,76 @@
         if (!contenitore) return;
         contenitore.textContent = '';
         const copia = window.CloudSync && CloudSync.copiaDivergente ? CloudSync.copiaDivergente() : null;
-        if (!copia || !copia.data) { contenitore.style.display = 'none'; return; }
+        const messe = window.CloudSync && CloudSync.copieRecuperabili ? CloudSync.copieRecuperabili() : [];
+        if ((!copia || !copia.data) && !messe.length) { contenitore.style.display = 'none'; return; }
         contenitore.style.display = '';
-        contenitore.appendChild(el('div', 'rc-avviso', 'Su questo dispositivo ci sono modifiche che non sono arrivate sul cloud (conservate il ' + fmtData(copia.conservataIl) + ').'));
-        const bottone = el('button', 'rc-apri', '🛟 Recupera le modifiche');
-        bottone.type = 'button';
-        bottone.addEventListener('click', () => apri(() => monta(contenitore)));
-        contenitore.appendChild(bottone);
+        if (copia && copia.data) {
+            contenitore.appendChild(el('div', 'rc-avviso', 'Su questo dispositivo ci sono modifiche che non sono arrivate sul cloud (conservate il ' + fmtData(copia.conservataIl) + ').'));
+            const bottone = el('button', 'rc-apri', '🛟 Recupera le modifiche');
+            bottone.type = 'button';
+            bottone.addEventListener('click', () => apri(() => monta(contenitore)));
+            contenitore.appendChild(bottone);
+        }
+        // Salvataggi messi da parte quando su questo dispositivo ha giocato qualcun altro (o prima che il dispositivo
+        // sapesse di chi fossero): un pulsante per copia, ognuno con il confronto prima di ripristinare.
+        if (messe.length) {
+            contenitore.appendChild(el('div', 'rc-avviso', messe.length === 1
+                ? 'Su questo dispositivo c\'è un salvataggio messo da parte che puoi riprendere.'
+                : 'Su questo dispositivo ci sono ' + messe.length + ' salvataggi messi da parte che puoi riprendere.'));
+            messe.forEach((m) => {
+                const b = el('button', 'rc-apri', '🗂️ ' + (m.tipo === 'tua' ? 'Tuo salvataggio' : 'Salvataggio senza proprietario') + ' del ' + fmtData(m.conservataIl));
+                b.type = 'button';
+                b.addEventListener('click', () => apriCopiaMessaDaParte(m, () => monta(contenitore)));
+                contenitore.appendChild(b);
+            });
+        }
+    }
+
+    /** Il riquadro di confronto per una copia messa da parte (CloudSync.copieRecuperabili). */
+    function apriCopiaMessaDaParte(m, alCambio) {
+        riquadro({
+            titolo: m.tipo === 'tua' ? 'Un tuo salvataggio messo da parte' : 'Un salvataggio messo da parte',
+            paragrafi: [
+                m.tipo === 'tua'
+                    ? 'Questo salvataggio è rimasto su questo dispositivo quando un altro account lo ha usato, o è una versione precedente del tuo.'
+                    : 'Questo salvataggio è su questo dispositivo da prima che si sapesse a chi appartenesse. Se è tuo, puoi riprenderlo.',
+                'Qui sotto vedi la differenza. Se lo ripristini diventa il tuo salvataggio e viene caricato sul cloud.'
+            ],
+            etichettaA: 'Adesso',
+            etichettaB: 'Messo da parte',
+            a: riassunto(window.SaveManager && SaveManager.hasSave() ? SaveManager.load() : null),
+            b: riassunto(m.data),
+            nota: 'Il salvataggio di adesso non va perso: diventa la tua copia di sicurezza, e da lì puoi tornare indietro.',
+            alChiudere: alCambio,
+            azioni: [
+                {
+                    testo: 'Ripristina', classe: 'rc-btn--ok', doppio: 'Tocca ancora per confermare',
+                    esegui: (ctx) => {
+                        ctx.disabilita(true);
+                        ctx.esito.textContent = 'Ripristino in corso…';
+                        CloudSync.ripristinaCopiaMessaDaParte(m.uid, m.indice)
+                            .then(() => {
+                                const carica = window.AutoSync && AutoSync.caricaOra ? AutoSync.caricaOra() : Promise.resolve();
+                                return Promise.resolve(carica).catch(() => null);
+                            })
+                            .then(() => {
+                                ctx.esito.textContent = '✅ Salvataggio ripristinato. Quello di prima è nella copia di sicurezza.';
+                                ctx.esito.classList.add('rc-esito--ok');
+                                ctx.azioni.textContent = '';
+                                const fine = el('button', 'rc-btn rc-btn--ok', 'Fatto');
+                                fine.type = 'button';
+                                fine.addEventListener('click', () => { window.location.reload(); });
+                                ctx.azioni.appendChild(fine);
+                            })
+                            .catch((e) => {
+                                ctx.esito.textContent = 'Non sono riuscito a ripristinare: ' + (e && e.message ? e.message : 'errore sconosciuto');
+                                ctx.disabilita(false);
+                            });
+                    }
+                },
+                { testo: 'Chiudi' }
+            ]
+        });
     }
 
     /** Il riquadro di recupero. `alCambio` ridisegna il pulsante dopo ripristino/scarto. */
