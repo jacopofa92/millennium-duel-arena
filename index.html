@@ -253,10 +253,6 @@
         z-index: -1;
         background: url('images/background/backgroundMainMenu.jpg') center/cover no-repeat;
     }
-    /* Il logo del menu non segue piu' mouse ne' giroscopio (richiesta dell'utente): ora e' il Puzzle 3D dello splash, che gira da solo. */
-    .menu-puzzle-3d { display: block; width: clamp(140px, 20vh, 200px); height: clamp(160px, 24vh, 240px); margin: 0 auto -6px; }
-    .menu-logo.puzzle-3d game-logo .gl-emblema { display: none; }
-    @media (max-height: 520px) { .menu-puzzle-3d { width: 84px; height: 100px; } }
     .menu-particle {
         position: absolute;
         bottom: -10px;
@@ -983,14 +979,6 @@
         <div class="menu-bg-flash"></div>
         <div class="menu-particles" id="menuParticles"></div>
     </div>
-    <script>
-        // Il logo del menu e dell'accesso: il Puzzle 3D dello splash (js/ui/splash-webgl.js), che gira piano da solo. La parallasse che lo
-        // muoveva con mouse e giroscopio e' stata tolta. Senza WebGL resta l'emblema SVG di <game-logo>.
-        document.addEventListener('DOMContentLoaded', function () {
-            if (!window.SplashWebgl) return;
-            document.querySelectorAll('.menu-logo').forEach(function (el) { SplashWebgl.montaPuzzle(el); });
-        });
-    </script>
 
     <!-- Schermata "gate" (Accedi/Registrati/Continua in locale): mostrata
          PRIMA del menu, una volta per apertura del gioco (sessionStorage —

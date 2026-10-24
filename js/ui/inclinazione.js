@@ -102,28 +102,12 @@
         return () => { ascoltatori.delete(fn); aggiornaAscolto(); };
     }
 
-    // ------------------------------------------------------------------
-    // Impostazione "Profondità del menu" (la parallasse di index.html).
-    // ------------------------------------------------------------------
-    // Accesa di default, su richiesta dell'utente. Scelta del dispositivo
-    // in localStorage come gli ologrammi (js/ui/hologram-setting.js), e
-    // ricopiata nel salvataggio (SaveManager.setSetting) come le altre.
-    // Cambiandola si avvisa con un evento: la vista Impostazioni sta nella
-    // stessa pagina del menu, e il menu deve fermarsi o ripartire subito.
-    const CHIAVE_PARALLASSE = 'ygoParallasseMenu';
-
-    function parallasseMenuAttiva() {
-        try { return localStorage.getItem(CHIAVE_PARALLASSE) !== 'off'; } catch (e) { return true; }
-    }
-    function impostaParallasseMenu(attiva) {
-        try { localStorage.setItem(CHIAVE_PARALLASSE, attiva ? 'on' : 'off'); } catch (e) { /* vale per questa sessione */ }
-        if (window.SaveManager && SaveManager.setSetting) SaveManager.setSetting('menuParallax', !!attiva);
-        window.dispatchEvent(new CustomEvent('ygo:parallasse-menu', { detail: { attiva: !!attiva } }));
-    }
-
-    // "Giroscopio sulle carte": se il giroscopio muove la luce della carta in
-    // dettaglio (acceso, di default) o se la luce si muove piano da sola
-    // (spento). Stessa chiave del salvataggio (cardGyro, js/save-manager.js).
+    // "Carte lucide: giroscopio" (Impostazioni): se il giroscopio muove la luce
+    // della carta in dettaglio (acceso, di default) o se la luce segue il TOCCO
+    // (spento: si preme e si trascina sulla carta; a dito alzato la luce si
+    // muove piano da sola). Stessa chiave del salvataggio (cardGyro,
+    // js/save-manager.js). Prima di questa c'era "Profondità del menu", la
+    // parallasse del logo: tolta, il logo e' ora il Puzzle 3D (js/ui/splash-webgl.js).
     const CHIAVE_GIROSCOPIO_CARTE = 'ygoGiroscopioCarte';
 
     function giroscopioCarteAttivo() {
@@ -137,8 +121,6 @@
     window.Inclinazione = {
         giroscopioCarteAttivo: giroscopioCarteAttivo,
         impostaGiroscopioCarte: impostaGiroscopioCarte,
-        parallasseMenuAttiva: parallasseMenuAttiva,
-        impostaParallasseMenu: impostaParallasseMenu,
         ascolta: ascolta,
         /** Vero dopo la prima lettura del giroscopio: su un computer resta falso. */
         haSensore: () => haSensore,

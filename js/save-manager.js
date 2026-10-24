@@ -30,21 +30,19 @@
 
     // videoDetail parte da 'alti' (richiesta dell'utente; prima 'normali'),
     // e vale solo se `videoDetailScelto`: vedi in cima a js/ui/video-quality.js
-    // perché serve il segno. menuParallax: la profondità del menu principale
-    // (index.html), accesa di default.
+    // perché serve il segno.
     const DEFAULT_SETTINGS = {
         videoDetail: 'alti', videoDetailScelto: false, summonVideos: true, hologram: true, haptics: true,
-        menuParallax: true,
         // cardGyro: sul telefono il giroscopio muove la LUCE della carta in
-        // dettaglio (js/ui/card-renderer.js, CartaViva). Spento, la luce si
-        // muove piano da sola.
+        // dettaglio (js/ui/card-renderer.js, CartaViva). Spento, la luce segue
+        // il tocco (e a dito alzato si muove piano da sola).
         cardGyro: true,
         musicVolume: 0.55, musicMuted: false,
         sfxVolume: 0.6, sfxMuted: false
     };
     const SETTINGS_CACHE_KEYS = {
         videoDetail: 'ygoVideoDetail', videoDetailScelto: 'ygoVideoDetailScelto',
-        summonVideos: 'ygoSummonVideos', hologram: 'ygoHologram', haptics: 'ygoHapticsEnabled', menuParallax: 'ygoParallasseMenu',
+        summonVideos: 'ygoSummonVideos', hologram: 'ygoHologram', haptics: 'ygoHapticsEnabled',
         cardGyro: 'ygoGiroscopioCarte',
         musicVolume: 'duelArenaMusicVolume', musicMuted: 'duelArenaMusicMuted',
         sfxVolume: 'duelArenaSfxVolume', sfxMuted: 'duelArenaSfxMuted'
@@ -70,8 +68,6 @@
             if (hologram === 'on' || hologram === 'off') settings.hologram = hologram === 'on';
             const summonVideos = localStorage.getItem(SETTINGS_CACHE_KEYS.summonVideos);
             if (summonVideos === 'on' || summonVideos === 'off') settings.summonVideos = summonVideos === 'on';
-            const parallasse = localStorage.getItem(SETTINGS_CACHE_KEYS.menuParallax);
-            if (parallasse === 'on' || parallasse === 'off') settings.menuParallax = parallasse === 'on';
             const giroscopioCarte = localStorage.getItem(SETTINGS_CACHE_KEYS.cardGyro);
             if (giroscopioCarte === 'on' || giroscopioCarte === 'off') settings.cardGyro = giroscopioCarte === 'on';
             const haptics = localStorage.getItem(SETTINGS_CACHE_KEYS.haptics);
@@ -106,7 +102,6 @@
             localStorage.setItem(SETTINGS_CACHE_KEYS.videoDetail, settings.videoDetail);
             if (settings.videoDetailScelto) localStorage.setItem(SETTINGS_CACHE_KEYS.videoDetailScelto, '1');
             else localStorage.removeItem(SETTINGS_CACHE_KEYS.videoDetailScelto);
-            localStorage.setItem(SETTINGS_CACHE_KEYS.menuParallax, settings.menuParallax ? 'on' : 'off');
             localStorage.setItem(SETTINGS_CACHE_KEYS.cardGyro, settings.cardGyro ? 'on' : 'off');
             localStorage.setItem(SETTINGS_CACHE_KEYS.hologram, settings.hologram ? 'on' : 'off');
             localStorage.setItem(SETTINGS_CACHE_KEYS.summonVideos, settings.summonVideos ? 'on' : 'off');

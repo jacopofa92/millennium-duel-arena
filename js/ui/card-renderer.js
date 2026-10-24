@@ -658,6 +658,14 @@
 
         const gradi = GRADI_MASSIMI[modo];
         const stile = bersaglio.style;
+        // "Carte lucide" (Impostazioni): con il giroscopio SPENTO il riflesso della carta in dettaglio segue il TOCCO — si preme e si
+        // trascina sulla carta (o si tocca in punti diversi) e il lucido arriva li'; al rilascio torna la luce che si muove piano da
+        // sola. Acceso (default) vale il sensore del telefono. Il mouse funziona sempre, con entrambe.
+        const giroscopioSpento = modo === 'grande' && !!(window.Inclinazione && Inclinazione.giroscopioCarteAttivo
+            && !Inclinazione.giroscopioCarteAttivo());
+        const modoTocco = giroscopioSpento;
+        // Il dito deve poter trascinare sulla carta senza far scorrere la pagina (altrimenti il browser lo prende per se' e annulla).
+        if (modoTocco) area.style.touchAction = 'none';
         let fotogrammaPuntatore = null;
         let ultimaInclinazione = null;
         function imposta(x, y) {
@@ -689,7 +697,7 @@
         let riquadro = null;
         let puntatoreDentro = false;
         area.addEventListener('pointerenter', (e) => {
-            if (e.pointerType === 'touch') return;
+            if (e.pointerType === 'touch' && !modoTocco) return;
             riquadro = area.getBoundingClientRect();
             puntatoreDentro = true;
             if (modo !== 'grande') {
@@ -698,8 +706,9 @@
                 stile.setProperty('--forza', '0.72');
             }
         });
-        area.addEventListener('pointermove', (e) => {
-            if (e.pointerType === 'touch') return;
+        // Un tocco fermo (senza movimento) deve gia' accendere il riflesso nel punto toccato: pointermove non arriva finche' il dito sta fermo.
+        const seguiPuntatore = (e) => {
+            if (e.pointerType === 'touch' && !modoTocco) return;
             if (!riquadro) riquadro = area.getBoundingClientRect();
             puntatoreDentro = true;
             const x = ((e.clientX - riquadro.left) / (riquadro.width || 1)) * 2 - 1;
@@ -722,13 +731,20 @@
                     }
                 });
             }
-        });
-        area.addEventListener('pointerleave', () => {
+        };
+        area.addEventListener('pointermove', seguiPuntatore);
+        const rilascia = () => {
             riquadro = null;
             puntatoreDentro = false;
             ultimaInclinazione = null;
             riposa();
-        });
+        };
+        area.addEventListener('pointerleave', rilascia);
+        if (modoTocco) {
+            area.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch') { riquadro = area.getBoundingClientRect(); seguiPuntatore(e); } });
+            area.addEventListener('pointerup', (e) => { if (e.pointerType === 'touch') rilascia(); });
+            area.addEventListener('pointercancel', rilascia);
+        }
 
         if (modo === 'grande') {
             bersaglio.classList.add('cv-ozio');
@@ -749,8 +765,6 @@
             // non guida più la luce, che invece si muove piano da sola (solo
             // la luce, mai la carta: vedi `.cv-luce-viva` in card.css, attivo
             // solo con puntatore a tocco). Acceso (default) vale il sensore.
-            const giroscopioSpento = !!(window.Inclinazione && Inclinazione.giroscopioCarteAttivo
-                && !Inclinazione.giroscopioCarteAttivo());
             if (giroscopioSpento) bersaglio.classList.add('cv-luce-viva');
             if (window.Inclinazione && !giroscopioSpento) {
                 // Si smette di ascoltare da soli quando la carta non è più

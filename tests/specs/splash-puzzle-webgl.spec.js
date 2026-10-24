@@ -66,11 +66,11 @@ module.exports = {
             await page4.waitForTimeout(1500);
             const logo = await page4.evaluate(() => ({
                 canvas: document.querySelectorAll('.menu-puzzle-3d').length,
-                classe: [...document.querySelectorAll('.menu-logo')].every((l) => l.classList.contains('puzzle-3d')),
-                emblemaNascosto: [...document.querySelectorAll('.menu-logo .gl-emblema')].every((e) => getComputedStyle(e).display === 'none'),
-                par: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--par-x')) || 0
+                emblemi: [...document.querySelectorAll('.menu-logo .gl-emblema')].length,
+                // l'Occhio e' in rilievo: tre strati (ombra, corpo, luce) con la stessa geometria, e non piu' linee nere
+                rilievo: [...document.querySelectorAll('.menu-logo .gl-rilievo')].length
             }));
-            assert(logo.canvas === 2 && logo.classe && logo.emblemaNascosto, `il logo deve essere il Puzzle 3D (menu e accesso): ${JSON.stringify(logo)}`);
+            assert(logo.canvas === 0 && logo.emblemi === 2 && logo.rilievo === 6, `il logo di menu e accesso e' l'emblema SVG con l'Occhio in rilievo: ${JSON.stringify(logo)}`);
             await page4.mouse.move(980, 690, { steps: 6 });
             await page4.waitForTimeout(500);
             assert((parseFloat(await page4.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--par-x'))) || 0) === 0, 'il logo non deve seguire il mouse');

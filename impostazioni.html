@@ -357,20 +357,8 @@
 
             <div class="settings-row">
                 <div>
-                    <div class="settings-row-label">Profondità del menu</div>
-                    <div class="settings-row-sub">Il logo del menu principale segue il mouse o l'inclinazione del telefono; lo sfondo resta fermo.</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="parallaxToggleInput">
-                    <span class="switch-track"></span>
-                    <span class="switch-thumb"></span>
-                </label>
-            </div>
-
-            <div class="settings-row">
-                <div>
-                    <div class="settings-row-label">Giroscopio sulle carte</div>
-                    <div class="settings-row-sub">Sul telefono, nel dettaglio di una carta la luce (lucido, bordi, arcobaleno) segue l'inclinazione. Spento, la carta resta ferma e la luce si muove piano da sola.</div>
+                    <div class="settings-row-label">Carte lucide: giroscopio</div>
+                    <div class="settings-row-sub">Sul telefono, nel dettaglio di una carta il lucido (riflesso, bordi, arcobaleno) segue l'inclinazione. Spento, segue il tocco: premi e trascina sulla carta, o toccala in punti diversi, e il riflesso arriva lì; quando alzi il dito la luce torna a muoversi piano da sola.</div>
                 </div>
                 <label class="switch">
                     <input type="checkbox" id="cardGyroToggleInput">
@@ -440,7 +428,7 @@
 <script src="js/ui/video-quality.js"></script>
 <script src="js/ui/bot-speed.js"></script>
 <script src="js/ui/hologram-setting.js"></script>
-<!-- Per l'impostazione "Profondità del menu" (Inclinazione.parallasseMenuAttiva). -->
+<!-- Per l'impostazione "Carte lucide: giroscopio" (Inclinazione.giroscopioCarteAttivo). -->
 <script src="js/ui/inclinazione.js"></script>
 <script src="js/ui/deck-switcher.js"></script>
 <script src="js/ui/topbar.js"></script>
@@ -579,21 +567,12 @@
         });
     }
 
-    // --- Profondità del menu ----------------------------------------
-    // La parallasse del menu principale (js/ui/inclinazione.js), accesa
-    // di default. Acceso = il menu si muove a strati.
-    const parallaxToggle = document.getElementById('parallaxToggleInput');
-    if (parallaxToggle && window.Inclinazione) {
-        parallaxToggle.checked = Inclinazione.parallasseMenuAttiva();
-        parallaxToggle.addEventListener('change', () => {
-            Inclinazione.impostaParallasseMenu(parallaxToggle.checked);
-            if (window.NativeHaptics) NativeHaptics.light();
-        });
-    }
-
-    // --- Giroscopio sulle carte -------------------------------------
+    // --- Carte lucide: giroscopio o tocco -----------------------------
     // Acceso (default): il giroscopio muove la luce della carta in
-    // dettaglio. Spento: la luce si muove piano da sola (CartaViva).
+    // dettaglio. Spento: la luce segue il TOCCO (si preme e si trascina
+    // sulla carta) e, a dito alzato, si muove piano da sola (CartaViva).
+    // (Prima di questa voce c'era "Profondità del menu": la parallasse del
+    // logo del menu e' stata tolta, il logo e' ora il Puzzle 3D.)
     const cardGyroToggle = document.getElementById('cardGyroToggleInput');
     if (cardGyroToggle && window.Inclinazione) {
         cardGyroToggle.checked = Inclinazione.giroscopioCarteAttivo();

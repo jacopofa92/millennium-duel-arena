@@ -102,12 +102,30 @@
             </g>
         </g>
         <g class="gl-occhio">
-            <path class="gl-sopracciglio" d="M-30,-31 Q0,-44 32,-30"/>
-            <path class="gl-palpebra" d="M-28,-17 Q0,-38 28,-17 Q0,-1 -28,-17 Z"/>
-            <circle class="gl-iride" cx="0" cy="-17" r="7.5"/>
-            <circle class="gl-pupilla" cx="0" cy="-17" r="3.4"/>
-            <!-- La "lacrima" e la spirale del Wedjat, sotto l'occhio. -->
-            <path class="gl-segno" d="M-6,-7 L-9,14 M9,-7 Q20,4 13,14 Q8,19 13,23"/>
+            <!-- L'Occhio e' IN RILIEVO, non disegnato in nero: le sagome si definiscono una volta sola e si disegnano tre volte —
+                 un'ombra scura appena spostata in basso a destra, il corpo in oro chiaro, e un filo di luce in alto a sinistra. -->
+            <defs>
+                <path id="${g('sopracciglio')}" fill="none" d="M-30,-31 Q0,-44 32,-30"/>
+                <path id="${g('palpebra')}" d="M-28,-17 Q0,-38 28,-17 Q0,-1 -28,-17 Z"/>
+                <circle id="${g('iride')}" fill="none" cx="0" cy="-17" r="7.5"/>
+                <circle id="${g('pupilla')}" stroke="none" cx="0" cy="-17" r="3.2"/>
+                <!-- La "lacrima" e la spirale del Wedjat, sotto l'occhio. -->
+                <path id="${g('segno')}" fill="none" d="M-6,-7 L-9,14 M9,-7 Q20,4 13,14 Q8,19 13,23"/>
+                <linearGradient id="${g('rilievo')}" gradientUnits="userSpaceOnUse" x1="-30" y1="-40" x2="30" y2="28">
+                    <stop offset="0" stop-color="#d79a1c"/>
+                    <stop offset="0.5" stop-color="#a86a0a"/>
+                    <stop offset="1" stop-color="#6b3c04"/>
+                </linearGradient>
+            </defs>
+            <g class="gl-rilievo gl-rilievo--ombra" transform="translate(1.1,1.8)">
+                <use href="#${g('sopracciglio')}"/><use href="#${g('palpebra')}"/><use href="#${g('iride')}"/><use href="#${g('pupilla')}"/><use href="#${g('segno')}"/>
+            </g>
+            <g class="gl-rilievo gl-rilievo--corpo" style="--gl-rilievo: url(#${g('rilievo')})">
+                <use href="#${g('sopracciglio')}"/><use href="#${g('palpebra')}"/><use class="gl-iride" href="#${g('iride')}"/><use href="#${g('pupilla')}"/><use href="#${g('segno')}"/>
+            </g>
+            <g class="gl-rilievo gl-rilievo--luce" transform="translate(-0.5,-0.8)">
+                <use href="#${g('sopracciglio')}"/><use href="#${g('palpebra')}"/><use href="#${g('iride')}"/><use href="#${g('segno')}"/>
+            </g>
         </g>
     </g>
 </svg>`;
