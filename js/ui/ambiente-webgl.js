@@ -66,6 +66,14 @@ float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
   return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}
 float fbm3(vec2 p){float a=.5,s=0.;for(int i=0;i<3;i++){s+=a*n(p);p=p*2.03+vec2(7.1,3.7);a*=.5;}return s;}
 vec4 over(vec4 top,vec4 bot){return top+bot*(1.-top.a);}
+// Da coordinate dello schermo a coordinate dell'IMMAGINE del campo (0..1, y verso l'alto): lo sfondo e' dipinto con
+// \`cover\`, quindi su uno schermo piu' largo o piu' alto dell'immagine una parte viene ritagliata. ia = larghezza/altezza dell'immagine.
+vec2 aImg(vec2 uv,float asp,float ia){return asp>ia?vec2(uv.x,.5+(uv.y-.5)*(ia/asp)):vec2(.5+(uv.x-.5)*(asp/ia),uv.y);}
+// 1 dentro il rettangolo q (x0,y0,x1,y1 in coordinate immagine, y verso l'alto), 0 fuori, con bordo morbido di larghezza s.
+float zonaR(vec2 uv,float asp,float ia,vec4 q,float s){
+  vec2 p=aImg(uv,asp,ia);
+  return smoothstep(q.x,q.x+s,p.x)*smoothstep(q.z,q.z-s,p.x)*smoothstep(q.y,q.y+s,p.y)*smoothstep(q.w,q.w-s,p.y);
+}
 // Limita un effetto a un rettangolo (x0,y0,x1,y1; y verso l'alto) con bordi morbidi.
 vec4 maschera(vec4 c,vec2 uv,vec4 r){
   float m=smoothstep(r.x,r.x+.05,uv.x)*smoothstep(r.z,r.z-.05,uv.x)*smoothstep(r.y,r.y+.05,uv.y)*smoothstep(r.w,r.w-.05,uv.y);
@@ -446,8 +454,116 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
   return vec4(c*al*1.4,al*.9);
 }`;
 
+    // ---- Effetti LOCALIZZATI (revamp delle arene): ognuno sta in un punto preciso dell'immagine, mai su tutto lo schermo ----
+
+    // Una fontana: getto luminoso, onde sull'acqua attorno e goccioline che salgono e ricadono. `f` = posizione nell'immagine.
+    MOD.fontane = `
+vec4 m_fontana(vec2 uv,float asp,float t,vec3 c1,vec3 c2,vec2 f,float s,float seed,float ia,float a){
+  vec2 sp=asp>ia?vec2(f.x,.5+(f.y-.5)*(asp/ia)):vec2(.5+(f.x-.5)*(ia/asp),f.y);
+  vec2 d=(uv-sp)*vec2(asp,1.);
+  float r=length(d);
+  if(r>.2*s) return vec4(0.);
+  float pul=.82+.18*sin(t*(2.3+seed*.4)+seed*9.);
+  float core=exp(-r*r*(1800./(s*s)))*pul;
+  float halo=exp(-r*r*(230./(s*s)));
+  float ring=0.;
+  for(int k=0;k<2;k++){
+    float ph=fract(t*.42+seed*.37+float(k)*.5);
+    ring+=exp(-pow((r-.02*s-ph*.1*s)*(120./s),2.))*(1.-ph)*(1.-ph);
+  }
+  float gocce=0.;
+  for(int k=0;k<7;k++){
+    float fk=float(k);
+    float ph=fract(t*(.62+fk*.09)+h(vec2(fk,seed)));
+    float ang=h(vec2(fk+3.,seed))*6.2832;
+    vec2 q=vec2(cos(ang)*ph*.04*s,ph*(1.-ph)*.2*s);
+    gocce+=smoothstep(.005*s,.0,length(d-q))*(1.-ph*.7);
+  }
+  float al=clamp((core*.6+halo*.2+ring*.32+gocce*.9)*a,0.,1.);
+  vec3 col=c1*(core+gocce*.9)+c2*(halo*.5+ring*.6);
+  return vec4(col*a,al);
+}`;
+
+    // Un'auto vista dall'alto che percorre una corsia (da `xa` in cima a `xb` in fondo all'immagine, x normalizzata).
+    // Quattro auto per corsia, ognuna con un colore, un parabrezza e un'ombra. `dir` +1 scende, -1 sale.
+    MOD.traffico = `
+vec4 m_auto(vec2 uv,float asp,float t,float ia,float xa,float xb,float dir,float seed,float a){
+  vec2 p=aImg(uv,asp,ia);
+  float yi=1.-p.y;
+  float lx=mix(xa,xb,yi);
+  float dx=(p.x-lx)*ia;
+  if(abs(dx)>.03) return vec4(0.);
+  vec4 acc=vec4(0.);
+  for(int k=0;k<4;k++){
+    float fk=float(k);
+    float rnd=h(vec2(fk,seed));
+    float ph=fract(t*(.026+rnd*.016)*dir+fk*.25+seed*.131);
+    float dy=yi-ph;
+    vec2 q=vec2(dx,dy*dir);
+    vec2 b=abs(q-vec2(0.,0.))-vec2(.0075,.0165);
+    float sd=length(max(b,0.))+min(max(b.x,b.y),0.);
+    float corpo=smoothstep(.0014,.0,sd);
+    float ombra=smoothstep(.006,.0,sd-.0012)*.35;
+    float parab=smoothstep(.0015,.0,max(abs(q.x)-.0052,abs(q.y-.0038)-.0046))*step(0.,.0165-abs(q.y));
+    float tipo=h(vec2(fk+7.,seed+3.));
+    vec3 col=tipo<.22?vec3(.92,.93,.95):tipo<.4?vec3(.78,.12,.12):tipo<.58?vec3(.15,.28,.62):tipo<.74?vec3(.95,.75,.15):tipo<.9?vec3(.55,.58,.62):vec3(.08,.09,.11);
+    vec4 vet=vec4(col*corpo,corpo);
+    vet.rgb=mix(vet.rgb,vec3(.1,.14,.2)*corpo,parab*.85);
+    vec4 sh=vec4(0.,0.,0.,ombra*(1.-corpo));
+    acc=over(over(vet,sh),acc);
+  }
+  return acc*a;
+}`;
+
+    // Una spia che lampeggia (luce di segnalazione): accesa a tratti, con il seme sfasata dalle altre (una fila di spie "corre").
+    MOD.spie = `
+vec4 m_spia(vec2 uv,float asp,float t,vec3 c,vec2 f,float s,float seed,float ia,float a,float vel){
+  vec2 sp=asp>ia?vec2(f.x,.5+(f.y-.5)*(asp/ia)):vec2(.5+(f.x-.5)*(ia/asp),f.y);
+  vec2 d=(uv-sp)*vec2(asp,1.);
+  float r2=dot(d,d);
+  if(r2>9.*s*s) return vec4(0.);
+  float ph=fract(t*vel*.5+seed*.173);
+  float on=smoothstep(.0,.07,ph)*smoothstep(.5,.38,ph);
+  float g=exp(-r2/(s*s*.7))*on;
+  float core=exp(-r2/(s*s*.06))*on;
+  return vec4(c*(g*.55+core*1.1)*a,(g*.4+core*.65)*a);
+}`;
+
+    // Scintille da un punto preciso (un giunto di tubo, un quadro elettrico): ogni punto ha il suo ritmo, a raffiche di ~1 secondo.
+    MOD.scintillePunti = `
+vec4 m_scintillaP(vec2 uv,float asp,float t,vec3 c,vec2 f,float s,float seed,float ia,float a){
+  vec2 sp=asp>ia?vec2(f.x,.5+(f.y-.5)*(asp/ia)):vec2(.5+(f.x-.5)*(ia/asp),f.y);
+  vec2 d=(uv-sp)*vec2(asp,1.);
+  if(length(d)>.22*s) return vec4(0.);
+  float cyc=t/(3.4+h(vec2(seed,2.))*3.5)+h(vec2(seed,5.));
+  float id=floor(cyc);
+  float ph=fract(cyc)/.26;
+  if(ph>=1.||h(vec2(id,seed))<.25) return vec4(0.);
+  float acc=exp(-dot(d,d)*(2500./(s*s)))*pow(1.-ph,2.)*.9;
+  for(int i=0;i<10;i++){
+    float fi=float(i);
+    float ang=h(vec2(fi+id*1.7,seed))*6.2832;
+    float v=.03+h(vec2(fi+9.,seed+id))*.13;
+    vec2 q=vec2(cos(ang),sin(ang))*v*s*ph;
+    q.y-=.14*s*ph*ph;
+    acc+=smoothstep(.0045*s,.0,length(d-q))*(1.-ph);
+  }
+  float al=clamp(acc*a,0.,1.);
+  return vec4(c*al*1.5,al*.9);
+}`;
+
     // Come si scrive la chiamata di ogni modulo (c = 'A' | 'B' | 'C').
     const f = (x) => (Number.isInteger(x) ? x.toFixed(1) : String(x));
+
+    /**
+     * Una catena `over(...)` di effetti puntuali (fiamme, luci, spie...): ogni punto sta SOPRA i precedenti, nell'ordine della lista.
+     * `raggio` (fin dove arriva un punto) e `ia` oggi non servono: provato a dividere l'immagine in celle e a valutare per pixel solo i
+     * punti vicini, ma gli `if` annidati non fanno saltare il calcolo (misurato: 4x PIU' lento in software, shader enorme), mentre
+     * ogni modulo esce gia' da solo, subito, quando il pixel e' lontano. La firma resta per poter riprovare con un'altra tecnica.
+     */
+    function catenaPunti(pts, ia, raggio, mk) {
+        return pts.reduce((e, p, i) => mk(p, i, e), 'vec4(0.)');
+    }
     /** @type {Record<string, { def: Record<string, any>, call: (c: string, o: any) => string }>} */
     const CALL = {
         strisce: { def: { vel: 1, stretch: 1.6, dens: 9, a: .22, y0: -.2, y1: 1.2 },
@@ -477,14 +593,14 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         // A e B della tavolozza. `sz` scala tutte le fiamme insieme, `ia` e' il rapporto
         // d'aspetto dell'immagine del campo.
         alone: { def: { pts: [], sz: 1, ia: 1.772, a: 1 },
-            call: (c, o) => o.pts.reduce((e, p, i) =>
-                `over(m_alone(uv,asp,t,${c},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)}),${e})`, 'vec4(0.)') },
+            call: (c, o) => catenaPunti(o.pts, o.ia, (p) => 3 * p[2] * o.sz, (p, i, e) =>
+                `over(m_alone(uv,asp,t,${c},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)}),${e})`) },
         brillo: { def: { pts: [], sz: 1, ia: 1.772, a: 1, ex: 6, vel: 1 },
-            call: (c, o) => o.pts.reduce((e, p, i) =>
-                `over(m_brillo(uv,asp,t,${c},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)},${f(o.ex)},${f(o.vel)}),${e})`, 'vec4(0.)') },
+            call: (c, o) => catenaPunti(o.pts, o.ia, (p) => 5.5 * p[2] * o.sz, (p, i, e) =>
+                `over(m_brillo(uv,asp,t,${c},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)},${f(o.ex)},${f(o.vel)}),${e})`) },
         fiamme: { def: { pts: [], sz: 1, ia: 1.772, a: 1 },
-            call: (c, o) => o.pts.reduce((e, p, i) =>
-                `over(m_fiamma(uv,asp,t,${o.c1 ? cost(o.c1) : 'A'},${o.c2 ? cost(o.c2) : 'B'},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)}),${e})`, 'vec4(0.)') },
+            call: (c, o) => catenaPunti(o.pts, o.ia, (p) => .3 * p[2] * o.sz, (p, i, e) =>
+                `over(m_fiamma(uv,asp,t,${o.c1 ? cost(o.c1) : 'A'},${o.c2 ? cost(o.c2) : 'B'},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)}),${e})`) },
         // Un proiettore di ologrammi per ogni punto di pts ([x, y], nell'immagine del campo, y verso l'alto).
         proiettori: { def: { pts: [], ia: 1.773, a: 1 },
             call: (c, o) => o.pts.reduce((e, p, i) =>
@@ -498,7 +614,24 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         traccianti: { def: { a: 1 },
             call: (c, o) => `m_traccianti(uv,asp,t,${c},${f(o.a)})` },
         glitch: { def: { a: .5 },
-            call: (c, o) => `m_glitch(uv,t,${c},${f(o.a)},ev)` }
+            call: (c, o) => `m_glitch(uv,t,${c},${f(o.a)},ev)` },
+        // ---- Localizzati: ognuno sta nei punti (pts) o nelle corsie (lanes) dati, mai su tutto lo schermo ----
+        // Una fontana per punto ([x, y, grandezza] nell'immagine, y verso l'alto). c1 getto/goccioline, c2 onde/alone.
+        fontane: { def: { pts: [], sz: 1, ia: 1.772, a: 1 },
+            call: (c, o) => catenaPunti(o.pts, o.ia, (p) => .2 * p[2] * o.sz, (p, i, e) =>
+                `over(m_fontana(uv,asp,t,${o.c1 ? cost(o.c1) : 'A'},${o.c2 ? cost(o.c2) : 'B'},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)}),${e})`) },
+        // Auto sulle strade: una corsia = [xInCima, xInFondo, verso] con x normalizzata sull'immagine e verso +1 (scende) / -1 (sale).
+        traffico: { def: { lanes: [], ia: 1, a: 1 },
+            call: (c, o) => o.lanes.reduce((e, l, i) =>
+                `over(m_auto(uv,asp,t,${f(o.ia)},${f(l[0])},${f(l[1])},${f(l[2])},${f(i + 1)},${f(o.a)}),${e})`, 'vec4(0.)') },
+        // Spie lampeggianti ([x, y, grandezza]); `vel` e' la rapidita' del lampeggio. L'ordine dei punti sfasa il ritmo.
+        spie: { def: { pts: [], sz: 1, ia: 1.772, a: 1, vel: 1 },
+            call: (c, o) => catenaPunti(o.pts, o.ia, (p) => 3 * p[2] * o.sz, (p, i, e) =>
+                `over(m_spia(uv,asp,t,${c},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)},${f(o.vel)}),${e})`) },
+        // Scintille da punti precisi ([x, y, grandezza]).
+        scintillePunti: { def: { pts: [], sz: 1, ia: 1.772, a: 1 },
+            call: (c, o) => catenaPunti(o.pts, o.ia, (p) => .22 * p[2] * o.sz, (p, i, e) =>
+                `over(m_scintillaP(uv,asp,t,${c},vec2(${f(p[0])},${f(p[1])}),${f(p[2] * o.sz)},${f(i + 1)},${f(o.ia)},${f(o.a)}),${e})`) }
     };
 
     // =================================================================
@@ -540,6 +673,57 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
     const TORRE_PROIETTORI = [[0.22, 0.925], [0.785, 0.935], [0.172, 0.25], [0.83, 0.25]];
     const HOLO = { c1: [.5, .92, 1], c2: [.72, .5, 1] };
     const FIAMMA_CALDA = { c1: [1, .86, .5], c2: [1, .42, .08] };
+
+    // ---- Arene con effetti LOCALIZZATI (revamp) ---------------------------------------------------------------
+    // Qui le posizioni si scrivono in PIXEL dell'illustrazione (come si leggono aprendola) e si convertono in 0..1 con y verso
+    // l'alto (PX) o in rettangoli con y dall'alto (ZPX). Le misure sono quelle delle immagini in images/fields/; se si cambia
+    // un'illustrazione vanno riguardate.
+    const PX = (W, H, pts) => pts.map((p) => [+(p[0] / W).toFixed(4), +(1 - p[1] / H).toFixed(4)].concat(p.slice(2)));
+    const ZPX = (W, H, rects) => rects.map((r) => [+(r[0] / W).toFixed(4), +(r[1] / H).toFixed(4), +(r[2] / W).toFixed(4), +(r[3] / H).toFixed(4)]);
+    const FIAMMA_ARENA = { c1: [1, .88, .58], c2: [1, .5, .16] };
+
+    // Castello di Pegasus (interno, 1672x941): le candele sui balconi e sulle balaustre, le quattro statue del cavallo alato e
+    // i led verdi agli angoli dell'arena. Prima: un bagliore di braciere sui lati di tutto lo schermo e una nebbia viola.
+    // Rilevate sull'immagine (macchie calde luminose, raggruppate): coordinate 0..1, y verso l'alto.
+    const PEGASUS_CANDELE = [[0.986,0.447],[0.024,0.472],[0.574,0.179],[0.11,0.247],[0.366,0.132],[0.579,0.864],[0.964,0.843],[0.89,0.251],[0.639,0.128],[0.067,0.196],[0.66,0.928],[0.033,0.838],[0.933,0.196],[0.419,0.864],[0.895,0.672],[0.933,0.74],[0.715,0.217],[0.266,0.796],[0.062,0.736],[0.423,0.179],[0.335,0.919],[0.28,0.221],[0.108,0.677],[0.732,0.796],[0.132,0.889],[0.115,0.374],[0.866,0.894]].map((q) => [q[0], q[1], 1]);
+    const PEGASUS_STATUE = [[630,75,1],[1055,75,1],[150,675,1],[1525,670,1]];
+    const PEGASUS_LED = [[503,205,1],[1163,205,1],[480,640,1],[1180,650,1]];
+
+    // Mondo Virtuale (Gozaburo, 1669x942): i quattro pannelli al plasma agli angoli, i led rossi lungo il bordo dell'arena e le
+    // torri sullo sfondo. Prima: griglia su tutto lo schermo, una spirale al centro e barre di disturbo ovunque.
+    const VIRTUALE_PANNELLI = [[300,52,1],[1365,52,1],[262,765,1],[1405,765,1]];
+    const VIRTUALE_ZONA_PANNELLI = ZPX(1669, 942, [[215,0,385,115],[1285,0,1450,115],[185,690,345,860],[1325,690,1495,860]]);
+    const VIRTUALE_LED = [[583,118,1],[722,122,1],[943,122,1],[1065,118,1],[1100,160,1],[1210,260,1],[1218,400,1],[1250,548,1],[1105,683,1],[930,683,1],[740,683,1],[572,683,1],[445,560,1],[438,400,1],[455,250,1],[470,160,1]];
+    const VIRTUALE_TORRI = [[80,300,1],[60,560,1],[110,150,1],[1580,140,1],[1610,370,1],[1560,660,1],[1620,500,1],[50,430,1]];
+
+    // Industria KaibaCorp (1670x942): spie rosse dei macchinari, lampade blu del pavimento, stanze con la luce accesa, tubi con
+    // scintille e vapore. Prima: griglia su tutto lo schermo e scintille a caso ovunque.
+    const INDUSTRIA_ROSSE = [[150,30,1],[835,30,1],[1530,28,1],[65,378,1],[1602,378,1],[75,725,1],[1595,740,1],[712,813,1],[960,813,1],[708,917,1],[960,917,1],[150,915,1],[1485,915,1]];
+    const INDUSTRIA_BLU = [[508,116,1],[1159,116,1],[508,687,1],[1151,687,1],[691,170,1],[975,170,1],[691,754,1],[975,754,1]];
+    const INDUSTRIA_FINESTRE = [[185,330,1],[170,590,1],[1487,330,1],[1490,590,1]];
+    const INDUSTRIA_GIUNTI = [[60,250,1],[40,640,1],[150,880,1],[1610,230,1],[1640,650,1],[1500,880,1],[330,420,1],[1330,420,1]];
+
+    // Campo acquatico (1670x942): i quattro bracieri nei blocchi di pietra, le cascatelle e la schiuma sui bordi, lo specchio
+    // d'acqua al centro.
+    const ACQUA_BRACIERI = [[395,120,1],[1280,118,1],[365,705,1],[1302,705,1]];
+    const ACQUA_SCHIUMA = [[735,150,1],[942,155,1],[745,825,1],[195,470,1],[235,625,1],[1480,440,1],[1448,640,1],[330,70,1],[1335,95,1]];
+    const ACQUA_STAGNO = ZPX(1670, 942, [[330,110,1350,760]]);
+
+    // Arena dell'Antico Egitto, giorno e notte (1670x942): le otto fontane nelle vasche azzurre, i quattro bracieri, gli obelischi
+    // e l'Occhio di Horus al centro.
+    const EGITTO_FONTANE_G = [[697,148,1],[968,148,1],[488,297,1],[1185,297,1],[420,540,1],[1250,540,1],[550,770,1],[1125,770,1]];
+    const EGITTO_VASCHE_G = ZPX(1670, 942, [[560,125,795,195],[880,125,1160,195],[390,275,535,385],[1140,275,1285,385],[360,485,520,640],[1155,485,1310,640],[505,730,780,810],[895,730,1180,810]]);
+    const EGITTO_BRACIERI_G = [[568,213,1],[1100,213,1],[548,657,1],[1120,657,1]];
+    const EGITTO_OBELISCHI = [[455,100,1],[1215,100,1],[440,640,1],[1225,640,1],[835,880,1]];
+    const EGITTO_FONTANE_N = [[677,105,1],[987,105,1],[418,258,1],[1250,258,1],[345,520,1],[1325,520,1],[435,785,1],[1235,785,1]];
+    const EGITTO_VASCHE_N = ZPX(1669, 942, [[480,100,790,170],[880,100,1190,170],[300,250,460,375],[1215,250,1370,375],[270,490,400,660],[1260,490,1395,660],[400,755,760,860],[910,755,1250,860]]);
+    const EGITTO_BRACIERI_N = [[510,182,1],[1158,182,1],[432,670,1],[1235,672,1]];
+    const EGITTO_LAMPADE_N = [[640,185,1],[715,185,1],[790,185,1],[875,185,1],[950,185,1],[1000,185,1],[1060,185,1],[400,300,1],[400,380,1],[1265,300,1],[1265,380,1],[440,560,1],[1230,560,1],[640,715,1],[715,715,1],[790,715,1],[900,715,1],[960,715,1],[1050,715,1],[250,160,1],[1420,160,1],[230,780,1],[1440,780,1],[90,500,1],[1580,500,1]];
+
+    // Citta' (1254x1254): vista dall'alto con strade laterali, aiuole, lampioni, vetrate. Effetti: le auto sulle due strade, i
+    // riflessi di sole sulle vetrate, le foglie nelle aiuole e le ombre lente delle nuvole.
+    const CITTA_VETRATE = [[410,45,1],[630,28,1],[860,45,1],[630,1030,1],[60,150,1],[35,430,1],[50,780,1],[1215,90,1],[1235,420,1],[1240,780,1],[100,1180,1],[1090,1180,1],[1190,1140,1],[300,1215,1]];
+    const CITTA_AIUOLE = ZPX(1254, 1254, [[330,130,495,215],[760,130,925,215],[188,285,250,440],[1005,285,1070,440],[160,600,230,770],[1025,600,1100,770],[225,890,405,965],[850,890,1035,965],[425,905,500,1075],[750,905,830,1075]]);
 
     /**
      * @typedef {[string, string, Record<string, any>?]} Mod  // [modulo, colore A|B|C, parametri]
@@ -606,8 +790,16 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         },
         'castello-candele': {
             pal: [rgb(210, 140, 255), rgb(130, 50, 220), rgb(255, 210, 160)],
-            fondo: [['braciere', 'A', { a: .5 }], ['nebbia', 'B', { sc: 1.5, a: .18, y0: -.5, y1: .6 }]],
-            primo: [['particelle', 'C', { vx: .05, vy: .3, dens: 11, dim: .07, lamp: 1, osc: .15, a: .95 }]],
+            ia: 1.777,
+            // Candele vere sui balconi (una fiamma piccola ciascuna, senza il bagliore diffuso di prima), un respiro
+            // dorato sulle statue del cavallo alato, i led verdi degli angoli dell'arena che pulsano, e qualche
+            // lucciola viola solo ai lati, davanti alle arcate.
+            fondo: [
+                ['fiamme', 'A', { pts: PEGASUS_CANDELE, c1: FIAMMA_ARENA.c1, c2: FIAMMA_ARENA.c2, sz: .2, a: .72 }],
+                ['brillo', 'C', { pts: PX(1672, 941, PEGASUS_STATUE), sz: .02, ex: 7, vel: .6, a: .7 }],
+                ['spie', 'vec3(.4,1.,.62)', { pts: PX(1672, 941, PEGASUS_LED), sz: .011, a: .9, vel: .7 }]
+            ],
+            primo: [['particelle', 'C', { vx: .04, vy: .2, dens: 9, dim: .06, lamp: 1, osc: .15, a: .5, zone: ZPX(1672, 941, [[0, 0, 430, 941], [1240, 0, 1672, 941]]), bordo: .04 }]],
             ev: { ogni: [5, 10], dur: 3 }
         },
         'torre-vento-verde': {
@@ -649,21 +841,50 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         },
         'gozaburo-glitch': {
             pal: PAL.rosso,
-            fondo: [['scan', 'A', { a: .45 }], ['vortice', 'A', { a: .16 }]],
-            primo: [['glitch', 'C', { a: .45 }], ['particelle', 'A', { vx: 0, vy: -.25, dens: 14, dim: .05, forma: 3, a: .8 }]],
+            // Il disturbo digitale vive SOLO nei quattro pannelli al plasma; i led del bordo si accendono in sequenza,
+            // le luci delle torri sullo sfondo lampeggiano, la scansione passa solo sul pavimento dell'arena e la
+            // foschia rossa sta ai lati. Niente piu' griglia su tutto lo schermo ne' spirale sopra le carte.
+            fondo: [
+                ['alone', 'A', { pts: PX(1669, 942, VIRTUALE_PANNELLI), sz: .07, ia: 1.772, a: .5 }],
+                ['glitch', 'C', { a: .75, zone: VIRTUALE_ZONA_PANNELLI, bordo: .004, ia: 1.772 }],
+                ['spie', 'C', { pts: PX(1669, 942, VIRTUALE_LED), sz: .011, ia: 1.772, a: .9, vel: 1.3 }],
+                ['brillo', 'A', { pts: PX(1669, 942, VIRTUALE_TORRI), sz: .014, ia: 1.772, ex: 5, vel: .8, a: .8 }],
+                ['scan', 'A', { a: .26, zone: ZPX(1669, 942, [[450, 150, 1220, 675]]), bordo: .03, ia: 1.772 }],
+                ['nebbia', 'B', { sc: 1.3, a: .2, y0: -.2, y1: 1.2, zone: ZPX(1669, 942, [[0, 0, 300, 942], [1370, 0, 1669, 942]]), bordo: .05, ia: 1.772 }]
+            ],
+            primo: [
+                ['scintillePunti', 'C', { pts: PX(1669, 942, VIRTUALE_PANNELLI), sz: .5, ia: 1.772, a: .85 }],
+                ['particelle', 'A', { vx: 0, vy: -.25, dens: 14, dim: .05, forma: 3, a: .6, zone: ZPX(1669, 942, [[0, 0, 300, 942], [1370, 0, 1669, 942]]), bordo: .05, ia: 1.772 }]
+            ],
             ev: { ogni: [3, 7], dur: 1.6 }
         },
         'industria-scariche': {
             pal: [rgb(173, 231, 255), rgb(255, 120, 70), rgb(255, 255, 220)],
-            fondo: [['scan', 'A', { a: .4 }], ['nebbia', 'B', { sc: 1.5, a: .12, y0: -.5, y1: .5 }]],
-            primo: [['scintille', 'C', { a: 1 }], ['particelle', 'B', { vx: .1, vy: .25, dens: 12, dim: .05, lamp: 1, a: .8 }]],
+            ia: 1.773,
+            // Spie rosse dei macchinari che lampeggiano, lampade blu del pavimento che pulsano, le stanze con la luce
+            // accesa, la scansione solo sul pavimento dell'arena, vapore ai lati e scintille dai giunti dei tubi.
+            fondo: [
+                ['spie', 'vec3(1.,.22,.18)', { pts: PX(1670, 942, INDUSTRIA_ROSSE), sz: .016, a: .95, vel: 1 }],
+                ['alone', 'A', { pts: PX(1670, 942, INDUSTRIA_BLU), sz: .02, a: .5 }],
+                ['alone', 'vec3(1.,.82,.45)', { pts: PX(1670, 942, INDUSTRIA_FINESTRE), sz: .06, a: .32 }],
+                ['scan', 'A', { a: .3, zone: ZPX(1670, 942, [[470, 265, 1205, 665]]), bordo: .03 }],
+                ['nebbia', 'vec3(.7,.82,.95)', { sc: 1.4, a: .12, y0: -.3, y1: 1.3, zone: ZPX(1670, 942, [[0, 0, 240, 942], [1430, 0, 1670, 942]]), bordo: .04 }]
+            ],
+            primo: [['scintillePunti', 'C', { pts: PX(1670, 942, INDUSTRIA_GIUNTI), sz: .6, a: 1 }]],
             ev: { ogni: [2.5, 6], dur: 1.6 }
         },
         // ---- Città e natura ------------------------------------------------------------
         'citta-brezza': {
             pal: [rgb(255, 238, 186), rgb(120, 190, 150), rgb(255, 255, 230)],
-            fondo: [['raggi', 'A', { ox: .6, cnt: 6, a: .22 }]],
-            primo: [['particelle', 'B', { vx: .8, vy: -.2, dens: 9, dim: .12, osc: .45, forma: 2, a: .85 }], ['strisce', 'C', { vel: 1, a: .1, dens: 10, y0: 0, y1: .7 }]],
+            ia: 1,
+            // Auto che percorrono le due strade laterali, riflessi di sole sulle vetrate, foglie che si muovono solo
+            // nelle aiuole e l'ombra lenta delle nuvole. Prima: raggi, strisce di vento e foglie su tutta la piazza.
+            fondo: [
+                ['nebbia', 'vec3(.04,.09,.2)', { sc: 1.1, vel: .8, a: .14, y0: -.4, y1: 1.4 }],
+                ['traffico', 'A', { lanes: [[.128, .045, 1], [.152, .075, -1], [.845, .925, 1], [.87, .95, -1]], a: 1 }],
+                ['brillo', 'C', { pts: PX(1254, 1254, CITTA_VETRATE), sz: .02, ex: 9, vel: .5, a: .85 }]
+            ],
+            primo: [['particelle', 'B', { vx: .5, vy: -.12, dens: 10, dim: .07, osc: .5, forma: 2, a: .6, zone: CITTA_AIUOLE, bordo: .01 }]],
             ev: { ogni: [5, 10], dur: 4 }
         },
         'prateria-pollini': {
@@ -680,8 +901,16 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         },
         'acqua-caustiche': {
             pal: PAL.acqua,
-            fondo: [['fiamme', 'A', { pts: TORCE.angoli, c1: FIAMMA_CALDA.c1, c2: FIAMMA_CALDA.c2, sz: .8, a: .9 }], ['caustiche', 'A', { sc: 5.5, a: .6 }], ['raggi', 'C', { ox: .5, cnt: 6, a: .26 }]],
-            primo: [['particelle', 'C', { vx: .03, vy: .28, dens: 11, dim: .09, osc: .3, a: .65 }]],
+            ia: 1.773,
+            // I quattro bracieri veri (prima le fiamme stavano in punti approssimati), la luce rifratta solo sullo
+            // specchio d'acqua, la schiuma delle cascatelle che luccica e una foschia sulle cascate.
+            fondo: [
+                ['caustiche', 'A', { sc: 5.5, a: .5, zone: ACQUA_STAGNO, bordo: .05 }],
+                ['alone', 'vec3(.85,.97,1.)', { pts: PX(1670, 942, [[735, 150, 1], [942, 155, 1], [745, 825, 1]]), sz: .03, a: .32 }],
+                ['brillo', 'C', { pts: PX(1670, 942, ACQUA_SCHIUMA), sz: .018, ex: 5, vel: .9, a: .8 }],
+                ['fiamme', 'A', { pts: PX(1670, 942, ACQUA_BRACIERI), c1: FIAMMA_ARENA.c1, c2: FIAMMA_ARENA.c2, sz: .4, a: .9 }]
+            ],
+            primo: [['particelle', 'C', { vx: .03, vy: .28, dens: 11, dim: .07, osc: .3, a: .42, zone: ACQUA_STAGNO, bordo: .05 }]],
             ev: { ogni: [6, 12], dur: 5 }
         },
         'foresta-lucciole': {
@@ -717,14 +946,31 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         },
         'arena-egizia-fontane': {
             pal: PAL.acqua,
-            fondo: [['caustiche', 'A', { sc: 5, a: .5 }], ['raggi', 'C', { ox: .5, cnt: 6, a: .3 }]],
-            primo: [['particelle', 'C', { vx: .02, vy: .3, dens: 10, dim: .08, osc: .25, a: .6 }]],
+            ia: 1.773,
+            // Le otto fontane vere (getto, onde, goccioline) e la luce rifratta SOLO nelle vasche azzurre; i quattro
+            // bracieri e un luccichio d'oro sulle punte degli obelischi e sullo scarabeo. Prima: raggi e caustiche ovunque.
+            fondo: [
+                ['caustiche', 'A', { sc: 6, a: .55, zone: EGITTO_VASCHE_G, bordo: .01 }],
+                ['fontane', 'A', { pts: PX(1670, 942, EGITTO_FONTANE_G), sz: .5, c1: [.9, 1, 1], c2: [.35, .8, 1], a: .9 }],
+                ['fiamme', 'A', { pts: PX(1670, 942, EGITTO_BRACIERI_G), c1: FIAMMA_ARENA.c1, c2: FIAMMA_ARENA.c2, sz: .28, a: .8 }],
+                ['brillo', 'vec3(1.,.86,.45)', { pts: PX(1670, 942, EGITTO_OBELISCHI), sz: .025, ex: 8, vel: .5, a: .9 }]
+            ],
+            primo: [['particelle', 'C', { vx: .02, vy: .3, dens: 10, dim: .07, osc: .25, a: .4, zone: EGITTO_VASCHE_G, bordo: .01 }]],
             ev: { ogni: [6, 11], dur: 4 }
         },
         'arena-egizia-torce': {
             pal: [rgb(255, 214, 140), rgb(255, 120, 40), rgb(255, 235, 190)],
-            fondo: [['fiamme', 'A', { pts: TORCE.arenaNotte, sz: .7, a: .9 }], ['nebbia', 'B', { sc: 1.5, a: .12, y0: -.5, y1: .5 }]],
-            primo: [['particelle', 'C', { vx: .05, vy: .3, dens: 11, dim: .06, lamp: 1, a: .95 }]],
+            ia: 1.772,
+            // I quattro bracieri, le otto fontane con la luce azzurra nelle sole vasche, le lampade lungo il bordo che
+            // tremolano e l'Occhio di Horus che respira. Prima: 28 fiamme (comprese quelle in punti sbagliati) e nebbia.
+            fondo: [
+                ['caustiche', 'vec3(.35,.75,1.)', { sc: 6, a: .42, zone: EGITTO_VASCHE_N, bordo: .01 }],
+                ['fontane', 'A', { pts: PX(1669, 942, EGITTO_FONTANE_N), sz: .5, c1: [.8, .95, 1], c2: [.3, .65, 1], a: .85 }],
+                ['alone', 'C', { pts: PX(1669, 942, EGITTO_LAMPADE_N), sz: .012, a: .5 }],
+                ['alone', 'vec3(1.,.8,.4)', { pts: PX(1669, 942, [[835, 432, 1]]), sz: .09, a: .3 }],
+                ['fiamme', 'A', { pts: PX(1669, 942, EGITTO_BRACIERI_N), c1: FIAMMA_ARENA.c1, c2: FIAMMA_ARENA.c2, sz: .34, a: .95 }]
+            ],
+            primo: [['particelle', 'A', { vx: .04, vy: .3, dens: 12, dim: .05, lamp: 1, a: .8, zone: ZPX(1669, 942, [[430, 110, 590, 220], [1080, 110, 1240, 220], [355, 600, 515, 715], [1155, 600, 1315, 715]]), bordo: .02 }]],
             ev: { ogni: [5, 10], dur: 3 }
         },
         'arena-zorc': {
@@ -783,7 +1029,7 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
         const lista = campo[piano];
         if (!lista || !lista.length) return null;
         const usati = {};
-        const righe = lista.map((m) => {
+        const righe = lista.map((m, qi) => {
             const def = CALL[m[0]];
             usati[m[0]] = true;
             const o = Object.assign({}, def.def, campo.ia ? { ia: campo.ia } : {}, m[2] || {});
@@ -791,6 +1037,15 @@ vec4 m_traccianti(vec2 uv,float asp,float t,vec3 c,float a){
             // Il parametro 'area' [x0, yAlto0, x1, yAlto1] limita l'effetto a un rettangolo dell'immagine (y misurata dall'alto, come nei programmi di grafica).
             const ar = o.area;
             const dentro = ar ? `maschera(${espr},uv,vec4(${f(ar[0])},${f(1 - ar[3])},${f(ar[2])},${f(1 - ar[1])}))` : espr;
+            // `zone`: UNA O PIU' aree [x0, y0, x1, y1] dell'IMMAGINE (y misurata dall'alto) in cui l'effetto esiste; fuori sono zero.
+            // A differenza di `area` segue lo sfondo `cover` (lo stesso ritaglio delle fiamme), quindi cade sui pezzi giusti dell'arena
+            // su qualunque schermo. `bordo` e' la morbidezza dei lati. Fuori zona il modulo NON viene calcolato (un `if` sulla maschera):
+            // moltiplicare per zero dopo averlo calcolato costava come disegnarlo su tutto lo schermo.
+            if (o.zone && o.zone.length) {
+                const bordo = f(o.bordo || .012);
+                const rit = o.zone.map((z) => `zonaR(uv,asp,${f(o.ia || 1.772)},vec4(${f(z[0])},${f(1 - z[3])},${f(z[2])},${f(1 - z[1])}),${bordo})`);
+                return `  { float zm${qi}=clamp(${rit.reduce((a, b) => `max(${a},${b})`)},0.,1.); if(zm${qi}>.002) acc=over((${dentro})*zm${qi},acc); }`;
+            }
             return `  acc=over(${dentro},acc);`;
         });
         const pal = campo.pal;

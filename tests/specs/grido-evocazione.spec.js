@@ -81,13 +81,27 @@ module.exports = {
             assert(secondo.fatto && !secondo.scena, 'lo stesso grido non si ripete nello stesso duello');
 
             // --- Evocazione Speciale dell'avversario: carta già in campo, scena a schermo ---
+            // La posa di Kaiba arriva LENTA (1,6 s: file da 1-2,5 MB su una rete lenta o su un APK appena aperto): prima la scena
+            // aspettava solo 900 ms e ripiegava sulla pedina normale ("a volte vedo la pedina normale e non quella del grido").
+            // (Playwright non intercetta file://, quindi il ritardo si mette sul setter di `src`: solo la PRIMA assegnazione.)
             const speciale = await page.evaluate(async () => {
+                const desc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+                let ritardata = false;
+                Object.defineProperty(HTMLImageElement.prototype, 'src', {
+                    configurable: true,
+                    get() { return desc.get.call(this); },
+                    set(v) {
+                        if (!ritardata && /pedine-esclamazione\/setoKaiba\.png/.test(String(v))) { ritardata = true; setTimeout(() => desc.set.call(this, v), 1600); } else desc.set.call(this, v);
+                    }
+                });
                 const drago = { ...cardDatabase.find((c) => c.id === 1), uid: 'dd' };
                 DuelEngine.actions.specialSummon.call({ owner: 'bot' }, 'bot', drago, 0, 'attack', 'hand');
                 const subito = { inCampo: !!gameState.botMonsterField[0] };
-                await new Promise((r) => setTimeout(r, 800));
-                const scena = document.getElementById('gridoEvocazione');
-                const out = { ...subito, scena: !!scena, contatore: FX.isCinematicPlaying() };
+                let scena = null;
+                for (let i = 0; i < 45 && !scena; i++) { await new Promise((r) => setTimeout(r, 100)); scena = document.getElementById('gridoEvocazione'); }
+                const figura = scena ? scena.querySelector('.ge-figura') : null;
+                const out = { ...subito, scena: !!scena, contatore: FX.isCinematicPlaying(), figura: figura ? figura.getAttribute('src') : '' };
+                Object.defineProperty(HTMLImageElement.prototype, 'src', desc);
                 // Un tocco la salta.
                 scena.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
                 await new Promise((r) => setTimeout(r, 400));
@@ -97,6 +111,7 @@ module.exports = {
             assert(speciale.inCampo, 'nella Special Summon lo stato è già cambiato quando parte il grido');
             assert(speciale.scena, 'la Special Summon deve mostrare il grido');
             assert(speciale.contatore, 'la scena deve segnarsi come cinematica in corso (il bot aspetta)');
+            assert(/pedine-esclamazione\/setoKaiba\.png/.test(speciale.figura || ''), `con la posa lenta la scena deve aspettarla, non ripiegare sulla pedina normale: ${speciale.figura}`);
             assert(!speciale.dopoTocco, 'un tocco deve saltare la scena');
 
             // --- Set coperto e duellante senza voce: nessuna scena, e fatto subito ---

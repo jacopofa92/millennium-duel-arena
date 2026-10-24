@@ -34,6 +34,9 @@
     const DURATA_MS = 3000;
     const DURATA_RIDOTTA_MS = 1500;
     const USCITA_MS = 300;
+    // Attesa per la posa dedicata (file da 1-2,5 MB): abbastanza da non ripiegare per una rete lenta; se e' gia' stata
+    // precaricata (vedi `precarica`) risolve subito. La pedina di ripiego e' piccola: basta l'attesa breve.
+    const ATTESA_POSA_MS = 3500;
     const ATTESA_IMMAGINE_MS = 900;
 
     // Colori per Attributo (stessi nomi di data/cards.json).
@@ -73,18 +76,56 @@
         return !window.VideoQuality || typeof VideoQuality.isAlti !== 'function' || VideoQuality.isAlti();
     }
 
+    // Il caricamento di ogni immagine e' UNO per indirizzo e NON si interrompe quando scade l'attesa di chi la chiede: la posa
+    // dedicata pesa 1-2,5 MB, e se la scena la aspettava solo 900 ms (rete lenta, APK, prima volta) ripiegava sulla pedina
+    // normale — il difetto segnalato ("a volte vedo la pedina normale e non quella del grido"). Cosi' una richiesta scaduta
+    // lascia comunque finire il download, e la scena dopo la trova pronta; `precarica` lo avvia prima che serva.
+    const caricamenti = {};
+    function avviaCaricamento(src) {
+        if (!caricamenti[src]) {
+            caricamenti[src] = new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = () => resolve(null);
+                img.src = src;
+            });
+        }
+        return caricamenti[src];
+    }
     /** Carica un'immagine; risolve con l'elemento o con null (errore o tempo scaduto). */
     function carica(src, tetto) {
-        return new Promise((resolve) => {
-            const img = new Image();
-            let fatto = false;
-            const fine = (esito) => { if (!fatto) { fatto = true; resolve(esito); } };
-            img.onload = () => fine(img);
-            img.onerror = () => fine(null);
-            setTimeout(() => fine(null), tetto);
-            img.src = src;
+        return Promise.race([avviaCaricamento(src), new Promise((resolve) => setTimeout(() => resolve(null), tetto))]);
+    }
+
+    function nomeFile(image) {
+        return String(image || '').split(/[\\/]/).pop().replace(/\.[a-z0-9]+(?:\?.*)?$/i, '');
+    }
+    /** I nomi di file della posa dedicata da provare, in ordine: l'aspetto preciso e poi la variante canonica. */
+    function nomiPosa(image) {
+        const nome = nomeFile(image);
+        if (!nome) return [];
+        const chiaveBase = window.chiavePersonaggio ? chiavePersonaggio(image) : nome.replace(/_.*$/, '').replace(/V2$/, '');
+        const canonica = chiaveBase === 'kaiba' ? 'setoKaiba' : chiaveBase;
+        return Array.from(new Set([nome, canonica].filter(Boolean)));
+    }
+
+    /**
+     * Scarica in anticipo le pose dedicate dei DUE duellanti (se hanno almeno un grido): sono file da 1-2,5 MB, e il momento
+     * dell'Evocazione e' il peggiore per cominciare a scaricarli. Si prova piu' volte perche' DuelSession sa chi sono solo dopo
+     * l'avvio; l'esito si tiene (vedi `avviaCaricamento`), quindi la scena lo trova gia' pronto.
+     */
+    function precarica() {
+        if (window.DUEL_FAST_OPENING && !window.GRIDO_EVOCAZIONE_FORZA) return;
+        if (ridotto() || (window.SaveManager && SaveManager.getSetting('summonVideos') === false)) return;
+        ['player', 'opponent'].forEach((posto) => {
+            const chi = identita(posto);
+            if (!chi || !chi.image || !window.chiavePersonaggio || !window.GRIDI_EVOCAZIONE) return;
+            const chiave = chiavePersonaggio(chi.image);
+            if (!GRIDI_EVOCAZIONE.some((v) => v.chi.indexOf(chiave) !== -1)) return;
+            nomiPosa(chi.image).forEach((n) => avviaCaricamento('images/characters/pedine-esclamazione/' + n + '.png'));
         });
     }
+    [1500, 5000].forEach((ms) => setTimeout(precarica, ms));
 
     /**
      * La sagoma trasparente: l'originale grande (i file di avatarTrasparenza,
@@ -96,18 +137,16 @@
         // Il nome del file, con tutto il suffisso di contesto: i file di
         // avatarTrasparenza/pedine si chiamano come l'immagine (es.
         // setoKaiba_duelist_Kingdom), non come la chiave breve dei gridi.
-        const nome = String(image || '').split(/[\\/]/).pop().replace(/\.[a-z0-9]+(?:\?.*)?$/i, '');
+        const nome = nomeFile(image);
         if (!nome) return null;
 
         // Prima usa la posa dedicata al grido. Gli aspetti contestuali
         // (es. setoKaiba_duelist_Kingdom) ricadono sulla variante canonica.
-        const chiaveBase = window.chiavePersonaggio ? chiavePersonaggio(image) : nome.replace(/_.*$/, '').replace(/V2$/, '');
-        const canonica = chiaveBase === 'kaiba' ? 'setoKaiba' : chiaveBase;
-        const nomiEsclamazione = Array.from(new Set([nome, canonica].filter(Boolean)));
+        const nomiEsclamazione = nomiPosa(image);
         // Le prove partono insieme: un costume privo di asset dedicato non
         // aggiunge un secondo timeout prima del fallback canonico.
         const esclamazioni = await Promise.all(nomiEsclamazione.map((n) =>
-            carica('images/characters/pedine-esclamazione/' + n + '.png', ATTESA_IMMAGINE_MS)
+            carica('images/characters/pedine-esclamazione/' + n + '.png', ATTESA_POSA_MS)
         ));
         const esclamazione = esclamazioni.find(Boolean);
         if (esclamazione) return esclamazione.src;
