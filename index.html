@@ -107,36 +107,6 @@
         background: radial-gradient(circle at 50% 40%, rgba(247,215,116,0.24), transparent 60%);
         animation: menuFlashPulse 2.6s ease-in-out infinite;
     }
-    /* Stesso raggio del menu (250vmax: copre gli angoli con qualunque
-       rapporto d'aspetto, vedi .menu-bg-rays), ma più deciso e più
-       veloce, e si accende solo quando l'Occhio si apre. */
-    .splash-raggi {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 250vmax;
-        height: 250vmax;
-        margin-top: -125vmax;
-        margin-left: -125vmax;
-        background: repeating-conic-gradient(from 0deg, rgba(247,215,116,0.10) 0deg 3deg, transparent 3deg 12deg);
-        mix-blend-mode: screen;
-        opacity: 0;
-        animation: splashRaggiAccendi 0.9s ease-out 1.2s forwards, menuRaysSpin 40s linear infinite;
-    }
-    @keyframes splashRaggiAccendi { to { opacity: 1; } }
-    .splash-lampo {
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at 50% 38%, rgba(255,246,220,0.85), rgba(247,215,116,0.25) 30%, transparent 62%);
-        opacity: 0;
-        pointer-events: none;
-        animation: splashLampo 0.9s ease-out 1.22s both;
-    }
-    @keyframes splashLampo {
-        0%   { opacity: 0; }
-        18%  { opacity: 1; }
-        100% { opacity: 0; }
-    }
     .splash-scintille { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
     .splash-scintilla {
         position: absolute;
@@ -202,9 +172,23 @@
         color: #cdbf98;
         transition: opacity 0.25s ease;
     }
+    /* Lo splash con il Puzzle del Millennio in WebGL (js/ui/splash-webgl.js): il canvas sta sotto tutto e disegna Puzzle, polvere
+       e alone; qui restano solo il titolo (il <game-logo> senza il suo emblema SVG: l'emblema e' il Puzzle 3D), la barra e la
+       frase, in basso. La barra la muove lo script col progresso VERO, non piu' una animazione a tempo. */
+    .splash-webgl-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .splash-webgl-on { align-items: flex-end; }
+    .splash-webgl-on .splash-glow, .splash-webgl-on .splash-scintille { display: none; }
+    .splash-webgl-on game-logo .gl-emblema { display: none; }
+    .splash-webgl-on .splash-contenuto { padding-bottom: clamp(14px, 5.5vh, 56px); gap: clamp(10px, 2.2vmin, 22px); }
+    .splash-webgl-on .splash-barra-riempi { animation: none; }
+    .splash-webgl-on .splash-barra { width: min(280px, 64vw); }
+    .splash-riga { display: flex; gap: 14px; align-items: baseline; justify-content: center; }
+    .splash-perc, .splash-dettaglio { display: none; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif; letter-spacing: 0.12em; color: #f7d774; font-variant-numeric: tabular-nums; }
+    .splash-webgl-on .splash-perc { display: inline; font-size: 0.78rem; min-width: 3ch; text-align: right; }
+    .splash-webgl-on .splash-dettaglio { display: block; font-size: 0.66rem; opacity: 0.6; min-height: 1em; color: #cdbf98; margin: 0; }
+    .splash-webgl-on.splash-hidden game-logo { transform: none; filter: none; }
     @media (prefers-reduced-motion: reduce) {
-        .splash-raggi { animation: splashRaggiAccendi 0.3s ease-out forwards; }
-        .splash-lampo, .splash-scintille { display: none; }
+        .splash-scintille { display: none; }
         .splash-barra-riempi { animation-duration: 0.01s; }
     }
 
@@ -922,18 +906,29 @@
          stesso schema di GATE_SESSION_KEY più sotto), per non ripeterla
          ad ogni ritorno al menu da un duello/una pagina esterna. -->
     <div class="splash-screen" id="splashScreen">
-        <div class="splash-raggi"></div>
         <div class="splash-glow"></div>
         <div class="splash-scintille" id="splashScintille"></div>
-        <div class="splash-lampo"></div>
         <div class="splash-contenuto">
             <game-logo variante="splash"></game-logo>
             <div class="splash-caricamento">
                 <div class="splash-barra"><span class="splash-barra-riempi"></span></div>
-                <p class="splash-frase" id="splashFrase">Si mescola il mazzo…</p>
+                <div class="splash-riga"><p class="splash-frase" id="splashFrase">Si mescola il mazzo…</p><span class="splash-perc" aria-hidden="true"></span></div>
+                <p class="splash-dettaglio" aria-hidden="true"></p>
             </div>
         </div>
     </div>
+    <!-- Lo splash 3D: il Puzzle del Millennio e il progresso del caricamento VERO. Parte solo alla primissima apertura della
+         sessione (come lo splash) e solo se c'e' WebGL con highp: altrimenti resta quello di sempre, qui sotto. -->
+    <script src="js/ui/splash-webgl.js"></script>
+    <script>
+        (function () {
+            var gia = false;
+            try { gia = sessionStorage.getItem('ygoSplashShown') === '1'; } catch (e) { /* noop */ }
+            if (gia || !window.SplashWebgl) return;
+            var sp = document.getElementById('splashScreen');
+            if (sp) SplashWebgl.avvia(sp);
+        })();
+    </script>
     <script>
         // Polvere d'oro e frasi dello splash. Solo se lo splash si vede
         // davvero: al ritorno al menu da un'altra pagina viene nascosto
@@ -942,7 +937,7 @@
         (function () {
             var gia = false;
             try { gia = sessionStorage.getItem('ygoSplashShown') === '1'; } catch (e) { /* noop */ }
-            if (gia) return;
+            if (gia || (window.SplashWebgl && SplashWebgl.attivo)) return;   // con il Puzzle 3D polvere e frasi le gestisce lui
             var ridotto = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             var mount = document.getElementById('splashScintille');
             if (mount && !ridotto) {
@@ -1653,6 +1648,16 @@
             // appena composta — tagliarla a metà sarebbe peggio di non
             // averla. È un minimo: se il caricamento vero dura di più, si
             // aspetta quello.
+            // Con lo splash 3D il verdetto e' il TRAGUARDO del caricamento vero: lo splash resta finche' il progresso non arriva in
+            // fondo (minimo di durata compreso), poi esplode di luce e SOLO allora compare il menu sotto.
+            if (window.SplashWebgl && SplashWebgl.attivo) {
+                SplashWebgl.concludi(() => {
+                    callback();
+                    splash.classList.add('splash-hidden');
+                    setTimeout(() => { splash.style.display = 'none'; }, 650);
+                });
+                return;
+            }
             const remaining = Math.max(0, 2400 - elapsed);
             setTimeout(() => {
                 callback();
