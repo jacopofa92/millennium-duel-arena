@@ -81,7 +81,7 @@ void main(){
   // ---- il mondo si oscura (di piu' lontano dal centro), con un battito di buio totale prima del colpo
   float dimIn=ease(tt/.45);
   float dimOut=1.-ease((tt-3.5)/1.5);
-  dark=.66*dimIn*dimOut*(.42+.58*smoothstep(.8,9.,rr));
+  dark=.9*dimIn*dimOut*(.72+.28*smoothstep(.8,9.,rr));
   dark=max(dark,.55*smoothstep(TI-.3,TI-.06,tt)*(1.-dopo));
 
   // ---- pavimento: un piano sotto la carta, schiacciato in prospettiva
@@ -286,7 +286,7 @@ void main(){
   L+=c2*exp(-rr*rr*.8)*.22*dopo*(1.-ease((imp-.8)/2.2));
 
   L=vec3(1.)-exp(-L*0.62);
-  gl_FragColor=vec4(L,clamp(dark,0.,.96));
+  gl_FragColor=vec4(L,clamp(dark,0.,.97));
 }`;
 
     // =================================================================================================================
@@ -476,18 +476,27 @@ void main(){
         const css3 = (c) => `rgb(${Math.round(c[0] * 255)},${Math.round(c[1] * 255)},${Math.round(c[2] * 255)})`;
 
 
-        // --- la carta: si carica, svanisce nel nucleo e ricompare all'impatto
-        try {
-            const anim = monsterElement.animate([
-                { opacity: 1, filter: 'brightness(1)', scale: '1', offset: 0, easing: 'ease-in' },
-                { opacity: 1, filter: 'brightness(2.1) saturate(1.3)', scale: '1.04', offset: 0.26, easing: 'ease-in' },
-                { opacity: 0.08, filter: 'brightness(6)', scale: '0.9', offset: 0.735, easing: 'linear' },
-                { opacity: 0, filter: 'brightness(7)', scale: '1.42', offset: 0.794, easing: 'cubic-bezier(.1,.7,.2,1)' },
-                { opacity: 1, filter: 'brightness(1)', scale: '1', offset: 1 }
-            ], { duration: (TI + 0.7) * 1000, fill: 'forwards' });
-            animazioni.push(anim);
-            setTimeout(() => { try { anim.cancel(); } catch (e) { /* nodo gia' sostituito */ } }, (TI + 0.75) * 1000);
-        } catch (e) { /* senza WAAPI la carta resta visibile: la scena funziona lo stesso */ }
+        // --- la carta evocata NON si vede finche' non scatta l'impatto: poi compare nel lampo. Il nascondiglio e' una regola
+        //     per uid (non un'animazione sul nodo): un ridisegno del Terreno sostituisce il nodo, e la regola vale anche per il nuovo.
+        const uidCarta = card && card.uid ? String(card.uid).replace(/["\\]/g, '') : '';
+        if (uidCarta) {
+            const nascondi = aggiungi(document.createElement('style'));
+            nascondi.textContent = `[data-uid="${uidCarta}"]{opacity:0 !important}`;
+            setTimeout(() => {
+                nascondi.remove();
+                const el = document.querySelector(`[data-uid="${uidCarta}"]`) || monsterElement;
+                try {
+                    const a = el.animate([
+                        { opacity: 0, filter: 'brightness(7)', scale: '1.3' },
+                        { opacity: 1, filter: 'brightness(1)', scale: '1' }
+                    ], { duration: 650, easing: 'cubic-bezier(.1,.7,.2,1)' });
+                    animazioni.push(a);
+                } catch (e) { /* senza WAAPI compare e basta */ }
+            }, TI * 1000);
+        } else {
+            monsterElement.style.visibility = 'hidden';
+            setTimeout(() => { monsterElement.style.removeProperty('visibility'); }, TI * 1000);
+        }
 
         // --- l'illustrazione che sale come uno spirito
         const percorso = (typeof window.getCardImagePath === 'function' && card) ? window.getCardImagePath(card) : null;
