@@ -727,7 +727,7 @@ vec4 m_scintillaP(vec2 uv,float asp,float t,vec3 c,vec2 f,float s,float seed,flo
 
     /**
      * @typedef {[string, string, Record<string, any>?]} Mod  // [modulo, colore A|B|C, parametri]
-     * @typedef {{ pal: number[][], fondo?: Mod[], primo?: Mod[], ev?: { ogni: number[], dur: number } }} Campo
+     * @typedef {{ pal: number[][], ia?: number, fondo?: Mod[], primo?: Mod[], ev?: { ogni: number[], dur: number } }} Campo
      */
 
     /** @type {Record<string, Campo>} */

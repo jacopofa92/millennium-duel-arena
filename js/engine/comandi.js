@@ -129,6 +129,9 @@ const Comandi = (function () {
         // Niente cambi di fase con una Catena o una finestra di priorità
         // aperta: stessa guardia di nextPhase()/endTurn() in fasi.js.
         if (window.DuelEngine && (DuelEngine.isChainActive() || (DuelEngine.isPriorityWindowOpen && DuelEngine.isPriorityWindowOpen()))) return false;
+        // E nemmeno con un'Evocazione Tributo a meta' (Tributi gia' pagati): vale per ogni strada verso una nuova fase, compreso il
+        // pulsante delle fasi e "Fine turno" che non passano da nextPhase().
+        if (Tavolo.ePersona(posto) && EventiDuello.chiedi('evocazione-in-sospeso', false) === true) return false;
         switch (c.verso) {
             case 'battle': enterBattlePhase(); return true;
             case 'main2': enterMainPhase2(); return true;

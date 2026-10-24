@@ -648,7 +648,7 @@ void main(){
             const hT = titolo.offsetHeight || 170;
             const gap = 12;
             const latoMax = Math.max(120, Math.min(H * 0.95 - hT - gap, W * 0.9));
-            const sp = document.querySelector('.ee-apparizione');
+            const sp = /** @type {HTMLElement|null} */ (document.querySelector('.ee-apparizione'));
             const latoF = sp ? Math.min(parseFloat(sp.style.width) || latoMax, latoMax) : 0;
             const totale = hT + (sp ? gap + latoF : 0);
             const alto = Math.max(4, (H - totale) / 2);
