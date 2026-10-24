@@ -57,6 +57,25 @@ module.exports = {
             assert((await page3.evaluate(() => localStorage.getItem('ygoSplash3D'))) === null, '?splash3d=1 deve riaccenderlo e togliere la memoria');
         } finally { await ctx3.close(); }
 
+        // --- il logo di menu e accesso e' lo stesso Puzzle 3D (non piu' l'emblema SVG che seguiva mouse e giroscopio)
+        const ctx4 = await browser.newContext({ serviceWorkers: 'block', viewport: { width: 1000, height: 700 } });
+        await ctx4.addInitScript(() => { sessionStorage.setItem('ygoSplashShown', '1'); });
+        const page4 = await ctx4.newPage();
+        try {
+            await page4.goto(url);
+            await page4.waitForTimeout(1500);
+            const logo = await page4.evaluate(() => ({
+                canvas: document.querySelectorAll('.menu-puzzle-3d').length,
+                classe: [...document.querySelectorAll('.menu-logo')].every((l) => l.classList.contains('puzzle-3d')),
+                emblemaNascosto: [...document.querySelectorAll('.menu-logo .gl-emblema')].every((e) => getComputedStyle(e).display === 'none'),
+                par: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--par-x')) || 0
+            }));
+            assert(logo.canvas === 2 && logo.classe && logo.emblemaNascosto, `il logo deve essere il Puzzle 3D (menu e accesso): ${JSON.stringify(logo)}`);
+            await page4.mouse.move(980, 690, { steps: 6 });
+            await page4.waitForTimeout(500);
+            assert((parseFloat(await page4.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--par-x'))) || 0) === 0, 'il logo non deve seguire il mouse');
+        } finally { await ctx4.close(); }
+
         // --- senza WebGL: resta lo splash di sempre
         const ctx2 = await browser.newContext({ serviceWorkers: 'block', viewport: { width: 1000, height: 600 } });
         await ctx2.addInitScript(() => {

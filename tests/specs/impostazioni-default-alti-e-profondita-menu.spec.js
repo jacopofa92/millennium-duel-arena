@@ -116,25 +116,16 @@ module.exports = {
             await page.waitForFunction(() => !!window.Inclinazione);
             assert(await page.evaluate(() => Inclinazione.parallasseMenuAttiva()), 'la profondità del menu è accesa di default');
             await muoviVersoAngolo(page);
-            assert(await parX(page) > 0.5, 'accesa, il menu segue il mouse');
+            // Il logo del menu non segue piu' il mouse (tolto su richiesta dell'utente: ora e' il Puzzle 3D che gira da solo): resta
+            // l'impostazione, che il resto del gioco puo' usare, ma nessuna parallasse sul menu.
+            assert(Math.abs(await parX(page)) < 0.05, 'il logo del menu non segue piu\' il mouse: ' + await parX(page));
 
             // Spenta (come fa l'interruttore della vista Impostazioni, nella
             // stessa pagina): il menu torna al centro e smette di seguire.
             await page.evaluate(() => Inclinazione.impostaParallasseMenu(false));
-            // Il rientro è un rallentamento per fotogramma, e senza finestra
-            // i fotogrammi sono più lenti: si aspetta il valore, non un tempo.
-            await page.waitForFunction(() => Math.abs(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--par-x')) || 0) < 0.05, null, { timeout: 8000 })
-                .catch(() => {});
-            assert(Math.abs(await parX(page)) < 0.05, 'spenta, il menu torna al centro: ' + await parX(page));
-            await page.mouse.move(5, 5, { steps: 8 });
-            await page.waitForTimeout(800);
-            assert(Math.abs(await parX(page)) < 0.05, 'spenta, il menu non segue più il mouse: ' + await parX(page));
-
             // Resta spenta riaprendo il gioco, e l'interruttore lo mostra.
             await page.reload();
             await page.waitForFunction(() => !!window.Inclinazione);
-            await muoviVersoAngolo(page);
-            assert(Math.abs(await parX(page)) < 0.05, 'riaprendo, resta spenta: ' + await parX(page));
             const impostazioni = await ctxMenu.newPage();
             await impostazioni.goto(url('impostazioni.html'));
             await impostazioni.waitForFunction(() => !!window.Inclinazione);
@@ -145,8 +136,7 @@ module.exports = {
             assert(await impostazioni.evaluate(() => Inclinazione.parallasseMenuAttiva()), 'riaccesa dall\'interruttore');
             await page.reload();
             await page.waitForFunction(() => !!window.Inclinazione);
-            await muoviVersoAngolo(page);
-            assert(await parX(page) > 0.5, 'riaccesa, il menu torna a seguire il mouse');
+            assert(await page.evaluate(() => Inclinazione.parallasseMenuAttiva()), 'riaccesa, l\'impostazione resta accesa dopo il ricaricamento');
         } finally {
             await ctxMenu.close();
         }

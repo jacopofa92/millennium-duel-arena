@@ -30,6 +30,8 @@ uniform float uProg;     // 0..1 progresso mostrato (l'Occhio si accende fin li'
 uniform float uIntro;    // 0..1 comparsa
 uniform float uOut;      // 0..1 uscita (esplosione + camera che entra)
 uniform float uDist;     // distanza della camera (si allarga sugli schermi bassi)
+uniform float uMenu;     // 1 = solo il Puzzle su fondo trasparente (il logo del menu), 0 = tutta la scena dello splash
+uniform float uTy;       // quota del punto guardato dalla camera (nello splash il Puzzle sta alto, per far posto al titolo)
 const float PI=3.14159265;
 const float TOP=.9;
 const float APEX=-1.;
@@ -127,7 +129,7 @@ float occhioH(vec2 e, out float lungo){
 }
 mat2 rot(float a){ float c=cos(a),s=sin(a); return mat2(c,-s,s,c); }
 
-const vec3 WHITE=vec3(1.,.95,.84);
+const vec3 WHITE=vec3(.012,.01,.008);   // il nome e' rimasto: e' il colore di FINE uscita, adesso un nero caldo (il menu sotto e' scuro)
 void main(){
   // fine dell'uscita: bianco pieno, niente raymarching (il frame costa quasi zero mentre la pagina lavora sotto)
   if(uOut>=.6){ gl_FragColor=vec4(WHITE,1.); return; }
@@ -154,11 +156,13 @@ void main(){
     col+=vec3(1.,.82,.45)*smoothstep(.07+.02*fl,0.,d)*step(.78,hh)*tw*(.55-.12*fl)*ease(uIntro);
   }
   col*=1.-.55*smoothstep(.4,1.15,length(uv*vec2(.85,1.)));
+  float alfa=1.;
+  if(uMenu>.5){ col=vec3(0.); alfa=0.; }   // logo del menu: niente fondale, solo il Puzzle
 
   // ---------- camera e oggetto
   float dolly=ease(uOut);
   vec3 ro=vec3(0.,.15,uDist*(1.-.62*dolly));
-  vec3 ta=vec3(0.,mix(.0,.25,dolly),0.);
+  vec3 ta=vec3(0.,mix(uTy,.25,dolly),0.);
   vec3 fw=normalize(ta-ro), rg=normalize(cross(vec3(0.,1.,0.),fw)), up=cross(fw,rg);
   vec3 rd=normalize(uv.x*rg+uv.y*up+2.2*fw);
   // l'oggetto gira piano attorno al proprio asse, con un respiro di inclinazione e un galleggiamento
@@ -247,12 +251,13 @@ void main(){
       c+=vec3(1.,.8,.5)*sweep*1.4;
       col=mix(col,c,ease(uIntro*1.4));
       sopra=ease(uIntro*1.4);
+      alfa=1.;
     }
   }
 
   // ---------- il bagliore dell'Occhio che cresce col progresso, e l'esplosione finale
   float cuore=exp(-length(uv-vec2(0.,.06))*length(uv-vec2(0.,.06))*18.);
-  col+=vec3(1.,.5,.12)*cuore*prog*prog*.07*(1.-sopra);
+  col+=vec3(1.,.5,.12)*cuore*prog*prog*.07*(1.-sopra)*(1.-uMenu);
   float o1=ease(uOut);
   float lampo=exp(-pow((uOut-.18)*7.,2.));
   col+=vec3(1.,.9,.7)*lampo*exp(-length(uv)*length(uv)*2.)*1.6;
@@ -263,10 +268,11 @@ void main(){
   col=vec3(1.)-exp(-col*.95);
   col=mix(vec3(dot(col,vec3(.3,.59,.11))),col,1.28);   // l'oro deve restare oro anche dove la luce lo schiarisce
   col=pow(max(col,0.),vec3(1.04));
-  // il Puzzle si apre nella luce: a bianco PIENO (dopo la mappa dei toni, o sarebbe grigio) la pagina costruisce il menu sotto,
-  // dove il lavoro non si vede, e poi lo splash sfuma verso di lui. Lo stacco di prima era quel lavoro, fatto a meta' animazione.
+  // Dopo il lampo dell'Occhio il Puzzle sprofonda nel NERO (dopo la mappa dei toni, o sarebbe grigio): a nero pieno la pagina
+  // costruisce il menu sotto, dove il lavoro non si vede, e poi lo splash sfuma verso di lui (anche il menu e' scuro, quindi
+  // non c'e' un salto di luminosita'). Lo stacco di prima era quel lavoro, fatto a meta' animazione.
   col=mix(col,WHITE,smoothstep(.3,.58,uOut));
-  gl_FragColor=vec4(col,1.);
+  gl_FragColor=(uMenu>.5)?vec4(col*alfa,alfa):vec4(col,1.);
 }`;
 
     // ------------------------------------------------------------------------------------------------
@@ -389,7 +395,9 @@ void main(){
             gl.enableVertexAttribArray(loc);
             gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
             const U = {};
-            ['r', 't', 'uProg', 'uIntro', 'uOut', 'uDist'].forEach((n) => { U[n] = gl.getUniformLocation(prog, n); });
+            ['r', 't', 'uProg', 'uIntro', 'uOut', 'uDist', 'uMenu', 'uTy'].forEach((n) => { U[n] = gl.getUniformLocation(prog, n); });
+            gl.uniform1f(U.uMenu, 0);
+            gl.uniform1f(U.uTy, 0);
 
             contenitore.insertBefore(canvas, contenitore.firstChild);
             contenitore.classList.add('splash-webgl-on');
@@ -494,6 +502,64 @@ void main(){
                 },
                 riavvia() { uscitaDa = 0; finito = false; chiamato = false; disp = 0; manuale = 0; if (misuratore) misuratore.stato.verdetto = false; }
             };
+            return true;
+        },
+        /**
+         * IL LOGO DEL MENU: lo stesso Puzzle dello splash, che gira lentamente su fondo trasparente, al posto dell'emblema SVG. NON segue
+         * mouse o giroscopio (richiesta dell'utente: il logo che si muoveva con l'inclinazione e' stato tolto). Si disegna a 30 fps, solo
+         * quando il contenitore si vede, e con movimento ridotto resta un fotogramma fermo. Torna false (e l'emblema SVG resta) se non
+         * c'e' WebGL con highp.
+         * @param {HTMLElement} contenitore il blocco del logo (.menu-logo): il canvas va in testa, prima del titolo
+         */
+        montaPuzzle(contenitore) {
+            if (!contenitore || interruttoreSpento() || !highpOk()) return false;
+            const canvas = document.createElement('canvas');
+            canvas.className = 'menu-puzzle-3d';
+            canvas.setAttribute('aria-hidden', 'true');
+            const gl = /** @type {WebGLRenderingContext|null} */ (canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false }));
+            if (!gl) return false;
+            const comp = (tipo, src) => { const o = /** @type {WebGLShader} */ (gl.createShader(tipo)); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; };
+            const vs = comp(gl.VERTEX_SHADER, VS), fs = comp(gl.FRAGMENT_SHADER, FS);
+            const prog = gl.createProgram();
+            if (!vs || !fs || !prog) return false;
+            gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+            if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return false;
+            gl.useProgram(prog);
+            const buf = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+            const loc = gl.getAttribLocation(prog, 'p');
+            gl.enableVertexAttribArray(loc);
+            gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+            const U = {};
+            ['r', 't', 'uProg', 'uIntro', 'uOut', 'uDist', 'uMenu', 'uTy'].forEach((n) => { U[n] = gl.getUniformLocation(prog, n); });
+            gl.uniform1f(U.uMenu, 1); gl.uniform1f(U.uTy, 0.52); gl.uniform1f(U.uDist, 7.8);
+            gl.uniform1f(U.uProg, 0); gl.uniform1f(U.uIntro, 1); gl.uniform1f(U.uOut, 0);
+            const ridimensiona = () => {
+                const b = canvas.getBoundingClientRect();
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                const w = Math.max(80, Math.round((b.width || 160) * dpr)), h = Math.max(80, Math.round((b.height || 190) * dpr));
+                if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; gl.viewport(0, 0, w, h); gl.uniform2f(U.r, w, h); }
+            };
+            contenitore.insertBefore(canvas, contenitore.firstChild);
+            contenitore.classList.add('puzzle-3d');
+            ridimensiona();
+            window.addEventListener('resize', ridimensiona);
+            const fermo = menoMovimento();
+            const t0 = performance.now();
+            let ultimo = 0;
+            const frame = (ora) => {
+                requestAnimationFrame(frame);
+                if (document.hidden || !canvas.isConnected || canvas.offsetParent === null) return;   // nascosto (gate o menu: ne vive uno solo)
+                if (ora - ultimo < 32) return;                                                          // 30 fps bastano per una rotazione lenta
+                ultimo = ora;
+                ridimensiona();
+                gl.clearColor(0, 0, 0, 0);
+                gl.clear(gl.COLOR_BUFFER_BIT);
+                gl.uniform1f(U.t, fermo ? 2.2 : (ora - t0) / 1000);
+                gl.drawArrays(gl.TRIANGLES, 0, 3);
+            };
+            requestAnimationFrame(frame);
             return true;
         },
         imposta(p) { if (this._api) this._api.imposta(p); },

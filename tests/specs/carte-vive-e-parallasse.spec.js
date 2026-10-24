@@ -168,8 +168,8 @@ module.exports = {
                 await menu.mouse.move(1270, 790, { steps: 8 });
                 await menu.waitForTimeout(1200);
                 const par = await menu.evaluate(() => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--par-x')) || 0);
-                if (caso.nome === 'normale') assert(par > 0.5, 'il menu segue il mouse (parallasse): --par-x = ' + par);
-                else assert(par === 0, 'con movimento ridotto il menu resta fermo: --par-x = ' + par);
+                // Il logo del menu NON segue piu' il mouse (tolto su richiesta dell'utente: e' il Puzzle 3D che gira da solo).
+                assert(par === 0, 'il logo del menu non deve piu\' seguire il mouse: --par-x = ' + par);
             } finally {
                 await c.close();
             }
