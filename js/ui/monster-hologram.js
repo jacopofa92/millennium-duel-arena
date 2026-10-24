@@ -228,7 +228,56 @@
      * fine di updateUI() e sul resize — mai un "ridisegna tutto": crea,
      * toglie e riposiziona solo ciò che è cambiato davvero.
      */
+    /**
+     * CARTE SETTATE (coperte) sul Terreno, per il riflesso WebGL (vedi monster-hologram-webgl.js). Si guarda il DOM, cioe'
+     * cio' che e' VISIVAMENTE coperto adesso — mostri in Difesa coperta, Magie/Trappole Set, Magia Terreno coperta — e di
+     * ogni carta si prende SOLO il posto: la chiave dice lato, tipo di casella e numero, mai la carta. Cosi' e' impossibile
+     * che il riflesso racconti qualcosa di una carta nascosta.
+     */
+    const settatePrima = new Map();
+    function settateInCampo() {
+        const lista = [];
+        ['playerFieldBoard', 'botFieldBoard'].forEach((id) => {
+            const board = document.getElementById(id);
+            if (!board) return;
+            board.querySelectorAll('.field-slot[data-type="monster"], .field-slot[data-type="st"], .field-slot[data-type="field-spell"]').forEach((slotEl) => {
+                const el = /** @type {HTMLElement|null} */ (slotEl.querySelector('.card.face-down'));
+                if (!el) return;
+                // Una carta che sta girando (rivelazione in corso) non brilla: ha gia' la sua animazione.
+                if (el.closest('.card-flip-outer')) return;
+                const r = el.getBoundingClientRect();
+                if (r.width === 0 && r.height === 0) return;
+                const d = /** @type {HTMLElement} */ (slotEl).dataset;
+                lista.push({ chiave: `${d.owner}:${d.type}:${d.index === undefined ? 0 : d.index}`, rect: { left: r.left, top: r.top, w: r.width, h: r.height } });
+            });
+        });
+        return lista;
+    }
+
+    function syncSettate() {
+        const gl = window.MonsterHologramGL;
+        if (!gl || typeof gl.aggiornaSettate !== 'function') return;
+        // Come gli altri effetti d'ambiente: solo con "Dettagli video: Alti".
+        const alti = !!(document.documentElement && document.documentElement.dataset.dettagli === 'alti');
+        const lista = alti && !sospeso ? settateInCampo() : [];
+        // Una carta che era coperta, e nello STESSO posto c'e' ancora una carta ma non piu' coperta, si e' appena scoperta:
+        // lampo. Se il posto e' vuoto (distrutta, tornata in mano) non c'e' niente da rivelare.
+        if (alti && !sospeso && settatePrima.size) {
+            const ora = new Set(lista.map((e) => e.chiave));
+            settatePrima.forEach((rect, chiave) => {
+                if (ora.has(chiave)) return;
+                const [owner, type, index] = chiave.split(':');
+                const slot = document.querySelector(`.field-slot[data-owner="${owner}"][data-type="${type}"][data-index="${index}"]`);
+                if (slot && slot.querySelector('.card:not(.face-down), .card-flip-outer')) gl.lampoSettata(rect);
+            });
+        }
+        settatePrima.clear();
+        lista.forEach((e) => settatePrima.set(e.chiave, e.rect));
+        gl.aggiornaSettate(lista);
+    }
+
     function sync() {
+        syncSettate();
         if (sospeso) return;
         if (!attivo()) {
             if (vivi.size) { vivi.forEach((_, uid) => rimuovi(uid)); }

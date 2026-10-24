@@ -1052,9 +1052,24 @@ float dado(vec2 q,float v){
         if (owner) s.add(T.WASH, C.ROSSO, 0, 0.9, [0, 0, 1, 0], owner === 'bot' ? 6 : 7);
         s.add(T.FLASH, C.ROSSO, 0, 1.1, [window.innerWidth / 2, window.innerHeight * 0.42, Math.min(window.innerWidth * 0.3, 190), 0]);
         if (touch) s.add(T.RING, C.ROSSO, 0, 0.34, [p.x, p.y, 74, 3]);
+        // Colpi pesanti: onde d'urto che partono dalla casella dei Life Point. Il raggio cresce con il danno, ma resta
+        // dentro lo schermo; da 3000 una seconda onda piu' larga e un lampo bianco. Sotto i 1000 nulla cambia.
+        const danno = Number(amount) || 0;
+        let durata = 0.56;
+        if (danno >= 1000) {
+            const rMax = Math.min(window.innerWidth * 0.35, 120 + danno / 16);
+            s.add(T.RING, C.ROSSO, 0.04, 0.5, [p.x, p.y, rMax, 5]);
+            s.add(T.RING, C.ROSSO, 0.16, 0.5, [p.x, p.y, rMax * 0.6, 3]);
+            durata = 0.7;
+            if (danno >= 3000) {
+                s.add(T.RING, C.ROSSO, 0.3, 0.55, [p.x, p.y, Math.min(window.innerWidth * 0.5, rMax * 1.5), 6]);
+                s.add(T.FLASH, C.BIANCO || C.ROSSO, 0, 0.35, [p.x, p.y, Math.min(window.innerWidth * 0.2, 130), 0]);
+                durata = 0.9;
+            }
+        }
         verifica(s);
         if (!touch && container !== document.body) scossa(container, [[-forza, 0.05], [forza * 0.8, 0.06], [-forza * 0.5, 0.06], [forza * 0.25, 0.06], [0, 0.08]]);
-        breve(s, 0.56);
+        breve(s, durata);
         // Il numero: 0.22s sale a 1.15, 0.1s si assesta, resta 0.25s, poi sale di 42px svanendo in 0.5s.
         const el = document.createElement('div');
         el.textContent = '-' + (Number(amount) || 0);

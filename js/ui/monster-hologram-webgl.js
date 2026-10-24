@@ -149,6 +149,65 @@ void main(){
   gl_FragColor=vec4(min(rgb,vec3(aa+.3)),aa);
 }`;
 
+    // ---------------------------------------------------------------------------------------------
+    // CARTA SETTATA (coperta): un riflesso che attraversa il dorso e un respiro di luce sul bordo, e un lampo quando si scopre.
+    // Nello STESSO canvas degli ologrammi (un contesto WebGL in meno: sui telefoni sono pochi), con un programma suo,
+    // SENZA texture — quindi funziona anche su file://, dove gli ologrammi no.
+    // REGOLA DI GIOCO, non di grafica: l'effetto e' IDENTICO per ogni carta coperta. Un colore diverso per Magia, Trappola
+    // o mostro direbbe all'avversario cos'e' una carta Settata, quindi qui non arriva nemmeno il tipo: solo dove sta.
+    // ---------------------------------------------------------------------------------------------
+    const FS_SETTATA = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+varying vec2 vUv;
+uniform float uT;      // secondi dall'avvio del modulo
+uniform float uSeed;   // sfasa una carta dall'altra
+uniform float uAsp;    // larghezza/altezza della carta
+uniform float uFlash;  // -1: nessun lampo; 0..1: avanzamento del lampo di rivelazione
+uniform float uAlpha;
+
+// distanza con segno da un rettangolo arrotondato (negativa dentro)
+float rr(vec2 p, vec2 b, float r){ vec2 q=abs(p)-b+r; return length(max(q,0.))+min(max(q.x,q.y),0.)-r; }
+
+void main(){
+  vec2 p=(vUv-.5)*vec2(uAsp,1.);
+  if(uFlash>=0.){
+    // RIVELAZIONE: un anello che si apre dal centro e un lampo caldo che svanisce.
+    float u=uFlash; float r=length(p);
+    float ring=exp(-pow((r-.25-u*.9)*7.,2.))*(1.-u);
+    float core=exp(-r*r*5.)*(1.-u)*(1.-u)*1.3;
+    float a=clamp(ring*.9+core,0.,1.)*uAlpha;
+    vec3 c=mix(vec3(1.,.82,.45),vec3(1.),core);
+    gl_FragColor=vec4(c*a,a);
+    return;
+  }
+  float d=rr(p,vec2(uAsp,1.)*.5,.075);
+  float dentro=1.-smoothstep(-.01,.004,d);
+  // il fascio di luce: ogni ~5,5 s attraversa il dorso in diagonale, poi riposa
+  float ph=fract(uT/5.5+uSeed);
+  float va=clamp(ph/.5,0.,1.); float attivo=1.-step(.5,ph);
+  float s=dot(vUv,vec2(.62,.78))/1.4;
+  float pos=-.3+va*1.6;
+  float fascio=exp(-pow((s-pos)*6.5,2.))*attivo*(sin(va*3.14159));
+  // il respiro del bordo: appena percepibile, mai fermo del tutto
+  float respiro=.5+.5*sin(uT*1.6+uSeed*6.283);
+  float bordo=exp(-pow(d/.03,2.))*(.38+.34*respiro);
+  vec3 oro=vec3(1.,.84,.5);
+  float a=clamp(fascio*.8*dentro+bordo,0.,1.)*uAlpha;
+  gl_FragColor=vec4(mix(oro,vec3(1.),fascio*.6)*a,a);
+}`;
+    /** @type {WebGLProgram|null} */ let progS = null;
+    /** @type {Record<string, WebGLUniformLocation|null>|null} */ let uniS = null;
+    let guastoSettata = false;
+    let ultimoDisegno = 0;
+    /** Le carte coperte sul Terreno, per chiave (lato:zona:posto): { rect, seme }. */
+    const settate = new Map();
+    /** I lampi di rivelazione in corso: { rect, t0 }. */
+    const lampi = [];
+
     /** @type {HTMLCanvasElement|null} */ let canvas = null;
     /** @type {WebGLRenderingContext|null} */ let gl = null;
     let prog = null;
@@ -211,6 +270,19 @@ void main(){
             uni = {};
             ['uRes', 'uTex', 'uT', 'uSeed', 'uBorn', 'uAsp', 'uImgAsp', 'uAlpha', 'uPx', 'uGlitch', 'uDis'].forEach((n) => { uni[n] = gl.getUniformLocation(prog, n); });
             bufPos = gl.createBuffer();
+            // Il programma della carta Settata: se NON si compila, cade solo lui (niente riflesso), gli ologrammi restano.
+            try {
+                progS = gl.createProgram();
+                gl.attachShader(progS, compila(gl.VERTEX_SHADER, VS));
+                gl.attachShader(progS, compila(gl.FRAGMENT_SHADER, FS_SETTATA));
+                gl.linkProgram(progS);
+                if (!gl.getProgramParameter(progS, gl.LINK_STATUS)) throw new Error('link-settata');
+                uniS = {};
+                ['uRes', 'uT', 'uSeed', 'uAsp', 'uFlash', 'uAlpha'].forEach((n) => { /** @type {any} */ (uniS)[n] = gl.getUniformLocation(progS, n); });
+            } catch (e) {
+                progS = null; uniS = null; guastoSettata = true;
+                if (window.console) console.warn('[carta Settata WebGL] disattivata:', e && e.message || e);
+            }
             gl.enable(gl.BLEND);
             gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
             canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); rompi('contesto-perso'); });
@@ -244,8 +316,8 @@ void main(){
             if (ext) ext.loseContext();
         } catch (e) { /* e' solo pulizia */ }
         if (canvas) canvas.remove();
-        canvas = null; gl = null; prog = null;
-        vivi.clear();
+        canvas = null; gl = null; prog = null; progS = null; uniS = null;
+        vivi.clear(); settate.clear(); lampi.length = 0;
         if (window.console) console.warn('[ologrammi WebGL] disattivati, si torna al CSS:', motivo);
         if (window.MonsterHolograms && typeof MonsterHolograms.sync === 'function') setTimeout(() => MonsterHolograms.sync(), 0);
     }
@@ -330,10 +402,59 @@ void main(){
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
+    /** C'e' qualcosa da disegnare? Il ciclo si ferma da solo quando non c'e' niente (batteria). */
+    function haLavoro() { return vivi.size > 0 || settate.size > 0 || lampi.length > 0; }
+
+    /**
+     * Le carte Settate e i lampi di rivelazione, dopo gli ologrammi. Un quadrato per carta, leggermente piu' grande
+     * (il respiro del bordo esce un poco dalla carta); il lampo e' piu' ampio, perche' l'anello si apre oltre la carta.
+     */
+    function disegnaSettate(ora, t) {
+        if (!progS || !uniS || (!settate.size && !lampi.length)) return;
+        const u = /** @type {any} */ (uniS);
+        gl.useProgram(progS);
+        gl.uniform2f(u.uRes, window.innerWidth, window.innerHeight);
+        gl.uniform1f(u.uT, t);
+        gl.uniform1f(u.uAlpha, 1);
+        const locPos = gl.getAttribLocation(progS, 'aPos');
+        const locUv = gl.getAttribLocation(progS, 'aUv');
+        gl.bindBuffer(gl.ARRAY_BUFFER, bufPos);
+        gl.enableVertexAttribArray(locPos);
+        gl.vertexAttribPointer(locPos, 2, gl.FLOAT, false, 16, 0);
+        gl.enableVertexAttribArray(locUv);
+        gl.vertexAttribPointer(locUv, 2, gl.FLOAT, false, 16, 8);
+        const riquadro = (r, mx, my) => {
+            const x0 = r.left - mx; const y0 = r.top - my; const x1 = r.left + r.w + mx; const y1 = r.top + r.h + my;
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([x0, y0, 0, 0, x1, y0, 1, 0, x0, y1, 0, 1, x1, y1, 1, 1]), gl.DYNAMIC_DRAW);
+            gl.uniform1f(u.uAsp, (r.w + mx * 2) / (r.h + my * 2));
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        };
+        gl.uniform1f(u.uFlash, -1);
+        settate.forEach((o) => {
+            gl.uniform1f(u.uSeed, o.seme);
+            riquadro(o.rect, o.rect.w * 0.08, o.rect.h * 0.08);
+        });
+        for (let i = lampi.length - 1; i >= 0; i--) {
+            const l = lampi[i];
+            const p = (ora - l.t0) / LAMPO_MS;
+            if (p >= 1) { lampi.splice(i, 1); continue; }
+            if (p < 0) continue;
+            gl.uniform1f(u.uSeed, 0);
+            gl.uniform1f(u.uFlash, p);
+            riquadro(l.rect, l.rect.w * 0.9, l.rect.h * 0.9);
+        }
+        gl.useProgram(prog);
+    }
+
+    const LAMPO_MS = 650;
+
     function disegna(ora) {
         rid = 0;
         if (!gl || guasto || !canvas) return;
         if (sospeso) { rid = requestAnimationFrame(disegna); return; }
+        // Con le sole carte Settate (nessun ologramma) 30 fotogrammi al secondo bastano: il riflesso e' lento.
+        if (!vivi.size && !lampi.length && ora - ultimoDisegno < 33) { rid = requestAnimationFrame(disegna); return; }
+        ultimoDisegno = ora;
         const t = (ora - t0) / 1000;
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
@@ -383,10 +504,11 @@ void main(){
             quad(o, voce, bob, ox, oy, sc, 1, volo ? 1 : 0, dis, nascita);
             disegnati++;
         });
-        if (vivi.size) rid = requestAnimationFrame(disegna);
+        disegnaSettate(ora, t);
+        if (haLavoro()) rid = requestAnimationFrame(disegna);
     }
 
-    function avvia() { if (!rid && gl && !guasto && vivi.size) rid = requestAnimationFrame(disegna); }
+    function avvia() { if (!rid && gl && !guasto && haLavoro()) rid = requestAnimationFrame(disegna); }
 
     window.MonsterHologramGL = {
         /** Si può usare adesso? Crea il contesto alla prima richiesta. */
@@ -460,6 +582,49 @@ void main(){
             avvia();
             return { left: o.rect.left, top: o.rect.top, width: o.rect.w, height: o.rect.h };
         },
+        /**
+         * Si possono disegnare le carte Settate? A differenza degli ologrammi NON servono texture, quindi vale anche su
+         * file://. Si spegne con il movimento ridotto, con `window.SETTATA_WEBGL_OFF`, o se il suo programma non si compila.
+         */
+        settateDisponibili() {
+            if (guasto || guastoSettata || window.SETTATA_WEBGL_OFF || menoMovimento()) return false;
+            return assicura() && !!progS;
+        },
+        /**
+         * Le carte coperte che devono brillare ADESSO: [{ chiave, rect: { left, top, w, h } }]. La chiave e' dove sta la
+         * carta (lato:zona:posto), mai cosa e': l'effetto e' uguale per tutte, e deve restare impossibile sapere dalla luce
+         * se una carta Settata e' una Magia, una Trappola o un mostro. Lista vuota = spenge tutto.
+         */
+        aggiornaSettate(lista) {
+            if (!lista.length) {
+                if (settate.size) settate.clear();
+                return true;
+            }
+            if (!this.settateDisponibili()) return false;
+            const attese = new Set();
+            lista.forEach((e) => {
+                attese.add(e.chiave);
+                const o = settate.get(e.chiave);
+                if (o) o.rect = e.rect;
+                else settate.set(e.chiave, { rect: e.rect, seme: Math.random() });
+            });
+            settate.forEach((_, k) => { if (!attese.has(k)) settate.delete(k); });
+            avvia();
+            return true;
+        },
+        /** Una carta Settata si e' appena scoperta: un lampo e un anello sul suo posto. */
+        lampoSettata(rect) {
+            if (!rect || !this.settateDisponibili()) return false;
+            lampi.push({ rect: rect, t0: performance.now() });
+            avvia();
+            return true;
+        },
+        /** Quante carte Settate sta disegnando adesso (per i test). */
+        settateAttive() { return settate.size; },
+        /** Quanti lampi di rivelazione sono in corso (per i test). */
+        lampiAttivi() { return lampi.length; },
+        /** I campi che il modulo conosce di ogni Settata (per provare che non porta il tipo della carta). */
+        campiSettata() { const o = settate.values().next().value; return o ? Object.keys(o) : []; },
         sospendi() { sospeso = true; },
         riprendi() { sospeso = false; avvia(); },
         /** Quanti ologrammi sta disegnando adesso (per i test). */
