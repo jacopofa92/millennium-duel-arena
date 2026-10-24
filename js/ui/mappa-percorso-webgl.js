@@ -24,26 +24,36 @@ varying vec2 vUv; varying vec2 vInfo;
 void main(){ vec2 c=aPos/uWorld*2.-1.; gl_Position=vec4(c.x,-c.y,0.,1.); vUv=aUv; vInfo=aInfo; }`;
 
     // aInfo.x = lunghezza della tratta in px (o raggio del faro), aInfo.y = tipo: 0 percorsa, 1 prossima, 2 faro.
+    // highp quando c'e': con mediump (16 bit sui telefoni) `x*len` si quantizza a gradini di decine di pixel e le comete
+    // avanzano a scatti, seghettate; lo stesso vale per uT quando la mappa resta aperta a lungo.
     const FS = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
 precision mediump float;
+#endif
 varying vec2 vUv; varying vec2 vInfo;
 uniform float uT;
 void main(){
   float kind=vInfo.y; vec3 col=vec3(0.); float a=0.;
   if(kind<1.5){
     float y=vUv.y; float x=vUv.x; float len=vInfo.x;
-    float core=exp(-y*y*16.); float glow=exp(-y*y*3.2);
+    // Il riquadro della tratta ha un bordo netto: la luce si spegne PRIMA di raggiungerlo (niente rettangoli visibili).
+    float lato=smoothstep(1.,.62,abs(y));
+    float core=exp(-y*y*16.); float glow=exp(-y*y*3.2)*lato;
     float ends=smoothstep(0.,.04,x)*smoothstep(1.,.96,x);
     if(kind<.5){
       // percorsa: luce ferma e fioca, con un'onda lenta che la attraversa
-      float p=fract(x*len/220.-uT*.18);
-      float onda=exp(-p*7.)*smoothstep(0.,.03,p);
+      // q=0 e' la TESTA (davanti, verso la tappa), che cresce piano e poi lascia una coda dietro: prima il profilo era
+      // girato (coda davanti) e col fronte tagliato netto, il "dente di sega" che si vedeva avanzare.
+      float q=1.-fract(x*len/220.-uT*.18);
+      float onda=exp(-q*6.)*smoothstep(0.,.14,q);
       a=(core*.32+glow*.10+onda*glow*.5)*ends;
       col=vec3(1.,.82,.45);
     } else {
       // prossima: comete vive nella direzione del cammino
-      float p=fract(x*len/130.-uT*.75);
-      float cometa=exp(-p*10.)*smoothstep(0.,.02,p);
+      float q=1.-fract(x*len/130.-uT*.75);
+      float cometa=exp(-q*8.)*smoothstep(0.,.14,q);
       a=(core*.55+glow*.18+cometa*(core*1.5+glow*.8))*ends;
       col=mix(vec3(1.,.55,.2),vec3(1.,.97,.8),cometa);
     }
@@ -90,8 +100,11 @@ void main(){
             canvas.className = 'nm-percorso-gl';
             canvas.setAttribute('aria-hidden', 'true');
             canvas.style.cssText = 'position:absolute;left:0;top:0;width:' + L + 'px;height:' + H + 'px;pointer-events:none;';
-            // Poca risoluzione: sono luci morbide, e il mondo di una mappa e' grande (fino a ~2600 px).
-            const scala = Math.min(1, 1400 / Math.max(L, H));
+            // La risoluzione segue la densita' di pixel dello schermo (prima era al piu' 1 pixel per px CSS, quindi su un
+            // telefono a 2-3x la luce veniva ingrandita e si vedeva a gradini), ma con un tetto sul totale dei pixel:
+            // il mondo di una mappa e' grande (fino a ~2600 px) e un canvas enorme costa piu' di quanto renda.
+            const dpr = Math.min(2, Math.max(1, window.devicePixelRatio || 1));
+            const scala = Math.min(dpr, Math.sqrt(3.2e6 / (L * H)));
             canvas.width = Math.max(64, Math.round(L * scala)); canvas.height = Math.max(64, Math.round(H * scala));
             gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false, powerPreference: 'low-power' });
             if (!gl) return null;
