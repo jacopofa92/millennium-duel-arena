@@ -472,11 +472,32 @@
             window.location.replace(qui.substring(0, qui.lastIndexOf('/') + 1) + 'index.html');
         }).catch(() => { scadenzaInCorso = false; });
     }
+    /**
+     * "Ultimo accesso online" per il pannello Admin: dice al server (`segna_visto()`, che scrive
+     * `profiles.last_seen_at` con la SUA ora) che questo account e' qui adesso. Al massimo una volta ogni
+     * 5 minuti per dispositivo (`ygoUltimoVisto` in localStorage, perche' lo chiamano tutte le pagine ad ogni
+     * apertura). Un errore (offline, funzione non ancora creata) non fa nulla: e' un'informazione, non una
+     * funzione del gioco.
+     */
+    const CHIAVE_ULTIMO_VISTO = 'ygoUltimoVisto';
+    const INTERVALLO_VISTO_MS = 5 * 60 * 1000;
+    function segnaVisto() {
+        if (!available || !cachedUser) return;
+        let ultimo = 0;
+        try { const v = JSON.parse(localStorage.getItem(CHIAVE_ULTIMO_VISTO) || 'null'); if (v && v.uid === cachedUser.id) ultimo = v.at || 0; } catch (e) { /* noop */ }
+        if (Date.now() - ultimo < INTERVALLO_VISTO_MS) return;
+        // Si annota PRIMA: due pagine che si aprono insieme non devono chiamare entrambe.
+        try { localStorage.setItem(CHIAVE_ULTIMO_VISTO, JSON.stringify({ uid: cachedUser.id, at: Date.now() })); } catch (e) { /* noop */ }
+        Promise.resolve(client.rpc('segna_visto')).catch(() => { /* informazione, non funzione */ });
+    }
     if (available) {
         setInterval(controllaScadenzaSessione, 5 * 60 * 1000);
+        setInterval(() => { if (document.visibilityState === 'visible') segnaVisto(); }, INTERVALLO_VISTO_MS);
         document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') controllaScadenzaSessione();
+            if (document.visibilityState === 'visible') { controllaScadenzaSessione(); segnaVisto(); }
         });
+        // All'apertura della pagina, appena si sa chi e' (la sessione persistita arriva in modo asincrono).
+        waitForUser().then((u) => { if (u) segnaVisto(); }).catch(() => { /* noop */ });
     }
 
     // ------------------------------------------------------------------
@@ -488,7 +509,7 @@
     /** Elenco completo di tutti i profili (in attesa + già decisi), più recenti prima — per il pannello Admin. */
     function adminListProfiles() {
         if (!available) return rejectUnavailable();
-        return client.from('profiles').select('id, email, status, is_admin, created_at')
+        return client.from('profiles').select('id, email, status, is_admin, created_at, last_seen_at')
             .order('created_at', { ascending: false })
             .then(({ data, error }) => { if (error) throw error; return data; });
     }

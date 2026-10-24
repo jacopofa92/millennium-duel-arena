@@ -315,6 +315,35 @@ $$;
 grant execute on function public.server_now() to anon, authenticated;
 
 -- ------------------------------------------------------------
+-- Ultimo accesso online (pannello Admin). `last_seen_at` lo scrive SOLO
+-- segna_visto(), con l'ora del SERVER (`now()`): un orologio di telefono
+-- sbagliato non deve falsare la colonna. Chiamata dal gioco (cloud-sync.js,
+-- `segnaVisto`) all'avvio di ogni pagina e ogni 5 minuti mentre è in primo
+-- piano, al massimo una volta ogni 5 minuti per dispositivo. Il primo valore
+-- viene da auth.users.last_sign_in_at (solo l'accesso, non la sessione
+-- rinnovata): per questo prima dell'aggiornamento un account può risultare
+-- "visto" molto prima dell'ultima volta in cui ha davvero giocato.
+-- ------------------------------------------------------------
+alter table public.profiles add column if not exists last_seen_at timestamptz;
+
+update public.profiles p
+set last_seen_at = u.last_sign_in_at
+from auth.users u
+where u.id = p.id and p.last_seen_at is null;
+
+create or replace function public.segna_visto()
+returns void
+language sql
+security definer
+set search_path = public
+as $$
+    update public.profiles set last_seen_at = now() where id = auth.uid();
+$$;
+
+revoke execute on function public.segna_visto() from public, anon;
+grant execute on function public.segna_visto() to authenticated;
+
+-- ------------------------------------------------------------
 -- Gate di scrittura: un utente non ancora approvato non può salvare/
 -- caricare nulla sul cloud, anche bypassando la UI (accesso al gioco è
 -- già bloccato lato client da cloud-sync.js#signIn, questo è un secondo

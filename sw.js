@@ -508,7 +508,8 @@
 // v383: app shell con scadenza di rete (1,5 s) quando la copia in cache c'e' gia' (rete lenta).
 // v384: correzione di v383 — il redirect 307 del sito (.html -> senza estensione) veniva scambiato con la copia in cache,
 // che il browser rifiuta per una navigazione (net::ERR_FAILED su ogni pagina).
-const CACHE_NAME = 'ygo-duel-arena-v384';
+// v385: ultimo accesso online nel pannello Admin (cloud-sync.js, admin.html).
+const CACHE_NAME = 'ygo-duel-arena-v385';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare

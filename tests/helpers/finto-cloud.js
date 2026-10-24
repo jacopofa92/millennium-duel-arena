@@ -17,11 +17,15 @@
 // =====================================================================
 
 function creaFintoCloud() {
-    const cloud = { saves: {}, custom_cards: {}, richieste: [] };
+    const cloud = { saves: {}, custom_cards: {}, richieste: [], profili: [] };
 
     function rispondi(q) {
         cloud.richieste.push(`${q.table}:${q.op}`);
         const uid = q.filters.user_id || q.filters.id;
+        // Una chiamata a funzione (client.rpc('segna_visto')): si registra in richieste come rpc:<nome>.
+        if (q.table === 'rpc') return { data: null, error: null };
+        // L'elenco dei profili (pannello Admin: nessun filtro) arriva da cloud.profili; il profilo di UN utente resta quello di sempre.
+        if (q.table === 'profiles' && q.op === 'select' && !q.filters.id && !q.filters.status) return { data: cloud.profili || [], error: null };
         if (q.table === 'profiles') return { data: { status: 'approved', is_admin: true }, error: null };
         if (q.table === 'saves') {
             if (q.op === 'select') return { data: cloud.saves[uid] ? JSON.parse(JSON.stringify(cloud.saves[uid])) : null, error: null };
@@ -74,6 +78,7 @@ function creaFintoCloud() {
                 const b = {
                     select() { return b; },
                     eq(k, v) { q.filters[k] = v; return b; },
+                    order() { return b; },
                     single() { return b; },
                     maybeSingle() { return b; },
                     upsert(p) { q.op = 'upsert'; q.payload = p; return b; },
@@ -97,7 +102,7 @@ function creaFintoCloud() {
                             signOut: () => { if (window.__fintoRicordaUscita) localStorage.setItem('__fintoUscito', '1'); return Promise.resolve({ error: null }); }
                         },
                         from: query,
-                        rpc: () => Promise.resolve({ data: null, error: null })
+                        rpc: (nome) => window.__fintoCloud(JSON.stringify({ table: 'rpc', op: nome, filters: {}, payload: null })).then((r) => JSON.parse(r))
                     };
                 }
             };

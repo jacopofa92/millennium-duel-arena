@@ -123,6 +123,17 @@
         color: var(--ink);
         word-break: break-all;
     }
+    .admin-row-seen {
+        margin-top: 4px;
+        font-size: 0.78rem;
+        color: var(--ink);
+        opacity: 0.62;
+    }
+    .admin-row-seen.is-online {
+        color: #7ddc9a;
+        opacity: 1;
+        font-weight: 600;
+    }
     .admin-pill {
         display: inline-block;
         padding: 3px 10px;
@@ -391,6 +402,22 @@
             catch (e) { return '—'; }
         }
 
+        /** "3 ore fa", "ieri", ... — e se e' online adesso (visto negli ultimi 10 minuti). */
+        function quantoTempoFa(iso) {
+            if (!iso) return { testo: 'Ultimo accesso: mai', online: false };
+            const t = new Date(iso).getTime();
+            if (!isFinite(t)) return { testo: 'Ultimo accesso: —', online: false };
+            const min = Math.max(0, Math.round((Date.now() - t) / 60000));
+            if (min <= 10) return { testo: '● Online ora', online: true };
+            let frase;
+            if (min < 60) frase = min + ' min fa';
+            else if (min < 60 * 24) { const o = Math.round(min / 60); frase = o + (o === 1 ? ' ora fa' : ' ore fa'); }
+            else if (min < 60 * 24 * 2) frase = 'ieri';
+            else if (min < 60 * 24 * 60) frase = Math.round(min / (60 * 24)) + ' giorni fa';
+            else frase = formatDate(iso);
+            return { testo: 'Ultimo accesso: ' + frase, online: false };
+        }
+
         function buildRow(profile, showActions) {
             const row = document.createElement('div');
             row.className = 'admin-row';
@@ -413,6 +440,15 @@
                 meta.appendChild(adminPill);
             }
             left.appendChild(meta);
+            // Ultimo accesso online: quanto tempo fa, e la data esatta al passaggio del dito/mouse. Un
+            // account visto negli ultimi 10 minuti e' "online ora" (il gioco avvisa il server ogni 5).
+            const visto = document.createElement('div');
+            visto.className = 'admin-row-seen';
+            const quando = quantoTempoFa(profile.last_seen_at);
+            visto.textContent = quando.testo;
+            if (profile.last_seen_at) visto.title = formatDate(profile.last_seen_at);
+            if (quando.online) visto.classList.add('is-online');
+            left.appendChild(visto);
             row.appendChild(left);
 
             if (showActions) {
@@ -444,7 +480,9 @@
         function render() {
             CloudSync.adminListProfiles().then((data) => {
                 const pending = data.filter((p) => p.status === 'pending');
-                const others = data.filter((p) => p.status !== 'pending');
+                // Chi e' stato visto per ultimo viene prima; chi non e' mai stato visto in fondo.
+                const ultimoVisto = (p) => (p.last_seen_at ? new Date(p.last_seen_at).getTime() : 0);
+                const others = data.filter((p) => p.status !== 'pending').sort((a, b) => ultimoVisto(b) - ultimoVisto(a));
 
                 pendingList.innerHTML = '';
                 pending.forEach((p) => pendingList.appendChild(buildRow(p, true)));
