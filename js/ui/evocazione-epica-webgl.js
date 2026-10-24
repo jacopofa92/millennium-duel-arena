@@ -39,7 +39,7 @@
     const TI = 2.7;
     const DUR = 5.2;
     const Z_CANVAS = 10052;
-    const Z_APPARIZIONE = 10049;
+    const Z_APPARIZIONE = 10053;   // SOPRA il canvas: l'illustrazione non deve passare sotto il velo scuro della scena
     const Z_TITOLO = 10054;
 
     const TIPI = { 'LUCE': 0, 'OSCURITÀ': 1, 'FUOCO': 2, 'ACQUA': 3, 'VENTO': 4, 'TERRA': 5, 'DIVINO': 6 };
@@ -346,8 +346,11 @@ void main(){
   text-shadow:0 0 14px var(--ee-c2),0 0 34px var(--ee-c3),0 3px 10px rgba(0,0,0,.9)}
 .ee-titolo-sotto{display:block;margin-top:.5em;font-family:system-ui,sans-serif;font-weight:700;font-size:clamp(.7rem,2vw,1rem);letter-spacing:.5em;color:var(--ee-c1);text-shadow:0 0 12px var(--ee-c2);text-transform:uppercase}
 .ee-titolo-stelle{display:block;margin-top:.4em;font-size:clamp(.8rem,2.4vw,1.25rem);letter-spacing:.25em;color:var(--ee-c1);text-shadow:0 0 10px var(--ee-c2)}
-.ee-apparizione{position:fixed;z-index:${Z_APPARIZIONE};pointer-events:none;background-size:cover;background-position:center;opacity:0;mix-blend-mode:screen;
-  -webkit-mask-image:radial-gradient(closest-side,#000 52%,transparent 100%);mask-image:radial-gradient(closest-side,#000 52%,transparent 100%)}
+.ee-apparizione{position:fixed;z-index:${Z_APPARIZIONE};pointer-events:none;background-size:cover;background-position:center;opacity:0;
+  -webkit-mask-image:radial-gradient(closest-side,#000 74%,transparent 100%);mask-image:radial-gradient(closest-side,#000 74%,transparent 100%)}
+.ee-stat{display:flex;justify-content:center;gap:1.6em;margin-top:.7em;font-family:Georgia,'Times New Roman',serif;font-weight:900;font-size:clamp(1rem,3.2vw,1.9rem);letter-spacing:.06em;color:#fff;text-shadow:0 0 12px var(--ee-c2),0 2px 8px rgba(0,0,0,.95)}
+.ee-stat b{font-size:.6em;letter-spacing:.2em;margin-right:.5em;color:var(--ee-c1);vertical-align:.18em}
+.ee-stelle{display:flex;justify-content:center;gap:.12em;margin-top:.5em;font-size:clamp(1rem,3.4vw,1.9rem);line-height:1;color:#ffd96b;text-shadow:0 0 10px #ff9d00,0 2px 6px rgba(0,0,0,.9)}
 `;
         document.head.appendChild(s);
     }
@@ -482,6 +485,12 @@ void main(){
         if (uidCarta) {
             const nascondi = aggiungi(document.createElement('style'));
             nascondi.textContent = `[data-uid="${uidCarta}"]{opacity:0 !important}`;
+            // L'ologramma WebGL del mostro (se acceso) nasce al primo ridisegno dopo la carta: lo si tiene spento fino all'impatto.
+            const guardia = setInterval(() => {
+                if (chiusa || !window.MonsterHologramGL) { clearInterval(guardia); return; }
+                MonsterHologramGL.nascondiPer(card.uid, TI * 1000 - (performance.now() - t0) + 150);
+            }, 80);
+            setTimeout(() => clearInterval(guardia), TI * 1000);
             setTimeout(() => {
                 nascondi.remove();
                 const el = document.querySelector(`[data-uid="${uidCarta}"]`) || monsterElement;
@@ -504,13 +513,13 @@ void main(){
             const lato = Math.max(300, Math.min(W, H) * 0.62, S * 3.6);
             const sp = aggiungi(document.createElement('div'));
             sp.className = 'ee-apparizione';
-            sp.style.cssText = `left:${cx - lato / 2}px;top:${cy - lato / 2}px;width:${lato}px;height:${lato}px;background-image:url('${String(percorso).replace(/'/g, "\\'")}');filter:saturate(1.35) brightness(1.15) drop-shadow(0 0 24px ${css3(mid)});`;
+            sp.style.cssText = `left:${cx - lato / 2}px;top:${cy - lato / 2}px;width:${lato}px;height:${lato}px;background-image:url('${String(percorso).replace(/'/g, "\\'")}');filter:saturate(1.2) contrast(1.06) drop-shadow(0 0 22px ${css3(mid)});`;
             try {
                 const a = sp.animate([
                     { opacity: 0, transform: 'translateY(50px) scale(.55)', offset: 0, easing: 'cubic-bezier(.1,.7,.2,1)' },
-                    { opacity: 0.92, transform: 'translateY(-6px) scale(1.04)', offset: 0.22, easing: 'ease-out' },
-                    { opacity: 0.8, transform: 'translateY(-30px) scale(1.12)', offset: 0.62, easing: 'ease-in' },
-                    { opacity: 0, transform: 'translateY(-70px) scale(1.2)', offset: 1 }
+                    { opacity: 1, transform: 'translateY(-6px) scale(1.04)', offset: 0.18, easing: 'ease-out' },
+                    { opacity: 1, transform: 'translateY(-24px) scale(1.1)', offset: 0.72, easing: 'ease-in' },
+                    { opacity: 0, transform: 'translateY(-50px) scale(1.16)', offset: 1 }
                 ], { duration: 2400, delay: TI * 1000, fill: 'both' });
                 animazioni.push(a);
             } catch (e) { sp.remove(); }
@@ -525,8 +534,26 @@ void main(){
         titolo.style.setProperty('--ee-c3', css3(rilievo(deep, .35)));
         const nome = document.createElement('span'); nome.className = 'ee-titolo-nome'; nome.textContent = String((card && card.name) || 'Evocazione');
         const sotto = document.createElement('span'); sotto.className = 'ee-titolo-sotto'; sotto.textContent = 'Evocazione';
-        const st = document.createElement('span'); st.className = 'ee-titolo-stelle'; st.textContent = stelle(card && card.level);
-        titolo.append(sotto, nome, st);
+        // Stelle del Livello e ATK/DEF, come nella presentazione di Master Duel: i valori sono quelli ATTUALI della carta in campo.
+        const st = document.createElement('div'); st.className = 'ee-stelle'; st.textContent = stelle(card && card.level);
+        const valore = (nomeFn, grezzo) => {
+            try {
+                const eng = window.DuelEngine;
+                if (eng && typeof eng[nomeFn] === 'function' && card && card.uid) {
+                    for (const owner of ['player', 'bot']) {
+                        const campo = window.gameState && gameState[owner + 'MonsterField'];
+                        const i = campo ? campo.findIndex((s) => s && s.card && s.card.uid === card.uid) : -1;
+                        if (i >= 0) { const v = eng[nomeFn](owner, i); if (typeof v === 'number') return v; }
+                    }
+                }
+            } catch (e) { /* ripiego sul valore stampato */ }
+            return grezzo;
+        };
+        const atk = valore('getEffectiveAtk', card && card.attack);
+        const dif = valore('getEffectiveDef', card && card.defense);
+        const stat = document.createElement('div'); stat.className = 'ee-stat';
+        stat.innerHTML = `<span><b>ATK</b>${Number.isFinite(atk) ? atk : '?'}</span><span><b>DEF</b>${Number.isFinite(dif) ? dif : '?'}</span>`;
+        titolo.append(sotto, nome, st, stat);
         try {
             const a = titolo.animate([
                 { opacity: 0, transform: 'translate(-50%,-50%) scale(1.25)', filter: 'blur(14px)', letterSpacing: '.7em', offset: 0, easing: 'cubic-bezier(.1,.7,.2,1)' },
