@@ -39,6 +39,24 @@ module.exports = {
             assert(errori.length === 0, `errori di pagina: ${errori.join(' | ')}`);
         } finally { await ctx.close(); }
 
+        // --- interruttore di emergenza: ?splash3d=0 spegne lo splash 3D (e lo ricorda), ?splash3d=1 lo riaccende
+        const ctx3 = await browser.newContext({ serviceWorkers: 'block', viewport: { width: 1000, height: 600 } });
+        const page3 = await ctx3.newPage();
+        try {
+            await page3.goto(url + '?splash3d=0');
+            await page3.waitForTimeout(800);
+            const spento = await page3.evaluate(() => ({ attivo: !!(window.SplashWebgl && SplashWebgl.attivo), canvas: !!document.querySelector('.splash-webgl-canvas'), mem: localStorage.getItem('ygoSplash3D') }));
+            assert(!spento.attivo && !spento.canvas && spento.mem === '0', `?splash3d=0 deve spegnerlo e ricordarlo: ${JSON.stringify(spento)}`);
+            await page3.evaluate(() => sessionStorage.clear());
+            await page3.goto(url);   // senza parametro: resta spento (memoria del dispositivo)
+            await page3.waitForTimeout(800);
+            assert(!(await page3.evaluate(() => !!document.querySelector('.splash-webgl-canvas'))), 'spento sul dispositivo: anche senza parametro resta lo splash di sempre');
+            await page3.evaluate(() => sessionStorage.clear());
+            await page3.goto(url + '?splash3d=1');
+            await page3.waitForFunction(() => window.SplashWebgl && SplashWebgl.attivo, null, { timeout: 8000 });
+            assert((await page3.evaluate(() => localStorage.getItem('ygoSplash3D'))) === null, '?splash3d=1 deve riaccenderlo e togliere la memoria');
+        } finally { await ctx3.close(); }
+
         // --- senza WebGL: resta lo splash di sempre
         const ctx2 = await browser.newContext({ serviceWorkers: 'block', viewport: { width: 1000, height: 600 } });
         await ctx2.addInitScript(() => {

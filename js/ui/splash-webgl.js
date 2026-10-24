@@ -321,6 +321,20 @@ void main(){
         } catch (e) { return false; }
     }
 
+    /**
+     * L'INTERRUTTORE DI EMERGENZA (il rollback "a caldo", senza ripubblicare): `?splash3d=0` nell'indirizzo, oppure
+     * `localStorage.ygoSplash3D = '0'` per spegnerlo su quel dispositivo; allora vale lo splash di sempre. `?splash3d=1` toglie
+     * la memoria e lo riaccende. Il rollback "a freddo" (togliere la funzione dal sito) e' il revert del merge: vedi CLAUDE.md.
+     */
+    function interruttoreSpento() {
+        try {
+            const q = new URLSearchParams(location.search).get('splash3d');
+            if (q === '0') { try { localStorage.setItem('ygoSplash3D', '0'); } catch (e) { /* ignora */ } return true; }
+            if (q === '1') { try { localStorage.removeItem('ygoSplash3D'); } catch (e) { /* ignora */ } return false; }
+            return localStorage.getItem('ygoSplash3D') === '0';
+        } catch (e) { return false; }
+    }
+
     const SplashWebgl = {
         attivo: false,
         /**
@@ -329,7 +343,7 @@ void main(){
          * @param {{ manuale?: boolean }} [opz] manuale: il progresso lo decide `imposta()` (anteprima), non il misuratore.
          */
         avvia(contenitore, opz) {
-            if (this.attivo || !contenitore || !highpOk()) return false;
+            if (this.attivo || !contenitore || interruttoreSpento() || !highpOk()) return false;
             const canvas = document.createElement('canvas');
             canvas.setAttribute('aria-hidden', 'true');
             canvas.className = 'splash-webgl-canvas';
