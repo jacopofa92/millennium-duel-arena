@@ -44,7 +44,16 @@ float ease(float x){ x=clamp(x,0.,1.); return x*x*(3.-2.*x); }
 float sdTorus(vec3 p, vec2 t2){ vec2 q=vec2(length(p.xz)-t2.x,p.y); return length(q)-t2.y; }
 float sdCyl(vec3 p, float h, float rad){ vec2 d=abs(vec2(length(p.xz),p.y))-vec2(rad,h); return min(max(d.x,d.y),0.)+length(max(d,0.)); }
 
-// Il corpo: piramide rovesciata (apice in basso), spigoli arrotondati, pannelli incassati dentro una cornice rialzata.
+float occhioH(vec2 e, out float lungo);
+
+// Coordinate sul pannello della faccia dominante, per l'Occhio (centrato, ingrandito): x lungo la faccia, y verso l'alto.
+vec2 coordOcchio(vec3 p, float dX, float dZ){
+  float u=(dZ>dX)?p.x*sign(p.z):-p.z*sign(p.x);
+  return vec2(u,p.y-.2)*.72;
+}
+
+// Il corpo: piramide rovesciata (apice in basso), spigoli arrotondati, pannelli incassati dentro una cornice rialzata,
+// e sul pannello l'Occhio di Wedjat IN RILIEVO (come sul Puzzle vero: non e' disegnato, sporge dal metallo).
 float sdBody(vec3 p, out float panel){
   float dX=dot(vec2(abs(p.x),p.y-APEX),NXY);
   float dZ=dot(vec2(abs(p.z),p.y-APEX),NXY);
@@ -52,7 +61,14 @@ float sdBody(vec3 p, out float panel){
   float d=max(max(dX,dZ),top)-.035;
   float m=.075;
   panel=smoothstep(2.*m,2.*m+.035,abs(dX-dZ))*smoothstep(m,m+.035,-top);
-  return d+.042*panel;
+  float r=d+.042*panel;
+  // il rilievo si calcola solo vicino alla superficie del pannello: fuori sarebbe lavoro inutile per ogni passo del raggio
+  if(panel>.02 && d<.16){
+    float lg;
+    float h=occhioH(coordOcchio(p,dX,dZ),lg);
+    r-=.05*h*panel;
+  }
+  return r;
 }
 // Anello e catena in cima (assieme al collare).
 float sdRing(vec3 p){
@@ -76,36 +92,45 @@ vec3 env(vec3 d){
 
 float seg(vec2 p, vec2 a, vec2 b){ vec2 pa=p-a,ba=b-a; float h=clamp(dot(pa,ba)/dot(ba,ba),0.,1.); return length(pa-ba*h); }
 
-// L'Occhio di Wedjat inciso sul pannello. Ritorna la maschera delle linee (0..1) e la posizione 0..1 lungo l'occhio.
-float occhio(vec2 e, out float lungo, out float riempi){
+// Distanza dalla spirale della goccia (Archimede: il raggio cresce con l'angolo).
+float spirale(vec2 q){
+  float rl=length(q);
+  float th=atan(q.y,q.x); if(th<0.) th+=6.2832;
+  float best=1.;
+  for(int n=0;n<2;n++){
+    float T=th+6.2832*float(n);
+    if(T<=3.*PI) best=min(best,abs(rl-(.012+.0085*T)));
+  }
+  return best;
+}
+// L'Occhio di Wedjat IN RILIEVO: l'altezza (0..1) sul pannello. Bordo della palpebra, anello dell'iride, pupilla, sopracciglio, goccia
+// con la sua spirale e coda, tutto con profilo arrotondato (un "filo" che sporge); il bianco dell'occhio e' appena sopra il fondo.
+// "lungo" e' la posizione 0..1 lungo l'occhio: serve a farlo accendere da sinistra a destra col progresso.
+float occhioH(vec2 e, out float lungo){
   float a=.36;
   lungo=clamp(e.x/(2.*a)+.5,0.,1.);
-  float w=.0105;
+  float w=.03;
   float hl=(e.y>0.?.17:.105)*max(1.-(e.x*e.x)/(a*a),0.);
-  float lente=abs(abs(e.y)-hl);
   float dentro=step(abs(e.x),a)*step(abs(e.y),hl);
-  riempi=dentro;
-  float dist=mix(1.,lente,step(abs(e.x),a+.004));
-  float iride=abs(length(e-vec2(0.,.012))-.108);
-  dist=min(dist,mix(1.,iride,step(abs(e.y),hl+.01)));
-  float pupilla=length(e-vec2(0.,.012))-.046;
-  dist=min(dist,abs(pupilla)*.5);
-  riempi=max(riempi*0.,step(pupilla,0.));
-  float bx=abs(e.x)/(a+.07);
-  float arco=.285+.065*(1.-bx*bx);
-  dist=min(dist,mix(1.,abs(e.y-arco)*.8,step(bx,1.)));
-  // goccia: dal centro del bordo basso scende e si arrotola; e coda dall'angolo esterno
-  dist=min(dist,mix(1.,abs(e.x-.07),step(abs(e.y+.19),.1)*step(e.y,-.105)));
-  float curl=abs(length(e-vec2(.15,-.275))-.08);
-  float ang=atan(e.y+.275,e.x-.15);
-  dist=min(dist,mix(1.,curl,step(ang,PI*.55)*step(-PI*.95,ang)*step(.0,-(e.y+.275)+.02)));
-  float coda=seg(e,vec2(a-.01,-.012),vec2(a+.11,-.2));
-  dist=min(dist,coda);
-  return smoothstep(w,w*.35,dist);
+  float contorno=(abs(e.x)<=a+.012)?abs(abs(e.y)-hl):1.;
+  float h=smoothstep(w,0.,contorno);                      // bordo della palpebra
+  h=max(h,dentro*.3);                                      // il bianco dell'occhio
+  float ir=length(e-vec2(0.,.012));
+  h=max(h,smoothstep(.034,0.,abs(ir-.108)));              // anello dell'iride
+  h=max(h,smoothstep(.008,0.,ir-.046)*.85);               // pupilla
+  float bx=abs(e.x)/(a+.08);
+  if(bx<1.) h=max(h,smoothstep(w,0.,abs(e.y-(.28+.06*(1.-bx*bx)))));   // sopracciglio
+  h=max(h,smoothstep(w*.9,0.,seg(e,vec2(0.,-.1),vec2(0.,-.25))));      // la goccia scende...
+  h=max(h,smoothstep(w*.9,0.,spirale(e-vec2(.04,-.25))));             // ...e si arrotola
+  h=max(h,smoothstep(w*.9,0.,seg(e,vec2(a-.01,-.012),vec2(a+.13,-.05))));   // coda verso l'esterno
+  return h;
 }
 mat2 rot(float a){ float c=cos(a),s=sin(a); return mat2(c,-s,s,c); }
 
+const vec3 WHITE=vec3(1.,.95,.84);
 void main(){
+  // fine dell'uscita: bianco pieno, niente raymarching (il frame costa quasi zero mentre la pagina lavora sotto)
+  if(uOut>=.6){ gl_FragColor=vec4(WHITE,1.); return; }
   vec2 uv=(gl_FragCoord.xy-.5*r)/r.y;
   float tt=t;
   float prog=uProg;
@@ -182,18 +207,17 @@ void main(){
       if(corpo){
         // il pannello incassato e' piu' scuro e satinato, la cornice lucida
         alb=mix(oro,oro*vec3(.9,.8,.62),pn);
-        rugosita=mix(.0,.14,pn);
-        // faccia dominante e coordinate dell'Occhio
+        rugosita=mix(.0,.06,pn);
+        // l'Occhio e' RILIEVO (la normale lo sa gia', viene dalla distanza): qui serve solo sapere dove sta, per lucidarlo e accenderlo
         float dX=dot(vec2(abs(p.x),p.y-APEX),NXY), dZ=dot(vec2(abs(p.z),p.y-APEX),NXY);
-        float u=(dZ>dX)?p.x*sign(p.z):-p.z*sign(p.x);
-        vec2 e=vec2(u,p.y-.22)*.8;
-        float lungo,riempi;
-        float linee=occhio(e,lungo,riempi)*pn;
+        float lungo;
+        float rilievo=occhioH(coordOcchio(p,dX,dZ),lungo)*pn;
+        float cresta=smoothstep(.55,.95,rilievo);
         float acceso=1.-smoothstep(prog-.1,prog,lungo*.98);
         acceso=max(acceso,ease(uOut*2.));
-        alb=mix(alb,vec3(.1,.055,.015),linee*.9);
-        emissione=linee*acceso;
-        alb=mix(alb,oro*1.15,riempi*.0);
+        alb=mix(alb,oro*1.1,smoothstep(.08,.6,rilievo));          // il rilievo e' oro lucido, il fondo satinato e piu' scuro
+        rugosita*=1.-smoothstep(.08,.6,rilievo);
+        emissione=cresta*acceso*.9;
         n=normalize(n+rugosita*(vec3(vnoise(p.xy*60.),vnoise(p.yz*60.),vnoise(p.zx*60.))-.5));
         emC=mix(vec3(1.,.52,.12),vec3(1.,.93,.7),smoothstep(.5,1.,prog)*.7+uOut);
       } else {
@@ -234,12 +258,14 @@ void main(){
   col+=vec3(1.,.9,.7)*lampo*exp(-length(uv)*length(uv)*2.)*1.6;
   float onda=exp(-pow((length(uv)-uOut*1.5)*9.,2.))*(1.-uOut);
   col+=vec3(1.,.78,.4)*onda*.8;
-  col=mix(col,vec3(1.,.94,.8),smoothstep(.42,.9,uOut));   // il Puzzle si apre nella luce: il menu compare da qui, non da un buio
 
   // mappa dei toni
   col=vec3(1.)-exp(-col*.95);
   col=mix(vec3(dot(col,vec3(.3,.59,.11))),col,1.28);   // l'oro deve restare oro anche dove la luce lo schiarisce
   col=pow(max(col,0.),vec3(1.04));
+  // il Puzzle si apre nella luce: a bianco PIENO (dopo la mappa dei toni, o sarebbe grigio) la pagina costruisce il menu sotto,
+  // dove il lavoro non si vede, e poi lo splash sfuma verso di lui. Lo stacco di prima era quel lavoro, fatto a meta' animazione.
+  col=mix(col,WHITE,smoothstep(.3,.58,uOut));
   gl_FragColor=vec4(col,1.);
 }`;
 
@@ -378,6 +404,7 @@ void main(){
             const perc = /** @type {HTMLElement|null} */ (contenitore.querySelector('.splash-perc'));
             const frase = /** @type {HTMLElement|null} */ (contenitore.querySelector('.splash-frase'));
             const dettaglio = /** @type {HTMLElement|null} */ (contenitore.querySelector('.splash-dettaglio'));
+            const contenuto = /** @type {HTMLElement|null} */ (contenitore.querySelector('.splash-contenuto'));
             let nFrase = -1;
             const congelato = () => (typeof window.FX_WEBGL_T === 'number' ? window.FX_WEBGL_T : null);
 
@@ -432,19 +459,27 @@ void main(){
                 if (misuratore && misuratore.stato.verdetto && !uscitaDa && disp > 0.995 && trascorso >= MIN_MS) uscitaDa = ora;
                 if (!misuratore && manuale >= 1 && !uscitaDa && disp > 0.995) uscitaDa = ora;
                 const u = uscitaDa ? Math.min(1, (ora - uscitaDa) / USCITA_MS) : 0;
-                if (u > 0.7 && !chiamato && cbUscita) { chiamato = true; const f = cbUscita; cbUscita = null; f(); }
                 if (u >= 1 && !finito) { finito = true; setTimeout(finePerche, 900); }
+                // titolo e barra spariscono PRIMA del bianco, cosi' non restano scritte sopra la luce
+                if (contenuto) contenuto.style.opacity = String(1 - Math.max(0, Math.min(1, (u - 0.08) / 0.3)));
 
                 const intro = Math.min(1, trascorso / 1500);
                 gl.uniform1f(U.t, tempo);
                 gl.uniform1f(U.uProg, disp);
-                if (document.hidden) return;
                 gl.uniform1f(U.uIntro, menoMovimento() ? 1 : intro);
                 gl.uniform1f(U.uOut, menoMovimento() ? (u > 0.5 ? 1 : 0) : u);
                 // se il dispositivo non regge, il Puzzle resta (e' tutta la scena), ma si abbassa la risoluzione. PRIMA di disegnare:
                 // cambiare la dimensione di un canvas lo svuota, e a fine frame si vedrebbe un lampo nero.
                 if (lenti > 1500 && canvas.width > 360) { lenti = 0; canvas.width = Math.round(canvas.width * 0.7); canvas.height = Math.round(canvas.height * 0.7); gl.viewport(0, 0, canvas.width, canvas.height); gl.uniform2f(U.r, canvas.width, canvas.height); }
                 gl.drawArrays(gl.TRIANGLES, 0, 3);
+                // A BIANCO PIENO (il frame appena disegnato) la pagina fa il suo lavoro pesante: costruire il menu o l'accesso sotto lo
+                // splash blocca il thread per un attimo, e a meta' animazione si vedeva come uno scatto. Qui non si vede niente.
+                // Si aspetta anche un frame in piu': il bianco deve essere davvero sullo schermo prima che il thread si fermi.
+                if (u > 0.62 && !chiamato && cbUscita) {
+                    chiamato = true;
+                    const f = cbUscita; cbUscita = null;
+                    requestAnimationFrame(() => setTimeout(f, 0));
+                }
             };
             rid = requestAnimationFrame(frame);
 
