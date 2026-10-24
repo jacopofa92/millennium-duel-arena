@@ -635,6 +635,7 @@ const APP_SHELL = [
     'js/ui/fx-webgl.js',
     'js/ui/fx-webgl-scena.js',
     'js/ui/evocazione-epica-webgl.js',
+    'js/ui/splash-webgl.js',
     'js/ui/icone-posizione-webgl.js',
     'js/ui/challenge-banner.js',
     'js/ui/stato-salvataggio.js',
