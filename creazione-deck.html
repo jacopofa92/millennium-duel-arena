@@ -2786,6 +2786,57 @@
         askConfirm('Le modifiche non salvate andranno perse. Continuare?', closeEditor);
     };
 
+    // ============================================================
+    // Uscire dall'editor per sbaglio (segnalato dall'utente: "sono uscito per errore e ho perso il deck")
+    // ============================================================
+    // Impronta del mazzo com'era all'apertura dell'editor: "ci sono modifiche non salvate" = l'impronta di adesso e' diversa.
+    // Il confronto e' sul CONTENUTO (nome, carte, aspetto), non su un flag da ricordarsi di accendere in ogni punto che modifica
+    // il mazzo: aggiungere una carta, toglierla o cambiare il colore passano tutte da qui senza altro codice.
+    const impronta = () => JSON.stringify([$('deckNameInput').value.trim(), editingDeck.main, editingDeck.extra, editingDeck.boxColor || null, editingDeck.coverCardId || null]);
+    let improntaIniziale = null;
+    const apriEditorOriginale = openEditor;
+    openEditor = function (existingDeck) {
+        apriEditorOriginale(existingDeck);
+        improntaIniziale = impronta();
+    };
+    const editorConModifiche = () => !!editingDeck && improntaIniziale !== null && impronta() !== improntaIniziale;
+
+    // Un tocco su un link che porta fuori dalla pagina (la freccia Indietro, il ritratto del profilo...) con modifiche non
+    // salvate chiede conferma. In fase di CAPTURE: nessun altro gestore puo' farci passare prima.
+    let uscitaConfermata = false;
+    document.addEventListener('click', (e) => {
+        if (uscitaConfermata || !editorConModifiche()) return;
+        const a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+        if (!a) return;
+        const href = a.getAttribute('href') || '';
+        if (!href || href.startsWith('#') || a.target === '_blank' || href.startsWith('javascript:')) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        askConfirm('Vuoi uscire dall\'editor? Le modifiche al deck non salvate andranno perse.', () => {
+            uscitaConfermata = true;
+            location.href = a.href;
+        });
+    }, true);
+
+    // Chiudere o ricaricare la scheda con modifiche non salvate: avviso del browser (sull'APK non compare, li' c'e' il tasto Indietro sotto).
+    window.addEventListener('beforeunload', (e) => {
+        if (uscitaConfermata || !editorConModifiche()) return;
+        e.preventDefault();
+        e.returnValue = '';
+    });
+
+    // Tasto Indietro di Android: dentro l'editor non deve buttarti fuori dall'app/pagina, ma tornare all'elenco dei deck (con
+    // conferma se ci sono modifiche non salvate). Fuori dall'editor resta il comportamento di sempre.
+    if (window.NativeBackButton) {
+        NativeBackButton.setHandler(() => {
+            if (!editingDeck) return false;
+            if ($('confirmBackdrop').classList.contains('open')) { $('confirmBackdrop').classList.remove('open'); return true; }
+            if (editorConModifiche()) askConfirm('Vuoi uscire dall\'editor? Le modifiche al deck non salvate andranno perse.', closeEditor);
+            else closeEditor();
+            return true;
+        });
+    }
+
     renderMyDecks();
     renderOpponentDecks();
     renderPackDecks('starter', 'starterDecksGrid');
