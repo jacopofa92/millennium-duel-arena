@@ -28,7 +28,6 @@
 <script src="js/cloud/auth-gate.js"></script>
 <script src="js/pwa-register.js"></script>
 <link rel="stylesheet" href="js/ui/page-loader.css">
-<link rel="preload" href="audio/soundtracks/56. Battle for the Millennium.mp3" as="audio">
 <link rel="stylesheet" href="js/ui/topbar.css">
 <link rel="stylesheet" href="js/ui/deck-switcher.css">
 <link rel="stylesheet" href="js/ui/node-map.css">
@@ -655,8 +654,13 @@
             // Tutti i candidati di `sfondo` come livelli impilati: il primo
             // che esiste copre gli altri, uno mancante lascia vedere il
             // successivo. Nessun controllo "esiste?" da fare a mano.
+            // La testata è alta 128px: si usano le miniature (images/thumbs-banner, stesso nome file, 640px di
+            // larghezza). Le mappe intere pesano fino a 2 MB l'una e il browser le scarica TUTTE (anche i livelli
+            // coperti), cioè ~7 MB per un menu: su rete lenta la pagina impiegava 17 s a finire di caricarsi.
+            // Una miniatura mancante si comporta come prima: il livello non si vede e compare il successivo.
+            const miniatura = (s) => 'images/thumbs-banner/' + String(s).split('/').pop();
             const sfondi = [].concat(campagna.sfondo || []).filter(Boolean);
-            if (sfondi.length) banner.style.backgroundImage = sfondi.map((s) => `url('${encodeURI(s)}')`).join(', ');
+            if (sfondi.length) banner.style.backgroundImage = sfondi.map((s) => `url('${encodeURI(miniatura(s))}')`).join(', ');
             const emblema = document.createElement('div');
             emblema.className = 'campagna-emblema';
             const emblemaIcona = document.createElement('span');
