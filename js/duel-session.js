@@ -140,7 +140,11 @@
     // personaggio del database ma un generico Bot o un giocatore online.
     const GENERIC_OPPONENTS = {
         demo: { id: null, name: 'Bot', title: 'Avversario di allenamento', image: null, icon: '🤖' },
-        // Un avversario online e' un altro giocatore: come lui ha il ritratto del giocatore (lo specchio, vedi resolvePlayer)\n        // invece del globo, cosi' la presentazione VS, l'angolo e la schermata finale mostrano una pedina vera.\n        multiplayer: { id: null, name: 'Avversario', title: 'Duellante online', image: 'images/characters/mirror.jpg', icon: '🌐' },
+        // Un avversario online e' un altro giocatore: come lui ha il ritratto del giocatore (lo specchio, vedi resolvePlayer)
+        // invece del globo, cosi' la presentazione VS, l'angolo e la schermata finale mostrano una pedina vera.
+        // (Qui c'erano due "\n" LETTERALI dentro un commento: la riga restava una sola e l'intera voce `multiplayer` era commentata,
+        // quindi l'avversario online usciva come "Bot" nel duello e come "undefined" nella schermata finale.)
+        multiplayer: { id: null, name: 'Avversario', title: 'Duellante online', image: 'images/characters/mirror.jpg', icon: '🌐' },
         sandbox: { id: null, name: 'Bot', title: 'Campo di prova', image: null, icon: '🧪' }
     };
 
@@ -196,9 +200,15 @@
             }
         }
         // Multiplayer: l'avversario si presenta con la pedina che ha scelto in sala (?pedinaAvv=, id di un personaggio).
+        // Il nome e' quello che l'altro giocatore ha nel suo profilo (?nomeAvv=, arrivato col suo messaggio "pronto" in sala): e' testo
+        // libero scritto da un'altra persona, quindi ripulito e accorciato (finisce solo in textContent, mai in HTML).
         if (mode === 'multiplayer') {
             const p = pedinaMultiplayer(params.get('pedinaAvv'));
-            if (p) return Object.assign({}, GENERIC_OPPONENTS.multiplayer, { image: p.image });
+            const nome = pulisciNomeGiocatore(params.get('nomeAvv'));
+            const base = Object.assign({}, GENERIC_OPPONENTS.multiplayer);
+            if (p) base.image = p.image;
+            if (nome) base.name = nome;
+            return base;
         }
         return GENERIC_OPPONENTS[mode] || GENERIC_OPPONENTS.demo;
     }
@@ -208,6 +218,11 @@
      * Si cerca SEMPRE nell'elenco locale, mai si fida di un percorso: un id sconosciuto (o "player", la pedina
      * personale di sempre) torna null e resta il ritratto predefinito.
      */
+    function pulisciNomeGiocatore(testo) {
+        const t = String(testo == null ? '' : testo).replace(/[\u0000-\u001f\u007f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 24);
+        return t || '';
+    }
+
     function pedinaMultiplayer(id) {
         if (!id || id === 'player' || typeof characterDatabase === 'undefined') return null;
         const c = characterDatabase.find((x) => x.id === id);

@@ -440,6 +440,11 @@
 
     // La pedina dell'avversario arriva col suo messaggio "pronto" (id del personaggio, mai un percorso: vedi mp-pedina.js).
     let pedinaAvversario = null;
+    // Il nome che l'avversario ha nel suo profilo (arriva col suo "pronto"): testo libero scritto da un'altra persona, quindi ripulito
+    // e accorciato, e usato solo in textContent. Vuoto = ancora sconosciuto (o un client vecchio che non lo manda).
+    let nomeAvversario = '';
+    const pulisciNome = (testo) => String(testo == null ? '' : testo).replace(/[\u0000-\u001f\u007f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 24);
+    const nomeMio = () => (window.SaveManager && SaveManager.getPlayerName && SaveManager.getPlayerName()) || '';
 
     /** Mette una pedina nel tondo del posto; senza pedina rimette il segnaposto (emoji). */
     function mostraPedinaNelPosto(idElemento, pedina, segnaposto) {
@@ -460,7 +465,7 @@
 
     /** Dice all'altro lato come siamo messi: pronti o no, e con quale pedina. Un solo messaggio, sempre completo. */
     function annunciaStato() {
-        net.sendAction({ kind: 'ready', pronto: sonoPronto, pedina: MpPedina.scelta().id });
+        net.sendAction({ kind: 'ready', pronto: sonoPronto, pedina: MpPedina.scelta().id, nome: pulisciNome(nomeMio()) });
     }
 
     function riempiPostoAvversario() {
@@ -469,7 +474,7 @@
         posto.classList.remove('mp-seat--empty');
         posto.classList.add('mp-seat--filled');
         mostraPedinaNelPosto('mpSeatOppAvatar', pedinaAvversario || MpPedina.PREDEFINITA);
-        $('mpSeatOppName').textContent = 'Avversario';
+        $('mpSeatOppName').textContent = nomeAvversario || 'Avversario';
         // "In stanza", non "Pronto": da quando esiste la dichiarazione di
         // prontezza vera, scrivere "Pronto" qui appena l'altro entra è una
         // bugia — e proprio accanto alla barra che sta aspettando quella
@@ -499,6 +504,7 @@
         posto.classList.remove('mp-seat--filled');
         posto.classList.add('mp-seat--empty');
         pedinaAvversario = null;
+        nomeAvversario = '';
         mostraPedinaNelPosto('mpSeatOppAvatar', null, '❔');
         $('mpSeatOppName').innerHTML = '<span class="mp-dots">In attesa</span>';
         $('mpSeatOppRole').textContent = 'Posto libero';
@@ -652,6 +658,10 @@
         if (typeof azione.pedina === 'string') {
             pedinaAvversario = MpPedina.risolvi(azione.pedina);
             if (avversarioInStanza) mostraPedinaNelPosto('mpSeatOppAvatar', pedinaAvversario);
+        }
+        if (typeof azione.nome === 'string') {
+            nomeAvversario = pulisciNome(azione.nome);
+            if (avversarioInStanza && $('mpSeatOppName')) $('mpSeatOppName').textContent = nomeAvversario || 'Avversario';
         }
         aggiornaPronto();
     }
@@ -1067,6 +1077,7 @@
         // (resolvePlayer/resolveOpponent) e le cerca nell'elenco dei personaggi.
         params.set('pedina', MpPedina.scelta().id);
         if (pedinaAvversario) params.set('pedinaAvv', pedinaAvversario.id); else params.delete('pedinaAvv');
+        if (nomeAvversario) params.set('nomeAvv', nomeAvversario); else params.delete('nomeAvv');
         history.replaceState({}, '', window.location.pathname + '?' + params.toString());
         // Il fondale della lobby è su body::before ed è FISSO: resterebbe
         // davanti allo sfondo dell'arena, rendendo invisibile l'arena
