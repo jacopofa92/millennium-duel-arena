@@ -703,32 +703,20 @@
             display: none;
             flex-shrink: 0;
         }
-        /* Etichetta "TURNO" dorata (richiesta dell'utente: la sola corona era
-           minimal e anonima, non si capiva di chi fosse il turno): corona + parola
-           dentro una targhetta ben visibile, accanto al nome di CHI e' di turno.
-           L'altro duellante, in piu', si spegne un poco (vedi sotto), cosi' la
-           differenza si coglie anche senza leggere. Niente pulsazione (scartata
-           dall'utente): e' un'etichetta ferma. */
-        /* Turno: NIENTE badge/corona (scartati dall'utente tre volte): si evidenzia il NOME di chi e' di
-           turno. Nome in oro con alone e un filo d'oro sotto (sfuma verso l'interno dello schermo); quello
-           dell'altro duellante resta spento. La corona, sempre nascosta, resta nel markup perche' duel-session.js
-           ci scrive dentro l'icona. */
-        .player-info.side-player.active-turn .turn-crown { display: none; }
-        .player-info.side-player:not(.active-turn) .duelist-name .name-text { opacity: 0.6; }
-        .player-info.side-player.active-turn .duelist-name .name-text {
-            color: #ffe58a;
-            font-weight: 900;
-            text-shadow: 0 0 6px rgba(255, 205, 70, 0.85), 0 0 14px rgba(255, 190, 40, 0.5), 0 2px 5px rgba(0, 0, 0, 0.9);
-        }        /* Filo d'oro sotto il nome di chi e' di turno: sfuma verso l'interno dello schermo. */
-        .player-info.side-player.active-turn .duelist-name {
-            padding-bottom: 3px;
-            border-bottom: 2px solid transparent;
-            border-image: linear-gradient(90deg, #f7c948, rgba(247, 201, 72, 0)) 1;
+        /* Turno: un SIMBOLO d'oro accanto al nome di chi e' di turno, l'Occhio (di Wedjat, lo stesso del
+           logo): niente badge, medaglione, parola o evidenziazione del nome (scartati dall'utente, uno
+           dopo l'altro). Fermo, senza sfondo; l'altro duellante non ha nulla e il suo ritratto e' un po'
+           spento (vedi sotto). Il segnaposto data-icon="eye" lo sostituisce Icons.hydrate. */
+        .player-info.side-player.active-turn .turn-crown {
+            display: inline-flex;
+            align-items: center;
+            width: 1.7em;
+            height: 1.7em;
+            margin: 0 3px;
+            color: #ffd45e;
+            filter: drop-shadow(0 0 3px rgba(255, 205, 70, 0.95)) drop-shadow(0 0 8px rgba(255, 180, 40, 0.6)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
         }
-        #playerInfo.player-info.side-player.active-turn .duelist-name {
-            border-image: linear-gradient(270deg, #f7c948, rgba(247, 201, 72, 0)) 1;
-        }
-        /* Chi NON e' di turno: ritratto un po' piu' spento. */
+        .player-info.side-player.active-turn .turn-crown svg { width: 100%; height: 100%; }        /* Chi NON e' di turno: ritratto un po' piu' spento. */
         .player-info.side-player:not(.active-turn) .duelist-avatar--corner {
             filter: saturate(0.6) brightness(0.82);
             transition: filter 0.4s ease;
@@ -1926,7 +1914,7 @@
         .life-points > span,
         .floating-damage,
         .epic-damage-value {
-            --num-c: rgb(70, 215, 255);
+            --num-c: rgb(150, 225, 255);
             font-family: 'Arial Black', 'Segoe UI Black', Impact, system-ui, sans-serif;
             font-style: italic;
             font-weight: 900;
@@ -1936,7 +1924,7 @@
             paint-order: stroke fill;
             text-shadow: 0 0 0.22em var(--num-c), 0 0 0.55em var(--num-c), 0 0.06em 0.18em rgba(0, 0, 0, 0.7);
         }
-        #botInfo .life-points > span { --num-c: rgb(255, 84, 64); }
+        #botInfo .life-points > span { --num-c: rgb(150, 225, 255); }
         .life-points.lp-hit > span { --num-c: rgb(255, 56, 56); }
         .life-points.lp-heal > span { --num-c: rgb(60, 235, 130); }
         .floating-damage.damage, .floating-damage.heal, .epic-damage-value { color: #fff; }
@@ -5497,7 +5485,7 @@
          angolo dello schermo. Spostato fuori esattamente come #playerInfo,
          per lo stesso motivo strutturale. -->
     <div class="player-info side-player" id="botInfo">
-        <h3><span class="turn-crown" data-icon="crown"></span><span class="name-text">🤖 Bot</span></h3>
+        <h3><span class="turn-crown" data-icon="eye"></span><span class="name-text">🤖 Bot</span></h3>
         <div class="life-points">❤️ <span id="botLP">8000</span></div>
         <!-- Zona Bandite: informazione pubblica come il Cimitero, vedi
              renderBanishedBadge()/openBanishedViewer() in game-flow.js.
@@ -5509,7 +5497,7 @@
         <span>L'avversario sta scegliendo…</span>
     </div>
     <div class="player-info side-player" id="playerInfo">
-        <h3 id="playerNameLabel"><span class="turn-crown" data-icon="crown"></span><span class="name-text">👤 Giocatore</span></h3>
+        <h3 id="playerNameLabel"><span class="turn-crown" data-icon="eye"></span><span class="name-text">👤 Giocatore</span></h3>
         <div class="life-points">❤️ <span id="playerLP">8000</span></div>
         <div class="banished-badge" id="playerBanishedBadge" title="Zona Bandite">🌀 <span id="playerBanishedCount">0</span></div>
     </div>
