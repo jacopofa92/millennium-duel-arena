@@ -4973,7 +4973,10 @@
 
             if (!link.alreadyAnnounced) {
                 addToLog(`🛡️ ${link.owner === 'player' ? 'Hai' : 'Il bot ha'} attivato ${link.card.name} in risposta!`);
-                if (window.FX) FX.playCardActivateCenterScreen(link.card);
+                // Con la scena della Catena in WebGL (js/ui/catena-webgl.js) la carta in risoluzione e' GIA' mostrata li', ingrandita:
+                // rifarla grande a centro schermo vorrebbe dire due animazioni sulla stessa carta nello stesso momento. L'attesa
+                // qui sotto (activatedAt) resta identica, quindi il ritmo del duello non cambia.
+                if (window.FX && !(window.CatenaGL && window.CatenaGL.mostra(link))) FX.playCardActivateCenterScreen(link.card);
                 link.activatedAt = Date.now();
             }
             // Evidenzia QUESTO link (il prossimo a risolversi, sempre
