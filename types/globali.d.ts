@@ -85,6 +85,10 @@ declare var FX_WEBGL_T: any;
 declare var FX_WEBGL_VEL: any;
 // Evocazione epica di Livello 7+ e Fusione in WebGL (js/ui/evocazione-epica-webgl.js) e splash d'apertura (js/ui/splash-webgl.js).
 declare var EvocazioneEpica: any;
+// Scena della Catena in WebGL (js/ui/catena-webgl.js).
+declare var CatenaGL: any;
+declare var CATENA_GL_OFF: any;
+declare var CATENA_GL_ERRORE: any;
 declare var EVOCAZIONE_EPICA_OFF: any;
 declare var EVOCAZIONE_EPICA_ERRORE: any;
 declare var MonsterHologramGL: any;

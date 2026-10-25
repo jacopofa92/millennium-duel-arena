@@ -911,6 +911,19 @@ function renderChainStack(resolvingLink) {
     const chain = gameState.chain;
     const links = (chain && chain.links) || [];
     const displayLinks = resolvingLink ? [...links, resolvingLink] : links;
+    // Scena della Catena in WebGL (js/ui/catena-webgl.js): se parte, si occupa lei di tutto e il pannello di sempre resta
+    // spento. Si passa SEMPRE da qui, anche a Catena finita, perche' e' da questa chiamata che la scena sa di doversi chiudere.
+    // Senza WebGL, con "Dettagli video: Normali" o col movimento ridotto `aggiorna` torna false e vale il pannello qui sotto.
+    if (window.CatenaGL) {
+        const finita = !chain || (!chain.active && !resolvingLink);
+        if (window.CatenaGL.aggiorna(finita ? [] : displayLinks, resolvingLink)) {
+            container.classList.remove('show');
+            container.innerHTML = '';
+            chainStackUltimoConteggio = 0;
+            chainStackUltimoRisolto = null;
+            return;
+        }
+    }
     if (!chain || (!chain.active && !resolvingLink) || displayLinks.length === 0) {
         container.classList.remove('show');
         container.innerHTML = '';
