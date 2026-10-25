@@ -57,6 +57,19 @@ module.exports = {
             assert((await page3.evaluate(() => localStorage.getItem('ygoSplash3D'))) === null, '?splash3d=1 deve riaccenderlo e togliere la memoria');
         } finally { await ctx3.close(); }
 
+        // --- legato a "Dettagli video": con "Normali" resta lo splash di sempre, con "Alti" parte il 3D
+        for (const [livello, atteso] of [['normali', false], ['alti', true]]) {
+            const c = await browser.newContext({ serviceWorkers: 'block', viewport: { width: 1000, height: 600 } });
+            await c.addInitScript((l) => { localStorage.setItem('ygoVideoDetail', l); localStorage.setItem('ygoVideoDetailScelto', '1'); }, livello);
+            const p = await c.newPage();
+            try {
+                await p.goto(url);
+                await p.waitForTimeout(1200);
+                const canvas = await p.evaluate(() => !!document.querySelector('.splash-webgl-canvas'));
+                assert(canvas === atteso, `Dettagli video "${livello}": splash 3D ${atteso ? 'acceso' : 'spento'}, trovato canvas=${canvas}`);
+            } finally { await c.close(); }
+        }
+
         // --- il logo di menu e accesso e' lo stesso Puzzle 3D (non piu' l'emblema SVG che seguiva mouse e giroscopio)
         const ctx4 = await browser.newContext({ serviceWorkers: 'block', viewport: { width: 1000, height: 700 } });
         await ctx4.addInitScript(() => { sessionStorage.setItem('ygoSplashShown', '1'); });

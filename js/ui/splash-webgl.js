@@ -354,6 +354,12 @@ void main(){
      * la memoria e lo riaccende. Il rollback "a freddo" (togliere la funzione dal sito) e' il revert del merge: vedi CLAUDE.md.
      */
     function interruttoreSpento() {
+        // "Dettagli video" (Impostazioni): lo splash 3D e' un effetto "Alti", con "Normali" resta lo splash di sempre. Vince sul resto,
+        // salvo ?splash3d=1 che serve proprio a provarlo. Se VideoQuality non e' stato caricato non si decide nulla da qui.
+        try {
+            const forzato = new URLSearchParams(location.search).get('splash3d') === '1';
+            if (!forzato && window.VideoQuality && !window.VideoQuality.isAlti()) return true;
+        } catch (e) { /* ignora */ }
         try {
             const q = new URLSearchParams(location.search).get('splash3d');
             if (q === '0') { try { localStorage.setItem('ygoSplash3D', '0'); } catch (e) { /* ignora */ } return true; }

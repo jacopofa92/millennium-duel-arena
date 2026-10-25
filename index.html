@@ -915,6 +915,8 @@
     </div>
     <!-- Lo splash 3D: il Puzzle del Millennio e il progresso del caricamento VERO. Parte solo alla primissima apertura della
          sessione (come lo splash) e solo se c'e' WebGL con highp: altrimenti resta quello di sempre, qui sotto. -->
+    <!-- Caricato QUI e non piu' in fondo: lo splash 3D deve sapere subito se "Dettagli video" e' Alti (vedi interruttoreSpento). -->
+    <script src="js/ui/video-quality.js"></script>
     <script src="js/ui/splash-webgl.js"></script>
     <script>
         (function () {
@@ -1166,7 +1168,6 @@
     <script src="js/ui/challenge-banner.js"></script>
     <script src="js/ui/stato-salvataggio.js"></script>
     <script src="js/ui/icon-library.js"></script>
-    <script src="js/ui/video-quality.js"></script>
 <script src="js/ui/ambiente-webgl.js"></script>
 <script src="js/ui/ambiente-menu.js"></script>
     <script src="js/ui/bot-speed.js"></script>
@@ -1913,6 +1914,16 @@
                     // chiedere il nome, e solo se non c'è già un locale
                     // da promuovere a salvataggio dell'account.
                     if (!SaveManager.hasSave()) {
+                        // Il primo avvio vero: la bottega del nonno (nome + scelta
+                        // del mazzo fra Yugi e Kaiba) e poi la lezione obbligatoria,
+                        // come dal pulsante "Nuova Partita" del menu. Il modale del
+                        // solo nome qui sotto resta come ripiego se il modulo manca.
+                        if (window.Onboarding) {
+                            return Onboarding.avvia().then((esito) => {
+                                if (esito && SaveManager.setTutorial) SaveManager.setTutorial({ daFare: true });
+                                resolveCloudConflict();
+                            });
+                        }
                         const input = document.getElementById('gateNewLocalNameInput');
                         input.value = '';
                         document.getElementById('gateNewLocalModal').classList.add('open');
