@@ -1,0 +1,1877 @@
+{
+  "generato": "2026-10-25T12:34:36.780Z",
+  "opzioni": {
+    "partite": 50,
+    "turni": 80,
+    "seme": 310000,
+    "iaGiocatore": "hard"
+  },
+  "duelli": 155550,
+  "stalliAlLimite": 1,
+  "globale": [
+    {
+      "livello": "easy",
+      "giocatore": 69.4,
+      "duelli": 51850
+    },
+    {
+      "livello": "medium",
+      "giocatore": 41.7,
+      "duelli": 51850
+    },
+    {
+      "livello": "hard",
+      "giocatore": 28.7,
+      "duelli": 51850
+    }
+  ],
+  "perDuellante": [
+    {
+      "duellante": "yugiMuto",
+      "easy": {
+        "giocatore": 59.4,
+        "minimo": 26,
+        "massimo": 90,
+        "turni": 21.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 50.7,
+        "minimo": 28,
+        "massimo": 92,
+        "turni": 18.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 35.4,
+        "minimo": 10,
+        "massimo": 74,
+        "turni": 16.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "yamiYugi",
+      "easy": {
+        "giocatore": 67.3,
+        "minimo": 22,
+        "massimo": 100,
+        "turni": 27.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 35.4,
+        "minimo": 10,
+        "massimo": 76,
+        "turni": 15.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 30.2,
+        "minimo": 2,
+        "massimo": 82,
+        "turni": 15.6,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "kaiba",
+      "easy": {
+        "giocatore": 57.9,
+        "minimo": 32,
+        "massimo": 90,
+        "turni": 16.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 30.5,
+        "minimo": 4,
+        "massimo": 86,
+        "turni": 13.8,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 24.2,
+        "minimo": 2,
+        "massimo": 70,
+        "turni": 13.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "joey",
+      "easy": {
+        "giocatore": 73.2,
+        "minimo": 30,
+        "massimo": 96,
+        "turni": 15.6,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 35.9,
+        "minimo": 10,
+        "massimo": 70,
+        "turni": 15.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 38,
+        "minimo": 10,
+        "massimo": 72,
+        "turni": 15,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "Difficile piu' facile di Medio"
+    },
+    {
+      "duellante": "mai",
+      "easy": {
+        "giocatore": 55.3,
+        "minimo": 22,
+        "massimo": 98,
+        "turni": 17.5,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 37.2,
+        "minimo": 8,
+        "massimo": 82,
+        "turni": 16.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 24.9,
+        "minimo": 8,
+        "massimo": 70,
+        "turni": 14.5,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "pegasus",
+      "easy": {
+        "giocatore": 48.5,
+        "minimo": 20,
+        "massimo": 86,
+        "turni": 21.6,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 30.6,
+        "minimo": 8,
+        "massimo": 76,
+        "turni": 17.5,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 28.9,
+        "minimo": 4,
+        "massimo": 58,
+        "turni": 16.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "bakura",
+      "easy": {
+        "giocatore": 71.4,
+        "minimo": 36,
+        "massimo": 96,
+        "turni": 20.5,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 42.5,
+        "minimo": 10,
+        "massimo": 80,
+        "turni": 16.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 20.5,
+        "minimo": 0,
+        "massimo": 56,
+        "turni": 14.3,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "marik",
+      "easy": {
+        "giocatore": 54.2,
+        "minimo": 24,
+        "massimo": 92,
+        "turni": 21.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 24.1,
+        "minimo": 2,
+        "massimo": 66,
+        "turni": 16.6,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 18.4,
+        "minimo": 2,
+        "massimo": 52,
+        "turni": 15.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "mako",
+      "easy": {
+        "giocatore": 72.9,
+        "minimo": 44,
+        "massimo": 98,
+        "turni": 21.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 30,
+        "minimo": 6,
+        "massimo": 74,
+        "turni": 16.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 17.6,
+        "minimo": 0,
+        "massimo": 66,
+        "turni": 14.3,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "weevil",
+      "easy": {
+        "giocatore": 87.2,
+        "minimo": 64,
+        "massimo": 100,
+        "turni": 18.3,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 72.1,
+        "minimo": 42,
+        "massimo": 96,
+        "turni": 19.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 52.7,
+        "minimo": 16,
+        "massimo": 88,
+        "turni": 20.8,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "rex",
+      "easy": {
+        "giocatore": 62.5,
+        "minimo": 32,
+        "massimo": 96,
+        "turni": 16.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 38.1,
+        "minimo": 12,
+        "massimo": 74,
+        "turni": 14.3,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 26.1,
+        "minimo": 6,
+        "massimo": 76,
+        "turni": 14,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "bandit_keith",
+      "easy": {
+        "giocatore": 62.1,
+        "minimo": 34,
+        "massimo": 96,
+        "turni": 21.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 35.9,
+        "minimo": 16,
+        "massimo": 88,
+        "turni": 15.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 30.2,
+        "minimo": 8,
+        "massimo": 82,
+        "turni": 15.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "panik",
+      "easy": {
+        "giocatore": 73.8,
+        "minimo": 44,
+        "massimo": 94,
+        "turni": 21.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 42.9,
+        "minimo": 10,
+        "massimo": 84,
+        "turni": 18,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 35.3,
+        "minimo": 12,
+        "massimo": 92,
+        "turni": 17.3,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "bonz",
+      "easy": {
+        "giocatore": 79.1,
+        "minimo": 46,
+        "massimo": 100,
+        "turni": 17.8,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 43.2,
+        "minimo": 14,
+        "massimo": 92,
+        "turni": 17.5,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 30.9,
+        "minimo": 2,
+        "massimo": 76,
+        "turni": 16.5,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "odion",
+      "easy": {
+        "giocatore": 71.4,
+        "minimo": 40,
+        "massimo": 100,
+        "turni": 20.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 68.5,
+        "minimo": 38,
+        "massimo": 98,
+        "turni": 18.3,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 49.9,
+        "minimo": 22,
+        "massimo": 86,
+        "turni": 17.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "ishizu",
+      "easy": {
+        "giocatore": 65.1,
+        "minimo": 30,
+        "massimo": 98,
+        "turni": 22.8,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 51.4,
+        "minimo": 16,
+        "massimo": 94,
+        "turni": 19.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 29.5,
+        "minimo": 4,
+        "massimo": 70,
+        "turni": 18.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "espaRoba",
+      "easy": {
+        "giocatore": 69.5,
+        "minimo": 44,
+        "massimo": 92,
+        "turni": 19.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 33.1,
+        "minimo": 14,
+        "massimo": 72,
+        "turni": 16.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 22.8,
+        "minimo": 8,
+        "massimo": 60,
+        "turni": 16.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "arkana",
+      "easy": {
+        "giocatore": 72.4,
+        "minimo": 46,
+        "massimo": 100,
+        "turni": 17.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 53.6,
+        "minimo": 24,
+        "massimo": 96,
+        "turni": 16.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 27.3,
+        "minimo": 6,
+        "massimo": 76,
+        "turni": 16.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "paradoxBrothers",
+      "easy": {
+        "giocatore": 53.2,
+        "minimo": 26,
+        "massimo": 94,
+        "turni": 22,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 37.5,
+        "minimo": 10,
+        "massimo": 84,
+        "turni": 16.6,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 27.2,
+        "minimo": 10,
+        "massimo": 78,
+        "turni": 15,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "tristan",
+      "easy": {
+        "giocatore": 84.1,
+        "minimo": 58,
+        "massimo": 100,
+        "turni": 17,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 48.6,
+        "minimo": 20,
+        "massimo": 78,
+        "turni": 16.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 26.7,
+        "minimo": 4,
+        "massimo": 60,
+        "turni": 15.3,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "tea",
+      "easy": {
+        "giocatore": 68.1,
+        "minimo": 36,
+        "massimo": 96,
+        "turni": 24.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 41.9,
+        "minimo": 8,
+        "massimo": 94,
+        "turni": 21.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 28.7,
+        "minimo": 4,
+        "massimo": 86,
+        "turni": 19.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "serenity",
+      "easy": {
+        "giocatore": 76.7,
+        "minimo": 44,
+        "massimo": 98,
+        "turni": 27.8,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 50.6,
+        "minimo": 12,
+        "massimo": 94,
+        "turni": 26.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 29.1,
+        "minimo": 4,
+        "massimo": 80,
+        "turni": 22.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "duke",
+      "easy": {
+        "giocatore": 68.1,
+        "minimo": 34,
+        "massimo": 98,
+        "turni": 15.5,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 42.1,
+        "minimo": 6,
+        "massimo": 90,
+        "turni": 14.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 26.5,
+        "minimo": 6,
+        "massimo": 78,
+        "turni": 14.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "solomonMuto",
+      "easy": {
+        "giocatore": 71.2,
+        "minimo": 38,
+        "massimo": 100,
+        "turni": 21.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 44.1,
+        "minimo": 10,
+        "massimo": 84,
+        "turni": 16.8,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 26.4,
+        "minimo": 2,
+        "massimo": 72,
+        "turni": 16.3,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "simonMuran",
+      "easy": {
+        "giocatore": 66.4,
+        "minimo": 34,
+        "massimo": 96,
+        "turni": 23.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 34.8,
+        "minimo": 4,
+        "massimo": 80,
+        "turni": 19.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 21.1,
+        "minimo": 2,
+        "massimo": 60,
+        "turni": 17,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "jono",
+      "easy": {
+        "giocatore": 74.7,
+        "minimo": 42,
+        "massimo": 98,
+        "turni": 19,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 51.8,
+        "minimo": 12,
+        "massimo": 96,
+        "turni": 18.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 35.9,
+        "minimo": 10,
+        "massimo": 90,
+        "turni": 17.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "mageSoldier",
+      "easy": {
+        "giocatore": 80.6,
+        "minimo": 48,
+        "massimo": 98,
+        "turni": 18.6,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 49.5,
+        "minimo": 12,
+        "massimo": 86,
+        "turni": 18.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 24.7,
+        "minimo": 6,
+        "massimo": 66,
+        "turni": 16.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "teana",
+      "easy": {
+        "giocatore": 61.9,
+        "minimo": 36,
+        "massimo": 96,
+        "turni": 26,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 34.1,
+        "minimo": 6,
+        "massimo": 86,
+        "turni": 22,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 18,
+        "minimo": 0,
+        "massimo": 78,
+        "turni": 17.3,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "priestSeto",
+      "easy": {
+        "giocatore": 59.8,
+        "minimo": 38,
+        "massimo": 94,
+        "turni": 16.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 27.2,
+        "minimo": 2,
+        "massimo": 64,
+        "turni": 13.6,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 18.8,
+        "minimo": 4,
+        "massimo": 58,
+        "turni": 12.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "shadi",
+      "easy": {
+        "giocatore": 48.7,
+        "minimo": 22,
+        "massimo": 90,
+        "turni": 24.6,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 44.5,
+        "minimo": 12,
+        "massimo": 96,
+        "turni": 20.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 26,
+        "minimo": 8,
+        "massimo": 70,
+        "turni": 17.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "priestessIsis",
+      "easy": {
+        "giocatore": 63.5,
+        "minimo": 40,
+        "massimo": 90,
+        "turni": 26.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 51.6,
+        "minimo": 22,
+        "massimo": 94,
+        "turni": 22.8,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 30.6,
+        "minimo": 6,
+        "massimo": 84,
+        "turni": 19.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "oceanMage",
+      "easy": {
+        "giocatore": 75.4,
+        "minimo": 46,
+        "massimo": 98,
+        "turni": 17.6,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 38,
+        "minimo": 10,
+        "massimo": 86,
+        "turni": 16.8,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 26.1,
+        "minimo": 4,
+        "massimo": 68,
+        "turni": 16.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "highMageSecmeton",
+      "easy": {
+        "giocatore": 58.9,
+        "minimo": 28,
+        "massimo": 98,
+        "turni": 20.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 23.4,
+        "minimo": 8,
+        "massimo": 72,
+        "turni": 14.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 15.6,
+        "minimo": 2,
+        "massimo": 50,
+        "turni": 13.6,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "forestMage",
+      "easy": {
+        "giocatore": 79.8,
+        "minimo": 50,
+        "massimo": 100,
+        "turni": 17.6,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 47.5,
+        "minimo": 14,
+        "massimo": 88,
+        "turni": 17.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 28.5,
+        "minimo": 8,
+        "massimo": 76,
+        "turni": 16.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "highMageAnubisius",
+      "easy": {
+        "giocatore": 81.1,
+        "minimo": 56,
+        "massimo": 94,
+        "turni": 19.8,
+        "errori": 0,
+        "limite": 1
+      },
+      "medium": {
+        "giocatore": 52.4,
+        "minimo": 16,
+        "massimo": 88,
+        "turni": 17.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 42.9,
+        "minimo": 18,
+        "massimo": 78,
+        "turni": 17.3,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "mountainMage",
+      "easy": {
+        "giocatore": 71.3,
+        "minimo": 42,
+        "massimo": 96,
+        "turni": 17.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 37.5,
+        "minimo": 4,
+        "massimo": 82,
+        "turni": 15.5,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 21.8,
+        "minimo": 4,
+        "massimo": 64,
+        "turni": 14.5,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "highMageAtenza",
+      "easy": {
+        "giocatore": 70.9,
+        "minimo": 40,
+        "massimo": 100,
+        "turni": 17.3,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 33.5,
+        "minimo": 6,
+        "massimo": 82,
+        "turni": 14.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 30.9,
+        "minimo": 8,
+        "massimo": 78,
+        "turni": 14.3,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "desertMage",
+      "easy": {
+        "giocatore": 52.4,
+        "minimo": 20,
+        "massimo": 96,
+        "turni": 20.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 34.4,
+        "minimo": 6,
+        "massimo": 78,
+        "turni": 18.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 24.2,
+        "minimo": 6,
+        "massimo": 74,
+        "turni": 17.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "highMageMartis",
+      "easy": {
+        "giocatore": 60.5,
+        "minimo": 30,
+        "massimo": 88,
+        "turni": 20.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 39.1,
+        "minimo": 12,
+        "massimo": 68,
+        "turni": 16,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 23.8,
+        "minimo": 0,
+        "massimo": 60,
+        "turni": 14.6,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "meadowMage",
+      "easy": {
+        "giocatore": 74.2,
+        "minimo": 40,
+        "massimo": 98,
+        "turni": 17.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 39.3,
+        "minimo": 18,
+        "massimo": 82,
+        "turni": 15.8,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 32.1,
+        "minimo": 14,
+        "massimo": 70,
+        "turni": 15.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "highMageKepura",
+      "easy": {
+        "giocatore": 62.1,
+        "minimo": 26,
+        "massimo": 100,
+        "turni": 16.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 34.9,
+        "minimo": 6,
+        "massimo": 86,
+        "turni": 15,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 23.8,
+        "minimo": 6,
+        "massimo": 62,
+        "turni": 14.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "labyrinthMage",
+      "easy": {
+        "giocatore": 88.5,
+        "minimo": 62,
+        "massimo": 100,
+        "turni": 18.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 50.8,
+        "minimo": 26,
+        "massimo": 96,
+        "turni": 19.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 33.1,
+        "minimo": 14,
+        "massimo": 80,
+        "turni": 16,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "sebek",
+      "easy": {
+        "giocatore": 81.1,
+        "minimo": 56,
+        "massimo": 100,
+        "turni": 18.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 31.1,
+        "minimo": 4,
+        "massimo": 76,
+        "turni": 14.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 20.8,
+        "minimo": 4,
+        "massimo": 60,
+        "turni": 13.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "neku",
+      "easy": {
+        "giocatore": 71.8,
+        "minimo": 42,
+        "massimo": 96,
+        "turni": 18,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 22,
+        "minimo": 2,
+        "massimo": 64,
+        "turni": 14.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 17.2,
+        "minimo": 4,
+        "massimo": 54,
+        "turni": 13.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "heishin",
+      "easy": {
+        "giocatore": 59.2,
+        "minimo": 34,
+        "massimo": 96,
+        "turni": 17.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 22,
+        "minimo": 8,
+        "massimo": 74,
+        "turni": 13.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 8,
+        "minimo": 0,
+        "massimo": 24,
+        "turni": 12.8,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "darkNite",
+      "easy": {
+        "giocatore": 75.4,
+        "minimo": 52,
+        "massimo": 94,
+        "turni": 17.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 27.1,
+        "minimo": 16,
+        "massimo": 64,
+        "turni": 13.8,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 22.5,
+        "minimo": 4,
+        "massimo": 70,
+        "turni": 14.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "robertoGiacobbo",
+      "easy": {
+        "giocatore": 68.7,
+        "minimo": 28,
+        "massimo": 96,
+        "turni": 26.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 21.1,
+        "minimo": 2,
+        "massimo": 52,
+        "turni": 13.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 20,
+        "minimo": 6,
+        "massimo": 60,
+        "turni": 13.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "albertoAngela",
+      "easy": {
+        "giocatore": 60.4,
+        "minimo": 30,
+        "massimo": 94,
+        "turni": 17.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 24,
+        "minimo": 2,
+        "massimo": 60,
+        "turni": 15.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 18,
+        "minimo": 6,
+        "massimo": 56,
+        "turni": 12.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "alessandroBarbero",
+      "easy": {
+        "giocatore": 70,
+        "minimo": 36,
+        "massimo": 96,
+        "turni": 17.6,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 32.6,
+        "minimo": 8,
+        "massimo": 76,
+        "turni": 16.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 24.8,
+        "minimo": 4,
+        "massimo": 52,
+        "turni": 13.5,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "noah",
+      "easy": {
+        "giocatore": 84.1,
+        "minimo": 58,
+        "massimo": 100,
+        "turni": 18.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 46.8,
+        "minimo": 18,
+        "massimo": 76,
+        "turni": 18.3,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 30.1,
+        "minimo": 8,
+        "massimo": 66,
+        "turni": 20.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "gozaburo",
+      "easy": {
+        "giocatore": 81.6,
+        "minimo": 56,
+        "massimo": 100,
+        "turni": 28.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 59.5,
+        "minimo": 26,
+        "massimo": 96,
+        "turni": 22.8,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 16.9,
+        "minimo": 0,
+        "massimo": 54,
+        "turni": 20.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "gansley",
+      "easy": {
+        "giocatore": 76.1,
+        "minimo": 46,
+        "massimo": 100,
+        "turni": 24.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 41.1,
+        "minimo": 18,
+        "massimo": 82,
+        "turni": 18.5,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 26.4,
+        "minimo": 4,
+        "massimo": 74,
+        "turni": 17.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "johnson",
+      "easy": {
+        "giocatore": 70.4,
+        "minimo": 34,
+        "massimo": 96,
+        "turni": 17.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 42.2,
+        "minimo": 18,
+        "massimo": 84,
+        "turni": 14.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 27.1,
+        "minimo": 10,
+        "massimo": 68,
+        "turni": 14.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "nesbitt",
+      "easy": {
+        "giocatore": 54.1,
+        "minimo": 22,
+        "massimo": 96,
+        "turni": 20.9,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 21.2,
+        "minimo": 4,
+        "massimo": 68,
+        "turni": 15.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 17.2,
+        "minimo": 2,
+        "massimo": 66,
+        "turni": 14.5,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "crump",
+      "easy": {
+        "giocatore": 65.2,
+        "minimo": 34,
+        "massimo": 100,
+        "turni": 20.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 35.5,
+        "minimo": 12,
+        "massimo": 76,
+        "turni": 17.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 18.9,
+        "minimo": 0,
+        "massimo": 62,
+        "turni": 14.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "lector",
+      "easy": {
+        "giocatore": 65.2,
+        "minimo": 36,
+        "massimo": 90,
+        "turni": 17.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 44.5,
+        "minimo": 12,
+        "massimo": 82,
+        "turni": 20.5,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 37.6,
+        "minimo": 18,
+        "massimo": 74,
+        "turni": 23.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "seeker",
+      "easy": {
+        "giocatore": 75.4,
+        "minimo": 52,
+        "massimo": 96,
+        "turni": 38.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 75.3,
+        "minimo": 46,
+        "massimo": 92,
+        "turni": 34.5,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 64,
+        "minimo": 34,
+        "massimo": 84,
+        "turni": 26.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "strings",
+      "easy": {
+        "giocatore": 84.9,
+        "minimo": 52,
+        "massimo": 100,
+        "turni": 23.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 74.4,
+        "minimo": 38,
+        "massimo": 100,
+        "turni": 20.6,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 57.5,
+        "minimo": 30,
+        "massimo": 96,
+        "turni": 20.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "lumis",
+      "easy": {
+        "giocatore": 82.8,
+        "minimo": 62,
+        "massimo": 98,
+        "turni": 25.3,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 80,
+        "minimo": 58,
+        "massimo": 100,
+        "turni": 24.3,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 72.5,
+        "minimo": 46,
+        "massimo": 96,
+        "turni": 20.5,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "umbra",
+      "easy": {
+        "giocatore": 74,
+        "minimo": 48,
+        "massimo": 96,
+        "turni": 27.7,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 73.3,
+        "minimo": 48,
+        "massimo": 94,
+        "turni": 24.2,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 64.9,
+        "minimo": 32,
+        "massimo": 100,
+        "turni": 22.4,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    },
+    {
+      "duellante": "nitemare",
+      "easy": {
+        "giocatore": 74.9,
+        "minimo": 46,
+        "massimo": 98,
+        "turni": 17,
+        "errori": 0,
+        "limite": 0
+      },
+      "medium": {
+        "giocatore": 28.1,
+        "minimo": 10,
+        "massimo": 76,
+        "turni": 14,
+        "errori": 0,
+        "limite": 0
+      },
+      "hard": {
+        "giocatore": 3.3,
+        "minimo": 0,
+        "massimo": 12,
+        "turni": 12.1,
+        "errori": 0,
+        "limite": 0
+      },
+      "progressione": "ok"
+    }
+  ],
+  "perDeck": [
+    {
+      "deck": "starter_sdy_yugi",
+      "tipo": "starter",
+      "easy": 72,
+      "medium": 34.1,
+      "hard": 21.2,
+      "media": 42.4
+    },
+    {
+      "deck": "starter_sdk_kaiba",
+      "tipo": "starter",
+      "easy": 68,
+      "medium": 30.6,
+      "hard": 19.5,
+      "media": 39.4
+    },
+    {
+      "deck": "starter_sdj_joey",
+      "tipo": "starter",
+      "easy": 47.6,
+      "medium": 21.7,
+      "hard": 13.6,
+      "media": 27.6
+    },
+    {
+      "deck": "starter_sdp_pegasus",
+      "tipo": "starter",
+      "easy": 43.3,
+      "medium": 16.7,
+      "hard": 11.3,
+      "media": 23.8
+    },
+    {
+      "deck": "starter_sye_yugi_evolution",
+      "tipo": "starter",
+      "easy": 80.5,
+      "medium": 48.7,
+      "hard": 31.2,
+      "media": 53.5
+    },
+    {
+      "deck": "starter_ske_kaiba_evolution",
+      "tipo": "starter",
+      "easy": 72.9,
+      "medium": 36.9,
+      "hard": 22,
+      "media": 43.9
+    },
+    {
+      "deck": "structure_sd1_dragons_roar",
+      "tipo": "structure",
+      "easy": 54.7,
+      "medium": 33.2,
+      "hard": 22.3,
+      "media": 36.7
+    },
+    {
+      "deck": "structure_sd2_zombie_madness",
+      "tipo": "structure",
+      "easy": 58.6,
+      "medium": 43.2,
+      "hard": 33.1,
+      "media": 45
+    },
+    {
+      "deck": "structure_sd3_blaze_of_destruction",
+      "tipo": "structure",
+      "easy": 81.5,
+      "medium": 59,
+      "hard": 45.6,
+      "media": 62
+    },
+    {
+      "deck": "structure_sd4_fury_from_the_deep",
+      "tipo": "structure",
+      "easy": 77.5,
+      "medium": 54,
+      "hard": 42.4,
+      "media": 58
+    },
+    {
+      "deck": "structure_sd5_warriors_triumph",
+      "tipo": "structure",
+      "easy": 78.2,
+      "medium": 50.3,
+      "hard": 31.5,
+      "media": 53.3
+    },
+    {
+      "deck": "structure_sd6_spellcasters_judgment",
+      "tipo": "structure",
+      "easy": 82.3,
+      "medium": 56,
+      "hard": 36.4,
+      "media": 58.2
+    },
+    {
+      "deck": "structure_sd7_invincible_fortress",
+      "tipo": "structure",
+      "easy": 61.6,
+      "medium": 33.9,
+      "hard": 21.4,
+      "media": 39
+    },
+    {
+      "deck": "structure_sd8_lord_of_the_storm",
+      "tipo": "structure",
+      "easy": 75.8,
+      "medium": 41.4,
+      "hard": 25.9,
+      "media": 47.7
+    },
+    {
+      "deck": "structure_sd9_dinosaurs_rage",
+      "tipo": "structure",
+      "easy": 79.1,
+      "medium": 45.8,
+      "hard": 28.7,
+      "media": 51.2
+    },
+    {
+      "deck": "structure_sd10_machine_revolt",
+      "tipo": "structure",
+      "easy": 49,
+      "medium": 22,
+      "hard": 12.7,
+      "media": 27.9
+    },
+    {
+      "deck": "custom",
+      "tipo": "custom",
+      "easy": 96.3,
+      "medium": 82.2,
+      "hard": 69.6,
+      "media": 82.7
+    }
+  ],
+  "errori": []
+}

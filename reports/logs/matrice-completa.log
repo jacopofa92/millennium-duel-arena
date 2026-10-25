@@ -1,0 +1,133 @@
+﻿Matrice: 17 deck x 61 duellanti x 3 livelli x 50 partite = 155550 duelli.
+Da giocare: 1037 coppie (0 gia' fatte). Lavoratori: 12.
+  25/1037 coppie, 62 s trascorsi, ~41.9 min mancanti
+  50/1037 coppie, 106 s trascorsi, ~34.9 min mancanti
+  75/1037 coppie, 152 s trascorsi, ~32.4 min mancanti
+  100/1037 coppie, 197 s trascorsi, ~30.7 min mancanti
+  125/1037 coppie, 244 s trascorsi, ~29.7 min mancanti
+  150/1037 coppie, 296 s trascorsi, ~29.2 min mancanti
+  175/1037 coppie, 344 s trascorsi, ~28.2 min mancanti
+  200/1037 coppie, 393 s trascorsi, ~27.4 min mancanti
+  225/1037 coppie, 442 s trascorsi, ~26.6 min mancanti
+  250/1037 coppie, 490 s trascorsi, ~25.7 min mancanti
+  275/1037 coppie, 552 s trascorsi, ~25.5 min mancanti
+  300/1037 coppie, 603 s trascorsi, ~24.7 min mancanti
+  325/1037 coppie, 654 s trascorsi, ~23.9 min mancanti
+  350/1037 coppie, 709 s trascorsi, ~23.2 min mancanti
+  375/1037 coppie, 779 s trascorsi, ~22.9 min mancanti
+  400/1037 coppie, 841 s trascorsi, ~22.3 min mancanti
+  425/1037 coppie, 900 s trascorsi, ~21.6 min mancanti
+  450/1037 coppie, 960 s trascorsi, ~20.9 min mancanti
+  475/1037 coppie, 1013 s trascorsi, ~20.0 min mancanti
+  500/1037 coppie, 1063 s trascorsi, ~19.0 min mancanti
+  525/1037 coppie, 1113 s trascorsi, ~18.1 min mancanti
+  550/1037 coppie, 1167 s trascorsi, ~17.2 min mancanti
+  575/1037 coppie, 1219 s trascorsi, ~16.3 min mancanti
+  600/1037 coppie, 1275 s trascorsi, ~15.5 min mancanti
+  625/1037 coppie, 1319 s trascorsi, ~14.5 min mancanti
+  650/1037 coppie, 1362 s trascorsi, ~13.5 min mancanti
+  675/1037 coppie, 1413 s trascorsi, ~12.6 min mancanti
+  700/1037 coppie, 1471 s trascorsi, ~11.8 min mancanti
+  725/1037 coppie, 1519 s trascorsi, ~10.9 min mancanti
+  750/1037 coppie, 1570 s trascorsi, ~10.0 min mancanti
+  775/1037 coppie, 1620 s trascorsi, ~9.1 min mancanti
+  800/1037 coppie, 1673 s trascorsi, ~8.3 min mancanti
+  825/1037 coppie, 1722 s trascorsi, ~7.4 min mancanti
+  850/1037 coppie, 1773 s trascorsi, ~6.5 min mancanti
+  875/1037 coppie, 1816 s trascorsi, ~5.6 min mancanti
+  900/1037 coppie, 1860 s trascorsi, ~4.7 min mancanti
+  925/1037 coppie, 1910 s trascorsi, ~3.9 min mancanti
+  950/1037 coppie, 1956 s trascorsi, ~3.0 min mancanti
+  975/1037 coppie, 2003 s trascorsi, ~2.1 min mancanti
+  1000/1037 coppie, 2049 s trascorsi, ~1.3 min mancanti
+  1025/1037 coppie, 2090 s trascorsi, ~0.4 min mancanti
+  1037/1037 coppie, 2113 s trascorsi, ~0.0 min mancanti
+Fine: 35.2 minuti.
+
+=== GLOBALE (vittorie del GIOCATORE, tutti i deck x tutti i duellanti)
+  easy    69.4%  (51850 duelli)
+  medium  41.7%  (51850 duelli)
+  hard    28.7%  (51850 duelli)
+  Duelli totali: 155550, al limite di turni: 1, partite con errori: 0
+
+=== PER DECK DEL GIOCATORE (vittorie % contro tutti i duellanti)
+  custom                                   F  96.3  M  82.2  D  69.6  media  82.7
+  structure_sd3_blaze_of_destruction       F  81.5  M    59  D  45.6  media    62
+  structure_sd6_spellcasters_judgment      F  82.3  M    56  D  36.4  media  58.2
+  structure_sd4_fury_from_the_deep         F  77.5  M    54  D  42.4  media    58
+  starter_sye_yugi_evolution               F  80.5  M  48.7  D  31.2  media  53.5
+  structure_sd5_warriors_triumph           F  78.2  M  50.3  D  31.5  media  53.3
+  structure_sd9_dinosaurs_rage             F  79.1  M  45.8  D  28.7  media  51.2
+  structure_sd8_lord_of_the_storm          F  75.8  M  41.4  D  25.9  media  47.7
+  structure_sd2_zombie_madness             F  58.6  M  43.2  D  33.1  media    45
+  starter_ske_kaiba_evolution              F  72.9  M  36.9  D    22  media  43.9
+  starter_sdy_yugi                         F    72  M  34.1  D  21.2  media  42.4
+  starter_sdk_kaiba                        F    68  M  30.6  D  19.5  media  39.4
+  structure_sd7_invincible_fortress        F  61.6  M  33.9  D  21.4  media    39
+  structure_sd1_dragons_roar               F  54.7  M  33.2  D  22.3  media  36.7
+  structure_sd10_machine_revolt            F    49  M    22  D  12.7  media  27.9
+  starter_sdj_joey                         F  47.6  M  21.7  D  13.6  media  27.6
+  starter_sdp_pegasus                      F  43.3  M  16.7  D  11.3  media  23.8
+
+=== PER DUELLANTE (vittorie % del giocatore, media dei deck) — ordinati per difficolta' a Difficile
+  nitemare             F  74.9  M  28.1  D   3.3  
+  heishin              F  59.2  M    22  D     8  
+  highMageSecmeton     F  58.9  M  23.4  D  15.6  
+  gozaburo             F  81.6  M  59.5  D  16.9  
+  neku                 F  71.8  M    22  D  17.2  
+  nesbitt              F  54.1  M  21.2  D  17.2  
+  mako                 F  72.9  M    30  D  17.6  
+  teana                F  61.9  M  34.1  D    18  
+  albertoAngela        F  60.4  M    24  D    18  
+  marik                F  54.2  M  24.1  D  18.4  
+  priestSeto           F  59.8  M  27.2  D  18.8  
+  crump                F  65.2  M  35.5  D  18.9  
+  robertoGiacobbo      F  68.7  M  21.1  D    20  
+  bakura               F  71.4  M  42.5  D  20.5  
+  sebek                F  81.1  M  31.1  D  20.8  
+  simonMuran           F  66.4  M  34.8  D  21.1  
+  mountainMage         F  71.3  M  37.5  D  21.8  
+  darkNite             F  75.4  M  27.1  D  22.5  
+  espaRoba             F  69.5  M  33.1  D  22.8  
+  highMageMartis       F  60.5  M  39.1  D  23.8  
+  highMageKepura       F  62.1  M  34.9  D  23.8  
+  kaiba                F  57.9  M  30.5  D  24.2  
+  desertMage           F  52.4  M  34.4  D  24.2  
+  mageSoldier          F  80.6  M  49.5  D  24.7  
+  alessandroBarbero    F    70  M  32.6  D  24.8  
+  mai                  F  55.3  M  37.2  D  24.9  
+  shadi                F  48.7  M  44.5  D    26  
+  rex                  F  62.5  M  38.1  D  26.1  
+  oceanMage            F  75.4  M    38  D  26.1  
+  solomonMuto          F  71.2  M  44.1  D  26.4  
+  gansley              F  76.1  M  41.1  D  26.4  
+  duke                 F  68.1  M  42.1  D  26.5  
+  tristan              F  84.1  M  48.6  D  26.7  
+  johnson              F  70.4  M  42.2  D  27.1  
+  paradoxBrothers      F  53.2  M  37.5  D  27.2  
+  arkana               F  72.4  M  53.6  D  27.3  
+  forestMage           F  79.8  M  47.5  D  28.5  
+  tea                  F  68.1  M  41.9  D  28.7  
+  pegasus              F  48.5  M  30.6  D  28.9  
+  serenity             F  76.7  M  50.6  D  29.1  
+  ishizu               F  65.1  M  51.4  D  29.5  
+  noah                 F  84.1  M  46.8  D  30.1  
+  yamiYugi             F  67.3  M  35.4  D  30.2  
+  bandit_keith         F  62.1  M  35.9  D  30.2  
+  priestessIsis        F  63.5  M  51.6  D  30.6  
+  bonz                 F  79.1  M  43.2  D  30.9  
+  highMageAtenza       F  70.9  M  33.5  D  30.9  
+  meadowMage           F  74.2  M  39.3  D  32.1  
+  labyrinthMage        F  88.5  M  50.8  D  33.1  
+  panik                F  73.8  M  42.9  D  35.3  
+  yugiMuto             F  59.4  M  50.7  D  35.4  
+  jono                 F  74.7  M  51.8  D  35.9  
+  lector               F  65.2  M  44.5  D  37.6  
+  joey                 F  73.2  M  35.9  D    38  << Difficile piu' facile di Medio
+  highMageAnubisius    F  81.1  M  52.4  D  42.9  
+  odion                F  71.4  M  68.5  D  49.9  
+  weevil               F  87.2  M  72.1  D  52.7  
+  strings              F  84.9  M  74.4  D  57.5  
+  seeker               F  75.4  M  75.3  D    64  
+  umbra                F    74  M  73.3  D  64.9  
+  lumis                F  82.8  M    80  D  72.5  

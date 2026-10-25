@@ -8,6 +8,8 @@ sono separati per area per evitare di affollare la radice del repository:
 - `logs/`: log diagnostici conservati come riferimento;
 - `pegasus/`: verifiche dedicate alle strategie di Pegasus;
 - `story/`: simulazioni della storia e della progressione delle difficoltà.
+- `matrix/`: la matrice completa deck x duellanti x livelli (`matrice-completa.jsonl` e riassunti), prodotta da
+  `tools/audit-matrice-completa.js` e commentata in `docs/audits/FULL_MATRIX_AUDIT.md`;
 - `archetypes/`: baseline e confronti dei supporti moderni per gli archetipi
   classici; l'eventuale deck personale `Custom` resta una metrica separata.
 
