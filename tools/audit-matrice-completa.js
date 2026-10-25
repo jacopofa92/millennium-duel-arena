@@ -53,14 +53,19 @@ function caricaGlobale(file, espressione) {
 async function eseguiCoppia(t) {
     const { giocaPartita } = require('./duello-senza-testa.js');
     const celle = {};
-    for (const livello of LIVELLI) {
+    // Modalita' normale: le tre celle sono Facile/Medio/Difficile (mazzo e IA insieme, come nel gioco). Con --incrocia le celle sono
+    // le NOVE combinazioni mazzo x IA (chiave "mazzo-IA"), per separare quanto della difficolta' viene dal mazzo e quanto dall'IA.
+    const combinazioni = t.incrocia ? LIVELLI.flatMap((m) => LIVELLI.map((i) => ({ chiave: m + '-' + i, mazzo: m, ia: i })))
+        : LIVELLI.map((l) => ({ chiave: l, mazzo: l, ia: l }));
+    for (const comb of combinazioni) {
+        const livello = comb.ia;
         const c = { vittorie: 0, sconfitte: 0, altro: 0, alLimite: 0, turni: 0, errori: 0, messaggi: [], ms: 0 };
         const inizio = Date.now();
         for (let p = 0; p < t.partite; p++) {
             let r;
             try {
                 r = await giocaPartita({
-                    avversario: t.duellante, livello, livelloGiocatore: t.iaGiocatore,
+                    avversario: t.duellante, livello, livelloDeckAvversario: comb.mazzo, livelloGiocatore: t.iaGiocatore,
                     mazzoGiocatore: t.deck, seme: t.seme + p, turni: t.turni
                 }, 0);
             } catch (e) {
@@ -81,7 +86,7 @@ async function eseguiCoppia(t) {
             }
         }
         c.ms = Date.now() - inizio;
-        celle[livello] = c;
+        celle[comb.chiave] = c;
     }
     return celle;
 }
@@ -99,6 +104,7 @@ function opzioni() {
         deckCustom: arg('deck-custom', 'reports/archetypes/CLASSIC_ARCHETYPES_WITH_CUSTOM.json'),
         uscita: arg('uscita', 'reports/matrix'),
         soloDeck: arg('deck', null),
+        incrocia: ha('incrocia'),
         soloDuellanti: arg('duellanti', null)
     };
 }
@@ -117,7 +123,7 @@ function elencoDeck(o) {
     } else {
         console.log(`(!) Deck Custom non trovato in ${o.deckCustom}: la matrice parte senza.`);
     }
-    return o.soloDeck ? decks.filter((d) => d.id === o.soloDeck) : decks;
+    return o.soloDeck ? decks.filter((d) => o.soloDeck.split(',').map((x) => x.trim()).includes(d.id)) : decks;
 }
 
 function elencoDuellanti(o) {
@@ -136,7 +142,7 @@ async function principale() {
     const duellanti = elencoDuellanti(o);
     if (!decks.length || !duellanti.length) throw new Error('Nessun deck o nessun duellante corrisponde ai filtri.');
     fs.mkdirSync(path.join(RADICE, o.uscita), { recursive: true });
-    const file = path.join(RADICE, o.uscita, 'matrice-completa.jsonl');
+    const file = path.join(RADICE, o.uscita, o.incrocia ? 'matrice-incrociata.jsonl' : 'matrice-completa.jsonl');
 
     const fatte = new Map();
     if (fs.existsSync(file) && ha('riprendi')) {
@@ -151,7 +157,7 @@ async function principale() {
     decks.forEach((d, indiceDeck) => duellanti.forEach((duellante, indiceDuellante) => {
         if (fatte.has(d.id + '|' + duellante)) return;
         compiti.push({ chiave: d.id + '|' + duellante, deckId: d.id, deck: d.deck, duellante, partite: o.partite, turni: o.turni,
-            iaGiocatore: o.iaGiocatore,
+            iaGiocatore: o.iaGiocatore, incrocia: o.incrocia,
             // Un blocco di semi per coppia, uguale ai tre livelli: indipendente dall'ordine in cui i compiti vengono eseguiti.
             seme: o.seme + indiceDeck * 1000000 + indiceDuellante * 1000 });
     }));
@@ -199,7 +205,27 @@ async function principale() {
     });
     if (falliti.length) console.log(`(!) Coppie non completate (lavoratore caduto): ${falliti.join(', ')}`);
     console.log(`Fine: ${((Date.now() - inizio) / 60000).toFixed(1)} minuti.`);
-    riassumi(o, decks, duellanti);
+    if (o.incrocia) riassumiIncrociata(o, decks, duellanti); else riassumi(o, decks, duellanti);
+}
+
+/** Tabella 3x3 per duellante: righe = livello del MAZZO avversario, colonne = livello dell'IA; valori = vittorie % del giocatore. */
+function riassumiIncrociata(o, decks, duellanti) {
+    const file = path.join(RADICE, o.uscita, 'matrice-incrociata.jsonl');
+    const righe = fs.readFileSync(file, 'utf8').split('\n').filter(Boolean).map((r) => JSON.parse(r));
+    const out = [];
+    (duellanti || [...new Set(righe.map((r) => r.duellante))]).forEach((duellante) => {
+        const mie = righe.filter((r) => r.duellante === duellante);
+        const cella = {};
+        LIVELLI.forEach((m) => LIVELLI.forEach((i) => {
+            const v = mie.reduce((n, r) => n + r.celle[m + '-' + i].vittorie, 0);
+            const tot = mie.reduce((n, r) => n + r.celle[m + '-' + i].vittorie + r.celle[m + '-' + i].sconfitte + r.celle[m + '-' + i].altro, 0);
+            cella[m + '-' + i] = percentuale(v, tot);
+        }));
+        out.push({ duellante, cella });
+        console.log('\n' + duellante + '   (righe: mazzo F/M/D, colonne: IA F/M/D)');
+        LIVELLI.forEach((m) => console.log('   mazzo ' + m.padEnd(6) + LIVELLI.map((i) => String(cella[m + '-' + i]).padStart(7)).join('')));
+    });
+    fs.writeFileSync(path.join(RADICE, o.uscita, 'MATRICE_INCROCIATA.json'), JSON.stringify(out, null, 2));
 }
 
 // ---------------------------------------------------------------------------
@@ -270,6 +296,8 @@ if (ha('lavoratore')) {
         const celle = await eseguiCoppia(compito);
         process.send(celle);
     });
+} else if (ha('riassumi') && ha('incrocia')) {
+    riassumiIncrociata(opzioni(), null, null);
 } else if (ha('riassumi')) {
     riassumi(opzioni(), null, null);
 } else {

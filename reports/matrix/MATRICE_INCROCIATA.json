@@ -1,0 +1,226 @@
+[
+  {
+    "duellante": "lumis",
+    "cella": {
+      "easy-easy": 90,
+      "easy-medium": 90,
+      "easy-hard": 90.8,
+      "medium-easy": 89.3,
+      "medium-medium": 89.3,
+      "medium-hard": 89.3,
+      "hard-easy": 78.5,
+      "hard-medium": 78.5,
+      "hard-hard": 79.3
+    }
+  },
+  {
+    "duellante": "seeker",
+    "cella": {
+      "easy-easy": 88.5,
+      "easy-medium": 88.5,
+      "easy-hard": 83.3,
+      "medium-easy": 83.8,
+      "medium-medium": 83.8,
+      "medium-hard": 83.5,
+      "hard-easy": 69,
+      "hard-medium": 69,
+      "hard-hard": 67
+    }
+  },
+  {
+    "duellante": "umbra",
+    "cella": {
+      "easy-easy": 84.3,
+      "easy-medium": 84.3,
+      "easy-hard": 84,
+      "medium-easy": 82.3,
+      "medium-medium": 82.3,
+      "medium-hard": 81,
+      "hard-easy": 76.8,
+      "hard-medium": 76.8,
+      "hard-hard": 74
+    }
+  },
+  {
+    "duellante": "strings",
+    "cella": {
+      "easy-easy": 90.3,
+      "easy-medium": 90.3,
+      "easy-hard": 90.8,
+      "medium-easy": 83.3,
+      "medium-medium": 83.3,
+      "medium-hard": 82,
+      "hard-easy": 71.8,
+      "hard-medium": 71.8,
+      "hard-hard": 65
+    }
+  },
+  {
+    "duellante": "weevil",
+    "cella": {
+      "easy-easy": 93.3,
+      "easy-medium": 93.3,
+      "easy-hard": 92.8,
+      "medium-easy": 80.3,
+      "medium-medium": 80.3,
+      "medium-hard": 78.3,
+      "hard-easy": 61,
+      "hard-medium": 61,
+      "hard-hard": 59.5
+    }
+  },
+  {
+    "duellante": "odion",
+    "cella": {
+      "easy-easy": 81.3,
+      "easy-medium": 80.5,
+      "easy-hard": 76.3,
+      "medium-easy": 75.3,
+      "medium-medium": 74.3,
+      "medium-hard": 74,
+      "hard-easy": 58.5,
+      "hard-medium": 58.3,
+      "hard-hard": 53
+    }
+  },
+  {
+    "duellante": "joey",
+    "cella": {
+      "easy-easy": 81.3,
+      "easy-medium": 81.3,
+      "easy-hard": 77.8,
+      "medium-easy": 41.5,
+      "medium-medium": 41.5,
+      "medium-hard": 38.5,
+      "hard-easy": 49,
+      "hard-medium": 49,
+      "hard-hard": 44.5
+    }
+  },
+  {
+    "duellante": "pegasus",
+    "cella": {
+      "easy-easy": 59.8,
+      "easy-medium": 59.8,
+      "easy-hard": 58.8,
+      "medium-easy": 40.3,
+      "medium-medium": 40.3,
+      "medium-hard": 33.8,
+      "hard-easy": 39.8,
+      "hard-medium": 39.8,
+      "hard-hard": 34.3
+    }
+  },
+  {
+    "duellante": "highMageAtenza",
+    "cella": {
+      "easy-easy": 78.8,
+      "easy-medium": 78.8,
+      "easy-hard": 77.8,
+      "medium-easy": 38.3,
+      "medium-medium": 38.3,
+      "medium-hard": 36.5,
+      "hard-easy": 35.8,
+      "hard-medium": 35.8,
+      "hard-hard": 34
+    }
+  },
+  {
+    "duellante": "neku",
+    "cella": {
+      "easy-easy": 80.8,
+      "easy-medium": 80.8,
+      "easy-hard": 78.5,
+      "medium-easy": 25.5,
+      "medium-medium": 25.5,
+      "medium-hard": 24.5,
+      "hard-easy": 21.5,
+      "hard-medium": 21.5,
+      "hard-hard": 18.8
+    }
+  },
+  {
+    "duellante": "nesbitt",
+    "cella": {
+      "easy-easy": 57.5,
+      "easy-medium": 57.5,
+      "easy-hard": 53.5,
+      "medium-easy": 21.5,
+      "medium-medium": 21.5,
+      "medium-hard": 21.8,
+      "hard-easy": 21.3,
+      "hard-medium": 21.3,
+      "hard-hard": 19.3
+    }
+  },
+  {
+    "duellante": "darkNite",
+    "cella": {
+      "easy-easy": 84.5,
+      "easy-medium": 84.5,
+      "easy-hard": 83,
+      "medium-easy": 31.8,
+      "medium-medium": 31.8,
+      "medium-hard": 29.8,
+      "hard-easy": 27.5,
+      "hard-medium": 27.5,
+      "hard-hard": 25.8
+    }
+  },
+  {
+    "duellante": "nitemare",
+    "cella": {
+      "easy-easy": 83.5,
+      "easy-medium": 83.5,
+      "easy-hard": 81.5,
+      "medium-easy": 30.3,
+      "medium-medium": 30.3,
+      "medium-hard": 29.8,
+      "hard-easy": 5.8,
+      "hard-medium": 5.8,
+      "hard-hard": 4.3
+    }
+  },
+  {
+    "duellante": "heishin",
+    "cella": {
+      "easy-easy": 61.8,
+      "easy-medium": 61.8,
+      "easy-hard": 59,
+      "medium-easy": 22.8,
+      "medium-medium": 22.8,
+      "medium-hard": 22.3,
+      "hard-easy": 9.5,
+      "hard-medium": 9.5,
+      "hard-hard": 10
+    }
+  },
+  {
+    "duellante": "robertoGiacobbo",
+    "cella": {
+      "easy-easy": 79.8,
+      "easy-medium": 79.8,
+      "easy-hard": 78,
+      "medium-easy": 21.8,
+      "medium-medium": 21.8,
+      "medium-hard": 21.8,
+      "hard-easy": 22.8,
+      "hard-medium": 22.8,
+      "hard-hard": 22
+    }
+  },
+  {
+    "duellante": "shadi",
+    "cella": {
+      "easy-easy": 53.8,
+      "easy-medium": 53.8,
+      "easy-hard": 52.8,
+      "medium-easy": 50.8,
+      "medium-medium": 50.8,
+      "medium-hard": 34.8,
+      "hard-easy": 47.3,
+      "hard-medium": 47.3,
+      "hard-hard": 29.3
+    }
+  }
+]

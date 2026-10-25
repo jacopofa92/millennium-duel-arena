@@ -1,0 +1,1514 @@
+{
+ "lumis|easy|40|structure_sd3_blaze_of_destruction": {
+  "chiave": "lumis|easy|40|structure_sd3_blaze_of_destruction",
+  "v": 44,
+  "s": 6,
+  "a": 0,
+  "turni": 995
+ },
+ "lumis|easy|50|structure_sd3_blaze_of_destruction": {
+  "chiave": "lumis|easy|50|structure_sd3_blaze_of_destruction",
+  "v": 44,
+  "s": 6,
+  "a": 0,
+  "turni": 1019
+ },
+ "lumis|easy|40|structure_sd6_spellcasters_judgment": {
+  "chiave": "lumis|easy|40|structure_sd6_spellcasters_judgment",
+  "v": 48,
+  "s": 2,
+  "a": 0,
+  "turni": 1278
+ },
+ "lumis|easy|40|starter_ske_kaiba_evolution": {
+  "chiave": "lumis|easy|40|starter_ske_kaiba_evolution",
+  "v": 46,
+  "s": 4,
+  "a": 0,
+  "turni": 1543
+ },
+ "lumis|easy|40|starter_sye_yugi_evolution": {
+  "chiave": "lumis|easy|40|starter_sye_yugi_evolution",
+  "v": 46,
+  "s": 4,
+  "a": 0,
+  "turni": 1343
+ },
+ "lumis|easy|50|starter_sye_yugi_evolution": {
+  "chiave": "lumis|easy|50|starter_sye_yugi_evolution",
+  "v": 48,
+  "s": 2,
+  "a": 0,
+  "turni": 1294
+ },
+ "lumis|easy|50|structure_sd6_spellcasters_judgment": {
+  "chiave": "lumis|easy|50|structure_sd6_spellcasters_judgment",
+  "v": 48,
+  "s": 2,
+  "a": 0,
+  "turni": 1311
+ },
+ "lumis|easy|40|starter_sdy_yugi": {
+  "chiave": "lumis|easy|40|starter_sdy_yugi",
+  "v": 44,
+  "s": 6,
+  "a": 0,
+  "turni": 1541
+ },
+ "lumis|easy|50|starter_sdy_yugi": {
+  "chiave": "lumis|easy|50|starter_sdy_yugi",
+  "v": 41,
+  "s": 9,
+  "a": 0,
+  "turni": 1656
+ },
+ "lumis|easy|50|starter_ske_kaiba_evolution": {
+  "chiave": "lumis|easy|50|starter_ske_kaiba_evolution",
+  "v": 44,
+  "s": 6,
+  "a": 0,
+  "turni": 1805
+ },
+ "lumis|easy|50|structure_sd4_fury_from_the_deep": {
+  "chiave": "lumis|easy|50|structure_sd4_fury_from_the_deep",
+  "v": 44,
+  "s": 6,
+  "a": 0,
+  "turni": 1609
+ },
+ "lumis|easy|40|structure_sd4_fury_from_the_deep": {
+  "chiave": "lumis|easy|40|structure_sd4_fury_from_the_deep",
+  "v": 48,
+  "s": 2,
+  "a": 0,
+  "turni": 1844
+ },
+ "lumis|easy|60|structure_sd3_blaze_of_destruction": {
+  "chiave": "lumis|easy|60|structure_sd3_blaze_of_destruction",
+  "v": 40,
+  "s": 10,
+  "a": 0,
+  "turni": 889
+ },
+ "lumis|hard|40|structure_sd3_blaze_of_destruction": {
+  "chiave": "lumis|hard|40|structure_sd3_blaze_of_destruction",
+  "v": 34,
+  "s": 16,
+  "a": 0,
+  "turni": 825
+ },
+ "lumis|easy|60|structure_sd6_spellcasters_judgment": {
+  "chiave": "lumis|easy|60|structure_sd6_spellcasters_judgment",
+  "v": 44,
+  "s": 6,
+  "a": 0,
+  "turni": 1229
+ },
+ "lumis|easy|60|starter_sye_yugi_evolution": {
+  "chiave": "lumis|easy|60|starter_sye_yugi_evolution",
+  "v": 48,
+  "s": 2,
+  "a": 0,
+  "turni": 1215
+ },
+ "lumis|hard|40|structure_sd6_spellcasters_judgment": {
+  "chiave": "lumis|hard|40|structure_sd6_spellcasters_judgment",
+  "v": 43,
+  "s": 7,
+  "a": 0,
+  "turni": 925
+ },
+ "lumis|easy|60|structure_sd4_fury_from_the_deep": {
+  "chiave": "lumis|easy|60|structure_sd4_fury_from_the_deep",
+  "v": 36,
+  "s": 14,
+  "a": 0,
+  "turni": 1455
+ },
+ "lumis|hard|40|structure_sd4_fury_from_the_deep": {
+  "chiave": "lumis|hard|40|structure_sd4_fury_from_the_deep",
+  "v": 40,
+  "s": 10,
+  "a": 0,
+  "turni": 1126
+ },
+ "lumis|hard|40|starter_sye_yugi_evolution": {
+  "chiave": "lumis|hard|40|starter_sye_yugi_evolution",
+  "v": 47,
+  "s": 3,
+  "a": 0,
+  "turni": 1105
+ },
+ "lumis|easy|60|starter_sdy_yugi": {
+  "chiave": "lumis|easy|60|starter_sdy_yugi",
+  "v": 31,
+  "s": 19,
+  "a": 0,
+  "turni": 1479
+ },
+ "lumis|easy|60|starter_ske_kaiba_evolution": {
+  "chiave": "lumis|easy|60|starter_ske_kaiba_evolution",
+  "v": 41,
+  "s": 9,
+  "a": 0,
+  "turni": 1644
+ },
+ "lumis|hard|40|starter_ske_kaiba_evolution": {
+  "chiave": "lumis|hard|40|starter_ske_kaiba_evolution",
+  "v": 40,
+  "s": 10,
+  "a": 0,
+  "turni": 1172
+ },
+ "lumis|hard|40|starter_sdy_yugi": {
+  "chiave": "lumis|hard|40|starter_sdy_yugi",
+  "v": 40,
+  "s": 10,
+  "a": 0,
+  "turni": 970
+ },
+ "lumis|hard|50|structure_sd3_blaze_of_destruction": {
+  "chiave": "lumis|hard|50|structure_sd3_blaze_of_destruction",
+  "v": 39,
+  "s": 11,
+  "a": 0,
+  "turni": 937
+ },
+ "lumis|hard|50|structure_sd6_spellcasters_judgment": {
+  "chiave": "lumis|hard|50|structure_sd6_spellcasters_judgment",
+  "v": 35,
+  "s": 15,
+  "a": 0,
+  "turni": 1135
+ },
+ "lumis|hard|50|structure_sd4_fury_from_the_deep": {
+  "chiave": "lumis|hard|50|structure_sd4_fury_from_the_deep",
+  "v": 42,
+  "s": 8,
+  "a": 0,
+  "turni": 1252
+ },
+ "lumis|hard|50|starter_sye_yugi_evolution": {
+  "chiave": "lumis|hard|50|starter_sye_yugi_evolution",
+  "v": 39,
+  "s": 11,
+  "a": 0,
+  "turni": 1205
+ },
+ "lumis|hard|60|structure_sd3_blaze_of_destruction": {
+  "chiave": "lumis|hard|60|structure_sd3_blaze_of_destruction",
+  "v": 30,
+  "s": 20,
+  "a": 0,
+  "turni": 980
+ },
+ "lumis|hard|50|starter_sdy_yugi": {
+  "chiave": "lumis|hard|50|starter_sdy_yugi",
+  "v": 39,
+  "s": 11,
+  "a": 0,
+  "turni": 1259
+ },
+ "lumis|hard|50|starter_ske_kaiba_evolution": {
+  "chiave": "lumis|hard|50|starter_ske_kaiba_evolution",
+  "v": 31,
+  "s": 19,
+  "a": 0,
+  "turni": 1480
+ },
+ "lumis|hard|60|starter_ske_kaiba_evolution": {
+  "chiave": "lumis|hard|60|starter_ske_kaiba_evolution",
+  "v": 24,
+  "s": 26,
+  "a": 0,
+  "turni": 1348
+ },
+ "lumis|hard|60|structure_sd6_spellcasters_judgment": {
+  "chiave": "lumis|hard|60|structure_sd6_spellcasters_judgment",
+  "v": 34,
+  "s": 16,
+  "a": 0,
+  "turni": 1320
+ },
+ "lumis|hard|60|starter_sye_yugi_evolution": {
+  "chiave": "lumis|hard|60|starter_sye_yugi_evolution",
+  "v": 32,
+  "s": 18,
+  "a": 0,
+  "turni": 1338
+ },
+ "lumis|hard|60|structure_sd4_fury_from_the_deep": {
+  "chiave": "lumis|hard|60|structure_sd4_fury_from_the_deep",
+  "v": 32,
+  "s": 18,
+  "a": 0,
+  "turni": 1374
+ },
+ "lumis|hard|60|starter_sdy_yugi": {
+  "chiave": "lumis|hard|60|starter_sdy_yugi",
+  "v": 25,
+  "s": 25,
+  "a": 0,
+  "turni": 1291
+ },
+ "umbra|easy|40|structure_sd3_blaze_of_destruction": {
+  "chiave": "umbra|easy|40|structure_sd3_blaze_of_destruction",
+  "v": 37,
+  "s": 13,
+  "a": 0,
+  "turni": 1025
+ },
+ "umbra|easy|50|structure_sd3_blaze_of_destruction": {
+  "chiave": "umbra|easy|50|structure_sd3_blaze_of_destruction",
+  "v": 40,
+  "s": 10,
+  "a": 0,
+  "turni": 888
+ },
+ "umbra|easy|40|structure_sd6_spellcasters_judgment": {
+  "chiave": "umbra|easy|40|structure_sd6_spellcasters_judgment",
+  "v": 49,
+  "s": 1,
+  "a": 0,
+  "turni": 1386
+ },
+ "umbra|easy|40|starter_sye_yugi_evolution": {
+  "chiave": "umbra|easy|40|starter_sye_yugi_evolution",
+  "v": 48,
+  "s": 2,
+  "a": 0,
+  "turni": 1448
+ },
+ "umbra|easy|40|structure_sd4_fury_from_the_deep": {
+  "chiave": "umbra|easy|40|structure_sd4_fury_from_the_deep",
+  "v": 37,
+  "s": 13,
+  "a": 0,
+  "turni": 1725
+ },
+ "umbra|easy|50|structure_sd6_spellcasters_judgment": {
+  "chiave": "umbra|easy|50|structure_sd6_spellcasters_judgment",
+  "v": 47,
+  "s": 3,
+  "a": 0,
+  "turni": 1270
+ },
+ "umbra|easy|50|starter_sye_yugi_evolution": {
+  "chiave": "umbra|easy|50|starter_sye_yugi_evolution",
+  "v": 41,
+  "s": 9,
+  "a": 0,
+  "turni": 1380
+ },
+ "umbra|easy|40|starter_sdy_yugi": {
+  "chiave": "umbra|easy|40|starter_sdy_yugi",
+  "v": 33,
+  "s": 17,
+  "a": 0,
+  "turni": 1723
+ },
+ "umbra|easy|40|starter_ske_kaiba_evolution": {
+  "chiave": "umbra|easy|40|starter_ske_kaiba_evolution",
+  "v": 41,
+  "s": 9,
+  "a": 0,
+  "turni": 1754
+ },
+ "umbra|easy|50|starter_ske_kaiba_evolution": {
+  "chiave": "umbra|easy|50|starter_ske_kaiba_evolution",
+  "v": 33,
+  "s": 16,
+  "a": 1,
+  "turni": 1628
+ },
+ "umbra|easy|50|structure_sd4_fury_from_the_deep": {
+  "chiave": "umbra|easy|50|structure_sd4_fury_from_the_deep",
+  "v": 36,
+  "s": 14,
+  "a": 0,
+  "turni": 1705
+ },
+ "umbra|easy|60|structure_sd3_blaze_of_destruction": {
+  "chiave": "umbra|easy|60|structure_sd3_blaze_of_destruction",
+  "v": 42,
+  "s": 8,
+  "a": 0,
+  "turni": 965
+ },
+ "umbra|easy|50|starter_sdy_yugi": {
+  "chiave": "umbra|easy|50|starter_sdy_yugi",
+  "v": 30,
+  "s": 20,
+  "a": 0,
+  "turni": 1726
+ },
+ "umbra|easy|60|structure_sd6_spellcasters_judgment": {
+  "chiave": "umbra|easy|60|structure_sd6_spellcasters_judgment",
+  "v": 44,
+  "s": 6,
+  "a": 0,
+  "turni": 1264
+ },
+ "umbra|easy|60|starter_sye_yugi_evolution": {
+  "chiave": "umbra|easy|60|starter_sye_yugi_evolution",
+  "v": 41,
+  "s": 9,
+  "a": 0,
+  "turni": 1437
+ },
+ "umbra|hard|40|structure_sd3_blaze_of_destruction": {
+  "chiave": "umbra|hard|40|structure_sd3_blaze_of_destruction",
+  "v": 33,
+  "s": 17,
+  "a": 0,
+  "turni": 987
+ },
+ "umbra|easy|60|starter_ske_kaiba_evolution": {
+  "chiave": "umbra|easy|60|starter_ske_kaiba_evolution",
+  "v": 38,
+  "s": 11,
+  "a": 1,
+  "turni": 1720
+ },
+ "umbra|easy|60|starter_sdy_yugi": {
+  "chiave": "umbra|easy|60|starter_sdy_yugi",
+  "v": 29,
+  "s": 19,
+  "a": 2,
+  "turni": 1660
+ },
+ "umbra|hard|50|structure_sd3_blaze_of_destruction": {
+  "chiave": "umbra|hard|50|structure_sd3_blaze_of_destruction",
+  "v": 42,
+  "s": 8,
+  "a": 0,
+  "turni": 895
+ },
+ "umbra|hard|40|starter_sye_yugi_evolution": {
+  "chiave": "umbra|hard|40|starter_sye_yugi_evolution",
+  "v": 40,
+  "s": 10,
+  "a": 0,
+  "turni": 1143
+ },
+ "umbra|hard|40|structure_sd6_spellcasters_judgment": {
+  "chiave": "umbra|hard|40|structure_sd6_spellcasters_judgment",
+  "v": 42,
+  "s": 8,
+  "a": 0,
+  "turni": 1276
+ },
+ "umbra|easy|60|structure_sd4_fury_from_the_deep": {
+  "chiave": "umbra|easy|60|structure_sd4_fury_from_the_deep",
+  "v": 35,
+  "s": 15,
+  "a": 0,
+  "turni": 1762
+ },
+ "umbra|hard|40|starter_ske_kaiba_evolution": {
+  "chiave": "umbra|hard|40|starter_ske_kaiba_evolution",
+  "v": 36,
+  "s": 14,
+  "a": 0,
+  "turni": 1266
+ },
+ "umbra|hard|40|structure_sd4_fury_from_the_deep": {
+  "chiave": "umbra|hard|40|structure_sd4_fury_from_the_deep",
+  "v": 39,
+  "s": 11,
+  "a": 0,
+  "turni": 1380
+ },
+ "umbra|hard|40|starter_sdy_yugi": {
+  "chiave": "umbra|hard|40|starter_sdy_yugi",
+  "v": 27,
+  "s": 23,
+  "a": 0,
+  "turni": 1279
+ },
+ "umbra|hard|50|structure_sd6_spellcasters_judgment": {
+  "chiave": "umbra|hard|50|structure_sd6_spellcasters_judgment",
+  "v": 37,
+  "s": 13,
+  "a": 0,
+  "turni": 1160
+ },
+ "umbra|hard|50|structure_sd4_fury_from_the_deep": {
+  "chiave": "umbra|hard|50|structure_sd4_fury_from_the_deep",
+  "v": 39,
+  "s": 11,
+  "a": 0,
+  "turni": 1346
+ },
+ "umbra|hard|60|structure_sd3_blaze_of_destruction": {
+  "chiave": "umbra|hard|60|structure_sd3_blaze_of_destruction",
+  "v": 33,
+  "s": 17,
+  "a": 0,
+  "turni": 929
+ },
+ "umbra|hard|50|starter_ske_kaiba_evolution": {
+  "chiave": "umbra|hard|50|starter_ske_kaiba_evolution",
+  "v": 35,
+  "s": 15,
+  "a": 0,
+  "turni": 1277
+ },
+ "umbra|hard|50|starter_sye_yugi_evolution": {
+  "chiave": "umbra|hard|50|starter_sye_yugi_evolution",
+  "v": 38,
+  "s": 12,
+  "a": 0,
+  "turni": 1361
+ },
+ "umbra|hard|50|starter_sdy_yugi": {
+  "chiave": "umbra|hard|50|starter_sdy_yugi",
+  "v": 31,
+  "s": 19,
+  "a": 0,
+  "turni": 1289
+ },
+ "nitemare|easy|40|structure_sd3_blaze_of_destruction": {
+  "chiave": "nitemare|easy|40|structure_sd3_blaze_of_destruction",
+  "v": 38,
+  "s": 12,
+  "a": 0,
+  "turni": 883
+ },
+ "umbra|hard|60|structure_sd6_spellcasters_judgment": {
+  "chiave": "umbra|hard|60|structure_sd6_spellcasters_judgment",
+  "v": 40,
+  "s": 10,
+  "a": 0,
+  "turni": 1182
+ },
+ "umbra|hard|60|starter_sdy_yugi": {
+  "chiave": "umbra|hard|60|starter_sdy_yugi",
+  "v": 25,
+  "s": 25,
+  "a": 0,
+  "turni": 1272
+ },
+ "umbra|hard|60|starter_ske_kaiba_evolution": {
+  "chiave": "umbra|hard|60|starter_ske_kaiba_evolution",
+  "v": 21,
+  "s": 29,
+  "a": 0,
+  "turni": 1326
+ },
+ "umbra|hard|60|structure_sd4_fury_from_the_deep": {
+  "chiave": "umbra|hard|60|structure_sd4_fury_from_the_deep",
+  "v": 34,
+  "s": 16,
+  "a": 0,
+  "turni": 1311
+ },
+ "umbra|hard|60|starter_sye_yugi_evolution": {
+  "chiave": "umbra|hard|60|starter_sye_yugi_evolution",
+  "v": 31,
+  "s": 19,
+  "a": 0,
+  "turni": 1344
+ },
+ "nitemare|easy|40|structure_sd6_spellcasters_judgment": {
+  "chiave": "nitemare|easy|40|structure_sd6_spellcasters_judgment",
+  "v": 44,
+  "s": 6,
+  "a": 0,
+  "turni": 860
+ },
+ "nitemare|easy|40|structure_sd4_fury_from_the_deep": {
+  "chiave": "nitemare|easy|40|structure_sd4_fury_from_the_deep",
+  "v": 41,
+  "s": 9,
+  "a": 0,
+  "turni": 886
+ },
+ "nitemare|easy|40|starter_ske_kaiba_evolution": {
+  "chiave": "nitemare|easy|40|starter_ske_kaiba_evolution",
+  "v": 41,
+  "s": 9,
+  "a": 0,
+  "turni": 729
+ },
+ "nitemare|easy|40|starter_sdy_yugi": {
+  "chiave": "nitemare|easy|40|starter_sdy_yugi",
+  "v": 47,
+  "s": 3,
+  "a": 0,
+  "turni": 779
+ },
+ "nitemare|easy|40|starter_sye_yugi_evolution": {
+  "chiave": "nitemare|easy|40|starter_sye_yugi_evolution",
+  "v": 39,
+  "s": 11,
+  "a": 0,
+  "turni": 914
+ },
+ "nitemare|easy|50|starter_ske_kaiba_evolution": {
+  "chiave": "nitemare|easy|50|starter_ske_kaiba_evolution",
+  "v": 38,
+  "s": 12,
+  "a": 0,
+  "turni": 696
+ },
+ "nitemare|easy|50|starter_sye_yugi_evolution": {
+  "chiave": "nitemare|easy|50|starter_sye_yugi_evolution",
+  "v": 45,
+  "s": 5,
+  "a": 0,
+  "turni": 747
+ },
+ "nitemare|easy|50|structure_sd6_spellcasters_judgment": {
+  "chiave": "nitemare|easy|50|structure_sd6_spellcasters_judgment",
+  "v": 37,
+  "s": 13,
+  "a": 0,
+  "turni": 858
+ },
+ "nitemare|easy|50|starter_sdy_yugi": {
+  "chiave": "nitemare|easy|50|starter_sdy_yugi",
+  "v": 42,
+  "s": 8,
+  "a": 0,
+  "turni": 798
+ },
+ "nitemare|easy|50|structure_sd3_blaze_of_destruction": {
+  "chiave": "nitemare|easy|50|structure_sd3_blaze_of_destruction",
+  "v": 40,
+  "s": 10,
+  "a": 0,
+  "turni": 961
+ },
+ "nitemare|easy|50|structure_sd4_fury_from_the_deep": {
+  "chiave": "nitemare|easy|50|structure_sd4_fury_from_the_deep",
+  "v": 36,
+  "s": 14,
+  "a": 0,
+  "turni": 972
+ },
+ "nitemare|easy|60|structure_sd3_blaze_of_destruction": {
+  "chiave": "nitemare|easy|60|structure_sd3_blaze_of_destruction",
+  "v": 43,
+  "s": 7,
+  "a": 0,
+  "turni": 786
+ },
+ "nitemare|easy|60|structure_sd6_spellcasters_judgment": {
+  "chiave": "nitemare|easy|60|structure_sd6_spellcasters_judgment",
+  "v": 42,
+  "s": 8,
+  "a": 0,
+  "turni": 930
+ },
+ "nitemare|easy|60|starter_ske_kaiba_evolution": {
+  "chiave": "nitemare|easy|60|starter_ske_kaiba_evolution",
+  "v": 38,
+  "s": 12,
+  "a": 0,
+  "turni": 804
+ },
+ "nitemare|easy|60|starter_sye_yugi_evolution": {
+  "chiave": "nitemare|easy|60|starter_sye_yugi_evolution",
+  "v": 36,
+  "s": 14,
+  "a": 0,
+  "turni": 998
+ },
+ "nitemare|hard|40|starter_ske_kaiba_evolution": {
+  "chiave": "nitemare|hard|40|starter_ske_kaiba_evolution",
+  "v": 1,
+  "s": 49,
+  "a": 0,
+  "turni": 536
+ },
+ "nitemare|easy|60|structure_sd4_fury_from_the_deep": {
+  "chiave": "nitemare|easy|60|structure_sd4_fury_from_the_deep",
+  "v": 35,
+  "s": 15,
+  "a": 0,
+  "turni": 1186
+ },
+ "nitemare|hard|40|starter_sye_yugi_evolution": {
+  "chiave": "nitemare|hard|40|starter_sye_yugi_evolution",
+  "v": 1,
+  "s": 49,
+  "a": 0,
+  "turni": 645
+ },
+ "nitemare|easy|60|starter_sdy_yugi": {
+  "chiave": "nitemare|easy|60|starter_sdy_yugi",
+  "v": 35,
+  "s": 15,
+  "a": 0,
+  "turni": 969
+ },
+ "nitemare|hard|40|structure_sd6_spellcasters_judgment": {
+  "chiave": "nitemare|hard|40|structure_sd6_spellcasters_judgment",
+  "v": 2,
+  "s": 48,
+  "a": 0,
+  "turni": 688
+ },
+ "nitemare|hard|40|structure_sd3_blaze_of_destruction": {
+  "chiave": "nitemare|hard|40|structure_sd3_blaze_of_destruction",
+  "v": 4,
+  "s": 46,
+  "a": 0,
+  "turni": 735
+ },
+ "nitemare|hard|40|starter_sdy_yugi": {
+  "chiave": "nitemare|hard|40|starter_sdy_yugi",
+  "v": 1,
+  "s": 49,
+  "a": 0,
+  "turni": 600
+ },
+ "nitemare|hard|40|structure_sd4_fury_from_the_deep": {
+  "chiave": "nitemare|hard|40|structure_sd4_fury_from_the_deep",
+  "v": 9,
+  "s": 41,
+  "a": 0,
+  "turni": 785
+ },
+ "nitemare|hard|50|structure_sd3_blaze_of_destruction": {
+  "chiave": "nitemare|hard|50|structure_sd3_blaze_of_destruction",
+  "v": 14,
+  "s": 36,
+  "a": 0,
+  "turni": 781
+ },
+ "nitemare|hard|50|starter_ske_kaiba_evolution": {
+  "chiave": "nitemare|hard|50|starter_ske_kaiba_evolution",
+  "v": 1,
+  "s": 49,
+  "a": 0,
+  "turni": 635
+ },
+ "nitemare|hard|50|structure_sd6_spellcasters_judgment": {
+  "chiave": "nitemare|hard|50|structure_sd6_spellcasters_judgment",
+  "v": 2,
+  "s": 48,
+  "a": 0,
+  "turni": 794
+ },
+ "nitemare|hard|50|starter_sdy_yugi": {
+  "chiave": "nitemare|hard|50|starter_sdy_yugi",
+  "v": 1,
+  "s": 49,
+  "a": 0,
+  "turni": 649
+ },
+ "nitemare|hard|50|starter_sye_yugi_evolution": {
+  "chiave": "nitemare|hard|50|starter_sye_yugi_evolution",
+  "v": 2,
+  "s": 48,
+  "a": 0,
+  "turni": 802
+ },
+ "nitemare|hard|50|structure_sd4_fury_from_the_deep": {
+  "chiave": "nitemare|hard|50|structure_sd4_fury_from_the_deep",
+  "v": 9,
+  "s": 41,
+  "a": 0,
+  "turni": 1031
+ },
+ "nitemare|hard|60|starter_ske_kaiba_evolution": {
+  "chiave": "nitemare|hard|60|starter_ske_kaiba_evolution",
+  "v": 1,
+  "s": 49,
+  "a": 0,
+  "turni": 803
+ },
+ "nitemare|hard|60|starter_sdy_yugi": {
+  "chiave": "nitemare|hard|60|starter_sdy_yugi",
+  "v": 2,
+  "s": 48,
+  "a": 0,
+  "turni": 784
+ },
+ "nitemare|hard|60|structure_sd3_blaze_of_destruction": {
+  "chiave": "nitemare|hard|60|structure_sd3_blaze_of_destruction",
+  "v": 13,
+  "s": 37,
+  "a": 0,
+  "turni": 887
+ },
+ "nitemare|hard|60|starter_sye_yugi_evolution": {
+  "chiave": "nitemare|hard|60|starter_sye_yugi_evolution",
+  "v": 4,
+  "s": 46,
+  "a": 0,
+  "turni": 889
+ },
+ "nitemare|hard|60|structure_sd6_spellcasters_judgment": {
+  "chiave": "nitemare|hard|60|structure_sd6_spellcasters_judgment",
+  "v": 7,
+  "s": 43,
+  "a": 0,
+  "turni": 1050
+ },
+ "nitemare|hard|60|structure_sd4_fury_from_the_deep": {
+  "chiave": "nitemare|hard|60|structure_sd4_fury_from_the_deep",
+  "v": 7,
+  "s": 43,
+  "a": 0,
+  "turni": 992
+ },
+ "heishin|easy|40|structure_sd3_blaze_of_destruction": {
+  "chiave": "heishin|easy|40|structure_sd3_blaze_of_destruction",
+  "v": 29,
+  "s": 21,
+  "a": 0,
+  "turni": 867
+ },
+ "heishin|easy|40|starter_sye_yugi_evolution": {
+  "chiave": "heishin|easy|40|starter_sye_yugi_evolution",
+  "v": 34,
+  "s": 16,
+  "a": 0,
+  "turni": 882
+ },
+ "heishin|easy|40|structure_sd4_fury_from_the_deep": {
+  "chiave": "heishin|easy|40|structure_sd4_fury_from_the_deep",
+  "v": 37,
+  "s": 13,
+  "a": 0,
+  "turni": 918
+ },
+ "heishin|easy|40|starter_ske_kaiba_evolution": {
+  "chiave": "heishin|easy|40|starter_ske_kaiba_evolution",
+  "v": 30,
+  "s": 20,
+  "a": 0,
+  "turni": 864
+ },
+ "heishin|easy|40|structure_sd6_spellcasters_judgment": {
+  "chiave": "heishin|easy|40|structure_sd6_spellcasters_judgment",
+  "v": 35,
+  "s": 15,
+  "a": 0,
+  "turni": 999
+ },
+ "heishin|easy|40|starter_sdy_yugi": {
+  "chiave": "heishin|easy|40|starter_sdy_yugi",
+  "v": 35,
+  "s": 15,
+  "a": 0,
+  "turni": 887
+ },
+ "heishin|easy|50|structure_sd3_blaze_of_destruction": {
+  "chiave": "heishin|easy|50|structure_sd3_blaze_of_destruction",
+  "v": 28,
+  "s": 22,
+  "a": 0,
+  "turni": 895
+ },
+ "heishin|easy|50|starter_ske_kaiba_evolution": {
+  "chiave": "heishin|easy|50|starter_ske_kaiba_evolution",
+  "v": 28,
+  "s": 22,
+  "a": 0,
+  "turni": 814
+ },
+ "heishin|easy|50|structure_sd6_spellcasters_judgment": {
+  "chiave": "heishin|easy|50|structure_sd6_spellcasters_judgment",
+  "v": 24,
+  "s": 26,
+  "a": 0,
+  "turni": 1005
+ },
+ "heishin|easy|50|starter_sdy_yugi": {
+  "chiave": "heishin|easy|50|starter_sdy_yugi",
+  "v": 30,
+  "s": 20,
+  "a": 0,
+  "turni": 837
+ },
+ "heishin|easy|50|structure_sd4_fury_from_the_deep": {
+  "chiave": "heishin|easy|50|structure_sd4_fury_from_the_deep",
+  "v": 35,
+  "s": 15,
+  "a": 0,
+  "turni": 1013
+ },
+ "heishin|easy|50|starter_sye_yugi_evolution": {
+  "chiave": "heishin|easy|50|starter_sye_yugi_evolution",
+  "v": 28,
+  "s": 22,
+  "a": 0,
+  "turni": 925
+ },
+ "heishin|easy|60|starter_ske_kaiba_evolution": {
+  "chiave": "heishin|easy|60|starter_ske_kaiba_evolution",
+  "v": 30,
+  "s": 20,
+  "a": 0,
+  "turni": 914
+ },
+ "heishin|easy|60|starter_sye_yugi_evolution": {
+  "chiave": "heishin|easy|60|starter_sye_yugi_evolution",
+  "v": 21,
+  "s": 29,
+  "a": 0,
+  "turni": 951
+ },
+ "heishin|hard|40|starter_sdy_yugi": {
+  "chiave": "heishin|hard|40|starter_sdy_yugi",
+  "v": 2,
+  "s": 48,
+  "a": 0,
+  "turni": 555
+ },
+ "heishin|hard|40|starter_ske_kaiba_evolution": {
+  "chiave": "heishin|hard|40|starter_ske_kaiba_evolution",
+  "v": 2,
+  "s": 48,
+  "a": 0,
+  "turni": 566
+ },
+ "heishin|easy|60|starter_sdy_yugi": {
+  "chiave": "heishin|easy|60|starter_sdy_yugi",
+  "v": 33,
+  "s": 17,
+  "a": 0,
+  "turni": 887
+ },
+ "heishin|easy|60|structure_sd4_fury_from_the_deep": {
+  "chiave": "heishin|easy|60|structure_sd4_fury_from_the_deep",
+  "v": 25,
+  "s": 25,
+  "a": 0,
+  "turni": 1009
+ },
+ "heishin|easy|60|structure_sd3_blaze_of_destruction": {
+  "chiave": "heishin|easy|60|structure_sd3_blaze_of_destruction",
+  "v": 26,
+  "s": 24,
+  "a": 0,
+  "turni": 879
+ },
+ "heishin|hard|40|structure_sd6_spellcasters_judgment": {
+  "chiave": "heishin|hard|40|structure_sd6_spellcasters_judgment",
+  "v": 3,
+  "s": 47,
+  "a": 0,
+  "turni": 727
+ },
+ "heishin|easy|60|structure_sd6_spellcasters_judgment": {
+  "chiave": "heishin|easy|60|structure_sd6_spellcasters_judgment",
+  "v": 29,
+  "s": 21,
+  "a": 0,
+  "turni": 1180
+ },
+ "heishin|hard|40|starter_sye_yugi_evolution": {
+  "chiave": "heishin|hard|40|starter_sye_yugi_evolution",
+  "v": 1,
+  "s": 49,
+  "a": 0,
+  "turni": 617
+ },
+ "heishin|hard|40|structure_sd3_blaze_of_destruction": {
+  "chiave": "heishin|hard|40|structure_sd3_blaze_of_destruction",
+  "v": 7,
+  "s": 43,
+  "a": 0,
+  "turni": 750
+ },
+ "heishin|hard|40|structure_sd4_fury_from_the_deep": {
+  "chiave": "heishin|hard|40|structure_sd4_fury_from_the_deep",
+  "v": 6,
+  "s": 44,
+  "a": 0,
+  "turni": 803
+ },
+ "heishin|hard|50|starter_ske_kaiba_evolution": {
+  "chiave": "heishin|hard|50|starter_ske_kaiba_evolution",
+  "v": 4,
+  "s": 46,
+  "a": 0,
+  "turni": 607
+ },
+ "heishin|hard|50|structure_sd6_spellcasters_judgment": {
+  "chiave": "heishin|hard|50|structure_sd6_spellcasters_judgment",
+  "v": 4,
+  "s": 46,
+  "a": 0,
+  "turni": 655
+ },
+ "heishin|hard|50|structure_sd3_blaze_of_destruction": {
+  "chiave": "heishin|hard|50|structure_sd3_blaze_of_destruction",
+  "v": 12,
+  "s": 38,
+  "a": 0,
+  "turni": 770
+ },
+ "heishin|hard|50|starter_sye_yugi_evolution": {
+  "chiave": "heishin|hard|50|starter_sye_yugi_evolution",
+  "v": 7,
+  "s": 43,
+  "a": 0,
+  "turni": 645
+ },
+ "heishin|hard|50|starter_sdy_yugi": {
+  "chiave": "heishin|hard|50|starter_sdy_yugi",
+  "v": 5,
+  "s": 45,
+  "a": 0,
+  "turni": 671
+ },
+ "heishin|hard|50|structure_sd4_fury_from_the_deep": {
+  "chiave": "heishin|hard|50|structure_sd4_fury_from_the_deep",
+  "v": 9,
+  "s": 41,
+  "a": 0,
+  "turni": 846
+ },
+ "heishin|hard|60|structure_sd6_spellcasters_judgment": {
+  "chiave": "heishin|hard|60|structure_sd6_spellcasters_judgment",
+  "v": 4,
+  "s": 46,
+  "a": 0,
+  "turni": 829
+ },
+ "heishin|hard|60|starter_sye_yugi_evolution": {
+  "chiave": "heishin|hard|60|starter_sye_yugi_evolution",
+  "v": 6,
+  "s": 44,
+  "a": 0,
+  "turni": 674
+ },
+ "heishin|hard|60|starter_ske_kaiba_evolution": {
+  "chiave": "heishin|hard|60|starter_ske_kaiba_evolution",
+  "v": 1,
+  "s": 49,
+  "a": 0,
+  "turni": 672
+ },
+ "heishin|hard|60|structure_sd4_fury_from_the_deep": {
+  "chiave": "heishin|hard|60|structure_sd4_fury_from_the_deep",
+  "v": 16,
+  "s": 34,
+  "a": 0,
+  "turni": 880
+ },
+ "heishin|hard|60|starter_sdy_yugi": {
+  "chiave": "heishin|hard|60|starter_sdy_yugi",
+  "v": 6,
+  "s": 44,
+  "a": 0,
+  "turni": 683
+ },
+ "heishin|hard|60|structure_sd3_blaze_of_destruction": {
+  "chiave": "heishin|hard|60|structure_sd3_blaze_of_destruction",
+  "v": 17,
+  "s": 33,
+  "a": 0,
+  "turni": 753
+ },
+ "joey|easy|40|structure_sd4_fury_from_the_deep": {
+  "chiave": "joey|easy|40|structure_sd4_fury_from_the_deep",
+  "v": 42,
+  "s": 8,
+  "a": 0,
+  "turni": 900
+ },
+ "joey|easy|40|structure_sd6_spellcasters_judgment": {
+  "chiave": "joey|easy|40|structure_sd6_spellcasters_judgment",
+  "v": 43,
+  "s": 7,
+  "a": 0,
+  "turni": 903
+ },
+ "joey|easy|40|structure_sd3_blaze_of_destruction": {
+  "chiave": "joey|easy|40|structure_sd3_blaze_of_destruction",
+  "v": 33,
+  "s": 17,
+  "a": 0,
+  "turni": 860
+ },
+ "joey|easy|40|starter_sdy_yugi": {
+  "chiave": "joey|easy|40|starter_sdy_yugi",
+  "v": 44,
+  "s": 6,
+  "a": 0,
+  "turni": 788
+ },
+ "joey|easy|40|starter_ske_kaiba_evolution": {
+  "chiave": "joey|easy|40|starter_ske_kaiba_evolution",
+  "v": 39,
+  "s": 11,
+  "a": 0,
+  "turni": 754
+ },
+ "joey|easy|40|starter_sye_yugi_evolution": {
+  "chiave": "joey|easy|40|starter_sye_yugi_evolution",
+  "v": 43,
+  "s": 7,
+  "a": 0,
+  "turni": 786
+ },
+ "joey|easy|50|structure_sd3_blaze_of_destruction": {
+  "chiave": "joey|easy|50|structure_sd3_blaze_of_destruction",
+  "v": 42,
+  "s": 8,
+  "a": 0,
+  "turni": 829
+ },
+ "joey|easy|50|starter_sye_yugi_evolution": {
+  "chiave": "joey|easy|50|starter_sye_yugi_evolution",
+  "v": 36,
+  "s": 14,
+  "a": 0,
+  "turni": 863
+ },
+ "joey|easy|50|starter_ske_kaiba_evolution": {
+  "chiave": "joey|easy|50|starter_ske_kaiba_evolution",
+  "v": 37,
+  "s": 13,
+  "a": 0,
+  "turni": 778
+ },
+ "joey|easy|50|structure_sd6_spellcasters_judgment": {
+  "chiave": "joey|easy|50|structure_sd6_spellcasters_judgment",
+  "v": 39,
+  "s": 11,
+  "a": 0,
+  "turni": 1043
+ },
+ "joey|easy|50|structure_sd4_fury_from_the_deep": {
+  "chiave": "joey|easy|50|structure_sd4_fury_from_the_deep",
+  "v": 42,
+  "s": 8,
+  "a": 0,
+  "turni": 1088
+ },
+ "joey|easy|50|starter_sdy_yugi": {
+  "chiave": "joey|easy|50|starter_sdy_yugi",
+  "v": 37,
+  "s": 13,
+  "a": 0,
+  "turni": 843
+ },
+ "joey|easy|60|structure_sd3_blaze_of_destruction": {
+  "chiave": "joey|easy|60|structure_sd3_blaze_of_destruction",
+  "v": 41,
+  "s": 9,
+  "a": 0,
+  "turni": 765
+ },
+ "joey|easy|60|starter_ske_kaiba_evolution": {
+  "chiave": "joey|easy|60|starter_ske_kaiba_evolution",
+  "v": 37,
+  "s": 13,
+  "a": 0,
+  "turni": 696
+ },
+ "joey|easy|60|starter_sye_yugi_evolution": {
+  "chiave": "joey|easy|60|starter_sye_yugi_evolution",
+  "v": 39,
+  "s": 11,
+  "a": 0,
+  "turni": 850
+ },
+ "joey|easy|60|starter_sdy_yugi": {
+  "chiave": "joey|easy|60|starter_sdy_yugi",
+  "v": 42,
+  "s": 8,
+  "a": 0,
+  "turni": 773
+ },
+ "joey|easy|60|structure_sd6_spellcasters_judgment": {
+  "chiave": "joey|easy|60|structure_sd6_spellcasters_judgment",
+  "v": 44,
+  "s": 6,
+  "a": 0,
+  "turni": 806
+ },
+ "joey|hard|40|structure_sd3_blaze_of_destruction": {
+  "chiave": "joey|hard|40|structure_sd3_blaze_of_destruction",
+  "v": 29,
+  "s": 21,
+  "a": 0,
+  "turni": 816
+ },
+ "joey|easy|60|structure_sd4_fury_from_the_deep": {
+  "chiave": "joey|easy|60|structure_sd4_fury_from_the_deep",
+  "v": 37,
+  "s": 13,
+  "a": 0,
+  "turni": 1015
+ },
+ "joey|hard|40|structure_sd4_fury_from_the_deep": {
+  "chiave": "joey|hard|40|structure_sd4_fury_from_the_deep",
+  "v": 21,
+  "s": 29,
+  "a": 0,
+  "turni": 795
+ },
+ "joey|hard|40|structure_sd6_spellcasters_judgment": {
+  "chiave": "joey|hard|40|structure_sd6_spellcasters_judgment",
+  "v": 20,
+  "s": 30,
+  "a": 0,
+  "turni": 832
+ },
+ "joey|hard|40|starter_ske_kaiba_evolution": {
+  "chiave": "joey|hard|40|starter_ske_kaiba_evolution",
+  "v": 12,
+  "s": 38,
+  "a": 0,
+  "turni": 642
+ },
+ "joey|hard|40|starter_sye_yugi_evolution": {
+  "chiave": "joey|hard|40|starter_sye_yugi_evolution",
+  "v": 20,
+  "s": 30,
+  "a": 0,
+  "turni": 902
+ },
+ "joey|hard|50|structure_sd3_blaze_of_destruction": {
+  "chiave": "joey|hard|50|structure_sd3_blaze_of_destruction",
+  "v": 26,
+  "s": 24,
+  "a": 0,
+  "turni": 798
+ },
+ "joey|hard|40|starter_sdy_yugi": {
+  "chiave": "joey|hard|40|starter_sdy_yugi",
+  "v": 14,
+  "s": 36,
+  "a": 0,
+  "turni": 758
+ },
+ "joey|hard|50|starter_sdy_yugi": {
+  "chiave": "joey|hard|50|starter_sdy_yugi",
+  "v": 12,
+  "s": 38,
+  "a": 0,
+  "turni": 744
+ },
+ "joey|hard|50|starter_ske_kaiba_evolution": {
+  "chiave": "joey|hard|50|starter_ske_kaiba_evolution",
+  "v": 16,
+  "s": 34,
+  "a": 0,
+  "turni": 707
+ },
+ "joey|hard|50|structure_sd6_spellcasters_judgment": {
+  "chiave": "joey|hard|50|structure_sd6_spellcasters_judgment",
+  "v": 22,
+  "s": 28,
+  "a": 0,
+  "turni": 888
+ },
+ "joey|hard|50|starter_sye_yugi_evolution": {
+  "chiave": "joey|hard|50|starter_sye_yugi_evolution",
+  "v": 23,
+  "s": 27,
+  "a": 0,
+  "turni": 803
+ },
+ "joey|hard|60|structure_sd3_blaze_of_destruction": {
+  "chiave": "joey|hard|60|structure_sd3_blaze_of_destruction",
+  "v": 27,
+  "s": 23,
+  "a": 0,
+  "turni": 691
+ },
+ "joey|hard|50|structure_sd4_fury_from_the_deep": {
+  "chiave": "joey|hard|50|structure_sd4_fury_from_the_deep",
+  "v": 29,
+  "s": 21,
+  "a": 0,
+  "turni": 911
+ },
+ "joey|hard|60|structure_sd4_fury_from_the_deep": {
+  "chiave": "joey|hard|60|structure_sd4_fury_from_the_deep",
+  "v": 27,
+  "s": 23,
+  "a": 0,
+  "turni": 853
+ },
+ "joey|hard|60|starter_sye_yugi_evolution": {
+  "chiave": "joey|hard|60|starter_sye_yugi_evolution",
+  "v": 21,
+  "s": 29,
+  "a": 0,
+  "turni": 735
+ },
+ "joey|hard|60|starter_ske_kaiba_evolution": {
+  "chiave": "joey|hard|60|starter_ske_kaiba_evolution",
+  "v": 17,
+  "s": 33,
+  "a": 0,
+  "turni": 655
+ },
+ "joey|hard|60|structure_sd6_spellcasters_judgment": {
+  "chiave": "joey|hard|60|structure_sd6_spellcasters_judgment",
+  "v": 23,
+  "s": 27,
+  "a": 0,
+  "turni": 1022
+ },
+ "joey|hard|60|starter_sdy_yugi": {
+  "chiave": "joey|hard|60|starter_sdy_yugi",
+  "v": 16,
+  "s": 34,
+  "a": 0,
+  "turni": 674
+ },
+ "kaiba|easy|40|starter_sye_yugi_evolution": {
+  "chiave": "kaiba|easy|40|starter_sye_yugi_evolution",
+  "v": 33,
+  "s": 17,
+  "a": 0,
+  "turni": 905
+ },
+ "kaiba|easy|40|starter_sdy_yugi": {
+  "chiave": "kaiba|easy|40|starter_sdy_yugi",
+  "v": 35,
+  "s": 15,
+  "a": 0,
+  "turni": 867
+ },
+ "kaiba|easy|40|structure_sd4_fury_from_the_deep": {
+  "chiave": "kaiba|easy|40|structure_sd4_fury_from_the_deep",
+  "v": 32,
+  "s": 18,
+  "a": 0,
+  "turni": 948
+ },
+ "kaiba|easy|40|structure_sd6_spellcasters_judgment": {
+  "chiave": "kaiba|easy|40|structure_sd6_spellcasters_judgment",
+  "v": 33,
+  "s": 17,
+  "a": 0,
+  "turni": 884
+ },
+ "kaiba|easy|40|starter_ske_kaiba_evolution": {
+  "chiave": "kaiba|easy|40|starter_ske_kaiba_evolution",
+  "v": 30,
+  "s": 20,
+  "a": 0,
+  "turni": 804
+ },
+ "kaiba|easy|50|structure_sd4_fury_from_the_deep": {
+  "chiave": "kaiba|easy|50|structure_sd4_fury_from_the_deep",
+  "v": 39,
+  "s": 11,
+  "a": 0,
+  "turni": 959
+ },
+ "kaiba|easy|50|structure_sd3_blaze_of_destruction": {
+  "chiave": "kaiba|easy|50|structure_sd3_blaze_of_destruction",
+  "v": 29,
+  "s": 21,
+  "a": 0,
+  "turni": 728
+ },
+ "kaiba|easy|40|structure_sd3_blaze_of_destruction": {
+  "chiave": "kaiba|easy|40|structure_sd3_blaze_of_destruction",
+  "v": 35,
+  "s": 15,
+  "a": 0,
+  "turni": 797
+ },
+ "kaiba|easy|50|structure_sd6_spellcasters_judgment": {
+  "chiave": "kaiba|easy|50|structure_sd6_spellcasters_judgment",
+  "v": 33,
+  "s": 17,
+  "a": 0,
+  "turni": 836
+ },
+ "kaiba|easy|50|starter_sye_yugi_evolution": {
+  "chiave": "kaiba|easy|50|starter_sye_yugi_evolution",
+  "v": 35,
+  "s": 15,
+  "a": 0,
+  "turni": 921
+ },
+ "kaiba|easy|50|starter_ske_kaiba_evolution": {
+  "chiave": "kaiba|easy|50|starter_ske_kaiba_evolution",
+  "v": 29,
+  "s": 21,
+  "a": 0,
+  "turni": 849
+ },
+ "kaiba|easy|50|starter_sdy_yugi": {
+  "chiave": "kaiba|easy|50|starter_sdy_yugi",
+  "v": 20,
+  "s": 30,
+  "a": 0,
+  "turni": 910
+ },
+ "kaiba|easy|60|structure_sd6_spellcasters_judgment": {
+  "chiave": "kaiba|easy|60|structure_sd6_spellcasters_judgment",
+  "v": 29,
+  "s": 21,
+  "a": 0,
+  "turni": 910
+ },
+ "kaiba|easy|60|structure_sd3_blaze_of_destruction": {
+  "chiave": "kaiba|easy|60|structure_sd3_blaze_of_destruction",
+  "v": 36,
+  "s": 14,
+  "a": 0,
+  "turni": 858
+ },
+ "kaiba|easy|60|starter_ske_kaiba_evolution": {
+  "chiave": "kaiba|easy|60|starter_ske_kaiba_evolution",
+  "v": 27,
+  "s": 23,
+  "a": 0,
+  "turni": 863
+ },
+ "kaiba|easy|60|starter_sdy_yugi": {
+  "chiave": "kaiba|easy|60|starter_sdy_yugi",
+  "v": 30,
+  "s": 20,
+  "a": 0,
+  "turni": 860
+ },
+ "kaiba|easy|60|starter_sye_yugi_evolution": {
+  "chiave": "kaiba|easy|60|starter_sye_yugi_evolution",
+  "v": 33,
+  "s": 17,
+  "a": 0,
+  "turni": 993
+ },
+ "kaiba|easy|60|structure_sd4_fury_from_the_deep": {
+  "chiave": "kaiba|easy|60|structure_sd4_fury_from_the_deep",
+  "v": 31,
+  "s": 19,
+  "a": 0,
+  "turni": 1064
+ },
+ "kaiba|hard|40|structure_sd3_blaze_of_destruction": {
+  "chiave": "kaiba|hard|40|structure_sd3_blaze_of_destruction",
+  "v": 15,
+  "s": 35,
+  "a": 0,
+  "turni": 669
+ },
+ "kaiba|hard|40|starter_sdy_yugi": {
+  "chiave": "kaiba|hard|40|starter_sdy_yugi",
+  "v": 9,
+  "s": 41,
+  "a": 0,
+  "turni": 607
+ },
+ "kaiba|hard|40|structure_sd4_fury_from_the_deep": {
+  "chiave": "kaiba|hard|40|structure_sd4_fury_from_the_deep",
+  "v": 18,
+  "s": 32,
+  "a": 0,
+  "turni": 716
+ },
+ "kaiba|hard|40|starter_sye_yugi_evolution": {
+  "chiave": "kaiba|hard|40|starter_sye_yugi_evolution",
+  "v": 13,
+  "s": 37,
+  "a": 0,
+  "turni": 814
+ },
+ "kaiba|hard|40|starter_ske_kaiba_evolution": {
+  "chiave": "kaiba|hard|40|starter_ske_kaiba_evolution",
+  "v": 10,
+  "s": 40,
+  "a": 0,
+  "turni": 656
+ },
+ "kaiba|hard|50|structure_sd3_blaze_of_destruction": {
+  "chiave": "kaiba|hard|50|structure_sd3_blaze_of_destruction",
+  "v": 18,
+  "s": 32,
+  "a": 0,
+  "turni": 694
+ },
+ "kaiba|hard|40|structure_sd6_spellcasters_judgment": {
+  "chiave": "kaiba|hard|40|structure_sd6_spellcasters_judgment",
+  "v": 17,
+  "s": 33,
+  "a": 0,
+  "turni": 731
+ },
+ "kaiba|hard|50|structure_sd4_fury_from_the_deep": {
+  "chiave": "kaiba|hard|50|structure_sd4_fury_from_the_deep",
+  "v": 19,
+  "s": 31,
+  "a": 0,
+  "turni": 829
+ },
+ "kaiba|hard|50|starter_sye_yugi_evolution": {
+  "chiave": "kaiba|hard|50|starter_sye_yugi_evolution",
+  "v": 14,
+  "s": 36,
+  "a": 0,
+  "turni": 820
+ },
+ "kaiba|hard|50|starter_sdy_yugi": {
+  "chiave": "kaiba|hard|50|starter_sdy_yugi",
+  "v": 3,
+  "s": 47,
+  "a": 0,
+  "turni": 629
+ },
+ "kaiba|hard|50|starter_ske_kaiba_evolution": {
+  "chiave": "kaiba|hard|50|starter_ske_kaiba_evolution",
+  "v": 9,
+  "s": 41,
+  "a": 0,
+  "turni": 591
+ },
+ "kaiba|hard|50|structure_sd6_spellcasters_judgment": {
+  "chiave": "kaiba|hard|50|structure_sd6_spellcasters_judgment",
+  "v": 15,
+  "s": 35,
+  "a": 0,
+  "turni": 921
+ },
+ "kaiba|hard|60|structure_sd3_blaze_of_destruction": {
+  "chiave": "kaiba|hard|60|structure_sd3_blaze_of_destruction",
+  "v": 23,
+  "s": 27,
+  "a": 0,
+  "turni": 859
+ },
+ "kaiba|hard|60|structure_sd4_fury_from_the_deep": {
+  "chiave": "kaiba|hard|60|structure_sd4_fury_from_the_deep",
+  "v": 25,
+  "s": 25,
+  "a": 0,
+  "turni": 867
+ },
+ "kaiba|hard|60|starter_sdy_yugi": {
+  "chiave": "kaiba|hard|60|starter_sdy_yugi",
+  "v": 3,
+  "s": 47,
+  "a": 0,
+  "turni": 617
+ },
+ "kaiba|hard|60|starter_ske_kaiba_evolution": {
+  "chiave": "kaiba|hard|60|starter_ske_kaiba_evolution",
+  "v": 6,
+  "s": 44,
+  "a": 0,
+  "turni": 554
+ },
+ "kaiba|hard|60|starter_sye_yugi_evolution": {
+  "chiave": "kaiba|hard|60|starter_sye_yugi_evolution",
+  "v": 12,
+  "s": 38,
+  "a": 0,
+  "turni": 772
+ },
+ "kaiba|hard|60|structure_sd6_spellcasters_judgment": {
+  "chiave": "kaiba|hard|60|structure_sd6_spellcasters_judgment",
+  "v": 18,
+  "s": 32,
+  "a": 0,
+  "turni": 927
+ }
+}

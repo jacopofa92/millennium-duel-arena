@@ -1,0 +1,89 @@
+﻿Matrice: 8 deck x 16 duellanti x 3 livelli x 50 partite = 19200 duelli.
+Da giocare: 128 coppie (0 gia' fatte). Lavoratori: 12.
+  25/128 coppie, 196 s trascorsi, ~13.5 min mancanti
+  50/128 coppie, 425 s trascorsi, ~11.1 min mancanti
+  75/128 coppie, 656 s trascorsi, ~7.7 min mancanti
+  100/128 coppie, 877 s trascorsi, ~4.1 min mancanti
+  125/128 coppie, 1055 s trascorsi, ~0.4 min mancanti
+  128/128 coppie, 1062 s trascorsi, ~0.0 min mancanti
+Fine: 17.7 minuti.
+
+lumis   (righe: mazzo F/M/D, colonne: IA F/M/D)
+   mazzo easy       90     90   90.8
+   mazzo medium   89.3   89.3   89.3
+   mazzo hard     78.5   78.5   79.3
+
+seeker   (righe: mazzo F/M/D, colonne: IA F/M/D)
+   mazzo easy     88.5   88.5   83.3
+   mazzo medium   83.8   83.8   83.5
+   mazzo hard       69     69     67
+
+umbra   (righe: mazzo F/M/D, colonne: IA F/M/D)
+   mazzo easy     84.3   84.3     84
+   mazzo medium   82.3   82.3     81
+   mazzo hard     76.8   76.8     74
+
+strings   (righe: mazzo F/M/D, colonne: IA F/M/D)
+   mazzo easy     90.3   90.3   90.8
+   mazzo medium   83.3   83.3     82
+   mazzo hard     71.8   71.8     65
+
+weevil   (righe: mazzo F/M/D, colonne: IA F/M/D)
+   mazzo easy     93.3   93.3   92.8
+   mazzo medium   80.3   80.3   78.3
+   mazzo hard       61     61   59.5
+
+odion   (righe: mazzo F/M/D, colonne: IA F/M/D)
+   mazzo easy     81.3   80.5   76.3
+   mazzo medium   75.3   74.3     74
+   mazzo hard     58.5   58.3     53
+
+joey   (righe: mazzo F/M/D, colonne: IA F/M/D)
+   mazzo easy     81.3   81.3   77.8
+   mazzo medium   41.5   41.5   38.5
+   mazzo hard       49     49   44.5
+
+pegasus   (righe: mazzo F/M/D, colonne: IA F/M/D)
+   mazzo easy     59.8   59.8   58.8
+   mazzo medium   40.3   40.3   33.8
+   mazzo hard     39.8   39.8   34.3
+
+highMageAtenza   (righe: mazzo F/M/D, colonne: IA F/M/D)
+   mazzo easy     78.8   78.8   77.8
+   mazzo medium   38.3   38.3   36.5
+   mazzo hard     35.8   35.8     34
+
+neku   (righe: mazzo F/M/D, colonne: IA F/M/D)
+   mazzo easy     80.8   80.8   78.5
+   mazzo medium   25.5   25.5   24.5
+   mazzo hard     21.5   21.5   18.8
+
+nesbitt   (righe: mazzo F/M/D, colonne: IA F/M/D)
+   mazzo easy     57.5   57.5   53.5
+   mazzo medium   21.5   21.5   21.8
+   mazzo hard     21.3   21.3   19.3
+
+darkNite   (righe: mazzo F/M/D, colonne: IA F/M/D)
+   mazzo easy     84.5   84.5     83
+   mazzo medium   31.8   31.8   29.8
+   mazzo hard     27.5   27.5   25.8
+
+nitemare   (righe: mazzo F/M/D, colonne: IA F/M/D)
+   mazzo easy     83.5   83.5   81.5
+   mazzo medium   30.3   30.3   29.8
+   mazzo hard      5.8    5.8    4.3
+
+heishin   (righe: mazzo F/M/D, colonne: IA F/M/D)
+   mazzo easy     61.8   61.8     59
+   mazzo medium   22.8   22.8   22.3
+   mazzo hard      9.5    9.5     10
+
+robertoGiacobbo   (righe: mazzo F/M/D, colonne: IA F/M/D)
+   mazzo easy     79.8   79.8     78
+   mazzo medium   21.8   21.8   21.8
+   mazzo hard     22.8   22.8     22
+
+shadi   (righe: mazzo F/M/D, colonne: IA F/M/D)
+   mazzo easy     53.8   53.8   52.8
+   mazzo medium   50.8   50.8   34.8
+   mazzo hard     47.3   47.3   29.3

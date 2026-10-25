@@ -6856,7 +6856,9 @@ characterDeckDatabase.seeker = {
     medium: { main: [
         { id: 41, qty: 1 }, { id: 11, qty: 1 }, { id: 42, qty: 1 }, { id: 43, qty: 1 }, { id: 44, qty: 1 },
         { id: 54, qty: 3 }, { id: 261, qty: 3 }, { id: 115, qty: 2 }, { id: 257, qty: 3 },
-        { id: 758, qty: 3 }, { id: 433, qty: 2 }, { id: 508, qty: 2 },
+        // 1.4.97: due Streghe della Foresta Nera (1100 ATK) diventano Genio della Lampada e Predatore Vorse
+        // (giocatore 83% -> 76%).
+        { id: 758, qty: 3 }, { id: 433, qty: 2 }, { id: 335, qty: 1 }, { id: 502, qty: 1 },
         { id: 8, qty: 2 }, { id: 750, qty: 2 }, { id: 503, qty: 2 }, { id: 143, qty: 2 },
         { id: 36, qty: 2 }, { id: 272, qty: 2 }, { id: 307, qty: 1 }, { id: 141, qty: 1 },
         { id: 35, qty: 1 }, { id: 820, qty: 1 }, { id: 620, qty: 1 }
@@ -6864,7 +6866,8 @@ characterDeckDatabase.seeker = {
     hard: { main: [
         { id: 41, qty: 1 }, { id: 11, qty: 1 }, { id: 42, qty: 1 }, { id: 43, qty: 1 }, { id: 44, qty: 1 },
         { id: 54, qty: 3 }, { id: 115, qty: 2 }, { id: 257, qty: 2 }, { id: 758, qty: 3 },
-        { id: 433, qty: 3 }, { id: 508, qty: 3 },
+        // 1.4.97: due Streghe della Foresta Nera diventano Predatore Vorse e Genio della Lampada (giocatore 77% -> 60%).
+        { id: 433, qty: 3 }, { id: 508, qty: 1 }, { id: 502, qty: 1 }, { id: 335, qty: 1 },
         { id: 8, qty: 1 }, { id: 750, qty: 2 }, { id: 503, qty: 1 },
         { id: 36, qty: 3 }, { id: 272, qty: 3 }, { id: 307, qty: 2 }, { id: 141, qty: 2 },
         { id: 35, qty: 1 }, { id: 820, qty: 1 }, { id: 409, qty: 1 },
@@ -6908,14 +6911,18 @@ characterDeckDatabase.lumis = {
     ], extra: [] },
     medium: { main: [
         { id: 167, qty: 1 }, { id: 602, qty: 3 }, { id: 483, qty: 3 }, { id: 644, qty: 3 },
-        { id: 54, qty: 2 }, { id: 391, qty: 2 }, { id: 261, qty: 2 }, { id: 433, qty: 2 },
+        // 1.4.97: Sangan e un Elfo sostituiti da mostri veri a 1800-1900 ATK, cosi' il Normale non e' piu' quasi
+        // quanto il Facile (misurato: giocatore 87% -> 74% su 8 mazzi di riferimento).
+        { id: 54, qty: 2 }, { id: 391, qty: 1 }, { id: 261, qty: 2 }, { id: 736, qty: 1 }, { id: 502, qty: 1 }, { id: 335, qty: 1 },
         { id: 168, qty: 2 }, { id: 370, qty: 3 }, { id: 371, qty: 3 }, { id: 372, qty: 3 },
         { id: 8, qty: 1 }, { id: 750, qty: 2 }, { id: 503, qty: 1 }, { id: 143, qty: 1 },
         { id: 820, qty: 1 }, { id: 36, qty: 2 }, { id: 272, qty: 1 }, { id: 35, qty: 1 }, { id: 620, qty: 1 }
     ], extra: [] },
     hard: { main: [
         { id: 167, qty: 1 }, { id: 602, qty: 3 }, { id: 483, qty: 3 }, { id: 644, qty: 3 },
-        { id: 54, qty: 2 }, { id: 433, qty: 2 }, { id: 508, qty: 2 },
+        // 1.4.97: via i muri da 1000-1100 ATK, dentro Abile Mago Nero, Predatore Vorse e Genio della Lampada
+        // (giocatore 81% -> 56%): il Difficile deve essere davvero piu' duro del Normale.
+        { id: 433, qty: 2 }, { id: 736, qty: 2 }, { id: 502, qty: 1 }, { id: 335, qty: 1 },
         { id: 168, qty: 3 }, { id: 370, qty: 3 }, { id: 371, qty: 3 }, { id: 372, qty: 3 },
         { id: 8, qty: 1 }, { id: 750, qty: 1 }, { id: 503, qty: 1 }, { id: 820, qty: 1 },
         { id: 36, qty: 2 }, { id: 272, qty: 2 }, { id: 35, qty: 1 }, { id: 620, qty: 1 },
@@ -6934,14 +6941,18 @@ characterDeckDatabase.umbra = {
     ], extra: [] },
     medium: { main: [
         { id: 167, qty: 1 }, { id: 602, qty: 3 }, { id: 483, qty: 2 }, { id: 644, qty: 3 },
-        { id: 54, qty: 2 }, { id: 261, qty: 2 }, { id: 433, qty: 2 }, { id: 758, qty: 3 }, { id: 759, qty: 3 },
+        // 1.4.97: due mostri deboli sostituiti da Abile Mago Nero e Genio della Lampada (giocatore 85% -> 76%).
+        { id: 54, qty: 2 }, { id: 261, qty: 2 }, { id: 433, qty: 1 }, { id: 758, qty: 2 }, { id: 759, qty: 3 },
+        { id: 736, qty: 1 }, { id: 335, qty: 1 },
         { id: 168, qty: 2 }, { id: 370, qty: 2 }, { id: 371, qty: 2 }, { id: 372, qty: 2 },
         { id: 8, qty: 1 }, { id: 750, qty: 2 }, { id: 503, qty: 1 }, { id: 143, qty: 1 },
         { id: 820, qty: 1 }, { id: 36, qty: 2 }, { id: 272, qty: 2 }, { id: 35, qty: 1 }
     ], extra: [] },
     hard: { main: [
         { id: 167, qty: 1 }, { id: 602, qty: 3 }, { id: 483, qty: 2 }, { id: 644, qty: 3 },
-        { id: 54, qty: 2 }, { id: 433, qty: 2 }, { id: 508, qty: 2 }, { id: 758, qty: 2 }, { id: 759, qty: 2 },
+        // 1.4.97: la Strega della Foresta Nera (1100 ATK) lascia il posto ad Abile Mago Nero e Predatore Vorse
+        // (giocatore 72% -> 60%).
+        { id: 54, qty: 2 }, { id: 433, qty: 2 }, { id: 736, qty: 1 }, { id: 502, qty: 1 }, { id: 758, qty: 2 }, { id: 759, qty: 2 },
         { id: 168, qty: 3 }, { id: 370, qty: 2 }, { id: 371, qty: 2 }, { id: 372, qty: 2 },
         { id: 8, qty: 1 }, { id: 750, qty: 2 }, { id: 503, qty: 1 }, { id: 820, qty: 1 },
         { id: 36, qty: 2 }, { id: 272, qty: 2 }, { id: 35, qty: 1 }, { id: 7, qty: 1 }, { id: 10, qty: 1 }
@@ -7013,6 +7024,54 @@ ritoccaDeckHard('heishin',
 ritoccaDeckHard('nitemare',
     { 12: 2, 1125: 1, 932: 2, 13: 1, 518: 1, 436: 1, 331: 2, 642: 1, 38: 1, 517: 1 },
     { 493: 1, 502: 1, 335: 1, 36: 2, 272: 2, 409: 1, 17: 2, 130: 3 });
+
+// ---- 1.4.97: secondo giro di bilanciamento, dalla matrice completa del 2026-10-25 ----
+// Misurato con tools/audit-matrice-completa.js (8 mazzi di riferimento, IA del giocatore Difficile):
+// l'IA dell'avversario sposta il risultato di soli 0-6 punti, la difficolta' la fa quasi tutta il
+// MAZZO. I numeri fra parentesi sono le vittorie del giocatore (prima -> dopo). Il Main Deck resta
+// sempre a 40 carte (decisione dell'utente: non si alza).
+
+// Nitemare e' ancora il superboss, ma 4% era un muro: meno Raigeki/Controllo della Mente (le
+// carte che chiudono la partita da sole) e piu' mostri con cui giocare davvero (4% -> 16%).
+ritoccaDeckHard('nitemare',
+    { 409: 2, 130: 3, 36: 2, 272: 1, 793: 1 },
+    { 12: 2, 331: 2, 932: 1, 13: 1, 17: 1, 613: 1, 436: 1 });
+
+// Heishin: stesso criterio, due Raigeki e due Controllo della Mente in meno (8% -> 16%).
+ritoccaDeckHard('heishin',
+    { 130: 2, 409: 2, 36: 1, 272: 1 },
+    { 428: 2, 12: 1, 237: 1, 518: 1, 327: 1 });
+
+// Duellanti il cui Difficile era quasi identico al Normale: i mostri che fanno solo numero
+// (gioco d'azzardo, 500-1200 ATK) cedono il posto a quelli che vincono le battaglie.
+ritoccaDeckHard('joey',                                   // 46% -> 32% (Normale 47%)
+    { 28: 2, 539: 1 },
+    { 122: 1, 16: 1, 399: 1 });
+ritoccaDeckHard('pegasus',                                // 36% -> 29% (Normale 36%)
+    { 481: 2, 190: 1, 483: 1 },
+    { 355: 1, 486: 1, 606: 1, 130: 1 });
+// Atenza: i draghi di Livello alto da soli rallentavano il mazzo (provato: 43%), servono
+// draghi da 1900 ATK di Livello 4 che si evocano subito (35% -> 33%).
+ritoccaDeckHard('highMageAtenza',
+    { 937: 1, 507: 1, 198: 1 },
+    { 639: 1, 855: 1, 398: 1 });
+ritoccaDeckHard('neku',                                   // 20% -> 16% (Normale 25%)
+    { 718: 2, 713: 1, 504: 1 },
+    { 467: 1, 317: 1, 409: 1, 399: 1 });
+ritoccaDeckHard('nesbitt',                                // 22% -> 18% (Normale 23%)
+    { 960: 2, 264: 2 },
+    { 373: 1, 510: 1, 455: 1, 177: 1 });
+
+// Difficile ancora troppo facile (oltre il 55%): Strings, Weevil e Odion.
+ritoccaDeckHard('strings',                                // 63% -> 53%
+    { 765: 2 },
+    { 502: 1, 335: 1 });
+ritoccaDeckHard('weevil',                                 // 63% -> 53%
+    { 23: 2 },
+    { 325: 1, 218: 1 });
+ritoccaDeckHard('odion',                                  // 58% -> 48%
+    { 1027: 2 },
+    { 1116: 1, 502: 1 });
 
 // ================================================================
 // REGOLE DEI TRE LIVELLI — verificate carta per carta su ogni mazzo
