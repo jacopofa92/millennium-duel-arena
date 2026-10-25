@@ -79,8 +79,8 @@ module.exports = {
                         const r = e.getBoundingClientRect();
                         return {
                             testo: e.textContent.trim(),
-                            // Con gli ologrammi sul telefono le due cifre sono impilate (vedi sopra): altezza fino a ~3 corpi.
-                            unaRiga: r.height < parseFloat(cs.fontSize) * (document.documentElement.classList.contains('holo-on') && !e.classList.contains('field-pile-badge') ? 3.2 : 1.6),
+                            // Mai impilati, nemmeno con gli ologrammi (l'utente l'ha vietato esplicitamente il 2026-10-25).
+                            unaRiga: r.height < parseFloat(cs.fontSize) * 1.6,
                             senzaBox: (cs.backgroundColor === 'rgba(0, 0, 0, 0)' || cs.backgroundColor === 'transparent')
                                 && parseFloat(cs.borderTopWidth) === 0 && cs.boxShadow === 'none'
                         };

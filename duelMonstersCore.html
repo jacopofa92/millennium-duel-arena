@@ -1943,27 +1943,20 @@
         .holo-on .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-atk { font-size: 0.8em; }
         .holo-on .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-def { font-size: 1.2em; }
         .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-sep { color: rgba(255, 255, 255, 0.75); font-size: 0.85em; }
-        /* Telefono: in una riga sola la casella (50px) limita le cifre a ~9px. Con gli ologrammi i numeri
-           si IMPILANO (ATK sopra, DEF sotto, il piu' grande e' quello della Posizione attuale) e salgono
-           sulla parte bassa della carta: ogni colonna e' larga 4 cifre, quindi due mostri vicini non si
-           toccano mai e le cifre arrivano a ~14px. Lo sorveglia lo spec badge-campo-non-si-sovrappongono. */
+        /* Telefono: MAI impilati (scelta esplicita dell'utente), sempre una riga. La riga sale sulla parte
+           bassa della carta (permesso dall'utente) e perde la barra "/": la differenza ATK/DEF la dice la
+           dimensione. Il limite e' la larghezza della casella (50px): la riga deve starci per non toccare
+           i numeri del mostro vicino, quindi il corpo e' ~10px. */
         @media (max-width: 900px) {
             .holo-on .field-stats-badge:not(.field-pile-badge) {
-                flex-direction: column;
-                align-items: center;
-                gap: 0;
-                line-height: 1;
-                font-size: clamp(9px, calc(var(--card-w) * 0.235), 13px);
-                top: calc(50% + var(--card-h) / 2 - 2.6em);
-            }
-            .holo-on .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) {
-                top: calc(50% + var(--card-w) / 2 - 2.6em);
+                gap: 0.15em;
+                letter-spacing: -0.08em;
+                font-size: clamp(9px, calc(var(--card-w) * 0.225), 13px);
+                /* Sale sulla carta fin dove sta sotto il bordo di una carta VICINA in Difesa (ruotata, e' larga
+                   quanto una carta e' alta e rientra nella nostra casella): lo stesso punto per tutti. */
+                top: calc(50% + var(--card-w) / 2 + 0.5px);
             }
             .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-sep { display: none; }
-            .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk { font-size: 1.5em; }
-            .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-def { font-size: 1em; }
-            .holo-on .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-atk { font-size: 1em; }
-            .holo-on .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-def { font-size: 1.5em; }
         }
         @keyframes holoSfarfalla {
             0%, 91%, 95%, 100% { opacity: 1; }
