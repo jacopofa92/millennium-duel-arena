@@ -230,6 +230,9 @@
      */
     function sync() {
         if (sospeso) return;
+        // Il badge ATK/DEF si veste da ologramma con questa classe (CSS in duelMonstersCore.html):
+        // sta sull'<html>, non sul badge, perché il Terreno si riconcilia confrontando l'HTML dei nodi.
+        document.documentElement.classList.toggle('holo-on', attivo());
         if (!attivo()) {
             if (vivi.size) { vivi.forEach((_, uid) => rimuovi(uid)); }
             if (window.MonsterHologramGL) MonsterHologramGL.aggiorna([]);

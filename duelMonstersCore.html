@@ -1857,6 +1857,80 @@
         }
 
         /* ============================================================
+           NUMERI LUMINOSI (richiesta dell'utente, dopo la Catena WebGL:
+           "quei numeri li puoi usare anche per i life points, danni e cure").
+           Stessa ricetta di .cgl-num in js/ui/catena-webgl.js: corsivo
+           pesante, riempimento bianco, contorno e alone del colore di chi
+           li porta (--num-c). Colori: tu azzurro, avversario rosso, danno
+           rosso, cura verde. paint-order fa stare il contorno SOTTO il
+           riempimento, così le cifre non si assottigliano.
+           ============================================================ */
+        .life-points > span,
+        .floating-damage,
+        .epic-damage-value {
+            --num-c: rgb(70, 215, 255);
+            font-family: 'Arial Black', 'Segoe UI Black', Impact, system-ui, sans-serif;
+            font-style: italic;
+            font-weight: 900;
+            color: #fff;
+            background: none;
+            -webkit-text-stroke: 0.045em var(--num-c);
+            paint-order: stroke fill;
+            text-shadow: 0 0 0.22em var(--num-c), 0 0 0.55em var(--num-c), 0 0.06em 0.18em rgba(0, 0, 0, 0.7);
+        }
+        #botInfo .life-points > span { --num-c: rgb(255, 84, 64); }
+        .life-points.lp-hit > span { --num-c: rgb(255, 56, 56); }
+        .life-points.lp-heal > span { --num-c: rgb(60, 235, 130); }
+        .floating-damage.damage, .floating-damage.heal, .epic-damage-value { color: #fff; }
+        .floating-damage.damage, #epicDamageBurst.dmg .epic-damage-value { --num-c: rgb(255, 56, 56); }
+        .floating-damage.heal, #epicDamageBurst.heal .epic-damage-value { --num-c: rgb(60, 235, 130); }
+        #epicDamageBurst.dmg .epic-damage-value,
+        #epicDamageBurst.heal .epic-damage-value {
+            background: none;
+            -webkit-background-clip: border-box;
+            background-clip: border-box;
+            color: #fff;
+            filter: drop-shadow(0 0 22px var(--num-c));
+        }
+        #epicDamageBurst.epic-gl .epic-damage-value { filter: none !important; }
+        .player-info.side-player .life-points > span { text-shadow: 0 0 0.22em var(--num-c), 0 0 0.55em var(--num-c), 0 0.06em 0.18em rgba(0, 0, 0, 0.7); }
+
+        /* ============================================================
+           ATK/DEF A OLOGRAMMA, solo con gli ologrammi accesi (classe
+           holo-on sull'<html>, la mette monster-hologram.js a ogni sync):
+           cifre traslucide con bagliore azzurro e righe di scansione,
+           che sfarfallano piano. Resta UNA riga, senza pillola né bordo
+           (scelte dell'utente); il filtro è l'unica cosa che cambia, e
+           duel-feedback.js lo legge da qui per il lampo delle variazioni.
+           L'animazione è sull'opacità: non tocca l'HTML del nodo, quindi
+           il ridisegno incrementale del Terreno non lo sostituisce.
+           ============================================================ */
+        .holo-on .field-stats-badge:not(.field-pile-badge) {
+            filter: drop-shadow(0 0 3px rgba(90, 215, 255, 0.95)) drop-shadow(0 0 8px rgba(40, 150, 255, 0.6));
+            animation: holoSfarfalla 3.2s steps(1, end) infinite;
+        }
+        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk,
+        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-def {
+            font-style: italic;
+            background-image:
+                repeating-linear-gradient(180deg, rgba(0, 20, 40, 0.55) 0 1px, transparent 1px 3px),
+                linear-gradient(180deg, #ffffff 0%, #9be8ff 55%, #3fb6ff 100%);
+        }
+        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk {
+            background-image:
+                repeating-linear-gradient(180deg, rgba(0, 20, 40, 0.55) 0 1px, transparent 1px 3px),
+                linear-gradient(180deg, #fff3e8 0%, #ffc08f 55%, #ff8a4a 100%);
+        }
+        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-sep { color: rgba(150, 230, 255, 0.8); }
+        @keyframes holoSfarfalla {
+            0%, 91%, 95%, 100% { opacity: 1; }
+            93% { opacity: 0.55; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .holo-on .field-stats-badge:not(.field-pile-badge) { animation: none; }
+        }
+
+        /* ============================================================
            Avviso "ATTACCO DIRETTO", stile Master Duel: due barre a
            strisce diagonali che entrano dai lati dello schermo.
            ============================================================ */
