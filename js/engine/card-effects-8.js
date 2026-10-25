@@ -5138,8 +5138,12 @@
             gameState.cannotBeTargetedByOpponentEffectsUids[ctx.card.uid] = ctx.owner;
         },
         canActivate(ctx) {
-            return (ctx.hand(ctx.owner).some((card) => card.id === 472) || Tavolo.mazzo(ctx.owner).some((card) => card.id === 472))
-                && ctx.findEmptyMonsterSlot(ctx.owner) !== -1;
+            // "Puoi offrire come Tributo QUESTA carta": solo da scoperta sul Terreno. Senza questo controllo la Sfera risultava
+            // attivabile anche in mano (il popover "Attiva" compariva e l'effetto non faceva nulla).
+            if (ctx.zone !== 'monster') return false;
+            // Nessun controllo sulla casella libera: la Sfera lascia la propria prima che Ra entri, quindi con il Terreno pieno
+            // la sua casella basta (prima l'effetto era negato proprio quando il Terreno era pieno).
+            return ctx.hand(ctx.owner).some((card) => card.id === 472) || Tavolo.mazzo(ctx.owner).some((card) => card.id === 472);
         },
         activate(ctx) {
             const ownIndex = ctx.field(ctx.owner).findIndex((slot) => slot && slot.card.uid === ctx.card.uid);

@@ -1434,17 +1434,45 @@ function openSummonModal(card, slotIndex, handIndex, fromRect, opzioni) {
  */
 function maybeAskRaLpChoice(card, slotEl, proceed) {
     if (card.id !== 472 || gameState.playerLP <= 100) { proceed(); return; }
-    const wouldGain = gameState.playerLP - 100;
+    // "FINO A che te ne rimangono solo 100": si sceglie QUANTO pagare, da 0 al massimo possibile (prima era tutto o niente).
+    // Il valore finisce in card._raPayLp come NUMERO (0 = non pagare; un `true` scritto dal bot o da un vecchio comando
+    // vale "tutto", vedi onSummon di Ra).
+    const massimo = gameState.playerLP - 100;
+    const PASSO = 50;
     const pop = openQuickPopover(slotEl, `
-        <div class="quick-popover-title">Ra: pagare LP fino a 100 per +${wouldGain} ATK/DEF?</div>
+        <div class="quick-popover-title">Il Drago Alato di Ra: quanti Life Points paghi?</div>
+        <div class="quick-popover-text" id="qpRaInfo"></div>
+        <input type="range" id="qpRaRange" min="0" max="${massimo}" step="1" value="${massimo}" style="width:100%;accent-color:#f7d774;margin:2px 0 8px;">
+        <div class="quick-popover-actions" style="margin-bottom:6px;">
+            <button type="button" class="quick-popover-btn cancel" id="qpRaMeta">Metà</button>
+            <button type="button" class="quick-popover-btn cancel" id="qpRaTutto">Tutto</button>
+        </div>
         <div class="quick-popover-actions">
-            <button type="button" class="quick-popover-btn confirm icon-round" id="qpRaPayYes" title="Sì, paga i Life Points"><span data-ico="ok">✔</span></button>
-            <button type="button" class="quick-popover-btn cancel icon-round" id="qpRaPayNo" title="No, resta 0/0"><span data-ico="cancel">✖</span></button>
+            <button type="button" class="quick-popover-btn confirm" id="qpRaPayYes">Paga</button>
+            <button type="button" class="quick-popover-btn cancel" id="qpRaPayNo">Non pagare</button>
         </div>
     `, { dismissible: false });
+    const range = pop.querySelector('#qpRaRange');
+    const info = pop.querySelector('#qpRaInfo');
+    // Si arrotonda ai 50 (come i Life Point del gioco), salvo il tetto che può non esserlo.
+    const valore = () => {
+        const v = Math.max(0, Math.min(massimo, parseInt(range.value, 10) || 0));
+        return v >= massimo ? massimo : Math.round(v / PASSO) * PASSO;
+    };
+    const aggiorna = () => {
+        const v = valore();
+        info.textContent = v > 0
+            ? `Paghi ${v} LP: Ra guadagna +${v} ATK/DEF e a te ne restano ${gameState.playerLP - v}.`
+            : 'Non paghi nulla: Ra resta 0/0.';
+    };
+    range.addEventListener('input', aggiorna);
+    pop.querySelector('#qpRaMeta').onclick = () => { range.value = String(Math.round(massimo / 2 / PASSO) * PASSO); aggiorna(); };
+    pop.querySelector('#qpRaTutto').onclick = () => { range.value = String(massimo); aggiorna(); };
+    aggiorna();
     pop.querySelector('#qpRaPayYes').onclick = () => {
+        const v = valore();
         closeQuickPopover();
-        card._raPayLp = true;
+        card._raPayLp = v > 0 ? v : false;
         proceed();
     };
     pop.querySelector('#qpRaPayNo').onclick = () => {

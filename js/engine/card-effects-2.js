@@ -14,7 +14,7 @@
 (function () {
     'use strict';
 
-    const { chooseCardFromList, otherHandCards, blockBanishFromField, isHarpieLadySupport, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, findPetitMothReadyForCocoonSummon, releaseRelinquishedTarget } = window.CardEffectsShared;
+    const { chooseCardFromList, otherHandCards, blockBanishFromField, isHarpieLadySupport, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldCardTargetWaiting, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, findPetitMothReadyForCocoonSummon, releaseRelinquishedTarget } = window.CardEffectsShared;
 
     // ================================================================
     // 52 — Grande Falena / Great Moth
@@ -2772,16 +2772,11 @@
     // il vero valore è dato SOLO dall'effetto (niente "somma dei mostri
     // sacrificati": quella era la versione anime/non ufficiale, corretta
     // dopo verifica).
-    // SEMPLIFICAZIONE: il pagamento LP-fino-a-100 è sempre applicato per
-    // intero (nessuna interfaccia per pagare meno, e nessun modo di
-    // rifiutarlo — il testo reale lo rende opzionale con "puoi", ma è
-    // sempre vantaggioso per il proprietario, che parte comunque da 0/0,
-    // quindi l'esecuzione automatica non cambia mai l'esito). Il
-    // bersaglio dell'Ignition è scelto da sola (il più forte disponibile
-    // dell'avversario, priorità a quelli scoperti) invece di un'interfaccia
-    // di selezione dedicata, e limitato al campo avversario (il testo
-    // reale non lo vieta, ma nessun caso di questo dataset trarrebbe
-    // beneficio dal colpire il proprio campo). "L'Evocazione Normale non
+    // Il pagamento all'Evocazione e' a scelta della persona ("FINO A che te
+    // ne rimangono solo 100": da 0 al massimo, maybeAskRaLpChoice in
+    // actions.js; il bot paga tutto, shouldPayRaLp). Il bersaglio
+    // dell'Ignition da 1000 LP lo sceglie chi attiva, su entrambi i Terreni
+    // (raBersagli); il bot prende il piu' forte avversario. "L'Evocazione Normale non
     // può essere annullata" non ha bisogno di codice: nessuna carta di
     // questo dataset nega mai un'Evocazione (il motore non ha ancora quel
     // meccanismo per NESSUNA carta), quindi la clausola è già rispettata
@@ -2790,6 +2785,17 @@
     // duel-engine.js/fireTrigger) SÌ è implementata, condivisa con gli
     // altri 2 Dei Egizi.
     // ================================================================
+    /** I mostri su cui l'Ignition di Ra puo' puntare: tutti sul Terreno (coperti compresi) tranne Ra stesso, quelli avversari per primi e i piu' forti in testa. */
+    function raBersagli(ctx) {
+        return collectFieldTargets(ctx, { owner: 'both', zone: 'monster', includiCoperte: true })
+            .filter((entry) => entry.card.uid !== ctx.card.uid)
+            .sort((a, b) => {
+                if (a.owner !== b.owner) return a.owner === ctx.opponent ? -1 : 1;
+                const atk = (e) => (e.slot && e.slot.isFaceDown ? 0 : DuelEngine.getEffectiveAtk(e.card));
+                return atk(b) - atk(a);
+            });
+    }
+
     CardEffects.register(472, {
         cannotBeSpecialSummoned: true,
         cannotBeSet: true,
@@ -2825,10 +2831,15 @@
             const lpKey = Tavolo.chiave(ctx.owner, 'LP');
             const currentLp = gameState[lpKey];
             if (currentLp <= 100) return;
-            const paid = currentLp - 100;
-            gameState[lpKey] = 100;
+            // _raPayLp e' un NUMERO quando la persona ha scelto quanto pagare (da 0 a LP-100); true/undefined = tutto (bot,
+            // vecchi comandi, test che chiamano l'handler a mano).
+            const massimo = currentLp - 100;
+            const scelto = ctx.summonedCard._raPayLp;
+            const paid = typeof scelto === 'number' ? Math.max(0, Math.min(massimo, Math.floor(scelto))) : massimo;
+            if (paid <= 0) return;
+            gameState[lpKey] = currentLp - paid;
             ctx.summonedCard.raPaidLp = paid;
-            ctx.log(`☀️ Il Drago Alato di Ra: Life Points pagati fino a restare a 100! Guadagna ${paid} ATK/DEF.`);
+            ctx.log(`☀️ Il Drago Alato di Ra: ${paid} Life Points pagati! Guadagna ${paid} ATK/DEF.`);
         },
         static(ctx) {
             const bonus = ctx.card.raPaidLp || 0;
@@ -2838,27 +2849,27 @@
         canActivate(ctx) {
             const lpKey = Tavolo.chiave(ctx.owner, 'LP');
             if (gameState[lpKey] < 1000) return false;
-            return ctx.field(ctx.opponent).some((slot) => slot);
+            return raBersagli(ctx).length > 0;
         },
         activate(ctx) {
             const lpKey = Tavolo.chiave(ctx.owner, 'LP');
-            const field = ctx.field(ctx.opponent);
-            let targetIndex = -1;
-            let bestAtk = -1;
-            field.forEach((slot, i) => {
-                if (!slot) return;
-                const a = slot.isFaceDown ? 0 : DuelEngine.getEffectiveAtk(slot.card);
-                if (a >= bestAtk) { bestAtk = a; targetIndex = i; }
+            // Il bersaglio lo sceglie chi attiva ("scegli come bersaglio 1 mostro sul Terreno": anche uno suo, anche coperto);
+            // il bot prende da solo il piu' forte dell'avversario (sceltaAutomaticaDelBot). I 1000 LP si pagano a scelta fatta,
+            // quindi chiudere la lista senza scegliere non costa niente. `dichiara`: il bersaglio passa dal checkpoint di
+            // targeting (un effetto che lo devia lo vede) e puo' essere negato.
+            chooseFieldCardTargetWaiting(ctx, raBersagli(ctx), {
+                title: ctx.card.name,
+                text: 'Paga 1000 Life Points e scegli 1 mostro da distruggere.',
+                dichiara: true
+            }, (scelto) => {
+                if (gameState[lpKey] < 1000) return;
+                const finalSlot = ctx.field(scelto.owner)[scelto.index];
+                if (!finalSlot) return;
+                gameState[lpKey] -= 1000;
+                const name = finalSlot.isFaceDown ? 'una carta coperta' : finalSlot.card.name;
+                ctx.destroyMonster(scelto.owner, scelto.index);
+                ctx.log(`☀️ Il Drago Alato di Ra paga 1000 Life Points e distrugge ${name}!`);
             });
-            if (targetIndex === -1) return;
-            const decl = ctx.declareTarget(ctx.opponent, targetIndex, { totalTargetCount: 1 });
-            if (!decl.allowed) return;
-            const finalSlot = ctx.field(decl.targetOwner)[decl.targetIndex];
-            if (!finalSlot) return;
-            gameState[lpKey] -= 1000;
-            const name = finalSlot.isFaceDown ? 'una carta coperta' : finalSlot.card.name;
-            ctx.destroyMonster(decl.targetOwner, decl.targetIndex);
-            ctx.log(`☀️ Il Drago Alato di Ra paga 1000 Life Points e distrugge ${name}!`);
         }
     });
 
