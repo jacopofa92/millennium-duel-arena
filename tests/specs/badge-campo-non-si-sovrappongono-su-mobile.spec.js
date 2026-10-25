@@ -63,7 +63,11 @@ module.exports = {
                     badges.forEach((b, i) => {
                         badges.slice(i + 1).forEach((c) => { if (area(b, c) > 1) esito.push(`badge "${b.testo}" su badge "${c.testo}"`); });
                         carte.forEach((c) => { if (c.slot !== b.slot && area(b, c) > 1) esito.push(`badge "${b.testo}" su una carta di un'altra casella`); });
-                        if (b.bordoCarta !== undefined && (b.distanzaDalBordo < -0.6 || b.distanzaDalBordo > 3)) {
+                        // Con gli ologrammi (holo-on, scelta dell'utente 2026-10-25) i numeri si impilano e salgono
+                        // sulla parte bassa della carta: restano però SOTTO il suo bordo superiore e non toccano altre caselle.
+                        const holo = document.documentElement.classList.contains('holo-on');
+                        const troppoAlto = holo && b.bordoCarta !== undefined && b.distanzaDalBordo < -40;
+                        if (troppoAlto || (!holo && b.bordoCarta !== undefined && (b.distanzaDalBordo < -0.6 || b.distanzaDalBordo > 3))) {
                             esito.push(`badge "${b.testo}" non è appena sotto la propria carta (distanza ${b.distanzaDalBordo.toFixed(1)}px)`);
                         }
                     });
@@ -75,7 +79,8 @@ module.exports = {
                         const r = e.getBoundingClientRect();
                         return {
                             testo: e.textContent.trim(),
-                            unaRiga: r.height < parseFloat(cs.fontSize) * 1.6,
+                            // Con gli ologrammi sul telefono le due cifre sono impilate (vedi sopra): altezza fino a ~3 corpi.
+                            unaRiga: r.height < parseFloat(cs.fontSize) * (document.documentElement.classList.contains('holo-on') && !e.classList.contains('field-pile-badge') ? 3.2 : 1.6),
                             senzaBox: (cs.backgroundColor === 'rgba(0, 0, 0, 0)' || cs.backgroundColor === 'transparent')
                                 && parseFloat(cs.borderTopWidth) === 0 && cs.boxShadow === 'none'
                         };

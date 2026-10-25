@@ -1924,27 +1924,47 @@
             .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-def {
                 background-image:
                     repeating-linear-gradient(180deg, rgba(0, 20, 40, 0.18) 0 1px, transparent 1px 4px),
-                    linear-gradient(180deg, #ffffff 0%, #b8f0ff 55%, #5cc4ff 100%);
-            }
-            .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk {
-                background-image:
-                    repeating-linear-gradient(180deg, rgba(0, 20, 40, 0.18) 0 1px, transparent 1px 4px),
-                    linear-gradient(180deg, #fff6ee 0%, #ffc9a0 55%, #ff9458 100%);
+                    linear-gradient(180deg, #ffffff 0%, #f4f8fa 55%, #dfe7ec 100%);
             }
         }
+        /* Niente colori ATK/DEF (scelta dell'utente): cifre bianche neutre. Conta la DIMENSIONE: quella
+           della Posizione in cui sta il mostro e' piu' grande (ATK se in Attacco, DEF se in Difesa).
+           La Posizione si legge dalla carta sorella, come fa gia' la regola mobile sopra. Le due misure
+           sommano come prima (4 cifre a 1,2em + 4 a 0,8em), cosi' la riga non si allarga sul telefono. */
         .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk,
         .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-def {
             font-style: italic;
             background-image:
                 repeating-linear-gradient(180deg, rgba(0, 20, 40, 0.55) 0 1px, transparent 1px 3px),
-                linear-gradient(180deg, #ffffff 0%, #9be8ff 55%, #3fb6ff 100%);
+                linear-gradient(180deg, #ffffff 0%, #f4f8fa 55%, #dfe7ec 100%);
         }
-        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk {
-            background-image:
-                repeating-linear-gradient(180deg, rgba(0, 20, 40, 0.55) 0 1px, transparent 1px 3px),
-                linear-gradient(180deg, #fff3e8 0%, #ffc08f 55%, #ff8a4a 100%);
+        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk { font-size: 1.2em; }
+        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-def { font-size: 0.8em; }
+        .holo-on .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-atk { font-size: 0.8em; }
+        .holo-on .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-def { font-size: 1.2em; }
+        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-sep { color: rgba(255, 255, 255, 0.75); font-size: 0.85em; }
+        /* Telefono: in una riga sola la casella (50px) limita le cifre a ~9px. Con gli ologrammi i numeri
+           si IMPILANO (ATK sopra, DEF sotto, il piu' grande e' quello della Posizione attuale) e salgono
+           sulla parte bassa della carta: ogni colonna e' larga 4 cifre, quindi due mostri vicini non si
+           toccano mai e le cifre arrivano a ~14px. Lo sorveglia lo spec badge-campo-non-si-sovrappongono. */
+        @media (max-width: 900px) {
+            .holo-on .field-stats-badge:not(.field-pile-badge) {
+                flex-direction: column;
+                align-items: center;
+                gap: 0;
+                line-height: 1;
+                font-size: clamp(9px, calc(var(--card-w) * 0.235), 13px);
+                top: calc(50% + var(--card-h) / 2 - 2.6em);
+            }
+            .holo-on .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) {
+                top: calc(50% + var(--card-w) / 2 - 2.6em);
+            }
+            .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-sep { display: none; }
+            .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk { font-size: 1.5em; }
+            .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-def { font-size: 1em; }
+            .holo-on .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-atk { font-size: 1em; }
+            .holo-on .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-def { font-size: 1.5em; }
         }
-        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-sep { color: rgba(150, 230, 255, 0.8); }
         @keyframes holoSfarfalla {
             0%, 91%, 95%, 100% { opacity: 1; }
             93% { opacity: 0.55; }
