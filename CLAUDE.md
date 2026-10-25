@@ -4774,3 +4774,5 @@ Matrice completa di bilanciamento (2026-10-25, senza modifiche al gioco): `tools
 1.4.106 (cache v415): tolte le righe di scansione dai numeri ATK/DEF con gli ologrammi (restano bagliore azzurro e leggero sfarfallio). Suite completa non eseguita.
 
 1.4.107 (cache v416): la cifra piu' piccola di ATK/DEF (0,8em -> 0,68em, con e senza ologrammi) e un filo di margine a destra di ogni cifra: il corsivo sporgeva e background-clip:text lo tagliava. Suite completa non eseguita.
+
+1.4.108 (cache v417): (1) nomi lunghi nel riquadro dei duellanti: vanno a capo su DUE righe (poi ellissi, tooltip col nome intero) invece di essere troncati su una; la regola nowrap+ellipsis di '.player-info h3' pesava piu' di '.duelist-name', quindi serve '.player-info.side-player .duelist-name'. (2) Turno: al posto della sola corona, una targhetta dorata 'TURNO' con la corona (.turn-crown + ::after) accanto al nome di chi e' di turno, e il ritratto di chi NON lo e' si spegne un po' (saturazione/luminosita'). Niente pulsazione (scartata prima dall'utente). Suite completa non eseguita.

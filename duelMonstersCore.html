@@ -701,14 +701,52 @@
            game-flow.js, changeTurn()). */
         .turn-crown {
             display: none;
-            width: 0.85em;
-            height: 0.85em;
-            color: #ffe27a;
-            filter: drop-shadow(0 0 3px rgba(255,215,0,0.75));
             flex-shrink: 0;
         }
+        /* Etichetta "TURNO" dorata (richiesta dell'utente: la sola corona era
+           minimal e anonima, non si capiva di chi fosse il turno): corona + parola
+           dentro una targhetta ben visibile, accanto al nome di CHI e' di turno.
+           L'altro duellante, in piu', si spegne un poco (vedi sotto), cosi' la
+           differenza si coglie anche senza leggere. Niente pulsazione (scartata
+           dall'utente): e' un'etichetta ferma. */
         .player-info.side-player.active-turn .turn-crown {
             display: inline-flex;
+            align-items: center;
+            gap: 0.35em;
+            padding: 0.18em 0.6em 0.18em 0.42em;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #fff0b0 0%, #f7c948 55%, #d9962a 100%);
+            color: #3b2400;
+            font: 900 clamp(8px, 0.85vw, 11px)/1 system-ui, 'Segoe UI', sans-serif;
+            letter-spacing: 0.14em;
+            text-shadow: none;
+            box-shadow: 0 0 0 1px rgba(80, 45, 0, 0.55), 0 0 10px rgba(255, 205, 80, 0.55), 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .player-info.side-player.active-turn .turn-crown::after { content: 'TURNO'; }
+        .player-info.side-player.active-turn .turn-crown svg { width: 1.45em; height: 1.45em; flex-shrink: 0; }
+        /* Chi NON e' di turno: ritratto un po' piu' spento. */
+        .player-info.side-player:not(.active-turn) .duelist-avatar--corner {
+            filter: saturate(0.6) brightness(0.82);
+            transition: filter 0.4s ease;
+        }
+        /* Nome lungo: va a capo su due righe invece di essere troncato (l'h3 ha la regola nowrap +
+           ellipsis piu' sopra, che qui va annullata: .player-info h3 pesa piu' di .duelist-name).
+           Oltre la seconda riga resta l'ellissi, e il titolo (tooltip) ha il nome intero. */
+        .player-info.side-player .duelist-details { max-width: min(54vw, 340px); }
+        .player-info.side-player .duelist-name {
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
+            flex-wrap: wrap;
+            line-height: 1.12;
+            overflow-wrap: anywhere;
+        }
+        .player-info.side-player .duelist-name .name-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-width: 0;
         }
         /* Tag LP a pillola, sotto il nome nella colonna dei dettagli. */
         .life-points {
