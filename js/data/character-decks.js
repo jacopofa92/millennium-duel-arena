@@ -7048,8 +7048,8 @@ ritoccaDeckHard('joey',                                   // 46% -> 32% (Normale
     { 28: 2, 539: 1 },
     { 122: 1, 16: 1, 399: 1 });
 ritoccaDeckHard('pegasus',                                // 36% -> 29% (Normale 36%)
-    { 481: 2, 190: 1, 483: 1 },
-    { 355: 1, 486: 1, 606: 1, 130: 1 });
+    { 481: 1, 483: 1, 306: 1 },
+    { 486: 1, 606: 1, 130: 1 });
 // Atenza: i draghi di Livello alto da soli rallentavano il mazzo (provato: 43%), servono
 // draghi da 1900 ATK di Livello 4 che si evocano subito (35% -> 33%).
 ritoccaDeckHard('highMageAtenza',

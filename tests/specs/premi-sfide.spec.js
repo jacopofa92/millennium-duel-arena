@@ -27,6 +27,11 @@ module.exports = {
                 .filter((k) => /ygo|duelArena/i.test(k))
                 .forEach((k) => localStorage.removeItem(k));
 
+            // Dal 1.4.91 una missione giornaliera generica ("vinci un duello") si completa con la
+            // stessa vittoria e paga per conto suo: qui si misurano solo le SFIDE, quindi le
+            // missioni si tolgono dal catalogo per la durata del test (le prova un altro spec).
+            if (window.missionsDatabase) window.missionsDatabase.length = 0;
+
             const partenza = SaveManager.getCurrency().credits;
 
             // 'win-1' si completa con UNA vittoria e paga 100 crediti.

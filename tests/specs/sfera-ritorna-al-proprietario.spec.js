@@ -41,6 +41,12 @@ module.exports = {
                 gameState.playerHand.length = 0; gameState.playerHand.push(mk(1275));
                 gameState.playerMonsterField.fill(null); gameState.botMonsterField.fill(null);
                 for (let i = 0; i < 3; i++) gameState.botMonsterField[i] = slot(4);
+                // Il bot non deve poter Evocare con Tributo: dal 1.4.93 sa farlo meglio e la Sfera (0 ATK, la piu'
+                // debole del suo Terreno) e' il Tributo naturale, quindi finiva nel suo Cimitero invece di tornare
+                // a me. Il Tributo di una Sfera e' lecito per le regole: qui si prova solo il RITORNO, quindi mano
+                // e mazzo del bot contengono solo una Trappola che non si puo' Evocare.
+                gameState.botHand.length = 0;
+                gameState.botDeck = Array.from({ length: 12 }, () => mk(503));
                 updateUI();
                 attemptMonsterSummon(gameState.playerHand[0], 0, 0, null);
             });
