@@ -1896,65 +1896,63 @@
         .player-info.side-player .life-points > span { text-shadow: 0 0 0.22em var(--num-c), 0 0 0.55em var(--num-c), 0 0.06em 0.18em rgba(0, 0, 0, 0.7); }
 
         /* ============================================================
-           ATK/DEF A OLOGRAMMA, solo con gli ologrammi accesi (classe
-           holo-on sull'<html>, la mette monster-hologram.js a ogni sync):
-           cifre traslucide con bagliore azzurro e righe di scansione,
-           che sfarfallano piano. Resta UNA riga, senza pillola né bordo
-           (scelte dell'utente); il filtro è l'unica cosa che cambia, e
-           duel-feedback.js lo legge da qui per il lampo delle variazioni.
-           L'animazione è sull'opacità: non tocca l'HTML del nodo, quindi
-           il ridisegno incrementale del Terreno non lo sostituisce.
+           ATK/DEF: cifre BIANCHE NEUTRE, senza colori ATK/DEF (scelta
+           dell'utente), con e senza ologrammi. Conta la DIMENSIONE: quella
+           della Posizione in cui sta il mostro e' piu' grande (ATK se in
+           Attacco, DEF se in Difesa). La Posizione si legge dalla carta
+           sorella (come la regola mobile del badge). Le due misure
+           sommano come prima (4 cifre a 1,2em + 4 a 0,8em): la riga non
+           si allarga. Resta UNA riga, MAI impilata, senza pillola ne' bordo
+           (scelte dell'utente). Sul telefono la barra "/" sparisce e il
+           corpo e' ~10px: il limite e' la larghezza della casella (50px),
+           la riga deve starci per non toccare i numeri del mostro vicino;
+           resta SOTTO la carta ("sopra" era permesso solo se serviva).
            ============================================================ */
+        .field-stats-badge:not(.field-pile-badge) {
+            font-size: clamp(0.82rem, 1.95vw, 1.12rem);
+        }
+        .field-stats-badge:not(.field-pile-badge) .fsb-atk,
+        .field-stats-badge:not(.field-pile-badge) .fsb-def {
+            font-style: italic;
+            background-image: linear-gradient(180deg, #ffffff 0%, #f4f8fa 55%, #dfe7ec 100%);
+        }
+        .field-stats-badge:not(.field-pile-badge) .fsb-atk { font-size: 1.2em; }
+        .field-stats-badge:not(.field-pile-badge) .fsb-def { font-size: 0.8em; }
+        .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-atk { font-size: 0.8em; }
+        .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-def { font-size: 1.2em; }
+        .field-stats-badge:not(.field-pile-badge) .fsb-sep { color: rgba(255, 255, 255, 0.75); font-size: 0.85em; }
+        @media (max-width: 900px) {
+            .field-stats-badge:not(.field-pile-badge) {
+                gap: 0.15em;
+                letter-spacing: -0.08em;
+                font-size: clamp(9px, calc(var(--card-w) * 0.225), 13px);
+            }
+            .field-stats-badge:not(.field-pile-badge) .fsb-atk,
+            .field-stats-badge:not(.field-pile-badge) .fsb-def { font-style: normal; font-weight: 900; }
+            .field-stats-badge:not(.field-pile-badge) .fsb-sep { display: none; }
+        }
+        /* Solo con gli ologrammi accesi (classe holo-on sull'<html>, la mette monster-hologram.js a ogni
+           sync): bagliore azzurro, righe di scansione e un leggero sfarfallio. L'animazione e' sull'opacita':
+           non tocca l'HTML del nodo, quindi il ridisegno incrementale del Terreno non lo sostituisce. Il
+           filtro lo legge duel-feedback.js per il lampo delle variazioni. Sul telefono le righe sono
+           quasi invisibili: mangiavano le cifre piccole. */
         .holo-on .field-stats-badge:not(.field-pile-badge) {
             filter: drop-shadow(0 0 3px rgba(90, 215, 255, 0.95)) drop-shadow(0 0 8px rgba(40, 150, 255, 0.6));
             animation: holoSfarfalla 3.2s steps(1, end) infinite;
-            /* Più grande del badge normale: con righe di scansione e alone le cifre piccole non si leggevano. */
-            font-size: clamp(0.82rem, 1.95vw, 1.12rem);
+        }
+        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk,
+        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-def {
+            background-image:
+                repeating-linear-gradient(180deg, rgba(0, 20, 40, 0.55) 0 1px, transparent 1px 3px),
+                linear-gradient(180deg, #ffffff 0%, #f4f8fa 55%, #dfe7ec 100%);
         }
         @media (max-width: 900px) {
-            .holo-on .field-stats-badge:not(.field-pile-badge) {
-                /* Misurato sul telefono (casella da 50px): a 10,6px la riga e' larga 55px e tocca la vicina; a 9px sta dentro. */
-                font-size: clamp(9px, calc(var(--card-w) * 0.205), 13px);
-                letter-spacing: -0.06em;
-            }
-            .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk,
-            .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-def { font-style: normal; font-weight: 900; }
-            /* Su carte piccole le righe di scansione mangiano le cifre: qui quasi invisibili. */
             .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk,
             .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-def {
                 background-image:
                     repeating-linear-gradient(180deg, rgba(0, 20, 40, 0.18) 0 1px, transparent 1px 4px),
                     linear-gradient(180deg, #ffffff 0%, #f4f8fa 55%, #dfe7ec 100%);
             }
-        }
-        /* Niente colori ATK/DEF (scelta dell'utente): cifre bianche neutre. Conta la DIMENSIONE: quella
-           della Posizione in cui sta il mostro e' piu' grande (ATK se in Attacco, DEF se in Difesa).
-           La Posizione si legge dalla carta sorella, come fa gia' la regola mobile sopra. Le due misure
-           sommano come prima (4 cifre a 1,2em + 4 a 0,8em), cosi' la riga non si allarga sul telefono. */
-        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk,
-        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-def {
-            font-style: italic;
-            background-image:
-                repeating-linear-gradient(180deg, rgba(0, 20, 40, 0.55) 0 1px, transparent 1px 3px),
-                linear-gradient(180deg, #ffffff 0%, #f4f8fa 55%, #dfe7ec 100%);
-        }
-        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk { font-size: 1.2em; }
-        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-def { font-size: 0.8em; }
-        .holo-on .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-atk { font-size: 0.8em; }
-        .holo-on .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-def { font-size: 1.2em; }
-        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-sep { color: rgba(255, 255, 255, 0.75); font-size: 0.85em; }
-        /* Telefono: MAI impilati (scelta esplicita dell'utente), sempre una riga. La riga sale sulla parte
-           bassa della carta SOLO se serve (l'utente: "se serve", non per forza: qui non serve, il limite e' la
-           larghezza, non l'altezza, quindi resta SOTTO la carta come prima) e perde la barra "/": la
-           differenza ATK/DEF la dice la dimensione. Il limite e' la larghezza della casella (50px): la riga deve starci per non toccare
-           i numeri del mostro vicino, quindi il corpo e' ~10px. */
-        @media (max-width: 900px) {
-            .holo-on .field-stats-badge:not(.field-pile-badge) {
-                gap: 0.15em;
-                letter-spacing: -0.08em;
-                font-size: clamp(9px, calc(var(--card-w) * 0.225), 13px);
-            }
-            .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-sep { display: none; }
         }
         @keyframes holoSfarfalla {
             0%, 91%, 95%, 100% { opacity: 1; }
@@ -1963,7 +1961,6 @@
         @media (prefers-reduced-motion: reduce) {
             .holo-on .field-stats-badge:not(.field-pile-badge) { animation: none; }
         }
-
         /* ============================================================
            Avviso "ATTACCO DIRETTO", stile Master Duel: due barre a
            strisce diagonali che entrano dai lati dello schermo.
