@@ -5017,7 +5017,8 @@
         if (destinationOwner !== ctx.owner) slot.originalOwner = ctx.owner;
         destinationField[slotIndex] = slot;
         if (options && options.returnAtNextEndPhase) card._sphereReturnAfterTurn = gameState.turn + 1;
-        consumeNormalSummonQuota(ctx.owner, card);
+        // Un'Evocazione Tributo pagata dall'effetto di una Magia (Incrocio di Anime) non usa l'Evocazione Normale del turno.
+        if (!(options && options.senzaConsumareEvocazione)) consumeNormalSummonQuota(ctx.owner, card);
         ctx.log(`🔺 Evocazione Tributo: ${card.name} entra sul Terreno ${destinationOwner === ctx.owner ? 'del suo proprietario' : 'avversario'}!`);
         const summonCtx = DuelEngine.makeContext(destinationOwner, {
             summonedCard: card,
@@ -5037,7 +5038,9 @@
             if (gameState.phase !== 'main1' && gameState.phase !== 'main2') return false;
             if (gameState.currentPlayer !== ctx.owner || gameState.tributesBlocked) return false;
             if (ctx.hasUsedOncePerTurn(`soul-crossing:${ctx.owner}`)) return false;
-            if (!canUseNormalSummonQuota(ctx.owner, { type: 'monster', level: 10 })) return false;
+            // Nessun controllo sull'Evocazione Normale del turno: l'Evocazione Tributo la fa l'EFFETTO della carta (in giapponese "Cross
+            // Soul": "モンスター1体のアドバンス召喚を行う"), e un'Evocazione fatta da un effetto non usa la tua Evocazione Normale. Si puo' attivare anche
+            // dopo aver gia' Evocato, e non la consuma (vedi resolveCrossFieldTributeSummon, opzione senzaConsumareEvocazione).
             const gods = ctx.hand(ctx.owner).filter(isDivineBeast);
             return gods.length > 0
                 && tributableFieldTargets(ctx, 'both').length >= 3
@@ -5077,7 +5080,7 @@
                     try {
                         if (chosen.length !== 3) return;
                         const usedOpponent = chosen.some((entry) => entry.owner === ctx.opponent);
-                        if (!resolveCrossFieldTributeSummon(ctx, god, chosen, ctx.owner)) return;
+                        if (!resolveCrossFieldTributeSummon(ctx, god, chosen, ctx.owner, { senzaConsumareEvocazione: true })) return;
                         ctx.markUsedOncePerTurn(`soul-crossing:${ctx.owner}`);
                         if (usedOpponent) {
                             gameState.soulCrossingActivationLimitFor = gameState.soulCrossingActivationLimitFor || {};
@@ -5172,7 +5175,9 @@
         }
     });
 
-    CardEffects.register(1276, {
+    // Fenice: "Una volta per turno, durante la End Phase" vale per la End Phase di OGNI giocatore (il testo non dice "tua"), quindi lo scambio con
+    // la Sfera scatta sia nella propria (onEndPhase) sia in quella dell'avversario (onOpponentEndPhase): stesso corpo, due ganci.
+    const feniceDef = {
         cannotNormalSummon: true,
         cannotSpecialSummon: true,
         unaffectedByOtherCardEffects: true,
@@ -5231,7 +5236,9 @@
                 { ignoreSummoningConditions: true });
             ctx.log(`☀️ ${ctx.card.name} ritorna alla ${sphere.name}.`);
         }
-    });
+    };
+    feniceDef.onOpponentEndPhase = feniceDef.onEndPhase;
+    CardEffects.register(1276, feniceDef);
 
     // ================================================================
     // 1277-1282 — due nuclei incompleti di Yugi/Yami Yugi.

@@ -84,6 +84,31 @@ module.exports = {
         t.assert(dopo1272.nomi.includes('Drago Occhi Blu Finale'), `gli effetti dei mostri con quel nome sono annullati per il turno: ${JSON.stringify(dopo1272.nomi)}`);
 
         await aCatenaFerma();
+        // --- 1274 Incrocio di Anime: l'Evocazione Tributo la fa l'EFFETTO, non usa la tua Evocazione Normale -------------
+        // (In giapponese e' "Cross Soul": "モンスター1体のアドバンス召喚を行う"; la si puo' attivare anche dopo aver gia' Evocato.)
+        await aCatenaFerma();
+        const quota = await t.evaluate(() => {
+            __prep();
+            for (let i = 0; i < 3; i++) gameState.botMonsterField[i] = __slot(4);
+            gameState.playerHand.push(__mk(1274), __mk(30));
+            gameState.hasNormalSummoned = true;
+            return { dopoAverEvocato: DuelEngine.canActivate('player', 'hand', 0) };
+        });
+        t.assert(quota.dopoAverEvocato === true, 'Incrocio di Anime si attiva anche dopo aver gia\' fatto l\'Evocazione Normale del turno');
+        await t.evaluate(() => { gameState.hasNormalSummoned = false; DuelEngine.activateCard('player', 'hand', 0); });
+        for (let i = 0; i < 6; i++) {
+            const trovata = await t.page.waitForFunction(() => !!Decisioni.inSospeso() || gameState.playerMonsterField.some((s) => s && s.card.id === 30), null, { timeout: 20000 }).then(() => true).catch(() => false);
+            if (!trovata) break;
+            const finita = await t.evaluate(() => gameState.playerMonsterField.some((s) => s && s.card.id === 30));
+            if (finita) break;
+            await rispondi(0);
+            await t.page.waitForTimeout(300);
+        }
+        await t.page.waitForFunction(() => gameState.playerMonsterField.some((s) => s && s.card.id === 30), null, { timeout: 20000 });
+        const dopoIncrocio = await t.evaluate(() => ({ evocato: gameState.hasNormalSummoned, puoAncora: canUseNormalSummonQuota('player', __mk(30)) }));
+        t.assert(dopoIncrocio.evocato === false && dopoIncrocio.puoAncora === true,
+            `l'Evocazione Tributo di Incrocio di Anime NON consuma l'Evocazione Normale del turno: ${JSON.stringify(dopoIncrocio)}`);
+
         // --- 1276: pagare 1000 LP e' un costo, non un danno: i blocchi dei danni non lo saltano -----------------------------
         await t.evaluate(() => {
             __prep();
