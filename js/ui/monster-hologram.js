@@ -63,7 +63,10 @@
     // Non scendere oltre: su mobile ATK/DEF sta sul FONDO della carta (vedi
     // .field-stats-badge in duelMonstersCore.html) e la base dell'ologramma
     // deve restare sopra quei numeri, non coprirli.
-    const MISURE_COMPATTE = { larghezza: 1.5, altezza: 1.25, sollevamento: 0.32 };
+    // 2026-10-26, richiesta dell'utente ("fai arretrare un po' di piu' gli ologrammi sulla carta"): sollevamento
+    // 0.32 -> 0.18, cioe' la base scende dal 68% all'82% dell'altezza della carta e la figura sporge meno sopra di
+    // lei (sui telefoni bassi copriva i numeri ATK/DEF e la barra delle fasi della fila di sopra).
+    const MISURE_COMPATTE = { larghezza: 1.5, altezza: 1.25, sollevamento: 0.18 };
     // Ritoccate dopo averle viste su un monitor 2K (segnalazione
     // dell'utente: "troppo grandi e troppo oltre la carta"). Con 2.0 × 1.7
     // e il fondo sollevato dell'85% della carta, la figura partiva quasi
@@ -72,7 +75,8 @@
     // dalla loro carta. Ora il fondo resta a un terzo dell'altezza della
     // carta, così la figura nasce DALLA carta e la copre per due terzi, e
     // sopra ne esce di poco più di mezza carta.
-    const MISURE_AMPIE = { larghezza: 1.6, altezza: 1.35, sollevamento: 0.35 };
+    // Idem (richiesta del 2026-10-26): 0.35 -> 0.2.
+    const MISURE_AMPIE = { larghezza: 1.6, altezza: 1.35, sollevamento: 0.2 };
     // La soglia è la stessa del breakpoint che il duello usa già ovunque
     // per distinguere "telefono" da "schermo vero" (vedi i @media di
     // duelMonstersCore.html): un valore in più, tutto suo, si

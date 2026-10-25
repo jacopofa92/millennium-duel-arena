@@ -3007,7 +3007,102 @@ function updatePhaseIndicator() {
     // qui evita un singolo frame con l'offset del viewport precedente.
     syncPhaseStepperToFieldWidth();
     aggiornaBarraFasi();
+    aggiornaPulsanteFasi();
 }
+
+/**
+ * Pulsante laterale delle fasi (telefono in orizzontale, vedi .phase-side-btn in duelMonstersCore.html).
+ * Non ha logica sua: legge dalla barra delle fasi (nascosta da CSS ma sempre aggiornata) quale fase e'
+ * attuale e quali sono raggiungibili (.clickable), e un tocco chiama la stessa handlePhaseStepperClick
+ * della barra, quindi le regole (primo turno, Catena aperta, attacchi forzati...) restano UNA sola.
+ */
+function aggiornaPulsanteFasi() {
+    const btn = document.getElementById('phaseSideBtn');
+    if (!btn) return;
+    const passi = Array.from(document.querySelectorAll('#phaseStepper .phase-step'));
+    const attuale = passi.find((p) => p.classList.contains('active'));
+    if (!attuale) { btn.hidden = true; return; }
+    btn.hidden = false;
+    const icona = attuale.querySelector('.step-icon');
+    document.getElementById('phaseSideIcon').innerHTML = icona ? icona.innerHTML : '';
+    const etichetta = attuale.querySelector('.step-label');
+    document.getElementById('phaseSideLabel').textContent = (etichetta && etichetta.dataset.short) || attuale.dataset.phase;
+    const indice = passi.indexOf(attuale);
+    btn.style.setProperty('--psb-p', `${Math.round(((indice + 1) / passi.length) * 100)}%`);
+    const raggiungibili = passi.filter((p) => p.classList.contains('clickable'));
+    btn.classList.toggle('psb-attendi', raggiungibili.length === 0);
+    btn.setAttribute('aria-label', raggiungibili.length
+        ? `Fase attuale: ${etichetta ? etichetta.textContent.trim() : ''}. Tocca per cambiare fase`
+        : `Fase attuale: ${etichetta ? etichetta.textContent.trim() : ''}`);
+    chiudiMenuFasi();
+    posizionaPulsanteFasi();
+}
+
+function chiudiMenuFasi() {
+    const menu = document.getElementById('phaseSideMenu');
+    if (menu) { menu.hidden = true; menu.innerHTML = ''; }
+}
+
+function toccaPulsanteFasi(event) {
+    if (event) event.stopPropagation();
+    const menu = document.getElementById('phaseSideMenu');
+    if (!menu) return;
+    if (!menu.hidden) { chiudiMenuFasi(); return; }
+    // Il menu mostra TUTTE le fasi (richiesta dell'utente): quella attuale evidenziata, le raggiungibili
+    // in questo momento attive, le altre in grigio e non toccabili. Si apre sempre, anche se c'e' una sola
+    // scelta o nessuna (turno avversario): cosi' si vede dove si e' nel turno.
+    menu.innerHTML = '';
+    document.querySelectorAll('#phaseStepper .phase-step').forEach((p) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        const attuale = p.classList.contains('active');
+        const raggiungibile = p.classList.contains('clickable');
+        b.textContent = p.dataset.phase === 'end' ? 'Fine turno' : (p.querySelector('.step-label')?.textContent?.trim() || p.dataset.phase);
+        b.className = attuale ? 'psm-attuale' : (raggiungibile ? 'psm-attiva' : 'psm-spenta');
+        if (attuale) b.setAttribute('aria-current', 'step');
+        if (!raggiungibile) b.disabled = true;
+        else b.onclick = (e) => { e.stopPropagation(); chiudiMenuFasi(); handlePhaseStepperClick(p.dataset.phase); };
+        menu.appendChild(b);
+    });
+    menu.hidden = false;
+}
+
+/**
+ * Il tondo sta appena a destra del CAMPO, non al bordo dello schermo (richiesta dell'utente: "piu' verso il
+ * campo"): si legge dal vero riquadro del campo del giocatore, che cambia con la misura delle carte. Il menu
+ * (CSS) lo segue con la stessa variabile.
+ */
+function posizionaPulsanteFasi() {
+    const campo = document.getElementById('playerFieldBoard');
+    const btn = document.getElementById('phaseSideBtn');
+    if (!campo || !btn) return;
+    const caselle = Array.from(campo.querySelectorAll('.field-slot')).map((s) => s.getBoundingClientRect()).filter((r) => r.width);
+    if (!caselle.length) return;
+    // Il bordo vero del campo e' quello delle CASELLE, non del contenitore (piu' largo).
+    const destra = Math.max(...caselle.map((r) => r.right));
+    const sinistra = Math.min(...caselle.map((r) => r.left));
+    // Il tondo sta subito FUORI dalla colonna destra delle caselle, a meta' altezza (sulla linea di mezzo fra i due
+    // campi), e NON deve mai coprire una casella (richiesta esplicita dell'utente): al suo posto sta sulla cornice
+    // decorativa del campo, che non e' una casella. Il menu delle fasi si apre piu' a destra ancora.
+    const root = document.documentElement.style;
+    root.setProperty('--psb-left', `${Math.round(Math.min(destra + 5, window.innerWidth - 60))}px`);
+    root.setProperty('--psb-menu-left', `${Math.round(Math.min(destra + 5 + 56, window.innerWidth - 120))}px`);
+    // Il box info carta (a sinistra) deve fermarsi PRIMA del campo e non coprirlo.
+    root.setProperty('--campo-sx', `${Math.round(sinistra)}px`);
+}(function collegaPulsanteFasi() {
+    const aggancia = () => {
+        const btn = document.getElementById('phaseSideBtn');
+        if (!btn || btn.dataset.collegato) return;
+        btn.dataset.collegato = '1';
+        btn.addEventListener('click', toccaPulsanteFasi);
+        // Un tocco fuori dal menu lo chiude.
+        document.addEventListener('pointerdown', (e) => {
+            const menu = document.getElementById('phaseSideMenu');
+            if (menu && !menu.hidden && !menu.contains(e.target) && e.target !== btn && !btn.contains(e.target)) chiudiMenuFasi();
+        }, true);
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', aggancia); else aggancia();
+})();
 
 /**
  * Misure della barra di avanzamento continua sotto lo stepper (CSS in duelMonstersCore.html, "Barra
@@ -3026,7 +3121,7 @@ function aggiornaBarraFasi() {
     barra.style.setProperty('--fase-xn', `${centro(passi[passi.length - 1])}px`);
     barra.style.setProperty('--fase-x1', `${centro(attivo)}px`);
 }
-window.addEventListener('resize', () => requestAnimationFrame(aggiornaBarraFasi));
+window.addEventListener('resize', () => requestAnimationFrame(() => { aggiornaBarraFasi(); posizionaPulsanteFasi(); }));
 
 // Boot del duello: appena questo file viene caricato, la partita parte con
 // l'intro cinematografica, che al termine avvia initGame() +

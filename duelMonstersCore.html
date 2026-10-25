@@ -4675,6 +4675,14 @@
                (--plancia-pad), e non deve arrivare sopra la mano. */
             .hand--bot { margin-top: calc(var(--duelist-box-offset) + 48px + 12px); }
             .hand { margin-bottom: calc(var(--duelist-box-offset) + 48px + 12px); }
+            /* CAMPO CENTRATO fra le due mani (segnalato dall'utente: "un po' piu' in basso, non centrato").
+               La mano del Bot ha anche la classe `.hand`, quindi la regola qui sopra le dava un margine SOTTO
+               di ~78px che non voleva: il campo si centrava fra "mano Bot + 78px" e "mano mia", cioe' 33px
+               sotto il punto di mezzo fra le due mani, e il vuoto sopra il campo era il doppio di quello
+               sotto. Il margine sotto la mano del Bot torna uguale a quello sopra la mia (stessa clamp di
+               `.hand` piu' in alto): i due vuoti si equivalgono su qualunque altezza di schermo, senza pixel
+               fissi. */
+            .hand--bot { margin-bottom: clamp(4px, 1.4vh, 12px); }
         }
 
         /* Schermi mobile ESTREMAMENTE bassi (es. telefoni piccoli in
@@ -4684,7 +4692,12 @@
            di ciascun giocatore si sovrappongano o escano dallo schermo. */
         @media (max-height: 420px) {
             :root {
-                --card-w: clamp(28px, min(6.2vh, 6.4vw), 118px);
+                /* Carta in funzione dell'ALTEZZA (misurato su 7 schermi in orizzontale, da 320 a 412px): con la vecchia
+                   min(6.2vh, ...) il risultato stava SEMPRE sotto il minimo (28px) per altezze fino a 450px, quindi
+                   un telefono da 412px aveva carte da 28px come uno da 325. Qui cresce di 0,08px per ogni px di
+                   altezza oltre i 325 (35px a 412; con 0,19 erano 45px e all'utente sembravano troppo grandi): il tetto e' quanto le due mani coprono le file Magia/Trappola
+                   (al massimo ~30%, lo stesso dei telefoni piu' piccoli, dove la carta resta a 28px). */
+                --card-w: clamp(28px, min(calc(28px + (100vh - 325px) * 0.08), 6.4vw), 118px);
                 --field-slot-pad: clamp(8px, 0.6vh, 20px);
                 --field-gap: clamp(7px, 3vh, 24px);
                 --hand-card-w: clamp(50px, min(7.2vh, 7.4vw), 138px);
@@ -5068,6 +5081,74 @@
         .duel-pause-resume:active { transform: translateY(1px); }
 
         /* ============================================================
+           PULSANTE LATERALE DELLE FASI (telefono in orizzontale, richiesta dell'utente: "come Duel Masters, un
+           pulsante laterale al centro e da li' cambio fase"). Stessa condizione dei telefoni bassi in
+           orizzontale usata piu' sopra; la barra delle fasi resta nel DOM (il codice la usa per lo stato) ma
+           non si vede. Il tondo ha un anello che si riempie con l'avanzare delle fasi (--psb-p, 0-100%).
+           ============================================================ */
+        .phase-side-btn, .phase-side-menu { display: none; }
+        @media (max-width: 960px) and (max-height: 520px) and (orientation: landscape) and (pointer: coarse) {
+            /* Invisibile ma NON tolta dal layout: il suo spazio (fra le due file di mostri) serve ai numeri ATK/DEF della fila di sopra, che senza finivano sotto gli ologrammi della fila di sotto. */
+            .phase-stepper { visibility: hidden; pointer-events: none; }
+            .phase-side-btn {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 1px;
+                position: fixed;
+                left: var(--psb-left, 72vw);
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 25;
+                width: 50px;
+                height: 50px;
+                padding: 0;
+                border: 0;
+                border-radius: 50%;
+                color: #fff;
+                cursor: pointer;
+                -webkit-tap-highlight-color: transparent;
+                background:
+                    radial-gradient(circle at 50% 50%, rgba(8, 12, 22, 0.92) 0 62%, transparent 63%),
+                    conic-gradient(var(--fase-accento, #f7d774) var(--psb-p, 0%), rgba(255, 255, 255, 0.16) 0);
+                box-shadow: 0 0 12px color-mix(in srgb, var(--fase-accento, #f7d774) 45%, transparent), 0 3px 8px rgba(0, 0, 0, 0.55);
+                transition: box-shadow 0.25s ease, opacity 0.25s ease;
+            }
+            .phase-side-btn[hidden], .phase-side-menu[hidden] { display: none; }
+            .phase-side-btn .psb-icon { display: inline-flex; width: 19px; height: 19px; }
+            .phase-side-btn .psb-icon svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+            .phase-side-btn .psb-label { font: 900 8px/1 system-ui, 'Segoe UI', sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
+            .phase-side-btn.psb-attendi { opacity: 0.55; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.55); }
+            .phase-side-btn:active { transform: translateY(-50%) scale(0.94); }
+            .phase-side-menu {
+                position: fixed;
+                left: var(--psb-menu-left, 78vw);
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 26;
+                flex-direction: column;
+                gap: 5px;
+            }
+            .phase-side-menu:not([hidden]) { display: flex; }
+            .phase-side-menu button {
+                min-width: 104px;
+                min-height: 32px;
+                padding: 0 14px;
+                border: 1.5px solid var(--fase-accento, #f7d774);
+                border-radius: 999px;
+                background: rgba(8, 12, 22, 0.92);
+                color: #fff;
+                font: 800 12px/1 system-ui, 'Segoe UI', sans-serif;
+                letter-spacing: 0.04em;
+                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.55);
+            }
+            /* Tutte le fasi: attuale evidenziata, raggiungibili accese, le altre in grigio (disattivate). */
+            .phase-side-menu button.psm-attuale { background: var(--fase-accento, #f7d774); color: #10131c; border-color: #fff; }
+            .phase-side-menu button.psm-spenta { color: rgba(255, 255, 255, 0.38); border-color: rgba(255, 255, 255, 0.16); background: rgba(8, 12, 22, 0.7); box-shadow: none; }
+        }
+
+        /* ============================================================
            BARRA DELLE FASI: tre stati leggibili a colpo d'occhio (segnalato dall'utente: "non si capisce in
            che fase sono e cosa posso cliccare"). Prima l'unica differenza era un'icona piu' luminosa:
            - FASE ATTUALE: l'icona sta su un disco PIENO del colore del campo, con anello chiaro, e
@@ -5154,8 +5235,33 @@
             .phase-stepper .phase-step.clickable:not(.active) .step-label::after,
             .phase-stepper .phase-step.completed .step-label::after { content: attr(data-short); animation: none; }
         }
-    </style>
-</head>
+        /* Box info carta in ORIZZONTALE su telefono: a SINISTRA (come Master Duel: carta e testo a sinistra,
+           comandi di turno a destra) e un po' piu' largo, cosi' il testo dell'effetto si scorre meno. Parte
+           sotto la plancia dell'avversario (in alto a sinistra) e arriva quasi al fondo. Stessa condizione del
+           pulsante delle fasi, che sta a destra e non va coperto. Tocco fuori = chiude, come prima. */
+        @media (max-width: 960px) and (max-height: 520px) and (orientation: landscape) and (pointer: coarse) {
+            .card-info-panel {
+                left: 6px;
+                right: auto;
+                top: 64px;
+                /* Si ferma PRIMA del campo (--campo-sx = bordo sinistro della prima casella, scritto da posizionaPulsanteFasi): il box info non deve coprirlo. */
+                width: clamp(120px, calc(var(--campo-sx, 300px) - 14px), 278px);
+                height: min(calc(100dvh - 72px), 340px);
+                max-height: calc(100dvh - 72px);
+                transform: translate(-110%, 0);
+            }
+            .card-info-panel.visible { transform: translate(0, 0); }
+        }
+
+        /* Icone e numeri delle zone speciali (Cimitero, Extra Deck/Fusione, Terreno) piu' piccoli in
+           ORIZZONTALE su telefono (richiesta dell'utente: "troppo grandi, prendi esempio dal numero sopra il
+           Mazzo"): il numero del Mazzo e' 9px, quelli di Cimitero/Fusione/Bandite erano 15px e le icone 26px. */
+        @media (max-width: 960px) and (max-height: 520px) and (orientation: landscape) and (pointer: coarse) {
+            .field-slot-icon { font-size: clamp(15px, calc(var(--card-w) * 0.5), 22px); }
+            .field-slot-count { font-size: clamp(9px, calc(var(--card-w) * 0.27), 13px); line-height: 1; }
+            .field-slot.special-slot { gap: 2px; padding: 2px; }
+        }
+    </style></head>
 <body>
     <!-- Schermata di caricamento condivisa (js/ui/page-loader.js/.css) al
          posto del vecchio #preIntroCover statico: stessa identica
@@ -5507,6 +5613,16 @@
         <div class="life-points">❤️ <span id="playerLP">8000</span></div>
         <div class="banished-badge" id="playerBanishedBadge" title="Zona Bandite">🌀 <span id="playerBanishedCount">0</span></div>
     </div>
+
+    <!-- Pulsante laterale delle fasi (SOLO telefono in orizzontale, stile Duel Masters): al posto della
+         barra delle fasi, un tondo a destra del campo, a meta' altezza, con la fase attuale e un anello di
+         avanzamento; un tocco porta alla fase successiva (o apre le scelte, se ce ne sono piu' d'una).
+         Lo riempie aggiornaPulsanteFasi() in game-flow.js; fuori da quel caso e' nascosto da CSS. -->
+    <button type="button" class="phase-side-btn" id="phaseSideBtn" aria-label="Fase del turno" hidden>
+        <span class="psb-icon" id="phaseSideIcon"></span>
+        <span class="psb-label" id="phaseSideLabel"></span>
+    </button>
+    <div class="phase-side-menu" id="phaseSideMenu" hidden></div>
 
     <!-- Le tre pillole di sistema nell'angolo in alto a destra
          (Tempo/Turno, Abbandona, Difficoltà). Stavano dentro
