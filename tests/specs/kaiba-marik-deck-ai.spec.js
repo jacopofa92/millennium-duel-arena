@@ -116,7 +116,9 @@ module.exports = {
             `Marik Difficile deve poter Evocare Ra con tre Tributi: ${JSON.stringify(risultato)}`);
         t.assert(risultato.sceltaPreparazioneRa === 265 && risultato.sceltaOfferta === 559,
             `Marik deve preservare il campo per Ra e sfruttare Offerta Suprema: ${JSON.stringify(risultato)}`);
-        t.assert(risultato.pagaRaSicuro && !risultato.pagaRaConMinaccia,
-            `Il pagamento LP di Ra deve essere aggressivo ma non suicida: ${JSON.stringify(risultato)}`);
+        // Con 8000 LP il bot paga una somma misurata (3000: l'obiettivo minimo) sia a campo libero sia davanti a un mostro da 1400, senza
+        // restare a 100 (la politica completa, soglie ed eccezione \"scacco\", e' in ia-ra-somma-da-pagare.spec.js).
+        t.assert(risultato.pagaRaSicuro && risultato.pagaRaConMinaccia,
+            `Il bot deve pagare per Ra quando puo' farlo senza rischiare: ${JSON.stringify(risultato)}`);
     }
 };

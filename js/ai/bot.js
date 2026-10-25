@@ -485,12 +485,15 @@ function botSummonMonster(card, tributeIndices, emptySlotHint, position, faceDow
     }
     // Il Drago Alato di Ra (id 472): "puoi pagare Life Points fino a
     // restarne con 100" è un "puoi" — lato persona lo decide un popover
-    // (maybeAskRaLpChoice, actions.js), qui un'euristica prudente: paga
-    // solo se il campo avversario è vuoto (nessun mostro pronto ad
-    // attaccare al turno successivo). Viaggia nel comando ('pagaLpRa'),
-    // che lo rimette su card._raPayLp per CardEffects.register(472).onSummon.
+    // (maybeAskRaLpChoice, actions.js), qui il bot sceglie QUANTO pagare
+    // (AI_SHARED.raLpDaPagare: un obiettivo di ATK, una soglia di LP da non
+    // toccare e l'eccezione "scacco", vedi il commento sulla funzione).
+    // Conosce già i Tributi: i mostri sacrificati non contano come
+    // attaccanti pronti. È un NUMERO (0 = non paga) e viaggia nel comando
+    // ('pagaLpRa'), che lo rimette su card._raPayLp per
+    // CardEffects.register(472).onSummon.
     const pagaLpRa = card.id === 472
-        ? !!(window.AI_SHARED && AI_SHARED.shouldPayRaLp(gameState, io))
+        ? (window.AI_SHARED ? AI_SHARED.raLpDaPagare(gameState, io, { tributi: tributeIndices || [] }) : 0)
         : undefined;
     return new Promise((resolve) => {
         const evoca = (casella) => {

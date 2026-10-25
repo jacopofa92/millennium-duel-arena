@@ -127,23 +127,88 @@
             const remainingCards = Math.max(0, hand.length - (hand.includes(card) ? 1 : 0));
             return { atk: remainingCards * 1000, def: remainingCards * 1000 };
         }
-        if (card && card.id === 472 && shouldPayRaLp(gameState, owner)) {
-            const lp = Tavolo.lp(owner, gameState) || 0;
-            const paid = Math.max(0, lp - 100);
+        if (card && card.id === 472) {
+            // Qui i Tributi non sono ancora scelti: l'eccezione "scacco" conta solo Ra (vedi raLpDaPagare), per non fidarsi di
+            // mostri che poi potrebbero essere sacrificati.
+            const paid = raLpDaPagare(gameState, owner);
             return { atk: paid, def: paid };
         }
         return { atk: (card && card.attack) || 0, def: (card && card.defense) || 0 };
     }
 
-    /**
-     * Ra lascia il controllore a 100 LP: il bot accetta il costo solo se
-     * nessun mostro avversario può punirlo al turno seguente. La decisione
-     * è condivisa tra valutazione ed esecuzione, così l'IA non sceglie Ra
-     * stimandolo forte per poi rifiutare il pagamento (o viceversa).
-     */
-    function shouldPayRaLp(gameState, owner) {
-        const opposingMonsters = Tavolo.mostri(Tavolo.avversario(owner), gameState) || [];
-        return (Tavolo.lp(owner, gameState) || 0) > 100 && !opposingMonsters.some(Boolean);
+    // ---------------------------------------------------------------
+    // Il Drago Alato di Ra: QUANTI Life Point paga il bot all'Evocazione.
+    // ---------------------------------------------------------------
+    // Prima pagava TUTTO (fino a restare a 100) ma solo a campo avversario vuoto. Ora decide una somma con un ragionamento in due
+    // parti, scelto dall'utente:
+    //  A) L'OBIETTIVO: Ra deve battere il mostro avversario piu' forte con un margine (RA_MARGINE), e comunque arrivare ad almeno
+    //     RA_ATK_MINIMO — pagare poco per un Ra da 900 sarebbe buttare tre Tributi. Un mostro coperto, di cui non si sa l'ATK, conta
+    //     RA_ATK_IGNOTO.
+    //  B) LA SOGLIA di LP da non toccare: parte da RA_LP_MINIMI e cresce con quanto puo' colpire il bot al turno dopo (gli altri
+    //     attaccanti avversari: Ra ne ferma uno solo), con le Magie/Trappole che l'avversario ha in campo (2 o piu') e con la sua
+    //     mano abbondante (4 o piu'). Si paga solo se, restando sopra la soglia, si arriva almeno a RA_ATK_MINIMO; altrimenti niente
+    //     (e chooseSummon, che stima Ra con questa stessa funzione, non lo Evoca nemmeno).
+    //  ECCEZIONE "scacco": se il campo avversario e' vuoto e un colpo diretto vince — i LP dell'avversario sono pari o meno
+    //     dell'ATK di Ra piu' quello degli altri attaccanti pronti — basta pagare il necessario, anche sotto RA_ATK_MINIMO e
+    //     anche oltre la soglia (si rischia: Trappole e Magie dell'avversario restano un'incognita, come da richiesta).
+    // `opzioni.tributi`: gli indici dei mostri che verranno sacrificati (non attaccano piu'); se mancano, per l'eccezione si conta
+    // soltanto Ra.
+    const RA_ATK_MINIMO = 3000;
+    const RA_MARGINE = 500;
+    const RA_ATK_IGNOTO = 1800;
+    const RA_LP_MINIMI = 1000;
+    const RA_PASSO = 50;
+
+    function raLpDecisione(gameState, owner, opzioni) {
+        const arrotondaSu = (n) => Math.ceil(n / RA_PASSO) * RA_PASSO;
+        const arrotondaGiu = (n) => Math.floor(n / RA_PASSO) * RA_PASSO;
+        const mieiLp = Tavolo.lp(owner, gameState) || 0;
+        if (mieiLp <= 100) return { paga: 0, motivo: 'niente-lp' };
+        const massimoPagabile = mieiLp - 100;
+        const avv = Tavolo.avversario(owner);
+        const lpAvv = Tavolo.lp(avv, gameState) || 0;
+        const mostriAvv = (Tavolo.mostri(avv, gameState) || []).filter(Boolean);
+
+        // ECCEZIONE "scacco": un colpo diretto chiude il duello.
+        if (mostriAvv.length === 0 && lpAvv > 0) {
+            const tributi = (opzioni && opzioni.tributi) || [];
+            const altriAttaccanti = (Tavolo.mostri(owner, gameState) || []).reduce((somma, slot, i) => {
+                if (!slot || slot.isFaceDown || slot.position !== 'attack' || slot.hasAttacked || tributi.indexOf(i) !== -1) return somma;
+                return somma + effAtk(slot.card);
+            }, 0);
+            const serveAdRa = lpAvv - altriAttaccanti;
+            if (serveAdRa <= 0) return { paga: 0, motivo: 'gia-vinto' };   // gli altri bastano: Ra non deve costare niente
+            const paga = arrotondaSu(serveAdRa);
+            if (paga <= massimoPagabile) return { paga, motivo: 'scacco' };
+        }
+
+        // A) l'obiettivo.
+        const atkMinacce = mostriAvv
+            .map((slot) => (slot.isFaceDown ? RA_ATK_IGNOTO : effAtk(slot.card)))
+            .sort((a, b) => b - a);
+        const piuForte = atkMinacce[0] || 0;
+        const obiettivo = Math.max(RA_ATK_MINIMO, arrotondaSu(piuForte + RA_MARGINE));
+
+        // B) la soglia di LP da non toccare.
+        const esposizione = atkMinacce.slice(1).reduce((somma, atk) => somma + atk, 0);   // Ra ne ferma uno solo
+        const retroguardia = (Tavolo.magieTrappole(avv, gameState) || []).filter(Boolean).length;
+        const manoAvv = (Tavolo.mano(avv, gameState) || []).length;
+        let soglia = RA_LP_MINIMI + esposizione;
+        if (retroguardia >= 2) soglia += 500;
+        if (manoAvv >= 4) soglia += 500;
+        const pagabile = arrotondaGiu(Math.min(massimoPagabile, mieiLp - soglia));
+        if (pagabile < RA_ATK_MINIMO) return { paga: 0, motivo: 'troppo-rischioso' };
+        return { paga: Math.min(obiettivo, pagabile), motivo: 'obiettivo' };
+    }
+
+    /** La somma di LP che il bot paga per Ra (0 = non paga). La usano sia la stima (estimateSummonedStats) sia l'esecuzione (bot.js). */
+    function raLpDaPagare(gameState, owner, opzioni) {
+        return raLpDecisione(gameState, owner, opzioni).paga;
+    }
+
+    /** Compatibilita': "paga qualcosa?". */
+    function shouldPayRaLp(gameState, owner, opzioni) {
+        return raLpDaPagare(gameState, owner, opzioni) > 0;
     }
 
     function decideMonsterPosture(card, gameState, owner, riskAversion) {
@@ -631,6 +696,8 @@
         canBeDestroyedByBattle: canBeDestroyedByBattle,
         estimateSummonedStats: estimateSummonedStats,
         shouldPayRaLp: shouldPayRaLp,
+        raLpDaPagare: raLpDaPagare,
+        raLpDecisione: raLpDecisione,
         isTributeSummonWorthwhile: isTributeSummonWorthwhile,
         getSpellTrapRestraint: getSpellTrapRestraint,
         pickWeightedByImpact: pickWeightedByImpact
