@@ -709,22 +709,17 @@
            L'altro duellante, in piu', si spegne un poco (vedi sotto), cosi' la
            differenza si coglie anche senza leggere. Niente pulsazione (scartata
            dall'utente): e' un'etichetta ferma. */
-        .player-info.side-player.active-turn .turn-crown {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            /* Medaglione tondo (niente parola: "TURNO" scritto era brutto, scelta dell'utente) con
-               la corona dentro, doppio anello d'oro e bagliore fermo. */
-            width: clamp(20px, 2.1vw, 30px);
-            height: clamp(20px, 2.1vw, 30px);
-            border-radius: 50%;
-            background: radial-gradient(circle at 35% 28%, #fff4c2 0%, #f7c948 45%, #b9791c 100%);
-            color: #3b2400;
-            box-shadow: 0 0 0 1.5px #5a3300, 0 0 0 3px rgba(255, 226, 122, 0.85), 0 0 12px 3px rgba(255, 200, 70, 0.6), 0 3px 6px rgba(0, 0, 0, 0.55);
-            margin: 0 4px;
-        }
-        .player-info.side-player.active-turn .turn-crown svg { width: 68%; height: 68%; flex-shrink: 0; }
-        /* Filo d'oro sotto il nome di chi e' di turno: sfuma verso l'interno dello schermo. */
+        /* Turno: NIENTE badge/corona (scartati dall'utente tre volte): si evidenzia il NOME di chi e' di
+           turno. Nome in oro con alone e un filo d'oro sotto (sfuma verso l'interno dello schermo); quello
+           dell'altro duellante resta spento. La corona, sempre nascosta, resta nel markup perche' duel-session.js
+           ci scrive dentro l'icona. */
+        .player-info.side-player.active-turn .turn-crown { display: none; }
+        .player-info.side-player:not(.active-turn) .duelist-name .name-text { opacity: 0.6; }
+        .player-info.side-player.active-turn .duelist-name .name-text {
+            color: #ffe58a;
+            font-weight: 900;
+            text-shadow: 0 0 6px rgba(255, 205, 70, 0.85), 0 0 14px rgba(255, 190, 40, 0.5), 0 2px 5px rgba(0, 0, 0, 0.9);
+        }        /* Filo d'oro sotto il nome di chi e' di turno: sfuma verso l'interno dello schermo. */
         .player-info.side-player.active-turn .duelist-name {
             padding-bottom: 3px;
             border-bottom: 2px solid transparent;
