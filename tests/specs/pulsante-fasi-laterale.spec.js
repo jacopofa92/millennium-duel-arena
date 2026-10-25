@@ -52,10 +52,20 @@ module.exports = {
             const primo = await stato();
             assert(primo.length === 6 && primo.includes('Main 1:psm-attuale:off') && primo.includes('Battaglia:psm-spenta:off') && primo.includes('Fine turno:psm-attiva'),
                 `Primo turno: sei fasi, Main 1 evidenziata, Battaglia grigia, Fine turno accesa: ${JSON.stringify(primo)}`);
-            // Il tondo sta vicino al campo, non al bordo: a destra del campo ma non incollato allo schermo.
-            const pos = await page.evaluate(() => ({ btn: document.getElementById('phaseSideBtn').getBoundingClientRect().left, campo: Math.max(...[...document.querySelectorAll('#playerFieldBoard .field-slot')].map((e) => e.getBoundingClientRect().right)), larg: innerWidth }));
-            assert(pos.btn >= pos.campo && pos.btn - pos.campo < 40 && pos.btn < pos.larg - 90, `Il tondo sta subito a destra del campo: ${JSON.stringify(pos)}`);
-            await page.tap('#phaseSideBtn');
+            // Il tondo NON deve coprire nessuna casella (richiesta esplicita dell'utente): sta subito fuori dalla
+            // colonna destra del campo, a meta' altezza, e non al bordo dello schermo.
+            const pos = await page.evaluate(() => {
+                const r = document.getElementById('phaseSideBtn').getBoundingClientRect();
+                const caselle = [...document.querySelectorAll('.field-slot')].map((e) => e.getBoundingClientRect()).filter((x) => x.width);
+                const tocca = caselle.filter((x) => Math.min(r.right, x.right) - Math.max(r.left, x.left) > 0.5 && Math.min(r.bottom, x.bottom) - Math.max(r.top, x.top) > 0.5).length;
+                return { sinistra: r.left, destra: Math.max(...caselle.map((x) => x.right)), tocca, larg: innerWidth };
+            });
+            assert(pos.tocca === 0, `Il tondo non copre nessuna casella: ${JSON.stringify(pos)}`);
+            assert(pos.sinistra >= pos.destra && pos.sinistra - pos.destra < 30 && pos.sinistra < pos.larg - 90, `Il tondo sta subito fuori dal campo, non al bordo dello schermo: ${JSON.stringify(pos)}`);            await page.evaluate(() => { const c = gameState.playerHand[0]; if (c && window.showCardInfo) showCardInfo(c); document.getElementById('cardInfoPanel')?.classList.add('visible'); });
+            await page.waitForTimeout(500);
+            const box = await page.evaluate(() => { const e = document.querySelector('.card-info-panel'); const r = e.getBoundingClientRect(); const sl = Math.min(...[...document.querySelectorAll('#playerFieldBoard .field-slot')].map((x) => x.getBoundingClientRect().left)); return { destra: r.right, sinistra: r.left, campo: sl, visibile: e.classList.contains('visible') }; });
+            assert(box.visibile && box.sinistra < 20 && box.destra <= box.campo, `Il box info sta a sinistra e si ferma prima del campo: ${JSON.stringify(box)}`);
+            await page.evaluate(() => document.querySelector('.card-info-panel').classList.remove('visible'));            await page.tap('#phaseSideBtn');
             await page.waitForFunction(() => document.getElementById('phaseSideMenu').hidden, null, { timeout: 3000 });
 
             // Dal secondo turno: la Battaglia diventa raggiungibile.

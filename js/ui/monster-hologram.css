@@ -34,7 +34,9 @@
    Solo dove il pannello GALLEGGIA sopra il campo (la stessa soglia di
    duelMonstersCore.html, 900px): su desktop è una colonna a parte, si apre
    a ogni passaggio del mouse su una carta e non copre nessun ologramma. */
-@media (max-width: 900px) {
+/* NON nei telefoni in ORIZZONTALE bassi: li' il box info sta a sinistra e si ferma prima del campo (vedi
+   duelMonstersCore.html), quindi non copre nessun ologramma, che devono restare (richiesta dell'utente). */
+@media (max-width: 900px) and (not ((orientation: landscape) and (max-height: 520px))) {
     body:has(.card-info-panel.visible) #monsterHologramLayer {
         opacity: 0;
     }

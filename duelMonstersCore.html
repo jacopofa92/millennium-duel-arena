@@ -5115,7 +5115,7 @@
             .phase-side-btn:active { transform: translateY(-50%) scale(0.94); }
             .phase-side-menu {
                 position: fixed;
-                left: calc(var(--psb-left, 72vw) + 58px);
+                left: var(--psb-menu-left, 78vw);
                 top: 50%;
                 transform: translateY(-50%);
                 z-index: 26;
@@ -5236,7 +5236,8 @@
                 left: 6px;
                 right: auto;
                 top: 64px;
-                width: min(31vw, 278px); /* il bordo destro resta a sinistra della mano (parte a ~290px su 891), che non va coperta */
+                /* Si ferma PRIMA del campo (--campo-sx = bordo sinistro della prima casella, scritto da posizionaPulsanteFasi): il box info non deve coprirlo. */
+                width: clamp(120px, calc(var(--campo-sx, 300px) - 14px), 278px);
                 height: min(calc(100dvh - 72px), 340px);
                 max-height: calc(100dvh - 72px);
                 transform: translate(-110%, 0);

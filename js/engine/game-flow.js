@@ -3076,13 +3076,20 @@ function posizionaPulsanteFasi() {
     const campo = document.getElementById('playerFieldBoard');
     const btn = document.getElementById('phaseSideBtn');
     if (!campo || !btn) return;
-    // Il bordo destro vero e' quello dell'ultima casella, non quello del contenitore (piu' largo del campo).
-    const destra = Math.max(0, ...Array.from(campo.querySelectorAll('.field-slot')).map((s) => s.getBoundingClientRect().right));
-    if (!destra) return;
-    const sinistra = Math.min(Math.round(destra + 14), window.innerWidth - 60);
-    document.documentElement.style.setProperty('--psb-left', `${sinistra}px`);
-}
-(function collegaPulsanteFasi() {
+    const caselle = Array.from(campo.querySelectorAll('.field-slot')).map((s) => s.getBoundingClientRect()).filter((r) => r.width);
+    if (!caselle.length) return;
+    // Il bordo vero del campo e' quello delle CASELLE, non del contenitore (piu' largo).
+    const destra = Math.max(...caselle.map((r) => r.right));
+    const sinistra = Math.min(...caselle.map((r) => r.left));
+    // Il tondo sta subito FUORI dalla colonna destra delle caselle, a meta' altezza (sulla linea di mezzo fra i due
+    // campi), e NON deve mai coprire una casella (richiesta esplicita dell'utente): al suo posto sta sulla cornice
+    // decorativa del campo, che non e' una casella. Il menu delle fasi si apre piu' a destra ancora.
+    const root = document.documentElement.style;
+    root.setProperty('--psb-left', `${Math.round(Math.min(destra + 5, window.innerWidth - 60))}px`);
+    root.setProperty('--psb-menu-left', `${Math.round(Math.min(destra + 5 + 56, window.innerWidth - 120))}px`);
+    // Il box info carta (a sinistra) deve fermarsi PRIMA del campo e non coprirlo.
+    root.setProperty('--campo-sx', `${Math.round(sinistra)}px`);
+}(function collegaPulsanteFasi() {
     const aggancia = () => {
         const btn = document.getElementById('phaseSideBtn');
         if (!btn || btn.dataset.collegato) return;
