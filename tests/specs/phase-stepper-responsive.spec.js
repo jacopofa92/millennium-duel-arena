@@ -91,7 +91,9 @@ module.exports = {
                     auraOpacity: Number(aura.opacity), auraAnimation: aura.animationName,
                     iconFilter: icon.filter, iconAnimation: icon.animationName,
                     labelCue: labelBefore.content, labelCueAnimation: labelBefore.animationName,
-                    ariaLabel: el.getAttribute('aria-label')
+                    ariaLabel: el.getAttribute('aria-label'),
+                    badgeOpacity: Number(badge.opacity),
+                    segmento: getComputedStyle(el, '::before').height
                 };
             };
             return {
@@ -111,10 +113,11 @@ module.exports = {
         t.assert(statiDesktop.clickable.background === 'none' && statiDesktop.clickable.shadow === 'none'
             && statiDesktop.clickable.badgeBackground === 'none'
             && statiDesktop.clickable.transform === 'none'
-            && statiDesktop.clickable.labelCue.includes('VAI')
-            && statiDesktop.clickable.labelCueAnimation.includes('phaseReadyCue'),
-        `La fase cliccabile deve restare una tacca leggera e non un rettangolo scuro: ${JSON.stringify(statiDesktop.clickable)}`);
-        t.assert(statiDesktop.disabled.opacity < 0.6,
+            // Niente scritte di servizio (VAI/ORA): l'utente le ha tolte il 2026-10-25 per una barra di avanzamento.
+            && !/VAI|ORA/.test(statiDesktop.clickable.labelCue)
+            && statiDesktop.clickable.segmento === '3px',
+        `La fase cliccabile deve restare una tacca leggera, senza scritte, con il suo segmento di barra: ${JSON.stringify(statiDesktop.clickable)}`);
+        t.assert(statiDesktop.disabled.badgeOpacity < 0.6,
             `La fase disabilitata deve restare attenuata: ${JSON.stringify(statiDesktop.disabled)}`);
 
         await t.page.setViewportSize({ width: 393, height: 851 });

@@ -5097,7 +5097,6 @@
             color: #fff;
             font-weight: 900;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 8px color-mix(in srgb, var(--fase-accento) 70%, transparent);
-            box-shadow: 0 2px 0 -0.5px var(--fase-accento);
         }
         .phase-stepper .phase-step.clickable:not(.active) .step-badge {
             border-radius: 50%;
@@ -5105,8 +5104,54 @@
             color: #fff;
         }
         .phase-stepper .phase-step.clickable:not(.active) .step-label { color: #fff; font-weight: 850; }
-        .phase-stepper .phase-step.completed:not(.active) { opacity: 0.45; }
-        .phase-stepper .phase-step.disabled { opacity: 0.2; }
+        /* BARRA DI AVANZAMENTO (richiesta dell'utente: "niente scritte VAI; una progress bar che avanza,
+           diventa piu' chiara e avanza di step"). Sotto ogni fase c'e' un segmento: spento per quelle ancora
+           da fare, del colore del campo per quelle fatte, chiaro e luminoso per quella attuale, che quando
+           diventa attuale si RIEMPIE da sinistra (un'animazione che parte da sola al cambio di classe: il
+           nodo non viene ricreato). Nessuna scritta di servizio (ORA/VAI/segni): resta solo il nome della
+           fase. Fatte e non raggiungibili si spengono sul badge e sull'etichetta, non sull'intero step,
+           altrimenti si spegnerebbe anche il segmento. */
+        .phase-stepper .phase-step .step-label::before,
+        .phase-stepper .phase-step.active .step-label::before,
+        .phase-stepper .phase-step.clickable:not(.active) .step-label::before,
+        .phase-stepper .phase-step.completed .step-label::before { content: none; display: none; animation: none; }
+        .phase-stepper .phase-step::before,
+        .phase-stepper .phase-step.active::before {
+            content: '';
+            display: block;
+            position: absolute;
+            inset: auto 0 -5px 0;
+            height: 3px;
+            border-radius: 999px;
+            pointer-events: none;
+            background: rgba(255, 255, 255, 0.16);
+            box-shadow: none;
+            transform-origin: 0 50%;
+            animation: none;
+        }
+        .phase-stepper .phase-step.completed::before {
+            background: color-mix(in srgb, var(--fase-accento) 78%, #fff 6%);
+        }
+        .phase-stepper .phase-step.active::before {
+            background: linear-gradient(90deg, color-mix(in srgb, var(--fase-accento) 78%, #fff 6%), color-mix(in srgb, var(--fase-accento) 25%, #fff));
+            box-shadow: 0 0 8px color-mix(in srgb, var(--fase-accento) 85%, transparent), 0 0 2px #fff;
+            animation: faseRiempi 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+        }
+        @keyframes faseRiempi { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+        @media (prefers-reduced-motion: reduce) {
+            .phase-stepper .phase-step.active::before { display: block; animation: none; }
+        }
+        .phase-stepper .phase-step.completed:not(.active) .step-badge,
+        .phase-stepper .phase-step.completed:not(.active) .step-label { opacity: 0.55; }
+        .phase-stepper .phase-step.disabled { opacity: 1; filter: none; }
+        .phase-stepper .phase-step.disabled .step-badge,
+        .phase-stepper .phase-step.disabled .step-label { opacity: 0.25; }
+        @media (max-width: 900px) {
+            .phase-stepper .phase-step .step-label::after,
+            .phase-stepper .phase-step.active .step-label::after,
+            .phase-stepper .phase-step.clickable:not(.active) .step-label::after,
+            .phase-stepper .phase-step.completed .step-label::after { content: attr(data-short); animation: none; }
+        }
     </style>
 </head>
 <body>
