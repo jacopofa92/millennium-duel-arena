@@ -84,6 +84,15 @@ module.exports = {
         const citazioni = fs.readdirSync(cartellaMotore).filter((f) => f.endsWith('.js'))
             .filter((f) => /TutorialDuel|tutorial-duel/.test(fs.readFileSync(path.join(cartellaMotore, f), 'utf8')));
         t.assert(citazioni.length === 0, `Nessun file del motore deve citare il tutorial: ${citazioni.join(', ')}`);
+        // Nei passi "Adesso tocca a me" l'avversario attacca e si apre la finestra per rispondere con la Trappola: lo SFONDO di quella
+        // finestra (#activateModal) non deve essere consentito, perche' un tocco li' la chiude = rifiuta la risposta, e la lezione
+        // deraglia. Il passo avanza da solo ogni 200 ms, quindi per un attimo dopo l'apertura un tocco sullo sfondo passava: e'
+        // il motivo per cui questo spec (che clicca il punto indicato dal riflettore) falliva a intermittenza.
+        const sorgenteLezione = fs.readFileSync(path.join(RADICE, 'js', 'tutorial', 'tutorial-duel.js'), 'utf8');
+        const passiRisposta = [...sorgenteLezione.matchAll(/testo: 'Adesso tocca a me[\s\S]*?consenti: \(\) => \[([^\]]*)\]/g)];
+        t.assert(passiRisposta.length >= 2, `i passi "Adesso tocca a me" ci sono (${passiRisposta.length})`);
+        passiRisposta.forEach((m, i) => t.assert(!m[1].includes('#activateModal') && m[1].includes('#activateConfirmBtn'),
+            `il passo "Adesso tocca a me" n.${i + 1} consente solo il pulsante Attiva, mai lo sfondo della finestra: ${m[1]}`));
         const indice = fs.readFileSync(path.join(RADICE, 'index.html'), 'utf8');
         t.assert(/label: 'Tutorial', action: 'link', href: 'tutorial\.html'/.test(indice),
             'Il menu Duelli deve avere la voce "Tutorial"');

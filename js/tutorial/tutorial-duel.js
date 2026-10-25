@@ -182,7 +182,10 @@
         {
             testo: 'Adesso tocca a me. Guarda cosa faccio…',
             bersaglio: () => document.getElementById('botFieldBoard'),
-            consenti: () => ['#activateModal'],
+            // Solo il pulsante "Attiva", MAI lo sfondo della finestra (#activateModal): un tocco sullo sfondo la chiude, cioe' RIFIUTA la
+            // risposta, e il Cilindro non scatta piu'. Il passo avanza da solo (ogni 200 ms) quando la finestra si apre, e in quel
+            // breve intervallo uno sfondo consentito faceva deragliare la lezione (a volte per i test, ma anche per chi tocca al momento sbagliato).
+            consenti: () => ['#activateConfirmBtn'],
             fatto: () => modaleAperto() || nelCimitero('player', CARTE.cilindro)
         },
         {
@@ -358,7 +361,7 @@
         {
             testo: 'Adesso tocca a me. Guarda cosa faccio…',
             bersaglio: () => document.getElementById('botFieldBoard'),
-            consenti: () => ['#activateModal'],
+            consenti: () => ['#activateConfirmBtn'],   // mai lo sfondo della finestra: chiuderla rifiuterebbe la risposta (vedi il primo "Adesso tocca a me")
             fatto: () => modaleAperto() || nelCimitero('player', ID.giudizio)
         },
         {
