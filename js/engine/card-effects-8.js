@@ -5205,7 +5205,9 @@
             }, (chosen) => {
                 try {
                     if (Tavolo.lp(ctx.owner) <= 1000) return;
-                    ctx.dealDamage(ctx.owner, 1000);
+                    // "Puoi PAGARE 1000 LP" e' un costo, non un danno: ctx.dealDamage passa dai blocchi dei danni (Carta della
+                    // Rovina, Virus Distruggi-Carte) e con uno di quelli attivi l'effetto partiva senza pagare. Come per Ra.
+                    gameState[Tavolo.chiave(ctx.owner, 'LP')] -= 1000;
                     ctx.sendMonsterToGraveyard(chosen.owner, chosen.index);
                 } finally { fine(); }
             });
