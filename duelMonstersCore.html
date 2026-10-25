@@ -712,18 +712,27 @@
         .player-info.side-player.active-turn .turn-crown {
             display: inline-flex;
             align-items: center;
-            gap: 0.35em;
-            padding: 0.18em 0.6em 0.18em 0.42em;
-            border-radius: 999px;
-            background: linear-gradient(180deg, #fff0b0 0%, #f7c948 55%, #d9962a 100%);
+            justify-content: center;
+            /* Medaglione tondo (niente parola: "TURNO" scritto era brutto, scelta dell'utente) con
+               la corona dentro, doppio anello d'oro e bagliore fermo. */
+            width: clamp(20px, 2.1vw, 30px);
+            height: clamp(20px, 2.1vw, 30px);
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 28%, #fff4c2 0%, #f7c948 45%, #b9791c 100%);
             color: #3b2400;
-            font: 900 clamp(8px, 0.85vw, 11px)/1 system-ui, 'Segoe UI', sans-serif;
-            letter-spacing: 0.14em;
-            text-shadow: none;
-            box-shadow: 0 0 0 1px rgba(80, 45, 0, 0.55), 0 0 10px rgba(255, 205, 80, 0.55), 0 2px 4px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 0 1.5px #5a3300, 0 0 0 3px rgba(255, 226, 122, 0.85), 0 0 12px 3px rgba(255, 200, 70, 0.6), 0 3px 6px rgba(0, 0, 0, 0.55);
+            margin: 0 4px;
         }
-        .player-info.side-player.active-turn .turn-crown::after { content: 'TURNO'; }
-        .player-info.side-player.active-turn .turn-crown svg { width: 1.45em; height: 1.45em; flex-shrink: 0; }
+        .player-info.side-player.active-turn .turn-crown svg { width: 68%; height: 68%; flex-shrink: 0; }
+        /* Filo d'oro sotto il nome di chi e' di turno: sfuma verso l'interno dello schermo. */
+        .player-info.side-player.active-turn .duelist-name {
+            padding-bottom: 3px;
+            border-bottom: 2px solid transparent;
+            border-image: linear-gradient(90deg, #f7c948, rgba(247, 201, 72, 0)) 1;
+        }
+        #playerInfo.player-info.side-player.active-turn .duelist-name {
+            border-image: linear-gradient(270deg, #f7c948, rgba(247, 201, 72, 0)) 1;
+        }
         /* Chi NON e' di turno: ritratto un po' piu' spento. */
         .player-info.side-player:not(.active-turn) .duelist-avatar--corner {
             filter: saturate(0.6) brightness(0.82);
@@ -737,13 +746,13 @@
             white-space: normal;
             overflow: visible;
             text-overflow: clip;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             line-height: 1.12;
             overflow-wrap: anywhere;
         }
         .player-info.side-player .duelist-name .name-text {
             display: -webkit-box;
-            -webkit-line-clamp: 2;
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
             min-width: 0;
