@@ -134,8 +134,8 @@ const missionsDatabase = [
         id: 'm-summon-kuriboh', icon: '🟤', scope: 'weekly',
         label: 'Piccolo aiuto', description: 'Evoca {n} volte Kuriboh',
         type: 'summonMonster', match: { cardId: 19 },
-        target: 1,
-        reward: { credits: 200 }
+        target: 3,
+        reward: { credits: 700 }
     },
     {
         id: 'm-summon-god', icon: '⚡', scope: 'weekly',
@@ -157,8 +157,8 @@ const missionsDatabase = [
         id: 'm-beat-joey', icon: '🎲', scope: 'weekly',
         label: 'Il migliore amico', description: 'Sconfiggi Joey Wheeler {n} volte',
         type: 'defeatCharacter', match: { characterId: 'joey' },
-        target: 1,
-        reward: { credits: 250 }
+        target: 2,
+        reward: { credits: 800 }
     },
     {
         id: 'm-beat-pegasus', icon: '👁️', scope: 'weekly',
@@ -201,8 +201,8 @@ const missionsDatabase = [
         id: 'm-activate-swords', icon: '🗡️', scope: 'weekly',
         label: 'Luce rivelatrice', description: 'Attiva {n} volte Spada Rivelatrice',
         type: 'activateCard', match: { cardId: 8 },
-        target: 1,
-        reward: { credits: 200 }
+        target: 3,
+        reward: { credits: 700 }
     },
 
     // --- I colpi grossi, solo settimanali ---------------------------

@@ -113,6 +113,15 @@
         };
     }
 
+    // "Mostra solo gli sbloccati": preferenza del DISPOSITIVO (come lo zoom di una lista), non del profilo, quindi localStorage.
+    const CHIAVE_SOLO_SBLOCCATI = 'ygoTitoliSoloSbloccati';
+    function leggiSoloSbloccati() {
+        try { return localStorage.getItem(CHIAVE_SOLO_SBLOCCATI) === '1'; } catch (e) { return false; }
+    }
+    function scriviSoloSbloccati(valore) {
+        try { if (valore) localStorage.setItem(CHIAVE_SOLO_SBLOCCATI, '1'); else localStorage.removeItem(CHIAVE_SOLO_SBLOCCATI); } catch (e) { /* non si ricorda, pazienza */ }
+    }
+
     function render(contenitore, opzioni) {
         const el = typeof contenitore === 'string' ? document.querySelector(contenitore) : contenitore;
         if (!el || !window.SaveManager) return;
@@ -127,6 +136,13 @@
         // I titoli speciali, per gruppo nell'ordine del catalogo. La sezione resta aperta dopo aver scelto un titolo (render
         // ridisegna tutto: senza questo si richiuderebbe a ogni tocco).
         const aperti = !!el.querySelector('[data-phr="speciali"][open]');
+        // Ogni gruppo e' richiudibile: si ricorda quali erano aperti (render ridisegna tutto). La prima volta restano aperti solo i
+        // gruppi dove c'e' qualcosa di sbloccato o il titolo in uso, cosi' 45 titoli non diventano un muro di testo.
+        const primaSezione = el.querySelector('[data-phr="speciali"]');
+        const gruppiAperti = primaSezione
+            ? new Set(Array.from(primaSezione.querySelectorAll('details.phr-gruppo[open]')).map((d) => d.getAttribute('data-gruppo')))
+            : null;
+        const soloSbloccati = leggiSoloSbloccati();
         const gruppiSpeciali = [];
         s.speciali.forEach((voce) => {
             let g = gruppiSpeciali.find((x) => x.nome === voce.def.gruppo);
@@ -180,14 +196,22 @@
                     ${s.speciali.length ? `<details class="phr-percorso phr-speciali" data-phr="speciali"${aperti ? ' open' : ''}>
                         <summary>Titoli speciali · ${s.specialiSbloccati} di ${s.speciali.length}</summary>
                         <div class="phr-speciali-aiuto">Si guadagnano completando storie, tornei e traguardi. Tocca uno sbloccato per mostrarlo sotto il tuo nome.</div>
-                        ${gruppiSpeciali.map((g) => `<div class="phr-gruppo">
-                            <div class="phr-gruppo-titolo">${esc(g.nome)} <span>${g.voci.filter((v) => v.sbloccato).length}/${g.voci.length}</span></div>
-                            <ul class="phr-speciali-elenco">${g.voci.map((v) => `<li class="${v.sbloccato ? 'is-sbloccato' : 'is-bloccato'}${s.specialeScelto && s.specialeScelto.id === v.def.id ? ' is-scelto' : ''}">
+                        <label class="phr-solo"><input type="checkbox" data-phr="solo-sbloccati"${soloSbloccati ? ' checked' : ''}> Mostra solo gli sbloccati</label>
+                        ${gruppiSpeciali.map((g) => {
+                            const voci = soloSbloccati ? g.voci.filter((v) => v.sbloccato) : g.voci;
+                            if (!voci.length) return '';
+                            const sbloccatiDelGruppo = g.voci.filter((v) => v.sbloccato).length;
+                            const inUso = !!(s.specialeScelto && g.voci.some((v) => v.def.id === s.specialeScelto.id));
+                            const apertoOra = gruppiAperti ? gruppiAperti.has(g.nome) : (sbloccatiDelGruppo > 0 || inUso);
+                            return `<details class="phr-gruppo" data-gruppo="${esc(g.nome)}"${apertoOra ? ' open' : ''}>
+                            <summary class="phr-gruppo-titolo">${esc(g.nome)} <span>${sbloccatiDelGruppo}/${g.voci.length}</span></summary>
+                            <ul class="phr-speciali-elenco">${voci.map((v) => `<li class="${v.sbloccato ? 'is-sbloccato' : 'is-bloccato'}${s.specialeScelto && s.specialeScelto.id === v.def.id ? ' is-scelto' : ''}">
                                 ${v.sbloccato
                                     ? `<button type="button" class="phr-speciale" data-titolo="${esc(v.def.id)}" aria-pressed="${s.specialeScelto && s.specialeScelto.id === v.def.id ? 'true' : 'false'}"><span class="phr-speciale-nome">${esc(v.def.nome)}</span><span class="phr-speciale-stato">${s.specialeScelto && s.specialeScelto.id === v.def.id ? 'In uso' : 'Usa'}</span></button>`
                                     : `<div class="phr-speciale phr-speciale--bloccato"><span class="phr-speciale-nome">${esc(v.def.nome)}</span><span class="phr-speciale-come">${esc(v.def.come)}</span></div>`}
                             </li>`).join('')}</ul>
-                        </div>`).join('')}
+                        </details>`;
+                        }).join('')}
                         ${s.specialeScelto ? '<button type="button" class="phr-btn phr-speciale-reset" data-phr="titolo-scala">Torna al titolo a punti</button>' : ''}
                     </details>` : ''}
                     <div class="phr-salvato">Ultimo salvataggio: ${esc(data(save.player && save.player.lastSaved))}</div>
@@ -250,6 +274,8 @@
                 render(el, opzioni);
             };
         });
+        const filtro = el.querySelector('[data-phr="solo-sbloccati"]');
+        if (filtro) filtro.onchange = () => { scriviSoloSbloccati(filtro.checked); render(el, opzioni); };
         const reset = el.querySelector('[data-phr="titolo-scala"]');
         if (reset) reset.onclick = () => { SaveManager.setTitoloScelto(null); toast('Titolo a punti ripristinato.'); render(el, opzioni); };
 

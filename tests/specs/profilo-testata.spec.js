@@ -87,6 +87,20 @@ module.exports = {
             await page.reload();
             await page.waitForSelector('#heroMount .phr-nome');
             t.assert(await page.evaluate(() => document.querySelector('.phr-titolo').textContent) === 'Faraone Supremo', 'il titolo scelto resta dopo il ricaricamento');
+            // La lista e' compatta: i gruppi senza nulla di sbloccato (Duellanti) partono chiusi, quelli con titoli (Storie) aperti, e
+            // "Mostra solo gli sbloccati" toglie i bloccati e i gruppi vuoti; la scelta resta dopo il ricaricamento.
+            const gruppi = await page.evaluate(() => Object.fromEntries(Array.from(document.querySelectorAll('details.phr-gruppo')).map((d) => [d.dataset.gruppo, d.open])));
+            t.assert(gruppi['Storie'] === true && gruppi['Duellanti'] === false, `gruppi aperti solo dove c'e' qualcosa di sbloccato: ${JSON.stringify(gruppi)}`);
+            await page.evaluate(() => document.querySelector('[data-phr="speciali"]').setAttribute('open', ''));
+            await page.check('[data-phr="solo-sbloccati"]');
+            await page.waitForFunction(() => document.querySelectorAll('.phr-speciale--bloccato').length === 0);
+            t.assert(await page.evaluate(() => !document.querySelector('details.phr-gruppo[data-gruppo="Duellanti"]')), 'col filtro i gruppi senza sbloccati spariscono');
+            await page.reload();
+            await page.waitForSelector('#heroMount .phr-nome');
+            t.assert(await page.evaluate(() => document.querySelector('[data-phr="solo-sbloccati"]').checked), 'il filtro si ricorda dopo il ricaricamento');
+            await page.evaluate(() => document.querySelector('[data-phr="speciali"]').setAttribute('open', ''));
+            await page.uncheck('[data-phr="solo-sbloccati"]');
+            await page.waitForFunction(() => document.querySelectorAll('.phr-speciale--bloccato').length > 0);
             // Un "Ricomincia" in una storia azzera `finita` ma non toglie il titolo (le Sfide restano completate).
             await page.evaluate(() => { const s = SaveManager.load(); s.story = {}; localStorage.setItem('yugiohDuelArenaSave', JSON.stringify(s)); });
             await page.reload();

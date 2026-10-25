@@ -368,3 +368,19 @@
 @media (max-width: 600px) {
     .profile-hero .phr-speciali-elenco { grid-template-columns: 1fr; }
 }
+/* Gruppi richiudibili + filtro "solo sbloccati" (la lista dei titoli speciali e' lunga) */
+.profile-hero details.phr-gruppo { margin-bottom: 6px; }
+.profile-hero summary.phr-gruppo-titolo { cursor: pointer; user-select: none; list-style: none; margin-bottom: 0; padding: 4px 0; }
+.profile-hero summary.phr-gruppo-titolo::-webkit-details-marker { display: none; }
+.profile-hero summary.phr-gruppo-titolo::before {
+    content: ''; width: 6px; height: 6px; margin-right: 2px; flex: none; align-self: center;
+    border-right: 2px solid var(--phr-oro); border-bottom: 2px solid var(--phr-oro);
+    transform: rotate(-45deg); transition: transform 0.15s ease;
+}
+.profile-hero details.phr-gruppo[open] > summary.phr-gruppo-titolo::before { transform: rotate(45deg); }
+.profile-hero details.phr-gruppo[open] > summary.phr-gruppo-titolo { margin-bottom: 5px; }
+.profile-hero .phr-solo { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 8px; font-size: 0.68rem; color: var(--phr-oro-chiaro); cursor: pointer; }
+.profile-hero .phr-solo input { accent-color: #f1c95a; }
+@media (prefers-reduced-motion: reduce) {
+    .profile-hero summary.phr-gruppo-titolo::before { transition: none; }
+}
