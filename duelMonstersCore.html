@@ -4684,7 +4684,12 @@
            di ciascun giocatore si sovrappongano o escano dallo schermo. */
         @media (max-height: 420px) {
             :root {
-                --card-w: clamp(28px, min(6.2vh, 6.4vw), 118px);
+                /* Carta in funzione dell'ALTEZZA (misurato su 7 schermi in orizzontale, da 320 a 412px): con la vecchia
+                   min(6.2vh, ...) il risultato stava SEMPRE sotto il minimo (28px) per altezze fino a 450px, quindi
+                   un telefono da 412px aveva carte da 28px come uno da 325. Qui cresce di 0,19px per ogni px di
+                   altezza oltre i 325 (45px a 412): il tetto e' quanto le due mani coprono le file Magia/Trappola
+                   (al massimo ~30%, lo stesso dei telefoni piu' piccoli, dove la carta resta a 28px). */
+                --card-w: clamp(28px, min(calc(28px + (100vh - 325px) * 0.19), 6.4vw), 118px);
                 --field-slot-pad: clamp(8px, 0.6vh, 20px);
                 --field-gap: clamp(7px, 3vh, 24px);
                 --hand-card-w: clamp(50px, min(7.2vh, 7.4vw), 138px);
