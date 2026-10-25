@@ -45,10 +45,10 @@ precision highp float;
 uniform vec2 r;          // dimensione del canvas in pixel
 uniform float k;         // pixel CSS per pixel del canvas
 uniform float uT;
-uniform float uDim;      // 0..1: quanto e' scuro il mondo
 uniform float uL;        // dimensione di una maglia, in pixel CSS
-uniform float uN;        // numero di ancore (carte) disegnate
-uniform vec2 uP[8];      // centro di ogni carta
+uniform float uN;        // numero di tratti di catena
+uniform vec2 uPa[7];     // inizio di ogni tratto (sul bordo della carta da cui parte)
+uniform vec2 uPb[7];     // fine di ogni tratto (sul bordo della carta a cui arriva)
 uniform vec3 uS[7];      // per tratto: x = quanto e' disegnato 0..1, y = quanto e' spezzato 0..1, z = 0 tuo / 1 avversario
 uniform float uF[7];     // lampo del tratto (una carta e' appena piombata)
 uniform vec4 uB[3];      // onde d'urto: x, y, eta' in secondi (<0 = spenta), tipo (0 azzurro, 1 rosso, 2 oro)
@@ -162,14 +162,11 @@ void tratto(vec2 P, vec2 A, vec2 B, vec3 st, float fl, float idx, inout vec4 col
 
 void main(){
   vec2 P = vec2(gl_FragCoord.x, r.y - gl_FragCoord.y) * k;
-  vec2 uv = P / (r * k) - .5;
-  float v = smoothstep(.15, .85, length(uv * vec2(1.1, 1.)) * 1.4);
-  float da = uDim * (.42 + .38 * v);
   vec4 col = vec4(0.);
   vec3 glow = vec3(0.);
   for (int i = 0; i < 7; i++) {
-    if (float(i) + 1. >= uN) break;
-    tratto(P, uP[i], uP[i + 1], uS[i], uF[i], float(i), col, glow);
+    if (float(i) >= uN) break;
+    tratto(P, uPa[i], uPb[i], uS[i], uF[i], float(i), col, glow);
   }
   for (int b = 0; b < 3; b++) {
     float age = uB[b].z;
@@ -183,10 +180,9 @@ void main(){
     float fl = exp(-dist / (uL * 2.2)) * exp(-age * 7.);
     glow += bc * ring * 1.1 + vec3(1.) * fl * 1.1 + bc * fl * .8;
   }
-  vec3 rgb = col.rgb + vec3(0., .01, .035) * da * (1. - col.a);
-  float a = col.a + da * (1. - col.a);
+  // Il buio attorno e' un velo DOM sotto le carte (.cgl-buio): qui si disegna solo cio' che sta SOPRA le carte.
   vec3 L = vec3(1.) - exp(-glow * 1.1);
-  gl_FragColor = vec4(rgb + L, a);
+  gl_FragColor = vec4(col.rgb + L, col.a);
 }`;
 
     // =================================================================================================================
@@ -233,6 +229,8 @@ void main(){
         s.textContent = `
 #catenaGL{position:fixed;inset:0;z-index:${Z_ROOT};pointer-events:none;overflow:hidden;transition:opacity ${DUR_CHIUSURA_MS}ms ease}
 #catenaGL canvas{position:absolute;left:0;top:0;width:100%;height:100%}
+.cgl-buio{position:absolute;inset:0;transition:opacity .3s ease;
+  background:radial-gradient(ellipse at 50% 50%,rgba(3,8,20,.5) 0%,rgba(2,5,14,.78) 62%,rgba(1,3,9,.9) 100%)}
 .cgl-pos{position:absolute;left:0;top:0;transition:left .5s cubic-bezier(.2,.8,.2,1),top .5s cubic-bezier(.2,.8,.2,1),transform .5s cubic-bezier(.2,.8,.2,1);will-change:left,top,transform}
 .cgl-in{position:relative;transform-origin:50% 50%}
 .cgl-carta{position:relative;filter:drop-shadow(0 0 16px var(--cgl-c)) drop-shadow(0 12px 18px rgba(0,0,0,.65))}
@@ -265,15 +263,21 @@ void main(){
     function disegnoCarte(n, W, H) {
         const verticale = H > W * 1.05;
         const f = n <= 3 ? 1 : n === 4 ? .9 : n === 5 ? .8 : n === 6 ? .72 : .64;
-        const alta = Math.max(110, Math.min(H * (verticale ? .31 : .37), (W * (verticale ? .46 : .27)) / RAPPORTO)) * f;
+        // In verticale le carte si sfalsano su una colonna: l'altezza e' limitata dal passo fra l'una e l'altra, cosi' non si
+        // sovrappongono e fra di loro resta posto per vedere la catena.
+        // (misurato sul telefono: con carte che riempiono il passo le maglie restano nascoste, serve un vuoto fra l'una e l'altra)
+        const passoV = n <= 1 ? H : (H * .66) / (n - 1);
+        const alta = Math.max(verticale ? 84 : 110, verticale
+            ? Math.min(H * .27, (W * .42) / RAPPORTO, passoV * .76)
+            : Math.min(H * .37, (W * .27) / RAPPORTO) * f);
         const rot = [-7, 5, -4, 7, -6, 4, -5, 6];
         const pos = [];
         for (let i = 0; i < n; i++) {
             let x, y;
             if (verticale) {
-                const passo = n <= 1 ? 0 : Math.min(.26, .56 / (n - 1));
+                const passo = n <= 1 ? 0 : Math.min(.40, .66 / (n - 1));
                 y = H * (.5 + (i - (n - 1) / 2) * passo);
-                x = W * (i % 2 === 0 ? .33 : .67);
+                x = W * (i % 2 === 0 ? .30 : .70);
             } else {
                 const passo = n <= 1 ? 0 : Math.min(.30, .62 / (n - 1));
                 x = W * (.5 + (i - (n - 1) / 2) * passo);
@@ -281,7 +285,7 @@ void main(){
             }
             pos.push({ x, y, rot: rot[i % 8], scala: i === n - 1 ? 1.1 : .94 });
         }
-        return { alta, larga: alta * RAPPORTO, pos };
+        return { alta, larga: alta * RAPPORTO, pos, verticale };
     }
 
     function avvia() {
@@ -308,18 +312,24 @@ void main(){
         gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
         if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { rilascia(gl); throw new Error('shader-non-collegato'); }
 
+        // Ordine dal basso: velo scuro, carte, catena (SOPRA le carte, come in Master Duel: le maglie passano sul bordo), scritta.
         const root = document.createElement('div');
         root.id = 'catenaGL';
         root.style.opacity = '1';
-        root.appendChild(canvas);
+        const buio = document.createElement('div');
+        buio.className = 'cgl-buio';
+        buio.style.opacity = '0';
+        root.appendChild(buio);
         const livello = document.createElement('div');
         livello.className = 'cgl-carte';
         root.appendChild(livello);
+        root.appendChild(canvas);
         const titolo = document.createElement('div');
         titolo.className = 'cgl-titolo';
         titolo.textContent = 'CATENA';
         root.appendChild(titolo);
         document.body.appendChild(root);
+        requestAnimationFrame(() => { buio.style.opacity = '1'; });
 
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
@@ -379,7 +389,18 @@ void main(){
             const num = v.num;
             if (num) {
                 num.style.fontSize = Math.round(d.larga * .62) + 'px';
-                const ang = ['tr', 'bl', 'br', 'tl'][i % 4];
+                // L'angolo del numero e' quello LONTANO dalla catena (che esce verso le carte vicine): in verticale il lato
+                // esterno dello schermo (sopra la prima carta, sotto l'ultima), in orizzontale il lato esterno in alto o in basso.
+                const n = vv.length;
+                let v1, o1;
+                if (d.verticale) {
+                    o1 = p.x < st.W / 2 ? 'l' : 'r';
+                    v1 = i === 0 ? 't' : i === n - 1 ? 'b' : (i % 2 === 0 ? 'b' : 't');
+                } else {
+                    v1 = p.y < st.H / 2 ? 't' : 'b';
+                    o1 = i === 0 ? 'l' : i === n - 1 ? 'r' : (i % 2 === 0 ? 'r' : 'l');
+                }
+                const ang = v1 + o1;
                 const fuori = -d.larga * .16;
                 num.style.top = num.style.bottom = num.style.left = num.style.right = 'auto';
                 if (ang[0] === 't') num.style.top = (fuori * 1.1) + 'px'; else num.style.bottom = (fuori * 1.1) + 'px';
@@ -587,40 +608,51 @@ void main(){
         s.ultimoFrame = now;
 
         const vv = vive().slice(-MAX_ANCORE);
-        const P = new Float32Array(MAX_ANCORE * 2);
+        const Pa = new Float32Array(7 * 2);
+        const Pb = new Float32Array(7 * 2);
         const S = new Float32Array(7 * 3);
         const F = new Float32Array(7);
-        vv.forEach((v, i) => {
+        const C = vv.map((v) => {
             const r = v.el.getBoundingClientRect();
-            P[i * 2] = r.left + r.width / 2;
-            P[i * 2 + 1] = r.top + r.height / 2;
-            if (i > 0) {
-                const seg = i - 1;
-                S[seg * 3] = easeOut((now - v.tRivela) / 460);
-                S[seg * 3 + 1] = v.risolvendo ? easeOut((now - v.tRisolve - 180) / 520) : 0;
-                S[seg * 3 + 2] = v.owner;
-                const eta = (now - v.tRivela - 330) / 1000;
-                F[seg] = eta > 0 ? Math.pow(Math.max(0, 1 - eta / 0.8), 2) : 0;
-            }
+            return { x: r.left + r.width / 2, y: r.top + r.height / 2, hw: r.width / 2, hh: r.height / 2 };
         });
+        for (let i = 1; i < vv.length; i++) {
+            const v = vv[i];
+            const seg = i - 1;
+            const a = C[i - 1], b = C[i];
+            // La catena va dal BORDO di una carta al bordo dell'altra (non da centro a centro: coprirebbe l'illustrazione)
+            // e si disegna SOPRA le carte, come in Master Duel: le prime maglie poggiano sulla cornice.
+            let dx = b.x - a.x, dy = b.y - a.y;
+            const len = Math.hypot(dx, dy) || 1;
+            dx /= len; dy /= len;
+            const bordo = (c) => Math.min(c.hw / Math.max(Math.abs(dx), 1e-3), c.hh / Math.max(Math.abs(dy), 1e-3)) * 0.8;
+            let sa = bordo(a), sb = len - bordo(b);
+            // Se le carte quasi si toccano la catena resta lunga almeno un paio di maglie, centrata fra le due.
+            if (sb - sa < s.L * 1.6) { const m = (sa + sb) / 2; sa = m - s.L * 0.8; sb = m + s.L * 0.8; }
+            Pa[seg * 2] = a.x + dx * sa; Pa[seg * 2 + 1] = a.y + dy * sa;
+            Pb[seg * 2] = a.x + dx * sb; Pb[seg * 2 + 1] = a.y + dy * sb;
+            S[seg * 3] = easeOut((now - v.tRivela) / 460);
+            S[seg * 3 + 1] = v.risolvendo ? easeOut((now - v.tRisolve - 180) / 520) : 0;
+            S[seg * 3 + 2] = v.owner;
+            const eta = (now - v.tRivela - 330) / 1000;
+            F[seg] = eta > 0 ? Math.pow(Math.max(0, 1 - eta / 0.8), 2) : 0;
+        }
         const B = new Float32Array(12);
         for (let i = 0; i < 3; i++) {
             const b = s.boom[i];
             const eta = b ? (now - b.t0) / 1000 : -1;
             B[i * 4] = b ? b.x : 0; B[i * 4 + 1] = b ? b.y : 0; B[i * 4 + 2] = eta > 2.2 ? -1 : eta; B[i * 4 + 3] = b ? b.tipo : 0;
         }
-        const dim = s.chiudendo ? clamp01(1 - (now - s.tChiusura) / DUR_CHIUSURA_MS) : clamp01((now - s.t0) / 280);
 
         gl.uniform2f(s.u('r'), s.canvas.width, s.canvas.height);
         gl.uniform1f(s.u('k'), 1 / s.scala);
         gl.uniform1f(s.u('uT'), t);
-        gl.uniform1f(s.u('uDim'), dim);
         gl.uniform1f(s.u('uL'), s.L);
-        gl.uniform1f(s.u('uN'), vv.length);
-        gl.uniform2fv(s.u('uP'), P);
+        gl.uniform1f(s.u('uN'), Math.max(0, vv.length - 1));
+        gl.uniform2fv(s.u('uPa'), Pa);
+        gl.uniform2fv(s.u('uPb'), Pb);
         gl.uniform3fv(s.u('uS'), S);
-        gl.uniform1fv(s.u('uF'), F);
-        gl.uniform4fv(s.u('uB'), B);
+        gl.uniform1fv(s.u('uF'), F);        gl.uniform4fv(s.u('uB'), B);
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLES, 0, 3);

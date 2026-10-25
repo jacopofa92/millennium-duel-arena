@@ -29,7 +29,10 @@ module.exports = {
 
             const prep = () => page.evaluate(() => {
                 window.__links = [10, 7, 382].map((id, i) => ({
-                    card: { ...cardDatabase.find((c) => c.id === id), uid: 'cgl-' + id }, owner: i % 2 ? 'bot' : 'player', linkNumber: i + 1
+                    card: { ...cardDatabase.find((c) => c.id === id), uid: 'cgl-' + id }, owner: i % 2 ? 'bot' : 'player', linkNumber: i + 1,
+                    // Campi che il motore legge se per caso risolve davvero questa Catena finta (il ciclo del duello gira):
+                    // senza, un TypeError in runHandler sporca il test.
+                    def: {}, handlerName: 'activate', ctx: {}
                 }));
                 gameState.chain = { active: true, links: [window.__links[0]] };
                 renderChainStack();
