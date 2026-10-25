@@ -1575,22 +1575,38 @@
            Spada Rivelatrice attiva: contatore turni rimasti + bagliore
            verde chiaro "a spade dall'alto" sulla carta stessa.
            ============================================================ */
+        /* Contatore SULLA carta, verso il basso (richiesta dell'utente; prima era una pillola verde sotto):
+           numero luminoso senza box, stesso linguaggio dei numeri della Catena/LP, in verde "Spada". Con gli
+           ologrammi accesi (.holo-on) diventa un ologramma: azzurro, con bagliore e un leggero sfarfallio. */
         .field-turns-badge {
+            --num-c: rgb(70, 235, 120);
             position: absolute;
             left: 50%;
-            top: 100%;
-            transform: translate(-50%, 1px);
+            top: calc(50% + var(--card-h, 90px) / 2 - 2em);
+            transform: translateX(-50%);
             z-index: 4;
-            background: linear-gradient(145deg, rgba(7,30,13,0.95), rgba(8,58,23,0.95));
-            border: 1px solid rgba(133,255,158,0.72);
-            border-radius: 999px;
-            padding: 1px 7px;
-            font-size: clamp(0.5rem, 1.3vw, 0.7rem);
-            font-weight: 800;
-            color: #c8ffd3;
+            font-family: 'Arial Black', 'Segoe UI Black', Impact, system-ui, sans-serif;
+            font-style: italic;
+            font-size: clamp(0.8rem, 1.7vw, 1.15rem);
+            font-weight: 900;
+            line-height: 1;
+            color: #fff;
+            -webkit-text-stroke: 0.05em var(--num-c);
+            paint-order: stroke fill;
+            text-shadow: 0 0 0.25em var(--num-c), 0 0 0.6em var(--num-c), 0 0.06em 0.2em rgba(0, 0, 0, 0.75);
             white-space: nowrap;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.45);
             pointer-events: none;
+        }
+        .holo-on .field-turns-badge {
+            --num-c: rgb(90, 215, 255);
+            color: #eaffff;
+            animation: holoSfarfalla 3.2s steps(1, end) infinite;
+        }
+        @media (max-width: 900px) {
+            .field-turns-badge { font-size: clamp(9px, calc(var(--card-w) * 0.28), 13px); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .holo-on .field-turns-badge { animation: none; }
         }
         .card.revealing-light-active {
             position: relative;
@@ -5061,6 +5077,36 @@
             outline-offset: 3px;
         }
         .duel-pause-resume:active { transform: translateY(1px); }
+
+        /* ============================================================
+           BARRA DELLE FASI: tre stati leggibili a colpo d'occhio (segnalato dall'utente: "non si capisce in
+           che fase sono e cosa posso cliccare"). Prima l'unica differenza era un'icona piu' luminosa:
+           - FASE ATTUALE: l'icona sta su un disco PIENO del colore del campo, con anello chiaro, e
+             l'etichetta e' bianca con un filo sotto;
+           - PROSSIMA FASE CLICCABILE: icona dentro un ANELLO acceso (vuoto dentro), etichetta chiara;
+           - il resto resta SPENTO (gia' fatte piu' scure, non raggiungibili quasi invisibili).
+           Resta la barra originale: solo colori/anelli, nessuna misura cambia (decisione delle sessioni
+           precedenti: niente celle, cornici o forme nuove).
+           ============================================================ */
+        .phase-stepper .phase-step.active .step-badge {
+            background: radial-gradient(circle at 35% 28%, color-mix(in srgb, var(--fase-accento) 70%, #000) 0%, color-mix(in srgb, var(--fase-accento) 50%, #000) 60%, color-mix(in srgb, var(--fase-accento) 30%, #000) 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.85), 0 0 12px color-mix(in srgb, var(--fase-accento) 75%, transparent);
+        }
+        .phase-stepper .phase-step.active .step-label {
+            color: #fff;
+            font-weight: 900;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 8px color-mix(in srgb, var(--fase-accento) 70%, transparent);
+            box-shadow: 0 2px 0 -0.5px var(--fase-accento);
+        }
+        .phase-stepper .phase-step.clickable:not(.active) .step-badge {
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px var(--fase-accento), 0 0 10px color-mix(in srgb, var(--fase-accento) 55%, transparent);
+            color: #fff;
+        }
+        .phase-stepper .phase-step.clickable:not(.active) .step-label { color: #fff; font-weight: 850; }
+        .phase-stepper .phase-step.completed:not(.active) { opacity: 0.45; }
+        .phase-stepper .phase-step.disabled { opacity: 0.2; }
     </style>
 </head>
 <body>
