@@ -1914,11 +1914,13 @@
         .field-stats-badge:not(.field-pile-badge) .fsb-atk,
         .field-stats-badge:not(.field-pile-badge) .fsb-def {
             font-style: italic;
+            /* Il corsivo sporge a destra dell'ultima cifra e background-clip:text lo taglia: un filo di margine dentro. */
+            padding-right: 0.12em;
             background-image: linear-gradient(180deg, #ffffff 0%, #f4f8fa 55%, #dfe7ec 100%);
         }
         .field-stats-badge:not(.field-pile-badge) .fsb-atk { font-size: 1.2em; }
-        .field-stats-badge:not(.field-pile-badge) .fsb-def { font-size: 0.8em; }
-        .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-atk { font-size: 0.8em; }
+        .field-stats-badge:not(.field-pile-badge) .fsb-def { font-size: 0.68em; }
+        .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-atk { font-size: 0.68em; }
         .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-def { font-size: 1.2em; }
         .field-stats-badge:not(.field-pile-badge) .fsb-sep { color: rgba(255, 255, 255, 0.75); font-size: 0.85em; }
         @media (max-width: 900px) {

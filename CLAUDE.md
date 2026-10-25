@@ -4772,3 +4772,5 @@ Matrice completa di bilanciamento (2026-10-25, senza modifiche al gioco): `tools
 1.4.105 (cache v414): lo stile dei numeri ATK/DEF (bianchi neutri, la cifra della Posizione attuale piu' grande, una riga, senza '/' sul telefono, ~10px) vale ORA ANCHE SENZA OLOGRAMMI (richiesta dell'utente). Con gli ologrammi (holo-on) restano in piu' solo bagliore azzurro, righe di scansione e sfarfallio. Suite completa non eseguita.
 
 1.4.106 (cache v415): tolte le righe di scansione dai numeri ATK/DEF con gli ologrammi (restano bagliore azzurro e leggero sfarfallio). Suite completa non eseguita.
+
+1.4.107 (cache v416): la cifra piu' piccola di ATK/DEF (0,8em -> 0,68em, con e senza ologrammi) e un filo di margine a destra di ogni cifra: il corsivo sporgeva e background-clip:text lo tagliava. Suite completa non eseguita.
