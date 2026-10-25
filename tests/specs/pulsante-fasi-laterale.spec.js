@@ -36,7 +36,7 @@ module.exports = {
                     label: document.getElementById('phaseSideLabel').textContent,
                     centroY: Math.round(r.top + r.height / 2), alto: innerHeight,
                     barra: getComputedStyle(document.getElementById('phaseStepper')).visibility,
-                    destra: r.left > innerWidth * 0.8
+                    destra: r.left > innerWidth * 0.5
                 };
             });
             assert(a.visibile && a.destra, `Il tondo c'e' ed e' a destra: ${JSON.stringify(a)}`);
@@ -44,19 +44,29 @@ module.exports = {
             assert(a.barra === 'hidden', `La barra delle fasi non si vede: ${a.barra}`);
             assert(/M1/i.test(a.label), `Mostra la fase attuale (Main 1): ${a.label}`);
 
-            // Primo turno: la Battaglia non e' raggiungibile, resta solo "Fine turno" -> un tocco diretto, nessun menu.
-            const primo = await page.evaluate(() => ({ turno: gameState.turn, raggiungibili: [...document.querySelectorAll('#phaseStepper .clickable')].map((e) => e.dataset.phase) }));
-            assert(primo.turno === 1 && primo.raggiungibili.join() === 'end', `Primo turno: solo Fine turno: ${JSON.stringify(primo)}`);
+            // Il menu mostra SEMPRE tutte le fasi: attuale evidenziata, raggiungibili accese, le altre grigie e
+            // disabilitate. Primo turno: la Battaglia non e' raggiungibile, resta accesa solo "Fine turno".
+            await page.tap('#phaseSideBtn');
+            await page.waitForFunction(() => !document.getElementById('phaseSideMenu').hidden, null, { timeout: 3000 });
+            const stato = () => page.evaluate(() => [...document.querySelectorAll('#phaseSideMenu button')].map((b) => `${b.textContent}:${b.className}${b.disabled ? ':off' : ''}`));
+            const primo = await stato();
+            assert(primo.length === 6 && primo.includes('Main 1:psm-attuale:off') && primo.includes('Battaglia:psm-spenta:off') && primo.includes('Fine turno:psm-attiva'),
+                `Primo turno: sei fasi, Main 1 evidenziata, Battaglia grigia, Fine turno accesa: ${JSON.stringify(primo)}`);
+            // Il tondo sta vicino al campo, non al bordo: a destra del campo ma non incollato allo schermo.
+            const pos = await page.evaluate(() => ({ btn: document.getElementById('phaseSideBtn').getBoundingClientRect().left, campo: Math.max(...[...document.querySelectorAll('#playerFieldBoard .field-slot')].map((e) => e.getBoundingClientRect().right)), larg: innerWidth }));
+            assert(pos.btn >= pos.campo && pos.btn - pos.campo < 40 && pos.btn < pos.larg - 90, `Il tondo sta subito a destra del campo: ${JSON.stringify(pos)}`);
+            await page.tap('#phaseSideBtn');
+            await page.waitForFunction(() => document.getElementById('phaseSideMenu').hidden, null, { timeout: 3000 });
 
-            // Dal secondo turno: Battaglia e Fine turno -> il tocco apre il menu con le due scelte.
+            // Dal secondo turno: la Battaglia diventa raggiungibile.
             await page.evaluate(() => { gameState.turn = 2; updatePhaseIndicator(); });
             await page.tap('#phaseSideBtn');
             await page.waitForFunction(() => !document.getElementById('phaseSideMenu').hidden, null, { timeout: 3000 });
-            const voci = await page.evaluate(() => [...document.querySelectorAll('#phaseSideMenu button')].map((b) => b.textContent));
-            assert(voci.join('|') === 'Battaglia|Fine turno', `Il menu offre Battaglia e Fine turno: ${JSON.stringify(voci)}`);
-
+            const secondo = await stato();
+            assert(secondo.includes('Battaglia:psm-attiva') && secondo.includes('Fine turno:psm-attiva') && secondo.includes('Pesca:psm-spenta:off'),
+                `Secondo turno: Battaglia e Fine turno accese, Pesca grigia: ${JSON.stringify(secondo)}`);
             // Scegliere Battaglia porta davvero alla Battle Phase e il tondo ne prende il nome.
-            await page.tap('#phaseSideMenu button:first-child');
+            await page.tap('#phaseSideMenu button.psm-attiva:has-text("Battaglia")');
             await page.waitForFunction(() => gameState.phase === 'battle', null, { timeout: 8000 });
             await page.waitForTimeout(400);
             const dopo = await page.evaluate(() => ({ label: document.getElementById('phaseSideLabel').textContent, menuChiuso: document.getElementById('phaseSideMenu').hidden }));

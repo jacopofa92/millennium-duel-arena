@@ -3035,6 +3035,7 @@ function aggiornaPulsanteFasi() {
         ? `Fase attuale: ${etichetta ? etichetta.textContent.trim() : ''}. Tocca per cambiare fase`
         : `Fase attuale: ${etichetta ? etichetta.textContent.trim() : ''}`);
     chiudiMenuFasi();
+    posizionaPulsanteFasi();
 }
 
 function chiudiMenuFasi() {
@@ -3044,23 +3045,43 @@ function chiudiMenuFasi() {
 
 function toccaPulsanteFasi(event) {
     if (event) event.stopPropagation();
-    const passi = Array.from(document.querySelectorAll('#phaseStepper .phase-step.clickable'));
-    if (!passi.length) return;
-    if (passi.length === 1) { handlePhaseStepperClick(passi[0].dataset.phase); return; }
     const menu = document.getElementById('phaseSideMenu');
     if (!menu) return;
     if (!menu.hidden) { chiudiMenuFasi(); return; }
+    // Il menu mostra TUTTE le fasi (richiesta dell'utente): quella attuale evidenziata, le raggiungibili
+    // in questo momento attive, le altre in grigio e non toccabili. Si apre sempre, anche se c'e' una sola
+    // scelta o nessuna (turno avversario): cosi' si vede dove si e' nel turno.
     menu.innerHTML = '';
-    passi.forEach((p) => {
+    document.querySelectorAll('#phaseStepper .phase-step').forEach((p) => {
         const b = document.createElement('button');
         b.type = 'button';
+        const attuale = p.classList.contains('active');
+        const raggiungibile = p.classList.contains('clickable');
         b.textContent = p.dataset.phase === 'end' ? 'Fine turno' : (p.querySelector('.step-label')?.textContent?.trim() || p.dataset.phase);
-        b.onclick = (e) => { e.stopPropagation(); chiudiMenuFasi(); handlePhaseStepperClick(p.dataset.phase); };
+        b.className = attuale ? 'psm-attuale' : (raggiungibile ? 'psm-attiva' : 'psm-spenta');
+        if (attuale) b.setAttribute('aria-current', 'step');
+        if (!raggiungibile) b.disabled = true;
+        else b.onclick = (e) => { e.stopPropagation(); chiudiMenuFasi(); handlePhaseStepperClick(p.dataset.phase); };
         menu.appendChild(b);
     });
     menu.hidden = false;
 }
 
+/**
+ * Il tondo sta appena a destra del CAMPO, non al bordo dello schermo (richiesta dell'utente: "piu' verso il
+ * campo"): si legge dal vero riquadro del campo del giocatore, che cambia con la misura delle carte. Il menu
+ * (CSS) lo segue con la stessa variabile.
+ */
+function posizionaPulsanteFasi() {
+    const campo = document.getElementById('playerFieldBoard');
+    const btn = document.getElementById('phaseSideBtn');
+    if (!campo || !btn) return;
+    // Il bordo destro vero e' quello dell'ultima casella, non quello del contenitore (piu' largo del campo).
+    const destra = Math.max(0, ...Array.from(campo.querySelectorAll('.field-slot')).map((s) => s.getBoundingClientRect().right));
+    if (!destra) return;
+    const sinistra = Math.min(Math.round(destra + 14), window.innerWidth - 60);
+    document.documentElement.style.setProperty('--psb-left', `${sinistra}px`);
+}
 (function collegaPulsanteFasi() {
     const aggancia = () => {
         const btn = document.getElementById('phaseSideBtn');
@@ -3093,7 +3114,7 @@ function aggiornaBarraFasi() {
     barra.style.setProperty('--fase-xn', `${centro(passi[passi.length - 1])}px`);
     barra.style.setProperty('--fase-x1', `${centro(attivo)}px`);
 }
-window.addEventListener('resize', () => requestAnimationFrame(aggiornaBarraFasi));
+window.addEventListener('resize', () => requestAnimationFrame(() => { aggiornaBarraFasi(); posizionaPulsanteFasi(); }));
 
 // Boot del duello: appena questo file viene caricato, la partita parte con
 // l'intro cinematografica, che al termine avvia initGame() +
