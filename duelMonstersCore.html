@@ -703,20 +703,23 @@
             display: none;
             flex-shrink: 0;
         }
-        /* Turno: un SIMBOLO d'oro accanto al nome di chi e' di turno, l'Occhio (di Wedjat, lo stesso del
-           logo): niente badge, medaglione, parola o evidenziazione del nome (scartati dall'utente, uno
-           dopo l'altro). Fermo, senza sfondo; l'altro duellante non ha nulla e il suo ritratto e' un po'
-           spento (vedi sotto). Il segnaposto data-icon="eye" lo sostituisce Icons.hydrate. */
+        /* Turno: una CORONA d'oro DAVANTI al nome di chi e' di turno (l'utente ha scartato badge, medaglione,
+           parola, nome evidenziato e Occhio: vuole la corona, in testa al nome, ben visibile). Ferma, senza
+           sfondo. Sul lato giocatore il nome e' allineato a destra con la corona esterna a DESTRA (row-reverse):
+           qui si rimette in riga normale, cosi' la corona sta sempre a sinistra del testo, cioe' davanti.
+           L'altro duellante non ha nulla e il suo ritratto e' un po' spento (vedi sotto). */
         .player-info.side-player.active-turn .turn-crown {
             display: inline-flex;
             align-items: center;
-            width: 1.7em;
-            height: 1.7em;
-            margin: 0 3px;
+            width: 1.55em;
+            height: 1.55em;
+            margin: 0 5px 0 0;
             color: #ffd45e;
             filter: drop-shadow(0 0 3px rgba(255, 205, 70, 0.95)) drop-shadow(0 0 8px rgba(255, 180, 40, 0.6)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
         }
-        .player-info.side-player.active-turn .turn-crown svg { width: 100%; height: 100%; }        /* Chi NON e' di turno: ritratto un po' piu' spento. */
+        .player-info.side-player.active-turn .turn-crown svg { width: 100%; height: 100%; }
+        #playerInfo.player-info.side-player .duelist-name { flex-direction: row; }
+        /* Chi NON e' di turno: ritratto un po' piu' spento. */
         .player-info.side-player:not(.active-turn) .duelist-avatar--corner {
             filter: saturate(0.6) brightness(0.82);
             transition: filter 0.4s ease;
@@ -739,6 +742,9 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
             min-width: 0;
+            /* Larghezza del testo (non del contenitore): la corona resta attaccata al nome. */
+            width: max-content;
+            max-width: 100%;
         }
         /* Tag LP a pillola, sotto il nome nella colonna dei dettagli. */
         .life-points {
@@ -5485,7 +5491,7 @@
          angolo dello schermo. Spostato fuori esattamente come #playerInfo,
          per lo stesso motivo strutturale. -->
     <div class="player-info side-player" id="botInfo">
-        <h3><span class="turn-crown" data-icon="eye"></span><span class="name-text">🤖 Bot</span></h3>
+        <h3><span class="turn-crown" data-icon="crown"></span><span class="name-text">🤖 Bot</span></h3>
         <div class="life-points">❤️ <span id="botLP">8000</span></div>
         <!-- Zona Bandite: informazione pubblica come il Cimitero, vedi
              renderBanishedBadge()/openBanishedViewer() in game-flow.js.
@@ -5497,7 +5503,7 @@
         <span>L'avversario sta scegliendo…</span>
     </div>
     <div class="player-info side-player" id="playerInfo">
-        <h3 id="playerNameLabel"><span class="turn-crown" data-icon="eye"></span><span class="name-text">👤 Giocatore</span></h3>
+        <h3 id="playerNameLabel"><span class="turn-crown" data-icon="crown"></span><span class="name-text">👤 Giocatore</span></h3>
         <div class="life-points">❤️ <span id="playerLP">8000</span></div>
         <div class="banished-badge" id="playerBanishedBadge" title="Zona Bandite">🌀 <span id="playerBanishedCount">0</span></div>
     </div>
