@@ -818,6 +818,26 @@
         return save.player.name;
     }
 
+    /**
+     * Il titolo SPECIALE che il giocatore ha scelto di mostrare sotto il nome (js/data/titles-db.js), o null = quello della
+     * scala a punti. Sta in `save.player` insieme al nome (un campo di quel blocco viaggia col salvataggio sul cloud); le
+     * impostazioni no, perche' sono una lista chiusa di chiavi. Si salva solo l'id: se un giorno quel titolo sparisse dal
+     * catalogo il Profilo ricade da solo sulla scala, senza rompere nulla.
+     */
+    function getTitoloScelto() {
+        const save = load();
+        const id = save && save.player && save.player.titoloScelto;
+        return typeof id === 'string' && id ? id : null;
+    }
+
+    function setTitoloScelto(id) {
+        const save = load() || createNew();
+        save.player = save.player || {};
+        if (id) save.player.titoloScelto = String(id); else delete save.player.titoloScelto;
+        touch(save);
+        return getTitoloScelto();
+    }
+
     // ================================================================
     // Collezione: quante copie di ciascuna carta il giocatore possiede.
     // ================================================================
@@ -1490,6 +1510,8 @@
         setMissionRoster: setMissionRoster,
         getPlayerName: getPlayerName,
         setPlayerName: setPlayerName,
+        getTitoloScelto: getTitoloScelto,
+        setTitoloScelto: setTitoloScelto,
         getCurrency: getCurrency,
         addCurrency: addCurrency,
         CARD_COPY_CAP: CARD_COPY_CAP,

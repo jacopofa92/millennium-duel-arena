@@ -510,7 +510,7 @@
 // che il browser rifiuta per una navigazione (net::ERR_FAILED su ogni pagina).
 // v385: ultimo accesso online nel pannello Admin (cloud-sync.js, admin.html).
 // v386: cambio account sullo stesso dispositivo a prova di perdite (cloud-sync.js, save-manager.js, duel-session.js).
-const CACHE_NAME = 'ygo-duel-arena-v399';
+const CACHE_NAME = 'ygo-duel-arena-v400';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
@@ -664,6 +664,7 @@ const APP_SHELL = [
     'js/ui/game-logo.js',
     'js/ui/sfide-view.js',
     'js/ui/profile-stats.js',
+    'js/data/titles-db.js',
     'js/ui/profile-hero.js',
     'js/ui/recupero-copia.js',
     'js/ui/recupero-copia.css',

@@ -28,14 +28,48 @@
 (function () {
     'use strict';
 
+    // La SCALA a punti. I sei titoli di sempre restano dove erano (stessi nomi, stesse soglie): fra uno e l'altro ne sono
+    // entrati altri, cosi' si sale piu' spesso, e in cima ce ne sono quattro per chi gioca tanto. I titoli SPECIALI (storie,
+    // tornei, traguardi) sono un'altra cosa, vedi js/data/titles-db.js.
     const TITOLI = [
         { da: 0, nome: 'Duellante novizio' },
+        { da: 3, nome: 'Recluta dell\'Arena' },
         { da: 5, nome: 'Apprendista duellante' },
+        { da: 12, nome: 'Duellante di strada' },
         { da: 20, nome: 'Duellante esperto' },
+        { da: 35, nome: 'Veterano del Millennio' },
         { da: 50, nome: 'Asso del duello' },
+        { da: 75, nome: 'Maestro dei Mostri' },
         { da: 100, nome: 'Campione' },
-        { da: 200, nome: 'Re dei Giochi' }
+        { da: 150, nome: 'Campione del Regno' },
+        { da: 200, nome: 'Re dei Giochi' },
+        { da: 300, nome: 'Leggenda dell\'Arena' },
+        { da: 500, nome: 'Sovrano dell\'Arena' },
+        { da: 1000, nome: 'Divinità del Duello' }
     ];
+
+    /**
+     * I titoli speciali con il loro stato. Si sbloccano guardando le SFIDE completate (permanenti: un "Ricomincia" in una storia
+     * non toglie un titolo), mai uno stato che si puo' azzerare. Forme di ichiede: vedi js/data/titles-db.js.
+     */
+    function speciali(save) {
+        const catalogo = /** @type {any} */ (window).titoliSpecialiDatabase || [];
+        const fatte = (save && save.challenges) || {};
+        const completata = (id) => !!(fatte[id] && fatte[id].completed);
+        const elencoSfide = /** @type {any} */ (window).challengesDatabase || [];
+        return catalogo.map((def) => {
+            const r = def.richiede || {};
+            let sbloccato = false;
+            if (Array.isArray(r.sfide)) {
+                sbloccato = r.sfide.length > 0 && r.sfide.every(completata);
+            } else if (r.prefisso) {
+                const ids = elencoSfide.map((c) => c.id).filter((id) => id.indexOf(r.prefisso) === 0);
+                const completate = ids.filter(completata).length;
+                sbloccato = r.tutte ? (ids.length > 0 && completate === ids.length) : completate >= (r.almeno || 1);
+            }
+            return { def: def, sbloccato: sbloccato };
+        });
+    }
 
     function esc(t) {
         return String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -61,10 +95,18 @@
         const prossimo = TITOLI[i + 1] || null;
         const avanzamento = prossimo ? Math.round(((punti - TITOLI[i].da) / (prossimo.da - TITOLI[i].da)) * 100) : 100;
         const giocati = vinti + persi;
+        // Il titolo mostrato: lo speciale scelto dal giocatore se lo ha ancora sbloccato, altrimenti quello della scala.
+        const tuttiSpeciali = speciali(save);
+        const sceltoId = save.player && save.player.titoloScelto;
+        const scelto = tuttiSpeciali.find((x) => x.sbloccato && x.def.id === sceltoId) || null;
         return {
             vinti, persi, giocati, punti,
             percentuale: giocati ? Math.round((vinti / giocati) * 100) : null,
-            titolo: TITOLI[i].nome, prossimo, avanzamento,
+            speciali: tuttiSpeciali,
+            specialiSbloccati: tuttiSpeciali.filter((x) => x.sbloccato).length,
+            specialeScelto: scelto ? scelto.def : null,
+            titoloScala: TITOLI[i].nome,
+            titolo: scelto ? scelto.def.nome : TITOLI[i].nome, prossimo, avanzamento,
             livello: i + 1,
             livelliTotali: TITOLI.length,
             puntiMancanti: prossimo ? Math.max(0, prossimo.da - punti) : 0
@@ -81,6 +123,16 @@
         const decks = save.decks || [];
         const attivo = SaveManager.getActiveDeckId ? SaveManager.getActiveDeckId() : null;
         el.classList.add('profile-hero');
+
+        // I titoli speciali, per gruppo nell'ordine del catalogo. La sezione resta aperta dopo aver scelto un titolo (render
+        // ridisegna tutto: senza questo si richiuderebbe a ogni tocco).
+        const aperti = !!el.querySelector('[data-phr="speciali"][open]');
+        const gruppiSpeciali = [];
+        s.speciali.forEach((voce) => {
+            let g = gruppiSpeciali.find((x) => x.nome === voce.def.gruppo);
+            if (!g) { g = { nome: voce.def.gruppo, voci: [] }; gruppiSpeciali.push(g); }
+            g.voci.push(voce);
+        });
 
         const anello = s.percentuale == null
             ? '<div class="phr-anello phr-anello--vuoto"><span class="phr-anello-valore">—</span><span class="phr-anello-etichetta">vittorie</span></div>'
@@ -114,6 +166,7 @@
                         : `Titolo massimo raggiunto · ${s.punti} punti`}
                         <span class="phr-regola-come">1 punto per vittoria, 15 per torneo vinto, 20 per storia completata</span>
                     </div>
+                    ${s.specialeScelto ? `<div class="phr-speciale-nota">Titolo speciale · il tuo rango è <strong>${esc(s.titoloScala)}</strong></div>` : ''}
                     <details class="phr-percorso">
                         <summary>Vedi tutti i ${s.livelliTotali} titoli</summary>
                         <ol class="phr-livelli">
@@ -124,6 +177,19 @@
                             </li>`).join('')}
                         </ol>
                     </details>
+                    ${s.speciali.length ? `<details class="phr-percorso phr-speciali" data-phr="speciali"${aperti ? ' open' : ''}>
+                        <summary>Titoli speciali · ${s.specialiSbloccati} di ${s.speciali.length}</summary>
+                        <div class="phr-speciali-aiuto">Si guadagnano completando storie, tornei e traguardi. Tocca uno sbloccato per mostrarlo sotto il tuo nome.</div>
+                        ${gruppiSpeciali.map((g) => `<div class="phr-gruppo">
+                            <div class="phr-gruppo-titolo">${esc(g.nome)} <span>${g.voci.filter((v) => v.sbloccato).length}/${g.voci.length}</span></div>
+                            <ul class="phr-speciali-elenco">${g.voci.map((v) => `<li class="${v.sbloccato ? 'is-sbloccato' : 'is-bloccato'}${s.specialeScelto && s.specialeScelto.id === v.def.id ? ' is-scelto' : ''}">
+                                ${v.sbloccato
+                                    ? `<button type="button" class="phr-speciale" data-titolo="${esc(v.def.id)}" aria-pressed="${s.specialeScelto && s.specialeScelto.id === v.def.id ? 'true' : 'false'}"><span class="phr-speciale-nome">${esc(v.def.nome)}</span><span class="phr-speciale-stato">${s.specialeScelto && s.specialeScelto.id === v.def.id ? 'In uso' : 'Usa'}</span></button>`
+                                    : `<div class="phr-speciale phr-speciale--bloccato"><span class="phr-speciale-nome">${esc(v.def.nome)}</span><span class="phr-speciale-come">${esc(v.def.come)}</span></div>`}
+                            </li>`).join('')}</ul>
+                        </div>`).join('')}
+                        ${s.specialeScelto ? '<button type="button" class="phr-btn phr-speciale-reset" data-phr="titolo-scala">Torna al titolo a punti</button>' : ''}
+                    </details>` : ''}
                     <div class="phr-salvato">Ultimo salvataggio: ${esc(data(save.player && save.player.lastSaved))}</div>
                 </div>
             </div>
@@ -174,6 +240,19 @@
         };
         input.addEventListener('keydown', (e) => { if (e.key === 'Escape') chiudi(); });
 
+        // Titolo speciale: un tocco su uno sbloccato lo mostra sotto il nome (di nuovo lo stesso = si torna alla scala).
+        el.querySelectorAll('.phr-speciale[data-titolo]').forEach((b) => {
+            b.onclick = () => {
+                const id = b.getAttribute('data-titolo');
+                const era = s.specialeScelto && s.specialeScelto.id === id;
+                SaveManager.setTitoloScelto(era ? null : id);
+                toast(era ? 'Titolo a punti ripristinato.' : `Ora sei «${b.querySelector('.phr-speciale-nome').textContent}».`);
+                render(el, opzioni);
+            };
+        });
+        const reset = el.querySelector('[data-phr="titolo-scala"]');
+        if (reset) reset.onclick = () => { SaveManager.setTitoloScelto(null); toast('Titolo a punti ripristinato.'); render(el, opzioni); };
+
         // Mazzi: una scatola piccola per mazzo; un tocco su uno non attivo
         // lo rende quello con cui si gioca.
         const fila = el.querySelector('[data-phr="mazzi"]');
@@ -204,5 +283,5 @@
         if (window.Icons) Icons.hydrate(el);
     }
 
-    window.ProfileHero = { render: render, calcola: calcola, TITOLI: TITOLI };
+    window.ProfileHero = { render: render, calcola: calcola, TITOLI: TITOLI, speciali: speciali };
 })();

@@ -52,7 +52,7 @@ module.exports = {
             });
             assert(sezioni.generiche > 40, `Poche Sfide generiche (${sezioni.generiche})`);
             assert(sezioni.storie >= 4, `Le Sfide delle storie devono coprire le campagne giocabili (${sezioni.storie})`);
-            assert(sezioni.giornaliere === 3, `Le missioni di oggi devono essere 3 (rilevate ${sezioni.giornaliere})`);
+            assert(sezioni.giornaliere === 4, `Le missioni di oggi devono essere 4 (rilevate ${sezioni.giornaliere})`);
             assert(sezioni.settimanali === 10, `Le missioni della settimana devono essere 10 (rilevate ${sezioni.settimanali})`);
 
             // --- Stesso periodo, stesse missioni ------------------------
@@ -85,9 +85,11 @@ module.exports = {
             assert(risorteggiate[0] === primoGiro.join(','),
                 `Risorteggiando lo stesso giorno devono uscire le stesse missioni: ${risorteggiate[0]} invece di ${primoGiro}`);
 
-            // --- Un altro periodo, altre missioni -----------------------
+            // --- Un altro periodo ---------------------------------------
             // Si sposta la CHIAVE, non l'orologio: è il modo in cui il
-            // meccanismo vede davvero un giorno diverso.
+            // meccanismo vede davvero un giorno o una settimana diversi.
+            // Le 4 giornaliere sono generiche e SEMPRE le stesse (si azzera
+            // solo il progresso); a ruotare sono le settimanali.
             const altroGiorno = await page.evaluate(() => {
                 const vero = ServerDate.dayKey;
                 ServerDate.dayKey = () => '2031-03-07';
@@ -95,10 +97,24 @@ module.exports = {
                 ServerDate.dayKey = vero;
                 return ids;
             });
-            assert(altroGiorno.length === 3, 'Anche un altro giorno deve avere 3 missioni');
-            assert(altroGiorno.join(',') !== primoGiro.join(','),
-                'Un giorno diverso deve proporre missioni diverse, altrimenti non ruotano');
-
+            assert(altroGiorno.length === 4, 'Anche un altro giorno deve avere 4 missioni');
+            assert(altroGiorno.join(',') === primoGiro.join(','),
+                `Le giornaliere sono sempre le stesse 4, nello stesso ordine: ${altroGiorno} invece di ${primoGiro}`);
+            const generiche = await page.evaluate(() => ChallengeTracker.getMissions('daily').map((m) => ({ id: m.id, match: m.match })));
+            assert(generiche.every((m) => m.id.indexOf('m-daily-') === 0
+                && !('cardId' in m.match) && !('characterId' in m.match)),
+                `Le giornaliere non chiedono una carta o un Duellante preciso: ${JSON.stringify(generiche)}`);
+            const settimane = await page.evaluate(() => {
+                const ids = (chiave) => {
+                    const vero = ServerDate.weekKey;
+                    ServerDate.weekKey = () => chiave;
+                    const out = ChallengeTracker.getMissions('weekly').map((m) => m.id).join(',');
+                    ServerDate.weekKey = vero;
+                    return out;
+                };
+                return [ids('2031-W10'), ids('2031-W11'), ids('2031-W12')];
+            });
+            assert(new Set(settimane).size >= 2, 'Settimane diverse devono proporre missioni diverse, altrimenti non ruotano');
             // --- Il progresso scade col periodo -------------------------
             const scadenza = await page.evaluate(() => {
                 const m = ChallengeTracker.getMissions('daily')[0];

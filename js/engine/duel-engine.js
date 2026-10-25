@@ -6356,7 +6356,9 @@
         // perche' questo e' il punto in cui l'attivazione e' davvero
         // andata a buon fine, non solo tentata.
         if (owner === 'player' && card && window.ChallengeTracker) {
-            ChallengeTracker.recordProgress('activateCard', { cardId: card.id });
+            // cardType ('spell'|'trap'|'monster') serve alle missioni generiche ("attiva 2 carte Magia o Trappola"): senza, l'unico
+            // modo di contarle sarebbe elencare gli id di tutte le Magie.
+            ChallengeTracker.recordProgress('activateCard', { cardId: card.id, cardType: card.type });
         }
 
         if (typeof updateUI === 'function') updateUI();

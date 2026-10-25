@@ -333,3 +333,38 @@
 @media (prefers-reduced-motion: reduce) {
     .profile-hero .phr-mazzo, .profile-hero .phr-matita { transition: none; }
 }
+
+/* ---- Titoli speciali (js/data/titles-db.js) --------------------------- */
+.profile-hero .phr-speciale-nota { font-size: 0.68rem; color: var(--phr-tenue); }
+.profile-hero .phr-speciale-nota strong { color: var(--phr-oro-chiaro); font-weight: 700; }
+.profile-hero .phr-speciali { max-width: 640px; }
+.profile-hero .phr-speciali-aiuto { font-size: 0.68rem; color: var(--phr-tenue); margin-bottom: 8px; line-height: 1.35; }
+.profile-hero .phr-gruppo { margin-bottom: 10px; }
+.profile-hero .phr-gruppo-titolo {
+    display: flex; align-items: baseline; gap: 8px; margin-bottom: 5px;
+    font-family: var(--phr-serif); font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--phr-oro);
+}
+.profile-hero .phr-gruppo-titolo span { font-family: inherit; letter-spacing: 0.04em; color: var(--phr-tenue); font-weight: 600; }
+.profile-hero .phr-speciali-elenco {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;
+    margin: 0; padding: 0; list-style: none;
+}
+.profile-hero .phr-speciale {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 3px;
+    width: 100%; min-height: 48px; padding: 7px 9px; box-sizing: border-box;
+    border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.2); color: var(--phr-tenue); text-align: left;
+    font: inherit; font-size: 0.68rem;
+}
+.profile-hero button.phr-speciale { cursor: pointer; color: #e9dcbf; border-color: rgba(241, 201, 90, 0.3); background: rgba(241, 201, 90, 0.07); }
+.profile-hero button.phr-speciale:hover { border-color: rgba(241, 201, 90, 0.6); }
+.profile-hero .is-scelto button.phr-speciale { border-color: rgba(241, 201, 90, 0.7); background: rgba(241, 201, 90, 0.16); color: #fff2c8; }
+.profile-hero .phr-speciale-nome { font-weight: 700; line-height: 1.2; }
+.profile-hero .phr-speciale-stato { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--phr-oro); }
+.profile-hero .phr-speciale--bloccato { opacity: 0.62; }
+.profile-hero .phr-speciale-come { font-size: 0.6rem; line-height: 1.3; }
+.profile-hero .phr-speciale-reset { margin-top: 4px; }
+@media (max-width: 600px) {
+    .profile-hero .phr-speciali-elenco { grid-template-columns: 1fr; }
+}

@@ -41,7 +41,7 @@
     // devono vedere le stesse missioni, e riaprendo la pagina dieci volte
     // non devono cambiare. Un Math.random() qui darebbe missioni nuove ad
     // ogni caricamento, cioè nessuna missione affatto.
-    const QUANTE = { daily: 3, weekly: 10 };
+    const QUANTE = { daily: 4, weekly: 10 };
 
     function getMissionDefs() {
         return (typeof missionsDatabase !== 'undefined') ? missionsDatabase : [];
@@ -92,7 +92,7 @@
      * rientra. Aggiungendone una nuova, va aggiunta anche qui — ed è il
      * motivo per cui questo commento esiste.
      */
-    const SINGOLARE = { volte: 'volta', Duelli: 'Duello', tornei: 'torneo', Oggetti: 'Oggetto' };
+    const SINGOLARE = { volte: 'volta', Duelli: 'Duello', tornei: 'torneo', Oggetti: 'Oggetto', mostri: 'mostro', carte: 'carta' };
 
     function descrizione(testo, target) {
         let out = String(testo || '').replace('{n}', target);
@@ -122,9 +122,16 @@
         const chiave = chiavePeriodo(ambito);
 
         let ids = window.SaveManager ? SaveManager.getMissionRoster(ambito, chiave) : null;
+        // Un elenco salvato che nomina una missione ormai fuori da questo pool (il catalogo e' cambiato nel frattempo, es. le
+        // giornaliere generiche al posto di quelle a tema) non si puo' mostrare: si rifa. Senza questo, il giorno dell'aggiornamento
+        // chi aveva gia' l'elenco di oggi si ritrovava con la scheda vuota.
+        if (ids && ids.some((id) => !pool.some((m) => m.id === id))) ids = null;
         if (!ids) {
-            ids = pesca(pool, Math.min(QUANTE[ambito] || 3, pool.length),
-                rng(hash('missioni-' + ambito + '-' + chiave))).map((m) => m.id);
+            const quante = Math.min(QUANTE[ambito] || 3, pool.length);
+            // Se il pool non ha piu' voci di quante ne servono (le 4 giornaliere) non c'e' nulla da sorteggiare: tutte, nell'ordine
+            // del catalogo, cosi' non cambiano nemmeno di posto da un giorno all'altro.
+            ids = (pool.length <= quante ? pool
+                : pesca(pool, quante, rng(hash('missioni-' + ambito + '-' + chiave)))).map((m) => m.id);
             if (window.SaveManager) SaveManager.setMissionRoster(ambito, chiave, ids);
         }
 
@@ -327,7 +334,7 @@
         drainPendingBanners: drainPendingBanners,
         getAllWithProgress: getAllWithProgress,
         getSezioni: getSezioni,
-        /** Le missioni di questo periodo: ambito 'daily' (3) o 'weekly' (10). */
+        /** Le missioni di questo periodo: ambito 'daily' (4, sempre le stesse) o 'weekly' (10 sorteggiate). */
         getMissions: getMissions
     };
 })();

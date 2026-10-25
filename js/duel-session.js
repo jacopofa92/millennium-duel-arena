@@ -798,6 +798,13 @@
         // record, Sfide generiche o premi di fine duello), decide tutto lui.
         if (ModalitaExtra.esclusiva()) { ModalitaExtra.finisciEsclusiva(playerWon, abbandono); return; }
 
+        // Missioni generiche ("Gioca 1 Duello fino alla fine"): conta un duello GIOCATO, vinto, perso o pareggiato, perche' una
+        // missione per chi comincia non deve punire chi perde. Non conta un abbandono (niente premi per chi lascia, vedi i
+        // premi qui sotto), ne' il banco di prova del Demo e della sandbox, che non sono partite.
+        if (!abbandono && mode !== 'demo' && mode !== 'sandbox' && window.ChallengeTracker) {
+            ChallengeTracker.recordProgress('playDuel', { mode: mode });
+        }
+
         let record = null;
         if (playerWon !== 'draw' && session.opponent.id && typeof recordCharacterResult === 'function') {
             // Il livello serve alla medaglia del Duello Libero ("battuto a
