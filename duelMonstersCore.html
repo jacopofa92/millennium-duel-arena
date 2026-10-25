@@ -5115,33 +5115,46 @@
         .phase-stepper .phase-step.active .step-label::before,
         .phase-stepper .phase-step.clickable:not(.active) .step-label::before,
         .phase-stepper .phase-step.completed .step-label::before { content: none; display: none; animation: none; }
+        /* Barra CONTINUA (non a segmenti): un binario che attraversa tutta la barra dal centro della prima
+           fase al centro dell'ultima, con un riempimento che AVANZA fino alla fase attuale e si fa piu'
+           chiaro verso la testa, dove c'e' un punto luminoso. Le icone ci stanno sopra come tappe. Le misure
+           (--fase-x0 = centro della prima, --fase-xn = centro dell'ultima, --fase-x1 = centro della fase
+           attuale, in px dal bordo sinistro della barra) le scrive aggiornaBarraFasi() in game-flow.js:
+           i passi hanno larghezze diverse, quindi non si possono dedurre dalle percentuali. */
         .phase-stepper .phase-step::before,
-        .phase-stepper .phase-step.active::before {
+        .phase-stepper .phase-step.active::before { content: none; display: none; animation: none; }
+        .phase-stepper { position: relative; }
+        .phase-stepper::before,
+        .phase-stepper::after {
             content: '';
             display: block;
             position: absolute;
-            inset: auto 0 -5px 0;
+            left: var(--fase-x0, 0px);
+            top: auto;
+            right: auto;
+            bottom: 2px;
             height: 3px;
             border-radius: 999px;
             pointer-events: none;
-            background: rgba(255, 255, 255, 0.16);
-            box-shadow: none;
-            transform-origin: 0 50%;
-            animation: none;
         }
-        .phase-stepper .phase-step.completed::before {
-            background: color-mix(in srgb, var(--fase-accento) 78%, #fff 6%);
+        .phase-stepper::before {
+            width: calc(var(--fase-xn, 0px) - var(--fase-x0, 0px));
+            background: rgba(255, 255, 255, 0.14);
+            inset-inline: auto;
+            transform: none;
         }
-        .phase-stepper .phase-step.active::before {
-            background: linear-gradient(90deg, color-mix(in srgb, var(--fase-accento) 78%, #fff 6%), color-mix(in srgb, var(--fase-accento) 25%, #fff));
-            box-shadow: 0 0 8px color-mix(in srgb, var(--fase-accento) 85%, transparent), 0 0 2px #fff;
-            animation: faseRiempi 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+        .phase-stepper::after {
+            width: calc(var(--fase-x1, 0px) - var(--fase-x0, 0px));
+            background: linear-gradient(90deg,
+                color-mix(in srgb, var(--fase-accento) 55%, transparent) 0%,
+                color-mix(in srgb, var(--fase-accento) 85%, #fff 5%) 70%,
+                color-mix(in srgb, var(--fase-accento) 30%, #fff) 100%);
+            box-shadow: 0 0 8px color-mix(in srgb, var(--fase-accento) 70%, transparent);
+            transition: width 0.65s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-        @keyframes faseRiempi { from { transform: scaleX(0); } to { transform: scaleX(1); } }
         @media (prefers-reduced-motion: reduce) {
-            .phase-stepper .phase-step.active::before { display: block; animation: none; }
-        }
-        .phase-stepper .phase-step.completed:not(.active) .step-badge,
+            .phase-stepper::after { transition: none; }
+        }        .phase-stepper .phase-step.completed:not(.active) .step-badge,
         .phase-stepper .phase-step.completed:not(.active) .step-label { opacity: 0.55; }
         .phase-stepper .phase-step.disabled { opacity: 1; filter: none; }
         .phase-stepper .phase-step.disabled .step-badge,

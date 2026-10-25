@@ -93,7 +93,7 @@ module.exports = {
                     labelCue: labelBefore.content, labelCueAnimation: labelBefore.animationName,
                     ariaLabel: el.getAttribute('aria-label'),
                     badgeOpacity: Number(badge.opacity),
-                    segmento: getComputedStyle(el, '::before').height
+                    segmento: getComputedStyle(el, '::before').display
                 };
             };
             return {
@@ -101,7 +101,7 @@ module.exports = {
                 railLine: getComputedStyle(document.getElementById('phaseStepper'), '::before').display
             };
         });
-        t.assert(statiDesktop.railLine === 'none', 'Lo stepper non deve avere una linea orizzontale dietro i sigilli');
+        // Dal 2026-10-25 la barra di avanzamento e' UNA linea continua sotto lo stepper (::before = binario, ::after = riempimento),\n        // non piu' un binario dietro i sigilli: il binario deve esserci, sottile, e le fasi non hanno segmenti propri.\n        t.assert(statiDesktop.railLine === 'block', 'Lo stepper deve avere il binario della barra di avanzamento');
         t.assert(statiDesktop.active.background === 'none' && statiDesktop.active.shadow === 'none'
             && /rgba\(0, 0, 0, 0\)/.test(statiDesktop.active.border)
             && statiDesktop.active.auraContent !== 'none' && statiDesktop.active.auraOpacity > 0.5
@@ -115,8 +115,8 @@ module.exports = {
             && statiDesktop.clickable.transform === 'none'
             // Niente scritte di servizio (VAI/ORA): l'utente le ha tolte il 2026-10-25 per una barra di avanzamento.
             && !/VAI|ORA/.test(statiDesktop.clickable.labelCue)
-            && statiDesktop.clickable.segmento === '3px',
-        `La fase cliccabile deve restare una tacca leggera, senza scritte, con il suo segmento di barra: ${JSON.stringify(statiDesktop.clickable)}`);
+            && statiDesktop.clickable.segmento === 'none',
+        `La fase cliccabile deve restare una tacca leggera, senza scritte, senza segmenti propri (la barra e' continua): ${JSON.stringify(statiDesktop.clickable)}`);
         t.assert(statiDesktop.disabled.badgeOpacity < 0.6,
             `La fase disabilitata deve restare attenuata: ${JSON.stringify(statiDesktop.disabled)}`);
 

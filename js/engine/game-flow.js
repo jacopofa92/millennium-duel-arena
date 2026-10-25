@@ -3006,7 +3006,27 @@ function updatePhaseIndicator() {
     // resize, prima che scada il debounce globale da 120 ms: riallinearlo
     // qui evita un singolo frame con l'offset del viewport precedente.
     syncPhaseStepperToFieldWidth();
+    aggiornaBarraFasi();
 }
+
+/**
+ * Misure della barra di avanzamento continua sotto lo stepper (CSS in duelMonstersCore.html, "Barra
+ * CONTINUA"): centro della prima fase, dell'ultima e di quella attuale, in px dal bordo sinistro della
+ * barra. Le fasi hanno larghezze diverse (etichette diverse), quindi non bastano le percentuali. Va
+ * rilanciata anche al resize, perche' le misure dipendono dalla larghezza del campo.
+ */
+function aggiornaBarraFasi() {
+    const barra = document.getElementById('phaseStepper');
+    if (!barra) return;
+    const passi = Array.from(barra.querySelectorAll('.phase-step'));
+    if (!passi.length) return;
+    const centro = (el) => el.offsetLeft + el.offsetWidth / 2;
+    const attivo = passi.find((p) => p.classList.contains('active')) || passi[0];
+    barra.style.setProperty('--fase-x0', `${centro(passi[0])}px`);
+    barra.style.setProperty('--fase-xn', `${centro(passi[passi.length - 1])}px`);
+    barra.style.setProperty('--fase-x1', `${centro(attivo)}px`);
+}
+window.addEventListener('resize', () => requestAnimationFrame(aggiornaBarraFasi));
 
 // Boot del duello: appena questo file viene caricato, la partita parte con
 // l'intro cinematografica, che al termine avvia initGame() +
