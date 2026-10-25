@@ -4675,6 +4675,14 @@
                (--plancia-pad), e non deve arrivare sopra la mano. */
             .hand--bot { margin-top: calc(var(--duelist-box-offset) + 48px + 12px); }
             .hand { margin-bottom: calc(var(--duelist-box-offset) + 48px + 12px); }
+            /* CAMPO CENTRATO fra le due mani (segnalato dall'utente: "un po' piu' in basso, non centrato").
+               La mano del Bot ha anche la classe `.hand`, quindi la regola qui sopra le dava un margine SOTTO
+               di ~78px che non voleva: il campo si centrava fra "mano Bot + 78px" e "mano mia", cioe' 33px
+               sotto il punto di mezzo fra le due mani, e il vuoto sopra il campo era il doppio di quello
+               sotto. Il margine sotto la mano del Bot torna uguale a quello sopra la mia (stessa clamp di
+               `.hand` piu' in alto): i due vuoti si equivalgono su qualunque altezza di schermo, senza pixel
+               fissi. */
+            .hand--bot { margin-bottom: clamp(4px, 1.4vh, 12px); }
         }
 
         /* Schermi mobile ESTREMAMENTE bassi (es. telefoni piccoli in
