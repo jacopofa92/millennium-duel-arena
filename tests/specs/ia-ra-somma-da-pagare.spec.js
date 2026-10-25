@@ -41,7 +41,11 @@ module.exports = {
         t.assert(r.paga === 3000, `a campo libero non butta tutti i LP: ${JSON.stringify(r)}`);
         t.assert(r.stimaAtk === r.paga, `la stima usata per scegliere Ra e' la stessa somma che poi paga: ${JSON.stringify(r)}`);
         r = await caso({ mioLp: 8000, lpAvv: 8000, avv: [{ id: 4, coperto: true }] });
-        t.assert(r.paga === 3000 && r.stimaAtk === 3000, `un mostro coperto conta come un'incognita media (1800): resta l'obiettivo minimo: ${JSON.stringify(r)}`);
+        t.assert(r.paga === 3500 && r.stimaAtk === 3500, `un mostro coperto conta come 3000 (ipotesi prudente): obiettivo 3000 + 500: ${JSON.stringify(r)}`);
+        r = await caso({ mioLp: 8000, lpAvv: 8000, avv: [{ id: 4, coperto: true }, { id: 4, coperto: true }] });
+        t.assert(r.paga === 3500, `due coperti: Ra ne ferma uno, l'altro pesa 3000 sulla soglia (4000 LP): 8000 - 4000 e' ancora sopra 3500: ${JSON.stringify(r)}`);
+        r = await caso({ mioLp: 6000, lpAvv: 8000, avv: [{ id: 4, coperto: true }, { id: 4, coperto: true }] });
+        t.assert(r.paga === 0 && r.motivo === 'troppo-rischioso', `con 6000 LP e due coperti (esposizione 3000, soglia 4000) non si arriva a 3000 pagabili: ${JSON.stringify(r)}`);
 
         // B) LA SOGLIA di LP
         r = await caso({ mioLp: 8000, lpAvv: 8000, avv: [{ id: 4, atk: 1800 }, { id: 4, atk: 1800 }, { id: 4, atk: 1800 }] });

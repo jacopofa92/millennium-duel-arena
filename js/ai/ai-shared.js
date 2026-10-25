@@ -143,7 +143,7 @@
     // parti, scelto dall'utente:
     //  A) L'OBIETTIVO: Ra deve battere il mostro avversario piu' forte con un margine (RA_MARGINE), e comunque arrivare ad almeno
     //     RA_ATK_MINIMO — pagare poco per un Ra da 900 sarebbe buttare tre Tributi. Un mostro coperto, di cui non si sa l'ATK, conta
-    //     RA_ATK_IGNOTO.
+    //     RA_ATK_IGNOTO (3000: l'ipotesi prudente, scelta dall'utente, e non una media).
     //  B) LA SOGLIA di LP da non toccare: parte da RA_LP_MINIMI e cresce con quanto puo' colpire il bot al turno dopo (gli altri
     //     attaccanti avversari: Ra ne ferma uno solo), con le Magie/Trappole che l'avversario ha in campo (2 o piu') e con la sua
     //     mano abbondante (4 o piu'). Si paga solo se, restando sopra la soglia, si arriva almeno a RA_ATK_MINIMO; altrimenti niente
@@ -155,7 +155,7 @@
     // soltanto Ra.
     const RA_ATK_MINIMO = 3000;
     const RA_MARGINE = 500;
-    const RA_ATK_IGNOTO = 1800;
+    const RA_ATK_IGNOTO = 3000;
     const RA_LP_MINIMI = 1000;
     const RA_PASSO = 50;
 
