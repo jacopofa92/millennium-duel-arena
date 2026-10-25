@@ -5244,6 +5244,15 @@
             }
             .card-info-panel.visible { transform: translate(0, 0); }
         }
+
+        /* Icone e numeri delle zone speciali (Cimitero, Extra Deck/Fusione, Terreno) piu' piccoli in
+           ORIZZONTALE su telefono (richiesta dell'utente: "troppo grandi, prendi esempio dal numero sopra il
+           Mazzo"): il numero del Mazzo e' 9px, quelli di Cimitero/Fusione/Bandite erano 15px e le icone 26px. */
+        @media (max-width: 960px) and (max-height: 520px) and (orientation: landscape) and (pointer: coarse) {
+            .field-slot-icon { font-size: clamp(15px, calc(var(--card-w) * 0.5), 22px); }
+            .field-slot-count { font-size: clamp(9px, calc(var(--card-w) * 0.27), 13px); line-height: 1; }
+            .field-slot.special-slot { gap: 2px; padding: 2px; }
+        }
     </style></head>
 <body>
     <!-- Schermata di caricamento condivisa (js/ui/page-loader.js/.css) al
