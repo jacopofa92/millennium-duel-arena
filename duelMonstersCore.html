@@ -5073,6 +5073,71 @@
         .duel-pause-resume:active { transform: translateY(1px); }
 
         /* ============================================================
+           PULSANTE LATERALE DELLE FASI (telefono in orizzontale, richiesta dell'utente: "come Duel Masters, un
+           pulsante laterale al centro e da li' cambio fase"). Stessa condizione dei telefoni bassi in
+           orizzontale usata piu' sopra; la barra delle fasi resta nel DOM (il codice la usa per lo stato) ma
+           non si vede. Il tondo ha un anello che si riempie con l'avanzare delle fasi (--psb-p, 0-100%).
+           ============================================================ */
+        .phase-side-btn, .phase-side-menu { display: none; }
+        @media (max-width: 960px) and (max-height: 520px) and (orientation: landscape) and (pointer: coarse) {
+            /* Invisibile ma NON tolta dal layout: il suo spazio (fra le due file di mostri) serve ai numeri ATK/DEF della fila di sopra, che senza finivano sotto gli ologrammi della fila di sotto. */
+            .phase-stepper { visibility: hidden; pointer-events: none; }
+            .phase-side-btn {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 1px;
+                position: fixed;
+                right: clamp(10px, 3.2vw, 34px);
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 25;
+                width: 50px;
+                height: 50px;
+                padding: 0;
+                border: 0;
+                border-radius: 50%;
+                color: #fff;
+                cursor: pointer;
+                -webkit-tap-highlight-color: transparent;
+                background:
+                    radial-gradient(circle at 50% 50%, rgba(8, 12, 22, 0.92) 0 62%, transparent 63%),
+                    conic-gradient(var(--fase-accento, #f7d774) var(--psb-p, 0%), rgba(255, 255, 255, 0.16) 0);
+                box-shadow: 0 0 12px color-mix(in srgb, var(--fase-accento, #f7d774) 45%, transparent), 0 3px 8px rgba(0, 0, 0, 0.55);
+                transition: box-shadow 0.25s ease, opacity 0.25s ease;
+            }
+            .phase-side-btn[hidden], .phase-side-menu[hidden] { display: none; }
+            .phase-side-btn .psb-icon { display: inline-flex; width: 19px; height: 19px; }
+            .phase-side-btn .psb-icon svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+            .phase-side-btn .psb-label { font: 900 8px/1 system-ui, 'Segoe UI', sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
+            .phase-side-btn.psb-attendi { opacity: 0.55; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.55); }
+            .phase-side-btn:active { transform: translateY(-50%) scale(0.94); }
+            .phase-side-menu {
+                position: fixed;
+                right: calc(clamp(10px, 3.2vw, 34px) + 58px);
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 26;
+                flex-direction: column;
+                gap: 6px;
+            }
+            .phase-side-menu:not([hidden]) { display: flex; }
+            .phase-side-menu button {
+                min-width: 92px;
+                min-height: 36px;
+                padding: 0 14px;
+                border: 1.5px solid var(--fase-accento, #f7d774);
+                border-radius: 999px;
+                background: rgba(8, 12, 22, 0.92);
+                color: #fff;
+                font: 800 12px/1 system-ui, 'Segoe UI', sans-serif;
+                letter-spacing: 0.04em;
+                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.55);
+            }
+        }
+
+        /* ============================================================
            BARRA DELLE FASI: tre stati leggibili a colpo d'occhio (segnalato dall'utente: "non si capisce in
            che fase sono e cosa posso cliccare"). Prima l'unica differenza era un'icona piu' luminosa:
            - FASE ATTUALE: l'icona sta su un disco PIENO del colore del campo, con anello chiaro, e
@@ -5512,6 +5577,16 @@
         <div class="life-points">❤️ <span id="playerLP">8000</span></div>
         <div class="banished-badge" id="playerBanishedBadge" title="Zona Bandite">🌀 <span id="playerBanishedCount">0</span></div>
     </div>
+
+    <!-- Pulsante laterale delle fasi (SOLO telefono in orizzontale, stile Duel Masters): al posto della
+         barra delle fasi, un tondo a destra del campo, a meta' altezza, con la fase attuale e un anello di
+         avanzamento; un tocco porta alla fase successiva (o apre le scelte, se ce ne sono piu' d'una).
+         Lo riempie aggiornaPulsanteFasi() in game-flow.js; fuori da quel caso e' nascosto da CSS. -->
+    <button type="button" class="phase-side-btn" id="phaseSideBtn" aria-label="Fase del turno" hidden>
+        <span class="psb-icon" id="phaseSideIcon"></span>
+        <span class="psb-label" id="phaseSideLabel"></span>
+    </button>
+    <div class="phase-side-menu" id="phaseSideMenu" hidden></div>
 
     <!-- Le tre pillole di sistema nell'angolo in alto a destra
          (Tempo/Turno, Abbandona, Difficoltà). Stavano dentro

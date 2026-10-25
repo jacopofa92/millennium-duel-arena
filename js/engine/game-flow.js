@@ -3007,7 +3007,74 @@ function updatePhaseIndicator() {
     // qui evita un singolo frame con l'offset del viewport precedente.
     syncPhaseStepperToFieldWidth();
     aggiornaBarraFasi();
+    aggiornaPulsanteFasi();
 }
+
+/**
+ * Pulsante laterale delle fasi (telefono in orizzontale, vedi .phase-side-btn in duelMonstersCore.html).
+ * Non ha logica sua: legge dalla barra delle fasi (nascosta da CSS ma sempre aggiornata) quale fase e'
+ * attuale e quali sono raggiungibili (.clickable), e un tocco chiama la stessa handlePhaseStepperClick
+ * della barra, quindi le regole (primo turno, Catena aperta, attacchi forzati...) restano UNA sola.
+ */
+function aggiornaPulsanteFasi() {
+    const btn = document.getElementById('phaseSideBtn');
+    if (!btn) return;
+    const passi = Array.from(document.querySelectorAll('#phaseStepper .phase-step'));
+    const attuale = passi.find((p) => p.classList.contains('active'));
+    if (!attuale) { btn.hidden = true; return; }
+    btn.hidden = false;
+    const icona = attuale.querySelector('.step-icon');
+    document.getElementById('phaseSideIcon').innerHTML = icona ? icona.innerHTML : '';
+    const etichetta = attuale.querySelector('.step-label');
+    document.getElementById('phaseSideLabel').textContent = (etichetta && etichetta.dataset.short) || attuale.dataset.phase;
+    const indice = passi.indexOf(attuale);
+    btn.style.setProperty('--psb-p', `${Math.round(((indice + 1) / passi.length) * 100)}%`);
+    const raggiungibili = passi.filter((p) => p.classList.contains('clickable'));
+    btn.classList.toggle('psb-attendi', raggiungibili.length === 0);
+    btn.setAttribute('aria-label', raggiungibili.length
+        ? `Fase attuale: ${etichetta ? etichetta.textContent.trim() : ''}. Tocca per cambiare fase`
+        : `Fase attuale: ${etichetta ? etichetta.textContent.trim() : ''}`);
+    chiudiMenuFasi();
+}
+
+function chiudiMenuFasi() {
+    const menu = document.getElementById('phaseSideMenu');
+    if (menu) { menu.hidden = true; menu.innerHTML = ''; }
+}
+
+function toccaPulsanteFasi(event) {
+    if (event) event.stopPropagation();
+    const passi = Array.from(document.querySelectorAll('#phaseStepper .phase-step.clickable'));
+    if (!passi.length) return;
+    if (passi.length === 1) { handlePhaseStepperClick(passi[0].dataset.phase); return; }
+    const menu = document.getElementById('phaseSideMenu');
+    if (!menu) return;
+    if (!menu.hidden) { chiudiMenuFasi(); return; }
+    menu.innerHTML = '';
+    passi.forEach((p) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = p.dataset.phase === 'end' ? 'Fine turno' : (p.querySelector('.step-label')?.textContent?.trim() || p.dataset.phase);
+        b.onclick = (e) => { e.stopPropagation(); chiudiMenuFasi(); handlePhaseStepperClick(p.dataset.phase); };
+        menu.appendChild(b);
+    });
+    menu.hidden = false;
+}
+
+(function collegaPulsanteFasi() {
+    const aggancia = () => {
+        const btn = document.getElementById('phaseSideBtn');
+        if (!btn || btn.dataset.collegato) return;
+        btn.dataset.collegato = '1';
+        btn.addEventListener('click', toccaPulsanteFasi);
+        // Un tocco fuori dal menu lo chiude.
+        document.addEventListener('pointerdown', (e) => {
+            const menu = document.getElementById('phaseSideMenu');
+            if (menu && !menu.hidden && !menu.contains(e.target) && e.target !== btn && !btn.contains(e.target)) chiudiMenuFasi();
+        }, true);
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', aggancia); else aggancia();
+})();
 
 /**
  * Misure della barra di avanzamento continua sotto lo stepper (CSS in duelMonstersCore.html, "Barra
