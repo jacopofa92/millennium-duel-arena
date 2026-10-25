@@ -4770,3 +4770,5 @@ Matrice completa di bilanciamento (2026-10-25, senza modifiche al gioco): `tools
 1.4.104 (cache v413): ATK/DEF a ologramma tornano SOTTO la carta sul telefono: 'sopra la carta' era un permesso condizionato ('se serve'), e non serve, perche' il limite e' la larghezza della casella e non l'altezza. Una riga, senza '/', ~10px. Suite completa non eseguita.
 
 1.4.105 (cache v414): lo stile dei numeri ATK/DEF (bianchi neutri, la cifra della Posizione attuale piu' grande, una riga, senza '/' sul telefono, ~10px) vale ORA ANCHE SENZA OLOGRAMMI (richiesta dell'utente). Con gli ologrammi (holo-on) restano in piu' solo bagliore azzurro, righe di scansione e sfarfallio. Suite completa non eseguita.
+
+1.4.106 (cache v415): tolte le righe di scansione dai numeri ATK/DEF con gli ologrammi (restano bagliore azzurro e leggero sfarfallio). Suite completa non eseguita.

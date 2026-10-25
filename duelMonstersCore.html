@@ -1932,27 +1932,12 @@
             .field-stats-badge:not(.field-pile-badge) .fsb-sep { display: none; }
         }
         /* Solo con gli ologrammi accesi (classe holo-on sull'<html>, la mette monster-hologram.js a ogni
-           sync): bagliore azzurro, righe di scansione e un leggero sfarfallio. L'animazione e' sull'opacita':
+           sync): bagliore azzurro e un leggero sfarfallio (niente righe di scansione: l'utente le ha tolte, mangiavano le cifre). L'animazione e' sull'opacita':
            non tocca l'HTML del nodo, quindi il ridisegno incrementale del Terreno non lo sostituisce. Il
-           filtro lo legge duel-feedback.js per il lampo delle variazioni. Sul telefono le righe sono
-           quasi invisibili: mangiavano le cifre piccole. */
+           filtro lo legge duel-feedback.js per il lampo delle variazioni. */
         .holo-on .field-stats-badge:not(.field-pile-badge) {
             filter: drop-shadow(0 0 3px rgba(90, 215, 255, 0.95)) drop-shadow(0 0 8px rgba(40, 150, 255, 0.6));
             animation: holoSfarfalla 3.2s steps(1, end) infinite;
-        }
-        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk,
-        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-def {
-            background-image:
-                repeating-linear-gradient(180deg, rgba(0, 20, 40, 0.55) 0 1px, transparent 1px 3px),
-                linear-gradient(180deg, #ffffff 0%, #f4f8fa 55%, #dfe7ec 100%);
-        }
-        @media (max-width: 900px) {
-            .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk,
-            .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-def {
-                background-image:
-                    repeating-linear-gradient(180deg, rgba(0, 20, 40, 0.18) 0 1px, transparent 1px 4px),
-                    linear-gradient(180deg, #ffffff 0%, #f4f8fa 55%, #dfe7ec 100%);
-            }
         }
         @keyframes holoSfarfalla {
             0%, 91%, 95%, 100% { opacity: 1; }
