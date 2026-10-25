@@ -73,6 +73,18 @@ module.exports = {
             });
             assert(due.root && due.canvas && due.carte === 2 && due.cartaVera, `Dal secondo Link c'e' la scena con due carte vere: ${JSON.stringify(due)}`);
             assert(due.numeri.join(',') === '1,2', `Le carte portano il numero del loro Link: ${JSON.stringify(due.numeri)}`);
+            // Chi ha attivato cosa, scritto sotto ogni carta (il Link 2 e' dell'avversario, il Link 1 e' tuo).
+            const chi = await page.evaluate(() => ({
+                scritte: Array.from(document.querySelectorAll('#catenaGL .cgl-chi')).map((e) => e.textContent),
+                mostraLink2: CatenaGL.mostra(window.__links[1]),
+                mostraEstraneo: CatenaGL.mostra({ card: { uid: 'x' }, owner: 'player' })
+            }));
+            assert(chi.scritte.join(',') === 'TU,AVVERSARIO', `Sotto ogni carta c'e' scritto di chi e': ${JSON.stringify(chi.scritte)}`);
+            assert(chi.mostraLink2 === true && chi.mostraEstraneo === false, `La scena sa quali Link sta mostrando: ${JSON.stringify(chi)}`);
+            // Il motore NON rifa la carta grande a centro schermo alla risoluzione di un Link che la scena mostra gia'.
+            const sorgente = require('fs').readFileSync(path.join(RADICE, 'js', 'engine', 'duel-engine.js'), 'utf8');
+            assert(/!\(window\.CatenaGL && window\.CatenaGL\.mostra\(link\)\)\) FX\.playCardActivateCenterScreen\(link\.card\)/.test(sorgente),
+                'duel-engine.js: alla risoluzione di un Link mostrato dalla scena non si rifa la carta a centro schermo');
             assert(due.tocco === 'none' && due.zModale > due.zRoot, `La scena non intercetta il tocco e sta sotto i modali (z ${due.zRoot} contro ${due.zModale})`);
             assert(due.errGl === 0 && due.persoGl === false && !due.pannello, `Contesto sano e vecchio pannello spento: ${JSON.stringify(due)}`);
 

@@ -238,6 +238,10 @@ void main(){
 .cgl-num{position:absolute;z-index:2;line-height:.8;font-family:'Arial Black','Segoe UI Black',Impact,system-ui,sans-serif;font-style:italic;font-weight:900;color:#fff;
   -webkit-text-stroke:.045em var(--cgl-c);paint-order:stroke fill;
   text-shadow:0 0 .22em var(--cgl-c),0 0 .55em var(--cgl-c),0 .06em .18em rgba(0,0,0,.7)}
+.cgl-chi{position:absolute;left:50%;top:100%;transform:translateX(-50%);margin-top:.5em;z-index:2;white-space:nowrap;
+  padding:.18em .9em .2em;border-radius:999px;font-family:system-ui,'Segoe UI',sans-serif;font-weight:900;letter-spacing:.16em;color:#fff;
+  background:linear-gradient(180deg,var(--cgl-c),rgba(0,0,0,.55));border:1px solid rgba(255,255,255,.55);
+  box-shadow:0 0 .9em var(--cgl-c),0 .2em .5em rgba(0,0,0,.6);text-shadow:0 1px 3px rgba(0,0,0,.85)}
 .cgl-titolo{position:absolute;left:50%;top:50%;z-index:3;opacity:0;white-space:nowrap;text-align:center;
   font-family:'Arial Black','Segoe UI Black',Impact,system-ui,sans-serif;font-style:italic;font-weight:900;letter-spacing:.03em;color:#fff;
   font-size:clamp(2.8rem,min(15vw,21vh),8.5rem);
@@ -386,6 +390,7 @@ void main(){
                 carta.style.setProperty('--card-w', d.larga + 'px');
                 carta.style.setProperty('--card-h', d.alta + 'px');
             }
+            if (v.chi) v.chi.style.fontSize = Math.max(10, Math.round(d.larga * .125)) + 'px';
             const num = v.num;
             if (num) {
                 num.style.fontSize = Math.round(d.larga * .62) + 'px';
@@ -401,6 +406,13 @@ void main(){
                     o1 = i === 0 ? 'l' : i === n - 1 ? 'r' : (i % 2 === 0 ? 'r' : 'l');
                 }
                 const ang = v1 + o1;
+                // La scritta di chi e' la carta sta dal lato OPPOSTO al numero, cosi' i due non si sovrappongono.
+                if (v.chi) {
+                    const sotto = v1 === 't';
+                    v.chi.style.top = sotto ? '100%' : 'auto';
+                    v.chi.style.bottom = sotto ? 'auto' : '100%';
+                    v.chi.style.margin = sotto ? '.5em 0 0' : '0 0 .5em';
+                }
                 const fuori = -d.larga * .16;
                 num.style.top = num.style.bottom = num.style.left = num.style.right = 'auto';
                 if (ang[0] === 't') num.style.top = (fuori * 1.1) + 'px'; else num.style.bottom = (fuori * 1.1) + 'px';
@@ -421,12 +433,17 @@ void main(){
         if (typeof window.createCardElement === 'function') cartaBox.appendChild(window.createCardElement(link.card));
         const num = document.createElement('span');
         num.className = 'cgl-num';
+        // Chi ha attivato la carta, scritto: il colore dell'alone da solo non basta a capirlo al volo.
+        const chi = document.createElement('span');
+        chi.className = 'cgl-chi';
+        chi.textContent = link.owner === 'bot' ? 'AVVERSARIO' : 'TU';
         dentro.appendChild(cartaBox);
         dentro.appendChild(num);
+        dentro.appendChild(chi);
         pos.appendChild(dentro);
         st.livello.appendChild(pos);
         const voce = {
-            link, el: pos, dentro, num, owner: link.owner === 'bot' ? 1 : 0,
+            link, el: pos, dentro, num, chi, owner: link.owner === 'bot' ? 1 : 0,
             tNasc: performance.now(), tRivela: performance.now() + (istantanea ? 0 : 120),
             risolvendo: false, tRisolve: 0, fuori: false, istantanea
         };
@@ -662,6 +679,14 @@ void main(){
         pronta,
         aggiorna,
         chiudi,
+        /**
+         * La scena sta mostrando QUESTO Link? Il motore lo chiede prima di rifare la carta grande a centro schermo alla
+         * risoluzione: se la scena la mostra gia', un secondo effetto sulla stessa carta sarebbe solo confusione.
+         * @param {any} link
+         */
+        mostra(link) {
+            return !!(st && !st.chiudendo && st.voci.some((v) => v.link === link && !v.fuori));
+        },
         /** Per i test: com'e' la scena adesso (null se non c'e'). */
         stato() {
             return st ? { voci: st.voci.filter((v) => !v.fuori).length, chiudendo: st.chiudendo, canvas: !!st.canvas.isConnected } : null;
