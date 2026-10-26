@@ -2088,6 +2088,7 @@
             gameState[graveKey] = [];
             gameState[Tavolo.chiave(ctx.owner, 'DeckCount')] = merged.length;
             ctx.log('🐧 Cavaliere Pinguino rimescola il Cimitero nel Deck!');
+            EventiDuello.emetti('mazzo-rimescolato', ctx.owner);
         }
     });
 
@@ -2376,6 +2377,7 @@
                 [deck[i], deck[j]] = [deck[j], deck[i]];
             }
             ctx.log('🧠 Saggezza Infetta rimescola il Deck!');
+            EventiDuello.emetti('mazzo-rimescolato', ctx.owner);
         }
     });
 

@@ -115,6 +115,14 @@ module.exports = {
                     return { voci: document.querySelectorAll('#phaseSideMenu button').length, sopra: menu.bottom <= b.top + 1, dentro: menu.top >= 0 && menu.left >= 0 && menu.right <= innerWidth };
                 });
                 assert(m.voci === 6 && m.sopra && m.dentro, `${larghezza}: il menu ha sei voci, sta sopra il tondo e dentro lo schermo: ${JSON.stringify(m)}`);
+                // Il tondo e il suo menu stanno SOPRA a tutto cio' che si disegna sul campo (ologrammi, riscontri, Catena...): erano
+                // a z-index 25/26 e un ologramma (30) li copriva. Solo i modali (100000) li superano.
+                const z = await page.evaluate(() => {
+                    const val = (el) => { const n = parseInt(getComputedStyle(el).zIndex, 10); return Number.isFinite(n) ? n : 0; };
+                    const campo = ['#monsterHologramLayer', '#duelFeedbackLayer', '#chainStack'].map((s) => document.querySelector(s)).filter(Boolean).map(val);
+                    return { menu: val(document.getElementById('phaseSideMenu')), tondo: val(document.getElementById('phaseSideBtn')), campoMax: Math.max(0, ...campo) };
+                });
+                assert(z.menu > z.campoMax && z.tondo > z.campoMax && z.menu < 100000, `${larghezza}: il menu delle fasi sta sopra ologrammi e riscontri ma sotto i modali: ${JSON.stringify(z)}`);
             } finally {
                 await ctx.close();
             }

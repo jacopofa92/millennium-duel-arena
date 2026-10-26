@@ -1014,6 +1014,49 @@ float dado(vec2 q,float v){
         b.onfinish = () => bag.remove(); setTimeout(() => bag.remove(), 900);
     };
 
+    /**
+     * Rimescolamento del Mazzo (`owner` = di chi): la pila si apre in due meta' che si sfiorano e si intrecciano, con un anello
+     * freddo sul bordo e un lampo appena le meta' si incontrano. Sono dorsi veri (la stessa carta coperta della pescata) mossi
+     * con la sola `transform`, quindi un ridisegno del Terreno non li ferma; la luce e' disegnata sulla tela WebGL.
+     * Nessuna particella: come la pescata, e' un gesto asciutto.
+     */
+    imp.playDeckShuffle = function (owner) {
+        const r = rectZona(owner, 'deck'); if (!r) return;
+        const c = cen(r); const raggio = '6px';
+        const dorsi = 6;
+        // Le due meta' si aprono SOLO verso l'interno dello schermo: il Mazzo sta in un angolo (misurato sul telefono: aprendolo
+        // verso il bordo le carte e l'anello uscivano dallo schermo). Una meta' scivola di lato verso il centro, l'altra sale (o
+        // scende) verso il campo; poi si intrecciano e tornano.
+        const lateraleIn = c.x < window.innerWidth / 2 ? 1 : -1;
+        const verticaleIn = c.y < window.innerHeight / 2 ? 1 : -1;
+        const spazioLaterale = lateraleIn > 0 ? window.innerWidth - r.right - 4 : r.left - 4;
+        const apertoLat = Math.max(0, Math.min(r.width * 0.75, spazioLaterale));
+        const apertoVert = r.height * 0.6;
+        for (let i = 0; i < dorsi; i++) {
+            const prima = i % 2 === 0;
+            const d = document.createElement('div');
+            d.className = 'fx-gsap-draw-card';
+            d.style.cssText = 'position:fixed;left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px;height:' + r.height + 'px;'
+                + 'pointer-events:none;z-index:' + (10040 + (i % 2 ? i : -i)) + ';border-radius:' + raggio + ';will-change:transform;transform-origin:50% 100%;'
+                + 'box-shadow:0 3px 10px rgba(0,0,0,0.5);';
+            document.body.appendChild(d);
+            const dx = prima ? lateraleIn * apertoLat : lateraleIn * apertoLat * 0.15;
+            const dy = prima ? 0 : verticaleIn * apertoVert;
+            const rot = (prima ? 1 : -1) * lateraleIn * (6 + i);
+            // Si apre, si sfiora a meta' (le due meta' si scambiano di posto) e si richiude: ogni dorso parte un attimo dopo l'altro.
+            const a = d.animate([
+                { transform: 'translate(0px,0px) rotate(0deg)', offset: 0 },
+                { transform: 'translate(' + dx + 'px,' + (dy - i * 1.5) + 'px) rotate(' + rot + 'deg)', offset: 0.38 },
+                { transform: 'translate(' + (dx * -0.3) + 'px,' + (dy * -0.3 - i * 1.5) + 'px) rotate(' + (-rot * 0.4) + 'deg)', offset: 0.7 },
+                { transform: 'translate(0px,0px) rotate(0deg)', offset: 1 }
+            ], { duration: 560, delay: i * 45, easing: 'cubic-bezier(.45,.05,.55,.95)', fill: 'both' });
+            a.onfinish = () => d.remove(); setTimeout(() => d.remove(), 1500);
+        }
+        // Solo un anello freddo sul bordo della pila, che non esce dallo schermo: niente lampo al centro (copriva la carta).
+        const s = new Scena();
+        s.add(T.RING, C.GHIACCIO, 0, 0.55, [c.x, c.y, Math.min(r.width * 0.8, Math.max(8, Math.min(c.x, window.innerWidth - c.x) - 3)), 2.4]);
+        breve(s, 0.9);
+    };
     // ---------------------------------------------------------------------
     // Gli impatti di battaglia (danno ai Life Point, scontro, distruzione). Identici a quelli GSAP nei tempi e
     // nei movimenti; la differenza e' che i lampi, gli anelli, il fumo e le scintille sono disegnati sulla

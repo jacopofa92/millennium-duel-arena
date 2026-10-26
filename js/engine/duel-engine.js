@@ -1930,6 +1930,7 @@
                 const j = Math.floor(Casuale.random() * (i + 1));
                 [deck[i], deck[j]] = [deck[j], deck[i]];
             }
+            EventiDuello.emetti('mazzo-rimescolato', owner);
             return true;
         },
 

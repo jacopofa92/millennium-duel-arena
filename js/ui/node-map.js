@@ -57,6 +57,32 @@
      * un duello già vinto NON deve poter ripartire — lo si rigiocherebbe
      * e il suo esito verrebbe contato una seconda volta.
      */
+    /**
+     * Le tappe COMPLETATE dall'ultima volta che questa mappa e' stata disegnata (il giocatore torna da un duello o da una
+     * scena e una tappa e' diventata 'fatta'): servono alla celebrazione WebGL (onda sul sentiero e scintille sul nodo).
+     * Il ricordo di cio' che e' gia' stato visto sta in localStorage, per mappa (primo nodo + quanti sono): la PRIMA volta
+     * che si vede una mappa non si celebra niente (le tappe gia' fatte non sono "appena completate"), e se le nuove sono
+     * troppe insieme (una migrazione dell'avanzamento, non un duello vinto) si segnano viste senza festeggiare.
+     * @returns {{x1:number,y1:number,x2:number,y2:number}[]}
+     */
+    function tappeAppenaCompletate(nodi) {
+        if (!nodi.length) return [];
+        const chiave = 'ygoMappaFatti:' + nodi[0].id + ':' + nodi.length;
+        const fatte = nodi.filter((n) => n.stato === 'fatta').map((n) => String(n.id));
+        let visti = null;
+        try { visti = JSON.parse(localStorage.getItem(chiave) || 'null'); } catch (e) { visti = null; }
+        try { localStorage.setItem(chiave, JSON.stringify(fatte)); } catch (e) { /* senza memoria non si celebra: va bene */ }
+        if (!Array.isArray(visti)) return [];
+        const nuove = nodi.filter((n) => n.stato === 'fatta' && visti.indexOf(String(n.id)) === -1);
+        if (nuove.length === 0 || nuove.length > 3) return [];
+        return nuove.map((b) => {
+            const i = nodi.indexOf(b);
+            const a = b.collegaDa
+                ? nodi.find((n) => n.id === b.collegaDa)
+                : [...nodi.slice(0, i)].reverse().find((n) => n.parallelo !== true);
+            return { x1: a ? a.x : b.x, y1: a ? a.y : b.y, x2: b.x, y2: b.y };
+        });
+    }
     function render(contenitore, opzioni) {
         const el = typeof contenitore === 'string' ? document.querySelector(contenitore) : contenitore;
         if (!el) return null;
@@ -174,7 +200,7 @@
         // aggiungono dopo, quindi stanno sopra nell'ordine del DOM). Se non si puo' restano le sole linee SVG.
         if (window.MappaPercorsoGL) {
             const nodoCorrente = nodi.find((n) => n.stato === 'corrente');
-            const glPercorso = MappaPercorsoGL.crea({ larghezza: larghezza, altezza: altezza, tratte: tratteLuce, corrente: nodoCorrente ? { x: nodoCorrente.x, y: nodoCorrente.y } : null });
+            const glPercorso = MappaPercorsoGL.crea({ larghezza: larghezza, altezza: altezza, tratte: tratteLuce, corrente: nodoCorrente ? { x: nodoCorrente.x, y: nodoCorrente.y } : null, celebrazioni: tappeAppenaCompletate(nodi) });
             if (glPercorso) canvas.appendChild(glPercorso);
         }
 

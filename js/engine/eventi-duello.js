@@ -59,6 +59,7 @@
         'orologio': '() è cambiato il turno: aggiornare il contatore',
         'carta-pescata-in-mano': '() il giocatore ha pescato la carta del turno',
         'pescata-da-effetto': '(owner, pescata) un effetto ha fatto pescare',
+        'mazzo-rimescolato': '(owner) un effetto ha rimescolato il Deck di quel giocatore',
         'partita-azzerata': '() un duello nuovo: dimenticare i ricordi del disegno',
         'attesa-decisione-remota': '(inAttesa, quante) il motore aspetta una scelta dell\'altro client',
         'selezione-azzerata': '() selezioni e prompt a schermo vanno chiusi',

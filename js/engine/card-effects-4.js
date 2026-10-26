@@ -282,6 +282,7 @@
                 }
                 ctx.drawCards(owner, Math.min(5, deck.length));
                 ctx.log(`🫙 ${owner === 'player' ? 'Rimescoli' : 'Il bot rimescola'} mano, Terreno e Cimitero nel Deck e pesc${owner === 'player' ? 'hi' : 'a'} 5 carte!`);
+                EventiDuello.emetti('mazzo-rimescolato', owner);
             });
         }
     });
@@ -1530,6 +1531,7 @@
                     [deck[i], deck[j]] = [deck[j], deck[i]];
                 }
                 ctx.log(`💐 Ultimo Desiderio Special Summona ${card.name} dal Deck e lo rimescola!`);
+                EventiDuello.emetti('mazzo-rimescolato', ctx.owner);
             });
         }
     });

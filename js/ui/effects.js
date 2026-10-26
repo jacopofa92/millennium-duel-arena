@@ -2684,6 +2684,8 @@
         fieldSlotRect: fieldSlotRect,
         zoneRect: zoneRect,
         playDrawEffect: viaBackend('playDrawEffect', playDrawEffect),
+        // Rimescolamento del Mazzo: solo WebGL, senza versione di base (senza WebGL non succede niente, come per le aure).
+        playDeckShuffle: viaBackend('playDeckShuffle', function () {}),
         playRaigeki: raigekiWithSafetyNet,
         playDarkHoleVortex: viaBackend('playDarkHoleVortex', playDarkHoleVortex),
         playMirrorForce: viaBackend('playMirrorForce', playMirrorForce),
