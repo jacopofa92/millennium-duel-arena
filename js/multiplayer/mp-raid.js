@@ -25,6 +25,11 @@
     let timer = null;
     let barra = null;
     let totaleInAttesa = null;
+    // Il campo del compagno (sola lettura): ultima fotografia ricevuta e quella che ho mandato io.
+    let campoCompagno = null;
+    let ultimoCampo = null;
+    let nomeCompagno = 'Compagno';
+    let pannello = null;
 
     function formato(n) { return Math.max(0, Math.round(n)).toLocaleString('it-IT'); }
 
@@ -41,6 +46,117 @@
         barra.querySelector('.mpr-riempi').style.width = (100 * restanti / lp).toFixed(1) + '%';
         barra.querySelector('.mpr-dettaglio').textContent =
             `Tu ${formato(mie)} · Compagno ${formato(compagno)}${compagnoFuori ? ' (a terra)' : ''}`;
+    }
+
+    // ------------------------------------------------------------------
+    // Vedere il campo del compagno. Tutto QUI, a sola lettura: dal gameState si LEGGE soltanto, e quello che si
+    // disegna sono carte con uid finti dentro un pannello a parte, che sparisce dal DOM alla chiusura, cosi' nessun
+    // codice del duello (ologrammi, riscontri, ricerche per uid) puo' incontrarle.
+    // La fotografia e' solo PUBBLICA: le carte coperte viaggiano senza identita' e la mano senza carte (solo quante).
+    // ------------------------------------------------------------------
+    function fotoSlot(s) {
+        if (!s || !s.card) return null;
+        const pos = s.position === 'defense' ? 'defense' : 'attack';
+        if (s.isFaceDown) return { coperta: true, pos };
+        const c = s.card;
+        const E = window.DuelEngine;
+        const atk = E && E.getEffectiveAtk ? E.getEffectiveAtk(c) : c.attack;
+        const def = E && E.getEffectiveDef ? E.getEffectiveDef(c) : c.defense;
+        const dato = { id: c.id, pos };
+        if (Number.isInteger(atk)) dato.atk = atk;
+        if (Number.isInteger(def)) dato.def = def;
+        return dato;
+    }
+
+    function fotografiaDelCampo(g) {
+        const riga = (a) => Array.from({ length: 5 }, (_, i) => fotoSlot(a && a[i]));
+        return {
+            lp: g.playerLP, mano: (g.playerHand || []).length, mazzo: g.playerDeckCount || 0,
+            cimitero: (g.playerGraveyard || []).length,
+            mostri: riga(g.playerMonsterField), mt: riga(g.playerSTField),
+            bossLp: g.botLP, bossMano: (g.botHand || []).length, bossCimitero: (g.botGraveyard || []).length,
+            bossMostri: riga(g.botMonsterField), bossMt: riga(g.botSTField)
+        };
+    }
+
+    function inviaCampo() {
+        let foto;
+        try { foto = fotografiaDelCampo(gameState); } catch (e) { return; }
+        const testo = JSON.stringify(foto);
+        if (testo === ultimoCampo) return;
+        ultimoCampo = testo;
+        invia('campo', { campo: foto });
+    }
+
+    function creaCarta(dato, k) {
+        const el = document.createElement('div');
+        el.className = 'mpr-slot';
+        if (!dato || typeof createCardElement !== 'function') return el;
+        let carta = { id: -1, uid: 'raid-' + k, name: '', type: 'monster' };
+        if (!dato.coperta && typeof cardDatabase !== 'undefined') {
+            const modello = cardDatabase.find((c) => c.id === dato.id);
+            if (modello) carta = Object.assign({}, modello, { uid: 'raid-' + k });
+            if (Number.isInteger(dato.atk)) carta.attack = dato.atk;
+            if (Number.isInteger(dato.def)) carta.defense = dato.def;
+        }
+        try { el.appendChild(createCardElement(carta, !!dato.coperta, dato.pos, { miniatura: true })); } catch (e) { /* una carta illeggibile resta uno slot vuoto */ }
+        return el;
+    }
+
+    function sezione(titolo, righe, stat) {
+        const s = document.createElement('section');
+        s.className = 'mpr-sez';
+        const h = document.createElement('h3');
+        h.textContent = titolo;
+        const st = document.createElement('div');
+        st.className = 'mpr-stat';
+        st.textContent = stat;
+        s.append(h, st);
+        righe.forEach((riga, r) => {
+            const div = document.createElement('div');
+            div.className = 'mpr-riga';
+            (riga || []).forEach((d, i) => div.appendChild(creaCarta(d, titolo + r + '-' + i)));
+            s.appendChild(div);
+        });
+        return s;
+    }
+
+    function disegnaPannello() {
+        if (!pannello) return;
+        const corpo = pannello.querySelector('.mpr-corpo');
+        corpo.textContent = '';
+        const c = campoCompagno;
+        if (!c) { corpo.textContent = 'Il compagno non ha ancora mostrato il suo campo.'; return; }
+        corpo.append(
+            sezione(nomeCompagno, [c.mostri, c.mt], `LP ${formato(c.lp)} · Mano ${c.mano} · Mazzo ${c.mazzo} · Cimitero ${c.cimitero}`),
+            sezione('Il suo Boss', [c.bossMostri, c.bossMt], `LP ${formato(c.bossLp)} · Mano ${c.bossMano} · Cimitero ${c.bossCimitero}`)
+        );
+    }
+
+    function chiudiPannello() {
+        if (pannello) { pannello.remove(); pannello = null; }
+    }
+
+    function apriPannello() {
+        if (pannello) { chiudiPannello(); return; }
+        pannello = document.createElement('div');
+        pannello.id = 'mpRaidCampo';
+        pannello.innerHTML = '<div class="mpr-scheda" role="dialog" aria-label="Campo del compagno"><button type="button" class="mpr-chiudi" aria-label="Chiudi">✕</button><div class="mpr-corpo"></div></div>';
+        pannello.addEventListener('click', (e) => { if (e.target === pannello || e.target.closest('.mpr-chiudi')) chiudiPannello(); });
+        document.body.appendChild(pannello);
+        disegnaPannello();
+    }
+
+    function creaPulsante() {
+        if (document.getElementById('mpRaidCampoBtn')) return;
+        const b = document.createElement('button');
+        b.id = 'mpRaidCampoBtn';
+        b.type = 'button';
+        b.title = 'Guarda il campo del compagno';
+        b.setAttribute('aria-label', 'Guarda il campo del compagno');
+        b.textContent = '👁';
+        b.onclick = apriPannello;
+        document.body.appendChild(b);
     }
 
     function invia(tipo, extra) {
@@ -64,13 +180,18 @@
         // Quello che manca alla barra e' tutto mio: i colpi del compagno li ho gia' sottratti io stesso.
         mie = lp - gameState.botLP - compagno;
         if (mie !== ultimoInviato) { ultimoInviato = mie; invia('colpo', { inflitti: mie }); }
+        inviaCampo();
         disegna(bossNome);
     }
 
     /** Un messaggio del compagno (dal 'game-action' della sala). */
     function ricevi(azione) {
         if (azione.tipo === 'fuori') { compagnoFuori = true; return; }
-        if (azione.tipo === 'ripeti') { ultimoInviato = null; return; }
+        if (azione.tipo === 'ripeti') { ultimoInviato = null; ultimoCampo = null; return; }
+        if (azione.tipo === 'campo') {
+            if (azione.campo && typeof azione.campo === 'object') { campoCompagno = azione.campo; disegnaPannello(); }
+            return;
+        }
         if (azione.tipo !== 'colpo' || !Number.isInteger(azione.inflitti)) return;
         // Il compagno puo' partire prima di me: la barra qui non e' ancora nota e il totale non si puo' contenere.
         // Si tiene da parte e si applica all'avvio (altrimenti, se poi non colpisce piu', andrebbe perso).
@@ -91,6 +212,8 @@
     function avvia(net, boss) {
         rete = net;
         lp = boss.lp;
+        if (boss.compagno) nomeCompagno = boss.compagno;
+        creaPulsante();
         const nome = boss.nome || 'Boss';
         if (totaleInAttesa !== null) { const t = totaleInAttesa; totaleInAttesa = null; ricevi({ kind: 'raid', tipo: 'colpo', inflitti: t }); }
         if (timer) clearInterval(timer);
@@ -98,7 +221,7 @@
     }
 
     /** Dopo una caduta di linea: ridice al compagno quanto ho fatto. */
-    function ridici() { ultimoInviato = null; }
+    function ridici() { ultimoInviato = null; ultimoCampo = null; }
 
     window.MpRaid = { avvia, ricevi, ridici };
 })();

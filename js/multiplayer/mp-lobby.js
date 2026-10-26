@@ -1334,7 +1334,7 @@
             window.MP_RAID = true;
             window.MULTIPLAYER_MODE = false;
             const boss = bossPerId(config.raid);
-            if (window.MpRaid) MpRaid.avvia(net, boss);
+            if (window.MpRaid) MpRaid.avvia(net, Object.assign({}, boss, { compagno: nomeAvversario || 'Compagno' }));
             applicaImpostazioniArena(config);
             const sala = $('mpLobbyScreen');
             if (sala) sala.remove();

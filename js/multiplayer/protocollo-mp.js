@@ -107,6 +107,23 @@
         // Raid cooperativo: colpo porta il TOTALE di danno inflitto al Boss da chi manda; uori = a terra.
         'raid': (a) => {
             if (a.tipo === 'fuori' || a.tipo === 'ripeti') return null;
+            // `campo`: fotografia PUBBLICA del campo (solo per essere guardata dal compagno): quattro righe da 5 caselle
+            // e qualche numero. Si controlla la forma e i limiti, non il significato.
+            if (a.tipo === 'campo') {
+                const c = a.campo;
+                if (!oggetto(c)) return 'campo mancante';
+                for (const riga of ['mostri', 'mt', 'bossMostri', 'bossMt']) {
+                    if (!Array.isArray(c[riga]) || c[riga].length > 5) return 'riga del campo non valida';
+                    for (const s of c[riga]) {
+                        if (s === null) continue;
+                        if (!oggetto(s) || (s.id !== undefined && !intero(s.id)) || (s.atk !== undefined && !intero(s.atk)) || (s.def !== undefined && !intero(s.def))) return 'casella del campo non valida';
+                    }
+                }
+                for (const n of ['lp', 'mano', 'mazzo', 'cimitero', 'bossLp', 'bossMano', 'bossCimitero']) {
+                    if (c[n] !== undefined && !intero(c[n])) return 'numero del campo non valido';
+                }
+                return null;
+            }
             if (a.tipo !== 'colpo') return 'tipo di messaggio del raid sconosciuto';
             return intero(a.inflitti) && a.inflitti > -1000000 && a.inflitti < 1000000 ? null : 'danno non valido';
         },
