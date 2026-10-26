@@ -35,7 +35,7 @@
             barra = document.createElement('div');
             barra.id = 'mpRaidBar';
             barra.setAttribute('role', 'status');
-            barra.innerHTML = '<div class="mpr-nome"></div><div class="mpr-pista"><div class="mpr-riempi"></div></div><div class="mpr-dettaglio"></div>';
+            barra.innerHTML = '<div class="mpr-testa"><span class="mpr-nome"></span><span class="mpr-dettaglio"></span></div><div class="mpr-pista"><div class="mpr-riempi"></div></div>';
             document.body.appendChild(barra);
         }
         const restanti = Math.max(0, lp - mie - compagno);

@@ -1101,15 +1101,20 @@ body.mp-in-duello {
 .mp-specchio-mazzo[hidden] { display: none; }
 /* Raid cooperativo: la barra comune dei Life Point del Boss, in cima all'arena (js/multiplayer/mp-raid.js). */
 #mpRaidBar {
-    position: fixed; top: 6px; left: 50%; transform: translateX(-50%); z-index: 10090;
-    width: min(46vw, 420px); pointer-events: none; text-align: center;
+    position: fixed; top: 4px; left: 50%; transform: translateX(-50%); z-index: 10090;
+    width: min(54vw, 460px); pointer-events: none; text-align: center;
     color: #fff; text-shadow: 0 1px 3px rgba(0, 0, 0, .9);
 }
-#mpRaidBar .mpr-nome { font-weight: 800; font-size: clamp(11px, 1.6vw, 15px); letter-spacing: .04em; }
-#mpRaidBar .mpr-pista { height: 8px; margin: 2px 0; border-radius: 4px; background: rgba(0, 0, 0, .6); border: 1px solid rgba(255, 215, 120, .55); overflow: hidden; }
+#mpRaidBar .mpr-testa { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; white-space: nowrap; }
+#mpRaidBar .mpr-nome { font-weight: 800; font-size: clamp(10px, 1.4vw, 13px); letter-spacing: .03em; overflow: hidden; text-overflow: ellipsis; }
+#mpRaidBar .mpr-pista { height: 6px; margin: 1px 0 0; border-radius: 4px; background: rgba(0, 0, 0, .6); border: 1px solid rgba(255, 215, 120, .55); overflow: hidden; }
 #mpRaidBar .mpr-riempi { height: 100%; background: linear-gradient(90deg, #c0392b, #f39c12); transition: width .5s ease-out; }
-#mpRaidBar .mpr-dettaglio { font-size: clamp(9px, 1.2vw, 11px); opacity: .85; }
+#mpRaidBar .mpr-dettaglio { font-size: clamp(8px, 1.1vw, 10px); opacity: .85; flex-shrink: 0; }
 
 /* Modalita' della sala (?modo=): la regola e' fissa, la spunta non serve; un gruppo nascosto sparisce davvero. */
 .mp-setup[hidden] { display: none; }
 .mp-regola-fissa .mp-specchio-riga { display: none; }
+
+/* Raid: a duello finito (schermata di vittoria/sconfitta) i tasti dei compagni restano raggiungibili, per guardare chi continua. */
+body:has(#duelOutcomeOverlay) .mpr-tasto { z-index: 100700; }
+body:has(#duelOutcomeOverlay) #mpRaidCampo { z-index: 100710; }
