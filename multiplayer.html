@@ -234,6 +234,21 @@
                         <div id="mpPedina"></div>
                     </div>
 
+                    <!-- DUELLO A SPECCHIO: una regola della stanza, come arena e musica la decide chi l'ha creata.
+                         Con la regola accesa nessuno usa il proprio mazzo: tutti e due giocano lo stesso, scelto qui
+                         (o a caso). Non serve avere una collezione e vince chi gioca meglio. -->
+                    <div class="mp-setup" id="mpSpecchioGroup">
+                        <div class="mp-setup-head">
+                            <span class="mp-setup-title">Duello a specchio</span>
+                            <span class="mp-setup-note" id="mpSpecchioNote">Stesso mazzo per tutti e due</span>
+                        </div>
+                        <label class="mp-specchio-riga">
+                            <input type="checkbox" id="mpSpecchioOn">
+                            <span id="mpSpecchioEtichetta">Giocate con lo stesso mazzo</span>
+                        </label>
+                        <select class="mp-specchio-mazzo" id="mpSpecchioMazzo" hidden aria-label="Mazzo del duello a specchio"></select>
+                    </div>
+
                     <div class="mp-own" id="mpDeckGroup">
                         <div class="mp-setup-head">
                             <span class="mp-setup-title">Il tuo mazzo</span>
@@ -319,6 +334,7 @@
 <script src="js/data/card-origins.generated.js"></script>
 <script src="js/data/deck-legality.js"></script>
 <script src="js/data/arena-options.js"></script>
+<script src="js/data/starter-structure-decks.js"></script>
 <script src="js/ui/duel-setup.js"></script>
 <!-- La morra si gioca fra i due giocatori veri (le mosse viaggiano, vedi
      morraCinese in js/multiplayer/mp-lobby.js) subito dopo il conto alla

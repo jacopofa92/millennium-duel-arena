@@ -122,6 +122,15 @@ const MpPassoComune = (function () {
 
     // --- Scambio dei mazzi -------------------------------------------
 
+    /** La specifica del mazzo a specchio ({ main, extra }) se la stanza gioca con quella regola, altrimenti null. */
+    function mazzoSpecchio() {
+        const id = window.MP_SPECCHIO_ID;
+        if (!id || typeof getStarterStructureDeck !== 'function') return null;
+        const d = getStarterStructureDeck(id);
+        if (!d || !Array.isArray(d.main) || d.main.length === 0) return null;
+        return { main: d.main.map((c) => ({ id: c.id, qty: c.qty })), extra: (d.extra || []).map((c) => ({ id: c.id, qty: c.qty })) };
+    }
+
     function riceviMazzo(azione) {
         if (azione.protocollo !== VERSIONE_PROTOCOLLO) {
             if (rifiutaAttesaMazzo) rifiutaAttesaMazzo('La versione Multiplayer dell\'avversario non è compatibile');
@@ -176,6 +185,10 @@ const MpPassoComune = (function () {
      */
     function prepara(mioMazzo) {
         if (!acceso || !net) return Promise.reject(new Error('Passo comune non configurato'));
+        // Duello a specchio (regola della stanza, vedi mp-lobby.js): al posto del mazzo personale si manda quello
+        // scelto per tutti e due. Se il catalogo non lo conosce si resta sul proprio: meglio un duello normale che nessuno.
+        const specchio = mazzoSpecchio();
+        if (specchio) mioMazzo = specchio;
         const mioSeme = sonoHost ? Math.floor(Math.random() * 2147483647) : undefined;
         net.sendAction({ kind: 'mazzo', protocollo: VERSIONE_PROTOCOLLO, spec: mioMazzo, seme: mioSeme });
         return aspettaMazzoAvversario().then((suo) => {

@@ -76,7 +76,7 @@
     let avversarioCollegato = false;
 
     // Scelte correnti: RANDOM finché non si tocca nulla.
-    const scelta = { field: window.ArenaOptions.RANDOM, music: window.ArenaOptions.RANDOM, origin: 'yu-gi-oh' };
+    const scelta = { field: window.ArenaOptions.RANDOM, music: window.ArenaOptions.RANDOM, origin: 'yu-gi-oh', specchio: null };
 
     function $(id) { return document.getElementById(id); }
 
@@ -436,6 +436,7 @@
         // Al primo giro i selettori non esistono ancora: il montaggio
         // riceve comunque readOnly (vedi costruisciSelettori).
         if (setupArena) setupArena.setReadOnly(!sonoHost);
+        aggiornaSpecchioPerRuolo();
     }
 
     // La pedina dell'avversario arriva col suo messaggio "pronto" (id del personaggio, mai un percorso: vedi mp-pedina.js).
@@ -530,6 +531,118 @@
     let setupArena = null;
     let setupMazzi = null;
 
+    // ============================================================
+    // DUELLO A SPECCHIO
+    // ------------------------------------------------------------
+    // Regola della stanza, come arena e musica: la decide chi l'ha creata e
+    // viaggia dentro `room-config` (campo `specchio`, l'id del mazzo). Con la
+    // regola accesa il mazzo personale non conta: MpPassoComune.prepara
+    // manda a tutti e due lo STESSO mazzo, preso dal catalogo degli Starter e
+    // Structure Deck (che entrambi i client hanno, è un file del gioco).
+    // Un "casuale" si estrae UNA volta sola, come per arena e musica, e
+    // all'ospite arriva già risolto.
+    // ============================================================
+    const SPECCHIO_CASUALE = '__casuale';
+    let estrattoSpecchio = null;
+
+    /** I mazzi giocabili a specchio: quelli del catalogo con una lista vera (non lo scheletro vuoto). */
+    function mazziPerSpecchio() {
+        if (typeof starterStructureDeckDatabase === 'undefined') return [];
+        return starterStructureDeckDatabase.filter((d) => Array.isArray(d.main) && d.main.reduce((s, c) => s + (c.qty || 0), 0) >= 30);
+    }
+
+    /** Il mazzo a specchio scelto da questo lato, già risolto (mai SPECCHIO_CASUALE), o null se la regola è spenta. */
+    function specchioRisolto() {
+        if (!scelta.specchio) return null;
+        if (scelta.specchio !== SPECCHIO_CASUALE) return scelta.specchio;
+        if (!estrattoSpecchio) {
+            const elenco = mazziPerSpecchio();
+            estrattoSpecchio = elenco.length ? elenco[Math.floor(Math.random() * elenco.length)].packId : null;
+        }
+        return estrattoSpecchio;
+    }
+
+    function nomeMazzoSpecchio(packId) {
+        const d = mazziPerSpecchio().find((x) => x.packId === packId);
+        return d ? d.name : packId;
+    }
+
+    /** Il mazzo personale non serve con la regola accesa: si nasconde, così non si perde tempo a sceglierlo. */
+    function mostraRegolaSpecchio(attiva, packId) {
+        const gruppoMazzo = $('mpDeckGroup');
+        if (gruppoMazzo) gruppoMazzo.hidden = !!attiva;
+        const nota = $('mpSpecchioNote');
+        if (nota) {
+            nota.textContent = attiva
+                ? (packId ? `Giocate entrambi: ${nomeMazzoSpecchio(packId)}` : 'Giocate entrambi lo stesso mazzo')
+                : 'Spento: ognuno usa il proprio mazzo';
+        }
+    }
+
+    function costruisciSpecchio() {
+        const spunta = $('mpSpecchioOn');
+        const menu = $('mpSpecchioMazzo');
+        if (!spunta || !menu) return;
+        const elenco = mazziPerSpecchio();
+        if (elenco.length === 0) { const g = $('mpSpecchioGroup'); if (g) g.hidden = true; return; }
+        menu.innerHTML = '';
+        const casuale = document.createElement('option');
+        casuale.value = SPECCHIO_CASUALE;
+        casuale.textContent = '🎲 Un mazzo a caso';
+        menu.appendChild(casuale);
+        elenco.forEach((d) => {
+            const o = document.createElement('option');
+            o.value = d.packId;
+            o.textContent = d.name;
+            menu.appendChild(o);
+        });
+        const applica = () => {
+            scelta.specchio = spunta.checked ? menu.value : null;
+            // Cambiare mazzo (o spegnere) rimette in gioco un nuovo sorteggio.
+            estrattoSpecchio = null;
+            menu.hidden = !spunta.checked;
+            mostraRegolaSpecchio(spunta.checked, specchioRisolto());
+            if (spunta.checked) showStatus('🪞 Duello a specchio: giocate entrambi lo stesso mazzo.');
+            else showStatus('🃏 Ognuno gioca il proprio mazzo.');
+            if (sonoHost && avversarioInStanza && !duelloGiaAvviato) inviaConfigHost();
+        };
+        spunta.onchange = applica;
+        menu.onchange = applica;
+        aggiornaSpecchioPerRuolo();
+    }
+
+    /** L'ospite vede la regola ma non la cambia (come arena e musica). */
+    function aggiornaSpecchioPerRuolo() {
+        const spunta = $('mpSpecchioOn');
+        const menu = $('mpSpecchioMazzo');
+        if (!spunta || !menu) return;
+        spunta.disabled = !sonoHost;
+        menu.disabled = !sonoHost;
+        const riga = spunta.closest('.mp-specchio-riga');
+        if (riga) riga.classList.toggle('is-sola-lettura', !sonoHost);
+    }
+
+    /** La regola arrivata dall'host: si mostra, in sola lettura. */
+    function mostraSpecchioRicevuto(config) {
+        const spunta = $('mpSpecchioOn');
+        const menu = $('mpSpecchioMazzo');
+        if (!spunta || !menu) return;
+        const id = config && typeof config.specchio === 'string' ? config.specchio : null;
+        spunta.checked = !!id;
+        menu.hidden = !id;
+        if (id) {
+            if (![...menu.options].some((o) => o.value === id)) {
+                // Un mazzo che questo client non conosce (versione diversa): si mostra comunque il nome grezzo.
+                const o = document.createElement('option');
+                o.value = id;
+                o.textContent = id;
+                menu.appendChild(o);
+            }
+            menu.value = id;
+        }
+        mostraRegolaSpecchio(!!id, id);
+    }
+
     function costruisciSelettori() {
         if (setupArena) return;
         // La pedina: personale come il mazzo. Cambiandola si aggiorna il proprio posto e, se l'avversario e' gia'
@@ -548,6 +661,7 @@
 
             onDeckChange: (mazzo) => showStatus(`🃏 Duellerai con "${mazzo.name}".`)
         });
+        costruisciSpecchio();
         setupArena = window.DuelSetup.mount($('mpSetupMount'), {
             readOnly: !sonoHost,
             initial: scelta,
@@ -574,6 +688,8 @@
      */
     function avvisaSeMazzoNonAmmesso(provenienza) {
         if (!window.DeckLegality) return;
+        // A specchio il mazzo personale non si usa: l'avviso sarebbe una bugia.
+        if (scelta.specchio || (configRicevuta && configRicevuta.specchio)) return;
         const fuori = DeckLegality.mazzoCorrenteNonAmmesso(provenienza);
         if (fuori.length === 0) return;
         const elenco = fuori.slice(0, 3).join(', ');
@@ -616,6 +732,8 @@
             // il resto invece di essere decisa da ciascuno per sé.
             origin: scelta.origin
         };
+        const specchio = specchioRisolto();
+        if (specchio) config.specchio = specchio;
         net.sendAction(config);
         configRicevuta = config;
     }
@@ -770,6 +888,7 @@
         if (azione.kind !== 'room-config') return;
         configRicevuta = azione;
         mostraSceltaRicevuta(azione);
+        mostraSpecchioRicevuto(azione);
         avvisaSeMazzoNonAmmesso(azione.origin);
         // Le impostazioni possono arrivare DOPO che entrambi si sono
         // dichiarati pronti: in quel caso l'ospite stava aspettando
@@ -933,7 +1052,8 @@
         const config = configRicevuta || {
             field: window.ArenaOptions.risolviCampo(scelta.field),
             music: window.ArenaOptions.risolviTraccia(scelta.music),
-            origin: scelta.origin
+            origin: scelta.origin,
+            specchio: specchioRisolto() || undefined
         };
         contoAllaRovescia(config, () => {
             morraCinese(youStart).then((chiInizia) => {
@@ -1033,6 +1153,11 @@
         const rigaCarte = document.createElement('div');
         rigaCarte.textContent = `🗂️ ${window.DuelSetup.originLabel(config.origin)}`;
         riepilogo.append(rigaArena, rigaCarte);
+        if (config.specchio) {
+            const rigaSpecchio = document.createElement('div');
+            rigaSpecchio.textContent = `🪞 Duello a specchio: ${nomeMazzoSpecchio(config.specchio)}`;
+            riepilogo.append(rigaSpecchio);
+        }
 
         let n = CONTO_ALLA_ROVESCIA_DA;
         const passo = () => {
@@ -1072,7 +1197,8 @@
         // rispetta. Ogni client controlla il proprio mazzo contro la
         // regola condivisa — limite dichiarato: se il mazzo dell'ospite
         // non è ammesso se ne accorge solo qui, a stanza già formata.
-        if (config.origin) params.set('origin', config.origin);
+        // A specchio il mazzo è quello del catalogo, uguale per tutti: la regola sulle carte ammesse non si applica.
+        if (config.origin && !config.specchio) params.set('origin', config.origin); else params.delete('origin');
         // Le due pedine: la mia e quella dell'avversario. js/duel-session.js le legge solo in Multiplayer
         // (resolvePlayer/resolveOpponent) e le cerca nell'elenco dei personaggi.
         params.set('pedina', MpPedina.scelta().id);
@@ -1093,6 +1219,8 @@
         if (window.PageLoader) PageLoader.show();
         window.MULTIPLAYER_MODE = true;
         window.MP_startingRole = youStart ? 'player' : 'bot';
+        // Duello a specchio: MpPassoComune.prepara manda questo mazzo al posto di quello personale.
+        window.MP_SPECCHIO_ID = (config && config.specchio) || null;
         // Il passo comune è l'unico protocollo di duello supportato. Il
         // relay accetta ancora temporaneamente i messaggi precedenti per
         // non spegnere da remoto l'APK beta.21, ma questo client non li usa.

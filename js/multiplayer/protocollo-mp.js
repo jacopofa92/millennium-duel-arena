@@ -69,6 +69,8 @@
             if (!testo(a.field)) return 'campo mancante';
             if (!testo(a.music)) return 'musica mancante';
             if (a.origin !== undefined && !testo(a.origin)) return 'origine non valida';
+            // Duello a specchio: id del mazzo che giocano ENTRAMBI (facoltativo, un client vecchio non lo manda).
+            if (a.specchio !== undefined && !testo(a.specchio)) return 'mazzo a specchio non valido';
             return null;
         },
         'ready': (a) => {
