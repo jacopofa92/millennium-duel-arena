@@ -5087,7 +5087,7 @@
            non si vede. Il tondo ha un anello che si riempie con l'avanzare delle fasi (--psb-p, 0-100%).
            ============================================================ */
         .phase-side-btn, .phase-side-menu { display: none; }
-        @media (max-width: 960px) and (max-height: 520px) and (orientation: landscape) and (pointer: coarse) {
+        @media ((max-width: 960px) and (max-height: 520px) and (orientation: landscape) and (pointer: coarse)), ((max-width: 600px) and (orientation: portrait) and (pointer: coarse)) {
             /* Invisibile ma NON tolta dal layout: il suo spazio (fra le due file di mostri) serve ai numeri ATK/DEF della fila di sopra, che senza finivano sotto gli ologrammi della fila di sotto. */
             .phase-stepper { visibility: hidden; pointer-events: none; }
             .phase-side-btn {
@@ -5146,6 +5146,25 @@
             /* Tutte le fasi: attuale evidenziata, raggiungibili accese, le altre in grigio (disattivate). */
             .phase-side-menu button.psm-attuale { background: var(--fase-accento, #f7d774); color: #10131c; border-color: #fff; }
             .phase-side-menu button.psm-spenta { color: rgba(255, 255, 255, 0.38); border-color: rgba(255, 255, 255, 0.16); background: rgba(8, 12, 22, 0.7); box-shadow: none; }
+        }
+        /* In VERTICALE (telefono) lo stesso tondo sta al CENTRO della fascia fra le Magie/Trappole del giocatore e la sua mano
+           (richiesta dell'utente): --psb-cx/--psb-cy sono il suo centro, scritti da posizionaPulsanteFasi(). Il menu delle fasi
+           si apre in colonna SOPRA di lui, centrato. */
+        @media (max-width: 600px) and (orientation: portrait) and (pointer: coarse) {
+            .phase-side-btn {
+                left: var(--psb-cx, 50vw);
+                top: var(--psb-cy, 70vh);
+                transform: translate(-50%, -50%);
+                width: 46px;
+                height: 46px;
+            }
+            .phase-side-btn:active { transform: translate(-50%, -50%) scale(0.94); }
+            .phase-side-menu {
+                left: var(--psb-cx, 50vw);
+                top: auto;
+                bottom: calc(100% - var(--psb-cy, 70vh) + 30px);
+                transform: translateX(-50%);
+            }
         }
 
         /* ============================================================

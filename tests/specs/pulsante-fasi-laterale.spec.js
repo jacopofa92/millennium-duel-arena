@@ -1,7 +1,7 @@
-// Pulsante laterale delle fasi (telefono in ORIZZONTALE, stile Duel Masters; CSS .phase-side-btn in duelMonstersCore.html,
+// Pulsante delle fasi (telefono, stile Duel Masters: a destra del campo in ORIZZONTALE, al centro fra campo e mano in VERTICALE; CSS .phase-side-btn in duelMonstersCore.html,
 // logica aggiornaPulsanteFasi/toccaPulsanteFasi in game-flow.js):
 //  - su un telefono basso in orizzontale la barra delle fasi non si vede e compare un tondo a destra, a meta' altezza,
-//    con la fase attuale; fuori da quel caso (desktop, verticale) il tondo non c'e' e la barra e' quella di sempre;
+//    con la fase attuale; fuori dal telefono (desktop) il tondo non c'e' e la barra e' quella di sempre;
 //  - con UNA sola fase raggiungibile un tocco la raggiunge, con piu' d'una apre un menu con le scelte;
 //  - passa dalle stesse regole della barra (handlePhaseStepperClick): nel primo turno la Battaglia non c'e' fra le scelte.
 const path = require('path');
@@ -10,7 +10,7 @@ const RADICE = path.join(__dirname, '..', '..');
 const url = (f) => 'file:///' + path.join(RADICE, f).replace(/\\/g, '/');
 
 module.exports = {
-    name: 'Pulsante laterale delle fasi: solo telefono in orizzontale, un tocco o un menu, stesse regole della barra',
+    name: 'Pulsante delle fasi: solo telefono (orizzontale e verticale), un tocco o un menu, stesse regole della barra',
     standalone: true,
     async run({ browser, assert }) {
         const errori = [];
@@ -83,6 +83,41 @@ module.exports = {
             assert(/BAT/i.test(dopo.label) && dopo.menuChiuso, `Ora e' Battaglia e il menu e' chiuso: ${JSON.stringify(dopo)}`);
         } finally {
             await ctx.close();
+        }
+
+        // --- telefono in VERTICALE: lo stesso tondo, al centro della fascia fra il campo del giocatore e la sua mano
+        for (const [larghezza, altezza] of [[390, 844], [360, 640]]) {
+            ({ ctx, page } = await apri({ width: larghezza, height: altezza }, true));
+            try {
+                const v = await page.evaluate(() => {
+                    const b = document.getElementById('phaseSideBtn');
+                    const r = b.getBoundingClientRect();
+                    const cima = document.getElementById('playerHand').getBoundingClientRect().top;
+                    // La fascia comincia sotto la casella piu' bassa che parte sopra la mano.
+                    let fondo = 0;
+                    document.querySelectorAll('#playerFieldBoard .field-slot').forEach((s) => { const q = s.getBoundingClientRect(); if (q.width && q.top < cima && q.bottom > fondo) fondo = q.bottom; });
+                    return {
+                        visibile: getComputedStyle(b).display !== 'none' && !b.hidden,
+                        barra: getComputedStyle(document.getElementById('phaseStepper')).visibility,
+                        cx: Math.round(r.left + r.width / 2), cy: Math.round(r.top + r.height / 2), larg: innerWidth,
+                        centroFascia: Math.round((fondo + cima) / 2), fascia: Math.round(cima - fondo)
+                    };
+                });
+                assert(v.visibile && v.barra === 'hidden', `${larghezza}: il tondo c'e' e la barra non si vede: ${JSON.stringify(v)}`);
+                assert(Math.abs(v.cx - v.larg / 2) < 12, `${larghezza}: il tondo sta al centro in orizzontale: ${JSON.stringify(v)}`);
+                assert(Math.abs(v.cy - v.centroFascia) <= 3, `${larghezza}: sta a meta' della fascia fra campo e mano: ${JSON.stringify(v)}`);
+                // Il menu si apre in colonna SOPRA il tondo, con tutte le fasi.
+                await page.tap('#phaseSideBtn');
+                await page.waitForFunction(() => !document.getElementById('phaseSideMenu').hidden, null, { timeout: 3000 });
+                const m = await page.evaluate(() => {
+                    const menu = document.getElementById('phaseSideMenu').getBoundingClientRect();
+                    const b = document.getElementById('phaseSideBtn').getBoundingClientRect();
+                    return { voci: document.querySelectorAll('#phaseSideMenu button').length, sopra: menu.bottom <= b.top + 1, dentro: menu.top >= 0 && menu.left >= 0 && menu.right <= innerWidth };
+                });
+                assert(m.voci === 6 && m.sopra && m.dentro, `${larghezza}: il menu ha sei voci, sta sopra il tondo e dentro lo schermo: ${JSON.stringify(m)}`);
+            } finally {
+                await ctx.close();
+            }
         }
 
         // --- desktop: niente tondo, la barra e' quella di sempre

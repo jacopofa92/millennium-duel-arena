@@ -3089,6 +3089,18 @@ function posizionaPulsanteFasi() {
     root.setProperty('--psb-menu-left', `${Math.round(Math.min(destra + 5 + 56, window.innerWidth - 120))}px`);
     // Il box info carta (a sinistra) deve fermarsi PRIMA del campo e non coprirlo.
     root.setProperty('--campo-sx', `${Math.round(sinistra)}px`);
+
+    // In VERTICALE (telefono) il tondo sta al centro della fascia fra le Magie/Trappole del giocatore e la sua mano:
+    // la fascia comincia sotto la casella piu' bassa che parte sopra la mano (anche se sconfina sotto la sua cima).
+    if (window.matchMedia('(max-width: 600px) and (orientation: portrait) and (pointer: coarse)').matches) {
+        const mano = document.getElementById('playerHand');
+        const cima = mano ? mano.getBoundingClientRect().top : window.innerHeight * 0.8;
+        let fondo = 0;
+        caselle.forEach((r) => { if (r.top < cima && r.bottom > fondo) fondo = r.bottom; });
+        const cy = fondo > 0 ? (fondo + cima) / 2 : cima - 26;
+        root.setProperty('--psb-cx', `${Math.round((sinistra + destra) / 2)}px`);
+        root.setProperty('--psb-cy', `${Math.round(Math.min(Math.max(cy, 30), window.innerHeight - 30))}px`);
+    }
 }(function collegaPulsanteFasi() {
     const aggancia = () => {
         const btn = document.getElementById('phaseSideBtn');
