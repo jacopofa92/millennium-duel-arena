@@ -1209,8 +1209,23 @@
     function getDailyEconomy(dayKey) {
         const save = load();
         const d = (save && save.dailyEconomy) || null;
-        if (!d || d.dayKey !== dayKey) return { dayKey: dayKey, wins: 0, boughtShopCardIds: [] };
+        if (!d || d.dayKey !== dayKey) return { dayKey: dayKey, wins: 0, raidWins: 0, boughtShopCardIds: [] };
         return d;
+    }
+
+    /**
+     * Registra una vittoria di RAID cooperativo nella giornata `dayKey` (il premio del Raid ha un limite giornaliero) e torna
+     * quante ne sono state registrate oggi. Vive in dailyEconomy come `wins`: ripartono da zero insieme, col cambio di giorno.
+     */
+    function recordDailyRaidWin(dayKey) {
+        const save = load() || createNew();
+        const current = (save.dailyEconomy && save.dailyEconomy.dayKey === dayKey)
+            ? save.dailyEconomy
+            : { dayKey: dayKey, wins: 0 };
+        current.raidWins = (Number(current.raidWins) || 0) + 1;
+        save.dailyEconomy = current;
+        touch(save);
+        return current.raidWins;
     }
 
     /** Registra una vittoria nella giornata `dayKey` e torna i contatori aggiornati. */
@@ -1541,6 +1556,7 @@
         incrementTournamentStat: incrementTournamentStat,
         getDailyEconomy: getDailyEconomy,
         recordDailyWin: recordDailyWin,
+        recordDailyRaidWin: recordDailyRaidWin,
         recordFreeWinMilestone: recordFreeWinMilestone,
         getFreeWinMilestones: getFreeWinMilestones,
         hasBoughtDailyShopCard: hasBoughtDailyShopCard,

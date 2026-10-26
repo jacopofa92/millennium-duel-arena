@@ -478,6 +478,8 @@
     /** Premio del Raid cooperativo (Multiplayer, "Assalto al Boss"), per chi ha il Boss a zero con la sua barra (richiesta dell'utente). */
     const CREDITI_RAID = 500;
     const STELLE_RAID = 2;
+    /** Quante volte al giorno il Raid vinto paga (la giornata e' quella del server, come le altre regole giornaliere). */
+    const RAID_AL_GIORNO = 2;
 
     /**
      * Premio per il Raid VINTO: sostituisce quello di un Duello Libero normale (che e' pensato per un duello 1 contro 1 e
@@ -489,6 +491,15 @@
         const rewards = [];
         if (!window.SaveManager) return rewards;
         const o = opts || {};
+        // Al giorno se ne riscuote un numero limitato (richiesta dell'utente: 2): oltre, la vittoria conta per record e Sfide ma
+        // non paga, e la schermata finale lo dice invece di restare vuota.
+        const giorno = dayKey();
+        const riscosse = Number(SaveManager.getDailyEconomy(giorno).raidWins) || 0;
+        if (riscosse >= RAID_AL_GIORNO) {
+            rewards.push(nota('🐉', `Premio del Raid già riscosso ${RAID_AL_GIORNO} volte oggi: torna domani`));
+            return rewards;
+        }
+        SaveManager.recordDailyRaidWin(giorno);
         const spiegazione = `Raid cooperativo vinto${o.bossNome ? ': ' + o.bossNome : ''}`;
         SaveManager.addCurrency('credits', CREDITI_RAID);
         rewards.push(voce('credits', CREDITI_RAID, spiegazione));
@@ -637,6 +648,7 @@
         forRaid: forRaid,
         CREDITI_RAID: CREDITI_RAID,
         STELLE_RAID: STELLE_RAID,
+        RAID_AL_GIORNO: RAID_AL_GIORNO,
         STELLE_PER_ARCO_STORIA: STELLE_PER_ARCO_STORIA,
         CREDITI_PER_ARCO_STORIA: CREDITI_PER_ARCO_STORIA,
         previewChallenge: previewChallenge,

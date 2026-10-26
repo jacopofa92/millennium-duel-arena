@@ -18,7 +18,7 @@ window.MP_MODI = [
     {
         id: 'raid', nome: 'Assalto al Boss', icona: 'tower',
         titolo: 'Assalto al Boss',
-        descrizione: 'Cooperativa: ognuno duella contro lo stesso Boss e i suoi Life Point sono in comune. Vittoria: 500 Crediti e 2 Stelle dell\'Esagono.'
+        descrizione: 'Cooperativa: ognuno duella contro lo stesso Boss e i suoi Life Point sono in comune. Vittoria: 500 Crediti e 2 Stelle dell\'Esagono (fino a 2 volte al giorno).'
     }
 ];
 window.mpModo = function (id) {

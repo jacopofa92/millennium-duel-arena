@@ -122,7 +122,19 @@ module.exports = {
             assert(dopo.stelle - prima.stelle >= 2, `Il Raid paga almeno 2 Stelle dell'Esagono: ${prima.stelle} -> ${dopo.stelle}`);
             const righe = (dopo.testo.match(/Raid cooperativo vinto/g) || []).length;
             assert(righe === 2, `La schermata finale mostra le due voci (crediti e Stelle) col loro motivo: ${righe}`);
-            assert(!/Premio di partecipazione|Prima vittoria di oggi/.test(dopo.testo), 'Il premio di un Duello Libero normale non si somma a quello del Raid');            assert(errori.length === 0, `Errori di pagina: ${errori.join(' | ')}`);        } finally {
+            assert(!/Premio di partecipazione|Prima vittoria di oggi/.test(dopo.testo), 'Il premio di un Duello Libero normale non si somma a quello del Raid');
+            // LIMITE GIORNALIERO: 2 al giorno. La prima e' appena stata pagata dal duello; la seconda paga, la terza no (e lo dice).
+            const limite = await host.evaluate(() => {
+                const conta = (voci) => voci.filter((v) => !v.nota).length;
+                const c0 = SaveManager.getCurrency().credits;
+                const seconda = Rewards.forRaid({ bossNome: 'Prova' });
+                const c1 = SaveManager.getCurrency().credits;
+                const terza = Rewards.forRaid({ bossNome: 'Prova' });
+                const c2 = SaveManager.getCurrency().credits;
+                return { pagate: [conta(seconda), conta(terza)], crediti: [c1 - c0, c2 - c1], notaTerza: terza.some((v) => v.nota && /gi. riscosso/i.test(v.rule)), giorno: Rewards.RAID_AL_GIORNO };
+            });
+            assert(limite.giorno === 2 && limite.pagate[0] === 2 && limite.crediti[0] === 500, `La seconda vittoria del giorno paga ancora: ${JSON.stringify(limite)}`);
+            assert(limite.pagate[1] === 0 && limite.crediti[1] === 0 && limite.notaTerza, `La terza no, e lo spiega: ${JSON.stringify(limite)}`);            assert(errori.length === 0, `Errori di pagina: ${errori.join(' | ')}`);        } finally {
             await context.close();
             await room.close();
             await statics.close();
