@@ -1012,14 +1012,15 @@
             if (motivo) { console.warn('Multiplayer: messaggio "' + azione.kind + '" scartato (' + motivo + ')'); return; }
         }
 
-        if (azione.kind === 'ready') {
-            riceviPronto(azione);
+        // Raid cooperativo: danno e campo del compagno (js/multiplayer/mp-raid.js) viaggiano dentro un 'ready' col campo
+        // `raid`: vanno smistati PRIMA, o verrebbero letti come una dichiarazione di 'pronto'.
+        if (azione.kind === 'ready' && azione.raid) {
+            if (window.MpRaid) MpRaid.ricevi(azione.raid);
             return;
         }
 
-        // Raid cooperativo: il danno al Boss del compagno (js/multiplayer/mp-raid.js).
-        if (azione.kind === 'raid') {
-            if (window.MpRaid) MpRaid.ricevi(azione);
+        if (azione.kind === 'ready') {
+            riceviPronto(azione);
             return;
         }
 

@@ -57,7 +57,9 @@
         invia('campo', { campo: foto });
     }
     function invia(tipo, extra) {
-        if (rete) rete.sendAction(Object.assign({ kind: 'raid', tipo }, extra || {}));
+        // Dentro un 'ready': il relay in produzione scarta i tipi che non conosce (vedi controlloRaid in protocollo-mp.js).
+        // Per chi legge e' un 'ready' qualunque col campo raid: la sala lo smista prima di trattarlo come dichiarazione.
+        if (rete) rete.sendAction({ kind: 'ready', pronto: true, raid: Object.assign({ tipo }, extra || {}) });
     }
 
     function tick(bossNome) {
