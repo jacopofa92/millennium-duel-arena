@@ -62,30 +62,46 @@ module.exports = {
             await host.waitForFunction(() => gameState.botLP === 11000, null, { timeout: 10000 });
             await new Promise((r) => setTimeout(r, 1500));
             assert((await lp(host)) === 11000 && (await lp(ospite)) === 11000, `Barra comune uguale: ${await lp(host)} / ${await lp(ospite)}`);
-            // CAMPO DEL COMPAGNO (sola lettura): l'ospite mette un mostro scoperto e uno coperto, l'host li guarda dal tasto.
+            // CAMPO DEL COMPAGNO (sola lettura): l'ospite mette un mostro scoperto, uno coperto e ha carte in mano; l'host
+            // le guarda dal tasto col ritratto del compagno.
             await ospite.evaluate(() => {
                 const mod = cardDatabase.find((c) => c.type === 'monster' && !c.extraDeck && c.attack > 0);
-                const scoperto = Object.assign({}, mod, { uid: 'prova-a' });
-                const coperto = Object.assign({}, mod, { uid: 'prova-b', name: 'SEGRETO-DA-NON-VEDERE' });
-                gameState.playerMonsterField[0] = { card: scoperto, position: 'attack', isFaceDown: false };
-                gameState.playerMonsterField[1] = { card: coperto, position: 'defense', isFaceDown: true };
-                window.__idProva = mod.id;
+                gameState.playerMonsterField[0] = { card: Object.assign({}, mod, { uid: 'prova-a' }), position: 'attack', isFaceDown: false };
+                gameState.playerMonsterField[1] = { card: Object.assign({}, mod, { uid: 'prova-b' }), position: 'defense', isFaceDown: true };
+                window.__nomeProva = mod.name;
+                window.__manoProva = gameState.playerHand.length;
             });
-            await host.waitForFunction(() => !!document.getElementById('mpRaidCampoBtn'), null, { timeout: 5000 });
-            await host.click('#mpRaidCampoBtn');
-            await host.waitForFunction(() => document.querySelectorAll('#mpRaidCampo .mpr-slot .card').length >= 2, null, { timeout: 8000 });
+            const nomeProva = await ospite.evaluate(() => window.__nomeProva);
+            const manoProva = await ospite.evaluate(() => window.__manoProva);
+            await host.waitForSelector('.mpr-tasto', { timeout: 5000 });
+            await host.click('.mpr-tasto');
+            await host.waitForFunction(() => document.querySelectorAll('#mpRaidCampo .mpr-giocatore .mpr-slot .card').length >= 2, null, { timeout: 8000 });
             const visto = await host.evaluate(() => {
                 const pannello = document.getElementById('mpRaidCampo');
-                return { carte: pannello.querySelectorAll('.mpr-slot .card').length, testo: pannello.textContent, uidDelDuello: !!document.querySelector('#mpRaidCampo [data-uid]:not([data-uid^="raid-"])') };
+                const blocchi = Array.from(pannello.querySelectorAll('.mpr-blocco'));
+                return {
+                    nome: pannello.querySelector('.mpr-nome-giocatore').textContent,
+                    ordine: blocchi.map((b) => b.className.includes('mpr-boss') ? 'boss' : 'giocatore'),
+                    carte: pannello.querySelectorAll('.mpr-giocatore .mpr-riga--mostro .mpr-slot .card').length,
+                    inMano: pannello.querySelectorAll('.mpr-giocatore .mpr-mano-carta').length,
+                    leggibili: pannello.querySelectorAll('.mpr-giocatore .mpr-leggibile').length,
+                    uidDelDuello: !!pannello.querySelector('[data-uid]:not([data-uid^="raid-"])')
+                };
             });
+            assert(visto.nome && visto.nome.length > 0, 'Il pannello mostra il nome del giocatore');
+            assert(visto.ordine[0] === 'boss' && visto.ordine[1] === 'giocatore', `Boss in alto, giocatore in basso: ${visto.ordine}`);
             assert(visto.carte === 2, `Il pannello mostra le due carte del compagno: ${visto.carte}`);
-            assert(!visto.testo.includes('SEGRETO-DA-NON-VEDERE'), 'La carta coperta del compagno non rivela il nome');
+            assert(visto.inMano === manoProva, `Le carte in mano compaiono col dorso: ${visto.inMano} su ${manoProva}`);
+            assert(visto.leggibili === 2, `Anche la carta coperta del compagno si puo' leggere: ${visto.leggibili}`);
             assert(!visto.uidDelDuello, 'Il pannello non contiene carte con uid del duello');
+            // Un tocco sulla carta COPERTA apre l'informazione con il suo nome.
+            await host.click('#mpRaidCampo .mpr-giocatore .mpr-riga--mostro .mpr-slot:nth-child(2)');
+            const info = await host.evaluate(() => (document.querySelector('#mpRaidCampo .mpr-info') || {}).textContent || '');
+            assert(info.includes(nomeProva) && info.includes('coperta'), `Info della carta coperta: ${info.slice(0, 80)}`);
             // Chiuso, il pannello sparisce dal DOM e non lascia carte in giro.
             await host.click('#mpRaidCampo .mpr-chiudi');
             const rimasto = await host.evaluate(() => !!document.getElementById('mpRaidCampo'));
             assert(!rimasto, 'Il pannello si chiude e sparisce dal DOM');
-            // Nessun effetto sul duello dell'host: il suo campo e' rimasto vuoto.
             const suoCampo = await host.evaluate(() => gameState.playerMonsterField.filter(Boolean).length);
             assert(suoCampo === 0, `Il campo dell'host non e' stato toccato: ${suoCampo}`);
             // Un compagno scorretto (totale enorme, negativo, non intero) non azzera ne' cura il Boss oltre la barra.
