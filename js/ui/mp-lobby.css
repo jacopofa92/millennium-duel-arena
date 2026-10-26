@@ -1109,3 +1109,7 @@ body.mp-in-duello {
 #mpRaidBar .mpr-pista { height: 8px; margin: 2px 0; border-radius: 4px; background: rgba(0, 0, 0, .6); border: 1px solid rgba(255, 215, 120, .55); overflow: hidden; }
 #mpRaidBar .mpr-riempi { height: 100%; background: linear-gradient(90deg, #c0392b, #f39c12); transition: width .5s ease-out; }
 #mpRaidBar .mpr-dettaglio { font-size: clamp(9px, 1.2vw, 11px); opacity: .85; }
+
+/* Modalita' della sala (?modo=): la regola e' fissa, la spunta non serve; un gruppo nascosto sparisce davvero. */
+.mp-setup[hidden] { display: none; }
+.mp-regola-fissa .mp-specchio-riga { display: none; }

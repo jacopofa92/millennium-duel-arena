@@ -151,8 +151,8 @@
             <!-- ============ Ingresso ============ -->
             <div data-vista="ingresso">
                 <div class="mp-screen">
-                    <h2 class="mp-title">Duello Multiplayer</h2>
-                    <p class="mp-sub">Sfida un amico online, in tempo reale</p>
+                    <h2 class="mp-title" id="mpTitolo">Duello Multiplayer</h2>
+                    <p class="mp-sub" id="mpSottotitolo">Sfida un amico online, in tempo reale</p>
 
                     <div class="mp-choice">
                         <button type="button" class="mp-tab active" id="mpTabCreate"><span class="mp-tab-icon">🏛️</span>Crea Stanza</button>
@@ -329,8 +329,14 @@
 <script src="js/ui/icon-library.js"></script>
 <script src="js/ui/deck-switcher.js"></script>
 <script src="js/ui/topbar.js"></script>
+<script src="js/multiplayer/mp-modi.js"></script>
 <script>
-    PageTopbar.render('#topbarMount', { icon: 'multiplayer', title: 'Duello Multiplayer' });
+    // La modalita' scelta dal menu (?modo=): titolo e icona della pagina; senza, la sala completa di sempre.
+    (function () {
+        const modo = mpModo(new URLSearchParams(location.search).get('modo'));
+        PageTopbar.render('#topbarMount', { icon: modo ? modo.icona : 'multiplayer', title: modo ? modo.titolo : 'Duello Multiplayer' });
+        window.MP_MODO = modo ? modo.id : null;
+    })();
     Icons.hydrate();
 </script>
 <script src="js/ui/deck-box.js"></script>
@@ -358,6 +364,11 @@
 <script src="js/multiplayer/protocollo-mp.js"></script>
 <script src="js/multiplayer/network.js"></script>
 <script src="js/data/raid-db.js"></script>
+<!-- Il visore del campo dei compagni disegna carte: serve il renderer anche prima del duello (l'arena, caricata dopo, salta
+     gli script gia' presenti). -->
+<script src="js/ui/inclinazione.js"></script>
+<script src="js/data/artwork-alternativi.js"></script>
+<script src="js/ui/card-renderer.js"></script>
 <script src="js/multiplayer/mp-raid-campo.js"></script>
 <script src="js/multiplayer/mp-raid.js"></script>
 <script src="js/multiplayer/mp-passo-comune.js"></script>

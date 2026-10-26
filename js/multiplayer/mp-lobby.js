@@ -438,6 +438,7 @@
         if (setupArena) setupArena.setReadOnly(!sonoHost);
         aggiornaSpecchioPerRuolo();
         aggiornaRaidPerRuolo();
+        attivaRegolaDelModo();
     }
 
     // La pedina dell'avversario arriva col suo messaggio "pronto" (id del personaggio, mai un percorso: vedi mp-pedina.js).
@@ -731,6 +732,55 @@
         mostraRegolaRaid(id);
     }
 
+    // ============================================================
+    // MODALITA' DELLA SALA (?modo=duello|specchio|raid, dal menu Multiplayer)
+    // ------------------------------------------------------------
+    // La modalita' non e' un protocollo nuovo: e' solo la sala che parte gia' con le regole giuste e senza i selettori
+    // delle altre (specchio e raid restano i campi di room-config di sempre). Senza ?modo= la sala e' completa.
+    // ============================================================
+    function modoDellaSala() { return window.MP_MODO && window.mpModo ? mpModo(window.MP_MODO) : null; }
+
+    /** Titolo, descrizione e selettori nascosti: si fa una volta, quando la sala e' costruita. */
+    function applicaModoDellaSala() {
+        const modo = modoDellaSala();
+        if (!modo) return;
+        const titolo = $('mpTitolo');
+        const sotto = $('mpSottotitolo');
+        if (titolo) titolo.textContent = modo.titolo;
+        if (sotto) sotto.textContent = modo.descrizione;
+        const sp = $('mpSpecchioGroup');
+        const rd = $('mpRaidGroup');
+        document.body.classList.add('mp-modo-' + modo.id);
+        if (modo.id !== 'specchio' && sp) sp.hidden = true;
+        if (modo.id !== 'raid' && rd) rd.hidden = true;
+        // Nella modalita' la regola e' fissa: niente spunta da accendere, resta la scelta del mazzo/Boss.
+        // Il titolo del gruppo ha lo stesso nome della voce di menu da cui si arriva.
+        const intesta = (g) => { const el = g && g.querySelector('.mp-setup-title'); if (el) el.textContent = modo.nome; };
+        if (modo.id === 'specchio') intesta(sp);
+        if (modo.id === 'raid') intesta(rd);
+        if (modo.id === 'specchio' && sp) sp.classList.add('mp-regola-fissa');
+        if (modo.id === 'raid' && rd) rd.classList.add('mp-regola-fissa');
+    }
+
+    /** L'host entra in sala: accende la regola della modalita' (idempotente). L'ospite la riceve dall'host. */
+    function attivaRegolaDelModo() {
+        const modo = modoDellaSala();
+        if (!modo || !sonoHost) return;
+        const id = modo.id === 'specchio' ? 'mpSpecchioOn' : modo.id === 'raid' ? 'mpRaidOn' : null;
+        const spunta = id ? $(id) : null;
+        if (spunta && !spunta.checked && spunta.onchange) { spunta.checked = true; spunta.onchange(); }
+    }
+
+    /** L'ospite e' entrato in una stanza di un'altra modalita' di quella scelta dal menu: glielo si dice, non lo si blocca. */
+    function avvisaModoDiverso(config) {
+        const modo = modoDellaSala();
+        if (!modo) return;
+        const questa = config.raid ? 'raid' : config.specchio ? 'specchio' : 'duello';
+        if (questa === modo.id) return;
+        const altra = mpModo(questa);
+        showStatus(`⚠️ Questa stanza e' in modalita' "${altra ? altra.nome : questa}", non "${modo.nome}": le regole sono quelle dell'host.`, true);
+    }
+
     function costruisciSelettori() {
         if (setupArena) return;
         // La pedina: personale come il mazzo. Cambiandola si aggiorna il proprio posto e, se l'avversario e' gia'
@@ -751,6 +801,8 @@
         });
         costruisciSpecchio();
         costruisciRaid();
+        applicaModoDellaSala();
+        attivaRegolaDelModo();
         setupArena = window.DuelSetup.mount($('mpSetupMount'), {
             readOnly: !sonoHost,
             initial: scelta,
@@ -988,6 +1040,7 @@
         mostraSceltaRicevuta(azione);
         mostraSpecchioRicevuto(azione);
         mostraRaidRicevuto(azione);
+        avvisaModoDiverso(azione);
         avvisaSeMazzoNonAmmesso(azione.origin);
         // Le impostazioni possono arrivare DOPO che entrambi si sono
         // dichiarati pronti: in quel caso l'ospite stava aspettando
@@ -1531,6 +1584,7 @@
     // Bootstrap
     // ============================================================
     initLobbyUI();
+    applicaModoDellaSala();
     restoreSavedServerUrl();
     creaGranelli();
 })();

@@ -1134,6 +1134,7 @@
     <script src="js/native/native-save-backup.js"></script>
     <script src="js/save-manager.js"></script>
     <script src="js/modes/mode-unlocks.js"></script>
+<script src="js/multiplayer/mp-modi.js"></script>
     <script src="js/data/characters-db.js"></script>
     <script src="js/data/character-unlocks.js"></script>
     <!-- cards-db.js serve solo per CARD_ORIGIN_LABELS (selettore "Carte
@@ -1354,7 +1355,14 @@
                     { icon: 'cardMaker', label: 'Creazione', action: 'link', href: 'crea-carta.html' }
                 ]
             },
-            { icon: 'multiplayer', label: 'Multiplayer', action: 'link', href: 'multiplayer.html' },
+            // Multiplayer: un sottomenu, una voce per modalita' (tabella unica in js/multiplayer/mp-modi.js). Ogni voce apre la
+            // stessa sala con le regole di quella modalita' gia' impostate.
+            {
+                icon: 'multiplayer', label: 'Multiplayer', action: 'submenu',
+                children: (window.MP_MODI || [{ id: 'duello', nome: 'Duello', icona: 'duel' }]).map((m) => ({
+                    icon: m.icona, label: m.nome, action: 'link', href: 'multiplayer.html?modo=' + m.id
+                }))
+            },
             { icon: 'profile', label: 'Profilo', action: 'link', href: 'profilo.html' },
             { icon: 'tournament', label: 'Sfide', action: 'link', href: 'sfide.html' },
             IMPOSTAZIONI_ITEM,
