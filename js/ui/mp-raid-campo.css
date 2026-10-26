@@ -1,0 +1,115 @@
+/* Raid cooperativo: tasti e pannello per guardare il campo dei compagni (js/multiplayer/mp-raid-campo.js). */
+
+/* ---- Tasto: il ritratto del compagno, con il simbolo delle carte. Uno per compagno (fino a 3). ---- */
+.mpr-tasto {
+    position: fixed; z-index: 10091; width: 40px; height: 40px; padding: 0; border-radius: 50%;
+    border: 2px solid #f7d774; background: #0b1020; cursor: pointer;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, .55), 0 0 12px rgba(247, 215, 116, .55);
+    transition: box-shadow .2s, filter .2s;
+}
+.mpr-tasto:active { filter: brightness(.85); }
+.mpr-tasto.mpr-attivo { box-shadow: 0 0 0 2px rgba(0, 0, 0, .55), 0 0 18px rgba(120, 220, 255, .95); border-color: #9fe6ff; }
+.mpr-tasto-foto {
+    position: absolute; inset: 0; border-radius: 50%; background: #1b2540 center / cover no-repeat;
+}
+.mpr-tasto-badge {
+    position: absolute; right: -5px; bottom: -5px; width: 18px; height: 18px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 11px; line-height: 1;
+    background: #0b1020; border: 1px solid #f7d774;
+}
+/* Il nome sotto il ritratto: solo dove c'e' spazio (non nella fascia stretta fra campo e mano). */
+.mpr-tasto-nome {
+    position: absolute; top: 100%; left: -2px; margin-top: 3px; max-width: 84px;
+    padding: 1px 6px; border-radius: 8px; font-size: 10px; font-weight: 700; color: #fff; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis; background: rgba(8, 12, 26, .85); border: 1px solid rgba(247, 215, 116, .5);
+}
+@media (orientation: portrait) and (max-width: 900px) {
+    .mpr-tasto { width: 36px; height: 36px; }
+    .mpr-tasto-nome { display: none; }
+}
+
+/* ---- Pannello ---- */
+#mpRaidCampo {
+    position: fixed; inset: 0; z-index: 10095; display: flex; align-items: center; justify-content: center;
+    padding: 8px; overflow: auto;
+    --card-w: clamp(26px, min(7.4vw, 8.4vh), 60px);
+    --card-h: calc(var(--card-w) / var(--card-ratio, 0.686));
+    background: radial-gradient(ellipse at center, rgba(20, 28, 60, .78), rgba(0, 0, 0, .88));
+    backdrop-filter: blur(3px);
+}
+#mpRaidCampo .mpr-scheda {
+    position: relative; max-height: 98vh; overflow: auto; padding: 10px 14px 12px; border-radius: 14px; color: #fff;
+    background:
+        linear-gradient(180deg, rgba(120, 30, 40, .22), rgba(0, 0, 0, 0) 38%, rgba(30, 80, 160, .22)),
+        #0a0f1f;
+    border: 1px solid rgba(247, 215, 116, .75);
+    box-shadow: 0 0 0 3px #0a0f1f, 0 0 0 4px rgba(247, 215, 116, .35), 0 12px 40px rgba(0, 0, 0, .7), inset 0 0 40px rgba(0, 0, 0, .55);
+}
+#mpRaidCampo .mpr-chiudi {
+    position: absolute; top: 6px; right: 8px; z-index: 3; width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(0, 0, 0, .5); border: 1px solid rgba(255, 255, 255, .3); color: #fff; font-size: 14px; cursor: pointer;
+}
+
+/* Testata: chi stai guardando. */
+#mpRaidCampo .mpr-testata { display: flex; align-items: center; gap: 10px; padding: 0 34px 8px 0; margin-bottom: 6px; border-bottom: 1px solid rgba(247, 215, 116, .3); }
+#mpRaidCampo .mpr-avatar { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; border: 2px solid #f7d774; background: #1b2540 center / cover no-repeat; box-shadow: 0 0 10px rgba(247, 215, 116, .5); }
+#mpRaidCampo .mpr-chi { display: flex; flex-direction: column; min-width: 0; }
+#mpRaidCampo .mpr-nome-giocatore { font-weight: 800; font-size: 16px; letter-spacing: .03em; color: #f7d774; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#mpRaidCampo .mpr-sub { font-size: 12px; opacity: .85; }
+
+/* Blocchi Boss (in alto, rossi) e giocatore (in basso, azzurri). */
+#mpRaidCampo .mpr-blocco { padding: 6px 8px 8px; border-radius: 10px; }
+#mpRaidCampo .mpr-boss { background: linear-gradient(180deg, rgba(160, 40, 50, .26), rgba(160, 40, 50, .05)); border: 1px solid rgba(235, 90, 90, .45); }
+#mpRaidCampo .mpr-giocatore { background: linear-gradient(0deg, rgba(40, 110, 200, .28), rgba(40, 110, 200, .05)); border: 1px solid rgba(110, 190, 255, .5); }
+#mpRaidCampo .mpr-blocco-testa { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+#mpRaidCampo .mpr-blocco-titolo { font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+#mpRaidCampo .mpr-boss .mpr-blocco-titolo { color: #ff9b8f; }
+#mpRaidCampo .mpr-giocatore .mpr-blocco-titolo { color: #9fd8ff; }
+#mpRaidCampo .mpr-blocco-stat { font-size: 11px; opacity: .85; }
+#mpRaidCampo .mpr-scontro { text-align: center; font-size: 18px; line-height: 1; margin: 3px 0; opacity: .8; text-shadow: 0 0 10px rgba(247, 215, 116, .8); }
+#mpRaidCampo .mpr-vuoto { padding: 28px 18px; text-align: center; opacity: .8; }
+
+/* Righe e caselle. */
+#mpRaidCampo .mpr-riga { display: flex; gap: 4px; justify-content: center; margin-bottom: 4px; }
+#mpRaidCampo .mpr-slot {
+    position: relative; width: calc(var(--card-w) * 1.6); height: calc(var(--card-w) * 1.7);
+    display: flex; align-items: center; justify-content: center; border-radius: 6px;
+    background: rgba(255, 255, 255, .035); border: 1px solid rgba(247, 215, 116, .22);
+    box-shadow: inset 0 0 12px rgba(0, 0, 0, .5);
+}
+#mpRaidCampo .mpr-slot--mostro::before, #mpRaidCampo .mpr-slot--mt::before {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: .12; font-size: calc(var(--card-w) * .6); pointer-events: none;
+}
+#mpRaidCampo .mpr-slot--mostro::before { content: '⚔'; }
+#mpRaidCampo .mpr-slot--mt::before { content: '✦'; }
+#mpRaidCampo .mpr-slot .card { position: relative; z-index: 1; }
+/* Carte di cui si puo' leggere l'informazione. */
+#mpRaidCampo .mpr-leggibile { cursor: pointer; }
+#mpRaidCampo .mpr-leggibile:hover { border-color: #f7d774; box-shadow: inset 0 0 12px rgba(0, 0, 0, .5), 0 0 10px rgba(247, 215, 116, .6); }
+/* Coperta ma nota (carta del compagno): un puntino ci dice che si puo' aprire. */
+#mpRaidCampo .mpr-coperta-nota::after {
+    content: 'i'; position: absolute; top: 1px; right: 2px; z-index: 2; width: 13px; height: 13px; border-radius: 50%;
+    font: 700 9px/13px Georgia, serif; text-align: center; color: #0a0f1f; background: #9fe6ff;
+}
+
+/* Mano: dorsi a ventaglio e il numero. */
+#mpRaidCampo .mpr-mano { position: relative; display: flex; justify-content: center; align-items: flex-end; height: calc(var(--card-h) * .78); padding-top: 8px; margin: 4px 0 8px; box-sizing: content-box; }
+#mpRaidCampo .mpr-mano-carta { margin-left: calc(var(--card-w) * -.42); transform: translateY(var(--su, 0)) rotate(var(--rot, 0deg)); transform-origin: 50% 160%; }
+#mpRaidCampo .mpr-mano-carta:first-child { margin-left: 0; }
+#mpRaidCampo .mpr-mano-carta .card { box-shadow: 0 2px 6px rgba(0, 0, 0, .6); }
+#mpRaidCampo .mpr-mano-n {
+    position: absolute; right: 2px; top: 0; min-width: 20px; padding: 0 6px; border-radius: 10px; font-size: 11px; font-weight: 800; text-align: center;
+    background: rgba(0, 0, 0, .65); border: 1px solid rgba(247, 215, 116, .55);
+}
+
+/* Informazioni della carta. */
+#mpRaidCampo .mpr-info {
+    position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 4; display: flex; gap: 10px; padding: 10px; border-radius: 10px; cursor: pointer;
+    background: rgba(6, 10, 22, .96); border: 1px solid rgba(247, 215, 116, .7); box-shadow: 0 6px 24px rgba(0, 0, 0, .8);
+    max-height: 60%; overflow: auto;
+}
+#mpRaidCampo .mpr-info-carta { flex-shrink: 0; --card-w: clamp(70px, 18vw, 120px); --card-h: calc(var(--card-w) / var(--card-ratio, 0.686)); }
+#mpRaidCampo .mpr-info-testo { min-width: 0; font-size: 12px; line-height: 1.4; }
+#mpRaidCampo .mpr-info-testo strong { color: #f7d774; font-size: 14px; }
+#mpRaidCampo .mpr-info-riga { opacity: .8; margin: 2px 0 4px; }
+#mpRaidCampo .mpr-info-testo p { margin: 0; white-space: pre-wrap; }

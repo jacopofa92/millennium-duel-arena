@@ -76,7 +76,7 @@
     let avversarioCollegato = false;
 
     // Scelte correnti: RANDOM finché non si tocca nulla.
-    const scelta = { field: window.ArenaOptions.RANDOM, music: window.ArenaOptions.RANDOM, origin: 'yu-gi-oh' };
+    const scelta = { field: window.ArenaOptions.RANDOM, music: window.ArenaOptions.RANDOM, origin: 'yu-gi-oh', specchio: null, raid: null };
 
     function $(id) { return document.getElementById(id); }
 
@@ -436,6 +436,9 @@
         // Al primo giro i selettori non esistono ancora: il montaggio
         // riceve comunque readOnly (vedi costruisciSelettori).
         if (setupArena) setupArena.setReadOnly(!sonoHost);
+        aggiornaSpecchioPerRuolo();
+        aggiornaRaidPerRuolo();
+        attivaRegolaDelModo();
     }
 
     // La pedina dell'avversario arriva col suo messaggio "pronto" (id del personaggio, mai un percorso: vedi mp-pedina.js).
@@ -530,6 +533,254 @@
     let setupArena = null;
     let setupMazzi = null;
 
+    // ============================================================
+    // DUELLO A SPECCHIO
+    // ------------------------------------------------------------
+    // Regola della stanza, come arena e musica: la decide chi l'ha creata e
+    // viaggia dentro `room-config` (campo `specchio`, l'id del mazzo). Con la
+    // regola accesa il mazzo personale non conta: MpPassoComune.prepara
+    // manda a tutti e due lo STESSO mazzo, preso dal catalogo degli Starter e
+    // Structure Deck (che entrambi i client hanno, è un file del gioco).
+    // Un "casuale" si estrae UNA volta sola, come per arena e musica, e
+    // all'ospite arriva già risolto.
+    // ============================================================
+    const SPECCHIO_CASUALE = '__casuale';
+    let estrattoSpecchio = null;
+
+    /** I mazzi giocabili a specchio: quelli del catalogo con una lista vera (non lo scheletro vuoto). */
+    function mazziPerSpecchio() {
+        if (typeof starterStructureDeckDatabase === 'undefined') return [];
+        return starterStructureDeckDatabase.filter((d) => Array.isArray(d.main) && d.main.reduce((s, c) => s + (c.qty || 0), 0) >= 30);
+    }
+
+    /** Il mazzo a specchio scelto da questo lato, già risolto (mai SPECCHIO_CASUALE), o null se la regola è spenta. */
+    function specchioRisolto() {
+        if (!scelta.specchio) return null;
+        if (scelta.specchio !== SPECCHIO_CASUALE) return scelta.specchio;
+        if (!estrattoSpecchio) {
+            const elenco = mazziPerSpecchio();
+            estrattoSpecchio = elenco.length ? elenco[Math.floor(Math.random() * elenco.length)].packId : null;
+        }
+        return estrattoSpecchio;
+    }
+
+    function nomeMazzoSpecchio(packId) {
+        const d = mazziPerSpecchio().find((x) => x.packId === packId);
+        return d ? d.name : packId;
+    }
+
+    /** Il mazzo personale non serve con la regola accesa: si nasconde, così non si perde tempo a sceglierlo. */
+    function mostraRegolaSpecchio(attiva, packId) {
+        const gruppoMazzo = $('mpDeckGroup');
+        if (gruppoMazzo) gruppoMazzo.hidden = !!attiva;
+        const nota = $('mpSpecchioNote');
+        if (nota) {
+            nota.textContent = attiva
+                ? (packId ? `Giocate entrambi: ${nomeMazzoSpecchio(packId)}` : 'Giocate entrambi lo stesso mazzo')
+                : 'Spento: ognuno usa il proprio mazzo';
+        }
+    }
+
+    function costruisciSpecchio() {
+        const spunta = $('mpSpecchioOn');
+        const menu = $('mpSpecchioMazzo');
+        if (!spunta || !menu) return;
+        const elenco = mazziPerSpecchio();
+        if (elenco.length === 0) { const g = $('mpSpecchioGroup'); if (g) g.hidden = true; return; }
+        menu.innerHTML = '';
+        const casuale = document.createElement('option');
+        casuale.value = SPECCHIO_CASUALE;
+        casuale.textContent = '🎲 Un mazzo a caso';
+        menu.appendChild(casuale);
+        elenco.forEach((d) => {
+            const o = document.createElement('option');
+            o.value = d.packId;
+            o.textContent = d.name;
+            menu.appendChild(o);
+        });
+        const applica = () => {
+            scelta.specchio = spunta.checked ? menu.value : null;
+            // Cambiare mazzo (o spegnere) rimette in gioco un nuovo sorteggio.
+            estrattoSpecchio = null;
+            menu.hidden = !spunta.checked;
+            if (spunta.checked) {
+                // Specchio e Raid si escludono.
+                const rd = $('mpRaidOn');
+                if (rd && rd.checked) { rd.checked = false; if (rd.onchange) rd.onchange(); }
+            }
+            mostraRegolaSpecchio(spunta.checked, specchioRisolto());
+            if (spunta.checked) showStatus('🪞 Duello a specchio: giocate entrambi lo stesso mazzo.');
+            else showStatus('🃏 Ognuno gioca il proprio mazzo.');
+            if (sonoHost && avversarioInStanza && !duelloGiaAvviato) inviaConfigHost();
+        };
+        spunta.onchange = applica;
+        menu.onchange = applica;
+        aggiornaSpecchioPerRuolo();
+    }
+
+    /** L'ospite vede la regola ma non la cambia (come arena e musica). */
+    function aggiornaSpecchioPerRuolo() {
+        const spunta = $('mpSpecchioOn');
+        const menu = $('mpSpecchioMazzo');
+        if (!spunta || !menu) return;
+        spunta.disabled = !sonoHost;
+        menu.disabled = !sonoHost;
+        const riga = spunta.closest('.mp-specchio-riga');
+        if (riga) riga.classList.toggle('is-sola-lettura', !sonoHost);
+    }
+
+    /** La regola arrivata dall'host: si mostra, in sola lettura. */
+    function mostraSpecchioRicevuto(config) {
+        const spunta = $('mpSpecchioOn');
+        const menu = $('mpSpecchioMazzo');
+        if (!spunta || !menu) return;
+        const id = config && typeof config.specchio === 'string' ? config.specchio : null;
+        spunta.checked = !!id;
+        menu.hidden = !id;
+        if (id) {
+            if (![...menu.options].some((o) => o.value === id)) {
+                // Un mazzo che questo client non conosce (versione diversa): si mostra comunque il nome grezzo.
+                const o = document.createElement('option');
+                o.value = id;
+                o.textContent = id;
+                menu.appendChild(o);
+            }
+            menu.value = id;
+        }
+        mostraRegolaSpecchio(!!id, id);
+    }
+
+    // ============================================================
+    // RAID COOPERATIVO
+    // ------------------------------------------------------------
+    // Regola della stanza (campo `raid` = id del Boss in `room-config`), alternativa allo specchio. Niente morra e
+    // niente duello a due: ognuno gioca il proprio duello contro il Boss, nella stessa pagina (per non perdere il
+    // collegamento), e js/multiplayer/mp-raid.js condivide la barra dei Life Point.
+    // ============================================================
+    function bossDelRaid() {
+        return (window.RAID_BOSSES || []).map((b) => {
+            const c = typeof characterDatabase !== 'undefined' ? characterDatabase.find((x) => x.id === b.id) : null;
+            return c ? { id: b.id, lp: b.lp, nome: c.name } : null;
+        }).filter(Boolean);
+    }
+
+    function bossPerId(id) { return bossDelRaid().find((b) => b.id === id) || null; }
+
+    function mostraRegolaRaid(id) {
+        const nota = $('mpRaidNote');
+        if (!nota) return;
+        const b = id ? bossPerId(id) : null;
+        nota.textContent = id ? `Contro ${b ? b.nome : id}: barra comune` : 'Spento: duello uno contro uno';
+    }
+
+    function costruisciRaid() {
+        const spunta = $('mpRaidOn');
+        const menu = $('mpRaidBoss');
+        if (!spunta || !menu) return;
+        const elenco = bossDelRaid();
+        if (elenco.length === 0) { const g = $('mpRaidGroup'); if (g) g.hidden = true; return; }
+        menu.innerHTML = '';
+        elenco.forEach((b) => {
+            const o = document.createElement('option');
+            o.value = b.id;
+            o.textContent = `${b.nome} (${b.lp.toLocaleString('it-IT')} LP)`;
+            menu.appendChild(o);
+        });
+        const applica = () => {
+            scelta.raid = spunta.checked ? menu.value : null;
+            menu.hidden = !spunta.checked;
+            if (spunta.checked) {
+                // Raid e specchio si escludono: nel Raid ognuno gioca il proprio mazzo.
+                const sp = $('mpSpecchioOn');
+                if (sp && sp.checked) { sp.checked = false; if (sp.onchange) sp.onchange(); }
+                showStatus('🐉 Raid: affrontate insieme il Boss, i suoi Life Point sono in comune.');
+            }
+            mostraRegolaRaid(scelta.raid);
+            if (sonoHost && avversarioInStanza && !duelloGiaAvviato) inviaConfigHost();
+        };
+        spunta.onchange = applica;
+        menu.onchange = applica;
+        aggiornaRaidPerRuolo();
+    }
+
+    function aggiornaRaidPerRuolo() {
+        const spunta = $('mpRaidOn');
+        const menu = $('mpRaidBoss');
+        if (!spunta || !menu) return;
+        spunta.disabled = !sonoHost;
+        menu.disabled = !sonoHost;
+        const riga = spunta.closest('.mp-specchio-riga');
+        if (riga) riga.classList.toggle('is-sola-lettura', !sonoHost);
+    }
+
+    function mostraRaidRicevuto(config) {
+        const spunta = $('mpRaidOn');
+        const menu = $('mpRaidBoss');
+        if (!spunta || !menu) return;
+        const id = config && typeof config.raid === 'string' ? config.raid : null;
+        spunta.checked = !!id;
+        menu.hidden = !id;
+        if (id) {
+            if (![...menu.options].some((o) => o.value === id)) {
+                const o = document.createElement('option');
+                o.value = id;
+                o.textContent = id;
+                menu.appendChild(o);
+            }
+            menu.value = id;
+        }
+        mostraRegolaRaid(id);
+    }
+
+    // ============================================================
+    // MODALITA' DELLA SALA (?modo=duello|specchio|raid, dal menu Multiplayer)
+    // ------------------------------------------------------------
+    // La modalita' non e' un protocollo nuovo: e' solo la sala che parte gia' con le regole giuste e senza i selettori
+    // delle altre (specchio e raid restano i campi di room-config di sempre). Senza ?modo= la sala e' completa.
+    // ============================================================
+    function modoDellaSala() { return window.MP_MODO && window.mpModo ? mpModo(window.MP_MODO) : null; }
+
+    /** Titolo, descrizione e selettori nascosti: si fa una volta, quando la sala e' costruita. */
+    function applicaModoDellaSala() {
+        const modo = modoDellaSala();
+        if (!modo) return;
+        const titolo = $('mpTitolo');
+        const sotto = $('mpSottotitolo');
+        if (titolo) titolo.textContent = modo.titolo;
+        if (sotto) sotto.textContent = modo.descrizione;
+        const sp = $('mpSpecchioGroup');
+        const rd = $('mpRaidGroup');
+        document.body.classList.add('mp-modo-' + modo.id);
+        if (modo.id !== 'specchio' && sp) sp.hidden = true;
+        if (modo.id !== 'raid' && rd) rd.hidden = true;
+        // Nella modalita' la regola e' fissa: niente spunta da accendere, resta la scelta del mazzo/Boss.
+        // Il titolo del gruppo ha lo stesso nome della voce di menu da cui si arriva.
+        const intesta = (g) => { const el = g && g.querySelector('.mp-setup-title'); if (el) el.textContent = modo.nome; };
+        if (modo.id === 'specchio') intesta(sp);
+        if (modo.id === 'raid') intesta(rd);
+        if (modo.id === 'specchio' && sp) sp.classList.add('mp-regola-fissa');
+        if (modo.id === 'raid' && rd) rd.classList.add('mp-regola-fissa');
+    }
+
+    /** L'host entra in sala: accende la regola della modalita' (idempotente). L'ospite la riceve dall'host. */
+    function attivaRegolaDelModo() {
+        const modo = modoDellaSala();
+        if (!modo || !sonoHost) return;
+        const id = modo.id === 'specchio' ? 'mpSpecchioOn' : modo.id === 'raid' ? 'mpRaidOn' : null;
+        const spunta = id ? $(id) : null;
+        if (spunta && !spunta.checked && spunta.onchange) { spunta.checked = true; spunta.onchange(); }
+    }
+
+    /** L'ospite e' entrato in una stanza di un'altra modalita' di quella scelta dal menu: glielo si dice, non lo si blocca. */
+    function avvisaModoDiverso(config) {
+        const modo = modoDellaSala();
+        if (!modo) return;
+        const questa = config.raid ? 'raid' : config.specchio ? 'specchio' : 'duello';
+        if (questa === modo.id) return;
+        const altra = mpModo(questa);
+        showStatus(`⚠️ Questa stanza e' in modalita' "${altra ? altra.nome : questa}", non "${modo.nome}": le regole sono quelle dell'host.`, true);
+    }
+
     function costruisciSelettori() {
         if (setupArena) return;
         // La pedina: personale come il mazzo. Cambiandola si aggiorna il proprio posto e, se l'avversario e' gia'
@@ -548,6 +799,10 @@
 
             onDeckChange: (mazzo) => showStatus(`🃏 Duellerai con "${mazzo.name}".`)
         });
+        costruisciSpecchio();
+        costruisciRaid();
+        applicaModoDellaSala();
+        attivaRegolaDelModo();
         setupArena = window.DuelSetup.mount($('mpSetupMount'), {
             readOnly: !sonoHost,
             initial: scelta,
@@ -574,6 +829,10 @@
      */
     function avvisaSeMazzoNonAmmesso(provenienza) {
         if (!window.DeckLegality) return;
+        // A specchio il mazzo personale non si usa: l'avviso sarebbe una bugia.
+        if (scelta.specchio || (configRicevuta && configRicevuta.specchio)) return;
+        // Nel Raid non c'e' una regola sulle carte: ognuno gioca il proprio mazzo contro il Boss.
+        if (scelta.raid || (configRicevuta && configRicevuta.raid)) return;
         const fuori = DeckLegality.mazzoCorrenteNonAmmesso(provenienza);
         if (fuori.length === 0) return;
         const elenco = fuori.slice(0, 3).join(', ');
@@ -616,6 +875,9 @@
             // il resto invece di essere decisa da ciascuno per sé.
             origin: scelta.origin
         };
+        const specchio = specchioRisolto();
+        if (specchio) config.specchio = specchio;
+        if (scelta.raid) config.raid = scelta.raid;
         net.sendAction(config);
         configRicevuta = config;
     }
@@ -755,6 +1017,12 @@
             return;
         }
 
+        // Raid cooperativo: il danno al Boss del compagno (js/multiplayer/mp-raid.js).
+        if (azione.kind === 'raid') {
+            if (window.MpRaid) MpRaid.ricevi(azione);
+            return;
+        }
+
         // La mossa della morra può arrivare PRIMA che questo lato abbia
         // aperto il proprio pannello (l'altro ha scelto in fretta): si
         // conserva, e attendiSceltaRps la trova già lì.
@@ -770,6 +1038,9 @@
         if (azione.kind !== 'room-config') return;
         configRicevuta = azione;
         mostraSceltaRicevuta(azione);
+        mostraSpecchioRicevuto(azione);
+        mostraRaidRicevuto(azione);
+        avvisaModoDiverso(azione);
         avvisaSeMazzoNonAmmesso(azione.origin);
         // Le impostazioni possono arrivare DOPO che entrambi si sono
         // dichiarati pronti: in quel caso l'ospite stava aspettando
@@ -811,7 +1082,7 @@
 
     /** Caduta della linea: il posto resta suo per la finestra di grazia del server. */
     net.on('opponent-disconnected', () => {
-        if (window.MULTIPLAYER_MODE || !avversarioInStanza) return;
+        if (window.MULTIPLAYER_MODE || window.MP_RAID || !avversarioInStanza) return;
         avversarioCollegato = false;
         // Se stava per partire perché eravamo pronti tutti e due, la
         // partenza si ferma qui: il conto alla rovescia e la morra cinese
@@ -822,7 +1093,8 @@
     });
 
     net.on('opponent-reconnected', () => {
-        if (window.MULTIPLAYER_MODE || !avversarioInStanza) return;
+        if (window.MP_RAID && window.MpRaid) MpRaid.ridici();
+        if (window.MULTIPLAYER_MODE || window.MP_RAID || !avversarioInStanza) return;
         avversarioCollegato = true;
         showStatus('✅ Il tuo avversario è tornato in sala!');
         // Può essere rientrato dopo che ci eravamo dichiarati pronti tutti
@@ -832,7 +1104,7 @@
 
     /** Uscita definitiva: la stanza torna ad avere un posto libero. */
     net.on('opponent-left', () => {
-        if (window.MULTIPLAYER_MODE || !avversarioInStanza) return;
+        if (window.MULTIPLAYER_MODE || window.MP_RAID || !avversarioInStanza) return;
         avversarioInStanza = false;
         avversarioCollegato = false;
         avversarioPronto = false;
@@ -862,7 +1134,7 @@
         // startMultiplayerDuel): un rifiuto del relay arrivato lì — per
         // esempio il 'mazzo' del passo comune davanti a un server della
         // versione precedente — non ha pulsanti da riabilitare.
-        if (window.MULTIPLAYER_MODE) { console.warn('Relay:', msg && msg.message); return; }
+        if (window.MULTIPLAYER_MODE || window.MP_RAID) { console.warn('Relay:', msg && msg.message); return; }
         showStatus('❌ ' + (msg.message || 'Si è verificato un errore.'), true);
         const crea = $('mpCreateBtn');
         const entra = $('mpJoinBtn');
@@ -878,24 +1150,24 @@
     // riabilitiamo i pulsanti SOLO se quel tentativo fallisce del tutto o
     // non è nemmeno partito (nessuna stanza ancora creata/raggiunta).
     net.on('disconnected', () => {
-        if (window.MULTIPLAYER_MODE) return;
+        if (window.MULTIPLAYER_MODE || window.MP_RAID) return;
         showStatus('❌ Connessione al server persa.', true);
         $('mpCreateBtn').disabled = false;
         $('mpJoinBtn').disabled = false;
     });
 
     net.on('reconnecting', (attempt) => {
-        if (window.MULTIPLAYER_MODE) return;
+        if (window.MULTIPLAYER_MODE || window.MP_RAID) return;
         showStatus(`🔌 Connessione persa, tentativo di riconnessione (${attempt})...`, true);
     });
 
     net.on('reconnected', () => {
-        if (window.MULTIPLAYER_MODE) return;
+        if (window.MULTIPLAYER_MODE || window.MP_RAID) return;
         showStatus('✅ Riconnesso, in attesa del tuo avversario...');
     });
 
     net.on('reconnect-failed', () => {
-        if (window.MULTIPLAYER_MODE) return;
+        if (window.MULTIPLAYER_MODE || window.MP_RAID) return;
         showStatus('❌ Impossibile riconnettersi al server.', true);
         $('mpCreateBtn').disabled = false;
         $('mpJoinBtn').disabled = false;
@@ -933,9 +1205,13 @@
         const config = configRicevuta || {
             field: window.ArenaOptions.risolviCampo(scelta.field),
             music: window.ArenaOptions.risolviTraccia(scelta.music),
-            origin: scelta.origin
+            origin: scelta.origin,
+            specchio: specchioRisolto() || undefined,
+            raid: scelta.raid || undefined
         };
         contoAllaRovescia(config, () => {
+            // Raid: nessuna morra, ognuno gioca il suo duello contro il Boss.
+            if (config.raid && bossPerId(config.raid)) { startMultiplayerDuel(true, config); return; }
             morraCinese(youStart).then((chiInizia) => {
                 startMultiplayerDuel(chiInizia === 'player', config);
             });
@@ -1033,6 +1309,17 @@
         const rigaCarte = document.createElement('div');
         rigaCarte.textContent = `🗂️ ${window.DuelSetup.originLabel(config.origin)}`;
         riepilogo.append(rigaArena, rigaCarte);
+        if (config.raid) {
+            const b = bossPerId(config.raid);
+            const rigaRaid = document.createElement('div');
+            rigaRaid.textContent = `🐉 Raid contro ${b ? b.nome : config.raid}`;
+            riepilogo.append(rigaRaid);
+        }
+        if (config.specchio) {
+            const rigaSpecchio = document.createElement('div');
+            rigaSpecchio.textContent = `🪞 Duello a specchio: ${nomeMazzoSpecchio(config.specchio)}`;
+            riepilogo.append(rigaSpecchio);
+        }
 
         let n = CONTO_ALLA_ROVESCIA_DA;
         const passo = () => {
@@ -1067,12 +1354,16 @@
         const params = new URLSearchParams(window.location.search);
         params.set('field', config.field);
         params.set('music', config.music);
+        // Raid: il Boss e' un Duellante in Duello Libero, a Difficile. Fuori dal Raid questi parametri non ci sono.
+        if (config.raid && bossPerId(config.raid)) { params.set('mode', 'free'); params.set('character', config.raid); params.set('difficulty', 'Difficile'); }
+        else { params.delete('mode'); params.delete('character'); params.delete('difficulty'); }
         // Stesso parametro del Duello Libero: js/duel-session.js lo legge
         // come `allowedOrigin` e BLOCCA davvero un mazzo che non lo
         // rispetta. Ogni client controlla il proprio mazzo contro la
         // regola condivisa — limite dichiarato: se il mazzo dell'ospite
         // non è ammesso se ne accorge solo qui, a stanza già formata.
-        if (config.origin) params.set('origin', config.origin);
+        // A specchio il mazzo è quello del catalogo, uguale per tutti: la regola sulle carte ammesse non si applica.
+        if (config.origin && !config.specchio && !(config.raid && bossPerId(config.raid))) params.set('origin', config.origin); else params.delete('origin');
         // Le due pedine: la mia e quella dell'avversario. js/duel-session.js le legge solo in Multiplayer
         // (resolvePlayer/resolveOpponent) e le cerca nell'elenco dei personaggi.
         params.set('pedina', MpPedina.scelta().id);
@@ -1091,8 +1382,22 @@
         // La schermata di caricamento copre il passaggio; la nasconde DuelSession.start() quando l'intro
         // del duello prende il suo posto.
         if (window.PageLoader) PageLoader.show();
+        if (config && config.raid && bossPerId(config.raid)) {
+            // Raid: duello in solitaria contro il Boss, nella STESSA pagina (altrimenti si perde il collegamento col compagno).
+            window.MP_RAID = true;
+            window.MULTIPLAYER_MODE = false;
+            const boss = bossPerId(config.raid);
+            if (window.MpRaid) MpRaid.avvia(net, Object.assign({}, boss, { compagni: [{ id: 'c1', nome: nomeAvversario || (pedinaAvversario && pedinaAvversario.name) || 'Compagno', image: (pedinaAvversario || MpPedina.PREDEFINITA).image }] }));
+            applicaImpostazioniArena(config);
+            const sala = $('mpLobbyScreen');
+            if (sala) sala.remove();
+            await loadDuelArena();
+            return;
+        }
         window.MULTIPLAYER_MODE = true;
         window.MP_startingRole = youStart ? 'player' : 'bot';
+        // Duello a specchio: MpPassoComune.prepara manda questo mazzo al posto di quello personale.
+        window.MP_SPECCHIO_ID = (config && config.specchio) || null;
         // Il passo comune è l'unico protocollo di duello supportato. Il
         // relay accetta ancora temporaneamente i messaggi precedenti per
         // non spegnere da remoto l'APK beta.21, ma questo client non li usa.
@@ -1279,6 +1584,7 @@
     // Bootstrap
     // ============================================================
     initLobbyUI();
+    applicaModoDellaSala();
     restoreSavedServerUrl();
     creaGranelli();
 })();

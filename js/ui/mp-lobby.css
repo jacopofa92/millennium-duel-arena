@@ -1071,3 +1071,45 @@ body.mp-in-duello {
 
 
 
+
+/* ---------------------------------------------------------------
+   Duello a specchio (regola della stanza)
+   --------------------------------------------------------------- */
+.mp-specchio-riga {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    color: var(--kc-ink);
+    font-size: 0.92rem;
+    cursor: pointer;
+}
+.mp-specchio-riga input { width: 20px; height: 20px; accent-color: var(--kc-gold); flex-shrink: 0; }
+.mp-specchio-riga.is-sola-lettura { cursor: default; opacity: 0.85; }
+.mp-specchio-mazzo {
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(247, 215, 116, 0.35);
+    background: rgba(18, 14, 20, 0.85);
+    color: var(--kc-ink);
+    font: inherit;
+    font-size: 0.9rem;
+}
+.mp-specchio-mazzo:disabled { opacity: 0.7; }
+.mp-specchio-mazzo[hidden] { display: none; }
+/* Raid cooperativo: la barra comune dei Life Point del Boss, in cima all'arena (js/multiplayer/mp-raid.js). */
+#mpRaidBar {
+    position: fixed; top: 6px; left: 50%; transform: translateX(-50%); z-index: 10090;
+    width: min(46vw, 420px); pointer-events: none; text-align: center;
+    color: #fff; text-shadow: 0 1px 3px rgba(0, 0, 0, .9);
+}
+#mpRaidBar .mpr-nome { font-weight: 800; font-size: clamp(11px, 1.6vw, 15px); letter-spacing: .04em; }
+#mpRaidBar .mpr-pista { height: 8px; margin: 2px 0; border-radius: 4px; background: rgba(0, 0, 0, .6); border: 1px solid rgba(255, 215, 120, .55); overflow: hidden; }
+#mpRaidBar .mpr-riempi { height: 100%; background: linear-gradient(90deg, #c0392b, #f39c12); transition: width .5s ease-out; }
+#mpRaidBar .mpr-dettaglio { font-size: clamp(9px, 1.2vw, 11px); opacity: .85; }
+
+/* Modalita' della sala (?modo=): la regola e' fissa, la spunta non serve; un gruppo nascosto sparisce davvero. */
+.mp-setup[hidden] { display: none; }
+.mp-regola-fissa .mp-specchio-riga { display: none; }

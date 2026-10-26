@@ -44,6 +44,7 @@
 <!-- Lobby e Sala d'Attesa: tutto il loro aspetto vive in un file a parte,
      altrimenti questa pagina non resterebbe leggibile a mano. -->
 <link rel="stylesheet" href="js/ui/mp-lobby.css">
+<link rel="stylesheet" href="js/ui/mp-raid-campo.css">
 <!-- Le scatole 3D dei mazzi, le stesse di Creazione Deck e del Negozio. -->
 <link rel="stylesheet" href="js/ui/deck-box.css">
 <!-- Selettore di mazzo/arena/musica, condiviso con il Duello Libero. -->
@@ -150,8 +151,8 @@
             <!-- ============ Ingresso ============ -->
             <div data-vista="ingresso">
                 <div class="mp-screen">
-                    <h2 class="mp-title">Duello Multiplayer</h2>
-                    <p class="mp-sub">Sfida un amico online, in tempo reale</p>
+                    <h2 class="mp-title" id="mpTitolo">Duello Multiplayer</h2>
+                    <p class="mp-sub" id="mpSottotitolo">Sfida un amico online, in tempo reale</p>
 
                     <div class="mp-choice">
                         <button type="button" class="mp-tab active" id="mpTabCreate"><span class="mp-tab-icon">🏛️</span>Crea Stanza</button>
@@ -234,6 +235,35 @@
                         <div id="mpPedina"></div>
                     </div>
 
+                    <!-- DUELLO A SPECCHIO: una regola della stanza, come arena e musica la decide chi l'ha creata.
+                         Con la regola accesa nessuno usa il proprio mazzo: tutti e due giocano lo stesso, scelto qui
+                         (o a caso). Non serve avere una collezione e vince chi gioca meglio. -->
+                    <div class="mp-setup" id="mpSpecchioGroup">
+                        <div class="mp-setup-head">
+                            <span class="mp-setup-title">Duello a specchio</span>
+                            <span class="mp-setup-note" id="mpSpecchioNote">Stesso mazzo per tutti e due</span>
+                        </div>
+                        <label class="mp-specchio-riga">
+                            <input type="checkbox" id="mpSpecchioOn">
+                            <span id="mpSpecchioEtichetta">Giocate con lo stesso mazzo</span>
+                        </label>
+                        <select class="mp-specchio-mazzo" id="mpSpecchioMazzo" hidden aria-label="Mazzo del duello a specchio"></select>
+                    </div>
+
+                    <!-- Raid cooperativo: regola della stanza, come lo specchio (e alternativa ad esso). Ognuno duella
+                         da solo contro lo stesso Boss, i Life Point del Boss sono UNA barra comune (js/multiplayer/mp-raid.js). -->
+                    <div class="mp-setup" id="mpRaidGroup">
+                        <div class="mp-setup-head">
+                            <span class="mp-setup-title">Raid cooperativo</span>
+                            <span class="mp-setup-note" id="mpRaidNote">Spento: duello uno contro uno</span>
+                        </div>
+                        <label class="mp-specchio-riga">
+                            <input type="checkbox" id="mpRaidOn">
+                            <span>Affrontate insieme un Boss</span>
+                        </label>
+                        <select class="mp-specchio-mazzo" id="mpRaidBoss" hidden aria-label="Boss del raid"></select>
+                    </div>
+
                     <div class="mp-own" id="mpDeckGroup">
                         <div class="mp-setup-head">
                             <span class="mp-setup-title">Il tuo mazzo</span>
@@ -299,8 +329,14 @@
 <script src="js/ui/icon-library.js"></script>
 <script src="js/ui/deck-switcher.js"></script>
 <script src="js/ui/topbar.js"></script>
+<script src="js/multiplayer/mp-modi.js"></script>
 <script>
-    PageTopbar.render('#topbarMount', { icon: 'multiplayer', title: 'Duello Multiplayer' });
+    // La modalita' scelta dal menu (?modo=): titolo e icona della pagina; senza, la sala completa di sempre.
+    (function () {
+        const modo = mpModo(new URLSearchParams(location.search).get('modo'));
+        PageTopbar.render('#topbarMount', { icon: modo ? modo.icona : 'multiplayer', title: modo ? modo.titolo : 'Duello Multiplayer' });
+        window.MP_MODO = modo ? modo.id : null;
+    })();
     Icons.hydrate();
 </script>
 <script src="js/ui/deck-box.js"></script>
@@ -319,6 +355,7 @@
 <script src="js/data/card-origins.generated.js"></script>
 <script src="js/data/deck-legality.js"></script>
 <script src="js/data/arena-options.js"></script>
+<script src="js/data/starter-structure-decks.js"></script>
 <script src="js/ui/duel-setup.js"></script>
 <!-- La morra si gioca fra i due giocatori veri (le mosse viaggiano, vedi
      morraCinese in js/multiplayer/mp-lobby.js) subito dopo il conto alla
@@ -326,6 +363,14 @@
 <script src="js/ui/duel-rps.js"></script>
 <script src="js/multiplayer/protocollo-mp.js"></script>
 <script src="js/multiplayer/network.js"></script>
+<script src="js/data/raid-db.js"></script>
+<!-- Il visore del campo dei compagni disegna carte: serve il renderer anche prima del duello (l'arena, caricata dopo, salta
+     gli script gia' presenti). -->
+<script src="js/ui/inclinazione.js"></script>
+<script src="js/data/artwork-alternativi.js"></script>
+<script src="js/ui/card-renderer.js"></script>
+<script src="js/multiplayer/mp-raid-campo.js"></script>
+<script src="js/multiplayer/mp-raid.js"></script>
 <script src="js/multiplayer/mp-passo-comune.js"></script>
 <script src="js/data/character-unlocks.js"></script>
 <script src="js/multiplayer/mp-pedina.js"></script>

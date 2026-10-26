@@ -289,7 +289,7 @@ try { ProtocolloMP = require('../js/multiplayer/protocollo-mp.js'); } catch (e) 
 const GAME_ACTION_KINDS = new Set([
     'room-config', 'ready', 'rps',
     'mazzo', 'passo', 'passo-riprendi',
-    'game-over'
+    'game-over', 'raid'
 ]);
 
 /**
