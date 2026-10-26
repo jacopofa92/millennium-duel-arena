@@ -1118,3 +1118,10 @@ body.mp-in-duello {
 /* Raid: a duello finito (schermata di vittoria/sconfitta) i tasti dei compagni restano raggiungibili, per guardare chi continua. */
 body:has(#duelOutcomeOverlay) .mpr-tasto { z-index: 100700; }
 body:has(#duelOutcomeOverlay) #mpRaidCampo { z-index: 100710; }
+
+/* Raid, schermi stretti: sopra c'e' gia' tutto (Boss, tempo, turno). Resta solo la barra e i suoi LP: il nome e' nel riquadro del Boss, il dettaglio nel pannello del compagno. */
+@media (max-width: 600px) {
+    #mpRaidBar { width: 32vw; margin-left: 5vw; }
+    #mpRaidBar .mpr-bn, #mpRaidBar .mpr-dettaglio { display: none; }
+    #mpRaidBar .mpr-testa { justify-content: center; }
+}

@@ -35,11 +35,12 @@
             barra = document.createElement('div');
             barra.id = 'mpRaidBar';
             barra.setAttribute('role', 'status');
-            barra.innerHTML = '<div class="mpr-testa"><span class="mpr-nome"></span><span class="mpr-dettaglio"></span></div><div class="mpr-pista"><div class="mpr-riempi"></div></div>';
+            barra.innerHTML = '<div class="mpr-testa"><span class="mpr-nome"><span class="mpr-bn"></span><span class="mpr-lp"></span></span><span class="mpr-dettaglio"></span></div><div class="mpr-pista"><div class="mpr-riempi"></div></div>';
             document.body.appendChild(barra);
         }
         const restanti = Math.max(0, lp - mie - compagno);
-        barra.querySelector('.mpr-nome').textContent = `${bossNome}  ${formato(restanti)} / ${formato(lp)}`;
+        barra.querySelector('.mpr-bn').textContent = bossNome + '  ';
+        barra.querySelector('.mpr-lp').textContent = `${formato(restanti)} / ${formato(lp)}`;
         barra.querySelector('.mpr-riempi').style.width = (100 * restanti / lp).toFixed(1) + '%';
         barra.querySelector('.mpr-dettaglio').textContent =
             `Tu ${formato(mie)} · Compagno ${formato(compagno)}${compagnoFuori ? ' (a terra)' : ''}`;

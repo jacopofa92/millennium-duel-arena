@@ -299,9 +299,17 @@
             let fondo = 0;
             document.querySelectorAll('.field-slot[data-owner="player"]').forEach((s) => {
                 const r = s.getBoundingClientRect();
-                if (r.bottom <= cima + 2 && r.bottom > fondo) fondo = r.bottom;
+                // Anche una casella che sconfina sotto la cima della mano (Mazzo/Cimitero su schermi bassi) conta: la fascia
+                // libera comincia dopo di lei.
+                if (r.top < cima && r.bottom > fondo) fondo = r.bottom;
             });
-            const centro = fondo > 0 ? (fondo + cima) / 2 : cima - 24;
+            let centro = fondo > 0 ? (fondo + cima) / 2 : cima - 24;
+            // Su schermi bassi la fascia fra le Magie/Trappole e la mano e' piu' stretta del tasto (misurato: da 375x667 in giu'
+            // il tasto finiva sopra la colonna di Mazzo/Cimitero, a 320x568 anche sulla mano): li' va SOTTO la mano, che e' libera.
+            if (fondo > 0 && cima - fondo < TASTO + 2 && mano) {
+                const sotto = mano.getBoundingClientRect().bottom + 6;
+                if (sotto + TASTO < H - 4) centro = sotto + TASTO / 2;
+            }
             tasti.forEach((b, i) => {
                 b.style.left = (8 + i * (TASTO + 6)) + 'px';
                 b.style.top = Math.max(0, centro - TASTO / 2) + 'px';
