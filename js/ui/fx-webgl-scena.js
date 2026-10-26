@@ -33,7 +33,7 @@
     const MAX = 40;
 
     // Tipi di primitiva (devono coincidere con l'ordine delle `if` dello shader qui sotto).
-    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19, ANKH: 20, PORTAL: 21, DUST: 22, SHIELD: 23 };
+    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19, ANKH: 20, PORTAL: 21, DUST: 22, SHIELD: 23, COMETA: 24 };
     // Colori: indici nella tavolozza dello shader.
     const C = { CALDO: 0, ORO: 1, ROSSO: 2, ARANCIO: 3, CIANO: 4, BLU: 5, VIOLA: 6, MAGENTA: 7, VERDE: 8, BIANCO: 9, SCURO: 10, GHIACCIO: 11, VERDE_SCURO: 12 };
 
@@ -240,6 +240,17 @@ float dado(vec2 q,float v){
   float e=1.-smoothstep(.85,1.,u);
   s=vec4(c*acc*1.4*e,clamp(acc*e,0.,1.));`;
 
+    // COMETA: la testa viaggia in LINEA RETTA da (x,y) a (z,w), con una coda sottile che si assottiglia dietro di lei
+    // (raggio B.w; la coda e' lunga ~7 raggi). Niente arco e niente scintille: serve a dare una direzione a un movimento
+    // asciutto (la pescata), non a farne un effetto.
+    CORPI[T.COMETA] = `
+  float k=easeIO(clamp(u/.8,0.,1.)); vec2 head=mix(A.xy,A.zw,k);
+  vec2 dir=normalize(A.zw-A.xy+vec2(.001)); float coda=B.w*7.*(1.-k*.3);
+  vec2 pa=P-head; float lungo=clamp(dot(pa,-dir),0.,coda); float d=length(pa+dir*lungo);
+  float fade=1.-lungo/coda; float w=B.w*(.3+.7*fade);
+  float core=exp(-d*d/(w*w)); float e=1.-smoothstep(.7,1.,u);
+  s=vec4(mix(c,vec3(1.),.45)*core*fade*1.25*e,clamp(core*fade*e,0.,1.));`;
+
     // PANNELLO tecnologico: cornice e righe di scansione (semi-larghezza A.z, semi-altezza A.w).
     CORPI[T.PANEL] = `
   vec2 q=abs(P-A.xy)-vec2(A.z,A.w); float sd=max(q.x,q.y); float e=campana(u,.12,.2);
@@ -403,6 +414,7 @@ float dado(vec2 q,float v){
             // (l'esplosione spinge i granelli anche di lato e verso il basso: ~90 px in scala della carta).
             case T.DUST: return [x - z * 5, y - q - z * 8, x + z * 7, y + q + z * 5];
             case T.SHIELD: e = z * 1.6; return [x - e, y - e, x + e, y + e];
+            case T.COMETA: e = w * 10 + 16; return [Math.min(x, z) - e, Math.min(y, q) - e, Math.max(x, z) + e, Math.max(y, q) + e];
             default: e = z * 3; return [x - e, y - q - e, x + e, y + e];   // moneta e dado
         }
     }
@@ -1012,6 +1024,46 @@ float dado(vec2 q,float v){
         document.body.appendChild(bag);
         const b = bag.animate([{ opacity: 0 }, { opacity: 1, offset: 0.21 }, { opacity: 0 }], { duration: 430, fill: 'forwards' });
         b.onfinish = () => bag.remove(); setTimeout(() => bag.remove(), 900);
+        // La scia: una cometa sottile, in linea retta, dal centro del mazzo a quello della carta d'arrivo. Niente particelle (le ha
+        // scartate l'utente): solo una direzione luminosa dietro al dorso che vola, per la durata del volo.
+        const a0 = cen(p); const a1 = cen(arrivo);
+        const sc = new Scena();
+        sc.add(T.COMETA, C.GHIACCIO, 0, 0.42, [a0.x, a0.y, a1.x, a1.y], Math.max(3.2, Math.min(7, p.width * 0.1)));
+        breve(sc, 0.45);
+    };
+
+    /**
+     * Rimescolamento del Mazzo (`owner` = di chi): la pila si apre in due meta' che si sfiorano e si intrecciano, con un anello
+     * freddo sul bordo e un lampo appena le meta' si incontrano. Sono dorsi veri (la stessa carta coperta della pescata) mossi
+     * con la sola `transform`, quindi un ridisegno del Terreno non li ferma; la luce e' disegnata sulla tela WebGL.
+     * Nessuna particella: come la pescata, e' un gesto asciutto.
+     */
+    imp.playDeckShuffle = function (owner) {
+        const r = rectZona(owner, 'deck'); if (!r) return;
+        const c = cen(r); const raggio = '6px';
+        const dorsi = 6; const aperto = r.width * 0.7;
+        for (let i = 0; i < dorsi; i++) {
+            const lato = i % 2 === 0 ? -1 : 1;
+            const d = document.createElement('div');
+            d.className = 'fx-gsap-draw-card';
+            d.style.cssText = 'position:fixed;left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px;height:' + r.height + 'px;'
+                + 'pointer-events:none;z-index:' + (10040 + (i % 2 ? i : -i)) + ';border-radius:' + raggio + ';will-change:transform;transform-origin:50% 100%;'
+                + 'box-shadow:0 3px 10px rgba(0,0,0,0.5);';
+            document.body.appendChild(d);
+            const dx = lato * aperto; const rot = lato * (7 + i);
+            // Si apre, si sfiora a meta' (le due meta' si scambiano di posto) e si richiude: ogni dorso parte un attimo dopo l'altro.
+            const a = d.animate([
+                { transform: 'translate(0px,0px) rotate(0deg)', offset: 0 },
+                { transform: 'translate(' + dx + 'px,' + (-i * 1.5) + 'px) rotate(' + rot + 'deg)', offset: 0.38 },
+                { transform: 'translate(' + (-dx * 0.35) + 'px,' + (-i * 1.5) + 'px) rotate(' + (-rot * 0.4) + 'deg)', offset: 0.7 },
+                { transform: 'translate(0px,0px) rotate(0deg)', offset: 1 }
+            ], { duration: 560, delay: i * 45, easing: 'cubic-bezier(.45,.05,.55,.95)', fill: 'both' });
+            a.onfinish = () => d.remove(); setTimeout(() => d.remove(), 1500);
+        }
+        const s = new Scena();
+        s.add(T.RING, C.GHIACCIO, 0, 0.55, [c.x, c.y, r.width * 0.95, 2.4]);
+        s.add(T.FLASH, C.GHIACCIO, 0.3, 0.3, [c.x, c.y, r.width * 0.45, 0]);
+        breve(s, 0.9);
     };
 
     // ---------------------------------------------------------------------

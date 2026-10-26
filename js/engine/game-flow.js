@@ -51,6 +51,10 @@ EventiDuello.ascolta('annuncio-fase', showPhaseAnnouncement);
 EventiDuello.ascolta('annuncio-turno', showEpicSlamAnnouncement);
 EventiDuello.ascolta('orologio', () => updateDuelTimer());
 EventiDuello.ascolta('pescata-da-effetto', animateEffectDraw);
+// Il Deck rimescolato da un effetto: dopo mezzo secondo, quando le carte che ci tornano dentro sono arrivate (solo WebGL).
+EventiDuello.ascolta('mazzo-rimescolato', (owner) => {
+    setTimeout(() => { if (window.FX && typeof FX.playDeckShuffle === 'function') FX.playDeckShuffle(owner); }, 500);
+});
 EventiDuello.ascolta('attesa-decisione-remota', mostraAttesaDecisioneRemota);
 EventiDuello.ascolta('effetto-battaglia', showBattleEffect);
 EventiDuello.ascolta('danno-fluttuante', showFloatingDamage);

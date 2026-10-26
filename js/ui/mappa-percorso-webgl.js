@@ -34,6 +34,7 @@ precision mediump float;
 #endif
 varying vec2 vUv; varying vec2 vInfo;
 uniform float uT;
+uniform float uStart;   // istante (s) in cui parte la celebrazione di una tappa appena completata
 void main(){
   float kind=vInfo.y; vec3 col=vec3(0.); float a=0.;
   if(kind<1.5){
@@ -56,6 +57,46 @@ void main(){
       float cometa=exp(-q*8.)*smoothstep(0.,.14,q);
       a=(core*.55+glow*.18+cometa*(core*1.5+glow*.8))*ends;
       col=mix(vec3(1.,.55,.2),vec3(1.,.97,.8),cometa);
+    }
+  } else if(kind>2.5){
+    // CELEBRAZIONE di una tappa appena completata. tt = secondi dall'inizio (uStart): prima non si vede niente.
+    float tt=uT-uStart;
+    if(tt>0.){
+      if(kind<3.5){
+        // 3: sul nodo: lampo, due onde che si allargano e scintille che schizzano a raggiera e si spengono
+        float r=length(vUv);
+        float vita=clamp(tt/1.5,0.,1.);
+        float lampo=exp(-r*r*26.)*(1.-smoothstep(0.,.35,tt))*1.3;
+        float on1=exp(-pow((r-tt*.55)*13.,2.))*(1.-vita);
+        float on2=exp(-pow((r-max(tt-.22,0.)*.5)*13.,2.))*(1.-vita)*step(.22,tt);
+        float sc=0.;
+        for(int i=0;i<18;i++){
+          float fi=float(i);
+          float ang=fi*2.399963+fract(sin(fi*12.9898)*43758.5453)*.8;
+          float vel=.34+fract(sin(fi*78.233)*12543.17)*.5;
+          float dist=vel*(1.-exp(-tt*2.6));
+          vec2 pos=vec2(cos(ang),sin(ang))*dist;
+          float d=length(vUv-pos);
+          float vivo=(1.-smoothstep(.55,1.25,tt))*(.65+.35*sin(tt*28.+fi*3.1));
+          sc+=exp(-d*d*1400.)*vivo;
+        }
+        float lim=smoothstep(1.,.85,r);
+        a=(lampo+(on1+on2)*.7+sc*1.2)*lim;
+        col=mix(vec3(1.,.8,.35),vec3(1.,.97,.85),clamp(lampo+sc*.5,0.,1.));
+      } else {
+        // 4: sul sentiero che porta al nodo: un'onda dorata corre dalla tappa precedente a questa
+        float y=vUv.y; float x=vUv.x;
+        float lato=smoothstep(1.,.62,abs(y));
+        float core=exp(-y*y*14.); float glow=exp(-y*y*3.)*lato;
+        float testa=1.-exp(-tt*3.2);
+        float q=testa-x;
+        // Il fronte e' MORBIDO (si accende in un 6% della tratta): con un taglio netto la testa dell'onda, col profilo a campana
+        // della luce, si leggeva come una punta di freccia.
+        float coda=exp(-max(q,0.)*14.)*smoothstep(-.06,.0,q);
+        float fine=1.-smoothstep(.9,1.4,tt);
+        a=(core*1.3+glow*.5)*coda*fine;
+        col=mix(vec3(1.,.8,.4),vec3(1.,.98,.88),coda);
+      }
     }
   } else {
     // faro: nucleo che respira e due onde sfasate che si allargano e svaniscono
@@ -93,12 +134,14 @@ void main(){
         if (window.MAPPA_PERCORSO_WEBGL_OFF || menoMovimento()) return null;
         if (!(window.VideoQuality && typeof window.VideoQuality.isAlti === 'function' && window.VideoQuality.isAlti())) return null;
         const L = op.larghezza; const H = op.altezza;
-        if (!L || !H || (!op.tratte.length && !op.corrente)) return null;
+        const celebrazioni = Array.isArray(op.celebrazioni) ? op.celebrazioni : [];
+        if (!L || !H || (!op.tratte.length && !op.corrente && !celebrazioni.length)) return null;
         let canvas; let gl; let rid = 0;
         try {
             canvas = document.createElement('canvas');
             canvas.className = 'nm-percorso-gl';
             canvas.setAttribute('aria-hidden', 'true');
+            canvas.dataset.celebrazioni = String(celebrazioni.length); // quante tappe appena completate sta festeggiando (lo leggono i test)
             canvas.style.cssText = 'position:absolute;left:0;top:0;width:' + L + 'px;height:' + H + 'px;pointer-events:none;';
             // La risoluzione segue la densita' di pixel dello schermo (prima era al piu' 1 pixel per px CSS, quindi su un
             // telefono a 2-3x la luce veniva ingrandita e si vedeva a gradini), ma con un tetto sul totale dei pixel:
@@ -130,15 +173,31 @@ void main(){
                 const R = 120; const c = op.corrente;
                 quad([c.x - R, c.y - R], [c.x + R, c.y - R], [c.x + R, c.y + R], [c.x - R, c.y + R], [-1, -1], [1, -1], [1, 1], [-1, 1], [R, 2]);
             }
+            // Celebrazione delle tappe appena completate: PER ULTIME, cosi' dopo qualche secondo si smette di disegnarle (si taglia il conteggio).
+            const n0 = v.length / 6;
+            celebrazioni.forEach((c) => {
+                const dx = c.x2 - c.x1; const dy = c.y2 - c.y1; const len = Math.hypot(dx, dy);
+                if (len >= 4) {
+                    const nx = -dy / len; const ny = dx / len; const w = 28;
+                    quad([c.x1 + nx * w, c.y1 + ny * w], [c.x2 + nx * w, c.y2 + ny * w], [c.x2 - nx * w, c.y2 - ny * w], [c.x1 - nx * w, c.y1 - ny * w],
+                        [0, 1], [1, 1], [1, -1], [0, -1], [len, 4]);
+                }
+                const R = 170;
+                quad([c.x2 - R, c.y2 - R], [c.x2 + R, c.y2 - R], [c.x2 + R, c.y2 + R], [c.x2 - R, c.y2 + R], [-1, -1], [1, -1], [1, 1], [-1, 1], [R, 3]);
+            });
             const dati = new Float32Array(v);
             const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, dati, gl.STATIC_DRAW);
             const attr = (nome, n, off) => { const l = gl.getAttribLocation(prog, nome); gl.enableVertexAttribArray(l); gl.vertexAttribPointer(l, n, gl.FLOAT, false, 24, off); };
             attr('aPos', 2, 0); attr('aUv', 2, 8); attr('aInfo', 2, 16);
             gl.uniform2f(gl.getUniformLocation(prog, 'uWorld'), L, H);
             const uT = gl.getUniformLocation(prog, 'uT');
+            const uStart = gl.getUniformLocation(prog, 'uStart');
+            // La celebrazione parte un istante dopo la comparsa della mappa e dura meno di 2,5 s: poi si smette di disegnarla.
+            const INIZIO_CELEBRAZIONE = 0.4; const FINE_CELEBRAZIONE = 3.2;
+            gl.uniform1f(uStart, INIZIO_CELEBRAZIONE);
             gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
             gl.viewport(0, 0, canvas.width, canvas.height);
-            const n = dati.length / 6;
+            const nTutti = dati.length / 6;
             const t0 = performance.now();
             const ciclo = (ora) => {
                 // Rilasciata appena la mappa viene ridisegnata (il suo contenitore svuotato): i contesti sono pochi.
@@ -148,8 +207,9 @@ void main(){
                 }
                 if (!document.hidden) {
                     gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
-                    gl.uniform1f(uT, (ora - t0) / 1000);
-                    gl.drawArrays(gl.TRIANGLES, 0, n);
+                    const sec = (ora - t0) / 1000;
+                    gl.uniform1f(uT, sec);
+                    gl.drawArrays(gl.TRIANGLES, 0, sec < FINE_CELEBRAZIONE ? nTutti : n0);
                 }
                 rid = requestAnimationFrame(ciclo);
             };
