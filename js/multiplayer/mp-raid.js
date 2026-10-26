@@ -70,9 +70,10 @@
     function ricevi(azione) {
         if (azione.tipo === 'fuori') { compagnoFuori = true; return; }
         if (azione.tipo === 'ripeti') { ultimoInviato = null; return; }
-        if (azione.tipo !== 'colpo' || !Number.isFinite(azione.inflitti)) return;
-        // Si somma a quanto il compagno aveva gia' fatto: un totale piu' vecchio non fa mai risalire il Boss oltre il giusto.
-        const nuovo = azione.inflitti;
+        if (azione.tipo !== 'colpo' || !Number.isInteger(azione.inflitti)) return;
+        // Il compagno e' un'altra persona (e un altro client): un totale assurdo non deve poter azzerare o curare il Boss
+        // oltre la barra. Si tiene tra 0 e la barra intera; il resto e' danno possibile e quindi accettato.
+        const nuovo = Math.max(0, Math.min(lp, azione.inflitti));
         if (nuovo === compagno) return;
         const delta = nuovo - compagno;
         compagno = nuovo;

@@ -62,6 +62,13 @@ module.exports = {
             await host.waitForFunction(() => gameState.botLP === 11000, null, { timeout: 10000 });
             await new Promise((r) => setTimeout(r, 1500));
             assert((await lp(host)) === 11000 && (await lp(ospite)) === 11000, `Barra comune uguale: ${await lp(host)} / ${await lp(ospite)}`);
+            // Un compagno scorretto (totale enorme, negativo, non intero) non azzera ne' cura il Boss oltre la barra.
+            await ospite.evaluate(() => { MpRaid.ricevi({ kind: 'raid', tipo: 'colpo', inflitti: -5000 }); MpRaid.ricevi({ kind: 'raid', tipo: 'colpo', inflitti: 1.5 }); });
+            const dopoNegativo = await ospite.evaluate(() => gameState.botLP);
+            assert(dopoNegativo <= 16000 && dopoNegativo >= 0, `Totale negativo ignorato oltre la barra: ${dopoNegativo}`);
+            await ospite.evaluate(() => MpRaid.ricevi({ kind: 'raid', tipo: 'colpo', inflitti: 99999999 }));
+            const dopoEnorme = await ospite.evaluate(() => gameState.botLP);
+            assert(dopoEnorme >= 0 && dopoEnorme <= 16000, `Totale enorme contenuto nella barra: ${dopoEnorme}`);
             assert(errori.length === 0, `Errori di pagina: ${errori.join(' | ')}`);        } finally {
             await context.close();
             await room.close();

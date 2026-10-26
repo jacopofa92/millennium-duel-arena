@@ -1158,7 +1158,7 @@
         };
         contoAllaRovescia(config, () => {
             // Raid: nessuna morra, ognuno gioca il suo duello contro il Boss.
-            if (config.raid) { startMultiplayerDuel(true, config); return; }
+            if (config.raid && bossPerId(config.raid)) { startMultiplayerDuel(true, config); return; }
             morraCinese(youStart).then((chiInizia) => {
                 startMultiplayerDuel(chiInizia === 'player', config);
             });
@@ -1302,7 +1302,7 @@
         params.set('field', config.field);
         params.set('music', config.music);
         // Raid: il Boss e' un Duellante in Duello Libero, a Difficile. Fuori dal Raid questi parametri non ci sono.
-        if (config.raid) { params.set('mode', 'free'); params.set('character', config.raid); params.set('difficulty', 'Difficile'); }
+        if (config.raid && bossPerId(config.raid)) { params.set('mode', 'free'); params.set('character', config.raid); params.set('difficulty', 'Difficile'); }
         else { params.delete('mode'); params.delete('character'); params.delete('difficulty'); }
         // Stesso parametro del Duello Libero: js/duel-session.js lo legge
         // come `allowedOrigin` e BLOCCA davvero un mazzo che non lo
@@ -1310,7 +1310,7 @@
         // regola condivisa — limite dichiarato: se il mazzo dell'ospite
         // non è ammesso se ne accorge solo qui, a stanza già formata.
         // A specchio il mazzo è quello del catalogo, uguale per tutti: la regola sulle carte ammesse non si applica.
-        if (config.origin && !config.specchio && !config.raid) params.set('origin', config.origin); else params.delete('origin');
+        if (config.origin && !config.specchio && !(config.raid && bossPerId(config.raid))) params.set('origin', config.origin); else params.delete('origin');
         // Le due pedine: la mia e quella dell'avversario. js/duel-session.js le legge solo in Multiplayer
         // (resolvePlayer/resolveOpponent) e le cerca nell'elenco dei personaggi.
         params.set('pedina', MpPedina.scelta().id);
