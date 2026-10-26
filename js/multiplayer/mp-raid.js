@@ -24,6 +24,7 @@
     let fuoriInviato = false;
     let timer = null;
     let barra = null;
+    let totaleInAttesa = null;
 
     function formato(n) { return Math.max(0, Math.round(n)).toLocaleString('it-IT'); }
 
@@ -71,6 +72,9 @@
         if (azione.tipo === 'fuori') { compagnoFuori = true; return; }
         if (azione.tipo === 'ripeti') { ultimoInviato = null; return; }
         if (azione.tipo !== 'colpo' || !Number.isInteger(azione.inflitti)) return;
+        // Il compagno puo' partire prima di me: la barra qui non e' ancora nota e il totale non si puo' contenere.
+        // Si tiene da parte e si applica all'avvio (altrimenti, se poi non colpisce piu', andrebbe perso).
+        if (!lp) { totaleInAttesa = azione.inflitti; return; }
         // Il compagno e' un'altra persona (e un altro client): un totale assurdo non deve poter azzerare o curare il Boss
         // oltre la barra. Si tiene tra 0 e la barra intera; il resto e' danno possibile e quindi accettato.
         const nuovo = Math.max(0, Math.min(lp, azione.inflitti));
@@ -88,6 +92,7 @@
         rete = net;
         lp = boss.lp;
         const nome = boss.nome || 'Boss';
+        if (totaleInAttesa !== null) { const t = totaleInAttesa; totaleInAttesa = null; ricevi({ kind: 'raid', tipo: 'colpo', inflitti: t }); }
         if (timer) clearInterval(timer);
         timer = setInterval(() => tick(nome), PASSO_MS);
     }
