@@ -111,7 +111,18 @@ module.exports = {
             await ospite.evaluate(() => MpRaid.ricevi({ kind: 'raid', tipo: 'colpo', inflitti: 99999999 }));
             const dopoEnorme = await ospite.evaluate(() => gameState.botLP);
             assert(dopoEnorme >= 0 && dopoEnorme <= 16000, `Totale enorme contenuto nella barra: ${dopoEnorme}`);
-            assert(errori.length === 0, `Errori di pagina: ${errori.join(' | ')}`);        } finally {
+            // PREMIO: la vittoria del Raid paga 500 Crediti e 2 Stelle dell'Esagono (e non il premio di un Duello Libero).
+            const prima = await host.evaluate(() => { const c = SaveManager.getCurrency(); return { crediti: c.credits, stelle: c.starChips }; });
+            await host.evaluate(() => { gameState.botLP = 0; if (typeof updateUI === 'function') updateUI(); });
+            await host.waitForSelector('#duelOutcomeOverlay', { timeout: 30000 });
+            const dopo = await host.evaluate(() => { const c = SaveManager.getCurrency(); return { crediti: c.credits, stelle: c.starChips, testo: document.getElementById('duelOutcomeOverlay').textContent }; });
+            // Altre cose possono pagare nello stesso momento (Sfide e missioni completate dalla vittoria): qui si controlla che
+            // il premio del Raid ci sia, intero, e che sia spiegato; non che sia l'unico accredito.
+            assert(dopo.crediti - prima.crediti >= 500, `Il Raid paga almeno 500 crediti: ${prima.crediti} -> ${dopo.crediti}`);
+            assert(dopo.stelle - prima.stelle >= 2, `Il Raid paga almeno 2 Stelle dell'Esagono: ${prima.stelle} -> ${dopo.stelle}`);
+            const righe = (dopo.testo.match(/Raid cooperativo vinto/g) || []).length;
+            assert(righe === 2, `La schermata finale mostra le due voci (crediti e Stelle) col loro motivo: ${righe}`);
+            assert(!/Premio di partecipazione|Prima vittoria di oggi/.test(dopo.testo), 'Il premio di un Duello Libero normale non si somma a quello del Raid');            assert(errori.length === 0, `Errori di pagina: ${errori.join(' | ')}`);        } finally {
             await context.close();
             await room.close();
             await statics.close();

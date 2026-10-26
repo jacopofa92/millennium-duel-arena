@@ -854,7 +854,11 @@
         // js/economy/rewards.js: qui si chiama e si passa il risultato alla
         // schermata, che mostra ogni voce CON la sua spiegazione.
         let rewards = [];
-        if (window.Rewards) {
+        if (window.Rewards && window.MP_RAID && playerWon === true && !abbandono && typeof Rewards.forRaid === 'function') {
+            // Raid cooperativo (Multiplayer, js/multiplayer/mp-raid.js): la vittoria paga il premio del Raid, non quello di un
+            // Duello Libero. Una sconfitta o un abbandono restano quelli di sempre, qui sotto.
+            rewards = Rewards.forRaid({ bossNome: (session.opponent && session.opponent.name) || '' });
+        } else if (window.Rewards) {
             rewards = Rewards.forDuel({
                 won: playerWon === true,
                 difficulty: session.difficulty,

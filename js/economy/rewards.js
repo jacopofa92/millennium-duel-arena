@@ -475,6 +475,28 @@
         return rewards;
     }
 
+    /** Premio del Raid cooperativo (Multiplayer, "Assalto al Boss"), per chi ha il Boss a zero con la sua barra (richiesta dell'utente). */
+    const CREDITI_RAID = 500;
+    const STELLE_RAID = 2;
+
+    /**
+     * Premio per il Raid VINTO: sostituisce quello di un Duello Libero normale (che e' pensato per un duello 1 contro 1 e
+     * non e' il motivo per cui si fa un Raid). Paga chi e' ancora in piedi quando la barra comune arriva a zero; chi era
+     * gia' a terra ha perso il suo duello e non prende nulla (come un duello perso). Un abbandono non paga: vale come ovunque.
+     * Accredita e torna le voci, ciascuna con la sua spiegazione.
+     */
+    function forRaid(opts) {
+        const rewards = [];
+        if (!window.SaveManager) return rewards;
+        const o = opts || {};
+        const spiegazione = `Raid cooperativo vinto${o.bossNome ? ': ' + o.bossNome : ''}`;
+        SaveManager.addCurrency('credits', CREDITI_RAID);
+        rewards.push(voce('credits', CREDITI_RAID, spiegazione));
+        SaveManager.addCurrency('starChips', STELLE_RAID);
+        rewards.push(voce('starChips', STELLE_RAID, spiegazione));
+        return rewards;
+    }
+
     /**
      * Premio per una Sfida appena COMPLETATA (js/data/challenges-db.js,
      * campo `reward` — lì c'è anche la nota su come sono tarati i numeri).
@@ -612,6 +634,9 @@
         forChallenge: forChallenge,
         forStoryCampaign: forStoryCampaign,
         forStoryArc: forStoryArc,
+        forRaid: forRaid,
+        CREDITI_RAID: CREDITI_RAID,
+        STELLE_RAID: STELLE_RAID,
         STELLE_PER_ARCO_STORIA: STELLE_PER_ARCO_STORIA,
         CREDITI_PER_ARCO_STORIA: CREDITI_PER_ARCO_STORIA,
         previewChallenge: previewChallenge,
