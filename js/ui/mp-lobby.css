@@ -1099,3 +1099,13 @@ body.mp-in-duello {
 }
 .mp-specchio-mazzo:disabled { opacity: 0.7; }
 .mp-specchio-mazzo[hidden] { display: none; }
+/* Raid cooperativo: la barra comune dei Life Point del Boss, in cima all'arena (js/multiplayer/mp-raid.js). */
+#mpRaidBar {
+    position: fixed; top: 6px; left: 50%; transform: translateX(-50%); z-index: 10090;
+    width: min(46vw, 420px); pointer-events: none; text-align: center;
+    color: #fff; text-shadow: 0 1px 3px rgba(0, 0, 0, .9);
+}
+#mpRaidBar .mpr-nome { font-weight: 800; font-size: clamp(11px, 1.6vw, 15px); letter-spacing: .04em; }
+#mpRaidBar .mpr-pista { height: 8px; margin: 2px 0; border-radius: 4px; background: rgba(0, 0, 0, .6); border: 1px solid rgba(255, 215, 120, .55); overflow: hidden; }
+#mpRaidBar .mpr-riempi { height: 100%; background: linear-gradient(90deg, #c0392b, #f39c12); transition: width .5s ease-out; }
+#mpRaidBar .mpr-dettaglio { font-size: clamp(9px, 1.2vw, 11px); opacity: .85; }

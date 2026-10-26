@@ -71,6 +71,8 @@
             if (a.origin !== undefined && !testo(a.origin)) return 'origine non valida';
             // Duello a specchio: id del mazzo che giocano ENTRAMBI (facoltativo, un client vecchio non lo manda).
             if (a.specchio !== undefined && !testo(a.specchio)) return 'mazzo a specchio non valido';
+            // Raid cooperativo: id del Boss (facoltativo, esclusivo con lo specchio).
+            if (a.raid !== undefined && !testo(a.raid)) return 'boss del raid non valido';
             return null;
         },
         'ready': (a) => {
@@ -102,6 +104,12 @@
             return null;
         },
         'passo-riprendi': (a) => (intero(a.ultimo) && a.ultimo >= 0 ? null : 'ultimo messaggio non valido'),
+        // Raid cooperativo: colpo porta il TOTALE di danno inflitto al Boss da chi manda; uori = a terra.
+        'raid': (a) => {
+            if (a.tipo === 'fuori' || a.tipo === 'ripeti') return null;
+            if (a.tipo !== 'colpo') return 'tipo di messaggio del raid sconosciuto';
+            return intero(a.inflitti) && a.inflitti > -1000000 && a.inflitti < 1000000 ? null : 'danno non valido';
+        },
         'game-over': (a) => (typeof a.opponentWon === 'boolean' || a.opponentWon === 'draw' ? null : 'esito non valido')
     };
 

@@ -249,6 +249,20 @@
                         <select class="mp-specchio-mazzo" id="mpSpecchioMazzo" hidden aria-label="Mazzo del duello a specchio"></select>
                     </div>
 
+                    <!-- Raid cooperativo: regola della stanza, come lo specchio (e alternativa ad esso). Ognuno duella
+                         da solo contro lo stesso Boss, i Life Point del Boss sono UNA barra comune (js/multiplayer/mp-raid.js). -->
+                    <div class="mp-setup" id="mpRaidGroup">
+                        <div class="mp-setup-head">
+                            <span class="mp-setup-title">Raid cooperativo</span>
+                            <span class="mp-setup-note" id="mpRaidNote">Spento: duello uno contro uno</span>
+                        </div>
+                        <label class="mp-specchio-riga">
+                            <input type="checkbox" id="mpRaidOn">
+                            <span>Affrontate insieme un Boss</span>
+                        </label>
+                        <select class="mp-specchio-mazzo" id="mpRaidBoss" hidden aria-label="Boss del raid"></select>
+                    </div>
+
                     <div class="mp-own" id="mpDeckGroup">
                         <div class="mp-setup-head">
                             <span class="mp-setup-title">Il tuo mazzo</span>
@@ -342,6 +356,8 @@
 <script src="js/ui/duel-rps.js"></script>
 <script src="js/multiplayer/protocollo-mp.js"></script>
 <script src="js/multiplayer/network.js"></script>
+<script src="js/data/raid-db.js"></script>
+<script src="js/multiplayer/mp-raid.js"></script>
 <script src="js/multiplayer/mp-passo-comune.js"></script>
 <script src="js/data/character-unlocks.js"></script>
 <script src="js/multiplayer/mp-pedina.js"></script>
