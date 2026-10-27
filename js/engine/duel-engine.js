@@ -4654,7 +4654,11 @@
         let candidates = [
             ...findMonsterQuickEffectCandidates(responderOwner, usati),
             ...findSpellTrapQuickEffectCandidates(responderOwner, usati),
-            ...findHandQuickEffectCandidates(responderOwner, usati)
+            ...findHandQuickEffectCandidates(responderOwner, usati),
+            // Magie Rapide Set: la finestra e' del giocatore che NON e' di turno,
+            // quindi qui compaiono solo con l'opzione "Magie Rapide nel turno
+            // dell'avversario" accesa (vedi findQuickPlaySpellCandidates).
+            ...findQuickPlaySpellCandidates(responderOwner, usati)
         ];
         // Il bot, in una finestra a vuoto, usa solo gli Effetti Veloci che
         // lo dichiarano utili in quel momento (`def.botInFinestraDiPriorita`,

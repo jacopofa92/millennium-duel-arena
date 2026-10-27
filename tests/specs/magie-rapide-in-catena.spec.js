@@ -73,6 +73,18 @@ module.exports = {
         t.assert((await cand('player')).length === 0, 'Con una Trappola Contatore in cima nessuna Rapida risponde');
         await t.evaluate(() => { gameState.chain = { links: [], active: false }; });
 
+        // 6b) Finestra di priorita' a vuoto nel turno avversario: spenta = passa subito, accesa = si apre
+        await t.evaluate(() => { gameState.currentPlayer = 'bot'; gameState.quickEffectsDeclined = null; });
+        const spenta = await t.evaluate(() => { window.__pf = false; DuelEngine.openPriorityWindow('player', 'end', () => { window.__pf = true; }); return window.__pf; });
+        t.assert(spenta === true, 'Opzione spenta: la finestra a vuoto passa subito');
+        await t.evaluate(() => SaveManager.setSetting('magieRapideTurnoAvversario', true));
+        const accesa = await t.evaluate(() => { window.__pf = false; DuelEngine.openPriorityWindow('player', 'end', () => { window.__pf = true; }); return { fatta: window.__pf, aperta: DuelEngine.isPriorityWindowOpen() }; });
+        t.assert(!accesa.fatta && accesa.aperta, 'Opzione accesa: la finestra a vuoto offre la Rapida Set');
+        await t.page.waitForFunction(() => document.getElementById('activateModal').classList.contains('open'), null, { timeout: 20000 });
+        await t.evaluate(() => { document.getElementById('activateModal').classList.remove('open'); });
+        await t.page.waitForFunction(() => !DuelEngine.isPriorityWindowOpen(), null, { timeout: 20000 }).catch(() => {});
+        await t.evaluate(() => { gameState.currentPlayer = 'player'; SaveManager.setSetting('magieRapideTurnoAvversario', false); gameState.chain = { links: [], active: false }; });
+
         // 7) Catena vera: il bot attiva una Magia, la Rapida Set del giocatore e' offerta
         await t.evaluate(() => {
             window.__catenaFinita = false;
