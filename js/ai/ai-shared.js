@@ -639,16 +639,31 @@
      * Una Magia/Trappola il cui effetto e' SOLO una Special Summon (Mostro Resuscitato, Carica Anime,
      * Richiamo del Posseduto...) con la zona Mostri piena non fa niente: la carta si consuma lo stesso.
      * Segnalato giocando: il bot con 5 mostri attivava Mostro Resuscitato. Il riconoscimento e' sul testo
-     * (vale anche per carte future) ed e' volutamente prudente: non vieta se il testo ha anche altro da
-     * fare (distruggere, pescare, cercare...) o libera una casella (Sacrifica, Tributa, bandisci, Fusione,
-     * "distrutto"), ne' per le carte Continue/Terreno/Equip, che non cercano una casella.
+     * (vale anche per carte future). Conta solo una Special Summon ATTIVA ("...: Special Summon X",
+     * "Evocalo Specialmente", "puoi Special Summonare"), non una che la carta subisce o osserva ("quando
+     * un mostro viene Special Summonato", Santuario...). Include Continue ed Equip che evocano
+     * all'attivazione (Richiamo del Posseduto, Sepoltura Prematura). E' prudente nell'altra direzione:
+     * non vieta se la carta libera una casella (Sacrifica, Tributa, Rituale, Fusione, distruggi) o
+     * decide a caso/dichiara, e non tocca le Magie Terreno.
      */
     function haSpazioPerEvocare(card, io, def) {
         if (!card || (card.type !== 'spell' && card.type !== 'trap')) return true;
-        if (card.subtype === 'continuous' || card.subtype === 'field' || card.subtype === 'equip' || (def && (def.continuous || def.isEquip))) return true;
-        const testo = card.effect || '';
-        if (!/Special Summon|Evoca Specialmente/i.test(testo)) return true;
-        if (/sacrific|tribut|bandisc|rilascia|fusione|distrug|distrutt|annull|nega|pesca|aggiung|cerca|infligg|danni|Equipaggia|rimand|lancia un dado|dichiara|Terreno del tuo avversario/i.test(testo)) return true;
+        if (card.subtype === 'field' || card.subtype === 'ritual' || card.subtype === 'counter') return true;
+        // Le frasi di divieto ("Non possono essere Sacrificate/Tributate...") non liberano nessuna casella.
+        // Le clausole sul destino della carta stessa ("Quando questa carta lascia il Terreno, distruggi...",
+        // "Annulla questa carta se...") non liberano nessuna casella al momento dell'attivazione.
+        const testo = (card.effect || '')
+            .replace(/\bNon (?:possono|può|puo')[^.]*\./gi, ' ')
+            .replace(/[^.]*\b(?:Quando|Se) questa carta[^.]*\./gi, ' ')
+            .replace(/[^.]*\bAnnulla\b[^.]*\./gi, ' ');
+        // Una Continua/Equip evoca all'attivazione solo se il testo lo dice ("Attiva questa carta ...");
+        // altrimenti e' un'abilita' che usera' dopo, a carta gia' piazzata (Richiamo della Mummia, Vera Luce).
+        const duraturaConAbilita = (card.subtype === 'continuous' || card.subtype === 'equip' || (def && (def.continuous || def.isEquip)))
+            && (!/\bAttiv(?:a|ala)\b/i.test(testo) || /Una volta per turno/i.test(testo));
+        if (duraturaConAbilita) return true;
+        const evocaAttivamente = /(?:^|[:;.]\s*|\bpoi\s+|\bpuoi\s+|\bse lo fai,?\s*)(?:Special Summon\w*|Evoc\w*\s+Specialmente)/i;
+        if (!evocaAttivamente.test(testo)) return true;
+        if (/sacrific|tribut|rilascia|fusione|distrug|distrutt|\bPesca\b|lancia un dado|dichiara|Terreno del tuo avversario/i.test(testo)) return true;
         return Tavolo.mostri(io, gameState).some((slot) => slot === null);
     }
 
