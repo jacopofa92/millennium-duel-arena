@@ -4327,6 +4327,11 @@
         continuous: true,
         repeatableWhileContinuous: true,
         canActivate(ctx) {
+            // L'attivazione della Trappola (da coperta a scoperta) non richiede nessun effetto: serve anche solo a
+            // tenerla in campo per la protezione dei Draghi Bianchi. Prima, senza un Drago in mano/Cimitero e senza
+            // una Magia/Trappola da Posizionare, la carta non si poteva attivare affatto.
+            const slotSua = ctx.zone === 'st' ? ctx.stField(ctx.owner)[ctx.index] : null;
+            if (slotSua && slotSua.card === ctx.card && slotSua.isFaceDown) return true;
             if (ctx.hasUsedOncePerTurn(`true-light:${ctx.owner}`)) return false;
             const deck = Tavolo.mazzo(ctx.owner) || [];
             const canSummon = ctx.findEmptyMonsterSlot(ctx.owner) !== -1
@@ -4350,6 +4355,11 @@
             const setCandidates = deck.filter((c) => (c.type === 'spell' || c.type === 'trap')
                 && cardMentionsName(c, 'Drago Bianco Occhi Blu') && !occupiedNames.has(c.name));
             const canSet = DuelEngine.findFreeSTSlot(ctx.owner) !== -1 && setCandidates.length > 0;
+            // Attivata solo per piazzarla (nessuno dei due effetti disponibile, o gia' usato oggi): niente da risolvere.
+            if ((!canSummon && !canSet) || ctx.hasUsedOncePerTurn(`true-light:${ctx.owner}`)) {
+                ctx.log(`${ctx.card.name} resta in campo: protegge i Draghi Bianchi Occhi Blu.`);
+                return;
+            }
             const resolve = (choice) => {
                 ctx.markUsedOncePerTurn(`true-light:${ctx.owner}`);
                 if (choice === 'set') {

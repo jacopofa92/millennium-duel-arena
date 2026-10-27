@@ -5100,9 +5100,9 @@
                 left: var(--psb-left, 72vw);
                 top: 50%;
                 transform: translateY(-50%);
-                /* SOPRA A TUTTO il campo (ologrammi z 30, riscontri 10040, Catena 10086, barra del Raid 10090) e sotto i soli modali
-                   (100000): il tondo e il suo menu sono comandi e non devono mai finire dietro a un effetto. */
-                z-index: 10095;
+                /* SOPRA il campo e i suoi effetti (ologrammi z 30, riscontri 10040, FX delle carte fino a 10065) ma SOTTO i messaggi
+                   a tutto schermo: annuncio del turno (#battleStartOverlay 10070), grido di Evocazione (10075), Catena (10086), modali. */
+                z-index: 10066;
                 width: 50px;
                 height: 50px;
                 padding: 0;
@@ -5128,7 +5128,7 @@
                 left: var(--psb-menu-left, 78vw);
                 top: 50%;
                 transform: translateY(-50%);
-                z-index: 10096;
+                z-index: 10067;
                 flex-direction: column;
                 gap: 5px;
             }

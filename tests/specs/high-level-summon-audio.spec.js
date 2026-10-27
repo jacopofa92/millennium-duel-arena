@@ -15,12 +15,17 @@ module.exports = {
             FX.playMonsterSummonEffect(card, cardEl);
             await new Promise((resolve) => setTimeout(resolve, 30));
             const withoutVideo = calls;
+            FX.azzeraCodaEvocazioni();
 
             calls = 0;
             VisualEffects.getVideoFor = () => Promise.resolve('video/evocazioni/test-dedicato.mp4');
             FX.playMonsterSummonEffect(card, cardEl);
             await new Promise((resolve) => setTimeout(resolve, 30));
             const withVideo = calls;
+            // Le cinematiche di Evocazione vanno in coda una alla volta: ogni passo del test parte da coda vuota,
+            // o la richiesta successiva aspetterebbe dietro la scena precedente (convergenza o filmato finto).
+            FX.azzeraCodaEvocazioni();
+            document.querySelectorAll('.fx-video-backdrop').forEach((el) => el.remove());
 
             calls = 0;
             let lookupDisattivato = 0;

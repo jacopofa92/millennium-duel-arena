@@ -115,14 +115,23 @@ module.exports = {
                     return { voci: document.querySelectorAll('#phaseSideMenu button').length, sopra: menu.bottom <= b.top + 1, dentro: menu.top >= 0 && menu.left >= 0 && menu.right <= innerWidth };
                 });
                 assert(m.voci === 6 && m.sopra && m.dentro, `${larghezza}: il menu ha sei voci, sta sopra il tondo e dentro lo schermo: ${JSON.stringify(m)}`);
-                // Il tondo e il suo menu stanno SOPRA a tutto cio' che si disegna sul campo (ologrammi, riscontri, Catena...): erano
-                // a z-index 25/26 e un ologramma (30) li copriva. Solo i modali (100000) li superano.
+                // Il tondo e il suo menu stanno SOPRA il campo (ologrammi, riscontri) ma SOTTO i messaggi a tutto schermo (annuncio del
+                // turno, grido di Evocazione): erano a 25/26 e un ologramma (30) li copriva; poi a 10095 e coprivano i messaggi.
                 const z = await page.evaluate(() => {
                     const val = (el) => { const n = parseInt(getComputedStyle(el).zIndex, 10); return Number.isFinite(n) ? n : 0; };
-                    const campo = ['#monsterHologramLayer', '#duelFeedbackLayer', '#chainStack'].map((s) => document.querySelector(s)).filter(Boolean).map(val);
-                    return { menu: val(document.getElementById('phaseSideMenu')), tondo: val(document.getElementById('phaseSideBtn')), campoMax: Math.max(0, ...campo) };
+                    const campo = ['#monsterHologramLayer', '#duelFeedbackLayer'].map((s) => document.querySelector(s)).filter(Boolean).map(val);
+                    // L'annuncio del turno nasce solo quando serve: ne creo uno a vuoto per leggerne lo z-index dal foglio di stile.
+                    const prova = document.createElement('div');
+                    prova.id = 'battleStartOverlay';
+                    document.body.appendChild(prova);
+                    const annuncio = val(prova);
+                    prova.remove();
+                    return {
+                        menu: val(document.getElementById('phaseSideMenu')), tondo: val(document.getElementById('phaseSideBtn')),
+                        campoMax: Math.max(0, ...campo), annuncio
+                    };
                 });
-                assert(z.menu > z.campoMax && z.tondo > z.campoMax && z.menu < 100000, `${larghezza}: il menu delle fasi sta sopra ologrammi e riscontri ma sotto i modali: ${JSON.stringify(z)}`);
+                assert(z.menu > z.campoMax && z.tondo > z.campoMax && z.menu < z.annuncio && z.annuncio > 0, `${larghezza}: il menu delle fasi sta sopra ologrammi e riscontri ma sotto l'annuncio del turno: ${JSON.stringify(z)}`);
             } finally {
                 await ctx.close();
             }
