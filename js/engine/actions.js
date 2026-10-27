@@ -67,6 +67,8 @@ EventiDuello.ascolta('decisione', (r, rispondi) => {
             // nulla da scegliere e si chiude con "nessuna".
             const apri = () => ui.openCardListPicker(disegnate, {
                 title: r.titolo, text: r.testo, emptyText: r.vuota,
+                // Non annullabile: niente Chiudi e nessun tocco fuori (vedi openCardListPicker).
+                obbligatoria: !annulla,
                 onSelect: (card, i) => rispondi(candidatoDi(card, i)),
                 onCancel: annulla || (disegnate.length === 0 ? () => rispondi(null) : () => setTimeout(apri, 0))
             });
@@ -2237,7 +2239,13 @@ window.DuelEngineUI = {
      * possono Evocare ADESSO in mezzo a tutte quelle che si possiedono,
      * come in Master Duel, invece di un elenco che contiene solo loro.
      */
-    openCardListPicker(cards, { title, text, selectable = true, emptyText, onSelect, onCancel, evocabili } = {}) {
+    /*
+     * `obbligatoria` (true): la scelta fa parte di un effetto gia' attivato e NON si puo' rinunciare (es. "scegli la carta da
+     * scartare come costo"). Il pulsante Chiudi non compare e un tocco fuori dal riquadro non fa nulla: prima Chiudi c'era ma
+     * il riquadro si riapriva subito, e per un attimo si vedeva il campo (il velo spariva e tornava). Con l'elenco vuoto resta
+     * il pulsante, o non ci sarebbe modo di uscire.
+     */
+    openCardListPicker(cards, { title, text, selectable = true, emptyText, onSelect, onCancel, evocabili, obbligatoria = false } = {}) {
         const uidEvocabili = Array.isArray(evocabili) ? new Set(evocabili) : null;
         const modal = document.getElementById('cardListPickerModal');
         const row = document.getElementById('cardListPickerRow');
@@ -2359,11 +2367,15 @@ window.DuelEngineUI = {
         }
 
         modal.classList.add('open');
-        document.getElementById('cardListPickerCloseBtn').onclick = () => {
+        const nonSiEsce = !!obbligatoria && cards.length > 0 && selectable;
+        const chiudiBtn = document.getElementById('cardListPickerCloseBtn');
+        chiudiBtn.style.display = nonSiEsce ? 'none' : '';
+        chiudiBtn.onclick = () => {
             close();
             if (onCancel) onCancel();
         };
         modal.onclick = (event) => {
+            if (nonSiEsce) return;
             if (event.target === modal) {
                 close();
                 if (onCancel) onCancel();

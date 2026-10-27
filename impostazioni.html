@@ -416,6 +416,21 @@
             </div>
         </div>
 
+        <div class="settings-card">
+            <div class="settings-section-title"><span data-icon="rules"></span> Regole di gioco</div>
+            <div class="settings-row">
+                <div>
+                    <div class="settings-row-label">Magie Rapide nel turno dell'avversario</div>
+                    <div class="settings-row-sub">Spento: le Magie Rapide si usano nel tuo turno (dalla mano o già Set), anche in risposta a una catena. Acceso: puoi rispondere con una Magia Rapida Set anche durante il turno dell'avversario, come nelle regole vere, ma ti verrà chiesto più spesso se vuoi rispondere. Una Rapida Set non si attiva nel turno in cui è stata Set.</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="magieRapideToggleInput">
+                    <span class="switch-track"></span>
+                    <span class="switch-thumb"></span>
+                </label>
+            </div>
+        </div>
+
         <div class="settings-more">Altre impostazioni in arrivo.</div>
     </main>
 
@@ -563,6 +578,16 @@
         summonVideosToggle.checked = SaveManager.getSetting('summonVideos') !== false;
         summonVideosToggle.addEventListener('change', () => {
             SaveManager.setSetting('summonVideos', summonVideosToggle.checked);
+            if (window.NativeHaptics) NativeHaptics.light();
+        });
+    }
+
+    // --- Regole di gioco: Magie Rapide nel turno dell'avversario ------
+    const magieRapideToggle = document.getElementById('magieRapideToggleInput');
+    if (magieRapideToggle && window.SaveManager) {
+        magieRapideToggle.checked = SaveManager.getSetting('magieRapideTurnoAvversario') === true;
+        magieRapideToggle.addEventListener('change', () => {
+            SaveManager.setSetting('magieRapideTurnoAvversario', magieRapideToggle.checked);
             if (window.NativeHaptics) NativeHaptics.light();
         });
     }

@@ -4538,6 +4538,61 @@
         return results;
     }
 
+    /**
+     * Magie Rapide (subtype 'quick-play') come RISPOSTA in una Catena.
+     *
+     * Per regola una Magia Rapida ha la velocità 2 di una Trappola: si può
+     * concatenare a una Magia Normale o a un'altra Rapida (una Magia Normale
+     * no, ha velocità 1: per questo le Normali non compaiono mai fra i
+     * candidati). Prima di questa funzione le Rapide non rispondevano mai.
+     *
+     * Dove si può usare, e perché è un'OPZIONE (`magieRapideTurnoAvversario`):
+     *  - dalla MANO solo nel proprio turno (regola vera: nel turno
+     *    dell'avversario una Rapida in mano non si può giocare);
+     *  - da Set solo se non è stata Set in QUESTO turno; nel turno
+     *    dell'avversario solo con l'opzione accesa, perché ogni attivazione
+     *    altrui aprirebbe una domanda in più a chi ne ha una Set. Spenta
+     *    (default) le Rapide Set rispondono solo nel proprio turno.
+     * Mai per l'IA (non sa valutarle: le gioca già dal suo turno) e mai in
+     * Multiplayer (la lista di candidati dipende da un'impostazione locale
+     * e dalla mano, e i due client la devono calcolare uguale).
+     * Una Catena con in cima una Trappola Contatore (velocità 3) non accetta
+     * Magie Rapide.
+     */
+    function findQuickPlaySpellCandidates(owner, usedUids) {
+        if (window.MULTIPLAYER_MODE || !Tavolo.giocaUnaPersona(owner)) return [];
+        const chain = gameState.chain;
+        const top = chain && chain.links && chain.links[chain.links.length - 1];
+        if (top && top.card && top.card.type === 'trap' && top.card.subtype === 'counter') return [];
+        const ownTurn = gameState.currentPlayer === owner;
+        const results = [];
+        const accetta = (card) => !!card && card.type === 'spell' && card.subtype === 'quick-play' && !usedUids.has(card.uid);
+        const defOk = (card) => {
+            const def = getDefinition(card.id);
+            return def && !def.continuous && !def.isEquip && typeof def.activate === 'function' ? def : null;
+        };
+        if (ownTurn) {
+            handOf(owner).forEach((card, index) => {
+                if (!accetta(card)) return;
+                const def = defOk(card);
+                if (!def || !canActivate(owner, 'hand', index)) return;
+                results.push({ zone: 'hand', index: index, card: card, def: def });
+            });
+        }
+        let opzione = false;
+        try { opzione = !!(window.SaveManager && SaveManager.getSetting('magieRapideTurnoAvversario')); } catch (e) { opzione = false; }
+        if (ownTurn || opzione) {
+            stFieldOf(owner).forEach((slot, index) => {
+                if (!slot || slot.isFaceDown === false || !accetta(slot.card)) return;
+                if (slot.setOnTurn === gameState.turn) return;
+                const def = defOk(slot.card);
+                if (!def || !canActivate(owner, 'st', index)) return;
+                results.push({ zone: 'st', index: index, card: slot.card, def: def });
+            });
+        }
+        return results;
+    }
+
     function findSpellTrapQuickEffectCandidates(owner, usedUids) {
         const results = [];
         stFieldOf(owner).forEach((slot, index) => {
@@ -4599,7 +4654,11 @@
         let candidates = [
             ...findMonsterQuickEffectCandidates(responderOwner, usati),
             ...findSpellTrapQuickEffectCandidates(responderOwner, usati),
-            ...findHandQuickEffectCandidates(responderOwner, usati)
+            ...findHandQuickEffectCandidates(responderOwner, usati),
+            // Magie Rapide Set: la finestra e' del giocatore che NON e' di turno,
+            // quindi qui compaiono solo con l'opzione "Magie Rapide nel turno
+            // dell'avversario" accesa (vedi findQuickPlaySpellCandidates).
+            ...findQuickPlaySpellCandidates(responderOwner, usati)
         ];
         // Il bot, in una finestra a vuoto, usa solo gli Effetti Veloci che
         // lo dichiarano utili in quel momento (`def.botInFinestraDiPriorita`,
@@ -4739,7 +4798,8 @@
                 ...findSetTrapCandidates(responderOwner, usedUidsBySide[responderOwner]),
                 ...findMonsterQuickEffectCandidates(responderOwner, usedUidsBySide[responderOwner]),
                 ...findSpellTrapQuickEffectCandidates(responderOwner, usedUidsBySide[responderOwner]),
-                ...findHandQuickEffectCandidates(responderOwner, usedUidsBySide[responderOwner])
+                ...findHandQuickEffectCandidates(responderOwner, usedUidsBySide[responderOwner]),
+                ...findQuickPlaySpellCandidates(responderOwner, usedUidsBySide[responderOwner])
             ];
             // La carta a cui `responderOwner` starebbe rispondendo ORA: il
             // link più in cima allo stack (l'ultima cosa aggiunta alla
@@ -6432,6 +6492,8 @@
         getDamageStepBonus: getDamageStepBonus,
         runBeforeDamageCalculation: runBeforeDamageCalculation,
         openPriorityWindow: openPriorityWindow,
+        findQuickPlaySpellCandidates: findQuickPlaySpellCandidates,
+        openActivationWindow: openActivationWindow,
         isPriorityWindowOpen: isPriorityWindowOpen,
         canSpecialSummonFromHand: canSpecialSummonFromHand,
         trySpecialSummonFromHand: trySpecialSummonFromHand,

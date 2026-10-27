@@ -1632,28 +1632,79 @@
         return FUSION_MATERIAL_EFFECT_MS;
     }
 
+    /**
+     * Le cinematiche di Evocazione vanno UNA ALLA VOLTA. Piu' mostri evocati
+     * insieme o di seguito (due Evocazioni Speciali in una Catena, Fusione +
+     * Evocazione...) facevano partire i filmati/convergenze nello stesso
+     * istante, sovrapposti. Ogni richiesta si mette in coda e parte quando
+     * la precedente ha finito (filmato concluso o durata della convergenza).
+     * Il contatore di "cinematica in corso" (che il ciclo del bot interroga)
+     * si alza SUBITO, alla richiesta, e scende solo a scena finita: nel
+     * tempo d'attesa in coda il bot non deve credere che sia tutto libero.
+     */
+    const codaEvocazioni = [];
+    let evocazioneInCorso = false;
+    let generazioneCoda = 0;
+
+    /**
+     * Butta via la coda e la scena in corso (duello ricominciato, test): le scene
+     * gia' partite finiscono da sole ma non toccano piu' il contatore ne' la coda.
+     */
+    function azzeraCodaEvocazioni() {
+        const daChiudere = codaEvocazioni.length + (evocazioneInCorso ? 1 : 0);
+        codaEvocazioni.length = 0;
+        evocazioneInCorso = false;
+        generazioneCoda++;
+        for (let i = 0; i < daChiudere; i++) endSummonCinematic();
+    }
+
     function playMonsterSummonEffect(card, monsterElement) {
+        if (!card && !monsterElement) return;
+        beginSummonCinematic();
+        codaEvocazioni.push({ card: card, monsterElement: monsterElement });
+        avviaProssimaEvocazione();
+    }
+
+    function avviaProssimaEvocazione() {
+        if (evocazioneInCorso) return;
+        const prossima = codaEvocazioni.shift();
+        if (!prossima) return;
+        evocazioneInCorso = true;
+        let finita = false;
+        const generazione = generazioneCoda;
+        const fine = () => {
+            if (finita) return;
+            finita = true;
+            if (generazione !== generazioneCoda) return; // la coda e' stata azzerata: il contatore e' gia' a posto
+            endSummonCinematic();
+            evocazioneInCorso = false;
+            avviaProssimaEvocazione();
+        };
+        try {
+            eseguiEvocazione(prossima.card, prossima.monsterElement, fine);
+        } catch (e) {
+            console.error('[FX] cinematica di Evocazione:', e);
+            fine();
+        }
+    }
+
+    function eseguiEvocazione(card, monsterElement, fineScena) {
         // Ancora sempre la cinematica alla carta REALE sul Terreno tramite
         // uid. Il nodo ricevuto dal chiamante puo' essere obsoleto dopo un
         // updateUI oppure, nei percorsi bot/multiplayer, risolvere una copia
         // non pertinente: la convergenza di un Livello 7+ finiva cosi'
         // centrata sul ritratto dell'avversario invece che sul mostro.
+        // Qui (al turno in coda, non alla richiesta) cosi' il nodo e' quello di adesso.
         if (card && card.uid && typeof window.findFieldCardElementByUid === 'function') {
             monsterElement = window.findFieldCardElementByUid(card.uid) || monsterElement;
         }
-        if (!monsterElement) return;
+        if (!monsterElement) { fineScena(); return; }
 
-        // Si segna come cinematica in corso SUBITO, prima ancora di sapere
-        // se ce ne sara' davvero una. La ricerca del filmato dedicato e'
-        // ASINCRONA (VisualEffects.getVideoFor), mentre chi deve aspettare
-        // — il ciclo del bot — interroga il flag nell'istante appena dopo
-        // questa chiamata: alzandolo solo dentro il .then() troverebbe
-        // "nessuna cinematica" e tirerebbe dritto proprio sul caso che
-        // doveva attendere. Se poi si scopre che basta il cerchio
-        // generico, lo si riabbassa subito.
-        beginSummonCinematic();
-        let chiusa = false;
-        const chiudi = () => { if (chiusa) return; chiusa = true; endSummonCinematic(); };
+        // Il contatore e' gia' stato alzato alla richiesta (playMonsterSummonEffect):
+        // la ricerca del filmato dedicato e' ASINCRONA (VisualEffects.getVideoFor)
+        // e chi deve aspettare — il ciclo del bot — interroga il flag subito
+        // dopo la chiamata. Se poi basta il cerchio generico, si chiude subito.
+        const chiudi = fineScena;
 
         const fallback = () => {
             const theme = card && (card.level || 0) >= 7 ? ATTRIBUTE_SUMMON_THEMES[card.attribute] : null;
@@ -2787,6 +2838,7 @@
         playElementalConvergence: runElementalConvergence,
         playVideoOverlay,
         playMonsterSummonEffect,
+        azzeraCodaEvocazioni,
         playFusionMaterialEffect: viaBackend('playFusionMaterialEffect', playFusionMaterialEffect),
         /** I temi per Attributo delle Evocazioni di Livello 7+ (colori): li riusa anche la Fusione in WebGL. */
         summonThemes: ATTRIBUTE_SUMMON_THEMES,
