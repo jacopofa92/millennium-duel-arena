@@ -636,6 +636,23 @@
     }
 
     /**
+     * Una Magia/Trappola il cui effetto e' SOLO una Special Summon (Mostro Resuscitato, Carica Anime,
+     * Richiamo del Posseduto...) con la zona Mostri piena non fa niente: la carta si consuma lo stesso.
+     * Segnalato giocando: il bot con 5 mostri attivava Mostro Resuscitato. Il riconoscimento e' sul testo
+     * (vale anche per carte future) ed e' volutamente prudente: non vieta se il testo ha anche altro da
+     * fare (distruggere, pescare, cercare...) o libera una casella (Sacrifica, Tributa, bandisci, Fusione,
+     * "distrutto"), ne' per le carte Continue/Terreno/Equip, che non cercano una casella.
+     */
+    function haSpazioPerEvocare(card, io, def) {
+        if (!card || (card.type !== 'spell' && card.type !== 'trap')) return true;
+        if (card.subtype === 'continuous' || card.subtype === 'field' || card.subtype === 'equip' || (def && (def.continuous || def.isEquip))) return true;
+        const testo = card.effect || '';
+        if (!/Special Summon|Evoca Specialmente/i.test(testo)) return true;
+        if (/sacrific|tribut|bandisc|rilascia|fusione|distrug|distrutt|annull|nega|pesca|aggiung|cerca|infligg|danni|Equipaggia|rimand|lancia un dado|dichiara|Terreno del tuo avversario/i.test(testo)) return true;
+        return Tavolo.mostri(io, gameState).some((slot) => slot === null);
+    }
+
+    /**
      * L'UNICO controllo "ha senso attivarla?" che il bot fa per una Magia/Trappola, sia che la giochi
      * dalla mano o da Settata sia che risponda in Catena:
      *  1) il veto della carta stessa (`def.aiCanActivate(ctx)`, per le carte con un costo o una scelta che
@@ -654,6 +671,7 @@
             if (evento) Object.keys(evento).forEach((k) => { if (!(k in ctx)) ctx[k] = evento[k]; });
             try { if (!def.aiCanActivate(ctx)) return false; } catch (e) { return false; }
         }
+        if (!haSpazioPerEvocare(card, io, def)) return false;
         // Una Trappola che SOLO potenzia un proprio mostro (Rinforzi, Mura del Castello, Risucchio di Energia,
         // le Carte Equipaggiamento-Trappola...) ha senso in battaglia, non in risposta a una Magia qualunque:
         // fuori dalla Battle Phase il bot la sprecava (e spesso il mostro potenziato era proprio quello che
