@@ -37,13 +37,17 @@
         // dettaglio (js/ui/card-renderer.js, CartaViva). Spento, la luce segue
         // il tocco (e a dito alzato si muove piano da sola).
         cardGyro: true,
+        // Regole di gioco: spento (default) le Magie Rapide Set rispondono in
+        // Catena solo nel TUO turno; acceso anche nel turno dell'avversario
+        // (più fedele alle regole, più domande). Vedi findQuickPlaySpellCandidates.
+        magieRapideTurnoAvversario: false,
         musicVolume: 0.55, musicMuted: false,
         sfxVolume: 0.6, sfxMuted: false
     };
     const SETTINGS_CACHE_KEYS = {
         videoDetail: 'ygoVideoDetail', videoDetailScelto: 'ygoVideoDetailScelto',
         summonVideos: 'ygoSummonVideos', hologram: 'ygoHologram', haptics: 'ygoHapticsEnabled',
-        cardGyro: 'ygoGiroscopioCarte',
+        cardGyro: 'ygoGiroscopioCarte', magieRapideTurnoAvversario: 'ygoMagieRapideAvversario',
         musicVolume: 'duelArenaMusicVolume', musicMuted: 'duelArenaMusicMuted',
         sfxVolume: 'duelArenaSfxVolume', sfxMuted: 'duelArenaSfxMuted'
     };
@@ -70,6 +74,8 @@
             if (summonVideos === 'on' || summonVideos === 'off') settings.summonVideos = summonVideos === 'on';
             const giroscopioCarte = localStorage.getItem(SETTINGS_CACHE_KEYS.cardGyro);
             if (giroscopioCarte === 'on' || giroscopioCarte === 'off') settings.cardGyro = giroscopioCarte === 'on';
+            const rapide = localStorage.getItem(SETTINGS_CACHE_KEYS.magieRapideTurnoAvversario);
+            if (rapide === 'on' || rapide === 'off') settings.magieRapideTurnoAvversario = rapide === 'on';
             const haptics = localStorage.getItem(SETTINGS_CACHE_KEYS.haptics);
             if (haptics === '0' || haptics === '1') settings.haptics = haptics === '1';
             ['musicVolume', 'sfxVolume'].forEach((key) => {
@@ -106,6 +112,7 @@
             localStorage.setItem(SETTINGS_CACHE_KEYS.hologram, settings.hologram ? 'on' : 'off');
             localStorage.setItem(SETTINGS_CACHE_KEYS.summonVideos, settings.summonVideos ? 'on' : 'off');
             localStorage.setItem(SETTINGS_CACHE_KEYS.haptics, settings.haptics ? '1' : '0');
+            localStorage.setItem(SETTINGS_CACHE_KEYS.magieRapideTurnoAvversario, settings.magieRapideTurnoAvversario ? 'on' : 'off');
             localStorage.setItem(SETTINGS_CACHE_KEYS.musicVolume, String(settings.musicVolume));
             localStorage.setItem(SETTINGS_CACHE_KEYS.musicMuted, String(settings.musicMuted));
             localStorage.setItem(SETTINGS_CACHE_KEYS.sfxVolume, String(settings.sfxVolume));

@@ -1,0 +1,399 @@
+﻿
+Esecuzione di 378 test da tests/specs/...
+
+  [32m✓[0m Abile Mago Oscuro: Segnalini visibili, massimo 3, scelta della provenienza, azzerati in campo [2m(89ms)[0m
+  [32m✓[0m Acquisizione carte: deck non cumulativi e requisiti composti di Ra [2m(849ms)[0m
+  [32m✓[0m Admin: l'ultimo accesso online dei giocatori e il segnale che lo alimenta [2m(1114ms)[0m
+  [32m✓[0m Stress-test generico: canActivate/activate/static non lanciano eccezioni su nessuna carta del database [2m(3475ms)[0m
+  [32m✓[0m Mappe della Storia: effetti WebGL per ogni mappa, dentro il mondo e sotto i nodi [2m(5806ms)[0m
+  [32m✓[0m Ambiente WebGL: ogni arena compila e parte, firme distinte, ripiego sugli strati DOM [2m(7626ms)[0m
+  [32m✓[0m Drop carta: cerimonia 3D in coda e contenuta su mobile [2m(6959ms)[0m
+  [32m✓[0m Mobile: la morra cede il compositore al campo senza layer concorrenti [2m(7962ms)[0m
+  [32m✓[0m Illustrazioni alternative: catalogo, sblocco dalle Sfide, scelta e scheda della carta [2m(1450ms)[0m
+  [32m✓[0m Ninja d'Assalto: Effetto Veloce risponde anche durante il turno avversario (id 459) [2m(11643ms)[0m
+  [32m✓[0m Ninja d'Assalto non esplode se la fonte lascia il Terreno [2m(3487ms)[0m
+  [32m✓[0m Attacco diretto possibile: bande tenui, aggancio alla mano, attacco al rilascio [2m(5091ms)[0m
+  [32m✓[0m Attacco respinto: barriera esagonale WebGL, luce che parte e poi torna a riposo [2m(9909ms)[0m
+  [32m✓[0m Audio: nell'APK la soundtrack usa il player nativo persistente [2m(191ms)[0m
+  [32m✓[0m Grande Guerra: audio WW1 prioritario con fallback standard [2m(3299ms)[0m
+[1/1] joey/easy... ufficiale 20% | Custom 100%
+[1/1] joey/medium... ufficiale 20% | Custom 100%
+[1/1] joey/hard... ufficiale 60% | Custom 0%
+  [32m✓[0m Audit archetipi classici: Custom separato, identificato e giocabile [2m(1372ms)[0m
+  [32m✓[0m Audit Custom: IA e versione del deck restano variabili indipendenti [2m(104ms)[0m
+  [32m✓[0m Audit backlog: Buco Trappola senza Fondo bandisce (id 128), Gilford il Fulmine richiede 3 Tributi (id 267) [2m(3448ms)[0m
+  [32m✓[0m Audit finale Joey: varianti Occhi Rossi conservano nucleo anime e azzardo [2m(16ms)[0m
+  [32m✓[0m Audit finale Kaiba: varianti moderne conservano Draghi, Obelisk e X/Y/Z [2m(12ms)[0m
+  [32m✓[0m Audit finale Marik: varianti di Ra isolate e deck da 40 carte [2m(13ms)[0m
+  [32m✓[0m Audit finale Pegasus: supporti Toon conservano Abbandonato e Mille Occhi [2m(11ms)[0m
+  [32m✓[0m Audit Strings Hard: varianti isolate e telemetria Slifer [2m(86ms)[0m
+  [32m✓[0m Audit supporti Mago Nero: varianti confrontabili a 40 carte [2m(14ms)[0m
+  [32m✓[0m Audit supporti Occhi Blu: varianti confrontabili a 40 carte [2m(3457ms)[0m
+  [32m✓[0m Audit supporti Occhi Rossi: varianti confrontabili a 40 carte [2m(5ms)[0m
+  [32m✓[0m Audit supporti Toon: varianti confrontabili e identita Pegasus preservata [2m(3503ms)[0m
+  [32m✓[0m Audit varianti Hard: liste sperimentali isolate dal database [2m(233ms)[0m
+  [32m✓[0m Audit finale Yami Yugi: il candidato prudente conserva i nuclei anime [2m(5ms)[0m
+  [32m✓[0m Autowin in Storie e Tornei: solo con interruttore acceso E account amministratore [2m(4158ms)[0m
+  [32m✓[0m Autowin torneo: nessun modale intercetta il pulsante Continua [2m(3123ms)[0m
+  [32m✓[0m Duello: copertura d'avvio e campo richiesto scritti nell'<head> [2m(2150ms)[0m
+  [32m✓[0m Azzeramento del profilo: gli altri dispositivi non lo riportano in vita [2m(16143ms)[0m
+  [32m✓[0m Azzeramento delle storie per tutti: locale, cloud e copie vecchie [2m(15368ms)[0m
+  [32m✓[0m Badge del campo: niente sovrapposizioni su mobile [2m(9736ms)[0m
+  [32m✓[0m I badge fissi (Tempo/Abbandona/Difficoltà) restano ancorati allo schermo anche col campo trasformato [2m(3507ms)[0m
+  [32m✓[0m Barra delle fasi: dal Terreno al Cimitero, col colore del campo [2m(3298ms)[0m
+  [32m✓[0m Battle City: le vittorie automatiche avanzano sedicesimi e ottavi [2m(441ms)[0m
+  [32m✓[0m Battle City: pedine 3D al posto delle emoji, e percorsi verso le sole caselle raggiungibili [2m(2024ms)[0m
+  [32m✓[0m Battle City: oggetti (Radar, Scudo), Blackout e Missione secondaria [2m(1944ms)[0m
+  [32m✓[0m Battle City: prologo prima della mappa urbana a tutto schermo [2m(2737ms)[0m
+  [32m✓[0m Risoluzione battaglia: le 6 combinazioni base [2m(12409ms)[0m
+  [32m✓[0m I bonus temporanei ignorano slot in transito privi di carta [2m(3424ms)[0m
+  [32m✓[0m Boss Hard: liste da 40 carte e identita strategiche protette [2m(3389ms)[0m
+  [32m✓[0m Il bot attiva Buco Nero PRIMA di Evocare quando conviene, mai quando non conviene [2m(25181ms)[0m
+  [32m✓[0m Il bot aspetta la fine di una cinematica di Evocazione prima di giocare [2m(19079ms)[0m
+  [32m✓[0m Negozio: buste tematiche coerenti con creature base garantite [2m(5256ms)[0m
+  [32m✓[0m Cambio turno: l'annuncio non scuote più lo schermo [2m(4113ms)[0m
+  [32m✓[0m Campo desktop centrato e indipendente dal box informazioni carta [2m(3664ms)[0m
+  [32m✓[0m Storia: il campo di battaglia della tappa arriva nel duello [2m(1190ms)[0m
+  [32m✓[0m Cancello di Fusione: lo usa chi è di turno, anche sul Terreno avversario (persona e IA) [2m(7531ms)[0m
+  [32m✓[0m Cannoni X/Y/Z e scelta Posizione obbligatoria [2m(1547ms)[0m
+  [32m✓[0m Il database carte si carica senza errori [2m(1225ms)[0m
+  [32m✓[0m Duello mobile landscape: dettaglio carta solo al tap e descrizione scorribile [2m(923ms)[0m
+  [32m✓[0m Info carta: non copre selezioni e attacchi, resta nei tap normali [2m(4016ms)[0m
+  [32m✓[0m Scheda carta: un tocco sulla carta la mostra a tutto schermo, proporzioni intatte, con effetto [2m(8319ms)[0m
+  [32m✓[0m Carta compatta: la decide la misura della carta, non la finestra [2m(3367ms)[0m
+  [32m✓[0m Carta in dettaglio su telefono: dritta, ma la luce segue il giroscopio [2m(5180ms)[0m
+  [32m✓[0m Carte doppie eliminate: sparite dai dati, salvataggi migrati, effetti portati sulle carte che restano [2m(3424ms)[0m
+  [32m✓[0m Carte vive: riflessi per rarità, inclinazione col mouse e col telefono; parallasse del menu [2m(10931ms)[0m
+  [32m✓[0m Cartoteca: fonti e progresso delle carte speciali sono consultabili [2m(633ms)[0m
+  [32m✓[0m Cartoteca: pagina autonoma e vista del menu si comportano allo stesso modo [2m(19415ms)[0m
+  [32m✓[0m Cartoteca: "Vedi ologramma" apre la vetrina (WebGL su http, CSS su file://) e la chiude [2m(2741ms)[0m
+  [32m✓[0m Campi e musiche nominati dalla Storia e dai tornei esistono (maiuscole comprese) [2m(3280ms)[0m
+  [32m✓[0m Catalogo musiche da duello: solo 30-43 e 57-59, con nome visibile [2m(3338ms)[0m
+  [32m✓[0m Catalogo Sfide: nessun traguardo impossibile, nessun tipo mai registrato [2m(3521ms)[0m
+  [32m✓[0m Chain: il pulse di attivazione finisce prima che l'effetto si risolva [2m(8599ms)[0m
+  [32m✓[0m Chain: risoluzione LIFO, risposte multiple, attivazione manuale [2m(14028ms)[0m
+  [32m✓[0m UI Catena: box semi-3D leggibile e contenuto nel viewport [2m(4463ms)[0m
+  [32m✓[0m Sfide: ACTIONS.specialSummon fa avanzare summonMonster solo per il giocatore, mai per bot o Token [2m(3419ms)[0m
+  [32m✓[0m Checkpoint di targeting: Equip, Jeroid Oscuro, Nega Attacco e Mura del Castello lo rispettano [2m(3710ms)[0m
+  [32m✓[0m Cinematiche iconiche IV: Nega Attacco, Capro, Scatola, Limitatore e Ombra [2m(5341ms)[0m
+  [32m✓[0m Cinematiche iconiche V: Cerchio, Cappelli, Moltiplicazione, Controller e Dimensione [2m(5185ms)[0m
+  [32m✓[0m Cinematiche iconiche II: tempeste, controllo, Anello e Richiamo persistente [2m(5506ms)[0m
+  [32m✓[0m Cinematiche iconiche III: Bottomless, Sakuretsu, Giudizio, Libro e Virus [2m(5294ms)[0m
+  [32m✓[0m Cinematiche iconiche: integrazione e sincronizzazione delle cinque carte [2m(5975ms)[0m
+  [32m✓[0m Fusione senza Polimerizzazione: X/Y convergono prima del Cannone Drago [2m(4406ms)[0m
+  [32m✓[0m Controllore Nemico cambia Posizione senza mostro da offrire [2m(3414ms)[0m
+  [32m✓[0m Magie con costo "scarta 1 carta": la carta stessa non conta come scarto (492/727/729) [2m(3343ms)[0m
+  [32m✓[0m declaredTargeting: Campo di Riryoku (636), La Perla del Drago (652), Scudo Magico Tipo-8 (689) [2m(3358ms)[0m
+  [32m✓[0m Mobile: il danno usa un impulso locale senza scuotere tutto il campo [2m(132ms)[0m
+  [32m✓[0m Tempio Egizio Oscuro: bracieri, Horus e scintille senza preset ombra [2m(3611ms)[0m
+  [32m✓[0m Buco Nero: singolarita 3D stratificata e carte risucchiate nel vortice [2m(3407ms)[0m
+  [32m✓[0m Decisioni: scelta automatica, decisione in sospeso e passo comune Multiplayer [2m(63ms)[0m
+  [32m✓[0m searchDeckWithChoice: vera scelta per il giocatore, auto-pick invariato per il bot (Sangan id 433 e famiglia "1500 dal Deck") [2m(3466ms)[0m
+  [32m✓[0m Destiny Board ed Elefante Volante riusano la stessa cinematica di vittoria istantanea di Exodia [2m(3913ms)[0m
+  [32m✓[0m Destiny Board: piazzamento in ordine, vittoria automatica, collasso, interazione con Santuario Oscuro [2m(3330ms)[0m
+  [32m✓[0m ctx.destroyTargetedMonster: distruzione normale, bersaglio protetto, bersaglio ridiretto [2m(3527ms)[0m
+  [32m✓[0m Distruzione di un mostro: disintegrazione WebGL con copia mascherata, pulita a fine effetto [2m(8104ms)[0m
+  [32m✓[0m Distruzione M/T e Terreno: scossa olografica non esplosiva [2m(3569ms)[0m
+  [32m✓[0m Battaglia: un mostro coperto viene distrutto restando visivamente in Difesa [2m(3424ms)[0m
+  [32m✓[0m Divieti di Evocazione: 282, 1045 e 434 (Normale, Set e Special Summon) [2m(7487ms)[0m
+  [32m✓[0m Due account sullo stesso dispositivo: niente perdite, mescolanze o sovrascritture [2m(6950ms)[0m
+  [32m✓[0m Duellanti: battute contestuali, personalità e balloon responsive [2m(3467ms)[0m
+  [32m✓[0m Duello Libero: i Duellanti si sbloccano vincendo in Torneo o nella Storia [2m(4120ms)[0m
+  [32m✓[0m Duellanti Extra storici: roster, risorse, mazzi e battute [2m(3457ms)[0m
+  [32m✓[0m Strategie anime: Strings prepara Slifer e Gozaburo seppellisce Exodia [2m(3486ms)[0m
+  [32m✓[0m Cronologia: Indietro non riapre un duello concluso [2m(3765ms)[0m
+  [32m✓[0m Duello gemello: due motori a passo comune restano allineati per tutta la partita [2m(1351ms)[0m
+  [32m✓[0m Duello Libero: configurazione leggibile in desktop, verticale e landscape [2m(1839ms)[0m
+  [32m✓[0m Duello Libero: avvio corretto contro Kaiba [2m(5783ms)[0m
+  [32m✓[0m Nucleo senza testa: duelli interi in Node, senza errori di carta né invarianti rotti [2m(1382ms)[0m
+  [32m✓[0m Economia: farming graduato per difficolta e prezzi del Negozio [2m(377ms)[0m
+  [32m✓[0m Editor Mappa: le modifiche si salvano nel file dei ritocchi e si riapplicano identiche [2m(3495ms)[0m
+  [32m✓[0m Editor Mappa della Storia: trascina, modifica, crea, cancella, esporta [2m(11559ms)[0m
+  [32m✓[0m Editor mazzi: scheda carta con azioni, volo, messaggio con Annulla, schede su telefono [2m(6205ms)[0m
+  [32m✓[0m Editor mazzi: la freccia Indietro chiede conferma solo con modifiche non salvate [2m(1833ms)[0m
+  [32m✓[0m I 3 Dei Egizi: statistiche, floodgate e scelta LP di Ra [2m(3448ms)[0m
+  [31m✗[0m Equip con più bersagli: scelto dalla lista, resta in campo agganciato al mostro scelto [2m(218797ms)[0m
+    [31mMagie Equipaggiamento che, scelte dalla lista, non restano agganciate al mostro scelto:
+  - duello rimasto fermo dopo la carta precedente a 727 Flamberga Spezza-Malvagi - Baou: ["cardListPickerModal: ⚔️ FLAMBERGE DEL MALE INFRANTO\n\nScegli a quale mostro equipaggiarti (tuo o dell'"][0m
+  [32m✓[0m Carte Equipaggiamento: la clausola "quando mandata al Cimitero" (117/135/301/594) [2m(3771ms)[0m
+  [32m✓[0m Storia: un nodo senza campo/musica propri eredita quelli del capitolo [2m(662ms)[0m
+  [32m✓[0m Una carta con un bug non blocca il resto del motore [2m(6002ms)[0m
+  [32m✓[0m Esito del duello: titolo, premi e "Continua" restano dentro lo schermo su desktop e telefono [2m(33786ms)[0m
+  [32m✓[0m Evocazione epica WebGL: backend, durata dichiarata, pulizia e ripiego [2m(19497ms)[0m
+  [32m✓[0m Evocazione Tributo: pagati i Tributi non si esce senza Evocare [2m(5208ms)[0m
+  [32m✓[0m Exodia: la cinematica di vittoria gira prima di endDuel(), niente riavvii rientranti (id 11/41-44) [2m(22517ms)[0m
+  [32m✓[0m Extra Deck: le Fusioni evocabili senza Polimerizzazione pulsano in viola [2m(3728ms)[0m
+  [32m✓[0m Trappola Fasulla protegge OGNI Trappola dello stesso lotto, non solo la prima (id 600) [2m(4560ms)[0m
+  [32m✓[0m Fenice di Ra: lo scambio con la Sfera scatta anche nella End Phase dell'avversario [2m(26755ms)[0m
+  [32m✓[0m Ambienti field: copertura completa, configurazioni univoche e spegnimento dal menu [2m(3392ms)[0m
+  [32m✓[0m Ambienti field: firme visive distinte e pulizia al cambio arena [2m(3582ms)[0m
+  [32m✓[0m Fine duello: con molti premi il pulsante Continua resta raggiungibile [2m(8367ms)[0m
+  [32m✓[0m Finestra di priorità per gli Effetti Veloci (396, 459, 1059) [2m(24084ms)[0m
+  [32m✓[0m Duello prolungato: 80 ridisegni conservano tutte le carte ferme [2m(3885ms)[0m
+  [32m✓[0m Flip Summon: la carta si gira in 3D e la meccanica resta intatta [2m(3321ms)[0m
+  [32m✓[0m Flip Summon: finito il giro la carta torna normale (niente carta che sparisce al passaggio del mouse) [2m(3998ms)[0m
+  [32m✓[0m Obbligo d'attacco condiviso (mustAttackTargetUidsFor / id 199) [2m(7476ms)[0m
+  [32m✓[0m Fusione: i tre materiali convergono in 3D prima della cinematica del mostro [2m(4385ms)[0m
+  [32m✓[0m Fusione: lo spazio considera le Zone liberate dai materiali sul Terreno [2m(3327ms)[0m
+  [32m✓[0m FX WebGL (scena): tutti gli spettacoli partono, chiudono la cinematica e le callback arrivano una volta [2m(19235ms)[0m
+  [32m✓[0m FX WebGL: Buco Nero, Spade Rivelatrici e Raigeki senza DOM per effetto, callback intatte [2m(15574ms)[0m
+  [32m✓[0m Potere Raccolto distrugge le Magie Equipaggiamento finite su un bersaglio non corretto (id 160) [2m(3359ms)[0m
+  [32m✓[0m Special Summon/recupero dal Cimitero: vera scelta (Lanciere Sciocco, Spada Divina, Gilford la Leggenda, Sepoltura Prematura) [2m(18807ms)[0m
+  [32m✓[0m Grido di Evocazione: il duellante annuncia la carta simbolo prima della sua Evocazione [2m(7788ms)[0m
+  [32m✓[0m Guardiano Kay'est è immune agli effetti di massa delle Magie, non solo al targeting diretto (id 285) [2m(3257ms)[0m
+  [32m✓[0m Guardrail: le azioni del motore e types/motore.d.ts descrivono le stesse cose [2m(3407ms)[0m
+  [32m✓[0m Guardrail: ogni effetto che bersaglia un mostro passa dal checkpoint di targeting [2m(98ms)[0m
+  [32m✓[0m Guardrail: ogni pagina col loader ha la copertura d'avvio inline, e il loader la toglie [2m(20ms)[0m
+  [32m✓[0m Guardrail: l'elenco delle carte con effetto coincide col motore e il filtro funziona senza motore [2m(3392ms)[0m
+  [32m✓[0m Guardrail: immagini sempre .jpg, e ogni riferimento a images/ punta a un file vero [2m(429ms)[0m
+  [32m✓[0m Guardrail: ogni specialSummon dichiara la zona di provenienza (fromZone) [2m(3455ms)[0m
+  [32m✓[0m Guardrail: i gruppi di <script> delle pagine coincidono con scripts/gruppi-script.js [2m(3443ms)[0m
+  [32m✓[0m Guardrail: l'IA gioca da qualunque posto al tavolo (niente posto fisso) [2m(85ms)[0m
+  [32m✓[0m Guardrail: le Impostazioni esistono in una sola copia (impostazioni.html) [2m(1ms)[0m
+  [32m✓[0m Guardrail: le modalità aggiuntive non toccano il motore, e il motore non le conosce [2m(16ms)[0m
+  [32m✓[0m Guardrail: nessun mp3 ha un tag ID3 enorme (copertina incorporata) che blocca MediaPlayer su Android [2m(74ms)[0m
+  [32m✓[0m Guardrail: ogni spostamento dal Cimitero scritto a mano passa da Necrovalley [2m(13ms)[0m
+  [32m✓[0m Guardrail: le ricerche per nome nel codice trovano le carte attese [2m(200ms)[0m
+  [32m✓[0m Guardrail: i file di regola del duello non toccano la pagina (document) [2m(3269ms)[0m
+  [32m✓[0m Guardrail: ogni pagina che disegna carte carica renderer e card.css [2m(275ms)[0m
+  [32m✓[0m Guardrail: le parti di card-effects vedono tutto quello che usano [2m(3435ms)[0m
+  [32m✓[0m Guardrail: le regole restano deterministiche fra due telefoni (Casuale, Tavolo.ordine) [2m(23ms)[0m
+  [32m✓[0m Guardrail: i messaggi del Multiplayer hanno una forma controllata, uguale per relay e client [2m(16ms)[0m
+  [32m✓[0m Guardrail: il client usa soltanto il Multiplayer a passo comune [2m(22ms)[0m
+  [32m✓[0m Guardrail: le regole del duello avvisano l'interfaccia dal canale degli eventi, mai per nome [2m(814ms)[0m
+  [32m✓[0m Guardrail: ogni colonna sonora nominata nel codice esiste in audio/soundtracks/ [2m(203ms)[0m
+  [32m✓[0m Guardrail: ogni pagina col catalogo delle storie carica anche i ritocchi, nell'ordine giusto [2m(10ms)[0m
+  [32m✓[0m Guardrail: fuori dal duello le carte usano la scala di card.css [2m(15ms)[0m
+  [32m✓[0m Guardrail: le liste di <script> delle pagine non vanno alla deriva [2m(3389ms)[0m
+  [32m✓[0m Guardrail: Magie e Trappole a bersaglio singolo usano il checkpoint attendibile [2m(3423ms)[0m
+  [32m✓[0m Guardrail: il controllo dei tipi (tsc, file con @ts-check) passa [2m(5987ms)[0m
+  [32m✓[0m Guardrail: le carte usano solo chiavi del vocabolario chiuso e ogni chiave è letta [2m(6068ms)[0m
+  [32m✓[0m UX mano: tap mostra e solleva, click esterno riallinea la carta [2m(3354ms)[0m
+  [32m✓[0m Evocazioni Livello 7+: evocation.mp3 solo senza video dedicato [2m(3214ms)[0m
+  [32m✓[0m IA: non attiva carte che le fanno male (Metamorfosi, potenziamenti sul nemico, audit a tappeto) [2m(10404ms)[0m
+  [32m✓[0m IA: gli attacchi tengono conto dei bonus/malus di ATK e DEF [2m(4031ms)[0m
+  [32m✓[0m IA Difficile: base stabile, preparazione del turno e linea letale [2m(3344ms)[0m
+  [32m✓[0m IA Hard riattiva gli effetti continui ripetibili (Labirinto Magico) [2m(3345ms)[0m
+  [32m✓[0m IA: Ra paga una somma misurata (obiettivo di ATK, soglia di LP, eccezione scacco) [2m(6703ms)[0m
+  [32m✓[0m IA non spreca Mondo Toon, Fusione, mostri o buff sul nemico [2m(3274ms)[0m
+  [32m✓[0m IA: a ogni difficoltà trattiene in mano tutti i pezzi di Exodia [2m(3309ms)[0m
+  [32m✓[0m Icone flottanti in WebGL: pulsanti animati, scena sulla carta, ripiego sulle icone di prima [2m(6211ms)[0m
+  [32m✓[0m Identita archetipi e nomi assunti per supporti moderni [2m(3494ms)[0m
+  [32m✓[0m Importa salvataggio: controllo del file, conferma con confronto, copia di sicurezza [2m(2864ms)[0m
+  [32m✓[0m Impostazioni: Dettagli video "Alti" di default, Profondità del menu attivabile [2m(6794ms)[0m
+  [32m✓[0m Impostazioni: profilo, migrazione locale e import restano sincronizzati [2m(157ms)[0m
+  [32m✓[0m Cerchio degli Inferi: Special Summon ricorrente in Standby Phase per entrambi i lati, bandita quando lascia il Terreno (id 498) [2m(3264ms)[0m
+  [32m✓[0m L'apertura del duello non sborda dallo schermo su mobile [2m(9341ms)[0m
+  [32m✓[0m Invincible Fortress: Exxod e Drago Megaroccia [2m(3252ms)[0m
+  [32m✓[0m Kaiba: avatar del Regno dei Duellanti e di Forbidden Memories solo nei contesti giusti [2m(6633ms)[0m
+  [32m✓[0m Kaiba e Marik avversari: boss e combo realmente usati dalla IA [2m(3389ms)[0m
+  [32m✓[0m Stadio Kaiba: flash casuali provenienti dagli spalti [2m(3377ms)[0m
+  [32m✓[0m Industria KaibaCorp: grappoli casuali di scintille sui macchinari [2m(3515ms)[0m
+  [32m✓[0m Lady Arpia: le carte di supporto contano solo i mostri, non la Magia 289 (787) [2m(3241ms)[0m
+  [32m✓[0m Un Oceano Leggendario riduce il Livello dei mostri ACQUA (id 79) [2m(3229ms)[0m
+  [32m✓[0m Diciassettesima ondata: Great Dezard / Fushioh Richie, evoluzione a stadi (id 1129-1130) [2m(3311ms)[0m
+  [32m✓[0m Helpoemer: scarto forzato dal Cimitero alla fine della Battle Phase avversaria, solo se distrutto in battaglia (id 1123) [2m(4656ms)[0m
+  [32m✓[0m Quindicesima ondata: Falena Perfetta, Drago Meteora, Drago Nero Meteora (id 1124-1126) [2m(6435ms)[0m
+  [32m✓[0m Quattordicesima ondata prima serie: negazione condizionata, mostro agganciato, bonus damage step, autodistruzione reattiva (id 1118-1121) [2m(6117ms)[0m
+  [32m✓[0m Seconda ondata prima serie: Mostri Spirito, attacco diretto, Evocazione Rituale (id 1001-1019) [2m(11984ms)[0m
+  [32m✓[0m Undicesima ondata prima serie: Special Summon bandendo dal Cimitero, cambio Posizione, bonus temporanei (id 1093-1104) [2m(3527ms)[0m
+  [32m✓[0m Dodicesima ondata prima serie: distruzione in battaglia dal lato del vincitore, bonus fino al turno avversario (id 1105-1114) [2m(3277ms)[0m
+  [32m✓[0m Nona ondata prima serie: divieto permanente, monitor di Evocazione, Umi virtuale (id 1075-1083) [2m(3322ms)[0m
+  [32m✓[0m Sesta ondata prima serie: cambio controllo, buff a Standby ritardato, distruzione in battaglia (id 1046-1059) [2m(3493ms)[0m
+  [32m✓[0m Sedicesima ondata: Campanella Cerimoniale, Skull Knight #2 (id 1127-1128) [2m(3058ms)[0m
+  [32m✓[0m Settima ondata prima serie: statistiche condizionali, tributo su distruzione in battaglia (id 1060-1066) [2m(3241ms)[0m
+  [32m✓[0m Quinta ondata prima serie: negazione da campo, floodgate anti-FLIP, blocco Special Summon (id 1039-1045) [2m(3204ms)[0m
+  [32m✓[0m Quarta ondata prima serie: controllo permanente, ritorno in mano, Fusione da Extra Deck (id 1031-1038) [2m(10715ms)[0m
+  [32m✓[0m Ottava ondata prima serie: floodgate statici, immunità condizionale, tributo su Magia distrutta (id 1067-1074) [2m(3044ms)[0m
+  [32m✓[0m Scorpione d'Acciaio: distruzione ritardata dell'attaccante non-Macchina alla 2ª End Phase del suo turno (id 1122) [2m(5917ms)[0m
+  [32m✓[0m Mage Soldier: deck a Segnalini Magia e rimozioni usate dalla IA [2m(3154ms)[0m
+  [32m✓[0m UX mano: attivare un effetto dalla mano chiude il box info [2m(4142ms)[0m
+  [32m✓[0m UX mano: dal popover di una carta a un'altra carta con un solo tap [2m(3349ms)[0m
+  [32m✓[0m UX mano: le caselle evidenziate seguono solo la carta selezionata (Mostro <-> Magia/Trappola) [2m(4029ms)[0m
+  [32m✓[0m UX mano: sollevare/abbassare una carta non ridisegna il nodo né l'artwork [2m(4185ms)[0m
+  [32m✓[0m UX mano: il trascinamento evidenzia le caselle valide [2m(3707ms)[0m
+  [32m✓[0m Mazzi dei Duellanti: regole dei tre livelli su tutto il roster [2m(3173ms)[0m
+  [32m✓[0m I menu non scorrono in orizzontale (logo, menu principale, sottomenu Duelli) [2m(10017ms)[0m
+  [32m✓[0m Menu: font locale del logo e loader sulle pagine Negozio/Cartoteca [2m(2521ms)[0m
+  [32m✓[0m Uovo Giurassico Miracoloso non può essere bandita dal Terreno, ma resta bandibile altrove (id 808) [2m(3601ms)[0m
+  [32m✓[0m Chiusura missingEffectNote — batch 1: attacco diretto sotto controllo, LP dal Cimitero in Standby, bando post-battaglia, una volta per turno per nome (id 1029/902/1041/100) [2m(3233ms)[0m
+  [32m✓[0m Chiusura missingEffectNote — batch 2: autodistruzione dopo un attacco, protezione dai propri Guerrieri contro le Magie (id 496/1039) [2m(4432ms)[0m
+  [32m✓[0m Missioni giornaliere: 4 generiche, si completano giocando normalmente [2m(8452ms)[0m
+  [32m✓[0m Puzzle: ogni puzzle è risolvibile, le strade sbagliate no, passare il turno lo fa fallire [2m(152203ms)[0m
+  [32m✓[0m Rivincite: il mazzo è quello del personaggio, la vittoria diventa una medaglia, la pagina la mostra [2m(9063ms)[0m
+  [32m✓[0m Modalità Storia: avanzamento, breadcrolla consumata, sconfitta innocua [2m(15267ms)[0m
+  [32m✓[0m Torre: scalata dalla pagina, LP portati, premio scelto, oggetti che cambiano davvero la preparazione [2m(26049ms)[0m
+  [32m✓[0m Morra cinese: arena responsive in verticale e landscape [2m(957ms)[0m
+  [32m✓[0m Movimenti di carta WebGL: Cimitero, rianimazione, controllo, Tributo, Equip [2m(17907ms)[0m
+  [32m✓[0m Multiplayer: se l'avversario se ne va a duello avviato, chi resta vince [2m(20063ms)[0m
+  [32m✓[0m Multiplayer: avviso di attesa acceso dalla decisione remota e sempre dentro il viewport [2m(3196ms)[0m
+  [32m✓[0m Multiplayer end-to-end: due client attraverso il server di stanze [2m(30214ms)[0m
+  [32m✓[0m Multiplayer: console KaibaCorp responsive durante il risveglio del server [2m(3237ms)[0m
+  [32m✓[0m Multiplayer: l'avversario che lascia la sala libera il posto [2m(7918ms)[0m
+  [32m✓[0m Multiplayer: la morra cinese si chiude su entrambi appena il vincitore sceglie chi comincia [2m(14926ms)[0m
+  [31m✗[0m Multiplayer: il nome dell'avversario si vede in sala e nel duello [2m(8962ms)[0m
+    [31mil suo pannello deve scrivere il nome: "🤖 Bot
+        ❤️ 8000
+        
+        🌀 0"[0m
+  [32m✓[0m Multiplayer a passo comune: due client veri giocano la stessa partita, anche dopo una caduta di linea [2m(64471ms)[0m
+  [32m✓[0m Multiplayer: ognuno sceglie la propria pedina, e l'avversario la vede in sala e nel duello [2m(9584ms)[0m
+  [32m✓[0m Multiplayer: entrato l'avversario, gli script dell'arena vengono precaricati in parallelo [2m(4849ms)[0m
+  [32m✓[0m Multiplayer: passo comune obbligatorio e versione incompatibile rifiutata [2m(3ms)[0m
+  [32m✓[0m Multiplayer: la somma pagata per Ra viaggia e i due client restano uguali [2m(19381ms)[0m
+  [32m✓[0m Multiplayer: l'arena scelta dall'host dopo l'ingresso dell'ospite arriva al duello [2m(19087ms)[0m
+  [32m✓[0m Necrovalley ferma gli spostamenti dal Cimitero; i mostri tornano nella mano del proprietario [2m(3229ms)[0m
+  [32m✓[0m Negazione (821/822): nessuna duplicazione, 822 rimette Set [2m(3168ms)[0m
+  [32m✓[0m Negozio: riacquisto deck illimitato riservato agli admin [2m(379ms)[0m
+  [32m✓[0m Negozio: apertura busta e acquisto deck riusano i prodotti reali [2m(3747ms)[0m
+  [32m✓[0m Negozio: la carta del giorno sparisce dopo l'acquisto, non si ricompra [2m(7709ms)[0m
+  [32m✓[0m Negozio: carte comuni e rare solo Crediti, dalle Super anche Stelle [2m(1586ms)[0m
+  [32m✓[0m Negozio: i mazzi della Grande Guerra sono gratis, una sola volta, e non rincarano gli altri [2m(3016ms)[0m
+  [32m✓[0m Forbidden Memories: Nitemare è separato da DarkNite [2m(1492ms)[0m
+  [32m✓[0m Note chiuse (2): 899 unicita', 142 escalation, 511/512 scarta e distruggi [2m(3379ms)[0m
+  [32m✓[0m Note chiuse (3): negazione in battaglia, bersaglio obbligato, Evocazione condizionata e altre 7 carte [2m(9490ms)[0m
+  [32m✓[0m Note chiuse (4): le 17 carte della categoria A [2m(11012ms)[0m
+  [32m✓[0m Note carte diventate false: 125 autodistruzione, 434/244 Tributo vietato, 898/1038/891 vera scelta [2m(4976ms)[0m
+  [32m✓[0m Economia: rarità e ottenibilità delle 30 nuove carte TCG [2m(312ms)[0m
+  [32m✓[0m Oggetti del Millennio (drop 5% mirato) e valute escluse per torneo [2m(3223ms)[0m
+  [32m✓[0m Ologramma presente anche per una carta scelta da un picker (Richiamo della Mummia 670 -> Genesi del Vampiro 656) [2m(4014ms)[0m
+  [32m✓[0m Ologramma WebGL: vola in attacco (la carta resta ferma) e si disintegra in distruzione [2m(10986ms)[0m
+  [32m✓[0m Ologrammi: la proiezione si vede anche su desktop, e si spegne davvero [2m(12588ms)[0m
+  [32m✓[0m Ologrammi WebGL: un canvas su http, ripiego sul CSS su file:// e con l'interruttore [2m(14827ms)[0m
+  [32m✓[0m Oppressione Reale: la usa anche l'avversario di chi la controlla [2m(9403ms)[0m
+  [32m✓[0m Spada Sigillante di Orichalcos estende la negazione a un secondo mostro via Field Zone (id 396) [2m(3183ms)[0m
+  [32m✓[0m Spada Sigillante di Orichalcos: Effetto Veloce scarta-per-distruggere, anche durante il turno avversario (id 396) [2m(8772ms)[0m
+  [32m✓[0m Orologio del server: RPC, poi il token, poi l'orologio locale dichiarato [2m(1229ms)[0m
+  [32m✓[0m Apertura bustina: luce WebGL creata e rilasciata, fasce alte annunciate [2m(3984ms)[0m
+  [32m✓[0m UI: loader condiviso con carta 3D responsive [2m(1309ms)[0m
+  [32m✓[0m Personaggi: pedine nelle UI, ritratti pieni solo nella griglia Duello Libero [2m(261ms)[0m
+  [32m✓[0m Pescata da effetto: nessun render intermedio mostra le carte prima dell’animazione [2m(4125ms)[0m
+  [32m✓[0m Pescata da effetto: le carte compaiono una alla volta, non tutte insieme [2m(4220ms)[0m
+  [32m✓[0m Tredicesima ondata prima serie: ATK durante il Damage Step, rivelazione informativa (id 1115-1117) [2m(3091ms)[0m
+  [32m✓[0m Decima ondata prima serie: rinascita ritardata in Difesa, controllo permanente, cambio Posizione (id 1084-1092) [2m(3227ms)[0m
+  [32m✓[0m Terza ondata prima serie: Mostri Flip con Ignition/Deck/controllo temporaneo (id 1020-1030) [2m(3301ms)[0m
+  [32m✓[0m Stepper fasi: stabile e senza overflow durante resize desktop/mobile [2m(3812ms)[0m
+  [32m✓[0m Pile allineate alle carte e niente sollevamento al tocco [2m(5886ms)[0m
+  [32m✓[0m Drago Nero Pece si stacca da Lama Oscura e torna sul Terreno (id 404) [2m(3194ms)[0m
+  [32m✓[0m Sfide: il premio viene accreditato, e una volta sola [2m(3222ms)[0m
+  [32m✓[0m Prima serie TCG: dieci effetti mancanti (1131-1140) [2m(4576ms)[0m
+  [32m✓[0m Prima serie TCG: 16 Fusioni storiche e materiali (1141-1160) [2m(3210ms)[0m
+  [32m✓[0m Primitive supporti Divinita: non annullabile, Tributo aggiuntivo e statistiche originali [2m(3292ms)[0m
+  [32m✓[0m Profilo: riprendere un salvataggio messo da parte, senza toccare quelli degli altri account [2m(1348ms)[0m
+  [32m✓[0m Profilo: testata condivisa, nome con la matita, mazzo con un tocco, titolo dai punti [2m(63982ms)[0m
+  [32m✓[0m Ra: la somma da pagare e il bersaglio li sceglie il giocatore; la Sfera si attiva solo dal Terreno [2m(7863ms)[0m
+  [32m✓[0m Raigeki: cinque fulmini sugli slot avversari e distruzione sincronizzata all impatto [2m(3096ms)[0m
+  [32m✓[0m Rare Hunters: roster, mazzi, battute e presenza a Battle City [2m(3163ms)[0m
+  [32m✓[0m Il bot gioca 3 turni realistici senza errori (Media e Difficile) [2m(54866ms)[0m
+  [32m✓[0m Recupero copia di sicurezza: pulsante, riquadro responsive, ripristino e scarto [2m(2064ms)[0m
+  [32m✓[0m Terreno: aggiornamento incrementale identico alla ricostruzione totale [2m(3827ms)[0m
+  [32m✓[0m Modale di risposta: aspetta il pulse e mostra la carta avversaria [2m(8555ms)[0m
+  [32m✓[0m Mostro Resuscitato: animazione dal Cimitero giusto e scelta non annullabile; Carità Graziosa: lo scarto lo sceglie il giocatore [2m(7192ms)[0m
+  [32m✓[0m Meccanismi condivisi "torna in mano" (262/761/92/790/671) [2m(3264ms)[0m
+  [32m✓[0m Rianimazione: Mostro Resuscitato non fa il volo generico dal Cimitero, una Special Summon qualunque si [2m(5127ms)[0m
+  [32m✓[0m Duello mobile: una scelta persa torna visibile dopo la sospensione [2m(3457ms)[0m
+  [32m✓[0m Riscontri del duello (ATK/DEF, bando, annullamento, Posizione, Token, LP critici) e ologrammi delle carte scoperte [2m(4444ms)[0m
+  [32m✓[0m Evocazione Rituale: materiali, cinematica, poi mostro sul Terreno [2m(6298ms)[0m
+  [32m✓[0m Magie Rituali: carta ritrovata dopo il sacrificio dalla mano, provenienza "mano" (116, 141) [2m(6178ms)[0m
+  [32m✓[0m Roc dalla Valle della Foschia torna nel Deck anche se scartata come costo di un'altra carta (id 781) [2m(3140ms)[0m
+  [32m✓[0m Forma del salvataggio: controllo, tipi aggiornati, rifiuto dei file rovinati, riparazione [2m(3315ms)[0m
+  [32m✓[0m Salvataggi: ogni scrittura avvisa, e fra due vince il più recente [2m(214ms)[0m
+  [32m✓[0m Sandbox: field iniziale, cambio live persistente e uscita diretta [2m(1111ms)[0m
+  [32m✓[0m Duello Sandbox: voce e pagina visibili solo all'amministratore [2m(4400ms)[0m
+  [32m✓[0m Santuario Oscuro protegge le Spirit Message anche dagli effetti non mirati [2m(3139ms)[0m
+  [32m✓[0m Menu: Regole nel Tutorial e sblocchi narrativi di Rivincite/Torre [2m(3145ms)[0m
+  [32m✓[0m Duello Libero: luoghi di sblocco allineati ai tornei, barra con filtri e ricerca, medaglia [2m(16589ms)[0m
+  [32m✓[0m Sbustamento responsive: carte grandi desktop e carosello mobile senza sovrapposizioni [2m(4529ms)[0m
+  [32m✓[0m Scelta del bersaglio fra Magie/Trappole sul Terreno (219 Tornado di Polvere, 647 Distruzione con Zampata) [2m(4477ms)[0m
+  [32m✓[0m Scelta del bersaglio fra i mostri sul Terreno (875 Libro della Luna, 453 Cacciatore di Anime) [2m(4159ms)[0m
+  [32m✓[0m Scelta di chi subisce lo scarto: Criosfinge (761) e Duo Delinquente (873) [2m(3232ms)[0m
+  [32m✓[0m Scelte che la battaglia aspetta (100, 883, 885, 889, 895, 1120) [2m(41099ms)[0m
+  [32m✓[0m Scelte che mancavano (2): 548, 289, 220, 881, 742, 792, 363 [2m(7253ms)[0m
+  [32m✓[0m Scelte con schema unico (scarto, casella) e velocità del bot [2m(3936ms)[0m
+  [32m✓[0m Carte con una scelta promessa dal testo: la scelta è del giocatore (Richiamo della Mummia 670, Cambio di Cuore 147, Scatola Mistica 388) [2m(4825ms)[0m
+  [32m✓[0m Secondo lotto di scelte restituite al giocatore (320 Kaiser Glider, 839 Esplosivo, 714 Capitano Predone, 704 Salvataggio) [2m(5928ms)[0m
+  [32m✓[0m Terzo lotto di scelte restituite al giocatore (Equip generiche, 421 Riryoku, 811 Colpo di Coda, 419 Anello della Distruzione) [2m(5258ms)[0m
+  [32m✓[0m Scheda carta unica: Cartoteca, menu e Creazione Deck aprono la stessa [2m(4049ms)[0m
+  [32m✓[0m Server Multiplayer: accetta soltanto lobby, passo comune ed esito [2m(0ms)[0m
+  [32m✓[0m Service worker: risposte valide attese in cache, errori HTTP mai persistiti [2m(3ms)[0m
+  [32m✓[0m Service worker: con i redirect del sito (.html -> senza estensione) le pagine si aprono, anche a rete lenta [2m(6572ms)[0m
+  [32m✓[0m Sessione: dura 48 ore, poi si rifà il login (salvando prima il progresso) [2m(5567ms)[0m
+  [32m✓[0m Modalita' Sfera sul Terreno avversario: torna al proprietario alla fine del turno dopo [2m(35233ms)[0m
+  [32m✓[0m Sfide: quattro sezioni, e missioni che ruotano davvero [2m(319ms)[0m
+  [32m✓[0m Inizio e fine duello: sfondo WebGL al posto dei raggi ruotanti [2m(5918ms)[0m
+  [32m✓[0m Simulazione Storia per deck: produce tentativi, turni e tempi [2m(189ms)[0m
+  [32m✓[0m Special Summon dalla mano: vera scelta per costi banisci/tributa N carte (Inferno/Fenrir/Stregone del Caos/Drago Toon Occhi Blu) [2m(4900ms)[0m
+  [32m✓[0m Non Special Summonabile dal Cimitero (1105/1118/1123) e Carta del Ritorno Sicuro (141) [2m(3265ms)[0m
+  [32m✓[0m Distruzione Magie/Trappole: frattura olografica senza esplosione da mostro [2m(3288ms)[0m
+  [32m✓[0m Mostri Spirito Evocati Normalmente tornano in mano alla End Phase (id 1005) [2m(3657ms)[0m
+  [32m✓[0m Splash 3D: Puzzle in WebGL col progresso vero, e ripiego senza WebGL [2m(15862ms)[0m
+  [32m✓[0m Menu: l'indicatore dice se i progressi sono sul cloud, in arrivo o solo su questo dispositivo [2m(161ms)[0m
+  [32m✓[0m Regno delle Ombre: ordine, avversari, nodi e raccordi narrativi coerenti [2m(3189ms)[0m
+  [32m✓[0m Storia anime: i salvataggi scritti prima della revisione di fedeltà restano allo stesso punto [2m(603ms)[0m
+  [32m✓[0m Storia: le aree sono mappe dentro la mappa, e perdere non le azzera [2m(11087ms)[0m
+  [32m✓[0m Storia: Continua ritorna alla mappa dopo vittoria e sconfitta [2m(5982ms)[0m
+  [32m✓[0m Storia: nelle conversazioni parla sempre la pedina, anche per il protagonista scritto a mano [2m(3379ms)[0m
+  [32m✓[0m Memorie Proibite: trama fedele al gioco PS1, e salvataggi che restano al loro punto [2m(1203ms)[0m
+  [32m✓[0m Storia: la Grande Guerra è posata sulla sua mappa e ha la sua musica [2m(1042ms)[0m
+  [32m✓[0m Storie: nuovi intermezzi non-WW1 e migrazione del progresso [2m(621ms)[0m
+  [32m✓[0m Storia: Facile all'inizio, Normale e Difficile a storia finita (non per la Grande Guerra) [2m(4244ms)[0m
+  [32m✓[0m Storia: zoom della mappa, e su telefono le informazioni si chiudono [2m(13672ms)[0m
+  [32m✓[0m Storia: le testate delle campagne usano miniature leggere [2m(3194ms)[0m
+  [32m✓[0m Storia: in una campagna il giocatore è il protagonista di quella storia [2m(10493ms)[0m
+  [32m✓[0m Storia anime: i duelli paralleli si diramano senza avanzare Yugi [2m(235ms)[0m
+  [32m✓[0m Storia: scene cinematiche, sigillo al posto del ritratto mancante, e nessun doppio avanzamento [2m(12765ms)[0m
+  [32m✓[0m Storia anime: 3 Stelle per ogni arco completato la prima volta, e per chi aveva gia' finito rifacendo l'ultimo nodo [2m(250ms)[0m
+  [32m✓[0m Storia: il torneo dentro la campagna (si sale, perdendo si ricomincia, vincendo si esce) [2m(114216ms)[0m
+  [32m✓[0m Storie admin al 100% senza premi e Obelisco non ripetibile al riavvio [2m(596ms)[0m
+  [32m✓[0m Effetto Evocazione Livello 7+: ancorato alla carta sul Terreno, non all avatar [2m(3125ms)[0m
+  [32m✓[0m Supporti Divinità complessi: Incrocio di Anime e ciclo completo di Ra [2m(3230ms)[0m
+  [32m✓[0m Supporti Divinità: Forza del Tuono, Pugno del Fato e il costo della Fenice [2m(17531ms)[0m
+  [32m✓[0m Supporti Divinita: Attacco Forza del Tuono e Pugno del Fato [2m(3072ms)[0m
+  [32m✓[0m Supporti Mago Nero: pacchetto moderno completo [2m(3274ms)[0m
+  [32m✓[0m Supporti moderni: prima copia tematica, rarità e limiti economici [2m(307ms)[0m
+  [32m✓[0m Supporti Occhi Blu: Melodia, Alternativo e Luce Autentica [2m(3246ms)[0m
+  [32m✓[0m Supporti Occhi Rossi: primo pacchetto moderno [2m(3220ms)[0m
+  [32m✓[0m Supporti Toon moderni: Regno, Segnalibro, Arpia, Gira-Pagina e Glorioso Soldato [2m(3247ms)[0m
+  [32m✓[0m Supporto Divinita: Canto Antico recupera Ra e applica i Tributi originali [2m(3164ms)[0m
+  [32m✓[0m Spada Rivelatrice gira scoperti i mostri avversari e ne scatena i trigger ON_FLIP (id 8/23) [2m(3172ms)[0m
+  [32m✓[0m Sync carte personalizzate: una coda sola, la carta arriva sull'altro dispositivo [2m(4591ms)[0m
+  [32m✓[0m Sync: un dispositivo rimasto indietro non sovrascrive i progressi dell'altro [2m(8959ms)[0m
+  [32m✓[0m Sync salvataggi: il telefono vede i progressi del desktop e non li cancella [2m(10685ms)[0m
+  [32m✓[0m Sync: il salvataggio di un altro account non viene mai caricato sul cloud di chi entra [2m(4230ms)[0m
+  [32m✓[0m Sync: il Profilo dice se l'ultimo salvataggio è di un altro dispositivo [2m(411ms)[0m
+  [32m✓[0m Guardrail: il checkpoint di targeting condiviso (ctx.declareTarget/destroyTargetedMonster) non regredisce [2m(3143ms)[0m
+  [32m✓[0m Checkpoint di targeting condiviso: floodgate e reazioni [2m(4445ms)[0m
+  [32m✓[0m Specchietto della Fata e Spostamento attendono la scelta del nuovo bersaglio [2m(3222ms)[0m
+  [32m✓[0m Duello contro Yugi: il suo tema in Torneo e Storia, non in Duello Libero [2m(4584ms)[0m
+  [32m✓[0m Temi ombra: Pegasus/Heishin e Marik/DarkNite/Nitemare rispettano contesto ed eccezioni [2m(4541ms)[0m
+  [32m✓[0m Teschio Evocato Toon (486), Mago Apprendista (737) e Drenaggio Magico (770): fix del backlog carte [2m(3147ms)[0m
+  [32m✓[0m Rework Toon: Mondo, attacco immediato, protezione e note legacy [2m(3135ms)[0m
+  [32m✓[0m Tornei: una partita in corso si può abbandonare dalla selezione [2m(1380ms)[0m
+  [32m✓[0m Tornei: una sola pagina canonica, collegata dal menu e dai ritorni [2m(2ms)[0m
+  [32m✓[0m Torneo Kaiba: due preliminari prima dei quarti [2m(3171ms)[0m
+  [32m✓[0m Regno dei Duellanti: il Castello conserva solo i nodi già affrontati al suo interno [2m(377ms)[0m
+  [32m✓[0m Torneo Regno dei Duellanti: Stelle iniziali, bonus e malus usano il contatore interno [2m(1881ms)[0m
+  [32m✓[0m Regno dei Duellanti: sfidanti visibili, vicoli ciechi senza blocchi [2m(35640ms)[0m
+  [32m✓[0m Transizioni carta: mano, Cimitero, Deck e zona bandite sono animate [2m(3333ms)[0m
+  [32m✓[0m Evocazione Tributo avviabile anche su caselle occupate a campo pieno [2m(5656ms)[0m
+  [32m✓[0m Tributi: Annulla/Esc; il bot aspetta se un modale è aperto [2m(5663ms)[0m
+  [32m✓[0m Tributo non si Setta, Drago Mascherato sceglie la Posizione, il bot aspetta le scelte del giocatore [2m(33585ms)[0m
+  [32m✓[0m Lezione col nonno: si gioca seguendo il riflettore, obbligatoria al primo avvio, premio una volta [2m(95063ms)[0m
+  [32m✓[0m Lezioni brevi (Catena, Fusione, Flip): si giocano seguendo il riflettore e finiscono spuntate nel menu Tutorial [2m(154760ms)[0m
+  [32m✓[0m Filmato di Evocazione: la Catena e le fasi restano ferme finché non finisce [2m(4258ms)[0m
+  [32m✓[0m Video evocazione: priorità assoluta e duello sospeso fino alla fine [2m(3875ms)[0m
+  [32m✓[0m Waboku: barriera persistente fino a End Phase o distruzione [2m(3152ms)[0m
+  [32m✓[0m WebGL: sentiero e faro sulle mappe, tempesta sulla Torre, aura di attivazione e Catena [2m(10700ms)[0m
+  [32m✓[0m Field Grande Guerra: esplosioni, fumogeno e proiettili restano nella zona centrale [2m(4248ms)[0m
+  [32m✓[0m Nome/effetto di una carta con markup HTML non vengono eseguiti (XSS) [2m(3163ms)[0m
+  [32m✓[0m Yami Yugi: Mago Nero canonico, Pietra del Saggio e IA di Slifer [2m(3298ms)[0m
+  [32m✓[0m Yugi/Yami Yugi: Guerrieri Magnetici e Cavalieri delle Figure completi [2m(3257ms)[0m
+
+376/378 test passati.
+[31m2 test falliti:[0m
+  - Equip con più bersagli: scelto dalla lista, resta in campo agganciato al mostro scelto: Magie Equipaggiamento che, scelte dalla lista, non restano agganciate al mostro scelto:
+  - duello rimasto fermo dopo la carta precedente a 727 Flamberga Spezza-Malvagi - Baou: ["cardListPickerModal: ⚔️ FLAMBERGE DEL MALE INFRANTO\n\nScegli a quale mostro equipaggiarti (tuo o dell'"]
+  - Multiplayer: il nome dell'avversario si vede in sala e nel duello: il suo pannello deve scrivere il nome: "🤖 Bot
+        ❤️ 8000
+        
+        🌀 0"
