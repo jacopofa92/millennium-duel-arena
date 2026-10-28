@@ -50,6 +50,20 @@ module.exports = {
         assert(b.tutte.spente === 20, `Dopo 20+ turni sono tutte spente: ${JSON.stringify(b)}`);
         assert(Number(b.z) < Number(b.gz), `Il velo sta sotto le carte: ${JSON.stringify(b)}`);
 
+        // 2b) L'anello chiude tutto il campo e NESSUNA fiamma cade su una casella (schermo largo: lo spazio c'e').
+        const anello = await page.evaluate(() => {
+            const pos = ContoAllaRovescia.posizioni() || [];
+            const W = innerWidth; const H = innerHeight;
+            const slots = [...document.querySelectorAll('.field-slot')].map((e) => e.getBoundingClientRect()).filter((q) => q.width > 2);
+            const sopra = pos.filter((p) => slots.some((q) => p.x * W > q.left && p.x * W < q.right && p.y * H > q.top && p.y * H < q.bottom)).length;
+            const xs = pos.map((p) => p.x * W); const ys = pos.map((p) => p.y * H);
+            const l = Math.min(...slots.map((q) => q.left)); const r = Math.max(...slots.map((q) => q.right));
+            const t = Math.min(...slots.map((q) => q.top)); const b = Math.max(...slots.map((q) => q.bottom));
+            return { n: pos.length, sopra, giro: Math.min(...xs) < l && Math.max(...xs) > r && Math.min(...ys) < t && Math.max(...ys) > b };
+        });
+        assert(anello.n === 20 && anello.sopra === 0, `Nessuna fiamma sulle caselle: ${JSON.stringify(anello)}`);
+        assert(anello.giro, `Le fiamme girano tutto attorno al campo: ${JSON.stringify(anello)}`);
+
         // 3) WebGL (Dettagli "Alti"): un canvas sopra il campo, rilasciato quando il conto sparisce, nessun errore.
         const c = await page.evaluate(async () => {
             window.CONTO_ROVESCIA_WEBGL_OFF = false;

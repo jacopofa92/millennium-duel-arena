@@ -20,13 +20,47 @@
     const MAX_FIAMME = 40;           // tetto di sicurezza per l'array dello shader
     const SPEGNIMENTO_S = 1.1;       // quanto dura lo spegnersi di una fiamma
 
-    /** Posizione (in frazioni dello schermo) della fiamma i di n: un arco sopra il centro del campo. */
-    function posizione(i, n) {
-        const a = Math.PI * (n > 1 ? i / (n - 1) : 0.5);
-        return { x: 0.5 + 0.4 * Math.cos(a), y: 0.60 - 0.34 * Math.sin(a) };
+    /**
+ * Le posizioni (in frazioni dello schermo) delle n fiamme: un anello CHIUSO attorno a tutto il campo, fuori dalle caselle.
+ * La forma e' una superellisse (esponente 4) centrata sul rettangolo che contiene tutte le `.field-slot`: tondeggiante come
+ * un ovale (in orizzontale diventa piu' larga che alta) ma molto piu' aderente di un'ellisse vera, che per lasciare fuori gli
+ * angoli del campo dovrebbe allargarsi del 41% e uscire dallo schermo. Con k = 1,19 gli angoli del rettangolo toccano la curva.
+ * Le fiamme sono distribuite a distanza uguale lungo la curva, a partire dal centro in alto, in senso orario: cosi' spegnendosi
+ * dalla fine "mangiano" l'anello un pezzo alla volta. Se lo schermo e' troppo stretto per l'anello (telefono in verticale) la
+ * curva si ferma a un margine dal bordo: li' le fiamme possono sfiorare le caselle piu' esterne, non c'e' altro posto.
+ */
+function calcolaPosizioni(n) {
+    const W = window.innerWidth || 1; const H = window.innerHeight || 1;
+    const m = Math.min(W, H);
+    let l = Infinity; let t = Infinity; let r = -Infinity; let b = -Infinity;
+    document.querySelectorAll('.field-slot').forEach((el) => {
+        const q = el.getBoundingClientRect();
+        if (q.width < 2 || q.height < 2) return;
+        l = Math.min(l, q.left); t = Math.min(t, q.top); r = Math.max(r, q.right); b = Math.max(b, q.bottom);
+    });
+    if (!isFinite(l)) { l = W * 0.2; r = W * 0.8; t = H * 0.2; b = H * 0.8; }   // nessuna casella: un anello centrato
+    const cx = (l + r) / 2; const cy = (t + b) / 2;
+    const margine = m * 0.05; const bordo = m * 0.035;
+    const a = Math.min((r - l) / 2 * 1.19 + margine, cx - bordo, W - cx - bordo);
+    const bb = Math.min((b - t) / 2 * 1.19 + margine, cy - bordo, H - cy - bordo);
+    // Si campiona la curva fitta e si prendono n punti equidistanti per lunghezza d'arco.
+    const N = 720; const pts = [];
+    for (let k = 0; k <= N; k++) {
+        const ang = -Math.PI / 2 + 2 * Math.PI * k / N;      // da in alto, in senso orario (y verso il basso)
+        const c = Math.cos(ang); const s = Math.sin(ang);
+        pts.push({ x: cx + a * Math.sign(c) * Math.pow(Math.abs(c), 0.5), y: cy + bb * Math.sign(s) * Math.pow(Math.abs(s), 0.5) });
     }
-
-    const VS = 'attribute vec2 aPos; varying vec2 vUv; void main(){ vUv=aPos*.5+.5; vUv.y=1.-vUv.y; gl_Position=vec4(aPos,0.,1.); }';
+    const cum = [0];
+    for (let k = 1; k < pts.length; k++) cum[k] = cum[k - 1] + Math.hypot(pts[k].x - pts[k - 1].x, pts[k].y - pts[k - 1].y);
+    const out = []; let k = 0;
+    for (let i = 0; i < n; i++) {
+        const target = cum[cum.length - 1] * i / n;
+        while (k < cum.length - 2 && cum[k + 1] < target) k++;
+        out.push({ x: pts[k].x / W, y: pts[k].y / H });
+    }
+    return out;
+}
+const VS = 'attribute vec2 aPos; varying vec2 vUv; void main(){ vUv=aPos*.5+.5; vUv.y=1.-vUv.y; gl_Position=vec4(aPos,0.,1.); }';
 
     function creaFS(n) {
         return `
@@ -36,6 +70,7 @@ uniform vec2 uRes;
 uniform float uT;
 uniform float uBuio;
 uniform float uV[${n}];
+uniform vec2 uP[${n}];
 float h(float k){return fract(sin(k*91.3458)*47453.5453);}
 void main(){
   vec2 P=vUv*uRes;
@@ -47,8 +82,7 @@ void main(){
   float luce=0.;
   for(int i=0;i<${n};i++){
     float fi=float(i);
-    float a=3.14159265*(${n}.>1.?fi/(${n}.-1.):.5);
-    vec2 c=vec2(.5+.4*cos(a),.60-.34*sin(a))*uRes;
+    vec2 c=uP[i]*uRes;
     float life=uV[i];
     float sz=m*.045*(.35+.65*life);
     vec2 q=(P-c)/sz; q.y=-q.y;              // y verso l'alto
@@ -121,7 +155,7 @@ void main(){
         layer.appendChild(buio);
         const fiamme = [];
         for (let i = 0; i < n; i++) {
-            const p = posizione(i, n);
+            const p = ora.pos[i];
             const f = document.createElement('span');
             f.className = 'cr-fiamma';
             f.style.left = (p.x * 100) + '%';
@@ -150,14 +184,24 @@ void main(){
         const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
         const l = gl.getAttribLocation(prog, 'aPos'); gl.enableVertexAttribArray(l); gl.vertexAttribPointer(l, 2, gl.FLOAT, false, 0, 0);
-        const U = { uRes: gl.getUniformLocation(prog, 'uRes'), uT: gl.getUniformLocation(prog, 'uT'), uBuio: gl.getUniformLocation(prog, 'uBuio'), uV: gl.getUniformLocation(prog, 'uV') };
+        const U = { uRes: gl.getUniformLocation(prog, 'uRes'), uT: gl.getUniformLocation(prog, 'uT'), uBuio: gl.getUniformLocation(prog, 'uBuio'), uV: gl.getUniformLocation(prog, 'uV'), uP: gl.getUniformLocation(prog, 'uP') };
         gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
         layer.appendChild(canvas);
         return { canvas: canvas, gl: gl, U: U };
     }
 
+    /** Ricalcola dove stanno le fiamme attorno al campo e lo riporta su canvas (uniform) e su fiamme CSS. */
+    function aggiornaPosizioni() {
+        if (!ora) return;
+        ora.pos = calcolaPosizioni(ora.n);
+        ora.posPiatte = new Float32Array(ora.n * 2);
+        ora.pos.forEach((p, i) => { ora.posPiatte[i * 2] = p.x; ora.posPiatte[i * 2 + 1] = p.y; });
+        if (ora.fiammeCss) ora.fiammeCss.forEach((f, i) => { f.style.left = (ora.pos[i].x * 100) + '%'; f.style.top = (ora.pos[i].y * 100) + '%'; });
+    }
+
     function misura() {
         if (!ora || !ora.canvas) return;
+        aggiornaPosizioni();
         const w = window.innerWidth || 1; const hgt = window.innerHeight || 1;
         // Luci morbide: poca risoluzione basta (e risparmia batteria sul telefono).
         const sc = Math.min(1, 900 / Math.max(w, hgt));
@@ -183,6 +227,7 @@ void main(){
         gl.uniform1f(U.uT, t);
         gl.uniform1f(U.uBuio, ora.buio);
         gl.uniform1fv(U.uV, new Float32Array(ora.vive));
+        gl.uniform2fv(U.uP, ora.posPiatte);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         ora.rid = requestAnimationFrame(ciclo);
     }
@@ -209,6 +254,7 @@ void main(){
             try { if (webglConsentito()) web = montaWebgl(layer, n); } catch (e) { web = null; layer.textContent = ''; }
             ora = { layer: layer, n: n, start: c.startTurn, owner: c.owner, buio: 0, vive: [], bersaglio: [], ultimo: 0, rid: 0 };
             for (let i = 0; i < n; i++) { ora.vive[i] = i < accese ? 1 : 0; ora.bersaglio[i] = ora.vive[i]; }
+            aggiornaPosizioni();
             if (web) {
                 ora.canvas = web.canvas; ora.gl = web.gl; ora.U = web.U;
                 misura();
@@ -219,8 +265,9 @@ void main(){
             }
         }
         for (let i = 0; i < n; i++) ora.bersaglio[i] = i < accese ? 1 : 0;
+        aggiornaPosizioni();   // il campo puo' essersi spostato (rotazione, altro duello nella stessa pagina)
         if (ora.fiammeCss) ora.fiammeCss.forEach((f, i) => f.classList.toggle('cr-spenta', i >= accese));
     }
 
-    window.ContoAllaRovescia = { sync: sync, fiammeAccese: fiammeAccese, rimuovi: rimuovi };
+    window.ContoAllaRovescia = { sync: sync, fiammeAccese: fiammeAccese, rimuovi: rimuovi, posizioni: () => (ora ? ora.pos : null) };
 })();
