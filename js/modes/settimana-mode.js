@@ -8,8 +8,9 @@
  * Tutorial e dalla Torre) e richiamando poi l'originale, che pesca come sempre.
  *  - I mostri del mazzo del giocatore e di quello dell'avversario che non
  *    rispettano la regola della settimana sono sostituiti (Settimana.conformaMazzo).
- *    Per il giocatore i rimpiazzi vengono dalla sua COLLEZIONE (non più copie di
- *    quelle possedute); se ne ha troppo pochi validi si pesca dal catalogo.
+ *    Per il giocatore i rimpiazzi vengono SOLO dalla sua collezione (non più copie
+ *    di quelle possedute): se non bastano il duello non parte (Settimana.verificaMazzo),
+ *    mai carte regalate dal catalogo.
  *  - Un riquadro in alto ricorda la regola per tutta la durata del duello.
  * Premi di fine duello: i soliti di un duello vinto, più il premio della
  * settimana la prima volta che si vince a quel livello (Settimana.registraVittoria).
@@ -20,18 +21,7 @@
     const params = new URLSearchParams(window.location.search);
     if ((params.get('mode') || '').toLowerCase() !== 'settimana') return;
 
-    /** Sotto questa soglia di carte valide possedute, i rimpiazzi del giocatore si pescano da tutto il catalogo. */
-    const MINIMO_VALIDE_POSSEDUTE = 8;
     const ETICHETTE = { Facile: 'Facile', Medio: 'Normale', Difficile: 'Difficile' };
-
-    /** I rimpiazzi per il giocatore: la sua collezione, o il catalogo se non basta. */
-    function opzioniGiocatore(r) {
-        const possedute = cardDatabase.filter((c) => Settimana.ammette(r, c) && window.SaveManager && SaveManager.getOwnedCount(c.id) > 0);
-        if (possedute.length >= MINIMO_VALIDE_POSSEDUTE) {
-            return { catalogo: possedute, copieMassime: (c) => SaveManager.getOwnedCount(c.id) };
-        }
-        return { catalogo: cardDatabase };
-    }
 
     /** @param {'player' | 'bot'} posto @param {any} r @param {any} opzioni */
     function adattaMazzo(posto, r, opzioni) {
@@ -64,9 +54,15 @@
             window.location.replace('settimana.html');
             return;
         }
+        // Il giocatore usa SOLO carte che possiede: se il suo mazzo non si può adattare alla regola con la sua collezione
+        // il duello non parte (nessun rimpiazzo dal catalogo). La pagina lo dice prima; qui si copre il link diretto.
+        if (!Settimana.verificaMazzo(window.SaveManager ? SaveManager.getActiveDeck() : null).ok) {
+            window.location.replace('settimana.html');
+            return;
+        }
         const originale = window.preparaManiIniziali;
         window.preparaManiIniziali = function () {
-            adattaMazzo('player', r, opzioniGiocatore(r));
+            adattaMazzo('player', r, Settimana.opzioniGiocatore(r));
             adattaMazzo('bot', r, { catalogo: cardDatabase });
             originale();
         };

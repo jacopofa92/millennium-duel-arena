@@ -130,6 +130,38 @@ module.exports = {
                 await page.goto(url('settimana.html'));
                 await page.waitForFunction(() => typeof Settimana !== 'undefined', null, { timeout: 30000 });
                 const avv = await page.evaluate(() => Settimana.avversario());
+
+                // Il giocatore usa SOLO carte che possiede: con un mazzo che la regola non permette e nessun mostro valido in
+                // collezione non si gioca (pagina con i livelli spenti, link diretto riportato alla pagina).
+                const bloccato = await page.evaluate(() => {
+                    if (!SaveManager.hasSave()) SaveManager.createNew('Prova');
+                    const save = SaveManager.load();
+                    save.collection = {};
+                    save.decks = [{ id: 'x', name: 'x', main: [{ id: 1, qty: 3 }, { id: 2, qty: 3 }], extra: [] }];
+                    save.activeDeckId = 'x';
+                    SaveManager.touch(save);
+                    const cartaFuoriRegola = (r) => !Settimana.ammette(r, cardDatabase.find((c) => c.id === 1)) && !Settimana.ammette(r, cardDatabase.find((c) => c.id === 2));
+                    const regolaOrig = Settimana.regola;
+                    // Una regola che il mazzo di prova (Drago Bianco e Mago Nero) non rispetta sicuramente.
+                    Settimana.regola = () => settimanaDatabase.regole.find((r) => cartaFuoriRegola(r));
+                    const v = Settimana.verificaMazzo(SaveManager.getActiveDeck());
+                    Settimana.regola = regolaOrig;
+                    return v;
+                });
+                t.assert(bloccato.ok === false && bloccato.mancano >= 1, `Senza mostri validi in collezione non si può giocare: ${JSON.stringify(bloccato)}`);
+                await page.evaluate(() => { const s = SaveManager.load(); s.decks = []; s.activeDeckId = null; SaveManager.touch(s); });
+                await page.goto(DUELLO + `?mode=settimana&character=${avv}&difficulty=Medio`);
+                await page.waitForURL(/settimana\.html/, { timeout: 20000 });
+
+                // Ora il giocatore possiede abbastanza mostri validi per ogni regola: si gioca.
+                await page.evaluate(() => {
+                    const save = SaveManager.load();
+                    save.collection = {};
+                    cardDatabase.filter((c) => c.type === 'monster' && !c.extraDeck && c.origin !== 'ww1').forEach((c) => { save.collection[c.id] = 3; });
+                    save.decks = [{ id: 'y', name: 'y', main: cardDatabase.filter((c) => c.type === 'monster' && !c.extraDeck && c.origin !== 'ww1').slice(0, 20).map((c) => ({ id: c.id, qty: 2 })), extra: [] }];
+                    save.activeDeckId = 'y';
+                    SaveManager.touch(save);
+                });
                 await page.goto(DUELLO + `?mode=settimana&character=${avv}&difficulty=Medio`);
                 try { await page.click('.di-skip', { timeout: 4000 }); } catch (e) { /* nessuna intro */ }
                 await page.waitForFunction(() => typeof gameState !== 'undefined' && (gameState.playerHand || []).length >= 5, null, { timeout: 30000 });
@@ -222,6 +254,19 @@ module.exports = {
             const p = await apri({ width: 393, height: 852 });
             try {
                 await p.goto(url('settimana.html'));
+                await p.waitForFunction(() => typeof Settimana !== 'undefined', null, { timeout: 20000 });
+                // Un mazzo di soli mostri e la collezione per rispettare qualunque regola.
+                await p.evaluate(() => {
+                    if (!SaveManager.hasSave()) SaveManager.createNew('Prova');
+                    const save = SaveManager.load();
+                    const mostri = cardDatabase.filter((c) => c.type === 'monster' && !c.extraDeck && c.origin !== 'ww1');
+                    save.collection = {};
+                    mostri.forEach((c) => { save.collection[c.id] = 3; });
+                    save.decks = [{ id: 'y', name: 'y', main: mostri.slice(0, 20).map((c) => ({ id: c.id, qty: 2 })), extra: [] }];
+                    save.activeDeckId = 'y';
+                    SaveManager.touch(save);
+                });
+                await p.reload();
                 await p.waitForFunction(() => document.querySelectorAll('#livelli .mp-scelta').length === 3, null, { timeout: 20000 });
                 const titolo = await p.textContent('#regolaTitolo');
                 t.assert(/Solo mostri/.test(titolo), `La pagina mostra la regola: "${titolo}"`);

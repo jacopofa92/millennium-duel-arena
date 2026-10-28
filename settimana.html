@@ -83,7 +83,6 @@
         const avv = characterDatabase.find((c) => c.id === idAvv) || { id: idAvv, name: idAvv };
 
         document.getElementById('regolaTitolo').textContent = r.icona + ' ' + r.titolo;
-        document.getElementById('regolaDesc').textContent = 'Questa settimana si gioca solo con questi mostri. I rimpiazzi sono scelti fra le tue carte (se ne hai abbastanza) con Livello e ATK più simili a quelli tolti.';
 
         const vinte = LIVELLI.filter((l) => stato.vinte[l.id]).length;
         const ms = Settimana.msAlProssimo();
@@ -106,6 +105,13 @@
             img.src = getCharacterPawnImage(avv.image);
         }
 
+        // Il giocatore usa solo carte che possiede: se col suo mazzo attivo la regola non si può rispettare, non si gioca.
+        const verifica = Settimana.verificaMazzo(SaveManager.getActiveDeck());
+        document.getElementById('regolaDesc').textContent = verifica.ok
+            ? 'Questa settimana si gioca solo con questi mostri. I mostri del tuo mazzo che non la rispettano vengono sostituiti da mostri che possiedi (Livello e ATK più simili).'
+            : (verifica.nessunMazzo
+                ? 'Non hai un mazzo attivo: scegline uno in Creazione Deck per giocare.'
+                : `Non puoi giocare questa settimana: nel mazzo attivo ci sono ${verifica.mancano} mostri fuori regola e nella tua collezione non hai abbastanza mostri validi per sostituirli. Non ti vengono mai date carte per giocare.`);
         const box = document.getElementById('livelli');
         box.innerHTML = '';
         LIVELLI.forEach((l) => {
@@ -121,7 +127,10 @@
             b.querySelector('.mp-scelta-desc').textContent = l.desc + ' ' + (preso
                 ? 'Premio di questa settimana già preso.'
                 : `Prima vittoria: ${premio.crediti} Crediti${premio.stelle ? ' e ' + premio.stelle + ' Stella' : ''}.`);
+            b.disabled = !verifica.ok;
+            if (!verifica.ok) b.style.opacity = '.45';
             b.addEventListener('click', () => {
+                if (!verifica.ok) return;
                 if (window.NativeHaptics) NativeHaptics.light();
                 window.location.href = 'duelMonstersCore.html?mode=settimana'
                     + '&character=' + encodeURIComponent(idAvv)

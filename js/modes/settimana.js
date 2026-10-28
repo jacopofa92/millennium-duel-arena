@@ -109,7 +109,7 @@ const Settimana = (function () {
     /**
      * Adatta un mazzo alla regola. I mostri non ammessi sono tolti e rimpiazzati
      * da mostri ammessi di Livello e ATK simili (al massimo MAX_COPIE per carta);
-     * le altre carte restano dove sono. Torna { mazzo, sostituite }.
+     * le altre carte restano dove sono. Torna { mazzo, sostituite, nonRimpiazzate } (quest'ultimo: i mostri fuori regola per cui non c'era un rimpiazzo).
      *
      * @param {any[]} mazzo le carte (con uid), com'è uscito da buildDeckFromSpec
      * @param {any} r la regola
@@ -128,12 +128,15 @@ const Settimana = (function () {
             copie.set(c.id, (copie.get(c.id) || 0) + 1);
         });
         let progressivo = 0;
+        let nonRimpiazzate = 0;
         daSostituire.forEach((vecchia) => {
             const scelta = catalogo
                 .map((c) => ({ c: c, d: distanza(vecchia, c) }))
                 .sort((a, b) => a.d - b.d)
                 .find((x) => (copie.get(x.c.id) || 0) < Math.min(MAX_COPIE, opzioni.copieMassime ? opzioni.copieMassime(x.c) : MAX_COPIE));
-            if (!scelta) { tenute.push(vecchia); return; } // nessun rimpiazzo possibile: meglio una carta in più che un mazzo più corto
+            // Nessun rimpiazzo possibile: la carta resta (meglio una carta in più che un mazzo più corto) e si CONTA, così chi
+            // non vuole carte che non ha (il giocatore) può rifiutare il duello invece di giocare fuori regola.
+            if (!scelta) { nonRimpiazzate++; tenute.push(vecchia); return; }
             copie.set(scelta.c.id, (copie.get(scelta.c.id) || 0) + 1);
             progressivo++;
             tenute.push(Object.assign({}, scelta.c, { uid: 'sett_' + Date.now() + '_' + progressivo + '_' + scelta.c.id }));
@@ -144,9 +147,32 @@ const Settimana = (function () {
             const j = Math.floor(rnd() * (i + 1));
             [tenute[i], tenute[j]] = [tenute[j], tenute[i]];
         }
-        return { mazzo: tenute, sostituite: daSostituire.length };
+        return { mazzo: tenute, sostituite: daSostituire.length, nonRimpiazzate: nonRimpiazzate };
     }
 
+
+    /** Le opzioni di rimpiazzo del GIOCATORE: solo carte che possiede, mai più copie di quelle che ha. Il catalogo non si tocca. */
+    function opzioniGiocatore(r) {
+        const possedute = cardDatabase.filter((c) => ammette(r, c) && window.SaveManager && SaveManager.getOwnedCount(c.id) > 0);
+        return { catalogo: possedute, copieMassime: (c) => SaveManager.getOwnedCount(c.id) };
+    }
+
+    /**
+     * Il giocatore può fare il Duello della Settimana col suo mazzo? Si adatta il mazzo (solo con carte sue) e si guarda se
+     * resta qualche mostro fuori regola. Torna { ok, mancano } (mancano = mostri per cui non ha un rimpiazzo), o
+     * { ok: false, nessunMazzo: true } se non ha un mazzo attivo.
+     * @param {{ main: { id: number, qty: number }[] } | null} spec
+     */
+    function verificaMazzo(spec) {
+        if (!spec || !Array.isArray(spec.main) || !spec.main.length) return { ok: false, mancano: 0, nessunMazzo: true };
+        const carte = [];
+        spec.main.forEach((e) => {
+            const modello = cardDatabase.find((c) => c.id === e.id);
+            for (let i = 0; modello && i < e.qty; i++) carte.push(Object.assign({}, modello, { uid: 'v' + carte.length }));
+        });
+        const esito = conformaMazzo(carte, regola(), opzioniGiocatore(regola()));
+        return { ok: esito.nonRimpiazzate === 0, mancano: esito.nonRimpiazzate };
+    }
     /** L'Extra Deck: si tengono solo i mostri che rispettano la regola (non si rimpiazza nulla). */
     function conformaExtra(extra, r) {
         return (extra || []).filter((c) => ammette(r, c));
@@ -162,6 +188,8 @@ const Settimana = (function () {
         registraVittoria: registraVittoria,
         ammette: ammette,
         conformaMazzo: conformaMazzo,
-        conformaExtra: conformaExtra
+        conformaExtra: conformaExtra,
+        opzioniGiocatore: opzioniGiocatore,
+        verificaMazzo: verificaMazzo
     };
 })();
