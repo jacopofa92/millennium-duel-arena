@@ -4001,6 +4001,8 @@ priorità o richiedono un refactor ampio):
   scelta chiesta, decisione mandata/attesa e comando, e la prima
   divergenza dice quale pezzo dello stato si è separato.
 
+1.4.144 (cache v453, branch `feature/duello-settimana-caccia-boss`): **Conto alla Rovescia Finale (id 1283)**, Magia Normale: paga 2000 LP (sottratti direttamente) e scrive `gameState.contoAllaRovescia = { owner, startTurn, durata: 20 }`; attivabile con piu' di 2000 LP e almeno 20 carte nel Deck, un solo conto alla volta, mai dal bot (`aiCanActivate` falso). **NESSUNA vittoria, per scelta dell'utente**: la `missingEffectNote` dice dove attaccarla (`checkGameOver` + `triggerInstantWin` quando `turn - startTurn >= durata`). Vista: `js/ui/conto-alla-rovescia.js/.css`, chiamata da `ridisegnaDuello` (legge solo lo stato, come DuelFeedback): velo scuro sotto le carte (z-index 1) e 20 fiammelle su un arco, una si spegne ad ogni cambio turno (`gameState.turn`) e lascia un tizzone. WebGL (shader su canvas, rilasciato a fine conto) con Dettagli video Alti e senza movimento ridotto, altrimenti fiamme CSS; `CONTO_ROVESCIA_WEBGL_OFF` lo spegne. Immagine `images/cards/1283.jpg` = SEGNAPOSTO disegnato (da sostituire con l'illustrazione vera, stesso nome). Spec `conto-alla-rovescia-finale`. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

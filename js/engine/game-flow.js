@@ -771,6 +771,8 @@ function ridisegnaDuello() {
     // Point critici. Confronta col ridisegno precedente, quindi va anche lui
     // DOPO renderFields.
     if (window.DuelFeedback) DuelFeedback.sync();
+    // Il campo scuro con le fiammelle di Conto alla Rovescia Finale (js/ui/conto-alla-rovescia.js): legge solo lo stato.
+    if (window.ContoAllaRovescia) ContoAllaRovescia.sync();
     updatePhaseIndicator();
 }
 

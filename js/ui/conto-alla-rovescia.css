@@ -1,0 +1,51 @@
+/* Conto alla Rovescia Finale (id 1283): velo scuro e fiamme. Vedi js/ui/conto-alla-rovescia.js.
+   z-index 1: sopra lo sfondo del campo, SOTTO le carte (.game-container sta a 2). Non intercetta mai i tocchi. */
+#contoRovesciaLayer {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+#contoRovesciaLayer .cr-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* ----- Versione senza WebGL: velo + fiamme CSS sulla stessa disposizione ad arco ----- */
+#contoRovesciaLayer .cr-buio {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 52%, rgba(0, 0, 0, .50) 0%, rgba(0, 0, 0, .66) 60%, rgba(0, 0, 0, .78) 100%);
+    animation: cr-buio-entra 1.2s ease-out both;
+}
+@keyframes cr-buio-entra { from { opacity: 0; } to { opacity: 1; } }
+
+#contoRovesciaLayer .cr-fiamma {
+    position: absolute;
+    width: clamp(10px, 2.2vmin, 22px);
+    height: clamp(16px, 3.8vmin, 38px);
+    margin: calc(clamp(16px, 3.8vmin, 38px) / -2) 0 0 calc(clamp(10px, 2.2vmin, 22px) / -2);
+    border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+    background: radial-gradient(ellipse at 50% 70%, #fff3b0 0%, #ffb338 38%, #ff5a0a 72%, rgba(255, 60, 0, 0) 100%);
+    box-shadow: 0 0 14px 4px rgba(255, 110, 20, .55);
+    transform-origin: 50% 100%;
+    animation: cr-fiamma 1.1s ease-in-out infinite alternate;
+    transition: opacity 1.1s ease, transform 1.1s ease;
+}
+@keyframes cr-fiamma {
+    from { transform: scale(1, 1) skewX(-4deg); }
+    to   { transform: scale(.9, 1.12) skewX(5deg); }
+}
+/* Spenta: resta un tizzone rosso, cosi' si contano ancora i posti. */
+#contoRovesciaLayer .cr-fiamma.cr-spenta {
+    animation: none;
+    opacity: .75;
+    transform: scale(.28);
+    background: #8a1d08;
+    box-shadow: 0 0 5px 1px rgba(150, 30, 5, .6);
+}
+@media (prefers-reduced-motion: reduce) {
+    #contoRovesciaLayer .cr-fiamma, #contoRovesciaLayer .cr-buio { animation: none; }
+}

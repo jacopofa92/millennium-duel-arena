@@ -3654,6 +3654,28 @@
     });
 
     // ================================================================
+    // 1283 — Conto alla Rovescia Finale (Magia Normale)
+    // Paga 2000 LP: parte un conto di 20 turni. PER ORA NON SI VINCE in nessun modo (richiesta esplicita dell'utente):
+    // la carta avvia soltanto il conto, che js/ui/conto-alla-rovescia.js mostra (campo scuro, 20 fiammelle di cui una si
+    // spegne ad ogni turno). Per attivare la vittoria basta controllare `gameState.contoAllaRovescia` in checkGameOver
+    // (game-flow.js) quando `turn - startTurn >= durata`, con triggerInstantWin: vedi la missingEffectNote della carta.
+    // ================================================================
+    CardEffects.register(1283, {
+        canActivate(ctx) {
+            if (gameState.contoAllaRovescia) return false;                 // un solo conto alla volta
+            if (Tavolo.lp(ctx.owner) <= 2000) return false;                // il costo non puo' portare a 0
+            return (Tavolo.mazzo(ctx.owner) || []).length >= 20;           // "20 carte o piu' nel Deck"
+        },
+        aiCanActivate() { return false; },   // il bot non sa ancora giocarla con senso: nessuna vittoria da inseguire
+        activate(ctx) {
+            // "Paga 2000 LP" e' un costo, non un danno: si sottrae direttamente (come Ra), senza passare dai blocchi dei danni.
+            gameState[Tavolo.chiave(ctx.owner, 'LP')] -= 2000;
+            gameState.contoAllaRovescia = { owner: ctx.owner, startTurn: gameState.turn, durata: 20 };
+            ctx.log(`⏳ ${ctx.card.name}: ${ctx.owner === 'player' ? 'paghi' : 'il bot paga'} 2000 LP. Inizia il conto alla rovescia di 20 turni.`);
+        }
+    });
+
+    // ================================================================
     // CARTE SENZA CODICE BESPOKE — libreria per il futuro Card Maker
     // (vedi js/engine/effect-templates.js, js/data/custom-cards.js): una carta in
     // cardDatabase può dichiarare "effectTemplate"/"cloneEffectOf" invece
