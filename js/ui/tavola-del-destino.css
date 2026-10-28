@@ -1,0 +1,64 @@
+/* Tavola del Destino: campo nel Regno delle Ombre e lettere di fumo. Vedi js/ui/tavola-del-destino.js.
+   Il velo sta a z-index 1: sopra lo sfondo del campo, SOTTO le carte (.game-container e' a 2). Mai sui tocchi. */
+#tavolaDestinoLayer {
+    --td-intensita: .6;
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+}
+#tavolaDestinoLayer .td-buio {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 50% 50%, rgba(22, 4, 40, .55) 0%, rgba(10, 0, 24, .78) 62%, rgba(2, 0, 8, .92) 100%);
+    opacity: var(--td-intensita);
+    animation: td-entra 1.6s ease-out both, td-respira 7s ease-in-out 1.6s infinite alternate;
+}
+/* Nebbia viola che scorre lenta: tre masse sfocate che attraversano il campo a velocita' diverse */
+#tavolaDestinoLayer .td-nebbia {
+    position: absolute;
+    width: 90vmax;
+    height: 60vmax;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(120, 40, 190, .34) 0%, rgba(70, 10, 120, .16) 45%, rgba(0, 0, 0, 0) 72%);
+    filter: blur(28px);
+    opacity: calc(var(--td-intensita) * .9);
+    mix-blend-mode: screen;
+    will-change: transform;
+}
+#tavolaDestinoLayer .td-nebbia-a { left: -35vmax; top: -18vmax; animation: td-scorri-a 38s ease-in-out infinite alternate; }
+#tavolaDestinoLayer .td-nebbia-b { right: -40vmax; bottom: -22vmax; animation: td-scorri-b 46s ease-in-out infinite alternate; }
+#tavolaDestinoLayer .td-nebbia-c { left: 10vmax; top: 25vh; width: 70vmax; height: 40vmax; opacity: calc(var(--td-intensita) * .5); animation: td-scorri-c 54s ease-in-out infinite alternate; }
+@keyframes td-entra { from { opacity: 0; } to { opacity: var(--td-intensita); } }
+@keyframes td-respira { from { filter: brightness(1); } to { filter: brightness(.82); } }
+@keyframes td-scorri-a { from { transform: translate(0, 0) rotate(0deg); } to { transform: translate(38vmax, 14vmax) rotate(14deg); } }
+@keyframes td-scorri-b { from { transform: translate(0, 0) rotate(0deg); } to { transform: translate(-42vmax, -10vmax) rotate(-12deg); } }
+@keyframes td-scorri-c { from { transform: translate(-12vmax, 0) scale(1); } to { transform: translate(22vmax, -8vmax) scale(1.2); } }
+
+/* Il fumo: una tela a tutto schermo SOPRA le carte (sono le lettere "sopra la carta") ma sotto i modali e gli annunci */
+#tavolaDestinoFumo {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 32;
+    pointer-events: none;
+}
+
+/* Ripiego senza tela: lettere di testo sfumate che respirano, in un contenitore sul body (z-index 32 come la tela) */
+#tavolaDestinoTesti { position: fixed; inset: 0; z-index: 32; pointer-events: none; }
+#tavolaDestinoTesti .td-lettera {
+    position: fixed;
+    transform: translate(-50%, -50%);
+    font: 900 40px/1 Impact, "Arial Black", "Segoe UI Black", sans-serif;
+    color: rgba(225, 205, 255, .55);
+    text-shadow: 0 0 14px rgba(170, 120, 255, .85), 0 0 34px rgba(110, 50, 190, .8);
+    filter: blur(1.6px);
+    animation: td-lettera-respira 3.4s ease-in-out infinite alternate;
+}
+@keyframes td-lettera-respira { from { opacity: .55; } to { opacity: .95; } }
+@media (prefers-reduced-motion: reduce) {
+    #tavolaDestinoLayer .td-buio, #tavolaDestinoLayer .td-nebbia, #tavolaDestinoTesti .td-lettera { animation: none; }
+}

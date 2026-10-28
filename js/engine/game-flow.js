@@ -773,6 +773,8 @@ function ridisegnaDuello() {
     if (window.DuelFeedback) DuelFeedback.sync();
     // Il campo scuro con le fiammelle di Conto alla Rovescia Finale (js/ui/conto-alla-rovescia.js): legge solo lo stato.
     if (window.ContoAllaRovescia) ContoAllaRovescia.sync();
+    // Tavola del Destino: campo nel Regno delle Ombre e lettere di fumo (js/ui/tavola-del-destino.js), solo lettura dello stato.
+    if (window.TavolaDestino) TavolaDestino.sync();
     updatePhaseIndicator();
 }
 
@@ -2683,7 +2685,7 @@ function suonaCinematicaVittoria(kind, playerWon, fatto) {
     } else if (kind === 'finalcountdown') {
         bannerText = 'CONTO ALLA ROVESCIA FINALE';
     } else if (kind === 'destinyboard') {
-        bannerText = 'FINAL';
+        bannerText = 'DEATH';
         const owner = playerWon ? 'player' : 'bot';
         const stField = Tavolo.magieTrappole(owner);
         const uids = DESTINY_BOARD_CARD_IDS

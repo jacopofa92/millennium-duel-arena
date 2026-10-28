@@ -1483,8 +1483,8 @@ function triggerExodiaWin(playerWon) {
  */
 function triggerDestinyBoardWin(playerWon) {
     triggerInstantWin('destinyboard', playerWon
-        ? '💀 Tavola del Destino è completo: "FINAL" è scritto sul tuo Terreno! Vittoria automatica!'
-        : '💀 Il bot ha completato Tavola del Destino: "FINAL" è scritto sul suo Terreno! Vittoria automatica!', playerWon);
+        ? '💀 Tavola del Destino è completo: "DEATH" è scritto sul tuo Terreno! Vittoria automatica!'
+        : '💀 Il bot ha completato Tavola del Destino: "DEATH" è scritto sul suo Terreno! Vittoria automatica!', playerWon);
 }
 
 /** Elefante Volante (id 246): una carta sola, nessun "insieme di pezzi". */
