@@ -372,6 +372,18 @@
      * torna sempre vero — nessuna restrizione, esattamente come prima.
      */
     function isMassDestructionWorthwhile(card, gameState, owner) {
+        // Distruzione di massa di MAGIE E TRAPPOLE (Tempesta Potente, Spolverino dell'Arpia, Attacco Mago Nero...): il confronto
+        // dei mostri qui sotto non c'entra, conta quante carte Magia/Trappola ha ciascuno. Segnalato giocando: Bakura Difficile
+        // spazzò il campo con Tempesta Potente quando il giocatore non aveva NESSUNA Magia/Trappola e lui ne aveva 2 (Spada
+        // Rivelatrice compresa). Serve che l'avversario ne abbia almeno una; se la carta colpisce anche il proprio lato, che ne
+        // abbia PIU' di chi la gioca (un pareggio non basta).
+        const testoST = card.effect || '';
+        if (/distrugg/i.test(testoST) && /Magie? e Trappol|Magia e Trappola|Magie\/Trappol/i.test(testoST) && !/mostr/i.test(testoST)) {
+            const conta = (o) => Tavolo.magieTrappole(o, gameState).filter(Boolean).length;
+            const sue = conta(Tavolo.avversario(owner));
+            if (sue < 1) return false;
+            return OPPONENT_ONLY_OWNERSHIP.test(testoST) || sue > conta(owner);
+        }
         if (!hasOwnSideCost(card)) return true;
         const ownField = Tavolo.mostri(owner, gameState);
         const opponentField = Tavolo.mostri(Tavolo.avversario(owner), gameState);

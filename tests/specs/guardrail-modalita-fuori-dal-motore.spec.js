@@ -15,11 +15,11 @@ const leggi = (cartella) => fs.readdirSync(path.join(RADICE, cartella))
     .filter((f) => f.endsWith('.js'))
     .map((f) => ({ nome: cartella + '/' + f, testo: fs.readFileSync(path.join(RADICE, cartella, f), 'utf8') }));
 
-const NOMI_DELLE_MODALITA = /ModalitaDuello|ModalitaExtra|puzzlesDatabase|rivinciteDatabase|torreDatabase|\bTorre\.|js\/modes\//;
+const NOMI_DELLE_MODALITA = /ModalitaDuello|ModalitaExtra|puzzlesDatabase|rivinciteDatabase|torreDatabase|settimanaDatabase|cacciaDatabase|\bTorre\.|\bSettimana\.|\bCaccia\.|js\/modes\//;
 // Ciò che un file di modalità può assegnare su window.
 const ASSEGNAZIONI_AMMESSE = new Set([
     'ModalitaDuello', 'Torre', 'preparaManiIniziali', 'DuelDialogues', 'onbeforeunload',
-    'puzzlesDatabase', 'rivinciteDatabase', 'torreDatabase'
+    'puzzlesDatabase', 'rivinciteDatabase', 'torreDatabase', 'settimanaDatabase', 'cacciaDatabase'
 ]);
 
 module.exports = {
@@ -31,7 +31,7 @@ module.exports = {
         const nominano = motore.filter((f) => NOMI_DELLE_MODALITA.test(f.testo)).map((f) => f.nome);
         t.assert(nominano.length === 0, `File del motore/IA che nominano le modalità aggiuntive:\n  - ${nominano.join('\n  - ')}`);
 
-        const modalita = leggi('js/modes').concat(['js/data/puzzles-db.js', 'js/data/rivincite-db.js', 'js/data/torre-db.js']
+        const modalita = leggi('js/modes').concat(['js/data/puzzles-db.js', 'js/data/rivincite-db.js', 'js/data/torre-db.js', 'js/data/settimana-db.js', 'js/data/caccia-db.js']
             .map((n) => ({ nome: n, testo: fs.readFileSync(path.join(RADICE, n), 'utf8') })));
         t.assert(modalita.length >= 7, `Attesi i file delle modalità, trovati ${modalita.length}`);
         const vietate = [];

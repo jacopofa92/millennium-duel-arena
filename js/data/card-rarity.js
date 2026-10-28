@@ -41,7 +41,8 @@
     const SECRET_IDS = new Set([
         11, 41, 42, 43, 44,          // Exodia il Proibito + i 4 arti
         866, 867, 868, 869, 870,     // Tavola del Destino + Spirit Message I/N/A/L
-        246                          // Elefante Volante
+        246,                         // Elefante Volante
+        1283                         // Conto alla Rovescia Finale (fuori dai pacchetti: richiesta dell'utente)
     ]);
     const LOCKED_IDS = new Set([...MYTHIC_IDS, ...SECRET_IDS]);
 

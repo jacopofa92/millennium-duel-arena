@@ -21,6 +21,12 @@ async function calma(page, scegli) {
         const stato = await page.evaluate((src) => {
             const posizione = document.querySelector('.quick-popover .quick-popover-btn.attack');
             if (posizione && posizione.offsetWidth > 0) { posizione.click(); return 'risposto'; }
+            // "Vuoi rispondere?" alla propria stessa attivazione (una Magia Rapida in mano puo' rispondere): si passa.
+            const risposta = document.getElementById('activateModal');
+            if (risposta && risposta.classList.contains('open') && /rispond/i.test(risposta.textContent)) {
+                document.getElementById('activateCancelBtn').click();
+                return 'risposto';
+            }
             const s = Decisioni.inSospeso();
             if (s) {
                 // eslint-disable-next-line no-eval

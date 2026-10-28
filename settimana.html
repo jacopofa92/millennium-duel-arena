@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<!-- Copertura d'avvio (identica in ogni pagina col loader: la sorveglia guardrail-copertura-avvio). Fino a quando
+     js/ui/page-loader.js -- che sta nel body e arriva dopo gli script bloccanti dell'head -- non prende il suo posto,
+     lo schermo restava vuoto e i tocchi cadevano nel nulla. La toglie page-loader.js; 15 s di rete di sicurezza. -->
+<style>html.avvio-in-corso::before{content:"";position:fixed;inset:0;z-index:2147483000;background:#0b0d14}html.avvio-in-corso::after{content:"";position:fixed;z-index:2147483001;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;box-sizing:border-box;border:3px solid rgba(247,215,116,.22);border-top-color:#f7d774;border-radius:50%;animation:avvio-in-corso-giro .9s linear infinite}@keyframes avvio-in-corso-giro{to{transform:rotate(360deg)}}</style>
+<script>(function(){var r=document.documentElement;r.classList.add("avvio-in-corso");setTimeout(function(){r.classList.remove("avvio-in-corso")},15000)})();</script>
+<!-- Opt-in STATICO alla View Transitions API — deve stare qui, non iniettato via JS in ritardo (vedi js/audio/audio-manager.js per la storia completa del bug che questo risolve). -->
+<style>@view-transition { navigation: auto; }</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="images/icons/icon-192.png">
+<link rel="apple-touch-icon" href="images/icons/icon-180.png">
+<meta name="theme-color" content="#0b0d14">
+<style>html, body { background: #0b0d14; }</style>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Millennium">
+<script src="js/ui/error-recovery.js"></script>
+<!-- Accesso obbligatorio (js/cloud/auth-gate.js). -->
+<script src="js/vendor/supabase.min.js"></script>
+<script src="js/cloud/supabase-config.js"></script>
+<script src="js/cloud/cloud-sync.js"></script>
+<script src="js/cloud/auto-sync.js"></script>
+<script src="js/cloud/auth-gate.js"></script>
+<script src="js/pwa-register.js"></script>
+<link rel="stylesheet" href="js/ui/page-loader.css">
+<link rel="stylesheet" href="js/ui/topbar.css">
+<link rel="stylesheet" href="js/ui/deck-switcher.css">
+<link rel="stylesheet" href="js/modes/mode-pages.css">
+<title>Yu-Gi-Oh! Millennium Duel Arena — Duello della Settimana</title>
+</head>
+<body>
+    <script src="js/ui/page-loader.js"></script>
+    <div id="topbarMount"></div>
+
+    <main class="mp-main">
+        <p class="mp-intro">Una regola nuova ogni lunedì, uguale per tutti. Vale per i mostri del tuo mazzo e di quello dell'avversario: quelli che non la rispettano vengono sostituiti da mostri validi, Magie e Trappole restano come sono.</p>
+        <div class="mp-riepilogo" id="riepilogo"></div>
+
+        <section class="mp-pannello" id="pannelloRegola">
+            <h2 id="regolaTitolo"></h2>
+            <p id="regolaDesc"></p>
+        </section>
+
+        <div class="mp-sezione">Il tuo avversario</div>
+        <div class="mp-elenco"><div class="mp-voce" id="avversario"></div></div>
+
+        <div class="mp-sezione">Scegli il livello</div>
+        <div class="mp-scelte" id="livelli"></div>
+    </main>
+
+<script src="js/data/cards-data.generated.js"></script>
+<script src="js/data/characters-db.js"></script>
+<script src="js/data/settimana-db.js"></script>
+<script src="js/save-manager.js"></script>
+<script src="js/cloud/server-date.js"></script>
+<script src="js/modes/settimana.js"></script>
+<script src="js/audio/audio-manager.js"></script>
+<script src="js/native/app-back-button.js"></script>
+<script src="js/native/haptics.js"></script>
+<script src="js/native/native-save-backup.js"></script>
+<script src="js/ui/icon-library.js"></script>
+<script src="js/ui/deck-switcher.js"></script>
+<script src="js/ui/topbar.js"></script>
+<script>
+    PageTopbar.render('#topbarMount', { icon: 'star', title: 'Duello della Settimana' });
+    initAudioManager();
+    Icons.hydrate();
+
+    const LIVELLI = [
+        { id: 'Facile', nome: 'Facile', icona: '🥉', desc: 'L\'avversario usa il suo mazzo più leggero.' },
+        { id: 'Medio', nome: 'Normale', icona: '🥈', desc: 'Un avversario all\'altezza.' },
+        { id: 'Difficile', nome: 'Difficile', icona: '🥇', desc: 'Il mazzo completo e l\'IA più attenta.' }
+    ];
+
+    function scrivi() {
+        const r = Settimana.regola();
+        const idAvv = Settimana.avversario();
+        const stato = Settimana.stato();
+        const avv = characterDatabase.find((c) => c.id === idAvv) || { id: idAvv, name: idAvv };
+
+        document.getElementById('regolaTitolo').textContent = r.icona + ' ' + r.titolo;
+
+        const vinte = LIVELLI.filter((l) => stato.vinte[l.id]).length;
+        const ms = Settimana.msAlProssimo();
+        const giorni = Math.floor(ms / 86400000);
+        const ore = Math.floor((ms % 86400000) / 3600000);
+        document.getElementById('riepilogo').innerHTML =
+            `<span>🏅 Premi presi <strong>${vinte}/3</strong></span>` +
+            `<span>⏳ Cambia tra <strong>${giorni > 0 ? giorni + ' g ' : ''}${ore} h</strong></span>`;
+
+        const a = document.getElementById('avversario');
+        a.innerHTML = '<div class="mp-emblema"></div><div><div class="mp-titolo"></div><div class="mp-desc"></div></div>';
+        a.querySelector('.mp-titolo').textContent = avv.name;
+        a.querySelector('.mp-desc').textContent = avv.title || 'Duellante';
+        const emb = a.querySelector('.mp-emblema');
+        emb.textContent = (avv.name || '?').charAt(0);
+        if (avv.image) {
+            const img = document.createElement('img');
+            img.alt = '';
+            img.onload = () => { emb.textContent = ''; emb.appendChild(img); };
+            img.src = getCharacterPawnImage(avv.image);
+        }
+
+        // Il giocatore usa solo carte che possiede: se col suo mazzo attivo la regola non si può rispettare, non si gioca.
+        const verifica = Settimana.verificaMazzo(SaveManager.getActiveDeck());
+        document.getElementById('regolaDesc').textContent = verifica.ok
+            ? 'Questa settimana si gioca solo con questi mostri. I mostri del tuo mazzo che non la rispettano vengono sostituiti da mostri che possiedi (Livello e ATK più simili).'
+            : (verifica.nessunMazzo
+                ? 'Non hai un mazzo attivo: scegline uno in Creazione Deck per giocare.'
+                : `Non puoi giocare questa settimana: nel mazzo attivo ci sono ${verifica.mancano} mostri fuori regola e nella tua collezione non hai abbastanza mostri validi per sostituirli. Non ti vengono mai date carte per giocare.`);
+        const box = document.getElementById('livelli');
+        box.innerHTML = '';
+        LIVELLI.forEach((l) => {
+            const premio = settimanaDatabase.premi[l.id];
+            const preso = !!stato.vinte[l.id];
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'mp-scelta';
+            b.dataset.livello = l.id;
+            b.innerHTML = '<span class="mp-scelta-icona"></span><span><span class="mp-scelta-nome"></span><span class="mp-scelta-desc"></span></span>';
+            b.querySelector('.mp-scelta-icona').textContent = preso ? '✅' : l.icona;
+            b.querySelector('.mp-scelta-nome').textContent = l.nome;
+            b.querySelector('.mp-scelta-desc').textContent = l.desc + ' ' + (preso
+                ? 'Premio di questa settimana già preso.'
+                : `Prima vittoria: ${premio.crediti} Crediti${premio.stelle ? ' e ' + premio.stelle + ' Stella' : ''}.`);
+            b.disabled = !verifica.ok;
+            if (!verifica.ok) b.style.opacity = '.45';
+            b.addEventListener('click', () => {
+                if (!verifica.ok) return;
+                if (window.NativeHaptics) NativeHaptics.light();
+                window.location.href = 'duelMonstersCore.html?mode=settimana'
+                    + '&character=' + encodeURIComponent(idAvv)
+                    + '&difficulty=' + encodeURIComponent(l.id);
+            });
+            box.appendChild(b);
+        });
+    }
+
+    scrivi();
+    // La data del server arriva in ritardo: appena c'è si riscrive (la regola potrebbe essere cambiata di un giorno al limite).
+    if (window.ServerDate && typeof ServerDate.sync === 'function') ServerDate.sync().then(scrivi).catch(() => {});
+</script>
+</body>
+</html>
