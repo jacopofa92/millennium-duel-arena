@@ -14142,8 +14142,7 @@ const cardDatabase = [
     "subtype": "normal",
     "effect": "Puoi attivare questa carta solo se hai almeno 2000 LP e 20 o più carte nel Deck. Paga 2000 LP. Dopo 20 turni dall'attivazione di questa carta, vinci il Duello.",
     "artOnly": true,
-    "limit": 1,
-    "missingEffectNote": "La vittoria dopo 20 turni NON è ancora attiva (scelta dell'utente): la carta paga i 2000 LP e avvia il conto, mostrato dal campo scuro con 20 fiammelle (js/ui/conto-alla-rovescia.js) di cui una si spegne ad ogni turno. Per attivarla basta controllare gameState.contoAllaRovescia in checkGameOver."
+    "limit": 1
   },
   {
     "id": 1200,

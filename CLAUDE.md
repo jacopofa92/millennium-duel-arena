@@ -4005,6 +4005,8 @@ priorità o richiedono un refactor ampio):
 
 1.4.145 (cache v454): **le fiamme del Conto alla Rovescia Finale formano un anello chiuso attorno a TUTTO il campo**, fuori dalle caselle (`calcolaPosizioni` in conto-alla-rovescia.js: superellisse esponente 4 centrata sul rettangolo di tutte le `.field-slot`, fiamme a distanza uguale lungo la curva da in alto in senso orario, ricalcolate a ogni sync e resize; una ellisse vera uscirebbe dallo schermo). In orizzontale nessuna fiamma cade su una casella (lo sorveglia lo spec); su telefono in verticale lo schermo e' troppo stretto e le piu' esterne sfiorano le caselle ai lati (le fiamme stanno comunque sotto le carte). Suite completa non eseguita.
 
+1.4.146 (cache v455): **Conto alla Rovescia Finale: la vittoria ORA C'E'** (chiarimento dell'utente: `per ora non si vince in alcun modo` voleva dire che la CARTA non si puo' ottenere, non che l'effetto restasse spento). Passati 20 turni dall'attivazione (`turn - startTurn >= durata`, lo stesso istante in cui si spegne l'ultima fiamma) `checkGameOver` (fasi.js) chiama `triggerInstantWin('finalcountdown', ...)` per chi l'ha attivata, con banner CONTO ALLA ROVESCIA FINALE (game-flow.js); le Sfide `winInstantly` la contano come le altre. Tolta la `missingEffectNote`. **Non si ottiene in nessun modo**: e' in `SECRET_IDS` (card-rarity.js, fuori da ogni pacchetto) e non ha fonti in `card-acquisition.js`; lo spec lo verifica (rarita' secret, non acquistabile). Le note 1.4.144/1.4.145 qui sopra che parlano di vittoria assente non valgono piu'. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

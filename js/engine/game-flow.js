@@ -2680,6 +2680,8 @@ function suonaCinematicaVittoria(kind, playerWon, fatto) {
         if (playerWon) {
             pieceElements = findCardElementsByUid('playerHand', gameState.playerHand.filter((card) => EXODIA_PIECE_IDS.includes(card.id)).map((card) => card.uid));
         }
+    } else if (kind === 'finalcountdown') {
+        bannerText = 'CONTO ALLA ROVESCIA FINALE';
     } else if (kind === 'destinyboard') {
         bannerText = 'FINAL';
         const owner = playerWon ? 'player' : 'bot';

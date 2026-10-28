@@ -1,10 +1,10 @@
-// Conto alla Rovescia Finale (id 1283): la carta paga 2000 LP e avvia un conto di 20 turni, SENZA vittoria (per ora).
+// Conto alla Rovescia Finale (id 1283): la carta paga 2000 LP e avvia un conto di 20 turni; al 20° vince chi l'ha attivata.
 // Il campo si oscura e compaiono 20 fiammelle (js/ui/conto-alla-rovescia.js), di cui una si spegne ad ogni turno.
 // Si provano entrambe le versioni: WebGL (Dettagli "Alti") e CSS di ripiego, e che un duello nuovo ripulisca tutto.
 const { openDuel } = require('../helpers/harness');
 
 module.exports = {
-    name: 'Conto alla Rovescia Finale: paga 2000 LP, 20 fiamme, una si spegne ad ogni turno, nessuna vittoria',
+    name: 'Conto alla Rovescia Finale: paga 2000 LP, 20 fiamme, una si spegne ad ogni turno, vince al 20° turno, e non si può ottenere',
     async run({ page, assert }) {
         const errori = [];
         page.on('pageerror', (e) => errori.push(e.message));
@@ -26,7 +26,10 @@ module.exports = {
         assert(a.lp === 6000, `Paga 2000 LP: ${JSON.stringify(a)}`);
         assert(a.stato && a.stato.durata === 20 && a.stato.owner === 'player', `Parte il conto di 20 turni: ${JSON.stringify(a)}`);
         assert(a.dopo === false, `Un solo conto alla volta: ${JSON.stringify(a)}`);
-        assert(a.vinto === false, `Nessuna vittoria: ${JSON.stringify(a)}`);
+        assert(a.vinto === false, `Attivarla non chiude il duello: ${JSON.stringify(a)}`);
+        await page.addScriptTag({ path: require('path').join(__dirname, '../../js/data/card-rarity.js') });
+        const rar = await page.evaluate(() => ({ rarita: CardRarity.of(1283), bloccata: CardRarity.LOCKED_IDS.has(1283), acquistabile: CardRarity.isPurchasable(1283) }));
+        assert(rar.bloccata && rar.rarita === 'secret' && !rar.acquistabile, `Non si può ottenere: fuori dai pacchetti: ${JSON.stringify(rar)}`);
 
         // 2) Il campo si scurisce e le fiamme (CSS: "Normali") sono 20, tutte accese; ogni turno ne spegne una.
         const b = await page.evaluate(async () => {
@@ -78,6 +81,21 @@ module.exports = {
             return { canvas, resto: document.querySelectorAll('#contoRovesciaLayer').length };
         });
         assert(c.resto === 0, `Senza conto non resta nulla a schermo: ${JSON.stringify(c)}`);
+        // 4) Vittoria: al 20° turno dall'attivazione vince chi l'ha attivata; prima no. (Ultimo, perché chiude il duello.)
+        const v = await page.evaluate(async () => {
+            const esiti = [];
+            const vera = window.endDuel;
+            window.endDuel = (chiVince) => { esiti.push(chiVince); };
+            gameState.contoAllaRovescia = { owner: 'player', startTurn: gameState.turn, durata: 20 };
+            gameState.turn += 19; checkGameOver();
+            const prima = { cinematica: !!gameState.instantWinCinematicPlaying, conto: !!gameState.contoAllaRovescia };
+            gameState.turn += 1; checkGameOver();
+            for (let k = 0; k < 120 && !esiti.length; k++) await new Promise((s) => setTimeout(s, 250));
+            window.endDuel = vera;
+            return { prima, esiti, conto: !!gameState.contoAllaRovescia };
+        });
+        assert(v.prima.cinematica === false && v.prima.conto === true, `Al 19° turno non vince ancora: ${JSON.stringify(v)}`);
+        assert(v.esiti.length === 1 && v.esiti[0] === true, `Al 20° vince chi l'ha attivata: ${JSON.stringify(v)}`);
         assert(errori.length === 0, `Errori: ${errori.join(' | ')}`);
     }
 };

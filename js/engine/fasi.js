@@ -1541,6 +1541,18 @@ function checkGameOver() {
         return;
     }
 
+    // 1283 — Conto alla Rovescia Finale: passati `durata` turni dall'attivazione (stessa regola con cui
+    // js/ui/conto-alla-rovescia.js spegne l'ultima fiamma) vince chi l'ha attivata. Controllato qui, dal punto
+    // "pulito" di updateUI(), come Exodia e Destiny Board; il conto lo scrive solo la carta (card-effects-8.js).
+    const conto = gameState.contoAllaRovescia;
+    if (conto && gameState.turn - conto.startTurn >= conto.durata) {
+        gameState.contoAllaRovescia = null;
+        triggerInstantWin('finalcountdown', conto.owner === 'player'
+            ? '⏳ Conto alla Rovescia Finale: sono passati 20 turni, hai vinto il Duello!'
+            : '⏳ Conto alla Rovescia Finale: sono passati 20 turni, il bot ha vinto il Duello!', conto.owner === 'player');
+        return;
+    }
+
     const playerLost = gameState.playerLP <= 0;
     const botLost = gameState.botLP <= 0;
     if (!playerLost && !botLost) return;

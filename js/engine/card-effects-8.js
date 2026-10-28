@@ -3655,10 +3655,10 @@
 
     // ================================================================
     // 1283 — Conto alla Rovescia Finale (Magia Normale)
-    // Paga 2000 LP: parte un conto di 20 turni. PER ORA NON SI VINCE in nessun modo (richiesta esplicita dell'utente):
-    // la carta avvia soltanto il conto, che js/ui/conto-alla-rovescia.js mostra (campo scuro, 20 fiammelle di cui una si
-    // spegne ad ogni turno). Per attivare la vittoria basta controllare `gameState.contoAllaRovescia` in checkGameOver
-    // (game-flow.js) quando `turn - startTurn >= durata`, con triggerInstantWin: vedi la missingEffectNote della carta.
+    // Paga 2000 LP: parte un conto di 20 turni, passati i quali vince chi l'ha attivata. La carta scrive soltanto
+    // gameState.contoAllaRovescia = { owner, startTurn, durata }: la vittoria la controlla checkGameOver (fasi.js, via
+    // triggerInstantWin) e le fiamme le disegna js/ui/conto-alla-rovescia.js. La carta NON si puo' ottenere (e' in SECRET_IDS
+    // di card-rarity.js e non ha nessuna fonte in card-acquisition.js): per ora esiste solo per prove e Duello Demo.
     // ================================================================
     CardEffects.register(1283, {
         canActivate(ctx) {
