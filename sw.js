@@ -510,7 +510,8 @@
 // che il browser rifiuta per una navigazione (net::ERR_FAILED su ogni pagina).
 // v385: ultimo accesso online nel pannello Admin (cloud-sync.js, admin.html).
 // v386: cambio account sullo stesso dispositivo a prova di perdite (cloud-sync.js, save-manager.js, duel-session.js).
-const CACHE_NAME = 'ygo-duel-arena-v451';
+// v452: Duello della Settimana (settimana.html) e Caccia al Boss (caccia-boss.html), a rotazione settimanale.
+const CACHE_NAME = 'ygo-duel-arena-v452';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
@@ -535,6 +536,8 @@ const APP_SHELL = [
     'puzzle.html',
     'rivincite.html',
     'torre.html',
+    'settimana.html',
+    'caccia-boss.html',
     'storia.html',
     'tornei.html',
     'torneo-regno-duellanti.html',
@@ -652,6 +655,12 @@ const APP_SHELL = [
     'js/data/torre-db.js',
     'js/modes/torre.js',
     'js/modes/torre-mode.js',
+    'js/data/settimana-db.js',
+    'js/modes/settimana.js',
+    'js/modes/settimana-mode.js',
+    'js/data/caccia-db.js',
+    'js/modes/caccia.js',
+    'js/modes/caccia-mode.js',
     'js/ui/effects.js',
     'js/ui/error-recovery.js',
     'js/ui/icon-library.js',

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<!-- Copertura d'avvio (identica in ogni pagina col loader: la sorveglia guardrail-copertura-avvio). Fino a quando
+     js/ui/page-loader.js -- che sta nel body e arriva dopo gli script bloccanti dell'head -- non prende il suo posto,
+     lo schermo restava vuoto e i tocchi cadevano nel nulla. La toglie page-loader.js; 15 s di rete di sicurezza. -->
+<style>html.avvio-in-corso::before{content:"";position:fixed;inset:0;z-index:2147483000;background:#0b0d14}html.avvio-in-corso::after{content:"";position:fixed;z-index:2147483001;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;box-sizing:border-box;border:3px solid rgba(247,215,116,.22);border-top-color:#f7d774;border-radius:50%;animation:avvio-in-corso-giro .9s linear infinite}@keyframes avvio-in-corso-giro{to{transform:rotate(360deg)}}</style>
+<script>(function(){var r=document.documentElement;r.classList.add("avvio-in-corso");setTimeout(function(){r.classList.remove("avvio-in-corso")},15000)})();</script>
+<!-- Opt-in STATICO alla View Transitions API — deve stare qui, non iniettato via JS in ritardo (vedi js/audio/audio-manager.js per la storia completa del bug che questo risolve). -->
+<style>@view-transition { navigation: auto; }</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="images/icons/icon-192.png">
+<link rel="apple-touch-icon" href="images/icons/icon-180.png">
+<meta name="theme-color" content="#0b0d14">
+<style>html, body { background: #0b0d14; }</style>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Millennium">
+<script src="js/ui/error-recovery.js"></script>
+<!-- Accesso obbligatorio (js/cloud/auth-gate.js). -->
+<script src="js/vendor/supabase.min.js"></script>
+<script src="js/cloud/supabase-config.js"></script>
+<script src="js/cloud/cloud-sync.js"></script>
+<script src="js/cloud/auto-sync.js"></script>
+<script src="js/cloud/auth-gate.js"></script>
+<script src="js/pwa-register.js"></script>
+<link rel="stylesheet" href="js/ui/page-loader.css">
+<link rel="stylesheet" href="js/ui/topbar.css">
+<link rel="stylesheet" href="js/ui/deck-switcher.css">
+<link rel="stylesheet" href="js/modes/mode-pages.css">
+<title>Yu-Gi-Oh! Millennium Duel Arena — Caccia al Boss</title>
+</head>
+<body>
+    <script src="js/ui/page-loader.js"></script>
+    <div id="topbarMount"></div>
+
+    <main class="mp-main">
+        <p class="mp-intro">Un Boss nuovo ogni lunedì, uguale per tutti. Ha molti più Life Point del solito e il suo mazzo più forte, ma tu hai un numero limitato di turni: se non lo batti in tempo, la caccia è persa. Puoi riprovare quante volte vuoi.</p>
+        <div class="mp-riepilogo" id="riepilogo"></div>
+
+        <section class="mp-pannello">
+            <div class="mp-voce" id="boss"></div>
+            <p id="bossFrase"></p>
+            <p id="regole"></p>
+        </section>
+
+        <div class="mp-sezione">Premio della settimana</div>
+        <section class="mp-pannello" id="premio"></section>
+
+        <button type="button" class="mp-btn" id="vai">🏹 Inizia la caccia</button>
+    </main>
+
+<script src="js/data/cards-data.generated.js"></script>
+<script src="js/data/characters-db.js"></script>
+<script src="js/data/caccia-db.js"></script>
+<script src="js/save-manager.js"></script>
+<script src="js/cloud/server-date.js"></script>
+<script src="js/modes/caccia.js"></script>
+<script src="js/audio/audio-manager.js"></script>
+<script src="js/native/app-back-button.js"></script>
+<script src="js/native/haptics.js"></script>
+<script src="js/native/native-save-backup.js"></script>
+<script src="js/ui/icon-library.js"></script>
+<script src="js/ui/deck-switcher.js"></script>
+<script src="js/ui/topbar.js"></script>
+<script>
+    PageTopbar.render('#topbarMount', { icon: 'skull', title: 'Caccia al Boss' });
+    initAudioManager();
+    Icons.hydrate();
+
+    function scrivi() {
+        const b = Caccia.boss();
+        const stato = Caccia.stato();
+        const pers = characterDatabase.find((c) => c.id === b.id) || { id: b.id, name: b.id };
+        const ms = Caccia.msAlProssimo();
+        const giorni = Math.floor(ms / 86400000);
+        const ore = Math.floor((ms % 86400000) / 3600000);
+        document.getElementById('riepilogo').innerHTML =
+            `<span>🏹 Tentativi <strong>${stato.tentativi}</strong></span>` +
+            `<span>${stato.vinta ? '✅ Battuto' : '⚔️ Da battere'}${stato.migliorTurni != null ? ' in <strong>' + stato.migliorTurni + '</strong> turni' : ''}</span>` +
+            `<span>⏳ Cambia tra <strong>${giorni > 0 ? giorni + ' g ' : ''}${ore} h</strong></span>`;
+
+        const el = document.getElementById('boss');
+        el.innerHTML = '<div class="mp-emblema"></div><div><div class="mp-titolo"></div><div class="mp-desc"></div></div>';
+        el.querySelector('.mp-titolo').textContent = pers.name;
+        el.querySelector('.mp-desc').textContent = `${cacciaDatabase.lpBoss.toLocaleString('it-IT')} Life Point · mazzo Difficile`;
+        const emb = el.querySelector('.mp-emblema');
+        emb.textContent = (pers.name || '?').charAt(0);
+        if (pers.image) {
+            const img = document.createElement('img');
+            img.alt = '';
+            img.onload = () => { emb.textContent = ''; emb.appendChild(img); };
+            img.src = getCharacterPawnImage(pers.image);
+        }
+        document.getElementById('bossFrase').textContent = b.titolo;
+        document.getElementById('regole').textContent = `Hai ${cacciaDatabase.turni} turni tuoi per portare il Boss a zero. Comincia sempre tu. I tuoi Life Point sono quelli di un duello normale.`;
+
+        const p = cacciaDatabase.premio;
+        document.getElementById('premio').innerHTML = '<p></p>';
+        document.getElementById('premio').firstChild.textContent = stato.vinta
+            ? 'Premio di questa settimana già preso. Puoi comunque tornare a cacciare per battere il tuo record di turni.'
+            : `Prima caccia vinta: ${p.crediti} Crediti e ${p.stelle} Stelle, più ${p.bonusVeloce.stelle} Stella extra se vinci entro ${p.bonusVeloce.entroTurni} turni.`;
+
+        document.getElementById('vai').onclick = () => {
+            if (window.NativeHaptics) NativeHaptics.light();
+            window.location.href = 'duelMonstersCore.html?mode=caccia'
+                + '&character=' + encodeURIComponent(b.id)
+                + '&difficulty=' + encodeURIComponent(cacciaDatabase.livello);
+        };
+    }
+
+    scrivi();
+    if (window.ServerDate && typeof ServerDate.sync === 'function') ServerDate.sync().then(scrivi).catch(() => {});
+</script>
+</body>
+</html>
