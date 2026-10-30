@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<!-- Copertura d'avvio (identica in ogni pagina col loader: la sorveglia guardrail-copertura-avvio). Fino a quando
+     js/ui/page-loader.js -- che sta nel body e arriva dopo gli script bloccanti dell'head -- non prende il suo posto,
+     lo schermo restava vuoto e i tocchi cadevano nel nulla. La toglie page-loader.js; 15 s di rete di sicurezza. -->
+<style>html.avvio-in-corso::before{content:"";position:fixed;inset:0;z-index:2147483000;background:#0b0d14}html.avvio-in-corso::after{content:"";position:fixed;z-index:2147483001;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;box-sizing:border-box;border:3px solid rgba(247,215,116,.22);border-top-color:#f7d774;border-radius:50%;animation:avvio-in-corso-giro .9s linear infinite}@keyframes avvio-in-corso-giro{to{transform:rotate(360deg)}}</style>
+<script>(function(){var r=document.documentElement;r.classList.add("avvio-in-corso");setTimeout(function(){r.classList.remove("avvio-in-corso")},15000)})();</script>
+<!-- Opt-in STATICO alla View Transitions API — deve stare qui, non iniettato via JS in ritardo (vedi js/audio/audio-manager.js per la storia completa del bug che questo risolve). -->
+<style>@view-transition { navigation: auto; }</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="images/icons/icon-192.png">
+<link rel="apple-touch-icon" href="images/icons/icon-180.png">
+<meta name="theme-color" content="#0b0d14">
+<style>html, body { background: #0b0d14; }</style>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Millennium">
+<script src="js/ui/error-recovery.js"></script>
+<!-- Accesso obbligatorio (js/cloud/auth-gate.js). -->
+<script src="js/vendor/supabase.min.js"></script>
+<script src="js/cloud/supabase-config.js"></script>
+<script src="js/cloud/cloud-sync.js"></script>
+<script src="js/cloud/auto-sync.js"></script>
+<script src="js/cloud/auth-gate.js"></script>
+<script src="js/pwa-register.js"></script>
+<link rel="stylesheet" href="js/ui/page-loader.css">
+<link rel="stylesheet" href="js/ui/topbar.css">
+<link rel="stylesheet" href="js/ui/menu-mobile.css">
+<link rel="stylesheet" href="js/ui/deck-switcher.css">
+<link rel="stylesheet" href="js/modes/mode-pages.css">
+<style>
+    /* Le scelte di questa pagina sono elenchi brevi: tessere in griglia, la scelta attuale col bordo d'oro. */
+    .tg-griglia { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+    .tg-griglia .mp-scelta { grid-template-columns: 40px 1fr; padding: 8px 10px; }
+    .tg-griglia .mp-emblema { width: 40px; height: 40px; font-size: 1.1rem; }
+    .tg-griglia .mp-scelta-nome { font-size: 0.9rem; line-height: 1.2; }
+    .mp-scelta.is-scelta { border-color: var(--gold); background: rgba(247, 215, 116, 0.16); box-shadow: 0 0 14px rgba(247, 215, 116, 0.22); }
+    .tg-opzioni { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tg-opzioni .mp-scelta { grid-template-columns: 1fr; flex: 1 1 160px; }
+    .tg-riepilogo { color: var(--ink-dim); font-size: 0.9rem; line-height: 1.45; }
+    .tg-riepilogo strong { color: var(--gold); }
+</style>
+<title>Yu-Gi-Oh! Millennium Duel Arena — Tag Team</title>
+</head>
+<body>
+    <script src="js/ui/page-loader.js"></script>
+    <div id="topbarMount"></div>
+
+    <main class="mp-main">
+        <p class="mp-intro">Tu e un compagno contro un Duellante. Giocate a turni alterni: un turno tu, il turno dopo il tuo compagno. Il Cimitero è comune, mentre mano, Mazzo e campo sono di ciascuno. L'avversario attacca chi ha giocato per ultimo.</p>
+
+        <div class="mp-sezione">Il tuo compagno</div>
+        <div class="tg-griglia" id="compagni"></div>
+
+        <div class="mp-sezione">L'avversario</div>
+        <div class="tg-griglia" id="avversari"></div>
+
+        <div class="mp-sezione">Livello dell'avversario</div>
+        <div class="tg-opzioni" id="livelli"></div>
+
+        <div class="mp-sezione">Life Point</div>
+        <div class="tg-opzioni" id="regoleLp"></div>
+
+        <section class="mp-pannello">
+            <p class="tg-riepilogo" id="riepilogo"></p>
+            <button type="button" class="mp-btn" id="vai">🤝 Inizia il Tag Team</button>
+        </section>
+    </main>
+
+<script src="js/data/cards-data.generated.js"></script>
+<script src="js/save-manager.js"></script>
+<script src="js/data/cards-db.js"></script>
+<script src="js/data/characters-db.js"></script>
+<script src="js/data/character-decks.js"></script>
+<script src="js/data/character-unlocks.js"></script>
+<script src="js/data/tag-db.js"></script>
+<script src="js/audio/audio-manager.js"></script>
+<script src="js/native/app-back-button.js"></script>
+<script src="js/native/haptics.js"></script>
+<script src="js/native/native-save-backup.js"></script>
+<script src="js/ui/icon-library.js"></script>
+<script src="js/ui/deck-switcher.js"></script>
+<script src="js/ui/topbar.js"></script>
+<script src="js/ui/tab-bar.js"></script>
+<script>
+    PageTopbar.render('#topbarMount', { icon: 'multiplayer', title: 'Tag Team' });
+    initAudioManager();
+    Icons.hydrate();
+
+    // Solo personaggi con un mazzo vero (js/data/character-decks.js) e già sbloccati in Duello Libero.
+    const haMazzo = (id) => !!getCharacterDeck(id, 'medium');
+    const sbloccato = (id) => !window.CharacterUnlocks || CharacterUnlocks.sbloccato(id);
+    const compagni = tagDatabase.compagniProposti.map((id) => characterDatabase.find((c) => c.id === id)).filter((c) => c && haMazzo(c.id));
+    const avversari = characterDatabase.filter((c) => haMazzo(c.id) && sbloccato(c.id) && c.series !== 'ww1');
+    const LIVELLI = [
+        { valore: 'Facile', nome: 'Facile', desc: 'Il mazzo più debole del Duellante' },
+        { valore: 'Medio', nome: 'Normale', desc: 'Il suo mazzo di tutti i giorni' },
+        { valore: 'Difficile', nome: 'Difficile', desc: 'Il mazzo al completo' }
+    ];
+    const REGOLE_LP = [
+        { valore: 'membro', nome: 'Uno a testa', desc: `${tagDatabase.lp.membro} Life Point a testa: perdete quando siete a zero tutti e due.` },
+        { valore: 'lato', nome: 'Condivisi', desc: `${tagDatabase.lp.lato} Life Point per la squadra: a zero perdete insieme.` }
+    ];
+
+    const scelta = {
+        compagno: compagni[0] ? compagni[0].id : null,
+        avversario: (avversari.find((c) => c.id === 'kaiba') || avversari[0] || {}).id || null,
+        livello: 'Medio',
+        lp: tagDatabase.regolaLpPredefinita
+    };
+
+    function tessera(c, attivo, onClick) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'mp-scelta' + (attivo ? ' is-scelta' : '');
+        b.setAttribute('aria-pressed', attivo ? 'true' : 'false');
+        const emb = document.createElement('span');
+        emb.className = 'mp-emblema';
+        emb.textContent = (c.name || '?').charAt(0);
+        if (c.image) {
+            const img = document.createElement('img');
+            img.alt = '';
+            img.onload = () => { emb.textContent = ''; emb.appendChild(img); };
+            img.src = getCharacterPawnImage(c.image);
+        }
+        const nome = document.createElement('span');
+        nome.className = 'mp-scelta-nome';
+        nome.textContent = c.name;
+        b.append(emb, nome);
+        b.onclick = () => { if (window.NativeHaptics) NativeHaptics.light(); onClick(); };
+        return b;
+    }
+
+    function opzione(o, attivo, onClick) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'mp-scelta' + (attivo ? ' is-scelta' : '');
+        b.setAttribute('aria-pressed', attivo ? 'true' : 'false');
+        b.innerHTML = '<span><span class="mp-scelta-nome"></span><span class="mp-scelta-desc"></span></span>';
+        b.querySelector('.mp-scelta-nome').textContent = o.nome;
+        b.querySelector('.mp-scelta-desc').textContent = o.desc;
+        b.onclick = () => { if (window.NativeHaptics) NativeHaptics.light(); onClick(); };
+        return b;
+    }
+
+    function scrivi() {
+        const elC = document.getElementById('compagni');
+        elC.replaceChildren(...compagni.map((c) => tessera(c, c.id === scelta.compagno, () => { scelta.compagno = c.id; scrivi(); })));
+        const elA = document.getElementById('avversari');
+        elA.replaceChildren(...avversari.map((c) => tessera(c, c.id === scelta.avversario, () => { scelta.avversario = c.id; scrivi(); })));
+        document.getElementById('livelli').replaceChildren(...LIVELLI.map((l) => opzione(l, l.valore === scelta.livello, () => { scelta.livello = l.valore; scrivi(); })));
+        document.getElementById('regoleLp').replaceChildren(...REGOLE_LP.map((r) => opzione(r, r.valore === scelta.lp, () => { scelta.lp = r.valore; scrivi(); })));
+
+        const compagno = characterDatabase.find((c) => c.id === scelta.compagno);
+        const avversario = characterDatabase.find((c) => c.id === scelta.avversario);
+        const livello = LIVELLI.find((l) => l.valore === scelta.livello);
+        const riepilogo = document.getElementById('riepilogo');
+        const vai = document.getElementById('vai');
+        if (!compagno || !avversario) {
+            riepilogo.textContent = 'Scegli un compagno e un avversario.';
+            vai.disabled = true;
+            return;
+        }
+        riepilogo.innerHTML = '';
+        riepilogo.append('Tu e ', Object.assign(document.createElement('strong'), { textContent: compagno.name }),
+            ' contro ', Object.assign(document.createElement('strong'), { textContent: avversario.name }),
+            ` (${livello.nome}). Il primo turno della squadra è tuo.`);
+        vai.disabled = false;
+    }
+
+    document.getElementById('vai').onclick = () => {
+        if (!scelta.compagno || !scelta.avversario) return;
+        if (window.NativeHaptics) NativeHaptics.light();
+        window.location.href = 'duelMonstersCore.html?mode=tag'
+            + '&character=' + encodeURIComponent(scelta.avversario)
+            + '&difficulty=' + encodeURIComponent(scelta.livello)
+            + '&partner=' + encodeURIComponent(scelta.compagno)
+            + '&lp=' + encodeURIComponent(scelta.lp);
+    };
+
+    scrivi();
+</script>
+</body>
+</html>

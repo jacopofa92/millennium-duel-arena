@@ -5108,6 +5108,19 @@
         });
     }
 
+    /**
+     * Vero se la carta è legata (equippedToUid o targetUid) a un mostro messo
+     * da parte da una variante di regole fuori dal motore
+     * (gameState.uidInPanchina, aggancio A2 di docs/planning/PIANO_TAG_TEAM.md).
+     * Vedi il suo uso in recomputeStaticEffects.
+     */
+    function legameInPanchina(card) {
+        const inPanchina = gameState.uidInPanchina;
+        if (!inPanchina || inPanchina.size === 0) return false;
+        return (card.equippedToUid != null && inPanchina.has(card.equippedToUid))
+            || (card.targetUid != null && inPanchina.has(card.targetUid));
+    }
+
     function recomputeStaticEffects() {
         // Reset dei flag prima di ricalcolare, altrimenti un effetto
         // continuo che sparisce (es. Jinzo distrutto) resterebbe "appiccicato".
@@ -5393,6 +5406,15 @@
                 if (!slot || slot.isFaceDown) return;
                 const def = getDefinition(slot.card.id);
                 if (!def) return;
+                // Legame sospeso (aggancio A2 di docs/planning/PIANO_TAG_TEAM.md):
+                // il mostro a cui questa carta è legata (Equip o Trappola
+                // Continua come Incantesimo Ombra) è stato messo da parte da
+                // una variante di regole fuori dal motore, quindi non è sul
+                // campo ma esiste ancora. La carta resta dov'è senza effetto,
+                // invece di essere scambiata per orfana e mandata al Cimitero,
+                // e riprende quando il mostro torna. Nel duello normale
+                // l'insieme è vuoto o assente.
+                if (legameInPanchina(slot.card)) return;
                 // Carte Equipaggiamento (def.isEquip): se il mostro a cui
                 // erano equipaggiate non è più lì (distrutto, tornato in
                 // mano, ecc.), la Carta Equipaggiamento va al Cimitero da

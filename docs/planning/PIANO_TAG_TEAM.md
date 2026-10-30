@@ -243,6 +243,48 @@ predefinita che lascia il 1v1 identico; due dei tre hanno un'alternativa senza a
 in questa fase: il passo comune a più client (fase 3), la semantica precisa delle zone bloccate,
 l'IA che cambia playbook allo scambio di `personaggioPerPosto`.
 
+## 3ter. Stato della fase 1 (2026-10-31, branch `feature/tag-team`, versione 1.4.188)
+
+**Fatto.**
+- Agganci nel motore A1, A2, A3 (vedi sezione 6). Prova d'identità: le 60 partite senza testa danno
+  un'impronta IDENTICA a prima; fra 413 funzioni e 870 carte cambiano solo `changeTurn`,
+  `checkGameOver` e `DuelEngine.recomputeStaticEffects`, nessuna carta.
+- Variante in file nuovi: `js/modes/tag.js` (regole, senza interfaccia), `js/modes/tag-mode.js`
+  (duello e interfaccia), `js/data/tag-db.js` (numeri ed elenchi), `tag.html` (scelta di compagno,
+  avversario, livello e regola dei Life Point), stile in `js/modes/modes.css`. Voce "Tag Team" in
+  Duelli › Allenamento, barra in basso, Service Worker.
+- Regole attive: D1 (entrambe le opzioni), D2 obbligato, D3/D14 Cimitero e Bandite condivisi, D4, D5
+  (compagno IA), D6, D7, D10, D11 lettura A, D12 predefinita (l'avversario attacca chi ha giocato per
+  ultimo), D15, D16 (15 mappe per membro, elenco sorvegliato dallo spec), D17, V1, V2, V3.
+- Interfaccia: nome e ritratto del riquadro dei Life Point seguono chi gioca, i Life Point si allineano
+  senza conteggio animato allo scambio, velo sui click durante il turno del compagno IA, riquadro della
+  squadra (sul telefono una pillola apribile, posizionata misurando le sovrapposizioni).
+- Spec `tag-team-fase1` (duello vero lasciato giocare, ogni regola a duello fermo, Life Point
+  condivisi, Mazzo vuoto, classificazione statica delle mappe), verificato al contrario su A2 e A3.
+  Guardrail `guardrail-modalita-fuori-dal-motore` esteso al Tag Team.
+
+**Scelte fatte durante il lavoro, da confermare con l'autore.**
+- **D18 (provvisoria):** un membro che arriva a 0 Life Point durante il PROPRIO turno (per esempio un
+  Cilindro Magico che rimanda il danno a chi attacca) esce al cambio turno, non subito: un turno già
+  cominciato non passa di mano a metà, perché l'IA che lo sta giocando continuerebbe a muovere su uno
+  stato cambiato sotto di lei. Nel turno avversario invece entra subito (D15), tra una battaglia e
+  l'altra.
+- **Avvolgimento di `Comandi.esegui`:** `tag.js` lo avvolge a runtime, solo in modalità tag, per contare
+  gli attacchi in corso (non cambia nessun comando). Serve a D15. È un'eccezione dichiarata nel
+  guardrail delle modalità e va approvata.
+- **Mazzo vuoto (D17) senza aggancio:** lo controlla la variante all'inizio del turno, prima della
+  pescata; A3 resta solo sui Life Point. Se entrambi i Mazzi sono vuoti decide il motore come sempre.
+- **Mazzo e IA del compagno:** mazzo Normale del personaggio, IA Difficile (`tagDatabase.compagno`).
+- **Premi:** quelli di un duello normale contro quell'avversario. Con due mazzi contro uno il Tag Team
+  è più facile: da rivedere nella fase 2 con il bilanciamento.
+
+**Non fatto in questa fase.**
+- D2 "libero" (scelta di chi gioca a inizio turno).
+- D12 scelta del bersaglio e D13: servono quando anche l'avversario è una squadra (fase 2).
+- V3 copre le distruzioni ritardate, l'autodistruzione, la Sfera Esplosiva e il bando temporaneo; le
+  altre voci ritardate per uid (Necrofear, Cappelli Magici, buff alla Standby) non sono messe da parte.
+- Prova sul telefono vero.
+
 ## 4. Rischi
 
 | Rischio | Gravità | Mitigazione |
@@ -266,8 +308,12 @@ Il tag non deve cambiare nessun'altra modalità. Prima di ogni merge:
 ## 6. Elenco degli agganci nel motore (da compilare)
 
 Ogni aggancio deve avere: file e funzione, motivo, perché è opt-in, quale spec lo copre.
-Stato: **approvati dall'autore il 2026-10-30, nessuno ancora scritto.** A1 e A2 con aggancio nel motore
-(non le alternative senza aggancio); A3 approvato.
+Stato: **approvati dall'autore il 2026-10-30 e scritti il 2026-10-31** (fase 1). A1 e A2 con aggancio
+nel motore (non le alternative senza aggancio); A3 approvato.
+Differenze rispetto alla proposta: A1 sta subito dopo il cambio di `currentPlayer` (non accanto a
+`orologio`), perché con D16 anche le scadenze "fino al tuo prossimo turno" e il turno saltato vanno
+lette sullo stato del membro che entra; A3 sta solo in `checkGameOver` (il Mazzo vuoto lo gestisce la
+variante a inizio turno, vedi 3ter).
 
 - **A1, evento di regola "inizio turno".** `js/engine/fasi.js`, `changeTurn`, accanto all'emissione di
   `orologio` (riga 624); più una voce nell'elenco `EVENTI` di `js/engine/eventi-duello.js`. Motivo: la
@@ -295,6 +341,8 @@ Stato: **approvati dall'autore il 2026-10-30, nessuno ancora scritto.** A1 e A2 
 
 ## 8. Diario
 
+- 2026-10-31: fase 1 implementata sul branch `feature/tag-team` (sezione 3ter). Da confermare: D18 e
+  l'avvolgimento di `Comandi.esegui`.
 - 2026-10-30: l'autore approva A1, A2 (con aggancio) e A3; chiude D14-D17. Fase 0 CHIUSA, nessuna decisione aperta.
 - 2026-10-30: fase 0 completata (sezione 3bis). Proposti gli agganci A1-A3; nate D14-D17.
 - 2026-10-30: l'autore propone la scelta del bersaglio (membro avversario) a inizio turno; compatibile con la lettura A.

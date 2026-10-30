@@ -487,6 +487,15 @@ function changeTurn() {
     addToLog(`🔄 Turno ${gameState.turn} terminato.`);
     gameState.turn++;
     gameState.currentPlayer = Tavolo.avversario(gameState.currentPlayer);
+    // Avviso di REGOLA "comincia il turno di questo posto", senza ascoltatori
+    // nel duello normale. Serve a una variante di regole fuori dal motore che
+    // cambia CHI siede in un posto da un turno all'altro (aggancio A1 di
+    // docs/planning/PIANO_TAG_TEAM.md). Deve stare QUI, prima di tutto il
+    // resto di changeTurn: le scadenze "fino al tuo prossimo turno" qui sotto
+    // (Ondata Gelida, Orgoth...) e il turno saltato (Azzardo) vanno lette
+    // sullo stato di chi siede adesso, e così l'azzeramento di
+    // hasAttacked/canChangePosition sul suo campo e la sua pescata.
+    EventiDuello.emetti('inizio-turno', gameState.currentPlayer);
     // Blocco Trappole/Magie "per il resto del turno" (es. Manta
     // Perforante Strisciante id 693, famiglia Ingranaggio Antico) — vedi
     // gameState.noTrapActivationFor/noSpellActivationFor, controllati in
@@ -1553,8 +1562,14 @@ function checkGameOver() {
         return;
     }
 
-    const playerLost = gameState.playerLP <= 0;
-    const botLost = gameState.botLP <= 0;
+    // Un posto a 0 Life Point ha perso, a meno che chi ascolta 'lato-sconfitto'
+    // dica di no: una variante di regole fuori dal motore può far sedere al
+    // suo posto un altro duellante ancora in gioco (aggancio A3 di
+    // docs/planning/PIANO_TAG_TEAM.md). Senza ascoltatori la domanda risponde
+    // true e tutto va come sempre. La si fa solo a Life Point già finiti,
+    // quindi nel duello normale non costa nulla.
+    const playerLost = gameState.playerLP <= 0 && EventiDuello.chiedi('lato-sconfitto', true, 'player', 'lp') !== false;
+    const botLost = gameState.botLP <= 0 && EventiDuello.chiedi('lato-sconfitto', true, 'bot', 'lp') !== false;
     if (!playerLost && !botLost) return;
 
     // ATTENZIONE all'ordine: updateUI() termina chiamando checkGameOver(),

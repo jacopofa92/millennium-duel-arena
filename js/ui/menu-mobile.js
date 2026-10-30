@@ -31,6 +31,7 @@
         'Caccia al Boss': '8 turni per abbatterlo',
         'Duello Libero': 'Scegli avversario e arena',
         'Puzzle': 'Vinci con la mano data',
+        'Tag Team': 'Tu e un compagno contro uno',
         'Tutorial': 'Impara a giocare',
         'Demo Duello Sandbox': 'Campo di prova (admin)',
         'Negozio': 'Pacchetti e mazzi',
