@@ -241,3 +241,32 @@ body.ha-tab-bar .cartoteca-filters { top: 0 !important; }
 /* Le icone delle valute sono le STESSE del Profilo (profile-hero.js: coin, star, map, eye), non piu' le gemme disegnate qui. */
 .mm-vi { display: inline-grid; place-items: center; width: 1.25rem; height: 1.25rem; color: #f7d774; filter: drop-shadow(0 0 4px rgba(247, 215, 116, 0.35)); }
 .mm-vi svg { width: 100%; height: 100%; }
+
+/* ---- AVVISI E RIQUADRI DI CONFERMA SU TELEFONO, nello stile dell'app (l'utente: "il popup di avviso salvataggio ecc su mobile e' troppo largo e ha uno
+   stile diverso dalla UI"). I toast erano una pillola a UNA riga (white-space: nowrap) che con un messaggio lungo ("Questo dispositivo aveva il
+   salvataggio piu' recente...") usciva dallo schermo, e i riquadri avevano il vecchio sfondo blu con bordo arancione. Ora: testo che va a capo,
+   larghezza massima, vetro scuro con bordo oro come le tessere del menu, sopra la barra in basso. Solo con touch e schermo stretto: il desktop
+   non cambia. I selettori sono quelli di tutte le pagine (.toast, .menu-toast, .menu-modal-card, .cloud-modal-card). ---- */
+@media (pointer: coarse) and (max-width: 1000px) {
+    .menu-toast, .toast {
+        white-space: normal !important; width: max-content; max-width: min(90vw, 340px); box-sizing: border-box;
+        text-align: center; line-height: 1.35; padding: 11px 16px !important; border-radius: 14px !important;
+        font-size: 0.84rem !important; font-weight: 700; color: #f4e7c4;
+        background: linear-gradient(160deg, rgba(40, 33, 18, 0.97), rgba(14, 12, 9, 0.98)) !important;
+        border: 1px solid rgba(247, 215, 116, 0.4) !important;
+        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 240, 190, 0.08) !important;
+    }
+    .menu-toast { bottom: calc(var(--mm-barra-h) + 14px) !important; z-index: 130 !important; }
+    .menu-modal-card, .cloud-modal-card {
+        width: min(88vw, 340px) !important; padding: 20px 18px 18px !important; border-radius: 16px !important;
+        background: linear-gradient(160deg, rgba(40, 33, 18, 0.98), rgba(14, 12, 9, 0.99)) !important;
+        border: 1px solid rgba(247, 215, 116, 0.4) !important;
+        box-shadow: 0 18px 44px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 240, 190, 0.08) !important;
+    }
+    .menu-modal-card h3, .cloud-modal-card h3 { font-size: 1.05rem !important; color: #f7d774; letter-spacing: 0.02em; }
+    .menu-modal-card p, .cloud-modal-card p { font-size: 0.86rem !important; line-height: 1.4; color: #cfc3a2 !important; margin-bottom: 14px !important; }
+    .menu-modal-actions, .cloud-modal-actions { flex-direction: column; gap: 8px !important; }
+    .menu-modal-actions > button, .cloud-modal-actions > button { width: 100%; padding: 12px 14px !important; border-radius: 12px !important; font-size: 0.9rem !important; font-weight: 800; box-shadow: none !important; }
+    .menu-modal-btn.confirm, .cloud-modal-actions > .confirm { background: linear-gradient(135deg, rgba(247, 215, 116, 0.24), rgba(243, 156, 18, 0.12)) !important; border: 1px solid rgba(247, 215, 116, 0.55) !important; color: #f7d774 !important; }
+    .menu-modal-btn.cancel, .cloud-modal-actions > .cancel { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(255, 255, 255, 0.14) !important; color: #cfc3a2 !important; }
+}
