@@ -167,7 +167,11 @@ body.ha-tab-bar .topbar .back-btn { bottom: calc(var(--mm-barra-h) + 12px); }
     body.ha-tab-bar.tb-indietro-basso { padding-bottom: 0; }   /* lo spazio lo da' .mm-spazio: due volte sarebbe un vuoto doppio */
     body.ha-tab-bar .mm-spazio { height: calc(var(--mm-barra-h) + 78px); }
 }
-.mm-barra { z-index: 900; }
+/* Sopra al contenuto e agli elementi fissi delle pagine (fino a 50) ma SOTTO i riquadri a tutto schermo (scheda carta 600-750, cerimonie,
+   selettori mazzo 200+): con 900 la barra restava sopra la scheda di una carta e ne copriva i comandi in basso. */
+.mm-barra { z-index: 120; }
+/* Senza la barra in alto niente le fa da margine: il contenuto non deve finire sotto la barra di stato dell'app. */
+body.ha-tab-bar { padding-top: env(safe-area-inset-top, 0px); }
 
 /* ---- desktop e schermi larghi: piu' colonne, larghezza massima, barra centrata ---- */
 @media (min-width: 901px) {
@@ -188,3 +192,23 @@ body.ha-tab-bar .topbar .back-btn { bottom: calc(var(--mm-barra-h) + 12px); }
     .mm-tab:hover { color: #f7d774; }
     .mm-tab--attiva::before { top: -7px; }
 }
+
+/* ---- SU TELEFONO, CON LA BARRA DI TAB IN BASSO, LA BARRA IN ALTO SPARISCE (richiesta dell'utente: "top bar + bottom bar e' un problema su
+   mobile"). Titolo, icona e ritratto vanno via (la tab accesa dice gia' dove si e'); resta il medaglione Indietro, fisso sopra la barra
+   in basso. Il .topbar resta nel DOM con altezza zero perche' lo script della pagina lo riempie e lo cerca. Su schermi 481-1000px il
+   medaglione di topbar.css e' ancora dentro la barra: qui lo si rende fisso a tutte le larghezze. ---- */
+body.ha-tab-bar .topbar {
+    min-height: 0 !important; height: 0; padding: 0; margin: 0; border: 0; border-image: none;
+    background: none; box-shadow: none; overflow: visible;
+}
+body.ha-tab-bar .topbar::before, body.ha-tab-bar .topbar::after { display: none; }
+body.ha-tab-bar .topbar > :not(.back-btn) { display: none !important; }
+body.ha-tab-bar .topbar .back-btn {
+    position: fixed; left: max(14px, env(safe-area-inset-left)); bottom: calc(var(--mm-barra-h) + 12px);
+    width: 56px; height: 56px; z-index: 2;
+    background: radial-gradient(circle at 50% 32%, #4a3a26 0%, #1f1810 62%, #120e0a 100%);
+    box-shadow: inset 0 0 0 3px rgba(14, 11, 8, 0.9), inset 0 0 0 4px rgba(247, 215, 116, 0.3), 0 6px 18px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+@media (max-height: 500px) and (orientation: landscape) { body.ha-tab-bar .topbar .back-btn { width: 50px; height: 50px; } }
+/* Le barre sticky che stavano SOTTO la barra in alto ora vanno in cima (top: in pixel tarato sull'altezza di quella barra). */
+body.ha-tab-bar .cartoteca-filters { top: 0 !important; }

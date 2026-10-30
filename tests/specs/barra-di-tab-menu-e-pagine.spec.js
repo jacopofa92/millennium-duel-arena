@@ -2,7 +2,7 @@
 // =====================================================================
 // Tre promesse:
 //  1) il menu principale ha la veste a tab su OGNI schermo (telefono e desktop), senza scorrere di lato;
-//  2) su telefono le pagine principali (Impostazioni, Sfide, Profilo, Negozio, Cartoteca) hanno la stessa barra, con la tab della loro
+//  2) su telefono le pagine principali (senza la barra in alto: sparisce, resta il medaglione Indietro) (Impostazioni, Sfide, Profilo, Negozio, Cartoteca) hanno la stessa barra, con la tab della loro
 //     sezione accesa, e la barra NON copre il medaglione "Indietro" ne' l'ultimo contenuto (segnalato dall'utente su Impostazioni: la barra
 //     copriva parte del box Regole di gioco e il pulsante Indietro);
 //  3) su desktop le pagine NON hanno la barra (e' una cosa da telefono).
@@ -71,11 +71,16 @@ module.exports = {
                         backBottom: br ? br.bottom : null,
                         backFisso: back ? getComputedStyle(back).position === 'fixed' : false,
                         spazio: !!spazio,
+                        topbar: (document.querySelector('.topbar') || { getBoundingClientRect: () => ({ height: 0 }) }).getBoundingClientRect().height,
+                        filtri: (() => { const f = document.querySelector('.cartoteca-filters'); return f ? f.getBoundingClientRect().top : null; })(),
                         extra: document.documentElement.scrollWidth - document.documentElement.clientWidth
                     };
                 });
                 assert(new RegExp(tabAttesa, 'i').test(r.attiva || ''), `${file}: tab accesa "${r.attiva}", attesa ${tabAttesa}`);
                 assert(r.spazio, `${file}: manca lo spazio in fondo (.mm-spazio): l'ultimo contenuto finirebbe sotto la barra`);
+                assert(r.topbar <= 1, `\: la barra in alto deve sparire su telefono con la barra di tab (alta \px)`);
+                assert(r.backFisso, `\: il medaglione Indietro deve restare, fisso`);
+                if (r.filtri !== null) assert(r.filtri <= 1, `\: i filtri sticky devono stare in cima, non sotto una barra che non c'e' piu' (top \)`);
                 if (r.backFisso) assert(r.backBottom <= r.barraTop + 0.5, `${file}: il medaglione Indietro (fondo ${r.backBottom}) e' coperto dalla barra (cima ${r.barraTop})`);
                 assert(r.extra <= 1, `${file}: scorre di lato di ${r.extra}px`);
             } finally { await context.close(); }
