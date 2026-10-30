@@ -4070,6 +4070,8 @@ priorità o richiedono un refactor ampio):
 
 1.4.178 (cache v487): **riquadri interni della carta meno smussati, in tutto il gioco** (`card.css`, nuova variabile `--box-raggio: max(1px, --card-w * 0.014)`, meta' del guscio `--card-raggio` al 3%). La usano `.card-frame-top` (nome), `.card-frame-art` (illustrazione), `.card-frame-typeline` (tipo) e `.card-stats` (ATK/DEF); guscio e cornice `.card-frame` restano al 3%. Misurato: Cartoteca telefono 82px guscio 2,5px / riquadri 1,1px; Cartoteca desktop 168px 5,0px / 2,4px; Negozio telefono 76px 2,3px / 1,1px. Le compatte (arte ad angoli vivi) invariate. Per cambiare la morbidezza dei riquadri basta lo 0,014. Suite completa non eseguita (spec carta-compatta verde).
 
+1.4.179 (cache v488): **barre basse della carta (tipo e ATK/DEF) con raggio ancora piu' piccolo** (l'utente: nel box del tipo, essendo stretto, la curva si nota di piu'). Nuova variabile `--barra-raggio: max(1px, --card-w * 0.007)` in `card.css`, usata da `.card-frame-typeline` e `.card-stats`; titolo e illustrazione restano su `--box-raggio` (1,4%) e guscio/cornice sul 3%. Misurato 160px: titolo/arte 2,2px, tipo e stat 1,1px; 240px: 3,4px contro 1,7px. Sotto i 100px tutti i raggi sono gia' al minimo di 1px, quindi su carte piccole non cambia nulla. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

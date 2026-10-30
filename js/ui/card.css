@@ -173,6 +173,8 @@
     --card-raggio: max(1px, calc(var(--card-w, 100px) * 0.03));
     /* Raggio dei RIQUADRI INTERNI (nome, illustrazione, tipo, ATK/DEF): la meta' del guscio. Con il 3% erano ancora troppo smussati (1.4.178). */
     --box-raggio: max(1px, calc(var(--card-w, 100px) * 0.014));
+    /* Raggio delle BARRE BASSE (tipo, ATK/DEF): essendo strette, a parita' di raggio la curva occupa piu' altezza e si nota di piu'. */
+    --barra-raggio: max(1px, calc(var(--card-w, 100px) * 0.007));
     /* La scatola ritaglia ancora quello che sborda (testi lunghissimi su
        carte minuscole), ma col raggio più piccolo possibile: gli angoli
        veri li disegnano corpo e illustrazione, che sanno quanto vale il
@@ -437,7 +439,7 @@
     font-weight: 600;
     color: #fff;
     background: rgba(0,0,0,0.3);
-    border-radius: var(--box-raggio);   /* riquadri interni: meta' del guscio (1.4.178) */
+    border-radius: var(--barra-raggio);   /* barra bassa: raggio ancora piu' piccolo, altrimenti la curva pesa (1.4.179) */
     padding: 0.6cqw 1.6cqw;
     text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     white-space: nowrap;
@@ -454,7 +456,7 @@
     font-weight: 600;
     color: #fff;
     background: rgba(0,0,0,0.34);
-    border-radius: var(--box-raggio);   /* riquadri interni: meta' del guscio (1.4.178) */
+    border-radius: var(--barra-raggio);   /* barra bassa: raggio ancora piu' piccolo, altrimenti la curva pesa (1.4.179) */
     padding: 0.8cqw 1.8cqw;
     text-shadow: 0 1px 2px rgba(0,0,0,0.6);
 }
