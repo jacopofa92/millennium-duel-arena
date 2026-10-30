@@ -152,3 +152,39 @@
     .mm-tessera--larga { grid-column: span 1; flex-direction: column; align-items: flex-start; }
 }
 @media (prefers-reduced-motion: reduce) { .mm-tessera, .mm-tab-icona { transition: none; } }
+
+/* ---- pagine con la barra di tab (js/ui/tab-bar.js): il contenuto non deve finire sotto la barra ---- */
+/* L'altezza della barra (6+54+6 px piu' la fascia di sicurezza): serve a chi deve stare SOPRA di lei. */
+:root { --mm-barra-h: calc(66px + env(safe-area-inset-bottom, 0px)); }
+@media (max-height: 520px) { :root { --mm-barra-h: calc(50px + env(safe-area-inset-bottom, 0px)); } }
+/* Lo spazio in fondo e' un ELEMENTO (.mm-spazio, messo da tab-bar.js in coda al body) e non un padding del body: su Impostazioni il body ha
+   un'altezza fissa e il contenuto la supera, quindi il padding non spostava niente e la barra copriva l'ultimo riquadro. */
+.mm-spazio { height: calc(var(--mm-barra-h) + 8px); flex: 0 0 auto; pointer-events: none; }
+/* Il medaglione "Indietro" delle pagine su telefono (js/ui/topbar.css) e' un pulsante FISSO in basso a sinistra: senza questa regola la barra
+   lo copriva. Sta sopra la barra, e la pagina lascia spazio in fondo anche a lui (altrimenti copre l'ultima riga). */
+body.ha-tab-bar .topbar .back-btn { bottom: calc(var(--mm-barra-h) + 12px); }
+@media (max-width: 480px), (max-height: 500px) and (orientation: landscape) {
+    body.ha-tab-bar.tb-indietro-basso { padding-bottom: 0; }   /* lo spazio lo da' .mm-spazio: due volte sarebbe un vuoto doppio */
+    body.ha-tab-bar .mm-spazio { height: calc(var(--mm-barra-h) + 78px); }
+}
+.mm-barra { z-index: 900; }
+
+/* ---- desktop e schermi larghi: piu' colonne, larghezza massima, barra centrata ---- */
+@media (min-width: 901px) {
+    .menu-shell--app .menu-logo { height: 190px; }
+    .menu-shell--app .menu-logo h1 { transform: scale(0.78); }
+    .menu-shell--app .mm-lista { max-width: 880px; }
+    .mm-corpo { padding-left: 18px; padding-right: 18px; }
+    .mm-griglia { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .mm-griglia[data-n="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .mm-griglia--una { grid-template-columns: 1fr; }
+    .mm-tessera--larga { grid-column: auto; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 8px; min-height: 96px; }
+    .mm-tessera--larga .mm-tessera-icona { font-size: 1.5rem; }
+    .mm-tessera--larga .mm-tessera-nome { font-size: 0.98rem; }
+    .mm-tessera { min-height: 96px; }
+    .mm-tessera:hover { border-color: rgba(247, 215, 116, 0.65); transform: translateY(-2px); }
+    .mm-barra { left: 50%; right: auto; width: min(880px, 100vw); transform: translateX(-50%); border: 1px solid rgba(247, 215, 116, 0.35); border-bottom: 0; border-radius: 18px 18px 0 0; }
+    .mm-tab { flex-direction: row; gap: 8px; min-height: 48px; }
+    .mm-tab:hover { color: #f7d774; }
+    .mm-tab--attiva::before { top: -7px; }
+}

@@ -120,42 +120,35 @@ module.exports = {
             });
             await page.waitForTimeout(600);
 
-            const voci = await page.$$eval('#menuShell .menu-item', (els) => els.map((el) => el.textContent.replace(/\s+/g, ' ').trim()));
+            // Dal 1.4.166 il menu e' una UI a tab (js/ui/menu-mobile.js): barra in basso + sezioni di tessere, niente piu' sottomenu a scendere.
+            const tab = await page.$$eval('#menuShell .mm-tab', (els) => els.map((el) => el.textContent.replace(/\s+/g, ' ').trim()));
             assert(
-                voci.some((v) => /Duelli/i.test(v)),
-                `Il menu completo non è stato raggiunto: voci trovate = ${JSON.stringify(voci)}`
+                ['Duelli', 'Carte', 'Online', 'Sfide', 'Altro'].every((n) => tab.some((t) => new RegExp(n, 'i').test(t))),
+                `Il menu completo non e' stato raggiunto: tab trovate = ${JSON.stringify(tab)}`
             );
 
-            const menu = await peggiorSbordoOrizzontale(page, SECONDI_DI_CAMPIONAMENTO);
-            assert(
-                menu.extra <= TOLLERANZA_PX,
-                `Il menu principale scorre in orizzontale di ${menu.extra}px: ${descriviColpevoli(menu)}`
-            );
-
-            // Si entra nel sottomenu cliccando la voce per davvero, non
-            // forzando lo stato interno: è il percorso dell'utente.
-            const entrato = await page.evaluate(() => {
-                const voce = Array.from(document.querySelectorAll('#menuShell .menu-item'))
-                    .find((el) => /Duelli/i.test(el.textContent));
-                if (!voce) return false;
-                voce.click();
-                return true;
-            });
-            assert(entrato, 'Non è stato possibile cliccare la voce "Duelli" del menu');
-            await page.waitForTimeout(600);
-
-            const sottovoci = await page.$$eval('#menuShell .menu-item', (els) => els.map((el) => el.textContent.replace(/\s+/g, ' ').trim()));
-            assert(
-                sottovoci.some((v) => /Allenamento/i.test(v)),   // dal 1.4.160 le voci stanno in tre sottomenu (Campagna, Sfide a rotazione, Allenamento)
-                `Il sottomenu Duelli non si è aperto: voci = ${JSON.stringify(sottovoci)}`
-            );
-
-            const sottomenu = await peggiorSbordoOrizzontale(page, SECONDI_DI_CAMPIONAMENTO);
-            assert(
-                sottomenu.extra <= TOLLERANZA_PX,
-                `Il sottomenu Duelli scorre in orizzontale di ${sottomenu.extra}px: ${descriviColpevoli(sottomenu)}`
-            );
-        } finally {
+            // Ogni tab si apre cliccandola per davvero, e in ognuna il menu non deve scorrere di lato.
+            for (const nome of ['Duelli', 'Carte', 'Online', 'Altro']) {
+                const aperta = await page.evaluate((n) => {
+                    const t = Array.from(document.querySelectorAll('#menuShell .mm-tab')).find((el) => new RegExp(n, 'i').test(el.textContent));
+                    if (!t) return false;
+                    t.click();
+                    return true;
+                }, nome);
+                assert(aperta, `Non e' stato possibile cliccare la tab "${nome}"`);
+                await page.waitForTimeout(500);
+                const tessere = await page.$$eval('#menuShell .mm-tessera', (els) => els.map((el) => el.textContent.replace(/\s+/g, ' ').trim()));
+                assert(tessere.length > 0, `La tab "${nome}" non mostra nessuna voce`);
+                if (nome === 'Duelli') {
+                    assert(tessere.some((v) => /Duello Libero/i.test(v)) && tessere.some((v) => /Storia/i.test(v)),
+                        `La tab Duelli deve mostrare direttamente le voci dei tre gruppi: ${JSON.stringify(tessere)}`);
+                }
+                const misura = await peggiorSbordoOrizzontale(page, SECONDI_DI_CAMPIONAMENTO);
+                assert(
+                    misura.extra <= TOLLERANZA_PX,
+                    `La tab "${nome}" scorre in orizzontale di ${misura.extra}px: ${descriviColpevoli(misura)}`
+                );
+            }        } finally {
             await context.close();
         }
     }

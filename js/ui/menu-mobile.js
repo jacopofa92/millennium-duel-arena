@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * menu-mobile.js — il menu principale in versione "app", SOLO su telefono (esperimento, branch experiment/menu-mobile-app).
+ * menu-mobile.js — il menu principale in versione "app" (nata su telefono, ora su ogni schermo).
  * ------------------------------------------------------------------------------------------------
  * Il menu a elenco verticale con sottomenu a scendere (Duelli > Campagna > Storia) e' fatto per un cursore: su un telefono costa
  * un tocco in piu' a ogni livello, e il pollice deve arrivare in alto per tornare indietro. Qui lo stesso contenuto e' una UI da
@@ -13,7 +13,7 @@
  *
  * NON ha dati suoi: legge le voci dello STESSO elenco del menu desktop (`voci`, FULL_MENU_ITEMS di index.html), quindi una voce nuova
  * compare qui da sola. Le uniche cose scritte qui sono i sottotitoli (`SOTTOTITOLI`, per etichetta) e quale voce sta in quale tab.
- * Si attiva con `(pointer: coarse) and (max-width: 1000px)`: il desktop non cambia di un pixel.
+ * Vale su OGNI schermo (telefono e desktop): sul desktop ha piu' colonne e una larghezza massima, la barra di tab e' centrata.
  */
 (function () {
     'use strict';
@@ -47,7 +47,9 @@
     function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] || c)); }
 
     const mq = window.matchMedia ? window.matchMedia(QUERY) : null;
-    function attivo() { return !!(mq && mq.matches); }
+    // Dopo la prova sul telefono (l'utente: "puo' andare anche per desktop") la veste app vale OVUNQUE: il menu e' lo stesso su ogni schermo,
+    // cambiano solo le misure (colonne, larghezza massima). mq resta esposto: serve a tab-bar.js e ai ridisegni, non decide piu'.
+    function attivo() { return true; }
 
     /** @param {any[]} voci @param {string} etichetta */
     function trova(voci, etichetta) { return voci.find((v) => v.label === etichetta) || null; }
@@ -138,6 +140,7 @@
                 if (attiva.gruppi.length > 1) sez.innerHTML = `<h3 class="mm-sezione-titolo"><span data-icon="${esc(g.icona)}"></span>${esc(g.titolo)}</h3>`;
                 const griglia = document.createElement('div');
                 griglia.className = 'mm-griglia';
+                griglia.dataset.n = String(visibili.length);   // il CSS dei desktop sceglie le colonne dal numero di tessere (4 -> una riga sola)
                 visibili.forEach((v, i) => {
                     const mp = v.href && v.href.indexOf('multiplayer.html') === 0 && window.MP_MODI
                         ? window.MP_MODI.find((m) => v.href.indexOf('modo=' + m.id) >= 0) : null;

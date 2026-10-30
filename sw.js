@@ -511,7 +511,7 @@
 // v385: ultimo accesso online nel pannello Admin (cloud-sync.js, admin.html).
 // v386: cambio account sullo stesso dispositivo a prova di perdite (cloud-sync.js, save-manager.js, duel-session.js).
 // v452: Duello della Settimana (settimana.html) e Caccia al Boss (caccia-boss.html), a rotazione settimanale.
-const CACHE_NAME = 'ygo-duel-arena-v474';
+const CACHE_NAME = 'ygo-duel-arena-v475';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
@@ -568,6 +568,7 @@ const APP_SHELL = [
     'js/ui/challenge-banner.css',
     'js/ui/page-loader.css',
     'js/ui/game-logo.css',
+    'js/ui/menu-mobile.css',
     'assets/fonts/cinzel/Cinzel-Variable.ttf',
     'assets/fonts/cinzel/OFL.txt',
     'js/ui/sfide-view.css',
@@ -672,6 +673,8 @@ const APP_SHELL = [
     'js/ui/node-map.css',
     'js/ui/page-loader.js',
     'js/ui/game-logo.js',
+    'js/ui/menu-mobile.js',
+    'js/ui/tab-bar.js',
     'js/ui/sfide-view.js',
     'js/ui/profile-stats.js',
     'js/data/titles-db.js',
