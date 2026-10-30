@@ -30,6 +30,7 @@
 <script src="js/ui/inclinazione.js"></script>
 <!-- Le scatole 3D dei due mazzi del primo avvio (onboarding). -->
 <link rel="stylesheet" href="js/ui/deck-box.css">
+    <link rel="stylesheet" href="js/ui/menu-mobile.css">
 <!-- Primo avvio (il negozio del nonno) e le battute che lo accompagnano. -->
 <link rel="stylesheet" href="js/ui/story-cutscene.css">
 <link rel="stylesheet" href="js/ui/onboarding.css">
@@ -1170,6 +1171,7 @@
     <script src="js/ui/challenge-banner.js"></script>
     <script src="js/ui/stato-salvataggio.js"></script>
     <script src="js/ui/icon-library.js"></script>
+    <script src="js/ui/menu-mobile.js"></script>
 <script src="js/ui/ambiente-webgl.js"></script>
 <script src="js/ui/ambiente-menu.js"></script>
     <script src="js/ui/bot-speed.js"></script>
@@ -1457,12 +1459,20 @@
             // amministratore: il menu si ridisegna ad ogni apertura, quindi
             // basta controllarlo qui, nel momento del disegno.
             const admin = !!(window.CloudSync && CloudSync.isAdmin());
-            if (openSubmenu) {
+            // ESPERIMENTO (branch experiment/menu-mobile-app): su telefono il menu e' una UI "app" (tab in basso, sezioni di tessere), vedi
+            // js/ui/menu-mobile.js. Legge le STESSE voci di FULL_MENU_ITEMS; senza salvataggio resta il menu ridotto di sempre.
+            const modoApp = !!(window.MenuMobile && MenuMobile.attivo() && window.SaveManager && SaveManager.hasSave());
+            if (modoApp) {
+                MenuMobile.render({ shell: document.getElementById('menuShell'), lista: list, voci: FULL_MENU_ITEMS, admin, adminItem: ADMIN_ITEM,
+                    azione: handleMenuAction, toast: showMenuToast, stato: { ridisegna: renderMenu } });
+            } else if (openSubmenu) {
+                if (window.MenuMobile) MenuMobile.spegni(document.getElementById('menuShell'), list);
                 list.appendChild(buildBackButton(openSubmenu.label));
                 openSubmenu.children
                     .filter((item) => !item.soloAdmin || admin)
                     .forEach((item) => list.appendChild(buildMenuButton(item)));
             } else {
+                if (window.MenuMobile) MenuMobile.spegni(document.getElementById('menuShell'), list);
                 const items = (window.SaveManager && SaveManager.hasSave()) ? FULL_MENU_ITEMS : NEW_PLAYER_MENU_ITEMS;
                 items.forEach((item) => list.appendChild(buildMenuButton(item)));
                 if (admin) list.appendChild(buildMenuButton(ADMIN_ITEM));
@@ -2140,10 +2150,16 @@
         // priorità, dal più "dentro" al più "fuori": un modale aperto,
         // poi un sottomenu aperto — solo se NESSUNO dei due e' vero si lascia fare
         // il default (esce dall'app, essendo il menu/gate la radice).
+        // Il telefono che ruota o si collega a uno schermo: il menu si ridisegna nella veste giusta.
+        if (window.MenuMobile && MenuMobile.mq) MenuMobile.mq.addEventListener('change', () => { if (document.getElementById('menuShell').style.display !== 'none') renderMenu(); });
         if (window.NativeBackButton) {
             NativeBackButton.setHandler(() => {
                 const openModal = document.querySelector('.menu-modal-backdrop.open');
                 if (openModal) { openModal.classList.remove('open'); return true; }
+                if (window.MenuMobile && MenuMobile.attivo() && MenuMobile.tabCorrente() !== 'duelli' && document.getElementById('menuShell').classList.contains('menu-shell--app')) {
+                    try { sessionStorage.setItem('ygoMenuTab', 'duelli'); } catch (e) { /* noop */ }
+                    renderMenu(); return true;
+                }
                 if (openSubmenu) { openSubmenu = openSubmenuParent; openSubmenuParent = null; renderMenu(); return true; }
                 return false;
             });
