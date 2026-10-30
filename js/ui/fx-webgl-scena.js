@@ -33,7 +33,7 @@
     const MAX = 40;
 
     // Tipi di primitiva (devono coincidere con l'ordine delle `if` dello shader qui sotto).
-    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19, ANKH: 20, PORTAL: 21, DUST: 22, SHIELD: 23 };
+    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19, ANKH: 20, PORTAL: 21, DUST: 22, SHIELD: 23, MIRROR: 24, TUBE: 25 };
     // Colori: indici nella tavolozza dello shader.
     const C = { CALDO: 0, ORO: 1, ROSSO: 2, ARANCIO: 3, CIANO: 4, BLU: 5, VIOLA: 6, MAGENTA: 7, VERDE: 8, BIANCO: 9, SCURO: 10, GHIACCIO: 11, VERDE_SCURO: 12 };
 
@@ -53,6 +53,8 @@ const float PI=3.14159265;
 float easeOut(float x){x=clamp(x,0.,1.);return 1.-pow(1.-x,3.);}
 float easeIO(float x){x=clamp(x,0.,1.);return x*x*(3.-2.*x);}
 float pop(float u){return (1.-u)*(1.-u)*smoothstep(0.,.08,u);}
+// Distanza dal bordo piu' vicino fra le celle di una griglia irregolare (0 sul bordo): serve per le CREPE dello specchio.
+float crepa(vec2 p){vec2 i=floor(p);float d1=9.,d2=9.;for(int y=-1;y<=1;y++)for(int x=-1;x<=1;x++){vec2 n=i+vec2(float(x),float(y));vec2 o=vec2(h(n),h(n+17.3));float d=length(p-(n+o));if(d<d1){d2=d1;d1=d;}else if(d<d2){d2=d;}}return d2-d1;}
 float campana(float u,float a,float b){return smoothstep(0.,a,u)*(1.-smoothstep(1.-b,1.,u));}
 float pip(vec2 q,vec2 c){return smoothstep(.13,.1,length(q-c));}
 float dado(vec2 q,float v){
@@ -368,6 +370,48 @@ float dado(vec2 q,float v){
   vec3 caldo=mix(c,vec3(1.),clamp(onda*.7+flash*.5,0.,1.));
   s=vec4(caldo*g2*1.3,clamp(g2*.85,0.,1.));`;
 
+    // SPECCHIO (Forza dello Specchio): una lastra di vetro dentro una cornice che si alza dal suo bordo basso, con riflessi
+    // che scorrono; negli ultimi due quinti si riempie di crepe e svanisce (A: centro x, y, semi-larghezza, semi-altezza).
+    CORPI[T.MIRROR] = `
+  float gr=easeOut(u/.2); float hh=A.w*max(gr,.02);
+  vec2 q=vec2(P.x-A.x,P.y-(A.y+A.w-hh));
+  vec2 dq=abs(q)-vec2(A.z,hh); float sd=max(dq.x,dq.y);
+  float fade=1.-smoothstep(.86,1.,u);
+  float inside=step(sd,0.);
+  float ny=q.y/max(hh,1.);
+  float gy=.5+.5*ny;
+  float sw=mix(-1.4,1.4,fract(u*1.8+.1));
+  float glint=exp(-pow(((q.x/A.z)+ny*.5-sw)*5.,2.))*.9+exp(-pow(((q.x/A.z)+ny*.5-sw*.5-.45)*14.,2.))*.4;
+  float frame=smoothstep(-9.,-6.,sd)*(1.-smoothstep(-3.,0.,sd));
+  float bev=exp(-pow((sd+3.)/2.5,2.));
+  vec3 fc=mix(c,vec3(1.),.55);
+  vec3 glass=mix(c*.2,c*.7,gy)+vec3(.7,.9,1.)*glint*.8+vec3(.5,.8,1.)*pow(1.-gy,3.)*.25;
+  float cp=(1.-smoothstep(0.,.11,crepa(vec2(q.x/A.z*5.,ny*3.))))*smoothstep(.55,.8,u)*inside;
+  vec3 rgb=glass*inside*.9+fc*(frame*.9+bev*.7)+vec3(1.)*cp*1.2;
+  float al=clamp(inside*.42+frame*.9+bev*.6+glint*inside*.5+cp*.9,0.,1.)*fade*smoothstep(0.,.05,u);
+  s=vec4(rgb*fade*smoothstep(0.,.05,u),al);`;
+
+    // CILINDRO (Cilindro Magico): un tubo d'acciaio visto di lato con la BOCCA luminosa su un'estremita'.
+    // A: centro x, y, semi-lunghezza, raggio; B.w: angolo dell'asse, dalla bocca verso il fondo.
+    CORPI[T.TUBE] = `
+  float sc=mix(.2,1.,easeOut(u/.2)); float L=A.z*sc; float Rr=A.w*sc;
+  vec2 d=P-A.xy; vec2 ex=vec2(cos(B.w),sin(B.w)); vec2 q=vec2(dot(d,ex),dot(d,vec2(-ex.y,ex.x)));
+  float e=campana(u,.12,.25);
+  float ny=q.y/Rr;
+  float inBody=step(-L,q.x)*step(q.x,L)*step(abs(q.y),Rr);
+  float metal=.3+.55*pow(clamp(1.-abs(ny-.3),0.,1.),2.)+.45*exp(-pow((ny+.5)/.1,2.));
+  float bande=smoothstep(.03,.0,abs(q.x-L*.55)/L)+smoothstep(.03,.0,abs(q.x+L*.55)/L)*.8;
+  vec3 steel=mix(vec3(.5,.55,.68),c,.3);
+  vec3 body=steel*metal*(1.-bande*.5)*(1.+.6*step(q.x,-L*.9))*inBody;
+  vec2 mq=vec2((q.x+L)/(Rr*.36),q.y/Rr); float em=length(mq);
+  float mouth=step(em,1.);
+  float rim=exp(-pow((em-1.)/.08,2.));
+  float pul=.65+.35*sin(t*9.);
+  vec3 inner=mix(vec3(.01,.0,.03),c*1.6,smoothstep(.1,1.,em)*.8*pul)+c*exp(-em*em*5.)*.9*pul;
+  float halo=exp(-pow(max(em-1.,0.)*1.2,2.)*2.)*.35*pul;
+  vec3 rgb=body*(1.-mouth)+inner*mouth+mix(c,vec3(1.),.6)*rim*1.3+c*halo;
+  float al=clamp(inBody*.95+mouth+rim+halo*.5,0.,1.);
+  s=vec4(rgb*e,al*e);`;
     /** Il programma di un tipo (costruito una volta sola e messo in cache dal motore). */
     const SORGENTI = {};
     function sorgente(tipo) {
@@ -403,6 +447,8 @@ float dado(vec2 q,float v){
             // (l'esplosione spinge i granelli anche di lato e verso il basso: ~90 px in scala della carta).
             case T.DUST: return [x - z * 5, y - q - z * 8, x + z * 7, y + q + z * 5];
             case T.SHIELD: e = z * 1.6; return [x - e, y - e, x + e, y + e];
+            case T.MIRROR: return [x - z - 24, y - q - 24, x + z + 24, y + q + 24];
+            case T.TUBE: e = z + q + 40; return [x - e, y - e, x + e, y + e];
             default: e = z * 3; return [x - e, y - q - e, x + e, y + e];   // moneta e dado
         }
     }
@@ -534,51 +580,96 @@ float dado(vec2 q,float v){
 
     const imp = {};
 
-    /** Forza dello Specchio: lastra davanti al difensore e cinque raggi sui mostri in Attacco. */
+    /**
+     * Forza dello Specchio: UNO SPECCHIO vero si alza davanti al difensore, fra le due file. I colpi dei mostri in
+     * Attacco partono dai mostri verso lo specchio (raggio caldo), SBATTONO sul vetro (lampo, anello) e tornano
+     * INDIETRO, bianchi e freddi, ognuno sul mostro che l'ha sparato: li' esplodono. Alla fine il vetro, che ha
+     * rimandato tutto, si riempie di crepe e va in frantumi. Prima erano raggi anonimi da un disco: non si capiva
+     * che la carta RIFLETTE.
+     */
     imp.playMirrorForce = function (attackerOwner, attackIndices) {
         const allowed = Array.isArray(attackIndices) ? new Set(attackIndices.map(Number)) : null;
         const targets = Array.from(document.querySelectorAll(`#${tavolo(attackerOwner)} .field-slot[data-owner="${attackerOwner}"][data-type="monster"]`))
             .filter((s) => !allowed || allowed.has(Number(/** @type {HTMLElement} */ (s).dataset.index))).map((s) => rectDi(s.querySelector('.card'))).filter(Boolean);
         if (!targets.length) return 0;
-        const W = innerWidth; const H = innerHeight; const mx = W / 2; const my = attackerOwner === 'player' ? H * 0.37 : H * 0.63; const m = Math.min(W, H);
+        const W = innerWidth; const H = innerHeight; const m = Math.min(W, H);
+        const mx = W / 2; const my = attackerOwner === 'player' ? H * 0.37 : H * 0.63;
+        // Lo specchio e' largo quanto serve a coprire i mostri che attaccano, ma mai oltre lo schermo.
+        const xs = targets.map((r) => cen(r).x);
+        const semiL = Math.min(W * 0.4, Math.max(W * 0.22, (Math.max(...xs) - Math.min(...xs)) / 2 + m * 0.14));
+        const semiA = Math.max(30, m * 0.085);
+        // La faccia che guarda gli attaccanti: il bordo verso di loro.
+        const faccia = my + (attackerOwner === 'player' ? 1 : -1) * semiA * 0.55;
         const s = new Scena();
-        s.add(T.WASH, C.SCURO, 0, 2.1, [0, 0, 0.5, 0], 3);
-        s.add(T.SEAL, C.CIANO, 0.05, 1.5, [mx, my, m * 0.2, 0], 0.5);
-        s.add(T.FLASH, C.BIANCO, 0.3, 0.5, [mx, my, m * 0.22, 0]);
-        s.add(T.RING, C.CIANO, 0.32, 0.8, [mx, my, m * 0.3, 6]);
+        s.add(T.WASH, C.SCURO, 0, 2.15, [0, 0, 0.55, 0], 3);
+        s.add(T.MIRROR, C.CIANO, 0.04, 2.0, [mx, my, semiL, semiA], 1);
+        s.add(T.FLASH, C.BIANCO, 0.12, 0.5, [mx, my, semiL * 0.5, 0]);
+        s.add(T.RING, C.CIANO, 0.18, 0.7, [mx, faccia, semiL * 0.6, 5]);
         targets.slice(0, 5).forEach((r, i) => {
-            const c = cen(r); const t0 = 0.76 + i * 0.055;
-            s.add(T.LINE, C.BIANCO, 0.36 + i * 0.055, 0.62, [mx, my, c.x, c.y], 8);
-            s.add(T.FLASH, C.CALDO, t0, 0.5, [c.x, c.y, r.width * 1.1, 0]);
-            s.add(T.RING, C.CIANO, t0, 0.6, [c.x, c.y, r.width * 1.2, 5]);
-            s.add(T.BURST, C.CALDO, t0, 0.8, [c.x, c.y, r.width * 1.2, 40], i + 1);
+            const c = cen(r);
+            const hx = Math.max(mx - semiL * 0.9, Math.min(mx + semiL * 0.9, c.x)); const hy = faccia;
+            const tA = 0.42 + i * 0.045;       // il colpo parte dal mostro
+            const tH = tA + 0.4;               // sbatte sul vetro
+            const tB = tH + 0.04;              // torna indietro
+            const tI = tB + 0.42;              // e arriva sul mostro che l'ha sparato
+            s.add(T.LINE, C.ARANCIO, tA, 0.5, [c.x, c.y, hx, hy], 9);
+            s.add(T.FLASH, C.BIANCO, tH, 0.45, [hx, hy, m * 0.09, 0]);
+            s.add(T.RING, C.CIANO, tH, 0.5, [hx, hy, m * 0.085, 4]);
+            s.add(T.LINE, C.BIANCO, tB, 0.55, [hx, hy, c.x, c.y], 11);
+            s.add(T.FLASH, C.CALDO, tI, 0.5, [c.x, c.y, r.width * 1.1, 0]);
+            s.add(T.BURST, C.ORO, tI, 0.8, [c.x, c.y, r.width * 1.3, 45], i + 1);
         });
-        const d = esegui(s, 2200); sfx('activateTrap', 0); return d;
+        // Il vetro cede: scheggie lungo tutta la lastra e un'onda
+        s.add(T.BURST, C.CIANO, 1.55, 0.7, [mx - semiL * 0.5, my, semiL * 0.5, 70], 7.3);
+        s.add(T.BURST, C.BIANCO, 1.55, 0.7, [mx + semiL * 0.5, my, semiL * 0.5, 70], 9.1);
+        s.add(T.RING, C.CIANO, 1.55, 0.55, [mx, my, semiL * 0.9, 6]);
+        const d = esegui(s, 2250); sfx('activateTrap', 0); return d;
     };
 
-    /** Cilindro Magico: due portali deviano il colpo verso la mano dell'attaccante. */
+    /**
+     * Cilindro Magico: DUE TUBI d'acciaio con la bocca luminosa. Il colpo dell'attaccante (raggio caldo) ENTRA nella
+     * bocca del primo tubo, passa dall'uno all'altro (un filo viola tratteggiato e un lampo dentro ciascun tubo) ed
+     * ESCE dalla bocca del secondo, che guarda la mano di chi aveva attaccato, dove arriva come un raggio magenta
+     * con i suoi danni. Prima erano due vortici anonimi: non si vedeva il tubo, quindi non si capiva da dove il
+     * colpo entrasse e da dove uscisse.
+     */
     imp.playMagicCylinder = function (attackerOwner, attackerIndex, damagedOwner, damage) {
         const attacker = rectDi(document.querySelector(`#${tavolo(attackerOwner)} .field-slot[data-owner="${attackerOwner}"][data-type="monster"][data-index="${attackerIndex}"] .card`));
         const anchor = rectDi(document.querySelector(damagedOwner === 'player' ? '#playerHand' : '#botHand'));
         if (!attacker || !anchor) return 0;
         const from = cen(attacker); const to = cen(anchor);
-        const en = { x: from.x + (to.x - from.x) * 0.28, y: from.y + (to.y - from.y) * 0.24 };
-        const ex = { x: from.x + (to.x - from.x) * 0.64, y: from.y + (to.y - from.y) * 0.62 };
+        const m = Math.min(innerWidth, innerHeight);
+        const R = Math.max(26, Math.min(58, m * 0.055)); const L = R * 2.3;
+        const en = { x: from.x + (to.x - from.x) * 0.30, y: from.y + (to.y - from.y) * 0.26 };
+        const ex = { x: from.x + (to.x - from.x) * 0.66, y: from.y + (to.y - from.y) * 0.64 };
+        // Asse di ogni tubo, dalla bocca verso il fondo: il primo guarda l'attaccante e continua nel verso del colpo;
+        // il secondo guarda il bersaglio, quindi ha il fondo dalla parte opposta.
+        const a1 = Math.atan2(to.y - from.y, to.x - from.x);
+        const a2 = Math.atan2(ex.y - to.y, ex.x - to.x);
+        const bocca1 = { x: en.x - Math.cos(a1) * L, y: en.y - Math.sin(a1) * L };
+        const bocca2 = { x: ex.x - Math.cos(a2) * L, y: ex.y - Math.sin(a2) * L };
         const s = new Scena();
-        s.add(T.WASH, C.SCURO, 0, 2.1, [0, 0, 0.45, 0], 3);
-        s.add(T.VORTEX, C.CIANO, 0.1, 1.4, [en.x, en.y, 70, 0], 1);
-        s.add(T.VORTEX, C.VIOLA, 0.2, 1.4, [ex.x, ex.y, 70, 0], 1);
-        s.add(T.SEAL, C.VIOLA, 0.1, 1.6, [ex.x, ex.y, 105, 0], 0.5);
-        s.add(T.LINE, C.CIANO, 0.25, 0.55, [from.x, from.y, en.x, en.y], 9);
-        s.add(T.LINE, C.BIANCO, 0.55, 0.55, [en.x, en.y, ex.x, ex.y], 11);
-        s.add(T.LINE, C.MAGENTA, 0.95, 0.55, [ex.x, ex.y, to.x, to.y], 10);
-        s.add(T.FLASH, C.CALDO, 1.45, 0.6, [to.x, to.y, 90, 0]);
-        s.add(T.RING, C.ARANCIO, 1.45, 0.7, [to.x, to.y, 130, 6]);
-        s.add(T.BURST, C.ORO, 1.45, 0.8, [to.x, to.y, 130, 60], 3);
-        if (damage) testo(`-${damage} LP`, to.x, to.y, 1500, 900, { size: 34, color: '#ffd9d0', glow: '#ff5040' });
-        const d = esegui(s, 2200); sfx('directHit', 900); return d;
+        s.add(T.WASH, C.SCURO, 0, 2.1, [0, 0, 0.5, 0], 3);
+        // L'attacco che sta per partire: l'anello si stringe sull'attaccante
+        s.add(T.RING, C.ROSSO, 0.04, 0.45, [from.x, from.y, attacker.width * 1.2, 4], -1);
+        s.add(T.TUBE, C.CIANO, 0.1, 1.7, [en.x, en.y, L, R], a1);
+        s.add(T.TUBE, C.VIOLA, 0.2, 1.7, [ex.x, ex.y, L, R], a2);
+        // Il colpo entra nella bocca del primo tubo
+        s.add(T.LINE, C.ARANCIO, 0.4, 0.5, [from.x, from.y, bocca1.x, bocca1.y], 10);
+        s.add(T.BURST, C.ARANCIO, 0.72, 0.5, [bocca1.x, bocca1.y, R * 1.3, 20], 2.2);
+        s.add(T.FLASH, C.CALDO, 0.8, 0.45, [en.x, en.y, R * 1.2, 0]);
+        // Passa da un tubo all'altro: filo viola e lampi
+        s.add(T.LINE, C.VIOLA, 0.78, 0.55, [en.x, en.y, ex.x, ex.y], 4);
+        s.add(T.FLASH, C.VIOLA, 1.0, 0.45, [ex.x, ex.y, R * 1.2, 0]);
+        // Esce dalla bocca del secondo, verso la mano di chi aveva attaccato
+        s.add(T.BURST, C.MAGENTA, 1.05, 0.5, [bocca2.x, bocca2.y, R * 1.3, 20], 4.4);
+        s.add(T.LINE, C.MAGENTA, 1.1, 0.6, [bocca2.x, bocca2.y, to.x, to.y], 11);
+        s.add(T.FLASH, C.CALDO, 1.5, 0.6, [to.x, to.y, 95, 0]);
+        s.add(T.RING, C.ARANCIO, 1.5, 0.7, [to.x, to.y, 135, 6]);
+        s.add(T.BURST, C.ORO, 1.5, 0.8, [to.x, to.y, 135, 60], 3);
+        if (damage) testo(`-${damage} LP`, to.x, to.y, 1550, 900, { size: 34, color: '#ffd9d0', glow: '#ff5040' });
+        const d = esegui(s, 2250); sfx('directHit', 1000); return d;
     };
-
     /**
      * Rinascita del Mostro, fedele alla versione originale (effects.css, "fx-monster-reborn"): scena scura e
      * verdastra, il portale piatto verde sul Cimitero, l'Ankh di luce che si apre sul bersaglio, e la carta
