@@ -1316,36 +1316,42 @@
             {
                 icon: 'duel', label: 'Duelli', action: 'submenu',
                 children: [
-                    // "Storia": la futura modalità avventura — non ancora
-                    // implementata, solo un segnaposto (stesso pattern
-                    // action:'soon' già pronto in handleMenuAction più sotto).
-                    { icon: 'story', label: 'Storia', action: 'link', href: 'storia.html' },
-                    { icon: 'freeDuel', label: 'Duello Libero', action: 'link', href: 'duello-libero.html' },
-                    // Una sola fonte per la selezione dei tornei: la pagina
-                    // autonoma contiene avanzamento, abbandono e premi. La
-                    // vecchia vista duplicata dentro index.html è stata
-                    // rimossa per evitare che le due UI divergano di nuovo.
-                    { icon: 'tournament', label: 'Tornei', action: 'link', href: 'tornei.html' },
-                    // Le modalità con un file loro (js/modes/): situazioni
-                    // preparate o regole di contorno, mai il motore.
-                    { icon: 'puzzle', label: 'Puzzle', action: 'link', href: 'puzzle.html' },
-                    { icon: 'rematch', label: 'Rivincite', action: 'link', href: 'rivincite.html', richiedeModalita: 'rivincite' },
-                    { icon: 'tower', label: 'Torre dei Duellanti', action: 'link', href: 'torre.html', richiedeModalita: 'torre' },
-                    // Le due modalità a rotazione settimanale (regola e Boss nuovi ogni lunedì, uguali per tutti).
-                    { icon: 'star', label: 'Duello della Settimana', action: 'link', href: 'settimana.html' },
-                    { icon: 'skull', label: 'Caccia al Boss', action: 'link', href: 'caccia-boss.html' },
-                    // Il menu Tutorial: la lezione col nonno (al primo
-                    // avvio obbligatoria, vedi obbligaLezioneSeDaFare più
-                    // sotto) e le lezioni brevi, tutte rifacibili.
-                    { icon: 'rules', label: 'Tutorial', action: 'link', href: 'tutorial.html' },
-                    // Demo Duello Sandbox: campo di prova per testare
-                    // singole carte/condizioni di Evocazione a mano, senza
-                    // passare da un vero mazzo/pescata — vedi
-                    // duello-sandbox.html e js/engine/duel-sandbox.js.
-                    // `soloAdmin`: strumento di prova, lo vede solo
-                    // l'amministratore (anche la pagina lo controlla).
+                    // Tre gruppi (1.4.160): il menu Duelli aveva nove voci tutte allo stesso livello. Ora sono tre sottomenu per
+                    // scopo; la Demo del Sandbox (solo amministratore) resta a questo livello.
+                    {
+                        icon: 'story', label: 'Campagna', action: 'submenu',
+                        children: [
+                            // Storia: la campagna a capitoli, con i Duellanti e i filmati.
+                            { icon: 'story', label: 'Storia', action: 'link', href: 'storia.html' },
+                            // Una sola fonte per la selezione dei tornei: la pagina autonoma contiene avanzamento, abbandono e premi.
+                            { icon: 'tournament', label: 'Tornei', action: 'link', href: 'tornei.html' },
+                            { icon: 'tower', label: 'Torre dei Duellanti', action: 'link', href: 'torre.html', richiedeModalita: 'torre' }
+                        ]
+                    },
+                    {
+                        icon: 'star', label: 'Sfide a rotazione', action: 'submenu',
+                        children: [
+                            // Le due modalita' a rotazione settimanale (regola e Boss nuovi ogni lunedi', uguali per tutti).
+                            { icon: 'star', label: 'Duello della Settimana', action: 'link', href: 'settimana.html' },
+                            { icon: 'skull', label: 'Caccia al Boss', action: 'link', href: 'caccia-boss.html' },
+                            // Le modalita' con un file loro (js/modes/): situazioni preparate o regole di contorno, mai il motore.
+                            { icon: 'rematch', label: 'Rivincite', action: 'link', href: 'rivincite.html', richiedeModalita: 'rivincite' },
+                            { icon: 'puzzle', label: 'Puzzle', action: 'link', href: 'puzzle.html' }
+                        ]
+                    },
+                    {
+                        icon: 'freeDuel', label: 'Allenamento', action: 'submenu',
+                        children: [
+                            { icon: 'freeDuel', label: 'Duello Libero', action: 'link', href: 'duello-libero.html' },
+                            // Il menu Tutorial: la lezione col nonno (al primo avvio obbligatoria, vedi obbligaLezioneSeDaFare piu' sotto)
+                            // e le lezioni brevi, tutte rifacibili.
+                            { icon: 'rules', label: 'Tutorial', action: 'link', href: 'tutorial.html' }
+                        ]
+                    },
+                    // Demo Duello Sandbox: campo di prova per testare singole carte/condizioni di Evocazione a mano, senza passare da
+                    // un vero mazzo/pescata (duello-sandbox.html, js/engine/duel-sandbox.js). `soloAdmin`: lo vede solo l'amministratore.
                     { icon: 'sandbox', label: 'Demo Duello Sandbox', action: 'link', href: 'duello-sandbox.html', soloAdmin: true }
-                ]
+]
             },
             {
                 icon: 'cards', label: 'Carte', action: 'submenu',
@@ -1381,6 +1387,8 @@
         // "torna indietro" e un eventuale ridisegno (es. dopo Nuova
         // Partita) sanno cosa ridisegnare.
         let openSubmenu = null;
+        // Il sottomenu da cui si e' entrati in uno annidato (Duelli > Campagna): 'indietro' torna li', non alla radice.
+        let openSubmenuParent = null;
 
         function buildMenuButton(item) {
             const accesso = item.richiedeModalita && window.ModeUnlocks
@@ -1418,7 +1426,7 @@
                 <span class="menu-item-icon">‹</span>
                 <span class="menu-item-label">${label}</span>
             `;
-            btn.addEventListener('click', () => { openSubmenu = null; renderMenu(); });
+            btn.addEventListener('click', () => { openSubmenu = openSubmenuParent; openSubmenuParent = null; renderMenu(); });
             return btn;
         }
 
@@ -1434,6 +1442,7 @@
             } else if (item.action === 'newgame') {
                 openNewGameModal();
             } else if (item.action === 'submenu') {
+                openSubmenuParent = openSubmenu;
                 openSubmenu = item;
                 renderMenu();
             }
@@ -2134,7 +2143,7 @@
             NativeBackButton.setHandler(() => {
                 const openModal = document.querySelector('.menu-modal-backdrop.open');
                 if (openModal) { openModal.classList.remove('open'); return true; }
-                if (openSubmenu) { openSubmenu = null; renderMenu(); return true; }
+                if (openSubmenu) { openSubmenu = openSubmenuParent; openSubmenuParent = null; renderMenu(); return true; }
                 return false;
             });
         }

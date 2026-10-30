@@ -146,7 +146,7 @@ module.exports = {
 
             const sottovoci = await page.$$eval('#menuShell .menu-item', (els) => els.map((el) => el.textContent.replace(/\s+/g, ' ').trim()));
             assert(
-                sottovoci.some((v) => /Duello Libero/i.test(v)),
+                sottovoci.some((v) => /Allenamento/i.test(v)),   // dal 1.4.160 le voci stanno in tre sottomenu (Campagna, Sfide a rotazione, Allenamento)
                 `Il sottomenu Duelli non si è aperto: voci = ${JSON.stringify(sottovoci)}`
             );
 
