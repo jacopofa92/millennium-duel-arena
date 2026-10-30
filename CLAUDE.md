@@ -4084,6 +4084,8 @@ priorità o richiedono un refactor ampio):
 
 1.4.185 (cache v494): (1) **riga del tipo senza parentesi quadre**: `typeLineText` in `card-renderer.js` non racchiude piu' razza/Magia/Trappola in `[...]` (`[Incantatore]` -> `Incantatore`, `[Magia Veloce]` -> `Magia Veloce`, `Aviazione · Italiana`); il punto mediano della fazione resta. (2) **Menu su telefono: il logo passava sotto la fotocamera frontale**. La viewport non ha `viewport-fit=cover`, quindi `env(safe-area-inset-top)` vale 0 anche nell'APK a tutto schermo: `menu-mobile.css` definisce `--mm-fotocamera: max(env(safe-area-inset-top), 30px)` (solo `pointer: coarse` in verticale; in orizzontale il logo e' nascosto) e la usa come margine sopra il logo; il blocco logo e' `clamp(96px, 15.5dvh, 132px)` e il box del profilo ha 12px sopra, quindi scende col logo senza schiacciarsi (50px alti, ~49px di vuoto fra logo e box a 750px). **Provato solo in emulazione** (411x750, 360x640, 393x852): da vedere sul telefono vero se 30px bastano per il foro. Le pagine figlie (senza logo) non hanno questo margine. Suite completa non eseguita.
 
+1.4.186 (cache v495): **Impostazioni senza riquadri** (l'utente: i box erano troppo attaccati, e se non mettessimo box?). In `impostazioni.html` le `.settings-card` perdono sfondo, bordo, angoli e ombra; ogni sezione ha il titolo con un filo d'oro sotto e 38px di aria sopra (32px su telefono, 24px in orizzontale basso), le righe restano separate dal filo leggero. Valido a ogni larghezza. Prima a telefono le card erano a 4-6px l'una dall'altra. Provato su 411px; suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**
