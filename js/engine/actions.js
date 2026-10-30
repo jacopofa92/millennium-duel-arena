@@ -392,6 +392,7 @@ function startHandCardDrag(event, card, sourceIndex, sourceOwner) {
         sourceIndex,
         sourceOwner,
         pointerId: event.pointerId,
+        pointerType: event.pointerType,
         startX: event.clientX,
         startY: event.clientY,
         moved: false,
@@ -569,6 +570,57 @@ function flyCardToSlot(card, fromSource, toEl, onArrive, hideEl, isFaceDown = fa
 function handleDragMove(event) {
     if (!dragState) return;
     if (dragState.type !== 'hand') return;
+
+    // SCORRIMENTO DELLA MANO CON IL DITO (1.4.184). Su touch, un gesto che parte sulla mano e va soprattutto di LATO non e' un trascinamento
+    // verso il campo: scorre la mano, sollevando una carta alla volta (quella sotto il dito) con il suo box info. Il trascinamento vero resta il
+    // gesto verso l'alto: se il dito esce dalla cima della mano il gesto diventa il trascinamento della carta che aveva sotto. Mouse: invariato
+    // (ha gia' il sollevamento al passaggio). Vale anche fuori dalla Main Phase, dove il gesto era gia' solo un'ispezione.
+    if (dragState.pointerType === 'touch' || dragState.pointerType === 'pen') {
+        const mx = event.clientX - dragState.startX;
+        const my = event.clientY - dragState.startY;
+        if (!dragState.scrub && !dragState.moved && Math.abs(mx) > 10 && Math.abs(mx) > Math.abs(my) * 1.4) {
+            dragState.scrub = true;
+            dragState.scrubIndex = -1;
+        }
+        if (dragState.scrub) {
+            const mano = document.getElementById('playerHand');
+            const carte = mano ? Array.from(mano.querySelectorAll('.card')) : [];
+            const r = mano ? mano.getBoundingClientRect() : null;
+            // Uscita verso l'alto dalla fascia della mano: da qui in poi e' un trascinamento normale della carta corrente.
+            if (r && event.clientY < r.top - 14 && dragState.scrubIndex >= 0 && dragState.dragEnabled) {
+                const cur = gameState.playerHand[dragState.scrubIndex];
+                if (cur) {
+                    dragState.scrub = false;
+                    dragState.card = cur;
+                    dragState.sourceIndex = dragState.scrubIndex;
+                    dragState.sourceEl = carte[dragState.scrubIndex] || dragState.sourceEl;
+                    dragState.startX = event.clientX;
+                    dragState.startY = event.clientY + 9;   // oltre la soglia degli 8px: il fantasma nasce subito, qui sotto
+                    if (typeof clearHandCardSelection === 'function') clearHandCardSelection();
+                }
+            } else {
+                // La carta sotto il dito: per posizione orizzontale (il dito puo' scivolare un poco sopra o sotto la mano) fra quelle visibili.
+                let idx = -1;
+                for (let i = 0; i < carte.length; i++) {
+                    const b = carte[i].getBoundingClientRect();
+                    if (event.clientX >= b.left && event.clientX <= b.right) { idx = i; }
+                }
+                if (idx < 0 && carte.length) {
+                    const primo = carte[0].getBoundingClientRect(), ultimo = carte[carte.length - 1].getBoundingClientRect();
+                    idx = event.clientX < primo.left ? 0 : (event.clientX > ultimo.right ? carte.length - 1 : -1);
+                }
+                const card = idx >= 0 ? gameState.playerHand[idx] : null;
+                if (card && idx !== dragState.scrubIndex) {
+                    dragState.scrubIndex = idx;
+                    if (window.NativeHaptics) NativeHaptics.light();
+                    selectHandCardForInspection(card, idx, 'player');
+                    if (typeof updateCardInfoPanel === 'function') updateCardInfoPanel(card, { sourceType: 'hand', sourceOwner: 'player', isFaceDown: false });
+                }
+                return;
+            }
+        }
+    }
+
     if (!dragState.dragEnabled) return;
 
     const dx = event.clientX - dragState.startX;
@@ -622,7 +674,8 @@ function handleDragEnd(event) {
         document.removeEventListener('pointercancel', handleDragEnd);
 
         const moved = dragState.moved;
-        if (!moved && event.type !== 'pointercancel') armHandCompatibilityClick(event);
+        const scorrimento = !!dragState.scrub;   // gesto di scorrimento della mano: la carta sollevata resta com'e', niente click ne' gioco
+        if (!moved && !scorrimento && event.type !== 'pointercancel') armHandCompatibilityClick(event);
         const dropTarget = document.elementFromPoint(event.clientX, event.clientY)?.closest('.field-slot');
         // Rettangolo del fantasma esattamente dov'era al momento del
         // rilascio, PRIMA di rimuoverlo: è il punto di partenza che
@@ -674,6 +727,8 @@ function handleDragEnd(event) {
             } else if (!touchLike) {
                 handleCardClick(dragState.card, 'hand', dragState.sourceIndex, dragState.sourceOwner);
             }
+        } else if (scorrimento) {
+            // niente: l'ultima carta toccata dal dito resta sollevata con il suo box info (1.4.184)
         } else if (!moved || !touchLike) {
             // Su touch uno swipe/trascinamento non è un tap: non deve aprire
             // il box informazioni solo perché il gesto era iniziato sopra
