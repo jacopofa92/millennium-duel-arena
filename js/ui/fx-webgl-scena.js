@@ -707,6 +707,58 @@ float dado(vec2 q,float v){
         const d = esegui(s, 2250); sfx('directHit', 1000); return d;
     };
     /**
+     * Evocazione Rituale, in blu: un grande SIGILLO si accende a terra al centro dello schermo, i materiali (le carte
+     * sacrificate) appaiono in cerchio e ruotano sempre piu' veloci stringendosi verso il centro; fili di luce li tirano dentro,
+     * a uno a uno si dissolvono nel cuore del sigillo che pulsa; alla fine un lampo, un'onda e una COLONNA DI LUCE da cui il
+     * mostro verra' evocato (lo fa il chiamante in `onDone`: qui il mostro NON compare). La scritta dice il nome della carta.
+     * Prima: anelli CSS su un piano inclinato, senza luce vera.
+     */
+    imp.playRitualSummon = function (materialCards, ritualCard, owner, onDone) {
+        const materiali = Array.isArray(materialCards) ? materialCards.filter(Boolean) : [];
+        if (!materiali.length || typeof window.createCardElement !== 'function') { if (typeof onDone === 'function') onDone(); return 0; }
+        const W = innerWidth; const H = innerHeight; const m = Math.min(W, H);
+        const cx = W / 2; const cy = H * 0.5; const R = Math.min(W * 0.42, m * 0.36);
+        const n = materiali.length;
+        const s = new Scena();
+        s.add(T.WASH, C.SCURO, 0, 2.7, [0, 0, 0.62, 0], 3);
+        // Il sigillo: due cerchi magici in prospettiva, controrotanti, e un vortice sottile al centro
+        s.add(T.SEAL, C.BLU, 0.05, 2.5, [cx, cy, R, 0], 0.5);
+        s.add(T.SEAL, C.CIANO, 0.2, 2.2, [cx, cy, R * 0.62, 0], 0.5);
+        s.add(T.VORTEX, C.BLU, 0.35, 1.9, [cx, cy, R * 0.55, 0], 0.5);
+        // I materiali: cerchio, rotazione che accelera, ritiro verso il centro, dissolvenza nel nucleo
+        const wC = Math.max(60, Math.min(112, m * 0.15)); const hC = wC / 0.685;
+        const DUR = 2150; const T0 = 250;
+        materiali.forEach((card, i) => {
+            const base = (i / n) * Math.PI * 2 - Math.PI / 2;
+            fantasma(card, { width: wC, height: hC }, (u) => {
+                const entra = Math.min(1, u / 0.14);
+                const k = u < 0.45 ? 0 : easeIO((u - 0.45) / 0.45);       // ritiro verso il centro
+                const giro = base + (u * u * 3.2 + u * 1.4) * Math.PI * 2 * 0.5;   // gira sempre piu' veloce
+                const raggio = R * 0.88 * (1 - k * 0.93);
+                const x = cx + Math.cos(giro) * raggio; const y = cy + Math.sin(giro) * raggio * 0.5 - (1 - entra) * 30;
+                const sc = (0.55 + 0.45 * easeOut(entra)) * (1 - k * 0.7);
+                const fine = u > 0.9 ? Math.max(0, (1 - u) / 0.1) : 1;
+                return { x: x - wC / 2, y: y - hC / 2, rx: 50, rot: (giro * 57.3) % 360 * 0.1 + k * 180, s: sc, op: entra * fine };
+            }, T0 + i * 40, DUR);
+            // Un filo di luce dal punto di partenza al nucleo, uno per materiale, mentre vengono tirati dentro
+            const px = cx + Math.cos(base) * R * 0.88; const py = cy + Math.sin(base) * R * 0.88 * 0.5;
+            s.add(T.LINE, C.CIANO, 1.0 + i * 0.03, 0.8, [px, py, cx, cy], 6);
+            s.add(T.FLASH, C.CIANO, 1.55 + i * 0.03, 0.4, [cx, cy, R * 0.18, 0]);
+        });
+        // L'esplosione di luce e la colonna da cui nascera' il mostro
+        s.add(T.FLASH, C.BIANCO, 1.7, 0.7, [cx, cy, R * 0.9, 0]);
+        s.add(T.RING, C.CIANO, 1.7, 0.9, [cx, cy, R * 1.25, 7]);
+        s.add(T.RING, C.BLU, 1.78, 0.9, [cx, cy, R * 0.8, 5]);
+        s.add(T.PILLAR, C.CIANO, 1.65, 1.0, [cx, cy, R * 0.28, 0]);
+        s.add(T.BURST, C.BIANCO, 1.7, 0.9, [cx, cy, R * 1.1, 50], 3);
+        s.add(T.BURST, C.CIANO, 1.74, 0.9, [cx, cy, R * 0.8, 70], 6.2);
+        testo('EVOCAZIONE RITUALE', cx, cy - R * 0.62 - 16, 250, 1900, { size: Math.max(18, m * 0.045), color: '#e4f2ff', glow: '#4ab0ff' });
+        if (ritualCard && ritualCard.name) testo(String(ritualCard.name), cx, cy - R * 0.62 + m * 0.035, 400, 1750, { size: Math.max(13, m * 0.03), color: '#bfe0ff', glow: '#2e8cff' });
+        const imp1 = unaVolta(onDone);
+        s.dopo(2150, imp1); s.dopo(2900, imp1);       // al momento del lampo finale il mostro puo' entrare; rete di scorta alla fine
+        const d = esegui(s, 2650); sfx('tribute', 0); sfx('summon', 1600); return d;
+    };
+    /**
      * Rinascita del Mostro, fedele alla versione originale (effects.css, "fx-monster-reborn"): scena scura e
      * verdastra, il portale piatto verde sul Cimitero, l'Ankh di luce che si apre sul bersaglio, e la carta
      * che sale inclinata dal Cimitero e si raddrizza sul Terreno. L'impatto cade a 1120 ms, come prima.

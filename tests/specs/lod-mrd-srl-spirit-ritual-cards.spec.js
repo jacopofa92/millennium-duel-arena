@@ -148,7 +148,7 @@ module.exports = {
             return {
                 canActivate: canActivate,
                 fodderSacrificed: !gameState.playerMonsterField.some((s) => s && s.card.uid === 'fodder-1'),
-                sceneVisible: !!document.querySelector('.fx-ritual-scene'),
+                sceneVisible: !!document.querySelector('.fx-ritual-scene') || !!(window.FxWebgl && window.FxWebgl.attivi() > 0),
                 burgerSummonedTooSoon: gameState.playerMonsterField.some((s) => s && s.card.uid === 'burger-1')
             };
         });
