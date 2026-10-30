@@ -68,14 +68,14 @@ game-logo[variante="splash"] {
 }
 .gl-gemma { fill: #fff3c4; filter: drop-shadow(0 0 3px #f7d774); }
 .gl-piramide-corpo { stroke: #fff3c4; stroke-width: 2.2; stroke-linejoin: round; }
-.gl-giunture { fill: none; stroke: #5a3304; stroke-width: 1.4; opacity: 0.45; }
+.gl-giunture { fill: none; stroke: #4a2a03; stroke-width: 1; opacity: 0.8; stroke-linejoin: round; }
 .gl-lama { opacity: 0.9; }
 /* L'Occhio in rilievo (vedi il commento in game-logo.js): tre strati con la stessa geometria. Lo spessore delle linee e' quello di
    sempre, ma il colore e' oro e non piu' nero. Fill e stroke si ereditano dai gruppi dentro i <use>. */
 .gl-rilievo { stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
 .gl-rilievo--ombra { fill: rgba(40, 20, 0, 0.7); stroke: rgba(40, 20, 0, 0.7); }
 .gl-rilievo--corpo { fill: var(--gl-rilievo, #a86a0a); stroke: var(--gl-rilievo, #a86a0a); }
-.gl-rilievo--luce { fill: none; stroke: rgba(255, 226, 150, 0.55); stroke-width: 0.8; }
+.gl-rilievo--luce { --k: 0.18; fill: none; stroke: rgba(255, 226, 150, 0.55); }
 .gl-iride { filter: drop-shadow(0 0 2px rgba(255, 220, 140, 0.6)); }
 .gl-onda { fill: none; stroke: #fff3c4; stroke-width: 2; opacity: 0; }
 
@@ -204,7 +204,7 @@ game-logo[variante="splash"] .gl-piramide-corpo {
 game-logo[variante="splash"] .gl-giunture { animation: glComparsaGiunture 0.3s ease-out 1.1s both; }
 /* L'Occhio si APRE: una palpebra che si alza, attorno al suo centro. */
 game-logo[variante="splash"] .gl-occhio {
-    transform-origin: 0px -17px;
+    transform-origin: 0px -6px;
     animation: glApri 0.32s cubic-bezier(.2, .8, .3, 1) 1.2s both;
 }
 /* `forwards` e NON `both`: il primo fotogramma dell'onda è quello pieno

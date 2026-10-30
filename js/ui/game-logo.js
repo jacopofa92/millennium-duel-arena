@@ -49,6 +49,26 @@
 
     function emblema(id) {
         const g = (nome) => `gl-${nome}-${id}`;
+        // GEOMETRIA DALLA FOTO del Puzzle vero (vedi js/ui/splash-webgl.js): unita' "e" = pixel della foto / 375, mezza larghezza in
+        // cima = 1, ey verso l'alto con 0 al centro dell'iride. Qui diventano unita' SVG: X = 62 * ex, y = -5.9 - 62 * ey.
+        const X = (ex) => +(62 * ex).toFixed(1), Y = (ey) => +(-5.9 - 62 * ey).toFixed(1);
+        const pt = (ex, ey) => `${X(ex)},${Y(ey)}`;
+        const poli = (punti) => 'M' + punti.map((q) => pt(q[0], q[1])).join(' L');
+        // Le scanalature a gradini (meta' sinistra; la destra e' lo specchio): le stesse del shader.
+        const gradini = [
+            [[-.627, .453], [-.627, .333], [-.747, .333], [-.667, .248], [-.741, .155], [-.515, .048], [-.328, -.125], [-.368, -.227], [-.195, -.227], [-.115, -.293], [0, -.39]],
+            [[-.28, .44], [-.28, .248], [-.475, .248], [-.408, .155], [-.515, .048]],
+            [[-.141, .44], [-.141, .248], [.141, .248], [.141, .44]],
+            [[0, -.387], [0, -.533]], [[-.181, -.536], [.181, -.536]]
+        ];
+        const speculare = (a) => a.map((q) => [-q[0], q[1]]);
+        const giunture = gradini.map((a, i) => i < 2 ? poli(a) + ' ' + poli(speculare(a)) : poli(a)).join(' ');
+        // Spirale della Wedjat (centro in basso a destra, ~1,5 giri): punti dalla formula r = .012 + .0105*T.
+        const spirale = (() => {
+            const c = [.215, -.345], pts = [];
+            for (let T = 9.74; T >= 0.3; T -= 0.3) pts.push([c[0] + (.012 + .0105 * T) * Math.cos(T), c[1] + (.012 + .0105 * T) * Math.sin(T)]);
+            return poli(pts);
+        })();
         // Le 8 gemme sull'anello di mezzo, ogni 45 gradi.
         const gemme = Array.from({ length: 8 }, (_, i) =>
             `<path class="gl-gemma" d="M0,-80 L3,-76 L0,-72 L-3,-76 Z" transform="rotate(${i * 45})"/>`).join('');
@@ -72,7 +92,7 @@
             <stop offset="1" stop-color="#f39c12" stop-opacity="0"/>
         </radialGradient>
         <clipPath id="${g('taglio')}">
-            <path d="M-60,-40 L60,-40 L0,64 Z"/>
+            <path d="M-62,-34 L62,-34 L0,40 Z"/>
         </clipPath>
     </defs>
 
@@ -89,9 +109,9 @@
     </g>
 
     <g class="gl-piramide">
-        <path class="gl-piramide-corpo" d="M-60,-40 L60,-40 L0,64 Z" pathLength="100" fill="url(#${g('oro')})"/>
+        <path class="gl-piramide-corpo" d="M-62,-34 L62,-34 L0,40 Z" pathLength="100" fill="url(#${g('oro')})"/>
         <!-- Le giunture dei pezzi del Puzzle: si vede che è composto. -->
-        <path class="gl-giunture" d="M-30,-40 L0,12 L30,-40 M-45,-14 L45,-14 M-15,38 L15,38"/>
+        <path class="gl-giunture" d="${giunture}"/>
         <!-- Il riflesso che attraversa la piramide. Il movimento sta sul
              GRUPPO e l'inclinazione sul rettangolo: un transform CSS
              sostituisce quello scritto come attributo, quindi animare il
@@ -105,26 +125,26 @@
             <!-- L'Occhio e' IN RILIEVO, non disegnato in nero: le sagome si definiscono una volta sola e si disegnano tre volte —
                  un'ombra scura appena spostata in basso a destra, il corpo in oro chiaro, e un filo di luce in alto a sinistra. -->
             <defs>
-                <path id="${g('sopracciglio')}" fill="none" d="M-30,-31 Q0,-44 32,-30"/>
-                <path id="${g('palpebra')}" fill="none" d="M-28,-17 Q0,-38 28,-17 Q0,-1 -28,-17 Z"/>
-                <circle id="${g('iride')}" fill="none" cx="0" cy="-17" r="7.5"/>
-                <circle id="${g('pupilla')}" stroke="none" cx="0" cy="-17" r="3.2"/>
-                <!-- La "lacrima" e la spirale del Wedjat, sotto l'occhio. -->
-                <path id="${g('segno')}" fill="none" d="M-6,-7 L-9,14 M9,-7 Q20,4 13,14 Q8,19 13,23"/>
+                <path id="${g('sopracciglio')}" fill="none" d="M${pt(-.405, .075)} Q${pt(0, .115)} ${pt(.405, .075)}" style="stroke-width:calc(var(--k,1)*6.4px)"/>
+                <path id="${g('palpebra')}" fill="none" style="stroke-width:calc(var(--k,1)*4px)" d="M${pt(-.405, -.025)} L${pt(.405, -.025)}"/>
+                <path id="${g('inferiore')}" fill="none" style="stroke-width:calc(var(--k,1)*4.2px)" d="M${pt(-.405, -.03)} Q${pt(0, -.23)} ${pt(.405, -.03)}"/>
+                <circle id="${g('iride')}" fill="none" style="stroke-width:calc(var(--k,1)*4px)" cx="0" cy="${Y(0)}" r="7.4"/>
+                <circle id="${g('pupilla')}" stroke="none" cx="0" cy="${Y(0)}" r="3.4"/>
+                <!-- Le due gambe sotto l'occhio (la sinistra con il piede, la destra che si arrotola) e la spirale. -->
+                <path id="${g('segno')}" fill="none" style="stroke-width:calc(var(--k,1)*4.4px)" d="M${pt(-.067, -.17)} L${pt(-.067, -.31)} Q${pt(-.075, -.385)} ${pt(-.235, -.435)} M${pt(.058, -.17)} L${pt(.058, -.31)} Q${pt(.065, -.35)} ${pt(.105, -.375)} ${spirale.replace('M', 'M')}"/>
                 <linearGradient id="${g('rilievo')}" gradientUnits="userSpaceOnUse" x1="-30" y1="-40" x2="30" y2="28">
-                    <stop offset="0" stop-color="#d79a1c"/>
-                    <stop offset="0.5" stop-color="#a86a0a"/>
-                    <stop offset="1" stop-color="#6b3c04"/>
+                    <stop offset="0" stop-color="#f1c04a"/>
+                    <stop offset="0.5" stop-color="#d79a1c"/>
+                    <stop offset="1" stop-color="#9a6208"/>
                 </linearGradient>
-            </defs>
-            <g class="gl-rilievo gl-rilievo--ombra" transform="translate(1.1,1.8)">
-                <use href="#${g('sopracciglio')}"/><use href="#${g('palpebra')}"/><use href="#${g('iride')}"/><use href="#${g('pupilla')}"/><use href="#${g('segno')}"/>
+            </defs>            <g class="gl-rilievo gl-rilievo--ombra" transform="translate(1.1,1.8)">
+                <use href="#${g('sopracciglio')}"/><use href="#${g('palpebra')}"/><use href="#${g('inferiore')}"/><use href="#${g('iride')}"/><use href="#${g('pupilla')}"/><use href="#${g('segno')}"/>
             </g>
             <g class="gl-rilievo gl-rilievo--corpo" style="--gl-rilievo: url(#${g('rilievo')})">
-                <use href="#${g('sopracciglio')}"/><use href="#${g('palpebra')}"/><use class="gl-iride" href="#${g('iride')}"/><use href="#${g('pupilla')}"/><use href="#${g('segno')}"/>
+                <use href="#${g('sopracciglio')}"/><use href="#${g('palpebra')}"/><use href="#${g('inferiore')}"/><use class="gl-iride" href="#${g('iride')}"/><use href="#${g('pupilla')}"/><use href="#${g('segno')}"/>
             </g>
             <g class="gl-rilievo gl-rilievo--luce" transform="translate(-0.5,-0.8)">
-                <use href="#${g('sopracciglio')}"/><use href="#${g('palpebra')}"/><use href="#${g('iride')}"/><use href="#${g('segno')}"/>
+                <use href="#${g('sopracciglio')}"/><use href="#${g('palpebra')}"/><use href="#${g('inferiore')}"/><use href="#${g('iride')}"/><use href="#${g('segno')}"/>
             </g>
         </g>
     </g>

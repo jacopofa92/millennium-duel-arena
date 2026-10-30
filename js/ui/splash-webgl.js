@@ -32,8 +32,8 @@ uniform float uOut;      // 0..1 uscita (esplosione + camera che entra)
 uniform float uDist;     // distanza della camera (si allarga sugli schermi bassi)
 const float PI=3.14159265;
 const float TOP=.9;
-const float APEX=-1.;
-const vec2 NXY=vec2(.8844,-.4668);   // normale del piano di una faccia nel piano (raggio, y): normalize(1.9, -1)
+const float APEX=-.66;   // piramide piu' piatta, come il Puzzle vero: 2,6 di larghezza in cima su 1,56 di altezza
+const vec2 NXY=vec2(.7682,-.6402);   // normale del piano di una faccia nel piano (raggio, y): normalize(1.56, -1.3)
 
 float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
 float hash3(vec3 p){ return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453); }
@@ -45,11 +45,13 @@ float sdTorus(vec3 p, vec2 t2){ vec2 q=vec2(length(p.xz)-t2.x,p.y); return lengt
 float sdCyl(vec3 p, float h, float rad){ vec2 d=abs(vec2(length(p.xz),p.y))-vec2(rad,h); return min(max(d.x,d.y),0.)+length(max(d,0.)); }
 
 float occhioH(vec2 e, out float lungo);
+float scanalature(vec2 e);
 
 // Coordinate sul pannello della faccia dominante, per l'Occhio (centrato, ingrandito): x lungo la faccia, y verso l'alto.
 vec2 coordOcchio(vec3 p, float dX, float dZ){
   float u=(dZ>dX)?p.x*sign(p.z):-p.z*sign(p.x);
-  return vec2(u,p.y-.2)*.72;
+  // unita' "e" della FOTO del Puzzle: mezza larghezza in cima = 1 (1,3 nel mondo), origine al centro dell'iride, y verso l'alto
+  return vec2(u,p.y-.31)/1.3;
 }
 
 // Il corpo: piramide rovesciata (apice in basso), spigoli arrotondati, pannelli incassati dentro una cornice rialzata,
@@ -59,14 +61,16 @@ float sdBody(vec3 p, out float panel){
   float dZ=dot(vec2(abs(p.z),p.y-APEX),NXY);
   float top=p.y-TOP;
   float d=max(max(dX,dZ),top)-.035;
-  float m=.075;
+  float m=.02;
   panel=smoothstep(2.*m,2.*m+.035,abs(dX-dZ))*smoothstep(m,m+.035,-top);
-  float r=d+.042*panel;
+  float r=d+.006*panel;
   // il rilievo si calcola solo vicino alla superficie del pannello: fuori sarebbe lavoro inutile per ogni passo del raggio
   if(panel>.02 && d<.16){
     float lg;
-    float h=occhioH(coordOcchio(p,dX,dZ),lg);
-    r-=.05*h*panel;
+    vec2 e=coordOcchio(p,dX,dZ);
+    float h=occhioH(e,lg);
+    r-=.06*h*panel;
+    r+=.032*scanalature(e)*(1.-h)*panel;      // le spaccature fra i pezzi, a gradini come sul Puzzle vero
   }
   return r;
 }
@@ -92,40 +96,70 @@ vec3 env(vec3 d){
 
 float seg(vec2 p, vec2 a, vec2 b){ vec2 pa=p-a,ba=b-a; float h=clamp(dot(pa,ba)/dot(ba,ba),0.,1.); return length(pa-ba*h); }
 
-// Distanza dalla spirale della goccia (Archimede: il raggio cresce con l'angolo).
+// Le scanalature fra i pezzi del Puzzle, COPIATE DALLA FOTO (unita' "e", la meta' sinistra si specchia): un taglio a gradini che
+// scende dal bordo alto verso l'apice, il blocco centrale in cima e le giunture sotto l'occhio. Ritorna 1 sul solco, 0 fuori.
+float scanalature(vec2 e){
+  vec2 q=vec2(abs(e.x),e.y);
+  float d=seg(q,vec2(.627,.453),vec2(.627,.333));
+  d=min(d,seg(q,vec2(.627,.333),vec2(.747,.333)));
+  d=min(d,seg(q,vec2(.747,.333),vec2(.667,.248)));
+  d=min(d,seg(q,vec2(.667,.248),vec2(.741,.155)));
+  d=min(d,seg(q,vec2(.741,.155),vec2(.515,.048)));
+  d=min(d,seg(q,vec2(.28,.44),vec2(.28,.248)));
+  d=min(d,seg(q,vec2(.28,.248),vec2(.475,.248)));
+  d=min(d,seg(q,vec2(.475,.248),vec2(.408,.155)));
+  d=min(d,seg(q,vec2(.408,.155),vec2(.515,.048)));
+  d=min(d,seg(q,vec2(.515,.048),vec2(.328,-.125)));
+  d=min(d,seg(q,vec2(.328,-.125),vec2(.368,-.227)));
+  d=min(d,seg(q,vec2(.368,-.227),vec2(.195,-.227)));
+  d=min(d,seg(q,vec2(.195,-.227),vec2(.115,-.293)));
+  d=min(d,seg(q,vec2(.115,-.293),vec2(0.,-.39)));
+  d=min(d,seg(q,vec2(.141,.44),vec2(.141,.248)));
+  d=min(d,seg(q,vec2(.141,.248),vec2(0.,.248)));
+  d=min(d,seg(q,vec2(0.,-.387),vec2(0.,-.533)));
+  d=min(d,seg(q,vec2(.181,-.536),vec2(0.,-.536)));
+  return smoothstep(.018,.006,d);
+}
+// Una barra a capsula dal profilo tondo (un "filo" che sporge): 1 sull'asse, 0 al bordo. w e' il mezzo spessore.
+float barra(vec2 q, vec2 a, vec2 b, float w){ float d=seg(q,a,b)/w; return sqrt(max(1.-d*d,0.)); }
+// Come sopra ma lungo una linea ARCUATA di quota yc a x di q: dx e' l'eccesso oltre l'estremita' (il cappuccio tondo).
+float arco(vec2 q, float L, float yc, float w){ float d=length(vec2(max(abs(q.x)-L,0.),q.y-yc))/w; return sqrt(max(1.-d*d,0.)); }
+// La spirale della Wedjat (Archimede, ~1,5 giri, r = .012 + .0105*T): distanza dal tratto.
 float spirale(vec2 q){
   float rl=length(q);
   float th=atan(q.y,q.x); if(th<0.) th+=6.2832;
   float best=1.;
   for(int n=0;n<2;n++){
     float T=th+6.2832*float(n);
-    if(T<=3.*PI) best=min(best,abs(rl-(.012+.0085*T)));
+    if(T<=3.1*PI) best=min(best,abs(rl-(.012+.0105*T)));
   }
   return best;
 }
-// L'Occhio di Wedjat IN RILIEVO: l'altezza (0..1) sul pannello. Bordo della palpebra, anello dell'iride, pupilla, sopracciglio, goccia
-// con la sua spirale e coda, tutto con profilo arrotondato (un "filo" che sporge); il bianco dell'occhio e' appena sopra il fondo.
-// "lungo" e' la posizione 0..1 lungo l'occhio: serve a farlo accendere da sinistra a destra col progresso.
+// L'Occhio di Wedjat IN RILIEVO, ricalcato sulla foto del Puzzle: sopracciglio (barra grossa), barra di mezzo, palpebra inferiore a
+// "sorriso", anello dell'iride con la pupilla a cupola, le due gambe (la sinistra con il piede, la destra che si arrotola) e la spirale.
+// Niente "bianco dell'occhio": l'interno resta il piano del metallo, non e' colorato. "lungo" (0..1) fa accendere l'Occhio da sinistra
+// a destra col progresso.
 float occhioH(vec2 e, out float lungo){
-  float a=.36;
-  lungo=clamp(e.x/(2.*a)+.5,0.,1.);
-  float w=.03;
-  float hl=(e.y>0.?.17:.105)*max(1.-(e.x*e.x)/(a*a),0.);
-  float dentro=step(abs(e.x),a)*step(abs(e.y),hl);
-  float contorno=(abs(e.x)<=a+.012)?abs(abs(e.y)-hl):1.;
-  float h=smoothstep(w,0.,contorno);                      // bordo della palpebra
-  h=max(h,dentro*.3);                                      // il bianco dell'occhio
-  float ir=length(e-vec2(0.,.012));
-  h=max(h,smoothstep(.034,0.,abs(ir-.108)));              // anello dell'iride
-  h=max(h,smoothstep(.008,0.,ir-.046)*.85);               // pupilla
-  float bx=abs(e.x)/(a+.08);
-  if(bx<1.) h=max(h,smoothstep(w,0.,abs(e.y-(.28+.06*(1.-bx*bx)))));   // sopracciglio
-  h=max(h,smoothstep(w*.9,0.,seg(e,vec2(0.,-.1),vec2(0.,-.25))));      // la goccia scende...
-  h=max(h,smoothstep(w*.9,0.,spirale(e-vec2(.04,-.25))));             // ...e si arrotola
-  h=max(h,smoothstep(w*.9,0.,seg(e,vec2(a-.01,-.012),vec2(a+.13,-.05))));   // coda verso l'esterno
+  lungo=clamp(e.x/.81+.5,0.,1.);
+  float x2=min(e.x*e.x/.1364,1.);
+  float r=length(e);
+  float h=arco(e,.353,.083+.014*(1.-x2),.052);               // sopracciglio
+  float fuori=smoothstep(.15,.17,r);                          // la barra di mezzo passa dietro l'iride
+  h=max(h,arco(e,.373,-.025,.032)*fuori);                     // barra di mezzo
+  h=max(h,arco(e,.373,-.03-.1*(1.-x2),.034));                 // palpebra inferiore
+  float anello=sqrt(max(1.-pow(abs(r-.118)/.033,2.),0.))*smoothstep(.07,.02,e.y);   // l'anello sfuma nel sopracciglio
+  h=max(h,anello);
+  h=max(h,.12*step(r,.1));                                    // il fondo dell'iride, appena sopra il piano
+  h=max(h,.8*sqrt(max(1.-(r*r)/(.058*.058),0.)));             // la pupilla a cupola
+  h=max(h,barra(e,vec2(-.067,-.17),vec2(-.067,-.31),.036));   // gamba sinistra
+  h=max(h,barra(e,vec2(-.067,-.31),vec2(-.125,-.385),.034));  // ...il piede che gira a sinistra
+  h=max(h,barra(e,vec2(-.125,-.385),vec2(-.235,-.435),.03));
+  h=max(h,barra(e,vec2(.058,-.17),vec2(.058,-.31),.036));     // gamba destra
+  h=max(h,barra(e,vec2(.058,-.31),vec2(.105,-.375),.034));    // ...che scende verso la spirale
+  float ds=spirale(e-vec2(.215,-.345));
+  h=max(h,sqrt(max(1.-pow(ds/.028,2.),0.)));                  // spirale
   return h;
-}
-mat2 rot(float a){ float c=cos(a),s=sin(a); return mat2(c,-s,s,c); }
+}mat2 rot(float a){ float c=cos(a),s=sin(a); return mat2(c,-s,s,c); }
 
 const vec3 WHITE=vec3(.012,.01,.008);   // il nome e' rimasto: e' il colore di FINE uscita, adesso un nero caldo (il menu sotto e' scuro)
 void main(){
@@ -218,8 +252,8 @@ void main(){
         acceso=max(acceso,ease(uOut*2.));
         // L'Occhio e' ORO SCURO, QUASI NERO (richiesta dell'utente: col metallo lucido i riflessi lo facevano sembrare bianco).
         // Colore scuro, superficie opaca (niente specchio) e, piu' sotto, niente riflessi ne' luce frontale su di lui.
-        scuro=smoothstep(.36,.55,rilievo);   // solo le LINEE incise: l'interno dell'occhio (il piano a .3) resta oro come il resto, non colorato
-        alb=mix(alb,vec3(.27,.155,.04),scuro);
+        scuro=smoothstep(.05,.4,rilievo)*.6;   // solo smorza i riflessi sul rilievo (niente bianco): il colore resta l'oro del metallo, non tinto
+        // (il colore dell'Occhio NON cambia: e' oro come il resto, come sul Puzzle vero)
         rugosita=mix(rugosita,.3,scuro);
         emissione=cresta*acceso*.3;
         n=normalize(n+rugosita*(vec3(vnoise(p.xy*60.),vnoise(p.yz*60.),vnoise(p.zx*60.))-.5));
