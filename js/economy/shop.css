@@ -450,6 +450,7 @@
     .shop-root .wallet-icon { font-size: 1.4rem; }
     .shop-root .wallet-value { font-size: 1.1rem; }
     .shop-root .shop-grid { grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 9px; }
+    /* Almeno 2 buste e 2 mazzi per riga (richiesta dell'utente, telefono in verticale): prima una colonna sola, carte enormi e tanta scrollata. */
     .shop-root .shop-grid.packs,
-    .shop-root .shop-grid.decks { grid-template-columns: 1fr; }
+    .shop-root .shop-grid.decks { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
 }

@@ -2,7 +2,7 @@
    Tutto sta sotto .menu-shell--app, che il modulo mette solo se `(pointer: coarse) and (max-width: 1000px)`: senza quella classe
    nessuna regola di questo file si applica, quindi il menu desktop non cambia. */
 
-.menu-shell--app {
+.menu-shell.menu-shell--app {   /* due classi: la regola .menu-shell di index.html (height:100vh) sta DOPO questo foglio e a parita' di peso vince */
     justify-content: flex-start;
     gap: 0;
     padding: 0;
@@ -160,13 +160,7 @@
 /* Lo spazio in fondo e' un ELEMENTO (.mm-spazio, messo da tab-bar.js in coda al body) e non un padding del body: su Impostazioni il body ha
    un'altezza fissa e il contenuto la supera, quindi il padding non spostava niente e la barra copriva l'ultimo riquadro. */
 .mm-spazio { height: calc(var(--mm-barra-h) + 8px); flex: 0 0 auto; pointer-events: none; }
-/* Il medaglione "Indietro" delle pagine su telefono (js/ui/topbar.css) e' un pulsante FISSO in basso a sinistra: senza questa regola la barra
-   lo copriva. Sta sopra la barra, e la pagina lascia spazio in fondo anche a lui (altrimenti copre l'ultima riga). */
-body.ha-tab-bar .topbar .back-btn { bottom: calc(var(--mm-barra-h) + 12px); }
-@media (max-width: 480px), (max-height: 500px) and (orientation: landscape) {
-    body.ha-tab-bar.tb-indietro-basso { padding-bottom: 0; }   /* lo spazio lo da' .mm-spazio: due volte sarebbe un vuoto doppio */
-    body.ha-tab-bar .mm-spazio { height: calc(var(--mm-barra-h) + 78px); }
-}
+body.ha-tab-bar.tb-indietro-basso { padding-bottom: 0; }   /* lo spazio in fondo lo da' .mm-spazio: due volte sarebbe un vuoto doppio */
 /* Sopra al contenuto e agli elementi fissi delle pagine (fino a 50) ma SOTTO i riquadri a tutto schermo (scheda carta 600-750, cerimonie,
    selettori mazzo 200+): con 900 la barra restava sopra la scheda di una carta e ne copriva i comandi in basso. */
 .mm-barra { z-index: 120; }
@@ -193,22 +187,53 @@ body.ha-tab-bar { padding-top: env(safe-area-inset-top, 0px); }
     .mm-tab--attiva::before { top: -7px; }
 }
 
-/* ---- SU TELEFONO, CON LA BARRA DI TAB IN BASSO, LA BARRA IN ALTO SPARISCE (richiesta dell'utente: "top bar + bottom bar e' un problema su
-   mobile"). Titolo, icona e ritratto vanno via (la tab accesa dice gia' dove si e'); resta il medaglione Indietro, fisso sopra la barra
-   in basso. Il .topbar resta nel DOM con altezza zero perche' lo script della pagina lo riempie e lo cerca. Su schermi 481-1000px il
-   medaglione di topbar.css e' ancora dentro la barra: qui lo si rende fisso a tutte le larghezze. ---- */
+/* ---- SU TELEFONO LA BARRA IN ALTO DELLE PAGINE NON C'E' PIU' (l'utente: "top bar + bottom bar e' un problema su mobile", poi "rimuovila"). Il
+   .topbar resta nel DOM con altezza zero perche' lo script della pagina lo riempie e lo cerca; titolo, icona e sottotitolo sono nascosti
+   (il titolo sta nella barra in basso, come voce "figlia" selezionata) e le cose che la pagina vi appende (selettore del mazzo, ritratto, badge)
+   le sposta tab-bar.js nella barra in basso. Resta il medaglione Indietro, fisso sopra la barra in basso a tutte le larghezze. ---- */
 body.ha-tab-bar .topbar {
-    min-height: 0 !important; height: 0; padding: 0; margin: 0; border: 0; border-image: none;
+    position: static; min-height: 0 !important; height: 0; margin: 0; padding: 0; border: 0; border-image: none;
     background: none; box-shadow: none; overflow: visible;
 }
 body.ha-tab-bar .topbar::before, body.ha-tab-bar .topbar::after { display: none; }
 body.ha-tab-bar .topbar > :not(.back-btn) { display: none !important; }
-body.ha-tab-bar .topbar .back-btn {
-    position: fixed; left: max(14px, env(safe-area-inset-left)); bottom: calc(var(--mm-barra-h) + 12px);
-    width: 56px; height: 56px; z-index: 2;
-    background: radial-gradient(circle at 50% 32%, #4a3a26 0%, #1f1810 62%, #120e0a 100%);
-    box-shadow: inset 0 0 0 3px rgba(14, 11, 8, 0.9), inset 0 0 0 4px rgba(247, 215, 116, 0.3), 0 6px 18px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(0, 0, 0, 0.5);
-}
-@media (max-height: 500px) and (orientation: landscape) { body.ha-tab-bar .topbar .back-btn { width: 50px; height: 50px; } }
-/* Le barre sticky che stavano SOTTO la barra in alto ora vanno in cima (top: in pixel tarato sull'altezza di quella barra). */
+
+/* ---- barra CONTESTUALE (pagine figlie): voce madre + voce figlia selezionata a sinistra, opzioni della pagina a destra ---- */
+.mm-barra--ctx { justify-content: flex-start; align-items: center; gap: 6px; padding-left: 10px; padding-right: 10px; }
+/* Stesso stile delle tab del menu (l'utente: "mantieni sempre icona sopra e testo sotto"): colonna, icona grande, nome in maiuscolo piccolo.
+   La voce figlia e' quella accesa (oro con la lineetta in alto, come una tab attiva), la madre e' spenta. */
+.mm-ctx-padre, .mm-ctx-figlio { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-width: 64px; min-height: 54px; padding: 0 10px; border: 0; border-radius: 12px; background: transparent; color: #9d9071; font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; position: relative; }
+.mm-ctx-padre .mm-tab-icona, .mm-ctx-figlio .mm-tab-icona { font-size: 1.35rem; line-height: 1; }
+.mm-ctx-sep { flex: 0 0 auto; color: rgba(247, 215, 116, 0.4); font-size: 1.1rem; margin: 0 -4px; }
+.mm-ctx-figlio { color: #f7d774; cursor: default; min-width: 0; max-width: 42vw; }
+.mm-ctx-figlio .mm-tab-icona { transform: translateY(-2px) scale(1.1); filter: drop-shadow(0 0 8px rgba(247, 215, 116, 0.6)); }
+.mm-ctx-figlio .mm-tab-nome { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }.mm-ctx-slot { margin-left: auto; flex: 0 1 auto; min-width: 0; display: flex; align-items: center; gap: 8px; }
+.mm-ctx-slot > .dsw-topbar { margin-left: 0; gap: 8px; }
+/* Il ritratto del giocatore (apre il Profilo) non serve piu' nella barra in basso (richiesta dell'utente): resta il selettore del mazzo. */
+.mm-ctx-slot .dsw-avatar { display: none; }
+.mm-ctx-slot .cartoteca-count, .mm-ctx-slot .deck-count-badge { font-size: 0.74rem; padding: 4px 9px; border-radius: 999px; color: #f7d774; background: rgba(247, 215, 116, 0.14); border: 1px solid rgba(247, 215, 116, 0.35); white-space: nowrap; margin: 0; }
+
+/* Elementi delle pagine con un `top:` in pixel tarato sulla barra in alto che non c'e' piu', o fissi in basso dove ora sta la barra. */
+body.ha-tab-bar .toc-bar, body.ha-tab-bar .editor-header, body.ha-tab-bar .torre-layout > .mp-pannello { top: 0 !important; }
+body.ha-tab-bar .preview-col { top: 14px !important; }
+body.ha-tab-bar .toast, body.ha-tab-bar .back-to-top { bottom: calc(var(--mm-barra-h) + 16px) !important; }/* Il medaglione Indietro NON serve piu' (l'utente): porta sempre al menu, e la voce madre della barra in basso fa la stessa cosa. */
+body.ha-tab-bar .topbar .back-btn { display: none !important; }
+/* La barra in alto non e' piu' fissa: le barre sticky che stavano SOTTO di lei (top in pixel tarato su di lei) vanno in cima. */
 body.ha-tab-bar .cartoteca-filters { top: 0 !important; }
+
+/* ---- scorrimento fra le tab (swipe): il contenuto nuovo entra dalla parte da cui si e' arrivati ---- */
+.mm-corpo { touch-action: pan-y; }
+.mm-da-destra { animation: mmDaDestra 0.26s cubic-bezier(0.22, 0.8, 0.3, 1); }
+.mm-da-sinistra { animation: mmDaSinistra 0.26s cubic-bezier(0.22, 0.8, 0.3, 1); }
+@keyframes mmDaDestra { from { opacity: 0.2; transform: translateX(38px); } to { opacity: 1; transform: none; } }
+@keyframes mmDaSinistra { from { opacity: 0.2; transform: translateX(-38px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .mm-da-destra, .mm-da-sinistra { animation: none; } }
+
+/* ---- barra giocatore: schermate a rotazione (valute, altre valute, titolo), una sopra l'altra nella stessa cella ---- */
+.mm-valute { display: grid; flex: 0 1 auto; min-width: 0; justify-items: end; align-items: center; }
+.mm-slide { grid-area: 1 / 1; display: flex; gap: 12px; align-items: center; justify-content: flex-end; min-width: 0; opacity: 0; transform: translateY(6px); transition: opacity 0.45s ease, transform 0.45s ease; pointer-events: none; }
+.mm-slide.is-on { opacity: 1; transform: none; }
+.mm-gemma--lo { background: linear-gradient(135deg, #b8f0c0, #3aa76d); box-shadow: 0 0 8px rgba(110, 220, 150, 0.55); }
+.mm-gemma--mi { background: linear-gradient(135deg, #e6c8ff, #8a4fd1); box-shadow: 0 0 8px rgba(190, 140, 255, 0.55); }
+.mm-titolo-giocatore { font-weight: 800; font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; color: #f7d774; text-shadow: 0 0 10px rgba(247, 215, 116, 0.35); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+@media (prefers-reduced-motion: reduce) { .mm-slide { transition: none; } }

@@ -5,7 +5,7 @@
  * Il menu a elenco verticale con sottomenu a scendere (Duelli > Campagna > Storia) e' fatto per un cursore: su un telefono costa
  * un tocco in piu' a ogni livello, e il pollice deve arrivare in alto per tornare indietro. Qui lo stesso contenuto e' una UI da
  * gioco mobile:
- *   - una BARRA DI TAB in basso (Duelli, Carte, Online, Sfide, Altro) alla portata del pollice, sempre visibile;
+ *   - una BARRA DI TAB in basso (Duelli, Carte, Online, Altro) alla portata del pollice, sempre visibile; Sfide sta in testa a Duelli;
  *   - una barra giocatore in alto (nome, crediti, Stelle) che da' subito il senso dell'avanzamento;
  *   - niente drill-down: Duelli mostra i suoi gruppi (Campagna, Settimanali, Allenamento) come SEZIONI di tessere, la prima voce di
  *     ogni sezione e' una tessera larga "in evidenza";
@@ -46,6 +46,15 @@
     /** @param {string} s */
     function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] || c)); }
 
+    /** Ogni quanti millisecondi la barra giocatore passa alla schermata successiva (valute, altre valute, titolo). */
+    const ROTAZIONE_MS = 3500;
+    /** @type {any} */
+    let rotazione = null;
+    function fermaRotazione() { if (rotazione) { clearInterval(rotazione); rotazione = null; } }
+
+    /** Verso dell'ultimo cambio di tab (+1 = verso destra): serve a far scorrere il contenuto nuovo dalla parte giusta. */
+    let direzione = 0;
+
     const mq = window.matchMedia ? window.matchMedia(QUERY) : null;
     // Dopo la prova sul telefono (l'utente: "puo' andare anche per desktop") la veste app vale OVUNQUE: il menu e' lo stesso su ogni schermo,
     // cambiano solo le misure (colonne, larghezza massima). mq resta esposto: serve a tab-bar.js e ai ridisegni, non decide piu'.
@@ -70,15 +79,17 @@
         /** @type {any[]} */
         const tab = [];
         if (duelli) {
+            // Sfide NON e' una tab (la barra ne ha quattro): sta in testa a Duelli, la prima cosa che si vede, perche' sono le missioni da
+            // rifare ogni giorno e il motivo per tornare nel gioco.
+            const sfideEvidenza = sfide ? [{ titolo: 'Sfide', icona: sfide.icon, voci: [Object.assign({}, sfide, { sottotitolo: 'Missioni del giorno e traguardi' })] }] : [];
             // Un gruppo e' una voce con `children`; una voce semplice (la Demo del Sandbox) finisce in "Altri".
             const gruppi = (duelli.children || []).filter((c) => c.children).map((g) => ({ titolo: g.label, icona: g.icon, voci: g.children }));
             const sciolte = (duelli.children || []).filter((c) => !c.children && (!c.soloAdmin || admin));
             if (sciolte.length) gruppi.push({ titolo: 'Strumenti', icona: 'settings', voci: sciolte });
-            tab.push({ id: 'duelli', titolo: 'Duelli', icona: duelli.icon, gruppi });
+            tab.push({ id: 'duelli', titolo: 'Duelli', icona: duelli.icon, gruppi: sfideEvidenza.concat(gruppi) });
         }
         if (carte) tab.push({ id: 'carte', titolo: 'Carte', icona: carte.icon, gruppi: [{ titolo: 'La tua collezione', icona: carte.icon, voci: carte.children || [] }] });
         if (online) tab.push({ id: 'online', titolo: 'Online', icona: online.icon, gruppi: [{ titolo: 'Multiplayer', icona: online.icon, voci: online.children || [] }] });
-        if (sfide) tab.push({ id: 'sfide', titolo: 'Sfide', icona: sfide.icon, link: sfide.href });
         tab.push({ id: 'altro', titolo: 'Altro', icona: 'settings', foglio: altre, logout });
         return tab;
     }
@@ -113,24 +124,44 @@
         }
 
         // ---- intestazione: nome, crediti, Stelle
-        let nome = 'Duellante', cr = 0, st = 0;
+        let nome = 'Duellante', cr = 0, st = 0, lo = 0, mi = 0, titolo = '';
         try {
             nome = window.SaveManager.getPlayerName() || nome;
-            const c = window.SaveManager.getCurrency(); cr = c.credits || 0; st = c.starChips || 0;
+            const c = window.SaveManager.getCurrency(); cr = c.credits || 0; st = c.starChips || 0; lo = c.locatorCards || 0; mi = c.millenniumCards || 0;
         } catch (e) { /* noop */ }
+        try { if (window.ProfileHero) titolo = window.ProfileHero.calcola(window.SaveManager.load()).titolo || ''; } catch (e) { /* il titolo e' un di piu' */ }
         const fmt = (n) => (n >= 1e6 ? (n / 1e6).toFixed(1).replace('.0', '') + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'k' : String(n));
         lista.innerHTML = '';
         lista.className = 'menu-list mm-lista';
         const testa = document.createElement('div');
         testa.className = 'mm-testa';
         testa.innerHTML = `<div class="mm-giocatore"><span class="mm-avatar" data-icon="profile"></span><span class="mm-nome">${esc(nome)}</span></div>`
-            + `<div class="mm-valute"><span class="mm-valuta" title="Crediti"><i class="mm-gemma mm-gemma--cr"></i>${fmt(cr)}</span>`
-            + `<span class="mm-valuta" title="Stelle"><i class="mm-gemma mm-gemma--st"></i>${fmt(st)}</span></div>`;
+            // A ROTAZIONE (ROTAZIONE_MS): Crediti e Stelle, poi Carte Locazione e Carte del Millennio, poi il titolo del giocatore. Le tre schermate
+            // stanno una SOPRA l'altra nella stessa cella (grid), cosi' il box non cambia mai larghezza e non salta nulla.
+            + '<div class="mm-valute">'
+            + `<div class="mm-slide is-on"><span class="mm-valuta" title="Crediti"><i class="mm-gemma mm-gemma--cr"></i>${fmt(cr)}</span>`
+            + `<span class="mm-valuta" title="Stelle"><i class="mm-gemma mm-gemma--st"></i>${fmt(st)}</span></div>`
+            + `<div class="mm-slide"><span class="mm-valuta" title="Carte Locazione"><i class="mm-gemma mm-gemma--lo"></i>${fmt(lo)}</span>`
+            + `<span class="mm-valuta" title="Carte del Millennio"><i class="mm-gemma mm-gemma--mi"></i>${fmt(mi)}</span></div>`
+            + (titolo ? `<div class="mm-slide"><span class="mm-titolo-giocatore">${esc(titolo)}</span></div>` : '')
+            + '</div>';
         lista.appendChild(testa);
+        fermaRotazione();
+        const slide = testa.querySelectorAll('.mm-slide');
+        if (slide.length > 1 && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+            let k = 0;
+            rotazione = setInterval(() => {
+                if (!testa.isConnected) { fermaRotazione(); return; }   // il menu e' stato ridisegnato: questa copia non serve piu'
+                slide[k].classList.remove('is-on');
+                k = (k + 1) % slide.length;
+                slide[k].classList.add('is-on');
+            }, ROTAZIONE_MS);
+        }
 
         // ---- contenuto della tab
         const corpo = document.createElement('div');
-        corpo.className = 'mm-corpo';
+        corpo.className = 'mm-corpo' + (direzione ? (direzione > 0 ? ' mm-da-destra' : ' mm-da-sinistra') : '');
+        direzione = 0;
         corpo.innerHTML = `<h2 class="mm-titolo">${esc(attiva.titolo)}</h2>`;
         if (attiva.gruppi) {
             attiva.gruppi.forEach((g) => {
@@ -188,10 +219,37 @@
         });
         lista.appendChild(barra);
         if (window.Icons) window.Icons.hydrate(lista);
+
+        // ---- SWIPE fra le tab: un gesto orizzontale deciso (almeno 60px, piu' largo che alto, entro 0,7 s) passa alla tab accanto, come in un'app.
+        // Le proprieta' on... (e non addEventListener) perche' la lista e' LA STESSA a ogni ridisegno: i listener si accumulerebbero.
+        const ordine = tab.map((t) => t.id);
+        const vai = (verso) => {
+            const i = ordine.indexOf(corrente) + verso;
+            if (i < 0 || i >= ordine.length) return;
+            direzione = verso;
+            try { sessionStorage.setItem(CHIAVE_TAB, ordine[i]); } catch (e) { /* noop */ }
+            if (window.NativeHaptics) window.NativeHaptics.light();
+            stato.ridisegna();
+        };
+        let x0 = null, y0 = 0, t0 = 0;
+        lista.ontouchstart = (e) => {
+            if (e.touches.length !== 1) { x0 = null; return; }
+            x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
+        };
+        lista.ontouchend = (e) => {
+            if (x0 === null) return;
+            const t = e.changedTouches[0];
+            const dx = t.clientX - x0, dy = t.clientY - y0;
+            x0 = null;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.6 && Date.now() - t0 < 700) vai(dx < 0 ? 1 : -1);
+        };
+        lista.ontouchcancel = () => { x0 = null; };
     }
 
     /** Spegne la veste "app" (il menu torna quello di sempre): serve quando la finestra esce dal telefono. */
     function spegni(shell, lista) {
+        lista.ontouchstart = lista.ontouchend = lista.ontouchcancel = null;
+        fermaRotazione();
         shell.classList.remove('menu-shell--app');
         lista.className = 'menu-list';
     }

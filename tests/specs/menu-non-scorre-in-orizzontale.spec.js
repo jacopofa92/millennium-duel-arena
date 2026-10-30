@@ -123,7 +123,7 @@ module.exports = {
             // Dal 1.4.166 il menu e' una UI a tab (js/ui/menu-mobile.js): barra in basso + sezioni di tessere, niente piu' sottomenu a scendere.
             const tab = await page.$$eval('#menuShell .mm-tab', (els) => els.map((el) => el.textContent.replace(/\s+/g, ' ').trim()));
             assert(
-                ['Duelli', 'Carte', 'Online', 'Sfide', 'Altro'].every((n) => tab.some((t) => new RegExp(n, 'i').test(t))),
+                ['Duelli', 'Carte', 'Online', 'Altro'].every((n) => tab.some((t) => new RegExp(n, 'i').test(t))),
                 `Il menu completo non e' stato raggiunto: tab trovate = ${JSON.stringify(tab)}`
             );
 
