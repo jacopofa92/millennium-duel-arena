@@ -50,6 +50,7 @@
      * realmente entrati nel documento.
      */
     function assegnaSorgenteImmagine(img, percorso) {
+        if (!percorso) return;   // anteprima senza immagine (carta non ancora salvata): niente richiesta, resta l'icona
         if (caricamentoImmaginiDifferito > 0) img.dataset.cardDeferredSrc = percorso;
         else img.src = percorso;
     }
@@ -103,6 +104,7 @@
      */
     function getCardImagePath(card) {
         if (card.customImage) return card.customImage;
+        if (typeof card.id === 'number' && card.id < 0) return '';   // anteprima di Crea Carta: nessun file da cercare
         if (card.origin && card.origin !== 'yu-gi-oh') return `${NON_YGO_ART_DIR}/${card.id}.jpg`;
         // Un'illustrazione alternativa scelta dal giocatore (js/data/artwork-alternativi.js, assente
         // nelle pagine che non la caricano: allora vale sempre l'originale).

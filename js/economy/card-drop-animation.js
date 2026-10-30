@@ -143,12 +143,14 @@
         }
     }
 
+    /** Le Image precaricate restano qui, altrimenti il garbage collector potrebbe scartarle prima dell'uso. */
+    const immaginiPrecaricate = [];
     function enqueue(entry) {
         if (!entry || !entry.cardId) return;
         // Illustrazione scaricata e decodificata prima che la carta compaia (1.4.183, vedi precaricaCarte in pack-opening.js).
         try {
             const c = (typeof cardDatabase !== 'undefined' ? cardDatabase : []).find((x) => x.id === entry.cardId);
-            if (c && typeof window.getCardImagePath === 'function') { const im = new Image(); im.decoding = 'async'; im.src = window.getCardImagePath(c); (window.__cdropPre = window.__cdropPre || []).push(im); }
+            if (c && typeof window.getCardImagePath === 'function') { const im = new Image(); im.decoding = 'async'; im.src = window.getCardImagePath(c); immaginiPrecaricate.push(im); }
         } catch (e) { /* il precaricamento e' un di piu' */ }
         queue.push(Object.assign({}, entry));
         showNext();

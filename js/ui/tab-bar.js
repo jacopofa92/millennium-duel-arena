@@ -42,6 +42,9 @@
         'profilo.html': ['altro', 'Profilo', 'profile'],
         'impostazioni.html': ['altro', 'Impostazioni', 'settings'],
         'regole.html': ['altro', 'Regole', 'rules'],
+        'torre.html': ['duelli', 'Torre', 'tower'],
+        'rivincite.html': ['duelli', 'Rivincite', 'rematch'],
+        'admin.html': ['altro', 'Admin', 'settings'],
         // Multiplayer: la voce figlia e' la MODALITA' della sala (Duello, Duello a Specchio, Assalto al Boss), letta da ?modo= nella tabella di
         // js/multiplayer/mp-modi.js. A duello avviato la barra si spegne (body.mp-in-duello, vedi menu-mobile.css).
         'multiplayer.html': () => {
@@ -81,7 +84,7 @@
             try { sessionStorage.setItem('ygoMenuTab', cfg[0]); } catch (e) { /* noop */ }
             // Passa dal pulsante Indietro della pagina (nascosto ma vivo): e' li' che alcune pagine intercettano l'uscita (l'editor dei mazzi
             // chiede cosa fare delle modifiche non salvate). Senza, la voce madre le butterebbe via in silenzio.
-            const indietro = document.querySelector('.topbar .back-btn');
+            const indietro = /** @type {HTMLElement|null} */ (document.querySelector('.topbar .back-btn'));
             if (indietro) indietro.click(); else location.href = 'index.html';
         });
 
