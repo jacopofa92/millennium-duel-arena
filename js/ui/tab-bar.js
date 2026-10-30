@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * tab-bar.js — la barra in basso delle PAGINE FIGLIE del menu "app", SOLO su telefono.
+ * tab-bar.js — la barra in basso delle PAGINE FIGLIE del menu "app" (telefono e desktop).
  * ------------------------------------------------------------------------------------------------
  * Il menu principale (js/ui/menu-mobile.js) ha quattro tab (Duelli, Carte, Online, Altro). Dentro una pagina figlia (Duello Libero, Storia,
  * Negozio, Cartoteca...) la barra cambia faccia e diventa CONTESTUALE (richiesta dell'utente): spariscono le altre voci e restano
@@ -18,13 +18,11 @@
 (function () {
     'use strict';
 
-    const QUERY = '(pointer: coarse) and (max-width: 1000px)';
-    if (!window.matchMedia || !window.matchMedia(QUERY).matches) return;
-
     /** Le voci madre: id della tab del menu, nome e icona. */
     const MADRI = {
         duelli: { nome: 'Duelli', icona: 'duel' },
         carte: { nome: 'Carte', icona: 'cards' },
+        online: { nome: 'Online', icona: 'multiplayer' },
         altro: { nome: 'Altro', icona: 'settings' }
     };
     /** Pagina -> [tab madre, nome della voce figlia, icona]. Le icone sono quelle delle voci del menu (index.html). */
@@ -43,19 +41,31 @@
         'crea-carta.html': ['carte', 'Creazione', 'cardMaker'],
         'profilo.html': ['altro', 'Profilo', 'profile'],
         'impostazioni.html': ['altro', 'Impostazioni', 'settings'],
-        'regole.html': ['altro', 'Regole', 'rules']
+        'regole.html': ['altro', 'Regole', 'rules'],
+        // Multiplayer: la voce figlia e' la MODALITA' della sala (Duello, Duello a Specchio, Assalto al Boss), letta da ?modo= nella tabella di
+        // js/multiplayer/mp-modi.js. A duello avviato la barra si spegne (body.mp-in-duello, vedi menu-mobile.css).
+        'multiplayer.html': () => {
+            let id = null;
+            try { id = new URLSearchParams(location.search).get('modo'); } catch (e) { /* noop */ }
+            const m = (window.MP_MODI || []).find((x) => x.id === id);
+            return ['online', m ? m.nome : 'Multiplayer', m ? m.icona : 'multiplayer'];
+        }
     };
 
     // Sul sito pubblicato le pagine non hanno l'estensione (/cartoteca): si confronta sempre il nome con ".html".
     const file = (location.pathname.split('/').pop() || '').replace(/\.html$/, '') + '.html';
-    const cfg = PAGINE[file];
-    if (!cfg) return;
+    const voce = PAGINE[file];
+    if (!voce) return;
+    // cfg si risolve a pagina pronta (alcune voci dipendono da tabelle caricate dopo questo script, come MP_MODI).
+    /** @type {any} */
+    let cfg = Array.isArray(voce) ? voce : ['online', 'Multiplayer', 'multiplayer'];
 
     /** @param {string} nome @param {string} icona */
     const interno = (nome, icona) => `<span class="mm-tab-icona" data-icon="${icona}"></span><span class="mm-tab-nome">${nome}</span>`;
 
     function monta() {
         if (document.querySelector('.mm-barra')) return;
+        if (typeof voce === 'function') cfg = voce();
         const madre = MADRI[cfg[0]];
         const barra = document.createElement('nav');
         barra.className = 'mm-barra mm-barra--ctx';
@@ -69,7 +79,10 @@
         btnMadre.addEventListener('click', () => {
             if (window.NativeHaptics) window.NativeHaptics.light();
             try { sessionStorage.setItem('ygoMenuTab', cfg[0]); } catch (e) { /* noop */ }
-            location.href = 'index.html';
+            // Passa dal pulsante Indietro della pagina (nascosto ma vivo): e' li' che alcune pagine intercettano l'uscita (l'editor dei mazzi
+            // chiede cosa fare delle modifiche non salvate). Senza, la voce madre le butterebbe via in silenzio.
+            const indietro = document.querySelector('.topbar .back-btn');
+            if (indietro) indietro.click(); else location.href = 'index.html';
         });
 
         const sep = document.createElement('span');

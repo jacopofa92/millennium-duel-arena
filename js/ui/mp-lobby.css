@@ -1125,3 +1125,31 @@ body:has(#duelOutcomeOverlay) #mpRaidCampo { z-index: 100710; }
     #mpRaidBar .mpr-bn, #mpRaidBar .mpr-dettaglio { display: none; }
     #mpRaidBar .mpr-testa { justify-content: center; }
 }
+
+/* =====================================================================
+   REWORK 1.4.171 — la sala sulla UI "app" (menu-mobile.css / tab-bar.js)
+   ---------------------------------------------------------------------
+   Niente barra in alto ne' pulsante Indietro (la barra in basso porta `Online > modalita'`), titolo e testi leggibili (prima tutto in
+   maiuscolo spaziato), scelta Crea/Entra come controllo segmentato compatto, e il pulsante "Sono pronto" appiccicato SOPRA la barra in basso.
+   NON toccato: la console KaibaCorp (.mp-lobby-status / #mpStatus, mp-term-fx.js) e la grafica delle due sedie (angoli, VS).
+   --------------------------------------------------------------------- */
+body.ha-tab-bar .mp-lobby-wrap { padding-top: 16px; }
+body.ha-tab-bar .mp-title { font-size: clamp(1.25rem, 4.6vw, 1.7rem); letter-spacing: 0.02em; text-transform: none; font-weight: 800; }
+body.ha-tab-bar .mp-title::before { animation: none; height: 0.95em; }
+body.ha-tab-bar .mp-sub { margin: 6px 0 18px 17px; font-size: 0.9rem; line-height: 1.45; letter-spacing: 0; text-transform: none; color: #cfc3a2; }
+
+/* Crea / Entra: una sola riga, due metà, icona accanto al testo */
+body.ha-tab-bar .mp-choice { gap: 4px; padding: 4px; margin-bottom: 14px; border-radius: 16px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(247, 215, 116, 0.18); }
+body.ha-tab-bar .mp-tab { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 10px; border-radius: 12px; font-size: 0.78rem; letter-spacing: 0.06em; background: transparent; box-shadow: none; }
+body.ha-tab-bar .mp-tab .mp-tab-icon { display: inline; font-size: 1.15rem; margin: 0; }
+body.ha-tab-bar .mp-tab:hover { transform: none; }
+body.ha-tab-bar .mp-tab.active { background: linear-gradient(160deg, var(--kc-gold), var(--kc-gold-strong)); color: #2a1c05; }
+body.ha-tab-bar .mp-tab.active { box-shadow: 0 0 18px rgba(247, 215, 116, 0.28); }
+body.ha-tab-bar .mp-lobby-panel > p { font-size: 0.88rem; color: #cfc3a2; }
+
+/* "Sono pronto": sopra la barra in basso, non sotto di lei */
+body.ha-tab-bar .mp-ready { bottom: calc(var(--mm-barra-h) + 10px); margin-bottom: 4px; }
+@media (max-width: 640px) {
+    body.ha-tab-bar .mp-ready { padding: 12px; }
+    body.ha-tab-bar .mp-ready-nota { font-size: 0.74rem; }
+}

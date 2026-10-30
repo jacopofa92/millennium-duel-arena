@@ -23,12 +23,12 @@ module.exports = {
             });
             const aperta = () => page.evaluate(() => document.getElementById('confirmBackdrop').classList.contains('open'));
 
-            await page.click('.back-btn');
+            await page.click('.mm-ctx-padre');   // dal 1.4.171 l'uscita e' la voce madre della barra in basso (che passa dal pulsante Indietro, nascosto ma vivo)
             assert(!(await aperta()), 'senza modifiche la freccia Indietro non deve fare domande');
             assert((await page.evaluate(() => window.__navigazioni)) === 1, 'senza modifiche il click deve passare');
 
             await page.evaluate(() => { document.getElementById('deckNameInput').value = 'Prova modificata'; });
-            await page.click('.back-btn');
+            await page.click('.mm-ctx-padre');   // dal 1.4.171 l'uscita e' la voce madre della barra in basso (che passa dal pulsante Indietro, nascosto ma vivo)
             assert(await aperta(), 'con modifiche non salvate la freccia Indietro deve chiedere conferma');
             assert((await page.evaluate(() => window.__navigazioni)) === 1, 'finche\' non si risponde il click non deve passare');
 
@@ -38,7 +38,7 @@ module.exports = {
 
             // Tornando com'era (stesso nome) l'impronta coincide: niente piu' domande.
             await page.evaluate(() => { document.getElementById('deckNameInput').value = 'Prova'; });
-            await page.click('.back-btn');
+            await page.click('.mm-ctx-padre');   // dal 1.4.171 l'uscita e' la voce madre della barra in basso (che passa dal pulsante Indietro, nascosto ma vivo)
             assert(!(await aperta()), 'rimesso com\'era non ci sono piu\' modifiche da perdere');
         } finally {
             await context.close();

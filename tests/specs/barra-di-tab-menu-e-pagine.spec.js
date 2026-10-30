@@ -5,7 +5,7 @@
 //  2) su telefono le pagine principali (senza la barra in alto: sparisce, resta il medaglione Indietro) (Impostazioni, Sfide, Profilo, Negozio, Cartoteca) hanno la stessa barra, con la tab della loro
 //     sezione accesa, e la barra NON copre il medaglione "Indietro" ne' l'ultimo contenuto (segnalato dall'utente su Impostazioni: la barra
 //     copriva parte del box Regole di gioco e il pulsante Indietro);
-//  3) su desktop le pagine NON hanno la barra (e' una cosa da telefono).
+//  3) su desktop vale la stessa barra contestuale (richiesta dell'utente: "procedi anche su desktop"), centrata.
 // `standalone`: serve index.html e le pagine, con finestre diverse da quella del duello.
 const path = require('path');
 
@@ -23,7 +23,7 @@ async function apri(browser, opzioni, file) {
 }
 
 module.exports = {
-    name: 'Barra di tab: menu a tab su ogni schermo, barra sulle pagine solo su telefono, senza coprire Indietro',
+    name: 'Barra di tab: menu a tab su ogni schermo, barra contestuale sulle pagine (telefono e desktop)',
     standalone: true,
     async run({ browser, assert }) {
         // ---- 1) il menu, su desktop e su telefono
@@ -158,14 +158,25 @@ module.exports = {
                 assert(dopo.url === 'index.html' && dopo.tab === 'carte', 'Il tocco sulla voce madre (Carte) doveva aprire il menu sulla tab Carte: ' + JSON.stringify(dopo));
             } finally { await context.close(); }
         }
-        // ---- 3) desktop: nessuna barra sulle pagine
+        // ---- 3) desktop: stessa barra contestuale, niente barra in alto, e la voce madre passa dal pulsante Indietro della pagina
         {
             const { context, page } = await apri(browser, { viewport: { width: 1280, height: 800 } }, 'impostazioni.html');
             try {
-                await page.waitForTimeout(800);
-                const n = await page.evaluate(() => document.querySelectorAll('.mm-barra').length);
-                assert(n === 0, `Su desktop le pagine non devono avere la barra di tab (trovate ${n})`);
+                await page.waitForSelector('.mm-barra--ctx', { timeout: 8000 });
+                const d = await page.evaluate(() => ({
+                    topbar: document.querySelector('.topbar').getBoundingClientRect().height,
+                    figlio: (document.querySelector('.mm-ctx-figlio') || {}).textContent,
+                    madre: (document.querySelector('.mm-ctx-padre') || {}).textContent,
+                    centrata: (() => { const b = document.querySelector('.mm-barra').getBoundingClientRect(); return Math.abs((b.left + b.right) / 2 - innerWidth / 2) < 2 && b.width <= 880; })()
+                }));
+                assert(d.topbar <= 1, 'Su desktop la barra in alto non deve esserci (alta ' + d.topbar + 'px)');
+                assert(/Impostazioni/i.test(d.figlio || '') && /Altro/i.test(d.madre || ''), 'Barra contestuale su desktop: ' + JSON.stringify(d));
+                assert(d.centrata, 'La barra su desktop deve essere centrata e larga al massimo 880px');
+                // La voce madre passa dal pulsante Indietro della pagina: se la pagina lo intercetta (editor dei mazzi) la guardia scatta.
+                await page.evaluate(() => { window.__indietro = 0; document.querySelector('.topbar .back-btn').addEventListener('click', (e) => { window.__indietro++; e.preventDefault(); }); });
+                await page.click('.mm-ctx-padre');
+                const n = await page.evaluate(() => window.__indietro);
+                assert(n === 1, 'La voce madre deve far scattare il pulsante Indietro della pagina (scattato ' + n + ' volte)');
             } finally { await context.close(); }
-        }
-    }
+        }    }
 };

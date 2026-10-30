@@ -34,6 +34,7 @@
 <link rel="stylesheet" href="js/ui/page-loader.css">
 <link rel="preload" href="audio/soundtracks/56. Battle for the Millennium.mp3" as="audio">
 <link rel="stylesheet" href="js/ui/topbar.css">
+    <link rel="stylesheet" href="js/ui/menu-mobile.css">
 <!-- Ritratto del giocatore in fondo alla topbar: lo monta PageTopbar. -->
 <link rel="stylesheet" href="js/ui/deck-switcher.css">
 <title>Yu-Gi-Oh! Millennium Duel Arena — Multiplayer</title>
@@ -156,12 +157,12 @@
 
                     <div class="mp-choice">
                         <button type="button" class="mp-tab active" id="mpTabCreate"><span class="mp-tab-icon">🏛️</span>Crea Stanza</button>
-                        <button type="button" class="mp-tab" id="mpTabJoin"><span class="mp-tab-icon">🔑</span>Entra con un codice</button>
+                        <button type="button" class="mp-tab" id="mpTabJoin"><span class="mp-tab-icon">🔑</span>Entra con codice</button>
                     </div>
 
                     <div class="mp-lobby-panel" id="mpPanelCreate">
                         <p>Apri una stanza, scegli arena e musica mentre aspetti, e il duello parte appena arriva il tuo avversario.</p>
-                        <button type="button" class="mp-btn mp-btn--primary" id="mpCreateBtn">Crea Stanza</button>
+                        <button type="button" class="mp-btn mp-btn--primary" id="mpCreateBtn">Apri la stanza</button>
                     </div>
 
                     <div class="mp-lobby-panel" id="mpPanelJoin" style="display:none;">
@@ -330,6 +331,7 @@
 <script src="js/ui/deck-switcher.js"></script>
 <script src="js/ui/topbar.js"></script>
 <script src="js/multiplayer/mp-modi.js"></script>
+    <script src="js/ui/tab-bar.js"></script>
 <script>
     // La modalita' scelta dal menu (?modo=): titolo e icona della pagina; senza, la sala completa di sempre.
     (function () {

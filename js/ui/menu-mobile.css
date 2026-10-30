@@ -247,7 +247,7 @@ body.ha-tab-bar .cartoteca-filters { top: 0 !important; }
    salvataggio piu' recente...") usciva dallo schermo, e i riquadri avevano il vecchio sfondo blu con bordo arancione. Ora: testo che va a capo,
    larghezza massima, vetro scuro con bordo oro come le tessere del menu, sopra la barra in basso. Solo con touch e schermo stretto: il desktop
    non cambia. I selettori sono quelli di tutte le pagine (.toast, .menu-toast, .menu-modal-card, .cloud-modal-card). ---- */
-@media (pointer: coarse) and (max-width: 1000px) {
+@media (min-width: 0px) {   /* ovunque (dopo la prova sul telefono l'utente ha chiesto di estenderlo al desktop) */
     .menu-toast, .toast {
         white-space: normal !important; width: max-content; max-width: min(90vw, 340px); box-sizing: border-box;
         text-align: center; line-height: 1.35; padding: 11px 16px !important; border-radius: 14px !important;
@@ -270,3 +270,6 @@ body.ha-tab-bar .cartoteca-filters { top: 0 !important; }
     .menu-modal-btn.confirm, .cloud-modal-actions > .confirm { background: linear-gradient(135deg, rgba(247, 215, 116, 0.24), rgba(243, 156, 18, 0.12)) !important; border: 1px solid rgba(247, 215, 116, 0.55) !important; color: #f7d774 !important; }
     .menu-modal-btn.cancel, .cloud-modal-actions > .cancel { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(255, 255, 255, 0.14) !important; color: #cfc3a2 !important; }
 }
+
+/* A duello Multiplayer avviato (l'arena sta nella stessa pagina della sala) la barra in basso non c'e': il duello ha la sua interfaccia. */
+body.mp-in-duello .mm-barra, body.mp-in-duello .mm-spazio { display: none !important; }
