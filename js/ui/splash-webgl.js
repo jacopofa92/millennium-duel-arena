@@ -124,40 +124,41 @@ float scanalature(vec2 e){
 float barra(vec2 q, vec2 a, vec2 b, float w){ float d=seg(q,a,b)/w; return sqrt(max(1.-d*d,0.)); }
 // Come sopra ma lungo una linea ARCUATA di quota yc a x di q: dx e' l'eccesso oltre l'estremita' (il cappuccio tondo).
 float arco(vec2 q, float L, float yc, float w){ float d=length(vec2(max(abs(q.x)-L,0.),q.y-yc))/w; return sqrt(max(1.-d*d,0.)); }
-// La spirale della Wedjat (Archimede, ~1,5 giri, r = .012 + .0105*T): distanza dal tratto.
+// La spirale della Wedjat dalla foto: braccio che parte dalla gamba (a sinistra), scende, risale a destra e si avvolge in senso
+// antiorario verso il centro (~2 giri). r = .012 + .0085*T con angolo = PI - T: qui si specchia x e si usa l'Archimede normale.
 float spirale(vec2 q){
+  q.x=-q.x;
   float rl=length(q);
   float th=atan(q.y,q.x); if(th<0.) th+=6.2832;
   float best=1.;
-  for(int n=0;n<2;n++){
+  for(int n=0;n<3;n++){
     float T=th+6.2832*float(n);
-    if(T<=3.1*PI) best=min(best,abs(rl-(.012+.0105*T)));
+    if(T<=12.2) best=min(best,abs(rl-(.012+.0085*T)));
   }
   return best;
 }
-// L'Occhio di Wedjat IN RILIEVO, ricalcato sulla foto del Puzzle: sopracciglio (barra grossa), barra di mezzo, palpebra inferiore a
-// "sorriso", anello dell'iride con la pupilla a cupola, le due gambe (la sinistra con il piede, la destra che si arrotola) e la spirale.
-// Niente "bianco dell'occhio": l'interno resta il piano del metallo, non e' colorato. "lungo" (0..1) fa accendere l'Occhio da sinistra
-// a destra col progresso.
+// L'Occhio di Wedjat IN RILIEVO, ricalcato sulla foto del Puzzle: due barre dalle estremita' tonde (la superiore si inarca sopra l'iride,
+// l'inferiore a "sorriso" le passa sotto, separate da un filo), l'iride come un disco incavato con un anello rialzato e la pupilla piatta,
+// le due gambe (la sinistra con il piede, la destra che scende verso la spirale) e la spirale. Niente "bianco dell'occhio": l'interno
+// resta il piano del metallo. "lungo" (0..1) fa accendere l'Occhio da sinistra a destra col progresso.
 float occhioH(vec2 e, out float lungo){
-  lungo=clamp(e.x/.81+.5,0.,1.);
-  float x2=min(e.x*e.x/.1364,1.);
-  float r=length(e);
-  float h=arco(e,.353,.083+.014*(1.-x2),.052);               // sopracciglio
-  float fuori=smoothstep(.15,.17,r);                          // la barra di mezzo passa dietro l'iride
-  h=max(h,arco(e,.373,-.025,.032)*fuori);                     // barra di mezzo
-  h=max(h,arco(e,.373,-.03-.1*(1.-x2),.034));                 // palpebra inferiore
-  float anello=sqrt(max(1.-pow(abs(r-.118)/.033,2.),0.))*smoothstep(.07,.02,e.y);   // l'anello sfuma nel sopracciglio
-  h=max(h,anello);
-  h=max(h,.12*step(r,.1));                                    // il fondo dell'iride, appena sopra il piano
-  h=max(h,.8*sqrt(max(1.-(r*r)/(.058*.058),0.)));             // la pupilla a cupola
-  h=max(h,barra(e,vec2(-.067,-.17),vec2(-.067,-.31),.036));   // gamba sinistra
-  h=max(h,barra(e,vec2(-.067,-.31),vec2(-.125,-.385),.034));  // ...il piede che gira a sinistra
-  h=max(h,barra(e,vec2(-.125,-.385),vec2(-.235,-.435),.03));
-  h=max(h,barra(e,vec2(.058,-.17),vec2(.058,-.31),.036));     // gamba destra
-  h=max(h,barra(e,vec2(.058,-.31),vec2(.105,-.375),.034));    // ...che scende verso la spirale
-  float ds=spirale(e-vec2(.215,-.345));
-  h=max(h,sqrt(max(1.-pow(ds/.028,2.),0.)));                  // spirale
+  lungo=clamp(e.x/.8+.5,0.,1.);
+  float x2=min(e.x*e.x/.16,1.);
+  vec2 ci=e-vec2(0.,.018);
+  float ri=length(ci);
+  float h=.2*smoothstep(.155,.14,ri);                                    // il disco incavato dell'iride (appena sopra il piano)
+  h=max(h,.6*sqrt(max(1.-pow((ri-.108)/.036,2.),0.)));                  // l'anello rialzato
+  vec2 pq=vec2(e.x/.062,(e.y-.027)/.044);
+  h=max(h,.7*smoothstep(1.,.78,dot(pq,pq)));                             // la pupilla, un disco piatto
+  h=max(h,arco(e,.356,.063+.088*(1.-x2),.04));                           // barra superiore, inarcata
+  h=max(h,arco(e,.366,-.022-.107*(1.-x2),.034));                         // barra inferiore, a sorriso
+  h=max(h,barra(e,vec2(-.08,-.205),vec2(-.08,-.335),.036));              // gamba sinistra
+  h=max(h,barra(e,vec2(-.08,-.335),vec2(-.12,-.352),.034));              // ...il piede
+  h=max(h,barra(e,vec2(-.12,-.352),vec2(-.23,-.436),.032));
+  h=max(h,barra(e,vec2(.062,-.205),vec2(.062,-.33),.034));               // gamba destra
+  h=max(h,barra(e,vec2(.062,-.33),vec2(.095,-.375),.032));
+  float ds=spirale(e-vec2(.209,-.356));
+  h=max(h,sqrt(max(1.-pow(ds/.024,2.),0.)));                             // spirale
   return h;
 }mat2 rot(float a){ float c=cos(a),s=sin(a); return mat2(c,-s,s,c); }
 

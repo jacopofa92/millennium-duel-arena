@@ -4043,6 +4043,8 @@ priorità o richiedono un refactor ampio):
 
 1.4.164 (cache v473): proporzioni del Puzzle quasi come prima della 1.4.162 (l'utente: "non deve essere schiacciato"): mezza larghezza 1,1 su altezza 1,9 (NXY (.8654,-.5010)); l'Occhio e le scanalature restano in unita' "e" ma con scala 1,1 nel mondo (coordOcchio, centro dell'iride a y=.402), quindi sotto le giunture la faccia ha un blocco liscio piu' lungo. Apice del logo SVG a y=62. Suite completa non eseguita.
 
+1.4.165 (cache v474): **Occhio rifatto su un ingrandimento della foto** (shader occhioH e SVG di game-logo.js, stesse misure in unita' "e"): due barre dalle estremita' tonde (la superiore inarcata sopra l'iride, y centro .063 ai capi e .151 al centro, mezzo spessore .04; l'inferiore a sorriso, -.022 ai capi e -.129 al centro, .034) separate da un filo; iride come disco incavato (r .15) con anello rialzato (r .108) e pupilla piatta ellittica; gamba sinistra con piede e destra che scende verso la spirale, che e' SPECCHIATA rispetto all'Archimede naturale (si avvolge in senso antiorario dal braccio esterno, ~2 giri,  = .012 + .0085*T, angolo PI-T). Tolta la vecchia barra di mezzo. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

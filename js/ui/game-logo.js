@@ -63,10 +63,12 @@
         ];
         const speculare = (a) => a.map((q) => [-q[0], q[1]]);
         const giunture = gradini.map((a, i) => i < 2 ? poli(a) + ' ' + poli(speculare(a)) : poli(a)).join(' ');
-        // Spirale della Wedjat (centro in basso a destra, ~1,5 giri): punti dalla formula r = .012 + .0105*T.
+        // Spirale della Wedjat dalla foto: centro in basso a destra, il braccio esterno parte dalla gamba (a sinistra), scende, risale a
+        // destra e si avvolge in senso antiorario verso il centro. r = .012 + .0085*T, angolo = PI - T (specchiata rispetto alla formula
+        // "naturale", come l'originale), ~2 giri.
         const spirale = (() => {
-            const c = [.215, -.345], pts = [];
-            for (let T = 9.74; T >= 0.3; T -= 0.3) pts.push([c[0] + (.012 + .0105 * T) * Math.cos(T), c[1] + (.012 + .0105 * T) * Math.sin(T)]);
+            const c = [.209, -.356], pts = [];
+            for (let T = 12.2; T >= 0.5; T -= 0.3) { const r = .012 + .0085 * T; pts.push([c[0] - r * Math.cos(T), c[1] + r * Math.sin(T)]); }
             return poli(pts);
         })();
         // Le 8 gemme sull'anello di mezzo, ogni 45 gradi.
@@ -125,26 +127,30 @@
             <!-- L'Occhio e' IN RILIEVO, non disegnato in nero: le sagome si definiscono una volta sola e si disegnano tre volte —
                  un'ombra scura appena spostata in basso a destra, il corpo in oro chiaro, e un filo di luce in alto a sinistra. -->
             <defs>
-                <path id="${g('sopracciglio')}" fill="none" d="M${pt(-.405, .075)} Q${pt(0, .115)} ${pt(.405, .075)}" style="stroke-width:calc(var(--k,1)*6.4px)"/>
-                <path id="${g('palpebra')}" fill="none" style="stroke-width:calc(var(--k,1)*4px)" d="M${pt(-.405, -.025)} L${pt(.405, -.025)}"/>
-                <path id="${g('inferiore')}" fill="none" style="stroke-width:calc(var(--k,1)*4.2px)" d="M${pt(-.405, -.03)} Q${pt(0, -.23)} ${pt(.405, -.03)}"/>
-                <circle id="${g('iride')}" fill="none" style="stroke-width:calc(var(--k,1)*4px)" cx="0" cy="${Y(0)}" r="7.4"/>
-                <circle id="${g('pupilla')}" stroke="none" cx="0" cy="${Y(0)}" r="3.4"/>
-                <!-- Le due gambe sotto l'occhio (la sinistra con il piede, la destra che si arrotola) e la spirale. -->
-                <path id="${g('segno')}" fill="none" style="stroke-width:calc(var(--k,1)*4.4px)" d="M${pt(-.067, -.17)} L${pt(-.067, -.31)} Q${pt(-.075, -.385)} ${pt(-.235, -.435)} M${pt(.058, -.17)} L${pt(.058, -.31)} Q${pt(.065, -.35)} ${pt(.105, -.375)} ${spirale.replace('M', 'M')}"/>
+                <!-- Le due barre dell'occhio hanno le estremita' tonde e sono separate da un filo: la superiore si inarca sopra l'iride,
+                     l'inferiore ("sorriso") le passa sotto. -->
+                <path id="${g('sopracciglio')}" fill="none" style="stroke-width:calc(var(--k,1)*5.2px)" d="M${pt(-.36, .063)} Q${pt(0, .239)} ${pt(.36, .063)}"/>
+                <path id="${g('inferiore')}" fill="none" style="stroke-width:calc(var(--k,1)*4.2px)" d="M${pt(-.366, -.022)} Q${pt(0, -.236)} ${pt(.366, -.022)}"/>
+                <!-- L'iride e' un disco incavato con un anello rialzato e la pupilla piatta al centro. -->
+                <circle id="${g('iride')}" fill="none" style="stroke-width:calc(var(--k,1)*2.4px)" cx="0" cy="${Y(.018)}" r="${X(.105)}"/>
+                <ellipse id="${g('pupilla')}" stroke="none" cx="0" cy="${Y(.027)}" rx="${X(.062)}" ry="${X(.044)}"/>
+                <!-- Le due gambe sotto l'occhio (la sinistra con il piede, la destra che scende verso la spirale) e la spirale. -->
+                <path id="${g('segno')}" fill="none" style="stroke-width:calc(var(--k,1)*4.4px)" d="M${pt(-.08, -.205)} L${pt(-.08, -.335)} L${pt(-.12, -.352)} L${pt(-.23, -.436)} M${pt(.062, -.205)} L${pt(.062, -.33)} L${pt(.095, -.375)}"/>
+                <path id="${g('spirale')}" fill="none" style="stroke-width:calc(var(--k,1)*3px)" d="${spirale}"/>
                 <linearGradient id="${g('rilievo')}" gradientUnits="userSpaceOnUse" x1="-30" y1="-40" x2="30" y2="28">
                     <stop offset="0" stop-color="#f1c04a"/>
                     <stop offset="0.5" stop-color="#d79a1c"/>
                     <stop offset="1" stop-color="#9a6208"/>
                 </linearGradient>
-            </defs>            <g class="gl-rilievo gl-rilievo--ombra" transform="translate(1.1,1.8)">
-                <use href="#${g('sopracciglio')}"/><use href="#${g('palpebra')}"/><use href="#${g('inferiore')}"/><use href="#${g('iride')}"/><use href="#${g('pupilla')}"/><use href="#${g('segno')}"/>
+            </defs>
+            <g class="gl-rilievo gl-rilievo--ombra" transform="translate(1.1,1.8)">
+                <use href="#${g('sopracciglio')}"/><use href="#${g('inferiore')}"/><use href="#${g('iride')}"/><use href="#${g('pupilla')}"/><use href="#${g('segno')}"/><use href="#${g('spirale')}"/>
             </g>
             <g class="gl-rilievo gl-rilievo--corpo" style="--gl-rilievo: url(#${g('rilievo')})">
-                <use href="#${g('sopracciglio')}"/><use href="#${g('palpebra')}"/><use href="#${g('inferiore')}"/><use class="gl-iride" href="#${g('iride')}"/><use href="#${g('pupilla')}"/><use href="#${g('segno')}"/>
+                <use href="#${g('sopracciglio')}"/><use href="#${g('inferiore')}"/><use class="gl-iride" href="#${g('iride')}"/><use href="#${g('pupilla')}"/><use href="#${g('segno')}"/><use href="#${g('spirale')}"/>
             </g>
             <g class="gl-rilievo gl-rilievo--luce" transform="translate(-0.5,-0.8)">
-                <use href="#${g('sopracciglio')}"/><use href="#${g('palpebra')}"/><use href="#${g('inferiore')}"/><use href="#${g('iride')}"/><use href="#${g('segno')}"/>
+                <use href="#${g('sopracciglio')}"/><use href="#${g('inferiore')}"/><use href="#${g('iride')}"/><use href="#${g('segno')}"/><use href="#${g('spirale')}"/>
             </g>
         </g>
     </g>
