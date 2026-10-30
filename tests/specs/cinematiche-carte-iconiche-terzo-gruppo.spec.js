@@ -22,7 +22,7 @@ module.exports = {
 
         ['playBottomlessTrapHole', 'playSakuretsuArmor', 'playSolemnJudgment', 'playBookOfMoon', 'playCrushCardVirus']
             .forEach((name) => t.assert(effects.includes(`function ${name}`) && (effects.includes(`${name},`) || effects.includes(`${name}: viaBackend`)), `${name} deve essere implementato ed esposto`));
-        ['.fx-bottomless-hole', '.fx-sakuretsu-armor', '.fx-solemn-judgment', '.fx-book-moon', '.fx-crush-virus']
+        ['.fx-bottomless-hole', '.fx-solemn-judgment', '.fx-book-moon', '.fx-crush-virus']
             .forEach((selector) => t.assert(css.includes(selector), `${selector} deve avere una resa dedicata`));
         integrations.forEach(([file, call]) => {
             const source = fs.readFileSync(path.join(root, file), 'utf8');
@@ -44,7 +44,7 @@ module.exports = {
             FX.playCrushCardVirus('player', [0]);
             await new Promise((resolve) => setTimeout(resolve, 80));
 
-            const presenti = ['.fx-bottomless-hole', '.fx-sakuretsu-armor', '.fx-solemn-judgment', '.fx-book-moon', '.fx-crush-virus']
+            const presenti = ['.fx-bottomless-hole', '.fx-solemn-judgment', '.fx-book-moon', '.fx-crush-virus']
                 .every((selector) => !!document.querySelector(selector));
             const dati = {
                 costo: document.querySelector('.fx-solemn-judgment small')?.textContent,

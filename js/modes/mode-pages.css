@@ -665,3 +665,15 @@ body::before {
 @media (prefers-reduced-motion: reduce) {
     .modalita-torre .tw-piano.is-attuale::before { animation: none; }
 }
+
+/* Avviso ben visibile (Duello della Settimana quando la collezione non basta per rispettare la regola). */
+.mp-avviso { display: flex; gap: 14px; align-items: flex-start; margin: 14px 0; padding: 14px 16px; border-radius: 12px;
+    background: rgba(255, 150, 70, 0.1); border: 1px solid rgba(255, 170, 90, 0.55); }
+.mp-avviso[hidden] { display: none; }
+.mp-avviso-icona { font-size: 1.6rem; line-height: 1; }
+.mp-avviso-testo strong { display: block; color: #ffd9a8; font-size: 1.02rem; margin-bottom: 4px; }
+.mp-avviso-testo p { margin: 0 0 10px; color: var(--ink-dim); font-size: 0.9rem; line-height: 1.45; }
+.mp-avviso-azioni { display: flex; flex-wrap: wrap; gap: 8px; }
+.mp-avviso-link { display: inline-block; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(247, 215, 116, 0.55);
+    color: var(--gold); text-decoration: none; font-weight: 700; font-size: 0.85rem; background: rgba(0, 0, 0, 0.25); }
+.mp-avviso-link:active { transform: scale(0.97); }

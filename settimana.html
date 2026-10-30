@@ -45,6 +45,9 @@
             <p id="regolaDesc"></p>
         </section>
 
+        <!-- Se col mazzo attivo la regola non si puo' rispettare, qui compare un avviso ben visibile con cosa fare (scrivi()). -->
+        <section class="mp-avviso" id="avviso" hidden></section>
+
         <div class="mp-sezione">Il tuo avversario</div>
         <div class="mp-elenco"><div class="mp-voce" id="avversario"></div></div>
 
@@ -107,11 +110,21 @@
 
         // Il giocatore usa solo carte che possiede: se col suo mazzo attivo la regola non si può rispettare, non si gioca.
         const verifica = Settimana.verificaMazzo(SaveManager.getActiveDeck());
-        document.getElementById('regolaDesc').textContent = verifica.ok
-            ? 'Questa settimana si gioca solo con questi mostri. I mostri del tuo mazzo che non la rispettano vengono sostituiti da mostri che possiedi (Livello e ATK più simili).'
-            : (verifica.nessunMazzo
-                ? 'Non hai un mazzo attivo: scegline uno in Creazione Deck per giocare.'
-                : `Non puoi giocare questa settimana: nel mazzo attivo ci sono ${verifica.mancano} mostri fuori regola e nella tua collezione non hai abbastanza mostri validi per sostituirli. Non ti vengono mai date carte per giocare.`);
+        document.getElementById('regolaDesc').textContent = 'Questa settimana si gioca solo con questi mostri. I mostri del tuo mazzo che non la rispettano vengono sostituiti da mostri che possiedi (Livello e ATK piu\' simili).';
+        // Avviso: la causa in chiaro e due strade per risolverla (non solo i pulsanti spenti).
+        const avviso = document.getElementById('avviso');
+        if (verifica.ok) { avviso.hidden = true; avviso.innerHTML = ''; } else {
+            avviso.hidden = false;
+            const titolo = verifica.nessunMazzo ? 'Non hai un mazzo attivo' : 'Questa settimana non puoi giocare';
+            const corpo = verifica.nessunMazzo
+                ? 'Il Duello della Settimana si gioca con il tuo mazzo attivo: scegline uno per poter sfidare l\'avversario.'
+                : `La regola (${r.titolo}) fa uscire dal mazzo ${verifica.mancano} mostri che non la rispettano, e nella tua collezione non ci sono abbastanza mostri validi per sostituirli. Non ti vengono mai regalate carte per giocare.`;
+            avviso.innerHTML = '<div class="mp-avviso-icona">⚠️</div><div class="mp-avviso-testo"><strong></strong><p></p>'
+                + '<div class="mp-avviso-azioni"><a class="mp-avviso-link" href="negozio.html">🛒 Apri il Negozio</a>'
+                + '<a class="mp-avviso-link" href="creazione-deck.html">🃏 Modifica il mazzo</a></div></div>';
+            avviso.querySelector('strong').textContent = titolo;
+            avviso.querySelector('p').textContent = corpo;
+        }
         const box = document.getElementById('livelli');
         box.innerHTML = '';
         LIVELLI.forEach((l) => {
@@ -124,7 +137,7 @@
             b.innerHTML = '<span class="mp-scelta-icona"></span><span><span class="mp-scelta-nome"></span><span class="mp-scelta-desc"></span></span>';
             b.querySelector('.mp-scelta-icona').textContent = preso ? '✅' : l.icona;
             b.querySelector('.mp-scelta-nome').textContent = l.nome;
-            b.querySelector('.mp-scelta-desc').textContent = l.desc + ' ' + (preso
+            b.querySelector('.mp-scelta-desc').textContent = !verifica.ok ? 'Non disponibile questa settimana: vedi l\'avviso qui sopra.' : l.desc + ' ' + (preso
                 ? 'Premio di questa settimana già preso.'
                 : `Prima vittoria: ${premio.crediti} Crediti${premio.stelle ? ' e ' + premio.stelle + ' Stella' : ''}.`);
             b.disabled = !verifica.ok;

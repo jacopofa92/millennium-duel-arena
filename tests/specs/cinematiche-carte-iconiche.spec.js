@@ -14,11 +14,11 @@ module.exports = {
         const effects = fs.readFileSync(path.join(root, 'js', 'ui', 'effects.js'), 'utf8');
         const css = fs.readFileSync(path.join(root, 'js', 'ui', 'effects.css'), 'utf8');
         [
-            'playMirrorForce', 'playMagicCylinder', 'playMonsterReborn',
+            'playMonsterReborn',
             'playTrapHole', 'playTorrentialTribute'
         ].forEach((name) => t.assert(effects.includes(`function ${name}`) && (effects.includes(`${name},`) || effects.includes(`${name}: viaBackend`)), `${name} deve essere implementato ed esposto da FX`));
         [
-            '.fx-mirror-disc', '.fx-cylinder', '.fx-reborn-ankh',
+            '.fx-reborn-ankh',
             '.fx-trap-hole', '.fx-torrential-wave'
         ].forEach((selector) => t.assert(css.includes(selector), `${selector} deve avere uno stile dedicato`));
 
@@ -105,30 +105,21 @@ module.exports = {
             gameState.playerMonsterField = [{ card, position: 'attack', isFaceDown: false }, null, null, null, null];
             gameState.botMonsterField = [{ card: { ...base, uid: 'fx-smoke-bot' }, position: 'attack', isFaceDown: false }, null, null, null, null];
             updateUI();
+            // Specchio e Cilindro sono solo WebGL (js/ui/fx-webgl-scena.js): qui non hanno piu' una scena DOM.
             FX.playMirrorForce('player', [0]);
             FX.playMagicCylinder('player', 0, 'player', 1500);
             FX.playMonsterReborn('player', card, 'player', 1, () => {});
             FX.playTrapHole('bot', 0, card);
             FX.playTorrentialTribute();
             await new Promise((resolve) => setTimeout(resolve, 80));
-            const cilindro = document.querySelector('.fx-magic-cylinder');
-            const specchio = document.querySelector('.fx-mirror-force');
             const presenti = [
-                '.fx-mirror-force', '.fx-magic-cylinder', '.fx-monster-reborn',
+                '.fx-monster-reborn',
                 '.fx-trap-hole', '.fx-torrential'
             ].every((selector) => !!document.querySelector(selector));
-            const bersaglioCilindro = cilindro && cilindro.dataset.target;
-            const grande = cilindro && parseFloat(getComputedStyle(cilindro.querySelector('.fx-cylinder')).width) >= 108;
-            const specchioGrande = specchio && parseFloat(getComputedStyle(specchio.querySelector('.fx-mirror-disc')).width) >= 300;
-            const bersagliSpecchio = specchio && Number(specchio.dataset.targetCount);
             await new Promise((resolve) => setTimeout(resolve, 2350));
-            return { presenti, bersaglioCilindro, grande, specchioGrande, bersagliSpecchio, sbloccato: !FX.isCinematicPlaying() };
+            return { presenti, sbloccato: !FX.isCinematicPlaying() };
         });
         t.assert(smoke.presenti, 'Le cinque scene devono poter convivere senza errori DOM');
-        t.assert(smoke.bersaglioCilindro === 'playerHand' && smoke.grande,
-            `Cilindro Magico deve puntare la mano con portali grandi: ${JSON.stringify(smoke)}`);
-        t.assert(smoke.specchioGrande && smoke.bersagliSpecchio === 1,
-            `Forza dello Specchio deve usare una scena ampia e un impatto per bersaglio: ${JSON.stringify(smoke)}`);
         t.assert(smoke.sbloccato, 'Ogni cinematica deve liberare il blocco al termine');
     }
 };

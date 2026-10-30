@@ -202,7 +202,8 @@ void main(){
       vec3 oro=vec3(1.,.74,.3);
       vec3 alb=oro;
       float emissione=0.;
-      vec3 emC=vec3(1.,.55,.14);
+      float scuro=0.;                 // quanto il punto e' L'OCCHIO (rilievo): li' l'oro e' scuro, quasi nero, e non riflette
+      vec3 emC=vec3(.55,.27,.05);
       float rugosita=.05;
       if(corpo){
         // il pannello incassato e' piu' scuro e satinato, la cornice lucida
@@ -215,11 +216,14 @@ void main(){
         float cresta=smoothstep(.55,.95,rilievo);
         float acceso=1.-smoothstep(prog-.1,prog,lungo*.98);
         acceso=max(acceso,ease(uOut*2.));
-        alb=mix(alb,oro*1.1,smoothstep(.08,.6,rilievo));          // il rilievo e' oro lucido, il fondo satinato e piu' scuro
-        rugosita*=1.-smoothstep(.08,.6,rilievo);
-        emissione=cresta*acceso*.9;
+        // L'Occhio e' ORO SCURO, QUASI NERO (richiesta dell'utente: col metallo lucido i riflessi lo facevano sembrare bianco).
+        // Colore scuro, superficie opaca (niente specchio) e, piu' sotto, niente riflessi ne' luce frontale su di lui.
+        scuro=smoothstep(.0,.22,rilievo);
+        alb=mix(alb,vec3(.1,.058,.018),scuro);
+        rugosita=mix(rugosita,.3,scuro);
+        emissione=cresta*acceso*.16;
         n=normalize(n+rugosita*(vec3(vnoise(p.xy*60.),vnoise(p.yz*60.),vnoise(p.zx*60.))-.5));
-        emC=mix(vec3(1.,.52,.12),vec3(1.,.93,.7),smoothstep(.5,1.,prog)*.7+uOut);
+        emC=vec3(.6,.28,.05);   // la brace dell'avanzamento resta ambra scura: mai il bianco-giallo di prima
       } else {
         rugosita=.02;
         n=normalize(n+.01*(vec3(vnoise(p.xy*50.),vnoise(p.yz*50.),vnoise(p.zx*50.))-.5));
@@ -228,7 +232,7 @@ void main(){
       float nv=max(dot(n,vdir),0.);
       vec3 rf=reflect(dd,n);
       float fres=pow(1.-nv,4.);
-      vec3 F=alb+(1.-alb)*fres*.8;
+      vec3 F=(alb+(1.-alb)*fres*.8)*(1.-.9*scuro);
       // occlusione ambientale: tre campioni lungo la normale
       float ao=1.;
       for(int k=1;k<=3;k++){ float h=.045*float(k); ao-=(h-map(p+n*h))*(.9/float(k)); }
@@ -236,12 +240,12 @@ void main(){
       vec3 luce=normalize(vec3(-.45,.75,.55));
       float dif=max(dot(n,luce),0.);
       float spec=pow(max(dot(rf,luce),0.),48.)*(1.-rugosita*3.);
-      vec3 c=env(rf)*F*1.2*ao + alb*(.14+.12*n.y+.42*dif)*ao + vec3(1.,.9,.7)*spec*.55;
-      c+=oro*vec3(1.,.82,.5)*pow(nv,1.4)*.5*ao;     // una luce frontale: le facce che guardano in basso restano oro, non marrone
-      c+=vec3(.5,.62,1.)*pow(1.-nv,3.)*.07*ao;   // un filo freddo sul bordo
+      vec3 c=env(rf)*F*1.2*ao + alb*(.14+.12*n.y+.42*dif)*ao + vec3(1.,.9,.7)*spec*.55*(1.-.92*scuro);
+      c+=oro*vec3(1.,.82,.5)*pow(nv,1.4)*.5*ao*(1.-.92*scuro);     // una luce frontale: le facce che guardano in basso restano oro, non marrone
+      c+=vec3(.5,.62,1.)*pow(1.-nv,3.)*.07*ao*(1.-scuro);   // un filo freddo sul bordo
       c*=mix(.6,1.,smoothstep(0.,.3,nv));           // a raso la normale non e' affidabile: niente puntini bianchi sulla sagoma
       c=min(c,vec3(2.2));
-      c+=emC*emissione*(2.4+.5*sin(tt*7.+p.y*9.));
+      c+=emC*emissione*(1.5+.4*sin(tt*7.+p.y*9.));
       // il Puzzle appena nato: si "ripassa" di luce dall'alto verso il basso
       float sweep=exp(-pow((p.y-(mix(1.9,-1.4,ease(uIntro*1.1))))*2.2,2.))*(1.-ease(uIntro));
       c+=vec3(1.,.8,.5)*sweep*1.4;

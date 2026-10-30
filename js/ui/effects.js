@@ -703,55 +703,9 @@
      * sul Terreno e solo allora parte la normale animazione di Evocazione.
      */
     function playRitualSummon(materialCards, ritualCard, owner, onDone) {
-        const materials = Array.isArray(materialCards) ? materialCards.filter(Boolean) : [];
-        if (!materials.length || typeof window.createCardElement !== 'function') {
-            if (typeof onDone === 'function') onDone();
-            return 0;
-        }
-
-        beginSummonCinematic();
-        if (window.SFX && typeof SFX.tribute === 'function') SFX.tribute();
-
-        const scene = document.createElement('div');
-        scene.className = 'fx-ritual-scene' + (owner === 'bot' ? ' fx-ritual-scene--bot' : '');
-        scene.setAttribute('aria-hidden', 'true');
-        scene.innerHTML = `
-            <div class="fx-ritual-vignette"></div>
-            <div class="fx-ritual-plane">
-                <i class="fx-ritual-ring fx-ritual-ring--outer"></i>
-                <i class="fx-ritual-ring fx-ritual-ring--inner"></i>
-                <i class="fx-ritual-glyph"></i>
-                <div class="fx-ritual-core"></div>
-            </div>
-            <div class="fx-ritual-title"><span>EVOCAZIONE RITUALE</span><small>${escapeHtml((ritualCard && ritualCard.name) || '')}</small></div>
-        `;
-
-        const orbit = document.createElement('div');
-        orbit.className = 'fx-ritual-materials';
-        materials.forEach((card, index) => {
-            const shell = document.createElement('div');
-            shell.className = 'fx-ritual-material';
-            shell.style.setProperty('--ritual-i', index);
-            shell.style.setProperty('--ritual-count', materials.length);
-            shell.style.setProperty('--ritual-angle', `${index * (360 / materials.length)}deg`);
-            const cardEl = createCardElement(card, false, 'attack');
-            cardEl.classList.add('fx-ritual-card');
-            shell.appendChild(cardEl);
-            orbit.appendChild(shell);
-        });
-        scene.appendChild(orbit);
-        document.body.appendChild(scene);
-
-        let closed = false;
-        const finish = () => {
-            if (closed) return;
-            closed = true;
-            scene.remove();
-            endSummonCinematic();
-            if (typeof onDone === 'function') onDone();
-        };
-        setTimeout(finish, RITUAL_SUMMON_EFFECT_MS);
-        return RITUAL_SUMMON_EFFECT_MS;
+        // Solo WebGL (js/ui/fx-webgl-scena.js). Senza WebGL niente scena, ma il duello PROSEGUE: onDone e' l'Evocazione vera.
+        if (typeof onDone === 'function') onDone();
+        return 0;
     }
 
     /** Vortice compatto che si stringe sulla singola Magia/Trappola. */
@@ -818,114 +772,14 @@
      * fotografati all'inizio, quindi il disegno non può alterare il duello.
      */
     function playMirrorForce(attackerOwner, attackIndices) {
-        const boardId = attackerOwner === 'player' ? 'playerFieldBoard' : 'botFieldBoard';
-        const allowed = Array.isArray(attackIndices) ? new Set(attackIndices.map(Number)) : null;
-        const targets = Array.from(document.querySelectorAll(`#${boardId} .field-slot[data-owner="${attackerOwner}"][data-type="monster"]`))
-            .filter((slot) => !allowed || allowed.has(Number(slot.dataset.index)))
-            .map((slot) => slot.querySelector('.card')).filter(Boolean)
-            .map((el) => el.getBoundingClientRect()).filter((rect) => rect.width);
-        if (!targets.length) return 0;
-        beginSummonCinematic();
-        const scene = document.createElement('div');
-        scene.className = 'fx-mirror-force' + (attackerOwner === 'player' ? ' fx-mirror-force--bottom' : '');
-        scene.setAttribute('aria-hidden', 'true');
-        scene.dataset.targetCount = String(targets.length);
-        const mirrorX = window.innerWidth / 2;
-        // Lo specchio nasce davanti al DIFENSORE e riflette verso la fila
-        // attaccante. Prima, nel caso piu' comune, compariva quasi sul lato
-        // dell'attaccante e i raggi CSS partivano da un'altra coordinata.
-        const mirrorY = attackerOwner === 'player' ? window.innerHeight * 0.37 : window.innerHeight * 0.63;
-        scene.style.setProperty('--mirror-x', `${mirrorX}px`);
-        scene.style.setProperty('--mirror-y', `${mirrorY}px`);
-        scene.innerHTML = '<div class="fx-mirror-force-shade"></div><div class="fx-mirror-aura"></div><div class="fx-mirror-disc"><i></i><b></b><em></em></div><div class="fx-mirror-flare"></div>';
-        document.body.appendChild(scene);
-        targets.forEach((rect, index) => {
-            const ray = document.createElement('span');
-            ray.className = 'fx-mirror-ray';
-            const x = rect.left + rect.width / 2;
-            const y = rect.top + rect.height / 2;
-            const dx = x - mirrorX;
-            const dy = y - mirrorY;
-            assegnaStile(ray.style, { left: `${mirrorX}px`, top: `${mirrorY}px` });
-            ray.style.setProperty('--ray-length', `${Math.hypot(dx, dy)}px`);
-            ray.style.setProperty('--ray-angle', `${Math.atan2(dy, dx) * 180 / Math.PI}deg`);
-            ray.style.setProperty('--ray-delay', `${360 + index * 55}ms`);
-            scene.appendChild(ray);
-            const impact = document.createElement('span');
-            impact.className = 'fx-mirror-impact';
-            impact.style.left = `${x}px`;
-            impact.style.top = `${y}px`;
-            impact.style.setProperty('--impact-delay', `${760 + index * 55}ms`);
-            impact.innerHTML = '<i></i><b></b>';
-            scene.appendChild(impact);
-        });
-        for (let i = 0; i < 22; i++) {
-            const shard = document.createElement('em');
-            shard.className = 'fx-mirror-shard';
-            shard.style.setProperty('--shard-angle', `${i * (360 / 22)}deg`);
-            shard.style.setProperty('--shard-distance', `${90 + (i % 6) * 24}px`);
-            shard.style.setProperty('--shard-delay', `${520 + (i % 5) * 35}ms`);
-            scene.appendChild(shard);
-        }
-        if (window.SFX && typeof SFX.activateTrap === 'function') SFX.activateTrap();
-        setTimeout(() => {
-            scene.remove();
-            endSummonCinematic();
-        }, 2200);
-        return 2200;
+        // Solo WebGL (js/ui/fx-webgl-scena.js): senza WebGL la carta si risolve senza animazione. La regola e' altrove.
+        return 0;
     }
 
     /** Cilindro Magico: due grandi portali deviano il colpo verso la mano dell'attaccante. */
     function playMagicCylinder(attackerOwner, attackerIndex, damagedOwner, damage) {
-        const boardId = attackerOwner === 'player' ? 'playerFieldBoard' : 'botFieldBoard';
-        const attacker = document.querySelector(`#${boardId} .field-slot[data-owner="${attackerOwner}"][data-type="monster"][data-index="${attackerIndex}"] .card`);
-        // La destinazione visiva e' la MANO del duellante che subisce il
-        // contraccolpo, non il suo avatar/riquadro LP. Oltre a rispettare la
-        // regia richiesta, la traiettoria attraversa davvero il tavolo.
-        const damageAnchor = document.querySelector(damagedOwner === 'player' ? '#playerHand' : '#botHand');
-        if (!attacker || !damageAnchor) return 0;
-        beginSummonCinematic();
-        const from = centerOf(attacker);
-        const to = centerOf(damageAnchor);
-        const scene = document.createElement('div');
-        scene.className = 'fx-magic-cylinder';
-        scene.setAttribute('aria-hidden', 'true');
-        scene.dataset.target = damagedOwner === 'player' ? 'playerHand' : 'botHand';
-        scene.style.setProperty('--cylinder-target-x', `${to.x}px`);
-        scene.style.setProperty('--cylinder-target-y', `${to.y}px`);
-        scene.innerHTML = '<div class="fx-cylinder-vignette"></div><div class="fx-cylinder-sigil"></div><i class="fx-cylinder fx-cylinder--in"></i><i class="fx-cylinder fx-cylinder--out"></i><b class="fx-cylinder-beam fx-cylinder-beam--in"></b><b class="fx-cylinder-beam fx-cylinder-beam--bridge"></b><b class="fx-cylinder-beam fx-cylinder-beam--out"></b><div class="fx-cylinder-impact"><i></i><b></b></div><strong></strong>';
-        const entrance = { x: from.x + (to.x - from.x) * 0.28, y: from.y + (to.y - from.y) * 0.24 };
-        const exit = { x: from.x + (to.x - from.x) * 0.64, y: from.y + (to.y - from.y) * 0.62 };
-        const placeBeam = (el, a, b) => {
-            const dx = b.x - a.x;
-            const dy = b.y - a.y;
-            assegnaStile(el.style, { left: `${a.x}px`, top: `${a.y}px`, width: `${Math.hypot(dx, dy)}px`, transform: `rotate(${Math.atan2(dy, dx) * 180 / Math.PI}deg)` });
-        };
-        const cylinders = scene.querySelectorAll('.fx-cylinder');
-        Object.assign(cylinders[0].style, { left: `${entrance.x}px`, top: `${entrance.y}px` });
-        Object.assign(cylinders[1].style, { left: `${exit.x}px`, top: `${exit.y}px` });
-        placeBeam(scene.querySelector('.fx-cylinder-beam--in'), { x: from.x, y: from.y }, entrance);
-        placeBeam(scene.querySelector('.fx-cylinder-beam--bridge'), entrance, exit);
-        placeBeam(scene.querySelector('.fx-cylinder-beam--out'), exit, { x: to.x, y: to.y });
-        const impact = scene.querySelector('.fx-cylinder-impact');
-        assegnaStile(impact.style, { left: `${to.x}px`, top: `${to.y}px` });
-        for (let i = 0; i < 18; i++) {
-            const spark = document.createElement('em');
-            spark.style.setProperty('--spark-angle', `${i * 20 + Math.random() * 10}deg`);
-            spark.style.setProperty('--spark-distance', `${55 + Math.random() * 95}px`);
-            spark.style.setProperty('--spark-delay', `${760 + Math.random() * 180}ms`);
-            impact.appendChild(spark);
-        }
-        const label = scene.querySelector('strong');
-        label.textContent = damage ? `-${damage} LP` : '';
-        assegnaStile(label.style, { left: `${to.x}px`, top: `${to.y}px` });
-        document.body.appendChild(scene);
-        if (window.SFX && typeof SFX.directHit === 'function') setTimeout(() => SFX.directHit(), 900);
-        setTimeout(() => {
-            scene.remove();
-            endSummonCinematic();
-        }, 2200);
-        return 2200;
+        // Solo WebGL (js/ui/fx-webgl-scena.js): senza WebGL la carta si risolve senza animazione.
+        return 0;
     }
 
     /**
@@ -1235,26 +1089,8 @@
 
     /** Armatura Sakuretsu: piastre in prospettiva serrano l'attaccante e collassano. */
     function playSakuretsuArmor(owner, index) {
-        const boardId = owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard';
-        const cardEl = document.querySelector(`#${boardId} .field-slot[data-owner="${owner}"][data-type="monster"][data-index="${index}"] .card`);
-        if (!cardEl) return 0;
-        beginSummonCinematic();
-        const point = centerOf(cardEl);
-        const armor = document.createElement('div');
-        armor.className = 'fx-sakuretsu-armor';
-        armor.setAttribute('aria-hidden', 'true');
-        assegnaStile(armor.style, {
-            left: `${point.x}px`, top: `${point.y}px`,
-            width: `${point.rect.width * 2.05}px`, height: `${point.rect.height * 1.55}px`
-        });
-        armor.innerHTML = '<i></i><i></i><i></i><i></i><b></b><span></span>';
-        document.body.appendChild(armor);
-        if (window.SFX && typeof SFX.destroy === 'function') setTimeout(() => SFX.destroy(), 650);
-        setTimeout(() => {
-            armor.remove();
-            endSummonCinematic();
-        }, 1450);
-        return 1450;
+        // Solo WebGL (js/ui/fx-webgl-scena.js): senza WebGL la carta si risolve senza animazione.
+        return 0;
     }
 
     /** Giudizio Solenne: tribunale celeste e sigillo che tronca l'azione negata. */
@@ -1998,60 +1834,8 @@
     // due.
     // ============================================================
     function playSwordsOfRevealingLight(owner, onLanded) {
-        const boardId = owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard';
-        const slots = document.querySelectorAll(`#${boardId} .field-slot[data-owner="${owner}"][data-type="monster"]`);
-        if (!slots.length) { if (typeof onLanded === 'function') onLanded(() => {}); return; }
-        const rects = Array.from(slots).map((s) => s.getBoundingClientRect());
-        const rowTop = Math.min(...rects.map((r) => r.top));
-        const rowBottom = Math.max(...rects.map((r) => r.bottom));
-        const rowLeft = Math.min(...rects.map((r) => r.left));
-        const rowRight = Math.max(...rects.map((r) => r.right));
-        // La discesa vive SOLO nel terreno di chi subisce (richiesta dell'utente): le spade nascono dal suo bordo alto.
-        const tutteDi = Array.from(document.querySelectorAll(`#${boardId} .field-slot[data-owner="${owner}"]`)).map((s) => s.getBoundingClientRect()).filter((r) => r.width);
-        const zonaTop = Math.min(rowTop, ...tutteDi.map((r) => r.top)) - 8;
-
-        const swordEls = rects.map((rect, i) => {
-            const cx = rect.left + rect.width / 2;
-            const sword = document.createElement('div');
-            sword.className = 'fx-sword-beam';
-            sword.innerHTML = '<span class="fx-sword-blade"></span><span class="fx-sword-guard"></span><span class="fx-sword-hilt"></span><span class="fx-sword-gem"></span>';
-            const distanzaDalCentro = Math.abs(i - (rects.length - 1) / 2);
-            const ordine = Math.round(distanzaDalCentro * 2);
-            assegnaStile(sword.style, {
-                left: `${cx}px`,
-                top: `${zonaTop}px`,
-                height: '140px',
-                transitionDelay: `${ordine * 55}ms`
-            });
-            document.body.appendChild(sword);
-            return sword;
-        });
-        void document.body.offsetWidth; // forza il reflow prima di animare `top`
-        swordEls.forEach((sword) => { sword.style.top = `${rowBottom - 140}px`; });
-
-        if (window.SFX && typeof SFX.swordsOfRevealingLight === 'function') SFX.swordsOfRevealingLight();
-
-        const lastLandedAt = 400 + (rects.length - 1) * 55 + 400;
-        setTimeout(() => {
-            const flash = document.createElement('div');
-            flash.className = 'fx-swords-row-flash';
-            assegnaStile(flash.style, {
-                left: `${rowLeft}px`,
-                top: `${rowTop}px`,
-                width: `${rowRight - rowLeft}px`,
-                height: `${rowBottom - rowTop}px`
-            });
-            document.body.appendChild(flash);
-            setTimeout(() => flash.remove(), 650);
-        }, lastLandedAt);
-
-        setTimeout(() => {
-            if (typeof onLanded === 'function') {
-                onLanded(() => swordEls.forEach((el) => el.remove()));
-            } else {
-                swordEls.forEach((el) => el.remove());
-            }
-        }, lastLandedAt + 60);
+        // Solo WebGL (js/ui/fx-webgl.js). Senza WebGL niente spade volanti, ma il chiamante riceve subito l'atterraggio.
+        if (typeof onLanded === 'function') onLanded(() => {});
     }
 
     // ============================================================

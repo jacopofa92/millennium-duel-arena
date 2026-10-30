@@ -1329,20 +1329,20 @@
                         ]
                     },
                     {
-                        icon: 'star', label: 'Sfide a rotazione', action: 'submenu',
+                        icon: 'star', label: 'Settimanali', action: 'submenu',
                         children: [
                             // Le due modalita' a rotazione settimanale (regola e Boss nuovi ogni lunedi', uguali per tutti).
                             { icon: 'star', label: 'Duello della Settimana', action: 'link', href: 'settimana.html' },
-                            { icon: 'skull', label: 'Caccia al Boss', action: 'link', href: 'caccia-boss.html' },
-                            // Le modalita' con un file loro (js/modes/): situazioni preparate o regole di contorno, mai il motore.
-                            { icon: 'rematch', label: 'Rivincite', action: 'link', href: 'rivincite.html', richiedeModalita: 'rivincite' },
-                            { icon: 'puzzle', label: 'Puzzle', action: 'link', href: 'puzzle.html' }
+                            { icon: 'skull', label: 'Caccia al Boss', action: 'link', href: 'caccia-boss.html' }
                         ]
                     },
                     {
                         icon: 'freeDuel', label: 'Allenamento', action: 'submenu',
                         children: [
                             { icon: 'freeDuel', label: 'Duello Libero', action: 'link', href: 'duello-libero.html' },
+                            // Le modalita' con un file loro (js/modes/): situazioni preparate o regole di contorno, mai il motore.
+                            { icon: 'puzzle', label: 'Puzzle', action: 'link', href: 'puzzle.html' },
+                            { icon: 'rematch', label: 'Rivincite', action: 'link', href: 'rivincite.html', richiedeModalita: 'rivincite' },
                             // Il menu Tutorial: la lezione col nonno (al primo avvio obbligatoria, vedi obbligaLezioneSeDaFare piu' sotto)
                             // e le lezioni brevi, tutte rifacibili.
                             { icon: 'rules', label: 'Tutorial', action: 'link', href: 'tutorial.html' }
@@ -1351,7 +1351,7 @@
                     // Demo Duello Sandbox: campo di prova per testare singole carte/condizioni di Evocazione a mano, senza passare da
                     // un vero mazzo/pescata (duello-sandbox.html, js/engine/duel-sandbox.js). `soloAdmin`: lo vede solo l'amministratore.
                     { icon: 'sandbox', label: 'Demo Duello Sandbox', action: 'link', href: 'duello-sandbox.html', soloAdmin: true }
-]
+                ]
             },
             {
                 icon: 'cards', label: 'Carte', action: 'submenu',
