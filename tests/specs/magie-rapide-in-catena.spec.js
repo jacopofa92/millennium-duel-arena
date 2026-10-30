@@ -73,6 +73,18 @@ module.exports = {
         t.assert((await cand('player')).length === 0, 'Con una Trappola Contatore in cima nessuna Rapida risponde');
         await t.evaluate(() => { gameState.chain = { links: [], active: false }; });
 
+        // 6a) Sulla PROPRIA attivazione (in cima alla Catena c'e' un link del giocatore): di default nessuna Rapida
+        // risponde (niente domanda in piu' a ogni Magia giocata), con l'opzione accesa si'.
+        await t.evaluate(() => {
+            const magia = cardDatabase.find((c) => c.type === 'spell' && c.subtype === 'normal' && DuelEngine.getDefinition(c.id));
+            gameState.chain = { active: true, links: [{ owner: 'player', card: { ...magia, uid: 'm-mia' }, def: {}, handlerName: 'activate', ctx: {} }] };
+            SaveManager.setSetting('magieRapideSuPropriaAttivazione', false);
+        });
+        t.assert((await cand('player')).length === 0, 'Sulla propria attivazione, opzione spenta (default): nessuna Rapida risponde');
+        await t.evaluate(() => SaveManager.setSetting('magieRapideSuPropriaAttivazione', true));
+        t.assert(JSON.stringify(await cand('player')) === '["st:595"]', 'Sulla propria attivazione, opzione accesa: la Rapida risponde');
+        await t.evaluate(() => { SaveManager.setSetting('magieRapideSuPropriaAttivazione', false); gameState.chain = { links: [], active: false }; });
+
         // 6b) Finestra di priorita' a vuoto nel turno avversario: spenta = passa subito, accesa = si apre
         await t.evaluate(() => { gameState.currentPlayer = 'bot'; gameState.quickEffectsDeclined = null; });
         const spenta = await t.evaluate(() => { window.__pf = false; DuelEngine.openPriorityWindow('player', 'end', () => { window.__pf = true; }); return window.__pf; });

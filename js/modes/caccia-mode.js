@@ -101,6 +101,11 @@
             }];
         }
         const esito = Caccia.registraVittoria(turniGiocati);
+        // Sfide (sezione 'caccia'): ogni Boss battuto conta, e quelli battuti entro il limite del bonus veloce.
+        if (window.ChallengeTracker) {
+            ChallengeTracker.recordProgress('cacciaWin', { turni: turniGiocati });
+            if (turniGiocati <= cacciaDatabase.premio.bonusVeloce.entroTurni) ChallengeTracker.recordProgress('cacciaVeloce', { turni: turniGiocati });
+        }
         if (!esito.primaVolta || !esito.premio) {
             return [{ nota: true, icon: '🏹', rule: `Boss battuto di nuovo in ${turniGiocati} turni: il premio di questa settimana l'hai già preso.` }];
         }

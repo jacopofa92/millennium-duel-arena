@@ -41,7 +41,7 @@
     // devono vedere le stesse missioni, e riaprendo la pagina dieci volte
     // non devono cambiare. Un Math.random() qui darebbe missioni nuove ad
     // ogni caricamento, cioè nessuna missione affatto.
-    const QUANTE = { daily: 4, weekly: 10 };
+    const QUANTE = { daily: 4, weekly: 8 };
 
     function getMissionDefs() {
         return (typeof missionsDatabase !== 'undefined') ? missionsDatabase : [];
@@ -92,7 +92,7 @@
      * rientra. Aggiungendone una nuova, va aggiunta anche qui — ed è il
      * motivo per cui questo commento esiste.
      */
-    const SINGOLARE = { volte: 'volta', Duelli: 'Duello', tornei: 'torneo', Oggetti: 'Oggetto', mostri: 'mostro', carte: 'carta' };
+    const SINGOLARE = { volte: 'volta', Duelli: 'Duello', Duellanti: 'Duellante', tornei: 'torneo', Oggetti: 'Oggetto', mostri: 'mostro', carte: 'carta' };
 
     function descrizione(testo, target) {
         let out = String(testo || '').replace('{n}', target);

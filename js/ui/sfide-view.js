@@ -59,7 +59,9 @@
     const MODALITA = [
         { id: 'puzzle', titolo: '🧩 Puzzle' },
         { id: 'rivincite', titolo: '⚔️ Rivincite' },
-        { id: 'torre', titolo: '🗼 Torre dei Duellanti' }
+        { id: 'torre', titolo: '🗼 Torre dei Duellanti' },
+        { id: 'settimana', titolo: '📅 Duello della Settimana' },
+        { id: 'caccia', titolo: '🏹 Caccia al Boss' }
     ];
 
     function escape(s) {

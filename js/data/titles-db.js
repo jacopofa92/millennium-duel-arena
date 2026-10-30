@@ -93,6 +93,20 @@ const titoliSpecialiDatabase = [
     { id: 't-rivincite-difficili', gruppo: 'Modalità', nome: 'Vendicatore Implacabile', come: 'Vinci dieci Rivincite a Difficile',
         richiede: { sfide: ['rivincita-tutte-difficile'] } },
 
+    // --- Modalità a rotazione: Duello della Settimana e Caccia al Boss ---
+    { id: 't-settimana-5', gruppo: 'Modalità', nome: 'Fedele alla Regola', come: 'Vinci 5 Duelli della Settimana',
+        richiede: { sfide: ['settimana-cinque'] } },
+    { id: 't-settimana-20', gruppo: 'Modalità', nome: 'Custode delle Regole', come: 'Vinci 20 Duelli della Settimana',
+        richiede: { sfide: ['settimana-venti'] } },
+    { id: 't-settimana-tripletta', gruppo: 'Modalità', nome: 'Maestro della Settimana', come: 'Prendi i premi di tutti e 3 i livelli nella stessa settimana',
+        richiede: { sfide: ['settimana-tutti-i-livelli'] } },
+    { id: 't-caccia-1', gruppo: 'Modalità', nome: 'Cacciatore di Boss', come: 'Sconfiggi un Boss nella Caccia al Boss',
+        richiede: { sfide: ['caccia-prima'] } },
+    { id: 't-caccia-veloce', gruppo: 'Modalità', nome: 'Cacciatore Fulmineo', come: 'Sconfiggi un Boss entro 5 turni',
+        richiede: { sfide: ['caccia-veloce'] } },
+    { id: 't-caccia-10', gruppo: 'Modalità', nome: 'Cacciatore Leggendario', come: 'Sconfiggi 10 Boss nella Caccia al Boss',
+        richiede: { sfide: ['caccia-dieci'] } },
+
     // --- Traguardi di gioco --------------------------------------------
     { id: 't-vittorie-100', gruppo: 'Traguardi', nome: 'Centurione', come: 'Vinci 100 Duelli',
         richiede: { sfide: ['win-100'] } },

@@ -82,143 +82,74 @@ const missionsDatabase = [
         reward: { credits: 150 }
     },
 
-    // --- Settimanali: duelli ------------------------------------------
+    // --- Le SETTIMANALI: 8 estratte da questo pool di 9 --------------
+    // Regola (richiesta dell'utente, 2026-10-30): come le giornaliere, devono essere alla portata di un giocatore MEDIO.
+    // Quindi niente carte o Duellanti precisi (Obelisco, Drago Bianco, Kaiba, Exodia: chi non li ha non puo' finirle),
+    // niente Oggetti del Millennio, niente traguardi che si fanno una volta sola nella vita (puzzle, Torre). Solo cio' che
+    // si conta giocando normalmente: duelli giocati e vinti, mostri evocati, Magie e Trappole attivate, qualche Duellante
+    // battuto. I numeri sono tarati su UNA settimana di gioco normale (qualche duello al giorno), non su una maratona.
     {
-        id: 'm-win-duels', icon: '⚔️', scope: 'weekly',
+        id: 'm-w-play', icon: '🎴', scope: 'weekly',
+        label: 'Sempre in campo', description: 'Gioca {n} Duelli fino alla fine',
+        type: 'playDuel', match: {},
+        target: 10,
+        reward: { credits: 600 }
+    },
+    {
+        id: 'm-w-win', icon: '⚔️', scope: 'weekly',
         label: 'Sul campo', description: 'Vinci {n} Duelli',
         type: 'winDuels', match: {},
-        target: 15,
-        reward: { credits: 900, starChips: 1 }
+        target: 6,
+        reward: { credits: 800, starChips: 1 }
     },
     {
-        id: 'm-perfect-win', icon: '🛡️', scope: 'weekly',
-        label: 'Senza un graffio', description: 'Vinci {n} Duelli senza perdere un solo Life Point',
-        type: 'perfectWin', match: {},
+        id: 'm-w-defeat', icon: '🏅', scope: 'weekly',
+        label: 'Avversari battuti', description: 'Sconfiggi {n} Duellanti',
+        type: 'defeatCharacter', match: {},
         target: 4,
-        reward: { credits: 1200, starChips: 1, locatorCards: 1 }
+        reward: { credits: 700, starChips: 1 }
     },
     {
-        id: 'm-tournament', icon: '🏆', scope: 'weekly',
-        label: 'Fino in fondo', description: 'Porta a termine {n} tornei',
+        id: 'm-w-summon', icon: '🐲', scope: 'weekly',
+        label: 'Esercito di mostri', description: 'Evoca {n} mostri',
+        type: 'summonMonster', match: {},
+        target: 25,
+        reward: { credits: 500 }
+    },
+    {
+        id: 'm-w-spelltrap', icon: '✨', scope: 'weekly',
+        label: 'Magia e inganno', description: 'Attiva {n} carte Magia o Trappola',
+        type: 'activateCard', match: { cardType: ['spell', 'trap'] },
+        target: 15,
+        reward: { credits: 500 }
+    },
+    {
+        id: 'm-w-spell', icon: '📜', scope: 'weekly',
+        label: 'Maestro di Magie', description: 'Attiva {n} carte Magia',
+        type: 'activateCard', match: { cardType: ['spell'] },
+        target: 8,
+        reward: { credits: 400 }
+    },
+    {
+        id: 'm-w-trap', icon: '🪤', scope: 'weekly',
+        label: 'Tendi la trappola', description: 'Attiva {n} carte Trappola',
+        type: 'activateCard', match: { cardType: ['trap'] },
+        target: 4,
+        reward: { credits: 400 }
+    },
+    {
+        id: 'm-w-perfect', icon: '🛡️', scope: 'weekly',
+        label: 'Senza un graffio', description: 'Vinci {n} Duello senza perdere un solo Life Point',
+        type: 'perfectWin', match: {},
+        target: 1,
+        reward: { credits: 700, starChips: 1 }
+    },
+    {
+        id: 'm-w-tournament', icon: '🏆', scope: 'weekly',
+        label: 'Fino in fondo', description: 'Porta a termine {n} torneo',
         type: 'completeTournament', match: {},
-        target: 1, targetWeekly: 2,
-        reward: { credits: 800 }, rewardWeekly: { credits: 1600, starChips: 2 }
-    },
-
-    // --- Evocazioni: un tema diverso per ogni missione ---------------
-    // Il `match` con un ELENCO di id accetta una qualunque di quelle
-    // carte: senza, l'unico modo di scrivere "evoca un Drago" sarebbe
-    // sceglierne uno e mentire nella descrizione.
-    {
-        id: 'm-summon-blue-eyes', icon: '🐉', scope: 'weekly',
-        label: 'Il Drago Bianco', description: 'Evoca {n} volte il Drago Bianco Occhi Blu',
-        type: 'summonMonster', match: { cardId: 1 },
-        target: 1, targetWeekly: 4,
-        reward: { credits: 300 }, rewardWeekly: { credits: 1000, starChips: 1 }
-    },
-    {
-        id: 'm-summon-dark-magician', icon: '🪄', scope: 'weekly',
-        label: 'Il Mago Nero', description: 'Evoca {n} volte il Mago Nero',
-        type: 'summonMonster', match: { cardId: 2 },
-        target: 1, targetWeekly: 4,
-        reward: { credits: 300 }, rewardWeekly: { credits: 1000, starChips: 1 }
-    },
-    {
-        id: 'm-summon-red-eyes', icon: '🔥', scope: 'weekly',
-        label: 'Occhi Rossi', description: 'Evoca {n} volte il Drago Nero Occhi Rossi',
-        type: 'summonMonster', match: { cardId: 3 },
-        target: 1, targetWeekly: 4,
-        reward: { credits: 300 }, rewardWeekly: { credits: 1000, starChips: 1 }
-    },
-    {
-        id: 'm-summon-kuriboh', icon: '🟤', scope: 'weekly',
-        label: 'Piccolo aiuto', description: 'Evoca {n} volte Kuriboh',
-        type: 'summonMonster', match: { cardId: 19 },
-        target: 3,
-        reward: { credits: 700 }
-    },
-    {
-        id: 'm-summon-god', icon: '⚡', scope: 'weekly',
-        label: 'Il potere degli Dei', description: 'Evoca {n} volte un Dio Egizio',
-        type: 'summonMonster', match: { cardId: [30, 31, 472] },
-        target: 1, targetWeekly: 2,
-        reward: { credits: 900, millenniumCards: 1 }, rewardWeekly: { credits: 1800, millenniumCards: 1 }
-    },
-
-    // --- Duellanti da battere ---------------------------------------
-    {
-        id: 'm-beat-kaiba', icon: '🧊', scope: 'weekly',
-        label: 'Contro il Presidente', description: 'Sconfiggi Seto Kaiba {n} volte',
-        type: 'defeatCharacter', match: { characterId: 'kaiba' },
-        target: 1, targetWeekly: 3,
-        reward: { credits: 350 }, rewardWeekly: { credits: 1100, starChips: 1 }
-    },
-    {
-        id: 'm-beat-joey', icon: '🎲', scope: 'weekly',
-        label: 'Il migliore amico', description: 'Sconfiggi Joey Wheeler {n} volte',
-        type: 'defeatCharacter', match: { characterId: 'joey' },
-        target: 2,
-        reward: { credits: 800 }
-    },
-    {
-        id: 'm-beat-pegasus', icon: '👁️', scope: 'weekly',
-        label: 'L\'Occhio del creatore', description: 'Sconfiggi Maximillion Pegasus {n} volte',
-        type: 'defeatCharacter', match: { characterId: 'pegasus' },
-        target: 1, targetWeekly: 3,
-        reward: { credits: 400 }, rewardWeekly: { credits: 1200, starChips: 1 }
-    },
-    {
-        id: 'm-beat-marik', icon: '🔱', scope: 'weekly',
-        label: 'Il Padrone delle Ombre', description: 'Sconfiggi Marik Ishtar {n} volte',
-        type: 'defeatCharacter', match: { characterId: 'marik' },
-        target: 1, targetWeekly: 3,
-        reward: { credits: 400 }, rewardWeekly: { credits: 1300, starChips: 1, locatorCards: 1 }
-    },
-
-    // --- Magie e Trappole -------------------------------------------
-    {
-        id: 'm-activate-pot', icon: '🏺', scope: 'weekly',
-        label: 'Avidità', description: 'Attiva {n} volte Vaso dell\'Avidità',
-        type: 'activateCard', match: { cardId: 36 },
-        target: 2, targetWeekly: 8,
-        reward: { credits: 250 }, rewardWeekly: { credits: 800 }
-    },
-    {
-        id: 'm-activate-dark-hole', icon: '🕳️', scope: 'weekly',
-        label: 'Tabula rasa', description: 'Attiva {n} volte Buco Nero',
-        type: 'activateCard', match: { cardId: 7 },
-        target: 1, targetWeekly: 5,
-        reward: { credits: 250 }, rewardWeekly: { credits: 800 }
-    },
-    {
-        id: 'm-activate-mirror', icon: '🪞', scope: 'weekly',
-        label: 'Riflesso', description: 'Attiva {n} volte Forza Riflessa',
-        type: 'activateCard', match: { cardId: 382 },
-        target: 1, targetWeekly: 5,
-        reward: { credits: 250 }, rewardWeekly: { credits: 800 }
-    },
-    {
-        id: 'm-activate-swords', icon: '🗡️', scope: 'weekly',
-        label: 'Luce rivelatrice', description: 'Attiva {n} volte Spada Rivelatrice',
-        type: 'activateCard', match: { cardId: 8 },
-        target: 3,
-        reward: { credits: 700 }
-    },
-
-    // --- I colpi grossi, solo settimanali ---------------------------
-    {
-        id: 'm-exodia', icon: '🧩', scope: 'weekly',
-        label: 'Il Proibito', description: 'Vinci {n} volte assemblando Exodia',
-        type: 'winInstantly', match: { kind: 'exodia' },
         target: 1,
-        reward: { credits: 2000, millenniumCards: 2 }
-    },
-    {
-        id: 'm-millennium', icon: '🏅', scope: 'weekly',
-        label: 'Un altro Oggetto', description: 'Vinci {n} Oggetti del Millennio',
-        type: 'winMillenniumItem', match: {},
-        target: 1,
-        reward: { credits: 1000, millenniumCards: 1 }
+        reward: { credits: 900, starChips: 1 }
     }
 ];
 

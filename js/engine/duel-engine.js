@@ -4564,6 +4564,13 @@
         const chain = gameState.chain;
         const top = chain && chain.links && chain.links[chain.links.length - 1];
         if (top && top.card && top.card.type === 'trap' && top.card.subtype === 'counter') return [];
+        // Rispondere alla PROPRIA attivazione (dopo che l'avversario ha passato) e' regola vera ma una domanda in piu' a ogni
+        // Magia che si gioca: resta spento finche' non lo si accende nelle Impostazioni (magieRapideSuPropriaAttivazione).
+        if (top && top.owner === owner) {
+            let suPropria = false;
+            try { suPropria = !!(window.SaveManager && SaveManager.getSetting('magieRapideSuPropriaAttivazione')); } catch (e) { suPropria = false; }
+            if (!suPropria) return [];
+        }
         const ownTurn = gameState.currentPlayer === owner;
         const results = [];
         const accetta = (card) => !!card && card.type === 'spell' && card.subtype === 'quick-play' && !usedUids.has(card.uid);

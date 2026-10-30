@@ -1164,6 +1164,75 @@ const challengesDatabase = [
         description: 'Conquista la Torre dei Duellanti 3 volte',
         type: 'torreCompleted', match: {}, target: 3,
         reward: { credits: 2500 }
+    },
+    // Duello della Settimana (js/modes/settimana-mode.js) e Caccia al Boss (js/modes/caccia-mode.js), 2026-10-30.
+    // Alla portata di un giocatore medio, come le missioni: niente traguardi che richiedono carte o Duellanti precisi.
+    //   'settimanaWin'       una vittoria nel Duello della Settimana (match: { livello: 'Facile'|'Medio'|'Difficile' });
+    //   'settimanaTutti'     presi i premi di TUTTI e 3 i livelli nella stessa settimana;
+    //   'cacciaWin'          un Boss della Caccia battuto;
+    //   'cacciaVeloce'       un Boss battuto entro il limite di turni del bonus (cacciaDatabase.premio.bonusVeloce).
+    {
+        id: 'settimana-prima', sezione: 'modalita', modalita: 'settimana',
+        icon: '📅', label: 'La regola della settimana',
+        description: 'Vinci un Duello della Settimana',
+        type: 'settimanaWin', match: {}, target: 1,
+        reward: { credits: 200 }
+    },
+    {
+        id: 'settimana-cinque', sezione: 'modalita', modalita: 'settimana',
+        icon: '🗓️', label: 'Abitudine settimanale',
+        description: 'Vinci 5 Duelli della Settimana',
+        type: 'settimanaWin', match: {}, target: 5,
+        reward: { credits: 400 }
+    },
+    {
+        id: 'settimana-venti', sezione: 'modalita', modalita: 'settimana',
+        icon: '🏛️', label: 'Veterano delle regole',
+        description: 'Vinci 20 Duelli della Settimana',
+        type: 'settimanaWin', match: {}, target: 20,
+        reward: { credits: 900 }
+    },
+    {
+        id: 'settimana-difficile', sezione: 'modalita', modalita: 'settimana',
+        icon: '🥇', label: 'Senza sconti',
+        description: 'Vinci un Duello della Settimana a livello Difficile',
+        type: 'settimanaWin', match: { livello: 'Difficile' }, target: 1,
+        reward: { credits: 500 }
+    },
+    {
+        id: 'settimana-tutti-i-livelli', sezione: 'modalita', modalita: 'settimana',
+        icon: '🏅', label: 'Tripletta',
+        description: 'Prendi i premi di tutti e 3 i livelli nella stessa settimana',
+        type: 'settimanaTutti', match: {}, target: 1,
+        reward: { credits: 600 }
+    },
+    {
+        id: 'caccia-prima', sezione: 'modalita', modalita: 'caccia',
+        icon: '🏹', label: 'Prima preda',
+        description: 'Sconfiggi un Boss nella Caccia al Boss',
+        type: 'cacciaWin', match: {}, target: 1,
+        reward: { credits: 300 }
+    },
+    {
+        id: 'caccia-cinque', sezione: 'modalita', modalita: 'caccia',
+        icon: '🐺', label: 'Cacciatore esperto',
+        description: 'Sconfiggi 5 Boss nella Caccia al Boss',
+        type: 'cacciaWin', match: {}, target: 5,
+        reward: { credits: 600 }
+    },
+    {
+        id: 'caccia-dieci', sezione: 'modalita', modalita: 'caccia',
+        icon: '🦅', label: 'Cacciatore leggendario',
+        description: 'Sconfiggi 10 Boss nella Caccia al Boss',
+        type: 'cacciaWin', match: {}, target: 10,
+        reward: { credits: 1000 }
+    },
+    {
+        id: 'caccia-veloce', sezione: 'modalita', modalita: 'caccia',
+        icon: '⚡', label: 'Caccia lampo',
+        description: 'Sconfiggi un Boss entro 5 turni',
+        type: 'cacciaVeloce', match: {}, target: 1,
+        reward: { credits: 500 }
     }
 ];
 

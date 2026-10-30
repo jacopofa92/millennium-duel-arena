@@ -81,6 +81,13 @@
         }
         const livello = params.get('difficulty') || 'Medio';
         const esito = Settimana.registraVittoria(livello);
+        // Sfide (js/data/challenges-db.js, sezione 'settimana'): ogni vittoria conta; la tripletta solo quando i tre
+        // premi della settimana sono tutti presi.
+        if (window.ChallengeTracker) {
+            ChallengeTracker.recordProgress('settimanaWin', { livello: livello });
+            const vinte = Settimana.stato().vinte;
+            if (esito.primaVolta && vinte.Facile && vinte.Medio && vinte.Difficile) ChallengeTracker.recordProgress('settimanaTutti', {});
+        }
         const nomeLivello = ETICHETTE[livello] || livello;
         if (!esito.primaVolta || !esito.premio) {
             return [{ nota: true, icon: r.icona, rule: `Duello della Settimana vinto di nuovo a livello ${nomeLivello}: il premio di questa settimana a quel livello l'hai già preso.` }];

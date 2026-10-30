@@ -53,7 +53,7 @@ module.exports = {
             assert(sezioni.generiche > 40, `Poche Sfide generiche (${sezioni.generiche})`);
             assert(sezioni.storie >= 4, `Le Sfide delle storie devono coprire le campagne giocabili (${sezioni.storie})`);
             assert(sezioni.giornaliere === 4, `Le missioni di oggi devono essere 4 (rilevate ${sezioni.giornaliere})`);
-            assert(sezioni.settimanali === 10, `Le missioni della settimana devono essere 10 (rilevate ${sezioni.settimanali})`);
+            assert(sezioni.settimanali === 8, `Le missioni della settimana devono essere 8 (rilevate ${sezioni.settimanali})`);
 
             // --- Stesso periodo, stesse missioni ------------------------
             const primoGiro = await page.evaluate(() => ChallengeTracker.getMissions('daily').map((m) => m.id));

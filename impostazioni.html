@@ -429,6 +429,17 @@
                     <span class="switch-thumb"></span>
                 </label>
             </div>
+            <div class="settings-row">
+                <div>
+                    <div class="settings-row-label">Chiedi se rispondere alla mia stessa attivazione</div>
+                    <div class="settings-row-sub">Spento: quando attivi una carta e l'avversario non risponde, il gioco non ti chiede se vuoi concatenare anche una tua Magia Rapida. Acceso: ti viene chiesto, come nelle regole vere (una domanda in più ad ogni attivazione).</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="magieRapideProprieToggleInput">
+                    <span class="switch-track"></span>
+                    <span class="switch-thumb"></span>
+                </label>
+            </div>
         </div>
 
         <div class="settings-more">Altre impostazioni in arrivo.</div>
@@ -592,6 +603,15 @@
         });
     }
 
+    // --- Regole di gioco: Magie Rapide sulla propria attivazione (default spento) ---
+    const rapideProprieToggle = document.getElementById('magieRapideProprieToggleInput');
+    if (rapideProprieToggle && window.SaveManager) {
+        rapideProprieToggle.checked = SaveManager.getSetting('magieRapideSuPropriaAttivazione') === true;
+        rapideProprieToggle.addEventListener('change', () => {
+            SaveManager.setSetting('magieRapideSuPropriaAttivazione', rapideProprieToggle.checked);
+            if (window.NativeHaptics) NativeHaptics.light();
+        });
+    }
     // --- Carte lucide: giroscopio o tocco -----------------------------
     // Acceso (default): il giroscopio muove la luce della carta in
     // dettaglio. Spento: la luce segue il TOCCO (si preme e si trascina
