@@ -4027,6 +4027,8 @@ priorità o richiedono un refactor ampio):
 
 1.4.156 (cache v465): **Provato sul telefono vero** (SM-S928B, Chrome, 411x750, Dettagli "Alti"): Spade Rivelatrici e Piumino delle Arpie a **58 fps** (peggior fotogramma 17 ms). Le Spade scendono solo nel terreno di chi subisce, con squarcio, scia e colpo a terra. Sul Piumino i cinque raggi di 1.4.154 erano troppo spessi e saturi sulla fila Magie/Trappola di un telefono (si sommavano in un blocco bianco): ora spessore 3-4,5 px e lampo piu' piccolo (`(right - left) * 0.14`), cinque sottili strisce di luce. **Insidia di prova**: la scheda gia' aperta tiene il JS vecchio, dopo una modifica va riaperta con un parametro nuovo (`?v=N`) e la morra rifatta. Suite completa non eseguita.
 
+1.4.157 (cache v466): **Armatura Sakuretsu: ARTIGLI sulla carta che distrugge** (richiesta dell'utente: "effetto anonimo"). Nuova primitiva `T.CLAW` in fx-webgl-scena.js: tre artigli d'acciaio (lame curve rastremate, riflesso sul dorso, bordo caldo) calano in diagonale sul mostro attaccante e lo lacerano; dietro ognuno resta una FERITA incandescente che si apre e si spegne. Lampo, anello, scintille e un breve scuotimento del campo al colpo; la distruzione vera e la sua disintegrazione partono nello stesso istante (la parte alta della carta resta visibile ~0,5 s, quindi gli artigli colpiscono una carta ancora presente). Firma e durata invariate, regola non toccata. Versione CSS/GSAP di ripiego non rifatta. Guardato con `FX_WEBGL_T`. Non provato sul telefono. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

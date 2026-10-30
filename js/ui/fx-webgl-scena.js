@@ -33,7 +33,7 @@
     const MAX = 40;
 
     // Tipi di primitiva (devono coincidere con l'ordine delle `if` dello shader qui sotto).
-    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19, ANKH: 20, PORTAL: 21, DUST: 22, SHIELD: 23, MIRROR: 24, TUNNEL: 25 };
+    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19, ANKH: 20, PORTAL: 21, DUST: 22, SHIELD: 23, MIRROR: 24, TUNNEL: 25, CLAW: 26 };
     // Colori: indici nella tavolozza dello shader.
     const C = { CALDO: 0, ORO: 1, ROSSO: 2, ARANCIO: 3, CIANO: 4, BLU: 5, VIOLA: 6, MAGENTA: 7, VERDE: 8, BIANCO: 9, SCURO: 10, GHIACCIO: 11, VERDE_SCURO: 12 };
 
@@ -412,6 +412,40 @@ float dado(vec2 q,float v){
   vec3 rgb=cc*tun*1.4+mix(c,vec3(1.),.5)*(rim*1.5+tick)+vec3(1.,.9,1.)*core*1.4;
   float al=clamp(tun*.9+rim+tick*.7+core+wall*.35,0.,1.)*e;
   s=vec4(rgb*e,al);`;
+    // ARTIGLI (Armatura Sakuretsu): tre artigli d'acciaio calano in diagonale sulla carta e la lacerano; dietro ognuno resta
+    // una FERITA incandescente che si apre e poi si spegne. A: centro x, y, misura (circa la carta), angolo della corsa.
+    CORPI[T.CLAW] = `
+  float size=A.z; float ang=A.w;
+  vec2 dir=vec2(cos(ang),sin(ang)); vec2 nrm=vec2(-dir.y,dir.x);
+  float L=size*2.5; vec2 start=A.xy-dir*L*.5; float sp=size*.3;
+  vec3 col=vec3(0.); float al=0.;
+  float aper=smoothstep(.12,.45,u)*(1.-smoothstep(.62,1.,u));
+  float fade=1.-smoothstep(.7,1.,u);
+  for(int k=-1;k<=1;k++){
+    float fk=float(k);
+    float dl=clamp((u-abs(fk)*.015)/.38,0.,1.);
+    float run=easeOut(dl)*L;
+    vec2 p0=start+nrm*fk*sp; vec2 hd=p0+dir*run;
+    vec2 pa=P-p0; vec2 ba=hd-p0;
+    float hh=clamp(dot(pa,ba)/max(dot(ba,ba),1.),0.,1.); float d=length(pa-ba*hh);
+    float wg=size*(.018+.05*aper); float taper=.25+.75*sin(3.14159*hh);
+    float gash=exp(-d*d/(wg*wg*taper*taper+1.))*step(.001,run);
+    float edge=exp(-d*d/(wg*wg*.1*taper*taper+.4))*step(.001,run);
+    col+=mix(vec3(1.,.35,.12),vec3(1.,.95,.8),edge)*(gash*.9+edge*.7)*fade;
+    al+=(gash+edge*.6)*fade;
+    if(u<.65){
+      vec2 q=P-hd; vec2 ql=vec2(dot(q,dir),dot(q,nrm)); float Lc=size*.9; float s2=(ql.x+Lc)/Lc;
+      if(s2>0.&&s2<1.){
+        float hw=size*.075*pow(max(1.-s2,0.),.7)+.8; float yc=size*.18*pow(s2,3.)*(fk<-.5?-1.:1.);
+        float dd=abs(ql.y-yc)-hw; float ins=smoothstep(.8,-.8,dd);
+        float luce=exp(-pow((ql.y-yc+hw*.35)/(hw*.45+.5),2.));
+        vec3 steel=mix(vec3(.16,.17,.22),vec3(.9,.95,1.),luce*.8);
+        float ed=exp(-dd*dd*.35)*.9; float vis=1.-smoothstep(.46,.62,u);
+        col+=(steel*ins+vec3(1.,.55,.2)*ed)*vis; al+=(ins+ed*.6)*vis;
+      }
+    }
+  }
+  s=vec4(col,clamp(al,0.,1.));`;
     /** Il programma di un tipo (costruito una volta sola e messo in cache dal motore). */
     const SORGENTI = {};
     function sorgente(tipo) {
@@ -448,6 +482,7 @@ float dado(vec2 q,float v){
             case T.DUST: return [x - z * 5, y - q - z * 8, x + z * 7, y + q + z * 5];
             case T.SHIELD: e = z * 1.6; return [x - e, y - e, x + e, y + e];
             case T.MIRROR: return [x - z - 24, y - q - 24, x + z + 24, y + q + 24];
+            case T.CLAW: e = z * 2.3; return [x - e, y - e, x + e, y + e];
             case T.TUNNEL: return [x - z * 1.25, y - z * 1.25 * tl - 6, x + z * 1.25, y + z * 1.25 * tl + 6];
             default: e = z * 3; return [x - e, y - q - e, x + e, y + e];   // moneta e dado
         }
@@ -826,20 +861,24 @@ float dado(vec2 q,float v){
         const d = esegui(s, 1550); sfx('destroy', 620); return d;
     };
 
-    /** Armatura Sakuretsu: piastre in prospettiva serrano l'attaccante e collassano. */
+    /**
+     * Armatura Sakuretsu: tre ARTIGLI d'acciaio calano in diagonale SULLA carta che sta per essere distrutta (il mostro
+     * attaccante) e la lacerano; restano tre ferite incandescenti che si aprono, mentre un lampo, un anello e le scintille
+     * partono dal punto del colpo e la carta si sfarina sotto (la distruzione vera parte nello stesso istante, vedi
+     * card-effects-6.js). Prima erano piastre in prospettiva che si chiudevano: generico, non diceva niente.
+     */
     imp.playSakuretsuArmor = function (owner, index) {
         const rect = rectMostro(owner, index); if (!rect) return 0;
-        const c = cen(rect); const w = rect.width; const s = new Scena();
-        s.add(T.WASH, C.SCURO, 0, 1.4, [0, 0, 0.4, 0], 3);
-        [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([dx, dy], i) => s.add(T.LINE, C.ORO, 0.05 + i * 0.05, 0.5, [c.x + dx * w * 1.5, c.y + dy * w * 1.2, c.x + dx * w * 0.5, c.y + dy * w * 0.4], 12));
-        s.add(T.RING, C.ARANCIO, 0.25, 0.5, [c.x, c.y, w * 1.4, 5], -1);
-        s.add(T.SEAL, C.ORO, 0.2, 0.9, [c.x, c.y, w * 0.8, 0], 1);
-        s.add(T.FLASH, C.CALDO, 0.62, 0.6, [c.x, c.y, w * 1.6, 0]);
-        s.add(T.RING, C.ORO, 0.62, 0.7, [c.x, c.y, w * 2.2, 6]);
-        s.add(T.BURST, C.ORO, 0.62, 0.8, [c.x, c.y, w * 1.8, 60], 8);
-        const d = esegui(s, 1450); sfx('destroy', 650); return d;
+        const c = cen(rect); const size = Math.max(rect.width, rect.height) * 1.3; const s = new Scena();
+        s.add(T.CLAW, C.ROSSO, 0.03, 1.25, [c.x, c.y, size, Math.PI * 0.32], 0);
+        s.add(T.FLASH, C.CALDO, 0.2, 0.5, [c.x, c.y, size * 1.1, 0]);
+        s.add(T.RING, C.ARANCIO, 0.22, 0.6, [c.x, c.y, size * 1.2, 5]);
+        s.add(T.BURST, C.ORO, 0.2, 0.8, [c.x, c.y, size * 1.4, 50], 8);
+        s.add(T.BURST, C.ARANCIO, 0.24, 0.8, [c.x, c.y, size * 1.0, 80], 3.1);
+        const campo = document.querySelector('.game-container');
+        setTimeout(() => scossa(campo, [[-5, 0.04], [4, 0.045], [-2, 0.05], [0, 0.06]]), 200);
+        const d = esegui(s, 1300); sfx('destroy', 180); return d;
     };
-
     /** Giudizio Solenne: tribunale celeste e sigillo che tronca l'azione negata. */
     imp.playSolemnJudgment = function (owner, cost) {
         const W = innerWidth; const H = innerHeight; const cy = owner === 'player' ? H * 0.66 : H * 0.34; const s = new Scena();
