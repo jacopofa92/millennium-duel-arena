@@ -19,6 +19,10 @@
     // fallback CSS sia (per Magia/Trappola) nel badge in alto a destra.
     const TYPE_ICON = { monster: '👑', spell: '✨', trap: '🌀' };
 
+    // Kanji del badge in alto a destra per Magia e Trappola, come l'Attributo dei mostri (1.4.182): 魔 = Magia, 罠 = Trappola, come sulle carte vere.
+    // Scritti come escape per non dipendere dalla codifica del file. TYPE_ICON (emoji) resta per tutto il resto: filtri, elenchi, scheda carta.
+    const TYPE_KANJI = { spell: '\u9b54', trap: '\u7f60' };
+
     // Kanji dell'Attributo come sulle vere carte Yu-Gi-Oh (光/闇/地/風/水/炎/神).
     const ATTRIBUTE_ICON = {
         'LUCE': '光',
@@ -186,7 +190,7 @@
         const isMonster = card.type === 'monster';
         const topBadge = isMonster
             ? `<div class="card-frame-attr" data-attr="${card.attribute || ''}">${ATTRIBUTE_ICON[card.attribute] || '?'}</div>`
-            : `<div class="card-frame-typebadge" data-ctype="${card.type}">${TYPE_ICON[card.type] || ''}</div>`;
+            : `<div class="card-frame-typebadge" data-ctype="${card.type}">${TYPE_KANJI[card.type] || TYPE_ICON[card.type] || ''}</div>`;
         const stars = isMonster && card.level
             ? `<div class="card-frame-stars">${'⭐'.repeat(card.level)}</div>`
             : '';

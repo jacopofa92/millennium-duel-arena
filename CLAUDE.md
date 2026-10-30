@@ -4076,6 +4076,8 @@ priorità o richiedono un refactor ampio):
 
 1.4.181 (cache v490): **un solo raggio per guscio, cornice e box interni** (l'utente: lo smussamento dei box interni va adottato anche per il bordo interno ed esterno). `--card-raggio` (guscio esterno `::before` e scansione a piena carta) passa dal 3% all'**1,4%** della larghezza (min 1px), e `.card-frame` usa `var(--box-raggio)` (1,4%) senza il `* 1.25` di 1.4.180. Titolo e illustrazione restano 1,4%; **tipo e ATK/DEF restano piu' piccoli (0,7%, `--barra-raggio`)** perche' sono barre basse. A 430px: guscio, cornice, titolo e arte 6,0px, tipo/stat 3,0px. Il contenitore della schermata premio (`card-drop-animation.css`) usa lo stesso 1,4%. Spec `carta-compatta-per-misura` aggiornato a 1,4%. Suite completa non eseguita.
 
+1.4.182 (cache v491): **kanji sul badge in alto a destra di Magie e Trappole**, come l'Attributo dei mostri. Verifica: Magie/Trappole mostravano le emoji (sparkle, spirale), non un kanji. Ora `card-renderer.js` ha `TYPE_KANJI = { spell: '\u9b54', trap: '\u7f60' }` (魔 Magia, 罠 Trappola, scritti come escape) usato solo da `buildFallbackFrameHTML`; `TYPE_ICON` (emoji) resta per filtri, elenchi e scheda carta. Controllato su carte da 160px (kanji visibili) e 72px (compatte: nessun badge, come per i mostri). Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**
