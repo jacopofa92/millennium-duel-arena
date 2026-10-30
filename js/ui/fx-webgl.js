@@ -362,6 +362,7 @@ uniform float ns;                // quante spade
 uniform vec4 fila;               // sinistra, alto, destra, basso della fila (px CSS)
 uniform float alt;               // altezza di una spada
 uniform float tFlash;            // istante del lampo sulla fila
+uniform vec2 zona;              // alto e basso del TERRENO di chi subisce: la discesa vive solo li' (px CSS)
 
 // Distanza (px) da un rettangolo centrato in c con mezze misure h.
 float scatola(vec2 p,vec2 c,vec2 h){vec2 q=abs(p-c)-h;return length(max(q,0.))+min(max(q.x,q.y),0.);}
@@ -408,7 +409,7 @@ void main(){
   vec4 o=vec4(0.);
   // Cielo che si schiarisce sopra la fila.
   float inX=smoothstep(fila.x-60.,fila.x,P.x)*smoothstep(fila.z+60.,fila.z,P.x);
-  float cielo=inX*(1.-smoothstep(0.,fila.w,P.y))*smoothstep(0.,.3,t);
+  float cielo=inX*(1.-smoothstep(zona.x,fila.w,P.y))*smoothstep(0.,.3,t);
   float fineCielo=1.-smoothstep(.9+ns*.095,1.5+ns*.095,t);
   o+=vec4(vec3(.3,1.,.55)*cielo*.5*fineCielo,cielo*.36*fineCielo);
   for(int i=0;i<${MAX_SPADE};i++){
@@ -419,7 +420,7 @@ void main(){
     // Colonna di luce che anticipa la lama: trapezio che si stringe verso l'alto.
     float ra=smoothstep(0.,.32,t-s.w*.4)*(1.-smoothstep(.82,1.4,t-s.w*.4));
     float semi=mix(s.z*.12,s.z*.72,smoothstep(0.,s.y,P.y));
-    float colonna=smoothstep(semi,semi*.2,abs(P.x-cx))*smoothstep(0.,s.y,P.y)*ra;
+    float colonna=smoothstep(semi,semi*.2,abs(P.x-cx))*smoothstep(0.,s.y,P.y)*step(P.y,s.y+10.)*ra;
     o+=vec4(vec3(.25,1.,.5)*colonna*.34,colonna*.24);
     // La lama cade da lontano, inclinata, e si raddrizza all'impatto.
     float cad=outExpo(tt/.62);
@@ -427,7 +428,7 @@ void main(){
     float dist=abs(float(i)-(ns-1.)*.5);
     float ang=-lato*(14.+dist*3.)*(1.-cad)*.01745;
     float sc=mix(.56,1.,cad);
-    vec2 centro=vec2(cx+lato*(55.+dist*16.)*(1.-cad), mix(-alt, s.y-alt*.5, cad));
+    vec2 centro=vec2(cx+lato*(55.+dist*16.)*(1.-cad), mix(zona.x-alt*.55, s.y-alt*.5, cad));
     vec2 l=P-centro;
     float cs=cos(ang),sn=sin(ang);
     l=vec2(cs*l.x+sn*l.y,-sn*l.x+cs*l.y)/sc;
@@ -450,7 +451,9 @@ void main(){
     float f=y*x*e;
     o+=vec4(vec3(.45,1.,.65)*f*.5,f*.32);
   }
-  gl_FragColor=o;
+  // Tutto cio' che e' fuori dal terreno di chi subisce si spegne: le spade appaiono e scendono SOLO li' (richiesta dell'utente).
+  float dentro=smoothstep(zona.x-6.,zona.x+16.,P.y)*smoothstep(zona.y+16.,zona.y-6.,P.y);
+  gl_FragColor=o*dentro;
 }`;
 
     function playSwordsOfRevealingLight(owner, onLanded) {
@@ -462,6 +465,10 @@ void main(){
         const rowBottom = Math.max(...rects.map((r) => r.bottom));
         const rowLeft = Math.min(...rects.map((r) => r.left));
         const rowRight = Math.max(...rects.map((r) => r.right));
+        // Il terreno di chi subisce (tutte le sue caselle): l'effetto non esce da qui.
+        const tutteDi = Array.from(document.querySelectorAll(`#${boardId} .field-slot[data-owner="${owner}"]`)).map((s) => s.getBoundingClientRect()).filter((r) => r.width);
+        const zonaTop = Math.min(rowTop, ...tutteDi.map((r) => r.top)) - 8;
+        const zonaBottom = Math.max(rowBottom, ...tutteDi.map((r) => r.bottom)) + 8;
         const altezza = Math.max(175, Math.min(270, (rowBottom - rowTop) * 1.65));
         const PASSO = 0.095;
         const CADUTA = 0.62;
@@ -486,6 +493,7 @@ void main(){
             g.uniform4f(u('fila'), rowLeft, rowTop, rowRight, rowBottom);
             g.uniform1f(u('alt'), altezza);
             g.uniform1f(u('tFlash'), ultima);
+            g.uniform2f(u('zona'), zonaTop, zonaBottom);
         });
         setTimeout(() => {
             if (typeof onLanded === 'function') onLanded(() => interrompi());

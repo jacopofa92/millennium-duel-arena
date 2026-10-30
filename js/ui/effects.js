@@ -2006,6 +2006,9 @@
         const rowBottom = Math.max(...rects.map((r) => r.bottom));
         const rowLeft = Math.min(...rects.map((r) => r.left));
         const rowRight = Math.max(...rects.map((r) => r.right));
+        // La discesa vive SOLO nel terreno di chi subisce (richiesta dell'utente): le spade nascono dal suo bordo alto.
+        const tutteDi = Array.from(document.querySelectorAll(`#${boardId} .field-slot[data-owner="${owner}"]`)).map((s) => s.getBoundingClientRect()).filter((r) => r.width);
+        const zonaTop = Math.min(rowTop, ...tutteDi.map((r) => r.top)) - 8;
 
         const swordEls = rects.map((rect, i) => {
             const cx = rect.left + rect.width / 2;
@@ -2016,7 +2019,7 @@
             const ordine = Math.round(distanzaDalCentro * 2);
             assegnaStile(sword.style, {
                 left: `${cx}px`,
-                top: '-140px',
+                top: `${zonaTop}px`,
                 height: '140px',
                 transitionDelay: `${ordine * 55}ms`
             });

@@ -1063,13 +1063,16 @@
             const rowBottom = Math.max(...rects.map((r) => r.bottom));
             const rowLeft = Math.min(...rects.map((r) => r.left));
             const rowRight = Math.max(...rects.map((r) => r.right));
+            // La discesa vive SOLO nel terreno di chi subisce (richiesta dell'utente): le spade nascono dal suo bordo alto.
+            const tutteDi = Array.from(document.querySelectorAll(`#${boardId} .field-slot[data-owner="${owner}"]`)).map((s) => s.getBoundingClientRect()).filter((r) => r.width);
+            const zonaTop = Math.min(rowTop, ...tutteDi.map((r) => r.top)) - 8;
             const altezza = Math.max(145, Math.min(205, (rowBottom - rowTop) * 1.16));
             const PASSO = 0.095;
 
             if (window.SFX && typeof SFX.swordsOfRevealingLight === 'function') SFX.swordsOfRevealingLight();
 
             // Cielo che si schiarisce: la luce arriva da sopra il campo.
-            const cielo = fxLayer('fx-gsap-swords-sky', rowLeft - 40, 0, (rowRight - rowLeft) + 80, rowBottom);
+            const cielo = fxLayer('fx-gsap-swords-sky', rowLeft - 40, zonaTop, (rowRight - rowLeft) + 80, rowBottom - zonaTop);
             gsap.set(cielo, {
                 zIndex: 10047,
                 background: 'linear-gradient(180deg, rgba(255,248,210,0.55) 0%, rgba(255,236,150,0.18) 45%, rgba(255,236,150,0) 100%)',
@@ -1084,7 +1087,7 @@
             // e inclinate, cosi' la fila sembra avere vera profondita'.
             const raggi = rects.map((rect, i) => {
                 const cxSlot = rect.left + rect.width / 2;
-                const raggio = fxLayer('fx-gsap-sword-ray', cxSlot, 0, Math.max(28, rect.width * 0.72), rowBottom);
+                const raggio = fxLayer('fx-gsap-sword-ray', cxSlot, zonaTop, Math.max(28, rect.width * 0.72), rowBottom - zonaTop);
                 gsap.set(raggio, {
                     xPercent: -50, zIndex: 10046, opacity: 0,
                     transformOrigin: '50% 100%',
@@ -1125,7 +1128,7 @@
                 const lato = i < rects.length / 2 ? -1 : 1;
                 gsap.fromTo(sword,
                     {
-                        y: -(rowBottom + altezza),
+                        y: -(rowBottom - altezza - zonaTop) - altezza * 0.5,
                         x: lato * (55 + distanzaDalCentro * 16),
                         z: -420 - distanzaDalCentro * 70,
                         opacity: 0,

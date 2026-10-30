@@ -1040,10 +1040,14 @@ float dado(vec2 q,float v){
         const left = Math.min(...rects.map((r) => r.left)); const right = Math.max(...rects.map((r) => r.right));
         const top = Math.min(...rects.map((r) => r.top)); const bottom = Math.max(...rects.map((r) => r.bottom));
         const cy = (top + bottom) / 2; const s = new Scena();
-        s.add(T.WASH, C.CALDO, 0.1, 1.3, [0, 0, 0.5, 0], 5);
-        s.add(T.WASH, C.GHIACCIO, 0.3, 1.0, [0, 0, 0.4, 0], 5);
-        s.add(T.LINE, C.BIANCO, 0.05, 0.7, [left - 40, cy - 14, right + 40, cy - 14], 10);
-        s.add(T.LINE, C.GHIACCIO, 0.15, 0.7, [left - 40, cy + 12, right + 40, cy + 12], 9);
+        // SOLO sul terreno di chi subisce (richiesta dell'utente): niente velo o raffiche a tutto schermo, che coinvolgevano
+        // anche il campo di chi attiva. Il vento e' fatto di raggi di luce che attraversano la sola fila Magie/Trappole.
+        const alto = bottom - top;
+        for (let k = 0; k < 5; k++) {
+            const y = top + alto * (k + 0.5) / 5;
+            s.add(T.LINE, k % 2 ? C.GHIACCIO : C.BIANCO, 0.05 + k * 0.07, 0.7, [left - 60, y, right + 60, y + (k - 2) * 2], 8 + (k % 2) * 2);
+        }
+        s.add(T.FLASH, C.CALDO, 0.25, 0.9, [(left + right) / 2, cy, (right - left) * 0.3, 0]);
         [0.2, 0.4, 0.6, 0.8].forEach((f, i) => s.add(T.BURST, C.BIANCO, 0.9 + i * 0.03, 0.8, [lerp(left, right, f), cy, (right - left) * 0.12, -20], i + 1));
         s.add(T.FLASH, C.CALDO, 1.05, 0.5, [(left + right) / 2, cy, (right - left) * 0.4, 0]);
         const imp1 = unaVolta(onImpact); s.dopo(1050, imp1); s.dopo(1570, imp1);
