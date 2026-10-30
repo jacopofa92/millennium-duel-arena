@@ -4072,6 +4072,8 @@ priorità o richiedono un refactor ampio):
 
 1.4.179 (cache v488): **barre basse della carta (tipo e ATK/DEF) con raggio ancora piu' piccolo** (l'utente: nel box del tipo, essendo stretto, la curva si nota di piu'). Nuova variabile `--barra-raggio: max(1px, --card-w * 0.007)` in `card.css`, usata da `.card-frame-typeline` e `.card-stats`; titolo e illustrazione restano su `--box-raggio` (1,4%) e guscio/cornice sul 3%. Misurato 160px: titolo/arte 2,2px, tipo e stat 1,1px; 240px: 3,4px contro 1,7px. Sotto i 100px tutti i raggi sono gia' al minimo di 1px, quindi su carte piccole non cambia nulla. Suite completa non eseguita.
 
+1.4.180 (cache v489): **la cornice interna (`.card-frame`) non e' piu' piu' tonda dei box che contiene** (segnalato sul telefono, scheda carta grande: dopo aver ridotto i raggi dei box la cornice, rimasta al 3%, risultava piu' smussata di nome, illustrazione, tipo e ATK/DEF). Ora `border-radius: calc(var(--box-raggio) * 1.25)`: appena sopra i box, concentrica. Scala dei raggi a 430px: guscio 12,9 (3%) > cornice 7,5 > titolo/illustrazione 6,0 (1,4%) > tipo/ATK-DEF 3,0 (0,7%). Il guscio esterno resta al 3%. Suite completa non eseguita (spec carta-compatta verde).
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**
