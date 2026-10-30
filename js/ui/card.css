@@ -165,10 +165,12 @@
        di impilamento proprio. */
     isolation: isolate;
     flex: 0 0 auto;
-    /* Angolo del corpo della carta: 6px su mobile (richiesta esplicita),
-       2px su desktop (regola in fondo al file), 1px sulla carta compatta.
+    /* Angolo del corpo della carta: PROPORZIONALE alla larghezza (3%, mai sotto 1px), uguale su ogni dispositivo e a ogni misura (1.4.174).
+       Prima erano pixel fissi per dispositivo e per misura (6px sul telefono, 2px col mouse, 1px sulla carta compatta, 3px sul suo dorso): la
+       stessa carta era tonda in Cartoteca e quasi squadrata nel duello. --card-w e' la stessa variabile da cui .card prende la larghezza.
+       Dove la larghezza non viene da --card-w (effetti a tutto schermo) vale il ripiego di 100px, cioe' 3px.
        Lo leggono il corpo (::before) e l'illustrazione a piena carta. */
-    --card-raggio: 6px;
+    --card-raggio: max(1px, calc(var(--card-w, 100px) * 0.03));
     /* La scatola ritaglia ancora quello che sborda (testi lunghissimi su
        carte minuscole), ma col raggio più piccolo possibile: gli angoli
        veri li disegnano corpo e illustrazione, che sanno quanto vale il
@@ -250,7 +252,7 @@
     /* Copre tutta la carta, quindi il suo angolo è quello visibile: mai
        meno di 4px, ma quanto il corpo quando il corpo è più tondo (6px su
        mobile) — prima ci pensava il ritaglio della scatola. */
-    border-radius: max(4px, var(--card-raggio));
+    border-radius: var(--card-raggio);
     z-index: 2;
     pointer-events: none;
     /* Dissolvenza invece di un pop istantaneo appena l'immagine finisce di
@@ -678,25 +680,6 @@ body[data-card-badges] .card-artwork-badge { display: flex; }
 body[data-card-badges] .card { overflow: visible; }
 
 /* ============================================================
-   Angolo della carta: appena smussato SU DESKTOP.
-   ============================================================
-   Richiesta esplicita, con il vincolo altrettanto esplicito che su
-   mobile resti com'è ora (6px). Il discriminante è quindi il puntatore,
-   non la larghezza: `pointer: fine` vuol dire mouse o trackpad, cioè
-   desktop, ed è l'esatto rovescio del `pointer: coarse` con cui questo
-   file definisce già il caso mobile più sopra. Un telefono ruotato o una
-   finestra desktop stretta non cambiano lato per sbaglio, come
-   succederebbe con un semplice min-width.
-
-   Vale per OGNI pagina che carica card.css (duello, Cartoteca,
-   Creazione Deck, Crea Carta), non solo per l'arena. */
-@media (pointer: fine) {
-    .card {
-        --card-raggio: 2px;
-    }
-}
-
-/* ============================================================
    CARTA COMPATTA: decide la misura della carta, non il dispositivo.
    ============================================================
    Richiesta esplicita: sotto una certa larghezza la carta perde barra del
@@ -726,10 +709,6 @@ body[data-card-badges] .card { overflow: visible; }
    Le carte COPERTE restano come sono: il dorso non ha nulla da togliere,
    e deve restare uguale a ogni misura. */
 @container (max-width: 66px) {
-    .card:not(.face-down)::before {
-        --card-raggio: 1px;
-    }
-    .card:not(.face-down) > * { --card-raggio: 1px; }
     .card:not(.face-down) > .card-frame {
         /* Cornice più sottile: 1px di filo + 1px di respiro dal bordo,
            invece dei 3px della carta classica. Il padding della scatola
@@ -754,11 +733,6 @@ body[data-card-badges] .card { overflow: visible; }
        — l'utente non la vuole (2026-10-17). */
     .card:not(.face-down) .card-frame-art { border-width: 0; border-radius: 0; }
 
-    /* Sulle carte piccole varia soltanto il raggio esterno: colori,
-       proporzioni e ovale restano gli stessi del dorso CSS grande. */
-    .card.face-down::before {
-        --card-raggio: 3px;
-    }
 }
 
 /* ============================================================
