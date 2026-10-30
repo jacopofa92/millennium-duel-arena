@@ -412,6 +412,10 @@ void main(){
   float cielo=inX*(1.-smoothstep(zona.x,fila.w,P.y))*smoothstep(0.,.3,t);
   float fineCielo=1.-smoothstep(.9+ns*.095,1.5+ns*.095,t);
   o+=vec4(vec3(.3,1.,.55)*cielo*.5*fineCielo,cielo*.36*fineCielo);
+  // SQUARCIO di luce al bordo alto del terreno: da qui nascono le spade (origine chiara della discesa, solo in questo campo).
+  float aperto=smoothstep(0.,.3,t)*(1.-smoothstep(1.1+ns*.095,1.7+ns*.095,t));
+  float squarcio=inX*(exp(-pow((P.y-zona.x-4.)/4.5,2.))*1.1+exp(-pow((P.y-zona.x-4.)/30.,2.))*.38)*aperto*(.75+.25*sin(P.x*.06+t*7.));
+  o+=vec4(mix(vec3(.3,1.,.55),vec3(.9,1.,.95),exp(-pow((P.y-zona.x-4.)/4.5,2.)))*squarcio,squarcio*.7);
   for(int i=0;i<${MAX_SPADE};i++){
     if(float(i)>=ns) break;
     vec4 s=sp[i];
@@ -436,11 +440,27 @@ void main(){
     float W=clamp(s.z*.3,5.,15.);
     float respiro=.86+.14*sin(t*4.2+float(i)*1.3);
     vec4 sw=spada(l,alt,W,respiro);
+    // Scia di luce sopra la lama mentre cala veloce: sparisce quando la spada rallenta e si ferma.
+    float yTop=centro.y-alt*.5*sc;
+    float tr=exp(-pow((P.x-centro.x)/(W*1.7*sc),2.))*step(P.y,yTop)*step(zona.x,P.y)*(1.-cad)*smoothstep(0.,.1,tt)*clamp(1.-(yTop-P.y)/(alt*1.2),0.,1.);
+    o+=vec4(vec3(.5,1.,.7)*tr*.55,tr*.3);
     float vis=smoothstep(0.,.12,tt);
     o=sw*vis+o*(1.-sw.a*vis);
     // Anello d'impatto alla punta.
     float imp=exp(-pow((length(P-vec2(cx,s.y))-(tt-.55)*260.)*.09,2.))*step(.55,tt)*(1.-smoothstep(.55,1.,tt));
     o+=vec4(vec3(.35,1.,.6)*imp*.9,imp*.55);
+    // Colpo a terra: onda schiacciata sul piano del campo, lampo alla punta e scintille che schizzano e ricadono.
+    float ell=exp(-pow((length(vec2(P.x-cx,(P.y-s.y)*2.4))-(tt-.55)*210.)*.12,2.))*step(.55,tt)*(1.-smoothstep(.55,.95,tt));
+    o+=vec4(vec3(.4,1.,.65)*ell*.7,ell*.4);
+    vec2 dP=P-vec2(cx,s.y);
+    float flashI=exp(-dot(dP,dP)/(s.z*s.z*1.2))*smoothstep(.5,.58,tt)*(1.-smoothstep(.58,.8,tt));
+    o+=vec4(vec3(.8,1.,.85)*flashI*1.2,flashI*.6);
+    for(int j=0;j<7;j++){
+      float fj=float(j); float aa=3.14159*(.1+.8*h(vec2(fj,float(i)))); float v0=70.+90.*h(vec2(fj+3.,float(i))); float tv=max(tt-.55,0.);
+      vec2 sp2=vec2(cx+cos(aa)*v0*tv*1.1, s.y-sin(aa)*v0*tv+260.*tv*tv); float dd=length(P-sp2);
+      float vita=(1.-smoothstep(0.,.55,tv))*step(.55,tt); float g2=exp(-dd*dd/6.)*vita;
+      o+=vec4(vec3(.6,1.,.75)*g2*1.2,g2*.7);
+    }
   }
   // Lampo orizzontale sulla fila quando l'ultima e' atterrata.
   float lf=t-tFlash;
