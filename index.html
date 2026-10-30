@@ -1325,7 +1325,9 @@
                             { icon: 'story', label: 'Storia', action: 'link', href: 'storia.html' },
                             // Una sola fonte per la selezione dei tornei: la pagina autonoma contiene avanzamento, abbandono e premi.
                             { icon: 'tournament', label: 'Tornei', action: 'link', href: 'tornei.html' },
-                            { icon: 'tower', label: 'Torre dei Duellanti', action: 'link', href: 'torre.html', richiedeModalita: 'torre' }
+                            { icon: 'tower', label: 'Torre dei Duellanti', action: 'link', href: 'torre.html', richiedeModalita: 'torre' },
+                            // Rivincite: rigioca i Duellanti gia' battuti nella Storia, quindi sta con la campagna e non con l'allenamento.
+                            { icon: 'rematch', label: 'Rivincite', action: 'link', href: 'rivincite.html', richiedeModalita: 'rivincite' }
                         ]
                     },
                     {
@@ -1342,7 +1344,6 @@
                             { icon: 'freeDuel', label: 'Duello Libero', action: 'link', href: 'duello-libero.html' },
                             // Le modalita' con un file loro (js/modes/): situazioni preparate o regole di contorno, mai il motore.
                             { icon: 'puzzle', label: 'Puzzle', action: 'link', href: 'puzzle.html' },
-                            { icon: 'rematch', label: 'Rivincite', action: 'link', href: 'rivincite.html', richiedeModalita: 'rivincite' },
                             // Il menu Tutorial: la lezione col nonno (al primo avvio obbligatoria, vedi obbligaLezioneSeDaFare piu' sotto)
                             // e le lezioni brevi, tutte rifacibili.
                             { icon: 'rules', label: 'Tutorial', action: 'link', href: 'tutorial.html' }
