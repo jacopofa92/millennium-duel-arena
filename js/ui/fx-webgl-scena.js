@@ -33,7 +33,7 @@
     const MAX = 40;
 
     // Tipi di primitiva (devono coincidere con l'ordine delle `if` dello shader qui sotto).
-    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19, ANKH: 20, PORTAL: 21, DUST: 22, SHIELD: 23, MIRROR: 24, TUBE: 25 };
+    const T = { FLASH: 0, RING: 1, BOLT: 2, BURST: 3, SEAL: 4, VORTEX: 5, WASH: 6, LINE: 7, PILLAR: 8, SMOKE: 9, PIT: 10, TWISTER: 11, MOON: 12, HEART: 13, EYE: 14, HAT: 15, ORB: 16, PANEL: 17, COIN: 18, DIE: 19, ANKH: 20, PORTAL: 21, DUST: 22, SHIELD: 23, MIRROR: 24, TUNNEL: 25 };
     // Colori: indici nella tavolozza dello shader.
     const C = { CALDO: 0, ORO: 1, ROSSO: 2, ARANCIO: 3, CIANO: 4, BLU: 5, VIOLA: 6, MAGENTA: 7, VERDE: 8, BIANCO: 9, SCURO: 10, GHIACCIO: 11, VERDE_SCURO: 12 };
 
@@ -391,27 +391,27 @@ float dado(vec2 q,float v){
   float al=clamp(inside*.42+frame*.9+bev*.6+glint*inside*.5+cp*.9,0.,1.)*fade*smoothstep(0.,.05,u);
   s=vec4(rgb*fade*smoothstep(0.,.05,u),al);`;
 
-    // CILINDRO (Cilindro Magico): un tubo d'acciaio visto di lato con la BOCCA luminosa su un'estremita'.
-    // A: centro x, y, semi-lunghezza, raggio; B.w: angolo dell'asse, dalla bocca verso il fondo.
-    CORPI[T.TUBE] = `
-  float sc=mix(.2,1.,easeOut(u/.2)); float L=A.z*sc; float Rr=A.w*sc;
-  vec2 d=P-A.xy; vec2 ex=vec2(cos(B.w),sin(B.w)); vec2 q=vec2(dot(d,ex),dot(d,vec2(-ex.y,ex.x)));
-  float e=campana(u,.12,.25);
-  float ny=q.y/Rr;
-  float inBody=step(-L,q.x)*step(q.x,L)*step(abs(q.y),Rr);
-  float metal=.3+.55*pow(clamp(1.-abs(ny-.3),0.,1.),2.)+.45*exp(-pow((ny+.5)/.1,2.));
-  float bande=smoothstep(.03,.0,abs(q.x-L*.55)/L)+smoothstep(.03,.0,abs(q.x+L*.55)/L)*.8;
-  vec3 steel=mix(vec3(.5,.55,.68),c,.3);
-  vec3 body=steel*metal*(1.-bande*.5)*(1.+.6*step(q.x,-L*.9))*inBody;
-  vec2 mq=vec2((q.x+L)/(Rr*.36),q.y/Rr); float em=length(mq);
-  float mouth=step(em,1.);
-  float rim=exp(-pow((em-1.)/.08,2.));
-  float pul=.65+.35*sin(t*9.);
-  vec3 inner=mix(vec3(.01,.0,.03),c*1.6,smoothstep(.1,1.,em)*.8*pul)+c*exp(-em*em*5.)*.9*pul;
-  float halo=exp(-pow(max(em-1.,0.)*1.2,2.)*2.)*.35*pul;
-  vec3 rgb=body*(1.-mouth)+inner*mouth+mix(c,vec3(1.),.6)*rim*1.3+c*halo;
-  float al=clamp(inBody*.95+mouth+rim+halo*.5,0.,1.);
-  s=vec4(rgb*e,al*e);`;
+    // TUNNEL (Cilindro Magico): un tunnel visto in prospettiva che RUOTA. Anelli che si allontanano verso il fondo, raggi a
+    // spirale che girano (piu' veloci mentre il colpo ci passa dentro), bordo luminoso con tacche e un nucleo di luce
+    // che si accende all'entrata e all'uscita del colpo. A: centro x, y, raggio; B.w: schiacciamento verticale.
+    CORPI[T.TUNNEL] = `
+  vec2 q=(P-A.xy)/A.z; q.y/=max(B.w,.05); float rr=length(q); float ang=atan(q.y,q.x);
+  float sc=easeOut(u/.18); rr/=max(sc,.05);
+  float e=campana(u,.15,.22);
+  float spin=t*(2.+6.*smoothstep(.3,.55,u)*(1.-smoothstep(.7,.9,u)));
+  float zd=1./(rr+.12);
+  float twist=ang+zd*.9-spin;
+  float spokes=pow(.5+.5*sin(twist*6.),3.);
+  float rings=pow(.5+.5*sin(zd*7.-t*6.),4.);
+  float wall=smoothstep(1.02,.9,rr)*smoothstep(.04,.2,rr);
+  float tun=(spokes*.8+rings*.6)*wall*(.35+.65*smoothstep(1.,.15,rr));
+  float rim=exp(-pow((rr-1.)/.045,2.));
+  float tick=step(.5,fract((ang-spin*.7)*10./(2.*PI)))*exp(-pow((rr-.9)/.04,2.))*.9;
+  float core=exp(-rr*rr*40.)*(.5+1.2*smoothstep(.3,.5,u)*(1.-smoothstep(.75,.95,u)));
+  vec3 cc=mix(c,vec3(1.,.5,.9),smoothstep(1.,.2,rr));
+  vec3 rgb=cc*tun*1.4+mix(c,vec3(1.),.5)*(rim*1.5+tick)+vec3(1.,.9,1.)*core*1.4;
+  float al=clamp(tun*.9+rim+tick*.7+core+wall*.35,0.,1.)*e;
+  s=vec4(rgb*e,al);`;
     /** Il programma di un tipo (costruito una volta sola e messo in cache dal motore). */
     const SORGENTI = {};
     function sorgente(tipo) {
@@ -448,7 +448,7 @@ float dado(vec2 q,float v){
             case T.DUST: return [x - z * 5, y - q - z * 8, x + z * 7, y + q + z * 5];
             case T.SHIELD: e = z * 1.6; return [x - e, y - e, x + e, y + e];
             case T.MIRROR: return [x - z - 24, y - q - 24, x + z + 24, y + q + 24];
-            case T.TUBE: e = z + q + 40; return [x - e, y - e, x + e, y + e];
+            case T.TUNNEL: return [x - z * 1.25, y - z * 1.25 * tl - 6, x + z * 1.25, y + z * 1.25 * tl + 6];
             default: e = z * 3; return [x - e, y - q - e, x + e, y + e];   // moneta e dado
         }
     }
@@ -627,46 +627,37 @@ float dado(vec2 q,float v){
     };
 
     /**
-     * Cilindro Magico: DUE TUBI d'acciaio con la bocca luminosa. Il colpo dell'attaccante (raggio caldo) ENTRA nella
-     * bocca del primo tubo, passa dall'uno all'altro (un filo viola tratteggiato e un lampo dentro ciascun tubo) ed
-     * ESCE dalla bocca del secondo, che guarda la mano di chi aveva attaccato, dove arriva come un raggio magenta
-     * con i suoi danni. Prima erano due vortici anonimi: non si vedeva il tubo, quindi non si capiva da dove il
-     * colpo entrasse e da dove uscisse.
+     * Cilindro Magico: un TUNNEL che ruota si apre in mezzo al campo, davanti a chi attacca. Il raggio d'attacco ci
+     * ENTRA (il tunnel accelera e s'illumina), e dal tunnel ESCE un raggio molto piu' grosso che va dritto alla MANO di
+     * chi aveva attaccato, dove arriva con i suoi danni. Prima erano due tubi d'acciaio: non si leggevano come un
+     * passaggio, e il tubo sembrava andare dal mostro alla mano.
      */
     imp.playMagicCylinder = function (attackerOwner, attackerIndex, damagedOwner, damage) {
         const attacker = rectDi(document.querySelector(`#${tavolo(attackerOwner)} .field-slot[data-owner="${attackerOwner}"][data-type="monster"][data-index="${attackerIndex}"] .card`));
         const anchor = rectDi(document.querySelector(damagedOwner === 'player' ? '#playerHand' : '#botHand'));
         if (!attacker || !anchor) return 0;
         const from = cen(attacker); const to = cen(anchor);
-        const m = Math.min(innerWidth, innerHeight);
-        const R = Math.max(26, Math.min(58, m * 0.055)); const L = R * 2.3;
-        const en = { x: from.x + (to.x - from.x) * 0.30, y: from.y + (to.y - from.y) * 0.26 };
-        const ex = { x: from.x + (to.x - from.x) * 0.66, y: from.y + (to.y - from.y) * 0.64 };
-        // Asse di ogni tubo, dalla bocca verso il fondo: il primo guarda l'attaccante e continua nel verso del colpo;
-        // il secondo guarda il bersaglio, quindi ha il fondo dalla parte opposta.
-        const a1 = Math.atan2(to.y - from.y, to.x - from.x);
-        const a2 = Math.atan2(ex.y - to.y, ex.x - to.x);
-        const bocca1 = { x: en.x - Math.cos(a1) * L, y: en.y - Math.sin(a1) * L };
-        const bocca2 = { x: ex.x - Math.cos(a2) * L, y: ex.y - Math.sin(a2) * L };
+        const W = innerWidth; const H = innerHeight; const m = Math.min(W, H);
+        const R = Math.max(70, Math.min(150, m * 0.17));
+        // Il tunnel sta fra le due file, appena di lato rispetto all'attaccante: cosi' il raggio che entra e quello che esce
+        // non si sovrappongono e si vede il rimbalzo.
+        const tx = Math.max(R * 1.1, Math.min(W - R * 1.1, W / 2 + (from.x < W / 2 ? m * 0.12 : -m * 0.12)));
+        const ty = H * 0.5;
         const s = new Scena();
         s.add(T.WASH, C.SCURO, 0, 2.1, [0, 0, 0.5, 0], 3);
-        // L'attacco che sta per partire: l'anello si stringe sull'attaccante
         s.add(T.RING, C.ROSSO, 0.04, 0.45, [from.x, from.y, attacker.width * 1.2, 4], -1);
-        s.add(T.TUBE, C.CIANO, 0.1, 1.7, [en.x, en.y, L, R], a1);
-        s.add(T.TUBE, C.VIOLA, 0.2, 1.7, [ex.x, ex.y, L, R], a2);
-        // Il colpo entra nella bocca del primo tubo
-        s.add(T.LINE, C.ARANCIO, 0.4, 0.5, [from.x, from.y, bocca1.x, bocca1.y], 10);
-        s.add(T.BURST, C.ARANCIO, 0.72, 0.5, [bocca1.x, bocca1.y, R * 1.3, 20], 2.2);
-        s.add(T.FLASH, C.CALDO, 0.8, 0.45, [en.x, en.y, R * 1.2, 0]);
-        // Passa da un tubo all'altro: filo viola e lampi
-        s.add(T.LINE, C.VIOLA, 0.78, 0.55, [en.x, en.y, ex.x, ex.y], 4);
-        s.add(T.FLASH, C.VIOLA, 1.0, 0.45, [ex.x, ex.y, R * 1.2, 0]);
-        // Esce dalla bocca del secondo, verso la mano di chi aveva attaccato
-        s.add(T.BURST, C.MAGENTA, 1.05, 0.5, [bocca2.x, bocca2.y, R * 1.3, 20], 4.4);
-        s.add(T.LINE, C.MAGENTA, 1.1, 0.6, [bocca2.x, bocca2.y, to.x, to.y], 11);
-        s.add(T.FLASH, C.CALDO, 1.5, 0.6, [to.x, to.y, 95, 0]);
-        s.add(T.RING, C.ARANCIO, 1.5, 0.7, [to.x, to.y, 135, 6]);
-        s.add(T.BURST, C.ORO, 1.5, 0.8, [to.x, to.y, 135, 60], 3);
+        s.add(T.TUNNEL, C.VIOLA, 0.1, 1.95, [tx, ty, R, 0], 0.7);
+        // Entra il raggio d'attacco
+        s.add(T.LINE, C.ARANCIO, 0.3, 0.55, [from.x, from.y, tx, ty], 13);
+        s.add(T.FLASH, C.CALDO, 0.72, 0.5, [tx, ty, R * 0.7, 0]);
+        s.add(T.BURST, C.ARANCIO, 0.72, 0.55, [tx, ty, R * 0.9, 25], 2.2);
+        // Il tunnel gira e il colpo esce, ingrossato, verso la mano di chi aveva attaccato
+        s.add(T.RING, C.MAGENTA, 1.0, 0.6, [tx, ty, R * 1.1, 6]);
+        s.add(T.LINE, C.MAGENTA, 1.02, 0.65, [tx, ty, to.x, to.y], 20);
+        s.add(T.LINE, C.BIANCO, 1.06, 0.55, [tx, ty, to.x, to.y], 8);
+        s.add(T.FLASH, C.CALDO, 1.5, 0.6, [to.x, to.y, 100, 0]);
+        s.add(T.RING, C.ARANCIO, 1.5, 0.7, [to.x, to.y, 140, 6]);
+        s.add(T.BURST, C.ORO, 1.5, 0.8, [to.x, to.y, 140, 60], 3);
         if (damage) testo(`-${damage} LP`, to.x, to.y, 1550, 900, { size: 34, color: '#ffd9d0', glow: '#ff5040' });
         const d = esegui(s, 2250); sfx('directHit', 1000); return d;
     };
