@@ -32,8 +32,8 @@ uniform float uOut;      // 0..1 uscita (esplosione + camera che entra)
 uniform float uDist;     // distanza della camera (si allarga sugli schermi bassi)
 const float PI=3.14159265;
 const float TOP=.9;
-const float APEX=-.66;   // piramide piu' piatta, come il Puzzle vero: 2,6 di larghezza in cima su 1,56 di altezza
-const vec2 NXY=vec2(.7682,-.6402);   // normale del piano di una faccia nel piano (raggio, y): normalize(1.56, -1.3)
+const float APEX=-1.;   // piramide piu' piatta, come il Puzzle vero: 2,6 di larghezza in cima su 1,56 di altezza
+const vec2 NXY=vec2(.8253,-.5647);   // normale del piano di una faccia nel piano (raggio, y): normalize(1.56, -1.3)
 
 float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
 float hash3(vec3 p){ return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453); }

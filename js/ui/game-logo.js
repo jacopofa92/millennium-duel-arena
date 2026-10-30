@@ -92,7 +92,7 @@
             <stop offset="1" stop-color="#f39c12" stop-opacity="0"/>
         </radialGradient>
         <clipPath id="${g('taglio')}">
-            <path d="M-62,-34 L62,-34 L0,40 Z"/>
+            <path d="M-62,-34 L62,-34 L0,54 Z"/>
         </clipPath>
     </defs>
 
@@ -109,7 +109,7 @@
     </g>
 
     <g class="gl-piramide">
-        <path class="gl-piramide-corpo" d="M-62,-34 L62,-34 L0,40 Z" pathLength="100" fill="url(#${g('oro')})"/>
+        <path class="gl-piramide-corpo" d="M-62,-34 L62,-34 L0,54 Z" pathLength="100" fill="url(#${g('oro')})"/>
         <!-- Le giunture dei pezzi del Puzzle: si vede che è composto. -->
         <path class="gl-giunture" d="${giunture}"/>
         <!-- Il riflesso che attraversa la piramide. Il movimento sta sul

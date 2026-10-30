@@ -4039,6 +4039,8 @@ priorità o richiedono un refactor ampio):
 
 1.4.162 (cache v471): **il Puzzle del Millennio e l'Occhio ricalcati su una FOTO del Puzzle vero** (richiesta dell'utente: "molto fedele"). Geometria in unita' "e" = pixel della foto / 375 (mezza larghezza in cima = 1, y verso l'alto, 0 al centro dell'iride), usata identica da splash-webgl.js (shader) e game-logo.js (SVG del menu). Piramide piu' piatta (APEX -.66, 2,6 x 1,56), nessun pannello incassato: le **scanalature a gradini** (scanalature(e) nello shader, gradini nell'SVG: taglio a Z dal bordo alto, blocco centrale in cima, giunture sotto l'occhio, meta' sinistra specchiata) sono solchi sottili. L'Occhio: sopracciglio grosso, barra di mezzo, palpebra inferiore a sorriso, anello dell'iride con pupilla a cupola, due gambe (la sinistra col piede, la destra che si arrotola) e spirale; **niente "bianco dell'occhio"**: l'interno e' il piano del metallo, oro come il resto, non colorato (il colore dell'Occhio e' lo stesso del corpo; scuro smorza solo i riflessi). Per ritoccare una forma si cambiano i numeri in occhioH/scanalature/gradini (stessi valori nei due file). Guardato in screenshot dello splash e del logo ingrandito. Suite completa non eseguita.
 
+1.4.163 (cache v472): il Puzzle era troppo schiacciato (segnalato dall'utente): piramide piu' alta, APEX -1 e NXY (.8253,-.5647) nello shader (larghezza/altezza 1,37 invece di 1,67), apice del logo SVG a y=54. L'Occhio e le scanalature restano quelli di 1.4.162. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**
