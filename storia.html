@@ -442,7 +442,60 @@
         .mappa-toggle-testo { min-width: 0; }
         #vistaMappa.compatto .mappa-dettagli { display: none; }
     }
-</style>
+
+    /* LA MAPPA A TUTTO BORDO (richiesta dell'utente: "non dentro un box, ma che tocchi il bordo laterale e la bottom bar"). Con la mappa aperta il
+       riquadro non ha piu' bordo, angoli ne' ombra, e si allarga fino ai lati dello schermo e fino alla barra in basso: margini negativi pari al
+       padding di .main (cosi' le intestazioni sopra restano dentro il margine) e lo spazio in fondo (.mm-spazio di tab-bar.js) ridotto
+       all'altezza esatta della barra. Vale per ogni larghezza. L'elenco delle campagne non cambia. */
+    body.ha-tab-bar:has(#vistaMappa:not([hidden])) .mm-spazio { height: var(--mm-barra-h); }
+    body.ha-tab-bar #mappaViewport {
+        margin-left: -16px; margin-right: -16px; margin-bottom: -18px; width: auto;
+        border-radius: 0; border-left: 0; border-right: 0; border-bottom: 0; box-shadow: none;
+    }
+    @media (max-width: 700px), (max-height: 560px) {
+        body.ha-tab-bar #mappaViewport { margin-left: -10px; margin-right: -10px; margin-bottom: -12px; }
+    }
+    /* ---- RIFATTO (1.4.172): barra sottile + pannello sopra la mappa ("il box espandibile della storia e' troppo confusionario") ----
+       - la BARRA (#mappaToggle) e' sempre visibile a tutta larghezza, in due righe: dove sei (capitolo) e, piu' piccolo, campagna, livello e
+         tappe fatte. Tocco = apre/chiude.
+       - il PANNELLO (#mappaDettagli) non spinge piu' giu' la mappa: si apre SOPRA di lei, con quattro gruppi etichettati (capitolo, avanzamento,
+         livello, capitoli) e in fondo le azioni. Un tocco sulla mappa lo chiude. Su TUTTE le larghezze (prima su desktop era sempre aperto).
+       - il bordo sopra la mappa e' sparito: la barra le sta attaccata e la mappa non ha ne' bordo ne' angoli. */
+    #vistaMappa { position: relative; }
+    .md-wrap { position: relative; margin: -10px -10px 0; }
+    @media (min-width: 701px) and (min-height: 561px) { .md-wrap { margin: -18px -16px 0; } }
+    #vistaMappa .mappa-toggle {
+        display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 52px;
+        margin: 0; padding: 8px 16px; border: 0; border-bottom: 1px solid rgba(247, 215, 116, 0.28); border-radius: 0;
+        background: linear-gradient(180deg, rgba(26, 21, 12, 0.98), rgba(14, 12, 9, 0.98)); color: var(--gold); text-align: left; cursor: pointer;
+        font: inherit;
+    }
+    #vistaMappa .mappa-toggle-testo { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    #vistaMappa .mappa-toggle-testo strong { font-size: 0.95rem; font-weight: 800; color: var(--gold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #vistaMappa .mappa-toggle-testo small { font-size: 0.72rem; color: #bcae86; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #vistaMappa .mappa-toggle-freccia { flex: 0 0 auto; font-size: 1rem; transition: transform 0.2s ease; }
+    #vistaMappa .mappa-toggle[aria-expanded="true"] .mappa-toggle-freccia { transform: rotate(180deg); }
+    #vistaMappa.compatto .mappa-dettagli { display: none; }
+    #vistaMappa .mappa-dettagli {
+        position: absolute; top: 100%; left: 0; right: 0; z-index: 40; max-height: min(72vh, 560px); overflow-y: auto; overscroll-behavior: contain;
+        background: linear-gradient(180deg, rgba(20, 16, 10, 0.98), rgba(12, 10, 8, 0.985));
+        border-bottom: 1px solid rgba(247, 215, 116, 0.4); box-shadow: 0 22px 34px rgba(0, 0, 0, 0.6);
+    }
+    #vistaMappa .md-sez { padding: 12px 16px; border-top: 1px solid rgba(247, 215, 116, 0.12); }
+    #vistaMappa .md-sez:first-child { border-top: 0; }
+    #vistaMappa .md-etichetta { margin-bottom: 8px; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: #bcae86; }
+    #vistaMappa .md-intro .mappa-titolo { font-size: 1.02rem; }
+    #vistaMappa .md-intro .mappa-capitolo-testo { display: block; margin-top: 6px; max-width: none; -webkit-line-clamp: unset; font-size: 0.84rem; }
+    #vistaMappa .md-livelli:has(#livelliMount[hidden]) { display: none; }
+    #vistaMappa .md-livelli .md-etichetta { display: none; }   /* il gruppo Livello disegna gia' la sua etichetta (storia-livelli) */
+    #vistaMappa .avanzamento { margin: 0; }
+    #vistaMappa .capitoli { display: flex; flex-wrap: nowrap; gap: 6px; margin: 0; padding-bottom: 4px; overflow-x: auto; }
+    #vistaMappa .capitoli > * { flex: 0 0 auto; }
+    #vistaMappa .md-azioni { display: flex; gap: 10px; margin: 0; padding: 12px 16px 14px; border-top: 1px solid rgba(247, 215, 116, 0.12); }
+    #vistaMappa .md-azioni .btn { flex: 1; justify-content: center; }
+    #vistaMappa #btnRicomincia { border-color: rgba(214, 90, 80, 0.5); color: #f0a39a; }
+    /* La mappa, attaccata alla barra: niente bordo sopra, niente angoli, un filo d'ombra che la stacca. */
+    body.ha-tab-bar #mappaViewport { border: 0; box-shadow: inset 0 12px 16px -12px rgba(0, 0, 0, 0.55); margin-top: 0; }</style>
 </head>
 <body>
 <script src="js/ui/page-loader.js"></script>
@@ -466,37 +519,43 @@
              apre/chiude tutto il resto. Su un telefono quelle informazioni
              occupavano un terzo dello schermo per del testo che si legge
              una volta, mentre la mappa è la cosa con cui si interagisce. -->
+        <!-- RIFATTO (1.4.172): una barra sottile in alto (dove sei) e, toccandola, un PANNELLO che si apre sopra la mappa con quattro gruppi
+             etichettati: capitolo, avanzamento, livello, capitoli, e in fondo le azioni. Prima era tutto insieme, in colonna, spinto sopra la mappa. -->
+        <div class="md-wrap">
         <button type="button" class="mappa-toggle" id="mappaToggle" aria-expanded="false" aria-controls="mappaDettagli">
             <span class="mappa-toggle-testo" id="mappaToggleTesto"></span>
             <span class="mappa-toggle-freccia" aria-hidden="true">▾</span>
         </button>
 
         <div class="mappa-dettagli" id="mappaDettagli">
-        <div class="mappa-intestazione">
-            <div>
+            <div class="md-sez md-intro">
                 <div class="mappa-titolo" id="mappaTitolo"></div>
                 <div class="mappa-capitolo" id="mappaCapitolo"></div>
-                <!-- Di cosa parla il capitolo in corso. Vuoto (e nascosto)
-                     se quel capitolo non lo dichiara: il campo `testo` del
-                     catalogo è facoltativo. -->
+                <!-- Di cosa parla il capitolo in corso. Vuoto (e nascosto) se quel capitolo non lo dichiara: il campo `testo` e' facoltativo. -->
                 <div class="mappa-capitolo-testo" id="mappaCapitoloTesto" hidden></div>
             </div>
-            <div class="barra-azioni">
+            <div class="md-sez">
+                <div class="md-etichetta">Avanzamento</div>
+                <div class="avanzamento">
+                    <span class="avanzamento-barra"><span class="avanzamento-riempi" id="avanzamentoRiempi"></span></span>
+                    <span class="avanzamento-testo" id="avanzamentoTesto"></span>
+                </div>
+            </div>
+            <!-- Livello di difficolta' (Facile/Normale/Difficile), solo se la campagna ne ha: l'intero gruppo si nasconde con la sua mappa (:has). -->
+            <div class="md-sez md-livelli">
+                <div class="md-etichetta">Livello</div>
+                <div class="livelli" id="livelliMount" hidden></div>
+            </div>
+            <div class="md-sez">
+                <div class="md-etichetta">Capitoli</div>
+                <div class="capitoli" id="capitoliMount"></div>
+            </div>
+            <div class="barra-azioni md-azioni">
                 <button type="button" class="btn btn--spento" id="btnIndietro">← Campagne</button>
                 <button type="button" class="btn btn--spento" id="btnRicomincia">Ricomincia</button>
             </div>
-        </div>
-        <!-- Livello di difficoltà della partita (Facile/Normale/Difficile),
-             solo sulla mappa della campagna e solo se la campagna ne ha. -->
-        <div class="livelli" id="livelliMount" hidden></div>
-        <!-- Striscia dei capitoli + avanzamento complessivo: dove sei e
-             quanto manca, senza dover contare i pallini sulla mappa. -->
-        <div class="capitoli" id="capitoliMount"></div>
-        <div class="avanzamento">
-            <span class="avanzamento-barra"><span class="avanzamento-riempi" id="avanzamentoRiempi"></span></span>
-            <span class="avanzamento-testo" id="avanzamentoTesto"></span>
-        </div>
         </div><!-- /.mappa-dettagli -->
+        </div><!-- /.md-wrap -->
         <div id="mappaViewport"></div>
     </section>
 </main>
@@ -1252,12 +1311,20 @@
         // A pannello chiuso (telefono) questa riga è tutto ciò che si vede:
         // il livello deve starci, o non si sa a quale partita si gioca.
         const livello = StoryProgress.getLivelliConStato(campagna.id).find((l) => l.attivo);
-        el.textContent = `${campagna.nome}${livello ? ' (' + livello.nome + ')' : ''} — ${dove} · ${fatte}/${totali}`;
+        const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]));
+        el.innerHTML = `<strong>${esc(dove)}</strong><small>${esc(campagna.nome)}${livello ? ' · ' + esc(livello.nome) : ''} · ${fatte}/${totali} tappe</small>`;
     }
 
     document.getElementById('mappaToggle').addEventListener('click', () => {
         if (window.NativeHaptics) NativeHaptics.light();
         applicaDettagli(document.getElementById('vistaMappa').classList.contains('compatto'));
+    });
+    // Un tocco fuori dal pannello (sulla mappa) lo chiude: e' un foglio sopra la mappa, non una parte fissa della pagina.
+    document.addEventListener('click', (e) => {
+        const s = document.getElementById('vistaMappa');
+        if (!s || s.hidden || s.classList.contains('compatto')) return;
+        if (e.target.closest('#mappaDettagli, #mappaToggle')) return;
+        applicaDettagli(false);
     });
 
     /**

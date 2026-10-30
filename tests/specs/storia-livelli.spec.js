@@ -70,7 +70,8 @@ module.exports = {
             // caricamento. Entrambi stanno sopra la pagina e si prendono il
             // click (vedi liberaLaPagina in tests/helpers/harness.js).
             await liberaLaPagina(page);
-            await page.locator('#livelliMount .livello', { hasText: 'Normale' }).click();
+            await page.evaluate(() => { const t = document.getElementById('mappaToggle'); if (t && t.getAttribute('aria-expanded') !== 'true') t.click(); });   // il pannello delle informazioni parte chiuso (1.4.172)
+    await page.locator('#livelliMount .livello', { hasText: 'Normale' }).click();
             await page.waitForTimeout(300);
             const normale = await page.evaluate(() => ({
                 attivo: StoryProgress.getLivelloAttivo('anime'),

@@ -273,7 +273,7 @@ module.exports = {
             assert(chiuso.toggleVisibile, 'Su telefono il pulsante che apre/chiude le informazioni deve esserci');
             assert(!chiuso.dettagliVisibili,
                 'Su telefono le informazioni sulla campagna devono partire CHIUSE: erano invasive');
-            assert(/Cap\. \d+\/\d+/.test(chiuso.riassunto) && /\d+\/\d+$/.test(chiuso.riassunto),
+            assert(/Cap\. \d+\/\d+/.test(chiuso.riassunto) && /\d+\/\d+ tappe$/.test(chiuso.riassunto),
                 `Chiuse, deve restare un riassunto con capitolo e avanzamento: "${chiuso.riassunto}"`);
             assert(chiuso.mappaH > chiuso.finestraH * 0.7,
                 `Con le informazioni chiuse la mappa deve prendersi quasi tutto lo schermo: ${Math.round(chiuso.mappaH)}px su ${chiuso.finestraH}`);
@@ -288,8 +288,9 @@ module.exports = {
                 mappaH: document.getElementById('mappaViewport').getBoundingClientRect().height
             }));
             assert(aperto.dettagliVisibili, 'Il pulsante deve aprire le informazioni');
-            assert(aperto.mappaH < chiuso.mappaH,
-                'Aprendo le informazioni la mappa deve cedere spazio, altrimenti il collapse non serviva a niente');
+            // Dal 1.4.172 le informazioni sono un PANNELLO SOPRA la mappa: non la spingono giu', quindi la mappa non cambia altezza.
+            assert(Math.abs(aperto.mappaH - chiuso.mappaH) < 2,
+                'Il pannello delle informazioni si apre SOPRA la mappa: non deve cambiarne l\'altezza (era ' + Math.round(chiuso.mappaH) + ', ora ' + Math.round(aperto.mappaH) + ')');
 
             // La scelta si ricorda.
             await page.reload();
@@ -388,19 +389,20 @@ module.exports = {
             await sessione.context.close();
         }
 
-        // Su desktop il pulsante non deve nemmeno esistere a schermo.
+        // Su desktop vale la stessa barra + pannello (dal 1.4.172): il pulsante c'e' e le informazioni partono chiuse, sopra la mappa.
         sessione = await apri(DESKTOP, false);
         try {
             const desktop = await sessione.page.evaluate(() => ({
                 toggleVisibile: document.getElementById('mappaToggle').offsetParent !== null,
                 dettagliVisibili: document.getElementById('mappaDettagli').offsetParent !== null
             }));
-            assert(!desktop.toggleVisibile,
-                'Su desktop il pulsante del collapse non deve comparire: lo spazio non manca');
-            assert(desktop.dettagliVisibili,
-                'Su desktop le informazioni devono restare sempre visibili, anche con la preferenza "chiuse"');
+            assert(desktop.toggleVisibile, 'Su desktop la barra delle informazioni deve esserci');
+            assert(!desktop.dettagliVisibili, 'Su desktop le informazioni devono partire chiuse (pannello sopra la mappa)');
+            await sessione.page.click('#mappaToggle');
+            await sessione.page.waitForTimeout(300);
+            const aperto = await sessione.page.evaluate(() => document.getElementById('mappaDettagli').offsetParent !== null);
+            assert(aperto, 'Il pulsante deve aprire il pannello anche su desktop');
         } finally {
             await sessione.context.close();
-        }
-    }
+        }    }
 };

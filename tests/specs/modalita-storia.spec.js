@@ -396,7 +396,8 @@ module.exports = {
             // stanno SOPRA la pagina e si prendono il click. Nel gioco vero
             // li chiude il giocatore; qui li si aspetta e li si toglie.
             await liberaLaPagina(page);
-            await page.click('#btnRicomincia');
+            await page.evaluate(() => { const t = document.getElementById('mappaToggle'); if (t && t.getAttribute('aria-expanded') !== 'true') t.click(); });   // il pannello delle informazioni parte chiuso (1.4.172)
+        await page.click('#btnRicomincia');
             await page.waitForTimeout(400);
             const conferma = await page.evaluate(() => ({
                 pannello: !!document.querySelector('#scenaMount .scena'),
@@ -417,7 +418,8 @@ module.exports = {
                 `"Annulla" deve lasciare tutto com'era (rilevato ${dopoAnnulla.completate})`);
 
             await liberaLaPagina(page);
-            await page.click('#btnRicomincia');
+            await page.evaluate(() => { const t = document.getElementById('mappaToggle'); if (t && t.getAttribute('aria-expanded') !== 'true') t.click(); });   // il pannello delle informazioni parte chiuso (1.4.172)
+        await page.click('#btnRicomincia');
             await page.waitForTimeout(400);
             await page.evaluate(() => [...document.querySelectorAll('#scenaMount .btn')]
                 .find((b) => /^Ricomincia$/.test(b.textContent.trim())).click());
