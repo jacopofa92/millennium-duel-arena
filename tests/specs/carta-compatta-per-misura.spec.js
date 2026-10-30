@@ -49,18 +49,18 @@ module.exports = {
         t.assert(!esito.piccola.nome && !esito.piccola.stelle && !esito.piccola.riga,
             'una carta da 58px è compatta (niente nome/stelle/riga): ' + JSON.stringify(esito.piccola));
         t.assert(esito.piccola.statistiche, 'la carta compatta tiene ATK/DEF');
-        // Dal 1.4.174 l'angolo e' PROPORZIONALE alla larghezza (3%, mai sotto 1px): uguale su ogni dispositivo e misura.
+        // Dal 1.4.174 l'angolo e' PROPORZIONALE alla larghezza (1,4%, mai sotto 1px): uguale su ogni dispositivo e misura.
         const vicino = (valore, atteso) => Math.abs(parseFloat(valore) - atteso) < 0.06;
-        t.assert(vicino(esito.piccola.raggio, 58 * 0.03), 'angolo proporzionale (3% di 58px) sulla carta compatta, trovato ' + esito.piccola.raggio);
+        t.assert(vicino(esito.piccola.raggio, Math.max(1, 58 * 0.014)), 'angolo proporzionale (1,4% di 58px, min 1px) sulla carta compatta, trovato ' + esito.piccola.raggio);
         t.assert(esito.piccola.raggioArte === '0px',
             'l artwork della carta compatta deve avere angoli vivi, trovato ' + esito.piccola.raggioArte);
         t.assert(!esito.soglia.nome, 'a 72px (la soglia) la carta è ancora compatta');
         t.assert(esito.sopra.nome && esito.sopra.riga, 'a 74px torna la cornice completa (miniature del Negozio)');
         t.assert(esito.grande.nome && esito.grande.stelle && esito.grande.riga,
             'una carta grande ha la cornice completa: ' + JSON.stringify(esito.grande));
-        t.assert(vicino(esito.grande.raggio, 160 * 0.03), 'la carta grande ha l\'angolo proporzionale (3% di 160px), trovato ' + esito.grande.raggio);
+        t.assert(vicino(esito.grande.raggio, 160 * 0.014), 'la carta grande ha l\'angolo proporzionale (1,4% di 160px), trovato ' + esito.grande.raggio);
         t.assert(esito.piccola.sfondo && esito.grande.sfondo, 'il corpo colorato della carta (::before) si vede a ogni misura');
-        t.assert(vicino(esito.dorsoPiccolo.raggio, 58 * 0.03), 'la cornice esterna del dorso piccolo segue lo stesso raggio proporzionale, trovato ' + esito.dorsoPiccolo.raggio);
+        t.assert(vicino(esito.dorsoPiccolo.raggio, Math.max(1, 58 * 0.014)), 'la cornice esterna del dorso piccolo segue lo stesso raggio proporzionale, trovato ' + esito.dorsoPiccolo.raggio);
         t.assert(esito.dorsoPiccolo.raggioRetro === '2px', 'il riquadro marrone del dorso piccolo deve avere raggio 2px');
         [esito.dorsoPiccolo, esito.dorsoGrande].forEach((dorso) => {
             t.assert(dorso.coloreEmblemaRetro === 'rgb(29, 29, 29)' && dorso.immagineEmblemaRetro === 'none',

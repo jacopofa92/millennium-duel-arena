@@ -4074,6 +4074,8 @@ priorità o richiedono un refactor ampio):
 
 1.4.180 (cache v489): **la cornice interna (`.card-frame`) non e' piu' piu' tonda dei box che contiene** (segnalato sul telefono, scheda carta grande: dopo aver ridotto i raggi dei box la cornice, rimasta al 3%, risultava piu' smussata di nome, illustrazione, tipo e ATK/DEF). Ora `border-radius: calc(var(--box-raggio) * 1.25)`: appena sopra i box, concentrica. Scala dei raggi a 430px: guscio 12,9 (3%) > cornice 7,5 > titolo/illustrazione 6,0 (1,4%) > tipo/ATK-DEF 3,0 (0,7%). Il guscio esterno resta al 3%. Suite completa non eseguita (spec carta-compatta verde).
 
+1.4.181 (cache v490): **un solo raggio per guscio, cornice e box interni** (l'utente: lo smussamento dei box interni va adottato anche per il bordo interno ed esterno). `--card-raggio` (guscio esterno `::before` e scansione a piena carta) passa dal 3% all'**1,4%** della larghezza (min 1px), e `.card-frame` usa `var(--box-raggio)` (1,4%) senza il `* 1.25` di 1.4.180. Titolo e illustrazione restano 1,4%; **tipo e ATK/DEF restano piu' piccoli (0,7%, `--barra-raggio`)** perche' sono barre basse. A 430px: guscio, cornice, titolo e arte 6,0px, tipo/stat 3,0px. Il contenitore della schermata premio (`card-drop-animation.css`) usa lo stesso 1,4%. Spec `carta-compatta-per-misura` aggiornato a 1,4%. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

@@ -42,7 +42,7 @@
 @keyframes cdropArrive { 0% { opacity:0; transform:translate3d(0,72px,-360px) rotateY(-360deg) rotateX(18deg) scale(.48); } 72% { opacity:1; transform:translate3d(0,-7px,18px) rotateY(8deg) rotateX(-2deg) scale(1.035); } 100% { opacity:1; transform:translate3d(0,0,0) rotateY(0) rotateX(0) scale(1); } }
 @keyframes cdropFloat { 0%,100% { transform:translate3d(0,0,0); } 50% { transform:translate3d(0,-6px,0); } }
 .cdrop-card::after { content:''; position:absolute; inset:-5%; border-radius:12px; z-index:-1; background:radial-gradient(circle,var(--drop-soft),transparent 70%); opacity:.5; }
-.cdrop-card-back, .cdrop-card-front { position:absolute; inset:0; backface-visibility:hidden; border-radius: max(1px, calc(var(--carta-premio) * 0.03)); overflow:hidden; }   /* era 8px fissi: piu' tondo della carta che contiene (1.4.177) */
+.cdrop-card-back, .cdrop-card-front { position:absolute; inset:0; backface-visibility:hidden; border-radius: max(1px, calc(var(--carta-premio) * 0.014)); overflow:hidden; }   /* era 8px fissi: piu' tondo della carta che contiene (1.4.177) */
 .cdrop-card-back { transform:rotateY(180deg); }
 .cdrop-card-front { background:#17131d; box-shadow:0 18px 38px rgba(0,0,0,.72),0 0 18px var(--drop-soft); }
 .cdrop-revealed .cdrop-card-front { animation:cdropFloat 4s ease-in-out infinite; }

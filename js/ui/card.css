@@ -170,7 +170,7 @@
        stessa carta era tonda in Cartoteca e quasi squadrata nel duello. --card-w e' la stessa variabile da cui .card prende la larghezza.
        Dove la larghezza non viene da --card-w (effetti a tutto schermo) vale il ripiego di 100px, cioe' 3px.
        Lo leggono il corpo (::before) e l'illustrazione a piena carta. */
-    --card-raggio: max(1px, calc(var(--card-w, 100px) * 0.03));
+    --card-raggio: max(1px, calc(var(--card-w, 100px) * 0.014));   /* 1.4% come i box interni (1.4.181: erano il 3%) */
     /* Raggio dei RIQUADRI INTERNI (nome, illustrazione, tipo, ATK/DEF): la meta' del guscio. Con il 3% erano ancora troppo smussati (1.4.178). */
     --box-raggio: max(1px, calc(var(--card-w, 100px) * 0.014));
     /* Raggio delle BARRE BASSE (tipo, ATK/DEF): essendo strette, a parita' di raggio la curva occupa piu' altezza e si nota di piu'. */
@@ -286,7 +286,7 @@
     display: flex;
     flex-direction: column;
     gap: 1.4cqw;
-    border-radius: calc(var(--box-raggio) * 1.25);   /* appena sopra i box che contiene: concentrica, mai piu' tonda di loro (1.4.180) */
+    border-radius: var(--box-raggio);   /* lo stesso dei box che contiene (1.4.181) */
     border: 1px solid rgba(255,255,255,0.28);
     background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(0,0,0,0.16));
     position: relative;
