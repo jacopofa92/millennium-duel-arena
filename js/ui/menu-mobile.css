@@ -237,3 +237,7 @@ body.ha-tab-bar .cartoteca-filters { top: 0 !important; }
 .mm-gemma--mi { background: linear-gradient(135deg, #e6c8ff, #8a4fd1); box-shadow: 0 0 8px rgba(190, 140, 255, 0.55); }
 .mm-titolo-giocatore { font-weight: 800; font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; color: #f7d774; text-shadow: 0 0 10px rgba(247, 215, 116, 0.35); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 @media (prefers-reduced-motion: reduce) { .mm-slide { transition: none; } }
+
+/* Le icone delle valute sono le STESSE del Profilo (profile-hero.js: coin, star, map, eye), non piu' le gemme disegnate qui. */
+.mm-vi { display: inline-grid; place-items: center; width: 1.25rem; height: 1.25rem; color: #f7d774; filter: drop-shadow(0 0 4px rgba(247, 215, 116, 0.35)); }
+.mm-vi svg { width: 100%; height: 100%; }

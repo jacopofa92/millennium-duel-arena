@@ -130,7 +130,7 @@
             const c = window.SaveManager.getCurrency(); cr = c.credits || 0; st = c.starChips || 0; lo = c.locatorCards || 0; mi = c.millenniumCards || 0;
         } catch (e) { /* noop */ }
         try { if (window.ProfileHero) titolo = window.ProfileHero.calcola(window.SaveManager.load()).titolo || ''; } catch (e) { /* il titolo e' un di piu' */ }
-        const fmt = (n) => (n >= 1e6 ? (n / 1e6).toFixed(1).replace('.0', '') + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'k' : String(n));
+        const fmt = (n) => (n >= 1e7 ? Math.round(n / 1e6) + 'M' : String(n));
         lista.innerHTML = '';
         lista.className = 'menu-list mm-lista';
         const testa = document.createElement('div');
@@ -139,10 +139,10 @@
             // A ROTAZIONE (ROTAZIONE_MS): Crediti e Stelle, poi Carte Locazione e Carte del Millennio, poi il titolo del giocatore. Le tre schermate
             // stanno una SOPRA l'altra nella stessa cella (grid), cosi' il box non cambia mai larghezza e non salta nulla.
             + '<div class="mm-valute">'
-            + `<div class="mm-slide is-on"><span class="mm-valuta" title="Crediti"><i class="mm-gemma mm-gemma--cr"></i>${fmt(cr)}</span>`
-            + `<span class="mm-valuta" title="Stelle"><i class="mm-gemma mm-gemma--st"></i>${fmt(st)}</span></div>`
-            + `<div class="mm-slide"><span class="mm-valuta" title="Carte Locazione"><i class="mm-gemma mm-gemma--lo"></i>${fmt(lo)}</span>`
-            + `<span class="mm-valuta" title="Carte del Millennio"><i class="mm-gemma mm-gemma--mi"></i>${fmt(mi)}</span></div>`
+            + `<div class="mm-slide is-on"><span class="mm-valuta" title="Crediti"><span class="mm-vi" data-icon="coin"></span>${fmt(cr)}</span>`
+            + `<span class="mm-valuta" title="Stelle"><span class="mm-vi" data-icon="star"></span>${fmt(st)}</span></div>`
+            + `<div class="mm-slide"><span class="mm-valuta" title="Carte Locazione"><span class="mm-vi" data-icon="map"></span>${fmt(lo)}</span>`
+            + `<span class="mm-valuta" title="Carte del Millennio"><span class="mm-vi" data-icon="eye"></span>${fmt(mi)}</span></div>`
             + (titolo ? `<div class="mm-slide"><span class="mm-titolo-giocatore">${esc(titolo)}</span></div>` : '')
             + '</div>';
         lista.appendChild(testa);
