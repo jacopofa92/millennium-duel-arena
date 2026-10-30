@@ -219,9 +219,9 @@ void main(){
         // L'Occhio e' ORO SCURO, QUASI NERO (richiesta dell'utente: col metallo lucido i riflessi lo facevano sembrare bianco).
         // Colore scuro, superficie opaca (niente specchio) e, piu' sotto, niente riflessi ne' luce frontale su di lui.
         scuro=smoothstep(.0,.22,rilievo);
-        alb=mix(alb,vec3(.1,.058,.018),scuro);
+        alb=mix(alb,vec3(.27,.155,.04),scuro);
         rugosita=mix(rugosita,.3,scuro);
-        emissione=cresta*acceso*.16;
+        emissione=cresta*acceso*.3;
         n=normalize(n+rugosita*(vec3(vnoise(p.xy*60.),vnoise(p.yz*60.),vnoise(p.zx*60.))-.5));
         emC=vec3(.6,.28,.05);   // la brace dell'avanzamento resta ambra scura: mai il bianco-giallo di prima
       } else {
@@ -232,7 +232,7 @@ void main(){
       float nv=max(dot(n,vdir),0.);
       vec3 rf=reflect(dd,n);
       float fres=pow(1.-nv,4.);
-      vec3 F=(alb+(1.-alb)*fres*.8)*(1.-.9*scuro);
+      vec3 F=(alb+(1.-alb)*fres*.8)*(1.-.55*scuro);
       // occlusione ambientale: tre campioni lungo la normale
       float ao=1.;
       for(int k=1;k<=3;k++){ float h=.045*float(k); ao-=(h-map(p+n*h))*(.9/float(k)); }
@@ -240,8 +240,8 @@ void main(){
       vec3 luce=normalize(vec3(-.45,.75,.55));
       float dif=max(dot(n,luce),0.);
       float spec=pow(max(dot(rf,luce),0.),48.)*(1.-rugosita*3.);
-      vec3 c=env(rf)*F*1.2*ao + alb*(.14+.12*n.y+.42*dif)*ao + vec3(1.,.9,.7)*spec*.55*(1.-.92*scuro);
-      c+=oro*vec3(1.,.82,.5)*pow(nv,1.4)*.5*ao*(1.-.92*scuro);     // una luce frontale: le facce che guardano in basso restano oro, non marrone
+      vec3 c=env(rf)*F*1.2*ao + alb*(.14+.12*n.y+.42*dif)*ao + vec3(1.,.9,.7)*spec*.55*(1.-.7*scuro);
+      c+=oro*vec3(1.,.82,.5)*pow(nv,1.4)*.5*ao*(1.-.7*scuro);     // una luce frontale: le facce che guardano in basso restano oro, non marrone
       c+=vec3(.5,.62,1.)*pow(1.-nv,3.)*.07*ao*(1.-scuro);   // un filo freddo sul bordo
       c*=mix(.6,1.,smoothstep(0.,.3,nv));           // a raso la normale non e' affidabile: niente puntini bianchi sulla sagoma
       c=min(c,vec3(2.2));
