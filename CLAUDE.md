@@ -4062,6 +4062,8 @@ priorità o richiedono un refactor ampio):
 
 1.4.174 (cache v483): **raggio degli angoli delle carte PROPORZIONALE alla larghezza** (`js/ui/card.css`, `--card-raggio: max(1px, calc(var(--card-w, 100px) * 0.03))`). Prima erano pixel fissi per dispositivo e misura (6px telefono, 2px mouse via `@media (pointer: fine)`, 1px carta compatta, 3px dorso compatto), quindi la stessa carta era tonda in Cartoteca/Negozio su telefono e quasi squadrata nel duello e su desktop. Ora 3% a ogni misura e dispositivo (82px -> 2,5px, 168px -> 5px); tolte la regola per puntatore e quelle della carta compatta; la scansione a piena carta usa lo stesso raggio (prima `max(4px, ...)`). Per cambiare la morbidezza basta lo 0,03. **Il riquadro dell'illustrazione e la cornice interna restano a 3px fissi** (le carte compatte hanno l'arte ad angoli vivi): non proporzionati, da rivedere se si vuole rifinire. Aggiornato lo spec `carta-compatta-per-misura` (raggio proporzionale invece di 1px/3px). Misurato su Cartoteca telefono e desktop. Suite completa non eseguita.
 
+1.4.175 (cache v484): anche i RIQUADRI INTERNI della carta (cornice `.card-frame`, nome, illustrazione, riga del tipo, statistiche) usano ora `var(--card-raggio)` al posto dei 3px fissi: guscio e riquadri hanno lo stesso raggio proporzionale (3% della larghezza). Le carte compatte tengono l'arte ad angoli vivi. Il dorso (`.card-back-frame`) aveva gia' un raggio in `cqw`. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**
