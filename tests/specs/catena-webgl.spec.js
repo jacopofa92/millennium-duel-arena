@@ -106,6 +106,21 @@ module.exports = {
                 return carte.map((c) => c.style.zIndex);
             });
             assert(ris.length === 3 && ris[2] === '5', `La carta in risoluzione passa davanti alle altre: ${JSON.stringify(ris)}`);
+            // In risoluzione la scena si fa da parte (striscia compatta, niente velo): gli effetti sotto restano visibili.
+            await page.waitForTimeout(700);
+            const compatta = await page.evaluate(() => {
+                const root = document.getElementById('catenaGL');
+                const r = root.getBoundingClientRect();
+                return { classe: root.classList.contains('cgl-compatta'), velo: getComputedStyle(root.querySelector('.cgl-buio')).opacity, larg: Math.round(r.width), alta: Math.round(r.height), schermo: innerWidth };
+            });
+            assert(compatta.classe && Number(compatta.velo) === 0 && compatta.larg < compatta.schermo * 0.4, `In risoluzione la scena e' compatta e senza velo: ${JSON.stringify(compatta)}`);
+            // Una nuova risposta (Link aggiunto, nessuno in risoluzione) la riporta a tutto schermo
+            await page.evaluate(() => { gameState.chain.links = window.__links.slice(0, 3); renderChainStack(); });
+            await page.waitForTimeout(700);
+            const piena = await page.evaluate(() => { const root = document.getElementById('catenaGL'); return { classe: root.classList.contains('cgl-compatta'), larg: Math.round(root.getBoundingClientRect().width), schermo: innerWidth }; });
+            assert(!piena.classe && piena.larg > piena.schermo * 0.9, `Con la Catena in costruzione la scena e' a tutto schermo: ${JSON.stringify(piena)}`);
+            await page.evaluate(() => { const l = window.__links[2]; gameState.chain.links = window.__links.slice(0, 2); renderChainStack(l); });
+            await page.waitForTimeout(300);
 
             // --- Catena finita: la scena si smonta e il contesto viene rilasciato
             await page.evaluate(() => { gameState.chain = { active: false, links: [] }; renderChainStack(); });

@@ -227,7 +227,13 @@ void main(){
         const s = document.createElement('style');
         s.id = 'catenaGLStile';
         s.textContent = `
-#catenaGL{position:fixed;inset:0;z-index:${Z_ROOT};pointer-events:none;overflow:hidden;transition:opacity ${DUR_CHIUSURA_MS}ms ease}
+#catenaGL{position:fixed;inset:0;z-index:${Z_ROOT};pointer-events:none;overflow:hidden;transform-origin:0 50%;
+  transition:opacity ${DUR_CHIUSURA_MS}ms ease,transform .55s cubic-bezier(.2,.8,.2,1)}
+/* RISOLUZIONE: la scena si riduce a una striscia sul bordo sinistro e il velo scuro sparisce, cosi' gli effetti che si risolvono
+   sotto (distruzioni, danni, Evocazioni) restano TUTTI visibili. Durante la costruzione della Catena torna a tutto schermo. */
+#catenaGL.cgl-compatta{transform:translateX(4px) scale(.26)}
+#catenaGL.cgl-compatta .cgl-buio{opacity:0!important}
+#catenaGL.cgl-compatta .cgl-titolo{display:none}
 #catenaGL canvas{position:absolute;left:0;top:0;width:100%;height:100%}
 .cgl-buio{position:absolute;inset:0;transition:opacity .3s ease;
   background:radial-gradient(ellipse at 50% 50%,rgba(3,8,20,.5) 0%,rgba(2,5,14,.78) 62%,rgba(1,3,9,.9) 100%)}
@@ -575,6 +581,8 @@ void main(){
             const v = st.voci.find((x) => x.link === resolvingLink);
             if (v && !v.risolvendo && !v.fuori) risolvi(v);
         }
+        // In risoluzione la scena si fa da parte (vedi .cgl-compatta nello stile): niente piu' effetti nascosti dalla Catena.
+        st.root.classList.toggle('cgl-compatta', !!resolvingLink);
         return true;
     }
 
