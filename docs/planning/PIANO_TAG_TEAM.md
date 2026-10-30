@@ -231,10 +231,10 @@ Agganci nel motore, da approvare (elenco in sezione 6): A1, A2, A3.
 
 | # | Domanda | Proposta |
 |---|---------|----------|
-| D14 | Zona Bandite: condivisa come il Cimitero, o per membro? | condivisa |
-| D15 | Un membro arriva a 0 a metà turno avversario (D7): il compagno entra subito o al prossimo turno del lato? | subito: davanti c'è sempre un membro vivo |
-| D16 | Effetti che colpiscono "un giocatore" per più turni (salta la pescata, Ondata Gelida, salta il turno): valgono per il lato o per il membro colpito? | per il lato (nessun lavoro in più) |
-| D17 | Mazzo vuoto di un membro | eliminato come a 0 Life Point |
+| D14 | DECISA: zona Bandite condivisa come il Cimitero | - |
+| D15 | DECISA: se un membro arriva a 0 a metà turno avversario (D7) il compagno entra SUBITO, così davanti c'è sempre un membro vivo | - |
+| D16 | Effetti che colpiscono "un giocatore" per più turni (salta la pescata, Ondata Gelida, salta il turno): valgono per il lato o per il membro colpito? | DECISA dall'autore: valgono solo per il MEMBRO colpito, non per il lato. Conseguenza: le mappe "per posto" che durano più turni (salta la pescata, Ondata Gelida, zone bloccate, ecc.) vanno messe da parte e ripristinate insieme al membro, quindi anche loro entrano nello scambio. Elenco completo da fare con uno spec. Confermato dall'autore. Per "salta il tuo prossimo turno" il turno del membro colpito è PERSO (come nel 1v1): il compagno non gioca al suo posto |
+| D17 | DECISA: Mazzo vuoto di un membro = eliminato come a 0 Life Point | - |
 
 ### Verdetto
 
@@ -266,7 +266,8 @@ Il tag non deve cambiare nessun'altra modalità. Prima di ogni merge:
 ## 6. Elenco degli agganci nel motore (da compilare)
 
 Ogni aggancio deve avere: file e funzione, motivo, perché è opt-in, quale spec lo copre.
-Stato: **proposti dalla fase 0, nessuno approvato né scritto.**
+Stato: **approvati dall'autore il 2026-10-30, nessuno ancora scritto.** A1 e A2 con aggancio nel motore
+(non le alternative senza aggancio); A3 approvato.
 
 - **A1, evento di regola "inizio turno".** `js/engine/fasi.js`, `changeTurn`, accanto all'emissione di
   `orologio` (riga 624); più una voce nell'elenco `EVENTI` di `js/engine/eventi-duello.js`. Motivo: la
@@ -294,6 +295,7 @@ Stato: **proposti dalla fase 0, nessuno approvato né scritto.**
 
 ## 8. Diario
 
+- 2026-10-30: l'autore approva A1, A2 (con aggancio) e A3; chiude D14-D17. Fase 0 CHIUSA, nessuna decisione aperta.
 - 2026-10-30: fase 0 completata (sezione 3bis). Proposti gli agganci A1-A3; nate D14-D17.
 - 2026-10-30: l'autore propone la scelta del bersaglio (membro avversario) a inizio turno; compatibile con la lettura A.
 - 2026-10-30: l'autore chiude D1-D6 (vedi sezione 2). Nascono D7-D9.
