@@ -4064,6 +4064,8 @@ priorità o richiedono un refactor ampio):
 
 1.4.175 (cache v484): anche i RIQUADRI INTERNI della carta (cornice `.card-frame`, nome, illustrazione, riga del tipo, statistiche) usano ora `var(--card-raggio)` al posto dei 3px fissi: guscio e riquadri hanno lo stesso raggio proporzionale (3% della larghezza). Le carte compatte tengono l'arte ad angoli vivi. Il dorso (`.card-back-frame`) aveva gia' un raggio in `cqw`. Suite completa non eseguita.
 
+1.4.176 (cache v485): **spazio tra il margine della carta e i box interni ridotto e reso proporzionale** (richiesta dell'utente; le carte compatte restano com'erano). In `card.css`: padding del guscio `max(3px - clamp(0px, (--card-w - 72px) * 1000, 1.5px), --card-w * 0.016)` (3px fissi fino a 72px, poi 1,6% con minimo 1,5px; il clamp e' un interruttore che evita di dividere lunghezze) e padding di `.card-frame` da 2cqw a 1cqw. Misurato (margine -> box, % della larghezza): 74px 7,0% -> 4,3%; 100px 5,9% -> 3,5%; 160px 4,4% -> 3,2%; 240px 3,6% -> 3,0%; sotto i 72px invariato (2,3px). Lo spazio tra titolo e illustrazione non e' stato toccato. Spec `carta-compatta-per-misura` verde; guardato lo schermo solo su una prova isolata, non sul duello. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**
