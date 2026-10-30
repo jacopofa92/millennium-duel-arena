@@ -218,7 +218,7 @@ void main(){
         acceso=max(acceso,ease(uOut*2.));
         // L'Occhio e' ORO SCURO, QUASI NERO (richiesta dell'utente: col metallo lucido i riflessi lo facevano sembrare bianco).
         // Colore scuro, superficie opaca (niente specchio) e, piu' sotto, niente riflessi ne' luce frontale su di lui.
-        scuro=smoothstep(.0,.22,rilievo);
+        scuro=smoothstep(.36,.55,rilievo);   // solo le LINEE incise: l'interno dell'occhio (il piano a .3) resta oro come il resto, non colorato
         alb=mix(alb,vec3(.27,.155,.04),scuro);
         rugosita=mix(rugosita,.3,scuro);
         emissione=cresta*acceso*.3;

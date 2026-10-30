@@ -106,7 +106,7 @@
                  un'ombra scura appena spostata in basso a destra, il corpo in oro chiaro, e un filo di luce in alto a sinistra. -->
             <defs>
                 <path id="${g('sopracciglio')}" fill="none" d="M-30,-31 Q0,-44 32,-30"/>
-                <path id="${g('palpebra')}" d="M-28,-17 Q0,-38 28,-17 Q0,-1 -28,-17 Z"/>
+                <path id="${g('palpebra')}" fill="none" d="M-28,-17 Q0,-38 28,-17 Q0,-1 -28,-17 Z"/>
                 <circle id="${g('iride')}" fill="none" cx="0" cy="-17" r="7.5"/>
                 <circle id="${g('pupilla')}" stroke="none" cx="0" cy="-17" r="3.2"/>
                 <!-- La "lacrima" e la spirale del Wedjat, sotto l'occhio. -->
