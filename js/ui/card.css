@@ -192,9 +192,9 @@
        illustrazione di un paio di pixel — misurato. Il corpo (::before,
        assoluto) copre comunque anche il padding. */
     /* Fascia di cornice (1.4.176, l'utente voleva ridurre lo spazio tra il margine e i box): 3px FISSI fino a 72px di larghezza (la carta compatta
-       li presuppone), poi 1,6% della larghezza con minimo 1,5px. Il termine clamp() e' un interruttore: (larghezza - 72px) * 1000 va da 0 a 1,5px
+       li presuppone), poi 1,2% della larghezza con minimo 1,5px. Il termine clamp() e' un interruttore: (larghezza - 72px) * 1000 va da 0 a 1,5px
        appena si supera 72px, senza dividere lunghezze (che il CSS non permette). */
-    padding: max(calc(3px - clamp(0px, (var(--card-w, 100px) - 72px) * 1000, 1.5px)), calc(var(--card-w, 100px) * 0.016));
+    padding: max(calc(3px - clamp(0px, (var(--card-w, 100px) - 72px) * 1000, 1.5px)), calc(var(--card-w, 100px) * 0.012));
     border: 0;
     touch-action: none;
 }
@@ -286,7 +286,7 @@
     border: 1px solid rgba(255,255,255,0.28);
     background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(0,0,0,0.16));
     position: relative;
-    padding: 1cqw;   /* era 2cqw (1.4.176) */
+    padding: 0.6cqw;   /* era 2cqw; 1cqw in 1.4.176 (1.4.177) */
 }
 
 /* --- Barra del nome + badge attributo/tipo (in alto) --- */
