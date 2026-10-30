@@ -13,7 +13,7 @@
 /* Il logo grande resta, ma piccolo: e' la firma del gioco, non deve rubare lo spazio ai comandi. */
 .menu-shell--app .menu-logo {
     flex: 0 0 auto;
-    margin-top: calc(env(safe-area-inset-top, 0px) + 6px);
+    margin-top: calc(var(--mm-fotocamera, 0px) + 6px);
     height: clamp(84px, 15dvh, 128px);
     width: 100%;
     display: flex;
@@ -273,3 +273,12 @@ body.ha-tab-bar .cartoteca-filters { top: 0 !important; }
 
 /* A duello Multiplayer avviato (l'arena sta nella stessa pagina della sala) la barra in basso non c'e': il duello ha la sua interfaccia. */
 body.mp-in-duello .mm-barra, body.mp-in-duello .mm-spazio { display: none !important; }
+
+/* ---- FOTOCAMERA FRONTALE (1.4.185): su telefono il logo passava sopra il foro. La viewport non ha viewport-fit=cover, quindi
+   env(safe-area-inset-top) vale 0 anche nell'APK a tutto schermo: serve un minimo fisso. Solo touch in verticale (in orizzontale il logo
+   e' nascosto). Il box del profilo scende con il logo (margine sopra) cosi' non resta schiacciato sotto di lui. ---- */
+@media (pointer: coarse) and (orientation: portrait) {
+    :root { --mm-fotocamera: max(env(safe-area-inset-top, 0px), 30px); }
+    .menu-shell--app .menu-logo { height: clamp(96px, 15.5dvh, 132px); }
+    .menu-shell--app .mm-testa { margin-top: 12px; }
+}

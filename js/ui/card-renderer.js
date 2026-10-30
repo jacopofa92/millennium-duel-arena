@@ -169,11 +169,11 @@
         // distinti invece che come due qualità della stessa carta.
         const fazione = fazioneEtichetta(card);
         const coda = fazione ? ` · ${fazione}` : '';
-        if (card.type === 'monster') return `[${card.race || terms.monsterSingular}${coda}]`;
+        if (card.type === 'monster') return `${card.race || terms.monsterSingular}${coda}`;
         if (card.type === 'spell' || card.type === 'trap') {
             const base = card.type === 'spell' ? terms.spellSingular : terms.trapSingular;
             const suffix = NOTABLE_SUBTYPE_SUFFIX[card.type][card.subtype];
-            return suffix ? `[${base} ${suffix}${coda}]` : `[${base}${coda}]`;
+            return suffix ? `${base} ${suffix}${coda}` : `${base}${coda}`;
         }
         return '';
     }
