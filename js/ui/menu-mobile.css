@@ -1,0 +1,154 @@
+/* menu-mobile.css — la veste "app" del menu principale, SOLO su telefono (vedi js/ui/menu-mobile.js).
+   Tutto sta sotto .menu-shell--app, che il modulo mette solo se `(pointer: coarse) and (max-width: 1000px)`: senza quella classe
+   nessuna regola di questo file si applica, quindi il menu desktop non cambia. */
+
+.menu-shell--app {
+    justify-content: flex-start;
+    gap: 0;
+    padding: 0;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+}
+/* Il logo grande resta, ma piccolo: e' la firma del gioco, non deve rubare lo spazio ai comandi. */
+.menu-shell--app .menu-logo {
+    flex: 0 0 auto;
+    margin-top: calc(env(safe-area-inset-top, 0px) + 6px);
+    height: clamp(84px, 15dvh, 128px);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: visible;
+    pointer-events: none;
+}
+.menu-shell--app .menu-logo h1 { transform: scale(0.5); transform-origin: top center; margin: 0; }
+.menu-shell--app #menuStatoSalvataggio,
+.menu-shell--app .menu-footer { display: none; }
+
+.menu-shell--app .mm-lista {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* ---- barra giocatore ---- */
+.mm-testa {
+    flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px;
+    margin: 4px 14px 0;
+    padding: 8px 12px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(34, 28, 16, 0.82), rgba(14, 12, 8, 0.82));
+    border: 1px solid rgba(247, 215, 116, 0.28);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+.mm-giocatore { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.mm-avatar {
+    flex: 0 0 auto; width: 32px; height: 32px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 1rem;
+    background: radial-gradient(circle at 35% 30%, #5a4510, #1b1407);
+    border: 1px solid rgba(247, 215, 116, 0.55);
+    color: #f7d774;
+}
+.mm-nome {
+    font-weight: 700; font-size: 0.95rem; letter-spacing: 0.02em; color: #f4e7c4;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mm-valute { display: flex; gap: 12px; flex: 0 0 auto; }
+.mm-valuta { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.9rem; color: #fff3c4; font-variant-numeric: tabular-nums; }
+.mm-gemma { width: 13px; height: 13px; border-radius: 3px; transform: rotate(45deg); display: inline-block; }
+.mm-gemma--cr { background: linear-gradient(135deg, #ffe08a, #d79a1c); box-shadow: 0 0 8px rgba(247, 215, 116, 0.6); }
+.mm-gemma--st { background: linear-gradient(135deg, #bfe3ff, #4a8fd9); box-shadow: 0 0 8px rgba(120, 190, 255, 0.6); }
+
+/* ---- contenuto ---- */
+.mm-corpo {
+    flex: 1 1 auto; min-height: 0;
+    overflow-y: auto; overflow-x: hidden;
+    -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+    padding: 10px 14px calc(78px + env(safe-area-inset-bottom, 0px));
+    display: flex; flex-direction: column; gap: 14px;
+}
+.mm-titolo {
+    margin: 4px 2px 0; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase;
+    color: #d9c79a; text-shadow: 0 0 10px rgba(247, 215, 116, 0.3);
+}
+.mm-sezione { display: flex; flex-direction: column; gap: 8px; }
+.mm-sezione-titolo {
+    display: flex; align-items: center; gap: 8px; margin: 0 2px;
+    font-size: 0.74rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #f7d774;
+}
+.mm-sezione-titolo::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(247, 215, 116, 0.5), transparent); }
+.mm-sezione-titolo > span { font-size: 0.9rem; opacity: 0.9; }
+
+.mm-griglia { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.mm-griglia--una { grid-template-columns: 1fr; }
+
+.mm-tessera {
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 8px;
+    min-height: 84px; padding: 12px 12px 11px; text-align: left;
+    border-radius: 14px; cursor: pointer; color: #f4e7c4;
+    background: linear-gradient(160deg, rgba(40, 33, 18, 0.88), rgba(14, 12, 9, 0.9));
+    border: 1px solid rgba(247, 215, 116, 0.26);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 240, 190, 0.08);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+}
+.mm-tessera::after {   /* un riflesso dorato che sale dall'angolo: da' profondita' senza immagini */
+    content: ''; position: absolute; right: -30px; bottom: -34px; width: 110px; height: 110px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(247, 215, 116, 0.16), transparent 68%); pointer-events: none;
+}
+.mm-tessera:active { transform: scale(0.97); border-color: rgba(247, 215, 116, 0.7); background: linear-gradient(160deg, rgba(64, 50, 20, 0.92), rgba(24, 18, 9, 0.92)); }
+.mm-tessera-icona { font-size: 1.5rem; line-height: 1; color: #f7d774; filter: drop-shadow(0 0 6px rgba(247, 215, 116, 0.35)); }
+.mm-tessera-testi { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.mm-tessera-nome { font-weight: 800; font-size: 0.98rem; line-height: 1.15; letter-spacing: 0.01em; }
+.mm-tessera-sotto { font-size: 0.72rem; line-height: 1.25; color: #bcae86; }
+.mm-tessera--larga { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: flex-start; gap: 14px; min-height: 84px; }
+.mm-tessera--larga .mm-tessera-icona { font-size: 2rem; }
+.mm-tessera--larga .mm-tessera-nome { font-size: 1.12rem; }
+.mm-tessera--larga { background: linear-gradient(120deg, rgba(86, 62, 14, 0.9), rgba(26, 19, 8, 0.92) 70%); border-color: rgba(247, 215, 116, 0.5); }
+.mm-griglia--una .mm-tessera { flex-direction: row; align-items: center; justify-content: flex-start; gap: 14px; min-height: 64px; }
+.mm-tessera--bloccata { opacity: 0.55; filter: saturate(0.5); }
+.mm-tessera--esci { margin-top: 6px; flex-direction: row; align-items: center; justify-content: flex-start; gap: 14px; min-height: 56px; border-color: rgba(214, 90, 80, 0.45); }
+.mm-versione { margin: 4px 0 0; text-align: center; font-size: 0.7rem; color: #8a7d5b; letter-spacing: 0.08em; }
+
+/* ---- barra delle tab ---- */
+.mm-barra {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+    display: flex; justify-content: space-around; align-items: stretch;
+    padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(180deg, rgba(18, 15, 9, 0.9), rgba(8, 7, 5, 0.97));
+    border-top: 1px solid rgba(247, 215, 116, 0.35);
+    box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.mm-tab {
+    flex: 1 1 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    min-height: 54px; border: 0; background: transparent; cursor: pointer; border-radius: 12px; color: #9d9071;
+    -webkit-tap-highlight-color: transparent; position: relative;
+}
+.mm-tab-icona { font-size: 1.35rem; line-height: 1; transition: transform 0.15s ease, color 0.15s ease; }
+.mm-tab-nome { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.mm-tab--attiva { color: #f7d774; }
+.mm-tab--attiva .mm-tab-icona { transform: translateY(-2px) scale(1.1); filter: drop-shadow(0 0 8px rgba(247, 215, 116, 0.6)); }
+.mm-tab--attiva::before { content: ''; position: absolute; top: -7px; width: 28px; height: 3px; border-radius: 0 0 3px 3px; background: #f7d774; box-shadow: 0 0 10px rgba(247, 215, 116, 0.8); }
+
+/* ---- telefono in orizzontale: poca altezza, il logo cede il posto ---- */
+@media (max-height: 520px) {
+    .menu-shell--app .menu-logo { display: none; }
+    .menu-shell--app { padding-top: env(safe-area-inset-top, 0px); }
+    .mm-testa { margin-top: 6px; }
+    .mm-barra { padding-top: 3px; padding-bottom: calc(3px + env(safe-area-inset-bottom, 0px)); }
+    .mm-tab { min-height: 42px; flex-direction: row; gap: 6px; }
+    .mm-tab-icona { font-size: 1.1rem; }
+    .mm-corpo { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px)); }
+    .mm-griglia { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .mm-tessera--larga { grid-column: span 1; flex-direction: column; align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) { .mm-tessera, .mm-tab-icona { transition: none; } }
