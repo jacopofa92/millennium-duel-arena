@@ -4025,6 +4025,8 @@ priorità o richiedono un refactor ampio):
 
 1.4.155 (cache v464): **Spade Rivelatrici: discesa rifatta con cura** (WebGL, `FS_SPADE`). Origine chiara: un SQUARCIO di luce al bordo alto del terreno di chi subisce, da cui le lame escono PUNTA IN GIU' (prima comparivano tagliate da una maschera). Mentre calano veloci lasciano una SCIA di luce sopra l'elsa che sparisce quando rallentano; all'arrivo: lampo alla punta, onda schiacciata sul piano del campo (ellisse), anello e sette scintille che schizzano e ricadono con la gravita'. Le colonne di luce si fermano alla punta. Resta valido tutto 1.4.154 (solo il terreno di chi subisce). Guardato su desktop a tre istanti con `FX_WEBGL_T`. Non provato sul telefono dopo la modifica. Suite completa non eseguita.
 
+1.4.156 (cache v465): **Provato sul telefono vero** (SM-S928B, Chrome, 411x750, Dettagli "Alti"): Spade Rivelatrici e Piumino delle Arpie a **58 fps** (peggior fotogramma 17 ms). Le Spade scendono solo nel terreno di chi subisce, con squarcio, scia e colpo a terra. Sul Piumino i cinque raggi di 1.4.154 erano troppo spessi e saturi sulla fila Magie/Trappola di un telefono (si sommavano in un blocco bianco): ora spessore 3-4,5 px e lampo piu' piccolo (`(right - left) * 0.14`), cinque sottili strisce di luce. **Insidia di prova**: la scheda gia' aperta tiene il JS vecchio, dopo una modifica va riaperta con un parametro nuovo (`?v=N`) e la morra rifatta. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

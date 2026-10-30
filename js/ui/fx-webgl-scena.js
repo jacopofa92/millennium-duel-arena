@@ -1045,9 +1045,9 @@ float dado(vec2 q,float v){
         const alto = bottom - top;
         for (let k = 0; k < 5; k++) {
             const y = top + alto * (k + 0.5) / 5;
-            s.add(T.LINE, k % 2 ? C.GHIACCIO : C.BIANCO, 0.05 + k * 0.07, 0.7, [left - 60, y, right + 60, y + (k - 2) * 2], 8 + (k % 2) * 2);
+            s.add(T.LINE, k % 2 ? C.GHIACCIO : C.BIANCO, 0.05 + k * 0.07, 0.7, [left - 60, y, right + 60, y + (k - 2) * 2], 3 + (k % 2) * 1.5);
         }
-        s.add(T.FLASH, C.CALDO, 0.25, 0.9, [(left + right) / 2, cy, (right - left) * 0.3, 0]);
+        s.add(T.FLASH, C.CALDO, 0.25, 0.9, [(left + right) / 2, cy, (right - left) * 0.14, 0]);
         [0.2, 0.4, 0.6, 0.8].forEach((f, i) => s.add(T.BURST, C.BIANCO, 0.9 + i * 0.03, 0.8, [lerp(left, right, f), cy, (right - left) * 0.12, -20], i + 1));
         s.add(T.FLASH, C.CALDO, 1.05, 0.5, [(left + right) / 2, cy, (right - left) * 0.4, 0]);
         const imp1 = unaVolta(onImpact); s.dopo(1050, imp1); s.dopo(1570, imp1);
