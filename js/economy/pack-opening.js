@@ -87,6 +87,37 @@
     }
 
     /**
+     * PRECARICAMENTO DELLE ILLUSTRAZIONI (1.4.183). Prima l'<img> di una carta nasceva solo nell'istante in cui la carta compariva in scena,
+     * con loading="lazy" e decodifica asincrona (card-renderer.js): il browser cominciava a scaricarla e decodificarla DOPO, e nel frattempo si
+     * vedeva l'icona segnaposto, poi la dissolvenza da 250ms. Con una rete lenta (o l'APK) l'icona restava a lungo. Ora le illustrazioni di
+     * TUTTE le carte della busta si scaricano e decodificano mentre la busta e' ancora chiusa (e durante lo strappo): quando la carta
+     * compare l'immagine e' gia' in memoria, `img.complete` e' vero e il renderer salta del tutto l'icona (vedi artImg.complete in
+     * createCardElement). Le Image restano in un elenco per non farle raccogliere dal garbage collector prima dell'uso.
+     * Torna una promessa che si risolve quando sono pronte (o fallite: una carta senza immagine non blocca nulla).
+     */
+    const immaginiPrecaricate = [];
+    function precaricaCarte(ids) {
+        const lavori = [];
+        (ids || []).forEach((id) => {
+            const carta = cartaPerId(id);
+            if (!carta || typeof window.getCardImagePath !== 'function') return;
+            const percorso = window.getCardImagePath(carta);
+            if (!percorso) return;
+            const img = new Image();
+            img.decoding = 'async';
+            img.src = percorso;
+            immaginiPrecaricate.push(img);
+            if (immaginiPrecaricate.length > 80) immaginiPrecaricate.shift();
+            lavori.push(typeof img.decode === 'function' ? img.decode().catch(() => {}) : Promise.resolve());
+        });
+        return Promise.all(lavori);
+    }
+
+    /** Aspetta le immagini, ma mai oltre `tetto` ms: su una rete molto lenta si parte comunque (con l'icona) invece di restare fermi. */
+    function attendi(promessa, tetto) {
+        return Promise.race([promessa, new Promise((risolvi) => setTimeout(risolvi, tetto))]);
+    }
+    /**
      * Una carta vera con la cornice del duello. La larghezza arriva da
      * fuori come stringa CSS: chi la usa sa in quale fascia della scena
      * sta, e solo lui può misurarla in modo che non sbordi.
@@ -235,6 +266,9 @@
         // scintille di prima). Si rilascia SEMPRE alla chiusura: su telefono i contesti sono pochi.
         const luce = window.PackOpeningGL ? PackOpeningGL.crea(backdrop) : null;
 
+        // Le illustrazioni di tutte le carte si preparano gia' ora, mentre la busta e' chiusa.
+        const illustrazioniPronte = precaricaCarte(elenco);
+
         let chiuso = false;
         const chiudi = () => {
             if (chiuso) return;
@@ -248,7 +282,7 @@
         };
 
         if (menoMovimento()) {
-            scenaSenzaMovimento(scena, elenco, nuoveSet, chiudi, busta);
+            attendi(illustrazioniPronte, 2500).then(() => scenaSenzaMovimento(scena, elenco, nuoveSet, chiudi, busta));
             return;
         }
 
@@ -274,9 +308,12 @@
             backdrop.appendChild(lampo);
             setTimeout(() => lampo.remove(), 560);
 
+            // Almeno 680ms di strappo; se le illustrazioni non sono ancora pronte si aspetta (al massimo 2,5s) tenendo la busta aperta.
             setTimeout(() => {
-                bustina.remove();
-                sequenza(backdrop, scena, elenco, nuoveSet, chiudi, busta, luce);
+                attendi(illustrazioniPronte, 2500).then(() => {
+                    bustina.remove();
+                    sequenza(backdrop, scena, elenco, nuoveSet, chiudi, busta, luce);
+                });
             }, 680);
         };
 
@@ -481,6 +518,10 @@
      * cerimonia lunga diventerebbe un ostacolo invece di un premio.
      */
     function festeggiaCarta(cardId, origineEl, onDone) {
+        // Illustrazione pronta prima di mostrare la carta (tetto 1,5s): niente icona segnaposto (1.4.183).
+        attendi(precaricaCarte([cardId]), 1500).then(() => festeggiaCartaPronta(cardId, origineEl, onDone));
+    }
+    function festeggiaCartaPronta(cardId, origineEl, onDone) {
         if (menoMovimento()) { if (onDone) onDone(); return; }
         const carta = cartaPerId(cardId);
         if (!carta || typeof window.createCardElement !== 'function') { if (onDone) onDone(); return; }
@@ -536,6 +577,9 @@
      * nel Negozio.
      */
     function festeggiaMazzo(deck, anteprimaIds, onDone) {
+        attendi(precaricaCarte((anteprimaIds || []).slice(0, 5)), 1500).then(() => festeggiaMazzoPronto(deck, anteprimaIds, onDone));
+    }
+    function festeggiaMazzoPronto(deck, anteprimaIds, onDone) {
         const backdrop = el('div', 'po-backdrop');
         const scena = el('div', 'po-scena po-scena-mazzo');
 
