@@ -23,7 +23,7 @@
     const CELLA = 256;                          // lato di una cella dell'atlante (px)
 
     // Il quadrato di ogni lettera in coordinate locali: la lettera sta in 0..1, il resto e' margine per code e volute.
-    const LOC = { x0: -0.35, x1: 1.35, y0: -1.0, y1: 1.3 };
+    const LOC = { x0: -0.2, x1: 1.2, y0: -0.4, y1: 1.2 };
 
     let layer = null;        // il velo scuro (div)
     let testi = null;        // le lettere di ripiego (solo senza WebGL)
@@ -116,21 +116,21 @@ void main(){
   float dens = 0.;
   for (int k = 0; k < 7; k++) {
     float fk = float(k);
-    vec2 pk = p + vec2(0., fk * .052) + w * (amp + fk * .045);
+    vec2 pk = p + vec2(0., fk * .022) + w * (amp + fk * .04);
     vec2 g = glifo(pk);
-    float peso = (k == 0) ? 1. : exp(-fk * .55) * .65;
+    float peso = (k == 0) ? .8 : exp(-fk * .6) * .5;
     dens += (g.x * .75 + g.y * .6) * peso;
   }
   // Rivelazione: la lettera appare scritta dall'alto, con il bordo mosso dalla nebbia
   float rev = smoothstep(0., .22, f * 1.55 - p.y * .75 - w.x * .35);
   dens *= rev;
   // Venature di fumo dentro la forma (nuvole piu' dense e piu' rade)
-  float ven = .35 + 1.15 * fbm(p * 5.5 + vec2(uSeme * 1.7, -t * .45) + w * 2.);
+  float ven = .25 + 1.2 * fbm(p * 5.5 + vec2(uSeme * 1.7, -t * .45) + w * 2.);
   dens *= ven;
   // Respiro lento
   dens *= .88 + .12 * sin(t * 1.3 + uSeme);
   dens = clamp(dens, 0., 1.);
-  float a = smoothstep(.05, .95, dens) * .8;
+  float a = smoothstep(.12, 1.1, dens) * .62;
   // Colore: fumo viola in ombra, quasi bianco-lilla dove e' denso
   vec3 col = mix(vec3(.42, .26, .72), vec3(.96, .90, 1.), smoothstep(.15, 1., dens));
   col += vec3(.25, .10, .45) * (1. - dens) * .35;
@@ -244,7 +244,7 @@ void main(){
         tela = null; gl = null; prog = null; U = null;
     }
 
-    /** Rilegge dove sta ogni carta (rettangolo a schermo) e ci appoggia la lettera: centrata SOPRA la carta. */
+    /** Rilegge dove sta ogni carta (rettangolo a schermo) e ci appoggia la lettera: centrata SULLA carta (sta dentro il suo riquadro: non copre le altre caselle). */
     function posiziona() {
         lettere.forEach((L) => {
             const el = document.querySelector(`#playerFieldBoard [data-uid="${L.uid}"], #botFieldBoard [data-uid="${L.uid}"]`);
@@ -252,10 +252,10 @@ void main(){
             const q = el.getBoundingClientRect();
             if (q.width < 2) { L.visibile = false; return; }
             L.visibile = true;
-            const lato = Math.max(q.width, q.height);
-            L.s = lato * 1.25;
+            const lato = Math.min(q.width, q.height);
+            L.s = lato * 1.1;
             L.x = q.left + q.width / 2;
-            L.y = q.top - q.height * 0.42;
+            L.y = q.top + q.height / 2;
         });
     }
 
