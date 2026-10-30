@@ -387,8 +387,8 @@ float dado(vec2 q,float v){
   vec3 fc=mix(c,vec3(1.),.55);
   vec3 glass=mix(c*.2,c*.7,gy)+vec3(.7,.9,1.)*glint*.8+vec3(.5,.8,1.)*pow(1.-gy,3.)*.25;
   float cp=(1.-smoothstep(0.,.11,crepa(vec2(q.x/A.z*5.,ny*3.))))*smoothstep(.55,.8,u)*inside;
-  vec3 rgb=glass*inside*.9+fc*(frame*.9+bev*.7)+vec3(1.)*cp*1.2;
-  float al=clamp(inside*.42+frame*.9+bev*.6+glint*inside*.5+cp*.9,0.,1.)*fade*smoothstep(0.,.05,u);
+  vec3 rgb=glass*inside*.9*B.w+fc*(frame*.9+bev*.7)+vec3(1.)*cp*1.2;
+  float al=clamp(inside*.42*B.w+frame*.9+bev*.6+glint*inside*.5*B.w+cp*.9,0.,1.)*fade*smoothstep(0.,.05,u);
   s=vec4(rgb*fade*smoothstep(0.,.05,u),al);`;
 
     // TUNNEL (Cilindro Magico): un tunnel visto in prospettiva che RUOTA. Anelli che si allontanano verso il fondo, raggi a
@@ -593,18 +593,24 @@ float dado(vec2 q,float v){
             .filter((s) => !allowed || allowed.has(Number(/** @type {HTMLElement} */ (s).dataset.index))).map((s) => rectDi(s.querySelector('.card'))).filter(Boolean);
         if (!targets.length) return 0;
         const W = innerWidth; const H = innerHeight; const m = Math.min(W, H);
-        const mx = W / 2; const my = attackerOwner === 'player' ? H * 0.37 : H * 0.63;
-        // Lo specchio e' largo quanto serve a coprire i mostri che attaccano, ma mai oltre lo schermo.
-        const xs = targets.map((r) => cen(r).x);
-        const semiL = Math.min(W * 0.4, Math.max(W * 0.22, (Math.max(...xs) - Math.min(...xs)) / 2 + m * 0.14));
-        const semiA = Math.max(30, m * 0.085);
-        // La faccia che guarda gli attaccanti: il bordo verso di loro.
-        const faccia = my + (attackerOwner === 'player' ? 1 : -1) * semiA * 0.55;
-        const s = new Scena();
+        // Lo specchio AVVOLGE TUTTO IL TERRENO del difensore (richiesta dell'utente): il rettangolo che contiene tutte le
+        // sue caselle, con un po' di margine. Il vetro e' trasparente, cosi' le sue carte si vedono attraverso.
+        const difensore = attackerOwner === 'player' ? 'bot' : 'player';
+        const caselleDif = Array.from(document.querySelectorAll(`#${tavolo(difensore)} .field-slot`)).map(rectDi).filter(Boolean);
+        let sx0; let sx1; let sy0; let sy1;
+        if (caselleDif.length) {
+            sx0 = Math.min(...caselleDif.map((r) => r.left)); sx1 = Math.max(...caselleDif.map((r) => r.right));
+            sy0 = Math.min(...caselleDif.map((r) => r.top)); sy1 = Math.max(...caselleDif.map((r) => r.bottom));
+        } else { sx0 = W * 0.2; sx1 = W * 0.8; sy0 = attackerOwner === 'player' ? H * 0.1 : H * 0.55; sy1 = sy0 + H * 0.35; }
+        const pad = Math.max(10, m * 0.022);
+        sx0 = Math.max(4, sx0 - pad); sx1 = Math.min(W - 4, sx1 + pad); sy0 = Math.max(4, sy0 - pad); sy1 = Math.min(H - 4, sy1 + pad);
+        const mx = (sx0 + sx1) / 2; const my = (sy0 + sy1) / 2; const semiL = (sx1 - sx0) / 2; const semiA = (sy1 - sy0) / 2;
+        // La faccia che guarda gli attaccanti: il bordo del terreno piu' vicino a loro.
+        const faccia = attackerOwner === 'player' ? my + semiA : my - semiA;        const s = new Scena();
         s.add(T.WASH, C.SCURO, 0, 2.15, [0, 0, 0.55, 0], 3);
-        s.add(T.MIRROR, C.CIANO, 0.04, 2.0, [mx, my, semiL, semiA], 1);
-        s.add(T.FLASH, C.BIANCO, 0.12, 0.5, [mx, my, semiL * 0.5, 0]);
-        s.add(T.RING, C.CIANO, 0.18, 0.7, [mx, faccia, semiL * 0.6, 5]);
+        s.add(T.MIRROR, C.CIANO, 0.04, 2.0, [mx, my, semiL, semiA], 0.5);
+        s.add(T.FLASH, C.BIANCO, 0.12, 0.5, [mx, my, Math.min(semiL, semiA * 2) * 0.5, 0]);
+        s.add(T.RING, C.CIANO, 0.18, 0.7, [mx, faccia, Math.min(semiL, semiA * 2) * 0.6, 5]);
         targets.slice(0, 5).forEach((r, i) => {
             const c = cen(r);
             const hx = Math.max(mx - semiL * 0.9, Math.min(mx + semiL * 0.9, c.x)); const hy = faccia;
@@ -620,9 +626,9 @@ float dado(vec2 q,float v){
             s.add(T.BURST, C.ORO, tI, 0.8, [c.x, c.y, r.width * 1.3, 45], i + 1);
         });
         // Il vetro cede: scheggie lungo tutta la lastra e un'onda
-        s.add(T.BURST, C.CIANO, 1.55, 0.7, [mx - semiL * 0.5, my, semiL * 0.5, 70], 7.3);
-        s.add(T.BURST, C.BIANCO, 1.55, 0.7, [mx + semiL * 0.5, my, semiL * 0.5, 70], 9.1);
-        s.add(T.RING, C.CIANO, 1.55, 0.55, [mx, my, semiL * 0.9, 6]);
+        s.add(T.BURST, C.CIANO, 1.55, 0.7, [mx - semiL * 0.5, my, Math.min(semiL, semiA * 2) * 0.5, 70], 7.3);
+        s.add(T.BURST, C.BIANCO, 1.55, 0.7, [mx + semiL * 0.5, my, Math.min(semiL, semiA * 2) * 0.5, 70], 9.1);
+        s.add(T.RING, C.CIANO, 1.55, 0.55, [mx, my, Math.min(semiL, semiA * 2) * 0.9, 6]);
         const d = esegui(s, 2250); sfx('activateTrap', 0); return d;
     };
 
@@ -638,12 +644,16 @@ float dado(vec2 q,float v){
         if (!attacker || !anchor) return 0;
         const from = cen(attacker); const to = cen(anchor);
         const W = innerWidth; const H = innerHeight; const m = Math.min(W, H);
-        const R = Math.max(70, Math.min(150, m * 0.17));
-        // Il tunnel sta fra le due file, appena di lato rispetto all'attaccante: cosi' il raggio che entra e quello che esce
-        // non si sovrappongono e si vede il rimbalzo.
-        const tx = Math.max(R * 1.1, Math.min(W - R * 1.1, W / 2 + (from.x < W / 2 ? m * 0.12 : -m * 0.12)));
-        const ty = H * 0.5;
-        const s = new Scena();
+        // Il tunnel sta AL CENTRO DEL TERRENO DI GIOCO (richiesta dell'utente): il centro del rettangolo che contiene le
+        // caselle di entrambi i giocatori.
+        const tutte = Array.from(document.querySelectorAll('.field-slot')).map(rectDi).filter(Boolean);
+        let tx = W / 2; let ty = H / 2; let lato = m;
+        if (tutte.length) {
+            const x0 = Math.min(...tutte.map((r) => r.left)); const x1 = Math.max(...tutte.map((r) => r.right));
+            const y0 = Math.min(...tutte.map((r) => r.top)); const y1 = Math.max(...tutte.map((r) => r.bottom));
+            tx = (x0 + x1) / 2; ty = (y0 + y1) / 2; lato = Math.min(x1 - x0, y1 - y0);
+        }
+        const R = Math.max(70, Math.min(150, lato * 0.3));        const s = new Scena();
         s.add(T.WASH, C.SCURO, 0, 2.1, [0, 0, 0.5, 0], 3);
         s.add(T.RING, C.ROSSO, 0.04, 0.45, [from.x, from.y, attacker.width * 1.2, 4], -1);
         s.add(T.TUNNEL, C.VIOLA, 0.1, 1.95, [tx, ty, R, 0], 0.7);
