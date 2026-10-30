@@ -4041,6 +4041,8 @@ priorità o richiedono un refactor ampio):
 
 1.4.163 (cache v472): il Puzzle era troppo schiacciato (segnalato dall'utente): piramide piu' alta, APEX -1 e NXY (.8253,-.5647) nello shader (larghezza/altezza 1,37 invece di 1,67), apice del logo SVG a y=54. L'Occhio e le scanalature restano quelli di 1.4.162. Suite completa non eseguita.
 
+1.4.164 (cache v473): proporzioni del Puzzle quasi come prima della 1.4.162 (l'utente: "non deve essere schiacciato"): mezza larghezza 1,1 su altezza 1,9 (NXY (.8654,-.5010)); l'Occhio e le scanalature restano in unita' "e" ma con scala 1,1 nel mondo (coordOcchio, centro dell'iride a y=.402), quindi sotto le giunture la faccia ha un blocco liscio piu' lungo. Apice del logo SVG a y=62. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

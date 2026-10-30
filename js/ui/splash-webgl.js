@@ -33,7 +33,7 @@ uniform float uDist;     // distanza della camera (si allarga sugli schermi bass
 const float PI=3.14159265;
 const float TOP=.9;
 const float APEX=-1.;   // piramide piu' piatta, come il Puzzle vero: 2,6 di larghezza in cima su 1,56 di altezza
-const vec2 NXY=vec2(.8253,-.5647);   // normale del piano di una faccia nel piano (raggio, y): normalize(1.56, -1.3)
+const vec2 NXY=vec2(.8654,-.5010);   // normale del piano di una faccia nel piano (raggio, y): normalize(1.56, -1.3)
 
 float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
 float hash3(vec3 p){ return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453); }
@@ -51,7 +51,7 @@ float scanalature(vec2 e);
 vec2 coordOcchio(vec3 p, float dX, float dZ){
   float u=(dZ>dX)?p.x*sign(p.z):-p.z*sign(p.x);
   // unita' "e" della FOTO del Puzzle: mezza larghezza in cima = 1 (1,3 nel mondo), origine al centro dell'iride, y verso l'alto
-  return vec2(u,p.y-.31)/1.3;
+  return vec2(u,p.y-.402)/1.1;
 }
 
 // Il corpo: piramide rovesciata (apice in basso), spigoli arrotondati, pannelli incassati dentro una cornice rialzata,
