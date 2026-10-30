@@ -171,6 +171,8 @@
        Dove la larghezza non viene da --card-w (effetti a tutto schermo) vale il ripiego di 100px, cioe' 3px.
        Lo leggono il corpo (::before) e l'illustrazione a piena carta. */
     --card-raggio: max(1px, calc(var(--card-w, 100px) * 0.03));
+    /* Raggio dei RIQUADRI INTERNI (nome, illustrazione, tipo, ATK/DEF): la meta' del guscio. Con il 3% erano ancora troppo smussati (1.4.178). */
+    --box-raggio: max(1px, calc(var(--card-w, 100px) * 0.014));
     /* La scatola ritaglia ancora quello che sborda (testi lunghissimi su
        carte minuscole), ma col raggio più piccolo possibile: gli angoli
        veri li disegnano corpo e illustrazione, che sanno quanto vale il
@@ -295,7 +297,7 @@
     align-items: center;
     gap: 1.4cqw;
     background: rgba(0,0,0,0.32);
-    border-radius: var(--card-raggio);   /* proporzionale come il guscio (1.4.174) */
+    border-radius: var(--box-raggio);   /* riquadri interni: meta' del guscio (1.4.178) */
     padding: 1cqw 1.6cqw;
     min-height: 13cqw;
 }
@@ -380,7 +382,7 @@
     position: relative;
     flex: 1 1 auto;
     min-height: 0;
-    border-radius: var(--card-raggio);   /* proporzionale come il guscio (1.4.174) */
+    border-radius: var(--box-raggio);   /* riquadri interni: meta' del guscio (1.4.178) */
     border: 1px solid rgba(255,255,255,0.35);
     background: radial-gradient(ellipse at center, rgba(255,255,255,0.16), rgba(0,0,0,0.28) 80%);
     display: flex;
@@ -435,7 +437,7 @@
     font-weight: 600;
     color: #fff;
     background: rgba(0,0,0,0.3);
-    border-radius: var(--card-raggio);   /* proporzionale come il guscio (1.4.174) */
+    border-radius: var(--box-raggio);   /* riquadri interni: meta' del guscio (1.4.178) */
     padding: 0.6cqw 1.6cqw;
     text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     white-space: nowrap;
@@ -452,7 +454,7 @@
     font-weight: 600;
     color: #fff;
     background: rgba(0,0,0,0.34);
-    border-radius: var(--card-raggio);   /* proporzionale come il guscio (1.4.174) */
+    border-radius: var(--box-raggio);   /* riquadri interni: meta' del guscio (1.4.178) */
     padding: 0.8cqw 1.8cqw;
     text-shadow: 0 1px 2px rgba(0,0,0,0.6);
 }
