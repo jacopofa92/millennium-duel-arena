@@ -48,6 +48,17 @@ module.exports = {
                 }));
                 assert(m.tab.length === 4 && !m.tab.some((t) => /Sfide/i.test(t)) && m.tessere > 0 && m.vecchie === 0, `Menu ${nome}: ${JSON.stringify(m)}`);
                 assert(m.extra <= 1, `Il menu ${nome} scorre di lato di ${m.extra}px`);
+                // Le Sfide stanno nel riquadro del giocatore (in ogni tab); il gruppo "Sfide" di Duelli ha Duello Libero, Puzzle e Tag Team.
+                const s = await page.evaluate(() => {
+                    const gruppo = Array.from(document.querySelectorAll('#menuShell .mm-sezione')).find((g) => /Sfide/.test((g.querySelector('.mm-sezione-titolo') || {}).textContent || ''));
+                    return {
+                        inBox: !!document.querySelector('#menuShell .mm-testa .mm-testa-sfide'),
+                        gruppo: gruppo ? Array.from(gruppo.querySelectorAll('.mm-tessera-nome')).map((e) => e.textContent.trim()) : null
+                    };
+                });
+                assert(s.inBox, `Menu ${nome}: Sfide nel riquadro del giocatore`);
+                assert(s.gruppo && ['Duello Libero', 'Puzzle', 'Tag Team'].every((v) => s.gruppo.includes(v)) && s.gruppo.length === 3, `Menu ${nome}: gruppo Sfide con i tre duelli: ${JSON.stringify(s)}`);
+                await page.screenshot({ path: process.env.SHOT_MENU ? process.env.SHOT_MENU + nome + '.png' : undefined });
             } finally { await context.close(); }
         }
 

@@ -60,6 +60,20 @@
     font-weight: 700; font-size: 0.95rem; letter-spacing: 0.02em; color: #f4e7c4;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+/* Le Sfide dentro il riquadro del giocatore: una riga intera sotto nome e valute. */
+.mm-testa { flex-wrap: wrap; }
+.mm-testa-sfide {
+    flex: 1 1 100%; display: flex; align-items: center; gap: 10px; min-height: 44px;
+    padding: 6px 10px; margin-top: 2px; border-radius: 10px; cursor: pointer;
+    border: 1px solid rgba(247, 215, 116, 0.3); background: rgba(247, 215, 116, 0.08);
+    color: inherit; font: inherit; text-align: left;
+}
+.mm-testa-sfide:hover, .mm-testa-sfide:focus-visible { border-color: #f7d774; background: rgba(247, 215, 116, 0.15); outline: none; }
+.mm-testa-sfide:active { transform: scale(0.99); }
+.mm-testa-sfide-testo { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.mm-testa-sfide-testo strong { color: #f7d774; font: normal 0.95rem Georgia, 'Times New Roman', serif; }
+.mm-testa-sfide-testo small { color: #b9ae92; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mm-testa-sfide-freccia { color: #f7d774; font-size: 1.3rem; }
 .mm-valute { display: flex; gap: 12px; flex: 0 0 auto; }
 .mm-valuta { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.9rem; color: #fff3c4; font-variant-numeric: tabular-nums; }
 .mm-gemma { width: 13px; height: 13px; border-radius: 3px; transform: rotate(45deg); display: inline-block; }
