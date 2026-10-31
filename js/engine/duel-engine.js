@@ -5108,6 +5108,19 @@
         });
     }
 
+    /**
+     * Vero se la carta è legata (equippedToUid o targetUid) a un mostro messo
+     * da parte da una variante di regole fuori dal motore
+     * (gameState.uidInPanchina, aggancio A2 di docs/planning/PIANO_TAG_TEAM.md).
+     * Vedi il suo uso in recomputeStaticEffects.
+     */
+    function legameInPanchina(card) {
+        const inPanchina = gameState.uidInPanchina;
+        if (!inPanchina || inPanchina.size === 0) return false;
+        return (card.equippedToUid != null && inPanchina.has(card.equippedToUid))
+            || (card.targetUid != null && inPanchina.has(card.targetUid));
+    }
+
     function recomputeStaticEffects() {
         // Reset dei flag prima di ricalcolare, altrimenti un effetto
         // continuo che sparisce (es. Jinzo distrutto) resterebbe "appiccicato".
@@ -5393,6 +5406,15 @@
                 if (!slot || slot.isFaceDown) return;
                 const def = getDefinition(slot.card.id);
                 if (!def) return;
+                // Legame sospeso (aggancio A2 di docs/planning/PIANO_TAG_TEAM.md):
+                // il mostro a cui questa carta è legata (Equip o Trappola
+                // Continua come Incantesimo Ombra) è stato messo da parte da
+                // una variante di regole fuori dal motore, quindi non è sul
+                // campo ma esiste ancora. La carta resta dov'è senza effetto,
+                // invece di essere scambiata per orfana e mandata al Cimitero,
+                // e riprende quando il mostro torna. Nel duello normale
+                // l'insieme è vuoto o assente.
+                if (legameInPanchina(slot.card)) return;
                 // Carte Equipaggiamento (def.isEquip): se il mostro a cui
                 // erano equipaggiate non è più lì (distrutto, tornato in
                 // mano, ecc.), la Carta Equipaggiamento va al Cimitero da
@@ -5480,8 +5502,12 @@
         if (gameState.revealedSwordsLanded) {
             Tavolo.ordine().forEach((target) => {
                 const controller = opponentOf(target);
-                const ancoraAttiva = stFieldOf(controller).some((slot) => slot && !slot.isFaceDown && slot.card.id === 8);
-                if (!ancoraAttiva) gameState.revealedSwordsLanded[target] = false;
+                const spade = stFieldOf(controller).filter((slot) => slot && !slot.isFaceDown && slot.card.id === 8);
+                if (spade.length === 0) gameState.revealedSwordsLanded[target] = false;
+                // Una Spada le cui lame erano già atterrate (segnato sulla casella) che torna sul
+                // campo attivo senza riattivarsi — nel Tag Team il suo membro rientra dalla
+                // panchina — riporta le lame fisse: l'effetto riparte, deve ripartire anche il segno.
+                else if (spade.some((slot) => slot.spadeAtterrate)) gameState.revealedSwordsLanded[target] = true;
             });
         }
     }
@@ -6182,7 +6208,11 @@
 
     /** Vero se i mostri del giocatore indicato non possono dichiarare attacchi (es. Spada Rivelatrice). */
     function cannotAttack(owner) {
-        return !!(gameState.cannotAttackFor && gameState.cannotAttackFor[owner]);
+        if (gameState.cannotAttackFor && gameState.cannotAttackFor[owner]) return true;
+        // A5 (docs/planning/PIANO_TAG_TEAM.md): una variante può vietare gli attacchi di un posto
+        // (Tag Team: non si attacca un avversario che non ha ancora giocato il suo primo turno).
+        // Senza ascoltatori la risposta è false: fuori dal Tag Team nulla cambia.
+        return !!(typeof EventiDuello !== 'undefined' && EventiDuello.chiedi('attacco-vietato', false, owner));
     }
 
     // ============================================================

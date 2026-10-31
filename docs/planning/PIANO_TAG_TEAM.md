@@ -243,6 +243,295 @@ predefinita che lascia il 1v1 identico; due dei tre hanno un'alternativa senza a
 in questa fase: il passo comune a più client (fase 3), la semantica precisa delle zone bloccate,
 l'IA che cambia playbook allo scambio di `personaggioPerPosto`.
 
+## 3ter. Stato della fase 1 (2026-10-31, branch `feature/tag-team`, versione 1.4.188)
+
+**Fatto.**
+- Agganci nel motore A1, A2, A3 (vedi sezione 6). Prova d'identità: le 60 partite senza testa danno
+  un'impronta IDENTICA a prima; fra 413 funzioni e 870 carte cambiano solo `changeTurn`,
+  `checkGameOver` e `DuelEngine.recomputeStaticEffects`, nessuna carta.
+- Variante in file nuovi: `js/modes/tag.js` (regole, senza interfaccia), `js/modes/tag-mode.js`
+  (duello e interfaccia), `js/data/tag-db.js` (numeri ed elenchi), `tag.html` (scelta di compagno,
+  avversario, livello e regola dei Life Point), stile in `js/modes/modes.css`. Voce "Tag Team" in
+  Duelli › Allenamento, barra in basso, Service Worker.
+- Regole attive: D1 (entrambe le opzioni), D2 obbligato, D3/D14 Cimitero e Bandite condivisi, D4, D5
+  (compagno IA), D6, D7, D10, D11 lettura A, D12 predefinita (l'avversario attacca chi ha giocato per
+  ultimo), D15, D16 (15 mappe per membro, elenco sorvegliato dallo spec), D17, V1, V2, V3.
+- Interfaccia: nome e ritratto del riquadro dei Life Point seguono chi gioca, i Life Point si allineano
+  senza conteggio animato allo scambio, velo sui click durante il turno del compagno IA, riquadro della
+  squadra (sul telefono una pillola apribile, posizionata misurando le sovrapposizioni).
+- Spec `tag-team-fase1` (duello vero lasciato giocare, ogni regola a duello fermo, Life Point
+  condivisi, Mazzo vuoto, classificazione statica delle mappe), verificato al contrario su A2 e A3.
+  Guardrail `guardrail-modalita-fuori-dal-motore` esteso al Tag Team.
+
+**Scelte fatte durante il lavoro** (le prime due approvate dall'autore il 2026-10-31).
+- **D18 (decisa dall'autore):** un membro che arriva a 0 Life Point durante il PROPRIO turno (per esempio
+  un Cilindro Magico che rimanda il danno a chi attacca) fa scattare la sua End Phase: appena il duello è
+  fermo in Main Phase 1, Battle Phase o Main Phase 2, la variante esegue il comando `fase` verso `end`;
+  da lì le mosse di quel posto sono rifiutate fino al cambio turno (tranne lo scarto di fine turno), ed
+  esce all'`inizio-turno` dell'avversario, in tempo per il suo turno. Il turno non passa di mano a metà,
+  perché l'IA che lo sta giocando muoverebbe su uno stato cambiato sotto di lei. Nel turno avversario
+  invece entra subito (D15), tra una battaglia e l'altra.
+- **Avvolgimento di `Comandi.esegui` (approvato):** `tag.js` lo avvolge a runtime, solo in modalità tag,
+  per contare gli attacchi in corso (D15) e per rifiutare le mosse dopo la End Phase forzata (D18); non
+  cambia mai un comando. Eccezione dichiarata nel guardrail delle modalità, che riconosce anche l'alias
+  preso da una funzione (`const C = motoreComandi()`). **Insidia presa col test di D18**: `Comandi` è un
+  `const` di script, non sta su `globalThis`, quindi `g.Comandi` era vuoto e l'avvolgimento non si era
+  mai agganciato (il conteggio degli attacchi di D15 non funzionava). Ora `motoreComandi()` lo cerca per
+  nome, e lo spec controlla che l'avvolgimento ci sia.
+- **Mazzo vuoto (D17) senza aggancio:** lo controlla la variante all'inizio del turno, prima della
+  pescata; A3 resta solo sui Life Point. Se entrambi i Mazzi sono vuoti decide il motore come sempre.
+- **Mazzo e IA del compagno:** mazzo Normale del personaggio, IA Difficile (`tagDatabase.compagno`).
+- **Premi:** quelli di un duello normale contro quell'avversario. Con due mazzi contro uno il Tag Team
+  è più facile: da rivedere nella fase 2 con il bilanciamento.
+
+**Non fatto in questa fase.**
+- D2 "libero" (scelta di chi gioca a inizio turno).
+- D12 scelta del bersaglio e D13: fatti nella fase 2 (sezione 3quater).
+- V3 copre le distruzioni ritardate, l'autodistruzione, la Sfera Esplosiva e il bando temporaneo; le
+  altre voci ritardate per uid (Necrofear, Cappelli Magici, buff alla Standby) non sono messe da parte.
+- Prova sul telefono vero.
+
+## 3quater. Stato della fase 2 (2026-10-31, stesso branch, versione 1.4.189)
+
+**Fatto.**
+- **2 contro 2 contro l'IA**: `duelMonstersCore.html?mode=tag&...&character2=<id>`. Il lato avversario è
+  una squadra come il tuo (stesso `preparaSquadra`, entrambi IA al livello scelto, mazzo del livello
+  scelto). In `tag.html` c'è la scelta del formato (2 contro 1 / 2 contro 2) e del secondo avversario.
+  Il riquadro dei Life Point dell'avversario segue il membro davanti; record, Sfide e sblocchi restano
+  sul PRIMO avversario (DuelSession.opponent non cambia). Un riquadro della squadra per lato; sul
+  telefono due pillole, la tua a sinistra e quella avversaria a destra.
+- **D12** in `js/modes/tag.js` (`sceltaFronte`, chiamata a ogni `inizio-turno` dopo l'entrata del
+  membro di turno): se il lato avversario è una squadra con due membri vivi, chi è di turno sceglie chi
+  affrontare. Una persona riceve la domanda con `Decisioni.chiedi` (tipo 'opzioni', con Life Point,
+  mostri e carte in mano di ciascuno): il modale ferma il passaggio alle fasi successive finché non
+  sceglie, e lo scambio arriva a duello fermo. L'IA usa il valore predefinito: chi ha giocato per
+  ultimo, cioè chi è già davanti (quindi nessuno scambio). La scelta ha luogo prima della pescata solo
+  per l'IA; per la persona la pescata (e un'eventuale risposta dell'avversario alla pescata) può
+  precedere la scelta: la Standby e la Main Phase la aspettano.
+- **D13**: `sq.fronte = { indice, fila }` conta per quanti turni avversari di fila lo stesso membro è
+  stato affrontato. Arrivati a `limiteBersaglio` (`tagDatabase.limiteBersaglio`, 2) la scelta è
+  obbligata sull'altro membro finché è vivo, senza domanda, e il registro lo spiega. Con l'IA che
+  sceglie sempre il predefinito il limite non scatta mai (l'alternanza di D2 cambia già chi è davanti):
+  conta per le scelte della persona.
+- **Strumento senza testa per le squadre**: `tools/tag-senza-testa.js` (partite intere IA contro IA,
+  2 contro 1 o 2 contro 2, `--inizia player|bot|alterna`, riassunto di vittorie, turni, eliminati,
+  scelte forzate da D13). Per farlo `tools/duello-senza-testa.js` ha tre opzioni generiche nuove
+  (`scriptAggiuntivi`, `primaDelTurno`, `allaFine`) e il primo turno lo guida chi è di turno: impronta
+  delle 60 partite IDENTICA a prima.
+- Spec `tag-team-fase2` (scelta a schermo, scambio, riquadro, D13 verificato al contrario, partite
+  intere senza testa in tre formati).
+
+**Misure di bilanciamento** (Yugi Muto con IA Difficile e mazzo Difficile + Joey con mazzo Normale,
+60 partite per cella, stessi semi, chi comincia alternato; vittorie della tua squadra):
+
+| Avversari, livello | 1 contro 1 (Yugi) | 2v1 LP a testa | 2v1 LP condivisi | 2v2 LP a testa | 2v2 LP condivisi |
+|---|---|---|---|---|---|
+| Kaiba / Pegasus, Normale | 43% | 58% | 42% | 40% | 47% |
+| Marik / Bakura, Normale | 27% | 58% | 40% | 53% | 47% |
+| Mai / Rex, Normale | 43% | 70% | 55% | 57% | 53% |
+| Kaiba / Pegasus, Difficile | 20% | 48% | 42% | 8% | 13% |
+| Marik / Bakura, Difficile | 28% | 50% | 38% | 13% | 23% |
+| Mai / Rex, Difficile | 17% | 35% | 22% | 20% | 28% |
+
+Letture: il 2 contro 1 con LP a testa rende il duello molto più facile (+15/+30 punti sull'1 contro 1),
+con LP condivisi meno (+5/+15). Il 2 contro 2 Difficile è più duro dell'1 contro 1 perché il compagno ha
+il mazzo Normale contro due mazzi Difficili. Nessuno stallo e nessun errore in 1.800 partite. Su 120
+partite 2 contro 1 (Kaiba Normale) la squadra vince il 52% quando comincia e il 73% quando comincia
+l'avversario: chi comincia non pesca e non attacca, e nel duello senza testa nessuno riceve la carta in
+più del primo turno che la pagina dà a chi comincia; da rimisurare prima di decidere se correggere.
+
+**Decisioni dell'autore sulle misure (2026-10-31).**
+- D19 (rivista lo stesso giorno): nel 2 contro 1 l'avversario solo ha 8000 Life Point e la coppia parte
+  con **4000 a testa** (con i Life Point a testa). Con i Life Point condivisi la coppia ha 8000 in tutto;
+  nel 2 contro 2 tutti hanno 8000 a testa. Nessuna pescata in più, compagno col mazzo Normale. Numeri in
+  `tagDatabase.lpSquadra(controUno)`, usati dalla pagina e dallo strumento senza testa. Rimisurato sugli
+  stessi semi, 2 contro 1 con LP a testa: Kaiba Normale 58% → 50%, Marik Normale 58% → 52%, Mai Normale
+  70% → 62%, Kaiba Difficile 48% → 42%, Marik Difficile 50% → 38%, Mai Difficile 35% → 32% (le altre
+  colonne della tabella non cambiano).
+- D20: premi del Tag Team per ora invariati (quelli di un duello normale contro il primo avversario).
+- D21: l'IA sceglie chi affrontare col valore predefinito (chi ha giocato per ultimo): va bene così.
+- D22: il Boss a squadre ha 12000 Life Point e pesca come sempre (nessuna carta in più).
+- D23: premio del Boss a squadre = quello di un duello normale contro quel Duellante (per ora).
+- D24: D2 "libero" come opzione: la persona chiede di scambiare il prossimo turno ("gioco io" o "gioca
+  tu"), il compagno accetta se gli conviene, altrimenti si va a turno come da regola obbligata.
+
+**Fatto dopo (1.4.191), con le scelte dell'autore.**
+- **Boss a squadre** (`&boss=1`, formato "Contro un Boss" in `tag.html`): tu e il compagno contro un Boss
+  dell'elenco del Raid (`js/data/raid-db.js`: Kaiba, Marik, Yami Yugi, Pegasus, Nitemare; i Life Point
+  del Raid non valgono qui), mazzo Difficile, **12000 Life Point** (`tagDatabase.lpBoss`), pescata
+  normale (D22), premio di un duello normale (D23). La coppia ha i Life Point del 2 contro 1 (4000 a
+  testa, o 8000 condivisi). Il Boss non chiede sblocchi (come nel Raid). Misure senza testa (Yugi IA
+  Difficile + Joey mazzo Normale, LP a testa, 60 partite): Kaiba 33%, Marik 33%, Yami Yugi 53%, Pegasus
+  20%, Nitemare 22%. `tools/tag-senza-testa.js --boss`.
+- **D2 "su richiesta"** (`&scambio=libero`, scelta "Turni" in `tag.html`; D24): si va a turno, ma la
+  persona può chiedere (pulsante nel riquadro della sua squadra) di invertire il prossimo turno della
+  squadra: "gioco io" quando toccherebbe al compagno, "gioca tu" quando toccherebbe a lei; la richiesta
+  si può ritirare. Il compagno IA risponde all'inizio di quel turno (`compagnoAccetta` in `tag.js`):
+  accetta se chi giocherebbe ha un Mazzo da cui pescare, almeno le carte in mano dell'altro e almeno i
+  suoi Life Point (con i Life Point condivisi questi non contano). L'autore aveva scelto "più Life
+  Point": con il "più" stretto, all'inizio (4000 contro 4000) il compagno rifiuterebbe sempre, quindi
+  vale anche la parità. Se rifiuta si va a turno. La risposta compare a schermo per 4 secondi e nel
+  registro. Solo la persona chiede: una squadra di sole IA va sempre a turno.
+- Spec `tag-team-boss-e-scambio` (Boss a 12000 anche a schermo; richiesta, ritiro, accetta, rifiuta,
+  "gioca tu", ritorno all'alternanza; il rifiuto verificato al contrario).
+
+**Non fatto.** Prova sul telefono vero.
+
+## 3quinquies. Fase 3: analisi del Multiplayer e proposta (2026-10-31)
+
+**Fatti verificati nel codice (non ipotesi).**
+- **Relay** (`server/server.js`): una stanza tiene al massimo **2 persone** (`room.players.size >= 2`
+  → "La stanza è già piena"). Il server su Render non si può ridistribuire (minuti di build esauriti),
+  quindi 3 o 4 persone nella stessa stanza oggi sono **impossibili**. Passano invece campi in più dentro i
+  messaggi già noti (`mazzo`, `room-config`, `ready`, i messaggi dei lotti `passo`): il controllo di
+  forma (`protocollo-mp.js`) ignora i campi che non conosce.
+- **Passo comune** (`js/engine/passo-comune.js`): pensato per DUE client, ciascuno chiama `player` sé
+  stesso (stato specchiato), un solo posto remoto fisso (`postoRemoto`, di norma `bot`); un comando non
+  porta il posto ("lo sa chi lo riceve: è quello remoto"); le decisioni viaggiano come posizione
+  nell'elenco, in un'unica coda ordinata.
+- **Chi c'è dietro un posto remoto** (`Tavolo.impostaNaturaRemoto`): UN valore per tutto il duello
+  ('persona' o 'ia'). In una squadra remota con una persona e un'IA deve seguire il membro davanti, o i
+  due client risponderebbero diversamente a `Decisioni.rispondeUnaPersona` e si separerebbero.
+- **Mazzo del compagno**: `TagTeam.preparaSquadra` lo costruisce senza `prefissoUid`, quindi con uid
+  fatti di ora e caso, diversi sui due telefoni: va passato un prefisso (solo nella variante).
+- **Tre punti della variante che oggi NON sono deterministici fra due client**:
+  1. **D15** (entra il compagno a metà turno avversario): `tenta` riprova con un timer finché il duello
+     è fermo; il passo comune esegue il comando successivo con un SUO timer quando il duello è fermo.
+     Quale dei due arriva prima dipende dal caso: da una parte il compagno entra prima del prossimo
+     attacco, dall'altra dopo. Non si risolve dentro la variante senza far scattare l'avviso di
+     divergenza (l'impronta che viaggia col comando si calcola prima che la variante possa intervenire
+     dal lato di chi riceve).
+  2. **D18** (End Phase forzata): oggi il comando lo eseguirebbero ENTRAMBI i client, e chi controlla
+     il posto lo spedirebbe anche all'altro (doppio). Va fatto solo dal client che controlla il posto.
+  3. **D2 su richiesta**: la richiesta nasce da un pulsante su un client solo e l'altro non la sa. In
+     rete va fatta viaggiare (o la regola resta "a turno" in Multiplayer).
+- D12 (scelta di chi affrontare) passa già da `Decisioni`: viaggia come ogni altra scelta.
+
+**Opzioni.**
+
+| | Chi gioca | Client | Cosa serve | Costo |
+|---|---|---|---|---|
+| **1. Squadre miste** | tu + compagno IA contro un amico + il suo compagno IA (oppure contro un amico da solo) | 2 | stato specchiato come oggi: ogni client guida la propria squadra (te e la tua IA), l'altra squadra è il posto remoto. Prefisso degli uid, natura del remoto che segue il membro, D18 solo da chi controlla, D2 su richiesta spento in rete, e **un aggancio nel motore per D15** (vedi A4) | M |
+| **2. Coppia contro l'IA** | tu e un amico nella STESSA squadra contro un Duellante o un Boss | 2 | tutto l'1, più il passo comune NON specchiato: i comandi portano il posto, il posto `player` è a volte mio e a volte remoto, l'IA avversaria gira solo sull'host e le sue mosse viaggiano. Modifiche vere a `passo-comune.js` | L |
+| **3. Tre o quattro persone** | 2v2 o 2v1 tutti umani | 3-4 | relay con stanze più grandi (ridistribuzione su Render) e passo comune a più client | XL, bloccata |
+| B. Come il Raid | ognuno il suo duello, barra comune | 2 | c'è già: è l'Assalto al Boss | nessuno |
+
+**Aggancio nuovo proposto (A4, da approvare).** Un evento di regola `prima-del-comando`, emesso dal
+passo comune nello stesso punto logico sui due client: da chi manda subito prima di calcolare
+l'impronta e spedire, da chi riceve subito prima di confrontarla ed eseguire. La variante lo ascolta e
+fa entrare il compagno di D15 lì (e a inizio turno). Fuori dal Multiplayer non viene mai emesso, quindi
+il gioco offline resta identico (impronta delle 60 partite). Alternativa senza aggancio: in rete il
+compagno di D15 entra solo all'inizio del turno successivo (cambia la regola in Multiplayer).
+
+**Decisioni dell'autore (2026-10-31).** A4 approvato. Il blocco del relay è temporaneo (i minuti di
+build di Render si azzerano): si progetta come se il server si potesse aggiornare, quindi anche 3 e 4
+persone.
+
+### Progetto: il passo comune "a posti" (sostituisce la scelta fra le opzioni 1-3)
+
+Con 3-4 persone le opzioni 1, 2 e 3 diventano casi dello stesso meccanismo, quindi conviene farne UNO.
+
+- **Posti (seat).** Ogni membro di ogni squadra è un posto con un nome ASSOLUTO, uguale su tutti i
+  client: `A0`, `A1` (squadra A) e `B0`, `B1` (squadra B). Ogni posto è controllato da una persona (un
+  client) o dall'IA. In un 1 contro 1 classico ci sono solo `A0` e `B0`.
+- **Prospettiva.** Il motore resta a due posti (`player`/`bot`): ogni client vede la PROPRIA squadra come
+  `player` e l'altra come `bot`, come oggi. Ciò che viaggia usa i nomi assoluti, e chi riceve li traduce
+  (la mia squadra → `player`). Il passo comune di oggi è il caso "2 posti, uno per client".
+- **Chi controlla il posto del motore.** A ogni scambio (A1 `inizio-turno`, D15, D12) il posto del
+  motore passa al membro davanti: `persona` se è il mio posto, `ia` se è un'IA che gira QUI, `remoto`
+  altrimenti, con la natura (persona/IA) del membro remoto (vedi `Tavolo.impostaNaturaRemoto`, che va
+  aggiornata a ogni scambio).
+- **Dove girano le IA.** Ogni IA gira su UN solo client: il compagno IA sul client della persona della
+  sua squadra; un'IA in una squadra senza persone (2 persone contro un Duellante, contro un Boss) sul
+  client dell'host. Le sue mosse e scelte viaggiano come quelle di una persona.
+- **Messaggi.** Ogni messaggio porta il posto che lo manda; ogni client numera i propri (`seq` per
+  mittente) e il relay li inoltra a TUTTI gli altri. Chi riceve tiene una coda per posto: un comando si
+  prende dalla coda del posto che ha il turno, una decisione dalla coda del posto che deve rispondere
+  (lo sa il motore, che l'ha chiesta). Ripresa dopo una caduta di linea: per mittente.
+- **Impronta.** Calcolata sui posti assoluti (squadra A prima), così è uguale su tutti i client.
+- **Nella variante** (`js/modes/tag.js`): prefisso degli uid per posto (anche del mazzo del
+  compagno), natura del remoto che segue il membro, comandi generati dalla variante (D18) solo dal
+  client che controlla quel posto, D15 sull'avviso A4 `prima-del-comando`, D2 su richiesta con la
+  richiesta che viaggia (una decisione del posto che chiede, l'accettazione una decisione del compagno).
+- **Relay** (`server/server.js`): stanze fino a 4, ognuno col suo posto e la sua squadra, inoltro a tutti,
+  ripresa per mittente. Da ridistribuire su Render quando si può; nel frattempo si prova col server
+  locale (gli spec Multiplayer lo avviano già da soli).
+- **Sala d'attesa**: formato (2v1, 2v2, contro un Boss), squadre, posti vuoti riempiti dall'IA
+  (sull'host), regole D1/D2.
+
+**Passo 1 FATTO (1.4.192).** `passo-comune.js` ha la modalità a posti (`avvia({ posti: { mioClient,
+miaSquadra } })`, `preparaDuello({ squadre })`, `impostaPostoAttivo`, flussi per mittente, `posto` e
+`mitt` nei messaggi, decisioni abbinate per posto assoluto) e l'avviso A4 `prima-del-comando`; senza
+`posti` i messaggi sono quelli di prima. `Decisioni` passa il posto del motore (`r.chi`) al passo comune;
+`Tavolo.impostaNaturaRemoto(natura, posto)` vale anche per un posto solo. Banco di prova
+`tools/gemello-posti.js` (N motori, rete a tutti, spettatori): 180/180 partite a tre motori allineate su
+sei coppie. **Difetto vero trovato e chiuso**: l'IA (`pickWeightedByImpact`) tirava i numeri dal
+generatore CONDIVISO; un'IA gira su un solo client, quindi lì spostava tutti i tiri successivi e uno
+scarto "a caso" usciva diverso (divergeva anche il gemello a due motori, Pegasus/Marik). A passo comune
+ora usa il caso locale; offline nulla cambia (impronta identica). Spec `passo-comune-a-posti`.
+Iniziato il passo 2: D15 in rete all'avviso A4 (niente timer), D18 chiesta solo da chi gioca quel posto
+e riconosciuta da tutti quando arriva il comando.
+
+**Passo 2 FATTO (1.4.193), tranne la prova end-to-end dello scambio su richiesta (passo 3).**
+- Variante pronta per la rete (`tag.js`): ogni membro ha il suo posto assoluto (`posti`) e la sua natura;
+  il mazzo del compagno ha uid col prefisso del posto (`prefissoUid`); il passo comune sa chi è davanti
+  (`postoAssolutoDavanti`, registrato da `preparaSquadra`); `scambia` aggiorna la natura del remoto per
+  posto; D15 entra all'avviso A4 (niente timer in rete); D18 la chiede solo chi gioca quel posto e tutti
+  la riconoscono quando arriva il comando; D12 che non trova il duello fermo si applica all'avviso A4; D2
+  su richiesta viaggia: a inizio turno si chiede a ogni membro-persona se ha chiesto lo scambio (risponde
+  in silenzio il suo client) e al primo "sì" risponde l'altro (persona a schermo, IA con compagnoAccetta).
+- Motore: `Decisioni` accetta un posto assoluto esplicito (`postoAssoluto`, `locale`, `perUnaPersona`) per
+  le scelte di chi NON è davanti; a passo comune l'inizio del turno aspetta le scelte aperte
+  (`PassoComune.dopo` in `changeTurn`, rilegge chi guida il turno allo scadere); all'avviso A4 il passo
+  comune ricalcola gli effetti continui.
+- **Due difetti veri trovati dal gemello a posti e chiusi**: (1) il livello dell'IA di un membro stava
+  solo sul client dove gira, e Abbandono (id 416) lo usa per ordinare i candidati di una scelta che
+  viaggia come posizione: ora è un dato del membro, uguale ovunque; (2) un Equipaggiamento rimasto senza
+  il suo mostro finiva nel Cimitero al ridisegno, in momenti diversi sui client (vale anche per l'1 contro
+  1 di oggi): ora c'è un ricalcolo all'avviso A4, prima dell'impronta.
+- Misura: 620 partite in rete simulate allineate (1 contro 1 con spettatori; 2v2 a quattro, coppia contro
+  l'IA, squadre miste, 2v1 a tre, Life Point condivisi, avversario che comincia), con 209 entrate di
+  compagni a metà turno avversario e 4 fini turno forzate. Spec `tag-team-in-rete` (entrambi i difetti
+  verificati al contrario). Offline: impronta delle 60 partite identica. Multiplayer: 17/17 spec verdi.
+- **Non provato**: lo scambio su richiesta in rete (nel gemello le persone sono IA e non chiedono): va nello
+  spec end-to-end con le pagine del passo 3.
+
+**Passo 3 FATTO (1.4.194).** Decisione dell'autore sulla sala: l'host sceglie il formato, ognuno entra e
+si siede da sé in un posto libero, l'host sistema le coppie, si parte quando tutti confermano di essere
+pronti. Scelte proposte e CONFERMATE dall'autore il 2026-10-31 (D25-D29, nell'ordine): i posti vuoti li gioca l'IA (sul client dell'host, con un
+Duellante scelto dall'host e un livello unico); ogni cambio di posti o regole toglie il "pronto" a tutti;
+un giocatore che esce a duello avviato fa vincere la squadra opposta (il suo posto non ha più chi lo
+gioca, e passarlo a un'IA dovrebbe succedere nello stesso punto su tutti i client); chi comincia lo
+sorteggia l'host (niente morra a quattro).
+- Relay (`server/server.js`): stanze da 2 a 4 posti (`capienza` a `create-room`, senza = 2 come prima),
+  id pubblico per giocatore (`g1`...), `room-update` a tutti nelle stanze da 3+, inoltro a TUTTI gli
+  altri con `da`, `lock-room` dell'host. La stanza da 2 non cambia (spec `server-stanze-grandi`).
+- Trasporto (`mp-passo-comune.js`): `configuraPosti` (la disposizione della sala), mazzo per posto (campo
+  `posto` di `mazzo`, il seme dall'host), mazzi dei posti IA costruiti da ognuno, ripresa per mittente
+  (`passo-riprendi` con `per`), `avviaMotore` (tavolo, natura e livello dei primi membri uguali ovunque,
+  `preparaDuello` a posti, poi la variante con `allaPreparazione`). `game-flow.js` chiama solo `avviaMotore`.
+- Esito per squadra (`game-over` con `vinceSquadra`, `multiplayer.js`), uscita di un compagno/avversario.
+- Sala (`mp-tag-sala.js` + `mp-tag-sala.css`, vista `tag` di `multiplayer.html`, voce "Tag Team" nel menu
+  Multiplayer via `mp-modi.js`): messaggi `tag-sala` (`io`, `siedi`, `stato`, `via`) in
+  `protocollo-mp.js`; lo stato lo tiene l'host. Un relay vecchio (stanza senza `capienza`) è riconosciuto
+  e lo si dice.
+- Duello (`tag-mode.js`): in rete (`window.MP_TAG`) prepara le squadre con le identità dei posti (pedina e
+  nome, o il personaggio IA), D19 e Boss come offline, velo anche per il compagno umano.
+- Spec `multiplayer-tag-team`: tre pagine vere, 2 contro 2 con un posto IA, ci si siede, l'host scambia
+  due giocatori, scambio su richiesta acceso, sei turni di persone con l'impronta identica sui tre client,
+  la risposta alla richiesta di scambio uguale ovunque (verificato al contrario).
+- **Non provato**: quattro pagine insieme, il 2 contro 1 con il Boss in rete, la caduta di linea a tre,
+  l'uscita a duello avviato (solo letto), l'interfaccia della sala su telefono.
+
+**Passi, ciascuno chiuso con test e impronta delle 60 partite offline identica.**
+1. Passo comune a posti nel motore, con il 1 contro 1 di oggi come caso particolare (stessi messaggi
+   per due client, per restare compatibili con un relay vecchio finché non si aggiorna). Duello gemello
+   esteso a 3 e 4 motori nello stesso processo (squadre IA contro IA, persone simulate dall'IA).
+2. Variante Tag Team pronta per la rete (i punti qui sopra, A4 compreso), misurata col gemello a 2, 3 e
+   4 motori: nessuna divergenza su centinaia di partite.
+3. Relay a 4 posti e sala d'attesa delle squadre; spec end-to-end con 3 e 4 pagine e il server locale.
+4. Ridistribuzione del relay su Render e prova su telefoni veri.
+
 ## 4. Rischi
 
 | Rischio | Gravità | Mitigazione |
@@ -266,8 +555,12 @@ Il tag non deve cambiare nessun'altra modalità. Prima di ogni merge:
 ## 6. Elenco degli agganci nel motore (da compilare)
 
 Ogni aggancio deve avere: file e funzione, motivo, perché è opt-in, quale spec lo copre.
-Stato: **approvati dall'autore il 2026-10-30, nessuno ancora scritto.** A1 e A2 con aggancio nel motore
-(non le alternative senza aggancio); A3 approvato.
+Stato: **approvati dall'autore il 2026-10-30 e scritti il 2026-10-31** (fase 1). A1 e A2 con aggancio
+nel motore (non le alternative senza aggancio); A3 approvato.
+Differenze rispetto alla proposta: A1 sta subito dopo il cambio di `currentPlayer` (non accanto a
+`orologio`), perché con D16 anche le scadenze "fino al tuo prossimo turno" e il turno saltato vanno
+lette sullo stato del membro che entra; A3 sta solo in `checkGameOver` (il Mazzo vuoto lo gestisce la
+variante a inizio turno, vedi 3ter).
 
 - **A1, evento di regola "inizio turno".** `js/engine/fasi.js`, `changeTurn`, accanto all'emissione di
   `orologio` (riga 624); più una voce nell'elenco `EVENTI` di `js/engine/eventi-duello.js`. Motivo: la
@@ -287,6 +580,16 @@ Stato: **approvati dall'autore il 2026-10-30, nessuno ancora scritto.** A1 e A2 
   il membro (D10, D17) e fa entrare il compagno (D15). Necessaria solo con D1 "per membro" e per D17.
   Spec: 1v1 invariato; nel tag, primo membro a 0 non chiude il duello, secondo sì.
 
+- **A5, attacco vietato (richiesto dall'autore il 2026-10-31: "non devo poter attaccare un avversario se
+  esso non ha ancora fatto il suo primo turno").** `js/engine/duel-engine.js`, `cannotAttack` (il cancello
+  unico degli attacchi, lo stesso di Spade Rivelatrici: lo leggono trascinamento, IA e `resolveAttack`):
+  una domanda al canale (`EventiDuello.chiedi('attacco-vietato', false, posto)`). Predefinito "no": fuori
+  dal Tag nulla cambia (60 partite identiche). Nel Tag la variante risponde "sì" quando il membro davanti
+  nella squadra avversaria non ha ancora giocato un turno (`giocato`, segnato all'entrata per il turno; il
+  primo membro del lato che comincia lo ha già). Nessun attacco, nemmeno diretto. Nella scelta di chi
+  affrontare (D12) il membro che non ha giocato è indicato con "niente attacchi", e il registro lo dice.
+  Spec `tag-team-primo-turno-avversario` (verificato al contrario).
+
 ## 7. Cosa non è in questo piano
 
 - Il Tag Team a quattro posti con quattro campi.
@@ -295,6 +598,22 @@ Stato: **approvati dall'autore il 2026-10-30, nessuno ancora scritto.** A1 e A2 
 
 ## 8. Diario
 
+- 2026-10-31: l'autore chiede che non si possa attaccare un avversario che non ha ancora giocato il suo
+  primo turno: aggancio A5 in 1.4.196 (sezione 6).
+- 2026-10-31: l'autore conferma le cinque scelte della sala in rete (D25-D29): posti vuoti all'IA
+  sull'host, "pronto" tolto a ogni cambio, chi esce a duello avviato fa vincere la squadra opposta,
+  chi comincia lo sorteggia l'host, formato fisso dopo l'apertura della stanza.
+- 2026-10-31: l'autore decide la sala: ognuno si siede, l'host sistema le coppie, si parte quando tutti
+  sono pronti. Passo 3 della fase 3 fatto in 1.4.194 (sezione 3quinquies).
+- 2026-10-31: l'autore decide D22-D24 (Boss a 12000 LP con pescata normale e premio normale; scambio su
+  richiesta: la persona chiede, il compagno IA accetta se gli conviene, altrimenti a turno). Fatti in 1.4.191.
+- 2026-10-31: l'autore rivede D19: nel 2 contro 1 la coppia ha 4000 a testa, l'avversario solo 8000.
+- 2026-10-31: l'autore decide D19-D21: bilanciamento, premi e scelta dell'IA restano come sono.
+- 2026-10-31: fase 2, prima parte: 2 contro 2 contro l'IA, D12 e D13, strumento senza testa per le
+  squadre e prime misure di bilanciamento (sezione 3quater).
+- 2026-10-31: l'autore decide D18 (End Phase forzata) e approva l'avvolgimento di `Comandi.esegui`;
+  implementati, con lo scenario nello spec `tag-team-fase1`.
+- 2026-10-31: fase 1 implementata sul branch `feature/tag-team` (sezione 3ter).
 - 2026-10-30: l'autore approva A1, A2 (con aggancio) e A3; chiude D14-D17. Fase 0 CHIUSA, nessuna decisione aperta.
 - 2026-10-30: fase 0 completata (sezione 3bis). Proposti gli agganci A1-A3; nate D14-D17.
 - 2026-10-30: l'autore propone la scelta del bersaglio (membro avversario) a inizio turno; compatibile con la lettura A.

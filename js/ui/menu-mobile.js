@@ -31,6 +31,7 @@
         'Caccia al Boss': '8 turni per abbatterlo',
         'Duello Libero': 'Scegli avversario e arena',
         'Puzzle': 'Vinci con la mano data',
+        'Tag Team': 'Tu e un compagno contro uno',
         'Tutorial': 'Impara a giocare',
         'Demo Duello Sandbox': 'Campo di prova (admin)',
         'Negozio': 'Pacchetti e mazzi',
@@ -72,21 +73,17 @@
         const duelli = trova(voci, 'Duelli');
         const carte = trova(voci, 'Carte');
         const online = trova(voci, 'Multiplayer');
-        const sfide = trova(voci, 'Sfide');
         const altre = [trova(voci, 'Profilo'), trova(voci, 'Impostazioni')].filter(Boolean);
         if (admin && adminItem) altre.push(adminItem);
         const logout = trova(voci, 'Logout');
         /** @type {any[]} */
         const tab = [];
         if (duelli) {
-            // Sfide NON e' una tab (la barra ne ha quattro): sta in testa a Duelli, la prima cosa che si vede, perche' sono le missioni da
-            // rifare ogni giorno e il motivo per tornare nel gioco.
-            const sfideEvidenza = sfide ? [{ titolo: 'Sfide', icona: sfide.icon, voci: [Object.assign({}, sfide, { sottotitolo: 'Missioni del giorno e traguardi' })] }] : [];
             // Un gruppo e' una voce con `children`; una voce semplice (la Demo del Sandbox) finisce in "Altri".
             const gruppi = (duelli.children || []).filter((c) => c.children).map((g) => ({ titolo: g.label, icona: g.icon, voci: g.children }));
             const sciolte = (duelli.children || []).filter((c) => !c.children && (!c.soloAdmin || admin));
             if (sciolte.length) gruppi.push({ titolo: 'Strumenti', icona: 'settings', voci: sciolte });
-            tab.push({ id: 'duelli', titolo: 'Duelli', icona: duelli.icon, gruppi: sfideEvidenza.concat(gruppi) });
+            tab.push({ id: 'duelli', titolo: 'Duelli', icona: duelli.icon, gruppi });
         }
         if (carte) tab.push({ id: 'carte', titolo: 'Carte', icona: carte.icon, gruppi: [{ titolo: 'La tua collezione', icona: carte.icon, voci: carte.children || [] }] });
         if (online) tab.push({ id: 'online', titolo: 'Online', icona: online.icon, gruppi: [{ titolo: 'Multiplayer', icona: online.icon, voci: online.children || [] }] });
@@ -97,6 +94,7 @@
     /** @param {any} ctx */
     function render(ctx) {
         const { shell, lista, voci, admin, adminItem, azione, stato, toast } = ctx;
+        const sfide = trova(voci, 'Sfide');
         shell.classList.add('menu-shell--app');
         const tab = costruisciTab(voci, admin, adminItem);
         let corrente = 'duelli';
@@ -145,6 +143,17 @@
             + `<span class="mm-valuta" title="Carte del Millennio"><span class="mm-vi" data-icon="eye"></span>${fmt(mi)}</span></div>`
             + (titolo ? `<div class="mm-slide"><span class="mm-titolo-giocatore">${esc(titolo)}</span></div>` : '')
             + '</div>';
+        // Le SFIDE (missioni del giorno e traguardi) stanno DENTRO il riquadro del giocatore: sono il suo avanzamento, e il riquadro
+        // c'e' in tutte le tab. Prima erano una tessera larga in testa a Duelli, visibile solo li'.
+        if (sfide) {
+            const bs = document.createElement('button');
+            bs.type = 'button';
+            bs.className = 'mm-testa-sfide';
+            bs.setAttribute('aria-label', 'Sfide: missioni del giorno e traguardi');
+            bs.innerHTML = `<span class="mm-vi" data-icon="${esc(sfide.icon)}"></span><span class="mm-testa-sfide-testo"><strong>Sfide</strong><small>Missioni del giorno e traguardi</small></span><span class="mm-testa-sfide-freccia" aria-hidden="true">›</span>`;
+            bs.addEventListener('click', () => { if (window.NativeHaptics) window.NativeHaptics.light(); azione(sfide); });
+            testa.appendChild(bs);
+        }
         lista.appendChild(testa);
         fermaRotazione();
         const slide = testa.querySelectorAll('.mm-slide');

@@ -49,6 +49,21 @@ const MpPassoComune = (function () {
     let iniziaIo = true;
     let acceso = false;
 
+    // MODALITÀ A POSTI (Tag Team in rete, più di due client). La disposizione
+    // la decide la sala (js/multiplayer/mp-tag-sala.js) e arriva qui con
+    // configuraPosti: { mioClient, miaSquadra, host, iniziaSquadra, posti:
+    // { A0: { tipo: 'persona', client } | { tipo: 'ia', personaggio, mazzo, ia }, A1?, B0, B1? } }.
+    // Ogni persona manda il mazzo del SUO posto (campo `posto`), l'host anche
+    // il seme; i mazzi dei posti IA li costruisce ognuno da sé (personaggio e
+    // livello sono nella disposizione, uguale per tutti). Senza configuraPosti
+    // tutto resta come nel duello 1 contro 1.
+    let configPosti = null;
+    const mazziDeiPosti = {};     // posto assoluto -> spec, arrivati dagli altri
+    let semeDeiPosti = null;      // il seme, arrivato dall'host
+    let attesaPosti = null;       // { risolvi, rifiuta, timer }
+    /** Chi, dopo la preparazione a posti, completa il duello (la variante a squadre). */
+    const preparazioni = [];
+
     let mazzoAvversario = null;   // { spec, seme }
     let attesaMazzo = null;       // chi lo sta aspettando
     let rifiutaAttesaMazzo = null;
@@ -89,9 +104,14 @@ const MpPassoComune = (function () {
                 const motivo = ProtocolloMP.motivoRifiuto(azione);
                 if (motivo) { console.warn('Multiplayer: messaggio "' + azione.kind + '" scartato (' + motivo + ')'); return; }
             }
-            if (azione.kind === 'mazzo') { riceviMazzo(azione); return; }
+            if (azione.kind === 'mazzo') { if (azione.posto) riceviMazzoDelPosto(azione); else riceviMazzo(azione); return; }
             if (azione.kind === 'passo') { consegna(azione.messaggi); return; }
-            if (azione.kind === 'passo-riprendi') { rimanda(azione.ultimo); return; }
+            if (azione.kind === 'passo-riprendi') {
+                // A posti la richiesta nomina a chi è rivolta: rimanda solo lui (i suoi messaggi).
+                if (azione.per && (!configPosti || azione.per !== configPosti.mioClient)) return;
+                rimanda(azione.ultimo);
+                return;
+            }
             // Un client precedente racconta le mosse invece di scambiare
             // il mazzo. Riconoscerlo evita quindici secondi di campo fermo.
             if (rifiutaAttesaMazzo && ['phase', 'summon', 'tribute', 'position', 'spelltrap', 'fieldspell', 'attack', 'activate', 'state-push', 'state-sync'].includes(azione.kind)) {
@@ -104,7 +124,8 @@ const MpPassoComune = (function () {
         // vicenda, e i doppioni il motore li scarta).
         net.on('error', relayIncompatibile);
         net.on('reconnected', chiediRipresa);
-        net.on('opponent-reconnected', chiediRipresa);
+        // A posti chi rientra chiede da sé a ciascuno (vedi chiediRipresa): chi è rimasto non sa cosa gli manca.
+        net.on('opponent-reconnected', () => { if (!configPosti) chiediRipresa(); });
         // Chi esce dalla stanza prima del duello si porta via il suo mazzo:
         // non deve restare lì per chi entrerà dopo.
         net.on('opponent-left', () => { if (!motoreAcceso()) mazzoAvversario = null; });
@@ -112,8 +133,163 @@ const MpPassoComune = (function () {
 
     function chiediRipresa() {
         if (!acceso || !motoreAcceso() || !net) return;
+        if (configPosti) {
+            // Una richiesta per ogni altro client, con il punto a cui ero arrivato nel SUO flusso.
+            altriClient().forEach((id) => net.sendAction({ kind: 'passo-riprendi', ultimo: PassoComune.ultimoRicevuto(id), per: id }));
+            return;
+        }
         net.sendAction({ kind: 'passo-riprendi', ultimo: PassoComune.ultimoRicevuto() });
     }
+
+    /** Gli altri client della partita a posti (persone; i posti IA girano sull'host, che è una persona). */
+    function altriClient() {
+        if (!configPosti) return [];
+        const ids = new Set();
+        Object.values(configPosti.posti).forEach((s) => { if (s && s.tipo === 'persona' && s.client !== configPosti.mioClient) ids.add(s.client); });
+        if (configPosti.host !== configPosti.mioClient) ids.add(configPosti.host);
+        return Array.from(ids);
+    }
+
+    // --- Modalità a posti --------------------------------------------
+
+    /** Il posto assoluto della persona di questo client. */
+    function mioPosto() {
+        return Object.keys(configPosti.posti).find((k) => {
+            const s = configPosti.posti[k];
+            return s && s.tipo === 'persona' && s.client === configPosti.mioClient;
+        }) || null;
+    }
+
+    /** Da mp-tag-sala.js, alla partenza: da qui in poi il duello è a passo comune, a posti. */
+    function configuraPosti(cfg) {
+        configPosti = cfg;
+        acceso = true;
+        sonoHost = cfg.mioClient === cfg.host;
+        window.MP_PASSO_COMUNE = true;
+        window.MP_POSTI = cfg;
+        collegaRete();
+    }
+
+    function riceviMazzoDelPosto(azione) {
+        if (azione.protocollo !== VERSIONE_PROTOCOLLO) {
+            if (attesaPosti) attesaPosti.rifiuta('Un giocatore usa una versione Multiplayer non compatibile');
+            return;
+        }
+        mazziDeiPosti[azione.posto] = azione.spec;
+        if (typeof azione.seme === 'number') semeDeiPosti = azione.seme;
+        verificaPostiCompleti();
+    }
+
+    /** I posti di persona di cui manca ancora il mazzo (il mio escluso: ce l'ho). */
+    function postiSenzaMazzo() {
+        if (!configPosti) return [];
+        const mio = mioPosto();
+        return Object.keys(configPosti.posti).filter((k) => {
+            const s = configPosti.posti[k];
+            return s && s.tipo === 'persona' && k !== mio && !mazziDeiPosti[k];
+        });
+    }
+
+    function verificaPostiCompleti() {
+        if (!attesaPosti || postiSenzaMazzo().length > 0 || (!sonoHost && typeof semeDeiPosti !== 'number')) return;
+        const a = attesaPosti;
+        attesaPosti = null;
+        clearTimeout(a.timer);
+        a.risolvi();
+    }
+
+    /** La specifica del mazzo di un posto IA: la stessa su tutti i client (personaggio e livello sono nella disposizione). */
+    function mazzoDelPostoIA(s) {
+        return typeof getCharacterDeck === 'function' ? getCharacterDeck(s.personaggio, s.mazzo || 'medium') : null;
+    }
+
+    function preparaAPosti(mioMazzo) {
+        const mio = mioPosto();
+        const mioSeme = sonoHost ? Math.floor(Math.random() * 2147483647) : undefined;
+        if (sonoHost) semeDeiPosti = mioSeme;
+        // L'host senza un posto di persona (non dovrebbe capitare: la sala lo fa sedere) manda comunque il seme.
+        net.sendAction({ kind: 'mazzo', protocollo: VERSIONE_PROTOCOLLO, spec: mioMazzo, seme: mioSeme, posto: mio || 'nessuno' });
+        return new Promise((risolvi, rifiuta) => {
+            attesaPosti = {
+                risolvi,
+                rifiuta: (motivo) => { if (!attesaPosti) return; clearTimeout(attesaPosti.timer); attesaPosti = null; rifiuta(new Error(motivo)); },
+                timer: setTimeout(() => {
+                    if (attesaPosti) attesaPosti.rifiuta('Qualcuno non ha ancora caricato il duello (telefono lento o connessione persa). Torna al menu e riprova.');
+                }, ATTESA_MAZZO_MS)
+            };
+            verificaPostiCompleti();
+        }).then(() => {
+            const specPerPosto = {};
+            Object.keys(configPosti.posti).forEach((k) => {
+                const s = configPosti.posti[k];
+                if (!s) return;
+                specPerPosto[k] = s.tipo === 'ia' ? mazzoDelPostoIA(s) : (k === mio ? mioMazzo : mazziDeiPosti[k]);
+                if (!specPerPosto[k]) throw new Error('Manca il mazzo del posto ' + k);
+            });
+            return {
+                aPosti: true,
+                seme: semeDeiPosti,
+                squadre: { A: { spec: specPerPosto.A0 }, B: { spec: specPerPosto.B0 } },
+                specPerPosto,
+                iniziaSquadra: configPosti.iniziaSquadra === 'B' ? 'B' : 'A',
+                config: configPosti
+            };
+        });
+    }
+
+    /**
+     * Chi controlla un posto assoluto, visto da QUESTO client: la mia persona
+     * 'persona', un posto IA 'ia' sull'host e 'remoto' altrove, ogni altra
+     * persona 'remoto'. Per tutti i client la natura (chi c'è davvero dietro)
+     * è la stessa: è il bivio "chiedo / decido da me" delle carte.
+     * @param {string} posto
+     */
+    function controlloDelPosto(posto) {
+        const s = configPosti && configPosti.posti[posto];
+        if (!s) return 'remoto';
+        if (s.tipo === 'persona') return s.client === configPosti.mioClient ? 'persona' : 'remoto';
+        return configPosti.mioClient === configPosti.host ? 'ia' : 'remoto';
+    }
+
+    /**
+     * Da initGame, con quello che ha restituito prepara: imposta il tavolo,
+     * avvia il motore e prepara lo stesso duello degli altri client.
+     */
+    function avviaMotore(partita) {
+        if (!partita.aPosti) {
+            Tavolo.imposta({ player: 'persona', bot: 'remoto' });
+            PassoComune.avvia({ invia });
+            PassoComune.preparaDuello(partita);
+            motoreAvviato();
+            return;
+        }
+        const cfg = partita.config;
+        const mia = cfg.miaSquadra;
+        const altra = mia === 'A' ? 'B' : 'A';
+        Tavolo.imposta({ player: controlloDelPosto(mia + '0'), bot: controlloDelPosto(altra + '0') });
+        PassoComune.avvia({ invia, posti: { mioClient: cfg.mioClient, miaSquadra: mia } });
+        // Natura, livello e personaggio dei primi membri: uguali su TUTTI i client (li leggono regole e IA).
+        gameState.livelloIA = gameState.livelloIA || {};
+        gameState.personaggioPerPosto = gameState.personaggioPerPosto || {};
+        [['player', mia + '0'], ['bot', altra + '0']].forEach(([postoMotore, seat]) => {
+            const s = cfg.posti[seat];
+            if (!s) return;
+            if (controlloDelPosto(seat) === 'remoto') Tavolo.impostaNaturaRemoto(s.tipo === 'ia' ? 'ia' : 'persona', postoMotore);
+            if (s.tipo === 'ia') {
+                gameState.livelloIA[postoMotore] = s.ia || 'hard';
+                gameState.personaggioPerPosto[postoMotore] = s.personaggio;
+            } else {
+                delete gameState.livelloIA[postoMotore];
+                gameState.personaggioPerPosto[postoMotore] = null;
+            }
+        });
+        PassoComune.preparaDuello({ seme: partita.seme, squadre: partita.squadre, iniziaSquadra: partita.iniziaSquadra });
+        preparazioni.forEach((fn) => fn(partita, controlloDelPosto));
+        motoreAvviato();
+    }
+
+    /** La variante a squadre si registra qui (js/modes/tag-mode.js): gira dopo preparaDuello, su tutti i client. */
+    function allaPreparazione(fn) { preparazioni.push(fn); }
 
     function rimanda(ultimo) {
         if (!motoreAcceso()) return;
@@ -185,6 +361,7 @@ const MpPassoComune = (function () {
      */
     function prepara(mioMazzo) {
         if (!acceso || !net) return Promise.reject(new Error('Passo comune non configurato'));
+        if (configPosti) return preparaAPosti(mioMazzo);
         // Duello a specchio (regola della stanza, vedi mp-lobby.js): al posto del mazzo personale si manda quello
         // scelto per tutti e due. Se il catalogo non lo conosce si resta sul proprio: meglio un duello normale che nessuno.
         const specchio = mazzoSpecchio();
@@ -258,10 +435,15 @@ const MpPassoComune = (function () {
 
     return {
         configura,
+        configuraPosti,
         prepara,
+        avviaMotore,
+        allaPreparazione,
         invia,
         motoreAvviato,
-        acceso: () => acceso
+        acceso: () => acceso,
+        /** La disposizione dei posti (null nel duello 1 contro 1). */
+        posti: () => configPosti
     };
 })();
 

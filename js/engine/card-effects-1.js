@@ -1235,6 +1235,10 @@
                     // vedrebbe nessuna delle due.
                     gameState.revealedSwordsLanded = gameState.revealedSwordsLanded || {};
                     gameState.revealedSwordsLanded[opponent] = true;
+                    // Anche sulla casella della carta: se la carta lascia il campo attivo e ci
+                    // torna senza riattivarsi (Tag Team: il suo membro va in panchina e rientra),
+                    // il ricalcolo degli effetti continui rimette le spade fisse da qui.
+                    if (slot) slot.spadeAtterrate = true;
                     if (typeof updateUI === 'function') updateUI();
                     removeFlyingSwords();
                     fireFlipTriggers(0);

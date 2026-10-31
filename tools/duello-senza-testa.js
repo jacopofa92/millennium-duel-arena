@@ -201,7 +201,9 @@ function creaContesto(opz) {
     // mazzo dopo il reset consumerebbe altri numeri casuali e renderebbe i
     // semi non confrontabili con una partita naturale dello stesso livello.
     vm.runInContext(`window.DuelSession = { opponent: { id: ${JSON.stringify(opz.avversario)}, name: ${JSON.stringify(opz.avversario)} }, aiDifficultyKey: ${JSON.stringify(opz.livelloDeckAvversario || opz.livello)} };`, contesto);
-    SCRIPT.forEach((f) => {
+    // opz.scriptAggiuntivi: file caricati dopo le regole e l'IA (per esempio una
+    // variante di js/modes/ che gira senza interfaccia, come il Tag Team).
+    SCRIPT.concat(opz.scriptAggiuntivi || []).forEach((f) => {
         const codice = fs.readFileSync(path.join(RADICE, f), 'utf8');
         vm.runInContext(codice, contesto, { filename: f });
         // Subito dopo il canale, prima di chiunque emetta.
@@ -323,8 +325,12 @@ async function giocaPartita(opz, n) {
         for (let i = 0; i < 5; i++) { drawCardsToHand('player', 1, { silent: true }); drawCardsToHand('bot', 1, { silent: true }); }
         window.__manoBotIniziale = gameState.botHand.map((c) => Number(c.id));
         gameState.turn = 1; gameState.currentPlayer = 'player';
-        turnoIA('player');
     `);
+    // opz.primaDelTurno: codice eseguito a mani pronte e primo giocatore deciso,
+    // prima che il primo turno parta (dove una pagina avvolge preparaManiIniziali).
+    // Può anche cambiare chi comincia: il primo turno lo guida chi è di turno.
+    if (opz.primaDelTurno) esegui(opz.primaDelTurno);
+    esegui(`turnoIA(gameState.currentPlayer);`);
     let passi = 0;
     // Gli audit di identita' possono chiedere se specifiche carte siano
     // davvero comparse nelle zone del solo avversario. Leggere le zone evita
@@ -429,7 +435,9 @@ async function giocaPartita(opz, n) {
     // per non gonfiare migliaia di risultati. Il registro completo va chiesto
     // esplicitamente dal chiamante quando confronta pochi semi anomali.
     const registroCompleto = opz.registroCompleto ? esegui('__logDuello.slice()') : undefined;
-    return { seme, passi, oraVirtualeMs: orologio.ora, alLimite, invarianti, trovate, trovatePerTesto,
+    // opz.allaFine: un'espressione letta a partita finita (per esempio lo stato delle squadre del Tag Team).
+    const extra = opz.allaFine ? esegui(opz.allaFine) : undefined;
+    return { seme, passi, oraVirtualeMs: orologio.ora, alLimite, invarianti, trovate, trovatePerTesto, extra,
         osservatiBotIds: Array.from(osservatiBot), osservatiPlayerIds: Array.from(osservatiPlayer),
         evocatiBotIds: Array.from(evocatiBot), primaEvocazioneBot,
         erroriCarte: erroriCarte.slice(), registroCompleto, ...fine };

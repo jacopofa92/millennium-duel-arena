@@ -64,10 +64,51 @@
         }
     }
 
+    // TAG TEAM IN RETE (window.MP_POSTI, la disposizione dei posti scritta da
+    // js/multiplayer/mp-passo-comune.js): più di un altro client, ognuno con
+    // la sua squadra. Messaggi e uscite dicono CHI (`da`, id pubblico).
+    /** @returns {any} */
+    function posti() { return /** @type {any} */ (window).MP_POSTI || null; }
+
+    /** La squadra di un client ('A'/'B'), o null. @param {string} client */
+    function squadraDelClient(client) {
+        const cfg = posti();
+        if (!cfg) return null;
+        const k = Object.keys(cfg.posti).find((p) => cfg.posti[p] && cfg.posti[p].tipo === 'persona' && cfg.posti[p].client === client);
+        return k ? k.charAt(0) : null;
+    }
+
+    /**
+     * Una persona lascia il Tag Team in rete: il duello non può proseguire
+     * (il suo posto non avrebbe più chi lo gioca, e farlo passare a un'IA
+     * dovrebbe succedere nello stesso punto della partita su tutti i client).
+     * Vince la squadra di chi è rimasto: se a uscire è un compagno, la tua
+     * squadra perde. Tutti i client ricevono la stessa uscita e decidono
+     * la stessa cosa.
+     * @param {string} chi
+     */
+    function uscitaInTag(chi) {
+        const cfg = posti();
+        const sua = squadraDelClient(chi);
+        const arenaPronta = typeof gameState !== 'undefined' && !!gameState;
+        if (!sua || (arenaPronta && gameState.gameOver)) return;
+        const compagno = sua === cfg.miaSquadra;
+        const testo = compagno ? '🏳️ Il tuo compagno ha lasciato la partita: la tua squadra perde.' : '🏳️ Un avversario ha lasciato la partita: vince la tua squadra.';
+        if (typeof addToLog === 'function') addToLog(testo);
+        if (arenaPronta && typeof endDuel === 'function') {
+            showMpBanner(testo);
+            window.MP_ricezioneEsito = true;
+            try { endDuel(!compagno); } finally { window.MP_ricezioneEsito = false; }
+            return;
+        }
+        showMpBanner(testo, { permanent: true });
+    }
+
     // Uscita definitiva: chi resta vince. Una caduta momentanea usa invece
     // opponent-disconnected e lascia al relay la finestra di riconnessione.
-    net.on('opponent-left', () => {
+    net.on('opponent-left', (msg) => {
         if (!window.MULTIPLAYER_MODE) return;
+        if (posti()) { uscitaInTag(msg && msg.da); return; }
         if (typeof addToLog === 'function') addToLog('⚠️ Il tuo avversario ha lasciato la partita.');
         const arenaPronta = typeof gameState !== 'undefined' && !!gameState;
         if (arenaPronta && gameState.gameOver) return;
@@ -79,16 +120,25 @@
         showMpBanner('⚠️ Il tuo avversario ha lasciato la partita.', { permanent: true });
     });
 
-    net.on('opponent-disconnected', () => {
+    /** "Il tuo avversario", oppure nel Tag Team in rete "Il tuo compagno"/"Un avversario". @param {any} msg */
+    function chiE(msg) {
+        if (!posti()) return 'Il tuo avversario';
+        const sua = squadraDelClient(msg && msg.da);
+        return sua && sua === posti().miaSquadra ? 'Il tuo compagno' : 'Un avversario';
+    }
+
+    net.on('opponent-disconnected', (msg) => {
         if (!window.MULTIPLAYER_MODE) return;
-        if (typeof addToLog === 'function') addToLog('🔌 Il tuo avversario ha perso la connessione, in attesa che torni...');
-        showMpBanner('🔌 Il tuo avversario ha perso la connessione, in attesa che torni...');
+        const chi = chiE(msg);
+        if (typeof addToLog === 'function') addToLog(`🔌 ${chi} ha perso la connessione, in attesa che torni...`);
+        showMpBanner(`🔌 ${chi} ha perso la connessione, in attesa che torni...`);
     });
 
-    net.on('opponent-reconnected', () => {
+    net.on('opponent-reconnected', (msg) => {
         if (!window.MULTIPLAYER_MODE) return;
-        if (typeof addToLog === 'function') addToLog('✅ Il tuo avversario è tornato in partita!');
-        showMpBanner('✅ Il tuo avversario è tornato in partita!');
+        const chi = chiE(msg);
+        if (typeof addToLog === 'function') addToLog(`✅ ${chi} è tornato in partita!`);
+        showMpBanner(`✅ ${chi} è tornato in partita!`);
         setTimeout(hideMpBanner, 3000);
     });
 
@@ -121,6 +171,14 @@
 
     net.on('game-action', (msg) => {
         const action = msg && msg.action;
-        if (action && action.kind === 'game-over') applyRemoteGameOver(action.opponentWon);
+        if (!action || action.kind !== 'game-over') return;
+        // A posti l'esito dice QUALE squadra vince: lo stesso messaggio vale per compagni e avversari di chi lo manda.
+        const cfg = posti();
+        if (cfg && action.vinceSquadra) {
+            // applyRemoteGameOver vuole "ho vinto io" (endDuel di chi riceve).
+            applyRemoteGameOver(action.vinceSquadra === 'draw' ? 'draw' : action.vinceSquadra === cfg.miaSquadra);
+            return;
+        }
+        applyRemoteGameOver(action.opponentWon);
     });
 })();

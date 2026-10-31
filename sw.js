@@ -511,7 +511,13 @@
 // v385: ultimo accesso online nel pannello Admin (cloud-sync.js, admin.html).
 // v386: cambio account sullo stesso dispositivo a prova di perdite (cloud-sync.js, save-manager.js, duel-session.js).
 // v452: Duello della Settimana (settimana.html) e Caccia al Boss (caccia-boss.html), a rotazione settimanale.
-const CACHE_NAME = 'ygo-duel-arena-v496';
+// v497: Tag Team (tag.html, js/modes/tag*.js), tu e un compagno IA contro un Duellante.
+// v498: Tag Team 2 contro 2, scelta di chi affrontare a inizio turno.
+// v499: Tag Team, nel 2 contro 1 la coppia ha 4000 Life Point a testa.
+// v500: Tag Team, Boss a squadre e scambio su richiesta.
+// v501: passo comune a posti (Multiplayer a più client), IA col caso locale in rete.
+// v502: Tag Team pronto per la rete (posti per membro, scambi deterministici).
+const CACHE_NAME = 'ygo-duel-arena-v509';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
@@ -538,6 +544,7 @@ const APP_SHELL = [
     'torre.html',
     'settimana.html',
     'caccia-boss.html',
+    'tag.html',
     'storia.html',
     'tornei.html',
     'torneo-regno-duellanti.html',
@@ -662,6 +669,9 @@ const APP_SHELL = [
     'js/data/caccia-db.js',
     'js/modes/caccia.js',
     'js/modes/caccia-mode.js',
+    'js/data/tag-db.js',
+    'js/modes/tag.js',
+    'js/modes/tag-mode.js',
     'js/ui/effects.js',
     'js/ui/error-recovery.js',
     'js/ui/icon-library.js',
@@ -694,6 +704,8 @@ const APP_SHELL = [
     'js/multiplayer/mp-raid.js',
     'js/multiplayer/mp-raid-campo.js',
     'js/ui/mp-raid-campo.css',
+    'js/multiplayer/mp-tag-sala.js',
+    'js/ui/mp-tag-sala.css',
     'js/data/raid-db.js',
     'js/multiplayer/multiplayer.js',
     'js/multiplayer/network.js',

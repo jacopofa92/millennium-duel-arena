@@ -41,6 +41,15 @@
     let primo = 'player';
     /** Chi c'è davvero dietro un posto 'remoto' (vedi Tavolo.giocaUnaPersona). */
     let naturaRemoto = 'persona';
+    /**
+     * La stessa cosa per un posto solo, quando i due posti remoti sono
+     * diversi: nel passo comune a posti (js/engine/passo-comune.js) un client
+     * può avere remoti entrambi i posti del motore (uno spettatore, o la
+     * persona di una squadra mentre gioca il compagno), e dietro uno c'è una
+     * persona e dietro l'altro un'IA. Vince sul valore unico qui sopra.
+     * @type {Record<string, string>}
+     */
+    let naturaPerPosto = {};
 
     /** @param {string} posto */
     function controllaPosto(posto) {
@@ -110,17 +119,23 @@
          */
         giocaUnaPersona(posto) {
             const c = Tavolo.controllore(posto);
-            return c === 'persona' || (c === 'remoto' && naturaRemoto === 'persona');
+            const natura = naturaPerPosto[posto] || naturaRemoto;
+            return c === 'persona' || (c === 'remoto' && natura === 'persona');
         },
 
         /**
          * Chi c'è dietro un posto 'remoto': 'persona' (default, il
-         * Multiplayer) o 'ia' (il duello gemello).
+         * Multiplayer) o 'ia' (il duello gemello). Con `posto` vale solo per
+         * quel posto (vedi naturaPerPosto); senza, per entrambi i posti che
+         * non ne hanno una propria.
          * @param {string} natura
+         * @param {string} [posto]
          */
-        impostaNaturaRemoto(natura) {
+        impostaNaturaRemoto(natura, posto) {
             if (natura !== 'persona' && natura !== 'ia') throw new Error(`Tavolo: natura del posto remoto sconosciuta "${natura}"`);
-            naturaRemoto = natura;
+            if (posto === undefined) { naturaRemoto = natura; return; }
+            controllaPosto(posto);
+            naturaPerPosto[posto] = natura;
         },
 
         /**
@@ -138,7 +153,7 @@
         },
 
         /** Torna ai controllori di default (e all'ordine di default). */
-        azzera() { impostati = {}; primo = 'player'; naturaRemoto = 'persona'; },
+        azzera() { impostati = {}; primo = 'player'; naturaRemoto = 'persona'; naturaPerPosto = {}; },
 
         /**
          * I due posti nell'ordine in cui le regole li scorrono quando

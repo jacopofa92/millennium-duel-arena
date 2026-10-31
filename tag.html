@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<!-- Copertura d'avvio (identica in ogni pagina col loader: la sorveglia guardrail-copertura-avvio). Fino a quando
+     js/ui/page-loader.js -- che sta nel body e arriva dopo gli script bloccanti dell'head -- non prende il suo posto,
+     lo schermo restava vuoto e i tocchi cadevano nel nulla. La toglie page-loader.js; 15 s di rete di sicurezza. -->
+<style>html.avvio-in-corso::before{content:"";position:fixed;inset:0;z-index:2147483000;background:#0b0d14}html.avvio-in-corso::after{content:"";position:fixed;z-index:2147483001;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;box-sizing:border-box;border:3px solid rgba(247,215,116,.22);border-top-color:#f7d774;border-radius:50%;animation:avvio-in-corso-giro .9s linear infinite}@keyframes avvio-in-corso-giro{to{transform:rotate(360deg)}}</style>
+<script>(function(){var r=document.documentElement;r.classList.add("avvio-in-corso");setTimeout(function(){r.classList.remove("avvio-in-corso")},15000)})();</script>
+<!-- Opt-in STATICO alla View Transitions API — deve stare qui, non iniettato via JS in ritardo (vedi js/audio/audio-manager.js per la storia completa del bug che questo risolve). -->
+<style>@view-transition { navigation: auto; }</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="images/icons/icon-192.png">
+<link rel="apple-touch-icon" href="images/icons/icon-180.png">
+<meta name="theme-color" content="#0b0d14">
+<style>html, body { background: #0b0d14; }</style>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Millennium">
+<script src="js/ui/error-recovery.js"></script>
+<!-- Accesso obbligatorio (js/cloud/auth-gate.js). -->
+<script src="js/vendor/supabase.min.js"></script>
+<script src="js/cloud/supabase-config.js"></script>
+<script src="js/cloud/cloud-sync.js"></script>
+<script src="js/cloud/auto-sync.js"></script>
+<script src="js/cloud/auth-gate.js"></script>
+<script src="js/pwa-register.js"></script>
+<link rel="stylesheet" href="js/ui/page-loader.css">
+<link rel="stylesheet" href="js/ui/topbar.css">
+<link rel="stylesheet" href="js/ui/menu-mobile.css">
+<link rel="stylesheet" href="js/ui/deck-switcher.css">
+<link rel="stylesheet" href="js/modes/mode-pages.css">
+<style>
+    /* =================================================================
+       Tag Team, pagina di scelta. Un TABELLONE invece di elenchi aperti:
+       in cima i posti (la tua squadra contro gli avversari), una tessera per
+       posto; toccandone una si apre il pannello di scelta con ricerca e
+       filtri, che scorre DENTRO di sé (prima ogni elenco era aperto nella
+       pagina, e gli stessi personaggi tornavano in tre sezioni). Sotto, le
+       regole come interruttori a due/tre voci. Il pulsante per iniziare
+       resta appiccicato in fondo, sopra la barra di navigazione.
+       ================================================================= */
+    .tg-main { position: relative; z-index: 1; width: min(920px, 100%); margin: 0 auto; padding: 18px 16px 24px; display: flex; flex-direction: column; gap: 18px; }
+
+    /* --- Interruttori (formato, livello, Life Point, turni) --- */
+    .tg-seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; padding: 4px; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); }
+    .tg-seg button { min-height: 44px; padding: 8px 10px; border: 0; border-radius: 10px; background: transparent; color: var(--ink-dim); font: 600 0.9rem/1.2 Arial, sans-serif; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-align: center; }
+    .tg-seg button small { font: 400 0.72rem/1.25 Arial, sans-serif; color: inherit; opacity: 0.8; }
+    .tg-seg button[aria-checked="true"] { color: #2a1a05; background: linear-gradient(180deg, #f7d774, #f0b542); box-shadow: 0 2px 10px rgba(247, 215, 116, 0.25); }
+    .tg-seg button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    .tg-seg--formato button { min-height: 58px; font-family: Georgia, 'Times New Roman', serif; font-size: 1rem; }
+
+    /* --- Il tabellone dei posti --- */
+    .tg-tavolo { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 14px; align-items: stretch; }
+    .tg-lato { display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 16px; background: var(--panel); border: 1px solid var(--line); }
+    .tg-lato--avv { border-color: rgba(224, 128, 107, 0.35); }
+    .tg-lato h2 { margin: 0; font: normal 0.8rem/1 Georgia, 'Times New Roman', serif; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
+    .tg-lato--avv h2 { color: #ffb4a8; }
+    .tg-posti { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; flex: 1; }
+    .tg-posti--uno { grid-template-columns: minmax(0, 1fr); }
+    .tg-vs { align-self: center; font: 700 1.4rem/1 Georgia, 'Times New Roman', serif; color: var(--gold); text-shadow: 0 0 14px rgba(247, 215, 116, 0.4); }
+
+    .tg-posto { position: relative; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: rgba(0, 0, 0, 0.35); color: inherit; font: inherit; text-align: left; padding: 0; min-width: 0; }
+    button.tg-posto { cursor: pointer; }
+    button.tg-posto:hover, button.tg-posto:focus-visible { border-color: var(--gold); box-shadow: 0 0 16px rgba(247, 215, 116, 0.22); outline: none; }
+    /* I ritratti sono QUADRATI (es. 968x968): un riquadro largo e basso li tagliava. Foto sempre quadrate. */
+    .tg-posto-foto { flex: 0 0 auto; aspect-ratio: 1; background: #15110c center / cover no-repeat; }
+    /* Un posto solo (2 contro 1, Boss): foto quadrata a sinistra e testo a destra, invece di una foto enorme. */
+    .tg-posti--uno .tg-posto { flex-direction: row; align-items: center; }
+    .tg-posti--uno .tg-posto-foto { flex: 0 0 auto; width: min(46%, 220px); }
+    .tg-posti--uno .tg-posto-testo { padding: 12px 14px; }
+    .tg-posti--uno .tg-posto-nome { font-size: 1.15rem; }
+    .tg-posto-testo { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px 10px; }
+    .tg-posto-ruolo { font: 600 0.68rem/1.2 Arial, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); }
+    .tg-posto-nome { font: normal 1rem/1.2 Georgia, 'Times New Roman', serif; color: var(--ink); overflow-wrap: anywhere; }
+    .tg-posto-nota { font: 400 0.75rem/1.3 Arial, sans-serif; color: var(--ink-dim); }
+    .tg-posto-cambia { position: absolute; top: 8px; right: 8px; padding: 3px 9px; border-radius: 999px; background: rgba(10, 8, 5, 0.78); border: 1px solid rgba(247, 215, 116, 0.5); color: var(--gold); font: 600 0.72rem/1.3 Arial, sans-serif; }
+    .tg-posto--vuoto .tg-posto-foto { display: grid; place-items: center; font-size: 2rem; color: var(--ink-dim); }
+
+    /* --- Regole --- */
+    .tg-regole { display: flex; flex-direction: column; gap: 14px; padding: 14px; border-radius: 16px; background: var(--panel); border: 1px solid var(--line); }
+    .tg-regola { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 6px 14px; align-items: center; }
+    .tg-regola-nome { font: normal 0.95rem/1.2 Georgia, 'Times New Roman', serif; color: var(--gold); }
+    .tg-regola-aiuto { grid-column: 2; margin: 0; color: var(--ink-dim); font-size: 0.82rem; line-height: 1.4; }
+    .tg-regola-fissa { margin: 0; color: var(--ink); font-size: 0.88rem; line-height: 1.4; }
+
+    .tg-come { border-radius: 14px; border: 1px solid var(--line); background: var(--panel); }
+    .tg-come summary { cursor: pointer; padding: 12px 14px; color: var(--gold); font: normal 0.95rem Georgia, 'Times New Roman', serif; list-style: none; }
+    .tg-come summary::-webkit-details-marker { display: none; }
+    .tg-come summary::after { content: '▾'; float: right; transition: transform 0.2s; }
+    .tg-come[open] summary::after { transform: rotate(180deg); }
+    .tg-come ul { margin: 0; padding: 0 16px 14px 32px; color: var(--ink-dim); font-size: 0.88rem; line-height: 1.5; display: flex; flex-direction: column; gap: 4px; }
+
+    /* --- Barra d'azione, sempre visibile in fondo --- */
+    .tg-azione { position: sticky; bottom: calc(var(--mm-barra-h, 0px) + 10px); z-index: 5; display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 16px; border-radius: 16px; border: 1px solid rgba(247, 215, 116, 0.45); background: rgba(14, 11, 7, 0.94); box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55); }
+    .tg-riepilogo { flex: 1; min-width: 0; margin: 0; color: var(--ink-dim); font-size: 0.88rem; line-height: 1.4; }
+    .tg-riepilogo strong { color: var(--gold); font-weight: normal; font-family: Georgia, 'Times New Roman', serif; }
+    .tg-vai { flex: 0 0 auto; min-height: 46px; padding: 0 22px; border: 0; border-radius: 12px; background: linear-gradient(180deg, #f7d774, #f39c12); color: #2a1a05; font: 700 1rem/1 Georgia, 'Times New Roman', serif; cursor: pointer; }
+    .tg-vai:disabled { opacity: 0.45; cursor: not-allowed; }
+    .tg-vai:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+    /* --- Pannello di scelta di un personaggio --- */
+    .tg-foglio { position: fixed; inset: 0; z-index: 300; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(4, 5, 8, 0.72); }
+    .tg-foglio[hidden] { display: none; }
+    .tg-foglio-pannello { width: min(780px, 100%); max-height: min(82vh, 760px); display: flex; flex-direction: column; border-radius: 18px; border: 1px solid rgba(247, 215, 116, 0.45); background: #120f0a; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.6); overflow: hidden; }
+    .tg-foglio-testa { display: flex; align-items: center; gap: 10px; padding: 14px 14px 10px 18px; }
+    .tg-foglio-testa h2 { flex: 1; margin: 0; font: normal 1.15rem Georgia, 'Times New Roman', serif; color: var(--gold); }
+    .tg-chiudi { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: transparent; color: var(--ink); font-size: 1.1rem; cursor: pointer; }
+    .tg-foglio-filtri { display: flex; flex-direction: column; gap: 8px; padding: 0 14px 10px 18px; }
+    .tg-cerca { width: 100%; min-height: 42px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); background: #1b1610; color: var(--ink); font: 0.95rem Arial, sans-serif; -webkit-user-select: text; user-select: text; }
+    .tg-cerca:focus { outline: 2px solid var(--gold); outline-offset: 0; }
+    .tg-chip-riga { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+    .tg-chip-riga[hidden], .tg-cerca[hidden] { display: none; }
+    .tg-chip { flex: 0 0 auto; min-height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink-dim); font: 600 0.8rem Arial, sans-serif; cursor: pointer; }
+    .tg-chip[aria-pressed="true"] { background: rgba(247, 215, 116, 0.16); border-color: var(--gold); color: var(--gold); }
+    /* Riquadri grandi: almeno 150px, mai schiacciati (le colonne si riducono invece di stringere i riquadri). */
+    /* grid-auto-rows: max-content e la foto che non si restringe: in un pannello ad altezza limitata la
+       griglia altrimenti STRINGE le righe (i riquadri diventavano strisce) invece di farle scorrere. */
+    .tg-foglio-lista { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 4px 14px 16px 18px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); grid-auto-rows: max-content; gap: 12px; align-content: start; }
+    .tg-voce { position: relative; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: rgba(0, 0, 0, 0.35); color: inherit; font: inherit; text-align: left; padding: 0; cursor: pointer; }
+    .tg-voce:hover, .tg-voce:focus-visible { border-color: var(--gold); outline: none; }
+    .tg-voce[aria-pressed="true"] { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold) inset, 0 0 14px rgba(247, 215, 116, 0.3); }
+    .tg-voce[aria-pressed="true"]::after { content: '✓'; position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--gold); color: #2a1a05; font-weight: 700; font-size: 0.8rem; }
+    .tg-voce:disabled { cursor: not-allowed; opacity: 0.38; }
+    .tg-voce-foto { flex: 0 0 auto; aspect-ratio: 1; background: #15110c center / cover no-repeat; }
+    .tg-voce-nome { padding: 8px 10px 10px; font: 0.92rem/1.25 Georgia, 'Times New Roman', serif; color: var(--ink); overflow-wrap: anywhere; }
+    .tg-voce-preso { position: absolute; left: 6px; top: 6px; padding: 2px 7px; border-radius: 999px; background: rgba(10, 8, 5, 0.85); color: var(--ink); font: 600 0.65rem Arial, sans-serif; }
+    .tg-foglio-vuoto { grid-column: 1 / -1; color: var(--ink-dim); font-size: 0.9rem; text-align: center; padding: 24px 0; }
+    body.tg-foglio-aperto { overflow: hidden; }
+
+    @media (max-width: 680px) {
+        .tg-main { padding: 12px 12px 16px; gap: 14px; }
+        .tg-tavolo { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+        .tg-vs { justify-self: center; font-size: 1.1rem; }
+        .tg-lato { padding: 10px; }
+        .tg-posti--uno .tg-posto-foto { width: 42%; }
+        .tg-regola { grid-template-columns: minmax(0, 1fr); }
+        .tg-regola-aiuto { grid-column: 1; }
+        .tg-seg button small { display: none; }
+        .tg-seg--formato button { min-height: 50px; font-size: 0.9rem; }
+        .tg-azione { padding: 8px 8px 8px 12px; }
+        .tg-riepilogo { font-size: 0.8rem; }
+        .tg-vai { padding: 0 16px; font-size: 0.95rem; }
+        /* Telefono: il pannello sale dal basso e occupa quasi tutto lo schermo. */
+        .tg-foglio { align-items: flex-end; padding: 0; }
+        .tg-foglio-pannello { width: 100%; max-height: 88dvh; border-radius: 18px 18px 0 0; border-bottom: 0; }
+        /* Telefono: due riquadri per riga, grandi (tre per riga li schiacciava). */
+        .tg-foglio-lista { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 4px 12px calc(16px + env(safe-area-inset-bottom, 0px)); }
+    }
+    @media (prefers-reduced-motion: reduce) { .tg-come summary::after { transition: none; } }
+</style>
+<title>Yu-Gi-Oh! Millennium Duel Arena — Tag Team</title>
+</head>
+<body>
+    <script src="js/ui/page-loader.js"></script>
+    <div id="topbarMount"></div>
+
+    <main class="tg-main">
+        <div class="tg-seg tg-seg--formato" id="formati" role="radiogroup" aria-label="Formato"></div>
+
+        <section class="tg-tavolo" aria-label="I duellanti">
+            <div class="tg-lato">
+                <h2>La tua squadra</h2>
+                <div class="tg-posti" id="postiTuoi"></div>
+            </div>
+            <div class="tg-vs" aria-hidden="true">VS</div>
+            <div class="tg-lato tg-lato--avv">
+                <h2 id="titoloAvv">Avversario</h2>
+                <div class="tg-posti" id="postiAvv"></div>
+            </div>
+        </section>
+
+        <section class="tg-regole" aria-label="Regole">
+            <div class="tg-regola" id="regolaLivello"></div>
+            <div class="tg-regola" id="regolaLp"></div>
+            <div class="tg-regola" id="regolaTurni"></div>
+        </section>
+
+        <details class="tg-come">
+            <summary>Come funziona il Tag Team</summary>
+            <ul>
+                <li>Giocate a turni alterni: un turno tu, il turno dopo il tuo compagno. Con i turni "su richiesta" puoi chiedergli di scambiarvi il prossimo.</li>
+                <li>Mano, Mazzo e campo sono di ciascuno; il Cimitero è comune.</li>
+                <li>Contro una squadra, a inizio turno scegli chi affrontare, ma mai lo stesso per più di due turni di fila.</li>
+                <li>Non si attacca un avversario che non ha ancora giocato il suo primo turno.</li>
+            </ul>
+        </details>
+
+        <div class="tg-azione">
+            <p class="tg-riepilogo" id="riepilogo" aria-live="polite"></p>
+            <button type="button" class="tg-vai" id="vai">Inizia</button>
+        </div>
+    </main>
+
+    <!-- La scelta di un personaggio per un posto: scorre dentro di sé, con ricerca e filtri. -->
+    <div class="tg-foglio" id="foglio" hidden>
+        <div class="tg-foglio-pannello" role="dialog" aria-modal="true" aria-labelledby="foglioTitolo">
+            <div class="tg-foglio-testa">
+                <h2 id="foglioTitolo">Scegli</h2>
+                <button type="button" class="tg-chiudi" id="foglioChiudi" aria-label="Chiudi">✕</button>
+            </div>
+            <div class="tg-foglio-filtri">
+                <input type="search" class="tg-cerca" id="foglioCerca" placeholder="Cerca un duellante" aria-label="Cerca un duellante" autocomplete="off">
+                <div class="tg-chip-riga" id="foglioSerie"></div>
+            </div>
+            <div class="tg-foglio-lista" id="foglioLista"></div>
+        </div>
+    </div>
+
+<script src="js/data/cards-data.generated.js"></script>
+<script src="js/save-manager.js"></script>
+<script src="js/data/cards-db.js"></script>
+<script src="js/data/characters-db.js"></script>
+<script src="js/data/character-decks.js"></script>
+<script src="js/data/tag-db.js"></script>
+<script src="js/data/raid-db.js"></script>
+<script src="js/audio/audio-manager.js"></script>
+<script src="js/native/app-back-button.js"></script>
+<script src="js/native/haptics.js"></script>
+<script src="js/native/native-save-backup.js"></script>
+<script src="js/ui/icon-library.js"></script>
+<script src="js/ui/deck-switcher.js"></script>
+<script src="js/ui/topbar.js"></script>
+<script src="js/ui/tab-bar.js"></script>
+<script>
+    PageTopbar.render('#topbarMount', { icon: 'multiplayer', title: 'Tag Team' });
+    initAudioManager();
+    Icons.hydrate();
+
+    (function () {
+    // Compagni e avversari: TUTTI i personaggi con un mazzo vero (js/data/character-decks.js), senza
+    // restrizioni di sblocco o di serie (decisione dell'autore). I compagni proposti vengono per primi.
+    const haMazzo = (id) => !!getCharacterDeck(id, 'medium');
+    const tutti = characterDatabase.filter((c) => haMazzo(c.id));
+    const proposti = tagDatabase.compagniProposti.map((id) => tutti.find((c) => c.id === id)).filter(Boolean);
+    const compagni = proposti.concat(tutti.filter((c) => proposti.indexOf(c) === -1));
+    const avversari = tutti;
+    const LIVELLI = [
+        { valore: 'Facile', nome: 'Facile', desc: 'Il mazzo più debole del Duellante' },
+        { valore: 'Medio', nome: 'Normale', desc: 'Il suo mazzo di tutti i giorni' },
+        { valore: 'Difficile', nome: 'Difficile', desc: 'Il mazzo al completo' }
+    ];
+    // I Boss del Raid (js/data/raid-db.js): solo l'elenco, i Life Point del Boss a squadre sono tagDatabase.lpBoss.
+    const bosses = (window.RAID_BOSSES || []).map((b) => characterDatabase.find((c) => c.id === b.id)).filter((c) => c && haMazzo(c.id));
+    const BOSS = 3;
+    // I numeri dipendono dal formato (D19: nel 2 contro 1, e quindi anche contro il Boss, la coppia ha 4000 a testa).
+    const regoleLp = () => {
+        const lp = tagDatabase.lpSquadra(scelta.formato !== 2);
+        const avv = scelta.formato === 1 ? ` L'avversario ne ha ${tagDatabase.lp.membro}.`
+            : (scelta.formato === BOSS ? ` Il Boss ne ha ${tagDatabase.lpBoss}.` : '');
+        return [
+            { valore: 'membro', nome: 'Uno a testa', desc: `${lp.membro} Life Point a testa: perdete quando siete a zero tutti e due.${avv}` },
+            { valore: 'lato', nome: 'Condivisi', desc: `${lp.lato} Life Point per la squadra: a zero perdete insieme.${avv}` }
+        ];
+    };
+    const REGOLE_SCAMBIO = [
+        { valore: 'obbligato', nome: 'A turno', desc: 'Un turno tu, il turno dopo il tuo compagno, sempre.' },
+        { valore: 'libero', nome: 'Su richiesta', desc: 'Si va a turno, ma puoi chiedere al compagno di scambiarvi il prossimo turno: se non gli conviene rifiuta.' }
+    ];
+
+    const FORMATI = [
+        { valore: 1, nome: '2 contro 1', breve: 'Contro un duellante' },
+        { valore: 2, nome: '2 contro 2', breve: 'Contro una squadra' },
+        { valore: BOSS, nome: 'Contro un Boss', breve: `${tagDatabase.lpBoss} Life Point` }
+    ];
+
+    const scelta = {
+        formato: 1,
+        compagno: compagni[0] ? compagni[0].id : null,
+        avversario: (avversari.find((c) => c.id === 'kaiba') || avversari[0] || {}).id || null,
+        avversario2: null,
+        boss: bosses[0] ? bosses[0].id : null,
+        livello: 'Medio',
+        lp: tagDatabase.regolaLpPredefinita,
+        scambio: tagDatabase.scambioPredefinito
+    };
+    // Il tuo compagno non può essere anche un avversario (né il Boss).
+    const disponibili = () => avversari.filter((c) => c.id !== scelta.compagno);
+    const bossDisponibili = () => bosses.filter((c) => c.id !== scelta.compagno);
+    // Il secondo avversario predefinito: il primo disponibile diverso dal primo avversario.
+    const secondoPredefinito = () => (disponibili().find((c) => c.id !== scelta.avversario) || {}).id || null;
+
+    const $ = (id) => document.getElementById(id);
+    const personaggio = (id) => characterDatabase.find((c) => c.id === id) || null;
+    const tocco = () => { if (window.NativeHaptics) NativeHaptics.light(); };
+    const el = (tag, classe, testo) => {
+        const e = document.createElement(tag);
+        if (classe) e.className = classe;
+        if (testo != null) e.textContent = testo;
+        return e;
+    };
+    /** Il ritratto di un personaggio come sfondo (l'immagine intera, inquadrata sul volto). */
+    const foto = (classe, img) => {
+        const f = el('span', classe);
+        if (img) f.style.backgroundImage = `url("${img}")`;
+        return f;
+    };
+
+    // I filtri del pannello di scelta: le serie del roster (js/data/characters-db.js).
+    const SERIE = [
+        { id: '', nome: 'Tutti' },
+        { id: 'main', nome: 'Serie animata' },
+        { id: 'forbiddenMemories', nome: 'Memorie Proibite' },
+        { id: 'extra', nome: 'Altri' },
+        { id: 'ww1', nome: 'Grande Guerra' }
+    ];
+    // Ogni posto del tabellone: che cosa sceglie, da quale elenco e con quale nome.
+    const RUOLI = {
+        compagno: { titolo: 'Scegli il tuo compagno', etichetta: 'Compagno', elenco: () => compagni, chiave: 'compagno' },
+        avversario: { titolo: 'Scegli l\'avversario', etichetta: 'Avversario', elenco: () => avversari, chiave: 'avversario' },
+        avversario2: { titolo: 'Scegli il secondo avversario', etichetta: '2° avversario', elenco: () => avversari, chiave: 'avversario2' },
+        boss: { titolo: 'Scegli il Boss', etichetta: 'Boss', elenco: () => bosses, chiave: 'boss' }
+    };
+
+    /** Chi occupa già un posto (id -> etichetta), per non mettere lo stesso personaggio due volte. */
+    function occupati(tranne) {
+        const mappa = {};
+        const controBoss = scelta.formato === BOSS;
+        const posti = [['compagno', scelta.compagno]].concat(controBoss ? [['boss', scelta.boss]]
+            : [['avversario', scelta.avversario]].concat(scelta.formato === 2 ? [['avversario2', scelta.avversario2]] : []));
+        posti.forEach(([ruolo, id]) => { if (id && ruolo !== tranne) mappa[id] = RUOLI[ruolo].etichetta; });
+        return mappa;
+    }
+
+    /** Una tessera del tabellone: il posto, chi lo occupa, e (se si può cambiare) il pulsante per farlo. */
+    function posto(ruolo, id, nota) {
+        const c = personaggio(id);
+        const b = el('button', 'tg-posto' + (c ? '' : ' tg-posto--vuoto'));
+        b.type = 'button';
+        b.setAttribute('aria-label', `${RUOLI[ruolo].etichetta}: ${c ? c.name : 'da scegliere'}. Tocca per cambiare.`);
+        const f = foto('tg-posto-foto', c && c.image);
+        if (!c) f.textContent = '?';
+        const t = el('span', 'tg-posto-testo');
+        t.append(el('span', 'tg-posto-ruolo', RUOLI[ruolo].etichetta), el('span', 'tg-posto-nome', c ? c.name : 'Da scegliere'));
+        if (nota) t.append(el('span', 'tg-posto-nota', nota));
+        b.append(f, t, el('span', 'tg-posto-cambia', c ? 'Cambia' : 'Scegli'));
+        b.onclick = () => { tocco(); apriFoglio(ruolo); };
+        return b;
+    }
+
+    /** La tua tessera: non si cambia (sei tu). */
+    function postoTuo() {
+        const d = el('div', 'tg-posto');
+        const nome = (window.SaveManager && SaveManager.getPlayerName && SaveManager.getPlayerName()) || 'Tu';
+        const t = el('span', 'tg-posto-testo');
+        t.append(el('span', 'tg-posto-ruolo', 'Tu'), el('span', 'tg-posto-nome', nome), el('span', 'tg-posto-nota', 'Il primo turno della squadra è tuo'));
+        d.append(foto('tg-posto-foto', 'images/characters/mirror.jpg'), t);
+        return d;
+    }
+
+    /** Un interruttore a più voci (radiogroup). */
+    function interruttore(voci, valore, onScelta, etichetta, classe) {
+        const g = el('div', 'tg-seg' + (classe ? ' ' + classe : ''));
+        g.setAttribute('role', 'radiogroup');
+        g.setAttribute('aria-label', etichetta);
+        voci.forEach((v) => {
+            const b = el('button');
+            b.type = 'button';
+            b.setAttribute('role', 'radio');
+            b.setAttribute('aria-checked', String(v.valore === valore));
+            b.append(document.createTextNode(v.nome));
+            if (v.breve) b.append(el('small', null, v.breve));
+            b.onclick = () => { tocco(); onScelta(v.valore); scrivi(); };
+            g.appendChild(b);
+        });
+        return g;
+    }
+
+    /** Una riga delle regole: nome, interruttore (o una frase fissa) e la spiegazione della voce scelta. */
+    function regola(contenitore, nome, controllo, aiuto) {
+        contenitore.replaceChildren(el('span', 'tg-regola-nome', nome), controllo);
+        if (aiuto) contenitore.append(el('p', 'tg-regola-aiuto', aiuto));
+    }
+
+    // --- Pannello di scelta ---
+    const foglio = { ruolo: null, serie: '', testo: '' };
+
+    function apriFoglio(ruolo) {
+        foglio.ruolo = ruolo;
+        foglio.serie = '';
+        foglio.testo = '';
+        $('foglioTitolo').textContent = RUOLI[ruolo].titolo;
+        $('foglioCerca').value = '';
+        // Ricerca e filtri solo dove l'elenco è lungo (gli avversari): i compagni proposti sono pochi.
+        const lungo = RUOLI[ruolo].elenco().length > 12;
+        $('foglioCerca').hidden = !lungo;
+        $('foglioSerie').hidden = !lungo;
+        disegnaFoglio();
+        $('foglio').hidden = false;
+        document.body.classList.add('tg-foglio-aperto');
+        const scelto = $('foglioLista').querySelector('[aria-pressed="true"]');
+        if (scelto) scelto.scrollIntoView({ block: 'center' });
+        (lungo && !matchMedia('(pointer: coarse)').matches ? $('foglioCerca') : (scelto || $('foglioChiudi'))).focus({ preventScroll: true });
+    }
+
+    function chiudiFoglio() {
+        $('foglio').hidden = true;
+        document.body.classList.remove('tg-foglio-aperto');
+        foglio.ruolo = null;
+    }
+
+    function disegnaFoglio() {
+        const ruolo = RUOLI[foglio.ruolo];
+        const presi = occupati(foglio.ruolo);
+        const attuale = scelta[ruolo.chiave];
+        $('foglioSerie').replaceChildren(...SERIE.filter((s) => !s.id || ruolo.elenco().some((c) => c.series === s.id)).map((s) => {
+            const b = el('button', 'tg-chip', s.nome);
+            b.type = 'button';
+            b.setAttribute('aria-pressed', String(s.id === foglio.serie));
+            b.onclick = () => { foglio.serie = s.id; disegnaFoglio(); };
+            return b;
+        }));
+        const cerca = foglio.testo.trim().toLowerCase();
+        const voci = ruolo.elenco().filter((c) => (!foglio.serie || c.series === foglio.serie) && (!cerca || c.name.toLowerCase().includes(cerca)));
+        const lista = $('foglioLista');
+        if (voci.length === 0) { lista.replaceChildren(el('p', 'tg-foglio-vuoto', 'Nessun duellante trovato.')); return; }
+        lista.replaceChildren(...voci.map((c) => {
+            const b = el('button', 'tg-voce');
+            b.type = 'button';
+            b.setAttribute('aria-pressed', String(c.id === attuale));
+            const preso = presi[c.id];
+            b.disabled = !!preso;
+            if (preso) b.title = `Già in partita come ${preso.toLowerCase()}`;
+            b.append(foto('tg-voce-foto', c.image), el('span', 'tg-voce-nome', c.name));
+            if (preso) b.append(el('span', 'tg-voce-preso', preso));
+            b.onclick = () => {
+                tocco();
+                scelta[ruolo.chiave] = c.id;
+                chiudiFoglio();
+                scrivi();
+            };
+            return b;
+        }));
+    }
+
+    $('foglioChiudi').onclick = chiudiFoglio;
+    $('foglio').addEventListener('click', (e) => { if (e.target === $('foglio')) chiudiFoglio(); });
+    $('foglioCerca').addEventListener('input', (e) => { foglio.testo = e.target.value; disegnaFoglio(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && foglio.ruolo) chiudiFoglio(); });
+
+    function scrivi() {
+        // Scelte rimaste valide dopo un cambio di compagno o di primo avversario.
+        if (!disponibili().some((c) => c.id === scelta.avversario)) {
+            scelta.avversario = (disponibili().find((c) => c.id === 'kaiba') || disponibili()[0] || {}).id || null;
+        }
+        if (scelta.formato === 2 && (!scelta.avversario2 || scelta.avversario2 === scelta.avversario || scelta.avversario2 === scelta.compagno)) {
+            scelta.avversario2 = secondoPredefinito();
+        }
+        if (!bossDisponibili().some((c) => c.id === scelta.boss)) scelta.boss = (bossDisponibili()[0] || {}).id || null;
+        const controBoss = scelta.formato === BOSS;
+
+        $('formati').replaceWith(Object.assign(interruttore(FORMATI, scelta.formato, (v) => { scelta.formato = v; }, 'Formato', 'tg-seg--formato'), { id: 'formati' }));
+
+        $('postiTuoi').replaceChildren(postoTuo(), posto('compagno', scelta.compagno, 'Gioca con la sua IA'));
+        const postiAvv = $('postiAvv');
+        $('titoloAvv').textContent = controBoss ? 'Il Boss' : (scelta.formato === 2 ? 'La squadra avversaria' : 'L\'avversario');
+        postiAvv.classList.toggle('tg-posti--uno', scelta.formato !== 2);
+        if (controBoss) postiAvv.replaceChildren(posto('boss', scelta.boss, `${tagDatabase.lpBoss} Life Point · mazzo Difficile`));
+        else if (scelta.formato === 2) postiAvv.replaceChildren(posto('avversario', scelta.avversario), posto('avversario2', scelta.avversario2));
+        else postiAvv.replaceChildren(posto('avversario', scelta.avversario));
+
+        // Il Boss gioca sempre il mazzo al completo: niente scelta del livello.
+        const livello = LIVELLI.find((l) => l.valore === scelta.livello);
+        if (controBoss) regola($('regolaLivello'), 'Livello', el('p', 'tg-regola-fissa', 'Il Boss gioca sempre il mazzo al completo.'));
+        else regola($('regolaLivello'), 'Livello', interruttore(LIVELLI, scelta.livello, (v) => { scelta.livello = v; }, 'Livello degli avversari'), livello.desc);
+        const lp = regoleLp();
+        regola($('regolaLp'), 'Life Point', interruttore(lp, scelta.lp, (v) => { scelta.lp = v; }, 'Life Point'), (lp.find((r) => r.valore === scelta.lp) || {}).desc);
+        regola($('regolaTurni'), 'Turni', interruttore(REGOLE_SCAMBIO, scelta.scambio, (v) => { scelta.scambio = v; }, 'Turni nella squadra'), (REGOLE_SCAMBIO.find((r) => r.valore === scelta.scambio) || {}).desc);
+
+        const compagno = personaggio(scelta.compagno);
+        const avversario = personaggio(controBoss ? scelta.boss : scelta.avversario);
+        const avversario2 = scelta.formato === 2 ? personaggio(scelta.avversario2) : null;
+        const riepilogo = $('riepilogo');
+        const vai = $('vai');
+        if (!compagno || !avversario || (scelta.formato === 2 && !avversario2)) {
+            // Con pochi Duellanti sbloccati (ne servono 2 diversi dal compagno per il 2 contro 2) lo si dice.
+            riepilogo.textContent = scelta.formato === 2 && disponibili().length < 2
+                ? 'Per il 2 contro 2 servono due avversari diversi dal tuo compagno: sbloccane altri vincendo in Torneo o nella Storia.'
+                : 'Scegli chi occupa i posti vuoti.';
+            vai.disabled = true;
+            return;
+        }
+        const forte = (testo) => el('strong', null, testo);
+        riepilogo.replaceChildren('Tu e ', forte(compagno.name), ' contro ', forte(avversario.name));
+        if (avversario2) riepilogo.append(' e ', forte(avversario2.name));
+        riepilogo.append(controBoss ? ' · Boss' : ` · ${livello.nome}`);
+        vai.disabled = false;
+    }
+
+    document.getElementById('vai').onclick = () => {
+        const controBoss = scelta.formato === BOSS;
+        const avversario = controBoss ? scelta.boss : scelta.avversario;
+        if (!scelta.compagno || !avversario || (scelta.formato === 2 && !scelta.avversario2)) return;
+        if (window.NativeHaptics) NativeHaptics.light();
+        window.location.href = 'duelMonstersCore.html?mode=tag'
+            + '&character=' + encodeURIComponent(avversario)
+            + (scelta.formato === 2 ? '&character2=' + encodeURIComponent(scelta.avversario2) : '')
+            + (controBoss ? '&boss=1' : '')
+            + '&difficulty=' + encodeURIComponent(controBoss ? tagDatabase.livelloBoss : scelta.livello)
+            + '&partner=' + encodeURIComponent(scelta.compagno)
+            + '&lp=' + encodeURIComponent(scelta.lp)
+            + (scelta.scambio === 'libero' ? '&scambio=libero' : '');
+    };
+
+    scrivi();
+    })();
+</script>
+</body>
+</html>

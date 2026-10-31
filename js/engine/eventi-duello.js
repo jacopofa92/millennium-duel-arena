@@ -57,6 +57,8 @@
         'annuncio-fase': '(titolo, sottotitolo?, variante?) inizia una fase',
         'annuncio-turno': '(parolaSinistra, parolaDestra, sottotitolo) inizia un turno',
         'orologio': '() è cambiato il turno: aggiornare il contatore',
+        'inizio-turno': '(posto) REGOLA: comincia il turno di quel posto, subito dopo il cambio di currentPlayer e prima di scadenze, turno saltato, azzeramenti e pescata (aggancio A1, docs/planning/PIANO_TAG_TEAM.md)',
+        'prima-del-comando': '(posto, comando) REGOLA, solo a passo comune: un comando sta per partire, a duello fermo, nello STESSO punto logico su tutti i client (da chi lo manda prima dell\'impronta, da chi lo riceve prima del confronto). Offline non viene mai emesso (aggancio A4, docs/planning/PIANO_TAG_TEAM.md)',
         'carta-pescata-in-mano': '() il giocatore ha pescato la carta del turno',
         'pescata-da-effetto': '(owner, pescata) un effetto ha fatto pescare',
         'mazzo-rimescolato': '(owner) un effetto ha rimescolato il Deck di quel giocatore',
@@ -85,7 +87,9 @@
         // --- domande (chiedi) ---
         'interfaccia-occupata': '() → true se a schermo c\'è una scelta o una cinematica che il duello deve aspettare',
         'evocazione-in-sospeso': '() → true se la persona ha GIA\' pagato i Tributi di un\'Evocazione e non l\'ha ancora completata: nessun cambio di fase finche\' non finisce',
-        'decisioni-a-schermo': '(tipo) → false se l\'interfaccia non può mostrare adesso una decisione di quel tipo'
+        'decisioni-a-schermo': '(tipo) → false se l\'interfaccia non può mostrare adesso una decisione di quel tipo',
+        'lato-sconfitto': '(posto, motivo) → false se quel posto NON ha perso anche se i suoi Life Point sono a 0 (aggancio A3, docs/planning/PIANO_TAG_TEAM.md). Predefinito: true, il duello finisce come sempre',
+        'attacco-vietato': '(posto) → true se i mostri di quel posto NON possono attaccare per una regola della variante (aggancio A5, docs/planning/PIANO_TAG_TEAM.md: nel Tag Team non si attacca chi non ha ancora giocato il suo primo turno). Predefinito: false'
     });
 
     /** @type {Map<string, Function[]>} */

@@ -487,6 +487,15 @@ function changeTurn() {
     addToLog(`🔄 Turno ${gameState.turn} terminato.`);
     gameState.turn++;
     gameState.currentPlayer = Tavolo.avversario(gameState.currentPlayer);
+    // Avviso di REGOLA "comincia il turno di questo posto", senza ascoltatori
+    // nel duello normale. Serve a una variante di regole fuori dal motore che
+    // cambia CHI siede in un posto da un turno all'altro (aggancio A1 di
+    // docs/planning/PIANO_TAG_TEAM.md). Deve stare QUI, prima di tutto il
+    // resto di changeTurn: le scadenze "fino al tuo prossimo turno" qui sotto
+    // (Ondata Gelida, Orgoth...) e il turno saltato (Azzardo) vanno lette
+    // sullo stato di chi siede adesso, e così l'azzeramento di
+    // hasAttacked/canChangePosition sul suo campo e la sua pescata.
+    EventiDuello.emetti('inizio-turno', gameState.currentPlayer);
     // Blocco Trappole/Magie "per il resto del turno" (es. Manta
     // Perforante Strisciante id 693, famiglia Ingranaggio Antico) — vedi
     // gameState.noTrapActivationFor/noSpellActivationFor, controllati in
@@ -684,12 +693,30 @@ function changeTurn() {
     // A passo comune (js/engine/passo-comune.js) anche il turno del posto
     // remoto si gioca di qua: pescata, Standby e Main Phase 1 avanzano da
     // sole come per la persona, e da lì in poi arrivano i suoi comandi.
-    const remotoAPassoComune = controllore === 'remoto' && typeof PassoComune !== 'undefined' && PassoComune.attivo();
-    if (controllore === 'ia') {
-        dopoPausaDuello(() => turnoIA(diTurno), 3000);
-    } else if (controllore === 'persona' || remotoAPassoComune) {
-        dopoPausaDuello(() => enterDrawPhase(true), 3000);
+    const aPassoComune = typeof PassoComune !== 'undefined' && PassoComune.attivo();
+    const remotoAPassoComune = controllore === 'remoto' && aPassoComune;
+    // A passo comune l'inizio del turno è un timer delle REGOLE: aspetta che
+    // non ci sia nessuna scelta aperta su nessun client (PassoComune.dopo).
+    // Una scelta chiesta a inizio turno (chi affrontare nel Tag Team, uno
+    // scambio di turno) deve risolversi PRIMA della pescata su tutti i
+    // client, o lo scambio che ne segue cadrebbe prima della pescata da una
+    // parte e dopo dall'altra. Offline resta il timer di sempre.
+    if (!aPassoComune) {
+        if (controllore === 'ia') {
+            dopoPausaDuello(() => turnoIA(diTurno), 3000);
+        } else if (controllore === 'persona' || remotoAPassoComune) {
+            dopoPausaDuello(() => enterDrawPhase(true), 3000);
+        }
+        return;
     }
+    // Chi guida il turno si rilegge allo scadere: la scelta aspettata può
+    // aver cambiato chi gioca questo turno (uno scambio accettato).
+    PassoComune.dopo(() => {
+        if (gameState.gameOver || gameState.currentPlayer !== diTurno) return;
+        const c = Tavolo.controllore(diTurno);
+        if (c === 'ia') turnoIA(diTurno);
+        else enterDrawPhase(true);
+    }, 3000);
 }
 
 function clearPhaseTransitionTimeout() {
@@ -1553,8 +1580,14 @@ function checkGameOver() {
         return;
     }
 
-    const playerLost = gameState.playerLP <= 0;
-    const botLost = gameState.botLP <= 0;
+    // Un posto a 0 Life Point ha perso, a meno che chi ascolta 'lato-sconfitto'
+    // dica di no: una variante di regole fuori dal motore può far sedere al
+    // suo posto un altro duellante ancora in gioco (aggancio A3 di
+    // docs/planning/PIANO_TAG_TEAM.md). Senza ascoltatori la domanda risponde
+    // true e tutto va come sempre. La si fa solo a Life Point già finiti,
+    // quindi nel duello normale non costa nulla.
+    const playerLost = gameState.playerLP <= 0 && EventiDuello.chiedi('lato-sconfitto', true, 'player', 'lp') !== false;
+    const botLost = gameState.botLP <= 0 && EventiDuello.chiedi('lato-sconfitto', true, 'bot', 'lp') !== false;
     if (!playerLost && !botLost) return;
 
     // ATTENZIONE all'ordine: updateUI() termina chiamando checkGameOver(),
