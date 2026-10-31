@@ -64,8 +64,13 @@
     .tg-posto { position: relative; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: rgba(0, 0, 0, 0.35); color: inherit; font: inherit; text-align: left; padding: 0; min-width: 0; }
     button.tg-posto { cursor: pointer; }
     button.tg-posto:hover, button.tg-posto:focus-visible { border-color: var(--gold); box-shadow: 0 0 16px rgba(247, 215, 116, 0.22); outline: none; }
-    .tg-posto-foto { aspect-ratio: 4 / 3; background: #15110c center 18% / cover no-repeat; }
-    .tg-posti--uno .tg-posto-foto { aspect-ratio: 16 / 9; }
+    /* I ritratti sono QUADRATI (es. 968x968): un riquadro largo e basso li tagliava. Foto sempre quadrate. */
+    .tg-posto-foto { flex: 0 0 auto; aspect-ratio: 1; background: #15110c center / cover no-repeat; }
+    /* Un posto solo (2 contro 1, Boss): foto quadrata a sinistra e testo a destra, invece di una foto enorme. */
+    .tg-posti--uno .tg-posto { flex-direction: row; align-items: center; }
+    .tg-posti--uno .tg-posto-foto { flex: 0 0 auto; width: min(46%, 220px); }
+    .tg-posti--uno .tg-posto-testo { padding: 12px 14px; }
+    .tg-posti--uno .tg-posto-nome { font-size: 1.15rem; }
     .tg-posto-testo { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px 10px; }
     .tg-posto-ruolo { font: 600 0.68rem/1.2 Arial, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); }
     .tg-posto-nome { font: normal 1rem/1.2 Georgia, 'Times New Roman', serif; color: var(--ink); overflow-wrap: anywhere; }
@@ -109,14 +114,17 @@
     .tg-chip-riga[hidden], .tg-cerca[hidden] { display: none; }
     .tg-chip { flex: 0 0 auto; min-height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink-dim); font: 600 0.8rem Arial, sans-serif; cursor: pointer; }
     .tg-chip[aria-pressed="true"] { background: rgba(247, 215, 116, 0.16); border-color: var(--gold); color: var(--gold); }
-    .tg-foglio-lista { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 4px 14px 16px 18px; display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; align-content: start; }
+    /* Riquadri grandi: almeno 150px, mai schiacciati (le colonne si riducono invece di stringere i riquadri). */
+    /* grid-auto-rows: max-content e la foto che non si restringe: in un pannello ad altezza limitata la
+       griglia altrimenti STRINGE le righe (i riquadri diventavano strisce) invece di farle scorrere. */
+    .tg-foglio-lista { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 4px 14px 16px 18px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); grid-auto-rows: max-content; gap: 12px; align-content: start; }
     .tg-voce { position: relative; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: rgba(0, 0, 0, 0.35); color: inherit; font: inherit; text-align: left; padding: 0; cursor: pointer; }
     .tg-voce:hover, .tg-voce:focus-visible { border-color: var(--gold); outline: none; }
     .tg-voce[aria-pressed="true"] { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold) inset, 0 0 14px rgba(247, 215, 116, 0.3); }
     .tg-voce[aria-pressed="true"]::after { content: '✓'; position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--gold); color: #2a1a05; font-weight: 700; font-size: 0.8rem; }
     .tg-voce:disabled { cursor: not-allowed; opacity: 0.38; }
-    .tg-voce-foto { aspect-ratio: 1; background: #15110c center 18% / cover no-repeat; }
-    .tg-voce-nome { padding: 6px 8px 8px; font: 0.82rem/1.2 Georgia, 'Times New Roman', serif; color: var(--ink); overflow-wrap: anywhere; }
+    .tg-voce-foto { flex: 0 0 auto; aspect-ratio: 1; background: #15110c center / cover no-repeat; }
+    .tg-voce-nome { padding: 8px 10px 10px; font: 0.92rem/1.25 Georgia, 'Times New Roman', serif; color: var(--ink); overflow-wrap: anywhere; }
     .tg-voce-preso { position: absolute; left: 6px; top: 6px; padding: 2px 7px; border-radius: 999px; background: rgba(10, 8, 5, 0.85); color: var(--ink); font: 600 0.65rem Arial, sans-serif; }
     .tg-foglio-vuoto { grid-column: 1 / -1; color: var(--ink-dim); font-size: 0.9rem; text-align: center; padding: 24px 0; }
     body.tg-foglio-aperto { overflow: hidden; }
@@ -126,8 +134,7 @@
         .tg-tavolo { grid-template-columns: minmax(0, 1fr); gap: 8px; }
         .tg-vs { justify-self: center; font-size: 1.1rem; }
         .tg-lato { padding: 10px; }
-        .tg-posto-foto { aspect-ratio: 16 / 10; }
-        .tg-posti--uno .tg-posto-foto { aspect-ratio: 16 / 8; }
+        .tg-posti--uno .tg-posto-foto { width: 42%; }
         .tg-regola { grid-template-columns: minmax(0, 1fr); }
         .tg-regola-aiuto { grid-column: 1; }
         .tg-seg button small { display: none; }
@@ -138,7 +145,8 @@
         /* Telefono: il pannello sale dal basso e occupa quasi tutto lo schermo. */
         .tg-foglio { align-items: flex-end; padding: 0; }
         .tg-foglio-pannello { width: 100%; max-height: 88dvh; border-radius: 18px 18px 0 0; border-bottom: 0; }
-        .tg-foglio-lista { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+        /* Telefono: due riquadri per riga, grandi (tre per riga li schiacciava). */
+        .tg-foglio-lista { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 4px 12px calc(16px + env(safe-area-inset-bottom, 0px)); }
     }
     @media (prefers-reduced-motion: reduce) { .tg-come summary::after { transition: none; } }
 </style>
@@ -205,7 +213,6 @@
 <script src="js/data/cards-db.js"></script>
 <script src="js/data/characters-db.js"></script>
 <script src="js/data/character-decks.js"></script>
-<script src="js/data/character-unlocks.js"></script>
 <script src="js/data/tag-db.js"></script>
 <script src="js/data/raid-db.js"></script>
 <script src="js/audio/audio-manager.js"></script>
@@ -222,11 +229,13 @@
     Icons.hydrate();
 
     (function () {
-    // Solo personaggi con un mazzo vero (js/data/character-decks.js) e già sbloccati in Duello Libero.
+    // Compagni e avversari: TUTTI i personaggi con un mazzo vero (js/data/character-decks.js), senza
+    // restrizioni di sblocco o di serie (decisione dell'autore). I compagni proposti vengono per primi.
     const haMazzo = (id) => !!getCharacterDeck(id, 'medium');
-    const sbloccato = (id) => !window.CharacterUnlocks || CharacterUnlocks.sbloccato(id);
-    const compagni = tagDatabase.compagniProposti.map((id) => characterDatabase.find((c) => c.id === id)).filter((c) => c && haMazzo(c.id));
-    const avversari = characterDatabase.filter((c) => haMazzo(c.id) && sbloccato(c.id) && c.series !== 'ww1');
+    const tutti = characterDatabase.filter((c) => haMazzo(c.id));
+    const proposti = tagDatabase.compagniProposti.map((id) => tutti.find((c) => c.id === id)).filter(Boolean);
+    const compagni = proposti.concat(tutti.filter((c) => proposti.indexOf(c) === -1));
+    const avversari = tutti;
     const LIVELLI = [
         { valore: 'Facile', nome: 'Facile', desc: 'Il mazzo più debole del Duellante' },
         { valore: 'Medio', nome: 'Normale', desc: 'Il suo mazzo di tutti i giorni' },
@@ -293,7 +302,8 @@
         { id: '', nome: 'Tutti' },
         { id: 'main', nome: 'Serie animata' },
         { id: 'forbiddenMemories', nome: 'Memorie Proibite' },
-        { id: 'extra', nome: 'Altri' }
+        { id: 'extra', nome: 'Altri' },
+        { id: 'ww1', nome: 'Grande Guerra' }
     ];
     // Ogni posto del tabellone: che cosa sceglie, da quale elenco e con quale nome.
     const RUOLI = {

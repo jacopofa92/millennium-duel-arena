@@ -67,11 +67,18 @@
     function personaggio(id) { return (typeof characterDatabase !== 'undefined' ? characterDatabase : []).find((c) => c.id === id) || null; }
     function nomePersonaggio(id) { const c = personaggio(id); return c ? c.name : id; }
 
-    /** I Duellanti che l'IA può giocare in un posto vuoto: i compagni proposti e i Boss (tutti con un mazzo vero). */
+    /**
+     * I Duellanti che l'IA può giocare in un posto vuoto: TUTTI quelli con un mazzo vero, senza
+     * restrizioni (decisione dell'autore), i compagni proposti per primi. Senza l'elenco dei mazzi
+     * (character-decks.js non caricato) restano i compagni proposti e i Boss, che un mazzo ce l'hanno.
+     */
     function duellantiIA() {
         const ids = [];
         const aggiungi = (id) => { if (id && ids.indexOf(id) === -1 && personaggio(id)) ids.push(id); };
         (typeof tagDatabase !== 'undefined' ? tagDatabase.compagniProposti : []).forEach(aggiungi);
+        if (typeof getCharacterDeck === 'function') {
+            (typeof characterDatabase !== 'undefined' ? characterDatabase : []).forEach((c) => { if (getCharacterDeck(c.id, 'medium')) aggiungi(c.id); });
+        }
         (g.RAID_BOSSES || []).forEach((b) => aggiungi(b.id));
         return ids;
     }

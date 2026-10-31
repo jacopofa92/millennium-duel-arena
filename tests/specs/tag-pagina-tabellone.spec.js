@@ -39,7 +39,13 @@ module.exports = {
                 await page.waitForSelector('#foglio:not([hidden])');
                 const pannello = await page.evaluate(() => {
                     const voci = Array.from(document.querySelectorAll('#foglioLista .tg-voce'));
+                    const lista = document.getElementById('foglioLista');
                     return {
+                        // Tutti i personaggi con un mazzo, senza restrizioni di sblocco (decisione dell'autore).
+                        quanti: voci.length,
+                        // Mai schiacciati: la foto resta quadrata anche con decine di personaggi (prima diventavano strisce).
+                        schiacciati: voci.filter((v) => { const r = v.querySelector('.tg-voce-foto').getBoundingClientRect(); return r.height < r.width * 0.95; }).length,
+                        scorreDentro: lista.scrollHeight > lista.clientHeight,
                         bloccati: voci.filter((v) => v.disabled).map((v) => v.querySelector('.tg-voce-preso').textContent),
                         liberi: voci.filter((v) => !v.disabled && v.getAttribute('aria-pressed') !== 'true').length,
                         dentroLoSchermo: (() => { const r = document.querySelector('.tg-foglio-pannello').getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth + 1 && r.bottom <= innerHeight + 1; })()
@@ -47,6 +53,8 @@ module.exports = {
                 });
                 t.assert(pannello.bloccati.includes('Compagno') && pannello.bloccati.includes('Avversario'), `${w}px: nel pannello compagno e primo avversario sono bloccati: ` + JSON.stringify(pannello));
                 t.assert(pannello.dentroLoSchermo, `${w}px: il pannello sta dentro lo schermo`);
+                t.assert(pannello.quanti > 30, `${w}px: tutti i duellanti con un mazzo, senza restrizioni: ${pannello.quanti}`);
+                t.assert(pannello.schiacciati === 0 && pannello.scorreDentro, `${w}px: riquadri quadrati e l'elenco scorre dentro il pannello: ` + JSON.stringify(pannello));
                 if (pannello.liberi > 0) {
                     const scelto = await page.evaluate(() => {
                         const v = Array.from(document.querySelectorAll('#foglioLista .tg-voce')).find((x) => !x.disabled && x.getAttribute('aria-pressed') !== 'true');
