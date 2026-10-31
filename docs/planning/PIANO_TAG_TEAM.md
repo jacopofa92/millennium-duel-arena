@@ -459,6 +459,19 @@ Con 3-4 persone le opzioni 1, 2 e 3 diventano casi dello stesso meccanismo, quin
 - **Sala d'attesa**: formato (2v1, 2v2, contro un Boss), squadre, posti vuoti riempiti dall'IA
   (sull'host), regole D1/D2.
 
+**Passo 1 FATTO (1.4.192).** `passo-comune.js` ha la modalità a posti (`avvia({ posti: { mioClient,
+miaSquadra } })`, `preparaDuello({ squadre })`, `impostaPostoAttivo`, flussi per mittente, `posto` e
+`mitt` nei messaggi, decisioni abbinate per posto assoluto) e l'avviso A4 `prima-del-comando`; senza
+`posti` i messaggi sono quelli di prima. `Decisioni` passa il posto del motore (`r.chi`) al passo comune;
+`Tavolo.impostaNaturaRemoto(natura, posto)` vale anche per un posto solo. Banco di prova
+`tools/gemello-posti.js` (N motori, rete a tutti, spettatori): 180/180 partite a tre motori allineate su
+sei coppie. **Difetto vero trovato e chiuso**: l'IA (`pickWeightedByImpact`) tirava i numeri dal
+generatore CONDIVISO; un'IA gira su un solo client, quindi lì spostava tutti i tiri successivi e uno
+scarto "a caso" usciva diverso (divergeva anche il gemello a due motori, Pegasus/Marik). A passo comune
+ora usa il caso locale; offline nulla cambia (impronta identica). Spec `passo-comune-a-posti`.
+Iniziato il passo 2: D15 in rete all'avviso A4 (niente timer), D18 chiesta solo da chi gioca quel posto
+e riconosciuta da tutti quando arriva il comando.
+
 **Passi, ciascuno chiuso con test e impronta delle 60 partite offline identica.**
 1. Passo comune a posti nel motore, con il 1 contro 1 di oggi come caso particolare (stessi messaggi
    per due client, per restare compatibili con un relay vecchio finché non si aggiorna). Duello gemello

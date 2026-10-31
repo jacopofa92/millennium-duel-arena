@@ -323,6 +323,10 @@
         eliminazioneInAttesa[posto] = caduto;
         if (gameState.currentPlayer === posto) {
             if (typeof g.addToLog === 'function') g.addToLog(`💀 ${sq.membri[caduto].nome} è a 0 Life Point: il suo turno finisce ed esce dal duello.`);
+            // In rete la End Phase la chiede solo il client che gioca quel posto:
+            // il comando viaggia, e gli altri la ricevono come ogni altra mossa
+            // (se la chiedessero anche loro sarebbe doppia).
+            if (aPassoComune() && g.Tavolo.eRemoto(posto)) return;
             const turno = gameState.turn;
             const chiudiTurno = () => {
                 if (eliminazioneInAttesa[posto] !== caduto) return;
@@ -339,6 +343,12 @@
             setTimeout(chiudiTurno, 0);
             return; // il compagno entra al cambio turno: eliminazioniInAttesa() su 'inizio-turno'
         }
+        // In rete un timer locale non va bene: scatterebbe in punti diversi
+        // della partita sui vari client (prima del prossimo attacco da una
+        // parte, dopo dall'altra). Il compagno entra all'avviso A4, subito
+        // prima del prossimo comando, che arriva nello stesso punto ovunque
+        // (vedi eliminazioniFuoriTurno), o al cambio turno.
+        if (aPassoComune()) return;
         const tenta = () => {
             if (eliminazioneInAttesa[posto] !== caduto) return;
             if (typeof gameState === 'undefined' || gameState.gameOver || !squadre[posto]) { eliminazioneInAttesa[posto] = null; return; }
@@ -351,6 +361,33 @@
             if (typeof g.updateUI === 'function') g.updateUI();
         };
         setTimeout(tenta, 0);
+    }
+
+    /** Vero nel Multiplayer a passo comune (js/engine/passo-comune.js). */
+    function aPassoComune() {
+        return !!(g.PassoComune && g.PassoComune.attivo());
+    }
+
+    /**
+     * A4 (avviso 'prima-del-comando', solo a passo comune): un comando sta per
+     * partire a duello fermo, nello stesso punto logico su tutti i client.
+     * Entra qui il compagno di un membro caduto nel turno avversario (D15).
+     * Niente controllo di duelloFermo: lo garantisce il passo comune, e il
+     * conteggio degli attacchi della variante, da chi manda, è già salito
+     * per l'attacco che sta per partire (sarebbe "non fermo" da una parte
+     * sola).
+     */
+    function eliminazioniFuoriTurno() {
+        if (typeof gameState === 'undefined' || gameState.gameOver) return;
+        let fatto = false;
+        Object.keys(eliminazioneInAttesa).forEach((posto) => {
+            const caduto = eliminazioneInAttesa[posto];
+            if (caduto == null || gameState.currentPlayer === posto) return;
+            eliminazioneInAttesa[posto] = null;
+            const sq = squadre[posto];
+            if (sq && sq.attivo === caduto && sq.membri[caduto].vivo) { eliminaAttivo(posto, 'lp'); fatto = true; }
+        });
+        if (fatto && typeof g.updateUI === 'function') g.updateUI();
     }
 
     /** Esegue le eliminazioni rimaste in attesa (chiamata a ogni 'inizio-turno', quando il duello è fermo). */
@@ -597,7 +634,16 @@
         if (!C || C.__tagSorvegliato) return;
         const originale = C.esegui;
         C.esegui = function (posto, cmd, extra) {
-            if (cmd && cmd.tipo !== 'scartaFineTurno' && fineForzata[posto] === gameState.turn && gameState.currentPlayer === posto) {
+            // D18 vista da tutti: la End Phase di un membro a 0 nel suo turno
+            // arriva come comando (in rete lo manda solo chi gioca quel posto),
+            // e da lì le mosse di quel posto si rifiutano su ogni client.
+            let questaChiude = false;
+            if (cmd && cmd.tipo === 'fase' && cmd.verso === 'end' && eliminazioneInAttesa[posto] != null
+                && gameState.currentPlayer === posto && fineForzata[posto] !== gameState.turn) {
+                fineForzata[posto] = gameState.turn;
+                questaChiude = true;
+            }
+            if (!questaChiude && cmd && cmd.tipo !== 'scartaFineTurno' && fineForzata[posto] === gameState.turn && gameState.currentPlayer === posto) {
                 if (cmd.tipo === 'attacca' && extra && typeof extra.alTermine === 'function') extra.alTermine();
                 return false;
             }
@@ -628,6 +674,7 @@
         agganciato = true;
         g.EventiDuello.ascolta('inizio-turno', inizioTurno);
         g.EventiDuello.ascolta('lato-sconfitto', (posto) => latoSconfitto(posto));
+        g.EventiDuello.ascolta('prima-del-comando', () => { if (aPassoComune()) eliminazioniFuoriTurno(); });
         sorvegliaComandi();
     }
 

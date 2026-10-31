@@ -144,7 +144,7 @@
             g.PassoComune.attendiDecisione((/** @type {number} */ indice) => {
                 const scelta = indice >= 0 ? r.candidati[indice] : null;
                 onDeciso(scelta === undefined ? null : scelta);
-            });
+            }, r.chi);
             return;
         }
 
@@ -160,7 +160,7 @@
             if (aPassoComune) {
                 // Sempre, anche una scelta obbligata o automatica: l'altro
                 // client la sta aspettando (vedi il punto 0 qui sopra).
-                g.PassoComune.decisioneLocale(posizioneDi(r.candidati, valore));
+                g.PassoComune.decisioneLocale(posizioneDi(r.candidati, valore), r.chi);
                 const scelta = valore === undefined ? null : valore;
                 // Presa all'istante, si applica a codice in corso finito: è
                 // lì che la applica anche l'altro client, che la riceve dalla

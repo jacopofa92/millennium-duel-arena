@@ -608,11 +608,16 @@
             return impact * impact * (1 - restraint) + restraint;
         });
         const total = weights.reduce((sum, w) => sum + w, 0);
-        // Le decisioni IA fanno parte delle regole condivise: devono usare
-        // lo stesso generatore seminabile del duello. Math.random rendeva
-        // due audit con identici semi discordanti (Invincible Fortress
-        // poteva vincere 5/50 oppure 0/50 contro Mako).
-        let roll = Casuale.random() * total;
+        // Offline le decisioni IA usano lo stesso generatore seminabile del
+        // duello: Math.random rendeva due audit con identici semi
+        // discordanti (Invincible Fortress poteva vincere 5/50 oppure 0/50
+        // contro Mako). A passo comune NO: un'IA gira su un solo client
+        // (il compagno IA, il Duellante o il Boss), e un numero tirato dal
+        // generatore CONDIVISO solo lì sposterebbe tutti i tiri successivi
+        // di quel client (uno scarto a caso usciva diverso: preso dal
+        // gemello a più motori). La sua scelta viaggia comunque come
+        // comando o decisione, quindi qui basta il caso locale.
+        let roll = (Casuale.condivisa() ? Math.random() : Casuale.random()) * total;
         for (let i = 0; i < candidates.length; i++) {
             roll -= weights[i];
             if (roll <= 0) return candidates[i];

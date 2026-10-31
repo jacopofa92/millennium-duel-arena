@@ -58,6 +58,7 @@
         'annuncio-turno': '(parolaSinistra, parolaDestra, sottotitolo) inizia un turno',
         'orologio': '() è cambiato il turno: aggiornare il contatore',
         'inizio-turno': '(posto) REGOLA: comincia il turno di quel posto, subito dopo il cambio di currentPlayer e prima di scadenze, turno saltato, azzeramenti e pescata (aggancio A1, docs/planning/PIANO_TAG_TEAM.md)',
+        'prima-del-comando': '(posto, comando) REGOLA, solo a passo comune: un comando sta per partire, a duello fermo, nello STESSO punto logico su tutti i client (da chi lo manda prima dell\'impronta, da chi lo riceve prima del confronto). Offline non viene mai emesso (aggancio A4, docs/planning/PIANO_TAG_TEAM.md)',
         'carta-pescata-in-mano': '() il giocatore ha pescato la carta del turno',
         'pescata-da-effetto': '(owner, pescata) un effetto ha fatto pescare',
         'mazzo-rimescolato': '(owner) un effetto ha rimescolato il Deck di quel giocatore',
