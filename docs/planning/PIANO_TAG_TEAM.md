@@ -263,15 +263,21 @@ l'IA che cambia playbook allo scambio di `personaggioPerPosto`.
   condivisi, Mazzo vuoto, classificazione statica delle mappe), verificato al contrario su A2 e A3.
   Guardrail `guardrail-modalita-fuori-dal-motore` esteso al Tag Team.
 
-**Scelte fatte durante il lavoro, da confermare con l'autore.**
-- **D18 (provvisoria):** un membro che arriva a 0 Life Point durante il PROPRIO turno (per esempio un
-  Cilindro Magico che rimanda il danno a chi attacca) esce al cambio turno, non subito: un turno già
-  cominciato non passa di mano a metà, perché l'IA che lo sta giocando continuerebbe a muovere su uno
-  stato cambiato sotto di lei. Nel turno avversario invece entra subito (D15), tra una battaglia e
-  l'altra.
-- **Avvolgimento di `Comandi.esegui`:** `tag.js` lo avvolge a runtime, solo in modalità tag, per contare
-  gli attacchi in corso (non cambia nessun comando). Serve a D15. È un'eccezione dichiarata nel
-  guardrail delle modalità e va approvata.
+**Scelte fatte durante il lavoro** (le prime due approvate dall'autore il 2026-10-31).
+- **D18 (decisa dall'autore):** un membro che arriva a 0 Life Point durante il PROPRIO turno (per esempio
+  un Cilindro Magico che rimanda il danno a chi attacca) fa scattare la sua End Phase: appena il duello è
+  fermo in Main Phase 1, Battle Phase o Main Phase 2, la variante esegue il comando `fase` verso `end`;
+  da lì le mosse di quel posto sono rifiutate fino al cambio turno (tranne lo scarto di fine turno), ed
+  esce all'`inizio-turno` dell'avversario, in tempo per il suo turno. Il turno non passa di mano a metà,
+  perché l'IA che lo sta giocando muoverebbe su uno stato cambiato sotto di lei. Nel turno avversario
+  invece entra subito (D15), tra una battaglia e l'altra.
+- **Avvolgimento di `Comandi.esegui` (approvato):** `tag.js` lo avvolge a runtime, solo in modalità tag,
+  per contare gli attacchi in corso (D15) e per rifiutare le mosse dopo la End Phase forzata (D18); non
+  cambia mai un comando. Eccezione dichiarata nel guardrail delle modalità, che riconosce anche l'alias
+  preso da una funzione (`const C = motoreComandi()`). **Insidia presa col test di D18**: `Comandi` è un
+  `const` di script, non sta su `globalThis`, quindi `g.Comandi` era vuoto e l'avvolgimento non si era
+  mai agganciato (il conteggio degli attacchi di D15 non funzionava). Ora `motoreComandi()` lo cerca per
+  nome, e lo spec controlla che l'avvolgimento ci sia.
 - **Mazzo vuoto (D17) senza aggancio:** lo controlla la variante all'inizio del turno, prima della
   pescata; A3 resta solo sui Life Point. Se entrambi i Mazzi sono vuoti decide il motore come sempre.
 - **Mazzo e IA del compagno:** mazzo Normale del personaggio, IA Difficile (`tagDatabase.compagno`).
@@ -341,8 +347,9 @@ variante a inizio turno, vedi 3ter).
 
 ## 8. Diario
 
-- 2026-10-31: fase 1 implementata sul branch `feature/tag-team` (sezione 3ter). Da confermare: D18 e
-  l'avvolgimento di `Comandi.esegui`.
+- 2026-10-31: l'autore decide D18 (End Phase forzata) e approva l'avvolgimento di `Comandi.esegui`;
+  implementati, con lo scenario nello spec `tag-team-fase1`.
+- 2026-10-31: fase 1 implementata sul branch `feature/tag-team` (sezione 3ter).
 - 2026-10-30: l'autore approva A1, A2 (con aggancio) e A3; chiude D14-D17. Fase 0 CHIUSA, nessuna decisione aperta.
 - 2026-10-30: fase 0 completata (sezione 3bis). Proposti gli agganci A1-A3; nate D14-D17.
 - 2026-10-30: l'autore propone la scelta del bersaglio (membro avversario) a inizio turno; compatibile con la lettura A.

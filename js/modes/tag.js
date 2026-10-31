@@ -36,6 +36,17 @@
     /** @type {any} */
     const g = globalThis;
 
+    /**
+     * Comandi (js/engine/comandi.js) è un `const` a livello di script: lo vede
+     * chi gira nello stesso ambiente globale, ma NON è una proprietà di
+     * globalThis, quindi g.Comandi è vuoto (preso col test di D18: la End Phase
+     * forzata non partiva e il conteggio degli attacchi non si agganciava).
+     * @returns {any}
+     */
+    function motoreComandi() {
+        return typeof Comandi !== 'undefined' ? Comandi : g.Comandi;
+    }
+
     /** Le proprietà di un posto che appartengono al membro (CAMPO = dopo il nome del posto). */
     const CAMPI_MEMBRO = ['Hand', 'Deck', 'DeckCount', 'ExtraDeck', 'MonsterField', 'STField', 'FieldSpell'];
 
@@ -78,6 +89,8 @@
     let attacchiInCorso = 0;
     /** @type {Record<string, number|null>} posto -> indice del membro a 0 Life Point che aspetta di lasciare il posto (D15, D18). */
     let eliminazioneInAttesa = {};
+    /** @type {Record<string, number>} posto -> turno in cui il suo turno è stato chiuso per un membro a 0 (D18): mosse rifiutate. */
+    let fineForzata = {};
     /** @type {Array<(evento: string, posto: string) => void>} */
     const ascoltatori = [];
     let agganciato = false;
@@ -294,10 +307,12 @@
      * - nel turno AVVERSARIO entra subito il compagno (D15), ma non a metà di una
      *   battaglia o di una Catena: si riprova finché il duello è fermo, così il
      *   prossimo attacco trova il compagno;
-     * - nel PROPRIO turno esce al prossimo cambio turno (D18, provvisoria, vedi
-     *   il piano): un turno già cominciato non passa di mano a metà, perché
-     *   l'IA che lo sta giocando continuerebbe a muovere su uno stato cambiato
-     *   sotto di lei. Fino ad allora il membro a 0 resta davanti.
+     * - nel PROPRIO turno (D18, decisa dall'autore): scatta la sua End Phase,
+     *   appena il duello è fermo in Main Phase 1, Battle Phase o Main Phase 2,
+     *   ed esce al cambio turno, in tempo per il turno avversario. Il suo turno
+     *   non passa di mano a metà: l'IA che lo stava giocando muoverebbe su uno
+     *   stato cambiato sotto di lei. Da quel momento le mosse di quel posto sono
+     *   rifiutate (vedi sorvegliaComandi), tranne lo scarto di fine turno.
      * eliminazioneInAttesa[posto] = indice del membro caduto.
      * @param {string} posto
      */
@@ -307,8 +322,22 @@
         const caduto = sq.attivo;
         eliminazioneInAttesa[posto] = caduto;
         if (gameState.currentPlayer === posto) {
-            if (typeof g.addToLog === 'function') g.addToLog(`💀 ${sq.membri[caduto].nome} è a 0 Life Point: esce dal duello alla fine del turno.`);
-            return; // ci pensa eliminazioniInAttesa() al prossimo 'inizio-turno'
+            if (typeof g.addToLog === 'function') g.addToLog(`💀 ${sq.membri[caduto].nome} è a 0 Life Point: il suo turno finisce ed esce dal duello.`);
+            const turno = gameState.turn;
+            const chiudiTurno = () => {
+                if (eliminazioneInAttesa[posto] !== caduto) return;
+                if (typeof gameState === 'undefined' || gameState.gameOver || gameState.turn !== turno || gameState.currentPlayer !== posto) return;
+                if (gameState.phase === 'end') { fineForzata[posto] = turno; return; }
+                // In pescata e Standby l'IA avanza con un timer suo (turnoIA): si aspetta la Main Phase 1.
+                const faseAdatta = gameState.phase === 'main1' || gameState.phase === 'battle' || gameState.phase === 'main2';
+                if (!faseAdatta || !duelloFermo() || !motoreComandi().esegui(posto, { tipo: 'fase', verso: 'end' })) {
+                    setTimeout(chiudiTurno, 150);
+                    return;
+                }
+                fineForzata[posto] = turno;
+            };
+            setTimeout(chiudiTurno, 0);
+            return; // il compagno entra al cambio turno: eliminazioniInAttesa() su 'inizio-turno'
         }
         const tenta = () => {
             if (eliminazioneInAttesa[posto] !== caduto) return;
@@ -379,15 +408,27 @@
     }
 
     /**
-     * Conta gli attacchi in corso avvolgendo Comandi.esegui (solo nel Tag
-     * Team, a runtime: il file del motore non cambia). eseguiAttacco chiama
-     * alTermine alla fine di ogni attacco, anche rifiutato.
+     * Avvolge Comandi.esegui (solo nel Tag Team, a runtime: il file del motore
+     * non cambia; eccezione approvata dall'autore e dichiarata nel guardrail
+     * delle modalità). Due compiti, nessuno cambia un comando:
+     *  - conta gli attacchi in corso (eseguiAttacco chiama alTermine alla fine
+     *    di ogni attacco, anche rifiutato), così il compagno non entra a metà
+     *    di una battaglia (D15);
+     *  - dopo la End Phase forzata di D18 rifiuta le mosse di quel posto fino al
+     *    cambio turno, tranne lo scarto di fine turno: l'IA che stava giocando
+     *    quel turno non deve poterlo riaprire (per esempio chiedendo la Battle
+     *    Phase). Un attacco rifiutato chiama comunque alTermine, o l'IA
+     *    resterebbe ad aspettarlo.
      */
-    function sorvegliaAttacchi() {
-        const C = g.Comandi;
+    function sorvegliaComandi() {
+        const C = motoreComandi();
         if (!C || C.__tagSorvegliato) return;
         const originale = C.esegui;
         C.esegui = function (posto, cmd, extra) {
+            if (cmd && cmd.tipo !== 'scartaFineTurno' && fineForzata[posto] === gameState.turn && gameState.currentPlayer === posto) {
+                if (cmd.tipo === 'attacca' && extra && typeof extra.alTermine === 'function') extra.alTermine();
+                return false;
+            }
             if (!cmd || cmd.tipo !== 'attacca') return originale.apply(this, arguments);
             attacchiInCorso++;
             let chiuso = false;
@@ -415,7 +456,7 @@
         agganciato = true;
         g.EventiDuello.ascolta('inizio-turno', inizioTurno);
         g.EventiDuello.ascolta('lato-sconfitto', (posto) => latoSconfitto(posto));
-        sorvegliaAttacchi();
+        sorvegliaComandi();
     }
 
     /**
@@ -531,7 +572,7 @@
         /** @param {(evento: string, posto: string) => void} fn */
         ascolta: (fn) => { ascoltatori.push(fn); },
         /** Solo per i test: ricomincia da zero. */
-        azzera: () => { squadre = { player: null, bot: null }; attacchiInCorso = 0; eliminazioneInAttesa = {}; },
+        azzera: () => { squadre = { player: null, bot: null }; attacchiInCorso = 0; eliminazioneInAttesa = {}; fineForzata = {}; },
         /** Diagnosi. */
         attacchiInCorso: () => attacchiInCorso
     };

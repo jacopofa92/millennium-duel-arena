@@ -31,7 +31,7 @@ const OGGETTI_DEL_MOTORE = ['Comandi', 'DuelEngine', 'EventiDuello', 'Decisioni'
 // Eccezioni dichiarate (file -> sostituzione -> motivo), discusse con l'autore.
 const SOSTITUZIONI_DICHIARATE = {
     'js/modes/tag.js': {
-        'esegui': 'conta gli attacchi in corso (non cambia il comando): il compagno entra tra una battaglia e l\'altra, mai a metà (D15 del piano Tag Team)'
+        'esegui': 'approvata dall\'autore: conta gli attacchi in corso (il compagno entra tra una battaglia e l\'altra, D15) e dopo la End Phase forzata di D18 rifiuta le mosse di quel posto fino al cambio turno; non cambia mai un comando'
     }
 };
 
@@ -59,12 +59,19 @@ module.exports = {
         t.assert(vietate.length === 0, `Un file di modalità sostituisce qualcosa fuori dai punti di aggancio previsti:\n  - ${vietate.join('\n  - ')}`);
 
         // 3) Funzioni degli oggetti del motore sostituite: sia per nome (Comandi.esegui = …) sia tramite un alias
-        //    preso da quell'oggetto (const C = g.Comandi; C.esegui = …).
+        //    preso da quell'oggetto (const C = g.Comandi; const C = typeof Comandi … ; o da una funzione che lo
+        //    restituisce: const C = motoreComandi();).
         const sostituite = [];
+        const nominaUnOggetto = (testo) => OGGETTI_DEL_MOTORE.some((o) => new RegExp('\\b' + o + '\\b').test(testo));
         modalita.forEach((f) => {
             const alias = new Set(OGGETTI_DEL_MOTORE);
-            for (const a of f.testo.matchAll(/const\s+(\w+)\s*=\s*(?:\w+\.)?(\w+)\s*;/g)) {
-                if (OGGETTI_DEL_MOTORE.includes(a[2])) alias.add(a[1]);
+            const funzioni = new Set();
+            for (const d of f.testo.matchAll(/function\s+(\w+)\s*\(\s*\)\s*\{([^{}]*)\}/g)) {
+                if (nominaUnOggetto(d[2])) funzioni.add(d[1]);
+            }
+            for (const a of f.testo.matchAll(/const\s+(\w+)\s*=\s*([^;]+);/g)) {
+                const chiamata = a[2].trim().match(/^(\w+)\(\s*\)$/);
+                if (nominaUnOggetto(a[2]) || (chiamata && funzioni.has(chiamata[1]))) alias.add(a[1]);
             }
             for (const s of f.testo.matchAll(/\b(\w+)\.(\w+)\s*=(?!=)\s*function/g)) {
                 if (!alias.has(s[1])) continue;

@@ -305,6 +305,68 @@ module.exports = {
             }
         }
 
+        // ---------- 2bis) D18: a 0 Life Point nel PROPRIO turno scatta la End Phase, il compagno entra al cambio turno
+        {
+            const page = await apri();
+            try {
+                await page.goto(TAG('membro'));
+                try { await page.click('.di-skip', { timeout: 4000 }); } catch (e) { /* nessuna intro */ }
+                await aspettaSquadra(page);
+                await waitForOpeningCascade(page);
+                await page.waitForFunction(() => gameState.phase === 'main1' && gameState.currentPlayer === 'player', null, { timeout: 30000 });
+                // Il cambio turno lo fa il test (emettendo 'inizio-turno'): quello vero farebbe partire il turno del bot.
+                await page.evaluate(() => { window.changeTurn = function () { window.__cambioTurnoChiesto = true; }; window.botPerformAttacks = async function () {}; });
+                await page.evaluate(() => {
+                    const mio = Object.assign({}, cardDatabase.find((c) => c.type === 'monster'), { uid: 'tag-d18', membro: 'player#0' });
+                    gameState.playerMonsterField[2] = { card: mio, position: 'attack', isFaceDown: false };
+                    gameState.playerLP = 0;
+                    checkGameOver();
+                });
+                try {
+                    await page.waitForFunction(() => gameState.phase === 'end', null, { timeout: 10000 });
+                } catch (e) {
+                    const stato = await page.evaluate(() => ({
+                        fase: gameState.phase, chi: gameState.currentPlayer, turno: gameState.turn, fine: gameState.gameOver,
+                        lp: gameState.playerLP, attivo: TagTeam.riassunto('player').attivo, catena: DuelEngine.isChainActive(),
+                        priorita: DuelEngine.isPriorityWindowOpen && DuelEngine.isPriorityWindowOpen(),
+                        scelta: window.Decisioni && Decisioni.inSospeso(), log: [...document.querySelectorAll('#gameLog *')].slice(-6).map((n) => n.textContent),
+                        tributoInSospeso: EventiDuello.chiedi('evocazione-in-sospeso', false)
+                    }));
+                    throw new Error('D18: la End Phase non è scattata: ' + JSON.stringify(stato));
+                }
+                const durante = await page.evaluate(() => ({
+                    gameOver: gameState.gameOver,
+                    attivo: TagTeam.riassunto('player').attivo,
+                    // Dopo la End Phase forzata le mosse di quel posto sono rifiutate fino al cambio turno.
+                    battaglia: Comandi.esegui('player', { tipo: 'fase', verso: 'battle' }),
+                    fase: gameState.phase,
+                    // Comandi è un const di script, non sta su globalThis: la variante deve averlo trovato lo stesso.
+                    sorvegliato: Comandi.__tagSorvegliato === true
+                }));
+                t.assert(durante.sorvegliato, 'La variante sorveglia Comandi.esegui (attacchi in corso, D15, e mosse dopo D18)');
+                t.assert(!durante.gameOver && durante.attivo === 0, 'D18: il membro a 0 nel suo turno resta davanti fino alla fine del turno: ' + JSON.stringify(durante));
+                t.assert(durante.battaglia === false && durante.fase === 'end', 'D18: dopo la End Phase forzata il turno non si riapre: ' + JSON.stringify(durante));
+                const dopo = await page.evaluate(() => {
+                    gameState.currentPlayer = 'bot';
+                    gameState.turn++;
+                    EventiDuello.emetti('inizio-turno', 'bot');
+                    const sq = TagTeam.riassunto('player');
+                    return {
+                        gameOver: gameState.gameOver,
+                        attivo: sq.attivo,
+                        tuVivo: sq.membri[0].vivo,
+                        lpJoey: gameState.playerLP,
+                        mostroNelCimitero: gameState.playerGraveyard.some((c) => c.uid === 'tag-d18')
+                    };
+                });
+                t.assert(!dopo.gameOver && dopo.attivo === 1 && !dopo.tuVivo && dopo.lpJoey === 8000,
+                    'D18: al cambio turno esci e Joey entra in tempo per il turno avversario: ' + JSON.stringify(dopo));
+                t.assert(dopo.mostroNelCimitero, 'D10: il tuo campo va nel Cimitero condiviso: ' + JSON.stringify(dopo));
+            } finally {
+                await page.close();
+            }
+        }
+
         // ---------- 3) Life Point condivisi e Mazzo vuoto
         {
             const page = await apri();
