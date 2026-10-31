@@ -92,7 +92,10 @@
     pointer-events: none;
 }
 /* La squadra avversaria (2 contro 2) in alto a sinistra, sotto il riquadro dei Life Point dell'avversario. */
-.tag-panchina--avv { bottom: auto; top: 132px; border-color: rgba(255, 138, 122, 0.35); }
+.tag-panchina--avv { bottom: auto; top: 132px; border-color: rgba(255, 138, 122, 0.35); transition: opacity 0.2s linear; }
+/* La battuta dell'avversario compare proprio sotto il suo riquadro dei Life Point, cioè dove sta questo
+ * pannello: finché si legge, il pannello si fa da parte (la posizione la scrive posizionaPillole). */
+body:has(#botInfo .duel-speech.is-visible) .tag-panchina--avv { opacity: 0.08; }
 .tag-panchina--avv .tag-titolo { color: #ffb4a8; }
 .tag-dettagli { display: flex; flex-direction: column; gap: 6px; }
 /* La pillola esiste solo sul telefono (vedi il @media in fondo). */

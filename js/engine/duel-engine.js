@@ -5502,8 +5502,12 @@
         if (gameState.revealedSwordsLanded) {
             Tavolo.ordine().forEach((target) => {
                 const controller = opponentOf(target);
-                const ancoraAttiva = stFieldOf(controller).some((slot) => slot && !slot.isFaceDown && slot.card.id === 8);
-                if (!ancoraAttiva) gameState.revealedSwordsLanded[target] = false;
+                const spade = stFieldOf(controller).filter((slot) => slot && !slot.isFaceDown && slot.card.id === 8);
+                if (spade.length === 0) gameState.revealedSwordsLanded[target] = false;
+                // Una Spada le cui lame erano già atterrate (segnato sulla casella) che torna sul
+                // campo attivo senza riattivarsi — nel Tag Team il suo membro rientra dalla
+                // panchina — riporta le lame fisse: l'effetto riparte, deve ripartire anche il segno.
+                else if (spade.some((slot) => slot.spadeAtterrate)) gameState.revealedSwordsLanded[target] = true;
             });
         }
     }

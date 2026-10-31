@@ -206,10 +206,20 @@
         const telefono = window.matchMedia('(max-width: 900px)').matches;
         const manoAvv = document.getElementById('botHand');
         const infoAvv = document.getElementById('botInfo');
+        // Desktop: il riquadro della squadra avversaria parte SOTTO il riquadro dei Life Point
+        // dell'avversario (che cresce con lo schermo: a 1920x1080 finisce a 146px e il valore
+        // fisso di 132px lo copriva), e il tuo sta alla stessa distanza dal bordo in basso, per
+        // simmetria. Senza il riquadro dei Life Point restano i valori del CSS.
+        const margine = !telefono && infoAvv ? Math.max(132, Math.round(infoAvv.getBoundingClientRect().bottom) + 12) : null;
         Object.keys(pannelli).forEach((posto) => {
             const pannello = pannelli[posto];
             if (!pannello) return;
-            if (!telefono || !manoAvv) { pannello.style.top = ''; return; }
+            if (!telefono || !manoAvv) {
+                pannello.style.top = posto === 'bot' && margine ? margine + 'px' : '';
+                pannello.style.bottom = posto === 'player' && margine ? margine + 'px' : '';
+                return;
+            }
+            pannello.style.bottom = '';
             const pillola = pannello.querySelector('.tag-compatto');
             if (!pillola) return;
             const sotto = Math.max(manoAvv.getBoundingClientRect().bottom, infoAvv ? infoAvv.getBoundingClientRect().bottom : 0) + 4;
