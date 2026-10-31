@@ -617,7 +617,9 @@
         // di quel client (uno scarto a caso usciva diverso: preso dal
         // gemello a più motori). La sua scelta viaggia comunque come
         // comando o decisione, quindi qui basta il caso locale.
-        let roll = (Casuale.condivisa() ? Math.random() : Casuale.random()) * total;
+        // Solo a passo comune: un seme fissato fuori dalla rete (un test, una simulazione) resta rispettato.
+        const aPassoComune = typeof PassoComune !== 'undefined' && PassoComune.attivo();
+        let roll = (aPassoComune && Casuale.condivisa() ? Math.random() : Casuale.random()) * total;
         for (let i = 0; i < candidates.length; i++) {
             roll -= weights[i];
             if (roll <= 0) return candidates[i];
