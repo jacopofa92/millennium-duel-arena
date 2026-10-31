@@ -377,6 +377,56 @@ più del primo turno che la pagina dà a chi comincia; da rimisurare prima di de
 
 **Non fatto.** Prova sul telefono vero.
 
+## 3quinquies. Fase 3: analisi del Multiplayer e proposta (2026-10-31)
+
+**Fatti verificati nel codice (non ipotesi).**
+- **Relay** (`server/server.js`): una stanza tiene al massimo **2 persone** (`room.players.size >= 2`
+  → "La stanza è già piena"). Il server su Render non si può ridistribuire (minuti di build esauriti),
+  quindi 3 o 4 persone nella stessa stanza oggi sono **impossibili**. Passano invece campi in più dentro i
+  messaggi già noti (`mazzo`, `room-config`, `ready`, i messaggi dei lotti `passo`): il controllo di
+  forma (`protocollo-mp.js`) ignora i campi che non conosce.
+- **Passo comune** (`js/engine/passo-comune.js`): pensato per DUE client, ciascuno chiama `player` sé
+  stesso (stato specchiato), un solo posto remoto fisso (`postoRemoto`, di norma `bot`); un comando non
+  porta il posto ("lo sa chi lo riceve: è quello remoto"); le decisioni viaggiano come posizione
+  nell'elenco, in un'unica coda ordinata.
+- **Chi c'è dietro un posto remoto** (`Tavolo.impostaNaturaRemoto`): UN valore per tutto il duello
+  ('persona' o 'ia'). In una squadra remota con una persona e un'IA deve seguire il membro davanti, o i
+  due client risponderebbero diversamente a `Decisioni.rispondeUnaPersona` e si separerebbero.
+- **Mazzo del compagno**: `TagTeam.preparaSquadra` lo costruisce senza `prefissoUid`, quindi con uid
+  fatti di ora e caso, diversi sui due telefoni: va passato un prefisso (solo nella variante).
+- **Tre punti della variante che oggi NON sono deterministici fra due client**:
+  1. **D15** (entra il compagno a metà turno avversario): `tenta` riprova con un timer finché il duello
+     è fermo; il passo comune esegue il comando successivo con un SUO timer quando il duello è fermo.
+     Quale dei due arriva prima dipende dal caso: da una parte il compagno entra prima del prossimo
+     attacco, dall'altra dopo. Non si risolve dentro la variante senza far scattare l'avviso di
+     divergenza (l'impronta che viaggia col comando si calcola prima che la variante possa intervenire
+     dal lato di chi riceve).
+  2. **D18** (End Phase forzata): oggi il comando lo eseguirebbero ENTRAMBI i client, e chi controlla
+     il posto lo spedirebbe anche all'altro (doppio). Va fatto solo dal client che controlla il posto.
+  3. **D2 su richiesta**: la richiesta nasce da un pulsante su un client solo e l'altro non la sa. In
+     rete va fatta viaggiare (o la regola resta "a turno" in Multiplayer).
+- D12 (scelta di chi affrontare) passa già da `Decisioni`: viaggia come ogni altra scelta.
+
+**Opzioni.**
+
+| | Chi gioca | Client | Cosa serve | Costo |
+|---|---|---|---|---|
+| **1. Squadre miste** | tu + compagno IA contro un amico + il suo compagno IA (oppure contro un amico da solo) | 2 | stato specchiato come oggi: ogni client guida la propria squadra (te e la tua IA), l'altra squadra è il posto remoto. Prefisso degli uid, natura del remoto che segue il membro, D18 solo da chi controlla, D2 su richiesta spento in rete, e **un aggancio nel motore per D15** (vedi A4) | M |
+| **2. Coppia contro l'IA** | tu e un amico nella STESSA squadra contro un Duellante o un Boss | 2 | tutto l'1, più il passo comune NON specchiato: i comandi portano il posto, il posto `player` è a volte mio e a volte remoto, l'IA avversaria gira solo sull'host e le sue mosse viaggiano. Modifiche vere a `passo-comune.js` | L |
+| **3. Tre o quattro persone** | 2v2 o 2v1 tutti umani | 3-4 | relay con stanze più grandi (ridistribuzione su Render) e passo comune a più client | XL, bloccata |
+| B. Come il Raid | ognuno il suo duello, barra comune | 2 | c'è già: è l'Assalto al Boss | nessuno |
+
+**Aggancio nuovo proposto (A4, da approvare).** Un evento di regola `prima-del-comando`, emesso dal
+passo comune nello stesso punto logico sui due client: da chi manda subito prima di calcolare
+l'impronta e spedire, da chi riceve subito prima di confrontarla ed eseguire. La variante lo ascolta e
+fa entrare il compagno di D15 lì (e a inizio turno). Fuori dal Multiplayer non viene mai emesso, quindi
+il gioco offline resta identico (impronta delle 60 partite). Alternativa senza aggancio: in rete il
+compagno di D15 entra solo all'inizio del turno successivo (cambia la regola in Multiplayer).
+
+**Proposta.** Prima l'opzione 1 (è la più piccola e riusa lo stato specchiato già provato: si misura
+subito con il duello gemello a squadre), poi la 2. La 3 resta ferma finché il relay non si può
+ridistribuire.
+
 ## 4. Rischi
 
 | Rischio | Gravità | Mitigazione |
