@@ -27,6 +27,8 @@ module.exports = {
                     titolo: document.getElementById('titoloAvv').textContent,
                     largo: document.documentElement.scrollWidth - innerWidth
                 }));
+                t.assert(await page.isVisible('#setupDuello .ds-group') && (await page.locator('#setupDuello [data-field], #setupDuello .ds-opt, #setupDuello button').count()) > 3,
+                    `${w}px: la pagina offre mazzo, arena e musica`);
                 const unoControUno = await conta();
                 t.assert(unoControUno.tuoi === 2 && unoControUno.avv === 1, `${w}px, 2 contro 1: tu + compagno contro un avversario: ` + JSON.stringify(unoControUno));
                 t.assert(unoControUno.largo <= 0, `${w}px: nessuno scorrimento laterale`);
@@ -80,6 +82,9 @@ module.exports = {
                 const url = new URL(page.url());
                 t.assert(url.searchParams.get('partner') && url.searchParams.get('character') && !url.searchParams.get('character2'),
                     `${w}px: "Inizia" porta al 2 contro 1 scelto: ` + url.search);
+                // Arena e musica sono scelte (qui "casuale", risolto in un file vero) e arrivano al duello.
+                t.assert(/\.(jpg|png)$/i.test(url.searchParams.get('field') || '') && /\.mp3$/i.test(url.searchParams.get('music') || ''),
+                    `${w}px: arena e musica arrivano al duello: ` + url.search);
                 t.assert(errori.length === 0, `${w}px: errori nella pagina: ` + errori.join(' | '));
             } finally {
                 await ctx.close();

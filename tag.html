@@ -31,6 +31,8 @@
 <link rel="stylesheet" href="js/ui/menu-mobile.css">
 <link rel="stylesheet" href="js/ui/deck-switcher.css">
 <link rel="stylesheet" href="js/modes/mode-pages.css">
+<link rel="stylesheet" href="js/ui/deck-box.css">
+<link rel="stylesheet" href="js/ui/duel-setup.css">
 <style>
     /* =================================================================
        Tag Team, pagina di scelta. Un TABELLONE invece di elenchi aperti:
@@ -177,6 +179,12 @@
             <div class="tg-regola" id="regolaTurni"></div>
         </section>
 
+        <!-- Mazzo, arena e musica: lo stesso selettore del Duello Libero (js/ui/duel-setup.js). -->
+        <section class="tg-regole tg-setup" aria-label="Mazzo, arena e musica">
+            <div class="tg-regola-nome">Il tuo mazzo, l'arena e la musica</div>
+            <div id="setupDuello"></div>
+        </section>
+
         <details class="tg-come">
             <summary>Come funziona il Tag Team</summary>
             <ul>
@@ -215,6 +223,15 @@
 <script src="js/data/character-decks.js"></script>
 <script src="js/data/tag-db.js"></script>
 <script src="js/data/raid-db.js"></script>
+<!-- Per il selettore di mazzo, arena e musica (stesse dipendenze della sala Multiplayer). -->
+<script src="js/data/custom-taxonomy.js"></script>
+<script src="js/data/custom-cards.js"></script>
+<script src="js/data/card-origins.generated.js"></script>
+<script src="js/data/deck-legality.js"></script>
+<script src="js/data/arena-options.js"></script>
+<script src="js/data/starter-structure-decks.js"></script>
+<script src="js/ui/deck-box.js"></script>
+<script src="js/ui/duel-setup.js"></script>
 <script src="js/audio/audio-manager.js"></script>
 <script src="js/native/app-back-button.js"></script>
 <script src="js/native/haptics.js"></script>
@@ -488,12 +505,31 @@
         vai.disabled = false;
     }
 
+    // Mazzo (è il mazzo attivo del gioco), arena e musica: stesso componente del Duello Libero.
+    const setup = window.DuelSetup ? DuelSetup.mount($('setupDuello'), { decks: true, deckLabel: false }) : null;
+    if (setup) setup.refresh();
+
     document.getElementById('vai').onclick = () => {
         const controBoss = scelta.formato === BOSS;
         const avversario = controBoss ? scelta.boss : scelta.avversario;
         if (!scelta.compagno || !avversario || (scelta.formato === 2 && !scelta.avversario2)) return;
+        // "Casuale" diventa un'arena e una traccia vere qui: il duello riceve sempre un nome di file preciso.
+        const sel = setup ? setup.getSelection() : {};
+        const campo = window.ArenaOptions ? ArenaOptions.risolviCampo(sel.field) : '';
+        const musica = window.ArenaOptions ? ArenaOptions.risolviTraccia(sel.music) : '';
+        const provenienza = sel.origin || 'yu-gi-oh';
+        // Il mazzo contro "Carte ammesse", qui (il duello lo ricontrolla, ma a quel punto arena e musica sono già partite).
+        const fuori = window.DeckLegality ? DeckLegality.mazzoCorrenteNonAmmesso(provenienza) : [];
+        if (fuori.length > 0) {
+            $('riepilogo').textContent = `Il tuo mazzo ha ${fuori.length} carte non ammesse da questa regola (${fuori.slice(0, 3).join(', ')}): cambia mazzo o scegli "Tutte le provenienze".`;
+            return;
+        }
+        if (setup) setup.stopPreview();
         if (window.NativeHaptics) NativeHaptics.light();
         window.location.href = 'duelMonstersCore.html?mode=tag'
+            + '&field=' + encodeURIComponent(campo)
+            + '&music=' + encodeURIComponent(musica)
+            + '&origin=' + encodeURIComponent(provenienza)
             + '&character=' + encodeURIComponent(avversario)
             + (scelta.formato === 2 ? '&character2=' + encodeURIComponent(scelta.avversario2) : '')
             + (controBoss ? '&boss=1' : '')
