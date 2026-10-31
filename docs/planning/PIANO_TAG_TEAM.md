@@ -340,12 +340,11 @@ partite 2 contro 1 (Kaiba Normale) la squadra vince il 52% quando comincia e il 
 l'avversario: chi comincia non pesca e non attacca, e nel duello senza testa nessuno riceve la carta in
 più del primo turno che la pagina dà a chi comincia; da rimisurare prima di decidere se correggere.
 
-**Da decidere con l'autore (bilanciamento e premi).**
-- Il 2 contro 1 va reso più duro? Opzioni: più Life Point all'avversario solo (12000 o 16000, come il
-  Boss del Raid), una pescata in più per lui, o il compagno con un mazzo più debole.
-- Premi del Tag Team (oggi quelli di un duello normale contro il primo avversario).
-- L'IA potrebbe scegliere chi affrontare con un criterio (chi può eliminare, o il campo più debole)
-  invece del valore predefinito: oggi D12 per l'IA è "chi ha giocato per ultimo", come da piano.
+**Decisioni dell'autore sulle misure (2026-10-31).**
+- D19: il 2 contro 1 NON si rende più duro: per ora resta così (avversario con 8000 LP, nessuna pescata
+  in più, compagno col mazzo Normale).
+- D20: premi del Tag Team per ora invariati (quelli di un duello normale contro il primo avversario).
+- D21: l'IA sceglie chi affrontare col valore predefinito (chi ha giocato per ultimo): va bene così.
 
 **Non fatto in questa fase.** Il Boss a squadre (2 contro 1 contro un Boss rinforzato con i dati del
 Raid), D2 "libero", prova sul telefono vero.
@@ -406,6 +405,7 @@ variante a inizio turno, vedi 3ter).
 
 ## 8. Diario
 
+- 2026-10-31: l'autore decide D19-D21: bilanciamento, premi e scelta dell'IA restano come sono.
 - 2026-10-31: fase 2, prima parte: 2 contro 2 contro l'IA, D12 e D13, strumento senza testa per le
   squadre e prime misure di bilanciamento (sezione 3quater).
 - 2026-10-31: l'autore decide D18 (End Phase forzata) e approva l'avvolgimento di `Comandi.esegui`;
