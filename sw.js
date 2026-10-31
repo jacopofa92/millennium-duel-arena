@@ -516,7 +516,8 @@
 // v499: Tag Team, nel 2 contro 1 la coppia ha 4000 Life Point a testa.
 // v500: Tag Team, Boss a squadre e scambio su richiesta.
 // v501: passo comune a posti (Multiplayer a più client), IA col caso locale in rete.
-const CACHE_NAME = 'ygo-duel-arena-v501';
+// v502: Tag Team pronto per la rete (posti per membro, scambi deterministici).
+const CACHE_NAME = 'ygo-duel-arena-v502';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare

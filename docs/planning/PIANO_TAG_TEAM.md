@@ -472,6 +472,30 @@ ora usa il caso locale; offline nulla cambia (impronta identica). Spec `passo-co
 Iniziato il passo 2: D15 in rete all'avviso A4 (niente timer), D18 chiesta solo da chi gioca quel posto
 e riconosciuta da tutti quando arriva il comando.
 
+**Passo 2 FATTO (1.4.193), tranne la prova end-to-end dello scambio su richiesta (passo 3).**
+- Variante pronta per la rete (`tag.js`): ogni membro ha il suo posto assoluto (`posti`) e la sua natura;
+  il mazzo del compagno ha uid col prefisso del posto (`prefissoUid`); il passo comune sa chi è davanti
+  (`postoAssolutoDavanti`, registrato da `preparaSquadra`); `scambia` aggiorna la natura del remoto per
+  posto; D15 entra all'avviso A4 (niente timer in rete); D18 la chiede solo chi gioca quel posto e tutti
+  la riconoscono quando arriva il comando; D12 che non trova il duello fermo si applica all'avviso A4; D2
+  su richiesta viaggia: a inizio turno si chiede a ogni membro-persona se ha chiesto lo scambio (risponde
+  in silenzio il suo client) e al primo "sì" risponde l'altro (persona a schermo, IA con compagnoAccetta).
+- Motore: `Decisioni` accetta un posto assoluto esplicito (`postoAssoluto`, `locale`, `perUnaPersona`) per
+  le scelte di chi NON è davanti; a passo comune l'inizio del turno aspetta le scelte aperte
+  (`PassoComune.dopo` in `changeTurn`, rilegge chi guida il turno allo scadere); all'avviso A4 il passo
+  comune ricalcola gli effetti continui.
+- **Due difetti veri trovati dal gemello a posti e chiusi**: (1) il livello dell'IA di un membro stava
+  solo sul client dove gira, e Abbandono (id 416) lo usa per ordinare i candidati di una scelta che
+  viaggia come posizione: ora è un dato del membro, uguale ovunque; (2) un Equipaggiamento rimasto senza
+  il suo mostro finiva nel Cimitero al ridisegno, in momenti diversi sui client (vale anche per l'1 contro
+  1 di oggi): ora c'è un ricalcolo all'avviso A4, prima dell'impronta.
+- Misura: 620 partite in rete simulate allineate (1 contro 1 con spettatori; 2v2 a quattro, coppia contro
+  l'IA, squadre miste, 2v1 a tre, Life Point condivisi, avversario che comincia), con 209 entrate di
+  compagni a metà turno avversario e 4 fini turno forzate. Spec `tag-team-in-rete` (entrambi i difetti
+  verificati al contrario). Offline: impronta delle 60 partite identica. Multiplayer: 17/17 spec verdi.
+- **Non provato**: lo scambio su richiesta in rete (nel gemello le persone sono IA e non chiedono): va nello
+  spec end-to-end con le pagine del passo 3.
+
 **Passi, ciascuno chiuso con test e impronta delle 60 partite offline identica.**
 1. Passo comune a posti nel motore, con il 1 contro 1 di oggi come caso particolare (stessi messaggi
    per due client, per restare compatibili con un relay vecchio finché non si aggiorna). Duello gemello

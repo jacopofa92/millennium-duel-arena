@@ -693,12 +693,30 @@ function changeTurn() {
     // A passo comune (js/engine/passo-comune.js) anche il turno del posto
     // remoto si gioca di qua: pescata, Standby e Main Phase 1 avanzano da
     // sole come per la persona, e da lì in poi arrivano i suoi comandi.
-    const remotoAPassoComune = controllore === 'remoto' && typeof PassoComune !== 'undefined' && PassoComune.attivo();
-    if (controllore === 'ia') {
-        dopoPausaDuello(() => turnoIA(diTurno), 3000);
-    } else if (controllore === 'persona' || remotoAPassoComune) {
-        dopoPausaDuello(() => enterDrawPhase(true), 3000);
+    const aPassoComune = typeof PassoComune !== 'undefined' && PassoComune.attivo();
+    const remotoAPassoComune = controllore === 'remoto' && aPassoComune;
+    // A passo comune l'inizio del turno è un timer delle REGOLE: aspetta che
+    // non ci sia nessuna scelta aperta su nessun client (PassoComune.dopo).
+    // Una scelta chiesta a inizio turno (chi affrontare nel Tag Team, uno
+    // scambio di turno) deve risolversi PRIMA della pescata su tutti i
+    // client, o lo scambio che ne segue cadrebbe prima della pescata da una
+    // parte e dopo dall'altra. Offline resta il timer di sempre.
+    if (!aPassoComune) {
+        if (controllore === 'ia') {
+            dopoPausaDuello(() => turnoIA(diTurno), 3000);
+        } else if (controllore === 'persona' || remotoAPassoComune) {
+            dopoPausaDuello(() => enterDrawPhase(true), 3000);
+        }
+        return;
     }
+    // Chi guida il turno si rilegge allo scadere: la scelta aspettata può
+    // aver cambiato chi gioca questo turno (uno scambio accettato).
+    PassoComune.dopo(() => {
+        if (gameState.gameOver || gameState.currentPlayer !== diTurno) return;
+        const c = Tavolo.controllore(diTurno);
+        if (c === 'ia') turnoIA(diTurno);
+        else enterDrawPhase(true);
+    }, 3000);
 }
 
 function clearPhaseTransitionTimeout() {

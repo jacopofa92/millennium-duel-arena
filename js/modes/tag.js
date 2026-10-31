@@ -233,13 +233,23 @@
         // 5) Chi muove il posto e con quale IA.
         if (!gameState.personaggioPerPosto) gameState.personaggioPerPosto = { player: null, bot: null };
         gameState.personaggioPerPosto[posto] = entra.personaggio || null;
-        if (entra.controllore === 'ia') {
+        // Il livello dell'IA è un DATO del membro, uguale su tutti i client,
+        // anche dove quell'IA non gira (lì il posto è 'remoto'): alcune regole
+        // lo leggono per ordinare i candidati di una scelta (Abbandono, id
+        // 416), e una scelta in rete viaggia come POSIZIONE nell'elenco. Con il
+        // livello scritto solo sul client dell'IA i due elenchi uscivano in
+        // ordine diverso e la stessa posizione indicava due mostri diversi
+        // (preso dal gemello a quattro motori). Una persona non ne ha.
+        if (entra.livelloIA) {
             gameState.livelloIA = gameState.livelloIA || {};
             gameState.livelloIA[posto] = entra.livelloIA;
         } else if (gameState.livelloIA) {
             delete gameState.livelloIA[posto];
         }
         g.Tavolo.imposta({ [posto]: entra.controllore });
+        // In rete: chi c'è dietro un posto remoto segue il membro davanti, o i
+        // client risponderebbero diversamente a Decisioni.rispondeUnaPersona.
+        if (entra.controllore === 'remoto') g.Tavolo.impostaNaturaRemoto(entra.natura || 'persona', posto);
 
         sq.attivo = indice;
         aggiornaUidInPanchina();
@@ -369,6 +379,125 @@
     }
 
     /**
+     * In rete (passo comune a posti): il posto assoluto davanti in un posto
+     * del motore. Per una squadra è il posto del membro davanti; per un lato
+     * con un solo duellante, il primo posto della sua squadra ('A0'/'B0').
+     * Uguale su tutti i client, perché gli scambi lo sono.
+     * @param {string} postoMotore
+     */
+    function postoAssolutoDavanti(postoMotore) {
+        const sq = squadre[postoMotore];
+        if (sq && sq.membri[sq.attivo].seat) return sq.membri[sq.attivo].seat;
+        const p = g.PassoComune.posti();
+        const mia = p ? p.miaSquadra : 'A';
+        return (postoMotore === 'player' ? mia : (mia === 'A' ? 'B' : 'A')) + '0';
+    }
+
+    /**
+     * D12 in rete: una scelta di chi affrontare arrivata quando il duello non
+     * era fermo si applica all'avviso A4 (subito prima del prossimo comando,
+     * nello stesso punto su tutti i client) invece che con un timer locale.
+     * @type {Record<string, { indice: number, turno: number } | null>}
+     */
+    let frontiInAttesa = {};
+
+    function frontiFuoriTempo() {
+        if (typeof gameState === 'undefined' || gameState.gameOver) return;
+        Object.keys(frontiInAttesa).forEach((dif) => {
+            const f = frontiInAttesa[dif];
+            frontiInAttesa[dif] = null;
+            const sq = squadre[dif];
+            if (!f || !sq || f.turno !== gameState.turn || sq.attivo === f.indice || !sq.membri[f.indice].vivo) return;
+            scambia(dif, f.indice);
+            avvisa('fronte', dif);
+        });
+    }
+
+    /** Una persona (qui o su un altro client) gioca quel membro. */
+    function ePersonaMembro(m) {
+        return m.controllore === 'persona' || (m.controllore === 'remoto' && m.natura === 'persona');
+    }
+
+    /**
+     * D2 su richiesta, IN RETE. La richiesta nasce da un pulsante su UN client
+     * e gli altri non la sanno: diventa una decisione che viaggia. A inizio
+     * turno della squadra si chiede a ogni membro che è una persona (prima chi
+     * giocherebbe a turno, poi l'altro) se ha chiesto di invertire il turno:
+     * risponde il suo client, in silenzio, guardando la richiesta che ha in
+     * memoria. Al primo "sì" l'altro membro decide se accettare: una persona lo
+     * vede a schermo, un'IA usa compagnoAccetta (uguale ovunque, non serve
+     * farla viaggiare). Poi `fatto(gioca)`, con chi gioca questo turno.
+     * Tutto si risolve prima della pescata: a passo comune l'inizio del turno
+     * aspetta le scelte aperte (changeTurn in fasi.js).
+     * @param {any} sq @param {number} prossimo chi giocherebbe a turno @param {(gioca: number) => void} fatto
+     */
+    function richiesteInRete(sq, prossimo, fatto) {
+        const altroIdx = altro(prossimo);
+        const ordine = [prossimo, altroIdx].filter((k) => ePersonaMembro(sq.membri[k]));
+        // La richiesta in memoria di QUESTO client (fatta dal suo pulsante), poi dimenticata.
+        const richiestaQui = sq.richiesta;
+        const richiedenteQui = sq.richiedente;
+        sq.richiesta = null;
+        sq.richiedente = null;
+        const chiediA = (passo) => {
+            if (passo >= ordine.length) { fatto(prossimo); return; }
+            const k = ordine[passo];
+            const m = sq.membri[k];
+            const haChiesto = richiestaQui === altroIdx && richiedenteQui === k;
+            g.Decisioni.chiedi({
+                chi: sq.posto,
+                tipo: 'opzioni',
+                titolo: 'Scambio del turno',
+                candidati: [{ value: false, label: 'No' }, { value: true, label: 'Sì' }],
+                postoAssoluto: m.seat,
+                locale: m.controllore !== 'remoto',
+                perUnaPersona: false,
+                automatica: (c) => c[haChiesto ? 1 : 0]
+            }, (scelta) => {
+                if (!(scelta && scelta.value === true)) { chiediA(passo + 1); return; }
+                rispostaAllaRichiesta(sq, k, prossimo, fatto);
+            });
+        };
+        chiediA(0);
+    }
+
+    /**
+     * Il membro `richiedente` ha chiesto di invertire il turno: risponde
+     * l'altro. Esito: chi gioca questo turno.
+     * @param {any} sq @param {number} richiedente @param {number} prossimo @param {(gioca: number) => void} fatto
+     */
+    function rispostaAllaRichiesta(sq, richiedente, prossimo, fatto) {
+        const altroIdx = altro(prossimo);
+        const risponde = sq.membri[altro(richiedente)];
+        const chiude = (accetta) => {
+            const gioca = accetta ? altroIdx : prossimo;
+            sq.ultimaRisposta = { accetta, gioca, da: risponde.nome, turno: gameState.turn };
+            if (typeof g.addToLog === 'function') {
+                g.addToLog(accetta
+                    ? `🔄 ${risponde.nome} accetta lo scambio: questo turno lo gioca ${sq.membri[altroIdx].nome}.`
+                    : `🔄 ${risponde.nome} non accetta lo scambio: si va a turno, gioca ${sq.membri[prossimo].nome}.`);
+            }
+            avvisa('risposta', sq.posto);
+            fatto(gioca);
+        };
+        if (!ePersonaMembro(risponde)) { chiude(compagnoAccetta(sq, altroIdx, prossimo)); return; }
+        const chiede = sq.membri[richiedente];
+        g.Decisioni.chiedi({
+            chi: sq.posto,
+            tipo: 'opzioni',
+            titolo: richiedente === prossimo
+                ? `${chiede.nome} ti chiede di giocare tu questo turno`
+                : `${chiede.nome} chiede di giocare questo turno al posto tuo`,
+            candidati: [{ value: true, label: 'Accetta', icon: '🔄' }, { value: false, label: 'Andiamo a turno', icon: '↩' }],
+            postoAssoluto: risponde.seat,
+            locale: risponde.controllore !== 'remoto',
+            perUnaPersona: risponde.controllore === 'persona',
+            // Senza schermo (simulazioni): la stessa regola del compagno IA.
+            automatica: (c) => c[compagnoAccetta(sq, altroIdx, prossimo) ? 0 : 1]
+        }, (scelta) => chiude(!!(scelta && scelta.value === true)));
+    }
+
+    /**
      * A4 (avviso 'prima-del-comando', solo a passo comune): un comando sta per
      * partire a duello fermo, nello stesso punto logico su tutti i client.
      * Entra qui il compagno di un membro caduto nel turno avversario (D15).
@@ -444,6 +573,21 @@
     function inizioTurno(posto) {
         eliminazioniInAttesa();
         const sq = squadre[posto];
+        // D2 su richiesta in rete: prima entra chi giocherebbe a turno, poi le
+        // richieste viaggiano come decisioni (richiesteInRete); la scelta di
+        // chi affrontare (D12) si fa solo dopo, quando si sa chi gioca.
+        if (sq && aPassoComune() && sq.scambio === 'libero') {
+            const prossimo = prossimoPerTurno(sq);
+            if (prossimo !== -1 && sq.membri[altro(prossimo)].vivo) {
+                const entrato = entraPerTurno(sq, posto, prossimo);
+                if (entrato !== prossimo) { sceltaFronte(posto); return; } // Mazzo vuoto (D17): niente scambio possibile
+                richiesteInRete(sq, prossimo, (gioca) => {
+                    if (gioca !== sq.attivo) entraPerTurno(sq, posto, gioca);
+                    sceltaFronte(posto);
+                });
+                return;
+            }
+        }
         if (sq) {
             let prossimo = prossimoPerTurno(sq);
             const richiesta = sq.richiesta;
@@ -461,21 +605,30 @@
                 if (accetta) prossimo = richiesta;
                 avvisa('risposta', posto);
             }
-            if (prossimo !== -1) {
-                const compagno = altro(prossimo);
-                if (mazzoVuoto(sq, prossimo) && sq.membri[compagno].vivo && !mazzoVuoto(sq, compagno)) {
-                    scambia(posto, prossimo);
-                    eliminaAttivo(posto, 'mazzo');
-                    prossimo = compagno;
-                } else {
-                    scambia(posto, prossimo);
-                }
-                sq.ultimo = prossimo;
-                avvisa('turno', posto);
-            }
+            if (prossimo !== -1) entraPerTurno(sq, posto, prossimo);
         }
         // Chi è di turno sceglie chi affrontare nel lato avversario, se è una squadra (D12, D13).
         sceltaFronte(posto);
+    }
+
+    /**
+     * Fa entrare per il turno il membro `indice` (D17: con il Mazzo vuoto è
+     * eliminato e gioca il compagno). Torna chi gioca davvero.
+     * @param {any} sq @param {string} posto @param {number} indice
+     */
+    function entraPerTurno(sq, posto, indice) {
+        let gioca = indice;
+        const compagno = altro(indice);
+        if (mazzoVuoto(sq, indice) && sq.membri[compagno].vivo && !mazzoVuoto(sq, compagno)) {
+            scambia(posto, indice);
+            eliminaAttivo(posto, 'mazzo');
+            gioca = compagno;
+        } else {
+            scambia(posto, indice);
+        }
+        sq.ultimo = gioca;
+        avvisa('turno', posto);
+        return gioca;
     }
 
     /**
@@ -483,19 +636,25 @@
      * squadra. Torna l'indice del membro che chiederebbe di giocare, o null
      * se non c'è (più) una richiesta: regola "a turno", compagno eliminato,
      * oppure richiesta appena ritirata.
-     * @param {string} posto
+     * @param {string} posto @param {number} [richiedente]
      */
-    function chiediScambio(posto) {
+    function chiediScambio(posto, richiedente) {
         const sq = squadre[posto];
         if (!sq || sq.scambio !== 'libero') return null;
         if (sq.richiesta != null) {
             sq.richiesta = null;
+            sq.richiedente = null;
             avvisa('richiesta', posto);
             return null;
         }
         const prossimo = prossimoPerTurno(sq);
         if (prossimo === -1 || !sq.membri[altro(prossimo)].vivo) return null;
         sq.richiesta = altro(prossimo);
+        // Chi chiede: la persona di QUESTO client (in rete la richiesta viaggia
+        // a suo nome, vedi richiesteInRete). `richiedente` esplicito per le
+        // simulazioni, dove le persone sono fatte dall'IA.
+        const qui = sq.membri.findIndex((m) => m.controllore === 'persona');
+        sq.richiedente = typeof richiedente === 'number' ? richiedente : (qui === -1 ? null : qui);
         avvisa('richiesta', posto);
         return sq.richiesta;
     }
@@ -537,7 +696,12 @@
         const applica = (/** @type {boolean} */ inRitardo) => {
             if (typeof gameState === 'undefined' || gameState.gameOver || gameState.turn !== turno || !squadre[dif]) return;
             if (sq.attivo === i || !sq.membri[i].vivo) { avvisa('fronte', dif); return; }
-            if (!duelloFermo()) { setTimeout(() => applica(true), 150); return; }
+            if (!duelloFermo()) {
+                // In rete niente timer locali: lo scambio si fa all'avviso A4.
+                if (aPassoComune()) { frontiInAttesa[dif] = { indice: i, turno }; return; }
+                setTimeout(() => applica(true), 150);
+                return;
+            }
             scambia(dif, i);
             avvisa('fronte', dif);
             if (inRitardo && typeof g.updateUI === 'function') g.updateUI();
@@ -674,7 +838,11 @@
         agganciato = true;
         g.EventiDuello.ascolta('inizio-turno', inizioTurno);
         g.EventiDuello.ascolta('lato-sconfitto', (posto) => latoSconfitto(posto));
-        g.EventiDuello.ascolta('prima-del-comando', () => { if (aPassoComune()) eliminazioniFuoriTurno(); });
+        g.EventiDuello.ascolta('prima-del-comando', () => {
+            if (!aPassoComune()) return;
+            eliminazioniFuoriTurno();
+            frontiFuoriTempo();
+        });
         sorvegliaComandi();
     }
 
@@ -683,10 +851,13 @@
      * motore (mano, Mazzo, campo nel posto); il secondo arriva con il suo
      * mazzo e pesca la sua mano iniziale qui.
      * @param {string} posto
-     * @param {{ primo: any, secondo: any, mazzoSecondo: any, regolaLp: 'membro'|'lato', lp: { membro: number, lato: number }, manoIniziale?: number, limiteBersaglio?: number, scambio?: 'obbligato'|'libero' }} o
+     * @param {{ primo: any, secondo: any, mazzoSecondo: any, regolaLp: 'membro'|'lato', lp: { membro: number, lato: number }, manoIniziale?: number, limiteBersaglio?: number, scambio?: 'obbligato'|'libero', posti?: string[], prefissoUid?: string }} o
      *   primo/secondo: { nome, personaggio, controllore, livelloIA, identita }
      *   limiteBersaglio: D13, turni avversari di fila in cui lo stesso membro può essere affrontato (0 = nessun limite)
      *   scambio: D2, 'obbligato' (a turno, predefinito) o 'libero' (a turno, ma la persona può chiedere di invertire)
+     *   In rete (passo comune a posti) anche: posti ['A0', 'A1'] (i posti assoluti dei due membri),
+     *   prefissoUid (uid prevedibili del mazzo del secondo membro, uguali su tutti i client) e, per un
+     *   membro 'remoto', natura 'persona' | 'ia' (chi c'è davvero dietro, sull'altro client)
      */
     function preparaSquadra(posto, o) {
         aggancia();
@@ -696,16 +867,22 @@
         segna(gameState[posto + 'Deck'], id0);
         segna(gameState[posto + 'ExtraDeck'], id0);
 
-        const mazzo = (typeof g.buildDeckFromSpec === 'function' && o.mazzoSecondo) ? (g.buildDeckFromSpec(o.mazzoSecondo) || []) : [];
-        const extra = (typeof g.buildExtraDeckFromSpec === 'function' && o.mazzoSecondo) ? g.buildExtraDeckFromSpec(o.mazzoSecondo) : [];
+        // In rete gli uid devono uscire uguali su tutti i client: si usa un prefisso (il posto assoluto).
+        const opzMazzo = o.prefissoUid ? { prefissoUid: o.prefissoUid } : undefined;
+        const opzExtra = o.prefissoUid ? { prefissoUid: o.prefissoUid + 'x' } : undefined;
+        const mazzo = (typeof g.buildDeckFromSpec === 'function' && o.mazzoSecondo) ? (g.buildDeckFromSpec(o.mazzoSecondo, opzMazzo) || []) : [];
+        const extra = (typeof g.buildExtraDeckFromSpec === 'function' && o.mazzoSecondo) ? g.buildExtraDeckFromSpec(o.mazzoSecondo, opzExtra) : [];
         segna(mazzo, id1);
         segna(extra, id1);
         const mano = [];
         const quante = o.manoIniziale === undefined ? 5 : o.manoIniziale;
         for (let i = 0; i < quante && mazzo.length > 0; i++) mano.push(mazzo.pop());
 
-        const membro = (dati, id, stato) => ({
+        const membro = (dati, id, stato, k) => ({
             id,
+            // In rete: il posto assoluto ('A0'...) e chi c'è davvero dietro un membro remoto.
+            seat: (o.posti && o.posti[k]) || null,
+            natura: dati.natura || (dati.controllore === 'remoto' ? 'persona' : (dati.controllore === 'persona' ? 'persona' : 'ia')),
             nome: dati.nome,
             personaggio: dati.personaggio || null,
             controllore: dati.controllore,
@@ -732,14 +909,15 @@
             // D2: regola dello scambio, richiesta in sospeso (indice di chi chiede di giocare) e l'ultima risposta del compagno.
             scambio: o.scambio === 'libero' ? 'libero' : 'obbligato',
             richiesta: null,
+            richiedente: null,
             ultimaRisposta: null,
             membri: [
-                membro(o.primo, id0, null),
+                membro(o.primo, id0, null, 0),
                 membro(o.secondo, id1, {
                     Hand: mano, Deck: mazzo, DeckCount: mazzo.length, ExtraDeck: extra,
                     MonsterField: Array(5).fill(null), STField: Array(5).fill(null), FieldSpell: null,
                     LP: lpMembro
-                })
+                }, 1)
             ]
         };
         squadre[posto] = sq;
@@ -747,6 +925,14 @@
         if (!gameState.personaggioPerPosto) gameState.personaggioPerPosto = { player: null, bot: null };
         gameState.personaggioPerPosto[posto] = sq.membri[0].personaggio;
         g.Tavolo.imposta({ [posto]: sq.membri[0].controllore });
+        if (sq.membri[0].controllore === 'remoto') g.Tavolo.impostaNaturaRemoto(sq.membri[0].natura, posto);
+        // Come in scambia: il livello dell'IA del primo membro vale su tutti i client.
+        if (sq.membri[0].livelloIA) {
+            gameState.livelloIA = gameState.livelloIA || {};
+            gameState.livelloIA[posto] = sq.membri[0].livelloIA;
+        }
+        // In rete il passo comune deve sapere quale posto assoluto è davanti in ogni posto del motore.
+        if (aPassoComune() && g.PassoComune.posti && g.PassoComune.posti()) g.PassoComune.impostaPostoAttivo(postoAssolutoDavanti);
         aggiornaUidInPanchina();
         avvisa('pronta', posto);
         return sq;
@@ -806,7 +992,7 @@
         /** @param {(evento: string, posto: string) => void} fn */
         ascolta: (fn) => { ascoltatori.push(fn); },
         /** Solo per i test: ricomincia da zero. */
-        azzera: () => { squadre = { player: null, bot: null }; attacchiInCorso = 0; eliminazioneInAttesa = {}; fineForzata = {}; },
+        azzera: () => { squadre = { player: null, bot: null }; attacchiInCorso = 0; eliminazioneInAttesa = {}; fineForzata = {}; frontiInAttesa = {}; },
         /** Diagnosi. */
         attacchiInCorso: () => attacchiInCorso
     };

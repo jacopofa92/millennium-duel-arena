@@ -489,11 +489,12 @@ const PassoComune = (function () {
      * Decisioni.chiedi: la mia scelta (posizione nell'elenco, -1 = nessuna)
      * parte per gli altri client. `chi` è il posto del motore a cui è stata
      * chiesta (serve solo nella modalità a posti, per dire chi ha risposto).
-     * @param {number} indice @param {string} [chi]
+     * `posto`: il posto assoluto che risponde, se non è chi è davanti in `chi`.
+     * @param {number} indice @param {string} [chi] @param {string} [posto]
      */
-    function decisioneLocale(indice, chi) {
+    function decisioneLocale(indice, chi, posto) {
         const messaggio = { tipo: 'decisione', indice: indice };
-        if (posti) messaggio.posto = postoAttivo(chi || 'player');
+        if (posti) messaggio.posto = posto || postoAttivo(chi || 'player');
         spedisci(messaggio);
     }
 
@@ -501,10 +502,11 @@ const PassoComune = (function () {
      * Decisioni.chiedi: a scegliere è un altro client; `poi(indice)` quando
      * arriva. Nella modalità a posti si aspetta la decisione del posto
      * assoluto davanti in `chi` adesso (lo stesso che la manderà).
-     * @param {(indice: number) => void} poi @param {string} [chi]
+     * `posto`: il posto assoluto che risponde, se non è chi è davanti in `chi`.
+     * @param {(indice: number) => void} poi @param {string} [chi] @param {string} [posto]
      */
-    function attendiDecisione(poi, chi) {
-        decisioniAttese.push({ posto: posti ? postoAttivo(chi || 'bot') : null, poi });
+    function attendiDecisione(poi, chi, posto) {
+        decisioniAttese.push({ posto: posti ? (posto || postoAttivo(chi || 'bot')) : null, poi });
         avvisaAttesaDecisioneRemota(true, decisioniAttese.length);
         pompa();
     }
@@ -538,8 +540,20 @@ const PassoComune = (function () {
         riprova = setTimeout(() => { riprova = null; pompa(); }, 50);
     }
 
-    /** A4: l'avviso alle regole che un comando sta per partire (vedi EVENTI in eventi-duello.js). */
+    /**
+     * A4: l'avviso alle regole che un comando sta per partire (vedi EVENTI in
+     * eventi-duello.js), più un ricalcolo degli effetti continui. Il ricalcolo
+     * fa anche pulizie di REGOLA (un Equipaggiamento rimasto senza il suo
+     * mostro va nel Cimitero) e di solito gira a ogni ridisegno, cioè in
+     * momenti diversi sui vari client: chi mandava un comando l'aveva già
+     * fatto e chi lo riceveva no, e le impronte divergevano (preso dal
+     * gemello a posti: Armatura Insetto rimasta sul campo da una parte sola
+     * dopo la distruzione della Grande Falena). Qui gira nello stesso punto
+     * logico ovunque, prima dell'impronta. È idempotente: rifarlo non cambia
+     * nulla se non c'è niente da pulire.
+     */
     function primaDelComando(posto, cmd) {
+        if (typeof DuelEngine !== 'undefined' && typeof DuelEngine.recomputeStaticEffects === 'function') DuelEngine.recomputeStaticEffects();
         if (typeof EventiDuello !== 'undefined') EventiDuello.emetti('prima-del-comando', posto, cmd);
     }
 

@@ -44,6 +44,12 @@
  *              duello senza interfaccia. Default: il primo candidato.
  *   annullabile la persona può chiudere senza scegliere: si risolve con null
  *   automaticaSeUnica  con un solo candidato non si chiede nulla
+ *   postoAssoluto  (passo comune a posti) il posto assoluto che risponde
+ *              ('A1'...), quando NON è chi è davanti in `chi` (per esempio il
+ *              compagno in panchina a cui si chiede uno scambio di turno);
+ *              va con `locale` (vero se risponde questo client) e
+ *              `perUnaPersona` (vero: chi risponde qui è una persona e vede
+ *              la scelta a schermo; falso: risponde la scelta automatica)
  * Il risultato arriva a `onDeciso(candidato | null)`. Asincrono quando
  * risponde una persona: tutto ciò che dipende dalla scelta va dentro
  * onDeciso, mai dopo la chiamata.
@@ -140,11 +146,14 @@
         // 0. Passo comune: OGNI scelta dell'altro client si aspetta (non
         // solo quelle con `viaggia`), come posizione nell'elenco — i due
         // client calcolano gli stessi candidati.
-        if (aPassoComune && g.Tavolo.eRemoto(r.chi)) {
+        // Con un posto assoluto esplicito, chi risponde lo dice la richiesta.
+        const esplicito = r.postoAssoluto != null;
+        const remota = esplicito ? r.locale !== true : g.Tavolo.eRemoto(r.chi);
+        if (aPassoComune && remota) {
             g.PassoComune.attendiDecisione((/** @type {number} */ indice) => {
                 const scelta = indice >= 0 ? r.candidati[indice] : null;
                 onDeciso(scelta === undefined ? null : scelta);
-            }, r.chi);
+            }, r.chi, esplicito ? r.postoAssoluto : undefined);
             return;
         }
 
@@ -160,7 +169,7 @@
             if (aPassoComune) {
                 // Sempre, anche una scelta obbligata o automatica: l'altro
                 // client la sta aspettando (vedi il punto 0 qui sopra).
-                g.PassoComune.decisioneLocale(posizioneDi(r.candidati, valore), r.chi);
+                g.PassoComune.decisioneLocale(posizioneDi(r.candidati, valore), r.chi, esplicito ? r.postoAssoluto : undefined);
                 const scelta = valore === undefined ? null : valore;
                 // Presa all'istante, si applica a codice in corso finito: è
                 // lì che la applica anche l'altro client, che la riceve dalla
@@ -181,8 +190,13 @@
             fine(r.candidati[0]);
             return;
         }
-        // 2. La persona davanti allo schermo, se c'è chi gliela mostra.
-        if (!interfacciaPerLaPersona(r.chi, r.tipo)) {
+        // 2. La persona davanti allo schermo, se c'è chi gliela mostra. Con
+        // un posto assoluto esplicito decide la richiesta se è una persona.
+        const aSchermo = esplicito
+            ? (r.perUnaPersona === true && !!g.EventiDuello && g.EventiDuello.ascoltato('decisione')
+                && g.EventiDuello.chiedi('decisioni-a-schermo', true, r.tipo) !== false)
+            : interfacciaPerLaPersona(r.chi, r.tipo);
+        if (!aSchermo) {
             // 3. La scelta automatica.
             fine(sceltaAutomatica(r));
             return;

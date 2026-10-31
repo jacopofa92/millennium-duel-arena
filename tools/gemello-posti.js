@@ -18,8 +18,9 @@
  * Un hook `prepara(lato)` (codice da eseguire in ogni contesto dopo
  * preparaDuello) serve alle varianti, per esempio le squadre del Tag Team.
  *
- * Uso da riga di comando (1 contro 1 con uno spettatore):
+ * Uso da riga di comando (1 contro 1 con uno spettatore, o uno scenario del Tag Team in rete):
  *   node tools/gemello-posti.js [--a yamiYugi] [--b kaiba] [--livello hard]
+ *        [--scenario 2v2-quattro|coppia-contro-ia|squadre-miste|2v1-tre]
  *        [--seme 42] [--partite 1] [--turni 60]
  */
 'use strict';
@@ -122,9 +123,11 @@ async function giocaGemelloPosti(opz, n) {
         nonFermo: PassoComune.motivoNonFermo(),
         esito: __esitoDuello, turno: gameState.turn, fase: gameState.phase, diTurno: gameState.currentPlayer,
         lp: [gameState.playerLP, gameState.botLP],
-        log: __logDuello.slice(-10)
+        log: __logDuello.slice(-${opz.righeRegistro || 10})
     })`);
     const fotografie = lati.map(foto);
+    // opz.allaFine: un'espressione letta a fine partita nel primo client (per esempio contare righe del registro).
+    const extra = opz.allaFine ? esegui(lati[0], opz.allaFine) : undefined;
     // L'esito visto da ogni client: vince la squadra A se vince il 'player' di un client della squadra A.
     const vinceA = fotografie.map((f, i) => (f.esito === null || f.esito === undefined ? null
         : (f.esito === 'draw' ? 'draw' : (lati[i].squadra === 'A' ? f.esito : !f.esito))));
@@ -134,7 +137,7 @@ async function giocaGemelloPosti(opz, n) {
     const altriErrori = lati.flatMap((l) => l.erroriCarte.filter((e) => !e.includes('PassoComune')).map((e) => `${l.id}: ${e}`));
     const buona = motivoStop !== 'divergenza' && divergenze.length === 0 && altriErrori.length === 0
         && esitiCoerenti && (motivoStop === 'limite' || finaliUguali) && (motivoStop === 'fine' || motivoStop === 'limite');
-    return { seme, passi, ora: orologio.ora, motivoStop, buona, vinceA: vinceA[0], esitiCoerenti, finaliUguali, divergenze, altriErrori, fotografie, lati: lati.map((l) => l.id) };
+    return { seme, passi, ora: orologio.ora, motivoStop, buona, vinceA: vinceA[0], esitiCoerenti, finaliUguali, divergenze, altriErrori, fotografie, lati: lati.map((l) => l.id), extra };
 }
 
 /** Il primo pezzo in cui due impronte differiscono. */
@@ -172,10 +175,65 @@ function unoControUnoConSpettatore(a, b, livello) {
     };
 }
 
+/**
+ * Uno scenario Tag Team in rete. `posti`: per ogni posto assoluto ('A0', 'A1', 'B0', 'B1'; il secondo membro
+ * di una squadra è facoltativo) il personaggio, il livello e il CLIENT che lo gioca (una persona simulata
+ * dall'IA, o un'IA vera: per il motore sono uguali, vedi naturaRemoto 'ia'). `client`: id → squadra che
+ * vede in basso. Ogni client prepara le squadre come la pagina (TagTeam.preparaSquadra), squadra A per
+ * prima, con i posti assoluti, il prefisso degli uid del secondo mazzo e chi controlla ogni membro DA LÌ.
+ * @param {{ posti: Record<string, { personaggio: string, livello: string, client: string }>, client: Record<string, string>, regolaLp?: string, scambio?: string }} s
+ */
+function tagInRete(s) {
+    const squadra = (x) => ['0', '1'].map((k) => s.posti[x + k]).filter(Boolean);
+    const controllo = (seat, id) => (s.posti[seat].client === id ? 'ia' : 'remoto');
+    const client = Object.keys(s.client).map((id) => {
+        const mia = s.client[id];
+        const altra = mia === 'A' ? 'B' : 'A';
+        return {
+            id, squadra: mia,
+            // Il primo membro di ogni squadra: preparaSquadra lo reimposta, ma per un lato con un solo duellante vale questo.
+            controlla: { player: controllo(mia + '0', id), bot: controllo(altra + '0', id) },
+            livelli: { player: s.posti[mia + '0'].livello, bot: s.posti[altra + '0'].livello }
+        };
+    });
+    const lp = { membro: 8000, lato: 8000 };
+    const prepara = (lato) => ['A', 'B'].filter((x) => squadra(x).length === 2).map((x) => {
+        const [m0, m1] = squadra(x);
+        const membro = (m, seat) => `{ nome: ${JSON.stringify(m.personaggio)}, personaggio: ${JSON.stringify(m.personaggio)}, controllore: ${JSON.stringify(controllo(seat, lato.id))}, natura: 'ia', livelloIA: ${JSON.stringify(m.livello)} }`;
+        return `TagTeam.preparaSquadra(PassoComune.postoDelMotore('${x}0'), {
+            primo: ${membro(m0, x + '0')}, secondo: ${membro(m1, x + '1')},
+            mazzoSecondo: getCharacterDeck(${JSON.stringify(m1.personaggio)}, ${JSON.stringify(m1.livello)}),
+            regolaLp: ${JSON.stringify(s.regolaLp || 'membro')}, lp: ${JSON.stringify(lp)}, limiteBersaglio: 2,
+            scambio: ${JSON.stringify(s.scambio || 'obbligato')}, posti: ['${x}0', '${x}1'], prefissoUid: '${x}1'
+        });`;
+    }).join('\n');
+    return {
+        squadre: { A: { personaggio: s.posti.A0.personaggio, livello: s.posti.A0.livello }, B: { personaggio: s.posti.B0.personaggio, livello: s.posti.B0.livello } },
+        client, prepara, scriptAggiuntivi: ['js/modes/tag.js']
+    };
+}
+
+/** Gli scenari del Tag Team in rete (fase 3 del piano). */
+const SCENARI_TAG = {
+    // Quattro persone, due per squadra.
+    '2v2-quattro': (p) => tagInRete({ posti: { A0: p('yamiYugi', 'h'), A1: p('joey', 'o'), B0: p('kaiba', 'c'), B1: p('pegasus', 'd') }, client: { h: 'A', o: 'A', c: 'B', d: 'B' } }),
+    // Tu e un amico contro un Duellante IA (gira sul client dell'host).
+    'coppia-contro-ia': (p) => tagInRete({ posti: { A0: p('yamiYugi', 'h'), A1: p('joey', 'o'), B0: p('kaiba', 'h') }, client: { h: 'A', o: 'A' } }),
+    // Tu + il tuo compagno IA contro un amico + il suo compagno IA (due client).
+    'squadre-miste': (p) => tagInRete({ posti: { A0: p('yamiYugi', 'h'), A1: p('joey', 'h'), B0: p('kaiba', 'o'), B1: p('mai', 'o') }, client: { h: 'A', o: 'B' } }),
+    // Tre persone: due contro uno.
+    '2v1-tre': (p) => tagInRete({ posti: { A0: p('yamiYugi', 'h'), A1: p('joey', 'o'), B0: p('marik', 'c') }, client: { h: 'A', o: 'A', c: 'B' } })
+};
+
 async function main() {
     const a = process.argv.slice(2);
     const val = (k, d) => { const i = a.indexOf('--' + k); return i >= 0 && a[i + 1] ? a[i + 1] : d; };
-    const base = unoControUnoConSpettatore(val('a', 'yamiYugi'), val('b', 'kaiba'), val('livello', 'hard'));
+    const livello = val('livello', 'hard');
+    const scenario = val('scenario', null);
+    const base = scenario
+        ? SCENARI_TAG[scenario]((personaggio, client) => ({ personaggio, livello, client }))
+        : unoControUnoConSpettatore(val('a', 'yamiYugi'), val('b', 'kaiba'), livello);
+    if (!base) { console.error('Scenario sconosciuto: ' + scenario + ' (' + Object.keys(SCENARI_TAG).join(', ') + ')'); process.exit(2); }
     const opz = Object.assign(base, { seme: Number(val('seme', '42')), turni: Number(val('turni', '60')) });
     let ok = true;
     for (let n = 0; n < Number(val('partite', '1')); n++) {
@@ -187,4 +245,4 @@ async function main() {
 }
 
 if (require.main === module) main();
-module.exports = { giocaGemelloPosti, descrivi, unoControUnoConSpettatore };
+module.exports = { giocaGemelloPosti, descrivi, unoControUnoConSpettatore, tagInRete, SCENARI_TAG };
