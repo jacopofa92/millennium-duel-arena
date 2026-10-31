@@ -10,7 +10,9 @@
  *   2) Gestisce un sistema di STANZE identificate da un codice a 5
  *      caratteri: un giocatore crea una stanza, l'altro la raggiunge
  *      con il codice, e da quel momento il server fa da "postino":
- *      inoltra ogni messaggio di gioco da un giocatore all'altro,
+ *      inoltra ogni messaggio di gioco da un giocatore a tutti gli altri
+ *      (una stanza ha 2 posti, o fino a 4 se chi la crea lo chiede: Tag
+ *      Team in rete; da 3 in su ogni messaggio porta `da`, chi lo manda),
  *      senza mai calcolare la logica della partita (che resta
  *      interamente lato client, in js/multiplayer.js).
  *   3) Riconosce ogni giocatore con un token (non col socket, che cambia
@@ -57,9 +59,20 @@ const RATE_LIMIT_WINDOW_MS = 1000;
 const RATE_LIMIT_MAX_MESSAGES = 20;
 const MAX_MESSAGE_BYTES = 65536;
 
+// Stanze da più di due giocatori (Tag Team in rete): da 2 a 4 posti, scelti
+// da chi crea la stanza. Una stanza creata senza dire nulla resta da 2, come
+// prima: i client del duello 1 contro 1 non sanno che le altre esistono.
+const CAPIENZA_MIN = 2;
+const CAPIENZA_MAX = 4;
+
 /**
- * @typedef {{ socket: import('net').Socket|null, disconnectTimer: NodeJS.Timeout|null }} PlayerSlot
- * @type {Map<string, { players: Map<string, PlayerSlot>, createdAt: number }>}
+ * Ogni giocatore ha DUE identità: il playerId (segreto, serve solo a lui per
+ * rientrare dopo una caduta di linea: chi lo conosce può prendere il suo
+ * posto) e un id PUBBLICO breve ('g1', 'g2'...), che il relay mette sui
+ * messaggi inoltrati (`da`) e nell'elenco della stanza. In una stanza da 2
+ * il mittente è implicito; da 3 in su i client devono sapere chi parla.
+ * @typedef {{ socket: import('net').Socket|null, disconnectTimer: NodeJS.Timeout|null, pubblico: string }} PlayerSlot
+ * @type {Map<string, { players: Map<string, PlayerSlot>, createdAt: number, capienza: number, prossimoPubblico: number, chiusa: boolean }>}
  */
 const rooms = new Map();
 
@@ -188,9 +201,52 @@ function otherPlayerId(room, playerId) {
     return null;
 }
 
+/** Tutti gli altri giocatori della stanza (da 2 è uno solo, come otherPlayerId). */
+function otherPlayerIds(room, playerId) {
+    return [...room.players.keys()].filter((id) => id !== playerId);
+}
+
 function sendToPlayer(room, playerId, obj) {
     const slot = room.players.get(playerId);
     if (slot && slot.socket) sendJSON(slot.socket, obj);
+}
+
+/** Lo stesso messaggio a tutti tranne `playerId`. */
+function sendToOthers(room, playerId, obj) {
+    otherPlayerIds(room, playerId).forEach((id) => sendToPlayer(room, id, obj));
+}
+
+/** L'id pubblico di un giocatore (null se non è più nella stanza). */
+function pubblicoDi(room, playerId) {
+    const slot = room.players.get(playerId);
+    return slot ? slot.pubblico : null;
+}
+
+function nuovoSlot(room, socket) {
+    room.prossimoPubblico += 1;
+    return { socket, disconnectTimer: null, pubblico: 'g' + room.prossimoPubblico };
+}
+
+/** Una capienza chiesta dal client: un intero fra 2 e 4, altrimenti 2 (la stanza di sempre). */
+function capienzaValida(v) {
+    return Number.isInteger(v) && v >= CAPIENZA_MIN && v <= CAPIENZA_MAX ? v : CAPIENZA_MIN;
+}
+
+/**
+ * Stanze da più di 2: a ogni ingresso, uscita, caduta o rientro tutti
+ * ricevono l'elenco aggiornato. L'host è il primo della stanza (chi l'ha
+ * creata, o il primo rimasto se è uscito). `tu` è l'id pubblico di chi
+ * riceve, e `playerId` il SUO segreto (serve per rientrare): ognuno riceve
+ * solo il proprio. Le stanze da 2 non lo ricevono: hanno 'room-ready'.
+ */
+function annunciaStanza(room, code) {
+    if (room.capienza <= 2) return;
+    const giocatori = [...room.players.values()].map((s) => ({ id: s.pubblico, collegato: !!s.socket }));
+    const host = giocatori.length ? giocatori[0].id : null;
+    room.players.forEach((slot, playerId) => {
+        if (!slot.socket) return;
+        sendJSON(slot.socket, { type: 'room-update', code, capienza: room.capienza, host, tu: slot.pubblico, playerId, giocatori, chiusa: room.chiusa });
+    });
 }
 
 /**
@@ -206,9 +262,10 @@ function removePlayerFully(roomCode, playerId) {
     const slot = room.players.get(playerId);
     if (slot && slot.disconnectTimer) clearTimeout(slot.disconnectTimer);
     room.players.delete(playerId);
-    const peerId = otherPlayerId(room, playerId) ?? [...room.players.keys()][0];
-    if (peerId) sendToPlayer(room, peerId, { type: 'opponent-left' });
-    if (room.players.size === 0) rooms.delete(roomCode);
+    // `da`: in una stanza da più di 2 bisogna sapere CHI è uscito.
+    if (slot) sendToOthers(room, playerId, { type: 'opponent-left', da: slot.pubblico });
+    if (room.players.size === 0) { rooms.delete(roomCode); return; }
+    annunciaStanza(room, roomCode);
 }
 
 /**
@@ -226,8 +283,8 @@ function handleSocketClose(socket) {
     const slot = room.players.get(socket.playerId);
     if (!slot || slot.socket !== socket) return; // già sostituito da un rejoin più recente
     slot.socket = null;
-    const peerId = otherPlayerId(room, socket.playerId);
-    if (peerId) sendToPlayer(room, peerId, { type: 'opponent-disconnected' });
+    sendToOthers(room, socket.playerId, { type: 'opponent-disconnected', da: slot.pubblico });
+    annunciaStanza(room, socket.roomCode);
     slot.disconnectTimer = setTimeout(() => removePlayerFully(socket.roomCode, socket.playerId), RECONNECT_GRACE_MS);
 }
 
@@ -248,7 +305,7 @@ function leaveRoomVoluntarily(socket) {
 // troppo in fretta.
 // ============================================================
 
-const KNOWN_MESSAGE_TYPES = new Set(['create-room', 'join-room', 'rejoin-room', 'game-action', 'leave-room']);
+const KNOWN_MESSAGE_TYPES = new Set(['create-room', 'join-room', 'rejoin-room', 'game-action', 'leave-room', 'lock-room']);
 
 function isValidMessageShape(msg) {
     if (!msg || typeof msg !== 'object' || Array.isArray(msg)) return false;
@@ -328,10 +385,16 @@ function handleClientMessage(socket, raw) {
         case 'create-room': {
             const code = generateRoomCode();
             const playerId = generatePlayerId();
-            rooms.set(code, { players: new Map([[playerId, { socket, disconnectTimer: null }]]), createdAt: Date.now() });
+            const room = { players: new Map(), createdAt: Date.now(), capienza: capienzaValida(msg.capienza), prossimoPubblico: 0, chiusa: false };
+            const slot = nuovoSlot(room, socket);
+            room.players.set(playerId, slot);
+            rooms.set(code, room);
             socket.roomCode = code;
             socket.playerId = playerId;
-            sendJSON(socket, { type: 'room-created', code, playerId });
+            // `capienza` e `tu` in più: un client che non li conosce li ignora,
+            // e uno nuovo capisce da `capienza` se il relay sa fare stanze grandi.
+            sendJSON(socket, { type: 'room-created', code, playerId, capienza: room.capienza, tu: slot.pubblico });
+            annunciaStanza(room, code);
             break;
         }
 
@@ -342,15 +405,24 @@ function handleClientMessage(socket, raw) {
                 sendJSON(socket, { type: 'error', message: 'Stanza non trovata. Controlla il codice.' });
                 return;
             }
-            if (room.players.size >= 2) {
+            if (room.chiusa) {
+                sendJSON(socket, { type: 'error', message: 'La partita in questa stanza è già cominciata.' });
+                return;
+            }
+            if (room.players.size >= room.capienza) {
                 sendJSON(socket, { type: 'error', message: 'La stanza è già piena.' });
                 return;
             }
             const playerId = generatePlayerId();
-            room.players.set(playerId, { socket, disconnectTimer: null });
+            room.players.set(playerId, nuovoSlot(room, socket));
             socket.roomCode = code;
             socket.playerId = playerId;
 
+            if (room.capienza > 2) {
+                // Stanza grande: non si parte quando è piena, lo decide la sala dei client.
+                annunciaStanza(room, code);
+                break;
+            }
             // Il creatore della stanza (primo entrato, ordine di
             // inserimento nella Map) inizia per primo.
             const ids = [...room.players.keys()];
@@ -372,9 +444,9 @@ function handleClientMessage(socket, raw) {
             slot.socket = socket;
             socket.roomCode = code;
             socket.playerId = msg.playerId;
-            sendJSON(socket, { type: 'rejoined', code });
-            const peerId = otherPlayerId(room, msg.playerId);
-            if (peerId) sendToPlayer(room, peerId, { type: 'opponent-reconnected' });
+            sendJSON(socket, { type: 'rejoined', code, tu: slot.pubblico });
+            sendToOthers(room, msg.playerId, { type: 'opponent-reconnected', da: slot.pubblico });
+            annunciaStanza(room, code);
             break;
         }
 
@@ -382,21 +454,30 @@ function handleClientMessage(socket, raw) {
             if (!socket.roomCode || !socket.playerId) return;
             const room = rooms.get(socket.roomCode);
             if (!room) return;
-            const peerId = otherPlayerId(room, socket.playerId);
-            // Senza un avversario in stanza non c'è nessuno a cui inoltrare,
+            // Senza nessun altro in stanza non c'è nessuno a cui inoltrare,
             // e nessun duello da controllare.
-            if (!peerId) return;
+            if (!otherPlayerId(room, socket.playerId)) return;
             const rifiuto = validateGameAction(room, socket.playerId, msg.action);
             if (rifiuto) {
                 sendJSON(socket, { type: 'error', message: 'Azione rifiutata dal server: ' + rifiuto + '.' });
                 return;
             }
-            sendToPlayer(room, peerId, { type: 'game-action', action: msg.action });
+            // A TUTTI gli altri (da 2 è uno solo), con l'id pubblico di chi manda.
+            sendToOthers(room, socket.playerId, { type: 'game-action', action: msg.action, da: pubblicoDi(room, socket.playerId) });
             break;
         }
 
         case 'leave-room': {
             leaveRoomVoluntarily(socket);
+            break;
+        }
+
+        case 'lock-room': {
+            // Solo l'host (il primo della stanza) chiude la stanza a nuovi ingressi: la partita è partita.
+            if (!socket.roomCode || !socket.playerId) return;
+            const room = rooms.get(socket.roomCode);
+            if (!room || [...room.players.keys()][0] !== socket.playerId) return;
+            room.chiusa = true;
             break;
         }
 

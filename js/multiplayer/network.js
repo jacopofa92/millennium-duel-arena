@@ -84,6 +84,8 @@
         let lastUrl = null;
         let roomCode = null;
         let playerId = null;
+        // L'id pubblico che il relay mi ha dato nella stanza ('g1'...): lo vedono anche gli altri.
+        let idPubblico = null;
         let intentionalClose = false;
         let reconnectTimer = null;
         const listeners = {};
@@ -136,10 +138,12 @@
                         } catch (err) {
                             return;
                         }
-                        if (msg.type === 'room-created' || msg.type === 'room-ready') {
+                        // 'room-update' arriva nelle stanze da più di 2 (Tag Team in rete) al posto di 'room-ready'.
+                        if (msg.type === 'room-created' || msg.type === 'room-ready' || msg.type === 'room-update') {
                             if (msg.playerId) playerId = msg.playerId;
                             if (msg.code) roomCode = msg.code;
                         }
+                        if (typeof msg.tu === 'string') idPubblico = msg.tu;
                         emit(msg.type, msg);
                     });
                     socket.addEventListener('close', () => {
@@ -239,8 +243,14 @@
             }
         }
 
-        function createRoom() {
-            send({ type: 'create-room' });
+        /** `capienza` (2-4) facoltativa: senza, la stanza da 2 di sempre. Un relay vecchio la ignora e risponde senza `capienza`. */
+        function createRoom(capienza) {
+            send(capienza ? { type: 'create-room', capienza } : { type: 'create-room' });
+        }
+
+        /** Solo l'host: la partita è partita, nessuno può più entrare nella stanza. */
+        function lockRoom() {
+            send({ type: 'lock-room' });
         }
 
         function joinRoom(code) {
@@ -257,6 +267,7 @@
             send({ type: 'leave-room' });
             roomCode = null;
             playerId = null;
+            idPubblico = null;
         }
 
         function close() {
@@ -278,7 +289,7 @@
             if (ws) ws.close();
         }
 
-        return { connect, on, createRoom, joinRoom, sendAction, leaveRoom, close, normalizeServerUrl, _simulateUnexpectedDisconnect };
+        return { connect, on, createRoom, joinRoom, sendAction, leaveRoom, lockRoom, close, normalizeServerUrl, idPubblico: () => idPubblico, _simulateUnexpectedDisconnect };
     }
 
     window.DuelNetwork = createNetworkClient();
