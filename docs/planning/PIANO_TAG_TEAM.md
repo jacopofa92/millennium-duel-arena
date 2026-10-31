@@ -423,9 +423,50 @@ fa entrare il compagno di D15 lì (e a inizio turno). Fuori dal Multiplayer non 
 il gioco offline resta identico (impronta delle 60 partite). Alternativa senza aggancio: in rete il
 compagno di D15 entra solo all'inizio del turno successivo (cambia la regola in Multiplayer).
 
-**Proposta.** Prima l'opzione 1 (è la più piccola e riusa lo stato specchiato già provato: si misura
-subito con il duello gemello a squadre), poi la 2. La 3 resta ferma finché il relay non si può
-ridistribuire.
+**Decisioni dell'autore (2026-10-31).** A4 approvato. Il blocco del relay è temporaneo (i minuti di
+build di Render si azzerano): si progetta come se il server si potesse aggiornare, quindi anche 3 e 4
+persone.
+
+### Progetto: il passo comune "a posti" (sostituisce la scelta fra le opzioni 1-3)
+
+Con 3-4 persone le opzioni 1, 2 e 3 diventano casi dello stesso meccanismo, quindi conviene farne UNO.
+
+- **Posti (seat).** Ogni membro di ogni squadra è un posto con un nome ASSOLUTO, uguale su tutti i
+  client: `A0`, `A1` (squadra A) e `B0`, `B1` (squadra B). Ogni posto è controllato da una persona (un
+  client) o dall'IA. In un 1 contro 1 classico ci sono solo `A0` e `B0`.
+- **Prospettiva.** Il motore resta a due posti (`player`/`bot`): ogni client vede la PROPRIA squadra come
+  `player` e l'altra come `bot`, come oggi. Ciò che viaggia usa i nomi assoluti, e chi riceve li traduce
+  (la mia squadra → `player`). Il passo comune di oggi è il caso "2 posti, uno per client".
+- **Chi controlla il posto del motore.** A ogni scambio (A1 `inizio-turno`, D15, D12) il posto del
+  motore passa al membro davanti: `persona` se è il mio posto, `ia` se è un'IA che gira QUI, `remoto`
+  altrimenti, con la natura (persona/IA) del membro remoto (vedi `Tavolo.impostaNaturaRemoto`, che va
+  aggiornata a ogni scambio).
+- **Dove girano le IA.** Ogni IA gira su UN solo client: il compagno IA sul client della persona della
+  sua squadra; un'IA in una squadra senza persone (2 persone contro un Duellante, contro un Boss) sul
+  client dell'host. Le sue mosse e scelte viaggiano come quelle di una persona.
+- **Messaggi.** Ogni messaggio porta il posto che lo manda; ogni client numera i propri (`seq` per
+  mittente) e il relay li inoltra a TUTTI gli altri. Chi riceve tiene una coda per posto: un comando si
+  prende dalla coda del posto che ha il turno, una decisione dalla coda del posto che deve rispondere
+  (lo sa il motore, che l'ha chiesta). Ripresa dopo una caduta di linea: per mittente.
+- **Impronta.** Calcolata sui posti assoluti (squadra A prima), così è uguale su tutti i client.
+- **Nella variante** (`js/modes/tag.js`): prefisso degli uid per posto (anche del mazzo del
+  compagno), natura del remoto che segue il membro, comandi generati dalla variante (D18) solo dal
+  client che controlla quel posto, D15 sull'avviso A4 `prima-del-comando`, D2 su richiesta con la
+  richiesta che viaggia (una decisione del posto che chiede, l'accettazione una decisione del compagno).
+- **Relay** (`server/server.js`): stanze fino a 4, ognuno col suo posto e la sua squadra, inoltro a tutti,
+  ripresa per mittente. Da ridistribuire su Render quando si può; nel frattempo si prova col server
+  locale (gli spec Multiplayer lo avviano già da soli).
+- **Sala d'attesa**: formato (2v1, 2v2, contro un Boss), squadre, posti vuoti riempiti dall'IA
+  (sull'host), regole D1/D2.
+
+**Passi, ciascuno chiuso con test e impronta delle 60 partite offline identica.**
+1. Passo comune a posti nel motore, con il 1 contro 1 di oggi come caso particolare (stessi messaggi
+   per due client, per restare compatibili con un relay vecchio finché non si aggiorna). Duello gemello
+   esteso a 3 e 4 motori nello stesso processo (squadre IA contro IA, persone simulate dall'IA).
+2. Variante Tag Team pronta per la rete (i punti qui sopra, A4 compreso), misurata col gemello a 2, 3 e
+   4 motori: nessuna divergenza su centinaia di partite.
+3. Relay a 4 posti e sala d'attesa delle squadre; spec end-to-end con 3 e 4 pagine e il server locale.
+4. Ridistribuzione del relay su Render e prova su telefoni veri.
 
 ## 4. Rischi
 
