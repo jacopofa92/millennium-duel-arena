@@ -4114,6 +4114,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.1 (cache v510, su `main`): **Tag Team in locale: si scelgono mazzo, arena e musica** (richiesta dell'utente). `tag.html` monta `DuelSetup` (lo stesso selettore del Duello Libero: mazzo attivo, arena, colonna sonora, carte ammesse) in una sezione sotto le regole, con le stesse dipendenze della sala Multiplayer; "Inizia" risolve "casuale" in un file vero e manda `&field=&music=&origin=` al duello, dopo aver controllato il mazzo contro le carte ammesse. Spec `tag-pagina-tabellone` esteso (il selettore c'è, arena e musica arrivano al duello). Suite completa non eseguita su questo commit.
 
+1.5.2 (cache v511, su `main`): solo versione, per ridistribuire il relay su Render (stanze Tag Team da 3-4 posti). **Aperto, in attesa della scelta dell'autore**: nel Tag, quando il membro davanti cade nel turno avversario, l'altro entra SUBITO (D15) e gli attacchi che restano in quel turno colpiscono lui (con un Boss a più attaccanti si perde nello stesso turno); proposta: farlo entrare all'inizio del proprio turno, con il caduto davanti che incassa a vuoto i colpi restanti. Suite completa non eseguita su questo commit.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**
