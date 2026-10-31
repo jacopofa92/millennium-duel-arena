@@ -498,7 +498,7 @@ e riconosciuta da tutti quando arriva il comando.
 
 **Passo 3 FATTO (1.4.194).** Decisione dell'autore sulla sala: l'host sceglie il formato, ognuno entra e
 si siede da sé in un posto libero, l'host sistema le coppie, si parte quando tutti confermano di essere
-pronti. Scelte mie, da confermare con l'autore: i posti vuoti li gioca l'IA (sul client dell'host, con un
+pronti. Scelte proposte e CONFERMATE dall'autore il 2026-10-31 (D25-D29, nell'ordine): i posti vuoti li gioca l'IA (sul client dell'host, con un
 Duellante scelto dall'host e un livello unico); ogni cambio di posti o regole toglie il "pronto" a tutti;
 un giocatore che esce a duello avviato fa vincere la squadra opposta (il suo posto non ha più chi lo
 gioca, e passarlo a un'IA dovrebbe succedere nello stesso punto su tutti i client); chi comincia lo
@@ -588,6 +588,9 @@ variante a inizio turno, vedi 3ter).
 
 ## 8. Diario
 
+- 2026-10-31: l'autore conferma le cinque scelte della sala in rete (D25-D29): posti vuoti all'IA
+  sull'host, "pronto" tolto a ogni cambio, chi esce a duello avviato fa vincere la squadra opposta,
+  chi comincia lo sorteggia l'host, formato fisso dopo l'apertura della stanza.
 - 2026-10-31: l'autore decide la sala: ognuno si siede, l'host sistema le coppie, si parte quando tutti
   sono pronti. Passo 3 della fase 3 fatto in 1.4.194 (sezione 3quinquies).
 - 2026-10-31: l'autore decide D22-D24 (Boss a 12000 LP con pescata normale e premio normale; scambio su
