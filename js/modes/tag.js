@@ -627,8 +627,31 @@
             scambia(posto, indice);
         }
         sq.ultimo = gioca;
+        sq.membri[gioca].giocato = true;
         avvisa('turno', posto);
         return gioca;
+    }
+
+    /**
+     * A5 (decisione dell'autore): non si attacca un avversario che non ha
+     * ancora giocato il suo primo turno. Vale per il membro DAVANTI nella
+     * squadra avversaria di chi attacca: nessun attacco (nemmeno diretto)
+     * finché lui non ha giocato. Undefined = nessun divieto (risponde il motore).
+     * Uguale su tutti i client: dipende solo da chi è entrato per un turno.
+     * @param {string} attaccante
+     */
+    function attaccoVietato(attaccante) {
+        const sq = squadre[avversarioDi(attaccante)];
+        if (!sq) return undefined;
+        const m = sq.membri[sq.attivo];
+        return m && m.vivo && !m.giocato ? true : undefined;
+    }
+
+    /** Nel registro: chi attacca sa subito che in questo turno non potrà attaccare. @param {any} sq @param {number} i */
+    function avvisaSenzaAttacchi(sq, i) {
+        const m = sq.membri[i];
+        if (!m || m.giocato || typeof g.addToLog !== 'function') return;
+        g.addToLog(`⏳ ${m.nome} non ha ancora giocato il suo primo turno: in questo turno non lo si può attaccare.`);
     }
 
     /**
@@ -684,6 +707,7 @@
         const sq = squadre[dif];
         if (!sq || !sq.membri[i] || !sq.membri[i].vivo) return;
         registraFronte(sq, i);
+        avvisaSenzaAttacchi(sq, i);
         const turno = gameState.turn;
         const nomeAtt = nomeDelPosto(attaccante);
         if (typeof g.addToLog === 'function') {
@@ -733,7 +757,7 @@
         if (!sq) return;
         const vivi = sq.membri.map((m, i) => (m.vivo ? i : -1)).filter((i) => i >= 0);
         if (vivi.length === 0) return;
-        if (vivi.length === 1) { registraFronte(sq, vivi[0]); return; }
+        if (vivi.length === 1) { registraFronte(sq, vivi[0]); avvisaSenzaAttacchi(sq, vivi[0]); return; }
         if (sq.fronte && sq.limiteBersaglio > 0 && sq.fronte.fila >= sq.limiteBersaglio) {
             fronteDecisa(dif, altro(sq.fronte.indice), attaccante, 'limite', true);
             return;
@@ -748,7 +772,8 @@
         const candidati = vivi.map((i) => {
             const m = r.membri[i];
             const lp = sq.regolaLp === 'membro' ? ` · ❤ ${m.lp}` : '';
-            return { value: i, icon: '⚔️', label: `${m.nome}${lp} · ${m.mostri} mostri · ✋ ${m.mano}` };
+            const nuovo = sq.membri[i].giocato ? '' : ' · non ha ancora giocato: niente attacchi';
+            return { value: i, icon: sq.membri[i].giocato ? '⚔️' : '⏳', label: `${m.nome}${lp} · ${m.mostri} mostri · ✋ ${m.mano}${nuovo}` };
         });
         let dentro = true;
         D.chiedi({
@@ -838,6 +863,7 @@
         agganciato = true;
         g.EventiDuello.ascolta('inizio-turno', inizioTurno);
         g.EventiDuello.ascolta('lato-sconfitto', (posto) => latoSconfitto(posto));
+        g.EventiDuello.ascolta('attacco-vietato', (posto) => attaccoVietato(posto));
         g.EventiDuello.ascolta('prima-del-comando', () => {
             if (!aPassoComune()) return;
             eliminazioniFuoriTurno();
@@ -890,6 +916,8 @@
             identita: dati.identita || null,
             vivo: true,
             motivo: null,
+            // Ha già giocato almeno un turno? Finché no, non lo si può attaccare (aggancio A5, vedi attaccoVietato).
+            giocato: false,
             stato,
             mappe: null,
             ritardate: null
@@ -921,6 +949,8 @@
             ]
         };
         squadre[posto] = sq;
+        // Il lato che comincia: il primo turno lo sta giocando il primo membro (non passa da 'inizio-turno').
+        if (gameState.currentPlayer === posto) sq.membri[0].giocato = true;
         gameState[posto + 'LP'] = o.regolaLp === 'membro' ? lpMembro : o.lp.lato;
         if (!gameState.personaggioPerPosto) gameState.personaggioPerPosto = { player: null, bot: null };
         gameState.personaggioPerPosto[posto] = sq.membri[0].personaggio;
@@ -966,6 +996,7 @@
                     identita: m.identita,
                     vivo: m.vivo,
                     motivo: m.motivo,
+                    giocato: m.giocato,
                     davanti,
                     lp: sq.regolaLp === 'membro' ? (davanti ? gameState[posto + 'LP'] : s.LP) : gameState[posto + 'LP'],
                     mano: (davanti ? gameState[posto + 'Hand'] : s.Hand || []).length,

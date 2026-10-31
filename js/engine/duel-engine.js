@@ -6208,7 +6208,11 @@
 
     /** Vero se i mostri del giocatore indicato non possono dichiarare attacchi (es. Spada Rivelatrice). */
     function cannotAttack(owner) {
-        return !!(gameState.cannotAttackFor && gameState.cannotAttackFor[owner]);
+        if (gameState.cannotAttackFor && gameState.cannotAttackFor[owner]) return true;
+        // A5 (docs/planning/PIANO_TAG_TEAM.md): una variante può vietare gli attacchi di un posto
+        // (Tag Team: non si attacca un avversario che non ha ancora giocato il suo primo turno).
+        // Senza ascoltatori la risposta è false: fuori dal Tag Team nulla cambia.
+        return !!(typeof EventiDuello !== 'undefined' && EventiDuello.chiedi('attacco-vietato', false, owner));
     }
 
     // ============================================================

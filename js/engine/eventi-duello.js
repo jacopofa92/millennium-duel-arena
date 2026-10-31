@@ -88,7 +88,8 @@
         'interfaccia-occupata': '() → true se a schermo c\'è una scelta o una cinematica che il duello deve aspettare',
         'evocazione-in-sospeso': '() → true se la persona ha GIA\' pagato i Tributi di un\'Evocazione e non l\'ha ancora completata: nessun cambio di fase finche\' non finisce',
         'decisioni-a-schermo': '(tipo) → false se l\'interfaccia non può mostrare adesso una decisione di quel tipo',
-        'lato-sconfitto': '(posto, motivo) → false se quel posto NON ha perso anche se i suoi Life Point sono a 0 (aggancio A3, docs/planning/PIANO_TAG_TEAM.md). Predefinito: true, il duello finisce come sempre'
+        'lato-sconfitto': '(posto, motivo) → false se quel posto NON ha perso anche se i suoi Life Point sono a 0 (aggancio A3, docs/planning/PIANO_TAG_TEAM.md). Predefinito: true, il duello finisce come sempre',
+        'attacco-vietato': '(posto) → true se i mostri di quel posto NON possono attaccare per una regola della variante (aggancio A5, docs/planning/PIANO_TAG_TEAM.md: nel Tag Team non si attacca chi non ha ancora giocato il suo primo turno). Predefinito: false'
     });
 
     /** @type {Map<string, Function[]>} */

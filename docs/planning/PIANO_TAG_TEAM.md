@@ -580,6 +580,16 @@ variante a inizio turno, vedi 3ter).
   il membro (D10, D17) e fa entrare il compagno (D15). Necessaria solo con D1 "per membro" e per D17.
   Spec: 1v1 invariato; nel tag, primo membro a 0 non chiude il duello, secondo sì.
 
+- **A5, attacco vietato (richiesto dall'autore il 2026-10-31: "non devo poter attaccare un avversario se
+  esso non ha ancora fatto il suo primo turno").** `js/engine/duel-engine.js`, `cannotAttack` (il cancello
+  unico degli attacchi, lo stesso di Spade Rivelatrici: lo leggono trascinamento, IA e `resolveAttack`):
+  una domanda al canale (`EventiDuello.chiedi('attacco-vietato', false, posto)`). Predefinito "no": fuori
+  dal Tag nulla cambia (60 partite identiche). Nel Tag la variante risponde "sì" quando il membro davanti
+  nella squadra avversaria non ha ancora giocato un turno (`giocato`, segnato all'entrata per il turno; il
+  primo membro del lato che comincia lo ha già). Nessun attacco, nemmeno diretto. Nella scelta di chi
+  affrontare (D12) il membro che non ha giocato è indicato con "niente attacchi", e il registro lo dice.
+  Spec `tag-team-primo-turno-avversario` (verificato al contrario).
+
 ## 7. Cosa non è in questo piano
 
 - Il Tag Team a quattro posti con quattro campi.
@@ -588,6 +598,8 @@ variante a inizio turno, vedi 3ter).
 
 ## 8. Diario
 
+- 2026-10-31: l'autore chiede che non si possa attaccare un avversario che non ha ancora giocato il suo
+  primo turno: aggancio A5 in 1.4.196 (sezione 6).
 - 2026-10-31: l'autore conferma le cinque scelte della sala in rete (D25-D29): posti vuoti all'IA
   sull'host, "pronto" tolto a ogni cambio, chi esce a duello avviato fa vincere la squadra opposta,
   chi comincia lo sorteggia l'host, formato fisso dopo l'apertura della stanza.
