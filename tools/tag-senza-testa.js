@@ -16,7 +16,10 @@
  *        [--avversario kaiba] [--avversario2 pegasus] [--livello medium]
  *        [--livello-giocatore hard] [--mazzo-compagno medium] [--lp membro|lato]
  *        [--inizia player|bot|alterna] [--partite 20] [--seme 1] [--turni 80]
- *        [--limite 2] [--dettaglio]
+ *        [--limite 2] [--dettaglio] [--boss]
+ *
+ * --boss: Boss a squadre, l'avversario solo ha tagDatabase.lpBoss Life Point
+ * (usare con --livello hard, come la pagina; --avversario2 non vale).
  *
  * Esce con 1 se una partita lancia un errore, rompe un invariante o si ferma
  * senza vincitore (uno stallo, non il limite di turni).
@@ -43,7 +46,8 @@ function argomenti() {
         seme: Number(val('seme', '1')),
         turni: Number(val('turni', '80')),
         limite: Number(val('limite', '2')),
-        dettaglio: a.includes('--dettaglio')
+        dettaglio: a.includes('--dettaglio'),
+        boss: a.includes('--boss')
     };
 }
 
@@ -68,6 +72,7 @@ function preparazione(o, iniziaBot) {
                 mazzoSecondo: getCharacterDeck(${JSON.stringify(o.avversario2)}, ${JSON.stringify(o.livello)}),
                 regolaLp: ${JSON.stringify(o.lp)}, lp: lpAvv, limiteBersaglio: ${o.limite}
             });` : ''}
+            ${o.boss ? 'gameState.botLP = tagDatabase.lpBoss;' : ''}
             window.__fronti = { player: [], bot: [] };
             EventiDuello.ascolta('registro', (m) => {
                 const t = String(m);
@@ -104,6 +109,7 @@ function giocaTag(o, n, iniziaBot) {
 
 async function main() {
     const o = argomenti();
+    if (o.boss) o.avversario2 = null;
     let ok = true;
     const conta = { partite: 0, vinte: 0, perse: 0, pari: 0, limite: 0, stalli: 0, errori: 0, turni: 0, inizioPlayer: [0, 0], inizioBot: [0, 0], limiteD13: 0, eliminatiG: 0, eliminatiA: 0 };
     for (let n = 0; n < o.partite; n++) {

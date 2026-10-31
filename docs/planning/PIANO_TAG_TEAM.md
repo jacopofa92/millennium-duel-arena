@@ -350,9 +350,32 @@ più del primo turno che la pagina dà a chi comincia; da rimisurare prima di de
   colonne della tabella non cambiano).
 - D20: premi del Tag Team per ora invariati (quelli di un duello normale contro il primo avversario).
 - D21: l'IA sceglie chi affrontare col valore predefinito (chi ha giocato per ultimo): va bene così.
+- D22: il Boss a squadre ha 12000 Life Point e pesca come sempre (nessuna carta in più).
+- D23: premio del Boss a squadre = quello di un duello normale contro quel Duellante (per ora).
+- D24: D2 "libero" come opzione: la persona chiede di scambiare il prossimo turno ("gioco io" o "gioca
+  tu"), il compagno accetta se gli conviene, altrimenti si va a turno come da regola obbligata.
 
-**Non fatto in questa fase.** Il Boss a squadre (2 contro 1 contro un Boss rinforzato con i dati del
-Raid), D2 "libero", prova sul telefono vero.
+**Fatto dopo (1.4.191), con le scelte dell'autore.**
+- **Boss a squadre** (`&boss=1`, formato "Contro un Boss" in `tag.html`): tu e il compagno contro un Boss
+  dell'elenco del Raid (`js/data/raid-db.js`: Kaiba, Marik, Yami Yugi, Pegasus, Nitemare; i Life Point
+  del Raid non valgono qui), mazzo Difficile, **12000 Life Point** (`tagDatabase.lpBoss`), pescata
+  normale (D22), premio di un duello normale (D23). La coppia ha i Life Point del 2 contro 1 (4000 a
+  testa, o 8000 condivisi). Il Boss non chiede sblocchi (come nel Raid). Misure senza testa (Yugi IA
+  Difficile + Joey mazzo Normale, LP a testa, 60 partite): Kaiba 33%, Marik 33%, Yami Yugi 53%, Pegasus
+  20%, Nitemare 22%. `tools/tag-senza-testa.js --boss`.
+- **D2 "su richiesta"** (`&scambio=libero`, scelta "Turni" in `tag.html`; D24): si va a turno, ma la
+  persona può chiedere (pulsante nel riquadro della sua squadra) di invertire il prossimo turno della
+  squadra: "gioco io" quando toccherebbe al compagno, "gioca tu" quando toccherebbe a lei; la richiesta
+  si può ritirare. Il compagno IA risponde all'inizio di quel turno (`compagnoAccetta` in `tag.js`):
+  accetta se chi giocherebbe ha un Mazzo da cui pescare, almeno le carte in mano dell'altro e almeno i
+  suoi Life Point (con i Life Point condivisi questi non contano). L'autore aveva scelto "più Life
+  Point": con il "più" stretto, all'inizio (4000 contro 4000) il compagno rifiuterebbe sempre, quindi
+  vale anche la parità. Se rifiuta si va a turno. La risposta compare a schermo per 4 secondi e nel
+  registro. Solo la persona chiede: una squadra di sole IA va sempre a turno.
+- Spec `tag-team-boss-e-scambio` (Boss a 12000 anche a schermo; richiesta, ritiro, accetta, rifiuta,
+  "gioca tu", ritorno all'alternanza; il rifiuto verificato al contrario).
+
+**Non fatto.** Prova sul telefono vero.
 
 ## 4. Rischi
 
@@ -410,6 +433,8 @@ variante a inizio turno, vedi 3ter).
 
 ## 8. Diario
 
+- 2026-10-31: l'autore decide D22-D24 (Boss a 12000 LP con pescata normale e premio normale; scambio su
+  richiesta: la persona chiede, il compagno IA accetta se gli conviene, altrimenti a turno). Fatti in 1.4.191.
 - 2026-10-31: l'autore rivede D19: nel 2 contro 1 la coppia ha 4000 a testa, l'avversario solo 8000.
 - 2026-10-31: l'autore decide D19-D21: bilanciamento, premi e scelta dell'IA restano come sono.
 - 2026-10-31: fase 2, prima parte: 2 contro 2 contro l'IA, D12 e D13, strumento senza testa per le

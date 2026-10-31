@@ -50,7 +50,7 @@
     <div id="topbarMount"></div>
 
     <main class="mp-main">
-        <p class="mp-intro">Tu e un compagno contro uno o due Duellanti. Giocate a turni alterni: un turno tu, il turno dopo il tuo compagno. Il Cimitero è comune, mentre mano, Mazzo e campo sono di ciascuno. Contro una squadra, a inizio turno scegli chi affrontare, ma mai lo stesso per più di due turni di fila.</p>
+        <p class="mp-intro">Tu e un compagno contro uno o due Duellanti, o contro un Boss. Giocate a turni alterni: un turno tu, il turno dopo il tuo compagno (con i turni "su richiesta" puoi chiedergli di scambiarvi il prossimo). Il Cimitero è comune, mentre mano, Mazzo e campo sono di ciascuno. Contro una squadra, a inizio turno scegli chi affrontare, ma mai lo stesso per più di due turni di fila.</p>
 
         <div class="mp-sezione">Formato</div>
         <div class="tg-opzioni" id="formati"></div>
@@ -58,19 +58,31 @@
         <div class="mp-sezione">Il tuo compagno</div>
         <div class="tg-griglia" id="compagni"></div>
 
-        <div class="mp-sezione">L'avversario</div>
-        <div class="tg-griglia" id="avversari"></div>
+        <div id="bloccoAvversario">
+            <div class="mp-sezione">L'avversario</div>
+            <div class="tg-griglia" id="avversari"></div>
+        </div>
 
         <div id="bloccoSecondo" hidden>
             <div class="mp-sezione">Il secondo avversario</div>
             <div class="tg-griglia" id="avversari2"></div>
         </div>
 
-        <div class="mp-sezione">Livello dell'avversario</div>
-        <div class="tg-opzioni" id="livelli"></div>
+        <div id="bloccoBoss" hidden>
+            <div class="mp-sezione">Il Boss</div>
+            <div class="tg-griglia" id="bosses"></div>
+        </div>
+
+        <div id="bloccoLivello">
+            <div class="mp-sezione">Livello dell'avversario</div>
+            <div class="tg-opzioni" id="livelli"></div>
+        </div>
 
         <div class="mp-sezione">Life Point</div>
         <div class="tg-opzioni" id="regoleLp"></div>
+
+        <div class="mp-sezione">Turni</div>
+        <div class="tg-opzioni" id="regoleScambio"></div>
 
         <section class="mp-pannello">
             <p class="tg-riepilogo" id="riepilogo"></p>
@@ -85,6 +97,7 @@
 <script src="js/data/character-decks.js"></script>
 <script src="js/data/character-unlocks.js"></script>
 <script src="js/data/tag-db.js"></script>
+<script src="js/data/raid-db.js"></script>
 <script src="js/audio/audio-manager.js"></script>
 <script src="js/native/app-back-button.js"></script>
 <script src="js/native/haptics.js"></script>
@@ -108,19 +121,28 @@
         { valore: 'Medio', nome: 'Normale', desc: 'Il suo mazzo di tutti i giorni' },
         { valore: 'Difficile', nome: 'Difficile', desc: 'Il mazzo al completo' }
     ];
-    // I numeri dipendono dal formato (D19: nel 2 contro 1 la coppia ha 4000 a testa).
+    // I Boss del Raid (js/data/raid-db.js): solo l'elenco, i Life Point del Boss a squadre sono tagDatabase.lpBoss.
+    const bosses = (window.RAID_BOSSES || []).map((b) => characterDatabase.find((c) => c.id === b.id)).filter((c) => c && haMazzo(c.id));
+    const BOSS = 3;
+    // I numeri dipendono dal formato (D19: nel 2 contro 1, e quindi anche contro il Boss, la coppia ha 4000 a testa).
     const regoleLp = () => {
-        const lp = tagDatabase.lpSquadra(scelta.formato === 1);
-        const avv = scelta.formato === 1 ? ` L'avversario ne ha ${tagDatabase.lp.membro}.` : '';
+        const lp = tagDatabase.lpSquadra(scelta.formato !== 2);
+        const avv = scelta.formato === 1 ? ` L'avversario ne ha ${tagDatabase.lp.membro}.`
+            : (scelta.formato === BOSS ? ` Il Boss ne ha ${tagDatabase.lpBoss}.` : '');
         return [
             { valore: 'membro', nome: 'Uno a testa', desc: `${lp.membro} Life Point a testa: perdete quando siete a zero tutti e due.${avv}` },
             { valore: 'lato', nome: 'Condivisi', desc: `${lp.lato} Life Point per la squadra: a zero perdete insieme.${avv}` }
         ];
     };
+    const REGOLE_SCAMBIO = [
+        { valore: 'obbligato', nome: 'A turno', desc: 'Un turno tu, il turno dopo il tuo compagno, sempre.' },
+        { valore: 'libero', nome: 'Su richiesta', desc: 'Si va a turno, ma puoi chiedere al compagno di scambiarvi il prossimo turno: se non gli conviene rifiuta.' }
+    ];
 
     const FORMATI = [
         { valore: 1, nome: '2 contro 1', desc: 'Tu e il tuo compagno contro un Duellante' },
-        { valore: 2, nome: '2 contro 2', desc: 'Contro una squadra: a inizio turno scegli chi affrontare' }
+        { valore: 2, nome: '2 contro 2', desc: 'Contro una squadra: a inizio turno scegli chi affrontare' },
+        { valore: BOSS, nome: 'Contro un Boss', desc: `Un Boss con il mazzo al completo e ${tagDatabase.lpBoss} Life Point` }
     ];
 
     const scelta = {
@@ -128,11 +150,14 @@
         compagno: compagni[0] ? compagni[0].id : null,
         avversario: (avversari.find((c) => c.id === 'kaiba') || avversari[0] || {}).id || null,
         avversario2: null,
+        boss: bosses[0] ? bosses[0].id : null,
         livello: 'Medio',
-        lp: tagDatabase.regolaLpPredefinita
+        lp: tagDatabase.regolaLpPredefinita,
+        scambio: tagDatabase.scambioPredefinito
     };
-    // Il tuo compagno non può essere anche un avversario.
+    // Il tuo compagno non può essere anche un avversario (né il Boss).
     const disponibili = () => avversari.filter((c) => c.id !== scelta.compagno);
+    const bossDisponibili = () => bosses.filter((c) => c.id !== scelta.compagno);
     // Il secondo avversario predefinito: il primo disponibile diverso dal primo avversario.
     const secondoPredefinito = () => (disponibili().find((c) => c.id !== scelta.avversario) || {}).id || null;
 
@@ -178,48 +203,60 @@
         if (scelta.formato === 2 && (!scelta.avversario2 || scelta.avversario2 === scelta.avversario || scelta.avversario2 === scelta.compagno)) {
             scelta.avversario2 = secondoPredefinito();
         }
+        if (!bossDisponibili().some((c) => c.id === scelta.boss)) scelta.boss = (bossDisponibili()[0] || {}).id || null;
+        const controBoss = scelta.formato === BOSS;
         document.getElementById('formati').replaceChildren(...FORMATI.map((f) => opzione(f, f.valore === scelta.formato, () => { scelta.formato = f.valore; scrivi(); })));
         const elC = document.getElementById('compagni');
         elC.replaceChildren(...compagni.map((c) => tessera(c, c.id === scelta.compagno, () => { scelta.compagno = c.id; scrivi(); })));
+        document.getElementById('bloccoAvversario').hidden = controBoss;
         const elA = document.getElementById('avversari');
         elA.replaceChildren(...disponibili().map((c) => tessera(c, c.id === scelta.avversario, () => { scelta.avversario = c.id; scrivi(); })));
         document.getElementById('bloccoSecondo').hidden = scelta.formato !== 2;
         document.getElementById('avversari2').replaceChildren(...disponibili().filter((c) => c.id !== scelta.avversario)
             .map((c) => tessera(c, c.id === scelta.avversario2, () => { scelta.avversario2 = c.id; scrivi(); })));
+        document.getElementById('bloccoBoss').hidden = !controBoss;
+        document.getElementById('bosses').replaceChildren(...bossDisponibili().map((c) => tessera(c, c.id === scelta.boss, () => { scelta.boss = c.id; scrivi(); })));
+        // Il Boss gioca sempre il mazzo al completo: niente scelta del livello.
+        document.getElementById('bloccoLivello').hidden = controBoss;
         document.getElementById('livelli').replaceChildren(...LIVELLI.map((l) => opzione(l, l.valore === scelta.livello, () => { scelta.livello = l.valore; scrivi(); })));
         document.getElementById('regoleLp').replaceChildren(...regoleLp().map((r) => opzione(r, r.valore === scelta.lp, () => { scelta.lp = r.valore; scrivi(); })));
+        document.getElementById('regoleScambio').replaceChildren(...REGOLE_SCAMBIO.map((r) => opzione(r, r.valore === scelta.scambio, () => { scelta.scambio = r.valore; scrivi(); })));
 
         const compagno = characterDatabase.find((c) => c.id === scelta.compagno);
-        const avversario = characterDatabase.find((c) => c.id === scelta.avversario);
+        const avversario = characterDatabase.find((c) => c.id === (controBoss ? scelta.boss : scelta.avversario));
         const avversario2 = scelta.formato === 2 ? characterDatabase.find((c) => c.id === scelta.avversario2) : null;
-        const livello = LIVELLI.find((l) => l.valore === scelta.livello);
+        const livello = controBoss ? LIVELLI.find((l) => l.valore === tagDatabase.livelloBoss) : LIVELLI.find((l) => l.valore === scelta.livello);
         const riepilogo = document.getElementById('riepilogo');
         const vai = document.getElementById('vai');
         if (!compagno || !avversario || (scelta.formato === 2 && !avversario2)) {
             // Con pochi Duellanti sbloccati (ne servono 2 diversi dal compagno per il 2 contro 2) lo si dice.
             riepilogo.textContent = scelta.formato === 2 && disponibili().length < 2
                 ? 'Per il 2 contro 2 servono due avversari diversi dal tuo compagno: sbloccane altri vincendo in Torneo o nella Storia.'
-                : (scelta.formato === 2 ? 'Scegli un compagno e due avversari.' : 'Scegli un compagno e un avversario.');
+                : (scelta.formato === 2 ? 'Scegli un compagno e due avversari.' : (controBoss ? 'Scegli un compagno e un Boss.' : 'Scegli un compagno e un avversario.'));
             vai.disabled = true;
             return;
         }
         const forte = (testo) => Object.assign(document.createElement('strong'), { textContent: testo });
         riepilogo.innerHTML = '';
-        riepilogo.append('Tu e ', forte(compagno.name), ' contro ', forte(avversario.name));
+        riepilogo.append('Tu e ', forte(compagno.name), controBoss ? ' contro il Boss ' : ' contro ', forte(avversario.name));
         if (avversario2) riepilogo.append(' e ', forte(avversario2.name));
-        riepilogo.append(` (${livello.nome}). Il primo turno della squadra è tuo.`);
+        riepilogo.append(controBoss ? ` (${livello.nome}, ${tagDatabase.lpBoss} Life Point).` : ` (${livello.nome}).`, ' Il primo turno della squadra è tuo.');
         vai.disabled = false;
     }
 
     document.getElementById('vai').onclick = () => {
-        if (!scelta.compagno || !scelta.avversario || (scelta.formato === 2 && !scelta.avversario2)) return;
+        const controBoss = scelta.formato === BOSS;
+        const avversario = controBoss ? scelta.boss : scelta.avversario;
+        if (!scelta.compagno || !avversario || (scelta.formato === 2 && !scelta.avversario2)) return;
         if (window.NativeHaptics) NativeHaptics.light();
         window.location.href = 'duelMonstersCore.html?mode=tag'
-            + '&character=' + encodeURIComponent(scelta.avversario)
+            + '&character=' + encodeURIComponent(avversario)
             + (scelta.formato === 2 ? '&character2=' + encodeURIComponent(scelta.avversario2) : '')
-            + '&difficulty=' + encodeURIComponent(scelta.livello)
+            + (controBoss ? '&boss=1' : '')
+            + '&difficulty=' + encodeURIComponent(controBoss ? tagDatabase.livelloBoss : scelta.livello)
             + '&partner=' + encodeURIComponent(scelta.compagno)
-            + '&lp=' + encodeURIComponent(scelta.lp);
+            + '&lp=' + encodeURIComponent(scelta.lp)
+            + (scelta.scambio === 'libero' ? '&scambio=libero' : '');
     };
 
     scrivi();

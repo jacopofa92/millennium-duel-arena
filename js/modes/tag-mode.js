@@ -4,6 +4,8 @@
  * =====================================================================
  * duelMonstersCore.html?mode=tag&character=<avversario>&difficulty=<livello>&partner=<compagno>&lp=membro|lato
  *   [&character2=<secondo avversario>]  con il secondo avversario è un 2 contro 2
+ *   [&boss=1]                           Boss a squadre: l'avversario ha tagDatabase.lpBoss Life Point
+ *   [&scambio=libero]                   D2 su richiesta: puoi chiedere al compagno di invertire il prossimo turno
  *
  * Fuori dal motore, come le altre modalità: le regole della squadra stanno
  * in js/modes/tag.js (senza interfaccia), qui solo ciò che sta intorno:
@@ -32,13 +34,19 @@
     const g = window;
     const idCompagno = params.get('partner') || '';
     const idAvversario = params.get('character') || '';
-    const idAvversario2 = params.get('character2') || '';
+    // Boss a squadre: 2 contro 1 contro un Boss con i Life Point di tagDatabase.lpBoss (un Boss non ha compagni).
+    const boss = params.get('boss') === '1';
+    const idAvversario2 = boss ? '' : (params.get('character2') || '');
     const regolaLp = params.get('lp') === 'lato' ? 'lato' : (params.get('lp') === 'membro' ? 'membro' : tagDatabase.regolaLpPredefinita);
+    const scambio = params.get('scambio') === 'libero' ? 'libero' : tagDatabase.scambioPredefinito;
 
     /** @type {Record<string, HTMLElement | null>} un riquadro della squadra per lato */
     const pannelli = { player: null, bot: null };
     /** @type {HTMLElement | null} */
     let avviso = null;
+    /** @type {HTMLElement | null} la risposta del compagno a una richiesta di scambio, per qualche secondo */
+    let avvisoRisposta = null;
+    let timerRisposta = 0;
 
     function personaggio(id) {
         return (typeof characterDatabase !== 'undefined' ? characterDatabase : []).find((c) => c.id === id) || null;
@@ -130,9 +138,48 @@
         // Nella pillola solo il primo nome: con nome e cognome non stava fra le carte su un telefono stretto.
         const breve = String(altro.nome || '').split(' ')[0];
         const icona = posto === 'player' ? '🤝' : '⚔️';
-        pannello.innerHTML = `<button type="button" class="tag-compatto" aria-expanded="${aperto}" title="${escape(altro.nome)}">${icona} ${escape(breve)}<span>${escape(dati)}</span><span aria-hidden="true">${aperto ? '▴' : '▾'}</span></button>`
-            + `<div class="tag-dettagli">${titolo}${r.membri.map((m) => riga(m, posto)).join('')}</div>`;
+        const segnoRichiesta = r.richiesta != null ? ' · 🔄' : '';
+        pannello.innerHTML = `<button type="button" class="tag-compatto" aria-expanded="${aperto}" title="${escape(altro.nome)}">${icona} ${escape(breve)}<span>${escape(dati + segnoRichiesta)}</span><span aria-hidden="true">${aperto ? '▴' : '▾'}</span></button>`
+            + `<div class="tag-dettagli">${titolo}${r.membri.map((m) => riga(m, posto)).join('')}${posto === 'player' ? richiestaScambio(r) : ''}</div>`;
         posizionaPillole();
+    }
+
+    /**
+     * D2 su richiesta: il pulsante per chiedere al compagno di invertire il
+     * prossimo turno della squadra (o per ritirare la richiesta). Il compagno
+     * risponde all'inizio di quel turno. Niente pulsante con la regola "a
+     * turno", a duello finito o con un membro eliminato.
+     * @param {any} r riassunto della tua squadra
+     */
+    function richiestaScambio(r) {
+        if (r.scambio !== 'libero' || typeof gameState === 'undefined' || gameState.gameOver) return '';
+        if (!r.membri.every((m) => m.vivo) || r.prossimo === -1) return '';
+        const io = r.membri.find((m) => m.controllore === 'persona');
+        const compagno = r.membri.find((m) => m.controllore !== 'persona');
+        if (!io || !compagno) return '';
+        if (r.richiesta != null) {
+            const chi = r.membri[r.richiesta];
+            return `<div class="tag-richiesta"><span>Hai chiesto: il prossimo turno lo gioca ${escape(chi.controllore === 'persona' ? 'tu' : chi.nome)}.</span>`
+                + `<button type="button" data-azione="scambio">↩ Ritira la richiesta</button></div>`;
+        }
+        const toccaATe = r.membri[r.prossimo].controllore === 'persona';
+        const testo = toccaATe ? `🔄 Chiedi a ${compagno.nome.split(' ')[0]} di giocare il prossimo turno` : '🔄 Chiedi di giocare tu il prossimo turno';
+        return `<div class="tag-richiesta"><button type="button" data-azione="scambio">${escape(testo)}</button></div>`;
+    }
+
+    /** La risposta del compagno, al centro per qualche secondo (il registro è chiuso di solito). */
+    function mostraRisposta() {
+        const r = g.TagTeam.riassunto('player');
+        if (!r || !r.ultimaRisposta || !avvisoRisposta) return;
+        const x = r.ultimaRisposta;
+        const chiGioca = r.membri[x.gioca];
+        const giochiTu = chiGioca.controllore === 'persona';
+        avvisoRisposta.textContent = x.accetta
+            ? `🔄 ${x.da} accetta: questo turno ${giochiTu ? 'giochi tu' : 'gioca lui'}`
+            : `🔄 ${x.da} preferisce andare a turno: ${giochiTu ? 'giochi tu' : 'gioca lui'}`;
+        avvisoRisposta.hidden = false;
+        clearTimeout(timerRisposta);
+        timerRisposta = window.setTimeout(() => { if (avvisoRisposta) avvisoRisposta.hidden = true; }, 4000);
     }
 
     /**
@@ -198,6 +245,11 @@
         // La pillola del telefono apre e chiude il dettaglio (il riquadro viene riscritto a ogni aggiornamento, quindi l'ascolto sta qui).
         pannello.addEventListener('click', (e) => {
             const t = /** @type {HTMLElement} */ (e.target);
+            if (t.closest('[data-azione="scambio"]')) {
+                if (window.NativeHaptics) g.NativeHaptics.light();
+                g.TagTeam.chiediScambio(posto);
+                return;
+            }
             if (!t.closest('.tag-compatto')) return;
             pannello.classList.toggle('is-aperta');
             aggiornaPannello(posto);
@@ -212,8 +264,14 @@
         avviso.className = 'tag-avviso';
         avviso.hidden = true;
         document.body.appendChild(avviso);
+        avvisoRisposta = document.createElement('div');
+        avvisoRisposta.id = 'tagRispostaCompagno';
+        avvisoRisposta.className = 'tag-avviso tag-avviso--risposta';
+        avvisoRisposta.hidden = true;
+        document.body.appendChild(avvisoRisposta);
         g.TagTeam.ascolta((evento, posto) => {
             if (evento === 'scambio' || evento === 'pronta') allineaLp(posto);
+            if (evento === 'risposta' && posto === 'player') mostraRisposta();
             aggiornaTutto();
         });
         // Life Point, mano e Mazzo cambiano a ogni mossa: i riquadri si
@@ -254,8 +312,14 @@
                 regolaLp: regolaLp,
                 // D19: nel 2 contro 1 la coppia ha 4000 a testa (vedi tagDatabase.lpSquadra).
                 lp: tagDatabase.lpSquadra(!avversario2),
-                limiteBersaglio: tagDatabase.limiteBersaglio
+                limiteBersaglio: tagDatabase.limiteBersaglio,
+                scambio: scambio
             });
+            if (boss) {
+                // Il Boss rinforzato: solo i Life Point, la pescata è quella di sempre (decisione dell'autore).
+                gameState.botLP = tagDatabase.lpBoss;
+                allineaLp('bot');
+            }
             if (avversario2) {
                 // Entrambi gli avversari giocano al livello scelto: mazzo e IA.
                 const livello = gameState.botDifficulty || 'medium';

@@ -365,19 +365,66 @@
     }
 
     /**
+     * Chi giocherà il prossimo turno del lato con l'alternanza di D2 (un
+     * eliminato non gioca più). -1 se nessuno è vivo.
+     * @param {any} sq
+     */
+    function prossimoPerTurno(sq) {
+        let prossimo = sq.ultimo === null ? 0 : altro(sq.ultimo);
+        if (!sq.membri[prossimo].vivo) prossimo = altro(prossimo);
+        return sq.membri[prossimo].vivo ? prossimo : -1;
+    }
+
+    /**
+     * Lo scambio "su richiesta" (D2 libero, decisa dall'autore): la persona
+     * chiede di invertire il prossimo turno della squadra ("gioco io" quando
+     * toccherebbe al compagno, "gioca tu" quando toccherebbe a lei); il
+     * compagno IA risponde all'inizio di quel turno. Accetta se gli conviene:
+     * chi finirebbe per giocare ha almeno i Life Point dell'altro (con i Life
+     * Point condivisi non conta), almeno tante carte in mano e un Mazzo da cui
+     * pescare. Il criterio scelto dall'autore diceva "più Life Point"; con
+     * "più" stretto all'inizio del duello (4000 contro 4000) rifiuterebbe
+     * sempre, per questo vale anche la parità. Se rifiuta, si va a turno.
+     * @param {any} sq @param {number} gioca chi giocherebbe accettando @param {number} invece chi giocherebbe a turno
+     */
+    function compagnoAccetta(sq, gioca, invece) {
+        if (mazzoVuoto(sq, gioca)) return false;
+        const r = riassunto(sq.posto);
+        const a = r.membri[gioca];
+        const b = r.membri[invece];
+        if (sq.regolaLp === 'membro' && a.lp < b.lp) return false;
+        return a.mano >= b.mano;
+    }
+
+    /**
      * A1: comincia il turno di `posto`. Si sceglie chi gioca (D2 obbligato:
-     * si alternano; un eliminato non gioca più) e lo si fa entrare, prima di
-     * scadenze, turno saltato e pescata. D17: chi entra con il Mazzo vuoto è
-     * eliminato e gioca il compagno.
+     * si alternano; un eliminato non gioca più; D2 su richiesta: vedi
+     * compagnoAccetta) e lo si fa entrare, prima di scadenze, turno saltato e
+     * pescata. D17: chi entra con il Mazzo vuoto è eliminato e gioca il
+     * compagno.
      * @param {string} posto
      */
     function inizioTurno(posto) {
         eliminazioniInAttesa();
         const sq = squadre[posto];
         if (sq) {
-            let prossimo = sq.ultimo === null ? 0 : altro(sq.ultimo);
-            if (!sq.membri[prossimo].vivo) prossimo = altro(prossimo);
-            if (sq.membri[prossimo].vivo) {
+            let prossimo = prossimoPerTurno(sq);
+            const richiesta = sq.richiesta;
+            sq.richiesta = null;
+            if (richiesta != null && prossimo !== -1 && richiesta !== prossimo && sq.membri[richiesta].vivo) {
+                const accetta = compagnoAccetta(sq, richiesta, prossimo);
+                // Chi risponde è il membro IA della coppia (la persona ha fatto la richiesta).
+                const ia = sq.membri.find((m) => m.controllore === 'ia') || sq.membri[altro(richiesta)];
+                sq.ultimaRisposta = { accetta, gioca: accetta ? richiesta : prossimo, da: ia.nome, turno: gameState.turn };
+                if (typeof g.addToLog === 'function') {
+                    g.addToLog(accetta
+                        ? `🔄 ${ia.nome} accetta lo scambio: questo turno lo gioca ${sq.membri[richiesta].nome}.`
+                        : `🔄 ${ia.nome} non accetta lo scambio: si va a turno, gioca ${sq.membri[prossimo].nome}.`);
+                }
+                if (accetta) prossimo = richiesta;
+                avvisa('risposta', posto);
+            }
+            if (prossimo !== -1) {
                 const compagno = altro(prossimo);
                 if (mazzoVuoto(sq, prossimo) && sq.membri[compagno].vivo && !mazzoVuoto(sq, compagno)) {
                     scambia(posto, prossimo);
@@ -392,6 +439,28 @@
         }
         // Chi è di turno sceglie chi affrontare nel lato avversario, se è una squadra (D12, D13).
         sceltaFronte(posto);
+    }
+
+    /**
+     * D2 su richiesta: chiede (o ritira) l'inversione del prossimo turno della
+     * squadra. Torna l'indice del membro che chiederebbe di giocare, o null
+     * se non c'è (più) una richiesta: regola "a turno", compagno eliminato,
+     * oppure richiesta appena ritirata.
+     * @param {string} posto
+     */
+    function chiediScambio(posto) {
+        const sq = squadre[posto];
+        if (!sq || sq.scambio !== 'libero') return null;
+        if (sq.richiesta != null) {
+            sq.richiesta = null;
+            avvisa('richiesta', posto);
+            return null;
+        }
+        const prossimo = prossimoPerTurno(sq);
+        if (prossimo === -1 || !sq.membri[altro(prossimo)].vivo) return null;
+        sq.richiesta = altro(prossimo);
+        avvisa('richiesta', posto);
+        return sq.richiesta;
     }
 
     /** @param {string} posto */
@@ -567,9 +636,10 @@
      * motore (mano, Mazzo, campo nel posto); il secondo arriva con il suo
      * mazzo e pesca la sua mano iniziale qui.
      * @param {string} posto
-     * @param {{ primo: any, secondo: any, mazzoSecondo: any, regolaLp: 'membro'|'lato', lp: { membro: number, lato: number }, manoIniziale?: number, limiteBersaglio?: number }} o
+     * @param {{ primo: any, secondo: any, mazzoSecondo: any, regolaLp: 'membro'|'lato', lp: { membro: number, lato: number }, manoIniziale?: number, limiteBersaglio?: number, scambio?: 'obbligato'|'libero' }} o
      *   primo/secondo: { nome, personaggio, controllore, livelloIA, identita }
      *   limiteBersaglio: D13, turni avversari di fila in cui lo stesso membro può essere affrontato (0 = nessun limite)
+     *   scambio: D2, 'obbligato' (a turno, predefinito) o 'libero' (a turno, ma la persona può chiedere di invertire)
      */
     function preparaSquadra(posto, o) {
         aggancia();
@@ -612,6 +682,10 @@
             // D13: chi è stato affrontato nell'ultimo turno avversario e per quanti turni di fila.
             fronte: null,
             limiteBersaglio: o.limiteBersaglio === undefined ? 2 : o.limiteBersaglio,
+            // D2: regola dello scambio, richiesta in sospeso (indice di chi chiede di giocare) e l'ultima risposta del compagno.
+            scambio: o.scambio === 'libero' ? 'libero' : 'obbligato',
+            richiesta: null,
+            ultimaRisposta: null,
             membri: [
                 membro(o.primo, id0, null),
                 membro(o.secondo, id1, {
@@ -640,6 +714,10 @@
             attivo: sq.attivo,
             ultimo: sq.ultimo,
             fronte: sq.fronte ? { indice: sq.fronte.indice, fila: sq.fronte.fila } : null,
+            scambio: sq.scambio,
+            prossimo: prossimoPerTurno(sq),
+            richiesta: sq.richiesta,
+            ultimaRisposta: sq.ultimaRisposta ? Object.assign({}, sq.ultimaRisposta) : null,
             membri: sq.membri.map((m, i) => {
                 const davanti = i === sq.attivo;
                 const s = m.stato || {};
@@ -671,6 +749,7 @@
         preparaSquadra,
         scambia,
         riassunto,
+        chiediScambio,
         /** Vero se il posto è una squadra. @param {string} posto */
         eSquadra: (posto) => !!squadre[posto],
         /** Il membro davanti del posto (oggetto interno, sola lettura). @param {string} posto */

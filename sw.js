@@ -514,7 +514,8 @@
 // v497: Tag Team (tag.html, js/modes/tag*.js), tu e un compagno IA contro un Duellante.
 // v498: Tag Team 2 contro 2, scelta di chi affrontare a inizio turno.
 // v499: Tag Team, nel 2 contro 1 la coppia ha 4000 Life Point a testa.
-const CACHE_NAME = 'ygo-duel-arena-v499';
+// v500: Tag Team, Boss a squadre e scambio su richiesta.
+const CACHE_NAME = 'ygo-duel-arena-v500';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare

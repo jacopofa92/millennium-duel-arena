@@ -34,11 +34,24 @@ const tagDatabase = {
     },
 
     /**
-     * Scambio fra i membri (D2). Per ora c'è solo 'obbligato' (si alternano a
-     * ogni turno del lato); 'libero' (scelta di chi gioca a inizio turno)
-     * arriva in un secondo momento, vedi il piano.
+     * Scambio fra i membri (D2, regola scelta prima del duello):
+     * - 'obbligato': si alternano a ogni turno del lato;
+     * - 'libero': si alternano, ma puoi chiedere al compagno di invertire il
+     *   prossimo turno della squadra; se non accetta si va a turno (il
+     *   criterio con cui risponde l'IA sta in compagnoAccetta, js/modes/tag.js).
      */
     scambioPredefinito: 'obbligato',
+
+    /**
+     * Boss a squadre (fase 2 del piano): tu e il compagno contro un Boss del
+     * Raid (js/data/raid-db.js, solo l'elenco: i Life Point del Raid sono
+     * quelli di una barra comune e qui non valgono). Il Boss gioca il suo
+     * mazzo Difficile con questi Life Point e pesca come sempre; la coppia ha i
+     * Life Point del 2 contro 1 (lpSquadra(true)). Premio: quello di un duello
+     * normale contro quel Duellante.
+     */
+    lpBoss: 12000,
+    livelloBoss: 'Difficile',
 
     /**
      * Chi attacca sceglie, a inizio turno, quale membro della squadra
