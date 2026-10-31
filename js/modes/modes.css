@@ -91,6 +91,9 @@
     box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
     pointer-events: none;
 }
+/* La squadra avversaria (2 contro 2) in alto a sinistra, sotto il riquadro dei Life Point dell'avversario. */
+.tag-panchina--avv { bottom: auto; top: 132px; border-color: rgba(255, 138, 122, 0.35); }
+.tag-panchina--avv .tag-titolo { color: #ffb4a8; }
 .tag-dettagli { display: flex; flex-direction: column; gap: 6px; }
 /* La pillola esiste solo sul telefono (vedi il @media in fondo). */
 .tag-compatto { display: none; }
@@ -183,6 +186,9 @@ body.tag-turno-compagno .phase-side-menu {
         border: 1px solid rgba(247, 215, 116, 0.35);
         background: rgba(14, 11, 7, 0.94);
     }
+    /* La pillola della squadra avversaria a destra, alla stessa altezza di quella tua. */
+    .tag-panchina--avv { left: auto; right: 6px; top: 64px; align-items: flex-end; }
+    .tag-panchina--avv .tag-compatto { border-color: rgba(255, 138, 122, 0.55); }
     .tag-avviso { font-size: 0.78rem; bottom: 30%; }
     .pz-obiettivo { left: 8px; top: 64px; max-width: min(260px, calc(100vw - 16px)); }
     .pz-chip { font-size: 0.78rem; padding: 6px 10px; }

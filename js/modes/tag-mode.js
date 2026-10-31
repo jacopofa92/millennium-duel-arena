@@ -1,22 +1,26 @@
 // @ts-check
 /**
- * tag-mode.js — Il duello Tag Team (fase 1: tu e un compagno IA contro un Duellante).
+ * tag-mode.js — Il duello Tag Team (2 contro 1 e 2 contro 2, contro l'IA).
  * =====================================================================
  * duelMonstersCore.html?mode=tag&character=<avversario>&difficulty=<livello>&partner=<compagno>&lp=membro|lato
+ *   [&character2=<secondo avversario>]  con il secondo avversario è un 2 contro 2
  *
  * Fuori dal motore, come le altre modalità: le regole della squadra stanno
  * in js/modes/tag.js (senza interfaccia), qui solo ciò che sta intorno:
  *  - PREPARAZIONE (avvolge preparaManiIniziali): il tuo lato diventa una
- *    squadra con il compagno scelto, che porta il suo mazzo;
- *  - CHI GIOCA: nome e ritratto nel riquadro dei Life Point seguono il membro
- *    davanti, e l'annuncio del turno dice il suo nome;
+ *    squadra con il compagno scelto, che porta il suo mazzo; con un secondo
+ *    avversario anche il lato dell'avversario è una squadra;
+ *  - CHI GIOCA: nome e ritratto nei riquadri dei Life Point seguono il membro
+ *    davanti di ciascun lato;
  *  - IL COMPAGNO IA: durante il suo turno un velo blocca i click sul campo e
  *    sulla mano (le guardie dell'interfaccia guardano il NOME del posto,
  *    'player', non chi lo controlla, quindi senza velo potresti muovere al
  *    suo posto);
- *  - LA PANCHINA: un riquadro con i due membri, Life Point, carte in mano e
- *    nel Mazzo, chi è davanti e chi è fuori.
- * Premi e record: quelli di un duello normale contro quell'avversario.
+ *  - LE SQUADRE: un riquadro per lato con i due membri, Life Point, carte in
+ *    mano e nel Mazzo, chi è davanti e chi è fuori.
+ * La scelta di chi affrontare a inizio turno (D12) la chiede tag.js con
+ * Decisioni, quindi la mostra l'interfaccia di sempre (actions.js).
+ * Premi e record: quelli di un duello normale contro il primo avversario.
  */
 (function () {
     'use strict';
@@ -27,10 +31,12 @@
     /** @type {any} */
     const g = window;
     const idCompagno = params.get('partner') || '';
+    const idAvversario = params.get('character') || '';
+    const idAvversario2 = params.get('character2') || '';
     const regolaLp = params.get('lp') === 'lato' ? 'lato' : (params.get('lp') === 'membro' ? 'membro' : tagDatabase.regolaLpPredefinita);
 
-    /** @type {HTMLElement | null} */
-    let pannello = null;
+    /** @type {Record<string, HTMLElement | null>} un riquadro della squadra per lato */
+    const pannelli = { player: null, bot: null };
     /** @type {HTMLElement | null} */
     let avviso = null;
 
@@ -39,22 +45,28 @@
     }
 
     /** Identità mostrabile di un personaggio del roster (come in duel-session.js). */
-    function identitaDi(id) {
+    function identitaDi(id, icona) {
         const c = personaggio(id);
         if (!c) return null;
-        return { id: c.id, name: c.name, title: c.title || '', image: c.image || null, icon: '🤝' };
+        return { id: c.id, name: c.name, title: c.title || '', image: c.image || null, icon: icona };
     }
 
     function escape(t) {
         return String(t == null ? '' : t).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
     }
 
-    /** Nome e ritratto del riquadro dei Life Point del giocatore = il membro davanti. */
-    function mostraChiGioca() {
-        const m = g.TagTeam.membroAttivo('player');
+    /**
+     * Nome e ritratto del riquadro dei Life Point di un lato = il membro
+     * davanti. Per il giocatore si aggiorna anche DuelSession.player (lo
+     * leggono annuncio del turno e messaggi); l'avversario di DuelSession resta
+     * il primo, perché record, Sfide e sblocchi si contano su di lui.
+     * @param {string} posto
+     */
+    function mostraChiGioca(posto) {
+        const m = g.TagTeam.membroAttivo(posto);
         if (!m || !m.identita) return;
-        if (g.DuelSession && g.DuelSession.player) Object.assign(g.DuelSession.player, m.identita);
-        const box = document.getElementById('playerInfo');
+        if (posto === 'player' && g.DuelSession && g.DuelSession.player) Object.assign(g.DuelSession.player, m.identita);
+        const box = document.getElementById(posto === 'player' ? 'playerInfo' : 'botInfo');
         if (!box) return;
         const nome = box.querySelector('.name-text');
         if (nome) nome.textContent = m.identita.name;
@@ -81,12 +93,12 @@
         }
     }
 
-    function riga(m) {
+    function riga(m, posto) {
         const stato = !m.vivo
             ? `<span class="tag-stato tag-stato--fuori">${m.motivo === 'mazzo' ? 'Mazzo vuoto' : 'Eliminato'}</span>`
             : (m.davanti ? '<span class="tag-stato tag-stato--davanti">In campo</span>' : '<span class="tag-stato">In panchina</span>');
         const lp = regolaLp === 'membro' ? `<span class="tag-lp" title="Life Point">❤ ${m.lp}</span>` : '';
-        const chi = m.controllore === 'ia' ? 'IA' : 'Tu';
+        const chi = posto === 'bot' ? 'Avversario' : (m.controllore === 'ia' ? 'IA' : 'Tu');
         return `<div class="tag-membro${m.davanti ? ' is-davanti' : ''}${m.vivo ? '' : ' is-fuori'}" data-membro="${escape(m.id)}">`
             + `<div class="tag-membro-testa"><span class="tag-nome">${escape(m.nome)}</span><span class="tag-chi">${chi}</span></div>`
             + `<div class="tag-membro-dati">${lp}<span title="Carte in mano">✋ ${m.mano}</span><span title="Carte nel Mazzo">🂠 ${m.mazzo}</span>`
@@ -100,12 +112,15 @@
      * davanti (quello davanti è già nel riquadro dei Life Point), che si apre
      * al tocco. Il riquadro intero sul telefono copriva la mano e la pila
      * dell'avversario (misurato).
+     * @param {string} posto
      */
-    function aggiornaPannello() {
+    function aggiornaPannello(posto) {
+        const pannello = pannelli[posto];
         if (!pannello) return;
-        const r = g.TagTeam.riassunto('player');
+        const r = g.TagTeam.riassunto(posto);
         if (!r) return;
-        const titolo = regolaLp === 'lato' ? `<div class="tag-titolo">Tag Team · Life Point condivisi</div>` : '<div class="tag-titolo">Tag Team</div>';
+        const nomeLato = posto === 'player' ? 'La tua squadra' : 'Squadra avversaria';
+        const titolo = `<div class="tag-titolo">${nomeLato}${regolaLp === 'lato' ? ' · Life Point condivisi' : ''}</div>`;
         const altro = r.membri.find((m) => !m.davanti) || r.membri[0];
         const dati = [
             regolaLp === 'membro' && altro.vivo ? `❤ ${altro.lp}` : '',
@@ -114,33 +129,40 @@
         const aperto = pannello.classList.contains('is-aperta');
         // Nella pillola solo il primo nome: con nome e cognome non stava fra le carte su un telefono stretto.
         const breve = String(altro.nome || '').split(' ')[0];
-        pannello.innerHTML = `<button type="button" class="tag-compatto" aria-expanded="${aperto}" title="${escape(altro.nome)}">🤝 ${escape(breve)}<span>${escape(dati)}</span><span aria-hidden="true">${aperto ? '▴' : '▾'}</span></button>`
-            + `<div class="tag-dettagli">${titolo}${r.membri.map(riga).join('')}</div>`;
-        posizionaPillola();
+        const icona = posto === 'player' ? '🤝' : '⚔️';
+        pannello.innerHTML = `<button type="button" class="tag-compatto" aria-expanded="${aperto}" title="${escape(altro.nome)}">${icona} ${escape(breve)}<span>${escape(dati)}</span><span aria-hidden="true">${aperto ? '▴' : '▾'}</span></button>`
+            + `<div class="tag-dettagli">${titolo}${r.membri.map((m) => riga(m, posto)).join('')}</div>`;
+        posizionaPillole();
     }
 
     /**
-     * Sul telefono la pillola va subito sotto la mano dell'avversario, se lì
-     * non tocca nessuna casella del campo; altrimenti (schermi molto piccoli)
-     * resta in alto, sopra i dorsi della mano avversaria: è la sovrapposizione
-     * meno dannosa, perché sono carte coperte. Misurato su 360x640, 393x852 e
-     * 430x932. Sul desktop decide il CSS.
+     * Sul telefono le pillole vanno subito sotto la mano dell'avversario (la
+     * tua a sinistra, quella della squadra avversaria a destra), se lì non
+     * toccano nessuna casella del campo; altrimenti (schermi molto piccoli)
+     * restano in alto, sopra i dorsi della mano avversaria: è la
+     * sovrapposizione meno dannosa, perché sono carte coperte. Misurato su
+     * 360x640, 393x852 e 430x932. Sul desktop decide il CSS.
      */
-    function posizionaPillola() {
-        if (!pannello) return;
-        if (!window.matchMedia('(max-width: 900px)').matches) { pannello.style.top = ''; return; }
-        const pillola = pannello.querySelector('.tag-compatto');
+    function posizionaPillole() {
+        const telefono = window.matchMedia('(max-width: 900px)').matches;
         const manoAvv = document.getElementById('botHand');
         const infoAvv = document.getElementById('botInfo');
-        if (!pillola || !manoAvv) return;
-        const sotto = Math.max(manoAvv.getBoundingClientRect().bottom, infoAvv ? infoAvv.getBoundingClientRect().bottom : 0) + 4;
-        const larga = pillola.getBoundingClientRect().width;
-        const alta = pillola.getBoundingClientRect().height;
-        const libera = ![...document.querySelectorAll('.field-slot')].some((s) => {
-            const x = s.getBoundingClientRect();
-            return x.width && !(x.right <= 6 || x.left >= 6 + larga || x.bottom <= sotto || x.top >= sotto + alta);
+        Object.keys(pannelli).forEach((posto) => {
+            const pannello = pannelli[posto];
+            if (!pannello) return;
+            if (!telefono || !manoAvv) { pannello.style.top = ''; return; }
+            const pillola = pannello.querySelector('.tag-compatto');
+            if (!pillola) return;
+            const sotto = Math.max(manoAvv.getBoundingClientRect().bottom, infoAvv ? infoAvv.getBoundingClientRect().bottom : 0) + 4;
+            const p = pillola.getBoundingClientRect();
+            // La pillola dell'avversario è allineata a destra (vedi .tag-panchina--avv nel CSS).
+            const sinistra = posto === 'player' ? 6 : window.innerWidth - 6 - p.width;
+            const libera = ![...document.querySelectorAll('.field-slot')].some((s) => {
+                const x = s.getBoundingClientRect();
+                return x.width && !(x.right <= sinistra || x.left >= sinistra + p.width || x.bottom <= sotto || x.top >= sotto + p.height);
+            });
+            pannello.style.top = (libera ? sotto : 64) + 'px';
         });
-        pannello.style.top = (libera ? sotto : 64) + 'px';
     }
 
     /**
@@ -159,24 +181,32 @@
     }
 
     function aggiornaTutto() {
-        mostraChiGioca();
+        ['player', 'bot'].forEach((posto) => {
+            if (!g.TagTeam.eSquadra(posto)) return;
+            mostraChiGioca(posto);
+            aggiornaPannello(posto);
+        });
         aggiornaVelo();
-        aggiornaPannello();
     }
 
-    function costruisciInterfaccia() {
-        pannello = document.createElement('aside');
-        pannello.id = 'tagPanchina';
-        pannello.className = 'tag-panchina';
-        pannello.setAttribute('aria-label', 'La tua squadra');
+    function creaPannello(posto) {
+        const pannello = document.createElement('aside');
+        pannello.id = posto === 'player' ? 'tagPanchina' : 'tagPanchinaAvv';
+        pannello.className = 'tag-panchina' + (posto === 'bot' ? ' tag-panchina--avv' : '');
+        pannello.setAttribute('aria-label', posto === 'player' ? 'La tua squadra' : 'La squadra avversaria');
         document.body.appendChild(pannello);
         // La pillola del telefono apre e chiude il dettaglio (il riquadro viene riscritto a ogni aggiornamento, quindi l'ascolto sta qui).
         pannello.addEventListener('click', (e) => {
             const t = /** @type {HTMLElement} */ (e.target);
             if (!t.closest('.tag-compatto')) return;
             pannello.classList.toggle('is-aperta');
-            aggiornaPannello();
+            aggiornaPannello(posto);
         });
+        pannelli[posto] = pannello;
+    }
+
+    function costruisciInterfaccia() {
+        ['player', 'bot'].forEach((posto) => { if (g.TagTeam.eSquadra(posto)) creaPannello(posto); });
         avviso = document.createElement('div');
         avviso.id = 'tagAvvisoCompagno';
         avviso.className = 'tag-avviso';
@@ -186,20 +216,28 @@
             if (evento === 'scambio' || evento === 'pronta') allineaLp(posto);
             aggiornaTutto();
         });
-        // Life Point, mano e Mazzo cambiano a ogni mossa: il riquadro si
-        // aggiorna con il resto del duello. 'orologio' arriva a ogni cambio turno.
-        g.EventiDuello.ascolta('ridisegna', () => { aggiornaPannello(); aggiornaVelo(); });
-        g.EventiDuello.ascolta('life-points', aggiornaPannello);
+        // Life Point, mano e Mazzo cambiano a ogni mossa: i riquadri si
+        // aggiornano con il resto del duello. 'orologio' arriva a ogni cambio turno.
+        const ridisegna = () => { aggiornaPannello('player'); aggiornaPannello('bot'); };
+        g.EventiDuello.ascolta('ridisegna', () => { ridisegna(); aggiornaVelo(); });
+        g.EventiDuello.ascolta('life-points', ridisegna);
         g.EventiDuello.ascolta('orologio', aggiornaVelo);
-        window.addEventListener('resize', posizionaPillola);
+        window.addEventListener('resize', posizionaPillole);
         aggiornaTutto();
     }
 
     function avvia() {
-        const compagno = identitaDi(idCompagno);
+        const compagno = identitaDi(idCompagno, '🤝');
         const mazzo = compagno && typeof getCharacterDeck === 'function' ? getCharacterDeck(idCompagno, tagDatabase.compagno.mazzo) : null;
         // Un link senza compagno valido (o con un compagno senza mazzo): si torna alla pagina di scelta.
         if (!compagno || !mazzo) {
+            window.location.replace('tag.html');
+            return;
+        }
+        // Il secondo avversario è facoltativo: se l'indirizzo ne nomina uno che non esiste o non ha un mazzo, si torna alla scelta.
+        const avversario = identitaDi(idAvversario, '⚔️');
+        const avversario2 = idAvversario2 ? identitaDi(idAvversario2, '⚔️') : null;
+        if (idAvversario2 && (!avversario || !avversario2 || idAvversario2 === idAvversario || typeof getCharacterDeck !== 'function')) {
             window.location.replace('tag.html');
             return;
         }
@@ -212,8 +250,21 @@
                 secondo: { nome: compagno.name, personaggio: compagno.id, controllore: 'ia', livelloIA: tagDatabase.compagno.ia, identita: compagno },
                 mazzoSecondo: mazzo,
                 regolaLp: regolaLp,
-                lp: tagDatabase.lp
+                lp: tagDatabase.lp,
+                limiteBersaglio: tagDatabase.limiteBersaglio
             });
+            if (avversario2) {
+                // Entrambi gli avversari giocano al livello scelto: mazzo e IA.
+                const livello = gameState.botDifficulty || 'medium';
+                g.TagTeam.preparaSquadra('bot', {
+                    primo: { nome: avversario.name, personaggio: avversario.id, controllore: 'ia', livelloIA: livello, identita: avversario },
+                    secondo: { nome: avversario2.name, personaggio: avversario2.id, controllore: 'ia', livelloIA: livello, identita: avversario2 },
+                    mazzoSecondo: getCharacterDeck(idAvversario2, livello),
+                    regolaLp: regolaLp,
+                    lp: tagDatabase.lp,
+                    limiteBersaglio: tagDatabase.limiteBersaglio
+                });
+            }
         };
         initGame();
         costruisciInterfaccia();
@@ -225,7 +276,7 @@
      */
     function chiudi(vinto, abbandono) {
         document.body.classList.remove('tag-turno-compagno');
-        const compagno = identitaDi(idCompagno);
+        const compagno = identitaDi(idCompagno, '🤝');
         const nome = compagno ? compagno.name : 'il tuo compagno';
         if (abbandono) return [{ nota: true, icon: '🤝', rule: `Duello Tag Team abbandonato insieme a ${nome}.` }];
         return [{ nota: true, icon: '🤝', rule: vinto ? `Vittoria in Tag Team insieme a ${nome}.` : `Sconfitta in Tag Team insieme a ${nome}.` }];

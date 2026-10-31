@@ -512,7 +512,8 @@
 // v386: cambio account sullo stesso dispositivo a prova di perdite (cloud-sync.js, save-manager.js, duel-session.js).
 // v452: Duello della Settimana (settimana.html) e Caccia al Boss (caccia-boss.html), a rotazione settimanale.
 // v497: Tag Team (tag.html, js/modes/tag*.js), tu e un compagno IA contro un Duellante.
-const CACHE_NAME = 'ygo-duel-arena-v497';
+// v498: Tag Team 2 contro 2, scelta di chi affrontare a inizio turno.
+const CACHE_NAME = 'ygo-duel-arena-v498';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare

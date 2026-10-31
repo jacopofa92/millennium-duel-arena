@@ -286,10 +286,69 @@ l'IA che cambia playbook allo scambio di `personaggioPerPosto`.
 
 **Non fatto in questa fase.**
 - D2 "libero" (scelta di chi gioca a inizio turno).
-- D12 scelta del bersaglio e D13: servono quando anche l'avversario è una squadra (fase 2).
+- D12 scelta del bersaglio e D13: fatti nella fase 2 (sezione 3quater).
 - V3 copre le distruzioni ritardate, l'autodistruzione, la Sfera Esplosiva e il bando temporaneo; le
   altre voci ritardate per uid (Necrofear, Cappelli Magici, buff alla Standby) non sono messe da parte.
 - Prova sul telefono vero.
+
+## 3quater. Stato della fase 2 (2026-10-31, stesso branch, versione 1.4.189)
+
+**Fatto.**
+- **2 contro 2 contro l'IA**: `duelMonstersCore.html?mode=tag&...&character2=<id>`. Il lato avversario è
+  una squadra come il tuo (stesso `preparaSquadra`, entrambi IA al livello scelto, mazzo del livello
+  scelto). In `tag.html` c'è la scelta del formato (2 contro 1 / 2 contro 2) e del secondo avversario.
+  Il riquadro dei Life Point dell'avversario segue il membro davanti; record, Sfide e sblocchi restano
+  sul PRIMO avversario (DuelSession.opponent non cambia). Un riquadro della squadra per lato; sul
+  telefono due pillole, la tua a sinistra e quella avversaria a destra.
+- **D12** in `js/modes/tag.js` (`sceltaFronte`, chiamata a ogni `inizio-turno` dopo l'entrata del
+  membro di turno): se il lato avversario è una squadra con due membri vivi, chi è di turno sceglie chi
+  affrontare. Una persona riceve la domanda con `Decisioni.chiedi` (tipo 'opzioni', con Life Point,
+  mostri e carte in mano di ciascuno): il modale ferma il passaggio alle fasi successive finché non
+  sceglie, e lo scambio arriva a duello fermo. L'IA usa il valore predefinito: chi ha giocato per
+  ultimo, cioè chi è già davanti (quindi nessuno scambio). La scelta ha luogo prima della pescata solo
+  per l'IA; per la persona la pescata (e un'eventuale risposta dell'avversario alla pescata) può
+  precedere la scelta: la Standby e la Main Phase la aspettano.
+- **D13**: `sq.fronte = { indice, fila }` conta per quanti turni avversari di fila lo stesso membro è
+  stato affrontato. Arrivati a `limiteBersaglio` (`tagDatabase.limiteBersaglio`, 2) la scelta è
+  obbligata sull'altro membro finché è vivo, senza domanda, e il registro lo spiega. Con l'IA che
+  sceglie sempre il predefinito il limite non scatta mai (l'alternanza di D2 cambia già chi è davanti):
+  conta per le scelte della persona.
+- **Strumento senza testa per le squadre**: `tools/tag-senza-testa.js` (partite intere IA contro IA,
+  2 contro 1 o 2 contro 2, `--inizia player|bot|alterna`, riassunto di vittorie, turni, eliminati,
+  scelte forzate da D13). Per farlo `tools/duello-senza-testa.js` ha tre opzioni generiche nuove
+  (`scriptAggiuntivi`, `primaDelTurno`, `allaFine`) e il primo turno lo guida chi è di turno: impronta
+  delle 60 partite IDENTICA a prima.
+- Spec `tag-team-fase2` (scelta a schermo, scambio, riquadro, D13 verificato al contrario, partite
+  intere senza testa in tre formati).
+
+**Misure di bilanciamento** (Yugi Muto con IA Difficile e mazzo Difficile + Joey con mazzo Normale,
+60 partite per cella, stessi semi, chi comincia alternato; vittorie della tua squadra):
+
+| Avversari, livello | 1 contro 1 (Yugi) | 2v1 LP a testa | 2v1 LP condivisi | 2v2 LP a testa | 2v2 LP condivisi |
+|---|---|---|---|---|---|
+| Kaiba / Pegasus, Normale | 43% | 58% | 42% | 40% | 47% |
+| Marik / Bakura, Normale | 27% | 58% | 40% | 53% | 47% |
+| Mai / Rex, Normale | 43% | 70% | 55% | 57% | 53% |
+| Kaiba / Pegasus, Difficile | 20% | 48% | 42% | 8% | 13% |
+| Marik / Bakura, Difficile | 28% | 50% | 38% | 13% | 23% |
+| Mai / Rex, Difficile | 17% | 35% | 22% | 20% | 28% |
+
+Letture: il 2 contro 1 con LP a testa rende il duello molto più facile (+15/+30 punti sull'1 contro 1),
+con LP condivisi meno (+5/+15). Il 2 contro 2 Difficile è più duro dell'1 contro 1 perché il compagno ha
+il mazzo Normale contro due mazzi Difficili. Nessuno stallo e nessun errore in 1.800 partite. Su 120
+partite 2 contro 1 (Kaiba Normale) la squadra vince il 52% quando comincia e il 73% quando comincia
+l'avversario: chi comincia non pesca e non attacca, e nel duello senza testa nessuno riceve la carta in
+più del primo turno che la pagina dà a chi comincia; da rimisurare prima di decidere se correggere.
+
+**Da decidere con l'autore (bilanciamento e premi).**
+- Il 2 contro 1 va reso più duro? Opzioni: più Life Point all'avversario solo (12000 o 16000, come il
+  Boss del Raid), una pescata in più per lui, o il compagno con un mazzo più debole.
+- Premi del Tag Team (oggi quelli di un duello normale contro il primo avversario).
+- L'IA potrebbe scegliere chi affrontare con un criterio (chi può eliminare, o il campo più debole)
+  invece del valore predefinito: oggi D12 per l'IA è "chi ha giocato per ultimo", come da piano.
+
+**Non fatto in questa fase.** Il Boss a squadre (2 contro 1 contro un Boss rinforzato con i dati del
+Raid), D2 "libero", prova sul telefono vero.
 
 ## 4. Rischi
 
@@ -347,6 +406,8 @@ variante a inizio turno, vedi 3ter).
 
 ## 8. Diario
 
+- 2026-10-31: fase 2, prima parte: 2 contro 2 contro l'IA, D12 e D13, strumento senza testa per le
+  squadre e prime misure di bilanciamento (sezione 3quater).
 - 2026-10-31: l'autore decide D18 (End Phase forzata) e approva l'avvolgimento di `Comandi.esegui`;
   implementati, con lo scenario nello spec `tag-team-fase1`.
 - 2026-10-31: fase 1 implementata sul branch `feature/tag-team` (sezione 3ter).

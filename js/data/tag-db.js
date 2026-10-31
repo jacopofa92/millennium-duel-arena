@@ -24,6 +24,14 @@ const tagDatabase = {
     scambioPredefinito: 'obbligato',
 
     /**
+     * Chi attacca sceglie, a inizio turno, quale membro della squadra
+     * avversaria affrontare (D12). D13: lo stesso membro non si affronta per
+     * più di questi turni di fila finché il suo compagno è in gioco, così non
+     * si può tenere l'altro intatto in panchina per sempre. 0 = nessun limite.
+     */
+    limiteBersaglio: 2,
+
+    /**
      * Il compagno IA della fase 1: il suo mazzo è quello del personaggio al
      * livello indicato (js/data/character-decks.js) e la sua IA gioca al
      * livello indicato (js/ai/ai-controller.js). Il mazzo Normale tiene il

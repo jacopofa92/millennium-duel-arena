@@ -50,13 +50,21 @@
     <div id="topbarMount"></div>
 
     <main class="mp-main">
-        <p class="mp-intro">Tu e un compagno contro un Duellante. Giocate a turni alterni: un turno tu, il turno dopo il tuo compagno. Il Cimitero è comune, mentre mano, Mazzo e campo sono di ciascuno. L'avversario attacca chi ha giocato per ultimo.</p>
+        <p class="mp-intro">Tu e un compagno contro uno o due Duellanti. Giocate a turni alterni: un turno tu, il turno dopo il tuo compagno. Il Cimitero è comune, mentre mano, Mazzo e campo sono di ciascuno. Contro una squadra, a inizio turno scegli chi affrontare, ma mai lo stesso per più di due turni di fila.</p>
+
+        <div class="mp-sezione">Formato</div>
+        <div class="tg-opzioni" id="formati"></div>
 
         <div class="mp-sezione">Il tuo compagno</div>
         <div class="tg-griglia" id="compagni"></div>
 
         <div class="mp-sezione">L'avversario</div>
         <div class="tg-griglia" id="avversari"></div>
+
+        <div id="bloccoSecondo" hidden>
+            <div class="mp-sezione">Il secondo avversario</div>
+            <div class="tg-griglia" id="avversari2"></div>
+        </div>
 
         <div class="mp-sezione">Livello dell'avversario</div>
         <div class="tg-opzioni" id="livelli"></div>
@@ -105,12 +113,21 @@
         { valore: 'lato', nome: 'Condivisi', desc: `${tagDatabase.lp.lato} Life Point per la squadra: a zero perdete insieme.` }
     ];
 
+    const FORMATI = [
+        { valore: 1, nome: '2 contro 1', desc: 'Tu e il tuo compagno contro un Duellante' },
+        { valore: 2, nome: '2 contro 2', desc: 'Contro una squadra: a inizio turno scegli chi affrontare' }
+    ];
+
     const scelta = {
+        formato: 1,
         compagno: compagni[0] ? compagni[0].id : null,
         avversario: (avversari.find((c) => c.id === 'kaiba') || avversari[0] || {}).id || null,
+        avversario2: null,
         livello: 'Medio',
         lp: tagDatabase.regolaLpPredefinita
     };
+    // Il secondo avversario predefinito: il primo dell'elenco diverso dal primo avversario.
+    const secondoPredefinito = () => (avversari.find((c) => c.id !== scelta.avversario) || {}).id || null;
 
     function tessera(c, attivo, onClick) {
         const b = document.createElement('button');
@@ -147,35 +164,43 @@
     }
 
     function scrivi() {
+        if (scelta.formato === 2 && (!scelta.avversario2 || scelta.avversario2 === scelta.avversario)) scelta.avversario2 = secondoPredefinito();
+        document.getElementById('formati').replaceChildren(...FORMATI.map((f) => opzione(f, f.valore === scelta.formato, () => { scelta.formato = f.valore; scrivi(); })));
         const elC = document.getElementById('compagni');
         elC.replaceChildren(...compagni.map((c) => tessera(c, c.id === scelta.compagno, () => { scelta.compagno = c.id; scrivi(); })));
         const elA = document.getElementById('avversari');
         elA.replaceChildren(...avversari.map((c) => tessera(c, c.id === scelta.avversario, () => { scelta.avversario = c.id; scrivi(); })));
+        document.getElementById('bloccoSecondo').hidden = scelta.formato !== 2;
+        document.getElementById('avversari2').replaceChildren(...avversari.filter((c) => c.id !== scelta.avversario)
+            .map((c) => tessera(c, c.id === scelta.avversario2, () => { scelta.avversario2 = c.id; scrivi(); })));
         document.getElementById('livelli').replaceChildren(...LIVELLI.map((l) => opzione(l, l.valore === scelta.livello, () => { scelta.livello = l.valore; scrivi(); })));
         document.getElementById('regoleLp').replaceChildren(...REGOLE_LP.map((r) => opzione(r, r.valore === scelta.lp, () => { scelta.lp = r.valore; scrivi(); })));
 
         const compagno = characterDatabase.find((c) => c.id === scelta.compagno);
         const avversario = characterDatabase.find((c) => c.id === scelta.avversario);
+        const avversario2 = scelta.formato === 2 ? characterDatabase.find((c) => c.id === scelta.avversario2) : null;
         const livello = LIVELLI.find((l) => l.valore === scelta.livello);
         const riepilogo = document.getElementById('riepilogo');
         const vai = document.getElementById('vai');
-        if (!compagno || !avversario) {
-            riepilogo.textContent = 'Scegli un compagno e un avversario.';
+        if (!compagno || !avversario || (scelta.formato === 2 && !avversario2)) {
+            riepilogo.textContent = scelta.formato === 2 ? 'Scegli un compagno e due avversari.' : 'Scegli un compagno e un avversario.';
             vai.disabled = true;
             return;
         }
+        const forte = (testo) => Object.assign(document.createElement('strong'), { textContent: testo });
         riepilogo.innerHTML = '';
-        riepilogo.append('Tu e ', Object.assign(document.createElement('strong'), { textContent: compagno.name }),
-            ' contro ', Object.assign(document.createElement('strong'), { textContent: avversario.name }),
-            ` (${livello.nome}). Il primo turno della squadra è tuo.`);
+        riepilogo.append('Tu e ', forte(compagno.name), ' contro ', forte(avversario.name));
+        if (avversario2) riepilogo.append(' e ', forte(avversario2.name));
+        riepilogo.append(` (${livello.nome}). Il primo turno della squadra è tuo.`);
         vai.disabled = false;
     }
 
     document.getElementById('vai').onclick = () => {
-        if (!scelta.compagno || !scelta.avversario) return;
+        if (!scelta.compagno || !scelta.avversario || (scelta.formato === 2 && !scelta.avversario2)) return;
         if (window.NativeHaptics) NativeHaptics.light();
         window.location.href = 'duelMonstersCore.html?mode=tag'
             + '&character=' + encodeURIComponent(scelta.avversario)
+            + (scelta.formato === 2 ? '&character2=' + encodeURIComponent(scelta.avversario2) : '')
             + '&difficulty=' + encodeURIComponent(scelta.livello)
             + '&partner=' + encodeURIComponent(scelta.compagno)
             + '&lp=' + encodeURIComponent(scelta.lp);

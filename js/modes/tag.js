@@ -374,20 +374,123 @@
     function inizioTurno(posto) {
         eliminazioniInAttesa();
         const sq = squadre[posto];
-        if (!sq) return;
-        let prossimo = sq.ultimo === null ? 0 : altro(sq.ultimo);
-        if (!sq.membri[prossimo].vivo) prossimo = altro(prossimo);
-        if (!sq.membri[prossimo].vivo) return;
-        const compagno = altro(prossimo);
-        if (mazzoVuoto(sq, prossimo) && sq.membri[compagno].vivo && !mazzoVuoto(sq, compagno)) {
-            scambia(posto, prossimo);
-            eliminaAttivo(posto, 'mazzo');
-            prossimo = compagno;
-        } else {
-            scambia(posto, prossimo);
+        if (sq) {
+            let prossimo = sq.ultimo === null ? 0 : altro(sq.ultimo);
+            if (!sq.membri[prossimo].vivo) prossimo = altro(prossimo);
+            if (sq.membri[prossimo].vivo) {
+                const compagno = altro(prossimo);
+                if (mazzoVuoto(sq, prossimo) && sq.membri[compagno].vivo && !mazzoVuoto(sq, compagno)) {
+                    scambia(posto, prossimo);
+                    eliminaAttivo(posto, 'mazzo');
+                    prossimo = compagno;
+                } else {
+                    scambia(posto, prossimo);
+                }
+                sq.ultimo = prossimo;
+                avvisa('turno', posto);
+            }
         }
-        sq.ultimo = prossimo;
-        avvisa('turno', posto);
+        // Chi è di turno sceglie chi affrontare nel lato avversario, se è una squadra (D12, D13).
+        sceltaFronte(posto);
+    }
+
+    /** @param {string} posto */
+    function avversarioDi(posto) { return posto === 'player' ? 'bot' : 'player'; }
+
+    /**
+     * D13: si conta per quanti turni avversari di fila lo stesso membro è
+     * stato affrontato. Chiamata una volta per turno, quando la scelta è presa.
+     * @param {any} sq @param {number} i
+     */
+    function registraFronte(sq, i) {
+        if (sq.fronte && sq.fronte.indice === i) sq.fronte.fila++;
+        else sq.fronte = { indice: i, fila: 1 };
+    }
+
+    /**
+     * Il membro `i` del lato `dif` è quello affrontato in questo turno: entra
+     * davanti se non lo è già. Se a sceglierlo è stata una persona la scelta
+     * arriva in ritardo (è un modale), quindi lo scambio aspetta il duello
+     * fermo nello stesso turno, come l'entrata di D15.
+     * @param {string} dif @param {number} i @param {string} attaccante @param {string|null} motivo
+     * @param {boolean} sincrona vero se si è ancora dentro changeTurn
+     */
+    function fronteDecisa(dif, i, attaccante, motivo, sincrona) {
+        const sq = squadre[dif];
+        if (!sq || !sq.membri[i] || !sq.membri[i].vivo) return;
+        registraFronte(sq, i);
+        const turno = gameState.turn;
+        const nomeAtt = nomeDelPosto(attaccante);
+        if (typeof g.addToLog === 'function') {
+            g.addToLog(motivo === 'limite'
+                ? `⚔️ ${nomeAtt} affronta ${sq.membri[i].nome}: lo stesso avversario non si affronta più di ${sq.limiteBersaglio} turni di fila.`
+                : `⚔️ ${nomeAtt} affronta ${sq.membri[i].nome}.`);
+        }
+        // Dentro changeTurn (scelta immediata) il ridisegno lo fa changeTurn
+        // stesso; dopo un'attesa lo si chiede qui.
+        const applica = (/** @type {boolean} */ inRitardo) => {
+            if (typeof gameState === 'undefined' || gameState.gameOver || gameState.turn !== turno || !squadre[dif]) return;
+            if (sq.attivo === i || !sq.membri[i].vivo) { avvisa('fronte', dif); return; }
+            if (!duelloFermo()) { setTimeout(() => applica(true), 150); return; }
+            scambia(dif, i);
+            avvisa('fronte', dif);
+            if (inRitardo && typeof g.updateUI === 'function') g.updateUI();
+        };
+        applica(!sincrona);
+    }
+
+    /** Il nome di chi gioca adesso su un posto (membro davanti, o il duellante unico). */
+    function nomeDelPosto(posto) {
+        const sq = squadre[posto];
+        if (sq) return sq.membri[sq.attivo].nome;
+        const s = g.DuelSession;
+        const id = posto === 'bot' ? (s && s.opponent) : (s && s.player);
+        return (id && id.name) || (posto === 'bot' ? 'L\'avversario' : 'Il giocatore');
+    }
+
+    /**
+     * D12: chi attacca sceglie, a inizio turno, quale membro del lato
+     * avversario affrontare (lettura A di D11: davanti c'è sempre un membro
+     * solo, quindi la scelta è "chi metto davanti"). D13: lo stesso membro non
+     * si affronta per più di `limiteBersaglio` turni di fila finché l'altro è
+     * vivo; al limite la scelta è obbligata. Senza scelta (IA) vale il valore
+     * predefinito: chi ha giocato per ultimo, cioè chi è già davanti.
+     * @param {string} attaccante
+     */
+    function sceltaFronte(attaccante) {
+        const dif = avversarioDi(attaccante);
+        const sq = squadre[dif];
+        if (!sq) return;
+        const vivi = sq.membri.map((m, i) => (m.vivo ? i : -1)).filter((i) => i >= 0);
+        if (vivi.length === 0) return;
+        if (vivi.length === 1) { registraFronte(sq, vivi[0]); return; }
+        if (sq.fronte && sq.limiteBersaglio > 0 && sq.fronte.fila >= sq.limiteBersaglio) {
+            fronteDecisa(dif, altro(sq.fronte.indice), attaccante, 'limite', true);
+            return;
+        }
+        const predefinito = sq.attivo;
+        const D = g.Decisioni;
+        if (!D || !D.rispondeUnaPersona(attaccante)) {
+            fronteDecisa(dif, predefinito, attaccante, null, true);
+            return;
+        }
+        const r = riassunto(dif);
+        const candidati = vivi.map((i) => {
+            const m = r.membri[i];
+            const lp = sq.regolaLp === 'membro' ? ` · ❤ ${m.lp}` : '';
+            return { value: i, icon: '⚔️', label: `${m.nome}${lp} · ${m.mostri} mostri · ✋ ${m.mano}` };
+        });
+        let dentro = true;
+        D.chiedi({
+            chi: attaccante,
+            tipo: 'opzioni',
+            titolo: 'Chi affronti in questo turno?',
+            candidati,
+            automatica: (/** @type {any[]} */ c) => c.find((x) => x.value === predefinito) || c[0]
+        }, (/** @type {any} */ scelta) => {
+            fronteDecisa(dif, scelta && typeof scelta.value === 'number' ? scelta.value : predefinito, attaccante, null, dentro);
+        });
+        dentro = false;
     }
 
     /**
@@ -464,8 +567,9 @@
      * motore (mano, Mazzo, campo nel posto); il secondo arriva con il suo
      * mazzo e pesca la sua mano iniziale qui.
      * @param {string} posto
-     * @param {{ primo: any, secondo: any, mazzoSecondo: any, regolaLp: 'membro'|'lato', lp: { membro: number, lato: number }, manoIniziale?: number }} o
+     * @param {{ primo: any, secondo: any, mazzoSecondo: any, regolaLp: 'membro'|'lato', lp: { membro: number, lato: number }, manoIniziale?: number, limiteBersaglio?: number }} o
      *   primo/secondo: { nome, personaggio, controllore, livelloIA, identita }
+     *   limiteBersaglio: D13, turni avversari di fila in cui lo stesso membro può essere affrontato (0 = nessun limite)
      */
     function preparaSquadra(posto, o) {
         aggancia();
@@ -505,6 +609,9 @@
             // di D2). Se il lato comincia, il primo turno è del primo membro e
             // non passa da 'inizio-turno' (al primo turno changeTurn non gira).
             ultimo: gameState.currentPlayer === posto ? 0 : null,
+            // D13: chi è stato affrontato nell'ultimo turno avversario e per quanti turni di fila.
+            fronte: null,
+            limiteBersaglio: o.limiteBersaglio === undefined ? 2 : o.limiteBersaglio,
             membri: [
                 membro(o.primo, id0, null),
                 membro(o.secondo, id1, {
@@ -532,6 +639,7 @@
             regolaLp: sq.regolaLp,
             attivo: sq.attivo,
             ultimo: sq.ultimo,
+            fronte: sq.fronte ? { indice: sq.fronte.indice, fila: sq.fronte.fila } : null,
             membri: sq.membri.map((m, i) => {
                 const davanti = i === sq.attivo;
                 const s = m.stato || {};
