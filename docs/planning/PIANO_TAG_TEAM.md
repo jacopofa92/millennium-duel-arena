@@ -341,8 +341,13 @@ l'avversario: chi comincia non pesca e non attacca, e nel duello senza testa nes
 più del primo turno che la pagina dà a chi comincia; da rimisurare prima di decidere se correggere.
 
 **Decisioni dell'autore sulle misure (2026-10-31).**
-- D19: il 2 contro 1 NON si rende più duro: per ora resta così (avversario con 8000 LP, nessuna pescata
-  in più, compagno col mazzo Normale).
+- D19 (rivista lo stesso giorno): nel 2 contro 1 l'avversario solo ha 8000 Life Point e la coppia parte
+  con **4000 a testa** (con i Life Point a testa). Con i Life Point condivisi la coppia ha 8000 in tutto;
+  nel 2 contro 2 tutti hanno 8000 a testa. Nessuna pescata in più, compagno col mazzo Normale. Numeri in
+  `tagDatabase.lpSquadra(controUno)`, usati dalla pagina e dallo strumento senza testa. Rimisurato sugli
+  stessi semi, 2 contro 1 con LP a testa: Kaiba Normale 58% → 50%, Marik Normale 58% → 52%, Mai Normale
+  70% → 62%, Kaiba Difficile 48% → 42%, Marik Difficile 50% → 38%, Mai Difficile 35% → 32% (le altre
+  colonne della tabella non cambiano).
 - D20: premi del Tag Team per ora invariati (quelli di un duello normale contro il primo avversario).
 - D21: l'IA sceglie chi affrontare col valore predefinito (chi ha giocato per ultimo): va bene così.
 
@@ -405,6 +410,7 @@ variante a inizio turno, vedi 3ter).
 
 ## 8. Diario
 
+- 2026-10-31: l'autore rivede D19: nel 2 contro 1 la coppia ha 4000 a testa, l'avversario solo 8000.
 - 2026-10-31: l'autore decide D19-D21: bilanciamento, premi e scelta dell'IA restano come sono.
 - 2026-10-31: fase 2, prima parte: 2 contro 2 contro l'IA, D12 e D13, strumento senza testa per le
   squadre e prime misure di bilanciamento (sezione 3quater).

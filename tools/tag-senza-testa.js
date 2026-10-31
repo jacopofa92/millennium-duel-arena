@@ -53,7 +53,9 @@ function preparazione(o, iniziaBot) {
         (function () {
             const nome = (id) => ((characterDatabase.find((c) => c.id === id) || {}).name || id);
             ${iniziaBot ? "gameState.currentPlayer = 'bot';" : ''}
-            const lp = { membro: 8000, lato: 8000 };
+            // Gli stessi Life Point della pagina (D19: 4000 a testa per la coppia nel 2 contro 1).
+            const lp = tagDatabase.lpSquadra(${o.avversario2 ? 'false' : 'true'});
+            const lpAvv = tagDatabase.lpSquadra(false);
             TagTeam.preparaSquadra('player', {
                 primo: { nome: nome(${JSON.stringify(o.giocatore)}), personaggio: ${JSON.stringify(o.giocatore)}, controllore: 'ia', livelloIA: ${JSON.stringify(o.livelloGiocatore)} },
                 secondo: { nome: nome(${JSON.stringify(o.compagno)}), personaggio: ${JSON.stringify(o.compagno)}, controllore: 'ia', livelloIA: ${JSON.stringify(o.livelloGiocatore)} },
@@ -64,7 +66,7 @@ function preparazione(o, iniziaBot) {
                 primo: { nome: nome(${JSON.stringify(o.avversario)}), personaggio: ${JSON.stringify(o.avversario)}, controllore: 'ia', livelloIA: ${JSON.stringify(o.livello)} },
                 secondo: { nome: nome(${JSON.stringify(o.avversario2)}), personaggio: ${JSON.stringify(o.avversario2)}, controllore: 'ia', livelloIA: ${JSON.stringify(o.livello)} },
                 mazzoSecondo: getCharacterDeck(${JSON.stringify(o.avversario2)}, ${JSON.stringify(o.livello)}),
-                regolaLp: ${JSON.stringify(o.lp)}, lp, limiteBersaglio: ${o.limite}
+                regolaLp: ${JSON.stringify(o.lp)}, lp: lpAvv, limiteBersaglio: ${o.limite}
             });` : ''}
             window.__fronti = { player: [], bot: [] };
             EventiDuello.ascolta('registro', (m) => {
@@ -94,7 +96,7 @@ function giocaTag(o, n, iniziaBot) {
         livelloGiocatore: o.livelloGiocatore,
         seme: o.seme,
         turni: o.turni,
-        scriptAggiuntivi: ['js/modes/tag.js'],
+        scriptAggiuntivi: ['js/data/tag-db.js', 'js/modes/tag.js'],
         primaDelTurno: preparazione(o, iniziaBot),
         allaFine: ALLA_FINE
     }, n);

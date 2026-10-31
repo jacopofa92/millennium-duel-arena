@@ -45,8 +45,10 @@ module.exports = {
                     pannello: !!document.getElementById('tagPanchinaAvv'),
                     nomeBox: document.querySelector('#botInfo .name-text').textContent,
                     personaggio: gameState.personaggioPerPosto.bot,
-                    controllore: Tavolo.controllore('bot')
+                    controllore: Tavolo.controllore('bot'),
+                    lp: [TagTeam.riassunto('player').membri.map((m) => m.lp), TagTeam.riassunto('bot').membri.map((m) => m.lp)]
                 }));
+                t.assert(JSON.stringify(inizio.lp) === '[[8000,8000],[8000,8000]]', 'D19: nel 2 contro 2 tutti hanno 8000 Life Point: ' + JSON.stringify(inizio.lp));
                 t.assert(inizio.bot && inizio.bot.membri[0].nome === 'Seto Kaiba' && inizio.bot.membri[1].nome === 'Maximillion Pegasus',
                     'Squadra avversaria Kaiba + Pegasus: ' + JSON.stringify(inizio.bot && inizio.bot.membri.map((m) => m.nome)));
                 t.assert(inizio.bot.membri[1].mano === 5 && inizio.bot.membri[1].mazzo > 20, 'Pegasus ha la sua mano e il suo Mazzo: ' + JSON.stringify(inizio.bot.membri[1]));

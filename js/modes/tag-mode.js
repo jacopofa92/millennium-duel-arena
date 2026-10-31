@@ -237,7 +237,9 @@
         // Il secondo avversario è facoltativo: se l'indirizzo ne nomina uno che non esiste o non ha un mazzo, si torna alla scelta.
         const avversario = identitaDi(idAvversario, '⚔️');
         const avversario2 = idAvversario2 ? identitaDi(idAvversario2, '⚔️') : null;
-        if (idAvversario2 && (!avversario || !avversario2 || idAvversario2 === idAvversario || typeof getCharacterDeck !== 'function')) {
+        // Il compagno non può essere anche un avversario (la pagina di scelta non lo permette; qui per un indirizzo scritto a mano).
+        if (idAvversario === idCompagno || idAvversario2 === idCompagno
+            || (idAvversario2 && (!avversario || !avversario2 || idAvversario2 === idAvversario || typeof getCharacterDeck !== 'function'))) {
             window.location.replace('tag.html');
             return;
         }
@@ -250,7 +252,8 @@
                 secondo: { nome: compagno.name, personaggio: compagno.id, controllore: 'ia', livelloIA: tagDatabase.compagno.ia, identita: compagno },
                 mazzoSecondo: mazzo,
                 regolaLp: regolaLp,
-                lp: tagDatabase.lp,
+                // D19: nel 2 contro 1 la coppia ha 4000 a testa (vedi tagDatabase.lpSquadra).
+                lp: tagDatabase.lpSquadra(!avversario2),
                 limiteBersaglio: tagDatabase.limiteBersaglio
             });
             if (avversario2) {
@@ -261,7 +264,7 @@
                     secondo: { nome: avversario2.name, personaggio: avversario2.id, controllore: 'ia', livelloIA: livello, identita: avversario2 },
                     mazzoSecondo: getCharacterDeck(idAvversario2, livello),
                     regolaLp: regolaLp,
-                    lp: tagDatabase.lp,
+                    lp: tagDatabase.lpSquadra(false),
                     limiteBersaglio: tagDatabase.limiteBersaglio
                 });
             }

@@ -788,4 +788,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.4.189';
+window.GAME_VERSION = '1.4.190';

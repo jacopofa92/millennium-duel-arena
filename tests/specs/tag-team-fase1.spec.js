@@ -118,8 +118,10 @@ module.exports = {
                     sq: TagTeam.riassunto('player'),
                     segnate: gameState.playerHand.every((c) => c.membro === 'player#0') && gameState.playerDeck.every((c) => c.membro === 'player#0'),
                     mazzoCompagno: TagTeam.membro('player', 1).stato.Deck.every((c) => c.membro === 'player#1'),
-                    pannello: !!document.getElementById('tagPanchina')
+                    pannello: !!document.getElementById('tagPanchina'),
+                    lp: [gameState.playerLP, TagTeam.membro('player', 1).stato.LP, gameState.botLP]
                 }));
+                t.assert(JSON.stringify(inizio.lp) === '[4000,4000,8000]', 'D19: nel 2 contro 1 la coppia ha 4000 a testa, l\'avversario 8000: ' + JSON.stringify(inizio.lp));
                 t.assert(inizio.sq.membri[0].davanti && inizio.sq.membri[0].controllore === 'persona', 'All\'inizio sei davanti tu: ' + JSON.stringify(inizio.sq));
                 t.assert(inizio.sq.membri[1].mano === 5 && inizio.sq.membri[1].mazzo === 35, 'Il compagno ha la sua mano di 5 e il resto del suo Mazzo: ' + JSON.stringify(inizio.sq.membri[1]));
                 t.assert(inizio.segnate && inizio.mazzoCompagno, 'Ogni carta è segnata con il suo membro (V2)');
@@ -292,7 +294,7 @@ module.exports = {
                     };
                 });
                 t.assert(!caduta.subito && !caduta.gameOver, 'A3: il primo membro a 0 non chiude il duello: ' + JSON.stringify(caduta));
-                t.assert(caduta.attivo === 1 && !caduta.tuVivo && caduta.lpJoey === 8000, 'D15: entra subito Joey con i suoi Life Point: ' + JSON.stringify(caduta));
+                t.assert(caduta.attivo === 1 && !caduta.tuVivo && caduta.lpJoey === 4000, 'D15: entra subito Joey con i suoi Life Point (4000, D19): ' + JSON.stringify(caduta));
                 t.assert(caduta.mostroNelCimitero && caduta.nomeBox === 'Joey Wheeler', 'D10: il campo di chi esce va nel Cimitero condiviso: ' + JSON.stringify(caduta));
                 const fine = await page.evaluate(() => {
                     gameState.playerLP = 0;
@@ -359,7 +361,7 @@ module.exports = {
                         mostroNelCimitero: gameState.playerGraveyard.some((c) => c.uid === 'tag-d18')
                     };
                 });
-                t.assert(!dopo.gameOver && dopo.attivo === 1 && !dopo.tuVivo && dopo.lpJoey === 8000,
+                t.assert(!dopo.gameOver && dopo.attivo === 1 && !dopo.tuVivo && dopo.lpJoey === 4000,
                     'D18: al cambio turno esci e Joey entra in tempo per il turno avversario: ' + JSON.stringify(dopo));
                 t.assert(dopo.mostroNelCimitero, 'D10: il tuo campo va nel Cimitero condiviso: ' + JSON.stringify(dopo));
             } finally {

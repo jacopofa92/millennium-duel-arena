@@ -108,10 +108,15 @@
         { valore: 'Medio', nome: 'Normale', desc: 'Il suo mazzo di tutti i giorni' },
         { valore: 'Difficile', nome: 'Difficile', desc: 'Il mazzo al completo' }
     ];
-    const REGOLE_LP = [
-        { valore: 'membro', nome: 'Uno a testa', desc: `${tagDatabase.lp.membro} Life Point a testa: perdete quando siete a zero tutti e due.` },
-        { valore: 'lato', nome: 'Condivisi', desc: `${tagDatabase.lp.lato} Life Point per la squadra: a zero perdete insieme.` }
-    ];
+    // I numeri dipendono dal formato (D19: nel 2 contro 1 la coppia ha 4000 a testa).
+    const regoleLp = () => {
+        const lp = tagDatabase.lpSquadra(scelta.formato === 1);
+        const avv = scelta.formato === 1 ? ` L'avversario ne ha ${tagDatabase.lp.membro}.` : '';
+        return [
+            { valore: 'membro', nome: 'Uno a testa', desc: `${lp.membro} Life Point a testa: perdete quando siete a zero tutti e due.${avv}` },
+            { valore: 'lato', nome: 'Condivisi', desc: `${lp.lato} Life Point per la squadra: a zero perdete insieme.${avv}` }
+        ];
+    };
 
     const FORMATI = [
         { valore: 1, nome: '2 contro 1', desc: 'Tu e il tuo compagno contro un Duellante' },
@@ -126,8 +131,10 @@
         livello: 'Medio',
         lp: tagDatabase.regolaLpPredefinita
     };
-    // Il secondo avversario predefinito: il primo dell'elenco diverso dal primo avversario.
-    const secondoPredefinito = () => (avversari.find((c) => c.id !== scelta.avversario) || {}).id || null;
+    // Il tuo compagno non può essere anche un avversario.
+    const disponibili = () => avversari.filter((c) => c.id !== scelta.compagno);
+    // Il secondo avversario predefinito: il primo disponibile diverso dal primo avversario.
+    const secondoPredefinito = () => (disponibili().find((c) => c.id !== scelta.avversario) || {}).id || null;
 
     function tessera(c, attivo, onClick) {
         const b = document.createElement('button');
@@ -164,17 +171,23 @@
     }
 
     function scrivi() {
-        if (scelta.formato === 2 && (!scelta.avversario2 || scelta.avversario2 === scelta.avversario)) scelta.avversario2 = secondoPredefinito();
+        // Scelte rimaste valide dopo un cambio di compagno o di primo avversario.
+        if (!disponibili().some((c) => c.id === scelta.avversario)) {
+            scelta.avversario = (disponibili().find((c) => c.id === 'kaiba') || disponibili()[0] || {}).id || null;
+        }
+        if (scelta.formato === 2 && (!scelta.avversario2 || scelta.avversario2 === scelta.avversario || scelta.avversario2 === scelta.compagno)) {
+            scelta.avversario2 = secondoPredefinito();
+        }
         document.getElementById('formati').replaceChildren(...FORMATI.map((f) => opzione(f, f.valore === scelta.formato, () => { scelta.formato = f.valore; scrivi(); })));
         const elC = document.getElementById('compagni');
         elC.replaceChildren(...compagni.map((c) => tessera(c, c.id === scelta.compagno, () => { scelta.compagno = c.id; scrivi(); })));
         const elA = document.getElementById('avversari');
-        elA.replaceChildren(...avversari.map((c) => tessera(c, c.id === scelta.avversario, () => { scelta.avversario = c.id; scrivi(); })));
+        elA.replaceChildren(...disponibili().map((c) => tessera(c, c.id === scelta.avversario, () => { scelta.avversario = c.id; scrivi(); })));
         document.getElementById('bloccoSecondo').hidden = scelta.formato !== 2;
-        document.getElementById('avversari2').replaceChildren(...avversari.filter((c) => c.id !== scelta.avversario)
+        document.getElementById('avversari2').replaceChildren(...disponibili().filter((c) => c.id !== scelta.avversario)
             .map((c) => tessera(c, c.id === scelta.avversario2, () => { scelta.avversario2 = c.id; scrivi(); })));
         document.getElementById('livelli').replaceChildren(...LIVELLI.map((l) => opzione(l, l.valore === scelta.livello, () => { scelta.livello = l.valore; scrivi(); })));
-        document.getElementById('regoleLp').replaceChildren(...REGOLE_LP.map((r) => opzione(r, r.valore === scelta.lp, () => { scelta.lp = r.valore; scrivi(); })));
+        document.getElementById('regoleLp').replaceChildren(...regoleLp().map((r) => opzione(r, r.valore === scelta.lp, () => { scelta.lp = r.valore; scrivi(); })));
 
         const compagno = characterDatabase.find((c) => c.id === scelta.compagno);
         const avversario = characterDatabase.find((c) => c.id === scelta.avversario);
@@ -183,7 +196,10 @@
         const riepilogo = document.getElementById('riepilogo');
         const vai = document.getElementById('vai');
         if (!compagno || !avversario || (scelta.formato === 2 && !avversario2)) {
-            riepilogo.textContent = scelta.formato === 2 ? 'Scegli un compagno e due avversari.' : 'Scegli un compagno e un avversario.';
+            // Con pochi Duellanti sbloccati (ne servono 2 diversi dal compagno per il 2 contro 2) lo si dice.
+            riepilogo.textContent = scelta.formato === 2 && disponibili().length < 2
+                ? 'Per il 2 contro 2 servono due avversari diversi dal tuo compagno: sbloccane altri vincendo in Torneo o nella Storia.'
+                : (scelta.formato === 2 ? 'Scegli un compagno e due avversari.' : 'Scegli un compagno e un avversario.');
             vai.disabled = true;
             return;
         }

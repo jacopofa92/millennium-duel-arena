@@ -17,6 +17,23 @@ const tagDatabase = {
     regolaLpPredefinita: 'membro',
 
     /**
+     * D19 (decisa dall'autore): nel 2 contro 1 con i Life Point a testa la
+     * coppia parte con questi Life Point A TESTA (4000 + 4000 = gli 8000
+     * dell'avversario solo, che restano quelli di sempre). Con i Life Point
+     * condivisi e nel 2 contro 2 valgono i numeri qui sopra.
+     */
+    lpMembroControUno: 4000,
+
+    /**
+     * I Life Point di una squadra nel formato scelto.
+     * @param {boolean} controUno vero nel 2 contro 1 (dall'altra parte un solo duellante)
+     * @returns {{ membro: number, lato: number }}
+     */
+    lpSquadra(controUno) {
+        return { membro: controUno ? this.lpMembroControUno : this.lp.membro, lato: this.lp.lato };
+    },
+
+    /**
      * Scambio fra i membri (D2). Per ora c'è solo 'obbligato' (si alternano a
      * ogni turno del lato); 'libero' (scelta di chi gioca a inizio turno)
      * arriva in un secondo momento, vedi il piano.
