@@ -215,7 +215,9 @@
         const ok = await ensureConnected();
         if (!ok) { $('mpCreateBtn').disabled = false; return; }
         sonoHost = true;
-        net.createRoom();
+        // Tag Team in rete: una stanza da 3 o 4 posti (la sala la gestisce js/multiplayer/mp-tag-sala.js).
+        const capienza = window.MpTagSala ? MpTagSala.capienzaRichiesta() : null;
+        net.createRoom(capienza || undefined);
     }
 
     async function handleJoinRoom() {
@@ -848,6 +850,8 @@
     // Eventi di rete
     // ============================================================
     net.on('room-created', (msg) => {
+        // Una stanza da più di 2 posti è del Tag Team: la sala è un'altra (js/multiplayer/mp-tag-sala.js).
+        if (msg.capienza > 2 || (window.MpTagSala && MpTagSala.aspettaStanza())) return;
         entraInSala(msg.code);
         showStatus('🕐 Condividi il codice e attendi il tuo avversario...');
     });
@@ -1580,6 +1584,22 @@
             document.body.appendChild(script);
         });
     }
+
+    // La sala del Tag Team in rete (js/multiplayer/mp-tag-sala.js) è un'altra
+    // schermata ma parte allo stesso modo: stesse impostazioni nell'URL, stesso
+    // conto alla rovescia, stessa arena caricata in questa pagina. Riusa questi
+    // pezzi invece di copiarli.
+    window.MpSalaInterna = {
+        showStatus,
+        mostraSchermata,
+        fermaAnteprima,
+        contoAllaRovescia,
+        applicaImpostazioniArena,
+        loadDuelArena,
+        precaricaArena,
+        /** La partenza è decisa: niente più "pronto" della sala 1 contro 1. */
+        segnaAvviato: () => { duelloGiaAvviato = true; }
+    };
 
     // ============================================================
     // Bootstrap

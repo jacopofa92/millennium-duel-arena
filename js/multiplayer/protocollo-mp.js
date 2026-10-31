@@ -91,8 +91,39 @@
         if (r.tipo !== 'colpo') return 'tipo di messaggio del raid sconosciuto';
         return intero(r.inflitti) && r.inflitti > -1000000 && r.inflitti < 1000000 ? null : 'danno non valido';
     }
+    const POSTI_TAG = ['A0', 'A1', 'B0', 'B1'];
+
+    /**
+     * Sala del Tag Team in rete (js/multiplayer/mp-tag-sala.js). 'io': chi sono
+     * e se sono pronto; 'siedi': chiedo un posto; 'stato': la sala com'è
+     * (dall'host); 'via': la disposizione con cui si parte (dall'host).
+     */
+    function controlloSalaTag(a) {
+        if (a.tipo === 'io') {
+            if (a.nome !== undefined && !testo(a.nome)) return 'nome non valido';
+            if (a.pedina !== undefined && !(typeof a.pedina === 'string' && a.pedina.length > 0 && a.pedina.length <= 40)) return 'pedina non valida';
+            return typeof a.pronto === 'boolean' ? null : 'pronto non è vero/falso';
+        }
+        if (a.tipo === 'siedi') return POSTI_TAG.includes(a.posto) ? null : 'posto non valido';
+        if (a.tipo === 'stato') return oggetto(a.stato) && oggetto(a.stato.posti) && oggetto(a.stato.persone) ? null : 'stato della sala non valido';
+        if (a.tipo === 'via') {
+            const p = a.partenza;
+            if (!oggetto(p) || !oggetto(p.posti) || !testo(p.host) || !testo(p.field) || !testo(p.music)) return 'partenza non valida';
+            for (const k of Object.keys(p.posti)) {
+                const s = p.posti[k];
+                if (!POSTI_TAG.includes(k) || !oggetto(s)) return 'posto della partenza non valido';
+                if (s.tipo === 'persona' && testo(s.client)) continue;
+                if (s.tipo === 'ia' && testo(s.personaggio)) continue;
+                return 'posto della partenza non valido';
+            }
+            return null;
+        }
+        return 'tipo di messaggio della sala sconosciuto';
+    }
+
     /** kind -> funzione(azione) che torna il motivo del rifiuto, o null. */
     const CONTROLLI = {
+        'tag-sala': controlloSalaTag,
         'room-config': (a) => {
             if (!testo(a.field)) return 'campo mancante';
             if (!testo(a.music)) return 'musica mancante';
@@ -118,6 +149,8 @@
         'mazzo': (a) => {
             if (!intero(a.protocollo)) return 'versione del protocollo mancante';
             if (a.seme !== undefined && (!intero(a.seme) || a.seme < 0 || a.seme > 2147483647)) return 'seme non valido';
+            // Tag Team in rete: il posto assoluto del mazzo ('A0'...), facoltativo.
+            if (a.posto !== undefined && !testo(a.posto)) return 'posto del mazzo non valido';
             if (!oggetto(a.spec)) return 'mazzo mancante';
             const principale = elencoCarte(a.spec.main, 'il mazzo');
             if (principale) return principale;
@@ -133,8 +166,14 @@
             }
             return null;
         },
-        'passo-riprendi': (a) => (intero(a.ultimo) && a.ultimo >= 0 ? null : 'ultimo messaggio non valido'),
-        'game-over': (a) => (typeof a.opponentWon === 'boolean' || a.opponentWon === 'draw' ? null : 'esito non valido')
+        // `per` (facoltativo, Tag Team in rete): il client a cui si chiede di rimandare.
+        'passo-riprendi': (a) => (intero(a.ultimo) && a.ultimo >= 0 && (a.per === undefined || testo(a.per)) ? null : 'ultimo messaggio non valido'),
+        // `vinceSquadra` (facoltativo, Tag Team in rete): 'A', 'B' o 'draw', uguale per tutti i client.
+        'game-over': (a) => {
+            if (!(typeof a.opponentWon === 'boolean' || a.opponentWon === 'draw')) return 'esito non valido';
+            if (a.vinceSquadra !== undefined && !['A', 'B', 'draw'].includes(a.vinceSquadra)) return 'squadra vincente non valida';
+            return null;
+        }
     };
 
     const KINDS = new Set(Object.keys(CONTROLLI));

@@ -962,6 +962,7 @@
                     nome: m.nome,
                     personaggio: m.personaggio,
                     controllore: m.controllore,
+                    natura: m.natura,
                     identita: m.identita,
                     vivo: m.vivo,
                     motivo: m.motivo,

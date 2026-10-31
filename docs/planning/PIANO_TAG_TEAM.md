@@ -496,6 +496,33 @@ e riconosciuta da tutti quando arriva il comando.
 - **Non provato**: lo scambio su richiesta in rete (nel gemello le persone sono IA e non chiedono): va nello
   spec end-to-end con le pagine del passo 3.
 
+**Passo 3 FATTO (1.4.194).** Decisione dell'autore sulla sala: l'host sceglie il formato, ognuno entra e
+si siede da sé in un posto libero, l'host sistema le coppie, si parte quando tutti confermano di essere
+pronti. Scelte mie, da confermare con l'autore: i posti vuoti li gioca l'IA (sul client dell'host, con un
+Duellante scelto dall'host e un livello unico); ogni cambio di posti o regole toglie il "pronto" a tutti;
+un giocatore che esce a duello avviato fa vincere la squadra opposta (il suo posto non ha più chi lo
+gioca, e passarlo a un'IA dovrebbe succedere nello stesso punto su tutti i client); chi comincia lo
+sorteggia l'host (niente morra a quattro).
+- Relay (`server/server.js`): stanze da 2 a 4 posti (`capienza` a `create-room`, senza = 2 come prima),
+  id pubblico per giocatore (`g1`...), `room-update` a tutti nelle stanze da 3+, inoltro a TUTTI gli
+  altri con `da`, `lock-room` dell'host. La stanza da 2 non cambia (spec `server-stanze-grandi`).
+- Trasporto (`mp-passo-comune.js`): `configuraPosti` (la disposizione della sala), mazzo per posto (campo
+  `posto` di `mazzo`, il seme dall'host), mazzi dei posti IA costruiti da ognuno, ripresa per mittente
+  (`passo-riprendi` con `per`), `avviaMotore` (tavolo, natura e livello dei primi membri uguali ovunque,
+  `preparaDuello` a posti, poi la variante con `allaPreparazione`). `game-flow.js` chiama solo `avviaMotore`.
+- Esito per squadra (`game-over` con `vinceSquadra`, `multiplayer.js`), uscita di un compagno/avversario.
+- Sala (`mp-tag-sala.js` + `mp-tag-sala.css`, vista `tag` di `multiplayer.html`, voce "Tag Team" nel menu
+  Multiplayer via `mp-modi.js`): messaggi `tag-sala` (`io`, `siedi`, `stato`, `via`) in
+  `protocollo-mp.js`; lo stato lo tiene l'host. Un relay vecchio (stanza senza `capienza`) è riconosciuto
+  e lo si dice.
+- Duello (`tag-mode.js`): in rete (`window.MP_TAG`) prepara le squadre con le identità dei posti (pedina e
+  nome, o il personaggio IA), D19 e Boss come offline, velo anche per il compagno umano.
+- Spec `multiplayer-tag-team`: tre pagine vere, 2 contro 2 con un posto IA, ci si siede, l'host scambia
+  due giocatori, scambio su richiesta acceso, sei turni di persone con l'impronta identica sui tre client,
+  la risposta alla richiesta di scambio uguale ovunque (verificato al contrario).
+- **Non provato**: quattro pagine insieme, il 2 contro 1 con il Boss in rete, la caduta di linea a tre,
+  l'uscita a duello avviato (solo letto), l'interfaccia della sala su telefono.
+
 **Passi, ciascuno chiuso con test e impronta delle 60 partite offline identica.**
 1. Passo comune a posti nel motore, con il 1 contro 1 di oggi come caso particolare (stessi messaggi
    per due client, per restare compatibili con un relay vecchio finché non si aggiorna). Duello gemello
@@ -561,6 +588,8 @@ variante a inizio turno, vedi 3ter).
 
 ## 8. Diario
 
+- 2026-10-31: l'autore decide la sala: ognuno si siede, l'host sistema le coppie, si parte quando tutti
+  sono pronti. Passo 3 della fase 3 fatto in 1.4.194 (sezione 3quinquies).
 - 2026-10-31: l'autore decide D22-D24 (Boss a 12000 LP con pescata normale e premio normale; scambio su
   richiesta: la persona chiede, il compagno IA accetta se gli conviene, altrimenti a turno). Fatti in 1.4.191.
 - 2026-10-31: l'autore rivede D19: nel 2 contro 1 la coppia ha 4000 a testa, l'avversario solo 8000.

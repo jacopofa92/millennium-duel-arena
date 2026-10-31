@@ -1,0 +1,165 @@
+/* =====================================================================
+   mp-tag-sala.css — la sala del Tag Team in rete (js/multiplayer/mp-tag-sala.js).
+   Stessa lingua della sala 1 contro 1 (js/ui/mp-lobby.css): oro per ciò che
+   si sceglie, pietra scura senza riquadri pieni, ciano solo per lo stato del
+   sistema. Le due squadre hanno un colore ciascuna (oro e ombra violacea),
+   così si vede a colpo d'occhio chi sta con chi.
+   ===================================================================== */
+
+.mp-lobby[data-schermata="tag"] [data-vista="tag"] { display: block; }
+
+/* --- Scelta del formato, nella schermata d'ingresso --- */
+.tg-formati {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin: 4px 0 14px;
+}
+.tg-formato {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 12px;
+    border-radius: var(--kc-round, 14px);
+    border: 1px solid var(--kc-gold-ghost, rgba(247, 215, 116, .13));
+    background: var(--kc-surface-b, rgba(24, 19, 26, .58));
+    color: var(--kc-ink, #f6ecd8);
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+}
+.tg-formato strong { color: var(--kc-gold, #f7d774); font-size: 1rem; letter-spacing: .02em; }
+.tg-formato small { color: var(--kc-ink-dim, #a3927a); font-size: .78rem; line-height: 1.35; }
+.tg-formato.is-scelto { border-color: var(--kc-gold, #f7d774); box-shadow: 0 0 0 1px var(--kc-gold-soft, rgba(247, 215, 116, .55)) inset, 0 0 18px rgba(247, 215, 116, .14); }
+.tg-formato:focus-visible { outline: 2px solid var(--kc-gold, #f7d774); outline-offset: 2px; }
+
+/* --- La sala --- */
+.tg-sala { display: flex; flex-direction: column; gap: 14px; margin: 14px 0; }
+.tg-formato-attivo {
+    margin: 0;
+    text-align: center;
+    color: var(--kc-ink-dim, #a3927a);
+    font-size: .82rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+}
+
+.tg-squadre {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+}
+.tg-vs {
+    align-self: center;
+    color: var(--kc-gold, #f7d774);
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-shadow: 0 0 12px rgba(247, 215, 116, .35);
+}
+.tg-squadra {
+    --tg-tinta: #f7d774;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    border-radius: var(--kc-round, 14px);
+    border-top: 2px solid var(--tg-tinta);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--tg-tinta) 9%, transparent), transparent 70%);
+}
+.tg-squadra--B { --tg-tinta: #c49bff; }
+.tg-squadra-nome {
+    margin: 0 0 2px;
+    font-size: .8rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--tg-tinta);
+}
+
+.tg-posto {
+    display: grid;
+    grid-template-columns: 46px minmax(0, 1fr);
+    gap: 4px 10px;
+    align-items: center;
+    padding: 8px;
+    border-radius: 10px;
+    background: var(--kc-surface-a, rgba(36, 28, 22, .72));
+    border: 1px solid transparent;
+}
+.tg-posto.is-mio { border-color: var(--tg-tinta); }
+.tg-posto.is-libero { background: var(--kc-surface-b, rgba(24, 19, 26, .58)); border-style: dashed; border-color: rgba(247, 215, 116, .18); }
+.tg-posto.is-bersaglio { box-shadow: 0 0 0 1px var(--kc-tech-soft, rgba(127, 227, 255, .5)); }
+.tg-ritratto {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #1b1520 center / cover no-repeat;
+    border: 2px solid var(--tg-tinta);
+}
+.tg-ritratto.is-ia { filter: grayscale(.55) brightness(.85); border-style: dashed; }
+.tg-testi { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tg-nome { color: var(--kc-ink, #f6ecd8); font-size: .92rem; overflow-wrap: anywhere; }
+.tg-stato { color: var(--kc-ink-dim, #a3927a); font-size: .76rem; }
+.tg-stato.is-pronto { color: #8fe3a5; }
+.tg-azioni { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; }
+
+.tg-btn {
+    font: inherit;
+    font-size: .8rem;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--kc-gold-soft, rgba(247, 215, 116, .55));
+    background: transparent;
+    color: var(--kc-gold, #f7d774);
+    cursor: pointer;
+}
+.tg-btn--primario { background: linear-gradient(180deg, #f7d774, #f39c12); color: #2a1a05; border-color: transparent; font-weight: 700; }
+.tg-btn--mini { padding: 1px 7px; margin-left: 6px; font-size: .75rem; }
+.tg-btn:focus-visible, .tg-select:focus-visible { outline: 2px solid var(--kc-gold, #f7d774); outline-offset: 2px; }
+
+.tg-select {
+    font: inherit;
+    font-size: .8rem;
+    max-width: 100%;
+    margin-top: 4px;
+    padding: 4px 6px;
+    border-radius: 8px;
+    border: 1px solid var(--kc-gold-ghost, rgba(247, 215, 116, .13));
+    background: #1b1520;
+    color: var(--kc-ink, #f6ecd8);
+}
+.tg-select:disabled { opacity: .75; }
+
+.tg-inpiedi { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.tg-inpiedi-titolo { color: var(--kc-ink-dim, #a3927a); font-size: .8rem; }
+.tg-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--kc-surface-a, rgba(36, 28, 22, .72));
+    color: var(--kc-ink, #f6ecd8);
+    font-size: .8rem;
+}
+.tg-nota { margin: 0; color: var(--kc-ink-dim, #a3927a); font-size: .8rem; text-align: center; }
+
+.tg-regole {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+    border-radius: var(--kc-round, 14px);
+    background: var(--kc-surface-b, rgba(24, 19, 26, .58));
+}
+.tg-regole-titolo { color: var(--kc-gold, #f7d774); font-size: .82rem; letter-spacing: .06em; text-transform: uppercase; }
+.tg-regola { display: flex; justify-content: space-between; align-items: center; gap: 10px; color: var(--kc-ink, #f6ecd8); font-size: .86rem; }
+.tg-regola .tg-select { margin-top: 0; }
+
+/* Telefono: le due squadre una sotto l'altra, il VS in mezzo. */
+@media (max-width: 600px) {
+    .tg-squadre { grid-template-columns: minmax(0, 1fr); }
+    .tg-vs { justify-self: center; }
+    .tg-formati { grid-template-columns: minmax(0, 1fr); }
+    .tg-regola { flex-direction: column; align-items: stretch; gap: 4px; }
+}

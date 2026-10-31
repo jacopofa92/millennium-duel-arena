@@ -27,18 +27,24 @@
 (function () {
     'use strict';
 
-    const params = new URLSearchParams(window.location.search);
-    if ((params.get('mode') || '').toLowerCase() !== 'tag') return;
-
     /** @type {any} */
     const g = window;
+    const params = new URLSearchParams(window.location.search);
+    // TAG TEAM IN RETE: multiplayer.html carica l'arena dopo che la sala
+    // (js/multiplayer/mp-tag-sala.js) ha scritto la disposizione in
+    // window.MP_TAG. Lì l'URL non ha `mode=tag`: il duello è 'multiplayer'.
+    const inRete = !!(g.MULTIPLAYER_MODE && g.MP_TAG);
+    if (!inRete && (params.get('mode') || '').toLowerCase() !== 'tag') return;
+
     const idCompagno = params.get('partner') || '';
     const idAvversario = params.get('character') || '';
     // Boss a squadre: 2 contro 1 contro un Boss con i Life Point di tagDatabase.lpBoss (un Boss non ha compagni).
     const boss = params.get('boss') === '1';
     const idAvversario2 = boss ? '' : (params.get('character2') || '');
-    const regolaLp = params.get('lp') === 'lato' ? 'lato' : (params.get('lp') === 'membro' ? 'membro' : tagDatabase.regolaLpPredefinita);
-    const scambio = params.get('scambio') === 'libero' ? 'libero' : tagDatabase.scambioPredefinito;
+    const regolaLpUrl = params.get('lp') === 'lato' ? 'lato' : (params.get('lp') === 'membro' ? 'membro' : tagDatabase.regolaLpPredefinita);
+    const regolaLp = inRete ? (g.MP_TAG.regolaLp === 'lato' ? 'lato' : 'membro') : regolaLpUrl;
+    const scambioUrl = params.get('scambio') === 'libero' ? 'libero' : tagDatabase.scambioPredefinito;
+    const scambio = inRete ? (g.MP_TAG.scambio === 'libero' ? 'libero' : 'obbligato') : scambioUrl;
 
     /** @type {Record<string, HTMLElement | null>} un riquadro della squadra per lato */
     const pannelli = { player: null, bot: null };
@@ -73,19 +79,24 @@
     function mostraChiGioca(posto) {
         const m = g.TagTeam.membroAttivo(posto);
         if (!m || !m.identita) return;
-        if (posto === 'player' && g.DuelSession && g.DuelSession.player) Object.assign(g.DuelSession.player, m.identita);
+        scriviIdentita(posto, m.identita);
+    }
+
+    /** Nome e ritratto nel riquadro dei Life Point di un lato. @param {string} posto @param {any} identita */
+    function scriviIdentita(posto, identita) {
+        if (posto === 'player' && g.DuelSession && g.DuelSession.player) Object.assign(g.DuelSession.player, identita);
         const box = document.getElementById(posto === 'player' ? 'playerInfo' : 'botInfo');
         if (!box) return;
         const nome = box.querySelector('.name-text');
-        if (nome) nome.textContent = m.identita.name;
+        if (nome) nome.textContent = identita.name;
         const h3 = box.querySelector('h3');
-        if (h3) h3.title = m.identita.name;
+        if (h3) h3.title = identita.name;
         const img = /** @type {HTMLImageElement | null} */ (box.querySelector('.duelist-avatar img'));
-        if (img && m.identita.image) {
-            const pedina = typeof getCharacterPawnImage === 'function' ? getCharacterPawnImage(m.identita.image) : null;
-            img.onerror = () => { if (img.src.indexOf(m.identita.image) === -1) img.src = m.identita.image; };
-            img.src = pedina || m.identita.image;
-            img.alt = m.identita.name;
+        if (img && identita.image) {
+            const pedina = typeof getCharacterPawnImage === 'function' ? getCharacterPawnImage(identita.image) : null;
+            img.onerror = () => { if (img.src.indexOf(identita.image) === -1) img.src = identita.image; };
+            img.src = pedina || identita.image;
+            img.alt = identita.name;
         }
     }
 
@@ -93,7 +104,8 @@
     function aggiornaVelo() {
         if (typeof gameState === 'undefined' || !gameState) return;
         const m = g.TagTeam.membroAttivo('player');
-        const turnoCompagno = !!m && !gameState.gameOver && gameState.currentPlayer === 'player' && m.controllore === 'ia';
+        // Il compagno può essere l'IA o, in rete, una persona su un altro client: in entrambi i casi qui non si tocca nulla.
+        const turnoCompagno = !!m && !gameState.gameOver && gameState.currentPlayer === 'player' && m.controllore !== 'persona';
         document.body.classList.toggle('tag-turno-compagno', turnoCompagno);
         if (avviso) {
             avviso.hidden = !turnoCompagno;
@@ -106,7 +118,7 @@
             ? `<span class="tag-stato tag-stato--fuori">${m.motivo === 'mazzo' ? 'Mazzo vuoto' : 'Eliminato'}</span>`
             : (m.davanti ? '<span class="tag-stato tag-stato--davanti">In campo</span>' : '<span class="tag-stato">In panchina</span>');
         const lp = regolaLp === 'membro' ? `<span class="tag-lp" title="Life Point">❤ ${m.lp}</span>` : '';
-        const chi = posto === 'bot' ? 'Avversario' : (m.controllore === 'ia' ? 'IA' : 'Tu');
+        const chi = posto === 'bot' ? 'Avversario' : (m.controllore === 'persona' ? 'Tu' : (m.natura === 'persona' ? 'Compagno' : 'IA'));
         return `<div class="tag-membro${m.davanti ? ' is-davanti' : ''}${m.vivo ? '' : ' is-fuori'}" data-membro="${escape(m.id)}">`
             + `<div class="tag-membro-testa"><span class="tag-nome">${escape(m.nome)}</span><span class="tag-chi">${chi}</span></div>`
             + `<div class="tag-membro-dati">${lp}<span title="Carte in mano">✋ ${m.mano}</span><span title="Carte nel Mazzo">🂠 ${m.mazzo}</span>`
@@ -349,7 +361,81 @@
         return [{ nota: true, icon: '🤝', rule: vinto ? `Vittoria in Tag Team insieme a ${nome}.` : `Sconfitta in Tag Team insieme a ${nome}.` }];
     }
 
+    // ------------------------------------------------------------------
+    // TAG TEAM IN RETE
+    // ------------------------------------------------------------------
+
+    /**
+     * L'identità di un posto della disposizione (window.MP_TAG.posti): il
+     * personaggio per un posto IA, nome e pedina della persona altrimenti.
+     * @param {any} s
+     */
+    function identitaDelPosto(s) {
+        if (s.tipo === 'ia') return identitaDi(s.personaggio, '🤖') || { id: s.personaggio, name: s.personaggio, title: '', image: null, icon: '🤖' };
+        const p = g.MpPedina ? g.MpPedina.risolvi(s.pedina) : { id: 'player', image: 'images/characters/mirror.jpg' };
+        return { id: p.id, name: s.nome || 'Giocatore', title: '', image: p.image, icon: '🧑' };
+    }
+
+    /**
+     * Gira su TUTTI i client subito dopo PassoComune.preparaDuello (vedi
+     * MpPassoComune.allaPreparazione), con la stessa disposizione: ogni lato
+     * con due posti diventa una squadra, nello stesso ordine ovunque (A per
+     * prima), con i posti assoluti e il prefisso degli uid del secondo mazzo.
+     * `controllo(posto)` dice chi gioca quel posto visto da QUI ('persona',
+     * 'ia' sull'host, 'remoto').
+     * @param {any} partita @param {(posto: string) => string} controllo
+     */
+    function preparaInRete(partita, controllo) {
+        const cfg = partita.config;
+        const t = g.MP_TAG;
+        /** @type {Record<string, any>} */
+        const singoli = {};
+        ['A', 'B'].forEach((sq) => {
+            const altra = sq === 'A' ? 'B' : 'A';
+            const posto = g.PassoComune.postoDelMotore(sq);
+            const membro = (/** @type {string} */ k) => {
+                const s = cfg.posti[k];
+                const id = identitaDelPosto(s);
+                return {
+                    nome: id.name, personaggio: s.tipo === 'ia' ? s.personaggio : null,
+                    controllore: controllo(k), natura: s.tipo === 'ia' ? 'ia' : 'persona',
+                    livelloIA: s.tipo === 'ia' ? s.ia : undefined, identita: id
+                };
+            };
+            if (!cfg.posti[sq + '1']) { singoli[posto] = identitaDelPosto(cfg.posti[sq + '0']); return; }
+            g.TagTeam.preparaSquadra(posto, {
+                primo: membro(sq + '0'),
+                secondo: membro(sq + '1'),
+                mazzoSecondo: partita.specPerPosto[sq + '1'],
+                regolaLp: regolaLp,
+                // D19: la coppia contro un duellante solo ha i Life Point del 2 contro 1.
+                lp: tagDatabase.lpSquadra(!cfg.posti[altra + '1']),
+                limiteBersaglio: tagDatabase.limiteBersaglio,
+                scambio: scambio,
+                posti: [sq + '0', sq + '1'],
+                prefissoUid: sq + '1'
+            });
+        });
+        // Boss a squadre: i Life Point del Boss, uguali su tutti i client (è stato di regola).
+        if (t.boss) gameState[g.PassoComune.postoDelMotore('B') + 'LP'] = tagDatabase.lpBoss;
+        costruisciInterfaccia();
+        Object.keys(singoli).forEach((posto) => { scriviIdentita(posto, singoli[posto]); allineaLp(posto); });
+    }
+
+    /** @param {boolean} vinto @param {boolean} abbandono @returns {VoceEsito[]} */
+    function chiudiInRete(vinto, abbandono) {
+        document.body.classList.remove('tag-turno-compagno');
+        if (abbandono) return [{ nota: true, icon: '🤝', rule: 'Duello Tag Team in rete abbandonato.' }];
+        return [{ nota: true, icon: '🤝', rule: vinto ? 'Vittoria della tua squadra in Tag Team.' : 'Sconfitta della tua squadra in Tag Team.' }];
+    }
+
     window.ModalitaDuello = window.ModalitaDuello || {};
+    if (inRete) {
+        if (g.MpPassoComune) g.MpPassoComune.allaPreparazione(preparaInRete);
+        // Il duello in rete è la modalità 'multiplayer' di duel-session.js: initGame fa lo scambio dei mazzi e la preparazione.
+        window.ModalitaDuello.multiplayer = { avvia: () => { initGame(); }, chiudi: chiudiInRete };
+        return;
+    }
     window.ModalitaDuello.tag = {
         urlRitorno: 'tag.html',
         avvia: avvia,

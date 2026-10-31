@@ -443,10 +443,8 @@ function initGame(opzioniAvvio) {
         const mioMazzo = (window.SaveManager && SaveManager.getActiveDeck())
             || (typeof buildBalancedDemoDeckSpec === 'function' ? buildBalancedDemoDeckSpec() : null);
         MpPassoComune.prepara(mioMazzo).then((partita) => {
-            Tavolo.imposta({ player: 'persona', bot: 'remoto' });
-            PassoComune.avvia({ invia: MpPassoComune.invia });
-            PassoComune.preparaDuello(partita);
-            MpPassoComune.motoreAvviato();
+            // Tavolo, avvio del motore e preparazione (anche a posti, Tag Team in rete): js/multiplayer/mp-passo-comune.js.
+            MpPassoComune.avviaMotore(partita);
             avviaDuelloPreparato();
         }, (err) => {
             console.error('Duello Multiplayer non avviato:', err);

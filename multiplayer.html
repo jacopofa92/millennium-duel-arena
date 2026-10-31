@@ -46,6 +46,7 @@
      altrimenti questa pagina non resterebbe leggibile a mano. -->
 <link rel="stylesheet" href="js/ui/mp-lobby.css">
 <link rel="stylesheet" href="js/ui/mp-raid-campo.css">
+<link rel="stylesheet" href="js/ui/mp-tag-sala.css">
 <!-- Le scatole 3D dei mazzi, le stesse di Creazione Deck e del Negozio. -->
 <link rel="stylesheet" href="js/ui/deck-box.css">
 <!-- Selettore di mazzo/arena/musica, condiviso con il Duello Libero. -->
@@ -162,6 +163,8 @@
 
                     <div class="mp-lobby-panel" id="mpPanelCreate">
                         <p>Apri una stanza, scegli arena e musica mentre aspetti, e il duello parte appena arriva il tuo avversario.</p>
+                        <!-- Solo nel Tag Team (?modo=tag): il formato decide quanti posti ha la stanza (js/multiplayer/mp-tag-sala.js). -->
+                        <div class="tg-formati" id="mpTagFormato" hidden></div>
                         <button type="button" class="mp-btn mp-btn--primary" id="mpCreateBtn">Apri la stanza</button>
                     </div>
 
@@ -303,6 +306,46 @@
                 </div>
             </div>
 
+            <!-- ============ Sala del Tag Team in rete ============
+                 Stanza da 3 o 4 posti: ci si siede, l'host sistema le coppie, i posti liberi li gioca l'IA,
+                 si parte quando tutti sono pronti (js/multiplayer/mp-tag-sala.js). -->
+            <div data-vista="tag">
+                <div class="mp-screen">
+                    <div class="mp-room-code-box">
+                        <span class="mp-room-code-label">Codice della stanza</span>
+                        <div class="mp-code-tiles" id="mpTagCodice"></div>
+                        <span class="mp-room-code" id="mpTagCodiceTesto" hidden>-----</span>
+                        <button type="button" class="mp-copy-btn" id="mpTagCopia">📋 Copia codice</button>
+                    </div>
+                    <div class="tg-sala" id="mpTagSala"></div>
+                    <div class="mp-own">
+                        <div class="mp-setup-head">
+                            <span class="mp-setup-title">La tua pedina</span>
+                            <span class="mp-setup-note">La vedono tutti</span>
+                        </div>
+                        <div id="mpTagPedina"></div>
+                    </div>
+                    <div class="mp-own">
+                        <div class="mp-setup-head">
+                            <span class="mp-setup-title">Il tuo mazzo</span>
+                            <span class="mp-setup-note">Lo scegli solo per te</span>
+                        </div>
+                        <div id="mpTagMazzi"></div>
+                    </div>
+                    <div class="mp-setup">
+                        <div class="mp-setup-head">
+                            <span class="mp-setup-title">Arena e musica</span>
+                            <span class="mp-setup-note">Le sceglie l'host, valgono per tutti</span>
+                        </div>
+                        <div id="mpTagArena"></div>
+                    </div>
+                    <div class="mp-ready">
+                        <button type="button" class="mp-ready-btn" id="mpTagPronto" disabled>Sono pronto</button>
+                        <p class="mp-ready-nota" id="mpTagProntoNota">Siediti in un posto per poter confermare.</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Unica riga di stato per entrambe le schermate: fuori dalle
                  due viste, così non sparisce passando dall'una all'altra. -->
             <div class="mp-lobby-status" id="mpStatus"></div>
@@ -378,6 +421,9 @@
 <script src="js/multiplayer/mp-pedina.js"></script>
 <script src="js/multiplayer/mp-term-fx.js"></script>
 <script src="js/multiplayer/mp-lobby.js"></script>
+<!-- Tag Team in rete: la sala a 3-4 posti (dopo mp-lobby.js, di cui riusa la partenza: window.MpSalaInterna). -->
+<script src="js/data/tag-db.js"></script>
+<script src="js/multiplayer/mp-tag-sala.js"></script>
 </body>
 </html>
 
