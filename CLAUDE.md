@@ -4120,6 +4120,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.5 (cache v514, su `main`): **Catena WebGL: appena decisa resta a tutto schermo, poi si fa miniatura** (richiesta dell'utente). In `catena-webgl.js` alla prima risoluzione (`resolvingLink`) la scena resta piena per `HOLD_DECISA_MS` (1,9 s) con il suono `activateChain` gia' partito alla comparsa; passato il tempo un timeout rilegge l'ultimo Link in risoluzione e passa alla miniatura (`st.tDecisa`, `ultimoRisolvendo`, `ultimaLista`). Il motore non e' toccato e risolve con i suoi tempi: nell'attesa la grafica salta `risolvi()` dei Link e si rimette in pari dopo (se piu' Link si risolvono dentro l'attesa, si anima solo l'ultimo). Spec `catena-webgl` esteso (piena subito dopo la decisione, miniatura dopo 2 s). Suite completa non eseguita.
 
+1.5.6 (cache v515, su `main`): **la scena della Catena a tutto schermo nasce solo a Catena DECISA** (richiesta dell'utente). Mentre la Catena si costruisce vale il pannello di sempre (`aggiorna` torna false senza `resolvingLink`); alla prima risoluzione compare la scena piena col suono `activateChain`, resta `HOLD_DECISA_MS` e poi si fa miniatura. Spec `catena-webgl` aggiornato. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

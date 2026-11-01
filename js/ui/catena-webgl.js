@@ -600,6 +600,9 @@ void main(){
         if (st && st.chiudendo) finisci();      // una Catena nuova mentre la vecchia si spegne: si ricomincia pulito
         if (!st) {
             if (n < 2) return true;             // un Link solo non fa scena: c'e' gia' la sua carta a centro schermo
+            // Mentre la Catena si costruisce (qualcuno puo' ancora rispondere) vale il pannello di sempre: la scena a tutto
+            // schermo, col suo suono, nasce solo quando la Catena e' DECISA, cioe' alla prima risoluzione.
+            if (!resolvingLink) return false;
             try { avvia(); } catch (e) {
                 guasto = true;
                 console.error('[catena-webgl] scena non partita, resta il pannello di sempre:', e);

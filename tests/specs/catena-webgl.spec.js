@@ -55,7 +55,14 @@ module.exports = {
                 const orig = SFX.activateChain;
                 SFX.activateChain = function (...a) { window.__suoniCatena++; return orig.apply(this, a); };
             });
-            await page.evaluate(() => { gameState.chain.links = window.__links.slice(0, 2); renderChainStack(); });
+            // Catena in costruzione (secondo e terzo Link): ancora niente scena ne' suono, vale il pannello di sempre
+            await page.evaluate(() => { gameState.chain.links = window.__links.slice(0, 3); renderChainStack(); });
+            await page.waitForTimeout(500);
+            const costruzione = await page.evaluate(() => ({ scena: CatenaGL.stato(), canvas: document.querySelectorAll('#catenaGL').length, suoni: window.__suoniCatena, pannello: document.getElementById('chainStack').classList.contains('show') }));
+            assert(costruzione.scena === null && costruzione.canvas === 0 && costruzione.suoni === 0 && costruzione.pannello,
+                `Mentre la Catena si costruisce niente scena a tutto schermo e niente suono: ${JSON.stringify(costruzione)}`);
+            // Catena DECISA: parte la prima risoluzione e nasce la scena a tutto schermo, col suono
+            await page.evaluate(() => { const l = window.__links[2]; gameState.chain.links = window.__links.slice(0, 2); renderChainStack(l); });
             await page.waitForTimeout(900);
             assert((await page.evaluate(() => window.__suoniCatena)) === 1, 'Il suono della Catena parte una volta quando la scena compare a tutto schermo');
             const due = await page.evaluate(() => {
@@ -78,15 +85,15 @@ module.exports = {
                     aTutto: root ? root.getBoundingClientRect().width : 0
                 };
             });
-            assert(due.root && due.canvas && due.carte === 2 && due.cartaVera, `Dal secondo Link c'e' la scena con due carte vere: ${JSON.stringify(due)}`);
-            assert(due.numeri.join(',') === '1,2', `Le carte portano il numero del loro Link: ${JSON.stringify(due.numeri)}`);
+            assert(due.root && due.canvas && due.carte === 3 && due.cartaVera, `A Catena decisa c'e' la scena con tre carte vere: ${JSON.stringify(due)}`);
+            assert(due.numeri.join(',') === '1,2,3', `Le carte portano il numero del loro Link: ${JSON.stringify(due.numeri)}`);
             // Chi ha attivato cosa, scritto sotto ogni carta (il Link 2 e' dell'avversario, il Link 1 e' tuo).
             const chi = await page.evaluate(() => ({
                 scritte: Array.from(document.querySelectorAll('#catenaGL .cgl-chi')).map((e) => e.textContent),
                 mostraLink2: CatenaGL.mostra(window.__links[1]),
                 mostraEstraneo: CatenaGL.mostra({ card: { uid: 'x' }, owner: 'player' })
             }));
-            assert(chi.scritte.join(',') === 'TU,AVVERSARIO', `Sotto ogni carta c'e' scritto di chi e': ${JSON.stringify(chi.scritte)}`);
+            assert(chi.scritte.join(',') === 'TU,AVVERSARIO,TU',`Sotto ogni carta c'e' scritto di chi e': ${JSON.stringify(chi.scritte)}`);
             assert(chi.mostraLink2 === true && chi.mostraEstraneo === false, `La scena sa quali Link sta mostrando: ${JSON.stringify(chi)}`);
             // Il motore NON rifa la carta grande a centro schermo alla risoluzione di un Link che la scena mostra gia'.
             const sorgente = require('fs').readFileSync(path.join(RADICE, 'js', 'engine', 'duel-engine.js'), 'utf8');
@@ -95,9 +102,7 @@ module.exports = {
             assert(due.tocco === 'none' && due.zModale > due.zRoot, `La scena non intercetta il tocco e sta sotto i modali (z ${due.zRoot} contro ${due.zModale})`);
             assert(due.errGl === 0 && due.persoGl === false && !due.pannello, `Contesto sano e vecchio pannello spento: ${JSON.stringify(due)}`);
 
-            // --- terzo Link: le carte si riposizionano, tre in tutto
-            await page.evaluate(() => { gameState.chain.links = window.__links.slice(0, 3); renderChainStack(); });
-            await page.waitForTimeout(500);
+            // --- tre Link, tre carte
             const tre = await page.evaluate(() => CatenaGL.stato());
             assert(tre && tre.voci === 3, `Tre Link, tre carte: ${JSON.stringify(tre)}`);
             const dentro = await page.evaluate(() => Array.from(document.querySelectorAll('#catenaGL .cgl-pos')).every((c) => {
@@ -106,13 +111,12 @@ module.exports = {
             assert(dentro, 'Le carte stanno dentro lo schermo (900x600)');
 
             // --- risoluzione: l'ultimo Link passa davanti
-            await page.evaluate(() => { const l = window.__links[2]; gameState.chain.links = window.__links.slice(0, 2); renderChainStack(l); });
-            await page.waitForTimeout(400);
+            // (la risoluzione e' gia' partita sopra, alla decisione)
             // Catena appena decisa: resta a TUTTO SCHERMO per un momento, poi si fa miniatura
             const decisa = await page.evaluate(() => { const root = document.getElementById('catenaGL'); return { classe: root.classList.contains('cgl-compatta'), larg: Math.round(root.getBoundingClientRect().width), schermo: innerWidth }; });
             assert(!decisa.classe && decisa.larg > decisa.schermo * 0.9, `Appena decisa la Catena resta a tutto schermo: ${JSON.stringify(decisa)}`);
-            await page.waitForTimeout(2000);
-            const ris = await page.evaluate(() => {
+            await page.waitForTimeout(1600);
+            const ris =await page.evaluate(() => {
                 const carte = Array.from(document.querySelectorAll('#catenaGL .cgl-pos'));
                 return carte.map((c) => c.style.zIndex);
             });
@@ -154,7 +158,7 @@ module.exports = {
 
             // --- una Catena nuova subito dopo riparte pulita
             await prep();
-            await page.evaluate(() => { gameState.chain.links = window.__links.slice(0, 2); renderChainStack(); });
+            await page.evaluate(() => { const l = window.__links[1]; gameState.chain.links = window.__links.slice(0, 1); renderChainStack(l); });
             await page.waitForTimeout(400);
             const bis = await page.evaluate(() => CatenaGL.stato());
             assert(bis && bis.voci === 2, `Una seconda Catena riparte da capo: ${JSON.stringify(bis)}`);
