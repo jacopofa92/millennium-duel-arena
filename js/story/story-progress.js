@@ -1248,6 +1248,16 @@
         const campagna = getCampaign(campaignId);
         const musica = tappa.music || (campagna && campagna.musicaDuello);
         if (musica) params.set('music', musica);
+        // DUELLO IN COPPIA (Tag Team, js/modes/tag-mode.js): un nodo con `tag: { compagno, avversario2?, boss? }` e' un duello che
+        // nell'anime si giocava in tag. Resta una tappa della Storia (stessa tappa, stesso avanzamento): cambia solo la squadra.
+        // `compagno` e' il personaggio che gioca con te (IA); `avversario2` un secondo avversario (2 contro 2); `boss` dà
+        // all'avversario i Life Point del Boss (2 contro 1, vedi tagDatabase.lpBoss). Senza `avversario2` ne' `boss` e' un 2 contro 1.
+        if (tappa.tag && tappa.tag.compagno) {
+            params.set('tag', '1');
+            params.set('partner', tappa.tag.compagno);
+            if (tappa.tag.avversario2) params.set('character2', tappa.tag.avversario2);
+            if (tappa.tag.boss) params.set('boss', '1');
+        }
         if (opzioni && opzioni.rigiocata) params.set('replay', '1');
         // Duello che fa parte di un TORNEO dentro la campagna: al ritorno
         // l'esito va applicato alla scalata del torneo, non alla tappa

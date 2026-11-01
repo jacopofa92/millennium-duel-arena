@@ -768,6 +768,11 @@ const storyCampaignsDatabase = [
                                 id: 'anime-2-paradox', kind: 'duel', icona: '🚪',
                                 label: 'I Fratelli Paradosso', x: 830, y: 275,
                                 characterId: 'paradoxBrothers',
+                                // Nell'anime (episodi 19-21, "Double Trouble Duel") e' un duello a coppie: Yugi e Joey contro Para e Dox.
+                                // I due fratelli sono UN solo Duellante del roster (un mazzo, un ritratto): qui diventa un 2 contro 1
+                                // (tu e Joey, 4000 Life Point a testa, contro i Paradosso con 8000). Dividerli in due personaggi
+                                // (Para e Dox) darebbe il vero 2 contro 2, ma serve un secondo mazzo e un secondo ritratto.
+                                tag: { compagno: 'joey' },
                                 music: "34. Mages Duel.mp3",
                                 dialogo: [
                                     { chi: 'paradoxBrothers', testo: 'Una porta conduce al castello, l’altra di nuovo nel labirinto. Prima, però, superate il Guardiano del Cancello.' },
@@ -1053,22 +1058,30 @@ const storyCampaignsDatabase = [
                             },
                             {
                                 id: 'anime-3-lumis', kind: 'duel', icona: '☀️',
-                                label: 'Lumis', x: 530, y: 230,
+                                label: 'Lumis e Umbra', x: 530, y: 230,
                                 characterId: 'lumis',
+                                // Nell'anime Lumis e Umbra sfidano Yugi e Kaiba insieme, in un unico duello a coppie (era
+                                // un duello singolo ciascuno). Il secondo avversario conta come battuto a tutti gli effetti
+                                // (record, Sfide, sblocco): lo fa tag-mode.js a fine duello.
+                                tag: { compagno: 'kaiba', avversario2: 'umbra' },
                                 music: '30. Preliminaries.mp3',
                                 dialogo: [
                                     { chi: 'lumis', testo: 'Sul tetto non c’è spazio per fuggire. La Maschera della Luce sigillerà i tuoi tributi.' },
-                                    { io: true, testo: 'Una maschera può nascondere un volto, non le intenzioni di chi la indossa.' }
+                                    { chi: 'umbra', testo: 'E la mia Bestia Mascherata chiuderà ogni ombra. Siete in due, ma due duellanti non fanno un solo cuore.' },
+                                    { chi: 'kaiba', testo: 'Non fraintendere, Yugi: li batterò perché mi hanno sfidato, non per te. Quando cadono i mostri, tu pensa solo a non intralciarmi.' },
+                                    { io: true, testo: 'Allora combatteremo ognuno a modo nostro, Kaiba. Loro hanno separato il campo, ma noi due sappiamo già come vincere insieme.' }
                                 ]
                             },
+                            // Il duello a coppie qui sopra assorbe quello che prima era un secondo duello singolo (Umbra): il
+                            // nodo resta, come scena, per non spostare di una posizione l'avanzamento di chi ha gia' giocato.
                             {
-                                id: 'anime-3-umbra', kind: 'duel', icona: '🌘',
-                                label: 'Umbra', x: 720, y: 300,
-                                characterId: 'umbra',
-                                music: '30. Preliminaries.mp3',
-                                dialogo: [
-                                    { chi: 'umbra', testo: 'Lumis ha chiuso la via alla luce. Ora la mia Bestia Mascherata completerà il doppio duello.' },
-                                    { io: true, testo: 'Avete separato il campo, ma avete sottovalutato il legame tra me e Kaiba.' }
+                                id: 'anime-3-umbra', kind: 'scene', icona: '🌘',
+                                label: 'Dopo il doppio duello', x: 720, y: 300,
+                                chi: 'Seto Kaiba', chiId: 'kaiba',
+                                testo: [
+                                    { chi: 'kaiba', testo: 'Due Cacciatori in meno. Non crederti il mio alleato, Yugi: mi serviva solo qualcuno che reggesse il secondo avversario.' },
+                                    { io: true, testo: 'Eppure hai combattuto al mio fianco, e adesso queste Carte Locazione ci avvicinano alle finali.' },
+                                    { chi: 'kaiba', testo: 'Ci rivedremo allo stadio. Lì ti sconfiggerò da solo, senza nessuno a coprirmi le spalle.' }
                                 ]
                             },
                             {
@@ -1345,6 +1358,10 @@ const storyCampaignsDatabase = [
                                 field: 'images/fields/mobile/campoPrato.jpg',
                                 music: '35. High Mages.mp3',
                                 characterId: 'gansley',
+                                // Nell'anime Yugi e Joey affrontano i Cinque insieme (5 contro 2). Per ora i Cinque sono UN avversario,
+                                // Gansley, con i Life Point del Boss (12000: boss, vedi tagDatabase.lpBoss); un mazzo "Cinque uniti"
+                                // vero verra' dopo.
+                                tag: { compagno: 'joey', boss: true },
                                 dialogo: [
                                     { nome: 'I Cinque', icona: '🐲', testo: 'Separati ci avete battuti. Uniti siamo il Drago a Cinque Teste, e nessun mostro con un solo cuore può fermarlo.' },
                                     { chi: 'joey', testo: 'Cinque contro due? Tipico di voi dirigenti. Yugi, io ci sono.' },

@@ -34,7 +34,12 @@
     // (js/multiplayer/mp-tag-sala.js) ha scritto la disposizione in
     // window.MP_TAG. Lì l'URL non ha `mode=tag`: il duello è 'multiplayer'.
     const inRete = !!(g.MULTIPLAYER_MODE && g.MP_TAG);
-    if (!inRete && (params.get('mode') || '').toLowerCase() !== 'tag') return;
+    // TAG NELLA STORIA: un nodo con `tag: { compagno, avversario2?, boss? }` (js/data/story-campaigns.js) lancia il duello con
+    // mode=story&tag=1&partner=...&character2=...|boss=1 (StoryProgress.urlDuello). Il duello resta un duello della Storia
+    // (avanzamento, premi, ritorno alla mappa: li gestisce duel-session.js come sempre); qui cambia solo la preparazione.
+    const modoUrl = (params.get('mode') || '').toLowerCase();
+    const inStoria = !inRete && modoUrl === 'story' && params.get('tag') === '1';
+    if (!inRete && modoUrl !== 'tag' && !inStoria) return;
 
     const idCompagno = params.get('partner') || '';
     const idAvversario = params.get('character') || '';
@@ -470,6 +475,30 @@
         return [{ nota: true, icon: '🤝', rule: vinto ? `Vittoria in Tag Team insieme a ${nome}.` : `Sconfitta in Tag Team insieme a ${nome}.` }];
     }
 
+    /**
+     * Fine di un duello Tag della STORIA. record, Sfide, sblocco e premi generici di duel-session.js contano solo il PRIMO
+     * avversario (session.opponent): se i due avversari erano due Duellanti veri (Lumis e Umbra), anche il secondo si conta come
+     * battuto — record, Sfida "sconfiggi X" e sblocco in Duello Libero — altrimenti la Sfida di Umbra non avanzerebbe piu'.
+     * @param {boolean} vinto @param {boolean} abbandono
+     * @returns {VoceEsito[]}
+     */
+    function chiudiStoria(vinto, abbandono) {
+        const voci = chiudi(vinto, abbandono);
+        if (!vinto || abbandono || !idAvversario2 || boss) return voci;
+        const sessione = g.DuelSession || {};
+        const difficolta = sessione.difficulty;
+        if (typeof g.recordCharacterResult === 'function') g.recordCharacterResult(idAvversario2, true, difficolta);
+        if (g.ChallengeTracker && typeof gameState !== 'undefined' && gameState) {
+            const lp = gameState.playerLP || 0;
+            g.ChallengeTracker.recordProgress('defeatCharacter', { characterId: idAvversario2, difficulty: difficolta, playerLP: lp, lpLost: Math.max(0, 8000 - lp) });
+        }
+        const secondo = identitaDi(idAvversario2, '⚔️');
+        if (g.CharacterUnlocks && g.CharacterUnlocks.modalitaSblocca('story') && g.CharacterUnlocks.sblocca(idAvversario2)) {
+            voci.push({ nota: true, icon: '🔓', rule: 'Nuovo Duellante in Duello Libero: ' + (secondo ? secondo.name : idAvversario2) + ' — si sblocca battendolo in un Torneo o nella Storia.' });
+        }
+        return voci;
+    }
+
     // ------------------------------------------------------------------
     // TAG TEAM IN RETE
     // ------------------------------------------------------------------
@@ -543,6 +572,11 @@
         if (g.MpPassoComune) g.MpPassoComune.allaPreparazione(preparaInRete);
         // Il duello in rete è la modalità 'multiplayer' di duel-session.js: initGame fa lo scambio dei mazzi e la preparazione.
         window.ModalitaDuello.multiplayer = { avvia: () => { initGame(); }, chiudi: chiudiInRete };
+        return;
+    }
+    if (inStoria) {
+        // Nessun urlRitorno: in Storia la pagina a cui tornare la decide duel-session.js (la mappa della campagna).
+        window.ModalitaDuello.story = { avvia: avvia, chiudi: chiudiStoria };
         return;
     }
     window.ModalitaDuello.tag = {
