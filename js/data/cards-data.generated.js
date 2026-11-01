@@ -71,7 +71,8 @@ const cardDatabase = [
     "type": "spell",
     "subtype": "normal",
     "effect": "Distruggi tutti i mostri sul Terreno.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 1
   },
   {
     "id": 8,
@@ -89,7 +90,8 @@ const cardDatabase = [
     "type": "trap",
     "subtype": "normal",
     "effect": "Quando un mostro dell'avversario dichiara un attacco: annulla l'attacco e, se lo fai, infliggi al tuo avversario danno pari all'ATK di quel mostro.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 1
   },
   {
     "id": 11,
@@ -375,7 +377,8 @@ const cardDatabase = [
     "type": "spell",
     "subtype": "normal",
     "effect": "Distruggi tutti i mostri che il tuo avversario controlla.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 1
   },
   {
     "id": 38,
@@ -393,7 +396,8 @@ const cardDatabase = [
     "type": "trap",
     "subtype": "normal",
     "effect": "Quando il tuo avversario Evoca Normalmente o gira scoperto (Flip Summon) un mostro con 1000 o più ATK: distruggilo.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 1
   },
   {
     "id": 41,
@@ -1245,7 +1249,8 @@ const cardDatabase = [
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro controllato dal tuo avversario; prendine il controllo. Quel mostro non può attaccare né essere sacrificato.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 2
   },
   {
     "id": 131,
@@ -1422,7 +1427,8 @@ const cardDatabase = [
     "type": "spell",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 mostro scoperto controllato dal tuo avversario; prendine il controllo fino alla End Phase.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 2
   },
   {
     "id": 148,
@@ -2251,7 +2257,8 @@ const cardDatabase = [
     "type": "trap",
     "subtype": "normal",
     "effect": "Scegli come bersaglio 1 Magia/Trappola controllata dal tuo avversario; distruggila, poi puoi Set 1 Magia/Trappola dalla tua mano.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 2
   },
   {
     "id": 220,
@@ -2479,7 +2486,8 @@ const cardDatabase = [
     "type": "spell",
     "subtype": "normal",
     "effect": "Distruggi il mostro scoperto con l'ATK più basso controllato dal tuo avversario (a tua scelta in caso di parità).",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 2
   },
   {
     "id": 244,
@@ -2699,7 +2707,8 @@ const cardDatabase = [
     "type": "spell",
     "subtype": "normal",
     "effect": "Fai tornare in mano tutte le Magie e Trappole sul Terreno, di entrambi i giocatori.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 2
   },
   {
     "id": 263,
@@ -4112,7 +4121,8 @@ const cardDatabase = [
     "type": "trap",
     "subtype": "normal",
     "effect": "Quando un mostro dell'avversario dichiara un attacco: distruggi tutti i mostri in Posizione di Attacco controllati dal tuo avversario.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 1
   },
   {
     "id": 383,
@@ -4121,7 +4131,8 @@ const cardDatabase = [
     "type": "trap",
     "subtype": "continuous",
     "effect": "Ogni mostro del tuo avversario che ha condotto un attacco mentre questa carta era scoperta sul Terreno ha l'ATK dimezzato finché questa carta resta scoperta. Durante ciascuna tua Standby Phase: paga 2000 Life Points o distruggi questa carta.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 2
   },
   {
     "id": 384,
@@ -4431,7 +4442,8 @@ const cardDatabase = [
     "type": "spell",
     "subtype": "normal",
     "effect": "Distruggi tutti i mostri controllati dal tuo avversario.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 1
   },
   {
     "id": 410,
@@ -4708,7 +4720,8 @@ const cardDatabase = [
     "type": "spell",
     "subtype": "quick-play",
     "effect": "Special Summon 4 Token \"Pecora\" (Bestia/TERRA/Livello 1/ATK 0/DEF 0) in Posizione di Difesa. Non possono essere sacrificati per un'Evocazione Tributo. Non puoi Evocare altri mostri nel turno in cui attivi questa carta (ma puoi Set).",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 2
   },
   {
     "id": 435,
@@ -5167,7 +5180,8 @@ const cardDatabase = [
     "type": "spell",
     "subtype": "normal",
     "effect": "Se controlli \"Mago Nero\": scegli come bersaglio 1 mostro controllato dal tuo avversario; distruggilo.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 2
   },
   {
     "id": 475,
@@ -5356,7 +5370,8 @@ const cardDatabase = [
     "type": "trap",
     "subtype": "normal",
     "effect": "Quando un mostro viene Evocato: distruggi tutti i mostri sul Terreno.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 2
   },
   {
     "id": 491,
@@ -5493,7 +5508,8 @@ const cardDatabase = [
     "type": "trap",
     "subtype": "normal",
     "effect": "Non subisci danno da battaglia dai mostri del tuo avversario in questo turno. I tuoi mostri non possono essere distrutti in battaglia in questo turno.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 2
   },
   {
     "id": 504,
@@ -6718,7 +6734,8 @@ const cardDatabase = [
     "type": "spell",
     "subtype": "quick-play",
     "effect": "Scegli come bersaglio 1 Magia/Trappola sul Terreno; distruggila.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 2
   },
   {
     "id": 608,
@@ -7100,7 +7117,8 @@ const cardDatabase = [
     "type": "spell",
     "subtype": "equip",
     "effect": "Equipaggia solo a un mostro controllato dal tuo avversario. Prendi il controllo del mostro equipaggiato. Durante ciascuna delle Standby Phase del tuo avversario: guadagnano 1000 Life Points.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 2
   },
   {
     "id": 646,
@@ -8313,7 +8331,8 @@ const cardDatabase = [
     "type": "spell",
     "subtype": "normal",
     "effect": "Questa carta resta sul Terreno per 2 turni del tuo avversario. Finché questa carta è scoperta sul Terreno, nessun mostro può attaccare.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 2
   },
   {
     "id": 751,
@@ -8845,7 +8864,8 @@ const cardDatabase = [
     "type": "trap",
     "subtype": "normal",
     "effect": "Quando un mostro dell'avversario dichiara un attacco: scegli come bersaglio il mostro attaccante; distruggilo.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 1
   },
   {
     "id": 794,
@@ -9158,7 +9178,8 @@ const cardDatabase = [
     "type": "trap",
     "subtype": "normal",
     "effect": "Quando un mostro dell'avversario dichiara un attacco: scegli come bersaglio il mostro attaccante; annulla l'attacco, poi termina la Battle Phase.",
-    "artOnly": true
+    "artOnly": true,
+    "limit": 2
   },
   {
     "id": 821,
