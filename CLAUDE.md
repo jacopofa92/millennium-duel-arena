@@ -4166,6 +4166,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.28 (cache v537, su `main`): **la console KaibaCorp non sposta piu' la barra di navigazione** (causa vera, trovata nell'app di debug con CDP sulla WebView): la console sbordava di 10 px a destra (canvas `.mp-term-gl` largo 10 px per lato in piu') e Chrome su telefono allarga allora la pagina (`innerWidth` 411 -> 421, `innerHeight` 891 -> 913) rimpicciolendo tutto: la barra `fixed` finiva 22 px sotto lo schermo. `overflow-x: clip` su `.mp-lobby-status` (mp-lobby.css). **Metodo**: se una barra fissa 'scivola', confrontare `innerWidth` con `documentElement.clientWidth` (e `visualViewport`) durante il fenomeno: se differiscono c'e' uno sbordo orizzontale. Misurato prima/dopo: larghezza e barra restano a 411/891. Suite completa non eseguita.
 
+1.5.29 (cache v538, su `main`): **tessere del menu app uniformi** (richiesta dell'utente): tutte le attive, anche la larga (Duello Libero), usano `--sup-riquadro`/`--sup-bordo` (prima la larga era un gradiente oro piu' acceso); tutte le disattive (`.mm-tessera--bloccata`) hanno lo stesso grigio; **tolto il riflesso dorato a pallino** nell'angolo destro (`.mm-tessera::after`). **Insidia**: `index.html` non carica `topbar.css`, quindi le due variabili sono definite anche in `menu-mobile.css` (da tenere uguali): senza, `var()` non risolveva e le tessere restavano senza sfondo. Provati barra-di-tab, menu-non-scorre, guardrail. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

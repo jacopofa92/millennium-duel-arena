@@ -2,6 +2,13 @@
    Tutto sta sotto .menu-shell--app, che il modulo mette solo se `(pointer: coarse) and (max-width: 1000px)`: senza quella classe
    nessuna regola di questo file si applica, quindi il menu desktop non cambia. */
 
+/* Le due variabili della superficie unica (stesse di topbar.css): index.html non carica topbar.css, quindi qui servono anche a lui.
+   Se si cambia un valore, cambiarlo in ENTRAMBI i file. */
+:root {
+    --sup-riquadro: linear-gradient(150deg, rgba(40, 32, 20, 0.84), rgba(18, 16, 22, 0.88));
+    --sup-bordo: rgba(247, 215, 116, 0.3);
+}
+
 .menu-shell.menu-shell--app {   /* due classi: la regola .menu-shell di index.html (height:100vh) sta DOPO questo foglio e a parita' di peso vince */
     justify-content: flex-start;
     gap: 0;
@@ -108,17 +115,15 @@
     display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 8px;
     min-height: 84px; padding: 12px 12px 11px; text-align: left;
     border-radius: 14px; cursor: pointer; color: #f4e7c4;
-    background: linear-gradient(160deg, rgba(40, 33, 18, 0.88), rgba(14, 12, 9, 0.9));
-    border: 1px solid rgba(247, 215, 116, 0.26);
+    /* UNA sola veste per tutte le tessere attive (anche la larga) e una per tutte le disattive (--bloccata): stessa superficie dei
+       riquadri delle pagine (--sup-riquadro, topbar.css), niente riflesso dorato a pallino nell'angolo (tolto su richiesta). */
+    background: var(--sup-riquadro);
+    border: 1px solid var(--sup-bordo);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 240, 190, 0.08);
     -webkit-tap-highlight-color: transparent;
     transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
 }
-.mm-tessera::after {   /* un riflesso dorato che sale dall'angolo: da' profondita' senza immagini */
-    content: ''; position: absolute; right: -30px; bottom: -34px; width: 110px; height: 110px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(247, 215, 116, 0.16), transparent 68%); pointer-events: none;
-}
-.mm-tessera:active { transform: scale(0.97); border-color: rgba(247, 215, 116, 0.7); background: linear-gradient(160deg, rgba(64, 50, 20, 0.92), rgba(24, 18, 9, 0.92)); }
+.mm-tessera:active { transform: scale(0.97); border-color: rgba(247, 215, 116, 0.7); }
 .mm-tessera-icona { font-size: 1.5rem; line-height: 1; color: #f7d774; filter: drop-shadow(0 0 6px rgba(247, 215, 116, 0.35)); }
 .mm-tessera-testi { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .mm-tessera-nome { font-weight: 800; font-size: 0.98rem; line-height: 1.15; letter-spacing: 0.01em; }
@@ -126,9 +131,8 @@
 .mm-tessera--larga { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: flex-start; gap: 14px; min-height: 84px; }
 .mm-tessera--larga .mm-tessera-icona { font-size: 2rem; }
 .mm-tessera--larga .mm-tessera-nome { font-size: 1.12rem; }
-.mm-tessera--larga { background: linear-gradient(120deg, rgba(86, 62, 14, 0.9), rgba(26, 19, 8, 0.92) 70%); border-color: rgba(247, 215, 116, 0.5); }
 .mm-griglia--una .mm-tessera { flex-direction: row; align-items: center; justify-content: flex-start; gap: 14px; min-height: 64px; }
-.mm-tessera--bloccata { opacity: 0.55; filter: saturate(0.5); }
+.mm-tessera--bloccata { opacity: 0.5; filter: saturate(0.4); }
 .mm-tessera--esci { margin-top: 6px; flex-direction: row; align-items: center; justify-content: flex-start; gap: 14px; min-height: 56px; border-color: rgba(214, 90, 80, 0.45); }
 .mm-versione { margin: 4px 0 0; text-align: center; font-size: 0.7rem; color: #8a7d5b; letter-spacing: 0.08em; }
 
