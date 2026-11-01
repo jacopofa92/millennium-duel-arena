@@ -4124,6 +4124,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.7 (cache v516, su `main`): **Tag Team: si guarda il campo del compagno in panchina** (richiesta dell'utente, come nell'Assalto al Boss). Stesso visore (`js/multiplayer/mp-raid-campo.js`, ora caricato anche da `duelMonstersCore.html`; l'elenco `avvia` ha il terzo argomento `esatto` e il pannello non mostra il blocco del Boss se la fotografia non ha `bossMostri`): in `tag-mode.js` `aggiornaAmico` legge `TagTeam.membro('player', i).stato` del membro che NON e' davanti e lo passa a `MpRaidCampo` a ogni ridisegno; niente viaggia in rete perche' ogni client tiene gia' lo stato di tutti i membri. Sola lettura (uid finti, pannello tolto dal DOM alla chiusura), carte coperte del compagno visibili (e' un alleato), tasto che cambia con lo scambio e sparisce se il compagno e' eliminato. **Non c'e' il visore della squadra avversaria.** Spec `tag-team-campo-compagno`. Suite completa non eseguita.
 
+1.5.8 (cache v517, su `main`): **il visore del Tag vale anche per l'avversario in panchina** (richiesta dell'utente; solo se la squadra avversaria ha due membri, quindi non nel 2 contro 1 ne' col Boss). `panchinaDi(posto)` in `tag-mode.js` al posto di `amicoInPanchina`: per l'avversario `fotoSlot` non rivela le carte coperte (dorsi senza nome, niente 'i'), della mano si vede il numero, il nome porta `(avversario)`. La nota di 1.5.7 sul fatto che l'avversario non ha visore non vale piu'. Spec `tag-team-campo-compagno` esteso. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

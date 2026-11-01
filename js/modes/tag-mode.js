@@ -284,45 +284,52 @@
     // Stesso visore dell'Assalto al Boss (js/multiplayer/mp-raid-campo.js): un tasto col ritratto del compagno che NON è
     // davanti, e un pannello di SOLA LETTURA col suo campo (mostri, Magie/Trappole anche coperte perché è un alleato, mano,
     // Life Point). Il suo stato è già in memoria su ogni client (ogni membro in panchina tiene il proprio in `stato`), quindi
-    // non viaggia niente: si legge e basta. Si guarda solo la TUA squadra; quella avversaria non ha nessun visore.
-    let amicoFirma = '';
-    let amicoId = '';
+    // non viaggia niente: si legge e basta. Lo stesso vale per il membro in panchina della squadra AVVERSARIA (se ne ha una),
+    // ma con le sole informazioni che si vedrebbero a tavolo: le sue carte coperte restano dorsi senza nome, della mano si
+    // vede solo quante sono.
+    let panchineFirma = '';
+    let panchineIds = '';
 
-    /** @returns {{ id: string, nome: string, image: string, campo: any } | null} */
-    function amicoInPanchina() {
-        const r = g.TagTeam.riassunto('player');
+    /**
+     * Il membro in panchina di un lato, nella forma del visore, o null (lato senza squadra, membro eliminato).
+     * @param {string} posto
+     * @returns {{ id: string, nome: string, image: string, campo: any } | null}
+     */
+    function panchinaDi(posto) {
+        const r = g.TagTeam.riassunto(posto);
         if (!r) return null;
         const i = r.membri.findIndex((m) => !m.davanti);
         if (i === -1 || !r.membri[i].vivo) return null;
-        const m = g.TagTeam.membro('player', i);
+        const m = g.TagTeam.membro(posto, i);
         const s = m && m.stato;
         const R = g.MpRaidCampo;
         if (!s || !R) return null;
-        const riga = (a) => Array.from({ length: 5 }, (_, k) => R.fotoSlot(a && a[k], true));
+        const alleato = posto === 'player';
+        const riga = (a) => Array.from({ length: 5 }, (_, k) => R.fotoSlot(a && a[k], alleato));
         const campo = {
             lp: r.membri[i].lp,
             mano: (s.Hand || []).length,
             mazzo: Array.isArray(s.Deck) ? s.Deck.length : (s.DeckCount || 0),
-            cimitero: (gameState.playerGraveyard || []).length,
+            cimitero: (gameState[posto + 'Graveyard'] || []).length,
             mostri: riga(s.MonsterField),
             mt: riga(s.STField)
         };
-        return { id: 'tag-' + m.id, nome: m.nome, image: (m.identita && m.identita.image) || '', campo };
+        return { id: 'tag-' + m.id, nome: alleato ? m.nome : m.nome + ' (avversario)', image: (m.identita && m.identita.image) || '', campo };
     }
 
     function aggiornaAmico() {
         if (typeof gameState === 'undefined' || !gameState || !g.MpRaidCampo || !g.TagTeam.eSquadra('player')) return;
-        const a = amicoInPanchina();
-        const firma = a ? JSON.stringify(a) : '';
-        if (firma === amicoFirma) return;
-        amicoFirma = firma;
-        if (!a) { amicoId = ''; g.MpRaidCampo.avvia([], '', true); return; }
-        // Cambia chi è in panchina (scambio): tasto nuovo; altrimenti si aggiorna solo il campo.
-        if (a.id !== amicoId) {
-            amicoId = a.id;
-            g.MpRaidCampo.avvia([{ id: a.id, nome: a.nome, image: a.image }], '', true);
+        const lista = [panchinaDi('player'), panchinaDi('bot')].filter(Boolean);
+        const firma = JSON.stringify(lista);
+        if (firma === panchineFirma) return;
+        panchineFirma = firma;
+        // Cambia chi è in panchina (scambio, eliminazione): tasti nuovi; altrimenti si aggiornano solo i campi.
+        const ids = lista.map((a) => a.id).join(',');
+        if (ids !== panchineIds) {
+            panchineIds = ids;
+            g.MpRaidCampo.avvia(lista.map((a) => ({ id: a.id, nome: a.nome, image: a.image })), '', true);
         }
-        g.MpRaidCampo.ricevi(a.id, a.campo);
+        lista.forEach((a) => g.MpRaidCampo.ricevi(a.id, a.campo));
     }
 
     function costruisciInterfaccia() {
