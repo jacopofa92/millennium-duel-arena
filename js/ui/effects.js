@@ -2551,8 +2551,16 @@
         playMultiply: viaBackend('playMultiply', playMultiply),
         playEnemyController: viaBackend('playEnemyController', playEnemyController),
         playDimensionHole: viaBackend('playDimensionHole', playDimensionHole),
-        playCoinFlip: viaBackend('playCoinFlip', playCoinFlip),
-        playDiceRoll: viaBackend('playDiceRoll', playDiceRoll),
+        // Moneta e dado: con Dettagli "Alti" e WebGL sono oggetti 3D (js/ui/lancio-webgl.js). Si prova PRIMA di
+        // qualunque backend (anche la versione GSAP di fx-gsap.js) e solo se non parte si ripiega su di loro.
+        playCoinFlip: (function () {
+            const altrimenti = viaBackend('playCoinFlip', playCoinFlip);
+            return function (heads) { if (window.LancioGL && window.LancioGL.moneta(heads)) return; return altrimenti.apply(null, arguments); };
+        })(),
+        playDiceRoll: (function () {
+            const altrimenti = viaBackend('playDiceRoll', playDiceRoll);
+            return function (result) { if (window.LancioGL && window.LancioGL.dado(result)) return; return altrimenti.apply(null, arguments); };
+        })(),
         // ATTENZIONE per chi scrivera' un backend per questa: i chiamanti
         // non aspettano una callback, aspettano ACTIVATE_CENTER_DURATION_MS
         // e tirano dritto. Una versione che sfora lascia una carta a

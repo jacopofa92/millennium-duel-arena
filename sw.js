@@ -517,7 +517,7 @@
 // v500: Tag Team, Boss a squadre e scambio su richiesta.
 // v501: passo comune a posti (Multiplayer a più client), IA col caso locale in rete.
 // v502: Tag Team pronto per la rete (posti per membro, scambi deterministici).
-const CACHE_NAME = 'ygo-duel-arena-v547';
+const CACHE_NAME = 'ygo-duel-arena-v548';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
@@ -539,6 +539,7 @@ const APP_SHELL = [
     'regole.html',
     'sfide.html',
     'tutorial.html',
+    'tutorial-tag.html',
     'puzzle.html',
     'rivincite.html',
     'torre.html',
@@ -647,6 +648,7 @@ const APP_SHELL = [
     'js/ui/fx-webgl-scena.js',
     'js/ui/evocazione-epica-webgl.js',
     'js/ui/catena-webgl.js',
+    'js/ui/lancio-webgl.js',
     'js/ui/splash-webgl.js',
     'js/ui/icone-posizione-webgl.js',
     'js/ui/challenge-banner.js',

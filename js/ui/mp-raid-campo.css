@@ -2,7 +2,7 @@
 
 /* ---- Tasto: il ritratto del compagno, con il simbolo delle carte. Uno per compagno (fino a 3). ---- */
 .mpr-tasto {
-    position: fixed; z-index: 10091; width: 40px; height: 40px; padding: 0; border-radius: 50%;
+    position: fixed; z-index: 10066; width: 40px; height: 40px; padding: 0; border-radius: 50%;
     border: 2px solid #f7d774; background: #0b1020; cursor: pointer;
     box-shadow: 0 0 0 2px rgba(0, 0, 0, .55), 0 0 12px rgba(247, 215, 116, .55);
     transition: box-shadow .2s, filter .2s;

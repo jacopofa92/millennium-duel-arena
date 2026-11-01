@@ -35,6 +35,7 @@
         'puzzle.html': ['duelli', 'Puzzle', 'puzzle'],
         'tag.html': ['duelli', 'Tag Team', 'multiplayer'],
         'tutorial.html': ['duelli', 'Tutorial', 'rules'],
+        'tutorial-tag.html': ['duelli', 'Tutorial', 'rules'],
         'sfide.html': ['duelli', 'Sfide', 'tournament'],
         'negozio.html': ['carte', 'Negozio', 'shop'],
         'cartoteca.html': ['carte', 'Cartoteca', 'collection'],

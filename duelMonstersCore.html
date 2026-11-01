@@ -1979,6 +1979,11 @@
         .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-atk { font-size: 0.68em; }
         .field-slot:has(> .card.defense-pos) > .field-stats-badge:not(.field-pile-badge) .fsb-def { font-size: 1.2em; }
         .field-stats-badge:not(.field-pile-badge) .fsb-sep { color: rgba(255, 255, 255, 0.75); font-size: 0.85em; }
+        /* Su desktop i numeri stanno piu' vicini alla carta: la casella e' piu' alta della carta e a 1400x900 restavano
+           ~7px di vuoto; con -4px ne restano ~3. Su telefono la posizione e' quella di sempre (blocco sotto). */
+        @media (min-width: 901px) {
+            .field-stats-badge:not(.field-pile-badge) { transform: translate(-50%, -4px); }
+        }
         @media (max-width: 900px) {
             .field-stats-badge:not(.field-pile-badge) {
                 gap: 0.15em;
@@ -5745,6 +5750,7 @@
 <script src="js/ui/evocazione-epica-webgl.js"></script>
 <!-- Scena della Catena in WebGL (stile Master Duel): chiamata da renderChainStack (game-flow.js); senza WebGL o con Dettagli "Normali" resta il pannello di sempre. -->
 <script src="js/ui/catena-webgl.js"></script>
+<script src="js/ui/lancio-webgl.js"></script>
 <script src="js/ui/icone-posizione-webgl.js"></script>
 <!-- Vita ambientale del Terreno, configurata individualmente per ogni
      field. Come fx-gsap.js qui sopra è un modulo a sé che si avvia da
