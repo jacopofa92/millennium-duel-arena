@@ -291,7 +291,7 @@
         if (i.mostraSchermata) i.mostraSchermata('tag');
         mostraCodice();
         montaPersonali();
-        status(sonoHost() ? '🕐 Condividi il codice: chi entra si siede in un posto libero.' : '🪑 Scegli un posto libero e conferma quando sei pronto.');
+        status(sonoHost() ? '🕐 Condividi il codice: chi entra prende un posto libero.' : 'Scegli un posto libero e conferma quando sei pronto.');
         if (i.precaricaArena) i.precaricaArena();
     }
 
@@ -422,7 +422,7 @@
                 pubblica();
             }, 'tg-btn tg-btn--primario'));
         } else if (!chi && postoDi(io) !== k) {
-            azioni.appendChild(bottone('🪑 Siediti qui', () => chiediPosto(k), 'tg-btn tg-btn--primario'));
+            azioni.appendChild(bottone('Prendi posto', () => chiediPosto(k), 'tg-btn tg-btn--primario'));
         } else if (chi && sonoHost()) {
             azioni.appendChild(bottone('⇄ Sposta', () => { spostando = chi; disegna(); }));
         }
