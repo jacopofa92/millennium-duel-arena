@@ -60,8 +60,9 @@
 }
 .tg-squadra {
     --tg-tinta: #f7d774;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
     gap: 8px;
     padding: 10px;
     border-radius: var(--kc-round, 14px);
@@ -69,7 +70,10 @@
     background: linear-gradient(180deg, color-mix(in srgb, var(--tg-tinta) 9%, transparent), transparent 70%);
 }
 .tg-squadra--B { --tg-tinta: #c49bff; }
+/* Un posto solo nella squadra (2 contro 1): la scheda occupa tutta la riga. */
+.tg-squadra > .tg-posto:nth-child(2):last-child { grid-column: 1 / -1; }
 .tg-squadra-nome {
+    grid-column: 1 / -1;
     margin: 0 0 2px;
     font-size: .8rem;
     letter-spacing: .12em;
@@ -77,32 +81,73 @@
     color: var(--tg-tinta);
 }
 
+/* Il posto come una PROIEZIONE (stessa lingua dei posti della sala 1 contro 1, js/ui/mp-lobby.css): pedina intera, parentesi
+   d'angolo del colore della squadra, e se il posto e' libero la banda di scansione ciano che scende in continuo. */
 .tg-posto {
-    display: grid;
-    grid-template-columns: 46px minmax(0, 1fr);
-    gap: 4px 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    padding: 8px;
-    border-radius: 10px;
-    background: var(--kc-surface-a, rgba(36, 28, 22, .72));
-    border: 1px solid transparent;
+    gap: 6px;
+    padding: 12px 8px 10px;
+    min-height: 208px;
+    overflow: hidden;
+    text-align: center;
+    border-radius: 14px;
+    background: linear-gradient(180deg, var(--kc-surface-a, rgba(36, 28, 22, .72)), var(--kc-surface-b, rgba(24, 19, 26, .58)));
 }
-.tg-posto.is-mio { border-color: var(--tg-tinta); }
-.tg-posto.is-libero { background: var(--kc-surface-b, rgba(24, 19, 26, .58)); border-style: dashed; border-color: rgba(247, 215, 116, .18); }
-.tg-posto.is-bersaglio { box-shadow: 0 0 0 1px var(--kc-tech-soft, rgba(127, 227, 255, .5)); }
-.tg-ritratto {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background: #1b1520 center / cover no-repeat;
+.tg-posto::before, .tg-posto::after {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
     border: 2px solid var(--tg-tinta);
+    opacity: .85;
+    pointer-events: none;
 }
-.tg-ritratto.is-ia { filter: grayscale(.55) brightness(.85); border-style: dashed; }
-.tg-testi { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.tg-nome { color: var(--kc-ink, #f6ecd8); font-size: .92rem; overflow-wrap: anywhere; }
-.tg-stato { color: var(--kc-ink-dim, #a3927a); font-size: .76rem; }
-.tg-stato.is-pronto { color: #8fe3a5; }
-.tg-azioni { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; }
+.tg-posto::before { top: 5px; left: 5px; border-right: 0; border-bottom: 0; }
+.tg-posto::after { bottom: 5px; right: 5px; border-left: 0; border-top: 0; }
+.tg-posto.is-mio { box-shadow: inset 0 0 34px color-mix(in srgb, var(--tg-tinta) 22%, transparent); }
+.tg-posto.is-occupato:not(.is-mio) { box-shadow: inset 0 0 28px rgba(120, 255, 170, .1); }
+.tg-posto.is-occupato::before, .tg-posto.is-occupato::after { border-color: #78ffaa; }
+.tg-posto.is-mio::before, .tg-posto.is-mio::after { border-color: var(--tg-tinta); }
+.tg-posto.is-libero::before, .tg-posto.is-libero::after { border-color: var(--kc-tech, #7fe3ff); opacity: .55; }
+.tg-posto.is-bersaglio { box-shadow: 0 0 0 1px var(--kc-tech-soft, rgba(127, 227, 255, .5)); }
+.tg-scan {
+    position: absolute;
+    left: 0; right: 0; top: 0;
+    height: 46%;
+    background: linear-gradient(180deg, transparent 0%, rgba(127, 227, 255, .2) 50%, transparent 100%);
+    transform: translateY(-100%);
+    will-change: transform;
+    animation: tgScan 2.4s ease-in-out infinite;
+    pointer-events: none;
+}
+@keyframes tgScan { from { transform: translateY(-100%); } to { transform: translateY(218%); } }
+.tg-ritratto {
+    position: relative;
+    width: 100%;
+    height: 112px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+.tg-ritratto img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: 50% 100%;
+    filter: drop-shadow(0 0 14px color-mix(in srgb, var(--tg-tinta) 60%, transparent)) drop-shadow(0 6px 8px rgba(0, 0, 0, .7));
+    user-select: none;
+}
+/* L'IA (o il Boss) che gioca il posto: figura spenta e luce ciano, a dire "e' il sistema". */
+.tg-ritratto.is-ia img { filter: grayscale(.7) brightness(.7) drop-shadow(0 0 12px rgba(127, 227, 255, .5)); opacity: .8; }
+.tg-testi { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; max-width: 100%; }
+.tg-nome { color: var(--kc-ink, #f6ecd8); font-size: .9rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; overflow-wrap: anywhere; }
+.tg-stato { color: var(--kc-ink-dim, #a3927a); font-family: 'Courier New', monospace; font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; }
+.tg-stato.is-pronto { color: #78ffaa; }
+.tg-posto.is-libero .tg-stato { color: var(--kc-tech, #7fe3ff); }
+.tg-azioni { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: auto; }
 
 .tg-btn {
     font: inherit;

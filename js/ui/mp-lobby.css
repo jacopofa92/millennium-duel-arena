@@ -184,7 +184,9 @@
    --------------------------------------------------------------- */
 .mp-screen {
     padding: 4px 2px 10px;
-    animation: mpScreenIn 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    /* `backwards` e non `both`: con `both` la schermata resta con un transform (anche solo l'identita') a vita, e un figlio
+       `position: fixed` (la barra "Sono pronto") prenderebbe lei come riferimento invece dello schermo. */
+    animation: mpScreenIn 480ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 @keyframes mpScreenIn {
     from { opacity: 0; transform: translateY(14px); }
@@ -1148,7 +1150,21 @@ body.ha-tab-bar .mp-tab.active { box-shadow: 0 0 18px rgba(247, 215, 116, 0.28);
 body.ha-tab-bar .mp-lobby-panel > p { font-size: 0.88rem; color: #cfc3a2; }
 
 /* "Sono pronto": sopra la barra in basso, non sotto di lei */
-body.ha-tab-bar .mp-ready { bottom: calc(var(--mm-barra-h) + 10px); margin-bottom: 4px; }
+/* FISSA (non piu' sticky): una barra sticky resta dentro il suo contenitore, quindi quando sotto di lei compare la console di
+   connessione KaibaCorp (#mpStatus, alta e a comparsa) la barra veniva spinta in su e "ballava" sopra la barra di tab. Cosi'
+   sta sempre alla stessa distanza dal fondo dello schermo; lo spazio per non coprire il contenuto lo da' il padding della sala. */
+body.ha-tab-bar .mp-ready {
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--mm-barra-h) + 10px);
+    transform: translateX(-50%);
+    width: min(calc(100% - 24px), 880px);
+    margin: 0;
+    box-sizing: border-box;
+    z-index: 110;
+}
+body.ha-tab-bar .mp-ready[hidden] { display: none; }
+body.ha-tab-bar .mp-lobby { padding-bottom: calc(var(--mm-barra-h) + 190px); }
 @media (max-width: 640px) {
     body.ha-tab-bar .mp-ready { padding: 12px; }
     body.ha-tab-bar .mp-ready-nota { font-size: 0.74rem; }

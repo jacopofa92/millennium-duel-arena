@@ -378,12 +378,25 @@
         const chi = stato.posti[k];
         const box = el('div', 'tg-posto' + (chi ? ' is-occupato' : ' is-libero') + (chi === io ? ' is-mio' : '') + (spostando ? ' is-bersaglio' : ''));
         box.setAttribute('data-posto', k);
+        // Proiezione come i posti della sala 1 contro 1: parentesi d'angolo e, se il posto e' libero, la banda di scansione.
+        if (!chi) box.appendChild(el('div', 'tg-scan'));
         const ritratto = el('div', 'tg-ritratto');
+        /** La pedina scontornata (ripiego sul ritratto se il file manca). @param {string} immagine */
+        const mettiPedina = (immagine) => {
+            if (!immagine) return;
+            const img = /** @type {HTMLImageElement} */ (el('img'));
+            img.alt = '';
+            img.draggable = false;
+            const pedinaSrc = typeof g.getCharacterPawnImage === 'function' ? g.getCharacterPawnImage(immagine) : immagine;
+            img.onerror = () => { img.onerror = null; img.src = immagine; };
+            img.src = pedinaSrc;
+            ritratto.appendChild(img);
+        };
         const testi = el('div', 'tg-testi');
         if (chi) {
             const p = stato.persone[chi] || {};
             const pedina = g.MpPedina ? MpPedina.risolvi(p.pedina) : null;
-            if (pedina) ritratto.style.backgroundImage = `url("${pedina.image}")`;
+            if (pedina) mettiPedina(pedina.image);
             testi.appendChild(el('strong', 'tg-nome', (p.nome || 'Giocatore') + (chi === io ? ' (tu)' : '')));
             const st = !collegato(chi) ? 'Connessione persa' : (p.pronto ? '✓ Pronto' : 'Sta scegliendo…');
             testi.appendChild(el('small', 'tg-stato' + (p.pronto ? ' is-pronto' : ''), (chi === host ? '👑 Host · ' : '') + st));
@@ -391,7 +404,7 @@
             const bossQui = k === 'B0' && stato.formato === '2v1' && stato.boss;
             const idIA = bossQui ? stato.boss : stato.ia[k];
             const c = personaggio(idIA);
-            if (c && c.image) ritratto.style.backgroundImage = `url("${c.image}")`;
+            if (c && c.image) mettiPedina(c.image);
             ritratto.classList.add('is-ia');
             testi.appendChild(el('strong', 'tg-nome', 'Posto libero'));
             testi.appendChild(el('small', 'tg-stato', bossQui ? `Lo gioca il Boss: ${nomePersonaggio(idIA)}` : `Lo gioca l'IA: ${nomePersonaggio(idIA)}`));
@@ -581,6 +594,8 @@
         /** Vero se la prossima 'room-created' è una stanza del Tag Team (mp-lobby.js la lascia a questa sala). */
         aspettaStanza: () => richiestaInCorso,
         /** Per i test: lo stato della sala e chi sono. */
-        _stato: () => ({ io, host, presenti, stato, avviata })
+        _stato: () => ({ io, host, presenti, stato, avviata }),
+        /** Per le prove a vista: disegna la sala con uno stato dato, senza rete. */
+        _anteprima: (s, mioId, hostId, pres) => { stato = s; io = mioId; host = hostId; presenti = pres; attiva = true; const i = interna(); if (i.mostraSchermata) i.mostraSchermata('tag'); disegna(); }
     };
 })();
