@@ -12,6 +12,9 @@
 .mpr-tasto-foto {
     position: absolute; inset: 0; border-radius: 50%; background: #1b2540 center / cover no-repeat;
 }
+/* La pedina (figura scontornata) dentro il cerchio: busto e testa, su un fondo scuro, ritagliati dal cerchio. */
+.mpr-pedina { overflow: hidden; background: radial-gradient(circle at 50% 30%, #3a4f86, #141b33) !important; }
+.mpr-pedina img { position: absolute; left: 50%; top: 3%; width: 135%; max-width: none; height: auto; transform: translateX(-50%); pointer-events: none; }
 .mpr-tasto-badge {
     position: absolute; right: -5px; bottom: -5px; width: 18px; height: 18px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center; font-size: 11px; line-height: 1;
@@ -52,7 +55,7 @@
 
 /* Testata: chi stai guardando. */
 #mpRaidCampo .mpr-testata { display: flex; align-items: center; gap: 10px; padding: 0 34px 8px 0; margin-bottom: 6px; border-bottom: 1px solid rgba(247, 215, 116, .3); }
-#mpRaidCampo .mpr-avatar { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; border: 2px solid #f7d774; background: #1b2540 center / cover no-repeat; box-shadow: 0 0 10px rgba(247, 215, 116, .5); }
+#mpRaidCampo .mpr-avatar { position: relative; width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; border: 2px solid #f7d774; background: #1b2540 center / cover no-repeat; box-shadow: 0 0 10px rgba(247, 215, 116, .5); }
 #mpRaidCampo .mpr-chi { display: flex; flex-direction: column; min-width: 0; }
 #mpRaidCampo .mpr-nome-giocatore { font-weight: 800; font-size: 16px; letter-spacing: .03em; color: #f7d774; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #mpRaidCampo .mpr-sub { font-size: 12px; opacity: .85; }

@@ -323,7 +323,7 @@
     /**
      * Il membro in panchina di un lato, nella forma del visore, o null (lato senza squadra, membro eliminato).
      * @param {string} posto
-     * @returns {{ id: string, nome: string, image: string, campo: any } | null}
+     * @returns {{ id: string, nome: string, image: string, pedina: string, campo: any } | null}
      */
     function panchinaDi(posto) {
         const r = g.TagTeam.riassunto(posto);
@@ -344,7 +344,10 @@
             mostri: riga(s.MonsterField),
             mt: riga(s.STField)
         };
-        return { id: 'tag-' + m.id, nome: alleato ? m.nome : m.nome + ' (avversario)', image: (m.identita && m.identita.image) || '', campo };
+        const image = (m.identita && m.identita.image) || '';
+        // L'icona del tasto e' la PEDINA del personaggio dentro un cerchio (il ritratto resta come ripiego).
+        const pedina = image && typeof g.getCharacterPawnImage === 'function' ? (g.getCharacterPawnImage(image) || '') : '';
+        return { id: 'tag-' + m.id, nome: alleato ? m.nome : m.nome + ' (avversario)', image, pedina, campo };
     }
 
     function aggiornaAmico() {
@@ -357,7 +360,7 @@
         const ids = lista.map((a) => a.id).join(',');
         if (ids !== panchineIds) {
             panchineIds = ids;
-            g.MpRaidCampo.avvia(lista.map((a) => ({ id: a.id, nome: a.nome, image: a.image })), '', true);
+            g.MpRaidCampo.avvia(lista.map((a) => ({ id: a.id, nome: a.nome, image: a.image, pedina: a.pedina })), '', true);
         }
         lista.forEach((a) => g.MpRaidCampo.ricevi(a.id, a.campo));
     }

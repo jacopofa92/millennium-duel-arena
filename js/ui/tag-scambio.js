@@ -39,12 +39,25 @@
         return !!window.DUEL_FAST_OPENING && !window.TAG_SCAMBIO_FORZA;
     }
 
+    /**
+     * La PEDINA del personaggio (la figura scontornata di images/characters/pedine/, la stessa del riquadro dei Life Point), non
+     * il ritratto in un cerchio. Se per quel personaggio non c'e' una pedina si ripiega sul ritratto che c'e'.
+     */
     function ritratto(dati, classe) {
         const r = document.createElement('div');
         r.className = 'tgs-ritr ' + classe;
         const f = document.createElement('div');
         f.className = 'tgs-foto';
-        if (dati && dati.image) f.style.backgroundImage = 'url("' + String(dati.image).replace(/"/g, '%22') + '")';
+        const originale = dati && dati.image ? String(dati.image) : '';
+        if (originale) {
+            const pedina = typeof window.getCharacterPawnImage === 'function' ? window.getCharacterPawnImage(originale) : null;
+            const img = document.createElement('img');
+            img.alt = '';
+            img.draggable = false;
+            if (pedina && pedina !== originale) img.onerror = () => { img.onerror = null; img.src = originale; };
+            img.src = pedina || originale;
+            f.appendChild(img);
+        }
         const n = document.createElement('div');
         n.className = 'tgs-nome';
         n.textContent = (dati && dati.nome) || '';

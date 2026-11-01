@@ -27,6 +27,28 @@
 
     function formato(n) { return Math.max(0, Math.round(n)).toLocaleString('it-IT'); }
 
+    /**
+     * L'icona di un compagno/avversario: un cerchio col suo ritratto, oppure (se `c.pedina` c'e', come nel Tag Team) la sua
+     * PEDINA, la figura scontornata, dentro il cerchio. Se il file della pedina manca si ripiega sul ritratto `c.image`.
+     */
+    function iconaPersonaggio(c, classe) {
+        const el = document.createElement('span');
+        el.className = classe;
+        const sfondo = () => { if (c.image) el.style.backgroundImage = `url("${c.image}")`; };
+        if (c.pedina) {
+            el.classList.add('mpr-pedina');
+            const img = document.createElement('img');
+            img.alt = '';
+            img.draggable = false;
+            img.onerror = () => { img.onerror = null; img.remove(); el.classList.remove('mpr-pedina'); sfondo(); };
+            img.src = c.pedina;
+            el.appendChild(img);
+        } else {
+            sfondo();
+        }
+        return el;
+    }
+
     // ------------------------------------------------------------------ fotografia (parte che manda)
     function fotoSlot(s, rivelaCoperta) {
         if (!s || !s.card) return null;
@@ -144,9 +166,7 @@
         testata.textContent = '';
         if (!c) return;
 
-        const av = document.createElement('span');
-        av.className = 'mpr-avatar';
-        if (c.image) av.style.backgroundImage = `url("${c.image}")`;
+        const av = iconaPersonaggio(c, 'mpr-avatar');
         const nome = document.createElement('span');
         nome.className = 'mpr-nome-giocatore';
         nome.textContent = c.nome;
@@ -273,9 +293,7 @@
             b.dataset.id = c.id;
             b.title = `Guarda il campo di ${c.nome}`;
             b.setAttribute('aria-label', `Guarda il campo di ${c.nome}`);
-            const foto = document.createElement('span');
-            foto.className = 'mpr-tasto-foto';
-            if (c.image) foto.style.backgroundImage = `url("${c.image}")`;
+            const foto = iconaPersonaggio(c, 'mpr-tasto-foto');
             const badge = document.createElement('span');
             badge.className = 'mpr-tasto-badge';
             badge.textContent = '🃏';
@@ -341,7 +359,7 @@
         compagni = (lista || []).slice(0, MAX_COMPAGNI).map((c, i) => {
             const id = c.id || (i === 0 ? 'c1' : 'c' + (i + 1));
             const prima = vecchi.find((x) => x.id === id);
-            return { id, nome: c.nome || 'Compagno', image: c.image || '', campo: prima ? prima.campo : null };
+            return { id, nome: c.nome || 'Compagno', image: c.image || '', pedina: c.pedina || '', campo: prima ? prima.campo : null };
         });
         // Messaggi arrivati prima dell'avvio, per compagni non nell'elenco: si tengono finche' c'e' posto.
         vecchi.forEach((v) => { if (!compagni.some((x) => x.id === v.id) && compagni.length < MAX_COMPAGNI) compagni.push(v); });
@@ -355,7 +373,7 @@
         let c = compagni.find((x) => x.id === id);
         if (!c) {
             if (compagni.length >= MAX_COMPAGNI) return;
-            c = { id, nome: 'Compagno', image: '', campo: null };
+            c = { id, nome: 'Compagno', image: '', pedina: '', campo: null };
             compagni.push(c);
             if (timer) creaTasti();
         }
