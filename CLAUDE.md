@@ -4150,6 +4150,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.20 (cache v529, su `main`): tolti i circuiti glitch dall'arena del Dirigibile (richiesta dell'utente); restano scansione blu, nodi lampeggianti e croci blu. Suite completa non eseguita.
 
+1.5.21 (cache v530, su `main`): **il tondo delle fasi sta al centro vero del campo** (non piu' al 50% dello schermo): `posizionaPulsanteFasi` scrive `--psb-mid-y` = meta' fra la prima casella dell'avversario e l'ultima del giocatore, usata da tondo e menu. Su desktop il centro del campo era ~50 px sopra la meta' dello schermo. Spec `pulsante-fasi-laterale` aggiornato. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

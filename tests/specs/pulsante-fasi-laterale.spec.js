@@ -34,13 +34,15 @@ module.exports = {
                 return {
                     visibile: getComputedStyle(b).display !== 'none' && !b.hidden,
                     label: document.getElementById('phaseSideLabel').textContent,
-                    centroY: Math.round(r.top + r.height / 2), alto: innerHeight,
+                    // Il centro vero del campo (prima era il 50% dello schermo, che non coincide con la linea di mezzo dei due Terreni).
+                    centroY: Math.round(r.top + r.height / 2),
+                    alto: (() => { const s = [...document.querySelectorAll('#playerFieldBoard .field-slot, #botFieldBoard .field-slot')].map((e) => e.getBoundingClientRect()).filter((x) => x.width); return Math.round(Math.min(...s.map((x) => x.top)) + Math.max(...s.map((x) => x.bottom))); })(),
                     barra: getComputedStyle(document.getElementById('phaseStepper')).visibility,
                     destra: r.left > innerWidth * 0.5
                 };
             });
             assert(a.visibile && a.destra, `Il tondo c'e' ed e' a destra: ${JSON.stringify(a)}`);
-            assert(Math.abs(a.centroY - a.alto / 2) < 4, `Sta a meta' altezza: ${JSON.stringify(a)}`);
+            assert(Math.abs(a.centroY - a.alto / 2) < 4, `Sta a meta' altezza del campo: ${JSON.stringify(a)}`);
             assert(a.barra === 'hidden', `La barra delle fasi non si vede: ${a.barra}`);
             assert(/M1/i.test(a.label), `Mostra la fase attuale (Main 1): ${a.label}`);
 

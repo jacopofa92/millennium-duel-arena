@@ -5117,7 +5117,7 @@
                 gap: 1px;
                 position: fixed;
                 left: var(--psb-left, 72vw);
-                top: 50%;
+                top: var(--psb-mid-y, 50%);
                 transform: translateY(-50%);
                 /* SOPRA il campo e i suoi effetti (ologrammi z 30, riscontri 10040, FX delle carte fino a 10065) ma SOTTO i messaggi
                    a tutto schermo: annuncio del turno (#battleStartOverlay 10070), grido di Evocazione (10075), Catena (10086), modali. */
@@ -5145,7 +5145,7 @@
             .phase-side-menu {
                 position: fixed;
                 left: var(--psb-menu-left, 78vw);
-                top: 50%;
+                top: var(--psb-mid-y, 50%);
                 transform: translateY(-50%);
                 z-index: 10067;
                 flex-direction: column;

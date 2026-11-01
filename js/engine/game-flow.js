@@ -3101,6 +3101,13 @@ function posizionaPulsanteFasi() {
     const root = document.documentElement.style;
     root.setProperty('--psb-left', `${Math.round(Math.min(destra + 5, window.innerWidth - 60))}px`);
     root.setProperty('--psb-menu-left', `${Math.round(Math.min(destra + 5 + 56, window.innerWidth - 120))}px`);
+    // Altezza: il centro vero del campo (fra la prima casella dell'avversario e l'ultima del giocatore), non il 50% dello schermo,
+    // che su desktop non coincide (barre, mani e plance sopra e sotto non sono simmetriche).
+    const botBoard = document.getElementById('botFieldBoard');
+    const tutte = caselle.concat(botBoard ? Array.from(botBoard.querySelectorAll('.field-slot')).map((s) => s.getBoundingClientRect()).filter((r) => r.width) : []);
+    const alto = Math.min(...tutte.map((r) => r.top));
+    const basso = Math.max(...tutte.map((r) => r.bottom));
+    root.setProperty('--psb-mid-y', `${Math.round((alto + basso) / 2)}px`);
     // Il box info carta (a sinistra) deve fermarsi PRIMA del campo e non coprirlo.
     root.setProperty('--campo-sx', `${Math.round(sinistra)}px`);
 
