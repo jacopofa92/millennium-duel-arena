@@ -5105,7 +5105,8 @@
            non si vede. Il tondo ha un anello che si riempie con l'avanzare delle fasi (--psb-p, 0-100%).
            ============================================================ */
         .phase-side-btn, .phase-side-menu { display: none; }
-        @media ((max-width: 960px) and (max-height: 520px) and (orientation: landscape) and (pointer: coarse)), ((max-width: 600px) and (orientation: portrait) and (pointer: coarse)) {
+        /* Dal 1.5.17 vale anche su DESKTOP (mouse): lo stesso tondo accanto al campo e lo stesso menu delle fasi. */
+        @media ((max-width: 960px) and (max-height: 520px) and (orientation: landscape) and (pointer: coarse)), ((max-width: 600px) and (orientation: portrait) and (pointer: coarse)), ((hover: hover) and (pointer: fine)) {
             /* Invisibile ma NON tolta dal layout: il suo spazio (fra le due file di mostri) serve ai numeri ATK/DEF della fila di sopra, che senza finivano sotto gli ologrammi della fila di sotto. */
             .phase-stepper { visibility: hidden; pointer-events: none; }
             .phase-side-btn {

@@ -4142,6 +4142,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.16 (cache v525, su `main`): **nuova illustrazione del campo Dirigibile KaibaCorp** (fornita dall'utente come PNG 1669x942): convertita in `images/fields/dirigibileKaibaCorp.jpg` (qualita' 90), `images/fields/mobile/dirigibileKaibaCorp.jpg` (qualita' 78) e miniatura `images/fields/thumbs/dirigibileKaibaCorp.webp` (`node scripts/build-ui-thumbnails.js`); il PNG e' stato tolto. Le posizioni degli effetti WebGL scritte in pixel dell'illustrazione (se esistono per questo campo) vanno riguardate se la composizione e' cambiata. Suite completa non eseguita.
 
+1.5.17 (cache v526, su `main`): (1) **la Demo Duello Sandbox (solo amministratore) passa dal menu Duelli al foglio "Altro"** (`costruisciTab` in `menu-mobile.js`; sparisce il gruppo "Strumenti"). (2) **Pulsante laterale delle fasi anche su DESKTOP** (richiesta dell'utente: "come per il mobile"): la media query del tondo `#phaseSideBtn` in `duelMonstersCore.html` ha ora un terzo ramo `(hover: hover) and (pointer: fine)`; la barra delle fasi resta nel DOM ma invisibile, il tondo sta subito fuori dalla colonna destra del campo e apre lo stesso menu a sei voci. Spec `pulsante-fasi-laterale` aggiornato (desktop). Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

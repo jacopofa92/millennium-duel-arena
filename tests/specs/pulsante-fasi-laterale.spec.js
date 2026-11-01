@@ -137,14 +137,25 @@ module.exports = {
             }
         }
 
-        // --- desktop: niente tondo, la barra e' quella di sempre
+        // --- desktop (dal 1.5.17): lo stesso tondo accanto al campo, la barra non si vede, il menu ha le sei fasi
         ({ ctx, page } = await apri({ width: 1440, height: 900 }, false));
         try {
-            const d = await page.evaluate(() => ({
-                tondo: getComputedStyle(document.getElementById('phaseSideBtn')).display,
-                barra: getComputedStyle(document.getElementById('phaseStepper')).visibility
-            }));
-            assert(d.tondo === 'none' && d.barra === 'visible', `Su desktop non c'e' il tondo e la barra si vede: ${JSON.stringify(d)}`);
+            const d = await page.evaluate(() => {
+                const r = document.getElementById('phaseSideBtn').getBoundingClientRect();
+                const caselle = [...document.querySelectorAll('.field-slot')].map((e) => e.getBoundingClientRect()).filter((x) => x.width);
+                const tocca = caselle.filter((x) => Math.min(r.right, x.right) - Math.max(r.left, x.left) > 0.5 && Math.min(r.bottom, x.bottom) - Math.max(r.top, x.top) > 0.5).length;
+                return {
+                    tondo: getComputedStyle(document.getElementById('phaseSideBtn')).display,
+                    barra: getComputedStyle(document.getElementById('phaseStepper')).visibility,
+                    tocca, sinistra: r.left, destra: Math.max(...caselle.map((x) => x.right))
+                };
+            });
+            assert(d.tondo !== 'none' && d.barra === 'hidden', `Su desktop il tondo c'e' e la barra non si vede: ${JSON.stringify(d)}`);
+            assert(d.tocca === 0 && d.sinistra >= d.destra, `Su desktop il tondo non copre nessuna casella: ${JSON.stringify(d)}`);
+            await page.click('#phaseSideBtn');
+            await page.waitForFunction(() => !document.getElementById('phaseSideMenu').hidden, null, { timeout: 3000 });
+            const voci = await page.evaluate(() => document.querySelectorAll('#phaseSideMenu button').length);
+            assert(voci === 6, `Su desktop il menu ha sei voci: ${voci}`);
         } finally {
             await ctx.close();
         }
