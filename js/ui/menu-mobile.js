@@ -79,10 +79,10 @@
         /** @type {any[]} */
         const tab = [];
         if (duelli) {
-            // Un gruppo e' una voce con `children`; una voce semplice (la Demo del Sandbox) finisce in "Altri".
+            // Un gruppo e' una voce con `children`; una voce semplice (la Demo del Sandbox, solo amministratore) sta nel foglio "Altro".
             const gruppi = (duelli.children || []).filter((c) => c.children).map((g) => ({ titolo: g.label, icona: g.icon, voci: g.children }));
             const sciolte = (duelli.children || []).filter((c) => !c.children && (!c.soloAdmin || admin));
-            if (sciolte.length) gruppi.push({ titolo: 'Strumenti', icona: 'settings', voci: sciolte });
+            altre.push(...sciolte);
             tab.push({ id: 'duelli', titolo: 'Duelli', icona: duelli.icon, gruppi });
         }
         if (carte) tab.push({ id: 'carte', titolo: 'Carte', icona: carte.icon, gruppi: [{ titolo: 'La tua collezione', icona: carte.icon, voci: carte.children || [] }] });
