@@ -227,13 +227,16 @@ void main(){
         const s = document.createElement('style');
         s.id = 'catenaGLStile';
         s.textContent = `
-#catenaGL{position:fixed;inset:0;z-index:${Z_ROOT};pointer-events:none;overflow:hidden;transform-origin:0 50%;
-  transition:opacity ${DUR_CHIUSURA_MS}ms ease,transform .55s cubic-bezier(.2,.8,.2,1)}
-/* RISOLUZIONE: la scena si riduce a una striscia sul bordo sinistro e il velo scuro sparisce, cosi' gli effetti che si risolvono
-   sotto (distruzioni, danni, Evocazioni) restano TUTTI visibili. Durante la costruzione della Catena torna a tutto schermo. */
-#catenaGL.cgl-compatta{transform:translateX(4px) scale(.26)}
+#catenaGL{position:fixed;inset:0;z-index:${Z_ROOT};pointer-events:none;overflow:hidden;
+  transition:opacity ${DUR_CHIUSURA_MS}ms ease}
+/* RISOLUZIONE: le carte si dispongono in una COLONNA di miniature sul bordo sinistro (le posizioni le calcola disegnoCompatto, in
+   coordinate di schermo vere) e il velo scuro sparisce, cosi' gli effetti che si risolvono sotto (distruzioni, danni, Evocazioni)
+   restano TUTTI visibili. Durante la costruzione della Catena torna a tutto schermo.
+   NIENTE transform sul contenitore: lo shader legge le posizioni delle carte dallo schermo e disegna in un canvas a tutto schermo;
+   rimpicciolire il contenitore spostava le maglie fuori dalle carte (era il difetto della striscia "buggata"). */
 #catenaGL.cgl-compatta .cgl-buio{opacity:0!important}
-#catenaGL.cgl-compatta .cgl-titolo{display:none}
+#catenaGL.cgl-compatta .cgl-titolo,#catenaGL.cgl-compatta .cgl-chi{display:none}
+#catenaGL.cgl-compatta .cgl-carta{filter:drop-shadow(0 0 6px var(--cgl-c)) drop-shadow(0 4px 6px rgba(0,0,0,.6))}
 #catenaGL canvas{position:absolute;left:0;top:0;width:100%;height:100%}
 .cgl-buio{position:absolute;inset:0;transition:opacity .3s ease;
   background:radial-gradient(ellipse at 50% 50%,rgba(3,8,20,.5) 0%,rgba(2,5,14,.78) 62%,rgba(1,3,9,.9) 100%)}
@@ -340,6 +343,8 @@ void main(){
         root.appendChild(titolo);
         document.body.appendChild(root);
         requestAnimationFrame(() => { buio.style.opacity = '1'; });
+        // La Catena compare a tutto schermo: il suo suono (audio/standard/activateChain.mp3; senza file, un rintocco sintetico).
+        try { if (window.SFX && typeof window.SFX.activateChain === 'function') window.SFX.activateChain(); } catch (e) { /* l'audio non deve fermare la scena */ }
 
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
@@ -363,6 +368,27 @@ void main(){
         st.rid = requestAnimationFrame(frame);
     }
 
+    /**
+     * La colonna di miniature della risoluzione: tutte della stessa misura, una sotto l'altra sul bordo sinistro, senza
+     * inclinazione ne' sovrapposizioni, con un vuoto fra l'una e l'altra per le maglie. Il primo Link e' in alto.
+     */
+    function disegnoCompatto(n, W, H) {
+        const tetto = Math.min(96, W * 0.2);
+        const alta = Math.max(40, Math.min(tetto, (H * 0.74) / (Math.max(n, 1) * 1.22)));
+        const larga = alta * RAPPORTO;
+        const passo = alta * 1.22;
+        const y0 = H / 2 - ((n - 1) * passo) / 2;
+        const pos = [];
+        for (let i = 0; i < n; i++) pos.push({ x: 10 + larga / 2, y: y0 + i * passo, rot: 0, scala: 1 });
+        return { alta, larga, pos, verticale: true, compatto: true };
+    }
+
+    /** La lunghezza di una maglia: piu' piccola nelle miniature, o la catena coprirebbe le carte. */
+    function lunghezzaMaglia() {
+        const piena = Math.max(26, Math.min(64, Math.min(st.W, st.H) * .052));
+        return st.compatta ? Math.max(14, piena * .5) : piena;
+    }
+
     function ridimensiona() {
         if (!st) return;
         const W = window.innerWidth;
@@ -374,7 +400,7 @@ void main(){
         st.canvas.height = Math.max(64, Math.round(H * scala));
         st.gl.viewport(0, 0, st.canvas.width, st.canvas.height);
         st.W = W; st.H = H; st.scala = scala;
-        st.L = Math.max(26, Math.min(64, Math.min(W, H) * .052));
+        st.L = lunghezzaMaglia();
         riposiziona();
     }
 
@@ -384,7 +410,8 @@ void main(){
     function riposiziona() {
         if (!st) return;
         const vv = vive();
-        const d = disegnoCarte(vv.length, st.W, st.H);
+        const d = st.compatta ? disegnoCompatto(vv.length, st.W, st.H) : disegnoCarte(vv.length, st.W, st.H);
+        st.L = lunghezzaMaglia();
         vv.forEach((v, i) => {
             const p = d.pos[i];
             v.el.style.left = p.x + 'px';
@@ -399,12 +426,15 @@ void main(){
             if (v.chi) v.chi.style.fontSize = Math.max(10, Math.round(d.larga * .125)) + 'px';
             const num = v.num;
             if (num) {
-                num.style.fontSize = Math.round(d.larga * .62) + 'px';
+                num.style.fontSize = Math.round(d.larga * (d.compatto ? .5 : .62)) + 'px';
                 // L'angolo del numero e' quello LONTANO dalla catena (che esce verso le carte vicine): in verticale il lato
                 // esterno dello schermo (sopra la prima carta, sotto l'ultima), in orizzontale il lato esterno in alto o in basso.
                 const n = vv.length;
                 let v1, o1;
-                if (d.verticale) {
+                if (d.compatto) {
+                    // Colonna sul bordo sinistro: il numero sta sull'angolo in alto a destra (verso il campo), mai fuori dallo schermo.
+                    v1 = 't'; o1 = 'r';
+                } else if (d.verticale) {
                     o1 = p.x < st.W / 2 ? 'l' : 'r';
                     v1 = i === 0 ? 't' : i === n - 1 ? 'b' : (i % 2 === 0 ? 'b' : 't');
                 } else {
@@ -516,10 +546,13 @@ void main(){
         const r = voce.el.getBoundingClientRect();
         spara(r.left + r.width / 2, r.top + r.height / 2, 2);
         try {
+            // Nella colonna di miniature la carta in risoluzione si evidenzia di poco (e' a passo stretto: un'ingrandita
+            // forte coprirebbe le vicine), in scena piena passa davanti e si ingrandisce.
+            const gr = st.compatta ? 1.14 : 1.2;
             voce.dentro.animate([
                 { transform: 'scale(1)', filter: 'brightness(1)', offset: 0, easing: 'cubic-bezier(.2,.9,.3,1)' },
-                { transform: 'scale(1.26)', filter: 'brightness(1.55)', offset: .28, easing: 'ease-in-out' },
-                { transform: 'scale(1.2)', filter: 'brightness(1.15)', offset: 1 }
+                { transform: `scale(${gr + .06})`, filter: 'brightness(1.55)', offset: .28, easing: 'ease-in-out' },
+                { transform: `scale(${gr})`, filter: 'brightness(1.15)', offset: 1 }
             ], { duration: 760, fill: 'both' });
             voce.num.animate([
                 { transform: 'scale(1)', offset: 0 }, { transform: 'scale(1.5)', offset: .3 }, { transform: 'scale(1.2)', offset: 1 }
@@ -575,14 +608,16 @@ void main(){
             }
         });
         st.voci.filter((v) => !v.fuori && !displayLinks.includes(v.link)).forEach(esci);
+        // In risoluzione la scena si fa da parte (vedi .cgl-compatta nello stile): niente piu' effetti nascosti dalla Catena.
+        // La modalita' va decisa PRIMA di posizionare le carte: la colonna di miniature e la scena piena hanno posizioni diverse.
+        st.compatta = !!resolvingLink;
+        st.root.classList.toggle('cgl-compatta', st.compatta);
         riposiziona();
         st.voci.forEach((v) => { if (!v.animato) { v.animato = true; animaIngresso(v); } });
         if (resolvingLink) {
             const v = st.voci.find((x) => x.link === resolvingLink);
             if (v && !v.risolvendo && !v.fuori) risolvi(v);
         }
-        // In risoluzione la scena si fa da parte (vedi .cgl-compatta nello stile): niente piu' effetti nascosti dalla Catena.
-        st.root.classList.toggle('cgl-compatta', !!resolvingLink);
         return true;
     }
 

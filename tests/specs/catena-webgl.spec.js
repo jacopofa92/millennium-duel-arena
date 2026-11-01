@@ -48,9 +48,16 @@ module.exports = {
             }));
             assert(uno.scena === null && uno.canvas === 0 && !uno.pannello, `Un Link solo non fa scena e non apre il pannello: ${JSON.stringify(uno)}`);
 
-            // --- secondo Link: nasce la scena
+            // --- secondo Link: nasce la scena (e con lei il suono audio/standard/activateChain.mp3, una volta sola)
+            assert(require('fs').existsSync(path.join(RADICE, 'audio', 'standard', 'activateChain.mp3')), 'Il suono della Catena e\' audio/standard/activateChain.mp3');
+            await page.evaluate(() => {
+                window.__suoniCatena = 0;
+                const orig = SFX.activateChain;
+                SFX.activateChain = function (...a) { window.__suoniCatena++; return orig.apply(this, a); };
+            });
             await page.evaluate(() => { gameState.chain.links = window.__links.slice(0, 2); renderChainStack(); });
             await page.waitForTimeout(900);
+            assert((await page.evaluate(() => window.__suoniCatena)) === 1, 'Il suono della Catena parte una volta quando la scena compare a tutto schermo');
             const due = await page.evaluate(() => {
                 const root = document.getElementById('catenaGL');
                 const canvas = root && root.querySelector('canvas');
@@ -110,10 +117,22 @@ module.exports = {
             await page.waitForTimeout(700);
             const compatta = await page.evaluate(() => {
                 const root = document.getElementById('catenaGL');
-                const r = root.getBoundingClientRect();
-                return { classe: root.classList.contains('cgl-compatta'), velo: getComputedStyle(root.querySelector('.cgl-buio')).opacity, larg: Math.round(r.width), alta: Math.round(r.height), schermo: innerWidth };
+                // Le carte sono una COLONNA di miniature sul bordo sinistro (il contenitore resta a tutto schermo: se lo si
+                // rimpicciolisce le maglie, che lo shader disegna in coordinate di schermo, escono dalle carte).
+                const r = Array.from(root.querySelectorAll('.cgl-pos')).filter((c) => getComputedStyle(c).opacity !== '0').map((c) => c.getBoundingClientRect());
+                const ordinate = r.slice().sort((a, b) => a.top - b.top);
+                return {
+                    classe: root.classList.contains('cgl-compatta'), velo: getComputedStyle(root.querySelector('.cgl-buio')).opacity,
+                    trasformato: getComputedStyle(root).transform !== 'none', carte: r.length,
+                    destraMax: Math.round(Math.max(...r.map((b) => b.right))), schermo: innerWidth,
+                    sovrapposte: ordinate.some((b, i) => i > 0 && b.top < ordinate[i - 1].bottom - 1),
+                    stessaColonna: Math.max(...r.map((b) => b.left)) - Math.min(...r.map((b) => b.left)) < 2,
+                    dentro: r.every((b) => b.left >= 0 && b.top >= 0 && b.bottom <= innerHeight)
+                };
             });
-            assert(compatta.classe && Number(compatta.velo) === 0 && compatta.larg < compatta.schermo * 0.4, `In risoluzione la scena e' compatta e senza velo: ${JSON.stringify(compatta)}`);
+            assert(compatta.classe && Number(compatta.velo) === 0 && !compatta.trasformato && compatta.carte === 3 && compatta.destraMax < compatta.schermo * 0.3,
+                `In risoluzione la scena e' una colonna di miniature a sinistra, senza velo e senza rimpicciolire il contenitore: ${JSON.stringify(compatta)}`);
+            assert(!compatta.sovrapposte && compatta.stessaColonna && compatta.dentro, `Le miniature sono in colonna, non si sovrappongono e stanno nello schermo: ${JSON.stringify(compatta)}`);
             // Una nuova risposta (Link aggiunto, nessuno in risoluzione) la riporta a tutto schermo
             await page.evaluate(() => { gameState.chain.links = window.__links.slice(0, 3); renderChainStack(); });
             await page.waitForTimeout(700);

@@ -33,6 +33,7 @@
  *   phaseChange()        — cambio fase
  *   activateSpell()      — Magia attivata
  *   activateTrap()        — Trappola attivata
+ *   activateChain()       — la Catena compare a tutto schermo (js/ui/catena-webgl.js)
  *   swordsOfRevealingLight() — Spade Rivelatrici: fruscio + rintocchi scaglionati
  *   raigeki()             — Raigeki: tuono, crepitii e scariche sfalsate
  *   darkHole()            — Buco Nero: risucchio grave + impatto
@@ -174,6 +175,11 @@
         },
         activateTrap() {
             tone(300, 0.18, { type: 'square', sweepTo: 520, gain: 0.18 });
+        },
+        /** Catena (scena a tutto schermo): normalmente sostituito da audio/standard/activateChain.mp3; qui un rintocco metallico di scorta. */
+        activateChain() {
+            noiseBurst(0.18, { gain: 0.2, filterType: 'highpass', filterFreq: 2400, filterSweepTo: 5200 });
+            [820, 1230, 1640].forEach((f, i) => tone(f, 0.16, { type: 'triangle', sweepTo: f * 0.8, gain: 0.14, delay: i * 0.07 }));
         },
         /** Spade Rivelatrici: un fruscio discendente (le spade che calano) seguito da rintocchi metallici scaglionati (ogni spada che si conficca). */
         swordsOfRevealingLight() {
