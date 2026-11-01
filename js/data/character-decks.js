@@ -7072,6 +7072,205 @@ ritoccaDeckHard('weevil',                                 // 63% -> 53%
 ritoccaDeckHard('odion',                                  // 58% -> 48%
     { 1027: 2 },
     { 1116: 1, 502: 1 });
+// ================================================================
+// LIMITI UFFICIALI DELLA LISTA (1.5.31, richiesta dell'utente)
+// ================================================================
+// Anche i mazzi dei Duellanti rispettano il numero massimo di copie per carta (campo `limit` di data/cards.json, tradotto da
+// getCardCopyLimit): prima ne ignoravano le carte Limitate (Anfora dell'Avidita' in 74 mazzi...). Per ogni mazzo che ne violava
+// una, la copia in piu' e' tolta e sostituita con un'altra carta GIA' PRESENTE nello stesso mazzo (dello stesso tipo, sotto il
+// suo limite, mai la carta simbolo, mai una rimozione limitata), e il risultato passa validaMazzoPersonaggio. Sta qui in
+// tabella, applicata DOPO i ritocchi del Difficile qui sopra, perche' i mazzi Difficile sono il risultato di lista + ritocchi.
+// I mazzi della Grande Guerra (congelato: true) NON sono toccati, per richiesta esplicita dell'utente.
+// Un mazzo nuovo deve rispettare i limiti da subito (lo controlla tests/specs/limiti-mazzi-duellanti.spec.js).
+const CORREZIONI_LIMITI = {
+    yugiMuto: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 127: 1 } },   // -Anfora dell'Avidità +Libro di Arti Ascose (2)
+        hard: { rimosse: { 36: 2 }, aggiunte: { 127: 2 } },   // -Anfora dell'Avidità +Libro di Arti Ascose (2); -Anfora dell'Avidità +Libro di Arti Ascose (3)
+    },
+    yamiYugi: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 38: 1 } },   // -Anfora dell'Avidità +Polimerizzazione (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 38: 1 } },   // -Anfora dell'Avidità +Polimerizzazione (2)
+    },
+    kaiba: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 226: 1 } },   // -Anfora dell'Avidità +Controlla-Avversario (3)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 226: 1 } },   // -Anfora dell'Avidità +Controlla-Avversario (3)
+    },
+    joey: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 38: 1 } },   // -Anfora dell'Avidità +Polimerizzazione (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 38: 1 } },   // -Anfora dell'Avidità +Polimerizzazione (2)
+    },
+    pegasus: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 38: 1 } },   // -Anfora dell'Avidità +Polimerizzazione (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 485: 1 } },   // -Anfora dell'Avidità +Ritorno Toon (3)
+    },
+    bakura: {
+        hard: { rimosse: { 36: 1 }, aggiunte: { 503: 1 } },   // -Anfora dell'Avidità +Waboku (2): niente 3o Santuario Oscuro, il piano Destiny Board resta com'era (tests/specs/boss-hard-balance)
+    },
+    mako: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 253: 1 } },   // -Anfora dell'Avidità +Giuramento della Balena Fortezza (3)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 253: 1 } },   // -Anfora dell'Avidità +Giuramento della Balena Fortezza (3)
+    },
+    weevil: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 309: 1 } },   // -Anfora dell'Avidità +Armatura Insetto con Cannone Laser (3)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 309: 1 } },   // -Anfora dell'Avidità +Armatura Insetto con Cannone Laser (3)
+    },
+    rex: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 810: 1 } },   // -Anfora dell'Avidità +Pillola dell'Evoluzione Gigante (3)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 810: 1 } },   // -Anfora dell'Avidità +Pillola dell'Evoluzione Gigante (3)
+    },
+    bandit_keith: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 350: 1 } },   // -Anfora dell'Avidità +Rimozione di Limite (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 350: 1 } },   // -Anfora dell'Avidità +Rimozione di Limite (2)
+    },
+    panik: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 151: 1 } },   // -Anfora dell'Avidità +Coro del Santuario (3)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 451: 1 } },   // -Anfora dell'Avidità +Scambio di Anime (3)
+    },
+    bonz: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 38: 1 } },   // -Anfora dell'Avidità +Polimerizzazione (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 38: 1 } },   // -Anfora dell'Avidità +Polimerizzazione (2)
+    },
+    odion: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 434: 1 } },   // -Anfora dell'Avidità +Capro Espiatorio (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 434: 1 } },   // -Anfora dell'Avidità +Capro Espiatorio (2)
+    },
+    ishizu: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 151: 1 } },   // -Anfora dell'Avidità +Coro del Santuario (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 434: 1 } },   // -Anfora dell'Avidità +Capro Espiatorio (2)
+    },
+    espaRoba: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 92: 1 } },   // -Anfora dell'Avidità +Amplificatore (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 92: 1 } },   // -Anfora dell'Avidità +Amplificatore (2)
+    },
+    arkana: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 127: 1 } },   // -Anfora dell'Avidità +Libro di Arti Ascose (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 127: 1 } },   // -Anfora dell'Avidità +Libro di Arti Ascose (2)
+    },
+    paradoxBrothers: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 38: 1 } },   // -Anfora dell'Avidità +Polimerizzazione (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 38: 1 } },   // -Anfora dell'Avidità +Polimerizzazione (2)
+    },
+    tristan: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 38: 1 } },   // -Anfora dell'Avidità +Polimerizzazione (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 38: 1 } },   // -Anfora dell'Avidità +Polimerizzazione (2)
+    },
+    solomonMuto: {
+        hard: { rimosse: { 36: 1 }, aggiunte: { 38: 1 } },   // -Anfora dell'Avidità +Polimerizzazione (2)
+    },
+    simonMuran: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 127: 1 } },   // -Anfora dell'Avidità +Libro di Arti Ascose (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 127: 1 } },   // -Anfora dell'Avidità +Libro di Arti Ascose (2)
+    },
+    jono: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 313: 1 } },   // -Anfora dell'Avidità +Rinvigorimento (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 313: 1 } },   // -Anfora dell'Avidità +Rinvigorimento (2)
+    },
+    mageSoldier: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 313: 1 } },   // -Anfora dell'Avidità +Rinvigorimento (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 313: 1 } },   // -Anfora dell'Avidità +Rinvigorimento (2)
+    },
+    teana: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 127: 1 } },   // -Anfora dell'Avidità +Libro di Arti Ascose (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 127: 1 } },   // -Anfora dell'Avidità +Libro di Arti Ascose (2)
+    },
+    priestSeto: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 38: 1 } },   // -Anfora dell'Avidità +Polimerizzazione (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 38: 1 } },   // -Anfora dell'Avidità +Polimerizzazione (2)
+    },
+    shadi: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 434: 1 } },   // -Anfora dell'Avidità +Capro Espiatorio (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 434: 1 } },   // -Anfora dell'Avidità +Capro Espiatorio (2)
+    },
+    priestessIsis: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 148: 1 } },   // -Anfora dell'Avidità +Scudo Giallo del Desiderio (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 434: 1 } },   // -Anfora dell'Avidità +Capro Espiatorio (2)
+    },
+    heishin: {
+        hard: { rimosse: { 36: 1, 272: 1 }, aggiunte: { 434: 1, 557: 1 } },   // -Anfora dell'Avidità +Capro Espiatorio (2); -Carità Graziosa +Yami (2)
+    },
+    robertoGiacobbo: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 576: 1 } },   // -Anfora dell'Avidità +Antico Telescopio (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 576: 1 } },   // -Anfora dell'Avidità +Antico Telescopio (2)
+    },
+    albertoAngela: {
+        easy: { rimosse: { 503: 1 }, aggiunte: { 143: 1 } },   // -Waboku +Mura del Castello (3)
+        hard: { rimosse: { 724: 1 }, aggiunte: { 465: 1 } },   // -Rinforzi dell'Esercito +Le Truppe A. (3)
+    },
+    alessandroBarbero: {
+        easy: { rimosse: { 503: 1 }, aggiunte: { 143: 1 } },   // -Waboku +Mura del Castello (3)
+        medium: { rimosse: { 724: 1 }, aggiunte: { 38: 1 } },   // -Rinforzi dell'Esercito +Polimerizzazione (3)
+        hard: { rimosse: { 724: 1 }, aggiunte: { 725: 1 } },   // -Rinforzi dell'Esercito +Il Guerriero Sopravvissuto (3)
+    },
+    noah: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 813: 1 } },   // -Anfora dell'Avidità +Benedizione di Sebek (3)
+        hard: { rimosse: { 36: 2, 272: 1 }, aggiunte: { 434: 1, 546: 1, 813: 1 } },   // -Anfora dell'Avidità +Benedizione di Sebek (3); -Anfora dell'Avidità +Capro Espiatorio (2); -Carità Graziosa +Dian Keto il Curatore (2)
+    },
+    gozaburo: {
+        easy: { rimosse: { 251: 1 }, aggiunte: { 161: 1 } },   // -Sepoltura Sciocca +Contratto con Exodia (2)
+        medium: { rimosse: { 251: 1, 272: 1 }, aggiunte: { 161: 1, 434: 1 } },   // -Sepoltura Sciocca -Carita' Graziosa; +1 Contratto con Exodia (il motore Exodia non cresce di piu') +Capro Espiatorio
+        hard: { rimosse: { 36: 1, 251: 1, 272: 2, 409: 1 }, aggiunte: { 434: 1, 595: 2, 503: 1, 820: 1 } },   // -Anfora -Sepoltura Sciocca -2 Carita' Graziosa -Raigeki; +Capro Espiatorio +2 Guardiano Affidabile +Waboku +Annulla Attacco (Contratto con Exodia resta a 1: boss-hard-balance)
+    },
+    gansley: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 79: 1 } },   // -Anfora dell'Avidità +Un Oceano Leggendario (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 79: 1 } },   // -Anfora dell'Avidità +Un Oceano Leggendario (2)
+    },
+    johnson: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 69: 1 } },   // -Anfora dell'Avidità +Blocca Difesa (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 344: 1 } },   // -Anfora dell'Avidità +Spada Leggendaria (2)
+    },
+    nesbitt: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 153: 1 } },   // -Anfora dell'Avidità +Notte Meccanica (3)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 153: 1 } },   // -Anfora dell'Avidità +Notte Meccanica (3)
+    },
+    crump: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 79: 1 } },   // -Anfora dell'Avidità +Un Oceano Leggendario (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 79: 1 } },   // -Anfora dell'Avidità +Un Oceano Leggendario (2)
+    },
+    lector: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 297: 1 } },   // -Anfora dell'Avidità +Hinotama (2)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 434: 1 } },   // -Anfora dell'Avidità +Capro Espiatorio (2)
+    },
+    seeker: {
+        medium: { rimosse: { 36: 1, 272: 1 }, aggiunte: { 307: 2 } },   // -Anfora dell'Avidità +Carte Infinite (2); -Carità Graziosa +Carte Infinite (3)
+        hard: { rimosse: { 36: 2, 141: 1, 272: 2 }, aggiunte: { 115: 1, 257: 1, 307: 1, 335: 2 } },   // -Anfora dell'Avidità +Carte Infinite (3); -Anfora dell'Avidità +Grande Scudo Custode (3); -Carta del Ritorno Sicuro +Golem-Ingranaggio, la Fortezza Movente (3); -Carità Graziosa +Genio della Lampada (2); -Carità Graziosa +Genio della Lampada (3)
+    },
+    strings: {
+        easy: { rimosse: { 141: 1 }, aggiunte: { 307: 1 } },   // -Carta del Ritorno Sicuro +Carte Infinite (3)
+        medium: { rimosse: { 36: 1, 141: 2, 272: 1 }, aggiunte: { 38: 1, 96: 1, 307: 2 } },   // -Anfora dell'Avidità +Polimerizzazione (3); -Carta del Ritorno Sicuro +Carte Infinite (2); -Carta del Ritorno Sicuro +Carte Infinite (3); -Carità Graziosa +Mago delle Acque (3)
+        hard: { rimosse: { 36: 1, 141: 2, 272: 1 }, aggiunte: { 38: 2, 96: 1, 433: 1 } },   // -Anfora dell'Avidità +Polimerizzazione (2); -Carta del Ritorno Sicuro +Polimerizzazione (3); -Carta del Ritorno Sicuro +Mago delle Acque (3); -Carità Graziosa +Sangan (3)
+    },
+    lumis: {
+        medium: { rimosse: { 36: 1 }, aggiunte: { 168: 1 } },   // -Anfora dell'Avidità +Maledizione della Bestia Mascherata (3)
+        hard: { rimosse: { 36: 1, 272: 1 }, aggiunte: { 433: 1, 750: 1 } },   // -Anfora dell'Avidità +Gabbia d'Acciaio dell'Incubo (2); -Carità Graziosa +Sangan (3)
+    },
+    umbra: {
+        medium: { rimosse: { 36: 1, 272: 1 }, aggiunte: { 168: 1, 370: 1 } },   // -Anfora dell'Avidità +Maledizione della Bestia Mascherata (3); -Carità Graziosa +Maschera dell'Antimagia (3)
+        hard: { rimosse: { 36: 1, 272: 1 }, aggiunte: { 370: 1, 372: 1 } },   // -Anfora dell'Avidità +Maschera dell'Antimagia (3); -Carità Graziosa +Maschera del Maledetto (3)
+    },
+    nitemare: {
+        hard: { rimosse: { 272: 1 }, aggiunte: { 78: 1 } },   // -Carità Graziosa +Un Accordo con l'Arcidemone (3)
+    }
+};
+(function applicaCorrezioniLimiti() {
+    Object.keys(CORREZIONI_LIMITI).forEach((personaggio) => {
+        Object.keys(CORREZIONI_LIMITI[personaggio]).forEach((livello) => {
+            const { rimosse, aggiunte } = CORREZIONI_LIMITI[personaggio][livello];
+            const main = characterDeckDatabase[personaggio][livello].main;
+            Object.keys(rimosse).forEach((id) => {
+                const voce = main.find((c) => c.id === Number(id));
+                if (!voce || voce.qty < rimosse[id]) throw new Error('Correzione limiti ' + personaggio + '/' + livello + ': impossibile togliere ' + rimosse[id] + 'x ' + id);
+                voce.qty -= rimosse[id];
+            });
+            for (let i = main.length - 1; i >= 0; i--) if (main[i].qty === 0) main.splice(i, 1);
+            Object.keys(aggiunte).forEach((id) => {
+                const voce = main.find((c) => c.id === Number(id));
+                if (voce) voce.qty += aggiunte[id]; else main.push({ id: Number(id), qty: aggiunte[id] });
+            });
+            if (main.reduce((t, c) => t + c.qty, 0) !== 40) throw new Error('Correzione limiti ' + personaggio + '/' + livello + ': il Main Deck non ha 40 carte');
+        });
+    });
+})();
+
 
 // ================================================================
 // REGOLE DEI TRE LIVELLI — verificate carta per carta su ogni mazzo

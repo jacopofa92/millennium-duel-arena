@@ -23,11 +23,13 @@ module.exports = {
         t.assert(esito.validi, 'Tutti i boss devono avere 40 carte e non piu di tre copie per carta');
         t.assert(JSON.stringify(esito.yugi) === '[2,2,1]', 'Yugi Hard deve conservare il motore di ricerca Exodia');
         t.assert(JSON.stringify(esito.bakura) === '[1,2,2]', 'Bakura Hard deve conservare Destiny Board/Necropaura');
-        t.assert(JSON.stringify(esito.gozaburo) === '[1,1,2]', 'Gozaburo Hard deve conservare il motore Exodia Necross');
+        // 1.5.31: Sepoltura Sciocca (251) e' Limitata (1 copia): da 2 a 1, come tutti i mazzi dei Duellanti.
+        t.assert(JSON.stringify(esito.gozaburo) === '[1,1,1]', 'Gozaburo Hard deve conservare il motore Exodia Necross');
         t.assert(JSON.stringify(esito.noah) === '[3,3,2]', 'Noah Hard deve restare centrato sui Mostri Spirito');
         // 1.4.97: Heishin e Nitemare ammorbiditi su richiesta (Raigeki 409 e Controllo/Anfora in meno,
         // Jinzo 17 in piu' per Nitemare): restano i boss piu' duri ma non piu' un muro (4% -> 16%).
-        t.assert(JSON.stringify(esito.heishin) === '[0,1,2]', 'Heishin Hard deve avere consistenza da superboss');
+        // 1.5.31: l'Anfora dell'Avidita' (36) e' Limitata: da 2 a 1 copia.
+        t.assert(JSON.stringify(esito.heishin) === '[0,1,1]', 'Heishin Hard deve avere consistenza da superboss');
         t.assert(JSON.stringify(esito.nitemare) === '[0,1,1,3]', 'Nitemare Hard deve restare il boss estremo');
         t.assert(esito.separati, 'Nitemare non deve tornare a condividere il deck di DarkNite');
     }
