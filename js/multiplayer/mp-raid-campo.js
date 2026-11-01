@@ -167,13 +167,19 @@
             return;
         }
         // In alto il Boss (come lo vede lui: Magie/Trappole in cima, mostri sotto), in basso il giocatore.
+        // Senza Boss (Tag Team: si guarda solo il compagno in panchina) c'e' il solo blocco del giocatore.
+        const conBoss = Array.isArray(f.bossMostri);
+        if (conBoss) {
+            corpo.append(
+                blocco('mpr-boss', nomeBoss, `LP ${formato(f.bossLp)} · Cimitero ${f.bossCimitero}`, [
+                    mano(f.bossMano, 'b'),
+                    riga(f.bossMt, 'bt', 'mt', 'Magie / Trappole'),
+                    riga(f.bossMostri, 'bm', 'mostro', 'Mostri')
+                ]),
+                (() => { const d = document.createElement('div'); d.className = 'mpr-scontro'; d.textContent = '⚔'; return d; })()
+            );
+        }
         corpo.append(
-            blocco('mpr-boss', nomeBoss, `LP ${formato(f.bossLp)} · Cimitero ${f.bossCimitero}`, [
-                mano(f.bossMano, 'b'),
-                riga(f.bossMt, 'bt', 'mt', 'Magie / Trappole'),
-                riga(f.bossMostri, 'bm', 'mostro', 'Mostri')
-            ]),
-            (() => { const d = document.createElement('div'); d.className = 'mpr-scontro'; d.textContent = '⚔'; return d; })(),
             blocco('mpr-giocatore', c.nome, `Mazzo ${f.mazzo} · Cimitero ${f.cimitero}`, [
                 riga(f.mostri, 'gm', 'mostro', 'Mostri'),
                 riga(f.mt, 'gt', 'mt', 'Magie / Trappole'),
@@ -327,9 +333,11 @@
 
     // ------------------------------------------------------------------ API
     /** `lista` = [{ id, nome, image }] dei compagni (fino a 3), `boss` = nome del Boss. */
-    function avvia(lista, boss) {
+    function avvia(lista, boss, esatto) {
         if (boss) nomeBoss = boss;
-        const vecchi = compagni;
+        // `esatto` (Tag Team): l'elenco e' tutto e solo quello dato, senza tenere i compagni di prima.
+        const vecchi = esatto ? compagni.filter((v) => (lista || []).some((c) => c.id === v.id)) : compagni;
+        if (esatto && apertoId && !(lista || []).some((c) => c.id === apertoId)) chiudiPannello();
         compagni = (lista || []).slice(0, MAX_COMPAGNI).map((c, i) => {
             const id = c.id || (i === 0 ? 'c1' : 'c' + (i + 1));
             const prima = vecchi.find((x) => x.id === id);
@@ -355,5 +363,5 @@
         if (apertoId === id) disegna();
     }
 
-    window.MpRaidCampo = { avvia, ricevi, fotografia, chiudi: chiudiPannello };
+    window.MpRaidCampo = { avvia, ricevi, fotografia, fotoSlot, chiudi: chiudiPannello };
 })();

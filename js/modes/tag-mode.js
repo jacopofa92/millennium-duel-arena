@@ -256,6 +256,7 @@
             aggiornaPannello(posto);
         });
         aggiornaVelo();
+        aggiornaAmico();
     }
 
     function creaPannello(posto) {
@@ -279,6 +280,51 @@
         pannelli[posto] = pannello;
     }
 
+    // ------------------------------------------------------------------ il campo del compagno in panchina
+    // Stesso visore dell'Assalto al Boss (js/multiplayer/mp-raid-campo.js): un tasto col ritratto del compagno che NON è
+    // davanti, e un pannello di SOLA LETTURA col suo campo (mostri, Magie/Trappole anche coperte perché è un alleato, mano,
+    // Life Point). Il suo stato è già in memoria su ogni client (ogni membro in panchina tiene il proprio in `stato`), quindi
+    // non viaggia niente: si legge e basta. Si guarda solo la TUA squadra; quella avversaria non ha nessun visore.
+    let amicoFirma = '';
+    let amicoId = '';
+
+    /** @returns {{ id: string, nome: string, image: string, campo: any } | null} */
+    function amicoInPanchina() {
+        const r = g.TagTeam.riassunto('player');
+        if (!r) return null;
+        const i = r.membri.findIndex((m) => !m.davanti);
+        if (i === -1 || !r.membri[i].vivo) return null;
+        const m = g.TagTeam.membro('player', i);
+        const s = m && m.stato;
+        const R = g.MpRaidCampo;
+        if (!s || !R) return null;
+        const riga = (a) => Array.from({ length: 5 }, (_, k) => R.fotoSlot(a && a[k], true));
+        const campo = {
+            lp: r.membri[i].lp,
+            mano: (s.Hand || []).length,
+            mazzo: Array.isArray(s.Deck) ? s.Deck.length : (s.DeckCount || 0),
+            cimitero: (gameState.playerGraveyard || []).length,
+            mostri: riga(s.MonsterField),
+            mt: riga(s.STField)
+        };
+        return { id: 'tag-' + m.id, nome: m.nome, image: (m.identita && m.identita.image) || '', campo };
+    }
+
+    function aggiornaAmico() {
+        if (typeof gameState === 'undefined' || !gameState || !g.MpRaidCampo || !g.TagTeam.eSquadra('player')) return;
+        const a = amicoInPanchina();
+        const firma = a ? JSON.stringify(a) : '';
+        if (firma === amicoFirma) return;
+        amicoFirma = firma;
+        if (!a) { amicoId = ''; g.MpRaidCampo.avvia([], '', true); return; }
+        // Cambia chi è in panchina (scambio): tasto nuovo; altrimenti si aggiorna solo il campo.
+        if (a.id !== amicoId) {
+            amicoId = a.id;
+            g.MpRaidCampo.avvia([{ id: a.id, nome: a.nome, image: a.image }], '', true);
+        }
+        g.MpRaidCampo.ricevi(a.id, a.campo);
+    }
+
     function costruisciInterfaccia() {
         ['player', 'bot'].forEach((posto) => { if (g.TagTeam.eSquadra(posto)) creaPannello(posto); });
         avviso = document.createElement('div');
@@ -298,7 +344,7 @@
         });
         // Life Point, mano e Mazzo cambiano a ogni mossa: i riquadri si
         // aggiornano con il resto del duello. 'orologio' arriva a ogni cambio turno.
-        const ridisegna = () => { aggiornaPannello('player'); aggiornaPannello('bot'); };
+        const ridisegna = () => { aggiornaPannello('player'); aggiornaPannello('bot'); aggiornaAmico(); };
         g.EventiDuello.ascolta('ridisegna', () => { ridisegna(); aggiornaVelo(); });
         g.EventiDuello.ascolta('life-points', ridisegna);
         g.EventiDuello.ascolta('orologio', aggiornaVelo);
