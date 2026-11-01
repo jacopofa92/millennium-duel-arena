@@ -1,4 +1,6 @@
-/* Tag Team: la scena dello scambio (js/ui/tag-scambio.js). Solo grafica, mai sul tocco. */
+/* Tag Team: le scene dello scambio (js/ui/tag-scambio.js). Solo grafica, mai sul tocco.
+   Lo stile segue il cambio turno classico (#battleStartOverlay in duelMonstersCore.html): stesso font della pagina, scritte
+   maiuscole molto pesanti con la sfumatura, fasce e testo inclinati di -3 gradi. */
 .tgs {
     --tgs-c: 90, 170, 255;
     position: fixed;
@@ -17,6 +19,7 @@
     background: radial-gradient(ellipse at center, rgba(255, 255, 255, .85) 0%, rgba(var(--tgs-c), .55) 38%, rgba(var(--tgs-c), 0) 72%);
 }
 
+/* La fascia delle scene brevi: come le due del cambio turno (fondo scuro, bordi colorati), inclinata di -3 gradi. */
 .tgs-fascia {
     position: absolute;
     left: -6%;
@@ -25,11 +28,11 @@
     height: clamp(150px, 26vh, 230px);
     transform: translateY(-50%) skewY(-3deg);
     background:
-        linear-gradient(90deg, rgba(var(--tgs-c), 0) 0%, rgba(var(--tgs-c), .38) 22%, rgba(var(--tgs-c), .38) 78%, rgba(var(--tgs-c), 0) 100%),
-        rgba(4, 8, 20, .82);
-    border-top: 2px solid rgba(var(--tgs-c), .95);
-    border-bottom: 2px solid rgba(var(--tgs-c), .95);
-    box-shadow: 0 0 26px rgba(var(--tgs-c), .55), inset 0 0 40px rgba(var(--tgs-c), .25);
+        linear-gradient(90deg, rgba(var(--tgs-c), 0) 0%, rgba(var(--tgs-c), .3) 14%, rgba(var(--tgs-c), .3) 86%, rgba(var(--tgs-c), 0) 100%),
+        linear-gradient(90deg, rgba(20, 10, 10, 0) 0%, rgba(18, 10, 10, .92) 12%, rgba(18, 10, 10, .92) 88%, rgba(20, 10, 10, 0) 100%);
+    border-top: 2px solid rgba(var(--tgs-c), .85);
+    border-bottom: 2px solid rgba(var(--tgs-c), .85);
+    box-shadow: 0 0 26px rgba(var(--tgs-c), .45);
 }
 
 .tgs-ritr {
@@ -55,10 +58,15 @@
     object-fit: contain;
     object-position: center bottom;
     filter: drop-shadow(0 0 14px rgba(var(--tgs-c), .85)) drop-shadow(0 6px 10px rgba(0, 0, 0, .7));
-}.tgs-nome {
+}
+.tgs-nome {
     max-width: min(46vw, 260px);
     padding: 2px 10px;
-    font: 700 clamp(12px, 2.4vmin, 17px) / 1.2 Georgia, 'Times New Roman', serif;
+    font-size: clamp(12px, 2.4vmin, 17px);
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    line-height: 1.2;
     color: #fff;
     text-align: center;
     text-shadow: 0 1px 4px #000, 0 0 10px rgba(var(--tgs-c), .9);
@@ -74,44 +82,39 @@
     text-shadow: 0 0 12px #000;
 }
 
+/* TAG! / KO!: stesso carattere, stessa pesantezza e stessa sfumatura delle parole del cambio turno. Il tuo lato usa la sfumatura
+   azzurra (come il nome dell'avversario nel cambio turno), quello avversario la rossa-oro (come TURNO), il KO un rosso cupo. */
 .tgs-testo {
     position: absolute;
     left: 50%;
     bottom: calc(50% + clamp(112px, 19vh, 150px));
-    transform: translate(-50%, 0);
-    font: italic 900 clamp(44px, 11vmin, 104px) / 1 Georgia, 'Times New Roman', serif;
-    letter-spacing: .04em;
-    color: #fff;
-    -webkit-text-stroke: 2px rgba(var(--tgs-c), 1);
-    text-shadow: 0 0 22px rgba(var(--tgs-c), .95), 0 4px 0 rgba(0, 0, 0, .55);
-    opacity: 0;
-    white-space: nowrap;
-}
-
-/* Il campo del lato che cambia resta nascosto mentre la scena lavora (lo fa WAAPI): niente regole qui. */
-@media (prefers-reduced-motion: reduce) {
-    .tgs-fascia { transform: translateY(-50%) skewY(-3deg); }
-}
-
-/* Scena del turno: la riga "Turno N" sotto la fascia, e la scelta di chi affrontare tenuta nascosta finche' la scena e' a schermo. */
-.tgs-turno {
-    position: absolute;
-    left: 50%;
-    top: calc(50% + clamp(128px, 17vh, 150px));
-    transform: translateX(-50%);
-    font: 700 clamp(15px, 3.4vmin, 26px) / 1 Georgia, 'Times New Roman', serif;
-    letter-spacing: .32em;
+    transform: translate(-50%, 0) skewY(-3deg);
+    font-size: clamp(2.2rem, 10vw, 4.6rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: .08em;
     text-transform: uppercase;
     white-space: nowrap;
-    color: #fff;
-    text-shadow: 0 0 14px rgba(var(--tgs-c), .95), 0 2px 0 rgba(0, 0, 0, .6);
+    background: linear-gradient(180deg, #eaf6ff 0%, #7dd3fc 35%, #3498db 75%, #1b6fb8 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 16px rgba(var(--tgs-c), .8));
     opacity: 0;
 }
+.tgs--avv .tgs-testo { background-image: linear-gradient(180deg, #fff0e0 0%, #f7d774 35%, #e74c3c 75%, #a52a1f 100%); }
+.tgs--ko .tgs-testo { background-image: linear-gradient(180deg, #ffe0e0 0%, #ff7a6b 40%, #c0392b 75%, #7a1a12 100%); }
+
+/* SCENA DEL CAMBIO TURNO: sotto c'e' l'annuncio classico (fasce, parole, numero del turno); qui ci sono SOLO le pedine, piu'
+   piccole e nello spazio fra "TURNO + nome" (40%) e "Turno N" (62%). I nomi sono gia' scritti dall'annuncio. */
+.tgs--turno { z-index: 10071; }
+.tgs--turno .tgs-foto { width: var(--tgs-lato, 120px); height: var(--tgs-lato, 120px); }
+.tgs--turno .tgs-nome { display: none; }
+
+/* Durante la scena del turno la scelta di chi affrontare (che si apre all'inizio del turno) e l'avviso "gioca il tuo compagno"
+   restano nascosti: compaiono alla fine, non sopra la scena. */
 body.tgs-turno-attivo .modal-backdrop,
 body.tgs-turno-attivo #quickPopover,
-body.tgs-turno-attivo #quickPopoverCatcher {
+body.tgs-turno-attivo #quickPopoverCatcher,
+body.tgs-turno-attivo .tag-avviso {
     opacity: 0 !important;
     pointer-events: none !important;
 }
-/* L'avviso "gioca il tuo compagno" ripete cio' che la scena gia' dice: resta nascosto finche' la scena e' a schermo. */
-body.tgs-turno-attivo .tag-avviso { opacity: 0 !important; }

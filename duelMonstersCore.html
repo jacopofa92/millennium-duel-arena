@@ -4066,6 +4066,20 @@
             line-height: 1.2;
         }
         .quick-popover-option-icon { font-size: 0.95rem; line-height: 1; }
+        /* Telefono in verticale: due opzioni affiancate (es. "Chi affronti in questo turno?" del Tag Team, con un testo lungo per
+           voce) diventavano due ovali stretti con il testo su sei righe. Qui le voci vanno UNA SOTTO L'ALTRA, a tutta larghezza,
+           con angoli normali e il testo allineato a sinistra accanto all'icona. */
+        @media (max-width: 620px) and (orientation: portrait) {
+            .quick-popover-actions--options { flex-direction: column; flex-wrap: nowrap; }
+            .quick-popover-actions--options .quick-popover-option {
+                flex: 0 0 auto;
+                width: 100%;
+                justify-content: flex-start;
+                text-align: left;
+                border-radius: 14px;
+                padding: 8px 12px;
+            }
+        }
         @keyframes quickPopoverIn {
             0% { opacity: 0; transform: scale(0.75); }
             100% { opacity: 1; transform: scale(1); }

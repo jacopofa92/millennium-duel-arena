@@ -111,20 +111,24 @@ module.exports = {
             await pagina3.waitForSelector('#tagScambio', { timeout: 3000 });
             const scena = await pagina3.evaluate(() => {
                 const r = document.getElementById('tagScambio');
+                const classico = document.getElementById('battleStartOverlay');
                 return {
                     scene: document.querySelectorAll('#tagScambio').length,
-                    standard: !!document.getElementById('battleStartOverlay'),
-                    turno: r.querySelector('.tgs-turno').textContent,
-                    testo: r.querySelector('.tgs-testo').textContent,
+                    classici: document.querySelectorAll('#battleStartOverlay').length,
+                    parole: classico ? Array.from(classico.querySelectorAll('.battle-start-word')).map((w) => w.textContent) : [],
+                    sotto: classico ? classico.querySelector('.battle-start-sub').textContent : '',
+                    pedine: r.querySelectorAll('.tgs-ritr').length,
+                    fascia: r.querySelectorAll('.tgs-fascia').length,
                     nomi: Array.from(r.querySelectorAll('.tgs-nome')).map((n) => n.textContent),
                     davanti: TagTeam.membroAttivo('bot').nome,
                     di: gameState.currentPlayer,
                     nascosta: document.body.classList.contains('tgs-turno-attivo')
                 };
             });
-            t.assert(scena.scene === 1 && !scena.standard, 'Una sola scena, senza l\'annuncio standard sotto: ' + JSON.stringify(scena));
-            t.assert(scena.di === 'bot' && /Pegasus/.test(scena.davanti) && scena.nomi[scena.nomi.length - 1] === scena.davanti, 'La scena dice il nome di chi gioca davvero: ' + JSON.stringify(scena));
-            t.assert(/Turno 4/i.test(scena.turno) && scena.nascosta, 'Riga "Turno 4" e scelte nascoste durante la scena: ' + JSON.stringify(scena));
+            // E' il cambio turno CLASSICO (un solo annuncio, stessi font e fasce) con le pedine sopra: nessuna fascia nostra.
+            t.assert(scena.scene === 1 && scena.classici === 1 && scena.fascia === 0 && scena.pedine === 2, 'Il cambio turno classico + due pedine, senza una seconda fascia: ' + JSON.stringify(scena));
+            t.assert(scena.di === 'bot' && /Pegasus/.test(scena.davanti) && scena.parole[0] === 'TURNO' && scena.parole[1] === scena.davanti && scena.nomi[scena.nomi.length - 1] === scena.davanti, 'L\'annuncio dice il nome di chi gioca davvero: ' + JSON.stringify(scena));
+            t.assert(/TAG!/i.test(scena.sotto) && /Turno 4/i.test(scena.sotto) && scena.nascosta, 'Sottotitolo "TAG! · Turno 4" e scelte nascoste durante la scena: ' + JSON.stringify(scena));
             // Dura come un cambio turno normale (3 s): ancora a schermo dopo 2,4 s, sparita dopo 3,6 s.
             await pagina3.waitForTimeout(2200);
             t.assert(await pagina3.evaluate(() => !!document.getElementById('tagScambio')), 'La scena dura quanto un cambio turno normale (ancora a schermo dopo 2,4 s)');
