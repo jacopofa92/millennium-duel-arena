@@ -4184,6 +4184,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.37 (cache v546, su `main`): **Yugi Muto Facile: tornano Elfo Mistico (x3) e Soldato di Pietra (x2)** (richiesta dell'utente), tenendo i tre attaccanti deboli aggiunti in 1.5.36 (Cucciolo di Drago, Gradius, Drago Trakodon). Misurato: Facile ~55% di vittorie del giocatore (era 45% con tutti i muri, 64% senza). Yami Yugi aveva gia' il Grande Scudo Custode (2/1/1 a Facile/Normale/Difficile): non toccato. Suite completa non eseguita.
 
+1.5.38 (cache v547, su `main`): **la Catena compare solo dopo le animazioni delle carte singole** (segnalato giocando: rispondendo a una carta avversaria si vedevano insieme la Catena e la carta singola). Causa: la risposta non aveva la sua carta a centro schermo all'attivazione (la faceva alla risoluzione, in contemporanea con la scena) e il pannello compariva gia' mentre si costruiva. Ora (`duel-engine.js`) ogni risposta si annuncia subito (carta a centro, log, `alreadyAnnounced`) e la domanda sulla risposta successiva parte a pulse finito; `chain.resolving` (acceso da `resolveChain`) dice che la Catena e' decisa e `renderChainStack` (game-flow.js) non disegna NIENTE (pannello o scena) finche' non lo e'. Il ritmo complessivo non cambia (l'attesa si sposta dalla risoluzione alla risposta). Spec `catena-dopo-le-carte-singole` (verificato al contrario) e `catena-webgl` aggiornato. `tutorial-lezioni-brevi` e `tutorial-lezione-col-nonno` falliscono anche sul commit precedente (verificato con stash): non legati. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

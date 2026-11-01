@@ -59,8 +59,8 @@ module.exports = {
             await page.evaluate(() => { gameState.chain.links = window.__links.slice(0, 3); renderChainStack(); });
             await page.waitForTimeout(500);
             const costruzione = await page.evaluate(() => ({ scena: CatenaGL.stato(), canvas: document.querySelectorAll('#catenaGL').length, suoni: window.__suoniCatena, pannello: document.getElementById('chainStack').classList.contains('show') }));
-            assert(costruzione.scena === null && costruzione.canvas === 0 && costruzione.suoni === 0 && costruzione.pannello,
-                `Mentre la Catena si costruisce niente scena a tutto schermo e niente suono: ${JSON.stringify(costruzione)}`);
+            assert(costruzione.scena === null && costruzione.canvas === 0 && costruzione.suoni === 0 && !costruzione.pannello,
+                `Mentre la Catena si costruisce niente scena, niente suono e niente pannello (c'e' solo la carta singola): ${JSON.stringify(costruzione)}`);
             // Catena DECISA: parte la prima risoluzione e nasce la scena a tutto schermo, col suono
             await page.evaluate(() => { const l = window.__links[2]; gameState.chain.links = window.__links.slice(0, 2); renderChainStack(l); });
             await page.waitForTimeout(900);
@@ -143,7 +143,8 @@ module.exports = {
                 `In risoluzione la scena e' in miniatura a sinistra, senza velo e senza rimpicciolire il contenitore: ${JSON.stringify(compatta)}`);
             assert(compatta.sfasate && compatta.piccole && compatta.dentro, `Le miniature restano sfasate, piccole e dentro lo schermo: ${JSON.stringify(compatta)}`);
             // Una nuova risposta (Link aggiunto, nessuno in risoluzione) la riporta a tutto schermo
-            await page.evaluate(() => { gameState.chain.links = window.__links.slice(0, 3); renderChainStack(); });
+            // (nel motore vero un Link aggiunto durante la risoluzione, da un trigger, trova `resolving` gia' acceso)
+            await page.evaluate(() => { gameState.chain.resolving = true; gameState.chain.links = window.__links.slice(0, 3); renderChainStack(); });
             await page.waitForTimeout(700);
             const piena = await page.evaluate(() => { const root = document.getElementById('catenaGL'); return { classe: root.classList.contains('cgl-compatta'), larg: Math.round(root.getBoundingClientRect().width), schermo: innerWidth }; });
             assert(!piena.classe && piena.larg > piena.schermo * 0.9, `Con la Catena in costruzione la scena e' a tutto schermo: ${JSON.stringify(piena)}`);
@@ -167,7 +168,8 @@ module.exports = {
             // --- "Normali": vale il pannello di sempre, la scena non nasce
             await page.evaluate(() => VideoQuality.set('normali'));
             await prep();
-            await page.evaluate(() => { gameState.chain.links = window.__links.slice(0, 2); renderChainStack(); });
+            // (il pannello compare solo a Catena decisa, cioe' alla prima risoluzione)
+            await page.evaluate(() => { gameState.chain.links = window.__links.slice(0, 1); renderChainStack(window.__links[1]); });
             const normali = await page.evaluate(() => ({
                 pronta: CatenaGL.pronta(), scena: CatenaGL.stato(), canvas: document.querySelectorAll('#catenaGL').length,
                 pannello: document.getElementById('chainStack').classList.contains('show'),

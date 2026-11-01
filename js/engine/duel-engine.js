@@ -4849,11 +4849,19 @@
                     def: choice.def,
                     ctx: makeContext(responderOwner, { card: choice.card, zone: choice.zone, index: choice.index }),
                     isManualActivation: true,
-                    linkNumber: chain.links.length + 1
+                    linkNumber: chain.links.length + 1,
+                    // La risposta si annuncia ORA, con la sua carta a centro schermo come il Link 1 (prima lo faceva
+                    // solo alla risoluzione, in contemporanea con la scena della Catena: due animazioni insieme).
+                    alreadyAnnounced: true,
+                    activatedAt: Date.now()
                 });
+                addToLog(`🛡️ ${responderOwner === 'player' ? 'Hai' : 'Il bot ha'} attivato ${choice.card.name} in risposta!`);
+                if (window.FX) FX.playCardActivateCenterScreen(choice.card);
                 EventiDuello.emetti('catena');
                 turnToRespond = Tavolo.avversario(responderOwner);
-                askNextRound();
+                // Si chiede l'eventuale risposta successiva solo a pulse finito: la Catena (pannello o scena) non
+                // compare mentre qualcuno puo' ancora rispondere, e mai sopra l'animazione di una singola carta.
+                dopoRegola(askNextRound, (window.FX && FX.ACTIVATE_CENTER_DURATION_MS) || 2000);
             }, triggerCard, null, triggerIsOwn);
         };
 
@@ -4935,10 +4943,13 @@
             return;
         }
         chainResolutionInFlight = true;
+        // La grafica della Catena (renderChainStack) compare solo da qui: finche' si costruisce non c'e'.
+        chain.resolving = true;
 
         const resolveNext = () => {
             if (chain.links.length === 0) {
                 chain.active = false;
+                chain.resolving = false;
                 chainResolutionInFlight = false;
                 EventiDuello.emetti('catena');
                 // Svuotata PRIMA di chiamarli: un onDone può aprire a sua
