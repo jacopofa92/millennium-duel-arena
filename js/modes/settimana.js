@@ -9,10 +9,13 @@
  * ora del SERVER via ServerDate quando c'è): tutti vedono la stessa regola e lo
  * stesso avversario, e cambiano nello stesso istante.
  *
- * COME SI APPLICA LA REGOLA senza toccare il motore: prima della prima pescata
- * i mostri del mazzo che non la rispettano vengono tolti e rimpiazzati da mostri
- * validi (`conformaMazzo`). Il mazzo resta di quante carte era, Magie e Trappole
- * non si toccano, e il duello è un duello normale.
+ * COME SI APPLICA LA REGOLA senza toccare il motore:
+ *  - il mazzo del GIOCATORE non si cambia MAI: se anche un solo mostro (Main o Extra Deck) non
+ *    rispetta la regola il duello non si gioca e si dice quali sono (`verificaMazzo`). Prima le
+ *    carte fuori regola venivano sostituite da altre, ed era sbagliato: il mazzo e' suo;
+ *  - il mazzo dell'AVVERSARIO e' costruito dal gioco, e prima della prima pescata i suoi mostri
+ *    fuori regola sono rimpiazzati da mostri validi (`conformaMazzo`): resta di quante carte era,
+ *    Magie e Trappole non si toccano, e il duello è un duello normale.
  *
  * Stato salvato (SaveManager.getModeState('settimana')):
  *   { chiave: '<numero settimana>', vinte: { Facile?: true, Medio?: true, Difficile?: true } }
@@ -151,27 +154,27 @@ const Settimana = (function () {
     }
 
 
-    /** Le opzioni di rimpiazzo del GIOCATORE: solo carte che possiede, mai più copie di quelle che ha. Il catalogo non si tocca. */
-    function opzioniGiocatore(r) {
-        const possedute = cardDatabase.filter((c) => ammette(r, c) && window.SaveManager && SaveManager.getOwnedCount(c.id) > 0);
-        return { catalogo: possedute, copieMassime: (c) => SaveManager.getOwnedCount(c.id) };
-    }
-
     /**
-     * Il giocatore può fare il Duello della Settimana col suo mazzo? Si adatta il mazzo (solo con carte sue) e si guarda se
-     * resta qualche mostro fuori regola. Torna { ok, mancano } (mancano = mostri per cui non ha un rimpiazzo), o
-     * { ok: false, nessunMazzo: true } se non ha un mazzo attivo.
-     * @param {{ main: { id: number, qty: number }[] } | null} spec
+     * Il giocatore puo' fare il Duello della Settimana col suo mazzo? SOLO se TUTTI i mostri del mazzo (Main ed Extra Deck)
+     * rispettano la regola. Nessuna carta viene mai cambiata al suo posto: se qualcuna non la rispetta il duello non si
+     * gioca e si dice quali sono (il mazzo e' suo, lo sistema lui). Magie e Trappole non contano.
+     * Torna { ok, mancano, fuori } (fuori = [{ id, nome, qty }], mancano = quante carte in tutto), oppure
+     * { ok: false, mancano: 0, fuori: [], nessunMazzo: true } se non ha un mazzo attivo.
+     * @param {{ main: { id: number, qty: number }[], extra?: { id: number, qty: number }[] } | null} spec
      */
     function verificaMazzo(spec) {
-        if (!spec || !Array.isArray(spec.main) || !spec.main.length) return { ok: false, mancano: 0, nessunMazzo: true };
-        const carte = [];
-        spec.main.forEach((e) => {
+        if (!spec || !Array.isArray(spec.main) || !spec.main.length) return { ok: false, mancano: 0, fuori: [], nessunMazzo: true };
+        const r = regola();
+        /** @type {{ id: number, nome: string, qty: number }[]} */
+        const fuori = [];
+        (spec.main || []).concat(spec.extra || []).forEach((e) => {
             const modello = cardDatabase.find((c) => c.id === e.id);
-            for (let i = 0; modello && i < e.qty; i++) carte.push(Object.assign({}, modello, { uid: 'v' + carte.length }));
+            if (!modello || modello.type !== 'monster' || ammette(r, modello)) return;
+            const gia = fuori.find((f) => f.id === e.id);
+            if (gia) gia.qty += (e.qty || 1);
+            else fuori.push({ id: e.id, nome: modello.name, qty: e.qty || 1 });
         });
-        const esito = conformaMazzo(carte, regola(), opzioniGiocatore(regola()));
-        return { ok: esito.nonRimpiazzate === 0, mancano: esito.nonRimpiazzate };
+        return { ok: fuori.length === 0, mancano: fuori.reduce((s, f) => s + f.qty, 0), fuori: fuori };
     }
     /** L'Extra Deck: si tengono solo i mostri che rispettano la regola (non si rimpiazza nulla). */
     function conformaExtra(extra, r) {
@@ -189,7 +192,6 @@ const Settimana = (function () {
         ammette: ammette,
         conformaMazzo: conformaMazzo,
         conformaExtra: conformaExtra,
-        opzioniGiocatore: opzioniGiocatore,
         verificaMazzo: verificaMazzo
     };
 })();

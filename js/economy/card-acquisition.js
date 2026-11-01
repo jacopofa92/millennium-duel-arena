@@ -320,6 +320,7 @@
         31: 'Completa Battle City I a Difficile; batti Strings 30 volte a Difficile e almeno una volta termina con 4000 LP.',
         472: 'Completa Battle City II a Difficile, vinci 3 tornei Battle City a Difficile e batti Marik 40 volte a Difficile; in 10 vittorie perdi al massimo 2000 LP.',
         866: 'Sconfiggi Bakura 25 volte a Difficile.',
+        1283: 'Completa 100 Sfide (di qualunque sezione: generiche, storie, modalità). Una sola copia, e non si trova in nessun altro modo.',
         867: 'Completa il capitolo Regno dei Duellanti.', 868: 'Completa Battle City I.',
         869: 'Completa il Mondo Virtuale.', 870: 'Completa Battle City II.',
         246: 'Prima copia: 25 vittorie contro Pegasus a Difficile; poi rarissima in offerte premium.',
@@ -367,6 +368,8 @@
         if (id === 31) return `Battle City I Difficile: ${s.completedChaptersByDifficulty['battlecity1:difficile'] ? 'completata' : 'da completare'} · Strings: ${Math.min(c.sliferStringsHard || 0, 30)}/30 · vittoria con almeno 4000 LP: ${Math.min(c.sliferStringsHealthy || 0, 1)}/1`;
         if (id === 472) return `Battle City II Difficile: ${s.completedChaptersByDifficulty['battlecity2:difficile'] ? 'completata' : 'da completare'} · tornei Battle City: ${Math.min(c.battleCityHardWins || 0, 3)}/3 · Marik: ${Math.min(c.raMarikHard || 0, 40)}/40 · vittorie controllate: ${Math.min(c.raMarikControlled || 0, 10)}/10`;
         if (id === 30) return `Ricompensa: ${s.claimed['obelisk-anime'] ? 'ottenuta' : 'non ancora ottenuta'}`;
+        // Le cento Sfide: il conto sta nel progresso della Sfida stessa (si aggiorna a ogni Sfida completata).
+        if (id === 1283) return `Sfide completate: ${Math.min(progressoSfida('cento-sfide'), 100)}/100`;
         if (id === 1133) return `Marik a Difficile: ${Math.min(c.lavaGolemMarikHard || 0, RULES.signaturesFirstSeries.lavaGolemMarikHard)}/${RULES.signaturesFirstSeries.lavaGolemMarikHard}`;
         if (id === 1139) return `Weevil a Difficile: ${Math.min(c.parasiteWeevilHard || 0, RULES.signaturesFirstSeries.parasiteWeevilHard)}/${RULES.signaturesFirstSeries.parasiteWeevilHard}`;
         if (MODERN_SUPPORT_RULES[id]) {

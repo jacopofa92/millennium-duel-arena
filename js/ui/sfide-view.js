@@ -35,11 +35,16 @@
     // dimenticata qui) finisce in fondo con un titolo generico invece di
     // sparire.
     const GRUPPI = [
+        { type: 'sfideCompletate', titolo: '⏳ Traguardo finale' },
         { type: 'winDuels', titolo: '🏆 Traguardi' },
         { type: 'defeatCharacter', titolo: '⚔️ Duellanti da battere' },
         { type: 'summonMonster', titolo: '✨ Mostri da evocare' },
         { type: 'activateCard', titolo: '🎴 Carte da attivare' },
         { type: 'perfectWin', titolo: '💎 Vittorie perfette' },
+        { type: 'winLowLp', titolo: '🩸 Vittorie al limite' },
+        { type: 'winFast', titolo: '⚡ Vittorie lampo' },
+        { type: 'packOpened', titolo: '📦 Buste' },
+        { type: 'tutorialLezione', titolo: '🎓 Tutorial' },
         { type: 'winInstantly', titolo: '🧩 Vittorie alternative' },
         { type: 'completeTournament', titolo: '🏟️ Tornei' },
         { type: 'winMillenniumItem', titolo: '🔱 Oggetti del Millennio' }
@@ -61,7 +66,8 @@
         { id: 'rivincite', titolo: '⚔️ Rivincite' },
         { id: 'torre', titolo: '🗼 Torre dei Duellanti' },
         { id: 'settimana', titolo: '📅 Duello della Settimana' },
-        { id: 'caccia', titolo: '🏹 Caccia al Boss' }
+        { id: 'caccia', titolo: '🏹 Caccia al Boss' },
+        { id: 'tag', titolo: '🤝 Tag Team' }
     ];
 
     function escape(s) {

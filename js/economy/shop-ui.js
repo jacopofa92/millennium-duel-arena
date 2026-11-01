@@ -478,6 +478,11 @@
                     const estratte = ShopCatalog.apriBusta(busta);
                     const nuove = estratte.filter((id) => SaveManager.getOwnedCount(id) === 0);
                     estratte.forEach((id) => SaveManager.addOwnedCards(id, 1));
+                    // Sfide "Buste" (js/data/challenges-db.js): tipo = base | avanzata | leggendaria | tematica | premium.
+                    if (window.ChallengeTracker) {
+                        const tipo = /^premium-/.test(busta.id) ? 'premium' : (/^tema-/.test(busta.id) ? 'tematica' : busta.id);
+                        ChallengeTracker.recordProgress('packOpened', { tipo: tipo });
+                    }
                     // La cerimonia (js/economy/pack-opening.js): la bustina
                     // si apre, le carte escono coperte e si girano una
                     // alla volta. Le carte sono GIÀ state estratte e

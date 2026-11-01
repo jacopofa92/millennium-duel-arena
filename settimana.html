@@ -38,7 +38,7 @@
     <div id="topbarMount"></div>
 
     <main class="mp-main">
-        <p class="mp-intro">Una regola nuova ogni lunedì, uguale per tutti. Vale per i mostri del tuo mazzo e di quello dell'avversario: quelli che non la rispettano vengono sostituiti da mostri validi, Magie e Trappole restano come sono.</p>
+        <p class="mp-intro">Una regola nuova ogni lunedì, uguale per tutti. Vale per tutti i mostri del tuo mazzo: se anche uno solo non la rispetta non si gioca (non cambiamo mai le tue carte). Il mazzo dell'avversario invece si adatta da solo. Magie e Trappole non contano.</p>
         <div class="mp-riepilogo" id="riepilogo"></div>
 
         <section class="mp-pannello" id="pannelloRegola">
@@ -112,15 +112,18 @@
 
         // Il giocatore usa solo carte che possiede: se col suo mazzo attivo la regola non si può rispettare, non si gioca.
         const verifica = Settimana.verificaMazzo(SaveManager.getActiveDeck());
-        document.getElementById('regolaDesc').textContent = 'Questa settimana si gioca solo con questi mostri. I mostri del tuo mazzo che non la rispettano vengono sostituiti da mostri che possiedi (Livello e ATK piu\' simili).';
+        document.getElementById('regolaDesc').textContent = 'Questa settimana si gioca solo con questi mostri. Nel tuo mazzo (anche nell\'Extra Deck) devono essere tutti così: se ce n\'è uno che non rispetta la regola non si gioca, e nessuna carta viene cambiata al posto tuo.';
         // Avviso: la causa in chiaro e due strade per risolverla (non solo i pulsanti spenti).
         const avviso = document.getElementById('avviso');
         if (verifica.ok) { avviso.hidden = true; avviso.innerHTML = ''; } else {
             avviso.hidden = false;
             const titolo = verifica.nessunMazzo ? 'Non hai un mazzo attivo' : 'Questa settimana non puoi giocare';
+            // I nomi delle carte fuori regola: il mazzo e' suo e lo sistema lui, quindi gli si dice QUALI sono (le prime sei).
+            const elencoFuori = (verifica.fuori || []).slice(0, 6).map((f) => `${f.nome}${f.qty > 1 ? ' ×' + f.qty : ''}`).join(', ')
+                + ((verifica.fuori || []).length > 6 ? ` e altre ${(verifica.fuori || []).length - 6}` : '');
             const corpo = verifica.nessunMazzo
                 ? 'Il Duello della Settimana si gioca con il tuo mazzo attivo: scegline uno per poter sfidare l\'avversario.'
-                : `La regola (${r.titolo}) fa uscire dal mazzo ${verifica.mancano} mostri che non la rispettano, e nella tua collezione non ci sono abbastanza mostri validi per sostituirli. Non ti vengono mai regalate carte per giocare.`;
+                : `La regola (${r.titolo}) non è rispettata da ${verifica.mancano} ${verifica.mancano === 1 ? 'carta' : 'carte'} del tuo mazzo: ${elencoFuori}. Togli o sostituisci questi mostri nell'editor dei mazzi: non cambiamo mai le tue carte al posto tuo.`;
             avviso.innerHTML = '<div class="mp-avviso-icona">⚠️</div><div class="mp-avviso-testo"><strong></strong><p></p>'
                 + '<div class="mp-avviso-azioni"><a class="mp-avviso-link" href="negozio.html">🛒 Apri il Negozio</a>'
                 + '<a class="mp-avviso-link" href="creazione-deck.html">🃏 Modifica il mazzo</a></div></div>';

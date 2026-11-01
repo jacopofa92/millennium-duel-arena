@@ -131,8 +131,8 @@ module.exports = {
                 await page.waitForFunction(() => typeof Settimana !== 'undefined', null, { timeout: 30000 });
                 const avv = await page.evaluate(() => Settimana.avversario());
 
-                // Il giocatore usa SOLO carte che possiede: con un mazzo che la regola non permette e nessun mostro valido in
-                // collezione non si gioca (pagina con i livelli spenti, link diretto riportato alla pagina).
+                // Il mazzo del giocatore NON si cambia mai (nemmeno con mostri validi in collezione): con anche un solo mostro fuori regola non si gioca; in
+                // pagina i livelli sono spenti con l'elenco delle carte, e il link diretto riporta alla pagina.
                 const bloccato = await page.evaluate(() => {
                     if (!SaveManager.hasSave()) SaveManager.createNew('Prova');
                     const save = SaveManager.load();
@@ -148,17 +148,18 @@ module.exports = {
                     Settimana.regola = regolaOrig;
                     return v;
                 });
-                t.assert(bloccato.ok === false && bloccato.mancano >= 1, `Senza mostri validi in collezione non si può giocare: ${JSON.stringify(bloccato)}`);
+                t.assert(bloccato.ok === false && bloccato.mancano >= 1 && bloccato.fuori.length >= 1 && bloccato.fuori.every((f) => f.nome && f.qty >= 1), `Con mostri fuori regola nel mazzo non si può giocare e si dice quali: ${JSON.stringify(bloccato)}`);
                 await page.evaluate(() => { const s = SaveManager.load(); s.decks = []; s.activeDeckId = null; SaveManager.touch(s); });
                 await page.goto(DUELLO + `?mode=settimana&character=${avv}&difficulty=Medio`);
                 await page.waitForURL(/settimana\.html/, { timeout: 20000 });
 
-                // Ora il giocatore possiede abbastanza mostri validi per ogni regola: si gioca.
+                // Ora il mazzo rispetta la regola (solo mostri ammessi): si gioca, e il suo mazzo arriva IDENTICO al duello.
                 await page.evaluate(() => {
                     const save = SaveManager.load();
                     save.collection = {};
-                    cardDatabase.filter((c) => c.type === 'monster' && !c.extraDeck && c.origin !== 'ww1').forEach((c) => { save.collection[c.id] = 3; });
-                    save.decks = [{ id: 'y', name: 'y', main: cardDatabase.filter((c) => c.type === 'monster' && !c.extraDeck && c.origin !== 'ww1').slice(0, 20).map((c) => ({ id: c.id, qty: 2 })), extra: [] }];
+                    const validi = cardDatabase.filter((c) => c.type === 'monster' && !c.extraDeck && c.origin !== 'ww1' && c.attribute !== 'DIVINO' && Settimana.ammette(Settimana.regola(), c)).slice(0, 20);
+                    validi.forEach((c) => { save.collection[c.id] = 3; });
+                    save.decks = [{ id: 'y', name: 'y', main: validi.map((c) => ({ id: c.id, qty: 2 })), extra: [] }];
                     save.activeDeckId = 'y';
                     SaveManager.touch(save);
                 });
@@ -169,7 +170,11 @@ module.exports = {
                     const r = Settimana.regola();
                     const tutte = (posto) => [].concat(gameState[posto + 'Hand'] || [], gameState[posto + 'Deck'] || []);
                     const conta = (posto) => tutte(posto).filter((c) => c.type === 'monster' && !Settimana.ammette(r, c)).length;
+                    // Il mazzo del giocatore e' quello salvato, carta per carta (nessuna sostituzione).
+                    const atteso = {}; SaveManager.getActiveDeck().main.forEach((e) => { atteso[e.id] = e.qty; });
+                    const reale = {}; tutte('player').forEach((c) => { reale[c.id] = (reale[c.id] || 0) + 1; });
                     return {
+                        mazzoInvariato: JSON.stringify(atteso, Object.keys(atteso).sort()) === JSON.stringify(reale, Object.keys(reale).sort()),
                         illegaliGiocatore: conta('player'),
                         illegaliBot: conta('bot'),
                         totaleGiocatore: tutte('player').length,
@@ -179,6 +184,7 @@ module.exports = {
                     };
                 });
                 t.assert(d.illegaliGiocatore === 0 && d.illegaliBot === 0, `Nessun mostro fuori regola, né nel mazzo del giocatore né in quello dell'avversario: ${JSON.stringify(d)}`);
+                t.assert(d.mazzoInvariato, `Il mazzo del giocatore arriva al duello esattamente com'e': ${JSON.stringify(d)}`);
                 t.assert(d.totaleBot === d.attesoBot, `Il mazzo dell'avversario ha tante carte quante ne aveva (${d.totaleBot} contro ${d.attesoBot})`);
                 t.assert(d.totaleGiocatore >= 30, `Il mazzo del giocatore non si è accorciato (${d.totaleGiocatore})`);
                 t.assert(/Solo mostri/.test(d.riquadro), `Il riquadro ricorda la regola: "${d.riquadro}"`);
@@ -259,7 +265,8 @@ module.exports = {
                 await p.evaluate(() => {
                     if (!SaveManager.hasSave()) SaveManager.createNew('Prova');
                     const save = SaveManager.load();
-                    const mostri = cardDatabase.filter((c) => c.type === 'monster' && !c.extraDeck && c.origin !== 'ww1');
+                    // Solo mostri che rispettano la regola di QUESTA settimana: il mazzo del giocatore non viene mai adattato.
+                    const mostri = cardDatabase.filter((c) => c.type === 'monster' && !c.extraDeck && c.origin !== 'ww1' && c.attribute !== 'DIVINO' && Settimana.ammette(Settimana.regola(), c));
                     save.collection = {};
                     mostri.forEach((c) => { save.collection[c.id] = 3; });
                     save.decks = [{ id: 'y', name: 'y', main: mostri.slice(0, 20).map((c) => ({ id: c.id, qty: 2 })), extra: [] }];

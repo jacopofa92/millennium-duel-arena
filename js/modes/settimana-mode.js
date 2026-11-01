@@ -6,11 +6,10 @@
  * Fuori dal motore, come le altre modalità: cambia soltanto la PREPARAZIONE
  * del duello, avvolgendo preparaManiIniziali() (lo stesso punto usato dal
  * Tutorial e dalla Torre) e richiamando poi l'originale, che pesca come sempre.
- *  - I mostri del mazzo del giocatore e di quello dell'avversario che non
- *    rispettano la regola della settimana sono sostituiti (Settimana.conformaMazzo).
- *    Per il giocatore i rimpiazzi vengono SOLO dalla sua collezione (non più copie
- *    di quelle possedute): se non bastano il duello non parte (Settimana.verificaMazzo),
- *    mai carte regalate dal catalogo.
+ *  - Il mazzo del GIOCATORE non si tocca: se anche un solo mostro non rispetta la regola
+ *    della settimana il duello non parte (Settimana.verificaMazzo) e la pagina dice quali.
+ *    Solo i mostri fuori regola del mazzo dell'AVVERSARIO (costruito dal gioco) sono
+ *    sostituiti (Settimana.conformaMazzo).
  *  - Un riquadro in alto ricorda la regola per tutta la durata del duello.
  * Premi di fine duello: i soliti di un duello vinto, più il premio della
  * settimana la prima volta che si vince a quel livello (Settimana.registraVittoria).
@@ -54,15 +53,14 @@
             window.location.replace('settimana.html');
             return;
         }
-        // Il giocatore usa SOLO carte che possiede: se il suo mazzo non si può adattare alla regola con la sua collezione
-        // il duello non parte (nessun rimpiazzo dal catalogo). La pagina lo dice prima; qui si copre il link diretto.
+        // Il mazzo del giocatore deve rispettare la regola cosi' com'e': se non la rispetta il duello non parte (nessuna carta
+        // viene cambiata al suo posto). La pagina lo dice prima, con l'elenco; qui si copre il link diretto.
         if (!Settimana.verificaMazzo(window.SaveManager ? SaveManager.getActiveDeck() : null).ok) {
             window.location.replace('settimana.html');
             return;
         }
         const originale = window.preparaManiIniziali;
         window.preparaManiIniziali = function () {
-            adattaMazzo('player', r, Settimana.opzioniGiocatore(r));
             adattaMazzo('bot', r, { catalogo: cardDatabase });
             originale();
         };

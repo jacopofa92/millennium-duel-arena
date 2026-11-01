@@ -468,11 +468,25 @@
     }
 
     /**
+     * Sfide del Tag Team (js/data/challenges-db.js, gruppo "Tag Team"): una vittoria, col suo formato e livello, e se
+     * nessuno della tua squadra e' stato eliminato. Vale anche per i duelli Tag della Storia (passano da chiudi).
+     */
+    function registraSfide() {
+        if (!g.ChallengeTracker) return;
+        const sessione = g.DuelSession || {};
+        const dati = { formato: boss ? 'boss' : (idAvversario2 ? '2v2' : '2v1'), livello: sessione.difficulty || '' };
+        g.ChallengeTracker.recordProgress('tagWin', dati);
+        const r = g.TagTeam && g.TagTeam.riassunto('player');
+        if (r && r.membri.every((/** @type {any} */ m) => m.vivo)) g.ChallengeTracker.recordProgress('tagWinSenzaKo', dati);
+    }
+
+    /**
      * @param {boolean} vinto @param {boolean} abbandono
      * @returns {VoceEsito[]}
      */
     function chiudi(vinto, abbandono) {
         document.body.classList.remove('tag-turno-compagno');
+        if (vinto && !abbandono) registraSfide();
         const compagno = identitaDi(idCompagno, '🤝');
         const nome = compagno ? compagno.name : 'il tuo compagno';
         if (abbandono) return [{ nota: true, icon: '🤝', rule: `Duello Tag Team abbandonato insieme a ${nome}.` }];

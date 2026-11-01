@@ -1233,6 +1233,200 @@ const challengesDatabase = [
         description: 'Sconfiggi un Boss entro 5 turni',
         type: 'cacciaVeloce', match: {}, target: 1,
         reward: { credits: 500 }
+    },
+
+    // ================================================================
+    // TAG TEAM (sezione Modalita', gruppo "Tag Team"): tagWin si registra a fine duello in js/modes/tag-mode.js (anche per i
+    // duelli Tag della Storia). Params: { formato: '2v1' | '2v2' | 'boss', livello: 'Facile' | 'Medio' | 'Difficile' }.
+    // tagWinSenzaKo: vittoria in cui nessun membro della tua squadra e' stato eliminato.
+    // ================================================================
+    {
+        id: 'tag-prima', sezione: 'modalita', modalita: 'tag',
+        icon: '🤝', label: 'In due si vince meglio',
+        description: 'Vinci un duello Tag Team',
+        type: 'tagWin', match: {}, target: 1,
+        reward: { credits: 200 }
+    },
+    {
+        id: 'tag-cinque', sezione: 'modalita', modalita: 'tag',
+        icon: '🤝', label: 'Affiatati',
+        description: 'Vinci 5 duelli Tag Team',
+        type: 'tagWin', match: {}, target: 5,
+        reward: { credits: 450 }
+    },
+    {
+        id: 'tag-quindici', sezione: 'modalita', modalita: 'tag',
+        icon: '🤝', label: 'Squadra collaudata',
+        description: 'Vinci 15 duelli Tag Team',
+        type: 'tagWin', match: {}, target: 15,
+        reward: { credits: 900 }
+    },
+    {
+        id: 'tag-trenta', sezione: 'modalita', modalita: 'tag',
+        icon: '🏅', label: 'Leggende del Tag',
+        description: 'Vinci 30 duelli Tag Team',
+        type: 'tagWin', match: {}, target: 30,
+        reward: { credits: 1500, starChips: 2 }
+    },
+    {
+        id: 'tag-2v1', sezione: 'modalita', modalita: 'tag',
+        icon: '⚖️', label: 'Due contro uno',
+        description: 'Vinci 5 duelli Tag Team 2 contro 1',
+        type: 'tagWin', match: { formato: '2v1' }, target: 5,
+        reward: { credits: 500 }
+    },
+    {
+        id: 'tag-2v2', sezione: 'modalita', modalita: 'tag',
+        icon: '⚔️', label: 'Quattro al tavolo',
+        description: 'Vinci 5 duelli Tag Team 2 contro 2',
+        type: 'tagWin', match: { formato: '2v2' }, target: 5,
+        reward: { credits: 650 }
+    },
+    {
+        id: 'tag-boss', sezione: 'modalita', modalita: 'tag',
+        icon: '👹', label: 'Caccia in coppia',
+        description: 'Sconfiggi 3 volte un Boss con la tua squadra',
+        type: 'tagWin', match: { formato: 'boss' }, target: 3,
+        reward: { credits: 800, starChips: 1 }
+    },
+    {
+        id: 'tag-difficile', sezione: 'modalita', modalita: 'tag',
+        icon: '🔥', label: 'Nessuno sconto',
+        description: 'Vinci 5 duelli Tag Team a Difficile',
+        type: 'tagWin', match: { livello: 'Difficile' }, target: 5,
+        reward: { credits: 900, starChips: 1 }
+    },
+    {
+        id: 'tag-nessun-ko', sezione: 'modalita', modalita: 'tag',
+        icon: '🛡️', label: 'Nessuno resta indietro',
+        description: 'Vinci 3 duelli Tag Team senza che nessuno della tua squadra venga eliminato',
+        type: 'tagWinSenzaKo', match: {}, target: 3,
+        reward: { credits: 750 }
+    },
+
+    // ================================================================
+    // TUTORIAL: tutorialLezione si registra la PRIMA volta che una lezione viene completata (js/tutorial/tutorial-duel.js e
+    // tutorial-tag.html). Le lezioni sono 13: le 12 del duello guidato piu' "Tag Team: le regole".
+    // ================================================================
+    {
+        id: 'tutorial-prima',
+        icon: '🎓', label: 'Primo giorno di scuola',
+        description: 'Completa una lezione del Tutorial',
+        type: 'tutorialLezione', match: {}, target: 1,
+        reward: { credits: 100 }
+    },
+    {
+        id: 'tutorial-cinque',
+        icon: '🎓', label: 'Allievo diligente',
+        description: 'Completa 5 lezioni del Tutorial',
+        type: 'tutorialLezione', match: {}, target: 5,
+        reward: { credits: 300 }
+    },
+    {
+        id: 'tutorial-tutte',
+        icon: '📜', label: 'Diplomato in Duel Monsters',
+        description: 'Completa tutte le lezioni del Tutorial',
+        type: 'tutorialLezione', match: {}, target: 13,
+        reward: { credits: 800, starChips: 1 }
+    },
+
+    // ================================================================
+    // IMPRESE DEL DUELLO (js/duel-session.js, accanto a 'perfectWin'): vittorie con un'impresa in piu'.
+    //   winLowLp: vinto con al massimo 500 Life Point (params { critica }); winFast: vinto entro 5 turni TUOI (params { veloce }).
+    // ================================================================
+    {
+        id: 'vittoria-al-limite-1',
+        icon: '🩸', label: 'Per un soffio',
+        description: 'Vinci un Duello con 500 Life Points o meno',
+        type: 'winLowLp', match: { critica: true }, target: 1,
+        reward: { credits: 250 }
+    },
+    {
+        id: 'vittoria-al-limite-5',
+        icon: '🩸', label: 'Sul filo del rasoio',
+        description: 'Vinci 5 Duelli con 500 Life Points o meno',
+        type: 'winLowLp', match: { critica: true }, target: 5,
+        reward: { credits: 600 }
+    },
+    {
+        id: 'vittoria-al-limite-15',
+        icon: '🩸', label: 'Il Re della Rimonta',
+        description: 'Vinci 15 Duelli con 500 Life Points o meno',
+        type: 'winLowLp', match: { critica: true }, target: 15,
+        reward: { credits: 1200, starChips: 2 }
+    },
+    {
+        id: 'vittoria-lampo-1',
+        icon: '⚡', label: 'Un lampo',
+        description: 'Vinci un Duello entro 5 turni tuoi',
+        type: 'winFast', match: { veloce: true }, target: 1,
+        reward: { credits: 250 }
+    },
+    {
+        id: 'vittoria-lampo-10',
+        icon: '⚡', label: 'Fulmine a ciel sereno',
+        description: 'Vinci 10 Duelli entro 5 turni tuoi',
+        type: 'winFast', match: { veloce: true }, target: 10,
+        reward: { credits: 700 }
+    },
+    {
+        id: 'vittoria-lampo-25',
+        icon: '⚡', label: 'Il Più Veloce del Regno',
+        description: 'Vinci 25 Duelli entro 5 turni tuoi',
+        type: 'winFast', match: { veloce: true }, target: 25,
+        reward: { credits: 1300, starChips: 2 }
+    },
+
+    // ================================================================
+    // BUSTE (js/economy/shop-ui.js, quando se ne apre una): packOpened, params { tipo: 'base' | 'avanzata' | 'leggendaria' | 'tematica' | 'premium' }.
+    // ================================================================
+    {
+        id: 'buste-prima',
+        icon: '📦', label: 'Strappo e via',
+        description: 'Apri una busta',
+        type: 'packOpened', match: {}, target: 1,
+        reward: { credits: 100 }
+    },
+    {
+        id: 'buste-dieci',
+        icon: '📦', label: 'Collezionista',
+        description: 'Apri 10 buste',
+        type: 'packOpened', match: {}, target: 10,
+        reward: { credits: 400 }
+    },
+    {
+        id: 'buste-trenta',
+        icon: '📦', label: 'Febbre delle buste',
+        description: 'Apri 30 buste',
+        type: 'packOpened', match: {}, target: 30,
+        reward: { credits: 900, starChips: 1 }
+    },
+    {
+        id: 'buste-premium',
+        icon: '💎', label: 'Un colpo di lusso',
+        description: 'Apri 3 buste Premium',
+        type: 'packOpened', match: { tipo: 'premium' }, target: 3,
+        reward: { credits: 700, starChips: 1 }
+    },
+    {
+        id: 'buste-leggendaria',
+        icon: '🌟', label: 'La Busta d\'Oro',
+        description: 'Apri 3 Buste Leggendarie',
+        type: 'packOpened', match: { tipo: 'leggendaria' }, target: 3,
+        reward: { credits: 700, starChips: 1 }
+    },
+
+    // ================================================================
+    // TRAGUARDO FINALE: 'sfideCompletate' non si incrementa con un evento, il suo progresso E' il numero di Sfide completate
+    // (di qualunque sezione, vedi riconciliaMeta in js/challenges/challenge-tracker.js). Il premio e' una carta unica, una copia
+    // sola (limit 1 in cards.json), che non si trova in nessun altro modo: Conto alla Rovescia Finale (id 1283).
+    // ================================================================
+    {
+        id: 'cento-sfide',
+        icon: '⏳', label: 'Il Conto alla Rovescia',
+        description: 'Completa 100 Sfide (di qualunque sezione: generiche, storie, modalità). Premio: la carta segreta Conto alla Rovescia Finale',
+        type: 'sfideCompletate', match: {}, target: 100,
+        reward: { credits: 3000, starChips: 5, cards: [{ id: 1283, qty: 1, nome: 'Conto alla Rovescia Finale' }] }
     }
 ];
 

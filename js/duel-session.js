@@ -833,6 +833,12 @@
             if (typeof gameState !== 'undefined' && gameState && gameState.playerLP >= 8000) {
                 ChallengeTracker.recordProgress('perfectWin', {});
             }
+            // Imprese in piu' (Sfide "Vittorie al limite" e "Vittorie lampo"): vinto con al massimo 500 Life Point, oppure entro
+            // 5 turni TUOI (il contatore dei turni conta quelli di entrambi: i tuoi sono circa la meta').
+            ChallengeTracker.recordProgress('winLowLp', { critica: lpFinali <= 500 });
+            if (typeof gameState !== 'undefined' && gameState && gameState.turn > 0) {
+                ChallengeTracker.recordProgress('winFast', { veloce: Math.ceil(gameState.turn / 2) <= 5 });
+            }
         }
         // Duellanti sbloccati per il Duello Libero (vedi
         // js/data/character-unlocks.js): battere qualcuno in un Torneo o

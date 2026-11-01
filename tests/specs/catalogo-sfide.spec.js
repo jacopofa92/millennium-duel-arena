@@ -102,7 +102,9 @@ module.exports = {
         let m2;
         while ((m2 = re.exec(sorgenti))) tipiRegistrati.add(m2[1]);
         const tipiCatalogo = [...new Set(dati.sfide.map((s) => s.type))];
-        const orfani = tipiCatalogo.filter((tipo) => !tipiRegistrati.has(tipo));
+        // 'sfideCompletate' non si registra con un evento: il suo progresso E' il numero di Sfide completate (riconciliaMeta in
+        // challenge-tracker.js), controllato dal suo spec (sfide-cento-sfide).
+        const orfani = tipiCatalogo.filter((tipo) => tipo !== 'sfideCompletate' && !tipiRegistrati.has(tipo));
         t.assert(orfani.length === 0,
             `Tipi di sfida che il motore non registra mai (resterebbero fermi a 0): ${orfani.join(', ')}`);
 

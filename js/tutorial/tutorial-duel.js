@@ -956,7 +956,12 @@
         if (p.fine) {
             // Arrivati in fondo la lezione è fatta, anche se poi si chiude
             // la pagina invece di premere il pulsante.
-            if (window.SaveManager) SaveManager.setTutorial({ lezioni: { [LEZIONE]: true } });
+            if (window.SaveManager) {
+                const gia = !!SaveManager.getTutorial().lezioni[LEZIONE];
+                SaveManager.setTutorial({ lezioni: { [LEZIONE]: true } });
+                // La Sfida "Tutorial" conta la lezione solo la PRIMA volta (rifarla non la fa contare ancora).
+                if (!gia && window.ChallengeTracker) ChallengeTracker.recordProgress('tutorialLezione', { lezione: LEZIONE });
+            }
             elCoach.classList.add('tut-coach--fine');
         }
         aggiornaTesto();

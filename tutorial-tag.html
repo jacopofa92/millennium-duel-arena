@@ -30,6 +30,7 @@
 <link rel="stylesheet" href="js/ui/topbar.css">
 <link rel="stylesheet" href="js/ui/menu-mobile.css">
 <link rel="stylesheet" href="js/ui/deck-switcher.css">
+<link rel="stylesheet" href="js/ui/challenge-banner.css">
 <title>Yu-Gi-Oh! Millennium Duel Arena — Lezione sul Tag Team</title>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -118,6 +119,13 @@
     </main>
 
 <script src="js/save-manager.js"></script>
+<!-- Completare la lezione conta per le Sfide "Tutorial": serve il tracker coi suoi cataloghi e le ricompense. -->
+<script src="js/cloud/server-date.js"></script>
+<script src="js/economy/rewards.js"></script>
+<script src="js/data/challenges-db.js"></script>
+<script src="js/data/missions-db.js"></script>
+<script src="js/challenges/challenge-tracker.js"></script>
+<script src="js/ui/challenge-banner.js"></script>
 <script src="js/audio/audio-manager.js"></script>
 <script src="js/native/app-back-button.js"></script>
 <script src="js/native/haptics.js"></script>
@@ -198,7 +206,12 @@
         const avanti = document.getElementById('avanti');
         if (avanti) avanti.addEventListener('click', () => { i++; if (window.NativeHaptics) NativeHaptics.light(); disegna(); });
         // Arrivati all'ultima pagina la lezione è letta: si segna come le altre del menu Tutorial.
-        if (ultima) SaveManager.setTutorial({ lezioni: { tagRegole: true } });
+        if (ultima) {
+            const gia = !!SaveManager.getTutorial().lezioni.tagRegole;
+            SaveManager.setTutorial({ lezioni: { tagRegole: true } });
+            // La Sfida "Tutorial" conta la lezione solo la PRIMA volta (rifarla non la fa contare ancora).
+            if (!gia && window.ChallengeTracker) ChallengeTracker.recordProgress('tutorialLezione', { lezione: 'tagRegole' });
+        }
     }
     disegna();
 </script>

@@ -247,6 +247,41 @@
                 : [];
             announceCompletion(def, premi);
         });
+        // Completare una Sfida fa avanzare anche "le cento Sfide" (e potrebbe completarla).
+        riconciliaMeta();
+    }
+
+    // ================================================================
+    // SFIDA DI SFIDE (type 'sfideCompletate', es. "Completa 100 Sfide")
+    // ================================================================
+    // Non si incrementa con un evento di gioco: il suo progresso E' il numero di Sfide completate (di tutte le sezioni:
+    // generiche, storie, modalita'; non le missioni del giorno e della settimana, che si rinnovano da sole). Si ricalcola
+    // dopo ogni completamento (recordProgress) e quando si apre la pagina Sfide (getAllWithProgress), cosi' chi aveva gia'
+    // completato abbastanza Sfide prima che questa esistesse la riceve comunque. Il premio passa da Rewards.forChallenge
+    // come per ogni altra Sfida, una volta sola (si esce se e' gia' completata).
+    function contaSfideCompletate() {
+        return getDefinitions().filter((d) => d.type !== 'sfideCompletate' && SaveManager.getChallengeProgress(d.id).completed).length;
+    }
+
+    function riconciliaMeta() {
+        if (!window.SaveManager) return;
+        const metas = getDefinitions().filter((d) => d.type === 'sfideCompletate');
+        if (metas.length === 0) return;
+        const fatte = contaSfideCompletate();
+        metas.forEach((def) => {
+            const progress = SaveManager.getChallengeProgress(def.id);
+            if (progress.completed) return;
+            const completed = fatte >= def.target;
+            if (!completed && progress.count === fatte) return;
+            SaveManager.setChallengeProgress(def.id, {
+                count: Math.min(fatte, def.target),
+                completed: completed,
+                completedAt: completed ? new Date().toISOString() : null
+            });
+            if (!completed) return;
+            const premi = (window.Rewards && typeof Rewards.forChallenge === 'function') ? Rewards.forChallenge(def) : [];
+            announceCompletion(def, premi);
+        });
     }
 
     /**
@@ -289,6 +324,7 @@
 
     /** Per sfide.html: ogni sfida del catalogo con il proprio progresso attuale unito dentro (count/completed/completedAt), pronta da renderizzare. */
     function getAllWithProgress() {
+        riconciliaMeta();
         return getDefinitions().map((def) => {
             const progress = window.SaveManager ? SaveManager.getChallengeProgress(def.id) : { count: 0, completed: false, completedAt: null };
             return Object.assign({}, def, {
