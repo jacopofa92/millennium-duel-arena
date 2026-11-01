@@ -75,6 +75,9 @@
         if (!dati || spenta() || typeof document === 'undefined') return;
         if (attiva) attiva.finisci();
 
+        // Il suono (audio/standard/tagSwitch.mp3; senza file un fruscio sintetico), una volta per scena.
+        try { if (window.SFX && typeof window.SFX.tagSwitch === 'function') window.SFX.tagSwitch(); } catch (e) { /* l'audio non deve fermare la scena */ }
+
         const movimento = conMovimento();
         const durata = movimento ? DUR_PIENA : DUR_LEGGERA;
         // Il lato del giocatore esce a sinistra (e' li' la pillola della sua squadra), quello avversario a destra.

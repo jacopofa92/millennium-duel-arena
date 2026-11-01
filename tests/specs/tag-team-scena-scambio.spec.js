@@ -34,7 +34,13 @@ module.exports = {
             t.assert(await page.evaluate(() => !document.getElementById('tagScambio') && TagTeam.membroAttivo('player').id === TagTeam.membro('player', 1).id), 'Con DUEL_FAST_OPENING la scena non parte ma lo scambio avviene');
             await page.evaluate(() => TagTeam.scambia('player', 0));
 
-            await page.evaluate(() => { window.TAG_SCAMBIO_FORZA = true; });
+            await page.evaluate(() => {
+                window.TAG_SCAMBIO_FORZA = true;
+                window.__suoniScambio = 0;
+                const orig = SFX.tagSwitch;
+                SFX.tagSwitch = function (...a) { window.__suoniScambio++; return orig.apply(this, a); };
+            });
+            t.assert(require('fs').existsSync(path.join(RADICE, 'audio', 'standard', 'tagSwitch.mp3')), 'Il suono dello scambio e\' audio/standard/tagSwitch.mp3');
 
             // Scambio fra compagni: blu, TAG!, due ritratti con i nomi giusti.
             await page.evaluate(() => TagTeam.scambia('player', 1));
@@ -45,6 +51,7 @@ module.exports = {
             });
             t.assert(/tgs--mio/.test(mio.classe) && !/tgs--ko/.test(mio.classe) && mio.ritratti === 2 && mio.testo === 'TAG!' && mio.tocco === 'none', 'Scambio fra compagni: scena blu con TAG!: ' + JSON.stringify(mio));
             t.assert(/Joey/i.test(mio.nomi[1]), 'Entra Joey: ' + JSON.stringify(mio.nomi));
+            t.assert((await page.evaluate(() => window.__suoniScambio)) === 1, 'Il suono dello scambio parte una volta per scena');
             // Il campo del tuo lato e' nascosto all'inizio...
             const nascosto = await page.evaluate(() => Number(getComputedStyle(document.getElementById('playerFieldBoard')).opacity));
             t.assert(nascosto < 0.5, 'All\'inizio il campo del lato che cambia e\' nascosto (opacita ' + nascosto + ')');

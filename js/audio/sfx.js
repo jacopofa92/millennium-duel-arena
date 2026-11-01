@@ -34,6 +34,7 @@
  *   activateSpell()      — Magia attivata
  *   activateTrap()        — Trappola attivata
  *   activateChain()       — la Catena compare a tutto schermo (js/ui/catena-webgl.js)
+ *   tagSwitch()           — scambio fra compagni/avversari nel Tag Team (js/ui/tag-scambio.js)
  *   swordsOfRevealingLight() — Spade Rivelatrici: fruscio + rintocchi scaglionati
  *   raigeki()             — Raigeki: tuono, crepitii e scariche sfalsate
  *   darkHole()            — Buco Nero: risucchio grave + impatto
@@ -180,6 +181,11 @@
         activateChain() {
             noiseBurst(0.18, { gain: 0.2, filterType: 'highpass', filterFreq: 2400, filterSweepTo: 5200 });
             [820, 1230, 1640].forEach((f, i) => tone(f, 0.16, { type: 'triangle', sweepTo: f * 0.8, gain: 0.14, delay: i * 0.07 }));
+        },
+        /** Tag Team, scambio fra compagni o fra avversari (js/ui/tag-scambio.js): normalmente sostituito da audio/standard/tagSwitch.mp3; qui un fruscio con un colpo di scorta. */
+        tagSwitch() {
+            noiseBurst(0.3, { gain: 0.16, filterFreq: 900, filterSweepTo: 4200 });
+            tone(240, 0.22, { type: 'triangle', sweepTo: 520, gain: 0.16, delay: 0.22 });
         },
         /** Spade Rivelatrici: un fruscio discendente (le spade che calano) seguito da rintocchi metallici scaglionati (ogni spada che si conficca). */
         swordsOfRevealingLight() {

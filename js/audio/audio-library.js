@@ -164,7 +164,7 @@
     const PRELOAD_STANDARD_NAMES = [
         'draw', 'place', 'summon', 'tribute', 'attackSwing', 'clash', 'destroy',
         'directHit', 'lifePointsLost', 'lifePointsGained', 'turnChange', 'phaseChange',
-        'activateSpell', 'activateTrap', 'activateChain', 'swordsOfRevealingLight', 'darkHole',
+        'activateSpell', 'activateTrap', 'activateChain', 'tagSwitch', 'swordsOfRevealingLight', 'darkHole',
         'fusion', 'evocation', 'victory', 'defeat'
     ];
     const startPreload = () => PRELOAD_STANDARD_NAMES.forEach((name) => {

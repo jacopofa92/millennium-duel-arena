@@ -4128,6 +4128,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.9 (cache v518, su `main`): **scena dello scambio nel Tag Team** (richiesta dell'utente). `js/ui/tag-scambio.js/.css`, `TagScambio.mostra(posto, dati)` chiamata da `tag-mode.js` all'evento `scambio` (`tag.js` ora passa un terzo argomento a `avvisa`: `{ esce, entra, eliminato }`). SOLO GRAFICA, nessuna regola aspetta e niente viaggia in rete (ogni client la disegna da se'). Fascia obliqua blu (compagni) o rossa (avversari), ritratto di chi esce che scivola via e di chi entra che arriva, TAG! (KO! con X sul ritratto se e' un'eliminazione), lampo, e il campo/mano del lato che cambia nascosti finche' il nuovo membro e' entrato (WAAPI su opacita'/filtro del contenitore, mai trasformazioni). ~1,15 s, un tocco la salta; con Dettagli Normali o movimento ridotto resta una versione ferma di 0,7 s. Spenta con `DUEL_FAST_OPENING` (la suite) salvo `TAG_SCAMBIO_FORZA`; `TAG_SCAMBIO_OFF` la spegne. **Insidia presa**: l'`easing` dell'intera animazione WAAPI deforma i tempi dei keyframe con `offset` (la fascia si spegneva a meta'): animazione `linear` e easing sui singoli keyframe. Spec `tag-team-scena-scambio`. Suite completa non eseguita.
 
+1.5.10 (cache v519, su `main`): **suono dello scambio nel Tag Team** (richiesta dell'utente): `audio/standard/nonAssegnate/effetto2.mp3` rinominato `audio/standard/tagSwitch.mp3` (con `git mv`), nuovo `SFX.tagSwitch` (con fruscio sintetico di scorta in `sfx.js` e nel precaricamento di `audio-library.js`), suonato una volta per scena in `TagScambio.mostra`. Spec `tag-team-scena-scambio` esteso. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**
