@@ -589,6 +589,8 @@
      campagna dichiara CHI si affronta, non che faccia abbia. -->
 <script src="js/data/characters-db.js"></script>
 <script src="js/data/story-campaigns.js"></script>
+<!-- Le conversazioni dopo la vittoria di un duello (StoryProgress.getDopoDuello). -->
+<script src="js/data/story-dopo-duello.js"></script>
 <!-- I ritocchi dell'Editor Mappa (js/story/story-ritocchi.js): subito dopo il catalogo. -->
 <script src="js/data/story-ritocchi.js"></script>
 <script src="js/story/story-ritocchi.js"></script>
@@ -1779,6 +1781,31 @@
         // L'esito dell'ultimo duello si consuma PRIMA di disegnare, così
         // la mappa si apre già con la tappa superata alle spalle.
         const esito = StoryProgress.consumaEsitoDuello(campagnaAperta);
+
+        // Vittoria NUOVA (non una tappa rigiocata): prima della mappa si racconta come e' finita. Senza una voce per la
+        // tappa si va dritti, come sempre; la conversazione non deve mai poter bloccare il ritorno alla mappa.
+        const vintaOra = !esito.perso && !esito.rigiocata && (esito.avanzato || esito.laterale === true);
+        const dopo = vintaOra && esito.tappaId ? StoryProgress.getDopoDuello(campagnaAperta, esito.tappaId) : null;
+        if (dopo) {
+            // La mappa sotto si disegna comunque subito: chiudendo la conversazione si e' gia' dove si deve essere.
+            const battute = vociDelProtagonista(campagnaAperta, dopo.battute, dopo.tappa);
+            const pg = dopo.tappa.characterId ? StoryProgress.getPersonaggio(dopo.tappa.characterId) : null;
+            let finito = false;
+            const procedi = () => { if (finito) return; finito = true; proseguiDopoEsito(esito); };
+            try {
+                StoryCutscene.play(battute, {
+                    titolo: (pg && pg.name) || dopo.tappa.label || '',
+                    sottotitolo: 'Dopo il duello',
+                    sfondo: [dopo.tappa.field],
+                    ritratti: dopo.tappa.avatar
+                }).then(procedi, procedi);
+            } catch (e) { procedi(); }
+            return;
+        }
+        proseguiDopoEsito(esito);
+    }
+
+    function proseguiDopoEsito(esito) {
 
         // --- Si sta giocando un TORNEO dentro la campagna -------------
         if (esito.torneoId || torneoAperto) {

@@ -772,7 +772,8 @@
                 perso: esito.playerWon !== true,
                 rigiocata: esito.rigiocata === true,
                 laterale: true, torneoId: esito.torneoId,
-                opponentId: esito.opponentId || null
+                opponentId: esito.opponentId || null,
+                tappaId: esito.tappaId || null
             };
         }
 
@@ -786,7 +787,8 @@
             const rigiocato = esito.rigiocata === true;
             const base = {
                 avanzato: false, appenaFinita: false, perso: false, rigiocata: rigiocato,
-                torneoId: esito.torneoId, opponentId: esito.opponentId || null
+                torneoId: esito.torneoId, opponentId: esito.opponentId || null,
+                tappaId: esito.tappaId || null
             };
             if (esito.playerWon !== true) {
                 // In un TORNEO si ricomincia dal primo incontro; in
@@ -843,7 +845,46 @@
             // Chi si e' appena battuto: serve alla pagina per dirlo, e
             // arriva dall'esito del duello perche' la tappa a quel punto
             // e' gia' alle spalle.
-            opponentId: esito.opponentId || null
+            opponentId: esito.opponentId || null,
+            // QUALE tappa: serve per la conversazione dopo la vittoria (getDopoDuello).
+            tappaId: esito.tappaId || null
+        };
+    }
+
+    /**
+     * La conversazione DOPO la vittoria di un duello (vedi js/data/story-dopo-duello.js), o null se la tappa non ne ha.
+     * Torna `{ battute, tappa }` dove `tappa` e' la tappa con quello che serve a mostrarla (protagonista e arena gia'
+     * risolti come per il `dialogo` prima del duello: tappa, poi area, poi capitolo, poi campagna).
+     * Una tappa del catalogo che dichiara un `dopo` suo vince sul file dei dialoghi.
+     * @param {string} campaignId
+     * @param {string} tappaId
+     * @returns {{ battute: any[], tappa: any } | null}
+     */
+    function getDopoDuello(campaignId, tappaId) {
+        const campagna = getCampaign(campaignId);
+        if (!campagna || !tappaId) return null;
+        const dalFile = typeof storyDopoDuello !== 'undefined' ? storyDopoDuello[tappaId] : null;
+        let trovata = null;
+        (campagna.capitoli || []).forEach((cap) => {
+            (cap.tappe || []).forEach((tappa) => {
+                const risolvi = (nodo, contenitore) => ({
+                    node: nodo,
+                    protagonista: nodo.protagonista || (contenitore && contenitore.protagonista) || cap.protagonista || campagna.protagonista || null,
+                    field: nodo.field || (contenitore && contenitore.field) || cap.field || null
+                });
+                if (tappa.id === tappaId) trovata = risolvi(tappa, null);
+                (tappa.tappe || []).forEach((prova) => { if (prova.id === tappaId) trovata = risolvi(prova, tappa); });
+            });
+        });
+        if (!trovata) return null;
+        const battute = trovata.node.dopo || dalFile;
+        if (!battute || !battute.length) return null;
+        return {
+            battute,
+            tappa: {
+                id: tappaId, label: trovata.node.label || '', characterId: trovata.node.characterId || null,
+                protagonista: trovata.protagonista, field: trovata.field, avatar: trovata.node.avatar
+            }
         };
     }
 
@@ -1301,6 +1342,7 @@
         getProgress: getProgress,
         avanza: avanza,
         consumaEsitoDuello: consumaEsitoDuello,
+        getDopoDuello: getDopoDuello,
         riscuotiPremioFinale: riscuotiPremioFinale,
         pagaStelleArco: pagaStelleArco,
         rifattoNodo: rifattoNodo,
