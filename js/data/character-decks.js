@@ -7194,12 +7194,9 @@ const CORREZIONI_LIMITI = {
     },
     albertoAngela: {
         easy: { rimosse: { 503: 1 }, aggiunte: { 143: 1 } },   // -Waboku +Mura del Castello (3)
-        hard: { rimosse: { 724: 1 }, aggiunte: { 465: 1 } },   // -Rinforzi dell'Esercito +Le Truppe A. (3)
     },
     alessandroBarbero: {
         easy: { rimosse: { 503: 1 }, aggiunte: { 143: 1 } },   // -Waboku +Mura del Castello (3)
-        medium: { rimosse: { 724: 1 }, aggiunte: { 38: 1 } },   // -Rinforzi dell'Esercito +Polimerizzazione (3)
-        hard: { rimosse: { 724: 1 }, aggiunte: { 725: 1 } },   // -Rinforzi dell'Esercito +Il Guerriero Sopravvissuto (3)
     },
     noah: {
         medium: { rimosse: { 36: 1 }, aggiunte: { 1007: 1 } },   // -Anfora dell'Avidita' +Soldato Susa (3): un attaccante, non una cura (con +Benedizione di Sebek il Normale saliva di 8 punti)
@@ -7232,12 +7229,11 @@ const CORREZIONI_LIMITI = {
     },
     seeker: {
         medium: { rimosse: { 36: 1, 272: 1 }, aggiunte: { 307: 2 } },   // -Anfora dell'Avidità +Carte Infinite (2); -Carità Graziosa +Carte Infinite (3)
-        hard: { rimosse: { 36: 2, 141: 1, 272: 2 }, aggiunte: { 115: 1, 257: 1, 307: 1, 335: 2 } },   // -Anfora dell'Avidità +Carte Infinite (3); -Anfora dell'Avidità +Grande Scudo Custode (3); -Carta del Ritorno Sicuro +Golem-Ingranaggio, la Fortezza Movente (3); -Carità Graziosa +Genio della Lampada (2); -Carità Graziosa +Genio della Lampada (3)
+        hard: { rimosse: { 36: 2, 272: 2 }, aggiunte: { 115: 1, 307: 1, 335: 2 } },   // -Anfora dell'Avidità +Carte Infinite; -Anfora dell'Avidità +Grande Scudo Custode; -Carità Graziosa +Genio della Lampada; -Carità Graziosa +Genio della Lampada [141/724 ora a limite 2: ricalcolato]
     },
     strings: {
-        easy: { rimosse: { 141: 1 }, aggiunte: { 307: 1 } },   // -Carta del Ritorno Sicuro +Carte Infinite (3)
-        medium: { rimosse: { 36: 1, 141: 2, 272: 1 }, aggiunte: { 38: 1, 96: 1, 307: 2 } },   // -Anfora dell'Avidità +Polimerizzazione (3); -Carta del Ritorno Sicuro +Carte Infinite (2); -Carta del Ritorno Sicuro +Carte Infinite (3); -Carità Graziosa +Mago delle Acque (3)
-        hard: { rimosse: { 36: 1, 141: 2, 272: 1 }, aggiunte: { 38: 2, 96: 1, 433: 1 } },   // -Anfora dell'Avidità +Polimerizzazione (2); -Carta del Ritorno Sicuro +Polimerizzazione (3); -Carta del Ritorno Sicuro +Mago delle Acque (3); -Carità Graziosa +Sangan (3)
+        medium: { rimosse: { 36: 1, 141: 1, 272: 1 }, aggiunte: { 38: 1, 96: 1, 307: 1 } },   // -Anfora dell'Avidità +Polimerizzazione; -Carta del Ritorno Sicuro +Carte Infinite; -Carità Graziosa +Mago delle Acque [141/724 ora a limite 2: ricalcolato]
+        hard: { rimosse: { 36: 1, 141: 1, 272: 1 }, aggiunte: { 38: 2, 433: 1 } },   // -Anfora dell'Avidità +Polimerizzazione; -Carta del Ritorno Sicuro +Polimerizzazione; -Carità Graziosa +Sangan [141/724 ora a limite 2: ricalcolato]
     },
     lumis: {
         medium: { rimosse: { 36: 1 }, aggiunte: { 168: 1 } },   // -Anfora dell'Avidità +Maledizione della Bestia Mascherata (3)

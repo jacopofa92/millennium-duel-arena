@@ -1365,7 +1365,7 @@ const cardDatabase = [
     "subtype": "continuous",
     "effect": "Quando un mostro viene Special Summonato dal tuo Cimitero, puoi pescare 1 carta.",
     "artOnly": true,
-    "limit": 1
+    "limit": 2
   },
   {
     "id": 142,
@@ -8068,7 +8068,7 @@ const cardDatabase = [
     "subtype": "normal",
     "effect": "Aggiungi 1 mostro Tipo Guerriero di Livello 4 o inferiore dal tuo Deck alla tua mano.",
     "artOnly": true,
-    "limit": 1
+    "limit": 2
   },
   {
     "id": 725,
