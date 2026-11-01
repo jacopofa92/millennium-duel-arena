@@ -328,5 +328,160 @@ const storyDopoDuello = {
         { io: true, testo: 'Mi sei sempre stato accanto, Atem. Non avrei potuto onorarti in modo diverso.' },
         { chi: 'yamiYugi', testo: 'La porta dell’aldilà si apre per me, ma il tuo cuore resta ovunque tu vada. Grazie, amico mio.' },
         { io: true, testo: 'Grazie a te. Ci rivedremo, Atem, nel luogo in cui nessun duello finisce mai davvero.' }
+    ],
+
+    // ================================================================== MEMORIE PROIBITE (forbiddenMemories)
+    // Mancano di proposito: fm-2-heishin (la scena "Il sigillo" racconta come finisce), fm-3t-kaiba ("Sette su sette"),
+    // fm-6-heishin (il duello dopo si apre sulle parole di Seto), fm-6-seto ("L'inganno di Heishin"), fm-7-darknite ("La vera
+    // forma") e fm-7-finale-duello ("Il nuovo Faraone"): subito dopo c'e' gia' una scena o un altro duello che lo racconta.
+
+    // ---------------------------------------------------------------- Il Regno del Principe
+    'fm-1-simon': [
+        { chi: 'simonMuran', testo: 'Hai vinto, principe. E hai vinto quasi come se ti stessi giocando la regola seconda.' },
+        { io: true, testo: 'Fuori da questa stanza non sarà altrettanto facile, lo so. Per questo mi alleno con te.' },
+        { chi: 'simonMuran', testo: 'Allora continuiamo domani. E la prossima volta, per cortesia, esci dal portone e non dal muro del giardino.' }
+    ],
+    'fm-1-teana': [
+        { chi: 'teana', testo: 'Non ti sei trattenuto, hai ragione. Ti ho battuto in una sola cosa: nel chiacchierare.' },
+        { io: true, testo: 'Hai giocato bene, Teana. Peccato che il mantello non c’entrasse niente.' },
+        { chi: 'teana', testo: 'Ti sei guadagnato un posto nell’arena. Ma non montarti la testa: Jono ti aspetta e lui non fa sconti.' }
+    ],
+    'fm-1-jono': [
+        { chi: 'jono', testo: 'Ahah! Ho perso e non mi dispiace nemmeno! Ti sei meritato la festa, ragazzo.' },
+        { io: true, testo: 'Allora portami a vedere i duelli dei sacerdoti, come promesso.' },
+        { chi: 'jono', testo: 'Promessa è promessa. Ma stai lontano dai sacerdoti più alti: quello con la faccia sempre seria non perdona nulla.' }
+    ],
+    'fm-1-seto-festa': [
+        { chi: 'priestSeto', testo: 'Hmph. Hai vinto. O forse ti ho lasciato vincere: non ho ancora deciso quale delle due.' },
+        { io: true, testo: 'Qualunque sia la risposta, Jono resta sotto la mia protezione.' },
+        { chi: 'priestSeto', testo: 'Ricorda la mia faccia, ragazzino. Quando ci rivedremo, non avrò più voglia di scherzare.' }
+    ],
+
+    // ---------------------------------------------------------------- Cinquemila anni dopo (il torneo di Kaiba)
+    'fm-3t-rex': [
+        { chi: 'rex', testo: 'Non ci credo… i miei dinosauri schiacciati da un nanerottolo col ciondolo. Mi sa che il nanerottolo ha qualcosa dentro.' },
+        { io: true, testo: 'Hai giocato forte, Rex. Mi aspettano altri tre preliminari.' },
+        { chi: 'rex', testo: 'Allora fai attenzione: dopo di me non sono tutti simpatici come i dinosauri.' }
+    ],
+    'fm-3t-weevil': [
+        { chi: 'weevil', testo: 'I miei insetti… mangiati da un moccioso! Impossibile!' },
+        { io: true, testo: 'Te l’avevo detto di masticare piano.' },
+        { chi: 'weevil', testo: 'Vai avanti, vai avanti. Ti aspetta qualcuno che non ride dei trucchetti.' }
+    ],
+    'fm-3t-mai': [
+        { chi: 'mai', testo: 'Hai chiamato "debito" quello che ti pesa addosso. Sei più strano di quanto pensassi, tesoro.' },
+        { io: true, testo: 'Non l’ho capito del tutto nemmeno io. Ma ora so che devo estinguerlo.' },
+        { chi: 'mai', testo: 'Allora vai avanti. E se un giorno lo capisci, vieni a dirmelo.' }
+    ],
+    'fm-3t-keith': [
+        { chi: 'bandit_keith', testo: 'Ho giocato sporco fino all’ultimo e non è servito. Maledetto ragazzino.' },
+        { io: true, testo: 'La regola numero uno, Keith: arrivare in fondo conta, ma conta anche come ci si arriva.' },
+        { chi: 'bandit_keith', testo: 'Fatti da parte, tu sei dentro. Le finali non sono più un gioco da ragazzi.' }
+    ],
+    'fm-3t-shadi': [
+        { chi: 'shadi', testo: 'La Bilancia ha pesato il tuo cuore e non è crollata. Hai dentro qualcosa da aprire, come speravo.' },
+        { io: true, testo: 'Prendo la Chiave e la Bilancia. Ma non so ancora che cosa dovrò aprire.' },
+        { chi: 'shadi', testo: 'Lo scoprirai strada facendo. Gli altri tre Oggetti sono nelle mani dei prossimi finalisti: ognuno ti chiederà qualcosa di diverso.' }
+    ],
+    'fm-3t-bakura': [
+        { chi: 'bakura', testo: 'Il Puzzle ha risposto al posto tuo. L’Anello non sbaglia mai direzione… ma questa volta ha trovato più di quanto cercasse.' },
+        { io: true, testo: 'Non sono venuto a combattere per quello che c’è dentro il Puzzle. Ma l’Anello adesso è mio.' },
+        { chi: 'bakura', testo: 'Tienilo pure, ragazzo. Quello che hai dentro non si consegna con una sconfitta.' }
+    ],
+    'fm-3t-pegasus': [
+        { chi: 'pegasus', testo: 'Ooh. L’Occhio vedeva ogni carta, e tu hai vinto lo stesso. Davvero interessante.' },
+        { io: true, testo: 'Vedere cosa faccio non è sapere perché lo faccio, Pegasus.' },
+        { chi: 'pegasus', testo: 'Ti consegno l’Occhio, giovanotto. Ma stai attento: chi non vede più nulla di sé, a volte ha il coraggio di guardare meglio.' }
+    ],
+    'fm-3t-isis': [
+        { chi: 'ishizu', testo: 'Come avevo visto. Eppure la fine è molto più pesante a viverla che a vederla.' },
+        { io: true, testo: 'Hai giocato per vincere, come promesso. Ti ringrazio per non essere stata indulgente.' },
+        { chi: 'ishizu', testo: 'Prendi la Collana. E ricorda: il nome che hai dimenticato ti sta aspettando alla fine, non qui.' }
+    ],
+
+    // ---------------------------------------------------------------- I Cinque Maghi Guerrieri
+    'fm-4-mage-soldier': [
+        { chi: 'mageSoldier', testo: 'Impossibile… hai davvero il volto del principe scomparso. Heishin non mi coprirà d’oro, ma mi farà la pelle.' },
+        { io: true, testo: 'Non lo saprà da me. Fammi passare, e dimentica di avermi visto.' },
+        { chi: 'mageSoldier', testo: 'Passa. Ma la città è piena di occhi di Heishin: cammina nell’ombra.' }
+    ],
+    'fm-4-jono2': [
+        { chi: 'jono', testo: 'Come ai vecchi tempi, sì. Ti credevo morto, e invece giochi ancora meglio di prima.' },
+        { io: true, testo: 'Sono tornato, Jono. Ma il regno è in mano a Heishin, e ho bisogno di voi.' },
+        { chi: 'jono', testo: 'Allora ce l’hai. Teana ti aspetta: prima di crederti vorrà battersi anche lei.' }
+    ],
+    'fm-4-teana2': [
+        { chi: 'teana', testo: 'Sei davvero tu. Nessun altro giocherebbe così: con quella calma che dà sui nervi.' },
+        { io: true, testo: 'Anni lontano da casa, Teana. Ora aiutatemi a riprendermela.' },
+        { chi: 'teana', testo: 'Conta su di me. Heishin ci ha tolto tutto, e ora è il momento di riprenderci qualcosa.' }
+    ],
+    'fm-4-ocean': [
+        { chi: 'oceanMage', testo: 'L’acqua ha deciso. Passi, principe.' },
+        { io: true, testo: 'Le secche non fermano chi ha fretta.' }
+    ],
+    'fm-4-secmeton': [
+        { chi: 'highMageSecmeton', testo: 'Il mare non restituisce niente, e invece oggi me lo hai strappato di mano.' },
+        { io: true, testo: 'Non l’ho strappato: l’ho solo atteso, come fa lui.' },
+        { chi: 'highMageSecmeton', testo: 'Prendi il mio Oggetto, allora. Il mare è meno testardo di me, ma ti seguirà comunque.' }
+    ],
+    'fm-4-mountain': [
+        { chi: 'mountainMage', testo: 'Mezzo fiato non basta. Hai vinto tu.' },
+        { io: true, testo: 'La salita non mi ha tolto la fretta, ma la lucidità l’ho tenuta.' }
+    ],
+    'fm-4-atenza': [
+        { chi: 'highMageAtenza', testo: 'La pietra si è spaccata davvero. Non me l’aspettavo da uno che arriva col fiatone.' },
+        { io: true, testo: 'La pietra non tratta, ma si può scalare. Prendo il tuo Oggetto, Atenza.' },
+        { chi: 'highMageAtenza', testo: 'Prendilo. Il prossimo non sarà altrettanto paziente.' }
+    ],
+    'fm-4-forest': [
+        { chi: 'forestMage', testo: 'Gli alberi volevano vedere come andava a finire. Adesso lo sanno.' },
+        { io: true, testo: 'E che cosa ne pensano?' },
+        { chi: 'forestMage', testo: 'Che puoi andare avanti. Per ora.' }
+    ],
+    'fm-4-anubisius': [
+        { chi: 'highMageAnubisius', testo: 'Ho contato tutti i morti di questa foresta, e alla fine ho contato anche me. Hai vinto.' },
+        { io: true, testo: 'Sdraiati pure tutti, allora. Io proseguo.' },
+        { chi: 'highMageAnubisius', testo: 'Prendi l’Oggetto, principe. I morti non ti seguiranno, ma ti ricorderanno.' }
+    ],
+    'fm-4-desert': [
+        { chi: 'desertMage', testo: 'Di solito ha ragione, il mio Sommo. Oggi no.' },
+        { io: true, testo: 'Te l’avevo detto. Fammi passare.' }
+    ],
+    'fm-4-martis': [
+        { chi: 'highMageMartis', testo: 'Sotto la sabbia da cinquemila anni, e un ragazzo con la fretta mi ha battuto. Il deserto si è fatto da parte.' },
+        { io: true, testo: 'Il deserto può aspettare, io no. Grazie per l’Oggetto.' },
+        { chi: 'highMageMartis', testo: 'Vai. Il sole sta già calando, e ti conviene arrivare al prato prima della notte.' }
+    ],
+    'fm-4-meadow': [
+        { chi: 'meadowMage', testo: 'Aprire il prato e lasciarti attraversare erano due cose diverse, allora. Eppure sei qui.' },
+        { io: true, testo: 'Alla fine sono la stessa cosa, come ti avevo detto.' },
+        { chi: 'meadowMage', testo: 'Kepura ti aspetta in cima. Non farlo aspettare troppo.' }
+    ],
+    'fm-4-kepura': [
+        { chi: 'highMageKepura', testo: 'Cinque terre, cinque Oggetti, e io che non avrei scommesso una moneta. Mi hai ripagato di un debito che non sapevo di avere.' },
+        { io: true, testo: 'Un Oggetto alla volta. Ora ti chiedo di dirmi che cosa c’è nel palazzo.' },
+        { chi: 'highMageKepura', testo: 'Una cosa che nemmeno Heishin guarda in faccia. Preparati: dopo di me, non c’è più nessuno che ti ostacoli, e nessuno che ti aiuti.' }
+    ],
+
+    // ---------------------------------------------------------------- Il Dungeon del Labirinto
+    'fm-5-labirinto': [
+        { chi: 'labyrinthMage', testo: 'Le avevi contate tutte, dunque. Il labirinto si è arreso a uno che non si è mai perso.' },
+        { io: true, testo: 'Mi sono perso solo una volta, da ragazzo: ho imparato a non farlo più.' },
+        { chi: 'labyrinthMage', testo: 'Allora vai. Ma il labirinto ha altre uscite, e non tutte portano dove vuoi.' }
+    ],
+    'fm-5-seto2': [
+        { chi: 'priestSeto', testo: 'Hai vinto di nuovo. Alla festa potevo permettermi di scherzare: oggi no, e hai vinto lo stesso.' },
+        { io: true, testo: 'Te lo avevo detto, Seto: non mi hai mai lasciato vincere.' },
+        { chi: 'priestSeto', testo: 'Forse no. Continua pure, principe: ti starò dietro, come sempre. Più vicino di quanto immagini.' }
+    ],
+    'fm-5-sebek': [
+        { chi: 'sebek', testo: 'Il fiume ha portato qui tante cose, ma non uno come te. Ho perso.' },
+        { io: true, testo: 'La porta la chiudo io. Chiunque sia entrato dopo di me, non uscirà più da qui.' },
+        { chi: 'sebek', testo: 'Fai attenzione: l’ultimo guardiano non parla, e non perde mai tempo.' }
+    ],
+    'fm-5-neku': [
+        { chi: 'neku', testo: '…Hai vinto. Non ho parole, e non servono.' },
+        { io: true, testo: 'Nemmeno a me servono. L’ultimo Oggetto è mio.' },
+        { chi: 'neku', testo: 'Prendilo. Heishin ti aspetta, e ha preparato tutto per il momento in cui lo avresti avuto in mano.' }
     ]
 };

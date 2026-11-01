@@ -7,7 +7,8 @@ const path = require('path');
 const RADICE = path.join(__dirname, '..', '..');
 const url = (f) => 'file:///' + path.join(RADICE, f).replace(/\\/g, '/');
 
-const SENZA_DOPO = ['anime-1-pegasus-video', 'anime-2-kaiba'];
+// Dopo questi duelli c'e' gia' una scena (o un altro duello) che racconta come finisce.
+const SENZA_DOPO = ['anime-1-pegasus-video', 'anime-2-kaiba', 'fm-2-heishin', 'fm-3t-kaiba', 'fm-6-heishin', 'fm-6-seto', 'fm-7-darknite', 'fm-7-finale-duello'];
 
 module.exports = {
     name: 'Storia: dopo una vittoria nuova c\'e\' la conversazione, prima della mappa',
@@ -26,7 +27,7 @@ module.exports = {
             const copertura = await page.evaluate((senza) => {
                 const duelli = [];
                 const walk = (lista) => (lista || []).forEach((t) => { if (t.kind === 'duel') duelli.push(t.id); if (t.tappe) walk(t.tappe); });
-                walk(StoryProgress.getCampaign('anime').capitoli.flatMap((c) => c.tappe));
+                ['anime', 'forbiddenMemories'].forEach((id) => walk(StoryProgress.getCampaign(id).capitoli.flatMap((c) => c.tappe)));
                 const mancanti = duelli.filter((id) => !storyDopoDuello[id] && !senza.includes(id));
                 const orfane = Object.keys(storyDopoDuello).filter((id) => !duelli.includes(id));
                 const ids = new Set();
@@ -37,7 +38,7 @@ module.exports = {
                 }));
                 return { duelli: duelli.length, mancanti, orfane, brutte, voci: Object.keys(storyDopoDuello).length };
             }, SENZA_DOPO);
-            assert(copertura.mancanti.length === 0, `Ogni duello dell'anime ha la sua conversazione dopo la vittoria. Mancano: ${copertura.mancanti.join(', ')}`);
+            assert(copertura.mancanti.length === 0, `Ogni duello dell'anime e di Memorie Proibite ha la sua conversazione dopo la vittoria. Mancano: ${copertura.mancanti.join(', ')}`);
             assert(copertura.orfane.length === 0, `Nessuna voce punta a un duello che non esiste: ${copertura.orfane.join(', ')}`);
             assert(copertura.brutte.length === 0, `Battute sensate e personaggi del roster: ${copertura.brutte.join(' | ')}`);
 
