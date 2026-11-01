@@ -711,7 +711,6 @@ vec4 m_scintillaP(vec2 uv,float asp,float t,vec3 c,vec2 f,float s,float seed,flo
     const DIRIGIBILE_FANALI = [[47,458,1.4],[1582,147,1],[1635,457,1],[1577,792,1]];
     // Pavimento dell'arena, fascia dei circuiti (le due diagonali e il KC) e nodi luminosi dove si incrociano.
     const DIRIGIBILE_ARENA = ZPX(1669, 942, [[430, 215, 1240, 610]]);
-    const DIRIGIBILE_CIRCUITI = ZPX(1669, 942, [[520, 300, 1150, 540]]);
     const DIRIGIBILE_NODI = [[835,300,1],[835,530,1],[640,410,1],[1030,410,1],[540,320,1],[1130,320,1],[540,510,1],[1130,510,1],[700,350,1],[970,350,1],[700,470,1],[970,470,1]];
     const DIRIGIBILE_FUORI = ZPX(1669, 942, [[0, 0, 420, 170], [420, 0, 1250, 85], [1250, 0, 1669, 140], [0, 0, 130, 330], [0, 620, 130, 942], [0, 720, 400, 942], [400, 865, 1300, 942], [1250, 800, 1669, 942], [1625, 140, 1669, 800]]);
     const INDUSTRIA_ROSSE = [[150,30,1],[835,30,1],[1530,28,1],[65,378,1],[1602,378,1],[75,725,1],[1595,740,1],[712,813,1],[960,813,1],[708,917,1],[960,917,1],[150,915,1],[1485,915,1]];
@@ -849,7 +848,6 @@ vec4 m_scintillaP(vec2 uv,float asp,float t,vec3 c,vec2 f,float s,float seed,flo
                 // L'ARENA viva: scansione blu che la attraversa, circuiti che si accendono lungo le diagonali e attorno al KC,
                 // nodi che lampeggiano in sequenza. Tutto dentro il rettangolo del pavimento.
                 ['scan', 'vec3(.3,.5,1.)', { a: .42, zone: DIRIGIBILE_ARENA, bordo: .02 }],
-                ['glitch', 'vec3(.35,.55,1.)', { a: .5, zone: DIRIGIBILE_CIRCUITI, bordo: .01 }],
                 ['spie', 'vec3(.45,.7,1.)', { pts: PX(1669, 942, DIRIGIBILE_NODI), sz: .012, a: .95, vel: 1.1 }],
                 ['alone', 'vec3(.3,.55,1.)', { pts: PX(1669, 942, DIRIGIBILE_NODI), sz: .018, a: .35 }]
             ],
