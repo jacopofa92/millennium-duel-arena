@@ -14,7 +14,7 @@
 (function () {
     'use strict';
 
-    const { chooseCardFromList, otherHandCards, blockBanishFromField, isHarpieLadySupport, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldCardTargetWaiting, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, findPetitMothReadyForCocoonSummon, releaseRelinquishedTarget } = window.CardEffectsShared;
+    const { chooseCardFromList, otherHandCards, blockBanishFromField, isHarpieLadySupport, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldCardTargetWaiting, attendiScelta, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, findPetitMothReadyForCocoonSummon, releaseRelinquishedTarget } = window.CardEffectsShared;
 
     // ================================================================
     // 52 — Grande Falena / Great Moth
@@ -1783,21 +1783,31 @@
             return attaccanti.length >= 2 || (ctx.attackerAtk || 0) >= 1700;
         },
         onAttackDeclare(ctx) {
-            if (window.FX && typeof FX.playMirrorForce === 'function') {
-                const attackIndices = [];
+            const distruggi = () => {
+                let count = 0;
                 ctx.field(ctx.opponent).forEach((slot, index) => {
-                    if (slot && !slot.isFaceDown && slot.position === 'attack') attackIndices.push(index);
+                    if (slot && !slot.isFaceDown && slot.position === 'attack') {
+                        ctx.destroyMonster(ctx.opponent, index);
+                        count++;
+                    }
                 });
-                FX.playMirrorForce(ctx.opponent, attackIndices);
-            }
-            let count = 0;
+                ctx.log(`🔮 Forza Riflessa distrugge ${count} mostr${count === 1 ? 'o' : 'i'} in Posizione di Attacco!`);
+            };
+            const attackIndices = [];
             ctx.field(ctx.opponent).forEach((slot, index) => {
-                if (slot && !slot.isFaceDown && slot.position === 'attack') {
-                    ctx.destroyMonster(ctx.opponent, index);
-                    count++;
-                }
+                if (slot && !slot.isFaceDown && slot.position === 'attack') attackIndices.push(index);
             });
-            ctx.log(`🔮 Forza Riflessa distrugge ${count} mostr${count === 1 ? 'o' : 'i'} in Posizione di Attacco!`);
+            // L'animazione (fx-webgl-scena.js, playMirrorForce) racconta il colpo che sbatte sulla barriera e TORNA sul mostro che
+            // l'ha sparato: i mostri devono sparire proprio a quell'urto, non all'inizio (prima la regola distruggeva subito e
+            // si vedevano le carte morire mentre l'effetto era appena partito). Il tempo e' quello della scena (l'ultimo colpo
+            // arriva a ~1,12 s); la battaglia aspetta (attendiScelta) e il timer e' un timer delle REGOLE, non della grafica,
+            // cosi' a passo comune i due client distruggono nello stesso punto. Senza animazione (nessun WebGL) si distrugge subito.
+            const animata = !!(window.FX && typeof FX.playMirrorForce === 'function' && FX.playMirrorForce(ctx.opponent, attackIndices) > 0);
+            if (!animata) { distruggi(); return; }
+            const fine = attendiScelta(ctx);
+            const alUrto = () => { try { distruggi(); } finally { fine(); } };
+            if (typeof PassoComune !== 'undefined') PassoComune.dopo(alUrto, 1120);
+            else setTimeout(alUrto, 1120);
         }
     });
 
