@@ -7104,7 +7104,7 @@ const CORREZIONI_LIMITI = {
         hard: { rimosse: { 36: 1 }, aggiunte: { 485: 1 } },   // -Anfora dell'Avidità +Ritorno Toon (3)
     },
     bakura: {
-        hard: { rimosse: { 36: 1 }, aggiunte: { 503: 1 } },   // -Anfora dell'Avidità +Waboku (2): niente 3o Santuario Oscuro, il piano Destiny Board resta com'era (tests/specs/boss-hard-balance)
+        hard: { rimosse: { 36: 1 }, aggiunte: { 1041: 1 } },   // -Anfora dell'Avidita' +Demone Minore (3): Bakura Difficile deve restare duro (misura: con +Waboku il giocatore vinceva 20% invece di 10%); niente 3o Santuario Oscuro (boss-hard-balance)
     },
     mako: {
         medium: { rimosse: { 36: 1 }, aggiunte: { 253: 1 } },   // -Anfora dell'Avidità +Giuramento della Balena Fortezza (3)
@@ -7202,8 +7202,8 @@ const CORREZIONI_LIMITI = {
         hard: { rimosse: { 724: 1 }, aggiunte: { 725: 1 } },   // -Rinforzi dell'Esercito +Il Guerriero Sopravvissuto (3)
     },
     noah: {
-        medium: { rimosse: { 36: 1 }, aggiunte: { 813: 1 } },   // -Anfora dell'Avidità +Benedizione di Sebek (3)
-        hard: { rimosse: { 36: 2, 272: 1 }, aggiunte: { 434: 1, 546: 1, 813: 1 } },   // -Anfora dell'Avidità +Benedizione di Sebek (3); -Anfora dell'Avidità +Capro Espiatorio (2); -Carità Graziosa +Dian Keto il Curatore (2)
+        medium: { rimosse: { 36: 1 }, aggiunte: { 1007: 1 } },   // -Anfora dell'Avidita' +Soldato Susa (3): un attaccante, non una cura (con +Benedizione di Sebek il Normale saliva di 8 punti)
+        hard: { rimosse: { 36: 2, 272: 1 }, aggiunte: { 147: 1, 503: 1, 820: 1 } },   // -2 Anfora -Carita' Graziosa; +Cambiare Idea +Waboku +Annulla Attacco: disturbo e difese (misura sullo stesso seme: originale 12,5%, +mostri grossi 29%, questa 17,5% di vittorie del giocatore)
     },
     gozaburo: {
         easy: { rimosse: { 251: 1 }, aggiunte: { 161: 1 } },   // -Sepoltura Sciocca +Contratto con Exodia (2)
