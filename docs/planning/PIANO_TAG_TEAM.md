@@ -232,7 +232,7 @@ Agganci nel motore, da approvare (elenco in sezione 6): A1, A2, A3.
 | # | Domanda | Proposta |
 |---|---------|----------|
 | D14 | DECISA: zona Bandite condivisa come il Cimitero | - |
-| D15 | DECISA: se un membro arriva a 0 a metà turno avversario (D7) il compagno entra SUBITO, così davanti c'è sempre un membro vivo | - |
+| D15 | DECISA, poi RIVISTA (1.5.11, scelta dell'autore "opzione 1"): se un membro arriva a 0 a metà turno avversario (D7) resta DAVANTI fino a fine turno e incassa a vuoto i colpi che restano; il compagno entra all'inizio del PROPRIO turno. Prima entrava subito e si prendeva lui i colpi rimasti (con un Boss a più attaccanti poteva perdere nello stesso turno). Il KO si mostra subito (evento `ko`), l'ingresso è una scena TAG! al turno dopo. Senza timer e senza A4: vale uguale su ogni client | - |
 | D16 | Effetti che colpiscono "un giocatore" per più turni (salta la pescata, Ondata Gelida, salta il turno): valgono per il lato o per il membro colpito? | DECISA dall'autore: valgono solo per il MEMBRO colpito, non per il lato. Conseguenza: le mappe "per posto" che durano più turni (salta la pescata, Ondata Gelida, zone bloccate, ecc.) vanno messe da parte e ripristinate insieme al membro, quindi anche loro entrano nello scambio. Elenco completo da fare con uno spec. Confermato dall'autore. Per "salta il tuo prossimo turno" il turno del membro colpito è PERSO (come nel 1v1): il compagno non gioca al suo posto |
 | D17 | DECISA: Mazzo vuoto di un membro = eliminato come a 0 Life Point | - |
 

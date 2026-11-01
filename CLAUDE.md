@@ -4130,6 +4130,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.10 (cache v519, su `main`): **suono dello scambio nel Tag Team** (richiesta dell'utente): `audio/standard/nonAssegnate/effetto2.mp3` rinominato `audio/standard/tagSwitch.mp3` (con `git mv`), nuovo `SFX.tagSwitch` (con fruscio sintetico di scorta in `sfx.js` e nel precaricamento di `audio-library.js`), suonato una volta per scena in `TagScambio.mostra`. Spec `tag-team-scena-scambio` esteso. Suite completa non eseguita.
 
+1.5.11 (cache v520, su `main`): **Tag Team, D15 rivista: il compagno entra al PROPRIO turno** (scelta dell'autore, `opzione 1`). Un membro a 0 Life Point nel turno AVVERSARIO resta davanti fino a fine turno e incassa a vuoto i colpi che restano; il compagno entra a `inizio-turno` della sua squadra (`eliminazioniInAttesa`), con mano e Life Point intatti. Tolti `eliminazioniFuoriTurno` e il timer `tenta` (e con loro l'uso di A4 per D15: l'aggancio resta per D12 `frontiFuoriTempo`); in rete vale uguale perche' non ci sono timer. D18 (caduto nel PROPRIO turno) invariata. Nuovo avviso `ko` di `tag.js` (`membro.koMostrato`): `tag-scambio.js` mostra subito la scena del solo KO (`entra` nullo), e l'ingresso del compagno e' poi una scena TAG! col caduto grigio (`esceKO`). Spec `tag-team-fase1` (D15 nuova) e `tag-team-scena-scambio` aggiornati; provate anche le partite senza testa (nessuna ferma) e il gemello a posti. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

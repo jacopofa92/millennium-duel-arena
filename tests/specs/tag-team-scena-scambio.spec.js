@@ -89,5 +89,35 @@ module.exports = {
         } finally {
             await page.close();
         }
+
+        // Caduto nel turno AVVERSARIO: il KO si vede subito (nessun compagno che entra), il compagno entra all'inizio del TUO turno (TAG!).
+        const pagina2 = await t.browser.newPage({ viewport: { width: 1400, height: 900 } });
+        const errori2 = [];
+        pagina2.on('pageerror', (e) => errori2.push(e.message));
+        await pagina2.addInitScript(() => {
+            window.AUTH_GATE_SKIP = true; window.DUEL_FAST_OPENING = true; window.DUEL_RPS_SKIP = true; window.TAG_SCAMBIO_FORZA = true;
+            try { localStorage.setItem('ygoVideoDetail', 'alti'); localStorage.setItem('ygoVideoDetailScelto', '1'); } catch (e) { /* niente storage */ }
+        });
+        try {
+            await pagina2.goto(TAG2V2);
+            try { await pagina2.click('.di-skip', { timeout: 4000 }); } catch (e) { /* nessuna intro */ }
+            await pagina2.waitForFunction(() => typeof gameState !== 'undefined' && window.TagTeam && TagTeam.eSquadra('player') && window.TagScambio, null, { timeout: 30000 });
+            await waitForOpeningCascade(pagina2);
+            await pagina2.waitForFunction(() => gameState.phase === 'main1' && gameState.currentPlayer === 'player', null, { timeout: 30000 });
+            await pagina2.evaluate(() => { window.changeTurn = function () {}; window.turnoIA = function () {}; window.DuelEngineUI = null; });
+            await pagina2.evaluate(() => { gameState.currentPlayer = 'bot'; gameState.playerLP = 0; checkGameOver(); });
+            await pagina2.waitForSelector('#tagScambio', { timeout: 3000 });
+            const koScena = await pagina2.evaluate(() => { const r = document.getElementById('tagScambio'); return { testo: r.querySelector('.tgs-testo').textContent, ritratti: r.querySelectorAll('.tgs-ritr').length, ko: /tgs--ko/.test(r.className), attivo: TagTeam.riassunto('player').attivo }; });
+            t.assert(koScena.testo === 'KO!' && koScena.ritratti === 1 && koScena.ko, 'Il KO si vede subito, senza compagno che entra: ' + JSON.stringify(koScena));
+            t.assert(koScena.attivo === 0, 'Il caduto resta davanti nel turno avversario');
+            await pagina2.waitForFunction(() => !document.getElementById('tagScambio'), null, { timeout: 5000 });
+            await pagina2.evaluate(() => { gameState.currentPlayer = 'player'; gameState.turn++; EventiDuello.emetti('inizio-turno', 'player'); });
+            await pagina2.waitForSelector('#tagScambio', { timeout: 3000 });
+            const tagScena = await pagina2.evaluate(() => { const r = document.getElementById('tagScambio'); return { testo: r.querySelector('.tgs-testo').textContent, ritratti: r.querySelectorAll('.tgs-ritr').length, esceKO: !!r.querySelector('.tgs-esce--ko'), attivo: TagTeam.riassunto('player').attivo }; });
+            t.assert(tagScena.testo === 'TAG!' && tagScena.ritratti === 2 && tagScena.esceKO && tagScena.attivo === 1, 'All\'inizio del tuo turno entra il compagno: scena TAG! col caduto grigio: ' + JSON.stringify(tagScena));
+            t.assert(errori2.length === 0, 'Errori nella pagina: ' + errori2.join(' | '));
+        } finally {
+            await pagina2.close();
+        }
     }
 };

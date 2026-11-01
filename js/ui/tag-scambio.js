@@ -69,7 +69,8 @@
 
     /**
      * @param {string} posto 'player' | 'bot'
-     * @param {{ esce: { nome: string, image: string }, entra: { nome: string, image: string }, eliminato?: boolean }} dati
+     * @param {{ esce: { nome: string, image: string }, entra?: { nome: string, image: string } | null, eliminato?: boolean, esceKO?: boolean }} dati
+     *   `entra` assente = il solo KO; `eliminato` = la scritta dice KO!; `esceKO` = il ritratto di chi esce e' quello di un eliminato.
      */
     function mostra(posto, dati) {
         if (!dati || spenta() || typeof document === 'undefined') return;
@@ -91,9 +92,12 @@
         lampo.className = 'tgs-lampo';
         const fascia = document.createElement('div');
         fascia.className = 'tgs-fascia';
-        const esce = ritratto(dati.esce, 'tgs-esce');
+        // Senza `entra` e' il solo KO (il membro e' appena caduto, il compagno entrera' piu' tardi): un ritratto e la scritta.
+        const soloKo = !dati.entra;
+        const esceKO = !!(dati.esceKO || dati.eliminato || soloKo);
+        const esce = ritratto(dati.esce, 'tgs-esce' + (esceKO ? ' tgs-esce--ko' : ''));
         const entra = ritratto(dati.entra, 'tgs-entra');
-        if (dati.eliminato) {
+        if (esceKO) {
             const ko = document.createElement('span');
             ko.className = 'tgs-x';
             ko.textContent = '✕';
@@ -101,8 +105,10 @@
         }
         const testo = document.createElement('div');
         testo.className = 'tgs-testo';
-        testo.textContent = dati.eliminato ? 'KO!' : 'TAG!';
-        radice.append(lampo, fascia, esce, entra, testo);
+        testo.textContent = (dati.eliminato || soloKo) ? 'KO!' : 'TAG!';
+        radice.append(lampo, fascia, esce);
+        if (!soloKo) radice.appendChild(entra);
+        radice.appendChild(testo);
         document.body.appendChild(radice);
 
         /** @type {Animation[]} */
@@ -125,7 +131,7 @@
         if (!movimento || !radice.animate) {
             // Versione leggera: tutto fermo (chi esce a sinistra, chi entra a destra, la scritta sopra), sfuma dentro e fuori.
             esce.style.opacity = '1';
-            esce.style.transform = 'translate(-125%,-50%)';
+            esce.style.transform = soloKo ? 'translate(-50%,-50%)' : 'translate(-125%,-50%)';
             entra.style.opacity = '1';
             entra.style.transform = 'translate(25%,-50%)';
             testo.style.opacity = '1';
@@ -145,6 +151,25 @@
         ], { duration: T, easing: 'linear', fill: 'both' }));
         // Chi esce: compare al centro, poi scivola via verso il suo lato e si spegne.
         const fuori = verso * 62;
+        if (soloKo) {
+            // Il solo KO: il ritratto resta al centro (grigio, con la X) e si spegne, la scritta colpisce subito, niente campo nascosto.
+            animazioni.push(esce.animate([
+                { transform: 'translate(-50%,-50%) scale(1.15)', opacity: 0, offset: 0, easing: 'cubic-bezier(.2,.8,.2,1)' },
+                { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, offset: at(220) },
+                { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, offset: at(900) },
+                { transform: 'translate(-50%,-50%) scale(.92)', opacity: 0, offset: 1 }
+            ], { duration: T, easing: 'linear', fill: 'both' }));
+            animazioni.push(testo.animate([
+                { transform: 'translate(-50%,0) scale(1.5)', opacity: 0, offset: 0, easing: 'cubic-bezier(.2,.8,.2,1)' },
+                { transform: 'translate(-50%,0) scale(1)', opacity: 1, offset: at(260) },
+                { transform: 'translate(-50%,0) scale(1)', opacity: 1, offset: at(900) },
+                { transform: 'translate(-50%,0) scale(1)', opacity: 0, offset: 1 }
+            ], { duration: T, easing: 'linear', fill: 'both' }));
+            animazioni.push(lampo.animate([
+                { opacity: 0, offset: 0 }, { opacity: .7, offset: at(150) }, { opacity: 0, offset: at(520) }, { opacity: 0, offset: 1 }
+            ], { duration: T, easing: 'linear', fill: 'both' }));
+            return;
+        }
         animazioni.push(esce.animate([
             { transform: 'translate(-50%,-50%) scale(.85)', opacity: 0, offset: 0 },
             { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, offset: at(200) },

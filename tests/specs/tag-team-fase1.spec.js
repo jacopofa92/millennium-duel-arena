@@ -273,7 +273,9 @@ module.exports = {
                 t.assert(v23.conJoey.cartaArrivata && v23.conTe.cartaNonPiuQui, 'V2: una carta di Joey finita nella tua mano torna a lui: ' + JSON.stringify(v23));
                 t.assert(v23.conJoey.voci === 0 && v23.conTe.voci === 1, 'V3: la distruzione ritardata del tuo mostro aspetta con te in panchina: ' + JSON.stringify(v23));
 
-                // A3, D7, D10, D15: tu a 0 nel turno avversario -> entra Joey e il tuo campo va nel Cimitero; poi Joey a 0 -> fine.
+                // A3, D7, D10, D15 (rivista: l'autore ha scelto che il compagno entri al PROPRIO turno): tu a 0 nel turno avversario ->
+                // resti davanti (incassi a vuoto i colpi che restano) fino a fine turno; all'inizio del tuo turno entra Joey e il tuo
+                // campo va nel Cimitero; poi Joey a 0 -> fine.
                 const caduta = await page.evaluate(async () => {
                     const mio = Object.assign({}, cardDatabase.find((c) => c.type === 'monster'), { uid: 'tag-caduto', membro: 'player#0' });
                     gameState.playerMonsterField[2] = { card: mio, position: 'attack', isFaceDown: false };
@@ -281,10 +283,17 @@ module.exports = {
                     gameState.playerLP = 0;
                     checkGameOver();
                     const subito = gameState.gameOver;
-                    for (let i = 0; i < 40 && TagTeam.riassunto('player').attivo !== 1; i++) await new Promise((r) => setTimeout(r, 50));
+                    // Per tutto il resto del turno avversario il caduto resta davanti (prima il compagno entrava subito).
+                    await new Promise((r) => setTimeout(r, 900));
+                    const durante = { attivo: TagTeam.riassunto('player').attivo, vivo: TagTeam.riassunto('player').membri[0].vivo, mostroAncoraQui: !!gameState.playerMonsterField[2] };
+                    // Comincia il TUO turno: ora entra Joey.
+                    gameState.currentPlayer = 'player';
+                    gameState.turn++;
+                    EventiDuello.emetti('inizio-turno', 'player');
                     const sq = TagTeam.riassunto('player');
                     return {
                         subito,
+                        durante,
                         gameOver: gameState.gameOver,
                         attivo: sq.attivo,
                         tuVivo: sq.membri[0].vivo,
@@ -294,7 +303,8 @@ module.exports = {
                     };
                 });
                 t.assert(!caduta.subito && !caduta.gameOver, 'A3: il primo membro a 0 non chiude il duello: ' + JSON.stringify(caduta));
-                t.assert(caduta.attivo === 1 && !caduta.tuVivo && caduta.lpJoey === 4000, 'D15: entra subito Joey con i suoi Life Point (4000, D19): ' + JSON.stringify(caduta));
+                t.assert(caduta.durante.attivo === 0 && caduta.durante.vivo && caduta.durante.mostroAncoraQui, 'D15: nel turno avversario il caduto resta davanti, il compagno non entra a metà turno: ' + JSON.stringify(caduta.durante));
+                t.assert(caduta.attivo === 1 && !caduta.tuVivo && caduta.lpJoey === 4000, 'D15: all\'inizio del tuo turno entra Joey con i suoi Life Point (4000, D19): ' + JSON.stringify(caduta));
                 t.assert(caduta.mostroNelCimitero && caduta.nomeBox === 'Joey Wheeler', 'D10: il campo di chi esce va nel Cimitero condiviso: ' + JSON.stringify(caduta));
                 const fine = await page.evaluate(() => {
                     gameState.playerLP = 0;

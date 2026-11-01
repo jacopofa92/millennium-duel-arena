@@ -255,7 +255,9 @@
         aggiornaUidInPanchina();
         // Chi esce e chi entra, per la scena dello scambio (js/ui/tag-scambio.js): `eliminato` = esce perché ha perso.
         const chi = (m) => ({ nome: m.nome, image: (m.identita && m.identita.image) || '' });
-        avvisa('scambio', posto, { esce: chi(esce), entra: chi(entra), eliminato: !esce.vivo });
+        // `eliminato` = la scena dice KO! (esce perche' ha perso e il KO non e' gia' stato mostrato quando e' caduto);
+        // `esceKO` = il ritratto di chi esce e' quello di un eliminato (grigio con la X) in ogni caso.
+        avvisa('scambio', posto, { esce: chi(esce), entra: chi(entra), eliminato: !esce.vivo && !esce.koMostrato, esceKO: !esce.vivo });
     }
 
     /** Il membro non ha più carte da pescare. */
@@ -316,9 +318,12 @@
 
     /**
      * Un membro è a 0 Life Point e il compagno è vivo (D7). Quando lascia il posto:
-     * - nel turno AVVERSARIO entra subito il compagno (D15), ma non a metà di una
-     *   battaglia o di una Catena: si riprova finché il duello è fermo, così il
-     *   prossimo attacco trova il compagno;
+     * - nel turno AVVERSARIO (D15, rivista dall'autore: "opzione 1"): il caduto resta
+     *   DAVANTI per il resto di quel turno e incassa a vuoto i colpi che restano; il
+     *   compagno entra solo all'inizio del PROPRIO turno (eliminazioniInAttesa su
+     *   'inizio-turno'), con mano e Life Point intatti. Prima entrava subito e si
+     *   prendeva lui i colpi rimasti: contro un Boss con più attaccanti poteva perdere
+     *   nello stesso turno. Niente timer: vale uguale su ogni client in rete;
      * - nel PROPRIO turno (D18, decisa dall'autore): scatta la sua End Phase,
      *   appena il duello è fermo in Main Phase 1, Battle Phase o Main Phase 2,
      *   ed esce al cambio turno, in tempo per il turno avversario. Il suo turno
@@ -333,6 +338,10 @@
         if (!sq || eliminazioneInAttesa[posto] != null) return;
         const caduto = sq.attivo;
         eliminazioneInAttesa[posto] = caduto;
+        // Il KO si mostra subito (scena in tag-scambio.js); l'ingresso del compagno arriva dopo, e allora la scena sara' un TAG!.
+        const membroCaduto = sq.membri[caduto];
+        membroCaduto.koMostrato = true;
+        avvisa('ko', posto, { nome: membroCaduto.nome, image: (membroCaduto.identita && membroCaduto.identita.image) || '' });
         if (gameState.currentPlayer === posto) {
             if (typeof g.addToLog === 'function') g.addToLog(`💀 ${sq.membri[caduto].nome} è a 0 Life Point: il suo turno finisce ed esce dal duello.`);
             // In rete la End Phase la chiede solo il client che gioca quel posto:
@@ -355,24 +364,10 @@
             setTimeout(chiudiTurno, 0);
             return; // il compagno entra al cambio turno: eliminazioniInAttesa() su 'inizio-turno'
         }
-        // In rete un timer locale non va bene: scatterebbe in punti diversi
-        // della partita sui vari client (prima del prossimo attacco da una
-        // parte, dopo dall'altra). Il compagno entra all'avviso A4, subito
-        // prima del prossimo comando, che arriva nello stesso punto ovunque
-        // (vedi eliminazioniFuoriTurno), o al cambio turno.
-        if (aPassoComune()) return;
-        const tenta = () => {
-            if (eliminazioneInAttesa[posto] !== caduto) return;
-            if (typeof gameState === 'undefined' || gameState.gameOver || !squadre[posto]) { eliminazioneInAttesa[posto] = null; return; }
-            // Il turno è cambiato nel frattempo: se ne occupa 'inizio-turno'.
-            if (gameState.currentPlayer === posto) return;
-            if (!duelloFermo()) { setTimeout(tenta, 150); return; }
-            eliminazioneInAttesa[posto] = null;
-            if (sq.attivo !== caduto || !sq.membri[caduto].vivo) return;
-            eliminaAttivo(posto, 'lp');
-            if (typeof g.updateUI === 'function') g.updateUI();
-        };
-        setTimeout(tenta, 0);
+        // Turno avversario: il caduto resta davanti, il compagno entra al PROPRIO turno ('inizio-turno'). Nessun timer.
+        if (typeof g.addToLog === 'function') {
+            g.addToLog(`💀 ${membroCaduto.nome} è a 0 Life Point: resta in campo fino alla fine del turno avversario, poi entra ${sq.membri[altro(caduto)].nome}.`);
+        }
     }
 
     /** Vero nel Multiplayer a passo comune (js/engine/passo-comune.js). */
@@ -500,28 +495,10 @@
     }
 
     /**
-     * A4 (avviso 'prima-del-comando', solo a passo comune): un comando sta per
-     * partire a duello fermo, nello stesso punto logico su tutti i client.
-     * Entra qui il compagno di un membro caduto nel turno avversario (D15).
-     * Niente controllo di duelloFermo: lo garantisce il passo comune, e il
-     * conteggio degli attacchi della variante, da chi manda, è già salito
-     * per l'attacco che sta per partire (sarebbe "non fermo" da una parte
-     * sola).
+     * Esegue le eliminazioni rimaste in attesa (chiamata a ogni 'inizio-turno', quando il duello è fermo): il compagno di un
+     * membro caduto nel turno avversario entra qui, all'inizio del proprio turno (D15 rivista); quello di un membro caduto nel
+     * proprio turno (D18) entra all'inizio del turno avversario.
      */
-    function eliminazioniFuoriTurno() {
-        if (typeof gameState === 'undefined' || gameState.gameOver) return;
-        let fatto = false;
-        Object.keys(eliminazioneInAttesa).forEach((posto) => {
-            const caduto = eliminazioneInAttesa[posto];
-            if (caduto == null || gameState.currentPlayer === posto) return;
-            eliminazioneInAttesa[posto] = null;
-            const sq = squadre[posto];
-            if (sq && sq.attivo === caduto && sq.membri[caduto].vivo) { eliminaAttivo(posto, 'lp'); fatto = true; }
-        });
-        if (fatto && typeof g.updateUI === 'function') g.updateUI();
-    }
-
-    /** Esegue le eliminazioni rimaste in attesa (chiamata a ogni 'inizio-turno', quando il duello è fermo). */
     function eliminazioniInAttesa() {
         Object.keys(eliminazioneInAttesa).forEach((posto) => {
             const caduto = eliminazioneInAttesa[posto];
@@ -868,7 +845,6 @@
         g.EventiDuello.ascolta('attacco-vietato', (posto) => attaccoVietato(posto));
         g.EventiDuello.ascolta('prima-del-comando', () => {
             if (!aPassoComune()) return;
-            eliminazioniFuoriTurno();
             frontiFuoriTempo();
         });
         sorvegliaComandi();

@@ -348,6 +348,8 @@
             if (evento === 'scambio' || evento === 'pronta') allineaLp(posto);
             // La scena dello scambio (solo grafica, js/ui/tag-scambio.js): parte dopo che la regola e' gia' avvenuta.
             if (evento === 'scambio' && dati && g.TagScambio && !gameState.gameOver) g.TagScambio.mostra(posto, dati);
+            // Un membro e' appena caduto: il KO si vede subito, il compagno entrera' al proprio turno (altra scena, TAG!).
+            if (evento === 'ko' && dati && g.TagScambio && !gameState.gameOver) g.TagScambio.mostra(posto, { esce: dati, entra: null, eliminato: true, esceKO: true });
             if (evento === 'risposta' && posto === 'player') mostraRisposta();
             aggiornaTutto();
         });
