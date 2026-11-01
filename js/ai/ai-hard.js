@@ -168,7 +168,7 @@
         return Tavolo.mano(io, gameState)
             .map((card, handIndex) => ({ card, handIndex }))
             .filter(({ card, handIndex }) => card.type === 'monster'
-                && !AI_SHARED.shouldHoldForExodia(card)
+                && !AI_SHARED.shouldHoldForExodia(card, gameState, io)
                 && DuelEngine.canSpecialSummonFromHand(io, handIndex))
             .sort((a, b) => {
                 const aStats = AI_SHARED.estimateSummonedStats(a.card, gameState, io);

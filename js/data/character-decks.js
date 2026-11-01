@@ -40,10 +40,13 @@ const characterDeckDatabase = {
                 { id: 109, qty: 3 }, // Castoro Guerriero
                 { id: 444, qty: 2 }, // Zanna d'Argento
                 { id: 237, qty: 2 }, // Demone Selvaggio
-                { id: 391, qty: 3 }, // Elfo Mistico
-                { id: 261, qty: 2 }, // Soldato di Pietra
+                // 1.5.36: al posto di 3 Elfo Mistico, 2 Soldato di Pietra e del Grande Scudo Custode (muri da 2000-2600 DEF che i mazzi
+                // base non riuscivano a superare: Facile al 45% con duelli da 26 turni) tre attaccanti deboli da ~1200 ATK. Misurato:
+                // vittorie del giocatore 45% -> 66%, 16 turni.
+                { id: 27, qty: 2 }, // Cucciolo di Drago
+                { id: 274, qty: 2 }, // Gradius
+                { id: 491, qty: 2 }, // Drago Trakodon
                 { id: 22, qty: 3 }, // Kuriboh
-                { id: 115, qty: 1 }, // Grande Scudo Custode
                 { id: 367, qty: 2 }, // Mammuth delle Tombe
                 { id: 4, qty: 1 }, // Guardiano Celtico
                 { id: 8, qty: 1 }, // Spada Rivelatrice

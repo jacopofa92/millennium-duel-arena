@@ -36,7 +36,7 @@
             .filter((card) => card.type === 'monster'
                 && (typeof canUseNormalSummonQuota !== 'function' || canUseNormalSummonQuota(io, card))
                 && (!window.AI_SHARED || AI_SHARED.canNormalSummonNow(card, gameState, io))
-                && !(window.AI_SHARED && AI_SHARED.shouldHoldForExodia(card))
+                && !(window.AI_SHARED && AI_SHARED.shouldHoldForExodia(card, gameState, io))
                 && (typeof options.allowCandidate !== 'function' || options.allowCandidate(card)))
             .sort((a, b) => scoreMonster(b) - scoreMonster(a));
 

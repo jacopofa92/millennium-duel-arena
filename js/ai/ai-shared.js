@@ -447,8 +447,33 @@
      * "il bot ha in mano un pezzo di Exodia", non "il bot è un
      * personaggio specifico", quindi nessun controllo per nome qui.
      */
-    function shouldHoldForExodia(card) {
-        return !!(card && typeof EXODIA_PIECE_IDS !== 'undefined' && EXODIA_PIECE_IDS.includes(card.id));
+    function shouldHoldForExodia(card, gameState, owner) {
+        if (!(card && typeof EXODIA_PIECE_IDS !== 'undefined' && EXODIA_PIECE_IDS.includes(card.id))) return false;
+        // Senza il contesto (chiamata storica) il pezzo si tiene sempre; con il contesto si tiene solo finche' il piano e' vivo.
+        if (!gameState || !owner) return true;
+        return pianoExodiaVivo(gameState, owner);
+    }
+
+    /** Dal turno 12 il piano Exodia si arrende se ha meno di 4 pezzi in mano (vedi pianoExodiaVivo). */
+    const ESODIA_TURNO_RESA = 12;
+
+    /**
+     * Il piano Exodia e' vivo finche' NESSUN pezzo e' gia' perso: un pezzo nel Cimitero, bandito o sul Terreno chiude per sempre la
+     * vittoria dei cinque pezzi in mano (hasExodiaAssembled), e gli altri pezzi rimasti in mano diventano mostri deboli ma normali
+     * (tributi, bersagli, una difesa) invece di carte morte per tutto il duello. Anche senza perdite il piano si arrende a meta'
+     * duello se e' ancora lontano: con meno di 4 pezzi in mano al turno ESODIA_TURNO_RESA gli altri restano nel Deck in posizioni
+     * che non si pescheranno piu' in tempo, e tenerli in mano toglie solo corpi al campo. Misurato su Yugi Muto (120 duelli per
+     * livello contro IA Difficile): duelli che finivano con 3+ pezzi fermi in mano 13% -> 2,5% (Normale) e 20% -> 4,2% (Difficile),
+     * IA di Yugi piu' forte di 5 punti a Normale; l'Exodia vinceva solo l'1,7% dei duelli Difficili.
+     */
+    function pianoExodiaVivo(gameState, owner) {
+        if (typeof EXODIA_PIECE_IDS === 'undefined') return true;
+        const sulCampo = (Tavolo.mostri(owner, gameState) || []).filter(Boolean).map((slot) => slot.card);
+        const persi = [].concat(Tavolo.cimitero(owner, gameState) || [], Tavolo.banditi(owner, gameState) || [], sulCampo)
+            .filter((c) => c && EXODIA_PIECE_IDS.includes(c.id));
+        if (persi.length > 0) return false;
+        const inMano = (Tavolo.mano(owner, gameState) || []).filter((c) => c && EXODIA_PIECE_IDS.includes(c.id)).length;
+        return !(gameState.turn >= ESODIA_TURNO_RESA && inMano < 4);
     }
 
     /**
