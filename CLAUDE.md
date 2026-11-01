@@ -4156,6 +4156,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.23 (cache v532, su `main`): (1) **sala del Tag Team in rete rifatta come le proiezioni della sala 1 contro 1** (`mp-tag-sala.js`/`.css`): scheda per posto con pedina intera (`getCharacterPawnImage`, ripiego sul ritratto), parentesi d'angolo del colore della squadra, verdi se occupato, ciano con banda di scansione (`tgScan`) se libero (IA/Boss con figura spenta); due schede per riga nella squadra, la scheda sola del 2 contro 1 a tutta riga; `MpTagSala._anteprima(stato, io, host, presenti)` disegna la sala senza rete (prove a vista). Non ancora fatto: menu "⋯" per spostare/scambiare. (2) **La barra "Sono pronto" della sala Multiplayer non si sposta piu'**: era `sticky` dentro la schermata e la console KaibaCorp (`#mpStatus`) sotto di lei la spingeva in su; ora e' `fixed` sopra la barra di tab (`body.ha-tab-bar .mp-ready`), con padding in fondo alla sala. Trappola: `.mp-screen` aveva `animation: ... both` e restava con un `transform` (identita') a vita, che rende il contenitore di ogni figlio `position: fixed`; ora `backwards`. Provati multiplayer-tag-team, -modalita, -lobby, barra-di-tab, guardrail. Suite completa non eseguita.
 
+1.5.24 (cache v533, su `main`): versione di chiusura del giro; aggiunta la miniatura mancante della carta 1283 (`images/cards/thumbs/1283.webp`). Il relay su Render e' ridistribuito (stanze Tag da 3-4 posti). Suite completa eseguita dopo questo commit (esito nel messaggio successivo).
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**
