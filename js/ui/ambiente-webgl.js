@@ -358,17 +358,17 @@ vec4 m_proiettore(vec2 uv,float asp,float t,vec3 c1,vec3 c2,vec2 f,float seed,fl
 vec4 m_citta(vec2 uv,float asp,float t,vec3 c1,vec3 c2,float ia,float a,float ev){
   vec2 iuv=asp>ia?vec2(uv.x,.5+(uv.y-.5)*(ia/asp)):vec2(.5+(uv.x-.5)*(asp/ia),uv.y);
   float yi=1.-iuv.y;
-  float ytop=max(.085,.28-.5*iuv.x);
-  float ybot=min(.9,.68+.55*iuv.x);
-  float fuori=max(ytop-yi,yi-ybot);
-  float m=smoothstep(-.01,.035,fuori);
+  // Lo scafo e' un'ellisse (immagine 1669x942: centro 825,470, semiassi ~785 e ~383 px): la citta' vive solo fuori.
+  vec2 qs=vec2((iuv.x*1669.-825.)/785.,(yi*942.-470.)/383.);
+  float fuori=length(qs)-1.;
+  float m=smoothstep(.0,.06,fuori);
   if(m<=0.) return vec4(0.);
   float luci=0.;
   float strade=0.;
   for(int i=0;i<3;i++){
     float fi=float(i);
     float sc=10.+fi*9.;
-    vec2 p=vec2(iuv.x*ia,iuv.y)*sc-vec2(t*(.18+fi*.22),0.);
+    vec2 p=vec2(iuv.x*ia,iuv.y)*sc-vec2(t*(.32+fi*.4),0.);
     vec2 id=floor(p);
     vec2 f=fract(p);
     float rnd=h(id+fi*13.7);
@@ -698,6 +698,12 @@ vec4 m_scintillaP(vec2 uv,float asp,float t,vec3 c,vec2 f,float s,float seed,flo
 
     // Industria KaibaCorp (1670x942): spie rosse dei macchinari, lampade blu del pavimento, stanze con la luce accesa, tubi con
     // scintille e vapore. Prima: griglia su tutto lo schermo e scintille a caso ovunque.
+    // Dirigibile KaibaCorp (1669x942, x/y in pixel dell'immagine, y dall'alto): le lampade calde dell'arena, i tratti dei led blu,
+    // i fanali rossi (prua e punte dei timoni) e le zone FUORI dallo scafo dove scorrono nubi e vento.
+    const DIRIGIBILE_LAMPADE = [[798,152,1],[530,205,1],[717,204,1],[950,204,1],[1132,204,1],[481,250,1],[1187,250,1],[398,281,1],[1268,281,1],[397,543,1],[1270,543,1],[478,571,1],[1189,571,1],[530,620,1],[717,620,1],[950,620,1],[1137,620,1],[610,695,1],[810,696,1],[1062,695,1]];
+    const DIRIGIBILE_LED = [[625,185,1.3],[1040,185,1.3],[408,420,1.3],[1260,420,1.3],[625,632,1.3],[1040,632,1.3],[835,610,1]];
+    const DIRIGIBILE_FANALI = [[47,458,1.4],[1582,147,1],[1635,457,1],[1577,792,1]];
+    const DIRIGIBILE_FUORI = ZPX(1669, 942, [[0, 0, 420, 170], [420, 0, 1250, 85], [1250, 0, 1669, 140], [0, 0, 130, 330], [0, 620, 130, 942], [0, 720, 400, 942], [400, 865, 1300, 942], [1250, 800, 1669, 942], [1625, 140, 1669, 800]]);
     const INDUSTRIA_ROSSE = [[150,30,1],[835,30,1],[1530,28,1],[65,378,1],[1602,378,1],[75,725,1],[1595,740,1],[712,813,1],[960,813,1],[708,917,1],[960,917,1],[150,915,1],[1485,915,1]];
     const INDUSTRIA_BLU = [[508,116,1],[1159,116,1],[508,687,1],[1151,687,1],[691,170,1],[975,170,1],[691,754,1],[975,754,1]];
     const INDUSTRIA_FINESTRE = [[185,330,1],[170,590,1],[1487,330,1],[1490,590,1]];
@@ -815,10 +821,26 @@ vec4 m_scintillaP(vec2 uv,float asp,float t,vec3 c,vec2 f,float s,float seed,flo
             primo: [['flash', 'C', { a: 1 }]],
             ev: { ogni: [3, 7], dur: 3 }
         },
+        // Il Dirigibile KaibaCorp visto dall'alto, in rotta verso SINISTRA (prua con la luce rossa a sinistra, timoni a destra):
+        // la citta' sotto scorre verso destra a tre velocita', le nubi e il vento solo FUORI dallo scafo (mai sull'arena), e le luci
+        // dell'arena e della nave (lampade, led blu, KC, fanali rossi) pulsano ognuna col suo ritmo. Coordinate: immagine 1669x942.
         'dirigibile-alta-quota': {
             pal: PAL.vento,
-            fondo: [['citta', 'A', { c1: [1, .74, .4], c2: [.8, .9, 1], a: .75 }], ['nebbia', 'A', { sc: 1.5, a: .17, y0: -.3, y1: 1.3 }], ['strisce', 'A', { vel: 1, a: .18, dens: 7, stretch: 1.1, y0: -.1, y1: 1 }]],
-            primo: [['strisce', 'B', { vel: 1.5, a: .32, dens: 13, stretch: 2.4, y0: 0, y1: 1 }]],
+            ia: 1.772,
+            fondo: [
+                ['citta', 'A', { c1: [1, .74, .4], c2: [.8, .9, 1], a: .85 }],
+                ['nebbia', 'vec3(.55,.62,.85)', { sc: 2.2, vel: 2.6, a: .26, y0: -.2, y1: 1.2, zone: DIRIGIBILE_FUORI, bordo: .05 }],
+                ['strisce', 'A', { vel: 2.4, a: .2, dens: 9, stretch: 2.4, y0: -.1, y1: 1.1, zone: DIRIGIBILE_FUORI, bordo: .05 }],
+                ['alone', 'vec3(1.,.8,.5)', { pts: PX(1669, 942, DIRIGIBILE_LAMPADE), sz: .03, a: .5 }],
+                ['alone', 'vec3(.25,.45,1.)', { pts: PX(1669, 942, DIRIGIBILE_LED), sz: .035, a: .55 }],
+                ['alone', 'vec3(.5,.65,1.)', { pts: PX(1669, 942, [[830, 415, 1.6]]), sz: .05, a: .6 }],
+                ['spie', 'vec3(1.,.15,.12)', { pts: PX(1669, 942, DIRIGIBILE_FANALI), sz: .016, a: 1, vel: .8 }],
+                ['spie', 'vec3(1.,.85,.6)', { pts: PX(1669, 942, [[885, 845, 1.4]]), sz: .02, a: .8, vel: .5 }]
+            ],
+            primo: [
+                ['strisce', 'B', { vel: 3.2, a: .3, dens: 14, stretch: 3.2, y0: 0, y1: 1, zone: DIRIGIBILE_FUORI, bordo: .04 }],
+                ['scintillePunti', 'vec3(1.,.8,.5)', { pts: PX(1669, 942, DIRIGIBILE_FANALI), sz: .35, a: .5 }]
+            ],
             ev: { ogni: [3, 7], dur: 5 }
         },
         'torre-cielo': {

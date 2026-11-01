@@ -4144,6 +4144,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.17 (cache v526, su `main`): (1) **la Demo Duello Sandbox (solo amministratore) passa dal menu Duelli al foglio "Altro"** (`costruisciTab` in `menu-mobile.js`; sparisce il gruppo "Strumenti"). (2) **Pulsante laterale delle fasi anche su DESKTOP** (richiesta dell'utente: "come per il mobile"): la media query del tondo `#phaseSideBtn` in `duelMonstersCore.html` ha ora un terzo ramo `(hover: hover) and (pointer: fine)`; la barra delle fasi resta nel DOM ma invisibile, il tondo sta subito fuori dalla colonna destra del campo e apre lo stesso menu a sei voci. Spec `pulsante-fasi-laterale` aggiornato (desktop). Suite completa non eseguita.
 
+1.5.18 (cache v527, su `main`): **effetti ambientali del Dirigibile KaibaCorp rifatti** sulla nuova illustrazione (profilo `dirigibile-alta-quota` in `js/ui/ambiente-webgl.js`): la citta' sotto scorre verso destra (la nave va a sinistra) a tre velocita' e la sua maschera e' ora l'ellisse dello scafo; nubi e vento (`DIRIGIBILE_FUORI`) solo FUORI dallo scafo, mai sull'arena; lampade calde dell'arena, led blu, KC, fanali rossi di prua e timoni e luce della gondola pulsano ognuno col suo ritmo. Posizioni in pixel dell'immagine 1669x942 (`DIRIGIBILE_*`): se si cambia l'illustrazione vanno riguardate. Spec `ambiente-webgl` verde, guardato in screenshot. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**
