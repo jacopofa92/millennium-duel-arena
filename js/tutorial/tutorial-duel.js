@@ -112,6 +112,29 @@
     const SEL_MOSTRI = '#playerFieldBoard .field-slot[data-owner="player"][data-type="monster"]';
     const SEL_MT = '#playerFieldBoard .field-slot[data-owner="player"][data-type="st"]';
     const SEL_POPOVER = '#quickPopover';
+
+    // Le FASI. Da quando su desktop (e su telefono in orizzontale) la barra delle fasi e' invisibile e al suo posto c'e'
+    // il tondo laterale (#phaseSideBtn, che apre il menu delle fasi), indicare `.phase-step[data-phase=...]` puntava a
+    // un elemento che non si vede e non si puo' toccare: le lezioni restavano ferme al passo "Fine turno". Il bersaglio
+    // e' quindi il tondo (poi la voce del menu), e la barra solo dove il tondo non c'e' (telefono in verticale).
+    function tondoVisibile() {
+        const b = document.getElementById('phaseSideBtn');
+        if (!b || b.hidden) return false;
+        const stile = getComputedStyle(b);
+        const r = b.getBoundingClientRect();
+        return r.width > 0 && stile.display !== 'none' && stile.visibility !== 'hidden';
+    }
+    function elFase(fase) {
+        if (!tondoVisibile()) return document.querySelector(`.phase-step[data-phase="${fase}"]`);
+        const menu = document.getElementById('phaseSideMenu');
+        if (menu && !menu.hidden) {
+            const passi = Array.from(document.querySelectorAll('#phaseStepper .phase-step'));
+            const i = passi.findIndex((p) => p.dataset.phase === fase);
+            return menu.children[i] || menu;
+        }
+        return document.getElementById('phaseSideBtn');
+    }
+    const consentiFase = (fase) => [`.phase-step[data-phase="${fase}"]`, '#phaseSideBtn', '#phaseSideMenu'];
     function primaCasellaLibera(tipo) {
         const campo = tipo === 'monster' ? Tavolo.mostri('player') : Tavolo.magieTrappole('player');
         const i = (campo || []).findIndex((s) => !s);
@@ -175,8 +198,8 @@
         },
         {
             testo: 'Nel primo turno del duello non si può attaccare. Passa il turno: tocca "Fine".',
-            bersaglio: () => document.querySelector('.phase-step[data-phase="end"]'),
-            consenti: () => ['.phase-step[data-phase="end"]'],
+            bersaglio: () => elFase('end'),
+            consenti: () => consentiFase('end'),
             fatto: () => gameState.currentPlayer === 'bot'
         },
         {
@@ -224,8 +247,8 @@
         },
         {
             testo: 'Eccolo! Ora si combatte: tocca "Battaglia" per entrare nella Battle Phase.',
-            bersaglio: () => document.querySelector('.phase-step[data-phase="battle"]'),
-            consenti: () => ['.phase-step[data-phase="battle"]'],
+            bersaglio: () => elFase('battle'),
+            consenti: () => consentiFase('battle'),
             fatto: () => gameState.phase === 'battle'
         },
         {
@@ -354,8 +377,8 @@
         },
         {
             testo: 'Le Trappole servono nel turno dell\'avversario. Passa il turno: tocca "Fine".',
-            bersaglio: () => document.querySelector('.phase-step[data-phase="end"]'),
-            consenti: () => ['.phase-step[data-phase="end"]'],
+            bersaglio: () => elFase('end'),
+            consenti: () => consentiFase('end'),
             fatto: () => gameState.currentPlayer === 'bot'
         },
         {
@@ -591,8 +614,8 @@
         },
         {
             testo: 'Ora si combatte: tocca "Battaglia" per entrare nella Battle Phase.',
-            bersaglio: () => document.querySelector('.phase-step[data-phase="battle"]'),
-            consenti: () => ['.phase-step[data-phase="battle"]'],
+            bersaglio: () => elFase('battle'),
+            consenti: () => consentiFase('battle'),
             fatto: () => gameState.phase === 'battle'
         },
         {
@@ -791,8 +814,68 @@
         { fine: true, testo: 'Lezione completata! Ora conosci le zone del campo: la prossima volta che una carta dice "Cimitero" o "Extra Deck" saprai dove guardare.' }
     ];
 
+    // --- Il Tag Team (duello guidato) --------------------------------
+    // Tu e Joey contro il nonno. Il duello e' un vero Tag (js/modes/tag-mode.js: TagTutorial.avvia, partner scelto dall'URL):
+    // qui solo le mani di partenza. Il nonno ha il mazzo di riempitivi e nessuna carta in mano, cosi' non fa nulla di imprevisto;
+    // la mano del compagno la pesca il Tag dal suo mazzo e la gioca l'IA, quindi i passi non dipendono da cosa fa Joey.
+    function preparaTag() {
+        preparaBreve({ manoGiocatore: [ID.servo, ID.robolady], manoNonno: [] });
+    }
+    const membroDavanti = () => (window.TagTeam && TagTeam.membroAttivo('player')) || null;
+    const compagnoInCampo = () => { const m = membroDavanti(); return !!m && m.controllore !== 'persona'; };
+    const ioInCampo = () => { const m = membroDavanti(); return !!m && m.controllore === 'persona'; };
+    const PASSI_TAG = [
+        {
+            testo: 'Oggi giochiamo un Tag Team: tu e Joey contro di me. Siete in due, ma sul campo ce n\'è uno solo alla volta. Qui vedi la tua squadra: chi è in campo e chi aspetta in panchina.',
+            bersaglio: () => document.getElementById('tagPanchina'),
+            avanti: true,
+            pronto: () => gameState.phase === 'main1' && gameState.currentPlayer === 'player' && !!document.getElementById('tagPanchina'),
+            attesa: 'Un attimo, il turno si sta preparando…'
+        },
+        {
+            testo: 'Ognuno di voi ha i suoi Life Point: 4000 a testa contro i miei 8000. Se uno arriva a zero esce dal duello, ma l\'altro continua. Perdete solo quando cadono tutti e due.',
+            bersaglio: () => document.getElementById('playerInfo'),
+            avanti: true
+        },
+        {
+            testo: 'Tocca a te. Evoca il Servitore del Teschio: tocca la carta e poi una casella Mostro libera.',
+            bersaglio: () => bersaglioPiazzamento(ID.servo, 'monster'),
+            consenti: () => [selCartaInMano(ID.servo), SEL_MOSTRI, SEL_POPOVER],
+            fatto: () => inCampo('player', ID.servo)
+        },
+        {
+            testo: 'Bene. Il turno è tuo e finisce qui: passalo con "Fine".',
+            bersaglio: () => elFase('end'),
+            consenti: () => consentiFase('end'),
+            fatto: () => gameState.currentPlayer === 'bot'
+        },
+        {
+            testo: 'Ora gioco io. Poi toccherà di nuovo alla vostra squadra, e quando comincia il turno succede una cosa: lo scambio. Guarda…',
+            bersaglio: () => document.getElementById('botFieldBoard'),
+            fatto: () => gameState.currentPlayer === 'player' && compagnoInCampo()
+        },
+        {
+            testo: 'Ecco lo scambio! In campo adesso c\'è Joey: gioca il suo turno da solo, con la sua mano, il suo Mazzo e il suo campo. Un velo sul campo ti impedisce di muovere al suo posto. Il Cimitero invece è della squadra intera.',
+            bersaglio: () => document.getElementById('tagPanchina'),
+            avanti: true
+        },
+        {
+            testo: 'Aspettiamo che Joey finisca e che tocchi di nuovo a te…',
+            bersaglio: () => document.getElementById('tagPanchina'),
+            fatto: () => gameState.currentPlayer === 'player' && ioInCampo()
+        },
+        {
+            testo: 'Rieccoti: i turni della squadra si alternano fra voi due. Se vuoi vedere cosa ha in panchina Joey, tocca la sua icona accanto al campo: lo vedi in sola lettura, senza poterlo toccare.',
+            bersaglio: () => document.getElementById('tagPanchina'),
+            avanti: true,
+            pronto: () => catenaVuota()
+        },
+        { fine: true, testo: 'Lezione completata! Nel Tag Team conta la squadra: scegli bene chi mettere in campo e fidati del tuo compagno.' }
+    ];
+
     const LEZIONI = {
         nonno: { prepara: preparaLezione, passi: PASSI_NONNO },
+        tag: { prepara: preparaTag, passi: PASSI_TAG },
         battaglia: { prepara: preparaBattaglia, passi: PASSI_BATTAGLIA },
         continue: { prepara: preparaContinue, passi: PASSI_CONTINUE },
         speciale: { prepara: preparaSpeciale, passi: PASSI_SPECIALE },
@@ -985,7 +1068,10 @@
         // Ogni chiamata nel gioco è già protetta da `if (window.DuelDialogues)`.
         window.DuelDialogues = null;
         window.preparaManiIniziali = LEZIONI[LEZIONE].prepara;
-        initGame();
+        // Il Tag Team e' un duello a squadre: lo avvia js/modes/tag-mode.js (avvolge la preparazione qui sopra e costruisce i
+        // riquadri della squadra); senza (modalita' non caricata) si ripiega sul duello normale, che i passi non saprebbero seguire.
+        if (LEZIONE === 'tag' && window.TagTutorial) window.TagTutorial.avvia();
+        else initGame();
         if (obbligatoria) {
             // Al primo avvio la lezione non si salta: niente Abbandona, e il
             // tasto Indietro di Android non apre la resa.

@@ -26,7 +26,9 @@ const ASSEGNAZIONI_AMMESSE = new Set([
     'puzzlesDatabase', 'rivinciteDatabase', 'torreDatabase', 'settimanaDatabase', 'cacciaDatabase',
     'TagTeam', 'ModeUnlocks',
     // Aggancio generico dell'annuncio del cambio turno (letto da game-flow.js senza sapere quale modalita' lo usa).
-    'AnnuncioTurnoModalita'
+    'AnnuncioTurnoModalita',
+    // Aggancio con cui la lezione guidata del Tutorial (js/tutorial/tutorial-duel.js) avvia la preparazione del Tag Team.
+    'TagTutorial'
 ]);
 // Oggetti del motore le cui funzioni una modalità non deve sostituire.
 const OGGETTI_DEL_MOTORE = ['Comandi', 'DuelEngine', 'EventiDuello', 'Decisioni', 'Tavolo', 'PassoComune', 'CardEffects'];

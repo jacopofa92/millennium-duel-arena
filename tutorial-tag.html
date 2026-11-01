@@ -198,7 +198,7 @@
         const avanti = document.getElementById('avanti');
         if (avanti) avanti.addEventListener('click', () => { i++; if (window.NativeHaptics) NativeHaptics.light(); disegna(); });
         // Arrivati all'ultima pagina la lezione è letta: si segna come le altre del menu Tutorial.
-        if (ultima) SaveManager.setTutorial({ lezioni: { tag: true } });
+        if (ultima) SaveManager.setTutorial({ lezioni: { tagRegole: true } });
     }
     disegna();
 </script>

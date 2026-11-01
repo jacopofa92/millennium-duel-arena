@@ -97,6 +97,19 @@ const LEZIONI = {
             dettaglio: { lp: gameState.playerLP, mostri: gameState.playerMonsterField.filter(Boolean).length }
         })
     },
+    tag: {
+        // Duello Tag guidato (tu e Joey contro il nonno): si e' evocato il Servitore, e il turno di Joey c'e' stato davvero
+        // (scambio avvenuto: la squadra ha due membri e a fine lezione il giocatore e' di nuovo in campo).
+        verifica: () => {
+            const r = TagTeam.riassunto('player');
+            return {
+                // Il Servitore puo' essere stato attaccato nel frattempo (il nonno non e' passivo): contano la squadra e i turni giocati.
+                ok: !!r && r.membri.length === 2 && r.membri.every((m) => m.vivo) && r.membri[0].davanti
+                    && gameState.turn >= 5 && gameState.playerLP > 0 && gameState.playerLP <= 4000,
+                dettaglio: { membri: r && r.membri.map((m) => ({ nome: m.nome, davanti: m.davanti, lp: m.lp })), turno: gameState.turn }
+            };
+        }
+    },
     rapida: {
         verifica: () => ({
             ok: gameState.botMonsterField.some((s) => s && s.card.id === 1 && s.isFaceDown && s.position === 'defense'),
@@ -154,7 +167,8 @@ module.exports = {
             page.on('pageerror', (e) => errori.push(e.message));
             await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.DUEL_FAST_OPENING = true; });
             try {
-                await page.goto(DUELLO + id);
+                // Il Tag Team si gioca in coppia: il compagno viaggia nell'indirizzo (lo mette tutorial.html).
+                await page.goto(DUELLO + id + (id === 'tag' ? '&partner=joey' : ''));
                 await page.waitForFunction(() => !!window.SaveManager);
                 await page.evaluate(() => {
                     if (!SaveManager.hasSave()) SaveManager.createNew('Allievo');
@@ -200,7 +214,9 @@ module.exports = {
             const link = await page.$$eval('.tut-lezione[data-lezione]', (els) => els.map((a) => a.getAttribute('href')));
             t.assert(['nonno', 'catena', 'fusione', 'flip', 'equip', 'rituale', 'rapida'].every((id) => link.some((h) => h.endsWith('&lezione=' + id))),
                 `Il menu Tutorial deve elencare tutte le lezioni: ${JSON.stringify(link)}`);
-            t.assert(link.every((h) => /[?&]field=citta\.jpg(&|$)/.test(h)),
+            // La lezione "Il Tag Team" e' un duello guidato (a squadre) e "Tag Team: le regole" una pagina da sfogliare, senza duello.
+            t.assert(link.some((h) => h.endsWith('&lezione=tag&partner=joey')), `Il menu elenca il duello guidato del Tag Team: ${JSON.stringify(link)}`);
+            t.assert(link.filter((h) => !/^tutorial-tag\.html$/.test(h)).every((h) => /[?&]field=citta\.jpg(&|$)/.test(h)),
                 `Ogni lezione del menu si gioca in città: ${JSON.stringify(link)}`);
         } finally {
             await page.close();

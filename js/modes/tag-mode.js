@@ -39,7 +39,11 @@
     // (avanzamento, premi, ritorno alla mappa: li gestisce duel-session.js come sempre); qui cambia solo la preparazione.
     const modoUrl = (params.get('mode') || '').toLowerCase();
     const inStoria = !inRete && modoUrl === 'story' && params.get('tag') === '1';
-    if (!inRete && modoUrl !== 'tag' && !inStoria) return;
+    // LEZIONE GUIDATA DEL TUTORIAL: mode=tutorial&lezione=tag&partner=<compagno>. Il duello lo guida js/tutorial/tutorial-duel.js
+    // (riflettore, passi, uscita); qui cambia solo la preparazione, che TutorialDuel chiede con TagTutorial.avvia() dopo aver
+    // scelto le mani della lezione. Niente di cio' che c'e' sotto (premi, record) vale per una lezione.
+    const inTutorial = !inRete && modoUrl === 'tutorial' && params.get('lezione') === 'tag';
+    if (!inRete && modoUrl !== 'tag' && !inStoria && !inTutorial) return;
 
     const idCompagno = params.get('partner') || '';
     const idAvversario = params.get('character') || '';
@@ -572,6 +576,10 @@
         if (g.MpPassoComune) g.MpPassoComune.allaPreparazione(preparaInRete);
         // Il duello in rete è la modalità 'multiplayer' di duel-session.js: initGame fa lo scambio dei mazzi e la preparazione.
         window.ModalitaDuello.multiplayer = { avvia: () => { initGame(); }, chiudi: chiudiInRete };
+        return;
+    }
+    if (inTutorial) {
+        g.TagTutorial = { avvia: avvia };
         return;
     }
     if (inStoria) {
