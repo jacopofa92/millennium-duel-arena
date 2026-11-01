@@ -340,6 +340,7 @@ async function giocaPartita(opz, n) {
     const osservatiBot = new Set();
     const evocatiBot = new Set();
     const primaEvocazioneBot = {};
+    const primaInMano = {};
     const osservaPlayerIds = new Set((opz.osservaPlayerIds || []).map(Number));
     const osservatiPlayer = new Set();
     const LIMITE_PASSI = 200000;
@@ -347,6 +348,16 @@ async function giocaPartita(opz, n) {
         passi++;
         const stato = esegui('({ fine: !!gameState.gameOver || __esitoDuello !== null, turno: gameState.turn, lp: [gameState.playerLP, gameState.botLP] })');
         if (osservaBotIds.size) {
+            // Quando la carta e' in mano: il turno e quanti mostri ha il bot (serve a capire se mancano i Tributi).
+            const inMano = esegui(`gameState.botHand.map((c) => Number(c.id))`);
+            inMano.forEach((id) => {
+                if (!osservaBotIds.has(id)) return;
+                const r = primaInMano[id] || (primaInMano[id] = { turno: esegui('gameState.turn'), maxMostri: 0, turniInMano: 0, ultimoTurno: -1 });
+                const turno = esegui('gameState.turn');
+                const mostri = esegui(`gameState.botMonsterField.filter(Boolean).length`);
+                if (mostri > r.maxMostri) r.maxMostri = mostri;
+                if (turno !== r.ultimoTurno) { r.ultimoTurno = turno; r.turniInMano++; r.mostriAlTurno = (r.mostriAlTurno || []).concat(mostri); r.mostriInMano = (r.mostriInMano || []).concat(esegui(`gameState.botHand.filter((c) => c.type === 'monster' && ![30, 31, 472].includes(Number(c.id))).length`)); }
+            });
             const mostriPresenti = esegui(`gameState.botMonsterField.filter(Boolean).map((x) => Number(x.card.id))`);
             mostriPresenti.forEach((id) => {
                 if (!osservaBotIds.has(id)) return;
@@ -439,7 +450,7 @@ async function giocaPartita(opz, n) {
     const extra = opz.allaFine ? esegui(opz.allaFine) : undefined;
     return { seme, passi, oraVirtualeMs: orologio.ora, alLimite, invarianti, trovate, trovatePerTesto, extra,
         osservatiBotIds: Array.from(osservatiBot), osservatiPlayerIds: Array.from(osservatiPlayer),
-        evocatiBotIds: Array.from(evocatiBot), primaEvocazioneBot,
+        evocatiBotIds: Array.from(evocatiBot), primaEvocazioneBot, primaInMano,
         erroriCarte: erroriCarte.slice(), registroCompleto, ...fine };
 }
 

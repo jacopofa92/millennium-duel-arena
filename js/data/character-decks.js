@@ -268,7 +268,9 @@ const characterDeckDatabase = {
                 { id: 56, qty: 1 }, // Rito della Gloria Nera
                 { id: 38, qty: 1 }, // Fusione
                 { id: 36, qty: 2 }, // Anfora dell'Avidità
-                { id: 419, qty: 1 }, // Anello della Distruzione
+                // Incrocio di Anime al posto dell'Anello della Distruzione: Evocazione Tributo di Slifer coi mostri di entrambi i
+                // campi. Guadagno piccolo e rumoroso su Slifer (8-16% prima, 10-17% dopo su 400 duelli), vittorie del bot invariate.
+                { id: 1274, qty: 1 }, // Incrocio di Anime
                 { id: 620, qty: 1 }, // Cerchio Incantatore
                 { id: 31, qty: 1 }, // Slifer il Drago del Cielo
                 { id: 854, qty: 1 }, // Mago del Chaos Oscuro
@@ -392,7 +394,11 @@ const characterDeckDatabase = {
                 { id: 69, qty: 1 }, // Blocca Difesa
                 { id: 646, qty: 1 }, // Tempesta Potente
                 { id: 631, qty: 1 }, // Megamorfosi
-                { id: 312, qty: 1 }, // Teletrasportatore
+                // Incrocio di Anime al posto del Teletrasportatore: permette l'Evocazione Tributo di Obelisk usando anche i mostri
+                // dell'avversario (senza, a Difficile compariva in meno dell'1% dei duelli: il campo del bot raramente arriva a tre
+                // mostri). Misurato su 400 duelli: Obelisk dallo 0,5% al 6-12%, Drago Bianco Occhi Blu invariato o in aumento,
+                // vittorie del bot 59-65% prima e 62-63% dopo.
+                { id: 1274, qty: 1 }, // Incrocio di Anime
                 { id: 820, qty: 2 }, // Annulla Attacco
                 { id: 40, qty: 1 }, // Buco Trappola
                 { id: 793, qty: 1 }, // Armatura Sakuretsu
@@ -983,7 +989,10 @@ const characterDeckDatabase = {
                 { id: 542, qty: 1 }, // Spettro Oscuro
                 { id: 559, qty: 1 }, // Ultima Offerta
                 { id: 750, qty: 1 }, // Gabbia d'Acciaio dell'Incubo
-                { id: 216, qty: 1 }, // Caduta
+                // Incrocio di Anime al posto di Caduta: Ra con i mostri di entrambi i campi. Su 400 duelli Ra dal 15% (11-19%) al 23%,
+                // vittorie del bot 61/60% prima e 62/58% dopo. (Al posto dei Sette Attrezzi del Bandito Ra saliva di piu', ma
+                // le vittorie del bot di 5-9 punti: Marik e' gia' fra i piu' duri.)
+                { id: 1274, qty: 1 }, // Incrocio di Anime
                 { id: 130, qty: 1 }, // Controllo della Mente
                 { id: 450, qty: 1 }, // Demolizione dell'Anima
                 { id: 136, qty: 1 }, // Richiamo del Posseduto
