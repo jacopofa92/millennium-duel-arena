@@ -368,6 +368,11 @@
 .mp-hint { display: block; margin-top: 8px; color: var(--kc-ink-dim); font-size: 0.72rem; line-height: 1.5; }
 
 .mp-lobby-status {
+    /* La console (sfondo WebGL piu' largo di 10px per lato, flusso esadecimale lungo centinaia di px) sbordava di 10px a destra:
+       sul telefono Chrome allarga allora la pagina (411 -> 421 px) e rimpicciolisce tutto, e la barra fissa in basso scivola sotto
+       lo schermo (segnalato dall'utente: "Kaiba Corp sposta la barra"). `clip` tiene dentro il bordo senza creare uno scorrimento. */
+    overflow-x: clip;
+    max-width: 100%;
     margin-top: 18px;
     min-height: 20px;
     font-size: 0.8rem;
