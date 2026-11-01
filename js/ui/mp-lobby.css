@@ -1164,6 +1164,8 @@ body.ha-tab-bar .mp-ready {
     z-index: 110;
 }
 body.ha-tab-bar .mp-ready[hidden] { display: none; }
+/* La console di connessione, portata a vista da scrollIntoView, si ferma SOPRA la barra di navigazione (non sotto). */
+body.ha-tab-bar #mpStatus { scroll-margin-bottom: calc(var(--mm-barra-h) + 16px); }
 body.ha-tab-bar .mp-lobby { padding-bottom: calc(var(--mm-barra-h) + 190px); }
 @media (max-width: 640px) {
     body.ha-tab-bar .mp-ready { padding: 12px; }

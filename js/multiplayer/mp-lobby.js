@@ -310,6 +310,17 @@
         // Sfondo WebGL "KaibaCorp System" dietro la console (js/multiplayer/mp-term-fx.js): niente se manca WebGL.
         if (attesa.fx) attesa.fx.ferma();
         attesa.fx = window.MpTermFx ? MpTermFx.monta(el.querySelector('.mp-term')) : null;
+        tieniInVista(el);
+    }
+
+    /**
+     * La console sta in fondo alla pagina, sotto il pulsante di apertura: sul telefono compariva sotto la piega e la barra di
+     * navigazione in basso la copriva a meta'. La si porta a vista, ferma sopra la barra (il margine e' `scroll-margin-bottom`
+     * di #mpStatus nel CSS), e di nuovo ogni volta che la console cresce con una riga in piu'.
+     */
+    function tieniInVista(el) {
+        const vai = () => { try { el.scrollIntoView({ block: 'end', behavior: riduciMovimento ? 'auto' : 'smooth' }); } catch (e) { /* vecchi browser: resta dov'e' */ } };
+        requestAnimationFrame(vai);
     }
 
     /** Una riga di byte in esadecimale, per il flusso di dati che scorre sotto il titolo (solo decorazione). */
@@ -365,6 +376,7 @@
         const stages = $('mpTermStages');
         if (stages) stages.querySelectorAll('i').forEach((nodo, indice) => nodo.classList.toggle('is-on', indice < avanzamento));
         const corpo = $('mpTermBody');
+        const righePrima = attesa.righe;
         while (attesa.righe < attese) {
             const prec = corpo.lastElementChild;
             if (prec) prec.classList.remove('is-attiva');
@@ -377,6 +389,7 @@
             const titolo = el.querySelector('.mp-term-title');
             titolo.classList.remove('is-glitch'); void titolo.offsetWidth; titolo.classList.add('is-glitch');
         }
+        if (attesa.righe > righePrima) tieniInVista(el);
         $('mpTermFoot').textContent = `TENTATIVO ${Math.max(1, attesa.tentativo)}`
             + (secondi >= 25 ? ' · PUÒ SERVIRE FINO A UN MINUTO: RESTA SU QUESTA PAGINA' : '');
     }

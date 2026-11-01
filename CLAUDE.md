@@ -4160,6 +4160,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.25 (cache v534, su `main`): testi della sala Multiplayer: `La tua pedina` diventa `Il tuo duellante` (sala 1 contro 1 e Tag) e il pulsante `Siediti qui` con la sedia diventa `Prendi posto`, senza icone. Provati multiplayer-pedina, multiplayer-tag-team, guardrail. Suite completa non eseguita.
 
+1.5.26 (cache v535, su `main`): **la console di connessione KaibaCorp resta sopra la barra di navigazione** (segnalato dall'utente sul telefono: a meta' sotto la barra). In `mp-lobby.js` `tieniInVista(el)` la porta a vista con `scrollIntoView({block:'end'})` alla comparsa e a ogni riga nuova; `#mpStatus` ha `scroll-margin-bottom: calc(var(--mm-barra-h) + 16px)` in `mp-lobby.css`. Misurato sul telefono vero: fondo della console 15 px sopra la barra. Provati multiplayer-kaibacorp, -attesa, -modalita. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**
