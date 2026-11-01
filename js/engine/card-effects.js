@@ -927,6 +927,13 @@
         const testo = ctx.card && ctx.card.effect;
         const unBersaglio = /bersaglio 1 mostr/i.test(testo || '') && ((testo || '').match(/\b1 mostr/gi) || []).length === 1;
         const dir = options && options.favorisce ? options.favorisce : (unBersaglio ? direzioneDellEffetto(testo) : null);
+        // Una carta che DISTRUGGE una Magia/Trappola a bersaglio (Rimuovi Trappola, Distruzione Schiacciante, Nobiluomo
+        // dello Sterminio...): il bot colpisce una carta dell'AVVERSARIO, mai una sua. L'elenco parte da 'player', che
+        // quando e' l'IA a giocare da quel posto (Tag Team, duello senza testa) e' proprio il suo lato.
+        if (testo && /\bdistrugg/i.test(testo) && !/che controlli/i.test(testo) && elenco.every((c) => c.zone === 'st')) {
+            const loro = elenco.filter((c) => c.owner !== ctx.owner);
+            if (loro.length > 0) return loro[0];
+        }
         const lati = new Set(elenco.map((c) => c.owner));
         if (lati.size < 2) {
             // un lato solo: se potenzia e sono i miei, il migliore; altrimenti il primo (potrebbe essere un costo)
@@ -953,6 +960,14 @@
 
     function chooseFieldCardTarget(ctx, candidates, options, onChosenOriginale) {
         if (!candidates || candidates.length === 0) return false;
+        // Il bot non distrugge una Magia/Trappola PROPRIA: se l'effetto distrugge e fra i bersagli possibili non c'e' nessuna
+        // carta dell'avversario, non sceglie niente (con un solo candidato la scelta sarebbe automatica, e cadrebbe su una
+        // sua carta: Kaiba che distrugge le sue Spade Rivelatrici con Tifone). Per una persona la scelta resta libera.
+        if (ctx && ctx.card && !Decisioni.rispondeUnaPersona(ctx.owner)
+            && /\bdistrugg/i.test(ctx.card.effect || '') && !/che controlli/i.test(ctx.card.effect || '')
+            && candidates.every((c) => c.zone === 'st') && !candidates.some((c) => c.owner !== ctx.owner)) {
+            return false;
+        }
         // `options.dichiara`: il bersaglio scelto passa dal checkpoint di
         // targeting condiviso (ctx.declareTarget) PRIMA di arrivare alla
         // carta — vedi dichiaraBersaglioScelto qui sotto. Si avvolge

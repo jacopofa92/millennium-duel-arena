@@ -687,6 +687,29 @@
     }
 
     /**
+     * Una Magia/Trappola che DISTRUGGE UNA Magia/Trappola a bersaglio ("Scegli come bersaglio 1 Magia/Trappola sul
+     * Terreno; distruggila": Tifone Spaziale Mistico, Annulla Carta Magia, Rimuovi Trappola, Distruzione Schiacciante,
+     * Nobiluomo dello Sterminio...) ma l'avversario non ha NESSUN bersaglio adatto: l'unica carta che il testo
+     * permette di colpire sarebbe una sua. Segnalato giocando: Kaiba usava il Tifone per distruggere le proprie Spade
+     * Rivelatrici, piu' di una volta e con ogni Duellante. Riconoscimento sul testo, quindi vale per le carte future;
+     * le distruzioni di massa (Tempesta Pesante, Piumino...) hanno il loro controllo (isMassDestructionWorthwhile).
+     * Torna true se la carta va VIETATA.
+     */
+    function distruggeSoloMagieTrappoleSue(card, io) {
+        if (!card || (card.type !== 'spell' && card.type !== 'trap')) return false;
+        if (card.subtype === 'continuous' || card.subtype === 'field' || card.subtype === 'equip') return false;
+        const t = card.effect || '';
+        if (!/\bdistrugg/i.test(t) || /che controlli/i.test(t)) return false;
+        if (!/(?:Scegli|bersaglio)[^.;:]*\b1\s+(?:carta\s+)?(?:Magia\/Trappola|Magia o Trappola|Magia|Trappola)/i.test(t)) return false;
+        const loro = (Tavolo.magieTrappole(Tavolo.avversario(io), gameState) || []).filter((s) => s && s.card);
+        if (loro.length === 0) return true;
+        // Il testo chiede carte scoperte ("Trappola scoperta") o solo coperte: ci vuole un bersaglio di quel tipo.
+        if (/scopert[ae]/i.test(t) && !/\bcopert[ae]\b|\bSet\b/i.test(t) && !loro.some((s) => !s.isFaceDown)) return true;
+        if (/\bcopert[ae]\b/i.test(t) && !/scopert[ae]/i.test(t) && !loro.some((s) => s.isFaceDown)) return true;
+        return false;
+    }
+
+    /**
      * L'UNICO controllo "ha senso attivarla?" che il bot fa per una Magia/Trappola, sia che la giochi
      * dalla mano o da Settata sia che risponda in Catena:
      *  1) il veto della carta stessa (`def.aiCanActivate(ctx)`, per le carte con un costo o una scelta che
@@ -706,6 +729,7 @@
             try { if (!def.aiCanActivate(ctx)) return false; } catch (e) { return false; }
         }
         if (!haSpazioPerEvocare(card, io, def)) return false;
+        if (distruggeSoloMagieTrappoleSue(card, io)) return false;
         // Una Trappola che SOLO potenzia un proprio mostro (Rinforzi, Mura del Castello, Risucchio di Energia,
         // le Carte Equipaggiamento-Trappola...) ha senso in battaglia, non in risposta a una Magia qualunque:
         // fuori dalla Battle Phase il bot la sprecava (e spesso il mostro potenziato era proprio quello che
@@ -732,6 +756,7 @@
 
     window.AI_SHARED = {
         attivazioneSensata: attivazioneSensata,
+        distruggeSoloMagieTrappoleSue: distruggeSoloMagieTrappoleSue,
         guadagnoRelativoCampo: guadagnoRelativoCampo,
         effAtk: effAtk,
         effDef: effDef,

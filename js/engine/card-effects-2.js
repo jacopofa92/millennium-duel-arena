@@ -452,8 +452,12 @@
                 // Euristica bot: preferisce un bersaglio SICURAMENTE una
                 // Magia (già scoperta) se ce n'è una, invece di rischiare
                 // alla cieca su una carta Set.
-                const faceUpSpell = candidates.find((c) => c.card.type === 'spell' && !ctx.stField(c.owner)[c.index].isFaceDown);
-                destroy(faceUpSpell || candidates[0]);
+                // Solo carte dell'AVVERSARIO (i candidati partono dal proprio lato: prima il bot distruggeva una propria
+                // Magia scoperta, per esempio le sue Spade Rivelatrici). Se l'avversario non ne ha, non fa niente.
+                const loro = candidates.filter((c) => c.owner === ctx.opponent);
+                const faceUpSpell = loro.find((c) => c.card.type === 'spell' && !ctx.stField(c.owner)[c.index].isFaceDown);
+                const scelta = faceUpSpell || loro[0];
+                if (scelta) destroy(scelta);
                 return;
             }
             Decisioni.chiedi({

@@ -2618,8 +2618,10 @@
                 }
             };
             if (!Decisioni.rispondeUnaPersona(ctx.owner)) {
+                // Mai una carta PROPRIA: se l'avversario non ne ha, il bot non distrugge niente (prima toccava la prima
+                // trovata, e distruggeva le sue Spade Rivelatrici). L'IA non la attiva nemmeno (distruggeSoloMagieTrappoleSue).
                 const oppCandidate = candidates.find((c) => c.owner === ctx.opponent);
-                destroy(oppCandidate || candidates[0]);
+                if (oppCandidate) destroy(oppCandidate);
                 return;
             }
             Decisioni.chiedi({
