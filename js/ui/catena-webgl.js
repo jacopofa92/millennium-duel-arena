@@ -229,9 +229,9 @@ void main(){
         s.textContent = `
 #catenaGL{position:fixed;inset:0;z-index:${Z_ROOT};pointer-events:none;overflow:hidden;
   transition:opacity ${DUR_CHIUSURA_MS}ms ease}
-/* RISOLUZIONE: le carte si dispongono in una COLONNA di miniature sul bordo sinistro (le posizioni le calcola disegnoCompatto, in
-   coordinate di schermo vere) e il velo scuro sparisce, cosi' gli effetti che si risolvono sotto (distruzioni, danni, Evocazioni)
-   restano TUTTI visibili. Durante la costruzione della Catena torna a tutto schermo.
+/* RISOLUZIONE: le carte restano sfasate come nella scena piena ma in miniatura sul bordo sinistro (le posizioni le calcola
+   disegnoCompatto, in coordinate di schermo vere) e il velo scuro sparisce, cosi' gli effetti che si risolvono sotto (distruzioni,
+   danni, Evocazioni) restano TUTTI visibili. Durante la costruzione della Catena torna a tutto schermo.
    NIENTE transform sul contenitore: lo shader legge le posizioni delle carte dallo schermo e disegna in un canvas a tutto schermo;
    rimpicciolire il contenitore spostava le maglie fuori dalle carte (era il difetto della striscia "buggata"). */
 #catenaGL.cgl-compatta .cgl-buio{opacity:0!important}
@@ -284,6 +284,7 @@ void main(){
             ? Math.min(H * .27, (W * .42) / RAPPORTO, passoV * .76)
             : Math.min(H * .37, (W * .27) / RAPPORTO) * f);
         const rot = [-7, 5, -4, 7, -6, 4, -5, 6];
+        /** @type {{ x: number, y: number, rot: number, scala: number, ox?: number, oy?: number }[]} */
         const pos = [];
         for (let i = 0; i < n; i++) {
             let x, y;
@@ -369,18 +370,23 @@ void main(){
     }
 
     /**
-     * La colonna di miniature della risoluzione: tutte della stessa misura, una sotto l'altra sul bordo sinistro, senza
-     * inclinazione ne' sovrapposizioni, con un vuoto fra l'una e l'altra per le maglie. Il primo Link e' in alto.
+     * Le miniature della risoluzione: LO STESSO disegno sfasato della scena piena (zig-zag, inclinazioni, carta in
+     * evidenza), rimpicciolito verso il bordo sinistro. La riduzione si fa QUI, sulle posizioni e sulla grandezza delle carte
+     * in coordinate di schermo, e non con una transform sul contenitore: lo shader della catena legge le carte dallo schermo e
+     * disegna in un canvas a tutto schermo, quindi un contenitore rimpicciolito spostava le maglie fuori dalle carte.
      */
     function disegnoCompatto(n, W, H) {
-        const tetto = Math.min(96, W * 0.2);
-        const alta = Math.max(40, Math.min(tetto, (H * 0.74) / (Math.max(n, 1) * 1.22)));
-        const larga = alta * RAPPORTO;
-        const passo = alta * 1.22;
-        const y0 = H / 2 - ((n - 1) * passo) / 2;
-        const pos = [];
-        for (let i = 0; i < n; i++) pos.push({ x: 10 + larga / 2, y: y0 + i * passo, rot: 0, scala: 1 });
-        return { alta, larga, pos, verticale: true, compatto: true };
+        const d = disegnoCarte(n, W, H);
+        // Le miniature non scendono sotto una misura leggibile (su telefono la scena piena e' gia' piccola).
+        const f = Math.max(0.3, Math.min(0.6, 54 / d.alta));
+        const pos = d.pos.map((p) => ({
+            x: 6 + p.x * f,
+            y: H / 2 + (p.y - H / 2) * f,
+            rot: p.rot, scala: p.scala,
+            // La posizione di scena piena: da lei dipende l'angolo del numero (non da quella rimpicciolita).
+            ox: p.x, oy: p.y
+        }));
+        return { alta: d.alta * f, larga: d.larga * f, pos, verticale: d.verticale, compatto: true };
     }
 
     /** La lunghezza di una maglia: piu' piccola nelle miniature, o la catena coprirebbe le carte. */
@@ -426,19 +432,19 @@ void main(){
             if (v.chi) v.chi.style.fontSize = Math.max(10, Math.round(d.larga * .125)) + 'px';
             const num = v.num;
             if (num) {
-                num.style.fontSize = Math.round(d.larga * (d.compatto ? .5 : .62)) + 'px';
+                num.style.fontSize = Math.round(d.larga * .62) + 'px';
                 // L'angolo del numero e' quello LONTANO dalla catena (che esce verso le carte vicine): in verticale il lato
                 // esterno dello schermo (sopra la prima carta, sotto l'ultima), in orizzontale il lato esterno in alto o in basso.
                 const n = vv.length;
                 let v1, o1;
-                if (d.compatto) {
-                    // Colonna sul bordo sinistro: il numero sta sull'angolo in alto a destra (verso il campo), mai fuori dallo schermo.
-                    v1 = 't'; o1 = 'r';
-                } else if (d.verticale) {
-                    o1 = p.x < st.W / 2 ? 'l' : 'r';
+                // Nelle miniature l'angolo si decide dalla posizione della scena piena (ox/oy), cosi' resta lo stesso.
+                const px = d.compatto ? p.ox : p.x;
+                const py = d.compatto ? p.oy : p.y;
+                if (d.verticale) {
+                    o1 = px < st.W / 2 ? 'l' : 'r';
                     v1 = i === 0 ? 't' : i === n - 1 ? 'b' : (i % 2 === 0 ? 'b' : 't');
                 } else {
-                    v1 = p.y < st.H / 2 ? 't' : 'b';
+                    v1 = py < st.H / 2 ? 't' : 'b';
                     o1 = i === 0 ? 'l' : i === n - 1 ? 'r' : (i % 2 === 0 ? 'r' : 'l');
                 }
                 const ang = v1 + o1;
@@ -546,9 +552,7 @@ void main(){
         const r = voce.el.getBoundingClientRect();
         spara(r.left + r.width / 2, r.top + r.height / 2, 2);
         try {
-            // Nella colonna di miniature la carta in risoluzione si evidenzia di poco (e' a passo stretto: un'ingrandita
-            // forte coprirebbe le vicine), in scena piena passa davanti e si ingrandisce.
-            const gr = st.compatta ? 1.14 : 1.2;
+            const gr = 1.2;
             voce.dentro.animate([
                 { transform: 'scale(1)', filter: 'brightness(1)', offset: 0, easing: 'cubic-bezier(.2,.9,.3,1)' },
                 { transform: `scale(${gr + .06})`, filter: 'brightness(1.55)', offset: .28, easing: 'ease-in-out' },

@@ -120,19 +120,20 @@ module.exports = {
                 // Le carte sono una COLONNA di miniature sul bordo sinistro (il contenitore resta a tutto schermo: se lo si
                 // rimpicciolisce le maglie, che lo shader disegna in coordinate di schermo, escono dalle carte).
                 const r = Array.from(root.querySelectorAll('.cgl-pos')).filter((c) => getComputedStyle(c).opacity !== '0').map((c) => c.getBoundingClientRect());
-                const ordinate = r.slice().sort((a, b) => a.top - b.top);
+                // Il disegno e' quello sfasato della scena piena (zig-zag): le carte NON stanno tutte alla stessa altezza.
+                const alture = r.map((b) => Math.round(b.top + b.height / 2));
                 return {
                     classe: root.classList.contains('cgl-compatta'), velo: getComputedStyle(root.querySelector('.cgl-buio')).opacity,
                     trasformato: getComputedStyle(root).transform !== 'none', carte: r.length,
                     destraMax: Math.round(Math.max(...r.map((b) => b.right))), schermo: innerWidth,
-                    sovrapposte: ordinate.some((b, i) => i > 0 && b.top < ordinate[i - 1].bottom - 1),
-                    stessaColonna: Math.max(...r.map((b) => b.left)) - Math.min(...r.map((b) => b.left)) < 2,
+                    sfasate: new Set(alture).size > 1,
+                    piccole: Math.max(...r.map((b) => b.width)) < innerWidth * 0.15,
                     dentro: r.every((b) => b.left >= 0 && b.top >= 0 && b.bottom <= innerHeight)
                 };
             });
-            assert(compatta.classe && Number(compatta.velo) === 0 && !compatta.trasformato && compatta.carte === 3 && compatta.destraMax < compatta.schermo * 0.3,
-                `In risoluzione la scena e' una colonna di miniature a sinistra, senza velo e senza rimpicciolire il contenitore: ${JSON.stringify(compatta)}`);
-            assert(!compatta.sovrapposte && compatta.stessaColonna && compatta.dentro, `Le miniature sono in colonna, non si sovrappongono e stanno nello schermo: ${JSON.stringify(compatta)}`);
+            assert(compatta.classe && Number(compatta.velo) === 0 && !compatta.trasformato && compatta.carte === 3 && compatta.destraMax < compatta.schermo * 0.5,
+                `In risoluzione la scena e' in miniatura a sinistra, senza velo e senza rimpicciolire il contenitore: ${JSON.stringify(compatta)}`);
+            assert(compatta.sfasate && compatta.piccole && compatta.dentro, `Le miniature restano sfasate, piccole e dentro lo schermo: ${JSON.stringify(compatta)}`);
             // Una nuova risposta (Link aggiunto, nessuno in risoluzione) la riporta a tutto schermo
             await page.evaluate(() => { gameState.chain.links = window.__links.slice(0, 3); renderChainStack(); });
             await page.waitForTimeout(700);
