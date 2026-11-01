@@ -2361,6 +2361,15 @@
             const handIndex = ctx.hand(ctx.owner).findIndex((c) => c.id === 416);
             return handIndex !== -1 && maxRitualTributeLevel(ctx, handIndex) >= 4;
         },
+        // Abbandonato nasce 0/0 e prende ATK/DEF dal mostro avversario che assorbe (stessa regola della Fusione per Restrizione
+        // dai Mille Occhi, id 38): evocato con il campo avversario vuoto, o con soli mostri deboli o coperti, restava un 0/0
+        // dopo aver sacrificato dei mostri veri (visto giocando, Pegasus). Il bot lo evoca solo se c'e' un mostro SCOPERTO da
+        // assorbire che valga il costo: la persona resta libera di farlo come vuole.
+        aiCanActivate(ctx) {
+            const MINIMO_DA_ASSORBIRE = 1800;
+            return ctx.field(ctx.opponent).some((slot) => slot && !slot.isFaceDown
+                && DuelEngine.getEffectiveAtk(slot.card) >= MINIMO_DA_ASSORBIRE);
+        },
         activate(ctx) {
             const hand = ctx.hand(ctx.owner);
             const handIndex = hand.findIndex((c) => c.id === 416);

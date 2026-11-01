@@ -7205,7 +7205,7 @@ const CORREZIONI_LIMITI = {
     gozaburo: {
         easy: { rimosse: { 251: 1 }, aggiunte: { 161: 1 } },   // -Sepoltura Sciocca +Contratto con Exodia (2)
         medium: { rimosse: { 251: 1, 272: 1 }, aggiunte: { 161: 1, 434: 1 } },   // -Sepoltura Sciocca -Carita' Graziosa; +1 Contratto con Exodia (il motore Exodia non cresce di piu') +Capro Espiatorio
-        hard: { rimosse: { 36: 1, 251: 1, 272: 2, 409: 1 }, aggiunte: { 434: 1, 595: 2, 503: 1, 820: 1 } },   // -Anfora -Sepoltura Sciocca -2 Carita' Graziosa -Raigeki; +Capro Espiatorio +2 Guardiano Affidabile +Waboku +Annulla Attacco (Contratto con Exodia resta a 1: boss-hard-balance)
+        hard: { rimosse: { 36: 1, 251: 1, 272: 2, 409: 1 }, aggiunte: { 161: 1, 434: 1, 595: 2, 503: 1 } },   // -Anfora -Sepoltura Sciocca -2 Carita' Graziosa -Raigeki; +Contratto con Exodia (2: scelta dell'autore, il piano Exodia Necross perdeva consistenza) +Capro Espiatorio +2 Guardiano Affidabile +Waboku
     },
     gansley: {
         medium: { rimosse: { 36: 1 }, aggiunte: { 79: 1 } },   // -Anfora dell'Avidità +Un Oceano Leggendario (2)

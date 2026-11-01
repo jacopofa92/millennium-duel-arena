@@ -23,8 +23,8 @@ module.exports = {
         t.assert(esito.validi, 'Tutti i boss devono avere 40 carte e non piu di tre copie per carta');
         t.assert(JSON.stringify(esito.yugi) === '[2,2,1]', 'Yugi Hard deve conservare il motore di ricerca Exodia');
         t.assert(JSON.stringify(esito.bakura) === '[1,2,2]', 'Bakura Hard deve conservare Destiny Board/Necropaura');
-        // 1.5.31: Sepoltura Sciocca (251) e' Limitata (1 copia): da 2 a 1, come tutti i mazzi dei Duellanti.
-        t.assert(JSON.stringify(esito.gozaburo) === '[1,1,1]', 'Gozaburo Hard deve conservare il motore Exodia Necross');
+        // 1.5.31: Sepoltura Sciocca (251) e' Limitata (1 copia): da 2 a 1. 1.5.34: Contratto con Exodia (161) a 2 copie (scelta dell'autore).
+        t.assert(JSON.stringify(esito.gozaburo) === '[1,2,1]', 'Gozaburo Hard deve conservare il motore Exodia Necross');
         t.assert(JSON.stringify(esito.noah) === '[3,3,2]', 'Noah Hard deve restare centrato sui Mostri Spirito');
         // 1.4.97: Heishin e Nitemare ammorbiditi su richiesta (Raigeki 409 e Controllo/Anfora in meno,
         // Jinzo 17 in piu' per Nitemare): restano i boss piu' duri ma non piu' un muro (4% -> 16%).
