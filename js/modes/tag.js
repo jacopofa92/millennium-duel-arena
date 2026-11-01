@@ -91,12 +91,12 @@
     let eliminazioneInAttesa = {};
     /** @type {Record<string, number>} posto -> turno in cui il suo turno è stato chiuso per un membro a 0 (D18): mosse rifiutate. */
     let fineForzata = {};
-    /** @type {Array<(evento: string, posto: string) => void>} */
+    /** @type {Array<(evento: string, posto: string, dati?: any) => void>} */
     const ascoltatori = [];
     let agganciato = false;
 
-    function avvisa(evento, posto) {
-        ascoltatori.slice().forEach((fn) => { try { fn(evento, posto); } catch (e) { console.error(e); } });
+    function avvisa(evento, posto, dati) {
+        ascoltatori.slice().forEach((fn) => { try { fn(evento, posto, dati); } catch (e) { console.error(e); } });
     }
 
     /** @param {number} i */
@@ -253,7 +253,9 @@
 
         sq.attivo = indice;
         aggiornaUidInPanchina();
-        avvisa('scambio', posto);
+        // Chi esce e chi entra, per la scena dello scambio (js/ui/tag-scambio.js): `eliminato` = esce perché ha perso.
+        const chi = (m) => ({ nome: m.nome, image: (m.identita && m.identita.image) || '' });
+        avvisa('scambio', posto, { esce: chi(esce), entra: chi(entra), eliminato: !esce.vivo });
     }
 
     /** Il membro non ha più carte da pescare. */
@@ -1021,7 +1023,7 @@
         membroAttivo: (posto) => (squadre[posto] ? squadre[posto].membri[squadre[posto].attivo] : null),
         /** Un membro qualsiasi del posto (oggetto interno, per i test). @param {string} posto @param {number} i */
         membro: (posto, i) => (squadre[posto] ? squadre[posto].membri[i] : null),
-        /** @param {(evento: string, posto: string) => void} fn */
+        /** @param {(evento: string, posto: string, dati?: any) => void} fn */
         ascolta: (fn) => { ascoltatori.push(fn); },
         /** Solo per i test: ricomincia da zero. */
         azzera: () => { squadre = { player: null, bot: null }; attacchiInCorso = 0; eliminazioneInAttesa = {}; fineForzata = {}; frontiInAttesa = {}; },

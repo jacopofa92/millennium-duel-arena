@@ -344,8 +344,10 @@
         avvisoRisposta.className = 'tag-avviso tag-avviso--risposta';
         avvisoRisposta.hidden = true;
         document.body.appendChild(avvisoRisposta);
-        g.TagTeam.ascolta((evento, posto) => {
+        g.TagTeam.ascolta((evento, posto, dati) => {
             if (evento === 'scambio' || evento === 'pronta') allineaLp(posto);
+            // La scena dello scambio (solo grafica, js/ui/tag-scambio.js): parte dopo che la regola e' gia' avvenuta.
+            if (evento === 'scambio' && dati && g.TagScambio && !gameState.gameOver) g.TagScambio.mostra(posto, dati);
             if (evento === 'risposta' && posto === 'player') mostraRisposta();
             aggiornaTutto();
         });

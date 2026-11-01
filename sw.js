@@ -517,7 +517,7 @@
 // v500: Tag Team, Boss a squadre e scambio su richiesta.
 // v501: passo comune a posti (Multiplayer a più client), IA col caso locale in rete.
 // v502: Tag Team pronto per la rete (posti per membro, scambi deterministici).
-const CACHE_NAME = 'ygo-duel-arena-v517';
+const CACHE_NAME = 'ygo-duel-arena-v518';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
@@ -702,6 +702,8 @@ const APP_SHELL = [
     'js/multiplayer/mp-lobby.js',
     'js/multiplayer/mp-passo-comune.js',
     'js/multiplayer/mp-raid.js',
+    'js/ui/tag-scambio.js',
+    'js/ui/tag-scambio.css',
     'js/multiplayer/mp-raid-campo.js',
     'js/ui/mp-raid-campo.css',
     'js/multiplayer/mp-tag-sala.js',
