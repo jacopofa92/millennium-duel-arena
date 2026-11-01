@@ -37,35 +37,33 @@ const characterDeckDatabase = {
         easy: {
             main: [
                 { id: 2, qty: 3 }, // Mago Nero
-                { id: 109, qty: 3 }, // Castoro Guerriero
+                { id: 109, qty: 2 }, // Castoro Guerriero
                 { id: 444, qty: 2 }, // Zanna d'Argento
                 { id: 237, qty: 2 }, // Demone Selvaggio
-                // 1.5.36: al posto di 3 Elfo Mistico, 2 Soldato di Pietra e del Grande Scudo Custode (muri da 2000-2600 DEF che i mazzi
-                // base non riuscivano a superare: Facile al 45% con duelli da 26 turni) tre attaccanti deboli da ~1200 ATK. Misurato:
-                // vittorie del giocatore 45% -> 66%, 16 turni.
-                { id: 27, qty: 2 }, // Cucciolo di Drago
-                { id: 274, qty: 2 }, // Gradius
+                // Elfo Mistico e Soldato di Pietra sono i mostri di Yugi: restano (scelta dell'autore). 1.5.37: il Facile era troppo duro
+                // (45%, duelli da 26 turni) per colpa dei muri da 2000+ DEF che i mazzi base non superavano; si compensa con piu'
+                // attaccanti deboli da ~1200 ATK e senza Mura del Castello, Libro della Luna, Cattura-Draghi, Dian Keto e Guardiano
+                // Celtico. Misurato: vittorie del giocatore 45% -> 55% (muri di 1.5.36 tutti tolti: 64%).
+                { id: 391, qty: 3 }, // Elfo Mistico
+                { id: 261, qty: 2 }, // Soldato di Pietra
+                { id: 27, qty: 3 }, // Cucciolo di Drago
+                { id: 274, qty: 3 }, // Gradius
                 { id: 491, qty: 2 }, // Drago Trakodon
                 { id: 22, qty: 3 }, // Kuriboh
                 { id: 367, qty: 2 }, // Mammuth delle Tombe
-                { id: 4, qty: 1 }, // Guardiano Celtico
                 { id: 8, qty: 1 }, // Spada Rivelatrice
                 { id: 620, qty: 1 }, // Cerchio Incantatore
-                { id: 143, qty: 2 }, // Mura del Castello
                 { id: 434, qty: 1 }, // Capro Espiatorio
-                { id: 875, qty: 1 }, // Libro della Luna
                 { id: 35, qty: 1 }, // Mostro Resuscitato
                 { id: 36, qty: 1 }, // Anfora dell'Avidità
                 { id: 127, qty: 1 }, // Libro di Arti Ascose
                 { id: 386, qty: 1 }, // Moltiplicazione
                 { id: 363, qty: 1 }, // Cappelli Magici
-                { id: 206, qty: 1 }, // Cattura-Draghi
                 { id: 263, qty: 1 }, // Dono dell'Elfo Mistico
                 { id: 272, qty: 1 }, // Carità Graziosa
                 { id: 503, qty: 1 }, // Waboku
                 { id: 820, qty: 1 }, // Annulla Attacco
-                { id: 474, qty: 1 }, // Mille Coltelli
-                { id: 546, qty: 1 } // Dian Keto il Curatore
+                { id: 474, qty: 1 } // Mille Coltelli
             ],
             extra: []
         },
