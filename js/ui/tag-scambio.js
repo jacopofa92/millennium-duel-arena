@@ -17,6 +17,9 @@
 
     const DUR_PIENA = 1150;
     const DUR_LEGGERA = 700;
+    // La scena del turno dura come l'annuncio di un cambio turno normale (showEpicSlamAnnouncement: 3 s, e il turno vero parte dopo 3 s).
+    const DUR_TURNO = 3000;
+    const DUR_TURNO_FERMA = 2400;
 
     /** @type {{ finisci: () => void } | null} */
     let attiva = null;
@@ -76,11 +79,19 @@
         if (!dati || spenta() || typeof document === 'undefined') return;
         if (attiva) attiva.finisci();
 
-        // Il suono (audio/standard/tagSwitch.mp3; senza file un fruscio sintetico), una volta per scena.
-        try { if (window.SFX && typeof window.SFX.tagSwitch === 'function') window.SFX.tagSwitch(); } catch (e) { /* l'audio non deve fermare la scena */ }
+        // SCENA DEL TURNO (dati.turno): sostituisce l'annuncio "TURNO nome" di una partita normale e dura come lui (3 s). Se nello
+        // stesso istante c'e' stato uno scambio (dati.esce + dati.entra) lo racconta dentro la stessa scena: TAG! e poi il turno,
+        // col nome di chi gioca DAVVERO (l'annuncio standard dice il nome del primo avversario, anche se davanti c'e' il secondo).
+        const turnoScena = dati.turno != null;
+        const scambio = !turnoScena || !!(dati.esce && dati.entra);
+        // Il suono dello scambio (audio/standard/tagSwitch.mp3; senza file un fruscio sintetico), una volta per scena e solo se
+        // c'e' uno scambio: il normale suono del cambio turno lo fa gia' changeTurn.
+        if (scambio) {
+            try { if (window.SFX && typeof window.SFX.tagSwitch === 'function') window.SFX.tagSwitch(); } catch (e) { /* l'audio non deve fermare la scena */ }
+        }
 
         const movimento = conMovimento();
-        const durata = movimento ? DUR_PIENA : DUR_LEGGERA;
+        const durata = turnoScena ? (movimento ? DUR_TURNO : DUR_TURNO_FERMA) : (movimento ? DUR_PIENA : DUR_LEGGERA);
         // Il lato del giocatore esce a sinistra (e' li' la pillola della sua squadra), quello avversario a destra.
         const verso = posto === 'player' ? -1 : 1;
 
@@ -93,10 +104,14 @@
         const fascia = document.createElement('div');
         fascia.className = 'tgs-fascia';
         // Senza `entra` e' il solo KO (il membro e' appena caduto, il compagno entrera' piu' tardi): un ritratto e la scritta.
-        const soloKo = !dati.entra;
+        const soloKo = !turnoScena && !dati.entra;
         const esceKO = !!(dati.esceKO || dati.eliminato || soloKo);
-        const esce = ritratto(dati.esce, 'tgs-esce' + (esceKO ? ' tgs-esce--ko' : ''));
-        const entra = ritratto(dati.entra, 'tgs-entra');
+        // Nella scena del turno senza scambio c'e' un solo ritratto: quello di chi gioca.
+        const esce = ritratto(dati.esce || { nome: '', image: '' }, 'tgs-esce' + (esceKO ? ' tgs-esce--ko' : ''));
+        const entra = ritratto(dati.entra || (turnoScena ? { nome: dati.nome, image: dati.image } : null), 'tgs-entra');
+        const rigaTurno = document.createElement('div');
+        rigaTurno.className = 'tgs-turno';
+        rigaTurno.textContent = dati.sottotitolo || '';
         if (esceKO) {
             const ko = document.createElement('span');
             ko.className = 'tgs-x';
@@ -105,11 +120,16 @@
         }
         const testo = document.createElement('div');
         testo.className = 'tgs-testo';
-        testo.textContent = (dati.eliminato || soloKo) ? 'KO!' : 'TAG!';
-        radice.append(lampo, fascia, esce);
+        testo.textContent = (dati.eliminato || soloKo) ? 'KO!' : (turnoScena && !scambio ? 'TURNO' : 'TAG!');
+        radice.append(lampo, fascia);
+        if (!turnoScena || scambio) radice.appendChild(esce);
         if (!soloKo) radice.appendChild(entra);
         radice.appendChild(testo);
+        if (turnoScena) radice.appendChild(rigaTurno);
         document.body.appendChild(radice);
+        // Mentre la scena del turno e' a schermo la scelta di chi affrontare (che si apre all'inizio del turno) resta invisibile:
+        // compare alla fine, non sopra la scena (vedi tag-scambio.css).
+        if (turnoScena) document.body.classList.add('tgs-turno-attivo');
 
         /** @type {Animation[]} */
         let animazioni = [];
@@ -120,6 +140,7 @@
             animazioni.forEach((a) => { try { a.cancel(); } catch (e) { /* gia' finita */ } });
             document.removeEventListener('pointerdown', finisci, true);
             clearTimeout(tFine);
+            if (turnoScena) document.body.classList.remove('tgs-turno-attivo');
             radice.remove();
             if (attiva && attiva.finisci === finisci) attiva = null;
         };
@@ -133,8 +154,9 @@
             esce.style.opacity = '1';
             esce.style.transform = soloKo ? 'translate(-50%,-50%)' : 'translate(-125%,-50%)';
             entra.style.opacity = '1';
-            entra.style.transform = 'translate(25%,-50%)';
+            entra.style.transform = turnoScena && !scambio ? 'translate(-50%,-50%)' : 'translate(25%,-50%)';
             testo.style.opacity = '1';
+            rigaTurno.style.opacity = '1';
             animazioni.push(radice.animate([{ opacity: 0 }, { opacity: 1, offset: .2 }, { opacity: 1, offset: .8 }, { opacity: 0 }], { duration: durata, easing: 'linear', fill: 'forwards' }));
             return;
         }
@@ -143,6 +165,64 @@
         const at = (ms) => ms / T;
         // Fascia: si apre dal lato di chi esce verso l'altro.
         fascia.style.transformOrigin = verso < 0 ? 'left center' : 'right center';
+        if (turnoScena) {
+            const lin = (el, keys) => el.animate(keys, { duration: T, easing: 'linear', fill: 'both' });
+            const piena = 'translateY(-50%) skewY(-3deg) scaleX(1)';
+            animazioni.push(fascia.animate([
+                { transform: 'translateY(-50%) skewY(-3deg) scaleX(0)', opacity: 1, offset: 0, easing: 'cubic-bezier(.2,.7,.2,1)' },
+                { transform: piena, opacity: 1, offset: at(320) },
+                { transform: piena, opacity: 1, offset: at(2600) },
+                { transform: piena, opacity: 0, offset: 1 }
+            ], { duration: T, easing: 'linear', fill: 'both' }));
+            // Quando entra chi gioca (con scambio) o quando compare il ritratto (senza): il momento dell'impatto.
+            const quando = scambio ? 1000 : 300;
+            if (scambio) {
+                const fuoriT = verso * 62;
+                // Chi esce: appare, poi scivola via verso il suo lato.
+                animazioni.push(esce.animate([
+                    { transform: 'translate(-50%,-50%) scale(.85)', opacity: 0, offset: 0 },
+                    { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, offset: at(260) },
+                    { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, offset: at(760), easing: 'cubic-bezier(.5,0,.3,1)' },
+                    { transform: 'translate(calc(-50% + ' + fuoriT + 'vw),-50%) scale(.8)', opacity: 0, offset: at(1450) },
+                    { transform: 'translate(calc(-50% + ' + fuoriT + 'vw),-50%) scale(.8)', opacity: 0, offset: 1 }
+                ], { duration: T, easing: 'linear', fill: 'both' }));
+                // Chi entra: arriva dal lato opposto e RESTA fino alla fine, col suo nome sotto.
+                animazioni.push(entra.animate([
+                    { transform: 'translate(calc(-50% + ' + (-fuoriT) + 'vw),-50%) scale(.9)', opacity: 0, offset: 0 },
+                    { transform: 'translate(calc(-50% + ' + (-fuoriT) + 'vw),-50%) scale(.9)', opacity: 0, offset: at(700), easing: 'cubic-bezier(.2,.8,.2,1)' },
+                    { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, offset: at(1100) },
+                    { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, offset: at(2650) },
+                    { transform: 'translate(-50%,-50%) scale(1.06)', opacity: 0, offset: 1 }
+                ], { duration: T, easing: 'linear', fill: 'both' }));
+            } else {
+                // Nessuno scambio: il ritratto di chi gioca compare al centro e resta.
+                animazioni.push(entra.animate([
+                    { transform: 'translate(-50%,-50%) scale(.85)', opacity: 0, offset: 0, easing: 'cubic-bezier(.2,.8,.2,1)' },
+                    { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, offset: at(500) },
+                    { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, offset: at(2650) },
+                    { transform: 'translate(-50%,-50%) scale(1.06)', opacity: 0, offset: 1 }
+                ], { duration: T, easing: 'linear', fill: 'both' }));
+            }
+            // TAG! (o TURNO) colpisce all'ingresso; sotto compare "Turno N".
+            animazioni.push(lin(testo, [
+                { transform: 'translate(-50%,0) scale(1.5)', opacity: 0, offset: 0 },
+                { transform: 'translate(-50%,0) scale(1.5)', opacity: 0, offset: at(quando + 100), easing: 'cubic-bezier(.2,.8,.2,1)' },
+                { transform: 'translate(-50%,0) scale(1)', opacity: 1, offset: at(quando + 300) },
+                { transform: 'translate(-50%,0) scale(1)', opacity: 1, offset: at(2650) },
+                { transform: 'translate(-50%,0) scale(1)', opacity: 0, offset: 1 }
+            ]));
+            animazioni.push(lin(rigaTurno, [
+                { opacity: 0, offset: 0 }, { opacity: 0, offset: at(quando + 300) }, { opacity: 1, offset: at(quando + 600) },
+                { opacity: 1, offset: at(2650) }, { opacity: 0, offset: 1 }
+            ]));
+            animazioni.push(lin(lampo, [
+                { opacity: 0, offset: 0 }, { opacity: 0, offset: at(quando) }, { opacity: scambio ? .9 : .5, offset: at(quando + 100) },
+                { opacity: 0, offset: at(quando + 600) }, { opacity: 0, offset: 1 }
+            ]));
+            // Con uno scambio il campo del lato cambiato resta nascosto fino all'ingresso, poi si ricompone.
+            if (scambio) animazioni = animazioni.concat(rivelaCampo(posto, quando, T));
+            return;
+        }
         animazioni.push(fascia.animate([
             { transform: 'translateY(-50%) skewY(-3deg) scaleX(0)', opacity: 1, offset: 0, easing: 'cubic-bezier(.2,.7,.2,1)' },
             { transform: 'translateY(-50%) skewY(-3deg) scaleX(1)', opacity: 1, offset: at(220) },
@@ -201,5 +281,5 @@
         animazioni = animazioni.concat(rivelaCampo(posto, 560, T));
     }
 
-    window.TagScambio = { mostra, attiva: () => !!attiva };
+    window.TagScambio = { mostra, attiva: () => !!attiva, spenta };
 })();

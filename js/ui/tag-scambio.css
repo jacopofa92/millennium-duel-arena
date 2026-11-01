@@ -90,3 +90,24 @@
 @media (prefers-reduced-motion: reduce) {
     .tgs-fascia { transform: translateY(-50%) skewY(-3deg); }
 }
+
+/* Scena del turno: la riga "Turno N" sotto la fascia, e la scelta di chi affrontare tenuta nascosta finche' la scena e' a schermo. */
+.tgs-turno {
+    position: absolute;
+    left: 50%;
+    top: calc(50% + clamp(124px, 21vh, 168px));
+    transform: translateX(-50%);
+    font: 700 clamp(15px, 3.4vmin, 26px) / 1 Georgia, 'Times New Roman', serif;
+    letter-spacing: .32em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: #fff;
+    text-shadow: 0 0 14px rgba(var(--tgs-c), .95), 0 2px 0 rgba(0, 0, 0, .6);
+    opacity: 0;
+}
+body.tgs-turno-attivo .modal-backdrop,
+body.tgs-turno-attivo #quickPopover,
+body.tgs-turno-attivo #quickPopoverCatcher {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}

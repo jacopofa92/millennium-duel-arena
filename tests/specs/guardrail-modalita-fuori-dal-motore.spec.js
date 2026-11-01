@@ -24,7 +24,9 @@ const NOMI_DELLE_MODALITA = /ModalitaDuello|ModalitaExtra|puzzlesDatabase|rivinc
 const ASSEGNAZIONI_AMMESSE = new Set([
     'ModalitaDuello', 'Torre', 'preparaManiIniziali', 'DuelDialogues', 'onbeforeunload',
     'puzzlesDatabase', 'rivinciteDatabase', 'torreDatabase', 'settimanaDatabase', 'cacciaDatabase',
-    'TagTeam', 'ModeUnlocks'
+    'TagTeam', 'ModeUnlocks',
+    // Aggancio generico dell'annuncio del cambio turno (letto da game-flow.js senza sapere quale modalita' lo usa).
+    'AnnuncioTurnoModalita'
 ]);
 // Oggetti del motore le cui funzioni una modalità non deve sostituire.
 const OGGETTI_DEL_MOTORE = ['Comandi', 'DuelEngine', 'EventiDuello', 'Decisioni', 'Tavolo', 'PassoComune', 'CardEffects'];

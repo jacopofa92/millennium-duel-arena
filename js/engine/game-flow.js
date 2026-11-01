@@ -48,7 +48,13 @@ EventiDuello.ascolta('ridisegna', ridisegnaDuello);
 EventiDuello.ascolta('catena', renderChainStack);
 EventiDuello.ascolta('life-points', () => renderLifePoints());
 EventiDuello.ascolta('annuncio-fase', showPhaseAnnouncement);
-EventiDuello.ascolta('annuncio-turno', showEpicSlamAnnouncement);
+// Aggancio GENERICO per una modalita' che vuole un annuncio suo del cambio turno (per esempio per raccontare uno scambio di
+// duellanti e dire il nome di chi gioca davvero): se `window.AnnuncioTurnoModalita.gestisci` se ne occupa (torna true)
+// l'annuncio standard non parte. Il motore non sa quale modalita' sia: senza quell'oggetto non cambia niente.
+EventiDuello.ascolta('annuncio-turno', (parolaSinistra, parolaDestra, sottotitolo) => {
+    if (window.AnnuncioTurnoModalita && window.AnnuncioTurnoModalita.gestisci(parolaSinistra, parolaDestra, sottotitolo)) return;
+    showEpicSlamAnnouncement(parolaSinistra, parolaDestra, sottotitolo);
+});
 EventiDuello.ascolta('orologio', () => updateDuelTimer());
 EventiDuello.ascolta('pescata-da-effetto', animateEffectDraw);
 // Il Deck rimescolato da un effetto: dopo mezzo secondo, quando le carte che ci tornano dentro sono arrivate (solo WebGL).

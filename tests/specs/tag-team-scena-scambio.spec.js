@@ -90,6 +90,50 @@ module.exports = {
             await page.close();
         }
 
+        // Cambio turno vero (changeTurn): UNA scena da 3 secondi al posto dell'annuncio standard, che racconta lo scambio e dice il
+        // nome di chi gioca davvero (l'annuncio standard diceva "TURNO Seto Kaiba" anche con Pegasus davanti).
+        const pagina3 = await t.browser.newPage({ viewport: { width: 1400, height: 900 } });
+        const errori3 = [];
+        pagina3.on('pageerror', (e) => errori3.push(e.message));
+        await pagina3.addInitScript(() => {
+            window.AUTH_GATE_SKIP = true; window.DUEL_FAST_OPENING = true; window.DUEL_RPS_SKIP = true; window.TAG_SCAMBIO_FORZA = true;
+            try { localStorage.setItem('ygoVideoDetail', 'alti'); localStorage.setItem('ygoVideoDetailScelto', '1'); } catch (e) { /* niente storage */ }
+        });
+        try {
+            await pagina3.goto(TAG2V2);
+            try { await pagina3.click('.di-skip', { timeout: 4000 }); } catch (e) { /* nessuna intro */ }
+            await pagina3.waitForFunction(() => typeof gameState !== 'undefined' && window.TagTeam && TagTeam.eSquadra('bot') && window.TagScambio && window.AnnuncioTurnoModalita, null, { timeout: 30000 });
+            await waitForOpeningCascade(pagina3);
+            await pagina3.waitForFunction(() => gameState.phase === 'main1' && gameState.currentPlayer === 'player', null, { timeout: 30000 });
+            await pagina3.evaluate(() => { window.turnoIA = function () {}; window.enterDrawPhase = function () {}; });
+            // Tre cambi turno di fila: al quarto turno tocca al bot, e davanti c'e' il SECONDO avversario (Pegasus).
+            await pagina3.evaluate(() => { changeTurn(); changeTurn(); changeTurn(); });
+            await pagina3.waitForSelector('#tagScambio', { timeout: 3000 });
+            const scena = await pagina3.evaluate(() => {
+                const r = document.getElementById('tagScambio');
+                return {
+                    scene: document.querySelectorAll('#tagScambio').length,
+                    standard: !!document.getElementById('battleStartOverlay'),
+                    turno: r.querySelector('.tgs-turno').textContent,
+                    testo: r.querySelector('.tgs-testo').textContent,
+                    nomi: Array.from(r.querySelectorAll('.tgs-nome')).map((n) => n.textContent),
+                    davanti: TagTeam.membroAttivo('bot').nome,
+                    di: gameState.currentPlayer,
+                    nascosta: document.body.classList.contains('tgs-turno-attivo')
+                };
+            });
+            t.assert(scena.scene === 1 && !scena.standard, 'Una sola scena, senza l\'annuncio standard sotto: ' + JSON.stringify(scena));
+            t.assert(scena.di === 'bot' && /Pegasus/.test(scena.davanti) && scena.nomi[scena.nomi.length - 1] === scena.davanti, 'La scena dice il nome di chi gioca davvero: ' + JSON.stringify(scena));
+            t.assert(/Turno 4/i.test(scena.turno) && scena.nascosta, 'Riga "Turno 4" e scelte nascoste durante la scena: ' + JSON.stringify(scena));
+            // Dura come un cambio turno normale (3 s): ancora a schermo dopo 2,4 s, sparita dopo 3,6 s.
+            await pagina3.waitForTimeout(2200);
+            t.assert(await pagina3.evaluate(() => !!document.getElementById('tagScambio')), 'La scena dura quanto un cambio turno normale (ancora a schermo dopo 2,4 s)');
+            await pagina3.waitForFunction(() => !document.getElementById('tagScambio') && !document.body.classList.contains('tgs-turno-attivo'), null, { timeout: 4000 });
+            t.assert(errori3.length === 0, 'Errori nella pagina: ' + errori3.join(' | '));
+        } finally {
+            await pagina3.close();
+        }
+
         // Caduto nel turno AVVERSARIO: il KO si vede subito (nessun compagno che entra), il compagno entra all'inizio del TUO turno (TAG!).
         const pagina2 = await t.browser.newPage({ viewport: { width: 1400, height: 900 } });
         const errori2 = [];

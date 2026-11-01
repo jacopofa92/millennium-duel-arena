@@ -280,6 +280,36 @@
         pannelli[posto] = pannello;
     }
 
+    // ------------------------------------------------------------------ la scena del cambio turno
+    /** @type {Record<string, any>} posto -> dati dell'ultimo scambio, in attesa dell'annuncio del turno che lo racconta */
+    const scambioInAttesa = {};
+
+    /**
+     * L'annuncio del cambio turno nel Tag Team (aggancio in game-flow.js: 'annuncio-turno'): una sola scena da 3 secondi, come il
+     * cambio turno di un duello normale, che racconta anche lo scambio avvenuto in quell'istante e dice il nome del membro che
+     * gioca DAVVERO. L'annuncio standard legge DuelSession.opponent, che resta il primo avversario (record e Sfide si contano su
+     * di lui): nel 2 contro 2 diceva "TURNO Seto Kaiba" con Pegasus davanti. Torna false (parte l'annuncio standard) se la scena
+     * e' spenta.
+     * @param {string} parolaSinistra @param {string} parolaDestra @param {string} sottotitolo
+     */
+    function gestisciAnnuncioTurno(parolaSinistra, parolaDestra, sottotitolo) {
+        if (!g.TagScambio || g.TagScambio.spenta() || typeof gameState === 'undefined' || !gameState || !g.TagTeam.eSquadra('player')) return false;
+        const posto = gameState.currentPlayer;
+        const m = g.TagTeam.eSquadra(posto) ? g.TagTeam.membroAttivo(posto) : null;
+        const sessione = g.DuelSession || {};
+        const altroLato = (posto === 'player' ? sessione.player : sessione.opponent) || {};
+        const nome = (m && m.nome) || altroLato.name || parolaDestra || '';
+        const image = (m && m.identita && m.identita.image) || altroLato.image || '';
+        const scambio = scambioInAttesa[posto];
+        delete scambioInAttesa[posto];
+        g.TagScambio.mostra(posto, {
+            turno: gameState.turn, sottotitolo, nome, image,
+            esce: scambio ? scambio.esce : null, entra: scambio ? scambio.entra : null
+        });
+        return true;
+    }
+    g.AnnuncioTurnoModalita = { gestisci: gestisciAnnuncioTurno };
+
     // ------------------------------------------------------------------ il campo del compagno in panchina
     // Stesso visore dell'Assalto al Boss (js/multiplayer/mp-raid-campo.js): un tasto col ritratto del compagno che NON è
     // davanti, e un pannello di SOLA LETTURA col suo campo (mostri, Magie/Trappole anche coperte perché è un alleato, mano,
@@ -346,8 +376,17 @@
         document.body.appendChild(avvisoRisposta);
         g.TagTeam.ascolta((evento, posto, dati) => {
             if (evento === 'scambio' || evento === 'pronta') allineaLp(posto);
-            // La scena dello scambio (solo grafica, js/ui/tag-scambio.js): parte dopo che la regola e' gia' avvenuta.
-            if (evento === 'scambio' && dati && g.TagScambio && !gameState.gameOver) g.TagScambio.mostra(posto, dati);
+            // La scena dello scambio (solo grafica, js/ui/tag-scambio.js): parte dopo che la regola e' gia' avvenuta. Lo scambio di
+            // inizio turno avviene PRIMA dell'annuncio del turno, nella stessa chiamata: se l'annuncio arriva subito dopo
+            // (TagTurno.gestisci) la scena e' una sola; altrimenti (uno scambio fuori da un cambio turno) parte da sola.
+            if (evento === 'scambio' && dati && g.TagScambio && !gameState.gameOver) {
+                scambioInAttesa[posto] = dati;
+                setTimeout(() => {
+                    if (scambioInAttesa[posto] !== dati) return;
+                    delete scambioInAttesa[posto];
+                    if (!gameState.gameOver) g.TagScambio.mostra(posto, dati);
+                }, 0);
+            }
             // Un membro e' appena caduto: il KO si vede subito, il compagno entrera' al proprio turno (altra scena, TAG!).
             if (evento === 'ko' && dati && g.TagScambio && !gameState.gameOver) g.TagScambio.mostra(posto, { esce: dati, entra: null, eliminato: true, esceKO: true });
             if (evento === 'risposta' && posto === 'player') mostraRisposta();
