@@ -110,8 +110,8 @@
         width: var(--cube-w);
         cursor: pointer;
         border-radius: 14px;
-        border: 2px solid rgba(247,215,116,0.35);
-        background: linear-gradient(150deg, rgba(40,32,20,0.9), rgba(18,16,22,0.92));
+        border: 2px solid var(--sup-bordo);
+        background: var(--sup-riquadro);
         overflow: hidden;
         box-shadow: 0 10px 26px rgba(0,0,0,0.4);
         transition: transform 0.3s cubic-bezier(0.16,0.84,0.44,1), box-shadow 0.3s ease, border-color 0.3s ease;

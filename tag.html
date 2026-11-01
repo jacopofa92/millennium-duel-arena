@@ -46,7 +46,7 @@
     .tg-main { position: relative; z-index: 1; width: min(920px, 100%); margin: 0 auto; padding: 18px 16px 24px; display: flex; flex-direction: column; gap: 18px; }
 
     /* --- Interruttori (formato, livello, Life Point, turni) --- */
-    .tg-seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; padding: 4px; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); }
+    .tg-seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; padding: 4px; border-radius: 14px; border: 1px solid var(--sup-bordo); background: var(--sup-riquadro); }
     .tg-seg button { min-height: 44px; padding: 8px 10px; border: 0; border-radius: 10px; background: transparent; color: var(--ink-dim); font: 600 0.9rem/1.2 Arial, sans-serif; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-align: center; }
     .tg-seg button small { font: 400 0.72rem/1.25 Arial, sans-serif; color: inherit; opacity: 0.8; }
     .tg-seg button[aria-checked="true"] { color: #2a1a05; background: linear-gradient(180deg, #f7d774, #f0b542); box-shadow: 0 2px 10px rgba(247, 215, 116, 0.25); }
@@ -55,7 +55,7 @@
 
     /* --- Il tabellone dei posti --- */
     .tg-tavolo { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 14px; align-items: stretch; }
-    .tg-lato { display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 16px; background: var(--panel); border: 1px solid var(--line); }
+    .tg-lato { display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 16px; background: var(--sup-riquadro); border: 1px solid var(--sup-bordo); }
     .tg-lato--avv { border-color: rgba(224, 128, 107, 0.35); }
     .tg-lato h2 { margin: 0; font: normal 0.8rem/1 Georgia, 'Times New Roman', serif; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
     .tg-lato--avv h2 { color: #ffb4a8; }
@@ -81,7 +81,7 @@
     .tg-posto--vuoto .tg-posto-foto { display: grid; place-items: center; font-size: 2rem; color: var(--ink-dim); }
 
     /* --- Regole --- */
-    .tg-regole { display: flex; flex-direction: column; gap: 14px; padding: 14px; border-radius: 16px; background: var(--panel); border: 1px solid var(--line); }
+    .tg-regole { display: flex; flex-direction: column; gap: 14px; padding: 14px; border-radius: 16px; background: var(--sup-riquadro); border: 1px solid var(--sup-bordo); }
     .tg-regola { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 6px 14px; align-items: center; }
     .tg-regola-nome { font: normal 0.95rem/1.2 Georgia, 'Times New Roman', serif; color: var(--gold); }
     .tg-regola-aiuto { grid-column: 2; margin: 0; color: var(--ink-dim); font-size: 0.82rem; line-height: 1.4; }

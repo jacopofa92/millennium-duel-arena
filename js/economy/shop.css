@@ -33,7 +33,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    background: linear-gradient(150deg, rgba(40,32,20,0.82), rgba(18,16,22,0.86));
+    background: var(--sup-riquadro);
     border: 2px solid rgba(247,215,116,0.3);
     border-radius: 16px;
     padding: 14px 16px;
@@ -104,8 +104,8 @@
     gap: 8px;
     padding: 12px;
     border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    background: rgba(12, 18, 32, 0.82);
+    border: 1px solid var(--sup-bordo);
+    background: var(--sup-riquadro);
     box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
     min-width: 0;
 }

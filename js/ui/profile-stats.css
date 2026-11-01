@@ -83,7 +83,7 @@
     align-items: center;
     padding: 10px 12px;
     border-radius: 12px;
-    background: rgba(10, 9, 14, 0.62);
+    background: var(--sup-riquadro);
     border: 1px solid rgba(247, 215, 116, 0.16);
     min-width: 0;
 }

@@ -25,7 +25,7 @@
     --ds-accent-strong: #f39c12;
     --ds-accent-soft: rgba(247, 215, 116, 0.5);
     --ds-accent-ghost: rgba(247, 215, 116, 0.14);
-    --ds-surface: rgba(12, 16, 28, 0.55);
+    --ds-surface: rgba(29, 24, 21, 0.86);   /* tinta media di --sup-riquadro (topbar.css): niente piu' blu notte diverso dagli altri riquadri */
     --ds-text: #e8edf7;
     --ds-text-dim: #8b93a7;
     --ds-alert: #ff8a7a;

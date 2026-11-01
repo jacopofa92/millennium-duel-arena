@@ -1,3 +1,11 @@
+/* SUPERFICIE UNICA dei riquadri dei menu (Tornei, Duello Libero, Negozio, Regole, Storia, Profilo, Sfide, Tutorial, modalita'...):
+   prima ognuno aveva il suo sfondo (gradienti da .78 a .98 di opacita', alcuni piu' blu, alcuni piatti). Un riquadro nuovo usa
+   questi due valori invece di scriverne di propri. topbar.css e' caricato da ogni pagina menu. */
+:root {
+    --sup-riquadro: linear-gradient(150deg, rgba(40, 32, 20, 0.84), rgba(18, 16, 22, 0.88));
+    --sup-bordo: rgba(247, 215, 116, 0.3);
+}
+
 /**
  * topbar.css — Barra superiore condivisa (pulsante "Indietro" + titolo)
  * di ogni pagina "menu" del gioco (Negozio, Impostazioni, Profilo,
