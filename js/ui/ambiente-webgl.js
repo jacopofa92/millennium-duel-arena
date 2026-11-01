@@ -362,6 +362,12 @@ vec4 m_citta(vec2 uv,float asp,float t,vec3 c1,vec3 c2,float ia,float a,float ev
   vec2 qs=vec2((iuv.x*1669.-825.)/785.,(yi*942.-470.)/383.);
   float fuori=length(qs)-1.;
   float m=smoothstep(.0,.06,fuori);
+  // Timoni e pinna di coda sporgono dall'ellisse: la citta' non deve passarci sopra (pixel dell'immagine).
+  vec2 px=vec2(iuv.x*1669.,yi*942.);
+  float ali=max(max(step(1440.,px.x)*step(px.x,1612.)*step(140.,px.y)*step(px.y,385.),
+                    step(1430.,px.x)*step(px.x,1605.)*step(550.,px.y)*step(px.y,810.)),
+                step(1445.,px.x)*step(px.x,1645.)*step(432.,px.y)*step(px.y,485.));
+  m*=1.-ali;
   if(m<=0.) return vec4(0.);
   float luci=0.;
   float strade=0.;
@@ -703,6 +709,10 @@ vec4 m_scintillaP(vec2 uv,float asp,float t,vec3 c,vec2 f,float s,float seed,flo
     const DIRIGIBILE_LAMPADE = [[798,152,1],[530,205,1],[717,204,1],[950,204,1],[1132,204,1],[481,250,1],[1187,250,1],[398,281,1],[1268,281,1],[397,543,1],[1270,543,1],[478,571,1],[1189,571,1],[530,620,1],[717,620,1],[950,620,1],[1137,620,1],[610,695,1],[810,696,1],[1062,695,1]];
     const DIRIGIBILE_LED = [[625,185,1.3],[1040,185,1.3],[408,420,1.3],[1260,420,1.3],[625,632,1.3],[1040,632,1.3],[835,610,1]];
     const DIRIGIBILE_FANALI = [[47,458,1.4],[1582,147,1],[1635,457,1],[1577,792,1]];
+    // Pavimento dell'arena, fascia dei circuiti (le due diagonali e il KC) e nodi luminosi dove si incrociano.
+    const DIRIGIBILE_ARENA = ZPX(1669, 942, [[430, 215, 1240, 610]]);
+    const DIRIGIBILE_CIRCUITI = ZPX(1669, 942, [[520, 300, 1150, 540]]);
+    const DIRIGIBILE_NODI = [[835,300,1],[835,530,1],[640,410,1],[1030,410,1],[540,320,1],[1130,320,1],[540,510,1],[1130,510,1],[700,350,1],[970,350,1],[700,470,1],[970,470,1]];
     const DIRIGIBILE_FUORI = ZPX(1669, 942, [[0, 0, 420, 170], [420, 0, 1250, 85], [1250, 0, 1669, 140], [0, 0, 130, 330], [0, 620, 130, 942], [0, 720, 400, 942], [400, 865, 1300, 942], [1250, 800, 1669, 942], [1625, 140, 1669, 800]]);
     const INDUSTRIA_ROSSE = [[150,30,1],[835,30,1],[1530,28,1],[65,378,1],[1602,378,1],[75,725,1],[1595,740,1],[712,813,1],[960,813,1],[708,917,1],[960,917,1],[150,915,1],[1485,915,1]];
     const INDUSTRIA_BLU = [[508,116,1],[1159,116,1],[508,687,1],[1151,687,1],[691,170,1],[975,170,1],[691,754,1],[975,754,1]];
@@ -835,9 +845,18 @@ vec4 m_scintillaP(vec2 uv,float asp,float t,vec3 c,vec2 f,float s,float seed,flo
                 ['alone', 'vec3(.25,.45,1.)', { pts: PX(1669, 942, DIRIGIBILE_LED), sz: .035, a: .55 }],
                 ['alone', 'vec3(.5,.65,1.)', { pts: PX(1669, 942, [[830, 415, 1.6]]), sz: .05, a: .6 }],
                 ['spie', 'vec3(1.,.15,.12)', { pts: PX(1669, 942, DIRIGIBILE_FANALI), sz: .016, a: 1, vel: .8 }],
-                ['spie', 'vec3(1.,.85,.6)', { pts: PX(1669, 942, [[885, 845, 1.4]]), sz: .02, a: .8, vel: .5 }]
+                ['spie', 'vec3(1.,.85,.6)', { pts: PX(1669, 942, [[885, 845, 1.4]]), sz: .02, a: .8, vel: .5 }],
+                // L'ARENA viva: scansione blu che la attraversa, circuiti che si accendono lungo le diagonali e attorno al KC,
+                // nodi che lampeggiano in sequenza. Tutto dentro il rettangolo del pavimento.
+                ['scan', 'vec3(.3,.5,1.)', { a: .42, zone: DIRIGIBILE_ARENA, bordo: .02 }],
+                ['glitch', 'vec3(.35,.55,1.)', { a: .5, zone: DIRIGIBILE_CIRCUITI, bordo: .01 }],
+                ['spie', 'vec3(.45,.7,1.)', { pts: PX(1669, 942, DIRIGIBILE_NODI), sz: .012, a: .95, vel: 1.1 }],
+                ['alone', 'vec3(.3,.55,1.)', { pts: PX(1669, 942, DIRIGIBILE_NODI), sz: .018, a: .35 }]
             ],
             primo: [
+                // Il vento corre anche SOPRA lo scafo e l'arena (sottile), piu' fitto fuori.
+                ['strisce', 'B', { vel: 2.2, a: .1, dens: 11, stretch: 3., y0: 0, y1: 1 }],
+                ['particelle', 'vec3(.45,.7,1.)', { vx: .5, vy: -.04, dens: 14, dim: .05, lamp: 1, osc: .1, forma: 3, a: .55, zone: DIRIGIBILE_ARENA, bordo: .02 }],
                 ['strisce', 'B', { vel: 3.2, a: .3, dens: 14, stretch: 3.2, y0: 0, y1: 1, zone: DIRIGIBILE_FUORI, bordo: .04 }],
                 ['scintillePunti', 'vec3(1.,.8,.5)', { pts: PX(1669, 942, DIRIGIBILE_FANALI), sz: .35, a: .5 }]
             ],

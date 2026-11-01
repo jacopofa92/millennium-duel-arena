@@ -4146,6 +4146,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.18 (cache v527, su `main`): **effetti ambientali del Dirigibile KaibaCorp rifatti** sulla nuova illustrazione (profilo `dirigibile-alta-quota` in `js/ui/ambiente-webgl.js`): la citta' sotto scorre verso destra (la nave va a sinistra) a tre velocita' e la sua maschera e' ora l'ellisse dello scafo; nubi e vento (`DIRIGIBILE_FUORI`) solo FUORI dallo scafo, mai sull'arena; lampade calde dell'arena, led blu, KC, fanali rossi di prua e timoni e luce della gondola pulsano ognuno col suo ritmo. Posizioni in pixel dell'immagine 1669x942 (`DIRIGIBILE_*`): se si cambia l'illustrazione vanno riguardate. Spec `ambiente-webgl` verde, guardato in screenshot. Suite completa non eseguita.
 
+1.5.19 (cache v528, su `main`): **Dirigibile KaibaCorp, ritocchi**: la citta' non passa piu' sopra timoni e pinna di coda (rettangoli `ali` in `m_citta`, pixel dell'immagine); il vento corre anche sopra scafo e arena (strisce sottili nel primo piano); l'arena ha scansione blu, circuiti (glitch nella fascia `DIRIGIBILE_CIRCUITI`), nodi lampeggianti (`DIRIGIBILE_NODI`) e particelle a croce blu. Spec `ambiente-webgl` verde. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**
