@@ -210,6 +210,11 @@
     object-fit: contain; object-position: 50% 100%;
     user-select: none;
 }
+/* Sui telefoni le pedine (320px) hanno proporzioni diverse (es. 274x320 contro 320x320): con `contain` in un riquadro alto e stretto
+   si scalavano sulla LARGHEZZA e quella piu' stretta usciva piu' alta dell'altra. Un riquadro quadrato le fa scalare tutte sull'ALTEZZA. */
+@media (max-width: 900px) {
+    .di-figura img { height: auto; aspect-ratio: 1 / 1; max-height: 100%; }
+}
 .di-duelist--player .di-figura img { object-position: 78% 100%; filter: drop-shadow(0 0 24px rgba(52, 152, 219, .6)) drop-shadow(0 12px 20px rgba(0, 0, 0, .75)); }
 .di-duelist--opponent .di-figura img { object-position: 22% 100%; filter: drop-shadow(0 0 24px rgba(231, 76, 60, .6)) drop-shadow(0 12px 20px rgba(0, 0, 0, .75)); }
 .di-duelist .duelist-avatar {

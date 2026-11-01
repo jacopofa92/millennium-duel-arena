@@ -4152,6 +4152,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.21 (cache v530, su `main`): **il tondo delle fasi sta al centro vero del campo** (non piu' al 50% dello schermo): `posizionaPulsanteFasi` scrive `--psb-mid-y` = meta' fra la prima casella dell'avversario e l'ultima del giocatore, usata da tondo e menu. Su desktop il centro del campo era ~50 px sopra la meta' dello schermo. Spec `pulsante-fasi-laterale` aggiornato. Suite completa non eseguita.
 
+1.5.22 (cache v531, su `main`): **schermata VS su telefono: le pedine hanno la stessa altezza** (segnalato dall'utente: quella del giocatore sembrava piu' grande). Causa: le pedine da 320px hanno proporzioni diverse (`mirror.png` 274x320, `setoKaiba.png` 320x320) e con `object-fit: contain` in un riquadro alto e stretto si scalavano sulla LARGHEZZA, quindi la piu' stretta usciva piu' alta (misurato sul telefono: 240 contro 206 px a parita' di larghezza). In `duel-cinematics.css` sotto i 900px l'immagine e' ora un quadrato (`aspect-ratio: 1/1`, `max-height: 100%`): tutte scalano sull'altezza. Desktop invariato. Verificato sul telefono vero (206x206 per entrambe). Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**
