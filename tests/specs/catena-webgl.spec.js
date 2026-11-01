@@ -108,6 +108,10 @@ module.exports = {
             // --- risoluzione: l'ultimo Link passa davanti
             await page.evaluate(() => { const l = window.__links[2]; gameState.chain.links = window.__links.slice(0, 2); renderChainStack(l); });
             await page.waitForTimeout(400);
+            // Catena appena decisa: resta a TUTTO SCHERMO per un momento, poi si fa miniatura
+            const decisa = await page.evaluate(() => { const root = document.getElementById('catenaGL'); return { classe: root.classList.contains('cgl-compatta'), larg: Math.round(root.getBoundingClientRect().width), schermo: innerWidth }; });
+            assert(!decisa.classe && decisa.larg > decisa.schermo * 0.9, `Appena decisa la Catena resta a tutto schermo: ${JSON.stringify(decisa)}`);
+            await page.waitForTimeout(2000);
             const ris = await page.evaluate(() => {
                 const carte = Array.from(document.querySelectorAll('#catenaGL .cgl-pos'));
                 return carte.map((c) => c.style.zIndex);

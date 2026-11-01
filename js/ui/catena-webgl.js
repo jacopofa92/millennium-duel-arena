@@ -35,6 +35,8 @@
     const DUR_PIOMBO_MS = 430;      // quanto ci mette una carta a cadere sulla scena
     const ISTANTE_COLPO_MS = 300;   // dentro il volo, quando tocca: onda, scossa, numero
     const DUR_CHIUSURA_MS = 480;
+    /** Quanto la Catena appena decisa resta a tutto schermo prima di farsi miniatura per la risoluzione. */
+    const HOLD_DECISA_MS = 1900;
 
     // =================================================================================================================
     // Lo shader: UNA catena fra le carte, onde d'urto, buio attorno. Unita' in pixel CSS (y verso il BASSO).
@@ -614,11 +616,19 @@ void main(){
         st.voci.filter((v) => !v.fuori && !displayLinks.includes(v.link)).forEach(esci);
         // In risoluzione la scena si fa da parte (vedi .cgl-compatta nello stile): niente piu' effetti nascosti dalla Catena.
         // La modalita' va decisa PRIMA di posizionare le carte: la colonna di miniature e la scena piena hanno posizioni diverse.
-        st.compatta = !!resolvingLink;
+        // Appena la Catena e' DECISA (parte la prima risoluzione) la scena resta a tutto schermo per HOLD_DECISA_MS, cosi' si vede
+        // l'animazione completa; solo dopo si fa miniatura. Il motore intanto risolve come sempre: la grafica si mette in pari dopo.
+        if (resolvingLink && !st.tDecisa) {
+            st.tDecisa = performance.now();
+            setTimeout(() => { const s = st; if (s && s.ultimoRisolvendo) aggiorna(s.ultimaLista || [], s.ultimoRisolvendo); }, HOLD_DECISA_MS + 30);
+        }
+        if (resolvingLink) { st.ultimoRisolvendo = resolvingLink; st.ultimaLista = displayLinks; }
+        const inAttesa = !!resolvingLink && performance.now() - st.tDecisa < HOLD_DECISA_MS;
+        st.compatta = !!resolvingLink && !inAttesa;
         st.root.classList.toggle('cgl-compatta', st.compatta);
         riposiziona();
         st.voci.forEach((v) => { if (!v.animato) { v.animato = true; animaIngresso(v); } });
-        if (resolvingLink) {
+        if (resolvingLink && !inAttesa) {
             const v = st.voci.find((x) => x.link === resolvingLink);
             if (v && !v.risolvendo && !v.fuori) risolvi(v);
         }
