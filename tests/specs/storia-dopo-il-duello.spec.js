@@ -1,14 +1,15 @@
 // Le conversazioni DOPO la vittoria di un duello della Storia (js/data/story-dopo-duello.js, StoryProgress.getDopoDuello):
 //  - ogni duello dell'anime ha la sua, tranne i due che hanno una scena subito dopo che racconta lo stesso momento;
 //  - ogni voce parla con personaggi che esistono nel roster, in battute non vuote;
-//  - dopo una vittoria nuova la pagina mostra la conversazione PRIMA della mappa, e solo allora la storia prosegue;
-//  - una tappa rigiocata o una sconfitta non la mostrano.
+//  - dopo una vittoria (nuova o su una tappa gia' superata) la pagina mostra la conversazione PRIMA della mappa, e solo allora la storia prosegue;
+//  - una sconfitta (anche in rivincita) non la mostra.
 const path = require('path');
 const RADICE = path.join(__dirname, '..', '..');
 const url = (f) => 'file:///' + path.join(RADICE, f).replace(/\\/g, '/');
 
 // Dopo questi duelli c'e' gia' una scena (o un altro duello) che racconta come finisce.
-const SENZA_DOPO = ['anime-1-pegasus-video', 'anime-2-kaiba', 'fm-2-heishin', 'fm-3t-kaiba', 'fm-6-heishin', 'fm-6-seto', 'fm-7-darknite', 'fm-7-finale-duello'];
+const SENZA_DOPO = ['anime-1-pegasus-video', 'anime-2-kaiba', 'fm-2-heishin', 'fm-3t-kaiba', 'fm-6-heishin', 'fm-6-seto', 'fm-7-darknite', 'fm-7-finale-duello',
+    'freedom-1-shadi', 'freedom-4-darknite', 'freedom-4-giacobbo'];
 
 module.exports = {
     name: 'Storia: dopo una vittoria nuova c\'e\' la conversazione, prima della mappa',
@@ -27,7 +28,7 @@ module.exports = {
             const copertura = await page.evaluate((senza) => {
                 const duelli = [];
                 const walk = (lista) => (lista || []).forEach((t) => { if (t.kind === 'duel') duelli.push(t.id); if (t.tappe) walk(t.tappe); });
-                ['anime', 'forbiddenMemories'].forEach((id) => walk(StoryProgress.getCampaign(id).capitoli.flatMap((c) => c.tappe)));
+                ['anime', 'forbiddenMemories', 'freedom', 'ww1'].forEach((id) => walk(StoryProgress.getCampaign(id).capitoli.flatMap((c) => c.tappe)));
                 const mancanti = duelli.filter((id) => !storyDopoDuello[id] && !senza.includes(id));
                 const orfane = Object.keys(storyDopoDuello).filter((id) => !duelli.includes(id));
                 const ids = new Set();
@@ -38,7 +39,7 @@ module.exports = {
                 }));
                 return { duelli: duelli.length, mancanti, orfane, brutte, voci: Object.keys(storyDopoDuello).length };
             }, SENZA_DOPO);
-            assert(copertura.mancanti.length === 0, `Ogni duello dell'anime e di Memorie Proibite ha la sua conversazione dopo la vittoria. Mancano: ${copertura.mancanti.join(', ')}`);
+            assert(copertura.mancanti.length === 0, `Ogni duello di anime, Memorie Proibite, Freedom e Grande Guerra ha la sua conversazione dopo la vittoria. Mancano: ${copertura.mancanti.join(', ')}`);
             assert(copertura.orfane.length === 0, `Nessuna voce punta a un duello che non esiste: ${copertura.orfane.join(', ')}`);
             assert(copertura.brutte.length === 0, `Battute sensate e personaggi del roster: ${copertura.brutte.join(' | ')}`);
 
@@ -71,8 +72,12 @@ module.exports = {
             assert(!dopoLettura.scena && dopoLettura.mappa, 'Finita la conversazione si vede la mappa: ' + JSON.stringify(dopoLettura));
             const persa = await apri({ playerWon: false, rigiocata: false, opponentId: 'weevil', tappaId: 'anime-2-weevil' });
             assert(!persa.scena && persa.mappa, 'Dopo una sconfitta niente conversazione, subito la mappa: ' + JSON.stringify(persa));
+            // Una tappa gia' superata e rivinta racconta di nuovo la sua fine (con il suo Salta); una rigiocata PERSA no.
             const rigiocata = await apri({ playerWon: true, rigiocata: true, opponentId: 'weevil', tappaId: 'anime-2-weevil' });
-            assert(!rigiocata.scena && rigiocata.mappa, 'Una tappa rigiocata non ripete la conversazione: ' + JSON.stringify(rigiocata));        } finally {
+            assert(rigiocata.scena, 'Una tappa rigiocata e vinta mostra di nuovo la conversazione: ' + JSON.stringify(rigiocata));
+            for (let k = 0; k < 25 && await page.$('.sc-scena'); k++) { await page.mouse.click(500, 350); await page.waitForTimeout(700); }
+            const rigiocataPersa = await apri({ playerWon: false, rigiocata: true, opponentId: 'weevil', tappaId: 'anime-2-weevil' });
+            assert(!rigiocataPersa.scena && rigiocataPersa.mappa, 'Una rigiocata persa va subito alla mappa: ' + JSON.stringify(rigiocataPersa));        } finally {
             await ctx.close();
         }
         assert(errori.length === 0, `Nessun errore JS: ${errori.join(' | ')}`);

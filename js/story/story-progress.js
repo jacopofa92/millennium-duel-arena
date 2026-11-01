@@ -833,7 +833,8 @@
             return {
                 avanzato: false, appenaFinita: false, perso: false,
                 rigiocata: true, vinta: esito.playerWon === true,
-                opponentId: esito.opponentId || null
+                opponentId: esito.opponentId || null,
+                tappaId: esito.tappaId || null
             };
         }
         if (esito.playerWon !== true) {

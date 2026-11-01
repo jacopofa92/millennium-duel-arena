@@ -1782,9 +1782,10 @@
         // la mappa si apre già con la tappa superata alle spalle.
         const esito = StoryProgress.consumaEsitoDuello(campagnaAperta);
 
-        // Vittoria NUOVA (non una tappa rigiocata): prima della mappa si racconta come e' finita. Senza una voce per la
-        // tappa si va dritti, come sempre; la conversazione non deve mai poter bloccare il ritorno alla mappa.
-        const vintaOra = !esito.perso && !esito.rigiocata && (esito.avanzato || esito.laterale === true);
+        // Vittoria (anche su una tappa gia' superata, richiesta dell'utente): prima della mappa si racconta come e' finita.
+        // Una sconfitta no. Senza una voce per la tappa si va dritti, come sempre; la conversazione non deve mai poter
+        // bloccare il ritorno alla mappa (una rivincita ha il suo "Salta" come ogni scena).
+        const vintaOra = !esito.perso && (esito.avanzato || esito.laterale === true || esito.vinta === true);
         const dopo = vintaOra && esito.tappaId ? StoryProgress.getDopoDuello(campagnaAperta, esito.tappaId) : null;
         if (dopo) {
             // La mappa sotto si disegna comunque subito: chiudendo la conversazione si e' gia' dove si deve essere.

@@ -483,5 +483,129 @@ const storyDopoDuello = {
         { chi: 'neku', testo: '…Hai vinto. Non ho parole, e non servono.' },
         { io: true, testo: 'Nemmeno a me servono. L’ultimo Oggetto è mio.' },
         { chi: 'neku', testo: 'Prendilo. Heishin ti aspetta, e ha preparato tutto per il momento in cui lo avresti avuto in mano.' }
+    ],
+
+    // ================================================================== FREEDOM: LA CORONA DEL MILLENNIO (freedom)
+    // Una puntata che si sporca: chi parla e' il conduttore (`io`) e la troupe (voci senza roster, solo `nome`).
+    // Mancano di proposito freedom-1-shadi (la scena "Riguardando il girato" parla proprio dei tre duelli), freedom-4-darknite
+    // ("L'incoronazione") e freedom-4-giacobbo ("Titoli di coda").
+    'freedom-1-ishizu': [
+        { chi: 'ishizu', testo: 'Ha giocato con garbo, signor Giacobbo. Non è comune, in chi arriva con una telecamera.' },
+        { io: true, testo: 'Sono qui per capire, signora, non per convincere nessuno.' },
+        { chi: 'ishizu', testo: 'Allora ricordi: chi comincia a fare domande in questo luogo non smette tanto facilmente.' }
+    ],
+    'freedom-1-odion': [
+        { chi: 'odion', testo: 'Ha vinto. Nessuno potrà fermarla prima del settore est.' },
+        { io: true, testo: 'Continuiamo a girare. Chi ci ha chiesto di non andarci doveva impegnarsi di più per convincerci.' },
+        { chi: 'odion', testo: 'Non si tratta di impedirglielo. Si tratta di non tornarne uguale.' }
+    ],
+    'freedom-2-labirinto': [
+        { chi: 'labyrinthMage', testo: 'Il labirinto ha altre scelte, signore. Ha scelto bene, o ha scelto troppo presto?' },
+        { io: true, testo: 'Questo lo diranno le telecamere, quando le riguarderemo.' },
+        { nome: 'La regista', testo: 'Roberto, la pellicola è rovinata: si vede la tua ombra arrivare in anticipo ad ogni curva.' }
+    ],
+    'freedom-2-anubisius': [
+        { chi: 'highMageAnubisius', testo: 'Conto i morti di questo posto da secoli. Lei non c’è ancora fra loro.' },
+        { io: true, testo: 'Mi basta non esserci tra quelli di stasera.' }
+    ],
+    'freedom-2-sebek': [
+        { chi: 'sebek', testo: 'Il fiume è passato anche di qui, una volta. Poi ha lasciato la porta aperta.' },
+        { nome: 'Il fonico', testo: 'Per un istante, nelle cuffie, ho sentito scorrere dell’acqua. Qui non c’è acqua da trentamila anni.' },
+        { io: true, testo: 'Lo mettiamo in sovrimpressione. Qualcuno, a casa, ci scriverà dicendo che l’abbiamo inventato.' }
+    ],
+    'freedom-3-isis': [
+        { chi: 'priestessIsis', testo: 'La porta senza maniglia si apre da sola, quando uno è pronto.' },
+        { io: true, testo: 'Dovrei essere preoccupato?' },
+        { chi: 'priestessIsis', testo: 'Dovrebbe essere curioso. In questo posto è la stessa cosa.' }
+    ],
+    'freedom-3-seto': [
+        { chi: 'priestSeto', testo: 'Ha affrontato un sacerdote senza tremare. È più sciocco o più coraggioso?' },
+        { io: true, testo: 'Sono un divulgatore: la risposta la daranno gli ascolti.' },
+        { chi: 'priestSeto', testo: 'Rida pure. La Corona ha già sentito la stessa battuta, tremila anni fa.' }
+    ],
+    'freedom-3-heishin': [
+        { chi: 'heishin', testo: 'Ha battuto un uomo che aspettava solo di perdere con qualcuno di più interessante. Sali, la Corona ti aspetta.' },
+        { io: true, testo: 'La Corona? Ha un’opinione anche lei?' },
+        { chi: 'heishin', testo: 'Ce l’hanno tutte le cose che aspettano da tremila anni.' }
+    ],
+
+    // ================================================================== GRANDE GUERRA (ww1)
+    // Il protagonista (`io`) e' il comandante del momento: Cadorna fino a Caporetto, Diaz dopo (lo decide il capitolo).
+    // Un duello vinto non cambia la storia vera: il racconto resta fedele (Caporetto e la ritirata ci sono comunque).
+    'ww1-1-boroevic': [
+        { chi: 'ww1_boroevic', testo: 'Il fiume è passato. Ma ogni metro dall’altra parte vi costerà più di quanto ve l’abbiano detto.' },
+        { io: true, testo: 'Allora conteremo i metri. Non è la prima volta che questa guerra ci insegna a contare.' },
+        { chi: 'ww1_boroevic', testo: 'Imparerete anche questo: l’Isonzo non si passa una volta sola. Ci tornerete undici volte.' }
+    ],
+    'ww1-1-kaiserjager': [
+        { chi: 'ww1_kaiserjager', testo: 'Avete avanzato di notte, e il sasso vi ha lasciato passare. Per ora.' },
+        { io: true, testo: 'Il Carso non è terra, ma anche il sasso ha una fine.' },
+        { chi: 'ww1_kaiserjager', testo: 'Certo. Dopo la fine, ne ricomincia un altro. Ecco perché le chiamano battaglie, non vittorie.' }
+    ],
+    'ww1-1-arigi': [
+        { chi: 'ww1_arigi', testo: 'Mi avete fatto atterrare. Succede, anche ai sergenti che volano da prima di voi.' },
+        { io: true, testo: 'Tornerai in cielo domani, sergente. E noi ti vedremo di nuovo come una riga di matita.' },
+        { chi: 'ww1_arigi', testo: 'Allora nascondetevi meglio, generale.' }
+    ],
+    'ww1-2-conrad': [
+        { chi: 'ww1_conrad', testo: 'L’offensiva si ferma, e la volevo dal 1911. Tutto ciò che aspetti per cinque anni, poi si spegne in una settimana.' },
+        { io: true, testo: 'Le divisioni che avete tolto al fronte russo servivano altrove, generale.' },
+        { chi: 'ww1_conrad', testo: 'Lo so. Me lo ricorderà Brusilov fra pochi giorni.' }
+    ],
+    'ww1-2-kaiserjager': [
+        { chi: 'ww1_kaiserjager', testo: 'Il ciglio ha tenuto. Non pensavo che dietro non avreste più niente e che avreste tenuto lo stesso.' },
+        { io: true, testo: 'Abbiamo ciò che abbiamo, e lo teniamo. Il resto lo riprendiamo.' },
+        { chi: 'ww1_kaiserjager', testo: 'Allora ricominciate pure dall’Isonzo. Noi saremo qui, più stanchi di voi.' }
+    ],
+    'ww1-3-eugenio': [
+        { chi: 'ww1_eugenio', testo: 'Gorizia è vostra. Una città vuota, con le finestre aperte e nessuno dentro.' },
+        { io: true, testo: 'È la prima in quattordici mesi. Domani avremo qualcosa da raccontare ai nostri soldati.' },
+        { chi: 'ww1_eugenio', testo: 'Raccontate pure. Ma ricordate che dietro Gorizia ci sono altri altari di sassi.' }
+    ],
+    'ww1-3-boroevic': [
+        { chi: 'ww1_boroevic', testo: 'La Bainsizza è vostra, e le strade non lo sono. Siete lunghi, stanchi e troppo lontani dai magazzini.' },
+        { io: true, testo: 'Abbiamo tenuto un altopiano che nessuno credeva di poter prendere.' },
+        { chi: 'ww1_boroevic', testo: 'Tenetelo bene, generale. Quest’inverno gli uomini che avete perso li rivedrete presto, sulla stessa linea.' }
+    ],
+    'ww1-4-brumowski': [
+        { chi: 'ww1_brumowski', testo: 'Mi avete respinto, ma la fila sotto di me non si ferma. Quella è gente che scappa, avete ragione.' },
+        { io: true, testo: 'Non è un esercito, è un popolo che si sposta. Il duello l’ho vinto, ma la colonna resta lì.' },
+        { chi: 'ww1_brumowski', testo: 'Allora fate in modo che nessuno spari. Io ho già contato abbastanza carri, muli e bambini.' }
+    ],
+    'ww1-4-kaiserjager': [
+        { chi: 'ww1_kaiserjager', testo: 'Il ponte ha retto le due ore. La Seconda Armata è passata, e ora salta tutto.' },
+        { io: true, testo: 'Due ore bastavano. Quello che resta è il Piave: e dietro il Piave, nessun altro fiume.' },
+        { chi: 'ww1_kaiserjager', testo: 'Allora tenetevelo stretto. Perché da qui in poi non avrete più niente da perdere.' }
+    ],
+    'ww1-5-eugenio': [
+        { chi: 'ww1_eugenio', testo: 'Il fiume sale e i ponti non reggono. Abbiamo fatto i conti anche noi, troppo tardi.' },
+        { io: true, testo: 'La piena lavora per noi, ma non conto su di lei: conto sui nostri uomini.' },
+        { chi: 'ww1_eugenio', testo: 'Ritiriamo gli uomini oltre il Piave. Non si ritira solo chi perde: anche chi capisce.' }
+    ],
+    'ww1-5-brumowski': [
+        { chi: 'ww1_brumowski', testo: 'I ponti sono saltati. Ottantacinque aerei non sono bastati a tenerli.' },
+        { io: true, testo: 'Il fiume era dalla nostra parte, ma sono stati i nostri artiglieri a fare il lavoro.' },
+        { chi: 'ww1_brumowski', testo: 'Tornerò a volare domani. Ma non su questo Piave.' }
+    ],
+    'ww1-5-conrad': [
+        { chi: 'ww1_conrad', testo: 'Ho chiesto un attacco solo. Me ne hanno dato due, per non offendere nessuno. Abbiamo perso per cortesia.' },
+        { io: true, testo: 'Avete perso perché l’impero non sapeva scegliere. Noi sì: abbiamo scelto di restare qui.' },
+        { chi: 'ww1_conrad', testo: 'Allora la Battaglia del Solstizio è vostra. Ma l’Austria non è finita, generale: è soltanto stanca.' }
+    ],
+    'ww1-6-kaiserjager': [
+        { chi: 'ww1_kaiserjager', testo: 'Il Grappa ha tenuto da entrambe le parti. Voi non siete passati, e io non ho più riserve altrove.' },
+        { io: true, testo: 'Non dovevamo passare. Dovevamo tenervi qui, mentre gli altri attraversano il Piave.' },
+        { chi: 'ww1_kaiserjager', testo: 'Chi ve l’ha insegnato, a tenere tutte le riserve su una montagna?' },
+        { io: true, testo: 'Voi. A Caporetto.' }
+    ],
+    'ww1-6-boroevic': [
+        { chi: 'ww1_boroevic', testo: 'La linea è tagliata in due, e non da voi: dal mio stesso esercito, che non esiste più.' },
+        { io: true, testo: 'Avete tenuto il fiume per tre anni e mezzo, generale. Nessuno lo mette in dubbio.' },
+        { chi: 'ww1_boroevic', testo: 'Una sola cosa vi chiedo: dite ai miei uomini che sono tornati a casa a testa alta.' }
+    ],
+    'ww1-6-eugenio': [
+        { chi: 'ww1_eugenio', testo: 'Trieste è vostra, per una questione di orari: l’armistizio entra in vigore domani alle quindici.' },
+        { io: true, testo: 'Poche ore, ma bastano a cambiare il nome di un confine.' },
+        { chi: 'ww1_eugenio', testo: 'Un impero si perde anche così. Che la pace sia più saggia della guerra, generale.' }
     ]
 };
