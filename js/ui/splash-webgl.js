@@ -368,7 +368,7 @@ void main(){
     // ------------------------------------------------------------------------------------------------
     // La scena
     // ------------------------------------------------------------------------------------------------
-    const FRASI = ['Si mescola il mazzo…', 'Il Puzzle si ricompone…', 'L\'Occhio del Millennio si apre…', 'Che il duello abbia inizio!'];
+    const FRASI = ['Carico le carte…', 'Preparo l\'arena…', 'Controllo il tuo profilo…', 'Pronto.'];
     const MIN_MS = 2800;       // minimo di durata, dall'avvio
     const RIEMPI_MAX = 0.42;   // velocita' massima del riempimento (frazione al secondo): niente salti anche con tutto in cache
     const USCITA_MS = 1250;
