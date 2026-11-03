@@ -135,6 +135,15 @@
         return nodo;
     }
 
+    /** Dorso vero del renderer, con le stesse misure del fronte. */
+    function nodoRetro(larghezza) {
+        if (typeof window.createCardElement !== 'function') return el('div', 'po-retro');
+        const nodo = window.createCardElement(null);
+        nodo.style.setProperty('--card-w', larghezza);
+        nodo.style.setProperty('--card-h', `calc(${larghezza} / var(--card-ratio))`);
+        return nodo;
+    }
+
     function rarita(cardId) {
         return (window.CardRarity && typeof CardRarity.of === 'function') ? CardRarity.of(cardId) : 'common';
     }
@@ -436,7 +445,16 @@
             // misurata sulla sola larghezza sborderebbe su uno schermo
             // basso — è esattamente com'era nata la versione con lo
             // scorrimento.
-            mostra.appendChild(nodoCarta(id, 'var(--carta-rivelata)'));
+            // Non basta ruotare il fronte già visibile: si parte dal dorso
+            // reale e solo dopo la pausa di lettura si scopre la carta.
+            const flip = el('div', 'po-carta-flip');
+            const retro = el('div', 'po-carta-flip-retro');
+            retro.appendChild(nodoRetro('var(--carta-rivelata)'));
+            const fronte = el('div', 'po-carta-flip-fronte');
+            fronte.appendChild(nodoCarta(id, 'var(--carta-rivelata)'));
+            flip.appendChild(retro);
+            flip.appendChild(fronte);
+            mostra.appendChild(flip);
             const targhetta = el('div', 'po-targhetta');
             targhetta.appendChild(el('div', 'po-nome', (cartaPerId(id) || {}).name || '???'));
             if (r !== 'common' && window.CardRarity) {

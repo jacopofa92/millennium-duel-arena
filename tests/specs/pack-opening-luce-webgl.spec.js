@@ -38,9 +38,12 @@ module.exports = {
             const rito = await page.evaluate(() => ({
                 carta: !!document.querySelector('.po-mostra.po-rivelata'),
                 sigillo: !!document.querySelector('.po-mostra .po-rito-sigillo'),
-                onda: !!document.querySelector('.po-mostra .po-rito-onda')
+                onda: !!document.querySelector('.po-mostra .po-rito-onda'),
+                dorso: !!document.querySelector('.po-carta-flip-retro .card'),
+                fronte: !!document.querySelector('.po-carta-flip-fronte .card')
             }));
-            assert(rito.carta && rito.sigillo && rito.onda, `Ogni carta viene rivelata sopra il proprio sigillo: ${JSON.stringify(rito)}`);
+            assert(rito.carta && rito.sigillo && rito.onda && rito.dorso && rito.fronte,
+                `Ogni carta gira davvero dal dorso al fronte sopra il proprio sigillo: ${JSON.stringify(rito)}`);
             await page.evaluate(() => document.querySelector('.po-backdrop').click());
             await page.waitForSelector('.po-riepilogo', { timeout: 5000 });
             const riepilogo = await page.evaluate(() => document.querySelector('.po-riepilogo').textContent);

@@ -316,11 +316,11 @@
     gap: 8px;
     z-index: 2;
     transform-style: preserve-3d;
-    animation: poMostraEntra 560ms cubic-bezier(0.18, 0.82, 0.22, 1) both;
+    animation: poMostraEntra 420ms cubic-bezier(0.18, 0.82, 0.22, 1) both;
 }
 @keyframes poMostraEntra {
-    0%   { opacity: 0; transform: translate3d(0,30px,-150px) scale(.68) rotateY(-92deg); }
-    58%  { opacity: 1; transform: translate3d(0,-7px,14px) scale(1.035) rotateY(5deg); }
+    0%   { opacity: 0; transform: translate3d(0,28px,-100px) scale(.76); }
+    68%  { opacity: 1; transform: translate3d(0,-5px,8px) scale(1.025); }
     100% { opacity: 1; transform: none; }
 }
 .po-mostra-rare { --reveal:#89d9ff; --reveal-soft:rgba(80,180,255,.35); }
@@ -328,7 +328,7 @@
 .po-mostra-ultra { --reveal:#ffe38a; --reveal-soft:rgba(255,196,55,.44); }
 .po-mostra-legendary { --reveal:#ffb14a; --reveal-soft:rgba(255,116,36,.5); }
 .po-mostra-secret, .po-mostra-mythic { --reveal:#8fffe9; --reveal-soft:rgba(88,238,218,.52); }
-.po-rito { position:absolute; z-index:-1; inset:50% auto auto 50%; width:calc(var(--carta-rivelata) * 1.65); aspect-ratio:1; transform:translate(-50%,-43%) rotateX(68deg); pointer-events:none; }
+.po-rito { position:absolute; z-index:0; inset:50% auto auto 50%; width:calc(var(--carta-rivelata) * 1.82); aspect-ratio:1; transform:translate(-50%,-41%) rotateX(68deg); pointer-events:none; }
 .po-rito-sigillo, .po-rito-onda { position:absolute; inset:0; border-radius:50%; opacity:0; }
 .po-rito-sigillo { border:1px solid var(--reveal); background:radial-gradient(circle, var(--reveal-soft), transparent 61%); box-shadow:0 0 18px var(--reveal-soft), inset 0 0 14px var(--reveal-soft); transform:scale(.34) rotate(0); }
 .po-rito-sigillo::before, .po-rito-sigillo::after { content:''; position:absolute; inset:12%; border:1px solid color-mix(in srgb,var(--reveal) 58%,transparent); transform:rotate(45deg); }
@@ -339,6 +339,17 @@
 .po-rivelata .po-rito-onda-b { animation:poOnda .9s .36s ease-out both; }
 @keyframes poSigillo { 0%{opacity:0;transform:scale(.3) rotate(-28deg)} 42%{opacity:.9} 100%{opacity:.32;transform:scale(1) rotate(18deg)} }
 @keyframes poOnda { 0%{opacity:.85;transform:scale(.24)} 100%{opacity:0;transform:scale(1.38)} }
+.po-carta-flip { position:relative; z-index:2; width:var(--carta-rivelata); aspect-ratio:var(--card-ratio); transform-style:preserve-3d; animation:poCartaFlip 520ms .08s cubic-bezier(.2,.72,.22,1) both; }
+.po-mostra-rare .po-carta-flip { animation-duration:700ms; }
+.po-mostra-super .po-carta-flip { animation-duration:850ms; }
+.po-mostra-ultra .po-carta-flip { animation-duration:1050ms; }
+.po-mostra-legendary .po-carta-flip { animation-duration:1200ms; }
+.po-mostra-secret .po-carta-flip, .po-mostra-mythic .po-carta-flip { animation-duration:1300ms; }
+.po-carta-flip-retro, .po-carta-flip-fronte { position:absolute; inset:0; backface-visibility:hidden; transform-style:preserve-3d; }
+.po-carta-flip-retro { transform:rotateY(180deg); }
+.po-carta-flip-fronte { transform:rotateY(0); }
+.po-carta-flip .card { width:100%; height:100%; }
+@keyframes poCartaFlip { 0%,24%{transform:rotateY(180deg) translateZ(0)} 58%{transform:rotateY(88deg) translateZ(16px)} 84%{transform:rotateY(-7deg) translateZ(22px)} 100%{transform:rotateY(0) translateZ(0)} }
 .po-mostra-via { animation: poMostraVia 260ms ease-in forwards; }
 @keyframes poMostraVia {
     to { opacity: 0; transform: translateY(46px) scale(0.5); }
@@ -346,8 +357,8 @@
 .po-mostra-rare  { filter: drop-shadow(0 0 16px rgba(138, 215, 255, 0.85)); }
 .po-mostra-ultra {
     filter: drop-shadow(0 0 26px rgba(255, 215, 0, 0.95));
-    animation: poMostraEntra 760ms cubic-bezier(0.18, 0.82, 0.22, 1) both,
-               poUltraPulsa 1.5s ease-in-out 760ms;
+    animation: poMostraEntra 520ms cubic-bezier(0.18, 0.82, 0.22, 1) both,
+               poUltraPulsa 1.5s ease-in-out 520ms;
 }
 @keyframes poUltraPulsa {
     0%, 100% { filter: drop-shadow(0 0 26px rgba(255, 215, 0, 0.9)); }
@@ -355,6 +366,8 @@
 }
 
 .po-targhetta {
+    position: relative;
+    z-index: 3;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -635,7 +648,7 @@ body:has(.cd-backdrop.open) .po-riepilogo {
 @media (prefers-reduced-motion: reduce) {
     .po-bustina, .po-bustina-luccichio, .po-mostra, .po-slot, .po-acquisto,
     .po-acquisto-nome, .po-ventaglio-carta, .po-lampo, .po-riepilogo, .po-pack-tear,
-    .po-rito-sigillo, .po-rito-onda {
+    .po-rito-sigillo, .po-rito-onda, .po-carta-flip {
         animation: none !important;
         transition: none !important;
     }

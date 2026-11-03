@@ -520,7 +520,8 @@
 // v557: Stelle del Regno dei Duellanti separate dal portafoglio del profilo.
 // v558: identità dei giocatori e del Boss corrette in Multiplayer, Raid e Tag Team;
 //        rivelazione delle carte graduata per rarità in bustine e ricompense.
-const CACHE_NAME = 'ygo-duel-arena-v558';
+// v559: lo sbustamento mostra davvero dorso, flip e sigillo sopra il fondale.
+const CACHE_NAME = 'ygo-duel-arena-v559';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
