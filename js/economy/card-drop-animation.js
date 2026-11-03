@@ -10,8 +10,15 @@
     // Prima di questo istante la carta sta ancora compiendo la rotazione
     // d'ingresso: permettere di chiudere il fondale produceva una cerimonia
     // troncata e, con premi in coda, due animazioni quasi sovrapposte.
-    const REVEAL_TEXT_MS = 1650;
-    const REVEAL_READY_MS = 2450;
+    const TEMPI = {
+        common: { reveal: 720, ready: 1350, particles: 10 },
+        rare: { reveal: 940, ready: 1650, particles: 16 },
+        super: { reveal: 1120, ready: 1900, particles: 20 },
+        ultra: { reveal: 1380, ready: 2250, particles: 26 },
+        legendary: { reveal: 1540, ready: 2450, particles: 30 },
+        secret: { reveal: 1680, ready: 2650, particles: 34 },
+        mythic: { reveal: 1780, ready: 2800, particles: 36 }
+    };
     const queue = [];
     let active = false;
 
@@ -67,6 +74,7 @@
         active = true;
         const entry = queue.shift();
         const r = rarity(entry.cardId);
+        const tempi = TEMPI[r] || TEMPI.legendary;
         const overlay = make('div', `cdrop-overlay cdrop-${r}`);
         overlay.setAttribute('role', 'dialog');
         overlay.setAttribute('aria-label', `Carta ottenuta: ${entry.nome || ''}`);
@@ -79,7 +87,7 @@
         overlay.appendChild(depth);
         // Poche particelle ben separate sono piu leggibili e molto meno
         // costose dei vecchi 42-72 punti, soprattutto nella WebView Android.
-        particles(overlay, r === 'mythic' ? 36 : r === 'secret' ? 30 : 24);
+        particles(overlay, tempi.particles);
 
         const content = make('div', 'cdrop-content');
         content.appendChild(make('div', 'cdrop-kicker', 'RICOMPENSA OTTENUTA'));
@@ -96,6 +104,7 @@
         face.appendChild(fronte);
         card.appendChild(face);
         stage.appendChild(make('div', 'cdrop-beam'));
+        stage.appendChild(make('div', 'cdrop-impact'));
         stage.appendChild(card);
         // La carta vinta si inclina e brilla secondo la sua rarità. Si
         // inclina il PALCO e non la carta: la carta sta dentro una faccia
@@ -132,14 +141,14 @@
                 if (overlay.isConnected && !overlay.classList.contains('cdrop-leaving')) {
                     overlay.classList.add('cdrop-revealed');
                 }
-            }, REVEAL_TEXT_MS);
+            }, tempi.reveal);
             setTimeout(() => {
                 if (!overlay.isConnected || overlay.classList.contains('cdrop-leaving')) return;
                 button.disabled = false;
                 button.setAttribute('aria-disabled', 'false');
                 overlay.classList.add('cdrop-ready');
                 button.focus({ preventScroll: true });
-            }, REVEAL_READY_MS);
+            }, tempi.ready);
         }
     }
 

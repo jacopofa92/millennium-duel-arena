@@ -518,7 +518,9 @@
 // v501: passo comune a posti (Multiplayer a più client), IA col caso locale in rete.
 // v502: Tag Team pronto per la rete (posti per membro, scambi deterministici).
 // v557: Stelle del Regno dei Duellanti separate dal portafoglio del profilo.
-const CACHE_NAME = 'ygo-duel-arena-v557';
+// v558: identità dei giocatori e del Boss corrette in Multiplayer, Raid e Tag Team;
+//        rivelazione delle carte graduata per rarità in bustine e ricompense.
+const CACHE_NAME = 'ygo-duel-arena-v558';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare

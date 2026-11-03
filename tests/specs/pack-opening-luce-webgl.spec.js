@@ -35,6 +35,12 @@ module.exports = {
             await page.evaluate(() => document.querySelector('.po-bustina').click());
             await page.waitForSelector('.po-palco', { timeout: 8000 });
             await page.waitForTimeout(600);
+            const rito = await page.evaluate(() => ({
+                carta: !!document.querySelector('.po-mostra.po-rivelata'),
+                sigillo: !!document.querySelector('.po-mostra .po-rito-sigillo'),
+                onda: !!document.querySelector('.po-mostra .po-rito-onda')
+            }));
+            assert(rito.carta && rito.sigillo && rito.onda, `Ogni carta viene rivelata sopra il proprio sigillo: ${JSON.stringify(rito)}`);
             await page.evaluate(() => document.querySelector('.po-backdrop').click());
             await page.waitForSelector('.po-riepilogo', { timeout: 5000 });
             const riepilogo = await page.evaluate(() => document.querySelector('.po-riepilogo').textContent);

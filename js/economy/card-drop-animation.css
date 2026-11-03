@@ -5,6 +5,11 @@
     background: radial-gradient(circle at 50% 46%, #171423 0%, #080a11 47%, #020308 100%);
     opacity: 0; transition: opacity .28s ease; perspective: 1100px;
 }
+.cdrop-overlay.cdrop-common { --drop:#ddd6c5; --drop-soft:rgba(215,207,190,.25); }
+.cdrop-overlay.cdrop-rare { --drop:#82d8ff; --drop-soft:rgba(68,170,255,.35); }
+.cdrop-overlay.cdrop-super { --drop:#d5abff; --drop-soft:rgba(162,91,255,.4); }
+.cdrop-overlay.cdrop-ultra { --drop:#ffe37c; --drop-soft:rgba(255,194,45,.46); }
+.cdrop-overlay.cdrop-legendary { --drop:#ffac45; --drop-soft:rgba(255,110,31,.5); }
 .cdrop-overlay.cdrop-secret { --drop: #77f6dd; --drop-soft: rgba(80,224,211,.44); }
 .cdrop-overlay.cdrop-mythic { --drop: #ffd35e; --drop-soft: rgba(255,116,37,.52); }
 .cdrop-overlay.cdrop-visible { opacity: 1; }
@@ -37,9 +42,15 @@
     filter: blur(6px); clip-path: polygon(45% 0,55% 0,82% 100%,18% 100%);
     opacity: 0; animation: cdropBeam 1.15s .2s ease-out forwards;
 }
+.cdrop-impact { position:absolute; width:min(60vmin,420px); aspect-ratio:1; border:2px solid var(--drop); border-radius:50%; opacity:0; transform:rotateX(70deg) scale(.15); pointer-events:none; }
+.cdrop-revealed .cdrop-impact { animation:cdropImpact .82s ease-out both; }
+@keyframes cdropImpact { 0%{opacity:.9;transform:rotateX(70deg) scale(.15)} 100%{opacity:0;transform:rotateX(70deg) scale(1.42)} }
 @keyframes cdropBeam { 0% { opacity:0; transform:scaleY(.3); } 40% { opacity:.72; } 100% { opacity:.24; transform:scaleY(1); } }
-.cdrop-card { position: relative; width: var(--carta-premio); aspect-ratio: var(--card-ratio); transform-style: preserve-3d; opacity: 0; will-change: transform,opacity; animation: cdropArrive 1.45s .12s cubic-bezier(.18,.78,.2,1) forwards; }
-@keyframes cdropArrive { 0% { opacity:0; transform:translate3d(0,72px,-360px) rotateY(-360deg) rotateX(18deg) scale(.48); } 72% { opacity:1; transform:translate3d(0,-7px,18px) rotateY(8deg) rotateX(-2deg) scale(1.035); } 100% { opacity:1; transform:translate3d(0,0,0) rotateY(0) rotateX(0) scale(1); } }
+.cdrop-card { position: relative; width: var(--carta-premio); aspect-ratio: var(--card-ratio); transform-style: preserve-3d; opacity: 0; will-change: transform,opacity; animation: cdropArrive 1.42s .12s cubic-bezier(.18,.78,.2,1) forwards; }
+/* Parte mostrando davvero il dorso: a metà resta quasi di taglio, poi il
+   fronte si apre. È la pausa leggibile del video di riferimento, non una
+   trottola completa che rendeva la carta "pastosa". */
+@keyframes cdropArrive { 0% { opacity:0; transform:translate3d(0,62px,-260px) rotateY(180deg) rotateX(12deg) scale(.58); } 34% { opacity:1; transform:translate3d(0,-4px,-20px) rotateY(180deg) rotateX(3deg) scale(.92); } 58% { opacity:1; transform:translate3d(0,-7px,8px) rotateY(88deg) rotateX(0) scale(1); } 82% { opacity:1; transform:translate3d(0,-8px,18px) rotateY(-6deg) scale(1.035); } 100% { opacity:1; transform:translate3d(0,0,0) rotateY(0) scale(1); } }
 @keyframes cdropFloat { 0%,100% { transform:translate3d(0,0,0); } 50% { transform:translate3d(0,-6px,0); } }
 .cdrop-card::after { content:''; position:absolute; inset:-5%; border-radius:12px; z-index:-1; background:radial-gradient(circle,var(--drop-soft),transparent 70%); opacity:.5; }
 .cdrop-card-back, .cdrop-card-front { position:absolute; inset:0; backface-visibility:hidden; border-radius: max(1px, calc(var(--carta-premio) * 0.014)); overflow:hidden; }   /* era 8px fissi: piu' tondo della carta che contiene (1.4.177) */
@@ -59,4 +70,5 @@
 .cdrop-particle { position:absolute; left:50%; top:48%; width:var(--size); height:var(--size); border-radius:50%; background:var(--drop); box-shadow:0 0 4px var(--drop); opacity:0; animation:cdropParticle 2.4s var(--delay) ease-out infinite; }
 @keyframes cdropParticle { 0% { opacity:0; transform:rotate(var(--a)) translateX(18px) scale(.2); } 18% { opacity:1; } 100% { opacity:0; transform:rotate(var(--a)) translateX(var(--d)) scale(1.1); } }
 @media (max-height: 560px) and (orientation: landscape) { .cdrop-stage { height:54vh; } .cdrop-rule { display:none; } .cdrop-name { font-size:1rem; } }
+@media (max-width: 700px) { .cdrop-ring-c { display:none; } .cdrop-particle:nth-child(n+25) { display:none; } }
 @media (prefers-reduced-motion: reduce) { .cdrop-overlay *, .cdrop-overlay *::after { animation:none !important; transition:none !important; } .cdrop-overlay { transition:none; } .cdrop-card { opacity:1; } .cdrop-beam { opacity:.25; } .cdrop-name,.cdrop-rarity,.cdrop-rule,.cdrop-continue { opacity:1; transform:none; } }

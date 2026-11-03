@@ -421,6 +421,16 @@
             }
 
             const mostra = el('div', 'po-mostra po-mostra-' + r);
+            // Il sigillo e le onde appartengono alla CERIMONIA, non alla
+            // carta: restano quindi economici da animare (solo transform e
+            // opacity) e non obbligano il renderer laminato a ridisegnarsi.
+            // La stessa grammatica visiva viene usata dalle ricompense
+            // singole in card-drop-animation.css.
+            const rito = el('div', 'po-rito po-rito-' + r);
+            rito.appendChild(el('i', 'po-rito-sigillo'));
+            rito.appendChild(el('i', 'po-rito-onda po-rito-onda-a'));
+            if (r !== 'common') rito.appendChild(el('i', 'po-rito-onda po-rito-onda-b'));
+            mostra.appendChild(rito);
             // Misurata in vh oltre che in vw: la fascia centrale è ciò che
             // AVANZA fra testa, striscia e pulsante, quindi una carta
             // misurata sulla sola larghezza sborderebbe su uno schermo
@@ -437,6 +447,7 @@
             palco.appendChild(mostra);
 
             requestAnimationFrame(() => {
+                mostra.classList.add('po-rivelata');
                 const c = centroDi(mostra);
                 const alta = FASCE_ALTE.has(r);
                 if (alta) {

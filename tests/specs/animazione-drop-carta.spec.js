@@ -26,6 +26,8 @@ module.exports = {
                     name: overlay.querySelector('.cdrop-name').textContent,
                     z: Number(getComputedStyle(overlay).zIndex),
                     particles: overlay.querySelectorAll('.cdrop-particle').length,
+                    fascia: overlay.classList.contains('cdrop-mythic'),
+                    impatto: !!overlay.querySelector('.cdrop-impact'),
                     backgroundOpaque: getComputedStyle(overlay).backgroundImage.indexOf('rgba') === -1,
                     cardInside: card.left >= 0 && card.right <= innerWidth && card.top >= 0 && card.bottom <= innerHeight,
                     buttonInside: button.bottom <= innerHeight && button.left >= 0 && button.right <= innerWidth
@@ -33,6 +35,7 @@ module.exports = {
             });
             assert(first.name.includes('Ra'), 'La prima carta della coda deve essere Ra');
             assert(first.z > 100000, 'La cerimonia deve stare sopra alla UI di gioco');
+            assert(first.fascia && first.impatto, 'La ricompensa usa la cerimonia e l\'impatto della propria rarità');
             assert(first.particles <= 36 && first.backgroundOpaque,
                 'La scena deve restare leggera e coprire davvero la pagina sottostante');
             assert(first.cardInside && first.buttonInside, 'Carta e pulsante devono restare nello schermo mobile');
