@@ -60,7 +60,15 @@
      * Quanto resta in mostra una carta prima di scendere nella striscia. Super, leggendaria, segreta e mitica
      * non avevano una voce (cadevano sul valore delle comuni, e nessuna luce): ora ogni fascia ha la sua.
      */
-    const MOSTRA_MS = { common: 620, rare: 900, super: 1250, ultra: 1900, legendary: 2300, secret: 2600, mythic: 2600 };
+    const RIVELAZIONE = {
+        common: { attesa: 260, flip: 560, mostra: 650 },
+        rare: { attesa: 320, flip: 720, mostra: 850 },
+        super: { attesa: 380, flip: 880, mostra: 1050 },
+        ultra: { attesa: 440, flip: 1050, mostra: 1450 },
+        legendary: { attesa: 500, flip: 1180, mostra: 1750 },
+        secret: { attesa: 540, flip: 1280, mostra: 1950 },
+        mythic: { attesa: 580, flip: 1380, mostra: 2150 }
+    };
     /**
      * Il TIER della luce WebGL (js/economy/pack-opening-webgl.js): 0 è lo strappo della busta, poi dalla comune
      * (1) alla segreta/mitica (6). Una fascia sconosciuta vale come una comune.
@@ -464,8 +472,13 @@
             mostra.appendChild(targhetta);
             palco.appendChild(mostra);
 
-            requestAnimationFrame(() => {
-                mostra.classList.add('po-rivelata');
+            const tempi = RIVELAZIONE[r] || RIVELAZIONE.common;
+            mostra.style.setProperty('--po-flip-ms', tempi.flip + 'ms');
+            requestAnimationFrame(() => mostra.classList.add('po-in-attesa'));
+
+            const impatto = () => {
+                if (saltato || !mostra.isConnected) return;
+                mostra.classList.add('po-rivelata', 'po-fronte-visibile');
                 const c = centroDi(mostra);
                 const alta = FASCE_ALTE.has(r);
                 if (alta) {
@@ -487,9 +500,9 @@
                         count: 28, colors: ['#8ad7ff', '#ffffff', '#c9e9ff'], speed: 5, life: 750, spread: 360, gravity: -0.02
                     });
                 }
-            });
+            };
 
-            timer = setTimeout(() => {
+            const riponi = () => {
                 if (saltato) return;
                 backdrop.classList.remove('po-ultra-attiva');
                 if (luce) luce.spegniAmbiente();
@@ -502,7 +515,20 @@
                 setTimeout(() => mostra.remove(), 260);
                 aggiungiAllaStriscia(id);
                 prossima();
-            }, MOSTRA_MS[r] || MOSTRA_MS.common);
+            };
+
+            // Tre atti distinti: dorso fermo, flip, impatto quando il
+            // fronte diventa leggibile. Prima luce e carta partivano nello
+            // stesso fotogramma, quindi la vecchia esplosione nascondeva
+            // completamente la nuova animazione.
+            timer = setTimeout(() => {
+                if (saltato || !mostra.isConnected) return;
+                mostra.classList.add('po-gira');
+                timer = setTimeout(() => {
+                    impatto();
+                    timer = setTimeout(riponi, tempi.mostra);
+                }, Math.round(tempi.flip * 0.8));
+            }, tempi.attesa);
         }
 
         // Toccare lo sfondo (non la striscia, non il pulsante) salta alla

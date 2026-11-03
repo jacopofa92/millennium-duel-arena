@@ -330,21 +330,18 @@
 .po-mostra-secret, .po-mostra-mythic { --reveal:#8fffe9; --reveal-soft:rgba(88,238,218,.52); }
 .po-rito { position:absolute; z-index:0; inset:50% auto auto 50%; width:calc(var(--carta-rivelata) * 1.82); aspect-ratio:1; transform:translate(-50%,-41%) rotateX(68deg); pointer-events:none; }
 .po-rito-sigillo, .po-rito-onda { position:absolute; inset:0; border-radius:50%; opacity:0; }
-.po-rito-sigillo { border:1px solid var(--reveal); background:radial-gradient(circle, var(--reveal-soft), transparent 61%); box-shadow:0 0 18px var(--reveal-soft), inset 0 0 14px var(--reveal-soft); transform:scale(.34) rotate(0); }
+.po-rito-sigillo { border:1px solid var(--reveal); background:radial-gradient(circle, var(--reveal-soft), transparent 61%); box-shadow:0 0 18px var(--reveal-soft), inset 0 0 14px var(--reveal-soft); transform:scale(.34) rotate(0); transition:opacity .28s ease,transform .38s ease; }
 .po-rito-sigillo::before, .po-rito-sigillo::after { content:''; position:absolute; inset:12%; border:1px solid color-mix(in srgb,var(--reveal) 58%,transparent); transform:rotate(45deg); }
 .po-rito-sigillo::after { inset:27%; transform:rotate(22.5deg); }
 .po-rito-onda { border:2px solid var(--reveal); transform:scale(.24); }
 .po-rivelata .po-rito-sigillo { animation:poSigillo .9s cubic-bezier(.16,.78,.22,1) both; }
 .po-rivelata .po-rito-onda-a { animation:poOnda .72s .22s ease-out both; }
 .po-rivelata .po-rito-onda-b { animation:poOnda .9s .36s ease-out both; }
+.po-in-attesa .po-rito-sigillo { opacity:.24; transform:scale(.76) rotate(-12deg); }
 @keyframes poSigillo { 0%{opacity:0;transform:scale(.3) rotate(-28deg)} 42%{opacity:.9} 100%{opacity:.32;transform:scale(1) rotate(18deg)} }
 @keyframes poOnda { 0%{opacity:.85;transform:scale(.24)} 100%{opacity:0;transform:scale(1.38)} }
-.po-carta-flip { position:relative; z-index:2; width:var(--carta-rivelata); aspect-ratio:var(--card-ratio); transform-style:preserve-3d; animation:poCartaFlip 520ms .08s cubic-bezier(.2,.72,.22,1) both; }
-.po-mostra-rare .po-carta-flip { animation-duration:700ms; }
-.po-mostra-super .po-carta-flip { animation-duration:850ms; }
-.po-mostra-ultra .po-carta-flip { animation-duration:1050ms; }
-.po-mostra-legendary .po-carta-flip { animation-duration:1200ms; }
-.po-mostra-secret .po-carta-flip, .po-mostra-mythic .po-carta-flip { animation-duration:1300ms; }
+.po-carta-flip { position:relative; z-index:2; width:var(--carta-rivelata); aspect-ratio:var(--card-ratio); transform-style:preserve-3d; transform:rotateY(180deg); will-change:transform; }
+.po-gira .po-carta-flip { animation:poCartaFlip var(--po-flip-ms, 560ms) cubic-bezier(.2,.72,.22,1) both; }
 .po-carta-flip-retro, .po-carta-flip-fronte { position:absolute; inset:0; backface-visibility:hidden; transform-style:preserve-3d; }
 .po-carta-flip-retro { transform:rotateY(180deg); }
 .po-carta-flip-fronte { transform:rotateY(0); }
@@ -372,7 +369,11 @@
     flex-direction: column;
     align-items: center;
     gap: 4px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity .36s ease, transform .36s ease;
 }
+.po-fronte-visibile .po-targhetta { opacity:1; transform:none; }
 .po-nome {
     font-size: clamp(0.76rem, 3vw, 0.95rem);
     font-weight: 800;

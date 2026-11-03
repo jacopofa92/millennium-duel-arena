@@ -34,7 +34,7 @@ module.exports = {
             // Si strappa la bustina e si salta alla fine (tocco sullo sfondo): il riepilogo annuncia la fascia più alta.
             await page.evaluate(() => document.querySelector('.po-bustina').click());
             await page.waitForSelector('.po-palco', { timeout: 8000 });
-            await page.waitForTimeout(600);
+            await page.waitForSelector('.po-mostra.po-fronte-visibile', { timeout: 5000 });
             const rito = await page.evaluate(() => ({
                 carta: !!document.querySelector('.po-mostra.po-rivelata'),
                 sigillo: !!document.querySelector('.po-mostra .po-rito-sigillo'),
