@@ -2841,14 +2841,53 @@ function setupSurrenderButton() {
     const duelReturnUrl = window.DuelSession && DuelSession.returnUrl
         ? new URL(DuelSession.returnUrl, duelUrl).href
         : new URL('index.html', duelUrl).href;
+    let uscitaRichiesta = '';
     history.replaceState({ duelReturn: true }, '', duelUrl);
     history.pushState({ duelGuard: true }, '', duelUrl);
+    // Il pulsante Continua non deve fare replace sulla sentinella: così
+    // resterebbe sotto la voce `duelReturn` e il successivo Indietro
+    // riaprirebbe il duello. Si torna prima alla voce-base; il popstate
+    // qui sotto la sostituisce con la destinazione corretta.
+    window.DuelHistory = {
+        esci: (url) => {
+            const destinazione = new URL(url || duelReturnUrl, duelUrl).href;
+            if (history.state && history.state.duelGuard) {
+                // Nel flusso normale la pagina precedente è proprio il
+                // menu/mappa a cui dobbiamo tornare. Saltare di due voci
+                // elimina base+sentinella in un solo movimento, evitando
+                // due navigazioni consecutive (e il relativo AbortError
+                // "Transition was skipped" osservabile su Chromium).
+                let provenienzaCorretta = false;
+                try {
+                    const prima = new URL(document.referrer);
+                    const dopo = new URL(destinazione);
+                    provenienzaCorretta = prima.origin === dopo.origin && prima.pathname === dopo.pathname;
+                } catch (e) { /* link diretto: usa il ripiego sotto */ }
+                if (provenienzaCorretta) {
+                    history.go(-2);
+                    setTimeout(() => {
+                        if (location.href === duelUrl) window.location.replace(destinazione);
+                    }, 650);
+                    return;
+                }
+                uscitaRichiesta = destinazione;
+                history.back();
+                // Difesa per WebView che non consegnano popstate: se la
+                // pagina è ancora viva, si esce comunque.
+                setTimeout(() => {
+                    if (location.href === duelUrl) window.location.replace(destinazione);
+                }, 450);
+                return;
+            }
+            window.location.replace(destinazione);
+        }
+    };
     window.addEventListener('popstate', () => {
-        if (gameState.gameOver) {
+        if (uscitaRichiesta || gameState.gameOver) {
             // popstate cambia l'URL ma non carica il documento associato:
             // replace forza il caricamento vero senza reintrodurre il
             // duello nella cronologia.
-            window.location.replace(duelReturnUrl);
+            window.location.replace(uscitaRichiesta || duelReturnUrl);
             return;
         }
         history.pushState({ duelGuard: true }, '', duelUrl);

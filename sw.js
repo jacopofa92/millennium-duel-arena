@@ -523,7 +523,8 @@
 // v559: lo sbustamento mostra davvero dorso, flip e sigillo sopra il fondale.
 // v560: rivelazione in tre atti, con luce soltanto all'apparizione del fronte.
 // v561: la difficoltà Facile resta tale in tutti e tre i tornei.
-const CACHE_NAME = 'ygo-duel-arena-v561';
+// v562: Continua elimina dalla cronologia il duello appena concluso.
+const CACHE_NAME = 'ygo-duel-arena-v562';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare

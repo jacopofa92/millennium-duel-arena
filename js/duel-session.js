@@ -74,6 +74,20 @@
         kaibaTournament: 'torneo-kaiba.html'
     };
 
+    /**
+     * Esce da un duello concluso consumando anche la sentinella che
+     * protegge il tasto Indietro durante la partita. Un semplice
+     * location.replace sostituisce soltanto la voce superiore e lascia
+     * sotto di essa la pagina del duello, che Android può quindi riaprire.
+     */
+    function tornaDopoDuello(url) {
+        if (window.DuelHistory && typeof DuelHistory.esci === 'function') {
+            DuelHistory.esci(url);
+            return;
+        }
+        window.location.replace(url);
+    }
+
     // =================================================================
     // EXTRA — MODALITÀ AGGIUNTIVE (Puzzle, Rivincite, Torre dei Duellanti)
     // =================================================================
@@ -125,7 +139,7 @@
                     const save = SaveManager.load();
                     if (save) SaveManager.touch(save);
                 }
-                const torna = () => window.location.replace(session.returnUrl);
+                const torna = () => tornaDopoDuello(session.returnUrl);
                 if (window.DuelCinematics) {
                     DuelCinematics.showOutcome({ playerWon: playerWon, session: session, record: null, rewards: premi, onContinue: torna });
                 } else {
@@ -788,7 +802,7 @@
             // Dove tornare lo decide il tutorial: il menu principale dopo la
             // lezione obbligatoria del primo avvio, il menu Tutorial altrimenti.
             const url = (window.TutorialDuel && TutorialDuel.urlRitorno && TutorialDuel.urlRitorno()) || session.returnUrl;
-            const torna = () => window.location.replace(url);
+            const torna = () => tornaDopoDuello(url);
             if (window.DuelCinematics) {
                 DuelCinematics.showOutcome({ playerWon: playerWon, session: session, record: null, rewards: premi, onContinue: torna });
             } else {
@@ -943,7 +957,7 @@
             // voce precedente può essere la mappa GENERALE della Storia,
             // non l'area da cui è partito il duello. `returnUrl` contiene
             // invece sempre campaign e, per una prova annidata, torneo.
-            window.location.replace(session.returnUrl);
+            tornaDopoDuello(session.returnUrl);
         };
 
         if (window.DuelCinematics) {
