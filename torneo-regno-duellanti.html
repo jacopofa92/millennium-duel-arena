@@ -964,10 +964,9 @@
             // portafoglio pieno voleva dire aprire il Cancello di Kaiba,
             // che ne chiede dieci, magari al primo passo. Impostata QUI
             // direttamente (non con `addStars(STARTING_STARS)` dopo aver
-            // creato lo stato): `addStars` scrive ANCHE nel portafoglio
-            // reale del giocatore (`SaveManager.addCurrency`), corretto
-            // per una VINCITA ma sbagliato per la dote di partenza, che
-            // non è stata vinta da nessuno — bug reale trovato e chiuso,
+            // creato lo stato): questa è la dote della singola scalata,
+            // non una ricompensa economica da versare nel profilo — bug
+            // reale trovato e chiuso,
             // segnalato dall'utente ("parto sempre con 2 stelle" non era
             // vero: `addStars` veniva chiamata PRIMA che questo stato
             // esistesse ancora, quindi il suo `if (!state) return 0`
@@ -996,23 +995,22 @@
     // apriva magari al primo passo. Non è un torneo, è un saldo.
     //
     // Ora il conto vive nello STATO DEL TORNEO (`state.stars`) e parte
-    // sempre da zero: si puntano e si perdono quelle, e sono l'unica cosa
-    // che conta per arrivare al Castello.
+    // sempre da STARTING_STARS: si puntano e si perdono quelle, e sono
+    // l'unica cosa che conta per arrivare al Castello.
     //
-    // Il portafoglio del giocatore resta il BOTTINO: ogni Stella VINTA gli
-    // viene accreditata e gli resta, anche se poi la si ripunta e la si
-    // perde qui dentro. È la differenza fra "quante ne ho raccolte in
-    // tutto" e "quante ne ho adesso su quest'isola" — perdere una puntata
-    // non può togliere al giocatore quello che ha già guadagnato in una
-    // partita precedente.
+    // Il portafoglio del profilo è un'economia distinta: riceve soltanto
+    // le Stelle dichiarate come premio finale da Rewards.forTournament o
+    // da una Sfida. Accreditare qui le Stelle vinte lungo il percorso le
+    // pagherebbe due volte e permetterebbe di coltivarle ricominciando il
+    // torneo senza mai conquistarlo.
     function currentStars() {
         const state = loadState();
         return (state && typeof state.stars === 'number') ? state.stars : 0;
     }
     /**
-     * Somma (o sottrae) Stelle del torneo, mai sotto zero. Una VINCITA
-     * viene accreditata anche al portafoglio del giocatore; una perdita
-     * no, per la ragione detta qui sopra.
+     * Somma (o sottrae) Stelle del solo torneo, mai sotto zero. Non tocca
+     * mai il portafoglio persistente del profilo: sono gettoni di accesso
+     * al Castello, non una valuta guadagnata dal giocatore.
      */
     function addStars(amount, currentState) {
         // Quando il chiamante sta già modificando lo stato del percorso,
@@ -1024,7 +1022,6 @@
         const prima = (typeof state.stars === 'number') ? state.stars : 0;
         state.stars = Math.max(0, prima + amount);
         saveState(state);
-        if (amount > 0) SaveManager.addCurrency('starChips', amount);
         return state.stars;
     }
 

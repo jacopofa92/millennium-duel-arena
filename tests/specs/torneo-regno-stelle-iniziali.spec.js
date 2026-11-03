@@ -1,7 +1,8 @@
 // Il torneo "Regno dei Duellanti" deve DAVVERO partire con STARTING_STARS
 // (2) Stelle interne al torneo, e quella dote di partenza non deve mai
-// finire nel portafoglio reale del giocatore (quello è il bottino delle
-// Stelle VINTE durante la scalata, non quelle con cui si parte).
+// finire nel portafoglio reale del giocatore. Vale sia per la dote iniziale
+// sia per bonus e puntate: sono gettoni temporanei per entrare nel Castello,
+// non ricompense economiche del profilo.
 //
 // Bug reale chiuso qui: il vecchio codice chiamava
 // `addStars(STARTING_STARS - currentStars())` PRIMA che lo stato del
@@ -15,7 +16,7 @@ const path = require('path');
 
 module.exports = {
     standalone: true,
-    name: 'Torneo Regno dei Duellanti: Stelle iniziali, bonus e malus usano il contatore interno',
+    name: 'Torneo Regno dei Duellanti: tutte le Stelle della scalata restano nel contatore interno',
     async run(t) {
         const RADICE = path.join(__dirname, '..', '..');
         const url = 'file:///' + path.join(RADICE, 'torneo-regno-duellanti.html').replace(/\\/g, '/');
@@ -83,8 +84,8 @@ module.exports = {
             });
             t.assert(dopoEventi.stelleTorneo === 3,
                 `Da 2 Stelle, bonus +2 e malus -1 devono lasciare il contatore del torneo a 3 (letto ${dopoEventi.stelleTorneo})`);
-            t.assert(dopoEventi.portafoglio === 9,
-                `Solo il bonus guadagnato entra nel portafoglio: atteso 9, letto ${dopoEventi.portafoglio}`);
+            t.assert(dopoEventi.portafoglio === 7,
+                `Bonus e malus della scalata non devono toccare il profilo: atteso 7, letto ${dopoEventi.portafoglio}`);
 
             await page.goto('file:///' + path.join(RADICE, 'tornei.html').replace(/\\/g, '/'));
             await page.waitForFunction(() => document.getElementById('duelistKingdomStatus'));
