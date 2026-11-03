@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     standalone: true,
-    name: 'Battle City: le vittorie automatiche avanzano sedicesimi e ottavi',
+    name: 'Battle City: dirigibile canonico e migrazione del vecchio tabellone',
     async run(t) {
         const root = path.join(__dirname, '..', '..');
         const url = 'file:///' + path.join(root, 'torneo-battle-city.html').replace(/\\/g, '/');
@@ -38,36 +38,29 @@ module.exports = {
             await page.reload();
             await page.waitForFunction(() => {
                 const current = SaveManager.getTournamentState('battleCity');
-                return current && current.bracket.r32Winners[0] === 'player' && !current.pendingEncounter;
-            });
-
-            await page.evaluate(() => {
-                const current = SaveManager.getTournamentState('battleCity');
-                current.pendingEncounter = { characterId: current.bracket.r32Winners[1], stage: 'r16', wager: 0 };
-                SaveManager.setTournamentState('battleCity', current);
-                sessionStorage.setItem('ygoLastDuelOutcome', JSON.stringify({
-                    mode: 'tournament', tournamentId: 'battleCity', playerWon: true,
-                    opponentId: current.pendingEncounter.characterId, timestamp: Date.now()
-                }));
-            });
-            await page.reload();
-            await page.waitForFunction(() => {
-                const current = SaveManager.getTournamentState('battleCity');
-                return current && current.bracket.r16Winners[0] === 'player' && !current.pendingEncounter;
+                return current && current.phase === 'tower' && !current.pendingEncounter;
             });
 
             const result = await page.evaluate(() => {
                 const current = SaveManager.getTournamentState('battleCity');
                 return {
-                    r32: current.bracket.r32Winners[0], r16: current.bracket.r16Winners[0],
+                    slots: current.bracket.slots.length,
+                    legacyR32: Object.prototype.hasOwnProperty.call(current.bracket, 'r32Winners'),
+                    legacyR16: Object.prototype.hasOwnProperty.call(current.bracket, 'r16Winners'),
+                    quarter: current.bracket.quarterWinners[0],
+                    opponent: current.bracket.slots[1],
+                    unique: new Set(current.bracket.slots).size,
+                    hasMarik: current.bracket.slots.includes('marik'),
                     phase: current.phase, eliminated: current.eliminated,
                     outcomeLeft: sessionStorage.getItem('ygoLastDuelOutcome')
                 };
             });
-            t.assert(result.r32 === 'player' && result.r16 === 'player',
-                `Il giocatore non avanza nel tabellone: ${JSON.stringify(result)}`);
-            t.assert(result.phase === 'airship' && !result.eliminated,
-                `La vittoria non deve eliminare o spostare prematuramente il giocatore: ${JSON.stringify(result)}`);
+            t.assert(result.slots === 8 && !result.legacyR32 && !result.legacyR16,
+                `Il vecchio tabellone non e' stato ridotto agli otto finalisti: ${JSON.stringify(result)}`);
+            t.assert(result.unique === 8 && result.hasMarik && result.opponent === 'rex',
+                `Finalisti duplicati, Marik assente o avversario migrato perso: ${JSON.stringify(result)}`);
+            t.assert(result.quarter === 'player' && result.phase === 'tower' && !result.eliminated,
+                `La vittoria nel duello migrato deve chiudere i quarti: ${JSON.stringify(result)}`);
             t.assert(result.outcomeLeft === null, 'L’esito automatico deve essere consumato una sola volta');
         } finally {
             await page.close();

@@ -511,6 +511,8 @@ Decisioni aperte dell'utente: i 6 PNG di avatar non usati; le regole del
 
 - [x] Pedine verificate: i 20 personaggi che possono comparire hanno il loro
       PNG col nome dell'avatar, nessun ripiego sulla pedina generica.
+- [x] Dirigibile riallineato all'anime: otto finalisti, soli quarti e
+      migrazione non distruttiva dei precedenti salvataggi a 32 posti.
 ## Correzioni decisioni IA condivise (2026-10-18)
 
 - L'IA non attiva una seconda copia di `Mondo dei Toon` mentre ne controlla già una scoperta.

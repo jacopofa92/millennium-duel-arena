@@ -975,29 +975,19 @@
     const DUEL_TRACKS = {
         street: '30. Preliminaries.mp3',
         hunter: '36. Heishin.mp3',
-        r32: '31. Finals.mp3',
-        r16: '31. Finals.mp3',
         quarter: '31. Finals.mp3',
         semi: '32. Seto Kaiba (Tournament Final).mp3',
         final: '38. Darknite-Nitemare.mp3'
     };
 
     /**
-     * I turni sul dirigibile PRIMA della Torre Kaiba — erano SOLO i
-     * quarti (8 posti): richiesta esplicita dell'utente di non partire
-     * direttamente da lì, ma due turni prima (sedicesimi e ottavi, 32
-     * posti). Ogni turno dimezza il tabellone come una vera eliminazione
-     * diretta: `slotsKey` dice dove leggere i DUE sfidanti di ogni match
-     * di quel turno, `winnersKey` dove finiscono i suoi vincitori (letto
-     * a sua volta come `slotsKey` dal turno successivo) — vedi
-     * buildBracket/simulateOtherAirshipMatches/renderAirship. Il turno
-     * dei quarti chiude qui e passa il testimone a semiWinners/champion
-     * (invariati, mai toccati da questo elenco).
+     * Nell'anime sul dirigibile salgono gli OTTO finalisti e si disputano
+     * soltanto i quarti. Sedicesimi e ottavi appartenevano a una precedente
+     * espansione del torneo, ma contraddicevano sia il dialogo di Kaiba sia
+     * la struttura canonica di Battle City.
      */
     const AIRSHIP_ROUNDS = [
-        { stage: 'r32', name: 'Sedicesimi di finale', slotsKey: 'slots', winnersKey: 'r32Winners', matchCount: 16 },
-        { stage: 'r16', name: 'Ottavi di finale', slotsKey: 'r32Winners', winnersKey: 'r16Winners', matchCount: 8 },
-        { stage: 'quarter', name: 'Quarti di finale', slotsKey: 'r16Winners', winnersKey: 'quarterWinners', matchCount: 4 }
+        { stage: 'quarter', name: 'Quarti di finale', slotsKey: 'slots', winnersKey: 'quarterWinners', matchCount: 4 }
     ];
 
     /**
@@ -1073,15 +1063,9 @@
      * garantite, e il resto del roster riempie i posti rimasti, diverso
      * ad ogni torneo. Richiesta esplicita dell'utente.
      *
-     * Il tabellone è a 32 posti (non più 8: richiesta esplicita
-     * dell'utente di non partire direttamente dai quarti, ma due turni
-     * prima — sedicesimi e ottavi, vedi AIRSHIP_ROUNDS), quindi servono
-     * 31 nomi e questo pool ne ha solo 13: pickWeightedWithRefill pesca
-     * SENZA rimpiazzo un giro alla volta (nessuna ripetizione dentro lo
-     * stesso giro di 13) e ricomincia da un'urna nuova quando serve
-     * ancora — le ripetizioni finiscono quindi solo nei posti "lontani"
-     * dal cammino del giocatore (mai giocati, solo simulati per dare
-     * un vincitore all'altro ramo del tabellone).
+     * Il tabellone canonico ha 8 posti: il giocatore più sette avversari.
+     * L'estrazione è senza rimpiazzo, quindi nessun personaggio può occupare
+     * due posti nei quarti.
      */
     const FINALIST_WEIGHTS = {
         kaiba: 100,
@@ -1108,22 +1092,6 @@
             while (i < urna.length - 1 && tiro >= urna[i].peso) { tiro -= urna[i].peso; i++; }
             scelti.push(urna[i].id);
             urna.splice(i, 1);
-        }
-        return scelti;
-    }
-
-    /**
-     * Come pickWeightedSample, ma per riempire un tabellone con più posti
-     * di quanti nomi esistano nel pool (32 posti, 13 nomi in
-     * FINALIST_WEIGHTS): pesca un giro intero SENZA ripetizioni (fino a
-     * esaurire il pool), poi ricomincia da un'urna nuova per i posti
-     * restanti. Le ripetizioni sono quindi possibili solo FRA un giro e
-     * l'altro, mai dentro lo stesso giro.
-     */
-    function pickWeightedWithRefill(weights, count) {
-        const scelti = [];
-        while (scelti.length < count) {
-            scelti.push(...pickWeightedSample(weights, Math.min(count - scelti.length, Object.keys(weights).length)));
         }
         return scelti;
     }
@@ -1253,7 +1221,35 @@
             eliminated: false
         };
     }
-    function loadState() { return SaveManager.getTournamentState(TOURNAMENT_ID); }
+    /**
+     * Migra i tornei iniziati quando il dirigibile aveva impropriamente 32
+     * posti. Non si azzerano città, difficoltà o avversario già caricato:
+     * un eventuale sedicesimo/ottavo in sospeso diventa il quarto canonico.
+     */
+    function migrateCanonicalAirship(state) {
+        if (!state || state.phase !== 'airship' || !state.bracket) return state;
+        const oldBracket = state.bracket;
+        const isExpanded = (oldBracket.slots && oldBracket.slots.length > 8)
+            || Array.isArray(oldBracket.r32Winners)
+            || Array.isArray(oldBracket.r16Winners);
+        if (!isExpanded) return state;
+
+        const pendingId = state.pendingEncounter && state.pendingEncounter.characterId;
+        buildBracket(state);
+        if (pendingId) {
+            const duplicateIndex = state.bracket.slots.indexOf(pendingId, 2);
+            const displaced = state.bracket.slots[1];
+            state.bracket.slots[1] = pendingId;
+            if (duplicateIndex !== -1) state.bracket.slots[duplicateIndex] = displaced;
+            state.pendingEncounter.stage = 'quarter';
+            state.pendingEncounter.wager = 0;
+        }
+        simulateOtherAirshipMatches(state);
+        logEvent(state, '🚁', 'Tabellone riallineato: sul dirigibile restano gli otto finalisti per i quarti.');
+        SaveManager.setTournamentState(TOURNAMENT_ID, state);
+        return state;
+    }
+    function loadState() { return migrateCanonicalAirship(SaveManager.getTournamentState(TOURNAMENT_ID)); }
     function saveState(state) { SaveManager.setTournamentState(TOURNAMENT_ID, state); }
 
     /** Aggiunge una riga al diario (mai un push diretto su state.history: qui si normalizza anche il timestamp). */
@@ -1477,27 +1473,19 @@
     // FASE 2/3 — TABELLONE (dirigibile) e TORRE
     // ================================================================
     /**
-     * 32 posti (non più 8: vedi il commento su AIRSHIP_ROUNDS), il
-     * giocatore nello slot 0, Marik SEMPRE nella metà bassa del
-     * tabellone (slot 16-31) così non può incrociare il giocatore prima
+     * Otto posti, il giocatore nello slot 0, Marik SEMPRE nella metà bassa
+     * del tabellone (slot 4-7) così non può incrociare il giocatore prima
      * della finale — è la struttura dell'anime, e rende la scalata
      * leggibile ("Marik è dall'altra parte, lo incontrerò solo in cima").
-     * `r32Winners`/`r16Winners` sono i vincitori dei due turni nuovi
-     * (sedicesimi, ottavi); `quarterWinners`/`semiWinners`/`champion`
-     * restano ESATTAMENTE come prima, ora alimentati da `r16Winners`
-     * invece che da `slots` direttamente (vedi
-     * simulateOtherAirshipMatches/playerSemiOpponent/playerFinalOpponent,
-     * mai toccate).
      */
     function buildBracket(state) {
-        const others = pickWeightedWithRefill(FINALIST_WEIGHTS, 31);
-        const bottomHalf = shuffle([BOSS_ID].concat(others.slice(0, 15)));
-        const topHalf = others.slice(15);
+        // Marik occupa già uno dei sette posti avversari: ne estraiamo sei.
+        const others = pickWeightedSample(FINALIST_WEIGHTS, 6);
+        const bottomHalf = shuffle([BOSS_ID].concat(others.slice(0, 3)));
+        const topHalf = others.slice(3);
         const slots = ['player'].concat(topHalf).concat(bottomHalf);
         state.bracket = {
             slots: slots,
-            r32Winners: new Array(16).fill(null),
-            r16Winners: new Array(8).fill(null),
             quarterWinners: [null, null, null, null],
             semiWinners: [null, null],
             champion: null
@@ -1512,13 +1500,8 @@
     }
 
     /**
-     * Risolve OGNI match dei tre turni del dirigibile che il giocatore
-     * non gioca di persona, tutti SUBITO al momento di salire a bordo —
-     * stesso principio già esistente per i soli quarti (era
-     * `simulateOtherQuarters`, ora tre turni invece di uno: sedicesimi,
-     * ottavi, quarti). Il match 0 di ogni turno resta aperto (null)
-     * finché non è il giocatore stesso a vincerlo — è l'unico risultato
-     * che questa funzione non decide.
+     * Risolve i tre quarti che il giocatore non disputa. Il match 0 resta
+     * aperto finché non è il giocatore stesso a vincerlo.
      */
     function simulateOtherAirshipMatches(state) {
         const br = state.bracket;
@@ -1533,10 +1516,8 @@
     }
 
     /**
-     * A quale dei tre turni del dirigibile si è arrivati: il primo il
-     * cui match 0 (quello del giocatore) non è ancora stato vinto.
-     * Quando anche i quarti sono vinti si è già usciti dal dirigibile
-     * (enterTower), quindi questa funzione non serve più chiamarla.
+     * Restituisce il turno corrente del dirigibile. Oggi è uno solo, ma la
+     * funzione mantiene il renderer indipendente dalla struttura dei dati.
      */
     function currentAirshipRound(state) {
         const br = state.bracket;
@@ -2194,7 +2175,7 @@
         state.grid = null;
         buildBracket(state);
         simulateOtherAirshipMatches(state);
-        logEvent(state, '🚁', 'Sali sul dirigibile di Kaiba: iniziano i sedicesimi di finale.');
+        logEvent(state, '🚁', 'Sali sul dirigibile di Kaiba: gli otto finalisti disputano i quarti.');
         saveState(state);
         render();
         // L'intermezzo arriva DOPO il render: dietro alla scena c'è già il
@@ -2203,7 +2184,7 @@
         // js/data/tournament-dialogues.js lo mostra una volta sola per
         // partita e resta sempre saltabile.
         TournamentDialogues.mostraUnaVolta(TOURNAMENT_ID, 'airship', state, saveState).then(() => {
-            showToast('🚁 Il dirigibile decolla su Domino City. I 32 finalisti sono al completo.');
+            showToast('🚁 Il dirigibile decolla su Domino City. Gli 8 finalisti sono al completo.');
         });
     }
 
@@ -2229,12 +2210,8 @@
     }
 
     /**
-     * Il dirigibile ora attraversa TRE turni (sedicesimi, ottavi, quarti
-     * — vedi AIRSHIP_ROUNDS) prima della Torre Kaiba, non più uno solo:
-     * questa funzione disegna SOLO il turno corrente (currentAirshipRound),
-     * con sopra una striscia di progresso (stesso linguaggio visivo dei
-     * "piani" della Torre — `.tower-floor`, riusata qui invece di
-     * inventare un terzo stile per lo stesso concetto di "tappe in fila").
+     * Sul dirigibile si disputano soltanto i quarti canonici. La striscia
+     * rende esplicita la fase prima del trasferimento alla Torre Kaiba.
      */
     function renderAirship(state) {
         document.body.classList.remove('city-map-active');
@@ -2488,14 +2465,14 @@
         const track = (sfidante && sfidante.duelTrack)
             || DUEL_TRACKS[encounter.stage] || DUEL_TRACKS.street;
         // Campo di gioco per fase: la città per le preliminari, il
-        // dirigibile per sedicesimi/ottavi/quarti, la torre per
+        // dirigibile per i quarti, la torre per
         // semifinale/finale. I percorsi passano da resolvedPhaseImage,
         // quindi se l'immagine dedicata non è ancora nel repository si
         // usa il fallback già deciso all'avvio invece di un campo vuoto
         // — e il parametro ?field= vuole solo il NOME del file dentro
         // images/fields/.
         let phase = 'city';
-        if (encounter.stage === 'r32' || encounter.stage === 'r16' || encounter.stage === 'quarter') phase = 'airship';
+        if (encounter.stage === 'quarter') phase = 'airship';
         else if (encounter.stage === 'semi' || encounter.stage === 'final') phase = 'tower';
         const fieldPath = resolvedPhaseImage[phase] || PHASE_IMAGES[phase].fallback;
         const fieldImage = fieldPath.split('/').pop();
@@ -2549,9 +2526,6 @@
         state.pendingEncounter = null;
 
         // --- Tabellone: vittoria-o-fuori, nessuna posta ---
-        // Sedicesimi e ottavi sono arrivati dopo i quarti: se non vengono
-        // riconosciuti qui, l'esito cade nel ramo della città e il torneo
-        // ripropone per sempre lo stesso turno (evidente con l'autowin).
         const airshipRound = AIRSHIP_ROUNDS.find((round) => round.stage === enc.stage);
         if (airshipRound || enc.stage === 'semi' || enc.stage === 'final') {
             if (!won) {
@@ -2563,14 +2537,7 @@
                 return true;
             }
             if (window.NativeHaptics) NativeHaptics.success();
-            if (enc.stage === 'r32' || enc.stage === 'r16') {
-                state.bracket[airshipRound.winnersKey][0] = 'player';
-                const prossimoIndice = AIRSHIP_ROUNDS.findIndex((round) => round.stage === enc.stage) + 1;
-                const prossimo = AIRSHIP_ROUNDS[prossimoIndice];
-                logEvent(state, '🏆', `Batti ${name} nei ${airshipRound.name.toLowerCase()} sul dirigibile.`);
-                saveState(state);
-                showToast(`🏆 Hai battuto ${name}! Avanzi ${prossimo ? `agli ${prossimo.name.toLowerCase()}` : 'nel tabellone'}.`, reaction);
-            } else if (enc.stage === 'quarter') {
+            if (enc.stage === 'quarter') {
                 state.bracket.quarterWinners[0] = 'player';
                 state.bracket.semiWinners[0] = 'player';
                 logEvent(state, '🏆', `Batti ${name} nei quarti sul dirigibile.`);

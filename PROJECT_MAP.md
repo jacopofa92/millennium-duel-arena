@@ -734,9 +734,10 @@ del protocollo corrente.
   `anime`, 3 in `forbiddenMemories` e 4 in `freedom`. Le separazioni
   `dalla: 'tappe'` migrano i vecchi contatori lineari senza spostare il punto
   narrativo; WW1 resta deliberatamente esclusa.
-- Nel tabellone di Battle City `resolvePendingEncounterIfDone()` tratta anche
-  `r32` e `r16` come turni a eliminazione: una vittoria, compreso l'autowin,
-  scrive `player` nel relativo array dei vincitori e apre il turno successivo.
+- Battle City segue di nuovo la struttura dell'anime: sul dirigibile salgono
+  otto finalisti e si disputano soltanto i quarti; semifinali e finale restano
+  alla Torre Kaiba. I salvataggi della vecchia variante a 32 posti vengono
+  ridotti automaticamente senza perdere difficolta' o duello in sospeso.
 - Il roster della prima serie include anche i Rare Hunter Seeker, Strings,
   Lumis e Umbra. Hanno tre mazzi ciascuno, battute personali e iconiche e
   partecipano agli incontri `hunter` di Battle City, quindi una vittoria nel
