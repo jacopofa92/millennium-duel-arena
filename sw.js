@@ -524,7 +524,8 @@
 // v560: rivelazione in tre atti, con luce soltanto all'apparizione del fronte.
 // v561: la difficoltà Facile resta tale in tutti e tre i tornei.
 // v562: Continua elimina dalla cronologia il duello appena concluso.
-const CACHE_NAME = 'ygo-duel-arena-v562';
+// v563: i controlli dei tavoli Tag/Raid restano sotto cambio turno e switch.
+const CACHE_NAME = 'ygo-duel-arena-v563';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare

@@ -2,6 +2,9 @@
 
 /* ---- Tasto: il ritratto del compagno, con il simbolo delle carte. Uno per compagno (fino a 3). ---- */
 .mpr-tasto {
+    /* Stesso livello del pulsante laterale delle fasi
+       (.phase-side-btn in duelMonstersCore.html). Le scene di turno e
+       switch vivono a 10070-10072 e devono coprirli entrambe. */
     position: fixed; z-index: 10066; width: 40px; height: 40px; padding: 0; border-radius: 50%;
     border: 2px solid #f7d774; background: #0b1020; cursor: pointer;
     box-shadow: 0 0 0 2px rgba(0, 0, 0, .55), 0 0 12px rgba(247, 215, 116, .55);
@@ -40,6 +43,11 @@
     background: radial-gradient(ellipse at center, rgba(20, 28, 60, .78), rgba(0, 0, 0, .88));
     backdrop-filter: blur(3px);
 }
+/* Se il tavolo era aperto mentre parte una cinematica, non deve bucarla:
+   il pannello resta sotto fasce, pedine e scritte del cambio turno. */
+body.tgs-turno-attivo #mpRaidCampo,
+body:has(.tgs) #mpRaidCampo,
+body:has(#battleStartOverlay.play) #mpRaidCampo { z-index: 10065; }
 #mpRaidCampo .mpr-scheda {
     position: relative; max-height: 98vh; overflow: auto; padding: 10px 14px 12px; border-radius: 14px; color: #fff;
     background:

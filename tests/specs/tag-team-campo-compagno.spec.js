@@ -41,9 +41,43 @@ module.exports = {
             const idAvv = await page.evaluate(() => 'tag-' + TagTeam.membro('bot', 1).id);
             t.assert(tasti.length === 2 && tasti[0] === idAmico && tasti[1] === idAvv, 'Due tasti: il compagno e l\'avversario in panchina: ' + JSON.stringify(tasti));
 
+            const livelli = await page.evaluate(() => {
+                const scenaSwitch = document.createElement('div');
+                scenaSwitch.className = 'tgs tgs--turno';
+                document.body.appendChild(scenaSwitch);
+                let scenaTurno = document.getElementById('battleStartOverlay');
+                const turnoCreato = !scenaTurno;
+                if (!scenaTurno) {
+                    scenaTurno = document.createElement('div');
+                    scenaTurno.id = 'battleStartOverlay';
+                    document.body.appendChild(scenaTurno);
+                }
+                const valori = {
+                    tavolo: Number(getComputedStyle(document.querySelector('.mpr-tasto')).zIndex),
+                    fasi: Number(getComputedStyle(document.getElementById('phaseSideBtn')).zIndex),
+                    turno: Number(getComputedStyle(scenaTurno).zIndex),
+                    cambio: Number(getComputedStyle(scenaSwitch).zIndex)
+                };
+                scenaSwitch.remove();
+                if (turnoCreato) scenaTurno.remove();
+                return valori;
+            });
+            t.assert(livelli.tavolo === livelli.fasi,
+                'I tasti dei tavoli hanno lo stesso livello del pulsante fasi: ' + JSON.stringify(livelli));
+            t.assert(livelli.tavolo < livelli.turno && livelli.tavolo < livelli.cambio,
+                'Cambio turno e switch restano sopra ai tasti: ' + JSON.stringify(livelli));
+
             const prima = await page.evaluate(() => JSON.stringify({ m: gameState.playerMonsterField.map((s) => s && s.card && s.card.uid), h: gameState.playerHand.length }));
             await page.click('.mpr-tasto[data-id="' + idAmico + '"]');
             await page.waitForSelector('#mpRaidCampo .mpr-slot', { timeout: 5000 });
+            const pannelloDuranteScena = await page.evaluate(() => {
+                document.body.classList.add('tgs-turno-attivo');
+                const z = Number(getComputedStyle(document.getElementById('mpRaidCampo')).zIndex);
+                document.body.classList.remove('tgs-turno-attivo');
+                return z;
+            });
+            t.assert(pannelloDuranteScena < livelli.turno,
+                'Anche il pannello già aperto scende sotto la scena del turno: ' + pannelloDuranteScena);
             const aperto = await page.evaluate(() => ({
                 carte: document.querySelectorAll('#mpRaidCampo .mpr-slot .card').length,
                 boss: document.querySelectorAll('#mpRaidCampo .mpr-boss').length,
