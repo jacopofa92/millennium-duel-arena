@@ -1405,7 +1405,19 @@
             window.MP_RAID = true;
             window.MULTIPLAYER_MODE = false;
             const boss = bossPerId(config.raid);
-            if (window.MpRaid) MpRaid.avvia(net, Object.assign({}, boss, { compagni: [{ id: 'c1', nome: nomeAvversario || (pedinaAvversario && pedinaAvversario.name) || 'Compagno', image: (pedinaAvversario || MpPedina.PREDEFINITA).image }] }));
+            if (window.MpRaid) {
+                const ritrattoCompagno = (pedinaAvversario || MpPedina.PREDEFINITA).image;
+                const figuraCompagno = typeof window.getCharacterPawnImage === 'function'
+                    ? (window.getCharacterPawnImage(ritrattoCompagno) || '') : '';
+                MpRaid.avvia(net, Object.assign({}, boss, {
+                    compagni: [{
+                        id: 'c1',
+                        nome: nomeAvversario || (pedinaAvversario && pedinaAvversario.name) || 'Compagno',
+                        image: ritrattoCompagno,
+                        pedina: figuraCompagno
+                    }]
+                }));
+            }
             applicaImpostazioniArena(config);
             const sala = $('mpLobbyScreen');
             if (sala) sala.remove();

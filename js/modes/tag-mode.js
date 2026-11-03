@@ -57,6 +57,15 @@
 
     /** @type {Record<string, HTMLElement | null>} un riquadro della squadra per lato */
     const pannelli = { player: null, bot: null };
+    /**
+     * Identità dei lati con UN solo membro nel Tag in rete. Serve anche
+     * all'annuncio del turno: un Boss 2 contro 1 non entra in TagTeam e,
+     * senza questa memoria, la cinematica ripiegava su
+     * DuelSession.opponent, cioè sulla pedina del giocatore remoto rimasta
+     * dalla lobby invece che sulla figura del Boss.
+     * @type {Record<string, any>}
+     */
+    const identitaSingolaPerPosto = {};
     /** @type {HTMLElement | null} */
     let avviso = null;
     /** @type {HTMLElement | null} la risposta del compagno a una richiesta di scambio, per qualche secondo */
@@ -306,7 +315,8 @@
         const posto = gameState.currentPlayer;
         const m = g.TagTeam.eSquadra(posto) ? g.TagTeam.membroAttivo(posto) : null;
         const sessione = g.DuelSession || {};
-        const altroLato = (posto === 'player' ? sessione.player : sessione.opponent) || {};
+        const altroLato = identitaSingolaPerPosto[posto]
+            || (posto === 'player' ? sessione.player : sessione.opponent) || {};
         const nome = (m && m.nome) || altroLato.name || parolaDestra || '';
         const image = (m && m.identita && m.identita.image) || altroLato.image || '';
         const scambio = scambioInAttesa[posto];
@@ -544,6 +554,7 @@
     function preparaInRete(partita, controllo) {
         const cfg = partita.config;
         const t = g.MP_TAG;
+        Object.keys(identitaSingolaPerPosto).forEach((posto) => { delete identitaSingolaPerPosto[posto]; });
         /** @type {Record<string, any>} */
         const singoli = {};
         ['A', 'B'].forEach((sq) => {
@@ -558,7 +569,11 @@
                     livelloIA: s.tipo === 'ia' ? s.ia : undefined, identita: id
                 };
             };
-            if (!cfg.posti[sq + '1']) { singoli[posto] = identitaDelPosto(cfg.posti[sq + '0']); return; }
+            if (!cfg.posti[sq + '1']) {
+                singoli[posto] = identitaDelPosto(cfg.posti[sq + '0']);
+                identitaSingolaPerPosto[posto] = singoli[posto];
+                return;
+            }
             g.TagTeam.preparaSquadra(posto, {
                 primo: membro(sq + '0'),
                 secondo: membro(sq + '1'),

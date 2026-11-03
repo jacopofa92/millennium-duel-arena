@@ -255,8 +255,11 @@
             image: 'images/characters/mirror.jpg',
             icon: '👤'
         };
-        // Multiplayer: la pedina scelta in sala (?pedina=). Cambia solo il ritratto, non il nome.
-        if (mode === 'multiplayer') {
+        // Multiplayer e Raid: la pedina scelta in sala (?pedina=). Il Raid
+        // usa `mode=free` per caricare mazzo e IA del Boss, ma resta una
+        // sessione multiplayer: senza MP_RAID qui il giocatore tornava allo
+        // specchio appena entrava nell'arena.
+        if (mode === 'multiplayer' || window.MP_RAID) {
             const p = pedinaMultiplayer(params.get('pedina'));
             if (p) io.image = p.image;
         }

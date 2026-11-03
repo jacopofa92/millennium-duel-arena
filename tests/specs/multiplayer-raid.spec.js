@@ -37,6 +37,11 @@ module.exports = {
             await host.waitForSelector('#mpReadyBar:not([hidden])', { timeout: 20000 });
             await ospite.waitForSelector('#mpReadyBar:not([hidden])', { timeout: 20000 });
 
+            // Due identità volutamente diverse: il Raid deve trasportare
+            // anche la pedina, non soltanto il nome del compagno.
+            await host.evaluate(() => MpPedina.imposta('solomonMuto'));
+            await ospite.evaluate(() => MpPedina.imposta('yugiMuto'));
+
             // L'ospite non puo' toccare la regola; l'host la accende.
             const bloccato = await ospite.evaluate(() => document.getElementById('mpRaidOn').disabled);
             assert(bloccato, 'L\'ospite vede il raid in sola lettura');
@@ -49,6 +54,13 @@ module.exports = {
 
             const pronto = (page) => page.waitForFunction(() => typeof gameState !== 'undefined' && gameState.botLP > 0 && !!document.getElementById('mpRaidBar') && window.MP_RAID === true, null, { timeout: 90000 });
             await Promise.all([pronto(host), pronto(ospite)]);
+            const identita = await Promise.all([host, ospite].map((page) => page.evaluate(() => ({
+                giocatore: DuelSession.player,
+                avversario: DuelSession.opponent
+            }))));
+            assert(/solomonMuto/i.test(identita[0].giocatore.image || ''), `L'host conserva la propria pedina: ${identita[0].giocatore.image}`);
+            assert(/yugiMuto/i.test(identita[1].giocatore.image || ''), `L'ospite conserva la propria pedina: ${identita[1].giocatore.image}`);
+            assert(identita.every((x) => x.avversario.id === BOSS), `Entrambi vedono il Boss come avversario: ${JSON.stringify(identita)}`);
             const lp = (page) => page.evaluate(() => gameState.botLP);
             // Dopo il primo giro del controllo la barra comune e' piena su entrambi.
             await host.waitForFunction(() => gameState.botLP === 16000, null, { timeout: 10000 });
@@ -74,6 +86,12 @@ module.exports = {
             const nomeProva = await ospite.evaluate(() => window.__nomeProva);
             const manoProva = await ospite.evaluate(() => window.__manoProva);
             await host.waitForSelector('.mpr-tasto', { timeout: 5000 });
+            const pedinaCompagno = await host.evaluate(() => {
+                const nodo = document.querySelector('.mpr-tasto .mpr-pedina');
+                const img = nodo && nodo.querySelector('img');
+                return img ? img.src : ((nodo && getComputedStyle(nodo).backgroundImage) || '');
+            });
+            assert(/yugiMuto/i.test(pedinaCompagno), `Il tasto del compagno mostra la sua pedina: ${pedinaCompagno}`);
             await host.click('.mpr-tasto');
             await host.waitForFunction(() => document.querySelectorAll('#mpRaidCampo .mpr-giocatore .mpr-slot .card').length >= 2, null, { timeout: 8000 });
             const visto = await host.evaluate(() => {
