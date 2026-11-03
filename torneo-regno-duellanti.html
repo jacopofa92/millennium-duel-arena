@@ -951,7 +951,7 @@
         return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    /** Stato di default per un torneo mai iniziato (in memoria finché non si preme "Inizia") — `difficulty` ('Medio'/'Difficile') scelta dal giocatore in renderStartScreen, si applica a OGNI bot del torneo, Kaiba e Pegasus compresi (vedi launchDuel). */
+    /** Stato di default per un torneo mai iniziato: la difficoltà scelta si applica a OGNI bot, Kaiba e Pegasus compresi. */
     function makeInitialState(difficulty) {
         return {
             step: 0,
@@ -975,7 +975,9 @@
             castleReached: false,
             eliminated: false,
             atKaibaGate: false,
-            difficulty: difficulty === 'Difficile' ? 'Difficile' : 'Medio'
+            // Non comprimere Facile su Medio: il selettore espone tre
+            // livelli e launchDuel riusa questo valore per ogni incontro.
+            difficulty: ['Facile', 'Medio', 'Difficile'].includes(difficulty) ? difficulty : 'Medio'
         };
     }
 

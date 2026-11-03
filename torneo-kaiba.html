@@ -726,7 +726,9 @@
             if (!slots[i]) slots[i] = sfidanti[indice++];
         }
         return {
-            difficulty: difficulty === 'Difficile' ? 'Difficile' : 'Medio',
+            // Vale per entrambi i preliminari e per tutto il tabellone;
+            // serve anche durante la migrazione dei vecchi salvataggi.
+            difficulty: ['Facile', 'Medio', 'Difficile'].includes(difficulty) ? difficulty : 'Medio',
             slots: slots,
             preliminary1Winners: Array(16).fill(null),
             preliminary2Winners: Array(8).fill(null),

@@ -1240,7 +1240,9 @@
     function makeInitialState(difficulty) {
         return {
             phase: 'city',
-            difficulty: difficulty === 'Difficile' ? 'Difficile' : 'Medio',
+            // Un'unica scelta governa città, dirigibile e torre. Prima
+            // Facile veniva silenziosamente trasformata in Medio qui.
+            difficulty: ['Facile', 'Medio', 'Difficile'].includes(difficulty) ? difficulty : 'Medio',
             locators: STARTING_LOCATORS,
             sector: 1,
             grid: null,
