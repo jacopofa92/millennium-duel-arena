@@ -147,6 +147,7 @@
         if (window.DeckSwitcher) {
             DeckSwitcher.mount(topbar, {
                 deck: !!(opts && opts.deck),
+                avatar: !(opts && opts.avatar === false),
                 onProfile: opts && opts.onProfile,
                 profileHref: opts && opts.profileHref
             });

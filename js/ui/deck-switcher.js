@@ -65,25 +65,34 @@
         // Tornei. Altrove sarebbe un'informazione fuori contesto, che
         // occupa spazio nella barra senza rispondere a nessuna domanda.
         const conMazzo = opts.deck === true;
-        const ritratto = document.createElement('button');
-        ritratto.type = 'button';
-        ritratto.className = 'dsw-avatar';
-        ritratto.title = 'Il tuo profilo';
-        ritratto.setAttribute('aria-label', 'Apri il tuo profilo');
-        ritratto.textContent = '👤'; // ripiego, sostituito dalla foto se carica
-        const foto = new Image();
-        foto.alt = '';
-        foto.onload = () => { ritratto.textContent = ''; ritratto.appendChild(foto); };
-        foto.src = RITRATTO;
-        ritratto.onclick = () => {
-            if (window.NativeHaptics) NativeHaptics.light();
-            if (typeof opts.onProfile === 'function') opts.onProfile();
-            else window.location.href = opts.profileHref || 'profilo.html';
-        };
+        // Nei Tornei il profilo non serve: `avatar:false` evita anche di
+        // caricare mirror.jpg e libera il margine vicino a notch/fotocamera.
+        // Le altre pagine mantengono il comportamento storico di default.
+        const conAvatar = opts.avatar !== false;
+        let ritratto = null;
+        if (conAvatar) {
+            ritratto = document.createElement('button');
+            ritratto.type = 'button';
+            ritratto.className = 'dsw-avatar';
+            ritratto.title = 'Il tuo profilo';
+            ritratto.setAttribute('aria-label', 'Apri il tuo profilo');
+            ritratto.textContent = '👤'; // ripiego, sostituito dalla foto se carica
+            const foto = new Image();
+            foto.alt = '';
+            foto.onload = () => { ritratto.textContent = ''; ritratto.appendChild(foto); };
+            foto.src = RITRATTO;
+            ritratto.onclick = () => {
+                if (window.NativeHaptics) NativeHaptics.light();
+                if (typeof opts.onProfile === 'function') opts.onProfile();
+                else window.location.href = opts.profileHref || 'profilo.html';
+            };
+        }
 
         if (!conMazzo) {
-            gruppo.appendChild(ritratto);
-            barra.appendChild(gruppo);
+            if (ritratto) {
+                gruppo.appendChild(ritratto);
+                barra.appendChild(gruppo);
+            }
             return { refresh: () => {}, element: gruppo };
         }
 
@@ -103,7 +112,8 @@
         chip.onclick = () => apri(opts, aggiorna);
         // Mazzo PRIMA, ritratto in fondo: l'avatar sta all'estremità destra
         // della barra (richiesta esplicita), il mazzo alla sua sinistra.
-        gruppo.append(chip, ritratto);
+        gruppo.appendChild(chip);
+        if (ritratto) gruppo.appendChild(ritratto);
 
         barra.appendChild(gruppo);
 

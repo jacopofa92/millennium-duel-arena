@@ -723,6 +723,12 @@ del protocollo corrente.
 - Ogni nuova scalata nel Regno apre il momento `prologue` di
   `TournamentDialogues` prima di renderizzare la mappa; viene registrato in
   `intermezziVisti` per non ripetersi dopo un reload.
+- La preparazione del torneo mostra nello stesso pannello mazzo corrente,
+  legalita', difficolta' globale e regole essenziali; su telefoni con notch o
+  fotocamera HUD e pannello rispettano tutti gli inset della safe area; nelle
+  pagine Tornei l'avatar profilo e' stato rimosso perché ridondante. La
+  mappa esterna conserva la foto di boschi e radure ma integra sentieri e nodi
+  con profondita', ombre e luce ambientale; il Castello resta invariato.
 - Battle City apre il proprio `prologue` su
   `images/maps/storia_anime_battlecity1.jpg`; la fase `city` usa una main
   full-viewport e il fondale `images/fields/citta.jpg` (con variante mobile).

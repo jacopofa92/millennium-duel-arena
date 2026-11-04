@@ -525,7 +525,8 @@
 // v561: la difficoltà Facile resta tale in tutti e tre i tornei.
 // v562: Continua elimina dalla cronologia il duello appena concluso.
 // v564: Battle City canonica (otto finalisti, soli quarti sul dirigibile).
-const CACHE_NAME = 'ygo-duel-arena-v564';
+// v565: preparazione e mappa esterna del torneo Regno dei Duellanti rinnovate.
+const CACHE_NAME = 'ygo-duel-arena-v565';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare

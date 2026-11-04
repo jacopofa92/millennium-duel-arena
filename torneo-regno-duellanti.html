@@ -9,7 +9,7 @@
 <script>(function(){var r=document.documentElement;r.classList.add("avvio-in-corso");setTimeout(function(){r.classList.remove("avvio-in-corso")},15000)})();</script>
 <!-- Opt-in STATICO alla View Transitions API — deve stare qui, non iniettato via JS in ritardo (vedi js/audio/audio-manager.js per la storia completa del bug che questo risolve). -->
 <style>@view-transition { navigation: auto; }</style>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="images/icons/icon-192.png">
 <link rel="apple-touch-icon" href="images/icons/icon-180.png">
@@ -115,8 +115,8 @@
     .hud-top {
         position: fixed;
         top: max(14px, env(safe-area-inset-top, 14px));
-        left: 14px;
-        right: 14px;
+        left: max(14px, env(safe-area-inset-left, 14px));
+        right: max(14px, env(safe-area-inset-right, 14px));
         z-index: 300;
         display: flex;
         align-items: center;
@@ -124,6 +124,16 @@
         pointer-events: none;
     }
     .hud-top > * { pointer-events: auto; }
+    .hud-right {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        pointer-events: none;
+    }
+    .hud-right > * { pointer-events: auto; }
+    .hud-right .dsw-topbar { margin-left: 0; }
+    body.start-screen-active #hudDeckMount .dsw-current { display: none; }
     .hud-back-btn, .menu-fab {
         width: 44px;
         height: 44px;
@@ -223,6 +233,7 @@
     }
     .map-canvas {
         position: relative;
+        isolation: isolate;
         /* width/height REALI impostati inline da renderMap() (JS), già
            calcolati lì come max(contenuto, viewport) — mai un min-width/
            min-height CSS qui: quel trucco (usato in una versione precedente)
@@ -251,6 +262,32 @@
         background-repeat: no-repeat, repeat;
         background-size: 100% 100%, 1536px 1024px;
     }
+    /* L'immagine resta la geografia reale dell'isola; questi due veli le
+       danno profondita' senza trasformarla in una griglia o in una lastra
+       scura. Le radure ricevono luce calda, i margini diventano bosco fitto
+       e il percorso sembra inciso nel paesaggio invece che appoggiato sopra. */
+    body[data-luogo="isola"] .map-canvas::before,
+    body[data-luogo="isola"] .map-canvas::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+    body[data-luogo="isola"] .map-canvas::before {
+        z-index: 0;
+        background:
+            radial-gradient(ellipse at 22% 24%, rgba(255,230,142,0.18) 0 8%, transparent 30%),
+            radial-gradient(ellipse at 70% 64%, rgba(255,218,112,0.13) 0 7%, transparent 28%),
+            linear-gradient(115deg, rgba(255,245,190,0.08), transparent 28% 68%, rgba(7,32,14,0.18));
+        mix-blend-mode: soft-light;
+    }
+    body[data-luogo="isola"] .map-canvas::after {
+        z-index: 1;
+        background:
+            linear-gradient(90deg, rgba(4,17,8,0.38), transparent 9% 91%, rgba(4,17,8,0.4)),
+            linear-gradient(180deg, rgba(4,15,8,0.28), transparent 13% 84%, rgba(3,12,7,0.42));
+        box-shadow: inset 0 0 110px rgba(3,12,7,0.38);
+    }
     /* DENTRO IL CASTELLO il bosco lascia il posto alle sale di Pegasus —
        stessa mappa a nodi, stesso modo di scorrerla, un altro luogo. Basta
        cambiare l'immagine: la geometria dei pallini non c'entra nulla con
@@ -265,7 +302,7 @@
             url('images/maps/regno_dei_duellanti_castello_pegasus_torneo.jpg');
     }
     body[data-luogo="castello"] .map-viewport { background: #0a0710; }
-    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; }
     .map-node {
         position: absolute;
         transform: translate(-50%, -50%);
@@ -274,6 +311,7 @@
         align-items: center;
         gap: 5px;
         width: 88px;
+        z-index: 3;
     }
     .map-node-dot {
         width: 54px;
@@ -303,7 +341,7 @@
     .map-node.current .map-node-dot {
         width: 64px; height: 64px;
         border-color: var(--gold-strong);
-        box-shadow: 0 0 0 7px rgba(243,156,18,0.22), 0 8px 24px rgba(0,0,0,0.6);
+        box-shadow: 0 0 0 4px rgba(243,156,18,0.2), 0 0 0 9px rgba(247,215,116,0.08), 0 8px 24px rgba(0,0,0,0.6);
         animation: mapCurrentPulse 1800ms ease-in-out infinite;
     }
     @keyframes mapCurrentPulse {
@@ -330,11 +368,12 @@
     .map-node.choice.castle .map-node-dot { border-color: rgba(155, 89, 182, 0.7); }
     .map-node.choice:hover .map-node-dot { border-color: var(--gold); }
     .map-line {
-        stroke: rgba(255,255,255,0.4);
-        stroke-width: 4;
-        stroke-dasharray: 2 9;
+        stroke: rgba(255,246,213,0.56);
+        stroke-width: 5;
+        stroke-dasharray: 2 11;
         stroke-linecap: round;
         fill: none;
+        filter: drop-shadow(0 2px 2px rgba(3,12,7,0.9));
     }
     .map-line.choice-line { stroke: rgba(247,215,116,0.6); }
 
@@ -348,7 +387,7 @@
        - Le etichette stanno su una pillola scura: sopra la foto del bosco
          il testo grigio di prima si perdeva.
        ===================================================================== */
-    .map-line.path-line { stroke: rgba(247,215,116,0.85); stroke-width: 5; stroke-dasharray: none; }
+    .map-line.path-line { stroke: rgba(249,221,132,0.86); stroke-width: 6; stroke-dasharray: none; filter: drop-shadow(0 2px 2px rgba(3,12,7,0.95)); }
     .map-line.dead-line { stroke: rgba(170,170,170,0.45); stroke-width: 3; stroke-dasharray: 4 7; }
     .map-node-label {
         padding: 2px 8px;
@@ -504,6 +543,92 @@
     .center-panel .cp-icon { font-size: 3rem; margin-bottom: 14px; }
     .center-panel h2 { font-size: 1.3rem; margin-bottom: 10px; color: var(--gold); }
     .center-panel p { color: var(--ink); font-size: 0.92rem; line-height: 1.6; margin-bottom: 22px; }
+
+    /* Preparazione del torneo: mazzo e difficolta' sono due decisioni della
+       stessa schermata, non un'icona anonima nell'angolo e tre pulsanti
+       scollegati al centro. */
+    .tournament-start {
+        width: min(820px, calc(100vw - 36px - env(safe-area-inset-left) - env(safe-area-inset-right)));
+        margin-top: max(0px, env(safe-area-inset-top));
+        padding: 28px 30px 30px;
+        background:
+            radial-gradient(circle at 50% 0%, rgba(247,215,116,0.1), transparent 42%),
+            linear-gradient(155deg, rgba(34,29,21,0.92), rgba(12,13,18,0.94));
+    }
+    .tournament-start .cp-icon { margin: 0 0 4px; font-size: 2.2rem; }
+    .start-kicker {
+        color: #dcbf6a;
+        font-size: 0.66rem;
+        font-weight: 900;
+        letter-spacing: 0.19em;
+        text-transform: uppercase;
+        margin-bottom: 7px;
+    }
+    .tournament-start h2 { font-size: clamp(1.25rem, 3vw, 1.65rem); }
+    .start-intro { max-width: 680px; margin: 0 auto 15px !important; }
+    .start-stats { color: var(--ink-dim) !important; font-size: 0.7rem !important; margin: -7px 0 10px !important; }
+    .start-rules {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin: 0 0 18px;
+    }
+    .start-rule {
+        padding: 8px 10px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.035);
+        border: 1px solid rgba(247,215,116,0.14);
+        color: #cfd6e6;
+        font-size: 0.72rem;
+        line-height: 1.35;
+    }
+    .start-rule strong { display: block; color: #ffe59a; font-size: 0.86rem; }
+    .start-setup {
+        display: grid;
+        grid-template-columns: minmax(230px, 0.85fr) minmax(330px, 1.4fr);
+        gap: 12px;
+        align-items: stretch;
+        margin-bottom: 18px;
+    }
+    .start-block {
+        min-width: 0;
+        padding: 13px 14px;
+        border-radius: 13px;
+        background: rgba(5,7,11,0.42);
+        border: 1px solid rgba(247,215,116,0.18);
+        text-align: left;
+    }
+    .start-block-label {
+        display: block;
+        color: #9aa5bd;
+        font-size: 0.64rem;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: 9px;
+    }
+    .start-deck-row { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .start-deck-art { width: 48px; flex: 0 0 48px; }
+    .start-deck-art .deck-box-stage { padding: 0; }
+    .start-deck-art .deck-box-stage::before, .start-deck-art .dbx-name { display: none; }
+    .start-deck-art .deck-box-art { width: 100%; }
+    .start-deck-copy { min-width: 0; flex: 1; }
+    .start-deck-name { color: #fff; font-weight: 900; font-size: 0.88rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .start-deck-meta { color: #9aa5bd; font-size: 0.68rem; margin-top: 2px; }
+    .start-change-deck {
+        border: 1px solid rgba(247,215,116,0.38);
+        border-radius: 9px;
+        padding: 8px 10px;
+        background: rgba(247,215,116,0.08);
+        color: #f7d774;
+        font-family: inherit;
+        font-size: 0.7rem;
+        font-weight: 800;
+        cursor: pointer;
+    }
+    .start-difficulty .wager-row { margin: 0; gap: 7px; }
+    .start-difficulty .wager-btn { padding: 11px 5px; font-size: 0.84rem; }
+    .start-action { min-width: min(280px, 100%); justify-content: center; }
 
     .big-btn {
         display: inline-flex;
@@ -676,6 +801,31 @@
     @media (max-width: 480px) {
         .main { padding: 14px 10px 40px; }
         .map-viewport { height: 360px; }
+        .tournament-start { width: calc(100vw - 20px); padding: 22px 16px 20px; margin-top: 0; }
+        .start-rules { grid-template-columns: 1fr; gap: 5px; }
+        .start-rule { display: flex; align-items: center; gap: 8px; text-align: left; padding: 6px 9px; }
+        .start-rule strong { min-width: 72px; }
+        .start-setup { grid-template-columns: 1fr; gap: 8px; }
+        .start-block { padding: 10px 11px; }
+        .start-change-deck { padding: 8px; }
+        .tournament-start .cp-icon { font-size: 1.8rem; }
+        .start-intro { font-size: 0.82rem !important; line-height: 1.45 !important; }
+        .hud-top { top: max(10px, env(safe-area-inset-top, 10px)); }
+    }
+    @media (max-height: 520px) and (orientation: landscape) {
+        .main:not(.map-mode) { padding-top: max(10px, env(safe-area-inset-top, 10px)); padding-bottom: 10px; }
+        .tournament-start { padding: 12px 18px; width: min(760px, calc(100vw - 110px - env(safe-area-inset-left) - env(safe-area-inset-right))); }
+        .tournament-start .cp-icon { display: none; }
+        .start-kicker { margin-bottom: 3px; }
+        .tournament-start h2 { margin-bottom: 4px; font-size: 1.16rem; }
+        .start-intro { font-size: 0.74rem !important; line-height: 1.35 !important; margin-bottom: 7px !important; }
+        .start-rules { display: none; }
+        .start-setup { margin-bottom: 9px; gap: 8px; }
+        .start-block { padding: 8px 10px; }
+        .start-block-label { margin-bottom: 5px; }
+        .start-deck-art { width: 38px; flex-basis: 38px; }
+        .start-action { padding: 10px 24px; }
+    }
     }
 </style>
 </head>
@@ -686,8 +836,10 @@
         <div class="stars-bar" id="starsBar" style="display:none;">
             <span>⭐</span><span class="stars-count" id="starsCount">0</span>
         </div>
-        <div id="hudDeckMount"></div>
-        <button type="button" class="menu-fab" id="adventureMenuBtn" style="display:none;" aria-label="Menu">☰</button>
+        <div class="hud-right">
+            <div id="hudDeckMount"></div>
+            <button type="button" class="menu-fab" id="adventureMenuBtn" style="display:none;" aria-label="Menu">☰</button>
+        </div>
     </div>
     <p class="stars-hint" id="starsHint" style="display:none;">Raccogli 10 Stelle per tentare l'accesso al Castello di Pegasus.</p>
 
@@ -768,7 +920,7 @@
     // scorrimento) dentro l'HUD del torneo: qui si sta per duellare, ed e'
     // il momento in cui serve sapere con che mazzo si scende in campo.
     if (window.DeckSwitcher) {
-        DeckSwitcher.mount(document.getElementById('hudDeckMount'), { deck: true });
+        DeckSwitcher.mount(document.getElementById('hudDeckMount'), { deck: true, avatar: false });
     }
 </script>
 <script src="js/cloud/server-date.js"></script>
@@ -1182,23 +1334,65 @@
         // è già stato tentato/completato.
         const stats = SaveManager.getTournamentStats(TOURNAMENT_ID);
         const statsLine = stats.attempts > 0
-            ? `<p style="color:var(--ink-dim); font-size:0.78rem;">🔁 Tentativi: ${stats.attempts} · 👑 Completamenti: ${stats.completions}</p>`
+            ? `<p class="start-stats">🔁 Tentativi: ${stats.attempts} · 👑 Completamenti: ${stats.completions}</p>`
             : '';
         content.innerHTML = `
-            <div class="center-panel">
+            <div class="center-panel tournament-start">
                 <div class="cp-icon">🏝️</div>
+                <div class="start-kicker">Torneo · Isola di Pegasus</div>
                 <h2>Il Regno dei Duellanti ti aspetta</h2>
-                <p>Parti con ${STARTING_STARS} Stelle dell'Esagono. Sfida i Duellanti dell'isola puntando le tue Stelle, raccogli premi ed evita le insidie del percorso — raggiungi ${CASTLE_THRESHOLD} Stelle per tentare l'accesso al Castello di Pegasus.</p>
-                ${statsLine}
-                <p style="color:var(--ink-dim); font-size:0.8rem; margin-bottom:10px;">Difficoltà dei Duellanti (Kaiba e Pegasus compresi)</p>
-                <div class="wager-row" id="difficultyRow" style="margin-bottom:22px;">
-                    <button type="button" class="wager-btn" data-difficulty="Facile">Facile</button>
-                    <button type="button" class="wager-btn" data-difficulty="Medio">Normale</button>
-                    <button type="button" class="wager-btn" data-difficulty="Difficile">Difficile</button>
+                <p class="start-intro">Esplora boschi e radure, sfida i Duellanti dell'isola e raggiungi il Castello di Pegasus.</p>
+                <div class="start-rules">
+                    <div class="start-rule"><strong>⭐ ${STARTING_STARS} Stelle</strong>La tua dotazione iniziale</div>
+                    <div class="start-rule"><strong>⚔️ Scommetti</strong>Vinci o perdi le Stelle puntate</div>
+                    <div class="start-rule"><strong>🏰 ${CASTLE_THRESHOLD} Stelle</strong>La soglia per entrare al Castello</div>
                 </div>
-                <button type="button" class="big-btn" id="startTournamentBtn">🚀 Inizia il Torneo</button>
+                ${statsLine}
+                <div class="start-setup">
+                    <div class="start-block">
+                        <span class="start-block-label">Mazzo del torneo</span>
+                        <div class="start-deck-row">
+                            <div class="start-deck-art" id="startDeckArt"></div>
+                            <div class="start-deck-copy">
+                                <div class="start-deck-name" id="startDeckName">Nessun mazzo</div>
+                                <div class="start-deck-meta" id="startDeckMeta">Scegli il mazzo prima di partire</div>
+                            </div>
+                            <button type="button" class="start-change-deck" id="startChangeDeckBtn">Cambia</button>
+                        </div>
+                    </div>
+                    <div class="start-block start-difficulty">
+                        <span class="start-block-label">Difficoltà · vale per tutti, inclusi Kaiba e Pegasus</span>
+                        <div class="wager-row" id="difficultyRow">
+                            <button type="button" class="wager-btn" data-difficulty="Facile">Facile</button>
+                            <button type="button" class="wager-btn" data-difficulty="Medio">Normale</button>
+                            <button type="button" class="wager-btn" data-difficulty="Difficile">Difficile</button>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="big-btn start-action" id="startTournamentBtn">⚔️ Sbarca sull'isola</button>
             </div>
         `;
+        const decks = (SaveManager.getDecks && SaveManager.getDecks()) || [];
+        const activeId = SaveManager.getActiveDeckId ? SaveManager.getActiveDeckId() : null;
+        const activeDeck = decks.find((deck) => deck.id === activeId) || decks[0] || null;
+        const deckName = document.getElementById('startDeckName');
+        const deckMeta = document.getElementById('startDeckMeta');
+        const deckArt = document.getElementById('startDeckArt');
+        if (activeDeck) {
+            const cardCount = (activeDeck.main || []).reduce((total, entry) => total + (entry.qty || 1), 0);
+            deckName.textContent = activeDeck.name;
+            deckMeta.textContent = `${cardCount} carte${cardCount < 40 ? ' · mazzo non legale' : ' · pronto al duello'}`;
+            if (window.DeckBox) {
+                deckArt.innerHTML = DeckBox.markup({
+                    name: '',
+                    color: activeDeck.color || DeckBox.colorForId(activeDeck.id)
+                });
+            }
+        }
+        document.getElementById('startChangeDeckBtn').onclick = () => {
+            if (!window.DeckSwitcher) return;
+            DeckSwitcher.open({ deckEditorHref: 'creazione-deck.html' }, renderStartScreen);
+        };
         const difficultyButtons = Array.from(document.querySelectorAll('#difficultyRow .wager-btn'));
         const syncDifficultyButtons = () => difficultyButtons.forEach((btn) => btn.classList.toggle('selected', btn.dataset.difficulty === selectedTournamentDifficulty));
         difficultyButtons.forEach((btn) => {
@@ -2363,6 +2557,7 @@
         // centrato, non a tutto schermo.
         mainEl.classList.remove('map-mode');
         document.body.classList.remove('map-active');
+        document.body.classList.remove('start-screen-active');
         // Sfondo del Castello di Pegasus per ogni schermata da qui in poi
         // (Cancello di Kaiba compreso — narrativamente è già "alla porta
         // del Castello") — mai per la mappa del bosco o la schermata
@@ -2377,6 +2572,7 @@
             menuFab.style.display = 'none';
             starsBar.style.display = 'none';
             starsHint.style.display = 'none';
+            document.body.classList.add('start-screen-active');
             renderStartScreen();
             return;
         }
