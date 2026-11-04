@@ -66,8 +66,20 @@ module.exports = {
                 const volo = await page.evaluate(() => !!document.querySelector('.carta-in-volo'));
                 assert(volo, `${n}: aggiungendo, una copia della carta vola verso il contatore`);
                 assert(await conta() === prima + 1, `${n}: la carta è nel mazzo`);
-                const messaggio = await page.evaluate(() => ({ testo: document.getElementById('toast').innerText, annulla: !!document.querySelector('#toast.show .toast-azione') }));
+                const messaggio = await page.evaluate(() => {
+                    const toast = document.getElementById('toast');
+                    const r = toast.getBoundingClientRect();
+                    return {
+                        testo: toast.innerText,
+                        annulla: !!document.querySelector('#toast.show .toast-azione'),
+                        larghezza: r.width,
+                        altezza: r.height,
+                        viewport: { larghezza: innerWidth, altezza: innerHeight }
+                    };
+                });
                 assert(/aggiunta al Main Deck/.test(messaggio.testo) && messaggio.annulla, `${n}: messaggio di aggiunta con "Annulla": ${JSON.stringify(messaggio)}`);
+                assert(messaggio.larghezza <= Math.min(560, messaggio.viewport.larghezza - 18) && messaggio.altezza <= 150,
+                    `${n}: il messaggio Annulla deve essere una notifica compatta, non un pannello a schermo intero: ${JSON.stringify(messaggio)}`);
                 const pulsanti = await page.evaluate(() => [...document.querySelectorAll('.cd-azione')].map((b) => b.textContent));
                 assert(pulsanti.some((t) => /Togli una copia/.test(t)), `${n}: ora la scheda offre anche di togliere una copia: ${pulsanti}`);
                 await page.click('#toast .toast-azione');

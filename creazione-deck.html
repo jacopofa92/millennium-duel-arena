@@ -1081,15 +1081,32 @@
         .deck-row.riga-aggiunta .deck-row-qty, .deck-row.riga-tolta .deck-row-qty { animation: none; }
     }
 
-    /* Toast */
-    .toast {
+    /* Riscontro compatto dell'EDITOR. Il selettore per id e le dimensioni
+       esplicite lo isolano dal generico `.toast` di menu-mobile.css: su
+       alcuni viewport touch quella regola condivisa poteva trasformare
+       l'azione "Annulla" in un pannello molto più grande del messaggio. */
+    #toast.toast {
         position: fixed;
         left: 50%;
+        right: auto;
+        top: auto;
         bottom: 30px;
         transform: translate(-50%, 16px);
         z-index: 300;
-        padding: 12px 22px;
-        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: fit-content;
+        min-width: 0;
+        height: auto;
+        min-height: 0;
+        max-width: min(calc(100vw - 24px), 560px);
+        max-height: min(30vh, 150px);
+        overflow: hidden;
+        box-sizing: border-box;
+        padding: 11px 14px;
+        border-radius: 14px;
         background: linear-gradient(135deg, rgba(20,20,30,0.96), rgba(35,30,20,0.94));
         border: 1px solid rgba(247,215,116,0.45);
         box-shadow: 0 10px 30px rgba(0,0,0,0.45);
@@ -1098,28 +1115,18 @@
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.3s ease, transform 0.3s ease;
-        max-width: 92vw;
-        text-align: center;
+        text-align: left;
+        line-height: 1.35;
     }
-    .toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
-    .toast.toast-error { border-color: rgba(231,76,60,0.6); }
+    #toast > span { min-width: 0; overflow-wrap: anywhere; }
+    #toast.toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+    #toast.toast.toast-error { border-color: rgba(231,76,60,0.6); }
     /* Sopra la scheda della carta (z-index 600), che dall'editor si apre
        spesso proprio mentre compare un messaggio. */
-    .toast { z-index: 700; display: flex; align-items: center; gap: 12px; }
-    /* Larghezza dal contenuto, con un tetto: con left:50% un riquadro
-       "auto" può allargarsi solo fino al bordo destro, cioè metà schermo,
-       e su telefono il messaggio usciva come una colonna stretta e alta
-       (visto in foto). Su due righe gli angoli tondi pieni non stanno più
-       bene, quindi raggio fisso. */
-    .toast {
-        width: max-content;
-        max-width: min(92vw, 560px);
-        border-radius: 18px;
-        text-align: left;
-    }
+    #toast.toast { z-index: 700; }
     /* Con la scheda aperta in alto: in basso coprirebbe i suoi pulsanti. */
-    .toast.toast-alto { top: 18px; bottom: auto; transform: translate(-50%, -16px); }
-    .toast.toast-alto.show { transform: translate(-50%, 0); }
+    #toast.toast.toast-alto { top: max(18px, env(safe-area-inset-top)); bottom: auto !important; transform: translate(-50%, -16px); }
+    #toast.toast.toast-alto.show { transform: translate(-50%, 0); }
     .toast-azione {
         flex: 0 0 auto;
         min-height: 34px;
@@ -1134,6 +1141,17 @@
         cursor: pointer;
     }
     .toast-azione:active { transform: scale(0.96); }
+    @media (max-width: 520px) {
+        #toast.toast {
+            bottom: max(14px, calc(env(safe-area-inset-bottom) + 10px));
+            max-width: calc(100vw - 20px);
+            max-height: 132px;
+            padding: 10px 11px !important;
+            gap: 9px;
+            font-size: 0.78rem !important;
+        }
+        #toast .toast-azione { min-height: 32px; padding: 5px 11px; }
+    }
 
     /* Conferma eliminazione */
     .confirm-backdrop {

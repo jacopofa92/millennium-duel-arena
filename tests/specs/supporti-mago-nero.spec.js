@@ -54,6 +54,31 @@ module.exports = {
             const circleBanishes = !gameState.playerMonsterField[0]
                 && gameState.playerBanished.some((c) => c.uid === enemy.uid);
 
+            // "Puoi" significa che il giocatore può non prendere nulla;
+            // le carte viste devono comunque poter tornare in cima
+            // nell'ordine scelto (il Deck pesca con pop()).
+            resetGameState();
+            const optionalCircle = copy(1255, 'circle-optional');
+            const bottom = copy(5, 'circle-bottom');
+            const topA = copy(2, 'circle-top-a');
+            const topB = copy(474, 'circle-top-b');
+            const topC = copy(1256, 'circle-top-c');
+            gameState.playerDeck = [bottom, topA, topB, topC];
+            gameState.playerDeckCount = 4;
+            gameState.playerSTField[0] = { card: optionalCircle, isFaceDown: false };
+            circleDef.activate(DuelEngine.makeContext('player', { card: optionalCircle, zone: 'st', index: 0 }));
+            const offeredOptionalChoice = !!Decisioni.inSospeso();
+            Decisioni.rispondi(null); // non aggiunge alcuna carta
+            let pending = Decisioni.inSospeso();
+            Decisioni.rispondi(pending.candidati.findIndex((c) => c.uid === topB.uid)); // prima pescata
+            pending = Decisioni.inSospeso();
+            Decisioni.rispondi(pending.candidati.findIndex((c) => c.uid === topC.uid)); // seconda pescata
+            const circleOptionalAndOrdered = gameState.playerHand.length === 0
+                && gameState.playerDeck.length === 4
+                && gameState.playerDeck[gameState.playerDeck.length - 1].uid === topB.uid
+                && gameState.playerDeck[gameState.playerDeck.length - 2].uid === topC.uid
+                && gameState.playerDeck[0].uid === bottom.uid;
+
             resetGameState();
             const soul = copy(1256, 'soul');
             const protectedDm = copy(2, 'protected-dm');
@@ -158,7 +183,8 @@ module.exports = {
                 && gameState.botMonsterField.some((s) => s.card.uid === returnGirl.uid);
 
             return {
-                rodSearches, rodGraveReady, rodReturns, circleSearches, circleBanishes, soulProtects, soulPunishes,
+                rodSearches, rodGraveReady, rodReturns, circleSearches, circleBanishes,
+                offeredOptionalChoice, circleOptionalAndOrdered, soulProtects, soulPunishes,
                 salvationSets, salvationRevives, servantStacks, servantDraws, flexibleFusion, secretsFuses,
                 secretsRituals, bossDrawSets, bossReplacesItself
             };

@@ -1324,6 +1324,54 @@ function openQuickPopover(anchorEl, innerHTML, { onDismiss, dismissible = true, 
     document.body.appendChild(catcher);
     document.body.appendChild(pop);
 
+    /**
+     * Il catcher chiude la scelta quando si tocca fuori, ma non deve
+     * coprire il box informazioni: proprio quando una carta in mano ha
+     * "Attiva", il giocatore può voler scorrerne il testo prima di
+     * decidere. Quattro rettangoli circondano il pannello e lasciano un
+     * foro vero; `pointer-events:none` sul padre fa arrivare lo swipe al
+     * contenuto anche se vive in uno stacking context più basso.
+     */
+    const aggiornaZoneCatcher = () => {
+        if (!catcher.isConnected) return;
+        catcher.innerHTML = '';
+        const panel = document.getElementById('cardInfoPanel');
+        const aperto = panel && panel.classList.contains('visible');
+        const r = aperto ? panel.getBoundingClientRect() : null;
+        const haForo = r && r.width > 0 && r.height > 0
+            && r.right > 0 && r.left < innerWidth && r.bottom > 0 && r.top < innerHeight;
+        const x0 = haForo ? Math.max(0, Math.min(innerWidth, r.left)) : 0;
+        const x1 = haForo ? Math.max(0, Math.min(innerWidth, r.right)) : 0;
+        const y0 = haForo ? Math.max(0, Math.min(innerHeight, r.top)) : 0;
+        const y1 = haForo ? Math.max(0, Math.min(innerHeight, r.bottom)) : 0;
+        const rettangoli = haForo ? [
+            [0, 0, innerWidth, y0],
+            [0, y1, innerWidth, innerHeight - y1],
+            [0, y0, x0, Math.max(0, y1 - y0)],
+            [x1, y0, innerWidth - x1, Math.max(0, y1 - y0)]
+        ] : [[0, 0, innerWidth, innerHeight]];
+        rettangoli.forEach(([left, top, width, height]) => {
+            if (width <= 0 || height <= 0) return;
+            const zona = document.createElement('div');
+            zona.className = 'quick-popover-catcher-zone';
+            zona.style.cssText = `left:${left}px;top:${top}px;width:${width}px;height:${height}px;`;
+            catcher.appendChild(zona);
+        });
+    };
+    catcher.__onResize = aggiornaZoneCatcher;
+    window.addEventListener('resize', catcher.__onResize);
+    aggiornaZoneCatcher();
+    // Il cassetto entra con una transizione: il foro lo segue fotogramma
+    // per fotogramma e non resta, neppure per un istante, sulla vecchia
+    // posizione fuori schermo. Dopo mezzo secondo il ciclo si spegne.
+    let fotogrammiForo = 0;
+    const seguiPannello = () => {
+        if (!catcher.isConnected || fotogrammiForo++ > 32) return;
+        aggiornaZoneCatcher();
+        requestAnimationFrame(seguiPannello);
+    };
+    requestAnimationFrame(seguiPannello);
+
     const anchorRect = anchorEl ? anchorEl.getBoundingClientRect() : {
         left: window.innerWidth / 2, right: window.innerWidth / 2,
         top: window.innerHeight / 2, bottom: window.innerHeight / 2, width: 0, height: 0
@@ -1391,7 +1439,10 @@ function closeQuickPopover() {
     const pop = document.getElementById('quickPopover');
     const catcher = document.getElementById('quickPopoverCatcher');
     if (pop) pop.remove();
-    if (catcher) catcher.remove();
+    if (catcher) {
+        if (catcher.__onResize) window.removeEventListener('resize', catcher.__onResize);
+        catcher.remove();
+    }
 }
 
 function openSummonModal(card, slotIndex, handIndex, fromRect, opzioni) {

@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.5.60 — Gabbia d'Acciaio dell'Incubo genera due gabbie di ferro WebGL persistenti sopra le file Mostri e le rimuove insieme alla carta; l'editor Deck mostra l'azione Annulla in una notifica compatta; il box carta resta scorribile con le azioni della mano aperte; Circolo Magico Nero rende facoltativa la presa e riordina davvero la cima del Deck.
  * 1.5.59 — La Magia risolta parte visivamente dalla sua carta nella mano verso il Cimitero, senza trascinare la cinematica centrale o l'intera ventola.
  * 1.5.58 — Corretta fedelmente la maglietta di Joey: corpo e carré bianchi, maniche blu con dettagli bianchi e pannello blu-grigio limitato al petto.
  * 1.5.57 — Joey Wheeler indossa la sua maglietta bianca e blu caratteristica nelle figure trasparenti normale, pedina e grido.
@@ -794,4 +795,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.5.59';
+window.GAME_VERSION = '1.5.60';

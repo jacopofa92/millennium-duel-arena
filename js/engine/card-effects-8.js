@@ -3897,6 +3897,46 @@
     });
 
     const darkCircleKey = (owner, effect) => `dark-magical-circle:${effect}:${owner}`;
+    /**
+     * Rimette in cima al Deck le carte viste da Circolo nell'ordine scelto.
+     * Il Deck pesca con pop(): la PRIMA carta scelta va quindi inserita per
+     * ULTIMA. Prima si conservava sempre l'ordine preesistente, perdendo la
+     * parte "in qualsiasi ordine" dell'effetto ufficiale.
+     */
+    const reorderDarkCircleTop = (ctx, cards, done) => {
+        const deck = Tavolo.mazzo(ctx.owner);
+        const restanti = cards.slice();
+        const ordinePescata = [];
+        const termina = () => {
+            deck.push(...ordinePescata.slice().reverse());
+            gameState[Tavolo.chiave(ctx.owner, 'DeckCount')] = deck.length;
+            if (typeof done === 'function') done();
+        };
+        const prossima = () => {
+            if (restanti.length <= 1) {
+                if (restanti.length) ordinePescata.push(restanti[0]);
+                termina();
+                return;
+            }
+            Decisioni.chiedi({
+                chi: ctx.owner,
+                candidati: restanti.slice(),
+                titolo: 'Circolo Magico Nero',
+                testo: `Scegli la prossima carta in cima al Deck (${ordinePescata.length + 1}/${cards.length}).`,
+                automatica: (elenco) => {
+                    if (!window.AI_SHARED || typeof AI_SHARED.scoreCardImpact !== 'function') return elenco[0];
+                    return elenco.slice().sort((a, b) => AI_SHARED.scoreCardImpact(b) - AI_SHARED.scoreCardImpact(a))[0];
+                },
+                automaticaSeUnica: true
+            }, (chosen) => {
+                const i = restanti.indexOf(chosen);
+                if (i === -1) { ordinePescata.push(...restanti); restanti.length = 0; termina(); return; }
+                ordinePescata.push(restanti.splice(i, 1)[0]);
+                prossima();
+            });
+        };
+        prossima();
+    };
     const banishCircleTarget = (ctx) => {
         if (ctx.hasUsedOncePerTurn(darkCircleKey(ctx.owner, 'banish'))) return;
         const candidates = collectFieldTargets(ctx, { owner: 'opponent', zone: 'both', includiCoperte: true });
@@ -3931,16 +3971,19 @@
                     ctx.hand(ctx.owner).push(chosen);
                     ctx.log(`${ctx.card.name} rivela e aggiunge ${chosen.name} alla mano!`);
                 } else ctx.log(`${ctx.card.name} guarda le prime carte del Deck senza trovarne una idonea.`);
-                // In assenza di un ordinatore dedicato, le carte non prese
-                // tornano in cima nello stesso ordine relativo: nessuna
-                // informazione viene persa e il comportamento è stabile in
-                // Multiplayer.
-                deck.push(...seen);
-                gameState[Tavolo.chiave(ctx.owner, 'DeckCount')] = deck.length;
+                reorderDarkCircleTop(ctx, seen);
             };
             if (eligible.length === 0) finish(null);
-            else chooseCardFromList(ctx, eligible, {
-                title: 'Circolo Magico Nero', text: 'Scegli Mago Nero o una carta che lo cita.'
+            else Decisioni.chiedi({
+                chi: ctx.owner,
+                candidati: eligible,
+                titolo: 'Circolo Magico Nero',
+                testo: 'Puoi aggiungere Mago Nero o una Magia/Trappola che lo cita. Chiudi per non aggiungere nulla.',
+                annullabile: true,
+                automatica: (elenco) => {
+                    if (!window.AI_SHARED || typeof AI_SHARED.scoreCardImpact !== 'function') return elenco[0];
+                    return elenco.slice().sort((a, b) => AI_SHARED.scoreCardImpact(b) - AI_SHARED.scoreCardImpact(a))[0];
+                }
             }, finish);
         },
         onAnyNormalOrFlipSummon(ctx) {

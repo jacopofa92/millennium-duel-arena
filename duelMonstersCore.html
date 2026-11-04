@@ -3997,10 +3997,19 @@
             inset: 0;
             z-index: 100050;
             background: transparent;
+            /* Le quattro zone create da openQuickPopover circondano il box
+               informazioni lasciandogli un foro reale. Il contenitore non
+               deve intercettare quel foro. */
+            pointer-events: none;
         }
+        .quick-popover-catcher-zone { position: absolute; pointer-events: auto; }
         .quick-popover {
             position: fixed;
-            z-index: 100051;
+            /* Sopra il box informazioni (100052), che a sua volta deve
+               restare sopra il catcher trasparente (100050): così i
+               pulsanti restano raggiungibili ma si può scorrere il testo
+               della carta mentre si decide se attivarne l'effetto. */
+            z-index: 100053;
             width: min(80vw, 230px);
             /* Stessa lingua dei modali (vedi .modal-card): vetro nero
                caldo e doppia riga dorata, non il vecchio viola-blu. Qui
@@ -4517,7 +4526,11 @@
                 width: calc(var(--info-card-w) + 28px);
                 max-height: 62dvh;
                 overflow-y: auto;
-                z-index: 10090;
+                /* Il catcher dei pulsanti rapidi copre tutto il viewport a
+                   quota 100050. Il pannello deve stare sopra di lui:
+                   altrimenti una carta attivabile dalla mano mostra le
+                   informazioni ma intercetta ogni swipe prima del testo. */
+                z-index: 100052;
                 display: block;
                 transition: transform 0.28s cubic-bezier(0.16,0.84,0.44,1);
                 box-shadow: 0 20px 50px rgba(0,0,0,0.5);

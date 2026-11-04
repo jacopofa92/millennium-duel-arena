@@ -95,6 +95,11 @@
     function chiudiTutto() {
         const fini = attivi.map((a) => a.fine).filter(Boolean);
         attivi = [];
+        // Un contesto perso o uno spegnimento esplicito invalida anche il
+        // riferimento persistente della Gabbia: al prossimo ridisegno deve
+        // poter essere ricreata, non credersi ancora viva su un canvas rimosso.
+        stopGabbiaIncubo = null;
+        firmaGabbiaIncubo = '';
         cancelAnimationFrame(rid); rid = 0;
         if (canvas) canvas.remove();
         canvas = null; gl = null;
@@ -522,6 +527,142 @@ void main(){
     }
 
     // ---------------------------------------------------------------------
+    // Gabbia d'Acciaio dell'Incubo — barriera persistente su ENTRAMBE le
+    // file Mostri. Non è una scena a tempo: `sincronizzaGabbiaIncubo()` la
+    // mantiene finché la carta id 750 è davvero scoperta sul Terreno.
+    // ---------------------------------------------------------------------
+
+    const FS_GABBIA_INCUBO = BASE + `
+uniform vec4 gabbia; // sinistra, alto, destra, basso della fila Mostri
+
+float segmento(vec2 p,vec2 a,vec2 b){
+  vec2 pa=p-a,ba=b-a;
+  float h2=clamp(dot(pa,ba)/max(dot(ba,ba),.001),0.,1.);
+  return length(pa-ba*h2);
+}
+vec4 ferro(float d,float spessore,float luce){
+  float corpo=1.-smoothstep(spessore,spessore+1.2,d);
+  float bordo=exp(-pow((d-spessore*.72)/1.05,2.));
+  float alone=exp(-max(d-spessore,0.)/5.)*.18;
+  vec3 metallo=mix(vec3(.055,.065,.075),vec3(.48,.53,.56),bordo*.8+luce*.5);
+  metallo+=vec3(.72,.78,.8)*luce*.75;
+  return vec4(metallo*corpo+vec3(.16,.19,.21)*alone,clamp(corpo+alone*.42,0.,.94));
+}
+void main(){
+  vec2 P=css();
+  vec4 o=vec4(0.);
+  float L=gabbia.x-7.,T=gabbia.y-14.,R=gabbia.z+7.,B=gabbia.w+14.;
+  float C=(L+R)*.5,W=R-L,Hg=B-T;
+  float dentro=smoothstep(L-3.,L+4.,P.x)*smoothstep(R+3.,R-4.,P.x)
+              *smoothstep(T-4.,T+5.,P.y)*smoothstep(B+4.,B-5.,P.y);
+  // Ombra fredda dietro le sbarre: le carte restano leggibili, ma si
+  // percepisce che entrambe le file sono imprigionate.
+  float nebbia=(.045+.025*n(P*.025+vec2(t*.05,0.)))*dentro;
+  o+=vec4(vec3(.015,.02,.025)*nebbia,nebbia);
+
+  // Parete frontale: undici sbarre verticali cilindriche. In alto
+  // convergono appena verso il centro, dando profondità senza inclinare
+  // la gabbia lateralmente rispetto agli slot.
+  for(int i=0;i<11;i++){
+    float fi=float(i)/10.;
+    float xb=mix(L,R,fi);
+    float xt=mix(C,xb,.91);
+    float d=segmento(P,vec2(xt,T),vec2(xb,B));
+    float scia=fract(t*.18+fi*.73);
+    float yL=mix(T,B,scia);
+    float glint=exp(-pow((P.y-yL)/10.,2.))*exp(-d*d/18.);
+    vec4 f=ferro(d,(i==0||i==10)?3.6:2.55,glint);
+    o=f+o*(1.-f.a);
+  }
+  // Traverse e cornice, più pesanti delle sbarre interne.
+  for(int j=0;j<4;j++){
+    float fj=float(j)/3.;
+    float y=mix(T,B,fj);
+    float inset=sin(fj*3.14159)*W*.018;
+    float d=segmento(P,vec2(L+inset,y),vec2(R-inset,y));
+    float glint=.18+.14*sin(t*1.25+fj*4.);
+    vec4 f=ferro(d,(j==0||j==3)?4.2:2.8,glint);
+    o=f+o*(1.-f.a);
+  }
+  // Tetto prospettico: seconda traversa arretrata e giunti obliqui ai
+  // quattro angoli, come una vera struttura tridimensionale.
+  float yDietro=T-18.;
+  vec4 tetto=ferro(segmento(P,vec2(L+W*.07,yDietro),vec2(R-W*.07,yDietro)),3.2,.22+.15*sin(t*1.4));
+  o=tetto+o*(1.-tetto.a);
+  vec4 a=ferro(segmento(P,vec2(L,T),vec2(L+W*.07,yDietro)),3.1,.2);
+  vec4 b=ferro(segmento(P,vec2(R,T),vec2(R-W*.07,yDietro)),3.1,.2);
+  o=a+o*(1.-a.a); o=b+o*(1.-b.a);
+  // Riflesso rapido e raro che corre sulla cornice, senza farla sembrare
+  // una gabbia luminosa: resta ferro scuro, non energia magica.
+  float sweep=fract(t*.095);
+  float sx=mix(L,R,sweep);
+  float lampo=exp(-pow((P.x-sx)/8.,2.))*exp(-pow((P.y-T)/5.,2.));
+  o+=vec4(vec3(.66,.73,.76)*lampo*.6,lampo*.34);
+  gl_FragColor=o;
+}`;
+
+    let stopGabbiaIncubo = null;
+    let firmaGabbiaIncubo = '';
+    let richiestaGabbiaIncubo = false;
+
+    function righeMostri() {
+        return ['player', 'bot'].map((owner) => {
+            const boardId = owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard';
+            const slots = Array.from(document.querySelectorAll(`#${boardId} .field-slot[data-owner="${owner}"][data-type="monster"]`));
+            const rs = slots.map((el) => el.getBoundingClientRect()).filter((r) => r.width && r.height);
+            if (!rs.length) return null;
+            return [
+                Math.min(...rs.map((r) => r.left)), Math.min(...rs.map((r) => r.top)),
+                Math.max(...rs.map((r) => r.right)), Math.max(...rs.map((r) => r.bottom))
+            ];
+        }).filter(Boolean);
+    }
+
+    function spegniGabbiaIncubo() {
+        if (stopGabbiaIncubo) stopGabbiaIncubo();
+        stopGabbiaIncubo = null;
+        firmaGabbiaIncubo = '';
+    }
+
+    function sincronizzaGabbiaIncubo(attiva) {
+        richiestaGabbiaIncubo = !!attiva;
+        const movimentoRidotto = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!attiva || movimentoRidotto || (/** @type {any} */ (window)).FX_BACKEND === 'css' || !window.FxWebglPronto) {
+            spegniGabbiaIncubo();
+            return false;
+        }
+        const righe = righeMostri();
+        if (righe.length !== 2) { spegniGabbiaIncubo(); return false; }
+        const firma = righe.flat().map((v) => Math.round(v)).join(':');
+        if (stopGabbiaIncubo && firma === firmaGabbiaIncubo) return true;
+        spegniGabbiaIncubo();
+        firmaGabbiaIncubo = firma;
+        try {
+            stopGabbiaIncubo = lancia('gabbia-incubo', FS_GABBIA_INCUBO, 86400, () => {}, null, (tempo, disegno) => {
+                righe.forEach((r) => {
+                    const bbox = [r[0] - 30, r[1] - 42, r[2] + 30, r[3] + 30];
+                    disegno.passata('gabbia-incubo', FS_GABBIA_INCUBO, tempo, bbox, (u, g) => {
+                        g.uniform4f(u('gabbia'), r[0], r[1], r[2], r[3]);
+                    });
+                });
+            });
+        } catch (errore) {
+            // È solo una rappresentazione: un driver WebGL vecchio o un
+            // contesto perso non deve mai interrompere updateUI né il duello.
+            spegniGabbiaIncubo();
+            console.warn('[FX webgl] Gabbia d\'Acciaio non disponibile:', errore);
+            return false;
+        }
+        return true;
+    }
+
+    window.addEventListener('resize', () => {
+        if (!richiestaGabbiaIncubo) return;
+        firmaGabbiaIncubo = '';
+        requestAnimationFrame(() => requestAnimationFrame(() => sincronizzaGabbiaIncubo(true)));
+    });
+
+    // ---------------------------------------------------------------------
     // Raigeki
     // ---------------------------------------------------------------------
 
@@ -642,5 +783,15 @@ void main(){
         try { if (window.FxWebglPronto && assicuraCanvas()) { adattaDimensioni(); programma(chiave, frammento); } } catch (e) { /* ottimizzazione */ }
     }
 
-    window.FxWebgl = { scalda: scalda, compilabile: compilabile, lancia: lancia, chiudi: chiudiTutto, attivi: () => attivi.length, BASE: BASE, Z_INDEX: Z_INDEX };
+    window.FxWebgl = {
+        scalda: scalda,
+        compilabile: compilabile,
+        lancia: lancia,
+        chiudi: chiudiTutto,
+        attivi: () => attivi.length,
+        BASE: BASE,
+        Z_INDEX: Z_INDEX,
+        sincronizzaGabbiaIncubo: sincronizzaGabbiaIncubo,
+        gabbiaIncuboAttiva: () => !!stopGabbiaIncubo
+    };
 })();
