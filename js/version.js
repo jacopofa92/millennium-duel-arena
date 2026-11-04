@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.5.58 — Corretta fedelmente la maglietta di Joey: corpo e carré bianchi, maniche blu con dettagli bianchi e pannello blu-grigio limitato al petto.
  * 1.5.57 — Joey Wheeler indossa la sua maglietta bianca e blu caratteristica nelle figure trasparenti normale, pedina e grido.
  * 1.5.56 — Incrocio di Anime conserva video e grido dell'Evocazione divina; le Magie dalla mano volano al Cimitero dopo la risoluzione; corrette le linee del Castello di Pegasus e uniformate le icone di Cartoteca/configurazione duello.
  * 1.5.55 — Tornei senza icona avatar; Regno dei Duellanti con preparazione mazzo/difficolta' leggibile, safe area per fotocamere/notch e mappa esterna di boschi e radure piu' profonda e integrata.
@@ -792,4 +793,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.5.57';
+window.GAME_VERSION = '1.5.58';
