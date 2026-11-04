@@ -18,6 +18,7 @@ module.exports = {
                 });
             });
             updateUI();
+            window.__larghezzaCartaAttivataInMano = document.querySelector('#playerHand .card').getBoundingClientRect().width;
         });
         const c = await t.page.evaluate(() => {
             const r = document.querySelector('#playerHand .card').getBoundingClientRect();
@@ -35,6 +36,10 @@ module.exports = {
         await t.page.waitForFunction(() => window.__transizioniAttivazione.some((m) => (
             m.uid === 'info-attiva' && m.da === 'hand' && m.a === 'graveyard' && m.variante === 'resolve'
         )), { timeout: 6000 });
+        t.assert(await t.evaluate(() => {
+            const fantasma = document.querySelector('.fx-card-travel[data-uid="info-attiva"]');
+            return fantasma && Math.abs(parseFloat(fantasma.style.width) - window.__larghezzaCartaAttivataInMano) < 2;
+        }), 'Il viaggio deve partire dalla singola carta in mano, non dalla cinematica o dall’intera ventola');
         await t.evaluate(() => {
             if (window.__smettiTransizioniAttivazione) window.__smettiTransizioniAttivazione();
         });

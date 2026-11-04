@@ -2055,11 +2055,39 @@
         return null;
     }
 
+    /**
+     * La sorgente "mano" non è il rettangolo dell'intera ventola: deve
+     * essere proprio LA carta giocata. Altrimenti il fantasma nasce largo
+     * quanto tutta la mano e sembra che il grande primo piano di attivazione
+     * venga risucchiato nel Cimitero. La ricerca è volutamente confinata al
+     * contenitore della mano: `cardRect()` globale potrebbe trovare prima la
+     * copia della stessa carta ancora presente nella cinematica centrale.
+     */
+    function handCardRect(owner, card) {
+        if (!card || !card.uid) return null;
+        const hand = document.getElementById(owner === 'player' ? 'playerHand' : 'botHand');
+        if (!hand) return null;
+        const safeUid = window.CSS && typeof CSS.escape === 'function'
+            ? CSS.escape(String(card.uid))
+            : String(card.uid).replace(/["\\]/g, '\\$&');
+        const el = hand.querySelector(`.card[data-uid="${safeUid}"]`);
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return r.width ? r : null;
+    }
+
     function transitionRect(descriptor, card, source) {
         if (!descriptor) return source ? cardRect(card) : null;
         if (descriptor.kind === 'auto') return cardRect(card);
         if (descriptor.kind === 'field') return fieldSlotRect(descriptor.owner, descriptor.index, descriptor.type);
-        if (descriptor.kind === 'hand' || descriptor.kind === 'banished') return looseZoneRect(descriptor.owner, descriptor.kind);
+        if (descriptor.kind === 'hand') {
+            // In partenza serve la carta precisa; in arrivo (es. recupero
+            // dal Cimitero) è corretto mirare al centro della ventola.
+            return source
+                ? (handCardRect(descriptor.owner, card) || looseZoneRect(descriptor.owner, 'hand'))
+                : looseZoneRect(descriptor.owner, 'hand');
+        }
+        if (descriptor.kind === 'banished') return looseZoneRect(descriptor.owner, descriptor.kind);
         if (descriptor.kind === 'deck' || descriptor.kind === 'graveyard' || descriptor.kind === 'fusion') return zoneRect(descriptor.owner, descriptor.kind);
         return null;
     }
