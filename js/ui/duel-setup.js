@@ -170,12 +170,17 @@
         });
     }
 
-    function gruppo(etichetta) {
+    function gruppo(etichetta, icona) {
         const box = document.createElement('div');
         box.className = 'ds-group';
         const lab = document.createElement('span');
         lab.className = 'ds-group-label';
-        lab.textContent = etichetta;
+        if (icona && window.Icons) {
+            const svg = Icons.buildIcon(icona);
+            if (svg) lab.appendChild(svg);
+        }
+        if (lab.childNodes.length) lab.appendChild(document.createTextNode(' '));
+        lab.appendChild(document.createTextNode(etichetta));
         box.appendChild(lab);
         return box;
     }
@@ -277,14 +282,16 @@
         }
 
         // --- Arene ------------------------------------------------------
-        const gArene = gruppo('🏟️ Arena');
+        const gArene = gruppo('Arena', 'arena');
         const stripArene = document.createElement('div');
         stripArene.className = 'ds-strip';
 
         const casuale = document.createElement('button');
         casuale.type = 'button';
         casuale.className = 'ds-field ds-field--random';
-        casuale.textContent = '🎲';
+        const iconaCasuale = window.Icons && Icons.buildIcon('random');
+        if (iconaCasuale) casuale.appendChild(iconaCasuale);
+        else casuale.textContent = 'Casuale';
         casuale.title = 'Arena casuale';
         casuale.dataset.file = window.ArenaOptions.RANDOM;
         stripArene.appendChild(casuale);
@@ -338,7 +345,7 @@
         radice.appendChild(gArene);
 
         // --- Colonne sonore --------------------------------------------
-        const gMusica = gruppo('🎵 Musica di battaglia');
+        const gMusica = gruppo('Musica di battaglia', 'audio');
         const tracce = document.createElement('div');
         tracce.className = 'ds-tracks';
 
@@ -384,7 +391,7 @@
             tracce.appendChild(riga);
         };
 
-        aggiungiTraccia(window.ArenaOptions.RANDOM, '🎲 Casuale', false);
+        aggiungiTraccia(window.ArenaOptions.RANDOM, 'Casuale', false);
         window.ArenaOptions.TRACKS.forEach((t) => aggiungiTraccia(t.file, t.nome, true));
         gMusica.appendChild(tracce);
         radice.appendChild(gMusica);
@@ -394,7 +401,7 @@
         // scendere in campo, e il motore ci blocca davvero un mazzo che non
         // la rispetta (vedi allowedOrigin in js/duel-session.js). In
         // Multiplayer la decide quindi chi crea la stanza, come l'arena.
-        const gOrigini = gruppo('🗂️ Carte ammesse');
+        const gOrigini = gruppo('Carte ammesse', 'cards');
         const origini = document.createElement('div');
         origini.className = 'ds-origins';
 
@@ -408,7 +415,7 @@
                 if (!voci.some((v) => v.key === o.key)) voci.push({ key: o.key, label: 'Solo ' + o.label });
             });
         }
-        voci.push({ key: 'all', label: '🌐 Tutte le provenienze' });
+        voci.push({ key: 'all', label: 'Tutte le provenienze' });
 
         voci.forEach((voce) => {
             const chip = document.createElement('button');

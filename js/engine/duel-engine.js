@@ -6473,6 +6473,25 @@
             ChallengeTracker.recordProgress('activateCard', { cardId: card.id, cardType: card.type });
         }
 
+        // Una Magia Normale attivata dalla mano viene spostata nello stato
+        // al momento dell'attivazione (prima della Chain), ma la mano resta
+        // volutamente disegnata finché il grande primo piano non è finito.
+        // Questo è quindi l'ultimo istante in cui esistono INSIEME il nodo
+        // visivo di partenza e la risoluzione conclusa: emettere qui il
+        // viaggio Mano -> Cimitero fa capire dove è finita la carta senza
+        // sovrapporlo al video centrale. Se l'effetto ha già spostato la
+        // carta fuori dal Cimitero non inventiamo un tragitto falso.
+        const def = card && getDefinition(card.id);
+        const magiaConsumataDallaMano = zone === 'hand' && card && card.type === 'spell'
+            && card.subtype !== 'field' && !(def && def.continuous)
+            && graveyardOf(owner).some((entry) => entry && entry.uid === card.uid);
+        if (magiaConsumataDallaMano) {
+            animaTransizioneCarta(card,
+                { kind: 'hand', owner: owner },
+                { kind: 'graveyard', owner: owner },
+                'resolve');
+        }
+
         if (typeof updateUI === 'function') updateUI();
         // Solo ORA, a mano già ridisegnata da updateUI() qui sopra, è sicuro
         // animare un'eventuale pescata scatenata da questa carta (es. Vaso

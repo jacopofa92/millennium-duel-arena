@@ -1735,7 +1735,14 @@
         // le altre strade del bivio aspettano, nascoste, il ritorno.
         const corridor = (!castleOnly && state.corridor) ? state.corridor : null;
         const junction = history[history.length - 1];
-        const current = castleOnly ? MAP_START_POS
+        // Nel Castello il punto corrente è l'ULTIMO duello completato, non
+        // l'origine invisibile della seconda mappa. Usare sempre
+        // MAP_START_POS produceva, dopo Rex/Mai, una diagonale che partiva
+        // dal margine sinistro e attraversava tutto il fondale fino al
+        // prossimo sfidante, mentre la linea corretta Mai -> Pegasus
+        // mancava. L'origine resta valida soltanto prima del primo duello;
+        // in quel caso la linea è intenzionalmente nascosta più sotto.
+        const current = castleOnly ? (history[history.length - 1] || MAP_START_POS)
             : corridor ? corridor.nodes[corridor.at]
             : junction;
         const choices = corridor

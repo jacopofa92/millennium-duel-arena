@@ -62,6 +62,16 @@ module.exports = {
             const posizioneFinale = await page.locator('.map-node.choice').evaluate((el) => parseFloat(el.style.left));
             t.assert(posizioneFinale > posizioneRex.x && Math.abs(posizioneFinale - 1280 / 2) < 40,
                 `Lo sfidante successivo deve avanzare da sinistra verso il centro (x=${posizioneFinale})`);
+            const collegamento = await page.locator('.map-line.choice-line').evaluate((line) => ({
+                x1: Number(line.getAttribute('x1')),
+                y1: Number(line.getAttribute('y1')),
+                x2: Number(line.getAttribute('x2')),
+                y2: Number(line.getAttribute('y2'))
+            }));
+            t.assert(Math.abs(collegamento.x1 - posizioneRex.x) < 1 && Math.abs(collegamento.y1 - posizioneRex.y) < 1,
+                `La nuova linea deve partire dall'ultimo nodo del Castello, non dall'origine invisibile: ${JSON.stringify(collegamento)}`);
+            t.assert(Math.abs(collegamento.x2 - posizioneFinale) < 1,
+                `La nuova linea deve terminare sullo sfidante corrente: ${JSON.stringify(collegamento)}`);
         } finally {
             await page.close();
         }

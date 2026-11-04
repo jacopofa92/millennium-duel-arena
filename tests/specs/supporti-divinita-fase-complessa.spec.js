@@ -1,7 +1,7 @@
 module.exports = {
     name: 'Supporti Divinità complessi: Incrocio di Anime e ciclo completo di Ra',
     async run(t) {
-        const result = await t.evaluate(() => {
+        const result = await t.evaluate(async () => {
             const copy = (id, uid) => ({ ...cardDatabase.find((card) => card.id === id), uid });
             const slot = (card) => ({ card, position: 'attack', isFaceDown: false, hasAttacked: false, canChangePosition: true });
 
@@ -16,9 +16,25 @@ module.exports = {
             gameState.playerMonsterField[0] = slot(copy(4, 'p1'));
             gameState.playerMonsterField[1] = slot(copy(5, 'p2'));
             gameState.playerMonsterField[2] = slot(copy(6, 'p3'));
+            const cinematica = { grido: false, evocazione: false };
+            const attendiOriginale = EventiDuello.attendi;
+            EventiDuello.attendi = (nome, dati, fatto) => {
+                if (nome !== 'grido-evocazione') return attendiOriginale.call(EventiDuello, nome, dati, fatto);
+                if (dati.posto === 'bot' && dati.carta && dati.carta.id === 30) cinematica.grido = true;
+                if (typeof fatto === 'function') fatto();
+            };
+            const fxOriginale = FX.playMonsterSummonEffect;
+            FX.playMonsterSummonEffect = (carta) => {
+                if (carta && carta.id === 30) cinematica.evocazione = true;
+            };
             const crossingDef = DuelEngine.getDefinition(1274);
             const crossingCan = crossingDef.canActivate(DuelEngine.makeContext('bot', { card: crossing }));
             crossingDef.activate(DuelEngine.makeContext('bot', { card: crossing }));
+            // La presentazione parte dopo che il Terreno e' stato ridisegnato:
+            // aspettiamo quel breve passaggio asincrono prima di resettare lo stato.
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            EventiDuello.attendi = attendiOriginale;
+            FX.playMonsterSummonEffect = fxOriginale;
             const crossingWorked = gameState.botMonsterField.some((entry) => entry && entry.card.uid === obelisk.uid)
                 && gameState.playerMonsterField.every((entry) => !entry)
                 && gameState.playerGraveyard.length === 3
@@ -80,11 +96,13 @@ module.exports = {
             const aiUnderstandsSphere = !!aiDecision && aiDecision.card.uid === aiSphere.uid
                 && aiDecision.customNormalSummon === true;
 
-            return { crossingCan, crossingWorked, sphereWorked, sphereToRa, phoenixRevived, phoenixSentVictim, aiUnderstandsSphere };
+            return { crossingCan, crossingWorked, cinematica, sphereWorked, sphereToRa, phoenixRevived, phoenixSentVictim, aiUnderstandsSphere };
         });
 
         t.assert(result.crossingCan && result.crossingWorked,
             `Incrocio di Anime deve usare legalmente il Terreno avversario: ${JSON.stringify(result)}`);
+        t.assert(result.cinematica.grido && result.cinematica.evocazione,
+            `Incrocio di Anime deve conservare grido e presentazione del Dio evocato: ${JSON.stringify(result)}`);
         t.assert(result.sphereWorked && result.sphereToRa,
             `Modalità Sfera deve rispettare lato di Evocazione e trasformazione in Ra: ${JSON.stringify(result)}`);
         t.assert(result.phoenixRevived && result.phoenixSentVictim,

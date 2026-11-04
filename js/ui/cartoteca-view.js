@@ -27,7 +27,7 @@
     <div class="cartoteca-filters">
         <div class="filter-bar-top">
             <div class="filter-search">
-                <span class="filter-search-icon">🔍</span>
+                <span class="filter-search-icon" data-icon="search" aria-hidden="true"></span>
                 <input type="text" data-ct="searchInput" placeholder="Cerca una carta per nome..." autocomplete="off">
             </div>
             <select class="filter-sort" data-ct="sortSelect">
@@ -42,7 +42,7 @@
                 <option value="level-asc">Livello (basso→alto)</option>
             </select>
             <button type="button" class="filter-toggle-btn" data-ct="filterToggleBtn">
-                <span>🔧 Filtri</span>
+                <span><span data-icon="settings" aria-hidden="true"></span> Filtri</span>
                 <span class="filter-toggle-badge" data-ct="filterToggleBadge"></span>
                 <span class="filter-toggle-arrow">▾</span>
             </button>
@@ -140,6 +140,9 @@
         opzioni = opzioni || {};
         contenitore.classList.add('cartoteca-view');
         contenitore.innerHTML = MARKUP;
+        // La Cartoteca viene montata dopo il caricamento pagina sia nel menu
+        // sia nella pagina autonoma: le icone vanno quindi idratate qui.
+        if (window.Icons) Icons.hydrate(contenitore);
         const root = contenitore;
         /** Un elemento interno, per nome (attributo data-ct). */
         const q = (nome) => /** @type {any} */ (root.querySelector('[data-ct="' + nome + '"]'));

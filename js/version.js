@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.5.56 — Incrocio di Anime conserva video e grido dell'Evocazione divina; le Magie dalla mano volano al Cimitero dopo la risoluzione; corrette le linee del Castello di Pegasus e uniformate le icone di Cartoteca/configurazione duello.
  * 1.5.55 — Tornei senza icona avatar; Regno dei Duellanti con preparazione mazzo/difficolta' leggibile, safe area per fotocamere/notch e mappa esterna di boschi e radure piu' profonda e integrata.
  * 1.5.54 — Battle City torna fedele all'anime: otto finalisti e soli quarti sul dirigibile; i vecchi salvataggi a 32 vengono migrati senza azzerare il torneo.
  * 1.4.33 — Loading generico di nuovo solo CSS (il canvas WebGL sul percorso critico di ogni pagina e' il sospetto principale dello schermo nero sull'APK). Scheda carta (Cartoteca): la X resta incollata in alto mentre si scorre e sta sopra la carta che si inclina.
@@ -790,4 +791,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.5.55';
+window.GAME_VERSION = '1.5.56';

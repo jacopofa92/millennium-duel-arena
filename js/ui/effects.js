@@ -2078,6 +2078,10 @@
         const presets = {
             hand: { duration: 760, scaleTo: 0.72, spin: 7, glow: 'rgba(105, 210, 255, 0.9)' },
             discard: { duration: 720, scaleTo: 0.42, spin: -12, glow: 'rgba(165, 175, 205, 0.9)' },
+            // La Magia ha appena finito il proprio primo piano: un arco
+            // netto, un po' più lento dello scarto, la ripone nel Cimitero
+            // come conseguenza della risoluzione e non come carta buttata.
+            resolve: { duration: 820, scaleTo: 0.42, spin: -7, glow: 'rgba(205, 165, 255, 0.92)' },
             banish: { duration: 850, scaleTo: 0.32, spin: 22, glow: 'rgba(190, 105, 255, 0.95)' },
             deck: { duration: 780, scaleTo: 0.42, spin: 10, glow: 'rgba(245, 205, 95, 0.85)' },
             search: { duration: 820, scaleTo: 0.72, spin: -5, glow: 'rgba(105, 225, 255, 0.95)' }
@@ -2093,6 +2097,7 @@
         };
         playCardTravel(movement.carta, from, to, p);
         const color = variant === 'banish' ? ['#b66cff', '#f0d2ff', '#ffffff']
+            : variant === 'resolve' ? ['#9d78d2', '#e0c8ff', '#ffffff']
             : variant === 'discard' ? ['#78839a', '#ccd5e5', '#ffffff']
                 : ['#66d9ff', '#f6d46b', '#ffffff'];
         spawnParticles(from.left + from.width / 2, from.top + from.height / 2, {

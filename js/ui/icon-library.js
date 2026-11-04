@@ -309,6 +309,25 @@
         pencil: `
             <path d="M15.6 3.6 L20.4 8.4 L9 19.8 L3.6 20.4 L4.2 15 Z" fill="currentColor"/>
             <path d="M13.4 5.8 L18.2 10.6" stroke="#0b0d1c" stroke-width="1.1" opacity="0.55"/>
+        `,
+        // Ricerca — lente con l'Occhio di Wedjat al posto del glifo di sistema.
+        search: `
+            <circle cx="10.2" cy="10.2" r="6.4" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M14.8 14.8 L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M6.7 10.2 C8.2 8.1 12.2 8.1 13.7 10.2 C12.2 12.2 8.2 12.2 6.7 10.2 Z" fill="currentColor"/>
+            <circle cx="10.2" cy="10.2" r="1" fill="#0b0d1c"/>
+        `,
+        // Arena — portale monumentale con due lame incrociate.
+        arena: `
+            <path d="M4 21 V7 L8 3 H16 L20 7 V21 H16.8 V9 H7.2 V21 Z" fill="currentColor"/>
+            <path d="M9 12 L15 18 M15 12 L9 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="12" cy="15" r="1.2" fill="currentColor"/>
+        `,
+        // Casuale — piccolo oracolo a quattro direzioni, senza dado emoji.
+        random: `
+            <circle cx="12" cy="12" r="3.2" fill="currentColor"/>
+            <path d="M12 2.5 V7 M12 17 V21.5 M2.5 12 H7 M17 12 H21.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 2.5 L10.2 4.5 M12 2.5 L13.8 4.5 M21.5 12 L19.5 10.2 M21.5 12 L19.5 13.8 M12 21.5 L10.2 19.5 M12 21.5 L13.8 19.5 M2.5 12 L4.5 10.2 M2.5 12 L4.5 13.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
         `
     };
 

@@ -8,6 +8,15 @@ module.exports = {
             gameState.hasNormalSummoned = false;
             gameState.playerHand = [{ ...cardDatabase.find((card) => card.id === 36), uid: 'info-attiva' }];
             gameState.selectedCard = { type: null, card: null, index: -1 };
+            window.__transizioniAttivazione = [];
+            window.__smettiTransizioniAttivazione = EventiDuello.ascolta('transizione-carta', (movimento) => {
+                window.__transizioniAttivazione.push({
+                    uid: movimento.carta && movimento.carta.uid,
+                    da: movimento.da && movimento.da.kind,
+                    a: movimento.a && movimento.a.kind,
+                    variante: movimento.variante
+                });
+            });
             updateUI();
         });
         const c = await t.page.evaluate(() => {
@@ -23,5 +32,11 @@ module.exports = {
         await t.page.waitForTimeout(500);
         t.assert(!(await t.evaluate(() => document.getElementById('cardInfoPanel').classList.contains('visible'))),
             'Attivando l\'effetto il box info deve chiudersi');
+        await t.page.waitForFunction(() => window.__transizioniAttivazione.some((m) => (
+            m.uid === 'info-attiva' && m.da === 'hand' && m.a === 'graveyard' && m.variante === 'resolve'
+        )), { timeout: 6000 });
+        await t.evaluate(() => {
+            if (window.__smettiTransizioniAttivazione) window.__smettiTransizioniAttivazione();
+        });
     }
 };

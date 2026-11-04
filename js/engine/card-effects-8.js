@@ -5060,7 +5060,31 @@
             summonedPosition: 'attack',
             summonedByOwner: ctx.owner
         });
-        DuelEngine.fireTrigger(DuelEngine.TRIGGER.ON_NORMAL_SUMMON, summonCtx, () => updateUI());
+        // Questa procedura non passa da eseguiEvocazioneNormale(), quindi
+        // deve riprodurne esplicitamente anche la parte audiovisiva. Prima
+        // la Divinità compariva sul Terreno e attivava correttamente i suoi
+        // trigger, ma saltava sia il grido del duellante sia il filmato/
+        // effetto dei mostri di Livello 7+: caso reale, Kaiba + Incrocio di
+        // Anime + Obelisk. Il grido appartiene a chi HA evocato la carta
+        // (`ctx.owner`), anche per procedure che la collocano sul Terreno
+        // avversario (Ra - Modalità Sfera); l'impatto invece usa il Terreno
+        // di destinazione.
+        if (window.DuelDialogues) DuelDialogues.summon(ctx.owner, card);
+        DuelEngine.fireTrigger(DuelEngine.TRIGGER.ON_NORMAL_SUMMON, summonCtx, () => {
+            updateUI();
+            setTimeout(() => {
+                const mostraEvocazione = () => {
+                    EventiDuello.emetti('impatto-campo', destinationOwner, slotIndex, 'monster');
+                    EventiDuello.emetti('cambio-posizione', destinationOwner, slotIndex, 'attack');
+                    const cardEl = PortaUI.query(`#${destinationOwner}FieldBoard .field-slot[data-type="monster"][data-index="${slotIndex}"] .card`);
+                    if (cardEl && window.FX) FX.playMonsterSummonEffect(card, cardEl);
+                    if ((card.level || 0) < 7
+                        && !(window.AudioLibrary && AudioLibrary.tryPlayCardSound(card, 'evocazioni'))
+                        && window.SFX) SFX.summon('attack');
+                };
+                EventiDuello.attendi('grido-evocazione', { posto: ctx.owner, carta: card }, mostraEvocazione);
+            }, 30);
+        });
         return true;
     };
 

@@ -292,6 +292,32 @@ body.ha-tab-bar .cartoteca-filters { top: 0 !important; }
 /* A duello Multiplayer avviato (l'arena sta nella stessa pagina della sala) la barra in basso non c'e': il duello ha la sua interfaccia. */
 body.mp-in-duello .mm-barra, body.mp-in-duello .mm-spazio { display: none !important; }
 
+/* Su desktop tutti i controlli realmente interattivi dei menu devono
+   comunicare il click anche col cursore. Molte pagine usano <button>,
+   altre una tessera con role/data-action/onclick: coprirli qui, nel foglio
+   condiviso dai menu, evita correzioni divergenti pagina per pagina. I
+   controlli disabilitati restano invece chiaramente non disponibili. */
+@media (pointer: fine) {
+    button:not(:disabled),
+    a[href],
+    select:not(:disabled),
+    summary,
+    label[for],
+    [role="button"]:not([aria-disabled="true"]),
+    [data-action]:not([aria-disabled="true"]),
+    [onclick]:not([aria-disabled="true"]),
+    input[type="button"]:not(:disabled),
+    input[type="submit"]:not(:disabled) {
+        cursor: pointer !important;
+    }
+
+    button:disabled,
+    select:disabled,
+    [aria-disabled="true"] {
+        cursor: default !important;
+    }
+}
+
 /* ---- FOTOCAMERA FRONTALE (1.4.185): su telefono il logo passava sopra il foro. La viewport non ha viewport-fit=cover, quindi
    env(safe-area-inset-top) vale 0 anche nell'APK a tutto schermo: serve un minimo fisso. Solo touch in verticale (in orizzontale il logo
    e' nascosto). Il box del profilo scende con il logo (margine sopra) cosi' non resta schiacciato sotto di lui. ---- */
