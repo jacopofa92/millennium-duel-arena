@@ -42,6 +42,7 @@ module.exports = {
         });
         assert(sp.prima.chiamate === 1 && sp.chiamateFinali === 1, `onLanded deve arrivare una volta sola: ${JSON.stringify(sp)}`);
         assert(sp.prima.attivi >= 1 && sp.ancora >= 1 && sp.prima.domSpade === 0, `Le spade restano (WebGL, senza DOM) finche' non vengono tolte: ${JSON.stringify(sp)}`);
+        assert(await page.evaluate(() => FxWebgl.shaderDisponibile('spade')), 'Lo shader delle Spade deve compilare davvero (effetto visibile, non solo attivo)');
         assert(sp.dopo < sp.ancora, `Tolte le spade, l'effetto si ferma: ${JSON.stringify(sp)}`);
 
         // 4) Raigeki
@@ -68,6 +69,7 @@ module.exports = {
         });
         assert(cage.durante.viva && cage.durante.attivi >= 1,
             `La Gabbia deve restare in WebGL sopra entrambe le file: ${JSON.stringify(cage)}`);
+        assert(await page.evaluate(() => FxWebgl.shaderDisponibile('gabbia-incubo')), 'Lo shader della Gabbia deve compilare davvero (effetto visibile, non solo attivo)');
         assert(!cage.dopo && cage.attiviDopo === 0,
             `La Gabbia deve sparire insieme alla carta: ${JSON.stringify(cage)}`);
 

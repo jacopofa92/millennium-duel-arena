@@ -64,10 +64,10 @@
     "semantic_hash": "f986617c6fec72fe2651bc8abdc63744"
   },
   "js/ai/ai-medium.js": {
-    "mtime": 1793561512.1397052,
-    "seen": 1793910198.2314875,
-    "ast_hash": "40c57c0a599d94ea2ab2b64f51a889fe",
-    "semantic_hash": "40c57c0a599d94ea2ab2b64f51a889fe"
+    "mtime": 1793915298.1495864,
+    "seen": 1793915850.8738735,
+    "ast_hash": "6589561d55e59ed3510bd80182459699",
+    "semantic_hash": ""
   },
   "js/ai/ai-shared.js": {
     "mtime": 1793561758.4272578,
@@ -886,9 +886,9 @@
     "semantic_hash": "8d7bb6657e40288b0964825d22b919fd"
   },
   "js/ui/fx-webgl.js": {
-    "mtime": 1793912904.2261052,
-    "seen": 1793913469.3700213,
-    "ast_hash": "591cfe5e2ea0cc6042cf8197a7b067a5",
+    "mtime": 1793918557.5116496,
+    "seen": 1793918662.9034061,
+    "ast_hash": "b76b7c71793fa03b23304411f9f8a623",
     "semantic_hash": ""
   },
   "js/ui/game-logo.js": {
@@ -916,9 +916,9 @@
     "semantic_hash": "daf3be37afead839bae5306bac925f72"
   },
   "js/ui/icone-posizione-webgl.js": {
-    "mtime": 1793912921.312277,
-    "seen": 1793913469.3713386,
-    "ast_hash": "cee86f3670b213651503400c8ebbdd99",
+    "mtime": 1793918325.547516,
+    "seen": 1793918662.9054697,
+    "ast_hash": "e4706946f9d5d80dac347a4b37b0c325",
     "semantic_hash": ""
   },
   "js/ui/inclinazione.js": {
@@ -1108,9 +1108,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1793914507.481671,
-    "seen": 1793914562.4131324,
-    "ast_hash": "1eed8b33d50dfb1a9516d14a14f1ab38",
+    "mtime": 1793918580.2398193,
+    "seen": 1793918662.9252858,
+    "ast_hash": "e2d86f9306800b0d91a15edca6cfd871",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1126,9 +1126,9 @@
     "semantic_hash": "57357a46c1d07a0fa18bbcd83581aaa6"
   },
   "package.json": {
-    "mtime": 1793914507.8008833,
-    "seen": 1793914562.4141877,
-    "ast_hash": "42a3f515f2e9f999e5f4a58e34082d4d",
+    "mtime": 1793918597.1696458,
+    "seen": 1793918662.9263291,
+    "ast_hash": "d2b53f2a0fa145a013e38a178a6908e8",
     "semantic_hash": ""
   },
   "render.yaml": {
@@ -1527,9 +1527,9 @@
     "semantic_hash": "e90f76660f0591cfeb068b83abeafdd5"
   },
   "sw.js": {
-    "mtime": 1793914508.1224067,
-    "seen": 1793914562.4445899,
-    "ast_hash": "8621dd64c7467c5d048fb21e4da8d979",
+    "mtime": 1793918597.5417569,
+    "seen": 1793918662.961994,
+    "ast_hash": "b8de0a4dd9292f55fe250c05e97bef92",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -2153,10 +2153,10 @@
     "semantic_hash": "d28da7ffb253ffdae7e760657f874a7f"
   },
   "tests/specs/divieti-di-evocazione.spec.js": {
-    "mtime": 1791031981.1413057,
-    "seen": 1793910198.3730922,
-    "ast_hash": "1e4e270af8d1d2bc0c4e2e64ec2cb065",
-    "semantic_hash": "1e4e270af8d1d2bc0c4e2e64ec2cb065"
+    "mtime": 1793915433.0423741,
+    "seen": 1793915851.0320394,
+    "ast_hash": "c453e3af6552d5d6ae70a6df0407a250",
+    "semantic_hash": ""
   },
   "tests/specs/due-account-stesso-dispositivo.spec.js": {
     "mtime": 1792832491.1005907,
@@ -5267,9 +5267,9 @@
     "semantic_hash": ""
   },
   "duelMonstersCore.html": {
-    "mtime": 1793835114.318296,
-    "seen": 1793912297.4187498,
-    "ast_hash": "73236d35bdb739e5f3529e1000050113",
+    "mtime": 1793918102.484166,
+    "seen": 1793918663.2898655,
+    "ast_hash": "91f4f33d35bbe1414760cf4efdc4e1b8",
     "semantic_hash": ""
   },
   "duello-libero.html": {
@@ -23480,6 +23480,24 @@
     "mtime": 1792839990.2541456,
     "seen": 1793912297.4272926,
     "ast_hash": "0caa9f1785a12bbc39d2909b71759463",
+    "semantic_hash": ""
+  },
+  "fx-cage-preview.png": {
+    "mtime": 1793918363.722324,
+    "seen": 1793918663.308484,
+    "ast_hash": "03550e11c57c7ba5f82a41061fe58fa6",
+    "semantic_hash": ""
+  },
+  "fx-swords-fall-preview.png": {
+    "mtime": 1793918365.827163,
+    "seen": 1793918663.308484,
+    "ast_hash": "472cab94de5bf02b1f6244a09f35182b",
+    "semantic_hash": ""
+  },
+  "fx-swords-landed-preview.png": {
+    "mtime": 1793918367.7103002,
+    "seen": 1793918663.308484,
+    "ast_hash": "eaa2fe895359b76eacf6e70c62c8d698",
     "semantic_hash": ""
   },
   "package-lock.json": {
