@@ -1,0 +1,4 @@
+# Stato locale: la cache si rigenera e il percorso assoluto dipende dal PC.
+cache/
+.graphify_root
+.graphify_python

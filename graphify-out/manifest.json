@@ -1,0 +1,4945 @@
+{
+  ".claude/settings.json": {
+    "mtime": 1793910059.2047186,
+    "seen": 1793910198.224682,
+    "ast_hash": "006012ec5a3dce23a1175d927b6408ad",
+    "semantic_hash": "006012ec5a3dce23a1175d927b6408ad",
+    "ast_empty": true
+  },
+  ".codex/hooks.json": {
+    "mtime": 1793910058.414843,
+    "seen": 1793910198.224682,
+    "ast_hash": "5ebef3dd159986e465ab65e4014107ec",
+    "semantic_hash": "5ebef3dd159986e465ab65e4014107ec",
+    "ast_empty": true
+  },
+  ".continue/mcpServers/new-mcp-server.yaml": {
+    "mtime": 1787089952.0,
+    "seen": 1793910198.224682,
+    "ast_hash": "68034e46087757720d7c4cdf34efc39f",
+    "semantic_hash": "68034e46087757720d7c4cdf34efc39f"
+  },
+  ".githooks/pre-commit": {
+    "mtime": 1791103407.792025,
+    "seen": 1793910198.224682,
+    "ast_hash": "05773f48d2289e0b4821226ae8683dd8",
+    "semantic_hash": "05773f48d2289e0b4821226ae8683dd8"
+  },
+  ".github/workflows/supabase-keepalive.yml": {
+    "mtime": 1787434066.0,
+    "seen": 1793910198.224682,
+    "ast_hash": "a6f52e59824cefa3ba62b16e372fd46e",
+    "semantic_hash": "a6f52e59824cefa3ba62b16e372fd46e"
+  },
+  ".github/workflows/test.yml": {
+    "mtime": 1791742121.8864532,
+    "seen": 1793910198.224682,
+    "ast_hash": "9e245204837bb282a0e68fdffab6148c",
+    "semantic_hash": "9e245204837bb282a0e68fdffab6148c"
+  },
+  "app-status.json": {
+    "mtime": 1792534313.6905527,
+    "seen": 1793910198.224682,
+    "ast_hash": "f54424bf26ceaa71cf664376d7b1bc2a",
+    "semantic_hash": "f54424bf26ceaa71cf664376d7b1bc2a",
+    "ast_empty": true
+  },
+  "data/cards.json": {
+    "mtime": 1793554400.3692975,
+    "seen": 1793910198.224682,
+    "ast_hash": "162784c3a5e8e364a699d5cba052c791",
+    "semantic_hash": "162784c3a5e8e364a699d5cba052c791",
+    "ast_empty": true
+  },
+  "js/ai/ai-controller.js": {
+    "mtime": 1792320742.1710443,
+    "seen": 1793910198.224682,
+    "ast_hash": "889335089c67178f91835b3b8590fa2c",
+    "semantic_hash": "889335089c67178f91835b3b8590fa2c"
+  },
+  "js/ai/ai-hard.js": {
+    "mtime": 1793561512.9641657,
+    "seen": 1793910198.2314875,
+    "ast_hash": "f986617c6fec72fe2651bc8abdc63744",
+    "semantic_hash": "f986617c6fec72fe2651bc8abdc63744"
+  },
+  "js/ai/ai-medium.js": {
+    "mtime": 1793561512.1397052,
+    "seen": 1793910198.2314875,
+    "ast_hash": "40c57c0a599d94ea2ab2b64f51a889fe",
+    "semantic_hash": "40c57c0a599d94ea2ab2b64f51a889fe"
+  },
+  "js/ai/ai-shared.js": {
+    "mtime": 1793561758.4272578,
+    "seen": 1793910198.2314875,
+    "ast_hash": "69e037486a98d96029adf9f085b237d3",
+    "semantic_hash": "69e037486a98d96029adf9f085b237d3"
+  },
+  "js/ai/bot.js": {
+    "mtime": 1792925152.2969549,
+    "seen": 1793910198.2314875,
+    "ast_hash": "c0551df9e55609b0296139191f01c291",
+    "semantic_hash": "c0551df9e55609b0296139191f01c291"
+  },
+  "js/audio/audio-library.js": {
+    "mtime": 1793533080.929211,
+    "seen": 1793910198.2314875,
+    "ast_hash": "c32387b2f20faaf11589327a4894b3c0",
+    "semantic_hash": "c32387b2f20faaf11589327a4894b3c0"
+  },
+  "js/audio/audio-manager.js": {
+    "mtime": 1792737251.9302344,
+    "seen": 1793910198.2314875,
+    "ast_hash": "630be3fce5ddc0f3fc9797c95a1d7c1b",
+    "semantic_hash": "630be3fce5ddc0f3fc9797c95a1d7c1b"
+  },
+  "js/audio/sfx.js": {
+    "mtime": 1793533080.1092913,
+    "seen": 1793910198.2344966,
+    "ast_hash": "3a5933b88a34e425cd7b38d095b837ea",
+    "semantic_hash": "3a5933b88a34e425cd7b38d095b837ea"
+  },
+  "js/challenges/challenge-tracker.js": {
+    "mtime": 1793574086.1819606,
+    "seen": 1793910198.2344966,
+    "ast_hash": "05dec56261ea505ef3d9cbf0562ac73f",
+    "semantic_hash": "05dec56261ea505ef3d9cbf0562ac73f"
+  },
+  "js/cloud/auth-gate.js": {
+    "mtime": 1792320742.1745162,
+    "seen": 1793910198.2344966,
+    "ast_hash": "2f8e29b90b8433e56993c2a1c2d60e47",
+    "semantic_hash": "2f8e29b90b8433e56993c2a1c2d60e47"
+  },
+  "js/cloud/auto-sync.js": {
+    "mtime": 1792839612.7794633,
+    "seen": 1793910198.2344966,
+    "ast_hash": "8c2cb14300110211f2773c2af187c596",
+    "semantic_hash": "8c2cb14300110211f2773c2af187c596"
+  },
+  "js/cloud/cloud-sync.js": {
+    "mtime": 1792839787.5713854,
+    "seen": 1793910198.2344966,
+    "ast_hash": "08bec2c060c043924fe71e4894a870cf",
+    "semantic_hash": "08bec2c060c043924fe71e4894a870cf"
+  },
+  "js/cloud/server-date.js": {
+    "mtime": 1790331125.8749795,
+    "seen": 1793910198.2344966,
+    "ast_hash": "58c918b492fba2f421a72608024b03ab",
+    "semantic_hash": "58c918b492fba2f421a72608024b03ab"
+  },
+  "js/cloud/supabase-config.js": {
+    "mtime": 1792320742.1756592,
+    "seen": 1793910198.2344966,
+    "ast_hash": "fccd4b0e8e12073218cf84e156c9337d",
+    "semantic_hash": "fccd4b0e8e12073218cf84e156c9337d"
+  },
+  "js/data/arena-options.js": {
+    "mtime": 1792320742.176663,
+    "seen": 1793910198.2344966,
+    "ast_hash": "c1522e0380db9d89c7d2bd33f4a1a467",
+    "semantic_hash": "c1522e0380db9d89c7d2bd33f4a1a467"
+  },
+  "js/data/artwork-alternativi.js": {
+    "mtime": 1792600817.3745277,
+    "seen": 1793910198.2344966,
+    "ast_hash": "8c9c9599b6387a017210f2c9c9cf842e",
+    "semantic_hash": "8c9c9599b6387a017210f2c9c9cf842e"
+  },
+  "js/data/caccia-db.js": {
+    "mtime": 1793216674.5996137,
+    "seen": 1793910198.2344966,
+    "ast_hash": "357b53bca5a1e2c2f4caa48d08a979a6",
+    "semantic_hash": "357b53bca5a1e2c2f4caa48d08a979a6"
+  },
+  "js/data/card-effect-ids.generated.js": {
+    "mtime": 1793216674.6006105,
+    "seen": 1793910198.2344966,
+    "ast_hash": "550b0ba2e6495fa66c9ae2630b59cc5d",
+    "semantic_hash": "550b0ba2e6495fa66c9ae2630b59cc5d"
+  },
+  "js/data/card-origins.generated.js": {
+    "mtime": 1793554400.4996538,
+    "seen": 1793910198.2344966,
+    "ast_hash": "4814c0b55436e237986c7e5b77d88ac9",
+    "semantic_hash": "4814c0b55436e237986c7e5b77d88ac9"
+  },
+  "js/data/card-rarity.js": {
+    "mtime": 1793216674.6006105,
+    "seen": 1793910198.2344966,
+    "ast_hash": "1658c7a7aece29f7ac6eccae9890c140",
+    "semantic_hash": "1658c7a7aece29f7ac6eccae9890c140"
+  },
+  "js/data/cards-data.generated.js": {
+    "mtime": 1793554400.4928465,
+    "seen": 1793910198.2344966,
+    "ast_hash": "df7e9a49c227cf35949ecc9d06d21800",
+    "semantic_hash": "df7e9a49c227cf35949ecc9d06d21800"
+  },
+  "js/data/cards-db.js": {
+    "mtime": 1792534613.4282072,
+    "seen": 1793910198.2344966,
+    "ast_hash": "6d0f7b24f9478e10cace04c1fd9b6110",
+    "semantic_hash": "6d0f7b24f9478e10cace04c1fd9b6110"
+  },
+  "js/data/challenges-db.js": {
+    "mtime": 1793574121.7793076,
+    "seen": 1793910198.2344966,
+    "ast_hash": "2129de789fbeaf87e1acb0bcb619d2f7",
+    "semantic_hash": "2129de789fbeaf87e1acb0bcb619d2f7"
+  },
+  "js/data/character-decks.js": {
+    "mtime": 1793566464.0778747,
+    "seen": 1793910198.2344966,
+    "ast_hash": "dfd704d0a790e07b97a5e67dab0590d1",
+    "semantic_hash": "dfd704d0a790e07b97a5e67dab0590d1"
+  },
+  "js/data/character-unlocks.js": {
+    "mtime": 1792325811.205076,
+    "seen": 1793910198.2425694,
+    "ast_hash": "992b2ccd9a2e75161e559b1490e252bc",
+    "semantic_hash": "992b2ccd9a2e75161e559b1490e252bc"
+  },
+  "js/data/characters-db.js": {
+    "mtime": 1792329913.5156028,
+    "seen": 1793910198.2425694,
+    "ast_hash": "c2984e50412c424138d299e4eb3b3937",
+    "semantic_hash": "c2984e50412c424138d299e4eb3b3937"
+  },
+  "js/data/custom-cards.js": {
+    "mtime": 1792320742.1809905,
+    "seen": 1793910198.2425694,
+    "ast_hash": "3db4fe17a12a724a80cb19a0c6ff2ba5",
+    "semantic_hash": "3db4fe17a12a724a80cb19a0c6ff2ba5"
+  },
+  "js/data/custom-taxonomy.js": {
+    "mtime": 1791583091.924584,
+    "seen": 1793910198.2425694,
+    "ast_hash": "ccc627c44a44d7886180c9bc9081eb29",
+    "semantic_hash": "ccc627c44a44d7886180c9bc9081eb29"
+  },
+  "js/data/deck-legality.js": {
+    "mtime": 1792320742.181993,
+    "seen": 1793910198.2425694,
+    "ast_hash": "5565cda324eafc728580460c961371ae",
+    "semantic_hash": "5565cda324eafc728580460c961371ae"
+  },
+  "js/data/gridi-evocazione.js": {
+    "mtime": 1792586049.832307,
+    "seen": 1793910198.2445717,
+    "ast_hash": "b550e83dc85ce95b16ddff52f8028555",
+    "semantic_hash": "b550e83dc85ce95b16ddff52f8028555"
+  },
+  "js/data/missions-db.js": {
+    "mtime": 1793348489.0211966,
+    "seen": 1793910198.2445717,
+    "ast_hash": "8a0fbe13ff4eb23d4dcc65b912308bd6",
+    "semantic_hash": "8a0fbe13ff4eb23d4dcc65b912308bd6"
+  },
+  "js/data/puzzles-db.js": {
+    "mtime": 1792586049.836317,
+    "seen": 1793910198.2445717,
+    "ast_hash": "9f9b7076fe3f98e743b12c9053749a66",
+    "semantic_hash": "9f9b7076fe3f98e743b12c9053749a66"
+  },
+  "js/data/raid-db.js": {
+    "mtime": 1793047957.946628,
+    "seen": 1793910198.2445717,
+    "ast_hash": "bbb64ede98eab9e154791fea2452489d",
+    "semantic_hash": "bbb64ede98eab9e154791fea2452489d"
+  },
+  "js/data/rivincite-db.js": {
+    "mtime": 1792586049.8383212,
+    "seen": 1793910198.2445717,
+    "ast_hash": "324c3b650e4b12fcbe74e60c62e8f8a2",
+    "semantic_hash": "324c3b650e4b12fcbe74e60c62e8f8a2"
+  },
+  "js/data/settimana-db.js": {
+    "mtime": 1793216674.6061244,
+    "seen": 1793910198.2473266,
+    "ast_hash": "8f0f2fe15239d2a8c1e838ea21c65939",
+    "semantic_hash": "8f0f2fe15239d2a8c1e838ea21c65939"
+  },
+  "js/data/starter-structure-decks.js": {
+    "mtime": 1792794162.5524375,
+    "seen": 1793910198.2473266,
+    "ast_hash": "868dc9c548374af7bbbed90007fbbf1a",
+    "semantic_hash": "868dc9c548374af7bbbed90007fbbf1a"
+  },
+  "js/data/story-campaigns.js": {
+    "mtime": 1793557269.407559,
+    "seen": 1793910198.2473266,
+    "ast_hash": "f1e0dc0d4b69eeefaf3c77e3603ab68a",
+    "semantic_hash": "f1e0dc0d4b69eeefaf3c77e3603ab68a"
+  },
+  "js/data/story-dopo-duello.js": {
+    "mtime": 1793571305.591321,
+    "seen": 1793910198.2473266,
+    "ast_hash": "ef5bb4b916d1cce5e31ad8952e1083a0",
+    "semantic_hash": "ef5bb4b916d1cce5e31ad8952e1083a0"
+  },
+  "js/data/story-ritocchi.js": {
+    "mtime": 1792320742.1881125,
+    "seen": 1793910198.2493308,
+    "ast_hash": "a35cc1eab5e5975d29b990166614e0fb",
+    "semantic_hash": "a35cc1eab5e5975d29b990166614e0fb"
+  },
+  "js/data/tag-db.js": {
+    "mtime": 1793482354.418127,
+    "seen": 1793910198.2493308,
+    "ast_hash": "43681edc287ec79dabb4c6a8d0fb5ab2",
+    "semantic_hash": "43681edc287ec79dabb4c6a8d0fb5ab2"
+  },
+  "js/data/tinte-campi.js": {
+    "mtime": 1792320742.1891098,
+    "seen": 1793910198.2493308,
+    "ast_hash": "ae9012a553505193cad9585be5e9a9bc",
+    "semantic_hash": "ae9012a553505193cad9585be5e9a9bc"
+  },
+  "js/data/titles-db.js": {
+    "mtime": 1793348579.4919477,
+    "seen": 1793910198.2493308,
+    "ast_hash": "71281162ca63fffe8b8a348dd2219de7",
+    "semantic_hash": "71281162ca63fffe8b8a348dd2219de7"
+  },
+  "js/data/torre-db.js": {
+    "mtime": 1791793780.6877773,
+    "seen": 1793910198.2513337,
+    "ast_hash": "577cc609728b38c70425d2596567e302",
+    "semantic_hash": "577cc609728b38c70425d2596567e302"
+  },
+  "js/data/tournament-dialogues.js": {
+    "mtime": 1792243815.549582,
+    "seen": 1793910198.2513337,
+    "ast_hash": "543be4b7023e1b4e2fcdf256352e5d45",
+    "semantic_hash": "543be4b7023e1b4e2fcdf256352e5d45"
+  },
+  "js/dev/story-admin-tools.js": {
+    "mtime": 1792320742.1901069,
+    "seen": 1793910198.2513337,
+    "ast_hash": "f45b4d1e3090c2b51638fba84915aefe",
+    "semantic_hash": "f45b4d1e3090c2b51638fba84915aefe"
+  },
+  "js/dev/story-map-editor.js": {
+    "mtime": 1792190211.8575764,
+    "seen": 1793910198.2513337,
+    "ast_hash": "d0ce52b3d54280ac9d6b0a64ee48d881",
+    "semantic_hash": "d0ce52b3d54280ac9d6b0a64ee48d881"
+  },
+  "js/dev/test-shortcuts.js": {
+    "mtime": 1790718025.6129522,
+    "seen": 1793910198.2513337,
+    "ast_hash": "fea8d8571521408de003e6ded873d161",
+    "semantic_hash": "fea8d8571521408de003e6ded873d161"
+  },
+  "js/duel-session.js": {
+    "mtime": 1793743760.9334521,
+    "seen": 1793910198.2513337,
+    "ast_hash": "cbdb0f012691f478b0bdf9ef2d8fdbd7",
+    "semantic_hash": "cbdb0f012691f478b0bdf9ef2d8fdbd7"
+  },
+  "js/economy/card-acquisition.js": {
+    "mtime": 1793574194.6867855,
+    "seen": 1793910198.2513337,
+    "ast_hash": "39d53aadfd3afca11c74a3ae9f11a6d0",
+    "semantic_hash": "39d53aadfd3afca11c74a3ae9f11a6d0"
+  },
+  "js/economy/card-drop-animation.js": {
+    "mtime": 1793738453.627683,
+    "seen": 1793910198.2543685,
+    "ast_hash": "ab94a3dc6ab5fb680d5fc90dc8981fa2",
+    "semantic_hash": "ab94a3dc6ab5fb680d5fc90dc8981fa2"
+  },
+  "js/economy/pack-opening-webgl.js": {
+    "mtime": 1792767772.773321,
+    "seen": 1793910198.2543685,
+    "ast_hash": "43e3bc255cfef69eb48d04870c134693",
+    "semantic_hash": "43e3bc255cfef69eb48d04870c134693"
+  },
+  "js/economy/pack-opening.js": {
+    "mtime": 1793742715.16343,
+    "seen": 1793910198.2543685,
+    "ast_hash": "da1f921c202848f8237a2be80492f3ed",
+    "semantic_hash": "da1f921c202848f8237a2be80492f3ed"
+  },
+  "js/economy/rewards.js": {
+    "mtime": 1793055036.246399,
+    "seen": 1793910198.2543685,
+    "ast_hash": "a9c6525c2dcc2b48d6495fb9121910d6",
+    "semantic_hash": "a9c6525c2dcc2b48d6495fb9121910d6"
+  },
+  "js/economy/shop-catalog.js": {
+    "mtime": 1792794164.864322,
+    "seen": 1793910198.2543685,
+    "ast_hash": "2bd6e53feda23cff6ba5359a8dedea69",
+    "semantic_hash": "2bd6e53feda23cff6ba5359a8dedea69"
+  },
+  "js/economy/shop-ui.js": {
+    "mtime": 1793574153.5954914,
+    "seen": 1793910198.2543685,
+    "ast_hash": "0c9b0769bf0be1d361b2f67b643860a4",
+    "semantic_hash": "0c9b0769bf0be1d361b2f67b643860a4"
+  },
+  "js/engine/actions.js": {
+    "mtime": 1793835973.9985795,
+    "seen": 1793910198.2543685,
+    "ast_hash": "27203d73071a735a95159b329efb2df9",
+    "semantic_hash": "27203d73071a735a95159b329efb2df9"
+  },
+  "js/engine/battaglia.js": {
+    "mtime": 1792586049.8544226,
+    "seen": 1793910198.2543685,
+    "ast_hash": "14ee70c1a68d538422e2f4fe85751e76",
+    "semantic_hash": "14ee70c1a68d538422e2f4fe85751e76"
+  },
+  "js/engine/canale-partita.js": {
+    "mtime": 1792320742.193226,
+    "seen": 1793910198.2543685,
+    "ast_hash": "bd179f5417bf939cd3da633175c79a93",
+    "semantic_hash": "bd179f5417bf939cd3da633175c79a93"
+  },
+  "js/engine/card-effects-1.js": {
+    "mtime": 1793482354.420139,
+    "seen": 1793910198.2543685,
+    "ast_hash": "9bbdd25e907fe71412442a453eb510a6",
+    "semantic_hash": "9bbdd25e907fe71412442a453eb510a6"
+  },
+  "js/engine/card-effects-2.js": {
+    "mtime": 1793571936.8356528,
+    "seen": 1793910198.2543685,
+    "ast_hash": "bb32ab803508ae23d34447b6200af06d",
+    "semantic_hash": "bb32ab803508ae23d34447b6200af06d"
+  },
+  "js/engine/card-effects-3.js": {
+    "mtime": 1792609045.8001719,
+    "seen": 1793910198.2543685,
+    "ast_hash": "a0d0ee4a5830ff7351a541eed7591355",
+    "semantic_hash": "a0d0ee4a5830ff7351a541eed7591355"
+  },
+  "js/engine/card-effects-4.js": {
+    "mtime": 1793555182.8793817,
+    "seen": 1793910198.2543685,
+    "ast_hash": "6200978cd9c6447adc3971002edc9667",
+    "semantic_hash": "6200978cd9c6447adc3971002edc9667"
+  },
+  "js/engine/card-effects-5.js": {
+    "mtime": 1792604170.7087324,
+    "seen": 1793910198.2543685,
+    "ast_hash": "a8cfe268352fc7915865fd72c59231bd",
+    "semantic_hash": "a8cfe268352fc7915865fd72c59231bd"
+  },
+  "js/engine/card-effects-6.js": {
+    "mtime": 1792608281.7908032,
+    "seen": 1793910198.2543685,
+    "ast_hash": "1082781f6209990a9f75a1720ef79ce5",
+    "semantic_hash": "1082781f6209990a9f75a1720ef79ce5"
+  },
+  "js/engine/card-effects-7.js": {
+    "mtime": 1792772919.6063032,
+    "seen": 1793910198.2543685,
+    "ast_hash": "7e12c6dcd2aba2bc2b89df0fa4c02e9d",
+    "semantic_hash": "7e12c6dcd2aba2bc2b89df0fa4c02e9d"
+  },
+  "js/engine/card-effects-8.js": {
+    "mtime": 1793834612.424409,
+    "seen": 1793910198.2543685,
+    "ast_hash": "151cd38c7fbb995700d0f872b7a8d8bc",
+    "semantic_hash": "151cd38c7fbb995700d0f872b7a8d8bc"
+  },
+  "js/engine/card-effects.js": {
+    "mtime": 1793535973.4806437,
+    "seen": 1793910198.2543685,
+    "ast_hash": "55f28bfa40f89f521eb4f0c8a4c98d79",
+    "semantic_hash": "55f28bfa40f89f521eb4f0c8a4c98d79"
+  },
+  "js/engine/casuale.js": {
+    "mtime": 1791272735.4297633,
+    "seen": 1793910198.2543685,
+    "ast_hash": "b81f214e6d8b1ae8ec35fa9e75d80ca7",
+    "semantic_hash": "b81f214e6d8b1ae8ec35fa9e75d80ca7"
+  },
+  "js/engine/comandi.js": {
+    "mtime": 1792883256.043831,
+    "seen": 1793910198.2632673,
+    "ast_hash": "992da564fb9bc51a21f0d3b2c08617db",
+    "semantic_hash": "992da564fb9bc51a21f0d3b2c08617db"
+  },
+  "js/engine/decisioni.js": {
+    "mtime": 1793482354.4211457,
+    "seen": 1793910198.2642758,
+    "ast_hash": "dcd14125a9faf5071dedc66d14fd61d0",
+    "semantic_hash": "dcd14125a9faf5071dedc66d14fd61d0"
+  },
+  "js/engine/duel-engine.js": {
+    "mtime": 1793908740.6598492,
+    "seen": 1793910198.2642758,
+    "ast_hash": "045cdbb50019b15680d02d7489eb6698",
+    "semantic_hash": "045cdbb50019b15680d02d7489eb6698"
+  },
+  "js/engine/duel-sandbox.js": {
+    "mtime": 1792586049.8961203,
+    "seen": 1793910198.2642758,
+    "ast_hash": "8653ad574ce10585cbcbccb41a5caf1c",
+    "semantic_hash": "8653ad574ce10585cbcbccb41a5caf1c"
+  },
+  "js/engine/effect-templates.js": {
+    "mtime": 1789914011.5709684,
+    "seen": 1793910198.2642758,
+    "ast_hash": "1c7cb717738e9fde28c85bc8104918d8",
+    "semantic_hash": "1c7cb717738e9fde28c85bc8104918d8"
+  },
+  "js/engine/eventi-duello.js": {
+    "mtime": 1793482354.4257238,
+    "seen": 1793910198.2642758,
+    "ast_hash": "f10cc5a973b9e306ff965fddfb6136b4",
+    "semantic_hash": "f10cc5a973b9e306ff965fddfb6136b4"
+  },
+  "js/engine/evocazioni.js": {
+    "mtime": 1792924030.265253,
+    "seen": 1793910198.2642758,
+    "ast_hash": "335089c2e943e786c13e0c3147c7734f",
+    "semantic_hash": "335089c2e943e786c13e0c3147c7734f"
+  },
+  "js/engine/fasi.js": {
+    "mtime": 1793482354.427735,
+    "seen": 1793910198.2642758,
+    "ast_hash": "d42a1978c3cc7eebca874eb6aff40c39",
+    "semantic_hash": "d42a1978c3cc7eebca874eb6aff40c39"
+  },
+  "js/engine/game-flow.js": {
+    "mtime": 1793833467.8987546,
+    "seen": 1793910198.2642758,
+    "ast_hash": "3d093c1a6f2fa56d2392c14000839045",
+    "semantic_hash": "3d093c1a6f2fa56d2392c14000839045"
+  },
+  "js/engine/passo-comune.js": {
+    "mtime": 1793482354.4297478,
+    "seen": 1793910198.2642758,
+    "ast_hash": "be3d1387f15f3aed0cdd232f169f1ac9",
+    "semantic_hash": "be3d1387f15f3aed0cdd232f169f1ac9"
+  },
+  "js/engine/pausa-duello.js": {
+    "mtime": 1792320813.0523033,
+    "seen": 1793910198.2642758,
+    "ast_hash": "b208614f49c415b62dbdcb3f0f0123ed",
+    "semantic_hash": "b208614f49c415b62dbdcb3f0f0123ed"
+  },
+  "js/engine/porta-ui.js": {
+    "mtime": 1791227476.3110595,
+    "seen": 1793910198.2642758,
+    "ast_hash": "34a12f9ee691644b1c20f885f00ba222",
+    "semantic_hash": "34a12f9ee691644b1c20f885f00ba222"
+  },
+  "js/engine/stato.js": {
+    "mtime": 1792320801.642635,
+    "seen": 1793910198.2695239,
+    "ast_hash": "b5078e11ed63e5b263f0829efa6010a9",
+    "semantic_hash": "b5078e11ed63e5b263f0829efa6010a9"
+  },
+  "js/engine/tavolo.js": {
+    "mtime": 1793482354.430865,
+    "seen": 1793910198.2695239,
+    "ast_hash": "e2d6c8d8b1265f2c546dcae67d003dfc",
+    "semantic_hash": "e2d6c8d8b1265f2c546dcae67d003dfc"
+  },
+  "js/modes/caccia-mode.js": {
+    "mtime": 1793348579.4965272,
+    "seen": 1793910198.2695239,
+    "ast_hash": "05f07185341528b4104e822f9a85435a",
+    "semantic_hash": "05f07185341528b4104e822f9a85435a"
+  },
+  "js/modes/caccia.js": {
+    "mtime": 1793216674.6141841,
+    "seen": 1793910198.2695239,
+    "ast_hash": "17936d35790d4bdb5e7f100f5082f708",
+    "semantic_hash": "17936d35790d4bdb5e7f100f5082f708"
+  },
+  "js/modes/mode-unlocks.js": {
+    "mtime": 1792320742.199336,
+    "seen": 1793910198.2695239,
+    "ast_hash": "5e22c32197f431ed1e285a8fcba52354",
+    "semantic_hash": "5e22c32197f431ed1e285a8fcba52354"
+  },
+  "js/modes/puzzle-mode.js": {
+    "mtime": 1791748832.6981208,
+    "seen": 1793910198.2695239,
+    "ast_hash": "555abbdbc0f67f79e6afd825028bbe6f",
+    "semantic_hash": "555abbdbc0f67f79e6afd825028bbe6f"
+  },
+  "js/modes/rivincita-mode.js": {
+    "mtime": 1792190037.5526485,
+    "seen": 1793910198.2695239,
+    "ast_hash": "5b92228820259c518316477d600a9c50",
+    "semantic_hash": "5b92228820259c518316477d600a9c50"
+  },
+  "js/modes/settimana-mode.js": {
+    "mtime": 1793573648.1648283,
+    "seen": 1793910198.2695239,
+    "ast_hash": "4786b2f6bd4cda56c107f1515eed9ab0",
+    "semantic_hash": "4786b2f6bd4cda56c107f1515eed9ab0"
+  },
+  "js/modes/settimana.js": {
+    "mtime": 1793573646.5055497,
+    "seen": 1793910198.2695239,
+    "ast_hash": "53e9c105985056c26358ba17f14146b3",
+    "semantic_hash": "53e9c105985056c26358ba17f14146b3"
+  },
+  "js/modes/tag-mode.js": {
+    "mtime": 1793737945.8777006,
+    "seen": 1793910198.2695239,
+    "ast_hash": "39b3616f6b7fa2d79d626955aacf2ae4",
+    "semantic_hash": "39b3616f6b7fa2d79d626955aacf2ae4"
+  },
+  "js/modes/tag.js": {
+    "mtime": 1793533478.7873144,
+    "seen": 1793910198.2745357,
+    "ast_hash": "9872282ca2ede09c162eb86c6440cf40",
+    "semantic_hash": "9872282ca2ede09c162eb86c6440cf40"
+  },
+  "js/modes/torre-mode.js": {
+    "mtime": 1792601420.4139652,
+    "seen": 1793910198.2745357,
+    "ast_hash": "e2af0cef510dcc6a1fc13b4e170d08fa",
+    "semantic_hash": "e2af0cef510dcc6a1fc13b4e170d08fa"
+  },
+  "js/modes/torre.js": {
+    "mtime": 1791757182.6062922,
+    "seen": 1793910198.2745357,
+    "ast_hash": "4c0aee312e8103fd15bfe30fddcdc681",
+    "semantic_hash": "4c0aee312e8103fd15bfe30fddcdc681"
+  },
+  "js/multiplayer/mp-lobby.js": {
+    "mtime": 1793737945.887982,
+    "seen": 1793910198.2745357,
+    "ast_hash": "f022a57164d1471d83fd1571ba8b87ce",
+    "semantic_hash": "f022a57164d1471d83fd1571ba8b87ce"
+  },
+  "js/multiplayer/mp-modi.js": {
+    "mtime": 1793482354.4353776,
+    "seen": 1793910198.2745357,
+    "ast_hash": "891b608e80fb41727b72f36c9e1927d9",
+    "semantic_hash": "891b608e80fb41727b72f36c9e1927d9"
+  },
+  "js/multiplayer/mp-passo-comune.js": {
+    "mtime": 1793482354.4353776,
+    "seen": 1793910198.2745357,
+    "ast_hash": "a301d0da035f1c4d9299a61efcd3c115",
+    "semantic_hash": "a301d0da035f1c4d9299a61efcd3c115"
+  },
+  "js/multiplayer/mp-pedina.js": {
+    "mtime": 1792622336.072132,
+    "seen": 1793910198.2745357,
+    "ast_hash": "c7e4d876d718c3e03253e4a1f2b40147",
+    "semantic_hash": "c7e4d876d718c3e03253e4a1f2b40147"
+  },
+  "js/multiplayer/mp-raid-campo.js": {
+    "mtime": 1793538655.013199,
+    "seen": 1793910198.2745357,
+    "ast_hash": "539e8be42f69ad14ae11a842e0b34694",
+    "semantic_hash": "539e8be42f69ad14ae11a842e0b34694"
+  },
+  "js/multiplayer/mp-raid.js": {
+    "mtime": 1793051369.3435674,
+    "seen": 1793910198.2745357,
+    "ast_hash": "bd6fca56f8d63091a262cad287a09b17",
+    "semantic_hash": "bd6fca56f8d63091a262cad287a09b17"
+  },
+  "js/multiplayer/mp-tag-sala.js": {
+    "mtime": 1793548730.6908696,
+    "seen": 1793910198.2745357,
+    "ast_hash": "84ba448a41bd4afb8057d5ce5c8e2dc4",
+    "semantic_hash": "84ba448a41bd4afb8057d5ce5c8e2dc4"
+  },
+  "js/multiplayer/mp-term-fx.js": {
+    "mtime": 1792620823.3393624,
+    "seen": 1793910198.2745357,
+    "ast_hash": "4bc14091f002862ad6d49eacb86ca705",
+    "semantic_hash": "4bc14091f002862ad6d49eacb86ca705"
+  },
+  "js/multiplayer/multiplayer.js": {
+    "mtime": 1793482354.437615,
+    "seen": 1793910198.2745357,
+    "ast_hash": "d84ffb24ad7e2b11ba808ff07bd3cdb9",
+    "semantic_hash": "d84ffb24ad7e2b11ba808ff07bd3cdb9"
+  },
+  "js/multiplayer/network.js": {
+    "mtime": 1793482354.437615,
+    "seen": 1793910198.2745357,
+    "ast_hash": "c6e2b0d3771a403b54232e53cd2e64d5",
+    "semantic_hash": "c6e2b0d3771a403b54232e53cd2e64d5"
+  },
+  "js/multiplayer/protocollo-mp.js": {
+    "mtime": 1793482354.4387188,
+    "seen": 1793910198.2745357,
+    "ast_hash": "dba9ffea2f6e0f6e7688058f24456ff4",
+    "semantic_hash": "dba9ffea2f6e0f6e7688058f24456ff4"
+  },
+  "js/native/app-back-button.js": {
+    "mtime": 1792320742.203325,
+    "seen": 1793910198.2745357,
+    "ast_hash": "16cbfa3663369e78991d6d3d5ec79f5d",
+    "semantic_hash": "16cbfa3663369e78991d6d3d5ec79f5d"
+  },
+  "js/native/haptics.js": {
+    "mtime": 1792320742.204323,
+    "seen": 1793910198.2745357,
+    "ast_hash": "5bb13f5cd65676ffff6d1c637b1a5a4a",
+    "semantic_hash": "5bb13f5cd65676ffff6d1c637b1a5a4a"
+  },
+  "js/native/keep-awake.js": {
+    "mtime": 1792320742.2053196,
+    "seen": 1793910198.2745357,
+    "ast_hash": "9bb4beac6477b0e9f3990d26156c78fe",
+    "semantic_hash": "9bb4beac6477b0e9f3990d26156c78fe"
+  },
+  "js/native/native-save-backup.js": {
+    "mtime": 1792320742.2063174,
+    "seen": 1793910198.2745357,
+    "ast_hash": "0e53883699f957eb448e873f1aed1ded",
+    "semantic_hash": "0e53883699f957eb448e873f1aed1ded"
+  },
+  "js/pwa-register.js": {
+    "mtime": 1792320742.1687777,
+    "seen": 1793910198.2745357,
+    "ast_hash": "15b5214a640840d7236e75d1d4ebc8b9",
+    "semantic_hash": "15b5214a640840d7236e75d1d4ebc8b9"
+  },
+  "js/save-manager.js": {
+    "mtime": 1793348389.4303844,
+    "seen": 1793910198.2745357,
+    "ast_hash": "16221a7641cd88653755bd0823aad446",
+    "semantic_hash": "16221a7641cd88653755bd0823aad446"
+  },
+  "js/story/story-progress.js": {
+    "mtime": 1793571201.4701655,
+    "seen": 1793910198.2840168,
+    "ast_hash": "1cbb900f48fbb999a47a1c77fb8b0f1e",
+    "semantic_hash": "1cbb900f48fbb999a47a1c77fb8b0f1e"
+  },
+  "js/story/story-ritocchi.js": {
+    "mtime": 1792320742.210438,
+    "seen": 1793910198.2845256,
+    "ast_hash": "655f2696b109cab63a533e5ca403efef",
+    "semantic_hash": "655f2696b109cab63a533e5ca403efef"
+  },
+  "js/tutorial/tutorial-duel.js": {
+    "mtime": 1793574182.853585,
+    "seen": 1793910198.2845256,
+    "ast_hash": "4303afb7290a4f719faf05900d05cf20",
+    "semantic_hash": "4303afb7290a4f719faf05900d05cf20"
+  },
+  "js/ui/ambiente-mappe-storia.js": {
+    "mtime": 1792444241.477215,
+    "seen": 1793910198.2845256,
+    "ast_hash": "6c2bd396f467b100810283bb2994996d",
+    "semantic_hash": "6c2bd396f467b100810283bb2994996d"
+  },
+  "js/ui/ambiente-menu.js": {
+    "mtime": 1792571339.5076995,
+    "seen": 1793910198.2845256,
+    "ast_hash": "c7988642b2752741fbb4c5ae1917ee92",
+    "semantic_hash": "c7988642b2752741fbb4c5ae1917ee92"
+  },
+  "js/ui/ambiente-webgl.js": {
+    "mtime": 1793545879.9157252,
+    "seen": 1793910198.2845256,
+    "ast_hash": "8b82185154a42b19455a3d18d373893c",
+    "semantic_hash": "8b82185154a42b19455a3d18d373893c"
+  },
+  "js/ui/board-pieces.js": {
+    "mtime": 1791051683.448624,
+    "seen": 1793910198.2845256,
+    "ast_hash": "ab8046d5a6f62d7a58f3ee39aff77489",
+    "semantic_hash": "ab8046d5a6f62d7a58f3ee39aff77489"
+  },
+  "js/ui/bot-speed.js": {
+    "mtime": 1792320742.212432,
+    "seen": 1793910198.2845256,
+    "ast_hash": "f0250fdc109ae4c773ba4bcdbcfe40a1",
+    "semantic_hash": "f0250fdc109ae4c773ba4bcdbcfe40a1"
+  },
+  "js/ui/card-detail.js": {
+    "mtime": 1792772919.6128893,
+    "seen": 1793910198.2845256,
+    "ast_hash": "07b0647f31e790dedb4f5866024b8ab5",
+    "semantic_hash": "07b0647f31e790dedb4f5866024b8ab5"
+  },
+  "js/ui/card-renderer.js": {
+    "mtime": 1793381544.8437831,
+    "seen": 1793910198.2845256,
+    "ast_hash": "1be338c14663e43a9bbb69c6a63cba0a",
+    "semantic_hash": "1be338c14663e43a9bbb69c6a63cba0a"
+  },
+  "js/ui/cartoteca-view.js": {
+    "mtime": 1793824259.2666218,
+    "seen": 1793910198.2845256,
+    "ast_hash": "5cadf1d0683a327171b71a66b74bb83f",
+    "semantic_hash": "5cadf1d0683a327171b71a66b74bb83f"
+  },
+  "js/ui/catena-webgl.js": {
+    "mtime": 1793528514.3434196,
+    "seen": 1793910198.2845256,
+    "ast_hash": "d3a91f3ee3e393f338541195a519a4fd",
+    "semantic_hash": "d3a91f3ee3e393f338541195a519a4fd"
+  },
+  "js/ui/challenge-banner.js": {
+    "mtime": 1792320801.5811093,
+    "seen": 1793910198.2845256,
+    "ast_hash": "05169dfc4c602d1acda736bbe707f606",
+    "semantic_hash": "05169dfc4c602d1acda736bbe707f606"
+  },
+  "js/ui/conto-alla-rovescia.js": {
+    "mtime": 1793217808.6569076,
+    "seen": 1793910198.2845256,
+    "ast_hash": "17943c8dce42b22fed8b5e7253e4b4ce",
+    "semantic_hash": "17943c8dce42b22fed8b5e7253e4b4ce"
+  },
+  "js/ui/deck-box.js": {
+    "mtime": 1792320742.214427,
+    "seen": 1793910198.2845256,
+    "ast_hash": "da6c1da2dabfc53c83851dd4ce2ae80b",
+    "semantic_hash": "da6c1da2dabfc53c83851dd4ce2ae80b"
+  },
+  "js/ui/deck-switcher.js": {
+    "mtime": 1793816315.3855245,
+    "seen": 1793910198.2845256,
+    "ast_hash": "600a2f5811c880ea7d0f07e2362562de",
+    "semantic_hash": "600a2f5811c880ea7d0f07e2362562de"
+  },
+  "js/ui/duel-cinematics.js": {
+    "mtime": 1792530446.2133358,
+    "seen": 1793910198.2845256,
+    "ast_hash": "cb4983c10f8a2fe8215cb4e786b8b4be",
+    "semantic_hash": "cb4983c10f8a2fe8215cb4e786b8b4be"
+  },
+  "js/ui/duel-dialogues.js": {
+    "mtime": 1792586049.9011378,
+    "seen": 1793910198.2845256,
+    "ast_hash": "9daa1a1271709f6db4452e4faf682a5e",
+    "semantic_hash": "9daa1a1271709f6db4452e4faf682a5e"
+  },
+  "js/ui/duel-feedback.js": {
+    "mtime": 1792181773.4435234,
+    "seen": 1793910198.2928383,
+    "ast_hash": "746cec52b66fc4a1ebf82a3917a63853",
+    "semantic_hash": "746cec52b66fc4a1ebf82a3917a63853"
+  },
+  "js/ui/duel-fx-webgl.js": {
+    "mtime": 1792529472.7556205,
+    "seen": 1793910198.2931392,
+    "ast_hash": "6ea4d9b81b7dd6d49896a33e966adc6b",
+    "semantic_hash": "6ea4d9b81b7dd6d49896a33e966adc6b"
+  },
+  "js/ui/duel-rps.js": {
+    "mtime": 1792231233.1435044,
+    "seen": 1793910198.2931392,
+    "ast_hash": "48cc17b60d72cdb5629dd926b3dc1c24",
+    "semantic_hash": "48cc17b60d72cdb5629dd926b3dc1c24"
+  },
+  "js/ui/duel-setup.js": {
+    "mtime": 1793824282.6089413,
+    "seen": 1793910198.2931392,
+    "ast_hash": "747e5f4d22a603822d2018492e57b96e",
+    "semantic_hash": "747e5f4d22a603822d2018492e57b96e"
+  },
+  "js/ui/effects.js": {
+    "mtime": 1793908518.128067,
+    "seen": 1793910198.2948053,
+    "ast_hash": "ed4735525608b3448af11258cd82e20b",
+    "semantic_hash": "ed4735525608b3448af11258cd82e20b"
+  },
+  "js/ui/error-recovery.js": {
+    "mtime": 1792610801.6383338,
+    "seen": 1793910198.2948053,
+    "ast_hash": "08ad6d2ef6ae40e7720dcca383ecc8cd",
+    "semantic_hash": "08ad6d2ef6ae40e7720dcca383ecc8cd"
+  },
+  "js/ui/evocazione-epica-webgl.js": {
+    "mtime": 1792883256.062046,
+    "seen": 1793910198.295818,
+    "ast_hash": "42c14b104e54487ae8e567f2c0881453",
+    "semantic_hash": "42c14b104e54487ae8e567f2c0881453"
+  },
+  "js/ui/field-ambience.js": {
+    "mtime": 1792441390.7880397,
+    "seen": 1793910198.295818,
+    "ast_hash": "69d292638dfacda826f21260d36dec34",
+    "semantic_hash": "69d292638dfacda826f21260d36dec34"
+  },
+  "js/ui/fluido.js": {
+    "mtime": 1792535453.6016665,
+    "seen": 1793910198.295818,
+    "ast_hash": "1f04f6964d5234d991daa2bda2239e38",
+    "semantic_hash": "1f04f6964d5234d991daa2bda2239e38"
+  },
+  "js/ui/fx-gsap.js": {
+    "mtime": 1793360616.2722304,
+    "seen": 1793910198.29722,
+    "ast_hash": "02b5c2f6653db5904711bae268c195a5",
+    "semantic_hash": "02b5c2f6653db5904711bae268c195a5"
+  },
+  "js/ui/fx-webgl-scena.js": {
+    "mtime": 1793571930.2833316,
+    "seen": 1793910198.29722,
+    "ast_hash": "8d7bb6657e40288b0964825d22b919fd",
+    "semantic_hash": "8d7bb6657e40288b0964825d22b919fd"
+  },
+  "js/ui/fx-webgl.js": {
+    "mtime": 1793902044.046209,
+    "seen": 1793910198.29722,
+    "ast_hash": "8ed4bd6091706a574c906f3fdb6a2455",
+    "semantic_hash": "8ed4bd6091706a574c906f3fdb6a2455"
+  },
+  "js/ui/game-logo.js": {
+    "mtime": 1793365512.8656745,
+    "seen": 1793910198.298284,
+    "ast_hash": "89ea958a519f829cbb9cc7f6f3e2780c",
+    "semantic_hash": "89ea958a519f829cbb9cc7f6f3e2780c"
+  },
+  "js/ui/grido-evocazione.js": {
+    "mtime": 1792843110.5168843,
+    "seen": 1793910198.298284,
+    "ast_hash": "8ead60c244bb317a3ba5205079e0b28b",
+    "semantic_hash": "8ead60c244bb317a3ba5205079e0b28b"
+  },
+  "js/ui/hologram-setting.js": {
+    "mtime": 1792320742.2205453,
+    "seen": 1793910198.299558,
+    "ast_hash": "e55ee3a67decdaae0b50ec5dc5ef571f",
+    "semantic_hash": "e55ee3a67decdaae0b50ec5dc5ef571f"
+  },
+  "js/ui/icon-library.js": {
+    "mtime": 1793824258.9474392,
+    "seen": 1793910198.299558,
+    "ast_hash": "daf3be37afead839bae5306bac925f72",
+    "semantic_hash": "daf3be37afead839bae5306bac925f72"
+  },
+  "js/ui/icone-posizione-webgl.js": {
+    "mtime": 1792750426.9347587,
+    "seen": 1793910198.299558,
+    "ast_hash": "b6b2c8c4beb2b3d94e651a23340a66eb",
+    "semantic_hash": "b6b2c8c4beb2b3d94e651a23340a66eb"
+  },
+  "js/ui/inclinazione.js": {
+    "mtime": 1792883256.0680654,
+    "seen": 1793910198.3007286,
+    "ast_hash": "7cbdf78a69f3f337e14709082b30d32f",
+    "semantic_hash": "7cbdf78a69f3f337e14709082b30d32f"
+  },
+  "js/ui/lancio-webgl.js": {
+    "mtime": 1793565317.5922399,
+    "seen": 1793910198.3007286,
+    "ast_hash": "e30c7a328729e1596276dbb13bdc9fb7",
+    "semantic_hash": "e30c7a328729e1596276dbb13bdc9fb7"
+  },
+  "js/ui/mappa-percorso-webgl.js": {
+    "mtime": 1793057979.9087007,
+    "seen": 1793910198.3007286,
+    "ast_hash": "d2a806751beed626a23d1594e2b83e60",
+    "semantic_hash": "d2a806751beed626a23d1594e2b83e60"
+  },
+  "js/ui/menu-mobile.js": {
+    "mtime": 1793545217.2108731,
+    "seen": 1793910198.3022013,
+    "ast_hash": "8038b5f9952a234a1de2e901ba2227e3",
+    "semantic_hash": "8038b5f9952a234a1de2e901ba2227e3"
+  },
+  "js/ui/monster-hologram-webgl.js": {
+    "mtime": 1792841140.3690364,
+    "seen": 1793910198.3022013,
+    "ast_hash": "7529af583b42284e1071399b26f8b4d1",
+    "semantic_hash": "7529af583b42284e1071399b26f8b4d1"
+  },
+  "js/ui/monster-hologram.js": {
+    "mtime": 1792972074.0112157,
+    "seen": 1793910198.3032305,
+    "ast_hash": "8f5c55dffdcd23399928fb9dc8933ded",
+    "semantic_hash": "8f5c55dffdcd23399928fb9dc8933ded"
+  },
+  "js/ui/node-map.js": {
+    "mtime": 1793057979.9087007,
+    "seen": 1793910198.3032305,
+    "ast_hash": "c73bcec76f6f1006f277ed58372ca65f",
+    "semantic_hash": "c73bcec76f6f1006f277ed58372ca65f"
+  },
+  "js/ui/ologramma-vetrina.js": {
+    "mtime": 1792772919.6197948,
+    "seen": 1793910198.3042285,
+    "ast_hash": "720fc9fcd83e3ad543fba85c1e585eca",
+    "semantic_hash": "720fc9fcd83e3ad543fba85c1e585eca"
+  },
+  "js/ui/onboarding.js": {
+    "mtime": 1789914011.629865,
+    "seen": 1793910198.304572,
+    "ast_hash": "eecc4cb34ad3f39967271bf659e23fbb",
+    "semantic_hash": "eecc4cb34ad3f39967271bf659e23fbb"
+  },
+  "js/ui/page-loader.js": {
+    "mtime": 1792795374.5655355,
+    "seen": 1793910198.304572,
+    "ast_hash": "7df2977e61b20ab5cf15a09dc174f0f3",
+    "semantic_hash": "7df2977e61b20ab5cf15a09dc174f0f3"
+  },
+  "js/ui/profile-hero.js": {
+    "mtime": 1792924238.522783,
+    "seen": 1793910198.3056977,
+    "ast_hash": "60ef12528145a3ea85c7a0952528e076",
+    "semantic_hash": "60ef12528145a3ea85c7a0952528e076"
+  },
+  "js/ui/profile-stats.js": {
+    "mtime": 1792320742.2266648,
+    "seen": 1793910198.3056977,
+    "ast_hash": "6b11b054540b7bb919a6380e2e90b7f1",
+    "semantic_hash": "6b11b054540b7bb919a6380e2e90b7f1"
+  },
+  "js/ui/recupero-copia.js": {
+    "mtime": 1792839802.674639,
+    "seen": 1793910198.306712,
+    "ast_hash": "add497254ce39ba525645ad743f02a41",
+    "semantic_hash": "add497254ce39ba525645ad743f02a41"
+  },
+  "js/ui/scelta-duellante.js": {
+    "mtime": 1792535453.7209566,
+    "seen": 1793910198.306712,
+    "ast_hash": "621e37ee8b5072bf9068b4eb653d501e",
+    "semantic_hash": "621e37ee8b5072bf9068b4eb653d501e"
+  },
+  "js/ui/sfida-libera.js": {
+    "mtime": 1791625597.1047132,
+    "seen": 1793910198.306712,
+    "ast_hash": "603b411fb9690b693ea05fcd33662857",
+    "semantic_hash": "603b411fb9690b693ea05fcd33662857"
+  },
+  "js/ui/sfide-view.js": {
+    "mtime": 1793574134.9844446,
+    "seen": 1793910198.3079817,
+    "ast_hash": "0906f5eacabf68fc2593ec175e7e7f10",
+    "semantic_hash": "0906f5eacabf68fc2593ec175e7e7f10"
+  },
+  "js/ui/splash-webgl.js": {
+    "mtime": 1793610313.9451897,
+    "seen": 1793910198.3079817,
+    "ast_hash": "0067efb92862b82bf2457984842a0e48",
+    "semantic_hash": "0067efb92862b82bf2457984842a0e48"
+  },
+  "js/ui/stato-salvataggio.js": {
+    "mtime": 1792839627.641005,
+    "seen": 1793910198.309057,
+    "ast_hash": "ea723b53bbf7bb50fac69798d78a93cb",
+    "semantic_hash": "ea723b53bbf7bb50fac69798d78a93cb"
+  },
+  "js/ui/story-cutscene.js": {
+    "mtime": 1792737284.6845021,
+    "seen": 1793910198.3097062,
+    "ast_hash": "99c38041efcafb24b333001fa289f34d",
+    "semantic_hash": "99c38041efcafb24b333001fa289f34d"
+  },
+  "js/ui/tab-bar.js": {
+    "mtime": 1793564894.1060002,
+    "seen": 1793910198.3097062,
+    "ast_hash": "d1eab066efdfb15eb8ed5e1741deade3",
+    "semantic_hash": "d1eab066efdfb15eb8ed5e1741deade3"
+  },
+  "js/ui/tag-scambio.js": {
+    "mtime": 1793541429.3668792,
+    "seen": 1793910198.3109667,
+    "ast_hash": "c2c412fbe1597ecc72b411ab40ee3c30",
+    "semantic_hash": "c2c412fbe1597ecc72b411ab40ee3c30"
+  },
+  "js/ui/tavola-del-destino.js": {
+    "mtime": 1793346828.8917077,
+    "seen": 1793910198.3109667,
+    "ast_hash": "da25c2af41f5ea4beb78bec907a8929c",
+    "semantic_hash": "da25c2af41f5ea4beb78bec907a8929c"
+  },
+  "js/ui/tinta-campo.js": {
+    "mtime": 1792320742.2276628,
+    "seen": 1793910198.3109667,
+    "ast_hash": "1bb816cf6d3065273eed08736566ce98",
+    "semantic_hash": "1bb816cf6d3065273eed08736566ce98"
+  },
+  "js/ui/topbar.js": {
+    "mtime": 1793816315.6954324,
+    "seen": 1793910198.3122633,
+    "ast_hash": "261f72e05725b0f27d9a5dfff9691e78",
+    "semantic_hash": "261f72e05725b0f27d9a5dfff9691e78"
+  },
+  "js/ui/torre-ambiente-webgl.js": {
+    "mtime": 1792787345.513605,
+    "seen": 1793910198.3122633,
+    "ast_hash": "f13827624942b0d436390f984e1dfb9b",
+    "semantic_hash": "f13827624942b0d436390f984e1dfb9b"
+  },
+  "js/ui/video-quality.js": {
+    "mtime": 1792437259.2357304,
+    "seen": 1793910198.3132648,
+    "ast_hash": "34d8ae5b9b052a0a10f0b56a6cfb8d30",
+    "semantic_hash": "34d8ae5b9b052a0a10f0b56a6cfb8d30"
+  },
+  "js/ui/visual-effects-library.js": {
+    "mtime": 1792320742.2318401,
+    "seen": 1793910198.3132648,
+    "ast_hash": "420a0065179dcce9f5b49330c278fb78",
+    "semantic_hash": "420a0065179dcce9f5b49330c278fb78"
+  },
+  "js/vendor/gsap.min.js": {
+    "mtime": 1787057808.0,
+    "seen": 1793910198.314263,
+    "ast_hash": "bf3fd8ec2a5d9f4531b4c310222361f8",
+    "semantic_hash": "bf3fd8ec2a5d9f4531b4c310222361f8"
+  },
+  "js/vendor/howler.min.js": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.314263,
+    "ast_hash": "f1a5950d6727ce745c848a950d783095",
+    "semantic_hash": "f1a5950d6727ce745c848a950d783095"
+  },
+  "js/vendor/pixi.min.js": {
+    "mtime": 1787057809.0,
+    "seen": 1793910198.3151166,
+    "ast_hash": "e1142a18c1002a2e1795d755cf8c345a",
+    "semantic_hash": "e1142a18c1002a2e1795d755cf8c345a"
+  },
+  "js/vendor/supabase.min.js": {
+    "mtime": 1787425656.0,
+    "seen": 1793910198.315719,
+    "ast_hash": "c1d8e632461f730874351e0e835c7f9e",
+    "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
+  },
+  "js/version.js": {
+    "mtime": 1793908996.6061025,
+    "seen": 1793910198.3162255,
+    "ast_hash": "1abcb2c6d3edc5a1929a4ebcb60797fa",
+    "semantic_hash": "1abcb2c6d3edc5a1929a4ebcb60797fa"
+  },
+  "jsconfig.json": {
+    "mtime": 1791227476.329826,
+    "seen": 1793910198.3162255,
+    "ast_hash": "0f8271504bf96d0cf94e249b7d20a3b7",
+    "semantic_hash": "0f8271504bf96d0cf94e249b7d20a3b7"
+  },
+  "manifest.json": {
+    "mtime": 1791736795.2753456,
+    "seen": 1793910198.3162255,
+    "ast_hash": "57357a46c1d07a0fa18bbcd83581aaa6",
+    "semantic_hash": "57357a46c1d07a0fa18bbcd83581aaa6"
+  },
+  "package.json": {
+    "mtime": 1793908996.902514,
+    "seen": 1793910198.3172462,
+    "ast_hash": "26913d50cb9521c8a60827b6cfc5571f",
+    "semantic_hash": "26913d50cb9521c8a60827b6cfc5571f"
+  },
+  "render.yaml": {
+    "mtime": 1791738697.6765425,
+    "seen": 1793910198.3172462,
+    "ast_hash": "bb5be2e81c4c4083f255a55ab62282c2",
+    "semantic_hash": "bb5be2e81c4c4083f255a55ab62282c2"
+  },
+  "reports/archetypes/BLUE_EYES_SUPPORT_1_2_3.json": {
+    "mtime": 1792172240.5826406,
+    "seen": 1793910198.3184786,
+    "ast_hash": "de95841b70f9a75056775ee60511e8de",
+    "semantic_hash": "de95841b70f9a75056775ee60511e8de",
+    "ast_empty": true
+  },
+  "reports/archetypes/BLUE_EYES_SUPPORT_COMPLETE.json": {
+    "mtime": 1792172240.5922325,
+    "seen": 1793910198.3184786,
+    "ast_hash": "c74891dc19ba919a157b0d1369576eb9",
+    "semantic_hash": "c74891dc19ba919a157b0d1369576eb9",
+    "ast_empty": true
+  },
+  "reports/archetypes/CLASSIC_ARCHETYPES_BASELINE.json": {
+    "mtime": 1792172240.6042075,
+    "seen": 1793910198.3184786,
+    "ast_hash": "9bbfcd9d5ffa16f7fe8d058d07a0cba6",
+    "semantic_hash": "9bbfcd9d5ffa16f7fe8d058d07a0cba6",
+    "ast_empty": true
+  },
+  "reports/archetypes/CLASSIC_ARCHETYPES_WITH_CUSTOM.json": {
+    "mtime": 1792172240.6215343,
+    "seen": 1793910198.3184786,
+    "ast_hash": "65b07464ed4878574a47df7da2c4817d",
+    "semantic_hash": "65b07464ed4878574a47df7da2c4817d",
+    "ast_empty": true
+  },
+  "reports/archetypes/CUSTOM_DIFFICULTY_FACTORIAL.json": {
+    "mtime": 1792172240.6319158,
+    "seen": 1793910198.3184786,
+    "ast_hash": "c6336cfeb7f0474ea237cb98fb87d808",
+    "semantic_hash": "c6336cfeb7f0474ea237cb98fb87d808",
+    "ast_empty": true
+  },
+  "reports/archetypes/DARK_MAGICIAN_SUPPORT_1_2_3.json": {
+    "mtime": 1792172240.6424866,
+    "seen": 1793910198.3184786,
+    "ast_hash": "1ae5b269545b3de0f2ec3119343badf2",
+    "semantic_hash": "1ae5b269545b3de0f2ec3119343badf2",
+    "ast_empty": true
+  },
+  "reports/archetypes/DARK_MAGICIAN_SUPPORT_IA_CURATED.json": {
+    "mtime": 1792172240.650561,
+    "seen": 1793910198.3184786,
+    "ast_hash": "ff8577bc39d74f615cf16eba1a3caf2b",
+    "semantic_hash": "ff8577bc39d74f615cf16eba1a3caf2b",
+    "ast_empty": true
+  },
+  "reports/archetypes/EGYPTIAN_GODS_SUPPORT_1_2_3.json": {
+    "mtime": 1792172240.6629717,
+    "seen": 1793910198.3184786,
+    "ast_hash": "f7c9f38084ec496f9615d9acce5426be",
+    "semantic_hash": "f7c9f38084ec496f9615d9acce5426be",
+    "ast_empty": true
+  },
+  "reports/archetypes/HARD_VARIANTS_CLASSIC.json": {
+    "mtime": 1792172240.6747432,
+    "seen": 1793910198.3184786,
+    "ast_hash": "dc151c7adaecc9bdeb0ed0f5035aaf94",
+    "semantic_hash": "dc151c7adaecc9bdeb0ed0f5035aaf94",
+    "ast_empty": true
+  },
+  "reports/archetypes/JOEY_SUPPORTS_FINAL_AUDIT.json": {
+    "mtime": 1792172240.684854,
+    "seen": 1793910198.3184786,
+    "ast_hash": "eaf74831c77bbcbc9a3f6ce9ab3d2193",
+    "semantic_hash": "eaf74831c77bbcbc9a3f6ce9ab3d2193",
+    "ast_empty": true
+  },
+  "reports/archetypes/KAIBA_SUPPORTS_FINAL_AUDIT.json": {
+    "mtime": 1792172240.6942146,
+    "seen": 1793910198.3184786,
+    "ast_hash": "d0e894ac3803768eb3d0828c0c7d7db5",
+    "semantic_hash": "d0e894ac3803768eb3d0828c0c7d7db5",
+    "ast_empty": true
+  },
+  "reports/archetypes/MARIK_RA_FINAL_AUDIT.json": {
+    "mtime": 1792172240.7068195,
+    "seen": 1793910198.3184786,
+    "ast_hash": "0cfd09afaa5e4bd28d8d64b883e7a70e",
+    "semantic_hash": "0cfd09afaa5e4bd28d8d64b883e7a70e",
+    "ast_empty": true
+  },
+  "reports/archetypes/PEGASUS_SUPPORTS_FINAL_AUDIT.json": {
+    "mtime": 1792172240.720602,
+    "seen": 1793910198.3184786,
+    "ast_hash": "d03a76cf5655332a57d56203a097f0bb",
+    "semantic_hash": "d03a76cf5655332a57d56203a097f0bb",
+    "ast_empty": true
+  },
+  "reports/archetypes/RED_EYES_SUPPORT_1_2_3.json": {
+    "mtime": 1792172240.7350137,
+    "seen": 1793910198.3184786,
+    "ast_hash": "b2d779ac5a823d73a578cfc8d311dbe3",
+    "semantic_hash": "b2d779ac5a823d73a578cfc8d311dbe3",
+    "ast_empty": true
+  },
+  "reports/archetypes/STRINGS_HARD_AUDIT.json": {
+    "mtime": 1792172240.745166,
+    "seen": 1793910198.3184786,
+    "ast_hash": "434b375284aaa08000ad970fb8702802",
+    "semantic_hash": "434b375284aaa08000ad970fb8702802",
+    "ast_empty": true
+  },
+  "reports/archetypes/TOON_SUPPORT_1_2_3.json": {
+    "mtime": 1792172240.7560563,
+    "seen": 1793910198.3184786,
+    "ast_hash": "5b40dbea968fdeb6a8d36c061924593c",
+    "semantic_hash": "5b40dbea968fdeb6a8d36c061924593c",
+    "ast_empty": true
+  },
+  "reports/archetypes/TOON_SUPPORT_COMPLETE_1_2_3.json": {
+    "mtime": 1792172240.7671661,
+    "seen": 1793910198.3184786,
+    "ast_hash": "17294386ac8c8f72b9b5cb63d71672ea",
+    "semantic_hash": "17294386ac8c8f72b9b5cb63d71672ea",
+    "ast_empty": true
+  },
+  "reports/archetypes/YAMI_MAGNETICI_CAVALIERI_AUDIT.json": {
+    "mtime": 1792178378.6852257,
+    "seen": 1793910198.3184786,
+    "ast_hash": "2cab4068d0ee9a9824dbef1cde5c7606",
+    "semantic_hash": "2cab4068d0ee9a9824dbef1cde5c7606",
+    "ast_empty": true
+  },
+  "reports/archetypes/YAMI_SUPPORTS_FINAL_AUDIT.json": {
+    "mtime": 1792172240.7786994,
+    "seen": 1793910198.3184786,
+    "ast_hash": "06952fd913964a6ed30a07df1def594d",
+    "semantic_hash": "06952fd913964a6ed30a07df1def594d",
+    "ast_empty": true
+  },
+  "reports/boss-hard/baseline.json": {
+    "mtime": 1792172240.7890623,
+    "seen": 1793910198.3184786,
+    "ast_hash": "db4841b275a24b7ce7b3d369d048d484",
+    "semantic_hash": "db4841b275a24b7ce7b3d369d048d484",
+    "ast_empty": true
+  },
+  "reports/boss-hard/candidato-1.json": {
+    "mtime": 1792172240.7988892,
+    "seen": 1793910198.3184786,
+    "ast_hash": "b7376d5999ed53a00b8dd3287a7cc000",
+    "semantic_hash": "b7376d5999ed53a00b8dd3287a7cc000",
+    "ast_empty": true
+  },
+  "reports/boss-hard/candidato-2.json": {
+    "mtime": 1792172240.809268,
+    "seen": 1793910198.3184786,
+    "ast_hash": "f90514b8cd0bbae747eef59b70719186",
+    "semantic_hash": "f90514b8cd0bbae747eef59b70719186",
+    "ast_empty": true
+  },
+  "reports/boss-hard/finale.json": {
+    "mtime": 1792172240.8211446,
+    "seen": 1793910198.3184786,
+    "ast_hash": "7c5ee3ffbb4690d823a9b02b9bf0bb3c",
+    "semantic_hash": "7c5ee3ffbb4690d823a9b02b9bf0bb3c",
+    "ast_empty": true
+  },
+  "reports/boss-hard/heishin-candidato-3.json": {
+    "mtime": 1792172240.8316946,
+    "seen": 1793910198.3184786,
+    "ast_hash": "67d778aed0de9b8fa24829ea793e9958",
+    "semantic_hash": "67d778aed0de9b8fa24829ea793e9958",
+    "ast_empty": true
+  },
+  "reports/boss-hard/nitemare-candidato-3.json": {
+    "mtime": 1792172240.840977,
+    "seen": 1793910198.3184786,
+    "ast_hash": "5e0ada17010fc7e981cfd53cf4bd2671",
+    "semantic_hash": "5e0ada17010fc7e981cfd53cf4bd2671",
+    "ast_empty": true
+  },
+  "reports/forbidden-memories/FORBIDDEN_MEMORIES_AUDIT.json": {
+    "mtime": 1791745995.298289,
+    "seen": 1793910198.3184786,
+    "ast_hash": "655b268a6d2664c6433c1d45e78c0f5e",
+    "semantic_hash": "655b268a6d2664c6433c1d45e78c0f5e",
+    "ast_empty": true
+  },
+  "reports/forbidden-memories/FORBIDDEN_MEMORIES_REPEATABLE_IMPACT.json": {
+    "mtime": 1791745995.2992928,
+    "seen": 1793910198.3184786,
+    "ast_hash": "c7ff58f921be383a41e42d92703c4e03",
+    "semantic_hash": "c7ff58f921be383a41e42d92703c4e03",
+    "ast_empty": true
+  },
+  "reports/forbidden-memories/FORBIDDEN_MEMORIES_STRATEGY_AUDIT.json": {
+    "mtime": 1791745995.3007996,
+    "seen": 1793910198.3184786,
+    "ast_hash": "85fb96face37f1dfddb04d8ec05ff10c",
+    "semantic_hash": "85fb96face37f1dfddb04d8ec05ff10c",
+    "ast_empty": true
+  },
+  "reports/main-duellists/MAIN_DUELISTS_AUDIT_AMICI.json": {
+    "mtime": 1791745995.3041477,
+    "seen": 1793910198.3184786,
+    "ast_hash": "d6a2b1b221d2cbbd0d2ab073e56025a5",
+    "semantic_hash": "d6a2b1b221d2cbbd0d2ab073e56025a5",
+    "ast_empty": true
+  },
+  "reports/main-duellists/MAIN_DUELISTS_AUDIT_BATTLE_CITY.json": {
+    "mtime": 1791745995.3053174,
+    "seen": 1793910198.3184786,
+    "ast_hash": "52fecd8945c2d4e4f4d7ea3b08924bca",
+    "semantic_hash": "52fecd8945c2d4e4f4d7ea3b08924bca",
+    "ast_empty": true
+  },
+  "reports/main-duellists/MAIN_DUELISTS_AUDIT_REGNO.json": {
+    "mtime": 1791745995.3063595,
+    "seen": 1793910198.3184786,
+    "ast_hash": "50b1d290e2270d8914d843fb17f6ffc0",
+    "semantic_hash": "50b1d290e2270d8914d843fb17f6ffc0",
+    "ast_empty": true
+  },
+  "reports/main-duellists/MAIN_DUELISTS_AUDIT_VIRTUALE.json": {
+    "mtime": 1791745995.307363,
+    "seen": 1793910198.3184786,
+    "ast_hash": "3b40fb0643743740e6c654c513057d77",
+    "semantic_hash": "3b40fb0643743740e6c654c513057d77",
+    "ast_empty": true
+  },
+  "reports/matrix/MATRICE_COMPLETA.json": {
+    "mtime": 1792931676.8036218,
+    "seen": 1793910198.3184786,
+    "ast_hash": "f8aa3b2a499c85da075ffc5d9f27935f",
+    "semantic_hash": "f8aa3b2a499c85da075ffc5d9f27935f",
+    "ast_empty": true
+  },
+  "reports/matrix/MATRICE_INCROCIATA.json": {
+    "mtime": 1792933828.4907045,
+    "seen": 1793910198.3184786,
+    "ast_hash": "4ada41897a564487ed68e93dd429bd99",
+    "semantic_hash": "4ada41897a564487ed68e93dd429bd99",
+    "ast_empty": true
+  },
+  "reports/matrix/analisi-riferimento.json": {
+    "mtime": 1792931736.8733058,
+    "seen": 1793910198.3184786,
+    "ast_hash": "a3264c87e6fbf3cfd643de91a31ac1a2",
+    "semantic_hash": "a3264c87e6fbf3cfd643de91a31ac1a2",
+    "ast_empty": true
+  },
+  "reports/matrix/esperimento-dimensione-mazzo.json": {
+    "mtime": 1792934046.60754,
+    "seen": 1793910198.3184786,
+    "ast_hash": "b94be9c073a70b9bc33b8d3524f101ba",
+    "semantic_hash": "b94be9c073a70b9bc33b8d3524f101ba",
+    "ast_empty": true
+  },
+  "reports/pegasus/PEGASUS_OPPONENT_AUDIT.json": {
+    "mtime": 1791745995.3085544,
+    "seen": 1793910198.3184786,
+    "ast_hash": "5c3e835944d1e2c1951f0f4ea7fc5bf6",
+    "semantic_hash": "5c3e835944d1e2c1951f0f4ea7fc5bf6",
+    "ast_empty": true
+  },
+  "reports/pegasus/PEGASUS_OPPONENT_IDENTITY_AUDIT.json": {
+    "mtime": 1791745995.309693,
+    "seen": 1793910198.3184786,
+    "ast_hash": "3272d133f9c162162fc23b6fcf8c3503",
+    "semantic_hash": "3272d133f9c162162fc23b6fcf8c3503",
+    "ast_empty": true
+  },
+  "reports/story/STORY_DECK_SIMULATION_REPORT.json": {
+    "mtime": 1791745995.3128674,
+    "seen": 1793910198.3184786,
+    "ast_hash": "43493f1f7228c497711d170e972a088d",
+    "semantic_hash": "43493f1f7228c497711d170e972a088d",
+    "ast_empty": true
+  },
+  "reports/story/STORY_DECK_SIMULATION_REPORT_AFTER_BALANCE.json": {
+    "mtime": 1791745995.3165812,
+    "seen": 1793910198.3184786,
+    "ast_hash": "1564e0a7647aaaa9ef7f9b0275c77a5b",
+    "semantic_hash": "1564e0a7647aaaa9ef7f9b0275c77a5b",
+    "ast_empty": true
+  },
+  "reports/story/STORY_DIFFICULTY_FACTORIAL_REPORT.json": {
+    "mtime": 1791745995.317991,
+    "seen": 1793910198.3184786,
+    "ast_hash": "29340c150c73dec1d06fc507e6ae7636",
+    "semantic_hash": "29340c150c73dec1d06fc507e6ae7636",
+    "ast_empty": true
+  },
+  "reports/story/STORY_DIFFICULTY_FACTORIAL_REPORT_AFTER_AI_FIX_V2.json": {
+    "mtime": 1791745995.3190744,
+    "seen": 1793910198.3184786,
+    "ast_hash": "a6471a28655bcd39a65cd00763a42708",
+    "semantic_hash": "a6471a28655bcd39a65cd00763a42708",
+    "ast_empty": true
+  },
+  "reports/story/STORY_DIFFICULTY_FACTORIAL_REPORT_BALANCED.json": {
+    "mtime": 1791745995.3210936,
+    "seen": 1793910198.3184786,
+    "ast_hash": "bbff602b09a1ed4d0d06cb57223e9058",
+    "semantic_hash": "bbff602b09a1ed4d0d06cb57223e9058",
+    "ast_empty": true
+  },
+  "reports/story/STORY_DIFFICULTY_FACTORIAL_REPORT_HARD_TACTICS.json": {
+    "mtime": 1791745995.3222084,
+    "seen": 1793910198.3184786,
+    "ast_hash": "d9757ec9b4bde93766739a063f59578c",
+    "semantic_hash": "d9757ec9b4bde93766739a063f59578c",
+    "ast_empty": true
+  },
+  "reports/story/STORY_DIFFICULTY_FACTORIAL_REPORT_PLAYBOOKS.json": {
+    "mtime": 1791745995.3232107,
+    "seen": 1793910198.3184786,
+    "ast_hash": "2709df6992ac11d47996b6d55cb8444d",
+    "semantic_hash": "2709df6992ac11d47996b6d55cb8444d",
+    "ast_empty": true
+  },
+  "reports/story/STORY_DIFFICULTY_FACTORIAL_REPORT_POSITIONS.json": {
+    "mtime": 1791745995.3242073,
+    "seen": 1793910198.3184786,
+    "ast_hash": "92c1a9a2d80fc7ab02f053fa19fd9fc5",
+    "semantic_hash": "92c1a9a2d80fc7ab02f053fa19fd9fc5",
+    "ast_empty": true
+  },
+  "reports/story/STORY_PEGASUS_TOON_REWORK_REPORT.json": {
+    "mtime": 1791745995.326202,
+    "seen": 1793910198.3184786,
+    "ast_hash": "b3693ebb931062130fa307be5eb1a88d",
+    "semantic_hash": "b3693ebb931062130fa307be5eb1a88d",
+    "ast_empty": true
+  },
+  "scripts/build-card-effect-ids.js": {
+    "mtime": 1792534581.2607217,
+    "seen": 1793910198.3184786,
+    "ast_hash": "7343c9c6d706e04f94dddbafc941403c",
+    "semantic_hash": "7343c9c6d706e04f94dddbafc941403c"
+  },
+  "scripts/build-cards-data.js": {
+    "mtime": 1789421674.469739,
+    "seen": 1793910198.3191237,
+    "ast_hash": "efa64494037957276d36994cacedfb26",
+    "semantic_hash": "efa64494037957276d36994cacedfb26"
+  },
+  "scripts/build-ui-thumbnails.js": {
+    "mtime": 1792592702.5854049,
+    "seen": 1793910198.3191237,
+    "ast_hash": "1a326c58a193852a15d438e54d8de758",
+    "semantic_hash": "1a326c58a193852a15d438e54d8de758"
+  },
+  "scripts/check-syntax.js": {
+    "mtime": 1791733756.601003,
+    "seen": 1793910198.3201342,
+    "ast_hash": "dc6559b7f4c6733c298c2d29606a220a",
+    "semantic_hash": "dc6559b7f4c6733c298c2d29606a220a"
+  },
+  "scripts/gruppi-script.js": {
+    "mtime": 1792235825.9377549,
+    "seen": 1793910198.3201342,
+    "ast_hash": "a758e688d7b7bf9a5ae56388e65bd081",
+    "semantic_hash": "a758e688d7b7bf9a5ae56388e65bd081"
+  },
+  "scripts/pre-commit.js": {
+    "mtime": 1791227476.357678,
+    "seen": 1793910198.3211584,
+    "ast_hash": "d95f90c981d736a93dbd68c6b92e1c17",
+    "semantic_hash": "d95f90c981d736a93dbd68c6b92e1c17"
+  },
+  "scripts/pubblica.js": {
+    "mtime": 1792570621.1794426,
+    "seen": 1793910198.3214648,
+    "ast_hash": "eb615d7d00501a244e020d720b5dc673",
+    "semantic_hash": "eb615d7d00501a244e020d720b5dc673"
+  },
+  "scripts/sync-script-groups.js": {
+    "mtime": 1791227476.3674183,
+    "seen": 1793910198.3218005,
+    "ast_hash": "9e45690f34cbe27683d4fe40e2e1b324",
+    "semantic_hash": "9e45690f34cbe27683d4fe40e2e1b324"
+  },
+  "scripts/verifica-pubblicazione.js": {
+    "mtime": 1791733460.2933023,
+    "seen": 1793910198.3218005,
+    "ast_hash": "3c1dc032fddc77fac99a834af70ab47b",
+    "semantic_hash": "3c1dc032fddc77fac99a834af70ab47b"
+  },
+  "server/server.js": {
+    "mtime": 1793482354.4445078,
+    "seen": 1793910198.3229165,
+    "ast_hash": "e90f76660f0591cfeb068b83abeafdd5",
+    "semantic_hash": "e90f76660f0591cfeb068b83abeafdd5"
+  },
+  "sw.js": {
+    "mtime": 1793908997.2274485,
+    "seen": 1793910198.3229165,
+    "ast_hash": "f2666fc571c2e83924475af023b0f1b5",
+    "semantic_hash": "f2666fc571c2e83924475af023b0f1b5"
+  },
+  "tests/data/ricerche-per-nome.json": {
+    "mtime": 1792586049.9179757,
+    "seen": 1793910198.3229165,
+    "ast_hash": "60e9277aa7cf5ff625c55e51afe72e18",
+    "semantic_hash": "60e9277aa7cf5ff625c55e51afe72e18",
+    "ast_empty": true
+  },
+  "tests/data/vocabolario-effetti.js": {
+    "mtime": 1792318120.0723705,
+    "seen": 1793910198.3229165,
+    "ast_hash": "452acd649c1c0dd13126c9f58245bd5d",
+    "semantic_hash": "452acd649c1c0dd13126c9f58245bd5d"
+  },
+  "tests/fixtures/custom-deck.json": {
+    "mtime": 1792172240.865097,
+    "seen": 1793910198.3229165,
+    "ast_hash": "2f778a58e775f44985d7fec93a7a5f2d",
+    "semantic_hash": "2f778a58e775f44985d7fec93a7a5f2d",
+    "ast_empty": true
+  },
+  "tests/helpers/finto-cloud.js": {
+    "mtime": 1792834853.3327048,
+    "seen": 1793910198.3229165,
+    "ast_hash": "6e48f762a6be7f946b9435fd80b4ebe4",
+    "semantic_hash": "6e48f762a6be7f946b9435fd80b4ebe4"
+  },
+  "tests/helpers/harness.js": {
+    "mtime": 1791733561.5193336,
+    "seen": 1793910198.3247051,
+    "ast_hash": "886eba6510b696307b9c82763b869782",
+    "semantic_hash": "886eba6510b696307b9c82763b869782"
+  },
+  "tests/helpers/local-servers.js": {
+    "mtime": 1789411445.3516083,
+    "seen": 1793910198.3253267,
+    "ast_hash": "a3f145e6c405b000bda1f4e568d90c71",
+    "semantic_hash": "a3f145e6c405b000bda1f4e568d90c71"
+  },
+  "tests/helpers/ricerche-per-nome.js": {
+    "mtime": 1792586049.918971,
+    "seen": 1793910198.3253267,
+    "ast_hash": "d3242e4ea329b533c537c03c06373fb4",
+    "semantic_hash": "d3242e4ea329b533c537c03c06373fb4"
+  },
+  "tests/run-all.js": {
+    "mtime": 1791728974.662027,
+    "seen": 1793910198.3263457,
+    "ast_hash": "1f0955d0a2ad780b56fe622f88f4df99",
+    "semantic_hash": "1f0955d0a2ad780b56fe622f88f4df99"
+  },
+  "tests/specs/abile-mago-oscuro-segnalini.spec.js": {
+    "mtime": 1791628166.6887615,
+    "seen": 1793910198.3263457,
+    "ast_hash": "dbd247d58230005a64b81893053ad295",
+    "semantic_hash": "dbd247d58230005a64b81893053ad295"
+  },
+  "tests/specs/acquisizione-carte.spec.js": {
+    "mtime": 1791322435.1717868,
+    "seen": 1793910198.3263457,
+    "ast_hash": "ff5b61ae3062fa62a42f36f42acf30fd",
+    "semantic_hash": "ff5b61ae3062fa62a42f36f42acf30fd"
+  },
+  "tests/specs/admin-ultimo-accesso.spec.js": {
+    "mtime": 1792830984.3897057,
+    "seen": 1793910198.3277802,
+    "ast_hash": "b353e8d44e830234218e62a50e90c6c0",
+    "semantic_hash": "b353e8d44e830234218e62a50e90c6c0"
+  },
+  "tests/specs/all-cards-hooks-stress-test.spec.js": {
+    "mtime": 1789165416.1591744,
+    "seen": 1793910198.3277802,
+    "ast_hash": "da7434f86a41822a191b8d30321ce82d",
+    "semantic_hash": "da7434f86a41822a191b8d30321ce82d"
+  },
+  "tests/specs/ambiente-mappe-storia.spec.js": {
+    "mtime": 1792444316.211849,
+    "seen": 1793910198.3277802,
+    "ast_hash": "b466c3b339e41e680f86fe97f6380db5",
+    "semantic_hash": "b466c3b339e41e680f86fe97f6380db5"
+  },
+  "tests/specs/ambiente-webgl.spec.js": {
+    "mtime": 1792441390.7960181,
+    "seen": 1793910198.329008,
+    "ast_hash": "16bc29fa1d83612e72fd25646825bc0e",
+    "semantic_hash": "16bc29fa1d83612e72fd25646825bc0e"
+  },
+  "tests/specs/animazione-drop-carta.spec.js": {
+    "mtime": 1793739358.985821,
+    "seen": 1793910198.329008,
+    "ast_hash": "ae6b0d2d19c23d1b2cce84959e82ad2d",
+    "semantic_hash": "ae6b0d2d19c23d1b2cce84959e82ad2d"
+  },
+  "tests/specs/apertura-post-morra-mobile.spec.js": {
+    "mtime": 1792231289.6534884,
+    "seen": 1793910198.3301628,
+    "ast_hash": "5381902d791680552386ac16b829da3f",
+    "semantic_hash": "5381902d791680552386ac16b829da3f"
+  },
+  "tests/specs/artwork-alternativi.spec.js": {
+    "mtime": 1792600921.9168756,
+    "seen": 1793910198.3301628,
+    "ast_hash": "324eb10f0581309ed51d8d176243b923",
+    "semantic_hash": "324eb10f0581309ed51d8d176243b923"
+  },
+  "tests/specs/assault-ninja-quick-effect.spec.js": {
+    "mtime": 1788463520.3107686,
+    "seen": 1793910198.3310823,
+    "ast_hash": "96dd3e8143d26d05b95160e9be2a2690",
+    "semantic_hash": "96dd3e8143d26d05b95160e9be2a2690"
+  },
+  "tests/specs/assault-ninja-source-gone.spec.js": {
+    "mtime": 1791554794.8553615,
+    "seen": 1793910198.3310823,
+    "ast_hash": "dbf7248ae8fc9f6ff032cb37fdab0de4",
+    "semantic_hash": "dbf7248ae8fc9f6ff032cb37fdab0de4"
+  },
+  "tests/specs/attacco-diretto-aggancio.spec.js": {
+    "mtime": 1792750426.9367805,
+    "seen": 1793910198.332115,
+    "ast_hash": "b18ae21993bfb48e0304e9b34cf6e94a",
+    "semantic_hash": "b18ae21993bfb48e0304e9b34cf6e94a"
+  },
+  "tests/specs/attacco-respinto-barriera.spec.js": {
+    "mtime": 1792772919.62875,
+    "seen": 1793910198.332115,
+    "ast_hash": "c87cd248a2881368db60f4e226a7338d",
+    "semantic_hash": "c87cd248a2881368db60f4e226a7338d"
+  },
+  "tests/specs/audio-nativo-persistente.spec.js": {
+    "mtime": 1791393210.0529296,
+    "seen": 1793910198.333066,
+    "ast_hash": "4fb72a69ea8c59708d46d51dd5342e83",
+    "semantic_hash": "4fb72a69ea8c59708d46d51dd5342e83"
+  },
+  "tests/specs/audio-ww1-priorita.spec.js": {
+    "mtime": 1790708141.7846532,
+    "seen": 1793910198.3339083,
+    "ast_hash": "b4e9805b651c47294e012b4e1a1dd813",
+    "semantic_hash": "b4e9805b651c47294e012b4e1a1dd813"
+  },
+  "tests/specs/audit-archetipi-classici.spec.js": {
+    "mtime": 1792172240.8760655,
+    "seen": 1793910198.3339083,
+    "ast_hash": "c57b78b3bf763c9daca1f5288b7f1344",
+    "semantic_hash": "c57b78b3bf763c9daca1f5288b7f1344"
+  },
+  "tests/specs/audit-custom-difficolta.spec.js": {
+    "mtime": 1792172240.8934126,
+    "seen": 1793910198.3345275,
+    "ast_hash": "48e80f4bda7e7cef0d87f14269422c23",
+    "semantic_hash": "48e80f4bda7e7cef0d87f14269422c23"
+  },
+  "tests/specs/audit-followup-fixes.spec.js": {
+    "mtime": 1788464134.576595,
+    "seen": 1793910198.3351307,
+    "ast_hash": "e33cfd7d726d8d41f143059192b214af",
+    "semantic_hash": "e33cfd7d726d8d41f143059192b214af"
+  },
+  "tests/specs/audit-joey-supporti-finali.spec.js": {
+    "mtime": 1792172240.9056957,
+    "seen": 1793910198.3351307,
+    "ast_hash": "efc86bff9dafcf4ea9ed732ca34a792f",
+    "semantic_hash": "efc86bff9dafcf4ea9ed732ca34a792f"
+  },
+  "tests/specs/audit-kaiba-supporti-finali.spec.js": {
+    "mtime": 1792172240.9176881,
+    "seen": 1793910198.3361588,
+    "ast_hash": "ddf5a7a9e0c0c6bede2df0240981212d",
+    "semantic_hash": "ddf5a7a9e0c0c6bede2df0240981212d"
+  },
+  "tests/specs/audit-marik-ra-finale.spec.js": {
+    "mtime": 1792172240.9302256,
+    "seen": 1793910198.3361588,
+    "ast_hash": "8fdf34f82c251ebc87da05fed828dd78",
+    "semantic_hash": "8fdf34f82c251ebc87da05fed828dd78"
+  },
+  "tests/specs/audit-pegasus-supporti-finali.spec.js": {
+    "mtime": 1792172240.9401686,
+    "seen": 1793910198.3371575,
+    "ast_hash": "55959827440b8fdd99ef7c3cfa2687b1",
+    "semantic_hash": "55959827440b8fdd99ef7c3cfa2687b1"
+  },
+  "tests/specs/audit-strings-hard.spec.js": {
+    "mtime": 1792172240.9568157,
+    "seen": 1793910198.3371575,
+    "ast_hash": "3f275acdff1f6512c7c17c9811abe4e9",
+    "semantic_hash": "3f275acdff1f6512c7c17c9811abe4e9"
+  },
+  "tests/specs/audit-supporti-mago-nero.spec.js": {
+    "mtime": 1792172240.968358,
+    "seen": 1793910198.3381412,
+    "ast_hash": "0f683e74ba3f79cd106adc972b49db96",
+    "semantic_hash": "0f683e74ba3f79cd106adc972b49db96"
+  },
+  "tests/specs/audit-supporti-occhi-blu.spec.js": {
+    "mtime": 1792172240.9821544,
+    "seen": 1793910198.3381412,
+    "ast_hash": "8ba1238c51da495a2c7a3d423b19a842",
+    "semantic_hash": "8ba1238c51da495a2c7a3d423b19a842"
+  },
+  "tests/specs/audit-supporti-occhi-rossi.spec.js": {
+    "mtime": 1792172240.9937851,
+    "seen": 1793910198.3391616,
+    "ast_hash": "c1f4415f07f26dce5f55d98d086c47d1",
+    "semantic_hash": "c1f4415f07f26dce5f55d98d086c47d1"
+  },
+  "tests/specs/audit-supporti-toon.spec.js": {
+    "mtime": 1792172241.0042634,
+    "seen": 1793910198.3396375,
+    "ast_hash": "c9d9349dd35c5f6716eb8283a1e77689",
+    "semantic_hash": "c9d9349dd35c5f6716eb8283a1e77689"
+  },
+  "tests/specs/audit-varianti-hard-classici.spec.js": {
+    "mtime": 1792172241.0158129,
+    "seen": 1793910198.33995,
+    "ast_hash": "5361d091075c52002f5bcc5016eab6a8",
+    "semantic_hash": "5361d091075c52002f5bcc5016eab6a8"
+  },
+  "tests/specs/audit-yami-supporti-finali.spec.js": {
+    "mtime": 1792172241.0284896,
+    "seen": 1793910198.33995,
+    "ast_hash": "db9c8f0e18b7bac200f29ffe2140b13c",
+    "semantic_hash": "db9c8f0e18b7bac200f29ffe2140b13c"
+  },
+  "tests/specs/autowin-storie-solo-admin.spec.js": {
+    "mtime": 1790718061.7705476,
+    "seen": 1793910198.3411589,
+    "ast_hash": "8d8553f41a3fbd8387cfef75e02d8b3a",
+    "semantic_hash": "8d8553f41a3fbd8387cfef75e02d8b3a"
+  },
+  "tests/specs/autowin-torneo-modali.spec.js": {
+    "mtime": 1790805162.9154315,
+    "seen": 1793910198.3411589,
+    "ast_hash": "fce640d500290e6e0aa03cebec25c1f5",
+    "semantic_hash": "fce640d500290e6e0aa03cebec25c1f5"
+  },
+  "tests/specs/avvio-lento-copertura-e-campo.spec.js": {
+    "mtime": 1792795811.5934367,
+    "seen": 1793910198.3422244,
+    "ast_hash": "eac34b835f9de3058b01e457afd0ed65",
+    "semantic_hash": "eac34b835f9de3058b01e457afd0ed65"
+  },
+  "tests/specs/azzeramento-profilo-tra-dispositivi.spec.js": {
+    "mtime": 1791583091.9905276,
+    "seen": 1793910198.3422244,
+    "ast_hash": "0b33cd177ea1ad7ffb3dc6f460f5d23a",
+    "semantic_hash": "0b33cd177ea1ad7ffb3dc6f460f5d23a"
+  },
+  "tests/specs/azzeramento-storie-per-tutti.spec.js": {
+    "mtime": 1791583091.9905276,
+    "seen": 1793910198.34314,
+    "ast_hash": "7ecc8799d98e1b964f4be7b2ebf6966b",
+    "semantic_hash": "7ecc8799d98e1b964f4be7b2ebf6966b"
+  },
+  "tests/specs/badge-campo-non-si-sovrappongono-su-mobile.spec.js": {
+    "mtime": 1792963065.6468139,
+    "seen": 1793910198.34314,
+    "ast_hash": "ae1eef469808d0c492d3c8ac172ed046",
+    "semantic_hash": "ae1eef469808d0c492d3c8ac172ed046"
+  },
+  "tests/specs/badge-fissi-fuori-dal-campo.spec.js": {
+    "mtime": 1791624839.1829324,
+    "seen": 1793910198.344078,
+    "ast_hash": "a52a494ab74919c5b04c4a91c5fb4b6e",
+    "semantic_hash": "a52a494ab74919c5b04c4a91c5fb4b6e"
+  },
+  "tests/specs/barra-di-tab-menu-e-pagine.spec.js": {
+    "mtime": 1793482354.4503517,
+    "seen": 1793910198.344597,
+    "ast_hash": "bd062fa74898e846b6df3dd2605b73a4",
+    "semantic_hash": "bd062fa74898e846b6df3dd2605b73a4"
+  },
+  "tests/specs/barra-fasi-dal-terreno-al-cimitero.spec.js": {
+    "mtime": 1792591812.6389787,
+    "seen": 1793910198.344597,
+    "ast_hash": "e8a3fdc7ebdaed8882dab169ac6feec0",
+    "semantic_hash": "e8a3fdc7ebdaed8882dab169ac6feec0"
+  },
+  "tests/specs/battle-city-autowin-avanza-tabellone.spec.js": {
+    "mtime": 1793746063.4532957,
+    "seen": 1793910198.345612,
+    "ast_hash": "5ea2154c4f56d641269fbcbf91b53d55",
+    "semantic_hash": "5ea2154c4f56d641269fbcbf91b53d55"
+  },
+  "tests/specs/battle-city-mappa-pedine.spec.js": {
+    "mtime": 1791050825.0482967,
+    "seen": 1793910198.3460453,
+    "ast_hash": "23817cef9cb0883470c4a0604b7ef0dc",
+    "semantic_hash": "23817cef9cb0883470c4a0604b7ef0dc"
+  },
+  "tests/specs/battle-city-oggetti-eventi.spec.js": {
+    "mtime": 1791051782.4668684,
+    "seen": 1793910198.3460453,
+    "ast_hash": "2d515ae4d15d2f0cb5ff5149715e73f1",
+    "semantic_hash": "2d515ae4d15d2f0cb5ff5149715e73f1"
+  },
+  "tests/specs/battle-city-prologo-mappa.spec.js": {
+    "mtime": 1791051734.8270042,
+    "seen": 1793910198.3471098,
+    "ast_hash": "6ac7e27ba52292604e2660e80dab58b1",
+    "semantic_hash": "6ac7e27ba52292604e2660e80dab58b1"
+  },
+  "tests/specs/battle-resolution.spec.js": {
+    "mtime": 1791631155.132752,
+    "seen": 1793910198.3471098,
+    "ast_hash": "07b712d687c971ee9ff76f43d59594c2",
+    "semantic_hash": "07b712d687c971ee9ff76f43d59594c2"
+  },
+  "tests/specs/bonus-temporaneo-slot-in-transito.spec.js": {
+    "mtime": 1791549920.5560408,
+    "seen": 1793910198.3481338,
+    "ast_hash": "28fc0ff3c0c3a17ade22441d7cf393a3",
+    "semantic_hash": "28fc0ff3c0c3a17ade22441d7cf393a3"
+  },
+  "tests/specs/boss-hard-balance.spec.js": {
+    "mtime": 1793555046.3719106,
+    "seen": 1793910198.3481338,
+    "ast_hash": "fad302caa7a39df8e38c08aab25bf534",
+    "semantic_hash": "fad302caa7a39df8e38c08aab25bf534"
+  },
+  "tests/specs/bot-buco-nero-prima-di-evocare.spec.js": {
+    "mtime": 1791046079.6389115,
+    "seen": 1793910198.3490515,
+    "ast_hash": "bc89964dadd2b0331396b7a987921058",
+    "semantic_hash": "bc89964dadd2b0331396b7a987921058"
+  },
+  "tests/specs/bot-waits-for-summon-cinematic.spec.js": {
+    "mtime": 1791019314.858947,
+    "seen": 1793910198.3490515,
+    "ast_hash": "03ff7278c127833fe788e0930190b391",
+    "semantic_hash": "03ff7278c127833fe788e0930190b391"
+  },
+  "tests/specs/buste-tematiche-coerenti.spec.js": {
+    "mtime": 1791649783.5833447,
+    "seen": 1793910198.3500829,
+    "ast_hash": "d34e881fd5cc7ed880d6d899d8133c70",
+    "semantic_hash": "d34e881fd5cc7ed880d6d899d8133c70"
+  },
+  "tests/specs/cambio-turno-senza-scuotimento.spec.js": {
+    "mtime": 1791554794.8710375,
+    "seen": 1793910198.3500829,
+    "ast_hash": "0d93b768eb4bd9d4e50d3378aec36487",
+    "semantic_hash": "0d93b768eb4bd9d4e50d3378aec36487"
+  },
+  "tests/specs/campo-centrato-desktop.spec.js": {
+    "mtime": 1792189169.3853748,
+    "seen": 1793910198.3511121,
+    "ast_hash": "ebbc0360125b54865beac9fb261913cc",
+    "semantic_hash": "ebbc0360125b54865beac9fb261913cc"
+  },
+  "tests/specs/campo-della-storia.spec.js": {
+    "mtime": 1790503432.3503113,
+    "seen": 1793910198.3511121,
+    "ast_hash": "bff5cb5b55e4f80e52d6b945e7150f0c",
+    "semantic_hash": "bff5cb5b55e4f80e52d6b945e7150f0c"
+  },
+  "tests/specs/cancello-di-fusione-per-chi-e-di-turno.spec.js": {
+    "mtime": 1791272735.4620602,
+    "seen": 1793910198.3520617,
+    "ast_hash": "b8197c20dea130961497144eb20a6db0",
+    "semantic_hash": "b8197c20dea130961497144eb20a6db0"
+  },
+  "tests/specs/cannoni-xyz-posizione-obbligatoria.spec.js": {
+    "mtime": 1791838978.6856756,
+    "seen": 1793910198.3520617,
+    "ast_hash": "d6294583fe7fe79ef78bafbde5ea7ef4",
+    "semantic_hash": "d6294583fe7fe79ef78bafbde5ea7ef4"
+  },
+  "tests/specs/card-database-sanity.spec.js": {
+    "mtime": 1788369225.0,
+    "seen": 1793910198.3520617,
+    "ast_hash": "61dfb798335ea9d0bcb314ea67edf245",
+    "semantic_hash": "61dfb798335ea9d0bcb314ea67edf245"
+  },
+  "tests/specs/card-info-mobile-landscape.spec.js": {
+    "mtime": 1793835632.571479,
+    "seen": 1793910198.3533266,
+    "ast_hash": "76861601f741d248d45b5c4007286f74",
+    "semantic_hash": "76861601f741d248d45b5c4007286f74"
+  },
+  "tests/specs/card-info-solo-consultazione.spec.js": {
+    "mtime": 1791839085.7178445,
+    "seen": 1793910198.3533266,
+    "ast_hash": "f68425548587d609f5c116507e6681ea",
+    "semantic_hash": "f68425548587d609f5c116507e6681ea"
+  },
+  "tests/specs/carta-a-schermo-intero.spec.js": {
+    "mtime": 1792523005.361663,
+    "seen": 1793910198.3543243,
+    "ast_hash": "a48f124f22901b391368c1aec4ec0e89",
+    "semantic_hash": "a48f124f22901b391368c1aec4ec0e89"
+  },
+  "tests/specs/carta-compatta-per-misura.spec.js": {
+    "mtime": 1793378967.805172,
+    "seen": 1793910198.3543243,
+    "ast_hash": "06808cdd5dcbc162dd4437d65bc28110",
+    "semantic_hash": "06808cdd5dcbc162dd4437d65bc28110"
+  },
+  "tests/specs/carta-dettaglio-mobile-senza-inclinazione.spec.js": {
+    "mtime": 1792883256.080161,
+    "seen": 1793910198.3555079,
+    "ast_hash": "1935fcdeb73b37f418c5462dac67d3e7",
+    "semantic_hash": "1935fcdeb73b37f418c5462dac67d3e7"
+  },
+  "tests/specs/carte-doppie-eliminate.spec.js": {
+    "mtime": 1792586049.921669,
+    "seen": 1793910198.3555079,
+    "ast_hash": "4abae6a032f0a5c95e9a21756d384d73",
+    "semantic_hash": "4abae6a032f0a5c95e9a21756d384d73"
+  },
+  "tests/specs/carte-vive-e-parallasse.spec.js": {
+    "mtime": 1792883256.080161,
+    "seen": 1793910198.3563752,
+    "ast_hash": "dca1560e1226da4605e1f930200ffc17",
+    "semantic_hash": "dca1560e1226da4605e1f930200ffc17"
+  },
+  "tests/specs/cartoteca-fonti-acquisizione.spec.js": {
+    "mtime": 1792566974.1577091,
+    "seen": 1793910198.357092,
+    "ast_hash": "9ddb06a1e05abbd7e78fdefbf089d30c",
+    "semantic_hash": "9ddb06a1e05abbd7e78fdefbf089d30c"
+  },
+  "tests/specs/cartoteca-funziona-in-entrambe-le-forme.spec.js": {
+    "mtime": 1792569544.558422,
+    "seen": 1793910198.357092,
+    "ast_hash": "7002eaa0e1b4041e6d11fc126b02ac05",
+    "semantic_hash": "7002eaa0e1b4041e6d11fc126b02ac05"
+  },
+  "tests/specs/cartoteca-vedi-ologramma.spec.js": {
+    "mtime": 1792772919.6313498,
+    "seen": 1793910198.358137,
+    "ast_hash": "087db737568bbd3505acc2b3885ad5b8",
+    "semantic_hash": "087db737568bbd3505acc2b3885ad5b8"
+  },
+  "tests/specs/catalogo-campi-e-musiche.spec.js": {
+    "mtime": 1792243797.8075585,
+    "seen": 1793910198.358137,
+    "ast_hash": "7962dee438358e6443fa309eeacf792c",
+    "semantic_hash": "7962dee438358e6443fa309eeacf792c"
+  },
+  "tests/specs/catalogo-musiche-duello.spec.js": {
+    "mtime": 1792172241.051384,
+    "seen": 1793910198.358137,
+    "ast_hash": "363ca4ca38e7545c8d9590988bd1ef3f",
+    "semantic_hash": "363ca4ca38e7545c8d9590988bd1ef3f"
+  },
+  "tests/specs/catalogo-sfide.spec.js": {
+    "mtime": 1793574289.0160053,
+    "seen": 1793910198.3593214,
+    "ast_hash": "ba2834354e1f9f181426189eeb1bb900",
+    "semantic_hash": "ba2834354e1f9f181426189eeb1bb900"
+  },
+  "tests/specs/catena-dopo-le-carte-singole.spec.js": {
+    "mtime": 1793564054.0397995,
+    "seen": 1793910198.3593214,
+    "ast_hash": "9f38461fe02dadc166392d7647f004b8",
+    "semantic_hash": "9f38461fe02dadc166392d7647f004b8"
+  },
+  "tests/specs/catena-webgl.spec.js": {
+    "mtime": 1793564013.263991,
+    "seen": 1793910198.3604145,
+    "ast_hash": "9634bd7b0b637ef9ad4633f3a8dadb71",
+    "semantic_hash": "9634bd7b0b637ef9ad4633f3a8dadb71"
+  },
+  "tests/specs/chain-animation-timing.spec.js": {
+    "mtime": 1788369297.0,
+    "seen": 1793910198.3611026,
+    "ast_hash": "8e07fa64f040c0465c0779e8819abff4",
+    "semantic_hash": "8e07fa64f040c0465c0779e8819abff4"
+  },
+  "tests/specs/chain-resolution.spec.js": {
+    "mtime": 1793908924.737073,
+    "seen": 1793910198.3611026,
+    "ast_hash": "4f576784c3306b5e0c4f6732a8dc516a",
+    "semantic_hash": "4f576784c3306b5e0c4f6732a8dc516a"
+  },
+  "tests/specs/chain-stack-semi-3d.spec.js": {
+    "mtime": 1790708485.833184,
+    "seen": 1793910198.3620777,
+    "ast_hash": "79dc5c3798b6afb4673d88587a0f78bd",
+    "semantic_hash": "79dc5c3798b6afb4673d88587a0f78bd"
+  },
+  "tests/specs/challenge-tracker-hooks.spec.js": {
+    "mtime": 1788510042.4653287,
+    "seen": 1793910198.3620777,
+    "ast_hash": "198a171955433938f14c418f4a7f3ff7",
+    "semantic_hash": "198a171955433938f14c418f4a7f3ff7"
+  },
+  "tests/specs/checkpoint-targeting-dichiara.spec.js": {
+    "mtime": 1792591697.3645058,
+    "seen": 1793910198.363077,
+    "ast_hash": "617be6207df2d6efd92845ccd6c74f17",
+    "semantic_hash": "617be6207df2d6efd92845ccd6c74f17"
+  },
+  "tests/specs/cinematiche-carte-iconiche-quarto-gruppo.spec.js": {
+    "mtime": 1792449424.143338,
+    "seen": 1793910198.363077,
+    "ast_hash": "4c980e7cd2db75f092e1efbde4b3bbee",
+    "semantic_hash": "4c980e7cd2db75f092e1efbde4b3bbee"
+  },
+  "tests/specs/cinematiche-carte-iconiche-quinto-gruppo.spec.js": {
+    "mtime": 1792449424.143338,
+    "seen": 1793910198.363077,
+    "ast_hash": "548b1e1386bf6a37b6cd6efde4254102",
+    "semantic_hash": "548b1e1386bf6a37b6cd6efde4254102"
+  },
+  "tests/specs/cinematiche-carte-iconiche-secondo-gruppo.spec.js": {
+    "mtime": 1792449424.143338,
+    "seen": 1793910198.3644679,
+    "ast_hash": "728eb4d7c04300fbd068db6de66d36db",
+    "semantic_hash": "728eb4d7c04300fbd068db6de66d36db"
+  },
+  "tests/specs/cinematiche-carte-iconiche-terzo-gruppo.spec.js": {
+    "mtime": 1793360616.3033054,
+    "seen": 1793910198.3648176,
+    "ast_hash": "c15cc458967d83bb0a4ae82c87299cce",
+    "semantic_hash": "c15cc458967d83bb0a4ae82c87299cce"
+  },
+  "tests/specs/cinematiche-carte-iconiche.spec.js": {
+    "mtime": 1793360616.3189702,
+    "seen": 1793910198.3648176,
+    "ast_hash": "22cf3b034e4cb4f55360ebc6642522a4",
+    "semantic_hash": "22cf3b034e4cb4f55360ebc6642522a4"
+  },
+  "tests/specs/contact-fusion-cinematic.spec.js": {
+    "mtime": 1790689650.39226,
+    "seen": 1793910198.3660283,
+    "ast_hash": "533a276ae76cddd94489094528965053",
+    "semantic_hash": "533a276ae76cddd94489094528965053"
+  },
+  "tests/specs/conto-alla-rovescia-finale.spec.js": {
+    "mtime": 1793218547.2643287,
+    "seen": 1793910198.3660283,
+    "ast_hash": "f7a62db1d8872aef2c9585ef3ce05373",
+    "semantic_hash": "f7a62db1d8872aef2c9585ef3ce05373"
+  },
+  "tests/specs/controllore-nemico-posizione.spec.js": {
+    "mtime": 1792277908.8693008,
+    "seen": 1793910198.3660283,
+    "ast_hash": "82ab081311017b241f41e7d96a96356b",
+    "semantic_hash": "82ab081311017b241f41e7d96a96356b"
+  },
+  "tests/specs/costo-scarto-dalla-mano.spec.js": {
+    "mtime": 1790516936.3942144,
+    "seen": 1793910198.367296,
+    "ast_hash": "ec79f052d20d25c241c99e1c98f9e9b7",
+    "semantic_hash": "ec79f052d20d25c241c99e1c98f9e9b7"
+  },
+  "tests/specs/counter-trap-declared-targeting.spec.js": {
+    "mtime": 1788381284.9599192,
+    "seen": 1793910198.367296,
+    "ast_hash": "cd0fb873640ea54d11a9a20cf1300ef5",
+    "semantic_hash": "cd0fb873640ea54d11a9a20cf1300ef5"
+  },
+  "tests/specs/danno-mobile-senza-scossa-globale.spec.js": {
+    "mtime": 1792236471.6451075,
+    "seen": 1793910198.3682997,
+    "ast_hash": "deaec1b337b58a1eb363232d46e8256b",
+    "semantic_hash": "deaec1b337b58a1eb363232d46e8256b"
+  },
+  "tests/specs/dark-egyptian-temple-ambience.spec.js": {
+    "mtime": 1792441390.7980125,
+    "seen": 1793910198.3682997,
+    "ast_hash": "2505c1e1a0aef0f8f15cbf92ba30a6c1",
+    "semantic_hash": "2505c1e1a0aef0f8f15cbf92ba30a6c1"
+  },
+  "tests/specs/dark-hole-vortex-revamp.spec.js": {
+    "mtime": 1790636476.7238836,
+    "seen": 1793910198.369119,
+    "ast_hash": "ccbe96968ea3c0db60c38c53e49b9594",
+    "semantic_hash": "ccbe96968ea3c0db60c38c53e49b9594"
+  },
+  "tests/specs/decisioni-in-sospeso.spec.js": {
+    "mtime": 1791298186.2519283,
+    "seen": 1793910198.369954,
+    "ast_hash": "ab9f2a741f03bacddac37ebc11d7876a",
+    "semantic_hash": "ab9f2a741f03bacddac37ebc11d7876a"
+  },
+  "tests/specs/deck-search-real-choice.spec.js": {
+    "mtime": 1788723437.1101413,
+    "seen": 1793910198.3703008,
+    "ast_hash": "e91c9944c20305d20607f242eeb2bad6",
+    "semantic_hash": "e91c9944c20305d20607f242eeb2bad6"
+  },
+  "tests/specs/destiny-board-flying-elephant-win-cinematic.spec.js": {
+    "mtime": 1788468335.829795,
+    "seen": 1793910198.3703008,
+    "ast_hash": "cdddd007bbb5fa55f688563f329d0f86",
+    "semantic_hash": "cdddd007bbb5fa55f688563f329d0f86"
+  },
+  "tests/specs/destiny-board-win-condition.spec.js": {
+    "mtime": 1788468521.934903,
+    "seen": 1793910198.3714163,
+    "ast_hash": "3e914d8857eef516f9ee188d4bf81e4f",
+    "semantic_hash": "3e914d8857eef516f9ee188d4bf81e4f"
+  },
+  "tests/specs/destroy-targeted-monster-helper.spec.js": {
+    "mtime": 1788465935.796992,
+    "seen": 1793910198.3720798,
+    "ast_hash": "5975c35b071a11c9e054c7ed00997a07",
+    "semantic_hash": "5975c35b071a11c9e054c7ed00997a07"
+  },
+  "tests/specs/distruzione-disintegrazione.spec.js": {
+    "mtime": 1792767772.8307893,
+    "seen": 1793910198.3720798,
+    "ast_hash": "3bf6a1eb817a865eb8bcd828412a71c8",
+    "semantic_hash": "3bf6a1eb817a865eb8bcd828412a71c8"
+  },
+  "tests/specs/distruzione-magie-trappole.spec.js": {
+    "mtime": 1790707919.0314875,
+    "seen": 1793910198.3720798,
+    "ast_hash": "00ad06db28b16cb7c285f48b4caf05df",
+    "semantic_hash": "00ad06db28b16cb7c285f48b4caf05df"
+  },
+  "tests/specs/distruzione-mostro-coperto-difesa.spec.js": {
+    "mtime": 1791931064.5084963,
+    "seen": 1793910198.3730922,
+    "ast_hash": "d28da7ffb253ffdae7e760657f874a7f",
+    "semantic_hash": "d28da7ffb253ffdae7e760657f874a7f"
+  },
+  "tests/specs/divieti-di-evocazione.spec.js": {
+    "mtime": 1791031981.1413057,
+    "seen": 1793910198.3730922,
+    "ast_hash": "1e4e270af8d1d2bc0c4e2e64ec2cb065",
+    "semantic_hash": "1e4e270af8d1d2bc0c4e2e64ec2cb065"
+  },
+  "tests/specs/due-account-stesso-dispositivo.spec.js": {
+    "mtime": 1792832491.1005907,
+    "seen": 1793910198.3730922,
+    "ast_hash": "ebc1e375c5e98e163c53aa97fc855854",
+    "semantic_hash": "ebc1e375c5e98e163c53aa97fc855854"
+  },
+  "tests/specs/duel-dialogues.spec.js": {
+    "mtime": 1791627421.348137,
+    "seen": 1793910198.3747747,
+    "ast_hash": "40e378e47ccec3a78fbe39b0156acb50",
+    "semantic_hash": "40e378e47ccec3a78fbe39b0156acb50"
+  },
+  "tests/specs/duellanti-da-sbloccare.spec.js": {
+    "mtime": 1792591637.346008,
+    "seen": 1793910198.3747747,
+    "ast_hash": "64a1d2798af84d32105d42df55a0b039",
+    "semantic_hash": "64a1d2798af84d32105d42df55a0b039"
+  },
+  "tests/specs/duellanti-extra-storici.spec.js": {
+    "mtime": 1792325811.222755,
+    "seen": 1793910198.3757875,
+    "ast_hash": "4247b69b550c6f9af54e74ea55d68537",
+    "semantic_hash": "4247b69b550c6f9af54e74ea55d68537"
+  },
+  "tests/specs/duellanti-main-strategie.spec.js": {
+    "mtime": 1792172241.0620692,
+    "seen": 1793910198.3761933,
+    "ast_hash": "4490b5c85bd4c5048f2fabdc294310cc",
+    "semantic_hash": "4490b5c85bd4c5048f2fabdc294310cc"
+  },
+  "tests/specs/duello-finito-non-rientra-con-indietro.spec.js": {
+    "mtime": 1793743761.485716,
+    "seen": 1793910198.3765202,
+    "ast_hash": "1de0ba168e0531fd3dcd00c7d4d47558",
+    "semantic_hash": "1de0ba168e0531fd3dcd00c7d4d47558"
+  },
+  "tests/specs/duello-gemello.spec.js": {
+    "mtime": 1791272735.4620602,
+    "seen": 1793910198.3765202,
+    "ast_hash": "57b2ebc8aa51ad983a219b3886f78ad3",
+    "semantic_hash": "57b2ebc8aa51ad983a219b3886f78ad3"
+  },
+  "tests/specs/duello-libero-config-responsive.spec.js": {
+    "mtime": 1792237348.1083405,
+    "seen": 1793910198.3775272,
+    "ast_hash": "9f1650331e2528a1e856b543baea32a8",
+    "semantic_hash": "9f1650331e2528a1e856b543baea32a8"
+  },
+  "tests/specs/duello-libero-smoke.spec.js": {
+    "mtime": 1788369390.0,
+    "seen": 1793910198.3780718,
+    "ast_hash": "68e1b8b90a2978af9f50ddddff51ce65",
+    "semantic_hash": "68e1b8b90a2978af9f50ddddff51ce65"
+  },
+  "tests/specs/duello-senza-testa.spec.js": {
+    "mtime": 1792591776.6579897,
+    "seen": 1793910198.3780718,
+    "ast_hash": "e7b5ca7afcefd4454419fe9ab76995f9",
+    "semantic_hash": "e7b5ca7afcefd4454419fe9ab76995f9"
+  },
+  "tests/specs/economia-difficolta.spec.js": {
+    "mtime": 1791666387.580609,
+    "seen": 1793910198.3790975,
+    "ast_hash": "8154045127cf10e328134b027e030fbd",
+    "semantic_hash": "8154045127cf10e328134b027e030fbd"
+  },
+  "tests/specs/editor-mappa-scrive-sul-file.spec.js": {
+    "mtime": 1791586925.3608146,
+    "seen": 1793910198.3790975,
+    "ast_hash": "7756e5ac7a095300291885827c1958c4",
+    "semantic_hash": "7756e5ac7a095300291885827c1958c4"
+  },
+  "tests/specs/editor-mappa-storia-admin.spec.js": {
+    "mtime": 1791586925.3628182,
+    "seen": 1793910198.3800294,
+    "ast_hash": "b4151ea224d7b66f5298018487ea064d",
+    "semantic_hash": "b4151ea224d7b66f5298018487ea064d"
+  },
+  "tests/specs/editor-mazzo-scheda-e-riscontro.spec.js": {
+    "mtime": 1793834212.5789833,
+    "seen": 1793910198.3800294,
+    "ast_hash": "153f79483803b88fa2cdf8e01e88a18c",
+    "semantic_hash": "153f79483803b88fa2cdf8e01e88a18c"
+  },
+  "tests/specs/editor-mazzo-uscita-con-modifiche.spec.js": {
+    "mtime": 1793370561.646834,
+    "seen": 1793910198.3810222,
+    "ast_hash": "a8344d71bfd469e3f3b925d50d7427f1",
+    "semantic_hash": "a8344d71bfd469e3f3b925d50d7427f1"
+  },
+  "tests/specs/egyptian-gods.spec.js": {
+    "mtime": 1788369329.0,
+    "seen": 1793910198.3810222,
+    "ast_hash": "7e452caf73101ddc594b286552fd9ea3",
+    "semantic_hash": "7e452caf73101ddc594b286552fd9ea3"
+  },
+  "tests/specs/equip-con-scelta-del-bersaglio.spec.js": {
+    "mtime": 1791754764.3691375,
+    "seen": 1793910198.382024,
+    "ast_hash": "9f112fe388597319f17ae9e8cc836e1d",
+    "semantic_hash": "9f112fe388597319f17ae9e8cc836e1d"
+  },
+  "tests/specs/equip-mandata-al-cimitero.spec.js": {
+    "mtime": 1789843141.6555274,
+    "seen": 1793910198.3823245,
+    "ast_hash": "3e1f6a39254e806eb2f0bca0841698f5",
+    "semantic_hash": "3e1f6a39254e806eb2f0bca0841698f5"
+  },
+  "tests/specs/eredita-campo-musica-capitolo.spec.js": {
+    "mtime": 1791901615.5521564,
+    "seen": 1793910198.3823245,
+    "ast_hash": "3484e3eadf4a2c029a18e60e18266a0e",
+    "semantic_hash": "3484e3eadf4a2c029a18e60e18266a0e"
+  },
+  "tests/specs/error-containment.spec.js": {
+    "mtime": 1788370819.0,
+    "seen": 1793910198.3834648,
+    "ast_hash": "4c9d9850806896d910a58c372ea718fd",
+    "semantic_hash": "4c9d9850806896d910a58c372ea718fd"
+  },
+  "tests/specs/esito-duello-non-taglia.spec.js": {
+    "mtime": 1791720169.3680377,
+    "seen": 1793910198.3834648,
+    "ast_hash": "dcc4dbd12aac0752a981ea433a951489",
+    "semantic_hash": "dcc4dbd12aac0752a981ea433a951489"
+  },
+  "tests/specs/evocazione-epica-webgl.spec.js": {
+    "mtime": 1792863450.8540971,
+    "seen": 1793910198.3844619,
+    "ast_hash": "01c0587a47429c65b4ed9f1391a5197a",
+    "semantic_hash": "01c0587a47429c65b4ed9f1391a5197a"
+  },
+  "tests/specs/evocazione-tributo-non-si-abbandona.spec.js": {
+    "mtime": 1792883256.080161,
+    "seen": 1793910198.3844619,
+    "ast_hash": "44982d00c6e194c971b5e5427b51edc0",
+    "semantic_hash": "44982d00c6e194c971b5e5427b51edc0"
+  },
+  "tests/specs/evocazioni-in-coda-e-scelte-obbligatorie.spec.js": {
+    "mtime": 1793141239.8735294,
+    "seen": 1793910198.385166,
+    "ast_hash": "8d3659e67890da7125be04fbd91a64bc",
+    "semantic_hash": "8d3659e67890da7125be04fbd91a64bc"
+  },
+  "tests/specs/exodia-win-cinematic.spec.js": {
+    "mtime": 1788733516.1532428,
+    "seen": 1793910198.385166,
+    "ast_hash": "9772338372a44cd6c2d5f707f5ddd0ac",
+    "semantic_hash": "9772338372a44cd6c2d5f707f5ddd0ac"
+  },
+  "tests/specs/extra-deck-evocabile-pulsa.spec.js": {
+    "mtime": 1792180492.9409597,
+    "seen": 1793910198.3862083,
+    "ast_hash": "635bf26f86f43bfe0ca93cd25727f44c",
+    "semantic_hash": "635bf26f86f43bfe0ca93cd25727f44c"
+  },
+  "tests/specs/fake-trap-batch-redirect.spec.js": {
+    "mtime": 1792535008.171727,
+    "seen": 1793910198.3862083,
+    "ast_hash": "de9ee55e6612df18892abebe09133193",
+    "semantic_hash": "de9ee55e6612df18892abebe09133193"
+  },
+  "tests/specs/fenice-scambio-fase-avversario.spec.js": {
+    "mtime": 1792926497.1970212,
+    "seen": 1793910198.3862083,
+    "ast_hash": "9714cdfae965b53e4e81b96850e0847c",
+    "semantic_hash": "9714cdfae965b53e4e81b96850e0847c"
+  },
+  "tests/specs/field-ambience-all-fields.spec.js": {
+    "mtime": 1792441390.7990105,
+    "seen": 1793910198.3874774,
+    "ast_hash": "0177d5444612fbe29d5e19fe0006db67",
+    "semantic_hash": "0177d5444612fbe29d5e19fe0006db67"
+  },
+  "tests/specs/field-ambience-distinct-signatures.spec.js": {
+    "mtime": 1792441390.8010044,
+    "seen": 1793910198.3881207,
+    "ast_hash": "44fb2490cf92f0493116c1c0192b076d",
+    "semantic_hash": "44fb2490cf92f0493116c1c0192b076d"
+  },
+  "tests/specs/fine-duello-premi-non-sbordano.spec.js": {
+    "mtime": 1792530623.531278,
+    "seen": 1793910198.38844,
+    "ast_hash": "1d51cc4c277d7d5a7727681d83bef868",
+    "semantic_hash": "1d51cc4c277d7d5a7727681d83bef868"
+  },
+  "tests/specs/finestra-di-priorita.spec.js": {
+    "mtime": 1791134794.7271695,
+    "seen": 1793910198.3891354,
+    "ast_hash": "1b09d7a416a568db9336f90250f4cb93",
+    "semantic_hash": "1b09d7a416a568db9336f90250f4cb93"
+  },
+  "tests/specs/flicker-duello-prolungato.spec.js": {
+    "mtime": 1791966329.2505074,
+    "seen": 1793910198.3891354,
+    "ast_hash": "dde210ed96d7b1da66d135649ef3d09a",
+    "semantic_hash": "dde210ed96d7b1da66d135649ef3d09a"
+  },
+  "tests/specs/flip-summon-animato.spec.js": {
+    "mtime": 1789822218.627292,
+    "seen": 1793910198.3901558,
+    "ast_hash": "d1abe796c4c1c3aae69e8b2eb62c5cf2",
+    "semantic_hash": "d1abe796c4c1c3aae69e8b2eb62c5cf2"
+  },
+  "tests/specs/flip-summon-carta-torna-normale.spec.js": {
+    "mtime": 1791671498.0446556,
+    "seen": 1793910198.3901558,
+    "ast_hash": "16c530076aaddebb5742a7b7da78f0e8",
+    "semantic_hash": "16c530076aaddebb5742a7b7da78f0e8"
+  },
+  "tests/specs/forced-attack-mechanism.spec.js": {
+    "mtime": 1789902388.6430788,
+    "seen": 1793910198.3911533,
+    "ast_hash": "2ff24e4cebdf290587eba9c9bcd4f814",
+    "semantic_hash": "2ff24e4cebdf290587eba9c9bcd4f814"
+  },
+  "tests/specs/forza-riflessa-distrugge-all-urto.spec.js": {
+    "mtime": 1793571951.824195,
+    "seen": 1793910198.3911533,
+    "ast_hash": "8bb82b0a75ec56e579af874d1cf9fb39",
+    "semantic_hash": "8bb82b0a75ec56e579af874d1cf9fb39"
+  },
+  "tests/specs/fusion-material-cinematic.spec.js": {
+    "mtime": 1790690415.8117735,
+    "seen": 1793910198.3921404,
+    "ast_hash": "81598539adb67860a8a7aac573a31032",
+    "semantic_hash": "81598539adb67860a8a7aac573a31032"
+  },
+  "tests/specs/fusion-space-legality.spec.js": {
+    "mtime": 1790672415.7943263,
+    "seen": 1793910198.3921404,
+    "ast_hash": "ac0f1ec960f8754af80f3d31fd326367",
+    "semantic_hash": "ac0f1ec960f8754af80f3d31fd326367"
+  },
+  "tests/specs/fx-webgl-scena.spec.js": {
+    "mtime": 1792521224.6341717,
+    "seen": 1793910198.3921404,
+    "ast_hash": "c1eec22082f0e494863ce637814329bd",
+    "semantic_hash": "c1eec22082f0e494863ce637814329bd"
+  },
+  "tests/specs/fx-webgl-spettacoli.spec.js": {
+    "mtime": 1793833609.2272334,
+    "seen": 1793910198.393175,
+    "ast_hash": "2723a9e8ce044cbd1ba27af28cb51670",
+    "semantic_hash": "2723a9e8ce044cbd1ba27af28cb51670"
+  },
+  "tests/specs/gather-your-mind-safety-destroy.spec.js": {
+    "mtime": 1788378658.3131,
+    "seen": 1793910198.393175,
+    "ast_hash": "5950c1c4e40d3938a5817eceaccbe6c8",
+    "semantic_hash": "5950c1c4e40d3938a5817eceaccbe6c8"
+  },
+  "tests/specs/graveyard-search-real-choice.spec.js": {
+    "mtime": 1789907779.9750135,
+    "seen": 1793910198.3941858,
+    "ast_hash": "c5a46e2f4287bb08b4c5722b792f1697",
+    "semantic_hash": "c5a46e2f4287bb08b4c5722b792f1697"
+  },
+  "tests/specs/grido-evocazione.spec.js": {
+    "mtime": 1792843231.392583,
+    "seen": 1793910198.3945305,
+    "ast_hash": "bb861a4ae14fbfc3ca64333a03bbb387",
+    "semantic_hash": "bb861a4ae14fbfc3ca64333a03bbb387"
+  },
+  "tests/specs/guardian-kayest-spell-immunity.spec.js": {
+    "mtime": 1792586049.923336,
+    "seen": 1793910198.3952184,
+    "ast_hash": "d982c2343fcb6e9c8bbb1c8e9ec5fd61",
+    "semantic_hash": "d982c2343fcb6e9c8bbb1c8e9ec5fd61"
+  },
+  "tests/specs/guardrail-azioni-del-motore-e-tipi.spec.js": {
+    "mtime": 1792320312.525208,
+    "seen": 1793910198.3952184,
+    "ast_hash": "6e4e35ba949bb941c05ded6cb934505a",
+    "semantic_hash": "6e4e35ba949bb941c05ded6cb934505a"
+  },
+  "tests/specs/guardrail-bersagli-dichiarati.spec.js": {
+    "mtime": 1792571714.67942,
+    "seen": 1793910198.3962405,
+    "ast_hash": "0bbd32a926adcbf0d4e5d0dd5c7a8c7f",
+    "semantic_hash": "0bbd32a926adcbf0d4e5d0dd5c7a8c7f"
+  },
+  "tests/specs/guardrail-copertura-avvio.spec.js": {
+    "mtime": 1792795772.7090528,
+    "seen": 1793910198.3962405,
+    "ast_hash": "4827cda0954335e61ba431b5b92af45e",
+    "semantic_hash": "4827cda0954335e61ba431b5b92af45e"
+  },
+  "tests/specs/guardrail-elenco-effetti.spec.js": {
+    "mtime": 1792570777.673839,
+    "seen": 1793910198.3962405,
+    "ast_hash": "ad8ca247fcf7005e4a356e233e0b5c87",
+    "semantic_hash": "ad8ca247fcf7005e4a356e233e0b5c87"
+  },
+  "tests/specs/guardrail-estensione-immagini.spec.js": {
+    "mtime": 1792244187.6028647,
+    "seen": 1793910198.397477,
+    "ast_hash": "b3537869052e6bce444f6eba09cb489a",
+    "semantic_hash": "b3537869052e6bce444f6eba09cb489a"
+  },
+  "tests/specs/guardrail-fromzone.spec.js": {
+    "mtime": 1789914238.1615424,
+    "seen": 1793910198.397477,
+    "ast_hash": "121415dc7ee208990d14eaacde798cc1",
+    "semantic_hash": "121415dc7ee208990d14eaacde798cc1"
+  },
+  "tests/specs/guardrail-gruppi-script.spec.js": {
+    "mtime": 1792534703.095713,
+    "seen": 1793910198.398479,
+    "ast_hash": "7077f199b49240129c71e79dddeee5f1",
+    "semantic_hash": "7077f199b49240129c71e79dddeee5f1"
+  },
+  "tests/specs/guardrail-ia-da-ogni-posto.spec.js": {
+    "mtime": 1791303000.1859262,
+    "seen": 1793910198.398479,
+    "ast_hash": "86272b1e18371ddc4a9fe3dab8546e5d",
+    "semantic_hash": "86272b1e18371ddc4a9fe3dab8546e5d"
+  },
+  "tests/specs/guardrail-impostazioni-due-copie.spec.js": {
+    "mtime": 1792569541.7339613,
+    "seen": 1793910198.3995247,
+    "ast_hash": "a2097d5be6791e6c86f1b6a302d82257",
+    "semantic_hash": "a2097d5be6791e6c86f1b6a302d82257"
+  },
+  "tests/specs/guardrail-modalita-fuori-dal-motore.spec.js": {
+    "mtime": 1793569402.843706,
+    "seen": 1793910198.3995247,
+    "ast_hash": "931807bc575b71c41a94a9f9e71f4f5d",
+    "semantic_hash": "931807bc575b71c41a94a9f9e71f4f5d"
+  },
+  "tests/specs/guardrail-mp3-senza-copertina.spec.js": {
+    "mtime": 1792774799.0306387,
+    "seen": 1793910198.4005694,
+    "ast_hash": "36f0193eaac1e2285af41a097fd6898e",
+    "semantic_hash": "36f0193eaac1e2285af41a097fd6898e"
+  },
+  "tests/specs/guardrail-necrovalley.spec.js": {
+    "mtime": 1791107831.8692744,
+    "seen": 1793910198.4005694,
+    "ast_hash": "9ff56424913edec624528fd98488a1c4",
+    "semantic_hash": "9ff56424913edec624528fd98488a1c4"
+  },
+  "tests/specs/guardrail-nomi-carte.spec.js": {
+    "mtime": 1792586049.9276974,
+    "seen": 1793910198.4005694,
+    "ast_hash": "c24b59bdac96fdc8f4ef3bbc217408c3",
+    "semantic_hash": "c24b59bdac96fdc8f4ef3bbc217408c3"
+  },
+  "tests/specs/guardrail-nucleo-senza-dom.spec.js": {
+    "mtime": 1791227476.4073787,
+    "seen": 1793910198.4005694,
+    "ast_hash": "b0a2a643dbce50911ce9ad8a05c3f248",
+    "semantic_hash": "b0a2a643dbce50911ce9ad8a05c3f248"
+  },
+  "tests/specs/guardrail-pagine-con-carte.spec.js": {
+    "mtime": 1792593028.204333,
+    "seen": 1793910198.4021664,
+    "ast_hash": "8843346faa3e8f185cddcdbb58b62dff",
+    "semantic_hash": "8843346faa3e8f185cddcdbb58b62dff"
+  },
+  "tests/specs/guardrail-parti-card-effects.spec.js": {
+    "mtime": 1789858205.5028577,
+    "seen": 1793910198.4021664,
+    "ast_hash": "35fe7270e2ca15a8089bcbe74f3e929d",
+    "semantic_hash": "35fe7270e2ca15a8089bcbe74f3e929d"
+  },
+  "tests/specs/guardrail-passo-comune.spec.js": {
+    "mtime": 1791272735.4916048,
+    "seen": 1793910198.4031694,
+    "ast_hash": "3cd3e041d320a1f172ee44e5f9d65817",
+    "semantic_hash": "3cd3e041d320a1f172ee44e5f9d65817"
+  },
+  "tests/specs/guardrail-protocollo-mp.spec.js": {
+    "mtime": 1792321162.9969273,
+    "seen": 1793910198.4037085,
+    "ast_hash": "52b2e79421fb7d157d4b51087e331af0",
+    "semantic_hash": "52b2e79421fb7d157d4b51087e331af0"
+  },
+  "tests/specs/guardrail-protocollo-multiplayer-unico.spec.js": {
+    "mtime": 1791298186.2529304,
+    "seen": 1793910198.4042215,
+    "ast_hash": "82e3f1f01fafb8c2243fce1409f05aef",
+    "semantic_hash": "82e3f1f01fafb8c2243fce1409f05aef"
+  },
+  "tests/specs/guardrail-regole-senza-interfaccia.spec.js": {
+    "mtime": 1791227476.4084587,
+    "seen": 1793910198.4042215,
+    "ast_hash": "86080f9b4c2d85caa2ffd7848ae3cd93",
+    "semantic_hash": "86080f9b4c2d85caa2ffd7848ae3cd93"
+  },
+  "tests/specs/guardrail-riferimenti-audio.spec.js": {
+    "mtime": 1791050321.9109974,
+    "seen": 1793910198.4042215,
+    "ast_hash": "8a8c359c0ae4ad71676641b47538bb71",
+    "semantic_hash": "8a8c359c0ae4ad71676641b47538bb71"
+  },
+  "tests/specs/guardrail-ritocchi-storia.spec.js": {
+    "mtime": 1791586925.3659642,
+    "seen": 1793910198.4057405,
+    "ast_hash": "e3636dd3d3481b050b5520daeafce1c0",
+    "semantic_hash": "e3636dd3d3481b050b5520daeafce1c0"
+  },
+  "tests/specs/guardrail-scala-carte.spec.js": {
+    "mtime": 1791554794.8710375,
+    "seen": 1793910198.4062955,
+    "ast_hash": "5e049c6261870e023b07ac49c464cf4c",
+    "semantic_hash": "5e049c6261870e023b07ac49c464cf4c"
+  },
+  "tests/specs/guardrail-script-delle-pagine.spec.js": {
+    "mtime": 1792570645.226699,
+    "seen": 1793910198.4066155,
+    "ast_hash": "0c433bbd4230258f8d3309833597bd48",
+    "semantic_hash": "0c433bbd4230258f8d3309833597bd48"
+  },
+  "tests/specs/guardrail-targeting-attendibile.spec.js": {
+    "mtime": 1791301985.583073,
+    "seen": 1793910198.4066155,
+    "ast_hash": "eb8aec016621c8139bc806f5b05ac802",
+    "semantic_hash": "eb8aec016621c8139bc806f5b05ac802"
+  },
+  "tests/specs/guardrail-tipi.spec.js": {
+    "mtime": 1792320823.6357956,
+    "seen": 1793910198.407733,
+    "ast_hash": "e5a1deabc3ae28e8450a403ecadac41c",
+    "semantic_hash": "e5a1deabc3ae28e8450a403ecadac41c"
+  },
+  "tests/specs/guardrail-vocabolario-effetti.spec.js": {
+    "mtime": 1792318094.6791337,
+    "seen": 1793910198.40814,
+    "ast_hash": "37d4aaa3233be2c8ba18d4b3e3f03e97",
+    "semantic_hash": "37d4aaa3233be2c8ba18d4b3e3f03e97"
+  },
+  "tests/specs/hand-pointer-ux.spec.js": {
+    "mtime": 1790804502.1760747,
+    "seen": 1793910198.40814,
+    "ast_hash": "b241b9c19b5e37170cd333e0a6f79c6d",
+    "semantic_hash": "b241b9c19b5e37170cd333e0a6f79c6d"
+  },
+  "tests/specs/high-level-summon-audio.spec.js": {
+    "mtime": 1793141239.8735294,
+    "seen": 1793910198.40916,
+    "ast_hash": "5d02290d6ffd2f66b8f9208826e9a18d",
+    "semantic_hash": "5d02290d6ffd2f66b8f9208826e9a18d"
+  },
+  "tests/specs/ia-abbandonato-solo-con-un-bersaglio.spec.js": {
+    "mtime": 1793555183.773668,
+    "seen": 1793910198.40916,
+    "ast_hash": "842dfa464f501db51d6abd2d4973ea0e",
+    "semantic_hash": "842dfa464f501db51d6abd2d4973ea0e"
+  },
+  "tests/specs/ia-attivazioni-sensate.spec.js": {
+    "mtime": 1792619368.3540182,
+    "seen": 1793910198.40916,
+    "ast_hash": "cbcb9b1dd53b14c372ebbaaaa72736e7",
+    "semantic_hash": "cbcb9b1dd53b14c372ebbaaaa72736e7"
+  },
+  "tests/specs/ia-bonus-attacco-difesa.spec.js": {
+    "mtime": 1791033390.0826142,
+    "seen": 1793910198.4104772,
+    "ast_hash": "690ef83dd4a3ebf3d4486613fafdc356",
+    "semantic_hash": "690ef83dd4a3ebf3d4486613fafdc356"
+  },
+  "tests/specs/ia-distruzione-magie-trappole.spec.js": {
+    "mtime": 1793216674.6221125,
+    "seen": 1793910198.4104772,
+    "ast_hash": "99ef6fd3420520c25b83bc194604e994",
+    "semantic_hash": "99ef6fd3420520c25b83bc194604e994"
+  },
+  "tests/specs/ia-esodia-resa.spec.js": {
+    "mtime": 1793562425.3234234,
+    "seen": 1793910198.4114773,
+    "ast_hash": "b096362ba967a7e79e0ee80fa02f0ab3",
+    "semantic_hash": "b096362ba967a7e79e0ee80fa02f0ab3"
+  },
+  "tests/specs/ia-hard-dominanza.spec.js": {
+    "mtime": 1791485518.6587577,
+    "seen": 1793910198.4120626,
+    "ast_hash": "919669adc7e96723516fa83192cf19d3",
+    "semantic_hash": "919669adc7e96723516fa83192cf19d3"
+  },
+  "tests/specs/ia-hard-effetti-continui-ripetibili.spec.js": {
+    "mtime": 1791623173.2733514,
+    "seen": 1793910198.4123933,
+    "ast_hash": "688f0710ff4368c6dca3a03f6d455a8a",
+    "semantic_hash": "688f0710ff4368c6dca3a03f6d455a8a"
+  },
+  "tests/specs/ia-non-distrugge-le-sue-magie.spec.js": {
+    "mtime": 1793535087.8238223,
+    "seen": 1793910198.4127479,
+    "ast_hash": "544cdd3394386df4b59c38e2496fc7ae",
+    "semantic_hash": "544cdd3394386df4b59c38e2496fc7ae"
+  },
+  "tests/specs/ia-non-evoca-senza-spazio.spec.js": {
+    "mtime": 1793141239.882828,
+    "seen": 1793910198.4127479,
+    "ast_hash": "784c11a2b4fc6095440231889264d93b",
+    "semantic_hash": "784c11a2b4fc6095440231889264d93b"
+  },
+  "tests/specs/ia-ra-somma-da-pagare.spec.js": {
+    "mtime": 1792925551.4858365,
+    "seen": 1793910198.4127479,
+    "ast_hash": "20168c25858a185ea48db79c6bb8695f",
+    "semantic_hash": "20168c25858a185ea48db79c6bb8695f"
+  },
+  "tests/specs/ia-risorse-e-bersagli.spec.js": {
+    "mtime": 1792586049.929841,
+    "seen": 1793910198.4142897,
+    "ast_hash": "30bc101f18a7fe0b58ae172f64d86341",
+    "semantic_hash": "30bc101f18a7fe0b58ae172f64d86341"
+  },
+  "tests/specs/ia-trattiene-pezzi-exodia.spec.js": {
+    "mtime": 1790787285.822381,
+    "seen": 1793910198.4142897,
+    "ast_hash": "cc44339f2e31da3b016816d133ac3fa6",
+    "semantic_hash": "cc44339f2e31da3b016816d133ac3fa6"
+  },
+  "tests/specs/icone-flottanti-webgl.spec.js": {
+    "mtime": 1792571399.163226,
+    "seen": 1793910198.415301,
+    "ast_hash": "c1bdfd8e975cca93fd73b5c22d489066",
+    "semantic_hash": "c1bdfd8e975cca93fd73b5c22d489066"
+  },
+  "tests/specs/identita-archetipi.spec.js": {
+    "mtime": 1792172241.0956278,
+    "seen": 1793910198.415301,
+    "ast_hash": "bbaba8e80c7d55356195428a96f07d5a",
+    "semantic_hash": "bbaba8e80c7d55356195428a96f07d5a"
+  },
+  "tests/specs/importa-salvataggio-con-conferma.spec.js": {
+    "mtime": 1792834853.3341043,
+    "seen": 1793910198.416351,
+    "ast_hash": "0eb43d878954c308473dac3741875d05",
+    "semantic_hash": "0eb43d878954c308473dac3741875d05"
+  },
+  "tests/specs/impostazioni-default-alti-e-profondita-menu.spec.js": {
+    "mtime": 1792883256.0862358,
+    "seen": 1793910198.416351,
+    "ast_hash": "5ab322165954863c2608d71e08687e0d",
+    "semantic_hash": "5ab322165954863c2608d71e08687e0d"
+  },
+  "tests/specs/impostazioni-nel-salvataggio.spec.js": {
+    "mtime": 1791883537.1749818,
+    "seen": 1793910198.416351,
+    "ast_hash": "663ca4ade27c8a39c99ea4822f4270a8",
+    "semantic_hash": "663ca4ade27c8a39c99ea4822f4270a8"
+  },
+  "tests/specs/inferno-circle-standby-summon.spec.js": {
+    "mtime": 1788730638.8749375,
+    "seen": 1793910198.4176588,
+    "ast_hash": "f9553d6034aedb8e3d76b5c3d74a2608",
+    "semantic_hash": "f9553d6034aedb8e3d76b5c3d74a2608"
+  },
+  "tests/specs/intro-duello-non-sborda-su-mobile.spec.js": {
+    "mtime": 1789898924.0285592,
+    "seen": 1793910198.4176588,
+    "ast_hash": "57f18f625b0d5780c6ca1f7cfb98f550",
+    "semantic_hash": "57f18f625b0d5780c6ca1f7cfb98f550"
+  },
+  "tests/specs/invincible-fortress-exxod-megaroccia.spec.js": {
+    "mtime": 1790761289.4898827,
+    "seen": 1793910198.4187062,
+    "ast_hash": "04da66930982968528adedaeea604840",
+    "semantic_hash": "04da66930982968528adedaeea604840"
+  },
+  "tests/specs/kaiba-avatar-per-contesto.spec.js": {
+    "mtime": 1792190331.0962522,
+    "seen": 1793910198.4187062,
+    "ast_hash": "07519ece5a330cf2ab38d8fac4ac1046",
+    "semantic_hash": "07519ece5a330cf2ab38d8fac4ac1046"
+  },
+  "tests/specs/kaiba-marik-deck-ai.spec.js": {
+    "mtime": 1792924903.6678998,
+    "seen": 1793910198.419939,
+    "ast_hash": "b2bda2b59b8b62994a4f97ec42c1d6a5",
+    "semantic_hash": "b2bda2b59b8b62994a4f97ec42c1d6a5"
+  },
+  "tests/specs/kaiba-stadium-crowd-flashes.spec.js": {
+    "mtime": 1792441390.8020027,
+    "seen": 1793910198.419939,
+    "ast_hash": "639ac2ac300811d303349d34016829f8",
+    "semantic_hash": "639ac2ac300811d303349d34016829f8"
+  },
+  "tests/specs/kaibacorp-industry-sparks.spec.js": {
+    "mtime": 1792441390.8034081,
+    "seen": 1793910198.4210815,
+    "ast_hash": "066c751a663e3ce280436029f16797f0",
+    "semantic_hash": "066c751a663e3ce280436029f16797f0"
+  },
+  "tests/specs/lady-arpia-solo-mostri.spec.js": {
+    "mtime": 1792586049.9308445,
+    "seen": 1793910198.4210815,
+    "ast_hash": "6065291349486943bac85ba30216b482",
+    "semantic_hash": "6065291349486943bac85ba30216b482"
+  },
+  "tests/specs/lancio-moneta-dado-webgl.spec.js": {
+    "mtime": 1793565318.427828,
+    "seen": 1793910198.4210815,
+    "ast_hash": "c2aea0ba605b3cf09f18cc4c97f12ff0",
+    "semantic_hash": "c2aea0ba605b3cf09f18cc4c97f12ff0"
+  },
+  "tests/specs/legendary-ocean-level-reduction.spec.js": {
+    "mtime": 1788378018.5052142,
+    "seen": 1793910198.422213,
+    "ast_hash": "f3a82e2af62fd301009f814a8e63e7d3",
+    "semantic_hash": "f3a82e2af62fd301009f814a8e63e7d3"
+  },
+  "tests/specs/limiti-copie-lista.spec.js": {
+    "mtime": 1793552100.501986,
+    "seen": 1793910198.422213,
+    "ast_hash": "51a6d973fbe6fdb0c86be7f81d8f58ab",
+    "semantic_hash": "51a6d973fbe6fdb0c86be7f81d8f58ab"
+  },
+  "tests/specs/limiti-mazzi-duellanti.spec.js": {
+    "mtime": 1793552760.1115327,
+    "seen": 1793910198.4232578,
+    "ast_hash": "7a86081f886f656a1c8ceffef0bf5ba4",
+    "semantic_hash": "7a86081f886f656a1c8ceffef0bf5ba4"
+  },
+  "tests/specs/lod-great-dezard-fushioh-richie-batch17.spec.js": {
+    "mtime": 1788712870.988112,
+    "seen": 1793910198.4232578,
+    "ast_hash": "3464d7b86785502b53faf38ecc2fcbc5",
+    "semantic_hash": "3464d7b86785502b53faf38ecc2fcbc5"
+  },
+  "tests/specs/lod-helpoemer-graveyard-battle-phase-end.spec.js": {
+    "mtime": 1789423715.4989378,
+    "seen": 1793910198.4242547,
+    "ast_hash": "0fb77036b71562dc84d99487cc3ec01f",
+    "semantic_hash": "0fb77036b71562dc84d99487cc3ec01f"
+  },
+  "tests/specs/lod-moth-meteor-dragons-batch15.spec.js": {
+    "mtime": 1790671675.330298,
+    "seen": 1793910198.4247074,
+    "ast_hash": "1ca5a327492b6ba3457188e5385b34ef",
+    "semantic_hash": "1ca5a327492b6ba3457188e5385b34ef"
+  },
+  "tests/specs/lod-mrd-linked-monster-batch14.spec.js": {
+    "mtime": 1791144193.0410895,
+    "seen": 1793910198.4247074,
+    "ast_hash": "676be8759cf19617afaffab5e9bd5ad4",
+    "semantic_hash": "676be8759cf19617afaffab5e9bd5ad4"
+  },
+  "tests/specs/lod-mrd-srl-spirit-ritual-cards.spec.js": {
+    "mtime": 1793356723.9833317,
+    "seen": 1793910198.4247074,
+    "ast_hash": "bfd1a641cd5e373ee127313f682771bb",
+    "semantic_hash": "bfd1a641cd5e373ee127313f682771bb"
+  },
+  "tests/specs/lod-pgd-banish-summon-batch11.spec.js": {
+    "mtime": 1788696986.8385496,
+    "seen": 1793910198.4259012,
+    "ast_hash": "8fc7d4684a280e388b2146e5a6404d26",
+    "semantic_hash": "8fc7d4684a280e388b2146e5a6404d26"
+  },
+  "tests/specs/lod-pgd-mrd-battle-destroyer-batch12.spec.js": {
+    "mtime": 1791064686.9046013,
+    "seen": 1793910198.4259012,
+    "ast_hash": "2aa0ec1cad6f1ff7583e031ca0825b6e",
+    "semantic_hash": "2aa0ec1cad6f1ff7583e031ca0825b6e"
+  },
+  "tests/specs/lod-pgd-reactive-summon-monitors-batch9.spec.js": {
+    "mtime": 1788694812.2818952,
+    "seen": 1793910198.4269812,
+    "ast_hash": "064646828d368824c7633a502af5b235",
+    "semantic_hash": "064646828d368824c7633a502af5b235"
+  },
+  "tests/specs/lod-srl-battle-control-effects-batch6.spec.js": {
+    "mtime": 1788691924.0223627,
+    "seen": 1793910198.4269812,
+    "ast_hash": "4531f9aae23f0839ed627209a2cf4b45",
+    "semantic_hash": "4531f9aae23f0839ed627209a2cf4b45"
+  },
+  "tests/specs/lod-srl-ceremonial-bell-skull-knight-batch16.spec.js": {
+    "mtime": 1788711660.8819363,
+    "seen": 1793910198.4282863,
+    "ast_hash": "bc2085e59cc5782b64dca07a9a64fdde",
+    "semantic_hash": "bc2085e59cc5782b64dca07a9a64fdde"
+  },
+  "tests/specs/lod-srl-conditional-stats-battle-tribute-batch7.spec.js": {
+    "mtime": 1788693438.2265859,
+    "seen": 1793910198.4282863,
+    "ast_hash": "bdd89b7f2c7f675549a86a969389ea98",
+    "semantic_hash": "bdd89b7f2c7f675549a86a969389ea98"
+  },
+  "tests/specs/lod-srl-fusion-monsters-batch5.spec.js": {
+    "mtime": 1791032261.2266693,
+    "seen": 1793910198.4282863,
+    "ast_hash": "330b2742e146a8f158f522a1c8a804b5",
+    "semantic_hash": "330b2742e146a8f158f522a1c8a804b5"
+  },
+  "tests/specs/lod-srl-psv-flip-cards-batch4.spec.js": {
+    "mtime": 1789907790.978513,
+    "seen": 1793910198.429638,
+    "ast_hash": "1ad9410eb8cadc9a65943667dbf22f29",
+    "semantic_hash": "1ad9410eb8cadc9a65943667dbf22f29"
+  },
+  "tests/specs/lod-srl-static-floodgates-batch8.spec.js": {
+    "mtime": 1788694079.0557566,
+    "seen": 1793910198.429638,
+    "ast_hash": "0d92bedc1a333fdf025c5dc084d9d17a",
+    "semantic_hash": "0d92bedc1a333fdf025c5dc084d9d17a"
+  },
+  "tests/specs/lod-steel-scorpion-delayed-destroy.spec.js": {
+    "mtime": 1788709603.817886,
+    "seen": 1793910198.4306707,
+    "ast_hash": "a47d3c9e6d9cf70eada3e3054b472628",
+    "semantic_hash": "a47d3c9e6d9cf70eada3e3054b472628"
+  },
+  "tests/specs/mage-soldier-deck-ai.spec.js": {
+    "mtime": 1791718839.6102648,
+    "seen": 1793910198.4311478,
+    "ast_hash": "4bc79c2782795e2cad718dac86641746",
+    "semantic_hash": "4bc79c2782795e2cad718dac86641746"
+  },
+  "tests/specs/magie-rapide-in-catena.spec.js": {
+    "mtime": 1793348653.9304852,
+    "seen": 1793910198.4315917,
+    "ast_hash": "66511605e5fdde5269b8a596adfb435e",
+    "semantic_hash": "66511605e5fdde5269b8a596adfb435e"
+  },
+  "tests/specs/mano-attivazione-chiude-box-info.spec.js": {
+    "mtime": 1793902077.2284806,
+    "seen": 1793910198.4315917,
+    "ast_hash": "a01c0d70f7e2823c76412bf99fe20211",
+    "semantic_hash": "a01c0d70f7e2823c76412bf99fe20211"
+  },
+  "tests/specs/mano-cambio-carta-con-popover.spec.js": {
+    "mtime": 1792750426.938889,
+    "seen": 1793910198.4315917,
+    "ast_hash": "e2c51f2e10ab623d6c1079082fa9c011",
+    "semantic_hash": "e2c51f2e10ab623d6c1079082fa9c011"
+  },
+  "tests/specs/mano-evidenziazione-una-carta-alla-volta.spec.js": {
+    "mtime": 1792750426.9403958,
+    "seen": 1793910198.432902,
+    "ast_hash": "f6999a40ea26117702f3777d0f7cc3f8",
+    "semantic_hash": "f6999a40ea26117702f3777d0f7cc3f8"
+  },
+  "tests/specs/mano-scorrimento-touch.spec.js": {
+    "mtime": 1793379898.3113208,
+    "seen": 1793910198.432902,
+    "ast_hash": "e845156f067c4b214ed2652abcdd5720",
+    "semantic_hash": "e845156f067c4b214ed2652abcdd5720"
+  },
+  "tests/specs/mano-sollevamento-non-ridisegna.spec.js": {
+    "mtime": 1792750426.9419017,
+    "seen": 1793910198.432902,
+    "ast_hash": "b1df24bca2cd42ef0d0254507c3fe207",
+    "semantic_hash": "b1df24bca2cd42ef0d0254507c3fe207"
+  },
+  "tests/specs/mano-trascinamento-evidenzia-caselle.spec.js": {
+    "mtime": 1792750426.942916,
+    "seen": 1793910198.4344091,
+    "ast_hash": "32c81585ce73593801853cc9ca29ac60",
+    "semantic_hash": "32c81585ce73593801853cc9ca29ac60"
+  },
+  "tests/specs/mappa-celebra-tappa.spec.js": {
+    "mtime": 1793057979.9087007,
+    "seen": 1793910198.4344091,
+    "ast_hash": "d5ec8c51a9536ab367659af286794a47",
+    "semantic_hash": "d5ec8c51a9536ab367659af286794a47"
+  },
+  "tests/specs/mazzi-livello-facile.spec.js": {
+    "mtime": 1790448932.8732738,
+    "seen": 1793910198.4354331,
+    "ast_hash": "b9db050da893ecb314ae1ca8a3da99ea",
+    "semantic_hash": "b9db050da893ecb314ae1ca8a3da99ea"
+  },
+  "tests/specs/menu-non-scorre-in-orizzontale.spec.js": {
+    "mtime": 1793368790.5375912,
+    "seen": 1793910198.4354331,
+    "ast_hash": "c9d082d21343f0db643fd559304f9110",
+    "semantic_hash": "c9d082d21343f0db643fd559304f9110"
+  },
+  "tests/specs/menu-viste-loader-logo.spec.js": {
+    "mtime": 1792569342.4774396,
+    "seen": 1793910198.436202,
+    "ast_hash": "6e010354e071ea26d929aedae6d02b62",
+    "semantic_hash": "6e010354e071ea26d929aedae6d02b62"
+  },
+  "tests/specs/miraculous-jurassic-egg-banish-immunity.spec.js": {
+    "mtime": 1788456846.0987024,
+    "seen": 1793910198.4369457,
+    "ast_hash": "917f05848241476f4e44218a374c2856",
+    "semantic_hash": "917f05848241476f4e44218a374c2856"
+  },
+  "tests/specs/missing-effect-note-batch1.spec.js": {
+    "mtime": 1788715626.9246995,
+    "seen": 1793910198.4369457,
+    "ast_hash": "42ef9296bdabd6286401ff93dacfdbb7",
+    "semantic_hash": "42ef9296bdabd6286401ff93dacfdbb7"
+  },
+  "tests/specs/missing-effect-note-batch2.spec.js": {
+    "mtime": 1788716139.7363307,
+    "seen": 1793910198.4369457,
+    "ast_hash": "09f74bc07d4fe463b0f01d8644056e80",
+    "semantic_hash": "09f74bc07d4fe463b0f01d8644056e80"
+  },
+  "tests/specs/missioni-giornaliere-generiche.spec.js": {
+    "mtime": 1792922076.3401356,
+    "seen": 1793910198.4380686,
+    "ast_hash": "6f113d50b74a781e03551e02a95cb401",
+    "semantic_hash": "6f113d50b74a781e03551e02a95cb401"
+  },
+  "tests/specs/modalita-puzzle.spec.js": {
+    "mtime": 1793216674.6231184,
+    "seen": 1793910198.4380686,
+    "ast_hash": "2264f9c6e0450ece2f46586680899962",
+    "semantic_hash": "2264f9c6e0450ece2f46586680899962"
+  },
+  "tests/specs/modalita-rivincite.spec.js": {
+    "mtime": 1791830200.3356225,
+    "seen": 1793910198.4380686,
+    "ast_hash": "f6cb71cf292c7cbe28c4cebe626d82ea",
+    "semantic_hash": "f6cb71cf292c7cbe28c4cebe626d82ea"
+  },
+  "tests/specs/modalita-settimana-e-caccia.spec.js": {
+    "mtime": 1793573984.1398637,
+    "seen": 1793910198.4394777,
+    "ast_hash": "63f0c4275609e22fa92b07c720a094e6",
+    "semantic_hash": "63f0c4275609e22fa92b07c720a094e6"
+  },
+  "tests/specs/modalita-storia.spec.js": {
+    "mtime": 1793372894.344247,
+    "seen": 1793910198.4394777,
+    "ast_hash": "481e8072dc1152a5ea82f1fb90529ebe",
+    "semantic_hash": "481e8072dc1152a5ea82f1fb90529ebe"
+  },
+  "tests/specs/modalita-torre.spec.js": {
+    "mtime": 1791830200.3371837,
+    "seen": 1793910198.440588,
+    "ast_hash": "24454fb7d8d158e1d52c4f726572958a",
+    "semantic_hash": "24454fb7d8d158e1d52c4f726572958a"
+  },
+  "tests/specs/morra-cinese-responsive.spec.js": {
+    "mtime": 1790709293.3865006,
+    "seen": 1793910198.440588,
+    "ast_hash": "e1d8519d7da5f00f1b5d4782afcf3b92",
+    "semantic_hash": "e1d8519d7da5f00f1b5d4782afcf3b92"
+  },
+  "tests/specs/movimenti-carta-webgl.spec.js": {
+    "mtime": 1792772919.6313498,
+    "seen": 1793910198.440588,
+    "ast_hash": "e8d8b4d23249bbecec6d7a615abb78c4",
+    "semantic_hash": "e8d8b4d23249bbecec6d7a615abb78c4"
+  },
+  "tests/specs/multiplayer-abbandono-a-duello-avviato.spec.js": {
+    "mtime": 1791298186.2541428,
+    "seen": 1793910198.441671,
+    "ast_hash": "db64d4ea3f5a7eee6a16e26583b33bc6",
+    "semantic_hash": "db64d4ea3f5a7eee6a16e26583b33bc6"
+  },
+  "tests/specs/multiplayer-attesa-remota.spec.js": {
+    "mtime": 1791278347.1850965,
+    "seen": 1793910198.441671,
+    "ast_hash": "be83de26f9e974aa8ea74cbbe1891c25",
+    "semantic_hash": "be83de26f9e974aa8ea74cbbe1891c25"
+  },
+  "tests/specs/multiplayer-end-to-end.spec.js": {
+    "mtime": 1791298186.2541428,
+    "seen": 1793910198.442645,
+    "ast_hash": "e27a78bc781cd9ce53bf13b8aef49c7b",
+    "semantic_hash": "e27a78bc781cd9ce53bf13b8aef49c7b"
+  },
+  "tests/specs/multiplayer-kaibacorp-connection-ui.spec.js": {
+    "mtime": 1792620832.4592233,
+    "seen": 1793910198.442645,
+    "ast_hash": "419e035c07db9714c9cdde29731def8e",
+    "semantic_hash": "419e035c07db9714c9cdde29731def8e"
+  },
+  "tests/specs/multiplayer-lobby-abbandono.spec.js": {
+    "mtime": 1791298186.256181,
+    "seen": 1793910198.4437132,
+    "ast_hash": "b0b27db5b3d812d286ae1bd587be6141",
+    "semantic_hash": "b0b27db5b3d812d286ae1bd587be6141"
+  },
+  "tests/specs/multiplayer-modalita-sala.spec.js": {
+    "mtime": 1793047958.0226269,
+    "seen": 1793910198.4442172,
+    "ast_hash": "bf4d0a71d2faa35e3ba856a842547208",
+    "semantic_hash": "bf4d0a71d2faa35e3ba856a842547208"
+  },
+  "tests/specs/multiplayer-morra-cinese.spec.js": {
+    "mtime": 1791277064.1606522,
+    "seen": 1793910198.4442172,
+    "ast_hash": "01e62f941b5a51cc4073daac29590df3",
+    "semantic_hash": "01e62f941b5a51cc4073daac29590df3"
+  },
+  "tests/specs/multiplayer-nome-e-avatar-avversario.spec.js": {
+    "mtime": 1792883256.0862358,
+    "seen": 1793910198.4452283,
+    "ast_hash": "93001ee112b649de1adbe811b4c6293a",
+    "semantic_hash": "93001ee112b649de1adbe811b4c6293a"
+  },
+  "tests/specs/multiplayer-passo-comune.spec.js": {
+    "mtime": 1791272735.502297,
+    "seen": 1793910198.4452283,
+    "ast_hash": "ef1ad7b0d54b746138c3aeae88fa6941",
+    "semantic_hash": "ef1ad7b0d54b746138c3aeae88fa6941"
+  },
+  "tests/specs/multiplayer-pedina.spec.js": {
+    "mtime": 1792622317.467003,
+    "seen": 1793910198.4463496,
+    "ast_hash": "d423bf29171e711b6f5be9ffa04dffc5",
+    "semantic_hash": "d423bf29171e711b6f5be9ffa04dffc5"
+  },
+  "tests/specs/multiplayer-precarica-arena.spec.js": {
+    "mtime": 1792796106.9653952,
+    "seen": 1793910198.4463496,
+    "ast_hash": "560f2cd9f82275cf46ad95009a984f60",
+    "semantic_hash": "560f2cd9f82275cf46ad95009a984f60"
+  },
+  "tests/specs/multiplayer-protocollo-obbligatorio.spec.js": {
+    "mtime": 1791298186.2581835,
+    "seen": 1793910198.4473507,
+    "ast_hash": "cf3735607d4f67f86f77b711397d31ba",
+    "semantic_hash": "cf3735607d4f67f86f77b711397d31ba"
+  },
+  "tests/specs/multiplayer-ra-somma-scelta.spec.js": {
+    "mtime": 1792923957.7575681,
+    "seen": 1793910198.4473507,
+    "ast_hash": "0f9c8a28bf19d268239b3b6ee8571bfb",
+    "semantic_hash": "0f9c8a28bf19d268239b3b6ee8571bfb"
+  },
+  "tests/specs/multiplayer-raid.spec.js": {
+    "mtime": 1793738468.4968224,
+    "seen": 1793910198.4473507,
+    "ast_hash": "2e3b4792e4b5a439fcbfb7982cccc36f",
+    "semantic_hash": "2e3b4792e4b5a439fcbfb7982cccc36f"
+  },
+  "tests/specs/multiplayer-scelta-arena-dopo-ingresso.spec.js": {
+    "mtime": 1792794555.584394,
+    "seen": 1793910198.448739,
+    "ast_hash": "e748c0518593718f48ce93e75765dec9",
+    "semantic_hash": "e748c0518593718f48ce93e75765dec9"
+  },
+  "tests/specs/multiplayer-specchio.spec.js": {
+    "mtime": 1793047958.0425634,
+    "seen": 1793910198.448739,
+    "ast_hash": "a07f9a962ffc615d9341db3277934e9b",
+    "semantic_hash": "a07f9a962ffc615d9341db3277934e9b"
+  },
+  "tests/specs/multiplayer-tag-team.spec.js": {
+    "mtime": 1793482354.4523466,
+    "seen": 1793910198.448739,
+    "ast_hash": "30a75aa5b49131be4dc276b8a95b0900",
+    "semantic_hash": "30a75aa5b49131be4dc276b8a95b0900"
+  },
+  "tests/specs/necrovalley-e-ritorni-in-mano.spec.js": {
+    "mtime": 1791107714.3402035,
+    "seen": 1793910198.448739,
+    "ast_hash": "503ea7b1ce226664a05abdffd8e06a5d",
+    "semantic_hash": "503ea7b1ce226664a05abdffd8e06a5d"
+  },
+  "tests/specs/negation-cards.spec.js": {
+    "mtime": 1788369356.0,
+    "seen": 1793910198.448739,
+    "ast_hash": "d0cd328ab27fc4b4e89005e33bbc93e6",
+    "semantic_hash": "d0cd328ab27fc4b4e89005e33bbc93e6"
+  },
+  "tests/specs/negozio-admin-riacquisto-deck.spec.js": {
+    "mtime": 1791322350.3385475,
+    "seen": 1793910198.448739,
+    "ast_hash": "471d9a77ce2b507c964782fecba8ad97",
+    "semantic_hash": "471d9a77ce2b507c964782fecba8ad97"
+  },
+  "tests/specs/negozio-animazioni-prodotti.spec.js": {
+    "mtime": 1792767772.835283,
+    "seen": 1793910198.448739,
+    "ast_hash": "92dd34dd14f4b70352878c1a8c94afef",
+    "semantic_hash": "92dd34dd14f4b70352878c1a8c94afef"
+  },
+  "tests/specs/negozio-carta-giornaliera-unica.spec.js": {
+    "mtime": 1791317797.536732,
+    "seen": 1793910198.448739,
+    "ast_hash": "b9f99518cf09098dbbe279ac1ab9bfd8",
+    "semantic_hash": "b9f99518cf09098dbbe279ac1ab9bfd8"
+  },
+  "tests/specs/negozio-comuni-solo-crediti.spec.js": {
+    "mtime": 1792758252.243004,
+    "seen": 1793910198.448739,
+    "ast_hash": "df65e48b6bf3d5ae37f20328458c3aa4",
+    "semantic_hash": "df65e48b6bf3d5ae37f20328458c3aa4"
+  },
+  "tests/specs/negozio-mazzi-ww1-gratis.spec.js": {
+    "mtime": 1792794310.7725139,
+    "seen": 1793910198.448739,
+    "ast_hash": "4dfa5a66363505b2d4dfa4762deba9c8",
+    "semantic_hash": "4dfa5a66363505b2d4dfa4762deba9c8"
+  },
+  "tests/specs/nitemare-separato.spec.js": {
+    "mtime": 1792172241.1134582,
+    "seen": 1793910198.448739,
+    "ast_hash": "44659cf6a17432a6ce5e4823cffc1013",
+    "semantic_hash": "44659cf6a17432a6ce5e4823cffc1013"
+  },
+  "tests/specs/note-carte-chiuse-2.spec.js": {
+    "mtime": 1791063079.4378147,
+    "seen": 1793910198.448739,
+    "ast_hash": "f1c16351076e67142596efa84ea265e3",
+    "semantic_hash": "f1c16351076e67142596efa84ea265e3"
+  },
+  "tests/specs/note-carte-chiuse-3.spec.js": {
+    "mtime": 1791064895.7573793,
+    "seen": 1793910198.4544861,
+    "ast_hash": "187b37ebd746aa6ff58407e23e06b076",
+    "semantic_hash": "187b37ebd746aa6ff58407e23e06b076"
+  },
+  "tests/specs/note-carte-chiuse-4.spec.js": {
+    "mtime": 1791726956.367345,
+    "seen": 1793910198.4547975,
+    "ast_hash": "c50168d99150c153d9acb9f23b659729",
+    "semantic_hash": "c50168d99150c153d9acb9f23b659729"
+  },
+  "tests/specs/note-carte-chiuse.spec.js": {
+    "mtime": 1791032262.3101697,
+    "seen": 1793910198.4551256,
+    "ast_hash": "2921566c6c6076fd8149e067e0aa7a41",
+    "semantic_hash": "2921566c6c6076fd8149e067e0aa7a41"
+  },
+  "tests/specs/nuove-carte-economia.spec.js": {
+    "mtime": 1791816067.3781126,
+    "seen": 1793910198.4551256,
+    "ast_hash": "dea1606c897040ae24d867e7d4f75e36",
+    "semantic_hash": "dea1606c897040ae24d867e7d4f75e36"
+  },
+  "tests/specs/oggetti-millennio.spec.js": {
+    "mtime": 1791666387.5831237,
+    "seen": 1793910198.4562573,
+    "ast_hash": "8226ae0a5a11b42546bd02bde466a582",
+    "semantic_hash": "8226ae0a5a11b42546bd02bde466a582"
+  },
+  "tests/specs/ologramma-dopo-scelta-picker.spec.js": {
+    "mtime": 1789817166.4627576,
+    "seen": 1793910198.4562573,
+    "ast_hash": "ecab108f5984a93b0c60b31cb86356d8",
+    "semantic_hash": "ecab108f5984a93b0c60b31cb86356d8"
+  },
+  "tests/specs/ologramma-volo-e-disintegrazione.spec.js": {
+    "mtime": 1792772919.6333537,
+    "seen": 1793910198.4572585,
+    "ast_hash": "7b154c580a9d669d0aec4e8e433d3085",
+    "semantic_hash": "7b154c580a9d669d0aec4e8e433d3085"
+  },
+  "tests/specs/ologrammi-visibili.spec.js": {
+    "mtime": 1792766386.0101526,
+    "seen": 1793910198.4572585,
+    "ast_hash": "6a1830b3043fda85528a1fb03f1a06e3",
+    "semantic_hash": "6a1830b3043fda85528a1fb03f1a06e3"
+  },
+  "tests/specs/ologrammi-webgl.spec.js": {
+    "mtime": 1792767772.8372087,
+    "seen": 1793910198.4582589,
+    "ast_hash": "8d18b667f05a43100ebb13c2b60e2bd4",
+    "semantic_hash": "8d18b667f05a43100ebb13c2b60e2bd4"
+  },
+  "tests/specs/oppressione-reale-per-entrambi.spec.js": {
+    "mtime": 1791132638.6210425,
+    "seen": 1793910198.4582589,
+    "ast_hash": "3ad19f967cf1b1ffdd89a411fd42bf63",
+    "semantic_hash": "3ad19f967cf1b1ffdd89a411fd42bf63"
+  },
+  "tests/specs/orichalcos-sword-extension.spec.js": {
+    "mtime": 1791134213.1632993,
+    "seen": 1793910198.4582589,
+    "ast_hash": "c2fb7954a6eb021e24fc1c27baf6b9af",
+    "semantic_hash": "c2fb7954a6eb021e24fc1c27baf6b9af"
+  },
+  "tests/specs/orichalcos-sword-quick-effect.spec.js": {
+    "mtime": 1791134277.1912622,
+    "seen": 1793910198.4592595,
+    "ast_hash": "fd7929c5564cda779fcf87e03b0629df",
+    "semantic_hash": "fd7929c5564cda779fcf87e03b0629df"
+  },
+  "tests/specs/orologio-del-server.spec.js": {
+    "mtime": 1790331101.3191698,
+    "seen": 1793910198.4592595,
+    "ast_hash": "44a78f626f58eaf1cf42d6f77ec8492f",
+    "semantic_hash": "44a78f626f58eaf1cf42d6f77ec8492f"
+  },
+  "tests/specs/pack-opening-luce-webgl.spec.js": {
+    "mtime": 1793742769.3565302,
+    "seen": 1793910198.46026,
+    "ast_hash": "ef9ab45f9ea1065bde651d8bdcd13794",
+    "semantic_hash": "ef9ab45f9ea1065bde651d8bdcd13794"
+  },
+  "tests/specs/page-loader-3d.spec.js": {
+    "mtime": 1790891139.0924644,
+    "seen": 1793910198.4608338,
+    "ast_hash": "5b9a505a981eec137b1103be50a1b6b4",
+    "semantic_hash": "5b9a505a981eec137b1103be50a1b6b4"
+  },
+  "tests/specs/passo-comune-a-posti.spec.js": {
+    "mtime": 1793482354.4523466,
+    "seen": 1793910198.4608338,
+    "ast_hash": "52e637b392214d72d5c1807a4c527755",
+    "semantic_hash": "52e637b392214d72d5c1807a4c527755"
+  },
+  "tests/specs/pedine-personaggi-ui.spec.js": {
+    "mtime": 1792190331.09226,
+    "seen": 1793910198.4620101,
+    "ast_hash": "ff8187f8b09efaef1877cc366951ad6f",
+    "semantic_hash": "ff8187f8b09efaef1877cc366951ad6f"
+  },
+  "tests/specs/pescata-effetto-nessun-flash-preanimazione.spec.js": {
+    "mtime": 1790672122.9011588,
+    "seen": 1793910198.4620101,
+    "ast_hash": "0246957a8f6ac46afe388474f22b321a",
+    "semantic_hash": "0246957a8f6ac46afe388474f22b321a"
+  },
+  "tests/specs/pescata-una-carta-alla-volta.spec.js": {
+    "mtime": 1789820090.958978,
+    "seen": 1793910198.4630113,
+    "ast_hash": "bce50f88aee889df382c7dea2f600404",
+    "semantic_hash": "bce50f88aee889df382c7dea2f600404"
+  },
+  "tests/specs/pgd-damage-step-peek-batch13.spec.js": {
+    "mtime": 1788704223.0177922,
+    "seen": 1793910198.4630113,
+    "ast_hash": "bb0492ac9cf48216383967ff55479e05",
+    "semantic_hash": "bb0492ac9cf48216383967ff55479e05"
+  },
+  "tests/specs/pgd-lon-delayed-revival-batch10.spec.js": {
+    "mtime": 1788695773.0466237,
+    "seen": 1793910198.4630113,
+    "ast_hash": "96138434eb8d1986723e60b6c62525e9",
+    "semantic_hash": "96138434eb8d1986723e60b6c62525e9"
+  },
+  "tests/specs/pgd-psv-srl-lod-flip-cards.spec.js": {
+    "mtime": 1792586049.9380364,
+    "seen": 1793910198.4630113,
+    "ast_hash": "55ef1fcffba9499921ca9d8574272b8c",
+    "semantic_hash": "55ef1fcffba9499921ca9d8574272b8c"
+  },
+  "tests/specs/phase-stepper-responsive.spec.js": {
+    "mtime": 1792966637.6097405,
+    "seen": 1793910198.4645164,
+    "ast_hash": "76f742d1d57e35362c84c38051994d68",
+    "semantic_hash": "76f742d1d57e35362c84c38051994d68"
+  },
+  "tests/specs/pile-allineate-alle-carte.spec.js": {
+    "mtime": 1792187724.374518,
+    "seen": 1793910198.4645164,
+    "ast_hash": "ee5a61dbbe39c3b1b3a808cfaec9bbc0",
+    "semantic_hash": "ee5a61dbbe39c3b1b3a808cfaec9bbc0"
+  },
+  "tests/specs/pitch-black-warwolf-detach.spec.js": {
+    "mtime": 1788384761.7246602,
+    "seen": 1793910198.4656024,
+    "ast_hash": "cfbea1f333e4c2f48bd6ee802d9fb2cb",
+    "semantic_hash": "cfbea1f333e4c2f48bd6ee802d9fb2cb"
+  },
+  "tests/specs/popover-opzioni-in-colonna-su-mobile.spec.js": {
+    "mtime": 1793542414.955666,
+    "seen": 1793910198.4656024,
+    "ast_hash": "4fbb973f9f45faab2942d980ac8da2d7",
+    "semantic_hash": "4fbb973f9f45faab2942d980ac8da2d7"
+  },
+  "tests/specs/premi-sfide.spec.js": {
+    "mtime": 1792947781.0582604,
+    "seen": 1793910198.466634,
+    "ast_hash": "2be042af669eb418986cd6a6cf9f7168",
+    "semantic_hash": "2be042af669eb418986cd6a6cf9f7168"
+  },
+  "tests/specs/prima-serie-effetti-mancanti.spec.js": {
+    "mtime": 1791816067.3798544,
+    "seen": 1793910198.4669993,
+    "ast_hash": "3632402f86f0581880748b550e000e10",
+    "semantic_hash": "3632402f86f0581880748b550e000e10"
+  },
+  "tests/specs/prima-serie-fusioni-mancanti.spec.js": {
+    "mtime": 1791816067.3798544,
+    "seen": 1793910198.4669993,
+    "ast_hash": "530c4f51b2fc8ab8f41eef6c3b408338",
+    "semantic_hash": "530c4f51b2fc8ab8f41eef6c3b408338"
+  },
+  "tests/specs/primitive-supporti-divinita.spec.js": {
+    "mtime": 1792172241.124491,
+    "seen": 1793910198.4669993,
+    "ast_hash": "939e6a27281262b1c8eefbd529338490",
+    "semantic_hash": "939e6a27281262b1c8eefbd529338490"
+  },
+  "tests/specs/profilo-recupera-copie-messe-da-parte.spec.js": {
+    "mtime": 1792839819.7816546,
+    "seen": 1793910198.4669993,
+    "ast_hash": "71675f35a90a9ec0b4294638a8ffd151",
+    "semantic_hash": "71675f35a90a9ec0b4294638a8ffd151"
+  },
+  "tests/specs/profilo-testata.spec.js": {
+    "mtime": 1792924320.5678265,
+    "seen": 1793910198.4669993,
+    "ast_hash": "3a677e32a081995dbdce890edd47dfdb",
+    "semantic_hash": "3a677e32a081995dbdce890edd47dfdb"
+  },
+  "tests/specs/pulsante-fasi-laterale.spec.js": {
+    "mtime": 1793546008.5199547,
+    "seen": 1793910198.4669993,
+    "ast_hash": "c4b356897e61eec74d6ccbf9ad1b53f7",
+    "semantic_hash": "c4b356897e61eec74d6ccbf9ad1b53f7"
+  },
+  "tests/specs/ra-scelte-del-giocatore.spec.js": {
+    "mtime": 1792919126.5415316,
+    "seen": 1793910198.4669993,
+    "ast_hash": "c0f30ffafed97846811a6062442c31c9",
+    "semantic_hash": "c0f30ffafed97846811a6062442c31c9"
+  },
+  "tests/specs/raigeki-lightning-effect.spec.js": {
+    "mtime": 1790636162.358562,
+    "seen": 1793910198.4669993,
+    "ast_hash": "d4b9677df71afaa37d9e9f603257f47c",
+    "semantic_hash": "d4b9677df71afaa37d9e9f603257f47c"
+  },
+  "tests/specs/rare-hunters-roster.spec.js": {
+    "mtime": 1791721877.0434012,
+    "seen": 1793910198.4669993,
+    "ast_hash": "c7e6e56b0582817d11e180f5d2cc4610",
+    "semantic_hash": "c7e6e56b0582817d11e180f5d2cc4610"
+  },
+  "tests/specs/realistic-bot-turns.spec.js": {
+    "mtime": 1788369410.0,
+    "seen": 1793910198.4669993,
+    "ast_hash": "e7ad65c423e3b992112f57bf697f59e4",
+    "semantic_hash": "e7ad65c423e3b992112f57bf697f59e4"
+  },
+  "tests/specs/recupero-copia-di-sicurezza.spec.js": {
+    "mtime": 1792834853.3351085,
+    "seen": 1793910198.4669993,
+    "ast_hash": "05e1835d880feb3eaa0585771f92cec7",
+    "semantic_hash": "05e1835d880feb3eaa0585771f92cec7"
+  },
+  "tests/specs/render-terreno-incrementale.spec.js": {
+    "mtime": 1791901077.0746057,
+    "seen": 1793910198.4669993,
+    "ast_hash": "001b2bec054cf66af8d1dac8771f2c6e",
+    "semantic_hash": "001b2bec054cf66af8d1dac8771f2c6e"
+  },
+  "tests/specs/response-modal-timing.spec.js": {
+    "mtime": 1788369309.0,
+    "seen": 1793910198.4669993,
+    "ast_hash": "b6a31371c73095ef76e3380d5461e21c",
+    "semantic_hash": "b6a31371c73095ef76e3380d5461e21c"
+  },
+  "tests/specs/resuscita-e-carita-graziosa.spec.js": {
+    "mtime": 1792618632.5648332,
+    "seen": 1793910198.4669993,
+    "ast_hash": "7a022cc4c0a380fd1f0682109be68d62",
+    "semantic_hash": "7a022cc4c0a380fd1f0682109be68d62"
+  },
+  "tests/specs/return-to-hand-mechanism.spec.js": {
+    "mtime": 1792179400.1220465,
+    "seen": 1793910198.4669993,
+    "ast_hash": "6f9848d5185aacd9a726eaded6f4d2cf",
+    "semantic_hash": "6f9848d5185aacd9a726eaded6f4d2cf"
+  },
+  "tests/specs/rianimazione-senza-doppio-effetto.spec.js": {
+    "mtime": 1792772919.635358,
+    "seen": 1793910198.4746635,
+    "ast_hash": "9a3985fec5c4208363bd31f59678550f",
+    "semantic_hash": "9a3985fec5c4208363bd31f59678550f"
+  },
+  "tests/specs/rimescolo-mazzo-webgl.spec.js": {
+    "mtime": 1793057979.9087007,
+    "seen": 1793910198.4746635,
+    "ast_hash": "b013e9ce91729f92db3afd47d614ca7c",
+    "semantic_hash": "b013e9ce91729f92db3afd47d614ca7c"
+  },
+  "tests/specs/ripresa-duello-schermo.spec.js": {
+    "mtime": 1792235456.9591155,
+    "seen": 1793910198.4746635,
+    "ast_hash": "96b8ca3f838aa5ada3e67945bfd6f7f9",
+    "semantic_hash": "96b8ca3f838aa5ada3e67945bfd6f7f9"
+  },
+  "tests/specs/riscontri-duello-e-ologrammi.spec.js": {
+    "mtime": 1791586925.3659642,
+    "seen": 1793910198.4746635,
+    "ast_hash": "d7cdb1a732e736ea6442dd04d58bd711",
+    "semantic_hash": "d7cdb1a732e736ea6442dd04d58bd711"
+  },
+  "tests/specs/ritual-summon-cinematic.spec.js": {
+    "mtime": 1793356762.356993,
+    "seen": 1793910198.4746635,
+    "ast_hash": "f6ede3275cb33a11b17c25a079285632",
+    "semantic_hash": "f6ede3275cb33a11b17c25a079285632"
+  },
+  "tests/specs/rituale-indice-e-provenienza.spec.js": {
+    "mtime": 1791227476.4346595,
+    "seen": 1793910198.4746635,
+    "ast_hash": "938aaeb953d8625021120e69f6bdd185",
+    "semantic_hash": "938aaeb953d8625021120e69f6bdd185"
+  },
+  "tests/specs/roc-valley-haze-discard-cost.spec.js": {
+    "mtime": 1788457993.0145674,
+    "seen": 1793910198.4746635,
+    "ast_hash": "59eb11bbbc5092c0b9a6313946aabd7c",
+    "semantic_hash": "59eb11bbbc5092c0b9a6313946aabd7c"
+  },
+  "tests/specs/salvataggio-forma.spec.js": {
+    "mtime": 1792318273.3128142,
+    "seen": 1793910198.4781604,
+    "ast_hash": "2e6556eee3067b53189cbf12b453f215",
+    "semantic_hash": "2e6556eee3067b53189cbf12b453f215"
+  },
+  "tests/specs/salvataggio-non-si-perde.spec.js": {
+    "mtime": 1790417053.5969276,
+    "seen": 1793910198.4781604,
+    "ast_hash": "921c373e1b1e90f96ac6ca83f1d2359f",
+    "semantic_hash": "921c373e1b1e90f96ac6ca83f1d2359f"
+  },
+  "tests/specs/sandbox-field-switch-exit.spec.js": {
+    "mtime": 1790667241.4869182,
+    "seen": 1793910198.4781604,
+    "ast_hash": "08f91709ed538f3d4d9a6c3c137cefef",
+    "semantic_hash": "08f91709ed538f3d4d9a6c3c137cefef"
+  },
+  "tests/specs/sandbox-solo-admin.spec.js": {
+    "mtime": 1791719703.8002832,
+    "seen": 1793910198.4781604,
+    "ast_hash": "9de74c1ddccebced4e89017136263270",
+    "semantic_hash": "9de74c1ddccebced4e89017136263270"
+  },
+  "tests/specs/santuario-oscuro-immunita-completa.spec.js": {
+    "mtime": 1791301985.583073,
+    "seen": 1793910198.4801633,
+    "ast_hash": "f9ab0f4dd0df415ba9131763908fb51c",
+    "semantic_hash": "f9ab0f4dd0df415ba9131763908fb51c"
+  },
+  "tests/specs/sblocchi-modalita-e-regole.spec.js": {
+    "mtime": 1791830052.8552184,
+    "seen": 1793910198.4801633,
+    "ast_hash": "327d216628834dbc300110f059d64df5",
+    "semantic_hash": "327d216628834dbc300110f059d64df5"
+  },
+  "tests/specs/sblocco-duellanti-luoghi.spec.js": {
+    "mtime": 1792569420.4953434,
+    "seen": 1793910198.4801633,
+    "ast_hash": "5d5e51832f2a3a9125e560c7675f3353",
+    "semantic_hash": "5d5e51832f2a3a9125e560c7675f3353"
+  },
+  "tests/specs/sbustamento-striscia-come-mano.spec.js": {
+    "mtime": 1791883310.4919462,
+    "seen": 1793910198.4801633,
+    "ast_hash": "390a77219abb8ea791a28180983dd5f2",
+    "semantic_hash": "390a77219abb8ea791a28180983dd5f2"
+  },
+  "tests/specs/scelta-bersaglio-magie-trappole.spec.js": {
+    "mtime": 1792591665.3912132,
+    "seen": 1793910198.482166,
+    "ast_hash": "2cdc44bf42c86c5117dee2e035e697d5",
+    "semantic_hash": "2cdc44bf42c86c5117dee2e035e697d5"
+  },
+  "tests/specs/scelta-bersaglio-mostri.spec.js": {
+    "mtime": 1789845356.9074054,
+    "seen": 1793910198.482166,
+    "ast_hash": "e097dceccc89fd2ab1e4b865e34c02a0",
+    "semantic_hash": "e097dceccc89fd2ab1e4b865e34c02a0"
+  },
+  "tests/specs/scelta-di-chi-subisce.spec.js": {
+    "mtime": 1791298186.2581835,
+    "seen": 1793910198.482166,
+    "ast_hash": "4d41c54ad33923a2adbe8b1ccbe42522",
+    "semantic_hash": "4d41c54ad33923a2adbe8b1ccbe42522"
+  },
+  "tests/specs/scelte-che-la-battaglia-aspetta.spec.js": {
+    "mtime": 1792172241.2161863,
+    "seen": 1793910198.482166,
+    "ast_hash": "1ed80ee4d8705b5b3a9ab9c81bd59b88",
+    "semantic_hash": "1ed80ee4d8705b5b3a9ab9c81bd59b88"
+  },
+  "tests/specs/scelte-che-mancavano-2.spec.js": {
+    "mtime": 1791628100.0392714,
+    "seen": 1793910198.4847014,
+    "ast_hash": "75d3913419cea171d54425a8b3930cd4",
+    "semantic_hash": "75d3913419cea171d54425a8b3930cd4"
+  },
+  "tests/specs/scelte-schema-unico-e-velocita-bot.spec.js": {
+    "mtime": 1791908427.2099628,
+    "seen": 1793910198.4847014,
+    "ast_hash": "cfb9e53231d4e53f7d163160c3522d86",
+    "semantic_hash": "cfb9e53231d4e53f7d163160c3522d86"
+  },
+  "tests/specs/scelte-utente-mancanti.spec.js": {
+    "mtime": 1789811222.3236072,
+    "seen": 1793910198.4847014,
+    "ast_hash": "5286e7261ad484f7afdc28e530bc4e9d",
+    "semantic_hash": "5286e7261ad484f7afdc28e530bc4e9d"
+  },
+  "tests/specs/scelte-utente-secondo-lotto.spec.js": {
+    "mtime": 1789901072.8112736,
+    "seen": 1793910198.4847014,
+    "ast_hash": "be52886c7810a953156e7dcc273b7871",
+    "semantic_hash": "be52886c7810a953156e7dcc273b7871"
+  },
+  "tests/specs/scelte-utente-terzo-lotto.spec.js": {
+    "mtime": 1789905231.544556,
+    "seen": 1793910198.4847014,
+    "ast_hash": "1f02cb3db866420d6aab86720b86e1e0",
+    "semantic_hash": "1f02cb3db866420d6aab86720b86e1e0"
+  },
+  "tests/specs/scheda-carta-unica.spec.js": {
+    "mtime": 1792569425.9581082,
+    "seen": 1793910198.4847014,
+    "ast_hash": "4e1a495133b2f64ddabf53178d11e309",
+    "semantic_hash": "4e1a495133b2f64ddabf53178d11e309"
+  },
+  "tests/specs/server-anti-imbroglio.spec.js": {
+    "mtime": 1792591624.5679574,
+    "seen": 1793910198.4847014,
+    "ast_hash": "b9a42e6be89020c234d57b63c043233d",
+    "semantic_hash": "b9a42e6be89020c234d57b63c043233d"
+  },
+  "tests/specs/server-stanze-grandi.spec.js": {
+    "mtime": 1793482354.4533439,
+    "seen": 1793910198.4847014,
+    "ast_hash": "c4d5c24968b2940e139194370f86b12a",
+    "semantic_hash": "c4d5c24968b2940e139194370f86b12a"
+  },
+  "tests/specs/service-worker-cache.spec.js": {
+    "mtime": 1792795907.5119734,
+    "seen": 1793910198.4847014,
+    "ast_hash": "a507f7ace0133a3bb6e62b72317bdbbf",
+    "semantic_hash": "a507f7ace0133a3bb6e62b72317bdbbf"
+  },
+  "tests/specs/service-worker-redirect-del-sito.spec.js": {
+    "mtime": 1792797833.5082166,
+    "seen": 1793910198.4847014,
+    "ast_hash": "4eb11b6c9eb4463ff015d8765f7405b3",
+    "semantic_hash": "4eb11b6c9eb4463ff015d8765f7405b3"
+  },
+  "tests/specs/sessione-48-ore.spec.js": {
+    "mtime": 1792254199.0134706,
+    "seen": 1793910198.4847014,
+    "ast_hash": "87a2c4418f8f307fbdf151083f56657b",
+    "semantic_hash": "87a2c4418f8f307fbdf151083f56657b"
+  },
+  "tests/specs/sfera-ritorna-al-proprietario.spec.js": {
+    "mtime": 1792947900.9327004,
+    "seen": 1793910198.4847014,
+    "ast_hash": "2c26cfcf378d58fe36e6315485eb1f71",
+    "semantic_hash": "2c26cfcf378d58fe36e6315485eb1f71"
+  },
+  "tests/specs/sfide-cento-sfide.spec.js": {
+    "mtime": 1793574321.533069,
+    "seen": 1793910198.490334,
+    "ast_hash": "f22cdbedb1579f290834199eb14c08f8",
+    "semantic_hash": "f22cdbedb1579f290834199eb14c08f8"
+  },
+  "tests/specs/sfide-nuove-famiglie.spec.js": {
+    "mtime": 1793574346.6937635,
+    "seen": 1793910198.490334,
+    "ast_hash": "640b38b600ee771c7bbe1fe955bf34de",
+    "semantic_hash": "640b38b600ee771c7bbe1fe955bf34de"
+  },
+  "tests/specs/sfide-settimana-e-caccia.spec.js": {
+    "mtime": 1793348993.980826,
+    "seen": 1793910198.490334,
+    "ast_hash": "b63f9a4abeeb79871bf91fe39ed7a208",
+    "semantic_hash": "b63f9a4abeeb79871bf91fe39ed7a208"
+  },
+  "tests/specs/sfide-sezioni-e-missioni.spec.js": {
+    "mtime": 1793348653.924966,
+    "seen": 1793910198.490334,
+    "ast_hash": "08dad7de26fefb2907da0f5d96ffa979",
+    "semantic_hash": "08dad7de26fefb2907da0f5d96ffa979"
+  },
+  "tests/specs/sfondo-webgl-inizio-fine-duello.spec.js": {
+    "mtime": 1792523556.25214,
+    "seen": 1793910198.490334,
+    "ast_hash": "3c313ca4c311d43da21ea1e1f6517298",
+    "semantic_hash": "3c313ca4c311d43da21ea1e1f6517298"
+  },
+  "tests/specs/simulazione-storia-deck.spec.js": {
+    "mtime": 1791400129.1198425,
+    "seen": 1793910198.490334,
+    "ast_hash": "8f09c957a48c5c165a3426c02d31dc9a",
+    "semantic_hash": "8f09c957a48c5c165a3426c02d31dc9a"
+  },
+  "tests/specs/special-summon-cost-real-choice.spec.js": {
+    "mtime": 1791499403.2012541,
+    "seen": 1793910198.490334,
+    "ast_hash": "aa0cd6982292f695fc8a2fa081e9c192",
+    "semantic_hash": "aa0cd6982292f695fc8a2fa081e9c192"
+  },
+  "tests/specs/special-summon-dal-cimitero.spec.js": {
+    "mtime": 1789914272.8286617,
+    "seen": 1793910198.490334,
+    "ast_hash": "0683b724dd75948f9ecba625358f503b",
+    "semantic_hash": "0683b724dd75948f9ecba625358f503b"
+  },
+  "tests/specs/spell-trap-destruction-effect.spec.js": {
+    "mtime": 1790671920.0074997,
+    "seen": 1793910198.490334,
+    "ast_hash": "94f0cf46bdfcce0bbe60534d7cd80c2e",
+    "semantic_hash": "94f0cf46bdfcce0bbe60534d7cd80c2e"
+  },
+  "tests/specs/spirito-torna-in-mano.spec.js": {
+    "mtime": 1791227476.442941,
+    "seen": 1793910198.4945922,
+    "ast_hash": "ef00007652c00a806780c3f2f60b8320",
+    "semantic_hash": "ef00007652c00a806780c3f2f60b8320"
+  },
+  "tests/specs/splash-puzzle-webgl.spec.js": {
+    "mtime": 1792917369.023359,
+    "seen": 1793910198.4945922,
+    "ast_hash": "bc2e8b554e3978c1e918ac3c4267f79b",
+    "semantic_hash": "bc2e8b554e3978c1e918ac3c4267f79b"
+  },
+  "tests/specs/stato-salvataggio-menu.spec.js": {
+    "mtime": 1792839666.9170735,
+    "seen": 1793910198.4945922,
+    "ast_hash": "8ba9bb0a1d914d8299e50cbb3a13a327",
+    "semantic_hash": "8ba9bb0a1d914d8299e50cbb3a13a327"
+  },
+  "tests/specs/storia-anime-coerenza-narrativa.spec.js": {
+    "mtime": 1791930163.7981734,
+    "seen": 1793910198.4945922,
+    "ast_hash": "e489e9fac5854884d7a9d38c23677cc7",
+    "semantic_hash": "e489e9fac5854884d7a9d38c23677cc7"
+  },
+  "tests/specs/storia-anime-migrazione-fedelta.spec.js": {
+    "mtime": 1791716088.356678,
+    "seen": 1793910198.4945922,
+    "ast_hash": "cc2d503ee0389114d48e361054c66911",
+    "semantic_hash": "cc2d503ee0389114d48e361054c66911"
+  },
+  "tests/specs/storia-aree-macro.spec.js": {
+    "mtime": 1791716088.3586874,
+    "seen": 1793910198.4945922,
+    "ast_hash": "2a940b73c0b05a21a868a50dd30c5c8d",
+    "semantic_hash": "2a940b73c0b05a21a868a50dd30c5c8d"
+  },
+  "tests/specs/storia-continua-fine-duello.spec.js": {
+    "mtime": 1790808178.3534503,
+    "seen": 1793910198.4945922,
+    "ast_hash": "4b0a4a9db5ee533ec2180c85de7aa766",
+    "semantic_hash": "4b0a4a9db5ee533ec2180c85de7aa766"
+  },
+  "tests/specs/storia-conversazioni-pedine.spec.js": {
+    "mtime": 1792737384.3941562,
+    "seen": 1793910198.4980702,
+    "ast_hash": "5d1cdd8f9af632eae93f20e834df9f88",
+    "semantic_hash": "5d1cdd8f9af632eae93f20e834df9f88"
+  },
+  "tests/specs/storia-dopo-il-duello.spec.js": {
+    "mtime": 1793571346.3383398,
+    "seen": 1793910198.4980702,
+    "ast_hash": "1cb5957698f3db69874012a2fc94a68b",
+    "semantic_hash": "1cb5957698f3db69874012a2fc94a68b"
+  },
+  "tests/specs/storia-duelli-tag.spec.js": {
+    "mtime": 1793557367.9343576,
+    "seen": 1793910198.4980702,
+    "ast_hash": "a4e9e61f220564a83c8d9e8369aa38ef",
+    "semantic_hash": "a4e9e61f220564a83c8d9e8369aa38ef"
+  },
+  "tests/specs/storia-fm-fedelta.spec.js": {
+    "mtime": 1792189418.1066356,
+    "seen": 1793910198.4980702,
+    "ast_hash": "4471634cfa19c7bf7d51431057851db8",
+    "semantic_hash": "4471634cfa19c7bf7d51431057851db8"
+  },
+  "tests/specs/storia-grande-guerra-sulla-mappa.spec.js": {
+    "mtime": 1790018495.3670323,
+    "seen": 1793910198.4980702,
+    "ast_hash": "a932a262625d9f744079fe670e6d915d",
+    "semantic_hash": "a932a262625d9f744079fe670e6d915d"
+  },
+  "tests/specs/storia-intermezzi-extra.spec.js": {
+    "mtime": 1791718165.588967,
+    "seen": 1793910198.4980702,
+    "ast_hash": "78a9e099bedb867fa1e33ff0a7b0a1b6",
+    "semantic_hash": "78a9e099bedb867fa1e33ff0a7b0a1b6"
+  },
+  "tests/specs/storia-livelli.spec.js": {
+    "mtime": 1793372894.3472915,
+    "seen": 1793910198.4980702,
+    "ast_hash": "e689f06ba3e605fd6c185c27a1cf26f7",
+    "semantic_hash": "e689f06ba3e605fd6c185c27a1cf26f7"
+  },
+  "tests/specs/storia-mappa-zoom-e-collapse.spec.js": {
+    "mtime": 1793372888.7166572,
+    "seen": 1793910198.4980702,
+    "ast_hash": "ac98623cde2296f01d30f8b6c2358084",
+    "semantic_hash": "ac98623cde2296f01d30f8b6c2358084"
+  },
+  "tests/specs/storia-miniature-testata.spec.js": {
+    "mtime": 1792840147.942418,
+    "seen": 1793910198.4980702,
+    "ast_hash": "1f7380d100c0ad6afb0947995ccd56a1",
+    "semantic_hash": "1f7380d100c0ad6afb0947995ccd56a1"
+  },
+  "tests/specs/storia-protagonista-per-campagna.spec.js": {
+    "mtime": 1792750426.9451113,
+    "seen": 1793910198.4980702,
+    "ast_hash": "a0257b31026a1a5ea8a405748aa2d27f",
+    "semantic_hash": "a0257b31026a1a5ea8a405748aa2d27f"
+  },
+  "tests/specs/storia-rami-paralleli.spec.js": {
+    "mtime": 1790807572.1157951,
+    "seen": 1793910198.4980702,
+    "ast_hash": "b069505512e99225c2edcd906408a6a2",
+    "semantic_hash": "b069505512e99225c2edcd906408a6a2"
+  },
+  "tests/specs/storia-scene-cinematiche.spec.js": {
+    "mtime": 1791721913.3900526,
+    "seen": 1793910198.4980702,
+    "ast_hash": "a4d30d7992ec2f25be06ff10adf6ea30",
+    "semantic_hash": "a4d30d7992ec2f25be06ff10adf6ea30"
+  },
+  "tests/specs/storia-stelle-per-arco.spec.js": {
+    "mtime": 1792780050.2571368,
+    "seen": 1793910198.4980702,
+    "ast_hash": "471458e8d40edec54aacee4583db1a69",
+    "semantic_hash": "471458e8d40edec54aacee4583db1a69"
+  },
+  "tests/specs/storia-torneo-dentro-campagna.spec.js": {
+    "mtime": 1791718165.5919595,
+    "seen": 1793910198.5046477,
+    "ast_hash": "bef86c1007e4328328c0c1e0cf6c97c1",
+    "semantic_hash": "bef86c1007e4328328c0c1e0cf6c97c1"
+  },
+  "tests/specs/storie-admin-premi-unici.spec.js": {
+    "mtime": 1791394598.9883325,
+    "seen": 1793910198.5046477,
+    "ast_hash": "408103547b2b8c7b21440816b51844b8",
+    "semantic_hash": "408103547b2b8c7b21440816b51844b8"
+  },
+  "tests/specs/summon-effect-card-anchor.spec.js": {
+    "mtime": 1790635655.6200716,
+    "seen": 1793910198.5056996,
+    "ast_hash": "f748e9130d89545b9830c4b6435a6ca2",
+    "semantic_hash": "f748e9130d89545b9830c4b6435a6ca2"
+  },
+  "tests/specs/supporti-divinita-fase-complessa.spec.js": {
+    "mtime": 1793824163.9365268,
+    "seen": 1793910198.5056996,
+    "ast_hash": "d50fc75bcbfdfcc3182ac36e13f4a2a4",
+    "semantic_hash": "d50fc75bcbfdfcc3182ac36e13f4a2a4"
+  },
+  "tests/specs/supporti-divinita-scelte-e-costi.spec.js": {
+    "mtime": 1792926401.497993,
+    "seen": 1793910198.5056996,
+    "ast_hash": "6a98f3104b05cb34f7809056568a0d64",
+    "semantic_hash": "6a98f3104b05cb34f7809056568a0d64"
+  },
+  "tests/specs/supporti-divinita-slifer-obelisk.spec.js": {
+    "mtime": 1792172241.238945,
+    "seen": 1793910198.5056996,
+    "ast_hash": "494da2720fc81ccfa3fe1e3d30ee2a16",
+    "semantic_hash": "494da2720fc81ccfa3fe1e3d30ee2a16"
+  },
+  "tests/specs/supporti-mago-nero.spec.js": {
+    "mtime": 1793834645.6808617,
+    "seen": 1793910198.5056996,
+    "ast_hash": "657314fab408002c23b9c33ac6cc59e7",
+    "semantic_hash": "657314fab408002c23b9c33ac6cc59e7"
+  },
+  "tests/specs/supporti-moderni-economia.spec.js": {
+    "mtime": 1792172241.265174,
+    "seen": 1793910198.5056996,
+    "ast_hash": "708cac7c4df791cf466fd4d4b346b9df",
+    "semantic_hash": "708cac7c4df791cf466fd4d4b346b9df"
+  },
+  "tests/specs/supporti-occhi-blu.spec.js": {
+    "mtime": 1792172241.2776759,
+    "seen": 1793910198.5056996,
+    "ast_hash": "a9c01b4811df1af33ba797b37c848d14",
+    "semantic_hash": "a9c01b4811df1af33ba797b37c848d14"
+  },
+  "tests/specs/supporti-occhi-rossi.spec.js": {
+    "mtime": 1792172241.289475,
+    "seen": 1793910198.5056996,
+    "ast_hash": "4ac3f86938928b95052e3be5cfc2d75d",
+    "semantic_hash": "4ac3f86938928b95052e3be5cfc2d75d"
+  },
+  "tests/specs/supporti-toon-moderni.spec.js": {
+    "mtime": 1792172241.3007925,
+    "seen": 1793910198.5056996,
+    "ast_hash": "b7e0b2591f399b3b66297e0fcb3c4e55",
+    "semantic_hash": "b7e0b2591f399b3b66297e0fcb3c4e55"
+  },
+  "tests/specs/supporto-divinita-canto-antico.spec.js": {
+    "mtime": 1792172241.310119,
+    "seen": 1793910198.5056996,
+    "ast_hash": "2c1ddaa035c3c9e1e4aaebe3d224df1e",
+    "semantic_hash": "2c1ddaa035c3c9e1e4aaebe3d224df1e"
+  },
+  "tests/specs/swords-of-revealing-light-flip.spec.js": {
+    "mtime": 1790635338.01601,
+    "seen": 1793910198.5056996,
+    "ast_hash": "ac8b240d18b647aa0ee3c2911a82d1d9",
+    "semantic_hash": "ac8b240d18b647aa0ee3c2911a82d1d9"
+  },
+  "tests/specs/sync-carte-personalizzate.spec.js": {
+    "mtime": 1791583092.0103877,
+    "seen": 1793910198.5056996,
+    "ast_hash": "2587895aa213c1d28b514abfcde320a6",
+    "semantic_hash": "2587895aa213c1d28b514abfcde320a6"
+  },
+  "tests/specs/sync-due-dispositivi-senza-sovrascrittura.spec.js": {
+    "mtime": 1792834853.3361135,
+    "seen": 1793910198.5056996,
+    "ast_hash": "a83c7634dbb86345edecd18923e3da8b",
+    "semantic_hash": "a83c7634dbb86345edecd18923e3da8b"
+  },
+  "tests/specs/sync-salvataggi-tra-dispositivi.spec.js": {
+    "mtime": 1792249835.7010458,
+    "seen": 1793910198.5056996,
+    "ast_hash": "78a2638cd6d06d31846bb0f2c1e0d332",
+    "semantic_hash": "78a2638cd6d06d31846bb0f2c1e0d332"
+  },
+  "tests/specs/sync-salvataggio-di-un-altro-account.spec.js": {
+    "mtime": 1792834853.3371181,
+    "seen": 1793910198.5056996,
+    "ast_hash": "3f6b682fd02e0a6faac408433656219a",
+    "semantic_hash": "3f6b682fd02e0a6faac408433656219a"
+  },
+  "tests/specs/sync-ultimo-dispositivo.spec.js": {
+    "mtime": 1792569669.2237728,
+    "seen": 1793910198.5056996,
+    "ast_hash": "2ee04357e02a9d348501f326fbf8269e",
+    "semantic_hash": "2ee04357e02a9d348501f326fbf8269e"
+  },
+  "tests/specs/tag-pagina-tabellone.spec.js": {
+    "mtime": 1793483774.1634839,
+    "seen": 1793910198.5056996,
+    "ast_hash": "ccdf539be046c4eb9d804e467b853768",
+    "semantic_hash": "ccdf539be046c4eb9d804e467b853768"
+  },
+  "tests/specs/tag-team-boss-e-scambio.spec.js": {
+    "mtime": 1793482354.4533439,
+    "seen": 1793910198.5139294,
+    "ast_hash": "1c86a5b51f1a34d48112b262ff2a5a8d",
+    "semantic_hash": "1c86a5b51f1a34d48112b262ff2a5a8d"
+  },
+  "tests/specs/tag-team-campo-compagno.spec.js": {
+    "mtime": 1793744619.9620423,
+    "seen": 1793910198.5144348,
+    "ast_hash": "f519ff2f0cc938fe212e4cd2dc3e0264",
+    "semantic_hash": "f519ff2f0cc938fe212e4cd2dc3e0264"
+  },
+  "tests/specs/tag-team-fase1.spec.js": {
+    "mtime": 1793533843.4836779,
+    "seen": 1793910198.5144348,
+    "ast_hash": "65c1470e9102528c745ca712839a84f9",
+    "semantic_hash": "65c1470e9102528c745ca712839a84f9"
+  },
+  "tests/specs/tag-team-fase2.spec.js": {
+    "mtime": 1793482354.455573,
+    "seen": 1793910198.5144348,
+    "ast_hash": "cfe8826b01a9c8b6969dd2ffc95b5678",
+    "semantic_hash": "cfe8826b01a9c8b6969dd2ffc95b5678"
+  },
+  "tests/specs/tag-team-in-rete.spec.js": {
+    "mtime": 1793482354.455573,
+    "seen": 1793910198.5144348,
+    "ast_hash": "6d5981dd24ba58dbba2c227e36c4242a",
+    "semantic_hash": "6d5981dd24ba58dbba2c227e36c4242a"
+  },
+  "tests/specs/tag-team-primo-turno-avversario.spec.js": {
+    "mtime": 1793482354.455573,
+    "seen": 1793910198.5144348,
+    "ast_hash": "d4db6fcc19a45e53bc01cb6a2cc07a6d",
+    "semantic_hash": "d4db6fcc19a45e53bc01cb6a2cc07a6d"
+  },
+  "tests/specs/tag-team-scena-scambio.spec.js": {
+    "mtime": 1793540456.1720421,
+    "seen": 1793910198.5144348,
+    "ast_hash": "e6adbbee7ca1442cdef8499469d1d338",
+    "semantic_hash": "e6adbbee7ca1442cdef8499469d1d338"
+  },
+  "tests/specs/tag-team-spade-dopo-la-panchina.spec.js": {
+    "mtime": 1793482354.4565804,
+    "seen": 1793910198.5144348,
+    "ast_hash": "169890ae7428524b61e0c34862fe8492",
+    "semantic_hash": "169890ae7428524b61e0c34862fe8492"
+  },
+  "tests/specs/targeting-checkpoint-guardrail.spec.js": {
+    "mtime": 1791301985.588688,
+    "seen": 1793910198.5144348,
+    "ast_hash": "2c6def4c97decbb77bc4a7b492fab41d",
+    "semantic_hash": "2c6def4c97decbb77bc4a7b492fab41d"
+  },
+  "tests/specs/targeting-checkpoint.spec.js": {
+    "mtime": 1791227476.444076,
+    "seen": 1793910198.5144348,
+    "ast_hash": "9434491d30399b8374b5ebdc8bb0b049",
+    "semantic_hash": "9434491d30399b8374b5ebdc8bb0b049"
+  },
+  "tests/specs/targeting-ridirezione-scelta.spec.js": {
+    "mtime": 1791301985.590691,
+    "seen": 1793910198.5144348,
+    "ast_hash": "70bbe44680790f380711d24900966335",
+    "semantic_hash": "70bbe44680790f380711d24900966335"
+  },
+  "tests/specs/tavola-del-destino-fumo.spec.js": {
+    "mtime": 1793220079.4723947,
+    "seen": 1793910198.5144348,
+    "ast_hash": "a567e22dc509dae4c322d90ee6f090bf",
+    "semantic_hash": "a567e22dc509dae4c322d90ee6f090bf"
+  },
+  "tests/specs/tema-di-duello-yugi.spec.js": {
+    "mtime": 1792172241.3207855,
+    "seen": 1793910198.5144348,
+    "ast_hash": "caec2cffe996bd6f49d256e5523d82ed",
+    "semantic_hash": "caec2cffe996bd6f49d256e5523d82ed"
+  },
+  "tests/specs/temi-ombra-duellanti.spec.js": {
+    "mtime": 1792172241.3327916,
+    "seen": 1793910198.5144348,
+    "ast_hash": "2bf15e3f583fc512d18e8c603b88c6e3",
+    "semantic_hash": "2bf15e3f583fc512d18e8c603b88c6e3"
+  },
+  "tests/specs/toon-mage-magicdrain-fixes.spec.js": {
+    "mtime": 1791628100.0403957,
+    "seen": 1793910198.5144348,
+    "ast_hash": "4af67f2bfa1c4f87c984ebe316d9a1db",
+    "semantic_hash": "4af67f2bfa1c4f87c984ebe316d9a1db"
+  },
+  "tests/specs/toon-rework-pegasus.spec.js": {
+    "mtime": 1792172241.3451948,
+    "seen": 1793910198.5144348,
+    "ast_hash": "b7d95a1e8ba83e754a2e23ac8af31e85",
+    "semantic_hash": "b7d95a1e8ba83e754a2e23ac8af31e85"
+  },
+  "tests/specs/tornei-abbandono-da-selezione.spec.js": {
+    "mtime": 1790721683.7798786,
+    "seen": 1793910198.5144348,
+    "ast_hash": "dd54af52caff46def5944d51a8e022fb",
+    "semantic_hash": "dd54af52caff46def5944d51a8e022fb"
+  },
+  "tests/specs/tornei-difficolta-selezionata.spec.js": {
+    "mtime": 1793743358.6589015,
+    "seen": 1793910198.5144348,
+    "ast_hash": "8134f045024e8a65785836493318453e",
+    "semantic_hash": "8134f045024e8a65785836493318453e"
+  },
+  "tests/specs/tornei-pagina-unica.spec.js": {
+    "mtime": 1790804937.7554758,
+    "seen": 1793910198.5144348,
+    "ast_hash": "6562a9e45598aa70c05c521f104b6ef2",
+    "semantic_hash": "6562a9e45598aa70c05c521f104b6ef2"
+  },
+  "tests/specs/torneo-kaiba-preliminari.spec.js": {
+    "mtime": 1790635052.584246,
+    "seen": 1793910198.5144348,
+    "ast_hash": "07db1e18e8d99ab203910b3a85f806f3",
+    "semantic_hash": "07db1e18e8d99ab203910b3a85f806f3"
+  },
+  "tests/specs/torneo-regno-castello-lineare.spec.js": {
+    "mtime": 1793823806.8862374,
+    "seen": 1793910198.5144348,
+    "ast_hash": "23162d28dab68e8f94a269a8f330ad20",
+    "semantic_hash": "23162d28dab68e8f94a269a8f330ad20"
+  },
+  "tests/specs/torneo-regno-stelle-iniziali.spec.js": {
+    "mtime": 1793737061.2810526,
+    "seen": 1793910198.5242102,
+    "ast_hash": "1f16b0fd4b0da0251835504d8174edd4",
+    "semantic_hash": "1f16b0fd4b0da0251835504d8174edd4"
+  },
+  "tests/specs/torneo-regno-vicoli-ciechi.spec.js": {
+    "mtime": 1791657767.2065346,
+    "seen": 1793910198.5242102,
+    "ast_hash": "0d2794f566f2da929d2535b41d2b82ea",
+    "semantic_hash": "0d2794f566f2da929d2535b41d2b82ea"
+  },
+  "tests/specs/transizioni-carta-zone.spec.js": {
+    "mtime": 1791884969.2115502,
+    "seen": 1793910198.5242102,
+    "ast_hash": "cfabeccfdec62bc407fe347281959339",
+    "semantic_hash": "cfabeccfdec62bc407fe347281959339"
+  },
+  "tests/specs/tribute-summon-full-field.spec.js": {
+    "mtime": 1792326447.4048843,
+    "seen": 1793910198.5242102,
+    "ast_hash": "a57e78476d4f69b70f8aff62a670d651",
+    "semantic_hash": "a57e78476d4f69b70f8aff62a670d651"
+  },
+  "tests/specs/tributi-annulla-e-bot-attende-modali.spec.js": {
+    "mtime": 1790978367.5555193,
+    "seen": 1793910198.5242102,
+    "ast_hash": "175f6773a40987de5c9e7fe3088b60d5",
+    "semantic_hash": "175f6773a40987de5c9e7fe3088b60d5"
+  },
+  "tests/specs/tributo-e-bot-che-aspetta.spec.js": {
+    "mtime": 1792327361.9731941,
+    "seen": 1793910198.5242102,
+    "ast_hash": "b55c9ceb96c7dc8a08366d031aeb3446",
+    "semantic_hash": "b55c9ceb96c7dc8a08366d031aeb3446"
+  },
+  "tests/specs/tutorial-lezione-col-nonno.spec.js": {
+    "mtime": 1792927619.0870955,
+    "seen": 1793910198.5242102,
+    "ast_hash": "f8707c9a4e5104dae12f2ecad54f0f34",
+    "semantic_hash": "f8707c9a4e5104dae12f2ecad54f0f34"
+  },
+  "tests/specs/tutorial-lezioni-brevi.spec.js": {
+    "mtime": 1793568904.0620418,
+    "seen": 1793910198.5242102,
+    "ast_hash": "db0a605f3f4dfac7771aa78f2faf528f",
+    "semantic_hash": "db0a605f3f4dfac7771aa78f2faf528f"
+  },
+  "tests/specs/tutorial-tag-lezione.spec.js": {
+    "mtime": 1793568642.780997,
+    "seen": 1793910198.5242102,
+    "ast_hash": "ea4519a4fd1c3b7bb001e50a51a373c0",
+    "semantic_hash": "ea4519a4fd1c3b7bb001e50a51a373c0"
+  },
+  "tests/specs/tutto-aspetta-il-filmato.spec.js": {
+    "mtime": 1791227476.4451,
+    "seen": 1793910198.5242102,
+    "ast_hash": "6baeb060d3fe7774288f2575b78e607e",
+    "semantic_hash": "6baeb060d3fe7774288f2575b78e607e"
+  },
+  "tests/specs/video-evocazione-priorita.spec.js": {
+    "mtime": 1791831607.6810286,
+    "seen": 1793910198.5242102,
+    "ast_hash": "017b4693cf626b35d1230820b087296d",
+    "semantic_hash": "017b4693cf626b35d1230820b087296d"
+  },
+  "tests/specs/waboku-persistent-shield.spec.js": {
+    "mtime": 1790672659.007679,
+    "seen": 1793910198.5242102,
+    "ast_hash": "6fb341cde4233cfadf339ddd4ad1b662",
+    "semantic_hash": "6fb341cde4233cfadf339ddd4ad1b662"
+  },
+  "tests/specs/webgl-catena-mappe-torre.spec.js": {
+    "mtime": 1792787345.5350156,
+    "seen": 1793910198.529856,
+    "ast_hash": "23f26502ac6e7f192b7c112f6bd37ee3",
+    "semantic_hash": "23f26502ac6e7f192b7c112f6bd37ee3"
+  },
+  "tests/specs/ww1-battlefield-effects.spec.js": {
+    "mtime": 1792441390.8045616,
+    "seen": 1793910198.529856,
+    "ast_hash": "9342c5bf200d199452fb71549468c42b",
+    "semantic_hash": "9342c5bf200d199452fb71549468c42b"
+  },
+  "tests/specs/xss-escaping.spec.js": {
+    "mtime": 1788371781.0,
+    "seen": 1793910198.529856,
+    "ast_hash": "247b778d7009a41e3bf8fc13009626a4",
+    "semantic_hash": "247b778d7009a41e3bf8fc13009626a4"
+  },
+  "tests/specs/yami-yugi-deck-ai.spec.js": {
+    "mtime": 1791532456.893581,
+    "seen": 1793910198.529856,
+    "ast_hash": "4da0d61919797ae8e609a574ec6a0a7c",
+    "semantic_hash": "4da0d61919797ae8e609a574ec6a0a7c"
+  },
+  "tests/specs/yugi-magnetici-cavalieri.spec.js": {
+    "mtime": 1792178378.6908052,
+    "seen": 1793910198.529856,
+    "ast_hash": "4ec5e67428f80d767323e4e15982280e",
+    "semantic_hash": "4ec5e67428f80d767323e4e15982280e"
+  },
+  "tools/analizza-matrice.js": {
+    "mtime": 1792931804.727033,
+    "seen": 1793910198.529856,
+    "ast_hash": "659b22561d07cb34bbf3f9c6d256900c",
+    "semantic_hash": "659b22561d07cb34bbf3f9c6d256900c"
+  },
+  "tools/audit-archetipi-classici.js": {
+    "mtime": 1792586049.9420683,
+    "seen": 1793910198.529856,
+    "ast_hash": "2d3bad474032c48a2aace2b318862fc8",
+    "semantic_hash": "2d3bad474032c48a2aace2b318862fc8"
+  },
+  "tools/audit-attivazioni-ia.js": {
+    "mtime": 1792608794.0408468,
+    "seen": 1793910198.529856,
+    "ast_hash": "ac5975d52e6cf09a27f919676f462d25",
+    "semantic_hash": "ac5975d52e6cf09a27f919676f462d25"
+  },
+  "tools/audit-custom-difficolta.js": {
+    "mtime": 1792172241.364774,
+    "seen": 1793910198.529856,
+    "ast_hash": "7d07e746b3ceb4acf86c4b0ef58f3201",
+    "semantic_hash": "7d07e746b3ceb4acf86c4b0ef58f3201"
+  },
+  "tools/audit-duellanti-main.js": {
+    "mtime": 1791745995.3296654,
+    "seen": 1793910198.529856,
+    "ast_hash": "e0cb907013a29e1cc2561dd65a172f4a",
+    "semantic_hash": "e0cb907013a29e1cc2561dd65a172f4a"
+  },
+  "tools/audit-fattoriale-storia.js": {
+    "mtime": 1791745995.3306653,
+    "seen": 1793910198.534537,
+    "ast_hash": "3c40277f1675057ae6106885b75fad53",
+    "semantic_hash": "3c40277f1675057ae6106885b75fad53"
+  },
+  "tools/audit-forbidden-memories-strategie.js": {
+    "mtime": 1792586049.9420683,
+    "seen": 1793910198.534537,
+    "ast_hash": "e949d2863b081e237c612a6d53f91b10",
+    "semantic_hash": "e949d2863b081e237c612a6d53f91b10"
+  },
+  "tools/audit-joey-supporti-finali.js": {
+    "mtime": 1792172241.3742175,
+    "seen": 1793910198.534537,
+    "ast_hash": "3e6e9560124685e3514d49ecba4c5ad7",
+    "semantic_hash": "3e6e9560124685e3514d49ecba4c5ad7"
+  },
+  "tools/audit-kaiba-supporti-finali.js": {
+    "mtime": 1792172241.383733,
+    "seen": 1793910198.534537,
+    "ast_hash": "bd2e66e9a05a995d15a8039bc714fbfb",
+    "semantic_hash": "bd2e66e9a05a995d15a8039bc714fbfb"
+  },
+  "tools/audit-marik-ra-finale.js": {
+    "mtime": 1792172241.3944764,
+    "seen": 1793910198.534537,
+    "ast_hash": "825ddba45e13fb5be65ea5fafeb0d07c",
+    "semantic_hash": "825ddba45e13fb5be65ea5fafeb0d07c"
+  },
+  "tools/audit-matrice-completa.js": {
+    "mtime": 1792932725.5758908,
+    "seen": 1793910198.534537,
+    "ast_hash": "430a8dda0bdf937aae57dad192370fb0",
+    "semantic_hash": "430a8dda0bdf937aae57dad192370fb0"
+  },
+  "tools/audit-pegasus-identita.js": {
+    "mtime": 1791745995.333736,
+    "seen": 1793910198.534537,
+    "ast_hash": "2f2895fc06e3351f25559d9d41254577",
+    "semantic_hash": "2f2895fc06e3351f25559d9d41254577"
+  },
+  "tools/audit-pegasus-supporti-finali.js": {
+    "mtime": 1792172241.4038734,
+    "seen": 1793910198.534537,
+    "ast_hash": "7408cf1f86fe0f9a70f6970311d69d85",
+    "semantic_hash": "7408cf1f86fe0f9a70f6970311d69d85"
+  },
+  "tools/audit-strings-hard.js": {
+    "mtime": 1792172241.4125216,
+    "seen": 1793910198.534537,
+    "ast_hash": "7a9e4833e9f996698ec3f581e4e61c04",
+    "semantic_hash": "7a9e4833e9f996698ec3f581e4e61c04"
+  },
+  "tools/audit-supporti-divinita.js": {
+    "mtime": 1792172241.4233265,
+    "seen": 1793910198.534537,
+    "ast_hash": "afbbf7044fb32a4e7e6603b736e8375c",
+    "semantic_hash": "afbbf7044fb32a4e7e6603b736e8375c"
+  },
+  "tools/audit-supporti-mago-nero.js": {
+    "mtime": 1792172241.4342933,
+    "seen": 1793910198.534537,
+    "ast_hash": "dd151282645fbd8bde8f59d34499a266",
+    "semantic_hash": "dd151282645fbd8bde8f59d34499a266"
+  },
+  "tools/audit-supporti-occhi-blu.js": {
+    "mtime": 1792172241.4431014,
+    "seen": 1793910198.5395267,
+    "ast_hash": "e4a64ce1d5ee62705b1a7af8425f5979",
+    "semantic_hash": "e4a64ce1d5ee62705b1a7af8425f5979"
+  },
+  "tools/audit-supporti-occhi-rossi.js": {
+    "mtime": 1792172241.454032,
+    "seen": 1793910198.5395267,
+    "ast_hash": "294ad2adb263b8458e791cb04b481213",
+    "semantic_hash": "294ad2adb263b8458e791cb04b481213"
+  },
+  "tools/audit-supporti-toon.js": {
+    "mtime": 1792172241.4636474,
+    "seen": 1793910198.5395267,
+    "ast_hash": "8dcc33dd9ad6171fe87b2ccd5665894d",
+    "semantic_hash": "8dcc33dd9ad6171fe87b2ccd5665894d"
+  },
+  "tools/audit-varianti-hard-classici.js": {
+    "mtime": 1792172241.473491,
+    "seen": 1793910198.5395267,
+    "ast_hash": "cf13757b6679a026bd6b42064d736ec0",
+    "semantic_hash": "cf13757b6679a026bd6b42064d736ec0"
+  },
+  "tools/audit-yami-magnetici-cavalieri.js": {
+    "mtime": 1792178378.6929228,
+    "seen": 1793910198.5395267,
+    "ast_hash": "e159c5816f983dd981bf092d4176627d",
+    "semantic_hash": "e159c5816f983dd981bf092d4176627d"
+  },
+  "tools/audit-yami-supporti-finali.js": {
+    "mtime": 1792172241.4840014,
+    "seen": 1793910198.5395267,
+    "ast_hash": "58dfab354244fd09fadf7018c53167a7",
+    "semantic_hash": "58dfab354244fd09fadf7018c53167a7"
+  },
+  "tools/duello-gemello.js": {
+    "mtime": 1791272735.5074985,
+    "seen": 1793910198.5395267,
+    "ast_hash": "a1c1df8fe284149c0f55d7baedcc9f35",
+    "semantic_hash": "a1c1df8fe284149c0f55d7baedcc9f35"
+  },
+  "tools/duello-senza-testa.js": {
+    "mtime": 1793565648.4346366,
+    "seen": 1793910198.5395267,
+    "ast_hash": "03563833b4303bbb40ea106e57a64204",
+    "semantic_hash": "03563833b4303bbb40ea106e57a64204"
+  },
+  "tools/gemello-posti.js": {
+    "mtime": 1793482354.4575846,
+    "seen": 1793910198.5395267,
+    "ast_hash": "66c47767426b5db9393f2a9b18b329e1",
+    "semantic_hash": "66c47767426b5db9393f2a9b18b329e1"
+  },
+  "tools/impronta-funzioni.js": {
+    "mtime": 1791227476.4551058,
+    "seen": 1793910198.5395267,
+    "ast_hash": "08914a2080d2d074b636baf3d07b56f6",
+    "semantic_hash": "08914a2080d2d074b636baf3d07b56f6"
+  },
+  "tools/impronta-partite.js": {
+    "mtime": 1791272735.5168042,
+    "seen": 1793910198.544381,
+    "ast_hash": "1eda7d3c9712cbb8276a9099711faef0",
+    "semantic_hash": "1eda7d3c9712cbb8276a9099711faef0"
+  },
+  "tools/simula-economia.js": {
+    "mtime": 1791666387.584375,
+    "seen": 1793910198.544381,
+    "ast_hash": "ce3b30fe5704e44ad78fa81873151006",
+    "semantic_hash": "ce3b30fe5704e44ad78fa81873151006"
+  },
+  "tools/simula-farming-carte.js": {
+    "mtime": 1791816067.3798544,
+    "seen": 1793910198.544381,
+    "ast_hash": "4a1ed3bc9ccf2459237dd470cd609857",
+    "semantic_hash": "4a1ed3bc9ccf2459237dd470cd609857"
+  },
+  "tools/simula-storia-deck.js": {
+    "mtime": 1791745995.335752,
+    "seen": 1793910198.5460026,
+    "ast_hash": "729dcb52aa73fb2c7af4b1a95cf63d8f",
+    "semantic_hash": "729dcb52aa73fb2c7af4b1a95cf63d8f"
+  },
+  "tools/sposta-funzioni.js": {
+    "mtime": 1791227476.464651,
+    "seen": 1793910198.5460026,
+    "ast_hash": "55718206e89d16d30f4e057dcddac332",
+    "semantic_hash": "55718206e89d16d30f4e057dcddac332"
+  },
+  "tools/tag-senza-testa.js": {
+    "mtime": 1793482354.4590654,
+    "seen": 1793910198.5460026,
+    "ast_hash": "9cc7066ea941499e707bfa199743e6a7",
+    "semantic_hash": "9cc7066ea941499e707bfa199743e6a7"
+  },
+  "types/globali.d.ts": {
+    "mtime": 1793367596.3173728,
+    "seen": 1793910198.5460026,
+    "ast_hash": "2489469c28945ed308d4aa901da33c63",
+    "semantic_hash": "2489469c28945ed308d4aa901da33c63"
+  },
+  "types/modalita.d.ts": {
+    "mtime": 1792601405.6947014,
+    "seen": 1793910198.5460026,
+    "ast_hash": "2e4f8504aa510dc73571b0ad2eb26052",
+    "semantic_hash": "2e4f8504aa510dc73571b0ad2eb26052"
+  },
+  "types/motore.d.ts": {
+    "mtime": 1792320328.6165562,
+    "seen": 1793910198.5460026,
+    "ast_hash": "3e0f99a9b26d2e26e301d164ef6f22c1",
+    "semantic_hash": "3e0f99a9b26d2e26e301d164ef6f22c1"
+  },
+  "types/salvataggio.d.ts": {
+    "mtime": 1792593404.433755,
+    "seen": 1793910198.5460026,
+    "ast_hash": "b67366d76b62fa13de82a3e08bdefd96",
+    "semantic_hash": "b67366d76b62fa13de82a3e08bdefd96"
+  },
+  "audio/soundtracks/01. Title.mp3": {
+    "mtime": 1792774722.4234889,
+    "seen": 1793910198.5460026,
+    "ast_hash": "44660f3138942cf714456fdc01dee025",
+    "semantic_hash": "44660f3138942cf714456fdc01dee025"
+  },
+  "audio/soundtracks/02. Input Name.mp3": {
+    "mtime": 1792774722.4289417,
+    "seen": 1793910198.5460026,
+    "ast_hash": "a67866f050ed7217a29b5e450aef1e06",
+    "semantic_hash": "a67866f050ed7217a29b5e450aef1e06"
+  },
+  "audio/soundtracks/03. Tournament Announcement.mp3": {
+    "mtime": 1792774722.4344447,
+    "seen": 1793910198.5460026,
+    "ast_hash": "6267b4c6dfd0f1b42b8d1a986e4437c6",
+    "semantic_hash": "6267b4c6dfd0f1b42b8d1a986e4437c6"
+  },
+  "audio/soundtracks/04. Modern Times.mp3": {
+    "mtime": 1792774722.4377072,
+    "seen": 1793910198.5460026,
+    "ast_hash": "95cc91ad7efc70e1552955c32a9d9f32",
+    "semantic_hash": "95cc91ad7efc70e1552955c32a9d9f32"
+  },
+  "audio/soundtracks/05. Shadi's Message.mp3": {
+    "mtime": 1792774722.4442205,
+    "seen": 1793910198.5460026,
+    "ast_hash": "7bab391e2c19cec24874cec117446ee2",
+    "semantic_hash": "7bab391e2c19cec24874cec117446ee2"
+  },
+  "audio/soundtracks/06. Inside the Puzzle.mp3": {
+    "mtime": 1792774722.4509249,
+    "seen": 1793910198.5460026,
+    "ast_hash": "6383d7662df6d774667422e7ed285b8d",
+    "semantic_hash": "6383d7662df6d774667422e7ed285b8d"
+  },
+  "audio/soundtracks/07. Preliminary Face-Off.mp3": {
+    "mtime": 1792774722.4541645,
+    "seen": 1793910198.5460026,
+    "ast_hash": "f45b61370207a1fd6f6ca4454e7dbe1f",
+    "semantic_hash": "f45b61370207a1fd6f6ca4454e7dbe1f"
+  },
+  "audio/soundtracks/08. Finals Face-Off.mp3": {
+    "mtime": 1792774722.4585094,
+    "seen": 1793910198.5460026,
+    "ast_hash": "42340650d8548593151077cb39f54d24",
+    "semantic_hash": "42340650d8548593151077cb39f54d24"
+  },
+  "audio/soundtracks/09. Seto Kaiba Face-Off.mp3": {
+    "mtime": 1792774722.4631073,
+    "seen": 1793910198.5460026,
+    "ast_hash": "efae49fcea812c37178c341d254a5ffe",
+    "semantic_hash": "efae49fcea812c37178c341d254a5ffe"
+  },
+  "audio/soundtracks/10. Card Shop.mp3": {
+    "mtime": 1792774722.4704025,
+    "seen": 1793910198.5460026,
+    "ast_hash": "5cce48652137f883b44d20f73d241cf3",
+    "semantic_hash": "5cce48652137f883b44d20f73d241cf3"
+  },
+  "audio/soundtracks/11. Metropolis.mp3": {
+    "mtime": 1792774722.473413,
+    "seen": 1793910198.5460026,
+    "ast_hash": "850f6d8f3c2d2f7b354f5ee7de131f31",
+    "semantic_hash": "850f6d8f3c2d2f7b354f5ee7de131f31"
+  },
+  "audio/soundtracks/12. Metropolis 2.mp3": {
+    "mtime": 1792774722.4802809,
+    "seen": 1793910198.5543551,
+    "ast_hash": "0dc5383a2c22f9d4d3d7cbf75ad98aaf",
+    "semantic_hash": "0dc5383a2c22f9d4d3d7cbf75ad98aaf"
+  },
+  "audio/soundtracks/13. Pharaoh's Palace.mp3": {
+    "mtime": 1792774722.486605,
+    "seen": 1793910198.5543551,
+    "ast_hash": "945e4d18c5ca58a6d985044ec153834d",
+    "semantic_hash": "945e4d18c5ca58a6d985044ec153834d"
+  },
+  "audio/soundtracks/14. Egypt in Ruins.mp3": {
+    "mtime": 1792774722.4937263,
+    "seen": 1793910198.5543551,
+    "ast_hash": "9b309e7560f1cde48288c734dfb3f842",
+    "semantic_hash": "9b309e7560f1cde48288c734dfb3f842"
+  },
+  "audio/soundtracks/15. Deck Setup.mp3": {
+    "mtime": 1792774722.5010314,
+    "seen": 1793910198.5543551,
+    "ast_hash": "9da5047e9455d5b27fdf460175ba29a2",
+    "semantic_hash": "9da5047e9455d5b27fdf460175ba29a2"
+  },
+  "audio/soundtracks/16. Duel Ground.mp3": {
+    "mtime": 1792774722.5064158,
+    "seen": 1793910198.5543551,
+    "ast_hash": "81ead773a9c63ce04a560adb1459c3d7",
+    "semantic_hash": "81ead773a9c63ce04a560adb1459c3d7"
+  },
+  "audio/soundtracks/17. King's Valley.mp3": {
+    "mtime": 1792774722.5158381,
+    "seen": 1793910198.5543551,
+    "ast_hash": "c2d61460d811d09e4f2bd9bdb26160ab",
+    "semantic_hash": "c2d61460d811d09e4f2bd9bdb26160ab"
+  },
+  "audio/soundtracks/18. Sea Shrine.mp3": {
+    "mtime": 1792774722.520587,
+    "seen": 1793910198.5543551,
+    "ast_hash": "a483522b760868793d87e17fbccb5511",
+    "semantic_hash": "a483522b760868793d87e17fbccb5511"
+  },
+  "audio/soundtracks/19. Forest Shrine.mp3": {
+    "mtime": 1792774722.5241318,
+    "seen": 1793910198.5543551,
+    "ast_hash": "9599793bb1fc553697082692e97517d9",
+    "semantic_hash": "9599793bb1fc553697082692e97517d9"
+  },
+  "audio/soundtracks/20. Desert Shrine.mp3": {
+    "mtime": 1792774722.5275009,
+    "seen": 1793910198.5543551,
+    "ast_hash": "f020793368f7a20a346eb4406e0b2716",
+    "semantic_hash": "f020793368f7a20a346eb4406e0b2716"
+  },
+  "audio/soundtracks/21. Meadow Shrine.mp3": {
+    "mtime": 1792774722.5311575,
+    "seen": 1793910198.5543551,
+    "ast_hash": "7b4fe376020bd986de410e58dded86c9",
+    "semantic_hash": "7b4fe376020bd986de410e58dded86c9"
+  },
+  "audio/soundtracks/22. Mountain Shrine.mp3": {
+    "mtime": 1792774722.536811,
+    "seen": 1793910198.5543551,
+    "ast_hash": "91b240959f92bad4bedf7d833a80a2c5",
+    "semantic_hash": "91b240959f92bad4bedf7d833a80a2c5"
+  },
+  "audio/soundtracks/23. Vast Shrine.mp3": {
+    "mtime": 1792774722.5463355,
+    "seen": 1793910198.559471,
+    "ast_hash": "60fbefffaabe1d7a472e2e847f8147b6",
+    "semantic_hash": "60fbefffaabe1d7a472e2e847f8147b6"
+  },
+  "audio/soundtracks/24. Dark Shrine.mp3": {
+    "mtime": 1792774722.5516942,
+    "seen": 1793910198.559471,
+    "ast_hash": "49df3ba543daba50a63b4fffafe6e02e",
+    "semantic_hash": "49df3ba543daba50a63b4fffafe6e02e"
+  },
+  "audio/soundtracks/25. Seto's Betrayal.mp3": {
+    "mtime": 1792774722.5586078,
+    "seen": 1793910198.559471,
+    "ast_hash": "047e5ebda74c85fd1f9ea4032af3e6a0",
+    "semantic_hash": "047e5ebda74c85fd1f9ea4032af3e6a0"
+  },
+  "audio/soundtracks/26. Forbidden Ruins.mp3": {
+    "mtime": 1792774722.564387,
+    "seen": 1793910198.559471,
+    "ast_hash": "c1ea464553a489cb6485d8c029f6b0a9",
+    "semantic_hash": "c1ea464553a489cb6485d8c029f6b0a9"
+  },
+  "audio/soundtracks/27. Heishin's Millennium Puzzle Confrontation.mp3": {
+    "mtime": 1792774722.5696528,
+    "seen": 1793910198.559471,
+    "ast_hash": "46cb48bcee6058affd6c2cd27b0daa3d",
+    "semantic_hash": "46cb48bcee6058affd6c2cd27b0daa3d"
+  },
+  "audio/soundtracks/28. Heishin's Invasion.mp3": {
+    "mtime": 1792774722.5743499,
+    "seen": 1793910198.5620105,
+    "ast_hash": "7310444fbd6bf3d7a135e5dae0db74e8",
+    "semantic_hash": "7310444fbd6bf3d7a135e5dae0db74e8"
+  },
+  "audio/soundtracks/29. Darknite's Arrival.mp3": {
+    "mtime": 1792774722.579616,
+    "seen": 1793910198.5620105,
+    "ast_hash": "204fc66f87fb4d2a10d49358a7b46652",
+    "semantic_hash": "204fc66f87fb4d2a10d49358a7b46652"
+  },
+  "audio/soundtracks/30. Preliminaries.mp3": {
+    "mtime": 1792774722.5884404,
+    "seen": 1793910198.5620105,
+    "ast_hash": "81fd7b4fa42a0c95c0cb50d8e4c84f73",
+    "semantic_hash": "81fd7b4fa42a0c95c0cb50d8e4c84f73"
+  },
+  "audio/soundtracks/31. Finals.mp3": {
+    "mtime": 1792774722.5969787,
+    "seen": 1793910198.5620105,
+    "ast_hash": "54f07955f9d73cf9f836054f1879cf8e",
+    "semantic_hash": "54f07955f9d73cf9f836054f1879cf8e"
+  },
+  "audio/soundtracks/32. Seto Kaiba (Tournament Final) HD.mp3": {
+    "mtime": 1786742888.0,
+    "seen": 1793910198.5645137,
+    "ast_hash": "b3a71a846cff4c03db9b231ac95bfc11",
+    "semantic_hash": "b3a71a846cff4c03db9b231ac95bfc11"
+  },
+  "audio/soundtracks/32. Seto Kaiba (Tournament Final).mp3": {
+    "mtime": 1792774722.6141148,
+    "seen": 1793910198.5645137,
+    "ast_hash": "e0e79a652b7dacbe8fdedd4d2f9d9a5f",
+    "semantic_hash": "e0e79a652b7dacbe8fdedd4d2f9d9a5f"
+  },
+  "audio/soundtracks/33. Egyptian Duel.mp3": {
+    "mtime": 1792774722.6226907,
+    "seen": 1793910198.5645137,
+    "ast_hash": "baa042bd62935538eb5491af4f63e25e",
+    "semantic_hash": "baa042bd62935538eb5491af4f63e25e"
+  },
+  "audio/soundtracks/34. Mages Duel.mp3": {
+    "mtime": 1792774722.629618,
+    "seen": 1793910198.5645137,
+    "ast_hash": "16da2a9cd114ba0a83186833a19d2a71",
+    "semantic_hash": "16da2a9cd114ba0a83186833a19d2a71"
+  },
+  "audio/soundtracks/35. High Mages.mp3": {
+    "mtime": 1792774722.63776,
+    "seen": 1793910198.5645137,
+    "ast_hash": "99e3c71c325290cafd8c11501b4d8dfa",
+    "semantic_hash": "99e3c71c325290cafd8c11501b4d8dfa"
+  },
+  "audio/soundtracks/36. Heishin.mp3": {
+    "mtime": 1792774722.6459231,
+    "seen": 1793910198.5645137,
+    "ast_hash": "b1c3f72b7abe5da7c5e9eb3b2dc0c2fb",
+    "semantic_hash": "b1c3f72b7abe5da7c5e9eb3b2dc0c2fb"
+  },
+  "audio/soundtracks/37. Seto.mp3": {
+    "mtime": 1792774722.6561887,
+    "seen": 1793910198.5645137,
+    "ast_hash": "ca7f298fb70b96d7de101242d3572510",
+    "semantic_hash": "ca7f298fb70b96d7de101242d3572510"
+  },
+  "audio/soundtracks/38. Darknite-Nitemare.mp3": {
+    "mtime": 1792774722.66422,
+    "seen": 1793910198.5645137,
+    "ast_hash": "531f356eff9536222533a0dabb584626",
+    "semantic_hash": "531f356eff9536222533a0dabb584626"
+  },
+  "audio/soundtracks/39. Free Duel.mp3": {
+    "mtime": 1792774722.675035,
+    "seen": 1793910198.5645137,
+    "ast_hash": "7ca22f0292952b501f98f162299e1f5b",
+    "semantic_hash": "7ca22f0292952b501f98f162299e1f5b"
+  },
+  "audio/soundtracks/40. Free Duel (3D).mp3": {
+    "mtime": 1792774722.6803474,
+    "seen": 1793910198.5645137,
+    "ast_hash": "350f9f598a03c78119bc3cccbc28c0a8",
+    "semantic_hash": "350f9f598a03c78119bc3cccbc28c0a8"
+  },
+  "audio/soundtracks/41. Seto Kaiba Duel (3D Tournament Final).mp3": {
+    "mtime": 1792774722.6865256,
+    "seen": 1793910198.5645137,
+    "ast_hash": "fe02ae5a07ab56c2aa80bf9566f1bf06",
+    "semantic_hash": "fe02ae5a07ab56c2aa80bf9566f1bf06"
+  },
+  "audio/soundtracks/42. Egyptian Duel (3D).mp3": {
+    "mtime": 1792774722.693711,
+    "seen": 1793910198.5645137,
+    "ast_hash": "6532e4eae979cdf9264389aa0a385e85",
+    "semantic_hash": "6532e4eae979cdf9264389aa0a385e85"
+  },
+  "audio/soundtracks/43. Darknite-Nitemare (3D).mp3": {
+    "mtime": 1792774722.703856,
+    "seen": 1793910198.5645137,
+    "ast_hash": "4dfa2bc5005d42ae7ce977ea7995e39b",
+    "semantic_hash": "4dfa2bc5005d42ae7ce977ea7995e39b"
+  },
+  "audio/soundtracks/44. Free Duel Menu.mp3": {
+    "mtime": 1792774722.7090526,
+    "seen": 1793910198.5645137,
+    "ast_hash": "a8ab4565b81a70ca86e9b5a2a5193a29",
+    "semantic_hash": "a8ab4565b81a70ca86e9b5a2a5193a29"
+  },
+  "audio/soundtracks/45. Library.mp3": {
+    "mtime": 1792774722.7176597,
+    "seen": 1793910198.5645137,
+    "ast_hash": "a26f8d809d405ccadc7fbee6f5be1cb1",
+    "semantic_hash": "a26f8d809d405ccadc7fbee6f5be1cb1"
+  },
+  "audio/soundtracks/46. Victory.mp3": {
+    "mtime": 1792774722.7216961,
+    "seen": 1793910198.5645137,
+    "ast_hash": "aa342dd24a56d98fd24cb21d3ab5c4ec",
+    "semantic_hash": "aa342dd24a56d98fd24cb21d3ab5c4ec"
+  },
+  "audio/soundtracks/47. Defeat.mp3": {
+    "mtime": 1792774722.7237248,
+    "seen": 1793910198.5645137,
+    "ast_hash": "920f20a5f278f4be2ad87aaf8204ce4e",
+    "semantic_hash": "920f20a5f278f4be2ad87aaf8204ce4e"
+  },
+  "audio/soundtracks/48. Results of Duel.mp3": {
+    "mtime": 1792774722.7292712,
+    "seen": 1793910198.5645137,
+    "ast_hash": "c3bc289bbdece0bdfa0fe296fad77c9f",
+    "semantic_hash": "c3bc289bbdece0bdfa0fe296fad77c9f"
+  },
+  "audio/soundtracks/49. Game Over.mp3": {
+    "mtime": 1792774722.731586,
+    "seen": 1793910198.5645137,
+    "ast_hash": "a1ed5f5d8294ec0e42e0a5cb474581f1",
+    "semantic_hash": "a1ed5f5d8294ec0e42e0a5cb474581f1"
+  },
+  "audio/soundtracks/50. Exodia.mp3": {
+    "mtime": 1792774722.7348711,
+    "seen": 1793910198.5645137,
+    "ast_hash": "d66c0241d6a72bc886a3ba5147453388",
+    "semantic_hash": "d66c0241d6a72bc886a3ba5147453388"
+  },
+  "audio/soundtracks/51. Epilogue.mp3": {
+    "mtime": 1792774722.7412899,
+    "seen": 1793910198.5743382,
+    "ast_hash": "c0953225d005d0551061d507f3bdc348",
+    "semantic_hash": "c0953225d005d0551061d507f3bdc348"
+  },
+  "audio/soundtracks/52. Credits.mp3": {
+    "mtime": 1792774722.7523706,
+    "seen": 1793910198.5743382,
+    "ast_hash": "b1318fb1eddbf76c0cd08b8373f36e7b",
+    "semantic_hash": "b1318fb1eddbf76c0cd08b8373f36e7b"
+  },
+  "audio/soundtracks/53. Town Plaza.mp3": {
+    "mtime": 1792774722.758985,
+    "seen": 1793910198.5743382,
+    "ast_hash": "7e8ed10fbfbb060678e725d415f24f5c",
+    "semantic_hash": "7e8ed10fbfbb060678e725d415f24f5c"
+  },
+  "audio/soundtracks/55. Millennium Item Found.mp3": {
+    "mtime": 1792774722.7645924,
+    "seen": 1793910198.5743382,
+    "ast_hash": "5c3246c524fca928a4ea21cae4bffeb8",
+    "semantic_hash": "5c3246c524fca928a4ea21cae4bffeb8"
+  },
+  "audio/soundtracks/56. Battle for the Millennium.mp3": {
+    "mtime": 1791050321.8752859,
+    "seen": 1793910198.5743382,
+    "ast_hash": "05740c7d103edb9a36cbdc9856c1ee99",
+    "semantic_hash": "05740c7d103edb9a36cbdc9856c1ee99"
+  },
+  "audio/soundtracks/57. Duel of Shadows \u2013 The Millennium Mind.mp3": {
+    "mtime": 1792172239.5019016,
+    "seen": 1793910198.5743382,
+    "ast_hash": "a5eb6a5b26ee7adf5ea2372bb176b070",
+    "semantic_hash": "a5eb6a5b26ee7adf5ea2372bb176b070"
+  },
+  "audio/soundtracks/58. Yugi vs. Marik \u2013 Wrath of the Shadow Realm.mp3": {
+    "mtime": 1792172239.558624,
+    "seen": 1793910198.5743382,
+    "ast_hash": "7415a7fa83a6b521dfc5dbc94ebec9fa",
+    "semantic_hash": "7415a7fa83a6b521dfc5dbc94ebec9fa"
+  },
+  "audio/soundtracks/59. King of Games - Yugi's Final Duel.mp3": {
+    "mtime": 1792172239.594251,
+    "seen": 1793910198.5743382,
+    "ast_hash": "fb1ceaa5fce7184771dabd72e77f9eff",
+    "semantic_hash": "fb1ceaa5fce7184771dabd72e77f9eff"
+  },
+  "audio/soundtracks/ww1/Alba sul Montello.mp3": {
+    "mtime": 1789499432.976968,
+    "seen": 1793910198.5779493,
+    "ast_hash": "461420b28c9d8958663ce55760bed4bb",
+    "semantic_hash": "461420b28c9d8958663ce55760bed4bb"
+  },
+  "audio/soundtracks/ww1/La carica del Piave.mp3": {
+    "mtime": 1789499449.820183,
+    "seen": 1793910198.5779493,
+    "ast_hash": "cf4accd46b825a62771b80987f2413db",
+    "semantic_hash": "cf4accd46b825a62771b80987f2413db"
+  },
+  "audio/standard/activateChain.mp3": {
+    "mtime": 1787407740.0,
+    "seen": 1793910198.5779493,
+    "ast_hash": "1646711aabe12f1841e3fcfe63749b91",
+    "semantic_hash": "1646711aabe12f1841e3fcfe63749b91"
+  },
+  "audio/standard/activateSpell.mp3": {
+    "mtime": 1787407740.0,
+    "seen": 1793910198.5779493,
+    "ast_hash": "01128633d6a952cd8869241e708e6920",
+    "semantic_hash": "01128633d6a952cd8869241e708e6920"
+  },
+  "audio/standard/activateSpell.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5779493,
+    "ast_hash": "add04e48cfe3431938a7f372b897cabf",
+    "semantic_hash": "add04e48cfe3431938a7f372b897cabf"
+  },
+  "audio/standard/activateTrap.mp3": {
+    "mtime": 1787407740.0,
+    "seen": 1793910198.5779493,
+    "ast_hash": "01128633d6a952cd8869241e708e6920",
+    "semantic_hash": "01128633d6a952cd8869241e708e6920"
+  },
+  "audio/standard/activateTrap.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5779493,
+    "ast_hash": "7bd42ef1cb309c84d0f2e3ae55e568bf",
+    "semantic_hash": "7bd42ef1cb309c84d0f2e3ae55e568bf"
+  },
+  "audio/standard/attackSwing.mp3": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5779493,
+    "ast_hash": "14534dd7e116e6b373bd95b334b2f339",
+    "semantic_hash": "14534dd7e116e6b373bd95b334b2f339"
+  },
+  "audio/standard/attackSwing.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5779493,
+    "ast_hash": "1020d1eb8f8d2ec0aa6349c4ff6bf85b",
+    "semantic_hash": "1020d1eb8f8d2ec0aa6349c4ff6bf85b"
+  },
+  "audio/standard/clash.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5779493,
+    "ast_hash": "7e54f01fa9104a0bbf7b15edb96785bd",
+    "semantic_hash": "7e54f01fa9104a0bbf7b15edb96785bd"
+  },
+  "audio/standard/darkHole.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5779493,
+    "ast_hash": "26a339ee4bbb6fdbf77aa82875389cd3",
+    "semantic_hash": "26a339ee4bbb6fdbf77aa82875389cd3"
+  },
+  "audio/standard/defeat.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5779493,
+    "ast_hash": "09c3591bdcf81a611a1b07063866ae8d",
+    "semantic_hash": "09c3591bdcf81a611a1b07063866ae8d"
+  },
+  "audio/standard/destroy.mp3": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5779493,
+    "ast_hash": "6a229a758a10ae1443e1d0e2f7f5f9cc",
+    "semantic_hash": "6a229a758a10ae1443e1d0e2f7f5f9cc"
+  },
+  "audio/standard/destroy.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5846388,
+    "ast_hash": "6da762efede1d9e94b42b9b0c01290ef",
+    "semantic_hash": "6da762efede1d9e94b42b9b0c01290ef"
+  },
+  "audio/standard/directHit.mp3": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5846388,
+    "ast_hash": "14534dd7e116e6b373bd95b334b2f339",
+    "semantic_hash": "14534dd7e116e6b373bd95b334b2f339"
+  },
+  "audio/standard/directHit.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5846388,
+    "ast_hash": "03f1dfb0b38a87c0406552af533c20d7",
+    "semantic_hash": "03f1dfb0b38a87c0406552af533c20d7"
+  },
+  "audio/standard/draw.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5846388,
+    "ast_hash": "de1affbe9a474646b72943f875301215",
+    "semantic_hash": "de1affbe9a474646b72943f875301215"
+  },
+  "audio/standard/evocation.mp3": {
+    "mtime": 1790690504.8724568,
+    "seen": 1793910198.5846388,
+    "ast_hash": "7a5120effee1055ad0addd616b447e51",
+    "semantic_hash": "7a5120effee1055ad0addd616b447e51"
+  },
+  "audio/standard/fusion.mp3": {
+    "mtime": 1790690347.8938804,
+    "seen": 1793910198.5846388,
+    "ast_hash": "57d1528c085df56c86eae19615fcad88",
+    "semantic_hash": "57d1528c085df56c86eae19615fcad88"
+  },
+  "audio/standard/lifePointsGained.mp3": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5846388,
+    "ast_hash": "0630a1a61bdc0727ec38b24cc4de8034",
+    "semantic_hash": "0630a1a61bdc0727ec38b24cc4de8034"
+  },
+  "audio/standard/lifePointsGained.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5846388,
+    "ast_hash": "d6a1eb6941239dc7efa8902088684086",
+    "semantic_hash": "d6a1eb6941239dc7efa8902088684086"
+  },
+  "audio/standard/lifePointsLost.mp3": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5846388,
+    "ast_hash": "0630a1a61bdc0727ec38b24cc4de8034",
+    "semantic_hash": "0630a1a61bdc0727ec38b24cc4de8034"
+  },
+  "audio/standard/lifePointsLost.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5846388,
+    "ast_hash": "b15360076f8b90ba46aad48e3c230972",
+    "semantic_hash": "b15360076f8b90ba46aad48e3c230972"
+  },
+  "audio/standard/phaseChange.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5846388,
+    "ast_hash": "c75e104d7213f88a4af957968c6a02c7",
+    "semantic_hash": "c75e104d7213f88a4af957968c6a02c7"
+  },
+  "audio/standard/place.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5846388,
+    "ast_hash": "880c4eabbad1c6618e325f279d1ac3ec",
+    "semantic_hash": "880c4eabbad1c6618e325f279d1ac3ec"
+  },
+  "audio/standard/summon.mp3": {
+    "mtime": 1792774722.8070092,
+    "seen": 1793910198.5846388,
+    "ast_hash": "0fba202814ad0c711b79f2670927724a",
+    "semantic_hash": "0fba202814ad0c711b79f2670927724a"
+  },
+  "audio/standard/summon.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5846388,
+    "ast_hash": "f54587ccab65cb2fbfa25ddcf16b64eb",
+    "semantic_hash": "f54587ccab65cb2fbfa25ddcf16b64eb"
+  },
+  "audio/standard/swordsOfRevealingLight.mp3": {
+    "mtime": 1787407740.0,
+    "seen": 1793910198.5846388,
+    "ast_hash": "aedb6fe940742dc217f5194254fe14e7",
+    "semantic_hash": "aedb6fe940742dc217f5194254fe14e7"
+  },
+  "audio/standard/swordsOfRevealingLight.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5846388,
+    "ast_hash": "ed0d60f4affade1362295b7c706ec682",
+    "semantic_hash": "ed0d60f4affade1362295b7c706ec682"
+  },
+  "audio/standard/tagSwitch.mp3": {
+    "mtime": 1787407740.0,
+    "seen": 1793910198.5846388,
+    "ast_hash": "f09b0c69257ab3759e649b8f90b81fb7",
+    "semantic_hash": "f09b0c69257ab3759e649b8f90b81fb7"
+  },
+  "audio/standard/tribute.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5846388,
+    "ast_hash": "ca11d4171148a6f1fa0441fb0db4db5c",
+    "semantic_hash": "ca11d4171148a6f1fa0441fb0db4db5c"
+  },
+  "audio/standard/turnChange.mp3": {
+    "mtime": 1787407740.0,
+    "seen": 1793910198.5846388,
+    "ast_hash": "938f73d491250c239158954783ee14e2",
+    "semantic_hash": "938f73d491250c239158954783ee14e2"
+  },
+  "audio/standard/turnChange.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5936902,
+    "ast_hash": "4f716428b2831e9330a024ffb09d37cd",
+    "semantic_hash": "4f716428b2831e9330a024ffb09d37cd"
+  },
+  "audio/standard/victory.ogg": {
+    "mtime": 1787325246.0,
+    "seen": 1793910198.5946949,
+    "ast_hash": "d9d73883717ab8e2024aef0ea920cd61",
+    "semantic_hash": "d9d73883717ab8e2024aef0ea920cd61"
+  },
+  "audio/standard/ww1/attackSwing.mp3": {
+    "mtime": 1790691472.6067505,
+    "seen": 1793910198.5946949,
+    "ast_hash": "c2196a90247b906943b8538efb96ae59",
+    "semantic_hash": "c2196a90247b906943b8538efb96ae59"
+  },
+  "audio/standard/ww1/lifePointsGained.mp3": {
+    "mtime": 1790691068.5922246,
+    "seen": 1793910198.5946949,
+    "ast_hash": "57fb8f92e142435066dac3a7d92beeea",
+    "semantic_hash": "57fb8f92e142435066dac3a7d92beeea"
+  },
+  "audio/standard/ww1/lifePointsLost.mp3": {
+    "mtime": 1790691131.6808462,
+    "seen": 1793910198.5946949,
+    "ast_hash": "78cb3b4f870a1df517ec428c5899f006",
+    "semantic_hash": "78cb3b4f870a1df517ec428c5899f006"
+  },
+  "video/evocazioni/1.mp4": {
+    "mtime": 1787867219.0,
+    "seen": 1793910198.5946949,
+    "ast_hash": "c5a09e1eeb4f345985f6e8e9b33cadad",
+    "semantic_hash": "c5a09e1eeb4f345985f6e8e9b33cadad"
+  },
+  "video/evocazioni/2.mp4": {
+    "mtime": 1787866521.0,
+    "seen": 1793910198.5967379,
+    "ast_hash": "c3843b35b99905fff61ceed28e1f885a",
+    "semantic_hash": "c3843b35b99905fff61ceed28e1f885a"
+  },
+  "video/evocazioni/30.mp4": {
+    "mtime": 1787867526.0,
+    "seen": 1793910198.5967379,
+    "ast_hash": "10e7efe8f8109619d3abe591eb595488",
+    "semantic_hash": "10e7efe8f8109619d3abe591eb595488"
+  },
+  "video/evocazioni/31.mp4": {
+    "mtime": 1787868031.0,
+    "seen": 1793910198.5967379,
+    "ast_hash": "5ff09cb09f657b88af95e7af3862bfe5",
+    "semantic_hash": "5ff09cb09f657b88af95e7af3862bfe5"
+  },
+  "video/evocazioni/472.mp4": {
+    "mtime": 1787868868.0,
+    "seen": 1793910198.5967379,
+    "ast_hash": "8fe8caae2ae16b3e7a7866570c2a519b",
+    "semantic_hash": "8fe8caae2ae16b3e7a7866570c2a519b"
+  },
+  "video/vittorie/exodiawin.mp4": {
+    "mtime": 1790978033.376869,
+    "seen": 1793910198.5987406,
+    "ast_hash": "6b4a46410841c40d7baa1be8a06b9c79",
+    "semantic_hash": "6b4a46410841c40d7baa1be8a06b9c79"
+  }
+}

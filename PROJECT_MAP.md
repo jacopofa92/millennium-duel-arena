@@ -2,6 +2,16 @@
 
 Ultimo aggiornamento verificato: 2026-10-18.
 
+## Grafo interrogabile del codice (2026-11-05)
+
+Graphify e' installato per Codex (`.codex/skills/graphify/`) e Claude Code
+(`.claude/skills/graphify/`), con output condiviso in `graphify-out/`.
+La prima mappa AST locale copre 714 file di codice: 7.977 nodi e 14.539
+relazioni. Per orientarsi senza caricare tutta la documentazione, usare la
+skill o `graphify query`; vedere `docs/architecture/GRAPHIFY.md` per i comandi,
+i file consultabili e i limiti dell'indice. Il codice e' indicizzato, mentre
+documenti e media sono esclusi per evitare estrazione semantica remota.
+
 ## Pedine-esclamazione per i gridi di Evocazione (2026-10-18)
 
 I 26 duellanti che possiedono almeno un grido di Evocazione hanno una posa
