@@ -59,5 +59,34 @@ module.exports = {
         await t.evaluate(() => {
             if (window.__smettiTransizioniAttivazione) window.__smettiTransizioniAttivazione();
         });
+
+        // Il bot mostra dorsi anonimi: anche lì il viaggio deve partire dal
+        // dorso corrispondente, mai dal clone centrale o dall'intera mano.
+        t.assert(await t.evaluate(() => {
+            const libro = { ...cardDatabase.find((card) => card.id === 875), uid: 'libro-luna-bot' };
+            const esca = { ...cardDatabase.find((card) => card.id === 36), uid: 'esca-bot' };
+            gameState.botHand = [esca, libro];
+            updateUI();
+            const dorso = document.querySelector('#botHand').children[1];
+            const r = dorso.getBoundingClientRect();
+            const origine = { left: r.left, top: r.top, width: r.width, height: r.height };
+            FX.playCardActivateCenterScreen(libro);
+            const salvata = FX.takeHandActivationOrigin(libro);
+            gameState.botHand.splice(1, 1);
+            updateUI();
+            FX.playZoneTransition({
+                carta: libro,
+                da: { kind: 'hand', owner: 'bot', rect: salvata },
+                a: { kind: 'graveyard', owner: 'bot' },
+                variante: 'resolve'
+            });
+            const viaggio = document.querySelector('.fx-card-travel[data-uid="libro-luna-bot"]');
+            return !!(viaggio && salvata
+                && Math.abs(salvata.left - origine.left) < 1
+                && Math.abs(salvata.top - origine.top) < 1
+                && Math.abs(parseFloat(viaggio.style.left) - origine.left) < 1
+                && Math.abs(parseFloat(viaggio.style.top) - origine.top) < 1
+                && Math.abs(parseFloat(viaggio.style.width) - origine.width) < 2);
+        }), 'Libro della Luna del bot: solo la copia in viaggio parte dal dorso preciso in mano, non dal clone centrale né dal contenitore della mano');
     }
 };

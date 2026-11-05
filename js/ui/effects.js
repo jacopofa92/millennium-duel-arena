@@ -1778,7 +1778,19 @@
             if (!mano) continue;
             const escape = window.CSS && typeof CSS.escape === 'function'
                 ? CSS.escape(uid) : uid.replace(/["\\]/g, '\\$&');
-            const el = mano.querySelector(`.card[data-uid="${escape}"]`);
+            let el = mano.querySelector(`.card[data-uid="${escape}"]`);
+            // La mano del bot normalmente disegna solo dorsi anonimi, senza
+            // uid. Prima che il motore rimuova la carta, l'ordine dei dorsi
+            // corrisponde a quello della mano: si fotografa il dorso esatto.
+            // Usare il rettangolo dell'intera mano faceva sembrare che il
+            // clone centrale dell'attivazione venisse risucchiato via.
+            if (!el) {
+                const handState = id === 'playerHand' ? gameState.playerHand : gameState.botHand;
+                const index = Array.isArray(handState)
+                    ? handState.findIndex((item) => item === card || (item && String(item.uid) === uid))
+                    : -1;
+                if (index >= 0) el = mano.children[index] || null;
+            }
             if (!el) continue;
             const r = el.getBoundingClientRect();
             if (r.width && r.height) return { left: r.left, top: r.top, width: r.width, height: r.height };
@@ -2106,11 +2118,11 @@
             // già stato rimosso dal render. Le coordinate fotografate prima
             // dell'attivazione sono la sua vera posizione di partenza.
             if (source && descriptor.rect && descriptor.rect.width) return descriptor.rect;
-            // In partenza serve la carta precisa; in arrivo (es. recupero
-            // dal Cimitero) è corretto mirare al centro della ventola.
-            return source
-                ? (handCardRect(descriptor.owner, card) || looseZoneRect(descriptor.owner, 'hand'))
-                : looseZoneRect(descriptor.owner, 'hand');
+            // In partenza serve la carta precisa: ripiegare sul rettangolo
+            // dell'intera mano disegna una carta gigante che sembra essere
+            // proprio il clone centrale dell'attivazione. Se manca la
+            // sorgente precisa, saltiamo l'animazione invece di inventarla.
+            return source ? handCardRect(descriptor.owner, card) : looseZoneRect(descriptor.owner, 'hand');
         }
         if (descriptor.kind === 'fieldSpell') {
             // Una nuova Magia Terreno sostituisce la precedente: si salva

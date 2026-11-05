@@ -527,7 +527,8 @@
 // v564: Battle City canonica (otto finalisti, soli quarti sul dirigibile).
 // v565: preparazione e mappa esterna del torneo Regno dei Duellanti rinnovate.
 // v573: ingressi prospettici della Catena e maglie sugli slot; Spade Rivelatrici in prospettiva zenitale.
-const CACHE_NAME = 'ygo-duel-arena-v573';
+// v574: Libro della Luna e altre Magie dalla mano del bot partono dal dorso corretto nel viaggio al Cimitero.
+const CACHE_NAME = 'ygo-duel-arena-v574';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
