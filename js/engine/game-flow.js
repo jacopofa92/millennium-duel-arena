@@ -779,17 +779,6 @@ function ridisegnaDuello() {
     if (window.ContoAllaRovescia) ContoAllaRovescia.sync();
     // Tavola del Destino: campo nel Regno delle Ombre e lettere di fumo (js/ui/tavola-del-destino.js), solo lettura dello stato.
     if (window.TavolaDestino) TavolaDestino.sync();
-    // Gabbia d'Acciaio dell'Incubo (id 750): la carta blocca ENTRAMBI i
-    // lati, quindi il renderer WebGL costruisce una gabbia sopra ciascuna
-    // fila Mostri finché almeno una copia resta scoperta sul Terreno. La
-    // condizione nasce dallo stato vero, non da un timer grafico: se viene
-    // distrutta, negata o scade, il ridisegno la rimuove subito.
-    if (window.FxWebgl && typeof FxWebgl.sincronizzaGabbiaIncubo === 'function') {
-        const gabbiaAttiva = Tavolo.ordine().some((posto) => Tavolo.magieTrappole(posto).some((slot) => (
-            slot && !slot.isFaceDown && slot.card && slot.card.id === 750
-        )));
-        FxWebgl.sincronizzaGabbiaIncubo(gabbiaAttiva);
-    }
     updatePhaseIndicator();
 }
 

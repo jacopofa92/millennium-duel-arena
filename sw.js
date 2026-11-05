@@ -530,7 +530,8 @@
 // v574: Libro della Luna e altre Magie dalla mano del bot partono dal dorso corretto nel viaggio al Cimitero.
 // v575: l'IA non offre per Tributo i Token di Capro Espiatorio.
 // v576: gabbia d'acciaio e Spade Rivelatrici ridisegnate per il campo zenitale.
-const CACHE_NAME = 'ygo-duel-arena-v576';
+// v577: ripristinato l'effetto precedente delle Spade e rimosso il rendering WebGL della Gabbia.
+const CACHE_NAME = 'ygo-duel-arena-v577';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare

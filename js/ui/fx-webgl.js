@@ -50,12 +50,7 @@
         const o = gl.createShader(tipo);
         gl.shaderSource(o, src);
         gl.compileShader(o);
-        if (gl.getShaderParameter(o, gl.COMPILE_STATUS)) return o;
-        // I test di lifecycle possono passare anche se uno shader di scena
-        // non compila: registrare il log evita un effetto persistente ma vuoto.
-        console.warn('[FX webgl] Shader non compilato:', gl.getShaderInfoLog(o));
-        gl.deleteShader(o);
-        return null;
+        return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null;
     }
 
     function assicuraCanvas() {
@@ -100,11 +95,6 @@
     function chiudiTutto() {
         const fini = attivi.map((a) => a.fine).filter(Boolean);
         attivi = [];
-        // Un contesto perso o uno spegnimento esplicito invalida anche il
-        // riferimento persistente della Gabbia: al prossimo ridisegno deve
-        // poter essere ricreata, non credersi ancora viva su un canvas rimosso.
-        stopGabbiaIncubo = null;
-        firmaGabbiaIncubo = '';
         cancelAnimationFrame(rid); rid = 0;
         if (canvas) canvas.remove();
         canvas = null; gl = null;
@@ -367,7 +357,7 @@ void main(){
 
     const MAX_SPADE = 6;
     const FS_SPADE = BASE + `
-uniform vec4 sp[${MAX_SPADE}];   // x centro slot, y centro carta, mezza larghezza slot, ritardo (s)
+uniform vec4 sp[${MAX_SPADE}];   // x centro, y fondo della fila, mezza larghezza slot, ritardo (s)
 uniform float ns;                // quante spade
 uniform vec4 fila;               // sinistra, alto, destra, basso della fila (px CSS)
 uniform float alt;               // altezza di una spada
@@ -412,55 +402,77 @@ float outExpo(float x){x=clamp(x,0.,1.);return x>=1.?1.:1.-pow(2.,-10.*x);}
 void main(){
   vec2 P=css();
   vec4 o=vec4(0.);
-  float inX=smoothstep(fila.x-14.,fila.x+2.,P.x)*smoothstep(fila.z+14.,fila.z-2.,P.x);
+  // Cielo che si schiarisce sopra la fila.
+  float inX=smoothstep(fila.x-60.,fila.x,P.x)*smoothstep(fila.z+60.,fila.z,P.x);
+  float cielo=inX*(1.-smoothstep(zona.x,fila.w,P.y))*smoothstep(0.,.3,t);
+  float fineCielo=1.-smoothstep(.9+ns*.095,1.5+ns*.095,t);
+  o+=vec4(vec3(.3,1.,.55)*cielo*.5*fineCielo,cielo*.36*fineCielo);
+  // SQUARCIO di luce al bordo alto del terreno: da qui nascono le spade (origine chiara della discesa, solo in questo campo).
+  float aperto=smoothstep(0.,.3,t)*(1.-smoothstep(1.1+ns*.095,1.7+ns*.095,t));
+  float squarcio=inX*(exp(-pow((P.y-zona.x-4.)/4.5,2.))*1.1+exp(-pow((P.y-zona.x-4.)/30.,2.))*.38)*aperto*(.75+.25*sin(P.x*.06+t*7.));
+  o+=vec4(mix(vec3(.3,1.,.55),vec3(.9,1.,.95),exp(-pow((P.y-zona.x-4.)/4.5,2.)))*squarcio,squarcio*.7);
   for(int i=0;i<${MAX_SPADE};i++){
     if(float(i)>=ns) break;
     vec4 s=sp[i];
     float tt=t-s.w;
     float cx=s.x;
-    // Camera quasi zenitale: la lama entra dall'alto del piano, si rimpicciolisce
-    // in profondità e si posa al centro della propria casella. Niente scie oblique
-    // a tutta fila: il movimento resta leggibile e ogni impatto ha un bersaglio.
-    float cad=outExpo(tt/.72);
+    // Colonna di luce che anticipa la lama: trapezio che si stringe verso l'alto.
+    float ra=smoothstep(0.,.32,t-s.w*.4)*(1.-smoothstep(.82,1.4,t-s.w*.4));
+    float semi=mix(s.z*.12,s.z*.72,smoothstep(0.,s.y,P.y));
+    float colonna=smoothstep(semi,semi*.2,abs(P.x-cx))*smoothstep(0.,s.y,P.y)*step(P.y,s.y+10.)*ra;
+    o+=vec4(vec3(.25,1.,.5)*colonna*.34,colonna*.24);
+    // La lama cade da lontano, inclinata, e si raddrizza all'impatto.
+    float cad=outExpo(tt/.78);
+    float lato=mod(float(i),2.)<.5?1.:-1.;
     float dist=abs(float(i)-(ns-1.)*.5);
-    float ang=mix((mod(float(i),2.)<.5?1.:-1.)*.16,0.035,cad);
-    vec2 sc=vec2(mix(.52,.96,cad),mix(.42,.78,cad));
-    vec2 centro=vec2(cx+sin(float(i)*7.13)*s.z*.10*(1.-cad),
-                     mix(fila.y-alt*.72, s.y, cad));
+    float ang=-lato*(22.+dist*4.)*(1.-cad)*.01745-.25*cad;
+    // In ingresso la lama arriva quasi di taglio e piccola, poi prende volume
+    // mentre attraversa il piano del campo; dopo l'impatto resta leggermente inclinata.
+    vec2 sc=vec2(mix(.20,.82,cad),mix(.52,.74,cad));
+    vec2 centro=vec2(cx+lato*(62.+dist*18.)*(1.-cad)-sin(ang)*alt*.5*sc.y*cad,
+                     mix(zona.x-alt*.78, s.y-cos(ang)*alt*.5*sc.y, cad));
     vec2 l=P-centro;
     float cs=cos(ang),sn=sin(ang);
     l=vec2(cs*l.x+sn*l.y,-sn*l.x+cs*l.y)/sc;
     // Mezza larghezza della lama: segue la casella (mai filiforme, mai tozza); a riposo la luce "respira".
-    float W=clamp(s.z*.17,4.5,12.);
+    float W=clamp(s.z*.3,5.,15.);
     float respiro=.86+.14*sin(t*4.2+float(i)*1.3);
     // Ombra obliqua sul terreno: ancora la lama al piano e ne rende leggibile
     // la profondita' vista dall'alto, soprattutto una volta ferma.
-    float ombra=exp(-pow((l.x-W*.4)/(W*1.45),2.)-pow((l.y+alt*.03)/(alt*.22),2.))*smoothstep(.44,.68,tt);
-    o+=vec4(vec3(.005,.018,.01)*ombra,ombra*.48);
+    float ombra=exp(-pow((l.x-W*.8)/(W*1.7),2.)-pow((l.y+alt*.08)/(alt*.28),2.))*smoothstep(.52,.82,tt);
+    o+=vec4(vec3(.005,.045,.018)*ombra,ombra*.66);
     vec4 sw=spada(l,alt,W,respiro);
     // Scia di luce sopra la lama mentre cala veloce: sparisce quando la spada rallenta e si ferma.
     float yTop=centro.y-alt*.5*sc.y;
-    float tr=exp(-pow((P.x-centro.x)/(W*1.15),2.))*step(P.y,yTop)*step(zona.x,P.y)*(1.-cad)*smoothstep(0.,.1,tt)*clamp(1.-(yTop-P.y)/(alt*.7),0.,1.);
-    o+=vec4(vec3(.5,1.,.7)*tr*.22,tr*.12);
+    float tr=exp(-pow((P.x-centro.x)/(W*1.7*sc.x),2.))*step(P.y,yTop)*step(zona.x,P.y)*(1.-cad)*smoothstep(0.,.1,tt)*clamp(1.-(yTop-P.y)/(alt*1.2),0.,1.);
+    o+=vec4(vec3(.5,1.,.7)*tr*.55,tr*.3);
     float vis=smoothstep(0.,.12,tt);
     o=sw*vis+o*(1.-sw.a*vis);
     // Anello d'impatto alla punta.
-    float imp=exp(-pow((length(P-vec2(cx,s.y))-(tt-.50)*45.)*.24,2.))*step(.50,tt)*(1.-smoothstep(.50,.86,tt));
-    o+=vec4(vec3(.42,1.,.68)*imp*.8,imp*.38);
-    // Cerchio d'impatto piccolo e piatto, vincolato allo slot invece di investire la fila.
-    float ell=exp(-pow((length(vec2(P.x-cx,(P.y-s.y)*1.8))-(tt-.50)*32.)*.3,2.))*step(.50,tt)*(1.-smoothstep(.50,.82,tt));
-    o+=vec4(vec3(.45,1.,.7)*ell*.42,ell*.22);
+    float imp=exp(-pow((length(P-vec2(cx,s.y))-(tt-.55)*260.)*.09,2.))*step(.55,tt)*(1.-smoothstep(.55,1.,tt));
+    o+=vec4(vec3(.35,1.,.6)*imp*.9,imp*.55);
+    // Colpo a terra: onda schiacciata sul piano del campo, lampo alla punta e scintille che schizzano e ricadono.
+    float ell=exp(-pow((length(vec2(P.x-cx,(P.y-s.y)*2.4))-(tt-.55)*210.)*.12,2.))*step(.55,tt)*(1.-smoothstep(.55,.95,tt));
+    o+=vec4(vec3(.4,1.,.65)*ell*.7,ell*.4);
     vec2 dP=P-vec2(cx,s.y);
-    float flashI=exp(-dot(dP,dP)/(s.z*s.z*.20))*smoothstep(.48,.54,tt)*(1.-smoothstep(.54,.68,tt));
+    float flashI=exp(-dot(dP,dP)/(s.z*s.z*1.2))*smoothstep(.5,.58,tt)*(1.-smoothstep(.58,.8,tt));
     o+=vec4(vec3(.8,1.,.85)*flashI*1.2,flashI*.6);
-    for(int j=0;j<4;j++){
-      float fj=float(j); float aa=6.28318*h(vec2(fj,float(i))); float v0=10.+12.*h(vec2(fj+3.,float(i))); float tv=max(tt-.50,0.);
-      vec2 sp2=vec2(cx+cos(aa)*v0*tv, s.y+sin(aa)*v0*tv+36.*tv*tv); float dd=length(P-sp2);
-      float vita=(1.-smoothstep(0.,.32,tv))*step(.50,tt); float g2=exp(-dd*dd/3.)*vita;
+    for(int j=0;j<7;j++){
+      float fj=float(j); float aa=3.14159*(.1+.8*h(vec2(fj,float(i)))); float v0=70.+90.*h(vec2(fj+3.,float(i))); float tv=max(tt-.55,0.);
+      vec2 sp2=vec2(cx+cos(aa)*v0*tv*1.1, s.y-sin(aa)*v0*tv+260.*tv*tv); float dd=length(P-sp2);
+      float vita=(1.-smoothstep(0.,.55,tv))*step(.55,tt); float g2=exp(-dd*dd/6.)*vita;
       o+=vec4(vec3(.6,1.,.75)*g2*1.2,g2*.7);
     }
   }
-  // Nessun flash orizzontale: gli impatti individuali comunicano già il sigillo.
+  // Lampo orizzontale sulla fila quando l'ultima e' atterrata.
+  float lf=t-tFlash;
+  if(lf>0. && lf<.65){
+    float y=smoothstep(fila.y-30.,fila.y,P.y)*smoothstep(fila.w+30.,fila.w,P.y);
+    float x=smoothstep(fila.x-30.,fila.x,P.x)*smoothstep(fila.z+30.,fila.z,P.x);
+    float e=sin(3.14159*lf/.65);
+    float f=y*x*e;
+    o+=vec4(vec3(.45,1.,.65)*f*.5,f*.32);
+  }
   // Tutto cio' che e' fuori dal terreno di chi subisce si spegne: le spade appaiono e scendono SOLO li' (richiesta dell'utente).
   float dentro=smoothstep(zona.x-6.,zona.x+16.,P.y)*smoothstep(zona.y+16.,zona.y-6.,P.y);
   gl_FragColor=o*dentro;
@@ -479,7 +491,7 @@ void main(){
         const tutteDi = Array.from(document.querySelectorAll(`#${boardId} .field-slot[data-owner="${owner}"]`)).map((s) => s.getBoundingClientRect()).filter((r) => r.width);
         const zonaTop = Math.min(rowTop, ...tutteDi.map((r) => r.top)) - 8;
         const zonaBottom = Math.max(rowBottom, ...tutteDi.map((r) => r.bottom)) + 8;
-        const altezza = Math.max(72, Math.min(118, (rowBottom - rowTop) * .74));
+        const altezza = Math.max(175, Math.min(270, (rowBottom - rowTop) * 1.65));
         const PASSO = 0.12;
         const CADUTA = 0.78;
         const n = rects.length;
@@ -487,7 +499,7 @@ void main(){
         rects.forEach((rect, i) => {
             const dist = Math.abs(i - (n - 1) / 2);
             data[i * 4] = rect.left + rect.width / 2;
-            data[i * 4 + 1] = rect.top + rect.height * .53;
+            data[i * 4 + 1] = rowBottom;
             data[i * 4 + 2] = rect.width / 2;
             data[i * 4 + 3] = dist * PASSO;
         });
@@ -510,155 +522,6 @@ void main(){
             else interrompi();
         }, (ultima + 0.06) * 1000);
     }
-
-    // ---------------------------------------------------------------------
-    // Gabbia d'Acciaio dell'Incubo — barriera persistente su ENTRAMBE le
-    // file Mostri. Non è una scena a tempo: `sincronizzaGabbiaIncubo()` la
-    // mantiene finché la carta id 750 è davvero scoperta sul Terreno.
-    // ---------------------------------------------------------------------
-
-    const FS_GABBIA_INCUBO = BASE + `
-uniform vec4 gabbia; // sinistra, alto, destra, basso della fila Mostri
-uniform float verso; // direzione della profondità verso il centro del campo
-
-float segmento(vec2 p,vec2 a,vec2 b){
-  vec2 pa=p-a,ba=b-a;
-  float h2=clamp(dot(pa,ba)/max(dot(ba,ba),.001),0.,1.);
-  return length(pa-ba*h2);
-}
-vec4 ferro(float d,float spessore,float luce){
-  // La sezione ha un'anima scura, due spigoli freddi e una faccia satinata:
-  // sul campo fotografico resta leggibile senza diventare una grata opaca.
-  float anima=1.-smoothstep(spessore,spessore+1.5,d);
-  float bordo=exp(-pow((d-spessore*.62)/.8,2.));
-  float alone=exp(-max(d-spessore,0.)/7.)*.16;
-  vec3 acciaio=mix(vec3(.018,.026,.035),vec3(.68,.76,.82),bordo*.96+luce*.72);
-  acciaio+=vec3(.88,.94,1.)*luce*.78;
-  return vec4(acciaio*anima+vec3(.16,.2,.24)*alone,clamp(anima*.98+alone*.4,0.,.98));
-}
-void main(){
-  vec2 P=css();
-  vec4 o=vec4(0.);
-  float L=gabbia.x,T=gabbia.y,R=gabbia.z,B=gabbia.w;
-  // Prospettiva zenitale: il telaio ha un bordo in primo piano e uno
-  // leggermente rialzato verso il centro del duello, uniti da montanti
-  // allineati ai divisori degli slot. La struttura si legge come gabbia,
-  // ma aste sottili e traslucide lasciano visibili artwork e testo.
-  float profondita=verso*clamp((B-T)*.22,16.,28.);
-  float centro=(L+R)*.5;
-  float restringi=(R-L)*.035;
-  float retroL=L+restringi,retroR=R-restringi;
-  float retroT=T+profondita,retroB=B+profondita;
-  for(int i=0;i<6;i++){
-    float x=mix(L,R,float(i)/5.);
-    float d=segmento(P,vec2(x,T-7.),vec2(x,B+7.));
-    float xr=centro+(x-centro)*.93;
-    float dr=segmento(P,vec2(xr,retroT),vec2(xr,retroB));
-    float glint=exp(-pow((P.y-(T-7.+fract(t*.17+float(i)*.19)*(B-T+14.)))/12.,2.))*exp(-d*d/55.);
-    vec4 om=ferro(d,4.2,.02); om.rgb*=.30; om.a*=.46;
-    o=om+o*(1.-om.a);
-    vec4 f=ferro(d,(i==0||i==5)?3.1:2.5,glint*.72);
-    o=f+o*(1.-f.a);
-    vec4 r=ferro(dr,2.,.2); r.a*=.9;
-    o=r+o*(1.-r.a);
-    float connettore=segmento(P,vec2(x,T-7.),vec2(xr,retroT));
-    vec4 c=ferro(connettore,2.2,.4); c.a*=.95;
-    o=c+o*(1.-c.a);
-  }
-  float top=T-7.,bottom=B+7.;
-  float sweep=fract(t*.11);
-  float sx=mix(L,R,sweep);
-  float scan=exp(-pow((P.x-sx)/34.,2.));
-  vec4 railTop=ferro(segmento(P,vec2(L-5.,top),vec2(R+5.,top)),3.6,.18+scan*.72);
-  vec4 railBottom=ferro(segmento(P,vec2(L-5.,bottom),vec2(R+5.,bottom)),3.6,.15+scan*.42);
-  vec4 railRetroT=ferro(segmento(P,vec2(retroL,retroT),vec2(retroR,retroT)),2.2,.22+scan*.3);
-  vec4 railRetroB=ferro(segmento(P,vec2(retroL,retroB),vec2(retroR,retroB)),2.2,.16);
-  railTop.a*=.96; railBottom.a*=.86;
-  o=railTop+o*(1.-railTop.a);
-  o=railBottom+o*(1.-railBottom.a);
-  o=railRetroT+o*(1.-railRetroT.a); o=railRetroB+o*(1.-railRetroB.a);
-  vec4 left=ferro(segmento(P,vec2(L,T-7.),vec2(L,B+7.)),3.6,.3);
-  vec4 right=ferro(segmento(P,vec2(R,T-7.),vec2(R,B+7.)),3.6,.3);
-  o=left+o*(1.-left.a); o=right+o*(1.-right.a);
-  vec4 latoL=ferro(segmento(P,vec2(L,top),vec2(retroL,retroT)),2.4,.32);
-  vec4 latoR=ferro(segmento(P,vec2(R,top),vec2(retroR,retroT)),2.4,.32);
-  vec4 latoLb=ferro(segmento(P,vec2(L,bottom),vec2(retroL,retroB)),2.4,.22);
-  vec4 latoRb=ferro(segmento(P,vec2(R,bottom),vec2(retroR,retroB)),2.4,.22);
-  o=latoL+o*(1.-latoL.a); o=latoR+o*(1.-latoR.a);
-  o=latoLb+o*(1.-latoLb.a); o=latoRb+o*(1.-latoRb.a);
-  // Chiodi/rivetti ai nodi del telaio: piccoli punti speculari, non icone.
-  for(int i=0;i<6;i++){
-    float x=mix(L,R,float(i)/5.);
-    float d=length(P-vec2(x,top));
-    float rivetto=exp(-d*d/7.);
-    o+=vec4(vec3(.72,.83,.9)*rivetto*.38,rivetto*.28);
-  }
-  float lampo=scan*exp(-pow((P.y-top)/4.,2.));
-  o+=vec4(vec3(.76,.86,.92)*lampo*.25,lampo*.16);
-  gl_FragColor=o;
-}`;
-
-    let stopGabbiaIncubo = null;
-    let firmaGabbiaIncubo = '';
-    let richiestaGabbiaIncubo = false;
-
-    function righeMostri() {
-        return ['player', 'bot'].map((owner) => {
-            const boardId = owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard';
-            const slots = Array.from(document.querySelectorAll(`#${boardId} .field-slot[data-owner="${owner}"][data-type="monster"]`));
-            const rs = slots.map((el) => el.getBoundingClientRect()).filter((r) => r.width && r.height);
-            if (!rs.length) return null;
-            return [
-                Math.min(...rs.map((r) => r.left)), Math.min(...rs.map((r) => r.top)),
-                Math.max(...rs.map((r) => r.right)), Math.max(...rs.map((r) => r.bottom))
-            ];
-        }).filter(Boolean);
-    }
-
-    function spegniGabbiaIncubo() {
-        if (stopGabbiaIncubo) stopGabbiaIncubo();
-        stopGabbiaIncubo = null;
-        firmaGabbiaIncubo = '';
-    }
-
-    function sincronizzaGabbiaIncubo(attiva) {
-        richiestaGabbiaIncubo = !!attiva;
-        const movimentoRidotto = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (!attiva || movimentoRidotto || (/** @type {any} */ (window)).FX_BACKEND === 'css' || !window.FxWebglPronto) {
-            spegniGabbiaIncubo();
-            return false;
-        }
-        const righe = righeMostri();
-        if (righe.length !== 2) { spegniGabbiaIncubo(); return false; }
-        const firma = righe.flat().map((v) => Math.round(v)).join(':');
-        if (stopGabbiaIncubo && firma === firmaGabbiaIncubo) return true;
-        spegniGabbiaIncubo();
-        firmaGabbiaIncubo = firma;
-        try {
-            stopGabbiaIncubo = lancia('gabbia-incubo', FS_GABBIA_INCUBO, 86400, () => {}, null, (tempo, disegno) => {
-                righe.forEach((r, indice) => {
-                    const bbox = [r[0] - 30, r[1] - 42, r[2] + 30, r[3] + 36];
-                    disegno.passata('gabbia-incubo', FS_GABBIA_INCUBO, tempo, bbox, (u, g) => {
-                        g.uniform4f(u('gabbia'), r[0], r[1], r[2], r[3]);
-                        g.uniform1f(u('verso'), indice === 0 ? -1 : 1);
-                    });
-                });
-            });
-        } catch (errore) {
-            // È solo una rappresentazione: un driver WebGL vecchio o un
-            // contesto perso non deve mai interrompere updateUI né il duello.
-            spegniGabbiaIncubo();
-            console.warn('[FX webgl] Gabbia d\'Acciaio non disponibile:', errore);
-            return false;
-        }
-        return true;
-    }
-
-    window.addEventListener('resize', () => {
-        if (!richiestaGabbiaIncubo) return;
-        firmaGabbiaIncubo = '';
-        requestAnimationFrame(() => requestAnimationFrame(() => sincronizzaGabbiaIncubo(true)));
-    });
 
     // ---------------------------------------------------------------------
     // Raigeki
@@ -788,9 +651,6 @@ void main(){
         chiudi: chiudiTutto,
         attivi: () => attivi.length,
         BASE: BASE,
-        Z_INDEX: Z_INDEX,
-        sincronizzaGabbiaIncubo: sincronizzaGabbiaIncubo,
-        gabbiaIncuboAttiva: () => !!stopGabbiaIncubo,
-        shaderDisponibile: (chiave) => !!programmi[chiave]
+        Z_INDEX: Z_INDEX
     };
 })();

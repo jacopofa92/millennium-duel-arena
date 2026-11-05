@@ -222,8 +222,8 @@ void main(){
       // La lama persistente non e' un pittogramma frontale: e' leggermente
       // coricata sul piano, con la prospettiva che converge verso la punta.
       l.x+=l.y*.25; l.y*=.74;
-      o=spadaNeon(l,120.,8.5,.92+.08*sin(t*3.1));
-      float ombra=exp(-pow((l.x-7.)/13.,2.)-pow((l.y+5.)/36.,2.))*.5;
+      o=spadaNeon(l,120.,4.4,.86+.14*sin(t*4.2));
+      float ombra=exp(-pow((l.x-7.)/10.,2.)-pow((l.y+5.)/36.,2.))*.62;
       o.rgb+=vec3(.005,.035,.014)*ombra*(1.-o.a);
       o.a=max(o.a,ombra*.34);
       // Il bagliore si spegne prima dei bordi dell'area di disegno: senza, si vedeva il rettangolo del canvas.

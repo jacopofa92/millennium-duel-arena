@@ -508,10 +508,10 @@
     "semantic_hash": "d42a1978c3cc7eebca874eb6aff40c39"
   },
   "js/engine/game-flow.js": {
-    "mtime": 1793833467.8987546,
-    "seen": 1793910198.2642758,
-    "ast_hash": "3d093c1a6f2fa56d2392c14000839045",
-    "semantic_hash": "3d093c1a6f2fa56d2392c14000839045"
+    "mtime": 1793920049.753241,
+    "seen": 1793920487.4543982,
+    "ast_hash": "84c89cafadeb5f7cdc3c78b1f4a8778b",
+    "semantic_hash": ""
   },
   "js/engine/passo-comune.js": {
     "mtime": 1793482354.4297478,
@@ -886,9 +886,9 @@
     "semantic_hash": "8d7bb6657e40288b0964825d22b919fd"
   },
   "js/ui/fx-webgl.js": {
-    "mtime": 1793919111.9008265,
-    "seen": 1793919248.1501791,
-    "ast_hash": "535560fa8533cedd849ba01c061c85ed",
+    "mtime": 1793920366.3846872,
+    "seen": 1793920487.490557,
+    "ast_hash": "b2f367cefc802f06ba738c26015a7c73",
     "semantic_hash": ""
   },
   "js/ui/game-logo.js": {
@@ -916,9 +916,9 @@
     "semantic_hash": "daf3be37afead839bae5306bac925f72"
   },
   "js/ui/icone-posizione-webgl.js": {
-    "mtime": 1793918325.547516,
-    "seen": 1793918662.9054697,
-    "ast_hash": "e4706946f9d5d80dac347a4b37b0c325",
+    "mtime": 1793920176.644634,
+    "seen": 1793920487.4930913,
+    "ast_hash": "164b2d039e0d5d025fdc1f098385e522",
     "semantic_hash": ""
   },
   "js/ui/inclinazione.js": {
@@ -1108,9 +1108,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1793918580.2398193,
-    "seen": 1793918662.9252858,
-    "ast_hash": "e2d86f9306800b0d91a15edca6cfd871",
+    "mtime": 1793920254.3770552,
+    "seen": 1793920487.5117445,
+    "ast_hash": "08bf192169e4e6ea71b694fad1e488a9",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1126,9 +1126,9 @@
     "semantic_hash": "57357a46c1d07a0fa18bbcd83581aaa6"
   },
   "package.json": {
-    "mtime": 1793918597.1696458,
-    "seen": 1793918662.9263291,
-    "ast_hash": "d2b53f2a0fa145a013e38a178a6908e8",
+    "mtime": 1793920254.8122568,
+    "seen": 1793920487.5137389,
+    "ast_hash": "0762104073588858fa09ff18ab80d9e9",
     "semantic_hash": ""
   },
   "render.yaml": {
@@ -1527,9 +1527,9 @@
     "semantic_hash": "e90f76660f0591cfeb068b83abeafdd5"
   },
   "sw.js": {
-    "mtime": 1793918597.5417569,
-    "seen": 1793918662.961994,
-    "ast_hash": "b8de0a4dd9292f55fe250c05e97bef92",
+    "mtime": 1793920255.2738986,
+    "seen": 1793920487.5538566,
+    "ast_hash": "f62ac542206aa4b39a5dbda88b09d2e3",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -2399,9 +2399,9 @@
     "semantic_hash": "c1eec22082f0e494863ce637814329bd"
   },
   "tests/specs/fx-webgl-spettacoli.spec.js": {
-    "mtime": 1793919135.262792,
-    "seen": 1793919248.283547,
-    "ast_hash": "97f7ddf55f98b051702b8b7dd35a6f78",
+    "mtime": 1793920154.086401,
+    "seen": 1793920487.6586294,
+    "ast_hash": "97d95a46fe23a8da90c5f70d3a91f4df",
     "semantic_hash": ""
   },
   "tests/specs/gather-your-mind-safety-destroy.spec.js": {
@@ -5267,9 +5267,9 @@
     "semantic_hash": ""
   },
   "duelMonstersCore.html": {
-    "mtime": 1793918102.484166,
-    "seen": 1793918663.2898655,
-    "ast_hash": "91f4f33d35bbe1414760cf4efdc4e1b8",
+    "mtime": 1793920201.3432813,
+    "seen": 1793920487.934498,
+    "ast_hash": "73236d35bdb739e5f3529e1000050113",
     "semantic_hash": ""
   },
   "duello-libero.html": {
@@ -23480,24 +23480,6 @@
     "mtime": 1792839990.2541456,
     "seen": 1793912297.4272926,
     "ast_hash": "0caa9f1785a12bbc39d2909b71759463",
-    "semantic_hash": ""
-  },
-  "fx-cage-preview.png": {
-    "mtime": 1793918887.598033,
-    "seen": 1793919248.4873357,
-    "ast_hash": "254e2559b8ae93428e33f74bbcd70582",
-    "semantic_hash": ""
-  },
-  "fx-swords-fall-preview.png": {
-    "mtime": 1793918889.6984732,
-    "seen": 1793919248.4873357,
-    "ast_hash": "12c103de1543ccc671431b3bc34dc1ea",
-    "semantic_hash": ""
-  },
-  "fx-swords-landed-preview.png": {
-    "mtime": 1793918891.2731013,
-    "seen": 1793919248.4873357,
-    "ast_hash": "fb8133d51e8ccbbaedc01a07d6b2bcf7",
     "semantic_hash": ""
   },
   "package-lock.json": {

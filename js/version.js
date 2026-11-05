@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.5.67 — Ripristinato l'effetto precedente delle Spade Rivelatrici; rimossa la resa visiva WebGL della Gabbia d'Acciaio dell'Incubo.
  * 1.5.66 — Gabbia d'Acciaio e Spade Rivelatrici ridisegnate sulla prospettiva zenitale: telaio metallico leggibile e lame più proporzionate agli slot.
  * 1.5.65 — L'IA esclude i Token di Capro Espiatorio dai Tributi per le Evocazioni Normali.
  * 1.5.64 — Le Magie attivate dalla mano avversaria partono dal dorso preciso; non viene più simulato il clone centrale come carta spedita al Cimitero.
@@ -801,4 +802,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.5.66';
+window.GAME_VERSION = '1.5.67';
