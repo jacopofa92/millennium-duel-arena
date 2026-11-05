@@ -1764,6 +1764,27 @@
     // prima di iniziare, invece di sovrapporsi: vedi il commento sull'uso
     // di questa costante in js/engine/card-effects.js (id 7 e id 8).
     const ACTIVATE_CENTER_DURATION_MS = 2000;
+    // Coordinate della carta reale in mano, salvate PRIMA che il motore la
+    // tolga dallo stato all'attivazione. Il primo piano centrale è un clone:
+    // la successiva animazione verso il Cimitero deve partire dallo slot
+    // originale, non dal clone né dal rettangolo generico della mano.
+    const originiAttivazioneMano = new Map();
+
+    function leggiOrigineAttivazioneMano(card) {
+        if (!card || !card.uid) return null;
+        const uid = String(card.uid);
+        for (const id of ['playerHand', 'botHand']) {
+            const mano = document.getElementById(id);
+            if (!mano) continue;
+            const escape = window.CSS && typeof CSS.escape === 'function'
+                ? CSS.escape(uid) : uid.replace(/["\\]/g, '\\$&');
+            const el = mano.querySelector(`.card[data-uid="${escape}"]`);
+            if (!el) continue;
+            const r = el.getBoundingClientRect();
+            if (r.width && r.height) return { left: r.left, top: r.top, width: r.width, height: r.height };
+        }
+        return null;
+    }
 
     function playCardActivateCenterScreen(card) {
         if (!card || typeof window.createCardElement !== 'function') return;
@@ -2081,6 +2102,10 @@
         if (descriptor.kind === 'auto') return cardRect(card);
         if (descriptor.kind === 'field') return fieldSlotRect(descriptor.owner, descriptor.index, descriptor.type);
         if (descriptor.kind === 'hand') {
+            // Per una carta attivata dalla mano il nodo DOM potrebbe essere
+            // già stato rimosso dal render. Le coordinate fotografate prima
+            // dell'attivazione sono la sua vera posizione di partenza.
+            if (source && descriptor.rect && descriptor.rect.width) return descriptor.rect;
             // In partenza serve la carta precisa; in arrivo (es. recupero
             // dal Cimitero) è corretto mirare al centro della ventola.
             return source
@@ -2616,6 +2641,11 @@
         playCardActivateCenterScreen: (function () {
             const alCentro = viaBackend('playCardActivateCenterScreen', playCardActivateCenterScreen);
             return function (card) {
+                // La facciata è comune a CSS, GSAP e WebGL. Fotografare qui
+                // la posizione garantisce lo stesso punto di partenza anche
+                // quando un backend sostituisce il renderer centrale.
+                const origineMano = leggiOrigineAttivazioneMano(card);
+                if (origineMano && card && card.uid) originiAttivazioneMano.set(String(card.uid), origineMano);
                 alCentro(card);
                 // Aura WebGL dietro la carta (solo se c'e' il backend: altrimenti la funzione e' vuota).
                 if (card && window.FX && typeof FX.playActivationAura === 'function') FX.playActivationAura(card);
@@ -2638,6 +2668,13 @@
                 }, 60);
             };
         })(),
+        takeHandActivationOrigin: (card) => {
+            if (!card || !card.uid) return null;
+            const uid = String(card.uid);
+            const rect = originiAttivazioneMano.get(uid) || null;
+            originiAttivazioneMano.delete(uid);
+            return rect;
+        },
 
         // Spade Rivelatrici: passa dal backend, ma con una RETE DI
         // SICUREZZA sulla callback (vedi swordsWithSafetyNet qui sotto) —

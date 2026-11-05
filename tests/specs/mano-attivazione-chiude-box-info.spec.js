@@ -14,9 +14,18 @@ module.exports = {
                     uid: movimento.carta && movimento.carta.uid,
                     da: movimento.da && movimento.da.kind,
                     a: movimento.a && movimento.a.kind,
-                    variante: movimento.variante
+                    variante: movimento.variante,
+                    origine: movimento.da && movimento.da.rect
                 });
             });
+            const playCentro = FX.playCardActivateCenterScreen;
+            FX.playCardActivateCenterScreen = (carta) => {
+                if (carta && carta.uid === 'info-attiva') {
+                    const r = document.querySelector('#playerHand .card[data-uid="info-attiva"]').getBoundingClientRect();
+                    window.__origineRealeMano = { left: r.left, top: r.top, width: r.width, height: r.height };
+                }
+                return playCentro(carta);
+            };
             updateUI();
             window.__larghezzaCartaAttivataInMano = document.querySelector('#playerHand .card').getBoundingClientRect().width;
         });
@@ -38,8 +47,15 @@ module.exports = {
         )), { timeout: 6000 });
         t.assert(await t.evaluate(() => {
             const fantasma = document.querySelector('.fx-card-travel[data-uid="info-attiva"]');
-            return fantasma && Math.abs(parseFloat(fantasma.style.width) - window.__larghezzaCartaAttivataInMano) < 2;
-        }), 'Il viaggio deve partire dalla singola carta in mano, non dalla cinematica o dall’intera ventola');
+            const movimento = window.__transizioniAttivazione.find((m) => m.uid === 'info-attiva');
+            const origine = window.__origineRealeMano;
+            return fantasma && origine && movimento && movimento.origine
+                && Math.abs(parseFloat(fantasma.style.width) - origine.width) < 2
+                && Math.abs(parseFloat(fantasma.style.left) - origine.left) < 1
+                && Math.abs(parseFloat(fantasma.style.top) - origine.top) < 1
+                && Math.abs(movimento.origine.left - origine.left) < 1
+                && Math.abs(movimento.origine.top - origine.top) < 1;
+        }), 'Il clone in viaggio deve partire dalle coordinate esatte della carta in mano salvate prima dell’animazione centrale, mai dal clone centrale o dal centro della mano');
         await t.evaluate(() => {
             if (window.__smettiTransizioniAttivazione) window.__smettiTransizioniAttivazione();
         });

@@ -6486,8 +6486,15 @@
             && card.subtype !== 'field' && !(def && def.continuous)
             && graveyardOf(owner).some((entry) => entry && entry.uid === card.uid);
         if (magiaConsumataDallaMano) {
+            // FX.playCardActivateCenterScreen ha fotografato la carta
+            // concreta nello slot della mano prima che activateCard la
+            // rimuovesse. Riutilizziamo quella geometria: cercare ora il
+            // nodo DOM trova solo il primo piano centrale o nessun nodo,
+            // mai la posizione originale che il giocatore deve riconoscere.
+            const origineMano = window.FX && typeof FX.takeHandActivationOrigin === 'function'
+                ? FX.takeHandActivationOrigin(card) : null;
             animaTransizioneCarta(card,
-                { kind: 'hand', owner: owner },
+                { kind: 'hand', owner: owner, rect: origineMano },
                 { kind: 'graveyard', owner: owner },
                 'resolve');
         }

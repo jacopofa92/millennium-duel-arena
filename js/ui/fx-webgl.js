@@ -551,53 +551,43 @@ vec4 ferro(float d,float spessore,float luce){
 void main(){
   vec2 P=css();
   vec4 o=vec4(0.);
-  float L=gabbia.x-7.,T=gabbia.y-14.,R=gabbia.z+7.,B=gabbia.w+14.;
-  float C=(L+R)*.5,W=R-L,Hg=B-T;
-  float dentro=smoothstep(L-3.,L+4.,P.x)*smoothstep(R+3.,R-4.,P.x)
-              *smoothstep(T-4.,T+5.,P.y)*smoothstep(B+4.,B-5.,P.y);
-  // Ombra fredda dietro le sbarre: le carte restano leggibili, ma si
-  // percepisce che entrambe le file sono imprigionate.
-  float nebbia=(.045+.025*n(P*.025+vec2(t*.05,0.)))*dentro;
-  o+=vec4(vec3(.015,.02,.025)*nebbia,nebbia);
-
-  // Parete frontale: undici sbarre verticali cilindriche. In alto
-  // convergono appena verso il centro, dando profondità senza inclinare
-  // la gabbia lateralmente rispetto agli slot.
-  for(int i=0;i<11;i++){
-    float fi=float(i)/10.;
-    float xb=mix(L,R,fi);
-    float xt=mix(C,xb,.91);
-    float d=segmento(P,vec2(xt,T),vec2(xb,B));
-    float scia=fract(t*.18+fi*.73);
-    float yL=mix(T,B,scia);
-    float glint=exp(-pow((P.y-yL)/10.,2.))*exp(-d*d/18.);
-    vec4 f=ferro(d,(i==0||i==10)?3.6:2.55,glint);
+  float L=gabbia.x,T=gabbia.y,R=gabbia.z,B=gabbia.w;
+  float W=R-L;
+  // La versione precedente stendeva 11 sbarre e traverse proprio sopra
+  // le illustrazioni: oscurava la fila e sembrava una grata appiccicata
+  // allo schermo. Qui la gabbia è un involucro leggero: i montanti cadono
+  // soltanto sui bordi e nei cinque corridoi fra gli slot; le carte restano
+  // completamente libere al centro. Nessun velo opaco copre la fila.
+  for(int i=0;i<6;i++){
+    float x=mix(L,R,float(i)/5.);
+    float d=segmento(P,vec2(x,T-10.),vec2(x,B+10.));
+    float glint=exp(-pow((P.y-(T-10.+fract(t*.12+float(i)*.21)*(B-T+20.)))/15.,2.))*exp(-d*d/28.);
+    vec4 f=ferro(d,(i==0||i==5)?2.4:1.65,glint*.28);
+    f.a*=.52;
     o=f+o*(1.-f.a);
   }
-  // Traverse e cornice, più pesanti delle sbarre interne.
-  for(int j=0;j<4;j++){
-    float fj=float(j)/3.;
-    float y=mix(T,B,fj);
-    float inset=sin(fj*3.14159)*W*.018;
-    float d=segmento(P,vec2(L+inset,y),vec2(R-inset,y));
-    float glint=.18+.14*sin(t*1.25+fj*4.);
-    vec4 f=ferro(d,(j==0||j==3)?4.2:2.8,glint);
-    o=f+o*(1.-f.a);
-  }
-  // Tetto prospettico: seconda traversa arretrata e giunti obliqui ai
-  // quattro angoli, come una vera struttura tridimensionale.
-  float yDietro=T-18.;
-  vec4 tetto=ferro(segmento(P,vec2(L+W*.07,yDietro),vec2(R-W*.07,yDietro)),3.2,.22+.15*sin(t*1.4));
-  o=tetto+o*(1.-tetto.a);
-  vec4 a=ferro(segmento(P,vec2(L,T),vec2(L+W*.07,yDietro)),3.1,.2);
-  vec4 b=ferro(segmento(P,vec2(R,T),vec2(R-W*.07,yDietro)),3.1,.2);
-  o=a+o*(1.-a.a); o=b+o*(1.-b.a);
-  // Riflesso rapido e raro che corre sulla cornice, senza farla sembrare
-  // una gabbia luminosa: resta ferro scuro, non energia magica.
-  float sweep=fract(t*.095);
+  // Cornice esterna, sopra e sotto le carte, con i lati appena rialzati
+  // per suggerire profondità. Le traverse non attraversano gli artwork.
+  float top=T-10.,bottom=B+10.;
+  vec4 railTop=ferro(segmento(P,vec2(L-5.,top),vec2(R+5.,top)),2.3,.16+.10*sin(t*1.1));
+  vec4 railBottom=ferro(segmento(P,vec2(L-5.,bottom),vec2(R+5.,bottom)),2.3,.12+.08*sin(t*1.1+1.));
+  railTop.a*=.62; railBottom.a*=.52;
+  o=railTop+o*(1.-railTop.a);
+  o=railBottom+o*(1.-railBottom.a);
+  vec4 left=ferro(segmento(P,vec2(L,T-10.),vec2(L,B+10.)),2.5,.24);
+  vec4 right=ferro(segmento(P,vec2(R,T-10.),vec2(R,B+10.)),2.5,.24);
+  left.a*=.52; right.a*=.52;
+  o=left+o*(1.-left.a); o=right+o*(1.-right.a);
+  // Due soli giunti diagonali all'esterno della fila danno il volume 3D
+  // senza far passare aste davanti ai mostri.
+  vec4 capL=ferro(segmento(P,vec2(L,T-10.),vec2(L+9.,T-19.)),1.8,.2);
+  vec4 capR=ferro(segmento(P,vec2(R,T-10.),vec2(R-9.,T-19.)),1.8,.2);
+  capL.a*=.42; capR.a*=.42;
+  o=capL+o*(1.-capL.a); o=capR+o*(1.-capR.a);
+  float sweep=fract(t*.09);
   float sx=mix(L,R,sweep);
-  float lampo=exp(-pow((P.x-sx)/8.,2.))*exp(-pow((P.y-T)/5.,2.));
-  o+=vec4(vec3(.66,.73,.76)*lampo*.6,lampo*.34);
+  float lampo=exp(-pow((P.x-sx)/11.,2.))*exp(-pow((P.y-top)/5.,2.));
+  o+=vec4(vec3(.68,.76,.79)*lampo*.34,lampo*.18);
   gl_FragColor=o;
 }`;
 
