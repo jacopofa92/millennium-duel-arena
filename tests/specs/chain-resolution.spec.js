@@ -34,6 +34,10 @@ module.exports = {
                 canActivate() { return true; },
                 onOpponentSummon() { window.__testLog.push('KURIBOH_RESOLVE'); }
             });
+            CardEffects.register(90006, {
+                canActivate() { return true; },
+                activate() { window.__testLog.push('FIELD_SPELL_RESOLVE'); }
+            });
         });
 
         // --- Caso 1: un solo trigger + una sola Trappola di risposta (Buco Trappola-style). ---
@@ -113,5 +117,52 @@ module.exports = {
         t.assert(r3.log.includes('SPELL_RESOLVE:player'), 'Caso 3: la Magia deve infine risolversi anche lei');
         t.assert(r3.trapInGraveyard, 'Caso 3: la Trappola deve finire al Cimitero');
         t.assert(r3.spellInGraveyard, 'Caso 3: la Magia deve finire al Cimitero');
+
+        // --- Caso 4: sostituire la Magia Terreno non deve animare la vecchia
+        // carta sopra l'attivazione della nuova, né perdere il suo slot sorgente. ---
+        const r4 = await t.evaluate(() => new Promise((resolve) => {
+            window.__testLog = [];
+            window.__fieldTransitions = [];
+            gameState.turn = 7;
+            gameState.currentPlayer = 'player';
+            gameState.phase = 'main1';
+            gameState.playerHand = [{ id: 90006, uid: 'new-field-spell', name: 'New Field Spell', type: 'spell', subtype: 'field' }];
+            gameState.playerGraveyard = [];
+            gameState.playerFieldSpell = { card: { id: 90007, uid: 'old-field-spell', name: 'Old Field Spell', type: 'spell', subtype: 'field' }, isFaceDown: false };
+            gameState.botHand = [];
+            gameState.botSTField = Array(5).fill(null);
+            gameState.botFieldSpell = null;
+            const stop = EventiDuello.ascolta('transizione-carta', (movement) => {
+                if (movement.carta && movement.carta.uid === 'old-field-spell') window.__fieldTransitions.push(movement);
+            });
+            updateUI();
+            const accepted = DuelEngine.activateCard('player', 'hand', 0);
+            const start = Date.now();
+            const poll = () => {
+                if (!DuelEngine.isChainActive() || Date.now() - start > 15000) {
+                    stop();
+                    const movement = window.__fieldTransitions[0];
+                    resolve({
+                        accepted,
+                        oldInGrave: gameState.playerGraveyard.some((card) => card.uid === 'old-field-spell'),
+                        newOnField: gameState.playerFieldSpell && gameState.playerFieldSpell.card.uid === 'new-field-spell',
+                        transitionCount: window.__fieldTransitions.length,
+                        sourceKind: movement && movement.da.kind,
+                        destinationKind: movement && movement.a.kind,
+                        variant: movement && movement.variante,
+                        sourceRect: movement && movement.da.rect,
+                        effectResolved: window.__testLog.includes('FIELD_SPELL_RESOLVE')
+                    });
+                    return;
+                }
+                setTimeout(poll, 100);
+            };
+            setTimeout(poll, 100);
+        }));
+        t.assert(r4.accepted && r4.oldInGrave && r4.newOnField, 'Caso 4: la nuova Magia Terreno sostituisce quella precedente e resta attiva');
+        t.assert(r4.effectResolved, 'Caso 4: l’effetto della nuova Magia Terreno deve risolversi');
+        t.assert(r4.transitionCount === 1, `Caso 4: la vecchia carta deve partire una sola volta (transizioni: ${r4.transitionCount})`);
+        t.assert(r4.sourceKind === 'fieldSpell' && r4.destinationKind === 'graveyard' && r4.variant === 'replace', 'Caso 4: l’uscita deve essere una sostituzione, non una distruzione');
+        t.assert(r4.sourceRect && r4.sourceRect.width > 0, 'Caso 4: l’animazione deve conservare le coordinate della vecchia zona Terreno');
     }
 };

@@ -950,15 +950,10 @@
             // già nel Cimitero, non più lo slot originale.
             const wasFaceDown = slot.isFaceDown;
             const wasPosition = slot.position;
-            // La carta vola verso il Cimitero. QUI e non dopo: fra due
-            // righe `field[index] = null`, e da lì in poi la casella di
-            // partenza non è più a schermo — l'animazione non avrebbe da
-            // dove partire. È anche il motivo per cui il fantasma è una
-            // copia appesa al body e non la carta vera (vedi
-            // FX.playCardTravel).
-            if (window.FX && typeof FX.playCardToGraveyard === 'function') {
-                FX.playCardToGraveyard(destroyedCard, owner, index, slot.originalOwner || owner);
-            }
+            // Qui non si lancia anche il viaggio generico verso il Cimitero:
+            // l'evento `distruzione` subito sotto avvia la disintegrazione
+            // dedicata sulla carta vera. Far partire entrambe le copie nello
+            // stesso istante mostrava due mostri durante la distruzione.
             graveyardOf(slot.originalOwner || owner).push(destroyedCard);
             redirectToBanishIfFlagged(slot.originalOwner || owner, destroyedCard);
             field[index] = null;
@@ -3842,6 +3837,11 @@
             const h = handOf(owner);
             const pos = h.indexOf(choice.card);
             if (pos !== -1) {
+                // La risposta è consumata prima che il suo Link venga
+                // mostrato al centro: conserva quindi la vera origine.
+                if (window.FX && typeof FX.captureHandActivationOrigin === 'function') {
+                    FX.captureHandActivationOrigin(choice.card);
+                }
                 h.splice(pos, 1);
             }
             graveyardOf(owner).push(choice.card);
@@ -4946,6 +4946,24 @@
         // La grafica della Catena (renderChainStack) compare solo da qui: finche' si costruisce non c'e'.
         chain.resolving = true;
 
+        // Dopo la risoluzione (o la negazione) ogni carta consumata dalla
+        // mano compie l'ultimo tratto dalla posizione fotografata al
+        // Cimitero. Non si basa sul tipo: un Effetto Veloce mostro dalla
+        // mano segue lo stesso percorso di una Magia, ma solo se è davvero
+        // finito nel Cimitero.
+        const animaConsumoDallaMano = (link) => {
+            if (!link || !link.card || !link.ctx || link.ctx.zone !== 'hand') return false;
+            const cimitero = graveyardOf(link.owner);
+            if (!cimitero.some((c) => c && c.uid === link.card.uid)) return false;
+            const rect = window.FX && typeof FX.takeHandActivationOrigin === 'function'
+                ? FX.takeHandActivationOrigin(link.card) : null;
+            animaTransizioneCarta(link.card,
+                { kind: 'hand', owner: link.owner, rect: rect },
+                { kind: 'graveyard', owner: link.owner },
+                'resolve');
+            return true;
+        };
+
         const resolveNext = () => {
             if (chain.links.length === 0) {
                 chain.active = false;
@@ -5006,6 +5024,7 @@
                         gameState[fieldKey] = null;
                     }
                 }
+                const transizioneMano = animaConsumoDallaMano(link);
                 if (typeof updateUI === 'function') updateUI();
                 // Anche un Link NEGATO si prende il suo momento: e' una
                 // delle cose piu' importanti che possono succedere in una
@@ -5014,7 +5033,7 @@
                 attendiUiBloccante(() => {
                     EventiDuello.emetti('catena');
                     resolveNext();
-                }, CHAIN_LINK_PAUSE_MS);
+                }, transizioneMano ? 900 : CHAIN_LINK_PAUSE_MS);
                 return;
             }
 
@@ -5034,6 +5053,7 @@
                 if (link.isManualActivation) {
                     fireTrigger(TRIGGER.ON_CARD_ACTIVATED, link.ctx);
                 }
+                const transizioneMano = animaConsumoDallaMano(link);
                 if (typeof updateUI === 'function') updateUI();
                 // Il link appena risolto resta evidenziato ancora per la
                 // durata della pausa (lo si ripassa come "fantasma"), poi
@@ -5047,7 +5067,7 @@
                 attendiUiBloccante(() => {
                     EventiDuello.emetti('catena');
                     resolveNext();
-                }, CHAIN_LINK_PAUSE_MS);
+                }, transizioneMano ? 900 : CHAIN_LINK_PAUSE_MS);
             };
 
             if (!link.alreadyAnnounced) {
@@ -5442,6 +5462,15 @@
                     // niente static() finché la scelta non si chiude.
                     if (!validTarget && slot.card.equipInScelta) return;
                     if (!validTarget) {
+                        // La pulizia avviene durante il ricalcolo degli effetti,
+                        // non in una risoluzione: cattura qui la casella prima
+                        // che il render la rimuova, senza invocare altre regole.
+                        if (!def.isUnion) {
+                            animaTransizioneCarta(slot.card,
+                                { kind: 'field', owner: owner, index: index, type: 'st' },
+                                { kind: 'graveyard', owner: owner },
+                                'discard');
+                        }
                         stFieldOf(owner)[index] = null;
                         // Mostro Union (def.isUnion, es. Testa di Drago Y
                         // id 513): a differenza di una Carta Equipaggiamento
@@ -6389,6 +6418,7 @@
         // carta al posto giusto (es. id8 la cerca via ctx.index).
         let finalZone = zone;
         let finalIndex = index;
+        let replacedFieldSpell = null;
         if (zone === 'monster') {
             // Un effetto Ignition NON manda la carta al Cimitero né la
             // muove: il mostro resta esattamente dov'è, scoperto sul
@@ -6403,6 +6433,12 @@
             const fieldKey = Tavolo.chiave(owner, 'FieldSpell');
             const existing = gameState[fieldKey];
             if (existing) {
+                replacedFieldSpell = {
+                    card: existing.card,
+                    owner: owner,
+                    rect: window.FX && typeof FX.zoneRect === 'function'
+                        ? FX.zoneRect(owner, 'fieldSpell') : null
+                };
                 graveyardOf(owner).push(existing.card);
                 addToLog(`🌍 ${existing.card.name} lascia il Terreno, sostituita da ${card.name}.`);
             }
@@ -6448,7 +6484,7 @@
             isManualActivation: true,
             alreadyAnnounced: true, // log/FX di attivazione già fatti qui sopra
             activatedAt: activatedAt
-        }, () => finishActivateCard(owner, card, zone, index, extra));
+        }, () => finishActivateCard(owner, card, zone, index, extra, replacedFieldSpell));
 
         return true;
     }
@@ -6460,7 +6496,7 @@
      * ordine di prima, solo spostato a dopo la risoluzione della Chain
      * invece che subito dopo def.activate(ctx).
      */
-    function finishActivateCard(owner, card, zone, index, extra) {
+    function finishActivateCard(owner, card, zone, index, extra, replacedFieldSpell) {
         // Sfide di tipo 'activateCard' (js/data/challenges-db.js): solo
         // attivazioni del GIOCATORE, come per 'summonMonster' — una sfida
         // che avanzasse anche quando la carta la gioca il bot non
@@ -6473,30 +6509,16 @@
             ChallengeTracker.recordProgress('activateCard', { cardId: card.id, cardType: card.type });
         }
 
-        // Una Magia Normale attivata dalla mano viene spostata nello stato
-        // al momento dell'attivazione (prima della Chain), ma la mano resta
-        // volutamente disegnata finché il grande primo piano non è finito.
-        // Questo è quindi l'ultimo istante in cui esistono INSIEME il nodo
-        // visivo di partenza e la risoluzione conclusa: emettere qui il
-        // viaggio Mano -> Cimitero fa capire dove è finita la carta senza
-        // sovrapporlo al video centrale. Se l'effetto ha già spostato la
-        // carta fuori dal Cimitero non inventiamo un tragitto falso.
-        const def = card && getDefinition(card.id);
-        const magiaConsumataDallaMano = zone === 'hand' && card && card.type === 'spell'
-            && card.subtype !== 'field' && !(def && def.continuous)
-            && graveyardOf(owner).some((entry) => entry && entry.uid === card.uid);
-        if (magiaConsumataDallaMano) {
-            // FX.playCardActivateCenterScreen ha fotografato la carta
-            // concreta nello slot della mano prima che activateCard la
-            // rimuovesse. Riutilizziamo quella geometria: cercare ora il
-            // nodo DOM trova solo il primo piano centrale o nessun nodo,
-            // mai la posizione originale che il giocatore deve riconoscere.
-            const origineMano = window.FX && typeof FX.takeHandActivationOrigin === 'function'
-                ? FX.takeHandActivationOrigin(card) : null;
-            animaTransizioneCarta(card,
-                { kind: 'hand', owner: owner, rect: origineMano },
-                { kind: 'graveyard', owner: owner },
-                'resolve');
+        // La vecchia Magia Terreno lascia lo slot solo dopo che la nuova
+        // attivazione ha finito la propria Chain: così non si sovrappone al
+        // primo piano della carta nuova e parte dalla casella catturata
+        // prima della sostituzione nel modello.
+        if (replacedFieldSpell && replacedFieldSpell.card
+            && graveyardOf(replacedFieldSpell.owner).some((entry) => entry && entry.uid === replacedFieldSpell.card.uid)) {
+            animaTransizioneCarta(replacedFieldSpell.card,
+                { kind: 'fieldSpell', owner: replacedFieldSpell.owner, rect: replacedFieldSpell.rect },
+                { kind: 'graveyard', owner: replacedFieldSpell.owner },
+                'replace');
         }
 
         if (typeof updateUI === 'function') updateUI();

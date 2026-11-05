@@ -2112,6 +2112,13 @@
                 ? (handCardRect(descriptor.owner, card) || looseZoneRect(descriptor.owner, 'hand'))
                 : looseZoneRect(descriptor.owner, 'hand');
         }
+        if (descriptor.kind === 'fieldSpell') {
+            // Una nuova Magia Terreno sostituisce la precedente: si salva
+            // la casella prima del render che mette la nuova carta al suo
+            // posto, poi si anima la vecchia solo a Catena conclusa.
+            if (source && descriptor.rect && descriptor.rect.width) return descriptor.rect;
+            return zoneRect(descriptor.owner, 'fieldSpell');
+        }
         if (descriptor.kind === 'banished') return looseZoneRect(descriptor.owner, descriptor.kind);
         if (descriptor.kind === 'deck' || descriptor.kind === 'graveyard' || descriptor.kind === 'fusion') return zoneRect(descriptor.owner, descriptor.kind);
         return null;
@@ -2135,6 +2142,9 @@
             // netto, un po' più lento dello scarto, la ripone nel Cimitero
             // come conseguenza della risoluzione e non come carta buttata.
             resolve: { duration: 820, scaleTo: 0.42, spin: -7, glow: 'rgba(205, 165, 255, 0.92)' },
+            // La vecchia Magia Terreno viene rimpiazzata, non distrutta:
+            // esce dal suo slot con una scia chiara, senza frattura.
+            replace: { duration: 700, scaleTo: 0.44, spin: -4, glow: 'rgba(105, 225, 205, 0.88)' },
             banish: { duration: 850, scaleTo: 0.32, spin: 22, glow: 'rgba(190, 105, 255, 0.95)' },
             deck: { duration: 780, scaleTo: 0.42, spin: 10, glow: 'rgba(245, 205, 95, 0.85)' },
             search: { duration: 820, scaleTo: 0.72, spin: -5, glow: 'rgba(105, 225, 255, 0.95)' }
@@ -2151,6 +2161,7 @@
         playCardTravel(movement.carta, from, to, p);
         const color = variant === 'banish' ? ['#b66cff', '#f0d2ff', '#ffffff']
             : variant === 'resolve' ? ['#9d78d2', '#e0c8ff', '#ffffff']
+            : variant === 'replace' ? ['#62d9cc', '#d8fff8', '#ffffff']
             : variant === 'discard' ? ['#78839a', '#ccd5e5', '#ffffff']
                 : ['#66d9ff', '#f6d46b', '#ffffff'];
         spawnParticles(from.left + from.width / 2, from.top + from.height / 2, {
@@ -2668,6 +2679,16 @@
                 }, 60);
             };
         })(),
+        // Alcune risposte dalla mano vengono consumate quando si sceglie
+        // il Link, ma il loro primo piano centrale parte più tardi (alla
+        // risoluzione). Fotografare prima del consumo mantiene la vera
+        // origine anche in questi percorsi asincroni.
+        captureHandActivationOrigin: (card) => {
+            if (!card || !card.uid) return null;
+            const rect = leggiOrigineAttivazioneMano(card);
+            if (rect) originiAttivazioneMano.set(String(card.uid), rect);
+            return rect;
+        },
         takeHandActivationOrigin: (card) => {
             if (!card || !card.uid) return null;
             const uid = String(card.uid);

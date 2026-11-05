@@ -526,8 +526,8 @@
 // v562: Continua elimina dalla cronologia il duello appena concluso.
 // v564: Battle City canonica (otto finalisti, soli quarti sul dirigibile).
 // v565: preparazione e mappa esterna del torneo Regno dei Duellanti rinnovate.
-// v571: ritocco Gabbia d'Acciaio e origine della Magia dalla mano salvata prima dell'attivazione.
-const CACHE_NAME = 'ygo-duel-arena-v571';
+// v572: transizioni per risposte dalla mano, sostituzione Magia Terreno ed Equip orfane; rimossa la doppia animazione di distruzione mostro.
+const CACHE_NAME = 'ygo-duel-arena-v572';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
