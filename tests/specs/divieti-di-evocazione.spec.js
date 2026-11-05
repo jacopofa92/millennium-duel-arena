@@ -50,6 +50,23 @@ module.exports = {
             out.vietaAvversario = DuelEngine.isSummonBannedThisTurn('bot');
             const token = gameState.playerMonsterField.filter((s) => s).length;
             out.token = token;
+
+            // Bandit non deve poter usare i Token di Capro Espiatorio per
+            // Evocare Drago Revolver. La regola per UID esiste già; questo
+            // controlla che Media e Difficile la applichino anche quando
+            // scelgono autonomamente i Tributi.
+            const tokensBandit = gameState.playerMonsterField.filter(Boolean).slice(0, 2);
+            gameState.botMonsterField = [tokensBandit[0], tokensBandit[1], null, null, null];
+            gameState.botHand = [{ ...mostro('drago-revolver-prova', 7), attack: 3500, defense: 3000 }];
+            const soloTokenMedia = AI_MEDIUM.chooseSummon(gameState, 'bot');
+            const soloTokenHard = AI_HARD.chooseSummon(gameState, 'bot');
+            out.soloTokenMedia = !!soloTokenMedia;
+            out.soloTokenHard = !!soloTokenHard;
+            gameState.botMonsterField[2] = { card: { ...mostro('tributo-valido-1', 4), attack: 500 }, position: 'attack', isFaceDown: false };
+            gameState.botMonsterField[3] = { card: { ...mostro('tributo-valido-2', 4), attack: 600 }, position: 'attack', isFaceDown: false };
+            const conMostriValidi = AI_HARD.chooseSummon(gameState, 'bot');
+            out.tributiHard = conMostriValidi ? conMostriValidi.tributeIndices : null;
+
             gameState.playerMonsterField = [null, null, null, null, null];
             const a = mostro('scoperto'); gameState.playerHand = [a];
             summonMonster(a, 0, 'attack', 0);
@@ -73,6 +90,8 @@ module.exports = {
         assert(r.flag282 === '{"player":true,"bot":false}', `282 blocca solo chi la controlla: ${r.flag282}`);
         assert(r.normaleOk282Bot === false, '282 blocca anche l\'Evocazione Normale/Set del suo controllore');
         assert(r.token === 4 && r.vieta434 === true && r.vietaAvversario === false, `434: 4 Token e divieto solo per chi l\'ha attivata: ${JSON.stringify([r.token, r.vieta434, r.vietaAvversario])}`);
+        assert(!r.soloTokenMedia && !r.soloTokenHard, 'I Token di Capro Espiatorio non devono permettere un’Evocazione Tributo all’IA Media o Difficile');
+        assert(JSON.stringify(r.tributiHard) === '[2,3]', `L’IA Difficile deve scegliere solo i due mostri sacrificabili, non i Token: ${JSON.stringify(r.tributiHard)}`);
         assert(r.scopertoRifiutato, '434: un\'Evocazione scoperta nello stesso turno viene rifiutata');
         assert(r.setRiuscito, '434: un Set coperto nello stesso turno è permesso');
         assert(r.specialRifiutata === false, '434: nessuna Special Summon nello stesso turno');

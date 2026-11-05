@@ -844,10 +844,10 @@
     "semantic_hash": "747e5f4d22a603822d2018492e57b96e"
   },
   "js/ui/effects.js": {
-    "mtime": 1793908518.128067,
-    "seen": 1793910198.2948053,
-    "ast_hash": "ed4735525608b3448af11258cd82e20b",
-    "semantic_hash": "ed4735525608b3448af11258cd82e20b"
+    "mtime": 1793914316.064752,
+    "seen": 1793914562.39027,
+    "ast_hash": "fac9becae481a01281502196fbb3ed2b",
+    "semantic_hash": ""
   },
   "js/ui/error-recovery.js": {
     "mtime": 1792610801.6383338,
@@ -1108,9 +1108,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1793911949.4595585,
-    "seen": 1793912297.1303456,
-    "ast_hash": "7bc6016188677f19fb3045f0a4ebb74e",
+    "mtime": 1793914507.481671,
+    "seen": 1793914562.4131324,
+    "ast_hash": "1eed8b33d50dfb1a9516d14a14f1ab38",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1126,9 +1126,9 @@
     "semantic_hash": "57357a46c1d07a0fa18bbcd83581aaa6"
   },
   "package.json": {
-    "mtime": 1793913253.7232907,
-    "seen": 1793913469.387882,
-    "ast_hash": "3d0d417d58a37c4ba8ead11bd2ceb59c",
+    "mtime": 1793914507.8008833,
+    "seen": 1793914562.4141877,
+    "ast_hash": "42a3f515f2e9f999e5f4a58e34082d4d",
     "semantic_hash": ""
   },
   "render.yaml": {
@@ -1527,9 +1527,9 @@
     "semantic_hash": "e90f76660f0591cfeb068b83abeafdd5"
   },
   "sw.js": {
-    "mtime": 1793911949.774314,
-    "seen": 1793912297.1660585,
-    "ast_hash": "035ddf8dbf532dcc3b3ae7ea7ea1ebb1",
+    "mtime": 1793914508.1224067,
+    "seen": 1793914562.4445899,
+    "ast_hash": "8621dd64c7467c5d048fb21e4da8d979",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -2879,10 +2879,10 @@
     "semantic_hash": "66511605e5fdde5269b8a596adfb435e"
   },
   "tests/specs/mano-attivazione-chiude-box-info.spec.js": {
-    "mtime": 1793902077.2284806,
-    "seen": 1793910198.4315917,
-    "ast_hash": "a01c0d70f7e2823c76412bf99fe20211",
-    "semantic_hash": "a01c0d70f7e2823c76412bf99fe20211"
+    "mtime": 1793914395.2656462,
+    "seen": 1793914562.57516,
+    "ast_hash": "489e29f41b82ada5c99ee5572cc7bc08",
+    "semantic_hash": ""
   },
   "tests/specs/mano-cambio-carta-con-popover.spec.js": {
     "mtime": 1792750426.938889,

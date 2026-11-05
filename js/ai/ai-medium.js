@@ -68,6 +68,20 @@
                 let ownIndices = Tavolo.mostri(io, gameState)
                     .map((slot, idx) => (slot ? idx : null))
                     .filter((idx) => idx !== null);
+                // Capro Espiatorio e le altre carte che vietano il Tributo
+                // registrano il divieto per UID. La selezione manuale lo
+                // rispettava già, ma l'IA contava ogni mostro sul Terreno:
+                // Bandit poteva così usare due Token Pecora per Drago
+                // Revolver. Filtriamo prima del conteggio e della scelta,
+                // così i token vietati non diventano mai Tributi candidati.
+                ownIndices = ownIndices.filter((idx) => {
+                    const slot = Tavolo.mostri(io, gameState)[idx];
+                    if (!slot) return false;
+                    if (gameState.cannotBeTributedUids
+                        && gameState.cannotBeTributedUids.has(slot.card.uid)) return false;
+                    const tributeDef = window.DuelEngine && DuelEngine.getDefinition(slot.card.id);
+                    return slot.isFaceDown || !tributeDef || !tributeDef.cannotBeTributed;
+                });
                 if (card.id === 772) {
                     ownIndices = ownIndices.filter((idx) => Tavolo.mostri(io, gameState)[idx].card.attribute === 'VENTO');
                 }

@@ -528,7 +528,8 @@
 // v565: preparazione e mappa esterna del torneo Regno dei Duellanti rinnovate.
 // v573: ingressi prospettici della Catena e maglie sugli slot; Spade Rivelatrici in prospettiva zenitale.
 // v574: Libro della Luna e altre Magie dalla mano del bot partono dal dorso corretto nel viaggio al Cimitero.
-const CACHE_NAME = 'ygo-duel-arena-v574';
+// v575: l'IA non offre per Tributo i Token di Capro Espiatorio.
+const CACHE_NAME = 'ygo-duel-arena-v575';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare

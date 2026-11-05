@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.5.65 — L'IA esclude i Token di Capro Espiatorio dai Tributi per le Evocazioni Normali.
  * 1.5.64 — Le Magie attivate dalla mano avversaria partono dal dorso preciso; non viene più simulato il clone centrale come carta spedita al Cimitero.
  * 1.5.63 — La scena Chain fa piombare i Link dal lato del duellante e serra una maglia WebGL sopra ciascuno slot Mostro; Spade Rivelatrici hanno caduta prospettica, lama verde/bianca senza impugnatura e ombra sul piano del campo.
  * 1.5.62 — La carta risposta consumata dalla mano vola al Cimitero dopo la Chain; la Magia Terreno sostituita parte solo dopo la risoluzione, dalla sua zona reale; le Equip orfane hanno una transizione dedicata e la distruzione dei mostri non duplica il viaggio generico.
@@ -799,4 +800,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.5.64';
+window.GAME_VERSION = '1.5.65';
