@@ -367,34 +367,39 @@ uniform vec2 zona;              // alto e basso del TERRENO di chi subisce: la d
 // Distanza (px) da un rettangolo centrato in c con mezze misure h.
 float scatola(vec2 p,vec2 c,vec2 h){vec2 q=abs(p-c)-h;return length(max(q,0.))+min(max(q.x,q.y),0.);}
 
-// Lama verde/bianca con la punta in basso. Guardia e gemma sono un unico
-// nucleo luminoso: niente impugnatura disegnata, come nell'illustrazione.
-// La lieve curvatura e le facce laterali danno volume anche con camera zenitale.
+// Una spada al neon con la punta in basso: pomolo, impugnatura, guardia con le punte alzate, lama che si
+// rastrema solo verso la fine. TUTTE le misure derivano da W (mezza larghezza della lama, px) e da alt:
+// la spada resta proporzionata a qualunque schermo, invece di una lama filiforme di larghezza fissa.
+// Coordinate locali in px, origine al centro, y verso il basso.
 vec4 spada(vec2 l,float alt,float W,float respiro){
   float v=(l.y/alt)+.5;
-  float asse=(v-.5)*W*.22;
-  float ax=abs(l.x-asse);
-  // Guardia luminosa, senza asta/elsa fra lei e la lama.
+  float ax=abs(l.x);
+  // pomolo e impugnatura
+  float dPom=length(vec2(l.x,l.y-(.032-.5)*alt))-W*.66;
+  float dImp=scatola(l,vec2(0.,(.115-.5)*alt),vec2(W*.3,.058*alt));
+  // guardia: barra con le estremita' che si alzano a falce
   float curva=pow(ax/(W*2.1),2.)*alt*.035;
   float dGua=scatola(vec2(l.x,l.y+curva),vec2(0.,(.205-.5)*alt),vec2(W*2.1,.02*alt));
-  float dPom=length(vec2(l.x,l.y-(.187-.5)*alt))-W*.55;
-  // Lama rastremata, con un leggero asse inclinato che simula la prospettiva.
+  // lama: larga fin quasi alla fine, poi si chiude a punta
   float vb=clamp((v-.228)/.772,0.,1.);
-  float hw=W*(1.-pow(vb,2.25));
+  float hw=W*(1.-pow(vb,2.6));
   float dLam=max(max(ax-hw,(.228-v)*alt),(v-1.)*alt);
-  float d=min(min(dPom,dGua),dLam);
+  float d=min(min(dPom,dImp),min(dGua,dLam));
+  // corpo scuro-verde, bordo a tubo di neon, alone largo
   float corpo=1.-smoothstep(-1.,.8,d);
-  float lato=exp(-pow((ax-hw*.82)/(W*.1),2.))*step(.23,v);
-  float scan=exp(-ax*ax/(W*W*.055))*step(.23,v)*(1.-smoothstep(-W*.2,W*.1,d))*(.72+.28*sin(v*17.-t*6.));
-  vec2 gp=l-vec2(0.,(.205-.5)*alt);
-  float gemma=exp(-dot(gp,gp)/(W*W*.46))*1.4;
   float bordo=exp(-pow((d+1.1)*.62,2.));
-  float alone=exp(-max(d,0.)/(W*.8))*.6+exp(-max(d,0.)/(W*3.4))*.28;
-  vec3 neon=vec3(.16,1.,.40);
-  vec3 faccia=mix(vec3(.07,.42,.19),vec3(.80,1.,.86),.78-smoothstep(.0,1.,ax/max(hw,.001))*.26);
-  vec3 lum=faccia*corpo+neon*lato*.75+vec3(.92,1.,.95)*scan*.68
-          +neon*bordo*1.45*respiro+neon*alone*respiro+vec3(.9,1.,.94)*gemma;
-  float al=clamp(corpo*.86+bordo+alone*.72+gemma*.7,0.,1.);
+  float alone=exp(-max(d,0.)/(W*.75))*.62+exp(-max(d,0.)/(W*3.2))*.3;
+  // scanalatura centrale della lama e riflesso che la percorre
+  float inLama=step(.236,v)*(1.-smoothstep(-W*.2,W*.1,d));
+  float scan=exp(-ax*ax/(W*W*.045))*inLama*(.55+.45*sin(v*15.-t*7.));
+  float gemma=exp(-dot(l-vec2(0.,(.205-.5)*alt),l-vec2(0.,(.205-.5)*alt))/(W*W*.5))*1.3;
+  vec3 neon=vec3(.22,1.,.45);
+  vec3 lum=vec3(.01,.2,.07)*corpo
+          +neon*bordo*1.7*respiro
+          +vec3(.7,1.,.8)*scan*.75
+          +neon*alone*respiro
+          +vec3(.8,1.,.9)*gemma;
+  float al=clamp(corpo*.85+bordo+alone*.75+gemma*.6,0.,1.);
   return vec4(lum,al);
 }
 float outExpo(float x){x=clamp(x,0.,1.);return x>=1.?1.:1.-pow(2.,-10.*x);}
@@ -422,29 +427,22 @@ void main(){
     float colonna=smoothstep(semi,semi*.2,abs(P.x-cx))*smoothstep(0.,s.y,P.y)*step(P.y,s.y+10.)*ra;
     o+=vec4(vec3(.25,1.,.5)*colonna*.34,colonna*.24);
     // La lama cade da lontano, inclinata, e si raddrizza all'impatto.
-    float cad=outExpo(tt/.78);
-    float lato=mod(float(i),2.)<.5?1.:-1.;
+    float cad=outExpo(tt/.62);
+    float lato=(float(i)<ns*.5)?-1.:1.;
     float dist=abs(float(i)-(ns-1.)*.5);
-    float ang=-lato*(22.+dist*4.)*(1.-cad)*.01745-.25*cad;
-    // In ingresso la lama arriva quasi di taglio e piccola, poi prende volume
-    // mentre attraversa il piano del campo; dopo l'impatto resta leggermente inclinata.
-    vec2 sc=vec2(mix(.20,.82,cad),mix(.52,.74,cad));
-    vec2 centro=vec2(cx+lato*(62.+dist*18.)*(1.-cad)-sin(ang)*alt*.5*sc.y*cad,
-                     mix(zona.x-alt*.78, s.y-cos(ang)*alt*.5*sc.y, cad));
+    float ang=-lato*(14.+dist*3.)*(1.-cad)*.01745;
+    float sc=mix(.56,1.,cad);
+    vec2 centro=vec2(cx+lato*(55.+dist*16.)*(1.-cad), mix(zona.x-alt*.55, s.y-alt*.5, cad));
     vec2 l=P-centro;
     float cs=cos(ang),sn=sin(ang);
     l=vec2(cs*l.x+sn*l.y,-sn*l.x+cs*l.y)/sc;
     // Mezza larghezza della lama: segue la casella (mai filiforme, mai tozza); a riposo la luce "respira".
     float W=clamp(s.z*.3,5.,15.);
     float respiro=.86+.14*sin(t*4.2+float(i)*1.3);
-    // Ombra obliqua sul terreno: ancora la lama al piano e ne rende leggibile
-    // la profondita' vista dall'alto, soprattutto una volta ferma.
-    float ombra=exp(-pow((l.x-W*.8)/(W*1.7),2.)-pow((l.y+alt*.08)/(alt*.28),2.))*smoothstep(.52,.82,tt);
-    o+=vec4(vec3(.005,.045,.018)*ombra,ombra*.66);
     vec4 sw=spada(l,alt,W,respiro);
     // Scia di luce sopra la lama mentre cala veloce: sparisce quando la spada rallenta e si ferma.
-    float yTop=centro.y-alt*.5*sc.y;
-    float tr=exp(-pow((P.x-centro.x)/(W*1.7*sc.x),2.))*step(P.y,yTop)*step(zona.x,P.y)*(1.-cad)*smoothstep(0.,.1,tt)*clamp(1.-(yTop-P.y)/(alt*1.2),0.,1.);
+    float yTop=centro.y-alt*.5*sc;
+    float tr=exp(-pow((P.x-centro.x)/(W*1.7*sc),2.))*step(P.y,yTop)*step(zona.x,P.y)*(1.-cad)*smoothstep(0.,.1,tt)*clamp(1.-(yTop-P.y)/(alt*1.2),0.,1.);
     o+=vec4(vec3(.5,1.,.7)*tr*.55,tr*.3);
     float vis=smoothstep(0.,.12,tt);
     o=sw*vis+o*(1.-sw.a*vis);
@@ -492,8 +490,8 @@ void main(){
         const zonaTop = Math.min(rowTop, ...tutteDi.map((r) => r.top)) - 8;
         const zonaBottom = Math.max(rowBottom, ...tutteDi.map((r) => r.bottom)) + 8;
         const altezza = Math.max(175, Math.min(270, (rowBottom - rowTop) * 1.65));
-        const PASSO = 0.12;
-        const CADUTA = 0.78;
+        const PASSO = 0.095;
+        const CADUTA = 0.62;
         const n = rects.length;
         const data = new Float32Array(MAX_SPADE * 4);
         rects.forEach((rect, i) => {
@@ -522,6 +520,132 @@ void main(){
             else interrompi();
         }, (ultima + 0.06) * 1000);
     }
+
+    // ---------------------------------------------------------------------
+    // Gabbia d'Acciaio dell'Incubo — barriera persistente su ENTRAMBE le
+    // file Mostri. Non è una scena a tempo: `sincronizzaGabbiaIncubo()` la
+    // mantiene finché la carta id 750 è davvero scoperta sul Terreno.
+    // ---------------------------------------------------------------------
+
+    const FS_GABBIA_INCUBO = BASE + `
+uniform vec4 gabbia; // sinistra, alto, destra, basso della fila Mostri
+
+float segmento(vec2 p,vec2 a,vec2 b){
+  vec2 pa=p-a,ba=b-a;
+  float h2=clamp(dot(pa,ba)/max(dot(ba,ba),.001),0.,1.);
+  return length(pa-ba*h2);
+}
+vec4 ferro(float d,float spessore,float luce){
+  float corpo=1.-smoothstep(spessore,spessore+1.2,d);
+  float bordo=exp(-pow((d-spessore*.72)/1.05,2.));
+  float alone=exp(-max(d-spessore,0.)/5.)*.18;
+  vec3 metallo=mix(vec3(.055,.065,.075),vec3(.48,.53,.56),bordo*.8+luce*.5);
+  metallo+=vec3(.72,.78,.8)*luce*.75;
+  return vec4(metallo*corpo+vec3(.16,.19,.21)*alone,clamp(corpo+alone*.42,0.,.94));
+}
+void main(){
+  vec2 P=css();
+  vec4 o=vec4(0.);
+  float L=gabbia.x,T=gabbia.y,R=gabbia.z,B=gabbia.w;
+  float W=R-L;
+  // La versione precedente stendeva 11 sbarre e traverse proprio sopra
+  // le illustrazioni: oscurava la fila e sembrava una grata appiccicata
+  // allo schermo. Qui la gabbia è un involucro leggero: i montanti cadono
+  // soltanto sui bordi e nei cinque corridoi fra gli slot; le carte restano
+  // completamente libere al centro. Nessun velo opaco copre la fila.
+  for(int i=0;i<6;i++){
+    float x=mix(L,R,float(i)/5.);
+    float d=segmento(P,vec2(x,T-10.),vec2(x,B+10.));
+    float glint=exp(-pow((P.y-(T-10.+fract(t*.12+float(i)*.21)*(B-T+20.)))/15.,2.))*exp(-d*d/28.);
+    vec4 f=ferro(d,(i==0||i==5)?2.4:1.65,glint*.28);
+    f.a*=.52;
+    o=f+o*(1.-f.a);
+  }
+  // Cornice esterna, sopra e sotto le carte, con i lati appena rialzati
+  // per suggerire profondità. Le traverse non attraversano gli artwork.
+  float top=T-10.,bottom=B+10.;
+  vec4 railTop=ferro(segmento(P,vec2(L-5.,top),vec2(R+5.,top)),2.3,.16+.10*sin(t*1.1));
+  vec4 railBottom=ferro(segmento(P,vec2(L-5.,bottom),vec2(R+5.,bottom)),2.3,.12+.08*sin(t*1.1+1.));
+  railTop.a*=.62; railBottom.a*=.52;
+  o=railTop+o*(1.-railTop.a);
+  o=railBottom+o*(1.-railBottom.a);
+  vec4 left=ferro(segmento(P,vec2(L,T-10.),vec2(L,B+10.)),2.5,.24);
+  vec4 right=ferro(segmento(P,vec2(R,T-10.),vec2(R,B+10.)),2.5,.24);
+  left.a*=.52; right.a*=.52;
+  o=left+o*(1.-left.a); o=right+o*(1.-right.a);
+  // Due soli giunti diagonali all'esterno della fila danno il volume 3D
+  // senza far passare aste davanti ai mostri.
+  vec4 capL=ferro(segmento(P,vec2(L,T-10.),vec2(L+9.,T-19.)),1.8,.2);
+  vec4 capR=ferro(segmento(P,vec2(R,T-10.),vec2(R-9.,T-19.)),1.8,.2);
+  capL.a*=.42; capR.a*=.42;
+  o=capL+o*(1.-capL.a); o=capR+o*(1.-capR.a);
+  float sweep=fract(t*.09);
+  float sx=mix(L,R,sweep);
+  float lampo=exp(-pow((P.x-sx)/11.,2.))*exp(-pow((P.y-top)/5.,2.));
+  o+=vec4(vec3(.68,.76,.79)*lampo*.34,lampo*.18);
+  gl_FragColor=o;
+}`;
+
+    let stopGabbiaIncubo = null;
+    let firmaGabbiaIncubo = '';
+    let richiestaGabbiaIncubo = false;
+
+    function righeMostri() {
+        return ['player', 'bot'].map((owner) => {
+            const boardId = owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard';
+            const slots = Array.from(document.querySelectorAll(`#${boardId} .field-slot[data-owner="${owner}"][data-type="monster"]`));
+            const rs = slots.map((el) => el.getBoundingClientRect()).filter((r) => r.width && r.height);
+            if (!rs.length) return null;
+            return [
+                Math.min(...rs.map((r) => r.left)), Math.min(...rs.map((r) => r.top)),
+                Math.max(...rs.map((r) => r.right)), Math.max(...rs.map((r) => r.bottom))
+            ];
+        }).filter(Boolean);
+    }
+
+    function spegniGabbiaIncubo() {
+        if (stopGabbiaIncubo) stopGabbiaIncubo();
+        stopGabbiaIncubo = null;
+        firmaGabbiaIncubo = '';
+    }
+
+    function sincronizzaGabbiaIncubo(attiva) {
+        richiestaGabbiaIncubo = !!attiva;
+        const movimentoRidotto = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!attiva || movimentoRidotto || (/** @type {any} */ (window)).FX_BACKEND === 'css' || !window.FxWebglPronto) {
+            spegniGabbiaIncubo();
+            return false;
+        }
+        const righe = righeMostri();
+        if (righe.length !== 2) { spegniGabbiaIncubo(); return false; }
+        const firma = righe.flat().map((v) => Math.round(v)).join(':');
+        if (stopGabbiaIncubo && firma === firmaGabbiaIncubo) return true;
+        spegniGabbiaIncubo();
+        firmaGabbiaIncubo = firma;
+        try {
+            stopGabbiaIncubo = lancia('gabbia-incubo', FS_GABBIA_INCUBO, 86400, () => {}, null, (tempo, disegno) => {
+                righe.forEach((r) => {
+                    const bbox = [r[0] - 30, r[1] - 42, r[2] + 30, r[3] + 30];
+                    disegno.passata('gabbia-incubo', FS_GABBIA_INCUBO, tempo, bbox, (u, g) => {
+                        g.uniform4f(u('gabbia'), r[0], r[1], r[2], r[3]);
+                    });
+                });
+            });
+        } catch (errore) {
+            // È solo una rappresentazione: un driver WebGL vecchio o un
+            // contesto perso non deve mai interrompere updateUI né il duello.
+            spegniGabbiaIncubo();
+            console.warn('[FX webgl] Gabbia d\'Acciaio non disponibile:', errore);
+            return false;
+        }
+        return true;
+    }
+
+    window.addEventListener('resize', () => {
+        if (!richiestaGabbiaIncubo) return;
+        firmaGabbiaIncubo = '';
+        requestAnimationFrame(() => requestAnimationFrame(() => sincronizzaGabbiaIncubo(true)));
+    });
 
     // ---------------------------------------------------------------------
     // Raigeki

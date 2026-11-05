@@ -531,7 +531,8 @@
 // v575: l'IA non offre per Tributo i Token di Capro Espiatorio.
 // v576: gabbia d'acciaio e Spade Rivelatrici ridisegnate per il campo zenitale.
 // v577: ripristinato l'effetto precedente delle Spade e rimosso il rendering WebGL della Gabbia.
-const CACHE_NAME = 'ygo-duel-arena-v577';
+// v578: Spade Rivelatrici riportate alla resa WebGL precedente al cambio prospettico.
+const CACHE_NAME = 'ygo-duel-arena-v578';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
