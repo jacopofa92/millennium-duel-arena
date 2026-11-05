@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.5.63 — La scena Chain fa piombare i Link dal lato del duellante e serra una maglia WebGL sopra ciascuno slot Mostro; Spade Rivelatrici hanno caduta prospettica, lama verde/bianca senza impugnatura e ombra sul piano del campo.
  * 1.5.62 — La carta risposta consumata dalla mano vola al Cimitero dopo la Chain; la Magia Terreno sostituita parte solo dopo la risoluzione, dalla sua zona reale; le Equip orfane hanno una transizione dedicata e la distruzione dei mostri non duplica il viaggio generico.
  * 1.5.61 — Gabbia d'Acciaio alleggerita: montanti solo sui margini e negli spazi tra gli slot, senza veli né traverse sulle carte. La Magia dalla mano ora parte verso il Cimitero dalle coordinate salvate prima del clone centrale, anche con backend GSAP.
  * 1.5.60 — Gabbia d'Acciaio dell'Incubo genera due gabbie di ferro WebGL persistenti sopra le file Mostri e le rimuove insieme alla carta; l'editor Deck mostra l'azione Annulla in una notifica compatta; il box carta resta scorribile con le azioni della mano aperte; Circolo Magico Nero rende facoltativa la presa e riordina davvero la cima del Deck.
@@ -797,4 +798,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.5.62';
+window.GAME_VERSION = '1.5.63';

@@ -81,11 +81,20 @@ module.exports = {
                     carte: carte.length,
                     numeri: carte.map((c) => c.querySelector('.cgl-num').textContent),
                     cartaVera: carte.every((c) => !!c.querySelector('.card')),
+                    slotMostro: CatenaGL.stato().slotMostro,
+                    ingressi: carte.map((c) => {
+                        const dentro = c.querySelector('.cgl-in');
+                        const animazione = dentro && dentro.getAnimations().find((a) => a.effect && a.effect.getKeyframes().some((f) => String(f.transform || '').includes('translateY')));
+                        return { lato: dentro && dentro.dataset.ingresso, fotogrammi: animazione ? animazione.effect.getKeyframes().map((f) => f.transform || '') : [] };
+                    }),
                     pannello: document.getElementById('chainStack').classList.contains('show'),
                     aTutto: root ? root.getBoundingClientRect().width : 0
                 };
             });
             assert(due.root && due.canvas && due.carte === 3 && due.cartaVera, `A Catena decisa c'e' la scena con tre carte vere: ${JSON.stringify(due)}`);
+            assert(due.slotMostro === 10, `Una maglia WebGL viene ancorata sopra ognuno dei dieci slot Mostro: ${JSON.stringify(due.slotMostro)}`);
+            assert(due.ingressi.some((i) => i.lato === 'dal-basso' && i.fotogrammi.some((f) => f.includes('72vh'))),
+                `La carta del giocatore piomba dal basso con prospettiva: ${JSON.stringify(due.ingressi)}`);
             assert(due.numeri.join(',') === '1,2,3', `Le carte portano il numero del loro Link: ${JSON.stringify(due.numeri)}`);
             // Chi ha attivato cosa, scritto sotto ogni carta (il Link 2 e' dell'avversario, il Link 1 e' tuo).
             const chi = await page.evaluate(() => ({
@@ -163,6 +172,12 @@ module.exports = {
             await page.waitForTimeout(400);
             const bis = await page.evaluate(() => CatenaGL.stato());
             assert(bis && bis.voci === 2, `Una seconda Catena riparte da capo: ${JSON.stringify(bis)}`);
+            const ingressoBot = await page.evaluate(() => Array.from(document.querySelectorAll('#catenaGL .cgl-in')).map((el) => ({
+                lato: el.dataset.ingresso,
+                fotogrammi: el.getAnimations().flatMap((a) => a.effect ? a.effect.getKeyframes().map((f) => f.transform || '') : [])
+            })));
+            assert(ingressoBot.some((i) => i.lato === 'dall-alto' && i.fotogrammi.some((f) => f.includes('-72vh'))),
+                `La carta dell'avversario piomba dall'alto: ${JSON.stringify(ingressoBot)}`);
             await page.evaluate(() => { gameState.chain = { active: false, links: [] }; renderChainStack(); CatenaGL._subito(); });
 
             // --- "Normali": vale il pannello di sempre, la scena non nasce

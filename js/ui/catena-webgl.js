@@ -32,8 +32,8 @@
     const Z_ROOT = 10086;
     const MAX_ANCORE = 8;           // l'ultimo N di maglie disegnate dallo shader; le carte in piu' restano nel DOM
     const RAPPORTO = 0.685;         // larghezza / altezza di una carta (--card-ratio in card.css)
-    const DUR_PIOMBO_MS = 430;      // quanto ci mette una carta a cadere sulla scena
-    const ISTANTE_COLPO_MS = 300;   // dentro il volo, quando tocca: onda, scossa, numero
+    const DUR_PIOMBO_MS = 620;      // caduta dal lato di chi attiva, con rinculo 3D all'impatto
+    const ISTANTE_COLPO_MS = 450;   // dentro il volo, quando tocca: onda, scossa, numero
     const DUR_CHIUSURA_MS = 480;
     /** Quanto la Catena appena decisa resta a tutto schermo prima di farsi miniatura per la risoluzione. */
     const HOLD_DECISA_MS = 1900;
@@ -53,6 +53,9 @@ uniform vec2 uPa[7];     // inizio di ogni tratto (sul bordo della carta da cui 
 uniform vec2 uPb[7];     // fine di ogni tratto (sul bordo della carta a cui arriva)
 uniform vec3 uS[7];      // per tratto: x = quanto e' disegnato 0..1, y = quanto e' spezzato 0..1, z = 0 tuo / 1 avversario
 uniform float uF[7];     // lampo del tratto (una carta e' appena piombata)
+uniform vec4 uQ[10];    // estremi (xy/zw) delle dieci maglie sopra gli slot Mostro
+uniform float uQN;
+uniform float uQAlpha;   // le maglie sugli slot si ritirano quando la scena diventa miniatura
 uniform vec4 uB[3];      // onde d'urto: x, y, eta' in secondi (<0 = spenta), tipo (0 azzurro, 1 rosso, 2 oro)
 
 vec3 own(float o){ return mix(vec3(.28,.86,1.), vec3(1.,.3,.24), o); }
@@ -170,6 +173,21 @@ void main(){
     if (float(i) >= uN) break;
     tratto(P, uPa[i], uPb[i], uS[i], uF[i], float(i), col, glow);
   }
+  // Una maglia sopra ciascuno dei dieci slot Mostro: il campo diventa il
+  // piano della Catena, senza coprire artwork o testo delle carte.
+  for (int q = 0; q < 10; q++) {
+    if (float(q) >= uQN) break;
+    float lane = mod(float(q), 5.);
+    float owner = q < 5 ? 1. : 0.; // prima fila avversaria, poi fila del giocatore
+    float eta = clamp((uT - .1 - (2. - abs(lane - 2.)) * .065 - (1. - owner) * .034) / .5, 0., 1.);
+    float reveal = 1. - pow(1. - eta, 3.);
+    float flash = eta > .08 && eta < .92 ? sin(3.14159 * (eta - .08) / .84) : 0.;
+    vec4 colPrima = col;
+    vec3 glowPrima = glow;
+    tratto(P, uQ[q].xy, uQ[q].zw, vec3(reveal, 0., owner), flash, float(q + 7), col, glow);
+    col = colPrima + (col - colPrima) * uQAlpha;
+    glow = glowPrima + (glow - glowPrima) * uQAlpha;
+  }
   for (int b = 0; b < 3; b++) {
     float age = uB[b].z;
     if (age < 0.) continue;
@@ -241,7 +259,7 @@ void main(){
 #catenaGL.cgl-compatta .cgl-carta{filter:drop-shadow(0 0 6px var(--cgl-c)) drop-shadow(0 4px 6px rgba(0,0,0,.6))}
 #catenaGL canvas{position:absolute;left:0;top:0;width:100%;height:100%}
 .cgl-buio{position:absolute;inset:0;transition:opacity .3s ease;
-  background:radial-gradient(ellipse at 50% 50%,rgba(3,8,20,.5) 0%,rgba(2,5,14,.78) 62%,rgba(1,3,9,.9) 100%)}
+  background:radial-gradient(ellipse at 50% 50%,rgba(3,8,20,.58) 0%,rgba(2,5,14,.86) 62%,rgba(1,3,9,.94) 100%)}
 .cgl-pos{position:absolute;left:0;top:0;transition:left .5s cubic-bezier(.2,.8,.2,1),top .5s cubic-bezier(.2,.8,.2,1),transform .5s cubic-bezier(.2,.8,.2,1);will-change:left,top,transform}
 .cgl-in{position:relative;transform-origin:50% 50%}
 .cgl-carta{position:relative;filter:drop-shadow(0 0 16px var(--cgl-c)) drop-shadow(0 12px 18px rgba(0,0,0,.65))}
@@ -254,9 +272,9 @@ void main(){
   background:linear-gradient(180deg,var(--cgl-c),rgba(0,0,0,.55));border:1px solid rgba(255,255,255,.55);
   box-shadow:0 0 .9em var(--cgl-c),0 .2em .5em rgba(0,0,0,.6);text-shadow:0 1px 3px rgba(0,0,0,.85)}
 .cgl-titolo{position:absolute;left:50%;top:50%;z-index:3;opacity:0;white-space:nowrap;text-align:center;
-  font-family:'Arial Black','Segoe UI Black',Impact,system-ui,sans-serif;font-style:italic;font-weight:900;letter-spacing:.03em;color:#fff;
-  font-size:clamp(2.8rem,min(15vw,21vh),8.5rem);
-  text-shadow:0 0 .12em rgba(255,255,255,.9),0 0 .4em rgba(120,220,255,.85),0 .05em .25em rgba(0,0,0,.7)}
+  font-family:'Arial Black','Segoe UI Black',Impact,system-ui,sans-serif;font-style:italic;font-weight:900;letter-spacing:.2em;color:#fff;
+  font-size:clamp(1.8rem,min(8vw,7vh),4.8rem);
+  text-shadow:0 0 .12em rgba(255,255,255,.9),-.08em 0 .42em rgba(80,220,255,.95),.08em 0 .42em rgba(255,95,80,.95),0 .05em .25em rgba(0,0,0,.9)}
 `;
         document.head.appendChild(s);
     }
@@ -364,9 +382,11 @@ void main(){
             u: (nome) => gl.getUniformLocation(prog, nome),
             voci: [], boom: [], rid: 0, t0: performance.now(), chiudendo: false, tChiusura: 0,
             ultimoAggiorna: performance.now(), animTitolo: null, W: 0, H: 0, scala: 1, L: 40,
+            slotEl: ['bot', 'player'].flatMap((owner) => Array.from(document.querySelectorAll(`#${owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard'} .field-slot[data-owner="${owner}"][data-type="monster"]`)).sort((a, b) => Number(a.dataset.index) - Number(b.dataset.index)).slice(0, 5)),
             adatta: 1, dtMedio: 0, ultimoFrame: 0, contaFrame: 0
         };
         ridimensiona();
+        spara(W / 2, H / 2, 2); // un sigillo d'energia apre la scena prima dell'impatto dei Link
         window.addEventListener('resize', ridimensiona);
         st.rid = requestAnimationFrame(frame);
     }
@@ -472,6 +492,7 @@ void main(){
         pos.style.setProperty('--cgl-c', `rgb(${colore})`);
         const dentro = document.createElement('div');
         dentro.className = 'cgl-in';
+        dentro.dataset.ingresso = link.owner === 'bot' ? 'dall-alto' : 'dal-basso';
         const cartaBox = document.createElement('div');
         cartaBox.className = 'cgl-carta';
         if (typeof window.createCardElement === 'function') cartaBox.appendChild(window.createCardElement(link.card));
@@ -500,11 +521,15 @@ void main(){
             try { voce.dentro.animate([{ opacity: 0, transform: 'scale(.9)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 260, easing: 'ease-out', fill: 'both' }); } catch (e) { /* pazienza */ }
             return;
         }
+        const dalBasso = voce.owner === 0;
+        const tilt = dalBasso ? -18 : 18;
+        const partenza = dalBasso ? '72vh' : '-72vh';
         try {
             voce.dentro.animate([
-                { opacity: 0, transform: 'scale(2.4) rotate(12deg)', filter: 'blur(12px) brightness(2)', offset: 0, easing: 'cubic-bezier(.16,.84,.3,1)' },
-                { opacity: 1, transform: 'scale(.97) rotate(0deg)', filter: 'blur(0) brightness(1.35)', offset: .7, easing: 'ease-out' },
-                { opacity: 1, transform: 'scale(1) rotate(0deg)', filter: 'blur(0) brightness(1)', offset: 1 }
+                { opacity: 0, transform: `translateY(${partenza}) perspective(900px) rotateX(${tilt}deg) rotateZ(${dalBasso ? -12 : 12}deg) scale(.34)`, offset: 0, easing: 'cubic-bezier(.12,.72,.18,1)' },
+                { opacity: 1, transform: `translateY(${dalBasso ? '-1.5vh' : '1.5vh'}) perspective(900px) rotateX(${-tilt * .32}deg) rotateZ(${dalBasso ? 2 : -2}deg) scale(1.12)`, offset: .76, easing: 'cubic-bezier(.16,.84,.3,1)' },
+                { opacity: 1, transform: 'translateY(0) perspective(900px) rotateX(0deg) rotateZ(0deg) scale(.98)', offset: .9, easing: 'ease-out' },
+                { opacity: 1, transform: 'translateY(0) perspective(900px) rotateX(0deg) rotateZ(0deg) scale(1)', offset: 1 }
             ], { duration: DUR_PIOMBO_MS, fill: 'both' });
         } catch (e) { /* pazienza */ }
         setTimeout(() => colpo(voce), ISTANTE_COLPO_MS);
@@ -528,7 +553,7 @@ void main(){
 
     function mostraTitolo() {
         const t = st.titolo;
-        const cx = st.W / 2, cy = st.H / 2;
+        const cx = st.W / 2, cy = Math.max(62, Math.min(st.H * .12, 116));
         t.style.left = cx + 'px';
         t.style.top = cy + 'px';
         if (st.animTitolo) { try { st.animTitolo.cancel(); } catch (e) { /* gia' finita */ } }
@@ -689,6 +714,7 @@ void main(){
         const Pb = new Float32Array(7 * 2);
         const S = new Float32Array(7 * 3);
         const F = new Float32Array(7);
+        const Q = new Float32Array(40);
         const C = vv.map((v) => {
             const r = v.el.getBoundingClientRect();
             return { x: r.left + r.width / 2, y: r.top + r.height / 2, hw: r.width / 2, hh: r.height / 2 };
@@ -714,6 +740,17 @@ void main(){
             const eta = (now - v.tRivela - 330) / 1000;
             F[seg] = eta > 0 ? Math.pow(Math.max(0, 1 - eta / 0.8), 2) : 0;
         }
+        const slotEl = s.slotEl.filter((el) => el.isConnected);
+        slotEl.forEach((el, i) => {
+            const r = el.getBoundingClientRect();
+            const j = i * 4;
+            // Sta sul bordo superiore del riquadro: la maglia è leggibile ma
+            // lascia liberi nome, illustrazione e interazione della carta.
+            Q[j] = r.left + Math.min(5, r.width * .08);
+            Q[j + 1] = r.top + 2;
+            Q[j + 2] = r.right - Math.min(5, r.width * .08);
+            Q[j + 3] = r.top + 2;
+        });
         const B = new Float32Array(12);
         for (let i = 0; i < 3; i++) {
             const b = s.boom[i];
@@ -730,6 +767,9 @@ void main(){
         gl.uniform2fv(s.u('uPb'), Pb);
         gl.uniform3fv(s.u('uS'), S);
         gl.uniform1fv(s.u('uF'), F);        gl.uniform4fv(s.u('uB'), B);
+        gl.uniform4fv(s.u('uQ'), Q);
+        gl.uniform1f(s.u('uQN'), slotEl.length);
+        gl.uniform1f(s.u('uQAlpha'), s.compatta ? 0 : 1);
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLES, 0, 3);
@@ -749,7 +789,7 @@ void main(){
         },
         /** Per i test: com'e' la scena adesso (null se non c'e'). */
         stato() {
-            return st ? { voci: st.voci.filter((v) => !v.fuori).length, chiudendo: st.chiudendo, canvas: !!st.canvas.isConnected } : null;
+            return st ? { voci: st.voci.filter((v) => !v.fuori).length, chiudendo: st.chiudendo, canvas: !!st.canvas.isConnected, slotMostro: st.slotEl.filter((el) => el.isConnected).length } : null;
         },
         /** Per i test: smonta subito, senza aspettare la dissolvenza. */
         _subito() { finisci(); }
