@@ -783,6 +783,8 @@ function ridisegnaDuello() {
     // L'alone sulle carte giocabili e le caselle che si accendono (js/ui/evidenzia-giocabili.js): solo lettura dello stato, DOPO la
     // fase (serve gameState.phase aggiornata) e dopo i render, perche' si applica ai nodi vivi.
     if (window.EvidenziaGiocabili) EvidenziaGiocabili.aggiorna();
+    // I segnalini sulle carte (card.counters) disegnati in WebGL: legge i badge appena ridisegnati (js/ui/segnalini-webgl.js).
+    if (window.SegnaliniGL) SegnaliniGL.sync();
 }
 
 /**

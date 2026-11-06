@@ -1544,19 +1544,26 @@
            un badge tondo col numero, ancorato in alto a destra della
            carta — non sotto come i badge ATK/DEF o turni, per non
            accavallarsi con quelli quando ci sono entrambi. */
+        /* POSIZIONE: in BASSO, CENTRATO sulla carta (prima in alto a destra), come il contatore dei turni. Il disco sta dentro il bordo
+           inferiore della carta. Se la carta e' in Difesa (ruotata) il "basso" visivo e' a meta' della sua LARGHEZZA. Con WebGL
+           (js/ui/segnalini-webgl.js, html.segnalini-gl) questo badge resta qui, invisibile, e dice al modulo dove e quanto grande
+           disegnare la sfera: stessa posizione, stesso numero. Senza WebGL e' il disco d'oro CSS qui sotto. */
         .field-counter-badge {
+            --seg-d: clamp(24px, calc(var(--card-w, 70px) * 0.46), 38px);
             position: absolute;
-            top: -6px;
-            right: -6px;
+            left: 50%;
+            top: calc(50% + var(--card-h, 90px) / 2 - var(--seg-d) * 1.04);
+            width: var(--seg-d);
+            margin-left: calc(var(--seg-d) / -2);
             z-index: 4;
-            min-width: 18px;
-            height: 18px;
-            padding: 0 3px;
+            min-width: 0;
+            height: var(--seg-d);
+            padding: 0;
             border-radius: 50%;
             background: radial-gradient(circle at 35% 30%, #ffe9a8, #d4900f 70%, #8a5a05 100%);
             border: 1px solid rgba(255,255,255,0.55);
             color: #241505;
-            font-size: clamp(0.6rem, 1.4vw, 0.78rem);
+            font-size: calc(var(--seg-d) * 0.55);
             font-weight: 900;
             display: flex;
             align-items: center;
@@ -1564,6 +1571,8 @@
             box-shadow: 0 3px 8px rgba(0,0,0,0.5);
             pointer-events: none;
         }
+        .field-slot:has(> .card.defense-pos) > .field-counter-badge { top: calc(50% + var(--card-w, 70px) / 2 - var(--seg-d) * 1.04); }
+        html.segnalini-gl .field-counter-badge { opacity: 0; }
 
         /* ============================================================
            Spada Rivelatrice attiva: contatore turni rimasti + bagliore
@@ -5778,6 +5787,7 @@
 <script src="js/ui/monster-hologram.js"></script>
 <script src="js/ui/duel-feedback.js"></script>
 <script src="js/ui/evidenzia-giocabili.js"></script>
+<script src="js/ui/segnalini-webgl.js"></script>
 <script src="js/ui/conto-alla-rovescia.js"></script>
 <script src="js/ui/tavola-del-destino.js"></script>
 <!-- Libreria di effetti visivi nominati, applicata automaticamente da
