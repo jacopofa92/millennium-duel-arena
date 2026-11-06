@@ -78,9 +78,9 @@ module.exports = {
                 t.assert(r.primo.primaVolta && r.primo.premio.crediti === 300, `La prima vittoria a Facile paga 300 Crediti: ${JSON.stringify(r.primo)}`);
                 t.assert(!r.secondo.primaVolta && !r.secondo.premio, 'La seconda vittoria a Facile nella stessa settimana non paga');
                 t.assert(r.altroLivello.primaVolta && r.altroLivello.premio.stelle === 1, `Un livello nuovo paga di nuovo (Difficile: crediti e 1 Stella): ${JSON.stringify(r.altroLivello)}`);
-                t.assert(r.cacciaVeloce.primaVolta && r.cacciaVeloce.premio.stelle === 4 && r.cacciaVeloce.premio.veloce, `Caccia vinta in 4 turni: 3 Stelle + 1 di bonus: ${JSON.stringify(r.cacciaVeloce)}`);
+                t.assert(r.cacciaVeloce.primaVolta && r.cacciaVeloce.premio.stelle === 5 && r.cacciaVeloce.premio.locazione === 1 && r.cacciaVeloce.premio.millennio === 1 && r.cacciaVeloce.premio.veloce, `Caccia vinta in 4 turni: 3 Stelle + 2 di bonus, 1 Carta Locazione e 1 del Millennio: ${JSON.stringify(r.cacciaVeloce)}`);
                 t.assert(!r.cacciaDopo.primaVolta && !r.cacciaDopo.premio && r.migliore === 2, 'La seconda caccia vinta non paga ma migliora il record di turni');
-                t.assert(r.cacciaLenta.premio.stelle === 3 && !r.cacciaLenta.premio.veloce, `Vinta in 9 turni: niente bonus (${JSON.stringify(r.cacciaLenta)})`);
+                t.assert(r.cacciaLenta.premio.stelle === 3 && !r.cacciaLenta.premio.veloce && !r.cacciaLenta.premio.locazione && !r.cacciaLenta.premio.millennio, `Vinta in 9 turni: niente bonus (${JSON.stringify(r.cacciaLenta)})`);
             } finally {
                 await page.close();
             }

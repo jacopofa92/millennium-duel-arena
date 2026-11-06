@@ -4236,6 +4236,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.84 (cache v594, su `main`): **Caccia al Boss: 12 turni (erano 8) e bonus 'caccia veloce' entro 8 turni (erano 5)**, dopo una simulazione di 1.920 duelli senza interfaccia (16 mazzi Starter/Structure con IA Difficile contro i 12 Boss a 12.000 LP, 10 semi ciascuno): entro 8 turni si vinceva il 9,0% dei duelli (38% delle vittorie possibili), entro 12 il 15,5% (66%), senza limite il 23,6%; il bonus entro 5 turni scattava nell'1,6%. Mediana dei turni delle vittorie: 10. Boss piu' duri: Gozaburo e Kaiba; piu' facili: Lumis e Yami Yugi. Cambiati `caccia-db.js` (turni, bonusVeloce), il testo della Sfida 'Sconfiggi un Boss entro 8 turni' e del titolo Cacciatore Fulmineo, il sottotitolo nel menu e gli spec. Lo strumento di misura sta in scratchpad (si riscrive in 40 righe: `giocaPartita` con `primaDelTurno: 'gameState.botLP = 12000;'`, turni del giocatore = ceil(turno/2)). Suite completa non eseguita.
 
+1.5.85 (cache v595, su `main`): **bonus della caccia veloce (Caccia al Boss, entro 8 turni): +2 Stelle, +1 Carta Locazione e +1 Carta del Millennio** (richiesta dell'utente; prima +1 Stella). Si aggiunge al premio base della settimana (1.500 crediti + 3 Stelle, una volta a settimana). Dati in `cacciaDatabase.premio.bonusVeloce` (`stelle`, `locazione`, `millennio`), calcolo in `Caccia.registraVittoria`, pagamento in `caccia-mode.js` (`chiudi`), testo in `Rewards.modalitaHtml('caccia')`. Spec `modalita-settimana-e-caccia` aggiornato. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

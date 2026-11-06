@@ -952,7 +952,7 @@
             if (!db) return '';
             titolo = 'Premi della Caccia al Boss';
             const p = db.premio;
-            speciali.push(riga('🏹', `Prima caccia vinta della settimana: <b>+${n(p.crediti)} crediti</b> e <b>+${stelle(p.stelle)}</b>, più <b>+${stelle(p.bonusVeloce.stelle)}</b> extra se vinci entro ${p.bonusVeloce.entroTurni} turni. Una volta a settimana.`));
+            speciali.push(riga('🏹', `Prima caccia vinta della settimana: <b>+${n(p.crediti)} crediti</b> e <b>+${stelle(p.stelle)}</b>, più, se vinci entro ${p.bonusVeloce.entroTurni} turni (caccia veloce): <b>+${stelle(p.bonusVeloce.stelle)}</b>, <b>+${p.bonusVeloce.locazione || 0} Carta Locazione</b> e <b>+${p.bonusVeloce.millennio || 0} Carta del Millennio</b>. Una volta a settimana.`));
             standard = () => riga('⚔️', `Come ogni duello, a ${NOME_LIVELLO[db.livello] || db.livello}:`, 'rw-sottotitolo').concat(righeVittoria(db.livello).join(''));
         } else if (id === 'settimana') {
             const db = window.settimanaDatabase;

@@ -63,7 +63,11 @@ const Caccia = (function () {
         if (!primaVolta) return { primaVolta: false, premio: null };
         const p = db().premio;
         const veloce = turni <= p.bonusVeloce.entroTurni;
-        return { primaVolta: true, premio: { crediti: p.crediti, stelle: p.stelle + (veloce ? p.bonusVeloce.stelle : 0), veloce: veloce } };
+        return { primaVolta: true, premio: {
+            crediti: p.crediti, stelle: p.stelle + (veloce ? p.bonusVeloce.stelle : 0), veloce: veloce,
+            // Il bonus della caccia veloce porta anche una Carta Locazione e una Carta del Millennio (0 se non e' veloce).
+            locazione: veloce ? (p.bonusVeloce.locazione || 0) : 0, millennio: veloce ? (p.bonusVeloce.millennio || 0) : 0
+        } };
     }
 
     return {

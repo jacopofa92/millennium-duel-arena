@@ -118,6 +118,15 @@
                 SaveManager.addCurrency('starChips', esito.premio.stelle);
                 voci.push({ currency: 'starChips', amount: esito.premio.stelle, icon: '⭐', nome: 'Stelle dell\'Esagono', rule: spiegazione });
             }
+            // Bonus caccia veloce: una Carta Locazione e una Carta del Millennio.
+            if (esito.premio.locazione > 0) {
+                SaveManager.addCurrency('locatorCards', esito.premio.locazione);
+                voci.push({ currency: 'locatorCards', amount: esito.premio.locazione, icon: '🃏', nome: 'Carta Locazione', rule: spiegazione });
+            }
+            if (esito.premio.millennio > 0) {
+                SaveManager.addCurrency('millenniumCards', esito.premio.millennio);
+                voci.push({ currency: 'millenniumCards', amount: esito.premio.millennio, icon: '🔱', nome: 'Carta del Millennio', rule: spiegazione });
+            }
         }
         return voci;
     }

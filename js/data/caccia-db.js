@@ -20,7 +20,7 @@ const cacciaDatabase = {
     /** Quanti turni DEL GIOCATORE ha per vincere (il primo conta, anche se non si può attaccare). */
     turni: 12,
     livello: 'Difficile',
-    premio: { crediti: 1500, stelle: 3, bonusVeloce: { entroTurni: 8, stelle: 1 } },
+    premio: { crediti: 1500, stelle: 3, bonusVeloce: { entroTurni: 8, stelle: 2, locazione: 1, millennio: 1 } },
     /** I Boss, uno a settimana. `titolo` è la frase che li presenta. */
     boss: [
         { id: 'kaiba',     titolo: 'Il Presidente della KaibaCorp non ha mai perso senza una buona scusa.' },
