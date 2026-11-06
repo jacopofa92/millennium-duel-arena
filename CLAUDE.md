@@ -4268,6 +4268,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.100 (cache v610, su `main`): **barre fisse (Negozio `.shop-fisso`, Sfide `.sv-fisso`) fino al bordo dello schermo**: agganciate a `top: 0` con il margine della fotocamera DENTRO la barra (`padding-top: --mm-fotocamera + 8px`) e un `margin-top` negativo che a riposo le porta fino al bordo; cosi' nessun contenuto scorre visibile sopra le valute/schede. **Regola per una barra sticky nuova su telefono: top 0, fotocamera nel padding, mai `top: var(--mm-fotocamera)` con la fascia sopra scoperta.** Suite completa non eseguita.
 
+1.5.101 (cache v611, su `main`): stessa regola delle barre fisse anche per i **filtri della Cartoteca**, le **tab di Creazione Deck** (ora sticky) e l'**intestazione dell'editor** (`top: 0`, fotocamera nel padding, margine negativo a riposo: vedi menu-mobile.css). Le tab di Creazione Deck sbordavano di 14px per lato sotto i 480px (margine -22px su un padding di 8px): i margini seguono ora il padding di `.list-main` a ogni misura. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

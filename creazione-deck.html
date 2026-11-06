@@ -1247,6 +1247,23 @@
         .editor-header { top: 41px; padding: 6px 14px; gap: 8px; }
         .editor-left, .editor-right { padding: 8px 14px; }
     }
+
+    /* TAB FISSE fino al bordo dello schermo (la fascia della fotocamera e' dentro la barra), e senza sbordare di lato: i margini negativi
+       seguono il padding di .list-main a ogni misura (24/22, 12/8, 8/14), altrimenti la pagina scorreva in orizzontale. */
+    .list-tabs {
+        position: sticky; top: 0; z-index: 36;
+        margin: calc(-1 * (24px + var(--mm-fotocamera, 0px))) -22px 18px;
+        padding: var(--mm-fotocamera, 0px) 22px 0;
+        background: linear-gradient(180deg, rgba(14, 11, 8, 0.97), rgba(14, 11, 8, 0.93));
+        -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
+    }
+    @media (max-width: 480px) {
+        .list-tabs { margin: calc(-1 * (12px + var(--mm-fotocamera, 0px))) -8px 14px; padding: var(--mm-fotocamera, 0px) 8px 0; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+        .list-tabs { margin: calc(-1 * (8px + var(--mm-fotocamera, 0px))) -14px 12px; padding: var(--mm-fotocamera, 0px) 14px 0; }
+    }
 </style>
 </head>
 <!-- data-card-badges accende su questa pagina i bollini "copie massime"

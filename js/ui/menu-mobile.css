@@ -265,12 +265,25 @@ body.ha-tab-bar .topbar > :not(.back-btn) { display: none !important; }
 .mm-ctx-slot .cartoteca-count, .mm-ctx-slot .deck-count-badge { font-size: 0.74rem; padding: 4px 9px; border-radius: 999px; color: #f7d774; background: rgba(247, 215, 116, 0.14); border: 1px solid rgba(247, 215, 116, 0.35); white-space: nowrap; margin: 0; }
 
 /* Elementi delle pagine con un `top:` in pixel tarato sulla barra in alto che non c'e' piu', o fissi in basso dove ora sta la barra. */
-body.ha-tab-bar .toc-bar, body.ha-tab-bar .editor-header, body.ha-tab-bar .torre-layout > .mp-pannello { top: var(--mm-fotocamera, 0px) !important; }
+body.ha-tab-bar .toc-bar, body.ha-tab-bar .torre-layout > .mp-pannello { top: var(--mm-fotocamera, 0px) !important; }
 body.ha-tab-bar .preview-col { top: calc(var(--mm-fotocamera, 0px) + 14px) !important; }
 body.ha-tab-bar .toast, body.ha-tab-bar .back-to-top { bottom: calc(var(--mm-barra-h) + 16px) !important; }/* Il medaglione Indietro NON serve piu' (l'utente): porta sempre al menu, e la voce madre della barra in basso fa la stessa cosa. */
 body.ha-tab-bar .topbar .back-btn { display: none !important; }
 /* La barra in alto non e' piu' fissa: le barre sticky che stavano SOTTO di lei (top in pixel tarato su di lei) vanno in cima. */
-body.ha-tab-bar .cartoteca-filters { top: var(--mm-fotocamera, 0px) !important; }
+/* BARRE FISSE FINO AL BORDO (Cartoteca: filtri; Creazione Deck: intestazione dell'editor): agganciate a top 0, la fascia della fotocamera e' DENTRO
+   la barra (padding-top) e un margin-top negativo la porta, a riposo, fino al bordo dello schermo: niente contenuto che scorre sopra. */
+body.ha-tab-bar .cartoteca-filters,
+body.ha-tab-bar .editor-header {
+    top: 0 !important;
+    margin-top: calc(-1 * var(--mm-fotocamera, 0px));
+    padding-top: calc(var(--mm-fotocamera, 0px) + 14px) !important;
+}
+@media (max-width: 480px) {
+    body.ha-tab-bar .cartoteca-filters, body.ha-tab-bar .editor-header { padding-top: calc(var(--mm-fotocamera, 0px) + 8px) !important; }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+    body.ha-tab-bar .cartoteca-filters, body.ha-tab-bar .editor-header { padding-top: calc(var(--mm-fotocamera, 0px) + 6px) !important; }
+}
 
 /* ---- scorrimento fra le tab (swipe): il contenuto nuovo entra dalla parte da cui si e' arrivati ---- */
 .mm-corpo { touch-action: pan-y; }
