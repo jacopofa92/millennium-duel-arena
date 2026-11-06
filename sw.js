@@ -532,7 +532,7 @@
 // v576: gabbia d'acciaio e Spade Rivelatrici ridisegnate per il campo zenitale.
 // v577: ripristinato l'effetto precedente delle Spade e rimosso il rendering WebGL della Gabbia.
 // v578: Spade Rivelatrici riportate alla resa WebGL precedente al cambio prospettico.
-const CACHE_NAME = 'ygo-duel-arena-v603';
+const CACHE_NAME = 'ygo-duel-arena-v604';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

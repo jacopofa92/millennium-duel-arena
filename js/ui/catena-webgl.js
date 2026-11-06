@@ -92,6 +92,10 @@ void tratto(vec2 P, vec2 A, vec2 B, vec3 st, float fl, float idx, inout vec4 col
 
   float vis = 1. - smoothstep(rev - k * 2., rev + k * 2., s);
   if (st.y > .001) vis *= 1. - smoothstep(m - gap - k * 3., m - gap, s) * (1. - smoothstep(m + gap, m + gap + k * 3., s));
+  // Le due estremita' non finiscono con un taglio netto: la catena AFFONDA nella carta (si dissolve in ~1 maglia), cosi' sembra
+  // agganciata all'angolo invece che tagliata. Sulle catene corte la rampa si accorcia per non spegnerle.
+  float rampa = min(uL * 1.15, len * .3);
+  vis *= smoothstep(0., rampa, s) * smoothstep(0., rampa, len - s);
   if (vis <= .001) return;
 
   float pitch = uL * .72;
@@ -750,7 +754,7 @@ body.cgl-scena-piena #phaseAnnouncement{visibility:hidden!important}
             dx /= len; dy /= len;
             // Come in Master Duel la catena e' AGGANCIATA ai ANGOLI: parte dall'angolo della carta piu' vicino all'altra e
             // arriva all'angolo piu' vicino dell'altra (un poco dentro la cornice), invece di correre centro-bordo.
-            const angolo = (c, sx, sy) => ({ x: c.x + sx * c.hw * 0.78, y: c.y + sy * c.hh * 0.78 });
+            const angolo = (c, sx, sy) => ({ x: c.x + sx * c.hw * 0.62, y: c.y + sy * c.hh * 0.62 });
             const pa = angolo(a, Math.sign(dx) || 1, Math.sign(dy) || 1);
             const pb = angolo(b, -(Math.sign(dx) || 1), -(Math.sign(dy) || 1));
             let ex = pb.x - pa.x, ey = pb.y - pa.y;
