@@ -17,6 +17,9 @@ module.exports = {
             const esito = await page.evaluate(() => {
                 if (!SaveManager.hasSave()) SaveManager.createNew('Economia test');
                 const originale = Math.random;
+                // Si misura il solo premio del torneo: una Sfida completata dalla prima vittoria
+                // (che paga i propri crediti) falserebbe il confronto fra i livelli.
+                if (window.ChallengeTracker) ChallengeTracker.recordProgress = function () { return []; };
                 const valuta = () => Object.assign({}, SaveManager.getCurrency());
                 const delta = (a, b, k) => (b[k] || 0) - (a[k] || 0);
                 function torneo(id, difficulty, firstTime) {

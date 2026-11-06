@@ -61,8 +61,9 @@ const risultati = livelli.map((livello) => {
     const stelleLibere = vittorieLibere * pStella;
     const stelleGarantite = Math.floor(vittorieLibere / R.STAR_MILESTONE_EVERY)
         * R.STAR_MILESTONE_REWARD[livello];
-    const locazioniLibere = vittorieLibere * (1 - pStella) * 0.03;
-    const millennioLibere = vittorieLibere * (1 - pStella) * 0.97 * 0.008;
+    // Un solo tiro a soglie cumulative (Rewards.rollDrop): 3% e 0,8% esatti a ogni livello.
+    const locazioniLibere = vittorieLibere * 0.03;
+    const millennioLibere = vittorieLibere * 0.008;
     const valore = (torneo, valuta) => R.TOURNAMENT_COMPLETION[torneo][valuta][livello] * torneiSettimana;
     const creditiTornei = ['duelistKingdom', 'battleCity', 'kaibaTournament']
         .reduce((tot, id) => tot + valore(id, 'credits'), 0)

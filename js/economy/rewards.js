@@ -215,11 +215,20 @@
 
     /** Tira i drop rari: al massimo uno per duello, il primo che esce nell'ordine della tabella. */
     function rollDrop(difficulty) {
+        // UN SOLO tiro con soglie cumulative, non un tiro per carta in fila:
+        // con la sequenza (Stella, poi Locazione, poi Millennio) ogni tiro
+        // successivo vedeva solo cio' che la Stella aveva lasciato, quindi
+        // piu' la difficolta' era alta (Stella 9%) MENO uscivano Locazione e
+        // Millennio — l'opposto di quanto ci si aspetta. Cosi' ogni premio
+        // esce esattamente con la probabilita' scritta in tabella.
+        const r = Math.random();
+        let soglia = 0;
         for (let i = 0; i < DROPS.length; i++) {
             const chance = DROPS[i].chanceByDifficulty
                 ? (DROPS[i].chanceByDifficulty[difficulty] || 0)
                 : DROPS[i].chance;
-            if (Math.random() < chance) return Object.assign({}, DROPS[i], { chance: chance });
+            soglia += chance;
+            if (r < soglia) return Object.assign({}, DROPS[i], { chance: chance });
         }
         return null;
     }
@@ -579,11 +588,8 @@
      * deriva. Non assegna nulla: solo lettura (anche dello stato di oggi,
      * che dice se la prossima vittoria e' la prima o e' gia' a meta' premio).
      *
-     * Le probabilita' dei ritrovamenti sono quelle EFFETTIVE, non quelle
-     * scritte in tabella: rollDrop si ferma al primo che esce (Stella, poi
-     * Locazione, poi Millennio), quindi la Locazione puo' uscire solo se la
-     * Stella e' mancata, e cosi' via. Mostrare 3% quando in realta' e'
-     * ~2,7% sarebbe una piccola bugia.
+     * Le probabilita' dei ritrovamenti sono quelle di tabella: rollDrop fa un
+     * solo tiro a soglie cumulative, quindi coincidono con quelle vere.
      */
     function preview(difficulty) {
         const base = WIN_CREDITS[difficulty] || 0;
@@ -592,13 +598,10 @@
         try { vittorieOggi = window.SaveManager ? (SaveManager.getDailyEconomy(giorno).wins || 0) : 0; } catch (e) { /* noop */ }
         const prossima = vittorieOggi + 1;
         const ridotta = prossima > DIMINISHING_AFTER_WINS;
-        let restante = 1;
-        const drops = DROPS.map((d) => {
-            const nominale = d.chanceByDifficulty ? (d.chanceByDifficulty[difficulty] || 0) : d.chance;
-            const effettiva = restante * nominale;
-            restante *= (1 - nominale);
-            return { currency: d.currency, icon: d.icon, nome: d.nome, chance: effettiva };
-        });
+        const drops = DROPS.map((d) => ({
+            currency: d.currency, icon: d.icon, nome: d.nome,
+            chance: d.chanceByDifficulty ? (d.chanceByDifficulty[difficulty] || 0) : d.chance
+        }));
         return {
             difficulty: difficulty,
             crediti: ridotta ? Math.round(base * DIMINISHING_FACTOR) : base,
@@ -725,6 +728,7 @@
         previewChallenge: previewChallenge,
         preview: preview,
         previewHtml: previewHtml,
+        _rollDrop: rollDrop, // solo per i test (tests/specs/premi-anteprima-duello-libero-e-tag.spec.js)
         rulesSummary: rulesSummary,
         summaryHtml: summaryHtml,
         CURRENCY_META: CURRENCY_META,

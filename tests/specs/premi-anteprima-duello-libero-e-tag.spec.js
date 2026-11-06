@@ -28,11 +28,30 @@ module.exports = {
                 t.assert(/Stella/.test(r.corpo) && /Carta Locazione/.test(r.corpo) && /Carta del Millennio/.test(r.corpo),
                     `Elenco ritrovamenti incompleto per ${key}: ${r.corpo}`);
             }
-            // Le percentuali sono quelle EFFETTIVE (il drop si ferma al primo): mai sopra la nominale.
-            const eff = await page.evaluate(() => Rewards.preview('Difficile').drops.map((d) => d.chance));
-            t.assert(Math.abs(eff[0] - 0.09) < 1e-9, 'La Stella a Difficile deve valere esattamente 9%');
-            t.assert(eff[1] < 0.03 && eff[1] > 0.027, `Locazione effettiva fuori scala: ${eff[1]}`);
-            t.assert(eff[2] < 0.008 && eff[2] > 0.007, `Millennio effettivo fuori scala: ${eff[2]}`);
+            // Il tiro dei ritrovamenti deve dare a OGNI livello le probabilita' scritte: Locazione 3% e
+            // Millennio 0,8% identiche a Facile, Normale e Difficile (con tiri in sequenza uscivano meno
+            // dove la Stella e' piu' frequente). Campione uniforme di tiri al posto del caso.
+            const conti = await page.evaluate(() => {
+                const N = 100000, out = {};
+                const orig = Math.random;
+                for (const liv of ['Facile', 'Medio', 'Difficile']) {
+                    const c = { starChips: 0, locatorCards: 0, millenniumCards: 0, niente: 0 };
+                    for (let i = 0; i < N; i++) {
+                        Math.random = () => (i + 0.5) / N;
+                        const d = Rewards._rollDrop(liv);
+                        c[d ? d.currency : 'niente']++;
+                    }
+                    out[liv] = c;
+                }
+                Math.random = orig;
+                return { out, N, nominali: ['Facile', 'Medio', 'Difficile'].map((l) => Rewards.preview(l).drops.map((d) => d.chance)) };
+            });
+            ['Facile', 'Medio', 'Difficile'].forEach((liv, k) => {
+                const c = conti.out[liv], n = conti.nominali[k];
+                t.assert(Math.abs(c.starChips / conti.N - n[0]) < 0.001, `Stella a ${liv}: ${c.starChips / conti.N} invece di ${n[0]}`);
+                t.assert(Math.abs(c.locatorCards / conti.N - 0.03) < 0.001, `Locazione a ${liv} non e' 3%: ${c.locatorCards / conti.N}`);
+                t.assert(Math.abs(c.millenniumCards / conti.N - 0.008) < 0.001, `Millennio a ${liv} non e' 0,8%: ${c.millenniumCards / conti.N}`);
+            });
 
             // --- Tag Team: il riquadro segue il livello scelto ---
             await page.goto(url('tag.html'));
