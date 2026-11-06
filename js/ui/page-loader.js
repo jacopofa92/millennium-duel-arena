@@ -119,21 +119,44 @@
     // lo schermo resta nero). Solo CSS.
     var glAttivo = null;
 
-    var MIN_MS = 1000; // richiesta esplicita dell'utente: 1s invece di 2s
+    // ESPERIMENTO "UX fluida" (branch feature/ux-fluida). Prima il disco compariva SEMPRE e restava almeno 1 s
+    // (richiesta esplicita dell'utente, 2 s -> 1 s) anche su una pagina pronta in 80 ms: ogni passaggio fra
+    // schermate costava un secondo di attesa finta. Ora il disco entra solo se la pagina e' DAVVERO lenta
+    // (RITARDO_COMPARSA_MS) e, una volta comparso, resta un minimo breve (MIN_MS) per non lampeggiare.
+    // Per tornare al comportamento di prima: SOLO_SE_LENTO = false e MIN_MS = 1000.
+    var SOLO_SE_LENTO = true;
+    var RITARDO_COMPARSA_MS = 220;
+    var MIN_MS = 450;
     var hidden = false;
     var hideTimer = null;
     var safetyTimer = null;
+    var comparsaTimer = null;
+    var mostratoAlle = 0; // istante in cui il disco e' diventato visibile (0 = mai, ancora in attesa)
+
+    // Il disco e' nel DOM dal primo frame (copre la pagina mezza costruita) ma resta invisibile finche' non
+    // scade il ritardo: se la pagina e' pronta prima, l'utente non lo vede mai e il cambio pagina e' immediato.
+    // La modalita' manuale (duello) e le chiamate show() esplicite lo vogliono subito.
+    function programmaComparsa() {
+        el.classList.add('page-loader-attesa');
+        comparsaTimer = setTimeout(function () {
+            el.classList.remove('page-loader-attesa');
+            mostratoAlle = performance.now();
+        }, RITARDO_COMPARSA_MS);
+    }
+
     function hide() {
         if (hidden) return;
         hidden = true;
+        clearTimeout(comparsaTimer);
         el.classList.add('page-loader-hidden');
         if (glAttivo) setTimeout(function () { if (hidden) glAttivo.ferma(); }, 600);
         clearTimeout(hideTimer);
         clearTimeout(safetyTimer);
     }
     function hideWhenReady() {
-        var elapsed = performance.now() - window.__pageLoaderStart;
-        var remaining = Math.max(0, MIN_MS - elapsed);
+        // Mai comparso: sparisce subito. Comparso: resta il minimo da quando si e' visto davvero.
+        var remaining = mostratoAlle ? Math.max(0, MIN_MS - (performance.now() - mostratoAlle)) : 0;
+        if (!mostratoAlle && !SOLO_SE_LENTO) remaining = Math.max(0, 1000 - (performance.now() - window.__pageLoaderStart));
         clearTimeout(hideTimer);
         hideTimer = setTimeout(hide, remaining);
     }
@@ -142,8 +165,11 @@
     function show() {
         clearTimeout(hideTimer);
         clearTimeout(safetyTimer);
+        clearTimeout(comparsaTimer);
         window.__pageLoaderStart = performance.now();
+        mostratoAlle = performance.now(); // show() esplicito: visibile subito
         hidden = false;
+        el.classList.remove('page-loader-attesa');
         el.classList.remove('page-loader-hidden');
         if (glAttivo) glAttivo.via();
     }
@@ -153,6 +179,7 @@
     if (dopo) {
         // Avvio ritardato: la pagina c'e' gia' e a nascondere il loader ci pensa chi lo ha mostrato (hideWhenReady).
     } else if (!window.PAGE_LOADER_MANUAL_HIDE) {
+        if (SOLO_SE_LENTO) programmaComparsa();
         // Se js/cloud/auth-gate.js è caricato in questa pagina e sta ancora
         // aspettando la conferma di sessione (window.__authGatePending),
         // non nascondersi al window.load come al solito: aspettare che

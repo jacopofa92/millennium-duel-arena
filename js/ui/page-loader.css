@@ -26,6 +26,13 @@
     opacity: 0;
     pointer-events: none;
 }
+/* In attesa della comparsa (vedi RITARDO_COMPARSA_MS in page-loader.js): invisibile e senza dissolvenza, cosi'
+   scade il ritardo e il disco entra con la transizione normale, mentre una pagina veloce non lo mostra mai. */
+.page-loader.page-loader-attesa {
+    opacity: 0;
+    pointer-events: none;
+    transition: none;
+}
 .page-loader-stage {
     position: relative;
     width: 150px;

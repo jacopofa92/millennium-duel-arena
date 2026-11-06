@@ -287,6 +287,23 @@
     body.tb-indietro-basso { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
 }
 
+/* ESPERIMENTO "UX fluida" (branch feature/ux-fluida) — due ritocchi condivisi da ogni pagina che carica la topbar.
+   1) Passaggio fra pagine: la dissolvenza predefinita delle View Transitions dura 250 ms e sa di attesa; qui e' breve
+      (l'opt-in `@view-transition` sta statico nell'<head> di ogni pagina). Va dichiarata in entrambe le pagine coinvolte.
+   2) Riscontro al tocco: ogni pulsante si "schiaccia" un attimo. Si usa la proprieta' `scale` (non `transform`) apposta:
+      si compone con i transform che le singole pagine gia' mettono (centraggi con translate, rotazioni) senza
+      sostituirli, e non aggiunge `transition` per non cancellare quelle che i pulsanti hanno gia'. */
+::view-transition-old(root) { animation-duration: 120ms; }
+::view-transition-new(root) { animation-duration: 160ms; }
+@media (hover: none) and (pointer: coarse), (hover: hover) and (pointer: fine) {
+    button:not(:disabled):active,
+    [role="button"]:not([aria-disabled="true"]):active {
+        scale: 0.965;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .topbar, .back-btn, .back-btn svg { transition: none; }
+    ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 1ms; }
+    button:not(:disabled):active, [role="button"]:not([aria-disabled="true"]):active { scale: 1; }
 }

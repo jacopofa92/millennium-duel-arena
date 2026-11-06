@@ -176,6 +176,7 @@
             }
 
             function finish(starter) {
+                generazione++; // annulla un eventuale passo automatico ancora in attesa
                 overlay.classList.remove('is-in');
                 overlay.classList.add('is-out');
                 // Si aspetta la fine della dissolvenza prima di restituire
@@ -204,6 +205,7 @@
             }
 
             function resetForNewRound() {
+                generazione++;
                 arena.classList.remove('is-revealed', 'is-win', 'is-lose', 'is-draw');
                 overlay.querySelectorAll('.rps-choice').forEach((b) => b.classList.remove('is-picked'));
                 playerIcon.textContent = '✊';
@@ -253,6 +255,8 @@
                     primary.textContent = 'Rigioca ↻';
                     primary.onclick = resetForNewRound;
                     useSecondary('', null);
+                    // UX fluida: un pareggio non chiede niente, quindi si riparte da soli (il pulsante accelera).
+                    avanzaDaSolo(resetForNewRound, 1300);
                 } else if (remoto && typeof opts.inviaInizio === 'function' && typeof opts.attendiInizio === 'function') {
                     // Contro una persona chi vince SCEGLIE, come contro l'IA,
                     // e la scelta VIAGGIA: appena il vincitore decide, il
@@ -313,8 +317,20 @@
                     primary.textContent = 'Inizia il duello ›';
                     primary.onclick = () => finish('bot');
                     useSecondary('', null);
+                    // UX fluida: perdendo la morra contro l'IA non c'e' nessuna scelta da fare, quindi si prosegue
+                    // da soli dopo il tempo di leggere l'esito (il pulsante resta per chi ha fretta).
+                    avanzaDaSolo(() => finish('bot'), 1700);
                 }
                 showPhase('result');
+            }
+
+            // Passo automatico dopo l'esito. Si annulla se il giocatore ha gia' toccato il pulsante (il pannello
+            // e' stato chiuso o il round ricominciato: `generazione` cambia) e non scatta mai con movimento ridotto.
+            let generazione = 0;
+            function avanzaDaSolo(azione, ms) {
+                if (prefersReducedMotion()) return;
+                const mia = ++generazione;
+                setTimeout(() => { if (mia === generazione && overlay.isConnected) azione(); }, ms);
             }
 
             function shoot(playerId) {

@@ -329,3 +329,7 @@ body.mp-in-duello .mm-barra, body.mp-in-duello .mm-spazio { display: none !impor
     .menu-shell--app .menu-logo { height: clamp(92px, 12.5dvh, 108px); }
     .menu-shell--app .mm-testa { margin-top: 4px; }
 }
+
+/* UX fluida: transizione fra pagine breve anche dal menu (index.html non carica topbar.css; vedi il commento li'). */
+::view-transition-old(root) { animation-duration: 120ms; }
+::view-transition-new(root) { animation-duration: 160ms; }
