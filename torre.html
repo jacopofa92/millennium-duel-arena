@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="js/ui/menu-mobile.css">
 <link rel="stylesheet" href="js/ui/deck-switcher.css">
 <link rel="stylesheet" href="js/modes/mode-pages.css">
+<link rel="stylesheet" href="js/economy/rewards.css">
 <title>Yu-Gi-Oh! Millennium Duel Arena — Torre dei Duellanti</title>
 </head>
 <body class="modalita-torre">
@@ -39,6 +40,7 @@
 
     <main class="mp-main torre-main">
         <div class="mp-riepilogo" id="record"></div>
+        <div id="premiModalita" hidden></div>
         <div id="esito"></div>
         <div id="contenuto" class="torre-layout"></div>
     </main>
@@ -83,10 +85,12 @@
 <script src="js/ui/torre-ambiente-webgl.js"></script>
 <script src="js/ui/topbar.js"></script>
     <script src="js/ui/tab-bar.js"></script>
+<script src="js/economy/rewards.js"></script>
 <script>
     PageTopbar.render('#topbarMount', { icon: 'tower', title: 'Torre dei Duellanti' });
     initAudioManager();
     Icons.hydrate();
+    Rewards.montaPremiModalita('#premiModalita', 'torre');
 
     const LIVELLI = { Facile: 'Facile', Medio: 'Normale', Difficile: 'Difficile' };
     const pers = (id) => characterDatabase.find((c) => c.id === id) || { name: id, image: null };

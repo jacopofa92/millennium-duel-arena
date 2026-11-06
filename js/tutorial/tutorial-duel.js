@@ -50,7 +50,8 @@
         robolady: 528    // Robolady, 450 (riempitivo)
     };
     const LP_NONNO = 3000;
-    const PREMIO_CREDITI = 200;
+    // Il premio vive in Rewards.TUTORIAL_CREDITI (js/economy/rewards.js), lo stesso numero che la pagina Tutorial mostra.
+    const PREMIO_CREDITI = (window.Rewards && Rewards.TUTORIAL_CREDITI) || 200;
 
     let uidContatore = 0;
     function istanzia(id) {

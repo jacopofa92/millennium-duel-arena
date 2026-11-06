@@ -34,6 +34,7 @@
 <link rel="stylesheet" href="js/ui/page-loader.css">
 <link rel="preload" href="audio/soundtracks/56. Battle for the Millennium.mp3" as="audio">
 <link rel="stylesheet" href="js/ui/topbar.css">
+<link rel="stylesheet" href="js/economy/rewards.css">
     <link rel="stylesheet" href="js/ui/menu-mobile.css">
 <!-- Ritratto del giocatore E mazzo corrente in fondo alla topbar: li monta
      PageTopbar con `deck: true`. Da qui si entra in un torneo, quindi il
@@ -628,6 +629,9 @@
             </a>
         </div>
 
+        <!-- Cosa paga ogni torneo, per livello: letto da Rewards (js/economy/rewards.js), popolato qui sotto. -->
+        <section id="premiTornei" hidden></section>
+
         <!-- Gli Oggetti del Millennio stanno QUI e non nel Profilo perche'
              e' qui che si vincono: la vetrina dice anche dove cercare
              quelli che mancano, che e' l'unica informazione utile finche'
@@ -851,6 +855,27 @@
      * disegna soltanto — cosi' cambiare una probabilita' o un portatore
      * non richiede di ricordarsi anche di questa pagina.
      */
+    (function renderPremiTornei() {
+        const box = document.getElementById('premiTornei');
+        if (!box || !window.Rewards || !Rewards.modalitaHtml) return;
+        TORNEI.forEach((t) => {
+            const html = Rewards.modalitaHtml('torneo', { torneo: t.id });
+            if (!html) return;
+            const nome = (document.querySelector('#' + t.prefisso + 'Card .tourney-name') || {}).textContent || t.id;
+            const det = document.createElement('details');
+            det.className = 'rw-modo';
+            const sum = document.createElement('summary');
+            // Nome del torneo da textContent (mai nell'HTML), l'icona a tema davanti.
+            sum.insertAdjacentHTML('afterbegin', Rewards.icona('🎁') + ' ');
+            sum.appendChild(document.createTextNode('Premi · ' + nome.trim()));
+            det.appendChild(sum);
+            det.insertAdjacentHTML('beforeend', html);
+            box.appendChild(det);
+        });
+        Rewards.idrata(box);
+        box.hidden = !box.firstChild;
+    })();
+
     (function renderOggettiMillennio() {
         if (!window.Rewards || !window.SaveManager || !Rewards.MILLENNIUM_ITEMS) return;
         const sezione = document.getElementById('millennioSezione');

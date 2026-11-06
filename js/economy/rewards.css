@@ -70,3 +70,13 @@
 .sl-premi { margin-top: 10px; border: 1px solid var(--reward-accent-soft); border-radius: 12px; background: var(--reward-bg); padding: 8px 12px; }
 .sl-premi > summary { cursor: pointer; font-size: .85rem; font-weight: 600; color: var(--reward-accent); }
 .sl-premi > div { margin-top: 8px; }
+
+.rw-anteprima .rw-sottotitolo { margin-top: 4px; font-weight: 600; color: var(--reward-accent); }
+.rw-anteprima .rw-sottotitolo + li { margin-top: 0; }
+.rw-modo { margin: 12px 0; }
+.rw-modo > summary { cursor: pointer; font-weight: 700; color: var(--reward-accent); padding: 8px 12px; border: 1px solid var(--reward-accent-soft); border-radius: 12px; background: var(--reward-bg); list-style-position: inside; }
+.rw-modo[open] > summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.rw-modo > .rw-anteprima { padding: 12px; border: 1px solid var(--reward-accent-soft); border-top: 0; border-radius: 0 0 12px 12px; background: var(--reward-bg); }
+
+.rw-anteprima .rw-ico { color: var(--reward-accent); display: inline-flex; align-items: center; justify-content: center; font-size: 1.15em; }
+.rw-modo > summary .themed-icon, .sl-premi > summary .themed-icon { margin-right: 4px; }

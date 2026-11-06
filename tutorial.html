@@ -28,6 +28,7 @@
 <script src="js/pwa-register.js"></script>
 <link rel="stylesheet" href="js/ui/page-loader.css">
 <link rel="stylesheet" href="js/ui/topbar.css">
+<link rel="stylesheet" href="js/economy/rewards.css">
     <link rel="stylesheet" href="js/ui/menu-mobile.css">
 <link rel="stylesheet" href="js/ui/deck-switcher.css">
 <title>Yu-Gi-Oh! Millennium Duel Arena — Tutorial</title>
@@ -158,6 +159,7 @@
             <img src="images/characters/solomonMuto.jpg" alt="" onerror="this.remove()">
             <p>Ogni lezione è un piccolo duello preparato: il nonno ti spiega una cosa alla volta e ti indica cosa toccare. Puoi rifarle quando vuoi.</p>
         </div>
+        <div id="premiModalita" hidden></div>
         <div class="tut-sezione">Le basi</div>
         <div class="tut-elenco" id="elencoBasi"></div>
         <div class="tut-sezione">Lezioni brevi</div>
@@ -185,10 +187,12 @@
 <script src="js/ui/deck-switcher.js"></script>
 <script src="js/ui/topbar.js"></script>
     <script src="js/ui/tab-bar.js"></script>
+<script src="js/economy/rewards.js"></script>
 <script>
     PageTopbar.render('#topbarMount', { icon: 'rules', title: 'Tutorial' });
     initAudioManager();
     Icons.hydrate();
+    Rewards.montaPremiModalita('#premiModalita', 'tutorial');
 
     // Le lezioni: l'id è il valore di ?lezione= letto da
     // js/tutorial/tutorial-duel.js, che ne contiene preparazione e passi.

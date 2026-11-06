@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="js/ui/menu-mobile.css">
 <link rel="stylesheet" href="js/ui/deck-switcher.css">
 <link rel="stylesheet" href="js/modes/mode-pages.css">
+<link rel="stylesheet" href="js/economy/rewards.css">
 <title>Yu-Gi-Oh! Millennium Duel Arena — Duello della Settimana</title>
 </head>
 <body>
@@ -48,6 +49,8 @@
 
         <!-- Se col mazzo attivo la regola non si puo' rispettare, qui compare un avviso ben visibile con cosa fare (scrivi()). -->
         <section class="mp-avviso" id="avviso" hidden></section>
+
+        <div id="premiModalita" hidden></div>
 
         <div class="mp-sezione">Il tuo avversario</div>
         <div class="mp-elenco"><div class="mp-voce" id="avversario"></div></div>
@@ -70,10 +73,12 @@
 <script src="js/ui/deck-switcher.js"></script>
 <script src="js/ui/topbar.js"></script>
     <script src="js/ui/tab-bar.js"></script>
+<script src="js/economy/rewards.js"></script>
 <script>
     PageTopbar.render('#topbarMount', { icon: 'star', title: 'Duello della Settimana' });
     initAudioManager();
     Icons.hydrate();
+    Rewards.montaPremiModalita('#premiModalita', 'settimana');
 
     const LIVELLI = [
         { id: 'Facile', nome: 'Facile', icona: '🥉', desc: 'L\'avversario usa il suo mazzo più leggero.' },

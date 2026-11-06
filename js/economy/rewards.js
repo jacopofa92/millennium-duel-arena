@@ -631,19 +631,178 @@
      * si riferisce; l'elenco e' lo stesso per tutte quelle che passano da
      * forDuel. Sicuro con innerHTML: tutto testo scritto in questo file.
      */
-    function previewHtml(difficulty, contesto, senzaTitolo) {
+    const NOME_LIVELLO = { Facile: 'Facile', Medio: 'Normale', Difficile: 'Difficile' };
+    const stelle = (n) => `${n} ${n === 1 ? 'Stella' : 'Stelle'}`;
+    // Le emoji dei premi diventano le icone a tema del gioco (js/ui/icon-library.js): le stesse del Profilo,
+    // quindi Crediti, Stelle, Locazione e Millennio hanno lo stesso disegno ovunque. L'emoji resta come
+    // contenuto di ripiego (se la pagina non carica la libreria, o per un'emoji senza icona).
+    const ICONE_TEMA = {
+        '💰': 'coin', '⭐': 'star', '🃏': 'map', '🔱': 'eye', '👁️': 'eye',
+        '🌅': 'medal', '🎯': 'target', '🏹': 'target', '🤝': 'defensePos', '⚔️': 'attackPos',
+        '📅': 'arena', '🗼': 'tower', '🎁': 'shop', '🖼️': 'collection', '🧩': 'puzzle',
+        '🎓': 'rules', 'ℹ️': 'rules', '🗺️': 'map', '👑': 'crown', '🏆': 'tournament',
+        '🏟️': 'arena', '✨': 'star'
+    };
+    /** Il segnaposto <span data-icon> per un'emoji (Icons.hydrate lo sostituisce con l'SVG); l'emoji se non ha icona. */
+    function icona(emoji) {
+        const nome = ICONE_TEMA[emoji];
+        return nome ? `<span class="icon" data-icon="${nome}">${emoji}</span>` : emoji;
+    }
+    /** Trasforma i segnaposto dentro `el` nelle icone vere. Da chiamare dopo aver messo nell'elemento l'HTML di questo file. */
+    function idrata(el) {
+        if (el && window.Icons && Icons.hydrate) Icons.hydrate(el);
+    }
+
+    /** Una riga dell'elenco premi: icona + testo (HTML scritto qui, mai input dell'utente). */
+    function riga(icon, html, classe) {
+        return `<li${classe ? ` class="${classe}"` : ''}><span class="rw-ico">${icona(icon)}</span><span>${html}</span></li>`;
+    }
+    /** Il riquadro: titolo facoltativo + elenco di righe gia' pronte. */
+    function riquadro(titolo, righe) {
+        return `<div class="rw-anteprima">${titolo ? `<div class="rw-titolo">${titolo}</div>` : ''}<ul>${righe.join('')}</ul></div>`;
+    }
+
+    /** Le righe di un duello VINTO al livello `difficulty` (crediti, bonus del giorno, Stelle ogni 10, ritrovamenti, sconfitta). */
+    function righeVittoria(difficulty) {
         const p = preview(difficulty);
-        const nomeLivello = { Facile: 'Facile', Medio: 'Normale', Difficile: 'Difficile' }[difficulty] || 'Normale';
+        const nomeLivello = NOME_LIVELLO[difficulty] || 'Normale';
         const righe = [];
-        righe.push(`<li><span class="rw-ico">💰</span><span><b>+${p.crediti} crediti</b> per ogni vittoria a ${nomeLivello}${p.ridotta ? ` <em>(oggi sei oltre la ${p.soglia}ª vittoria: valgono la metà, base ${p.creditiPieni})</em>` : ` <em>(dalla ${p.soglia + 1}ª vittoria del giorno la metà)</em>`}</span></li>`);
-        if (p.primaDelGiorno) righe.push(`<li><span class="rw-ico">🌅</span><span><b>+${p.bonusPrimaDelGiorno} crediti</b> in più: sarebbe la tua prima vittoria di oggi</span></li>`);
-        else righe.push(`<li><span class="rw-ico">🌅</span><span>Bonus prima vittoria del giorno (+${p.bonusPrimaDelGiorno}) già preso oggi</span></li>`);
-        righe.push(`<li><span class="rw-ico">🎯</span><span><b>+${p.traguardoStelle} ${p.traguardoStelle === 1 ? 'Stella' : 'Stelle'}</b> ogni ${p.traguardoOgni} vittorie a ${nomeLivello}</span></li>`);
-        p.drops.forEach((d) => {
-            righe.push(`<li><span class="rw-ico">${d.icon}</span><span>${d.nome}: <b>${percento(d.chance)}</b> a ogni vittoria</span></li>`);
-        });
-        righe.push(`<li class="rw-nota"><span class="rw-ico">🤝</span><span>Se perdi: +${p.perdita} crediti. Se abbandoni: niente. Ritrovamenti: al massimo uno per duello.</span></li>`);
-        return `<div class="rw-anteprima">${senzaTitolo ? '' : `<div class="rw-titolo">Premi in caso di vittoria${contesto ? ' · ' + contesto : ''}</div>`}<ul>${righe.join('')}</ul></div>`;
+        righe.push(riga('💰', `<b>+${p.crediti} crediti</b> per ogni vittoria a ${nomeLivello}${p.ridotta ? ` <em>(oggi sei oltre la ${p.soglia}ª vittoria: valgono la metà, base ${p.creditiPieni})</em>` : ` <em>(dalla ${p.soglia + 1}ª vittoria del giorno la metà)</em>`}`));
+        righe.push(p.primaDelGiorno
+            ? riga('🌅', `<b>+${p.bonusPrimaDelGiorno} crediti</b> in più: sarebbe la tua prima vittoria di oggi`)
+            : riga('🌅', `Bonus prima vittoria del giorno (+${p.bonusPrimaDelGiorno}) già preso oggi`));
+        righe.push(riga('🎯', `<b>+${stelle(p.traguardoStelle)}</b> ogni ${p.traguardoOgni} vittorie a ${nomeLivello}`));
+        p.drops.forEach((d) => righe.push(riga(d.icon, `${d.nome}: <b>${percento(d.chance)}</b> a ogni vittoria`)));
+        righe.push(riga('🤝', `Se perdi: +${p.perdita} crediti. Se abbandoni: niente. Ritrovamenti: al massimo uno per duello.`, 'rw-nota'));
+        return righe;
+    }
+
+    /** Come righeVittoria, ma per le modalita' dove il livello cambia (o si sceglie dopo): i tre livelli in una riga sola. */
+    function righeVittoriaTuttiILivelli() {
+        const liv = ['Facile', 'Medio', 'Difficile'];
+        const per = (f) => liv.map((l) => `${f(l)} ${NOME_LIVELLO[l]}`).join(' · ');
+        const p = preview('Medio');
+        const righe = [];
+        righe.push(riga('💰', `Ogni vittoria: <b>${per((l) => '+' + WIN_CREDITS[l])}</b> crediti <em>(dalla ${p.soglia + 1}ª vittoria del giorno la metà)</em>`));
+        righe.push(p.primaDelGiorno
+            ? riga('🌅', `<b>+${p.bonusPrimaDelGiorno} crediti</b> in più la prima vittoria di oggi`)
+            : riga('🌅', `Bonus prima vittoria del giorno (+${p.bonusPrimaDelGiorno}) già preso oggi`));
+        righe.push(riga('🎯', `Ogni ${STAR_MILESTONE_EVERY} vittorie allo stesso livello: <b>${liv.map((l) => '+' + STAR_MILESTONE_REWARD[l]).join('/')} Stelle</b> (Facile/Normale/Difficile)`));
+        righe.push(riga('⭐', `Stella dell'Esagono: <b>${liv.map((l) => percento(STAR_DROP_CHANCE[l])).join(' / ')}</b> a ogni vittoria (Facile/Normale/Difficile)`));
+        DROPS.filter((d) => !d.chanceByDifficulty).forEach((d) => righe.push(riga(d.icon, `${d.nome}: <b>${percento(d.chance)}</b> a ogni vittoria`)));
+        righe.push(riga('🤝', `Se perdi: +${LOSS_CREDITS} crediti. Se abbandoni: niente. Ritrovamenti: al massimo uno per duello.`, 'rw-nota'));
+        return righe;
+    }
+
+    function previewHtml(difficulty, contesto, senzaTitolo) {
+        return riquadro(senzaTitolo ? '' : `Premi in caso di vittoria${contesto ? ' · ' + contesto : ''}`, righeVittoria(difficulty));
+    }
+
+    // ---- Premi PROPRI delle modalita' (oltre a quelli di un duello) -------------------------------
+    // I numeri che hanno una costante nel loro modulo restano li' (js/data/caccia-db.js, settimana-db.js,
+    // torre-db.js): qui si LEGGONO. Quelli che vivevano come numeri nel codice di una modalita' (Puzzle,
+    // Tutorial) vivono ora qui, e le modalita' li chiedono a Rewards.
+    const PUZZLE_CREDITI_BASE = 60;
+    const PUZZLE_CREDITI_PER_DIFFICOLTA = 40;
+    const TUTORIAL_CREDITI = 200;
+    /** Crediti per la PRIMA soluzione di un puzzle di difficolta' 1..3. */
+    function puzzleCrediti(difficolta) { return PUZZLE_CREDITI_BASE + PUZZLE_CREDITI_PER_DIFFICOLTA * (difficolta || 1); }
+
+    /**
+     * Il riquadro "Premi di questa modalita'" per `id`: 'caccia' | 'settimana' | 'rivincite' | 'torre' |
+     * 'puzzle' | 'tutorial' | 'storia' | 'torneo' (con `opzioni.torneo` = id del torneo). Dice cosa paga la
+     * modalita' IN PIU' e, dove vale, il premio normale di un duello vinto. Torna '' per un id sconosciuto
+     * o se manca il database della modalita' (la pagina non lo ha caricato).
+     */
+    function modalitaHtml(id, opzioni) {
+        const o = opzioni || {};
+        const n = (x) => Number(x).toLocaleString('it-IT');
+        const speciali = [];
+        let standard = null;
+        let titolo = '';
+        if (id === 'caccia') {
+            const db = window.cacciaDatabase;
+            if (!db) return '';
+            titolo = 'Premi della Caccia al Boss';
+            const p = db.premio;
+            speciali.push(riga('🏹', `Prima caccia vinta della settimana: <b>+${n(p.crediti)} crediti</b> e <b>+${stelle(p.stelle)}</b>, più <b>+${stelle(p.bonusVeloce.stelle)}</b> extra se vinci entro ${p.bonusVeloce.entroTurni} turni. Una volta a settimana.`));
+            standard = () => riga('⚔️', `Come ogni duello, a ${NOME_LIVELLO[db.livello] || db.livello}:`, 'rw-sottotitolo').concat(righeVittoria(db.livello).join(''));
+        } else if (id === 'settimana') {
+            const db = window.settimanaDatabase;
+            if (!db) return '';
+            titolo = 'Premi del Duello della Settimana';
+            const livelli = ['Facile', 'Medio', 'Difficile'];
+            const premio = (l) => { const x = db.premi[l]; return `${n(x.crediti)}${x.stelle ? ` + ${stelle(x.stelle)}` : ''}`; };
+            speciali.push(riga('📅', `Prima vittoria della settimana a ogni livello: <b>${livelli.map((l) => `${NOME_LIVELLO[l]} ${premio(l)}`).join(' · ')}</b> (crediti). Una volta a settimana per livello.`));
+            standard = () => righeVittoriaTuttiILivelli().join('');
+        } else if (id === 'rivincite') {
+            titolo = 'Premi delle Rivincite';
+            speciali.push(riga('⚔️', 'Nessun premio in più: vincere una Rivincita assegna la <b>medaglia</b> di quel livello, che resta nella schermata Rivincite.'));
+            standard = () => righeVittoriaTuttiILivelli().join('');
+        } else if (id === 'torre') {
+            const db = window.torreDatabase;
+            if (!db) return '';
+            titolo = 'Premi della Torre dei Duellanti';
+            const fasce = db.fasce.map((f) => `piani ${f.daPiano}–${f.aPiano} ${NOME_LIVELLO[f.livello] || f.livello}`).join(' · ');
+            speciali.push(riga('🗼', `Il livello cresce con i piani (${fasce}); i Boss dei piani ${Object.keys(db.boss).join(', ')} hanno il loro. Ogni piano vinto paga come un duello a quel livello.`));
+            speciali.push(riga('🎁', `Dopo ogni piano scegli fra <b>Ristoro</b> (+${db.recuperoLp} Life Point) e un <b>oggetto</b> per la scalata.`));
+            speciali.push(riga('🖼️', 'Illustrazioni alternative di alcune carte: una a sorte superando il piano 15 e una conquistando la Torre, finché ne restano da sbloccare.'));
+            standard = () => righeVittoriaTuttiILivelli().join('');
+        } else if (id === 'puzzle') {
+            titolo = 'Premi dei Puzzle';
+            speciali.push(riga('🧩', `Prima soluzione di un puzzle: <b>+${puzzleCrediti(1)}</b> (difficoltà 1) · <b>+${puzzleCrediti(2)}</b> (difficoltà 2) · <b>+${puzzleCrediti(3)}</b> (difficoltà 3) crediti. Rifarlo non paga di nuovo.`));
+            speciali.push(riga('⭐', 'Le stelle del puzzle sono un voto, non una valuta: tre al primo tentativo, due entro il terzo.'));
+            speciali.push(riga('ℹ️', 'Un puzzle non è un duello vero: niente premio di vittoria, bonus del giorno o ritrovamenti.', 'rw-nota'));
+        } else if (id === 'tutorial') {
+            titolo = 'Premi del Tutorial';
+            speciali.push(riga('🎓', `Prima lezione completata: <b>+${TUTORIAL_CREDITI} crediti</b>, una volta sola.`));
+            speciali.push(riga('ℹ️', 'Le altre lezioni non pagano, e una lezione non è un duello vero: niente premio di vittoria o ritrovamenti.', 'rw-nota'));
+        } else if (id === 'storia') {
+            titolo = 'Premi della Storia';
+            speciali.push(riga('🗺️', `Ogni arco narrativo completato la prima volta, a qualsiasi livello: <b>+${stelle(STELLE_PER_ARCO_STORIA)}</b> e <b>+${CREDITI_PER_ARCO_STORIA} crediti</b>.`));
+            speciali.push(riga('👑', 'Fine della campagna: premio finale <b>×1 a Facile, ×1,5 a Normale, ×2 a Difficile</b>, pagato una volta per livello (la Grande Guerra ha un solo livello).'));
+            speciali.push(riga('🖼️', 'A Difficile, alcune tappe regalano un\'illustrazione alternativa di una carta, una volta sola.'));
+            standard = () => riga('⚔️', 'Ogni duello vinto paga come in Duello Libero, al livello della storia:', 'rw-sottotitolo').concat(righeVittoriaTuttiILivelli().join(''));
+        } else if (id === 'torneo') {
+            const t = TOURNAMENT_COMPLETION[o.torneo];
+            if (!t) return '';
+            titolo = 'Premi del torneo';
+            const liv = ['Facile', 'Medio', 'Difficile'];
+            const per = (valori) => liv.map((l) => `${valori[l]} ${NOME_LIVELLO[l]}`).join(' · ');
+            speciali.push(riga('🏆', `Torneo completato: <b>${per(t.credits)}</b> crediti`));
+            Object.keys(t).filter((c) => c !== 'credits').forEach((c) => {
+                const meta = CURRENCY_META[c] || { icon: '•', nome: c };
+                speciali.push(riga(meta.icon, `<b>${per(t[c])}</b> ${meta.nome}`));
+            });
+            const b = FIRST_COMPLETION_BONUS[o.torneo] || {};
+            const bonus = Object.keys(b).map((c) => `+${b[c]} ${(CURRENCY_META[c] || { nome: c }).nome}`);
+            if (bonus.length) speciali.push(riga('✨', `La prima volta in assoluto, in più: <b>${bonus.join(', ')}</b>`));
+            speciali.push(riga('🏟️', `Ogni duello vinto dentro il torneo: <b>+${TOURNAMENT_DUEL_CREDITS} crediti</b>. Qui non escono ritrovamenti.`));
+            const inPalio = Object.keys(MILLENNIUM_ITEMS).map((k) => MILLENNIUM_ITEMS[k]).filter((it) => it.tornei.indexOf(o.torneo) !== -1);
+            if (inPalio.length) {
+                speciali.push(riga('👁️', `Oggetti del Millennio in palio: ${inPalio.map((it) => `${it.icon} ${it.nome} (battendo ${it.nomeChi})`).join(', ')}. <b>${Math.round(MILLENNIUM_ITEM_CHANCE * 100)}%</b> ogni volta; una copia sola per oggetto.`));
+            }
+        } else {
+            return '';
+        }
+        const righe = speciali.slice();
+        if (standard) righe.push(standard());
+        return riquadro(titolo, righe);
+    }
+
+    /**
+     * Mette in `destinazione` (elemento o selettore) un <details> richiudibile "Premi di questa modalita'"
+     * col contenuto di modalitaHtml. Non fa nulla se l'id non ha premi da mostrare. Chiuso di default:
+     * c'e' per chi lo cerca, senza allungare la pagina.
+     */
+    function montaPremiModalita(destinazione, id, opzioni) {
+        const el = typeof destinazione === 'string' ? document.querySelector(destinazione) : destinazione;
+        if (!el) return;
+        const html = modalitaHtml(id, opzioni);
+        if (!html) { el.hidden = true; return; }
+        el.hidden = false;
+        el.innerHTML = `<details class="rw-modo"><summary>${icona('🎁')} Premi di questa modalità</summary>${html}</details>`;
+        idrata(el);
     }
 
     /**
@@ -728,6 +887,12 @@
         previewChallenge: previewChallenge,
         preview: preview,
         previewHtml: previewHtml,
+        modalitaHtml: modalitaHtml,
+        montaPremiModalita: montaPremiModalita,
+        idrata: idrata,
+        icona: icona,
+        puzzleCrediti: puzzleCrediti,
+        TUTORIAL_CREDITI: TUTORIAL_CREDITI,
         _rollDrop: rollDrop, // solo per i test (tests/specs/premi-anteprima-duello-libero-e-tag.spec.js)
         rulesSummary: rulesSummary,
         summaryHtml: summaryHtml,

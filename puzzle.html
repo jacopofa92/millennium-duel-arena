@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="js/ui/menu-mobile.css">
 <link rel="stylesheet" href="js/ui/deck-switcher.css">
 <link rel="stylesheet" href="js/modes/mode-pages.css">
+<link rel="stylesheet" href="js/economy/rewards.css">
 <title>Yu-Gi-Oh! Millennium Duel Arena — Puzzle</title>
 </head>
 <body>
@@ -40,6 +41,7 @@
     <main class="mp-main">
         <p class="mp-intro">Una situazione già pronta e un solo turno a disposizione: porta a zero i Life Point dell'avversario prima di passare il turno. Tre stelle se lo risolvi al primo tentativo.</p>
         <div class="mp-riepilogo" id="riepilogo"></div>
+        <div id="premiModalita" hidden></div>
         <div id="elenco"></div>
     </main>
 
@@ -54,10 +56,12 @@
 <script src="js/ui/deck-switcher.js"></script>
 <script src="js/ui/topbar.js"></script>
     <script src="js/ui/tab-bar.js"></script>
+<script src="js/economy/rewards.js"></script>
 <script>
     PageTopbar.render('#topbarMount', { icon: 'puzzle', title: 'Puzzle' });
     initAudioManager();
     Icons.hydrate();
+    Rewards.montaPremiModalita('#premiModalita', 'puzzle');
 
     const LIVELLI = { 1: 'Per cominciare', 2: 'Ci vuole un\'idea', 3: 'Da maestri' };
     const stato = SaveManager.getModeState('puzzle') || {};

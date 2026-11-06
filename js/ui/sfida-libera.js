@@ -156,8 +156,9 @@
         box.hidden = false;
         const p = Rewards.preview(livello);
         const nome = (LIVELLI.find((l) => l.key === livello) || {}).label || '';
-        el('premiSommario').textContent = `🎁 Premi della vittoria a ${nome}: +${p.crediti} crediti${p.primaDelGiorno ? ` (+${p.bonusPrimaDelGiorno} oggi)` : ''}`;
+        el('premiSommario').innerHTML = `${Rewards.icona('🎁')} Premi della vittoria a ${escape(nome)}: +${p.crediti} crediti${p.primaDelGiorno ? ` (+${p.bonusPrimaDelGiorno} oggi)` : ''}`;
         el('premiCorpo').innerHTML = Rewards.previewHtml(livello, '', true);
+        Rewards.idrata(box);
     }
 
     function mostraRitratto(character) {

@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="js/ui/menu-mobile.css">
 <link rel="stylesheet" href="js/ui/deck-switcher.css">
 <link rel="stylesheet" href="js/modes/mode-pages.css">
+<link rel="stylesheet" href="js/economy/rewards.css">
 <title>Yu-Gi-Oh! Millennium Duel Arena — Caccia al Boss</title>
 </head>
 <body>
@@ -47,7 +48,7 @@
             <p id="regole"></p>
         </section>
 
-        <div class="mp-sezione">Premio della settimana</div>
+        <div class="mp-sezione">Premi</div>
         <section class="mp-pannello" id="premio"></section>
 
         <button type="button" class="mp-btn" id="vai">🏹 Inizia la caccia</button>
@@ -67,6 +68,7 @@
 <script src="js/ui/deck-switcher.js"></script>
 <script src="js/ui/topbar.js"></script>
     <script src="js/ui/tab-bar.js"></script>
+<script src="js/economy/rewards.js"></script>
 <script>
     PageTopbar.render('#topbarMount', { icon: 'skull', title: 'Caccia al Boss' });
     initAudioManager();
@@ -99,11 +101,14 @@
         document.getElementById('bossFrase').textContent = b.titolo;
         document.getElementById('regole').textContent = `Hai ${cacciaDatabase.turni} turni tuoi per portare il Boss a zero. Comincia sempre tu. I tuoi Life Point sono quelli di un duello normale.`;
 
-        const p = cacciaDatabase.premio;
-        document.getElementById('premio').innerHTML = '<p></p>';
-        document.getElementById('premio').firstChild.textContent = stato.vinta
-            ? 'Premio di questa settimana già preso. Puoi comunque tornare a cacciare per battere il tuo record di turni.'
-            : `Prima caccia vinta: ${p.crediti} Crediti e ${p.stelle} Stelle, più ${p.bonusVeloce.stelle} Stella extra se vinci entro ${p.bonusVeloce.entroTurni} turni.`;
+        // Lo stato (premio gia' preso o no) in una riga, poi l'elenco completo dei premi da Rewards.modalitaHtml.
+        const premio = document.getElementById('premio');
+        premio.innerHTML = '<p></p>';
+        premio.firstChild.textContent = stato.vinta
+            ? 'Premio di questa settimana già preso. Puoi comunque tornare a cacciare per battere il tuo record di turni: ogni vittoria paga comunque come un duello normale.'
+            : 'Il premio della settimana è ancora da prendere.';
+        premio.insertAdjacentHTML('beforeend', Rewards.modalitaHtml('caccia'));
+        Rewards.idrata(premio);
 
         document.getElementById('vai').onclick = () => {
             if (window.NativeHaptics) NativeHaptics.light();

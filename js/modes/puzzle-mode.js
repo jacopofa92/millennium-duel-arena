@@ -243,7 +243,8 @@
             if (stelle === 3 && (prima.stelle || 0) < 3) ChallengeTracker.recordProgress('puzzleThreeStars', { puzzleId: p.id });
         }
         if (!prima.risolto && window.SaveManager) {
-            const crediti = 60 + 40 * (p.difficolta || 1);
+            // La formula vive in Rewards.puzzleCrediti (la stessa che la pagina Puzzle mostra al giocatore).
+            const crediti = Rewards.puzzleCrediti(p.difficolta);
             SaveManager.addCurrency('credits', crediti);
             voci.push({
                 currency: 'credits',

@@ -510,6 +510,7 @@
             <div class="storie-titolo">Le Storie</div>
             <div class="storie-sotto">Scegli quale leggenda rivivere</div>
         </div>
+        <div id="premiModalita" hidden></div>
         <div class="campagne" id="campagneLista"></div>
     </section>
 
@@ -1775,6 +1776,7 @@
         if (!campagnaAperta) {
             document.getElementById('sceltaCampagna').hidden = false;
             document.getElementById('vistaMappa').hidden = true;
+            if (window.Rewards) Rewards.montaPremiModalita('#premiModalita', 'storia');
             renderCampagne();
             return;
         }

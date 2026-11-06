@@ -492,6 +492,7 @@
         if (window.Rewards && Rewards.previewHtml) {
             premi.hidden = false;
             premi.innerHTML = Rewards.previewHtml(controBoss ? tagDatabase.livelloBoss : scelta.livello, 'Tag Team');
+            Rewards.idrata(premi);
         } else premi.hidden = true;
         const lp = regoleLp();
         regola($('regolaLp'), 'Life Point', interruttore(lp, scelta.lp, (v) => { scelta.lp = v; }, 'Life Point'), (lp.find((r) => r.valore === scelta.lp) || {}).desc);

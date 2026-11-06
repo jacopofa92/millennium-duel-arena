@@ -25,6 +25,9 @@ module.exports = {
                 }), key);
                 t.assert(r.sommario.includes(`+${credito} crediti`), `Sommario di ${key} senza +${credito}: ${r.sommario}`);
                 t.assert(r.atteso.crediti === credito || r.atteso.ridotta, `Rewards.preview(${key}) incoerente`);
+                const senzaSvg = await page.evaluate(() => Array.from(document.querySelectorAll('.sl-premi .rw-ico, .sl-premi summary'))
+                    .filter((e) => !e.querySelector('svg.themed-icon')).length);
+                t.assert(senzaSvg === 0, `Duello Libero ${key}: icone a tema mancanti (${senzaSvg})`);
                 t.assert(/Stella/.test(r.corpo) && /Carta Locazione/.test(r.corpo) && /Carta del Millennio/.test(r.corpo),
                     `Elenco ritrovamenti incompleto per ${key}: ${r.corpo}`);
             }
@@ -59,6 +62,8 @@ module.exports = {
             const testo = () => page.evaluate(() => document.getElementById('premiTag').textContent);
             let s = await testo();
             t.assert(s.includes('Tag Team') && s.includes('+50 crediti'), `Tag a Normale deve mostrare +50: ${s}`);
+            const tagSenzaSvg = await page.evaluate(() => Array.from(document.querySelectorAll('#premiTag .rw-ico')).filter((e) => !e.querySelector('svg.themed-icon')).length);
+            t.assert(tagSenzaSvg === 0, `Tag: icone a tema mancanti (${tagSenzaSvg})`);
             await page.evaluate(() => {
                 const b = Array.from(document.querySelectorAll('#regolaLivello button')).find((x) => /Difficile/.test(x.textContent));
                 b.click();

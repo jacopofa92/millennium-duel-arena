@@ -226,8 +226,13 @@ module.exports = {
                 await p.close();
             }
             const db = fs.readFileSync(path.join(RADICE, 'js', 'data', 'challenges-db.js'), 'utf8');
-            const sezione = db.slice(db.indexOf("modalita: 'torre'") - 200);
-            t.assert(!/starChips|locatorCards|millenniumCards|cards:/.test(sezione.slice(0, sezione.lastIndexOf('];'))),
+            // Solo le Sfide della Torre: dalla prima all'inizio del gruppo successivo (Settimana e Caccia, che
+            // pagano anche Stelle). Prima si leggeva fino a fine file e il test si rompeva a ogni Sfida nuova.
+            const inizio = db.indexOf("modalita: 'torre'") - 200;
+            const finePrevista = db.indexOf('// Duello della Settimana', inizio);
+            const sezione = db.slice(inizio, finePrevista > inizio ? finePrevista : db.lastIndexOf('];'));
+            t.assert(finePrevista > inizio, 'Il confine dopo le Sfide della Torre non si trova piu\': aggiornare il test');
+            t.assert(!/starChips|locatorCards|millenniumCards|cards:/.test(sezione),
                 'Le Sfide della Torre pagano solo crediti');
         }
     }
