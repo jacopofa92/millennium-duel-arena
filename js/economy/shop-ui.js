@@ -344,6 +344,18 @@
         fisso.appendChild(tabs);
         root.appendChild(pannelli);
 
+        // Barra agganciata: la fascia sopra di lei (la fotocamera) si copre solo da quel momento (classe is-agganciata).
+        (function osservaAggancio() {
+            let attesa = 0;
+            const controlla = () => {
+                attesa = 0;
+                const alto = parseFloat(getComputedStyle(fisso).top) || 0;
+                fisso.classList.toggle('is-agganciata', fisso.getBoundingClientRect().top <= alto + 0.5 && window.scrollY > 4);
+            };
+            window.addEventListener('scroll', () => { if (!attesa) attesa = requestAnimationFrame(controlla); }, { passive: true });
+            controlla();
+        })();
+
         const riduciMovimento = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
         function posizionaBarra() {
             const v = voci.find((x) => x.sc.id === schedaAttiva);

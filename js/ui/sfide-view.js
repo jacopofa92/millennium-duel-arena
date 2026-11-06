@@ -382,6 +382,19 @@
             corpo.addEventListener('touchcancel', () => { corpo.style.transform = ''; corpo.style.opacity = ''; x0 = null; }, { passive: true });
         })();
         if (window.Icons) Icons.hydrate(root.querySelector('.sv-sezioni'));
+        const fissoSv = root.querySelector('.sv-fisso');
+
+        // Barra agganciata: la fascia sopra di lei (la fotocamera) si copre solo da quel momento (classe is-agganciata).
+        (function osservaAggancio() {
+            let attesa = 0;
+            const controlla = () => {
+                attesa = 0;
+                const alto = parseFloat(getComputedStyle(fissoSv).top) || 0;
+                fissoSv.classList.toggle('is-agganciata', fissoSv.getBoundingClientRect().top <= alto + 0.5 && window.scrollY > 4);
+            };
+            window.addEventListener('scroll', () => { if (!attesa) attesa = requestAnimationFrame(controlla); }, { passive: true });
+            controlla();
+        })();
         window.addEventListener('resize', posizionaBarra);
         requestAnimationFrame(posizionaBarra);
         if (document.fonts && document.fonts.ready) document.fonts.ready.then(posizionaBarra);

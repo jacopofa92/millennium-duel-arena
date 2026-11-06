@@ -521,3 +521,21 @@
 .shop-root .shop-head h2 .shop-ico { width: 1.2em; height: 1.2em; margin-right: 0.35em; color: var(--shop-gold); }
 .shop-root .shop-ico--eye { color: #d7b8ff; }
 .shop-root .shop-ico--map { color: #8fe0ff; }
+
+/* Agganciata: la fascia della fotocamera sopra la barra si copre (altrimenti il contenuto vi scorre dentro, visibile sopra le valute). */
+.shop-root .shop-fisso::before {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 100%; height: var(--mm-fotocamera, 0px);
+    background: rgba(14, 11, 8, 0.97); opacity: 0; transition: opacity 0.15s ease; pointer-events: none;
+}
+.shop-root .shop-fisso.is-agganciata::before { opacity: 1; }
+
+/* BARRA FINO AL BORDO: agganciata a top 0, copre anche la fascia della fotocamera (niente contenuto che scorre sopra le valute); il margine
+   del foro e' DENTRO la barra (padding), le valute stanno sotto. A riposo il margine negativo la porta fino al bordo dello schermo. */
+.shop-root .shop-fisso {
+    top: 0;
+    padding-top: calc(var(--mm-fotocamera, 0px) + 8px);
+    margin-top: calc(-1 * (var(--mm-fotocamera, 0px) + 14px));
+}
+@media (min-width: 601px) { .shop-root .shop-fisso { margin-top: calc(-1 * (var(--mm-fotocamera, 0px) + 26px)); } }
+@media (max-height: 500px) and (orientation: landscape) { .shop-root .shop-fisso { margin-top: calc(-1 * (var(--mm-fotocamera, 0px) + 8px)); } }
+.shop-root .shop-fisso::before { display: none; }

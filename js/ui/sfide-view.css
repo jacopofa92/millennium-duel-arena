@@ -334,3 +334,21 @@
 .sfide-vista .sv-icona .emoji-tema { width: 1.15em; height: 1.15em; margin: 0; color: var(--sv-oro); filter: drop-shadow(0 0 4px rgba(247, 215, 116, 0.35)); }
 .sfide-vista .sv-gruppo .emoji-tema, .sfide-vista .sv-premio-voce .emoji-tema { color: var(--sv-oro); }
 .sfide-vista .sv-spunta .emoji-tema { width: 0.9em; height: 0.9em; margin: 0; color: #1c1620; }
+
+/* Agganciata: la fascia della fotocamera sopra le schede si copre. */
+.sfide-vista .sv-fisso::before {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 100%; height: var(--mm-fotocamera, 0px);
+    background: rgba(14, 11, 8, 0.97); opacity: 0; transition: opacity 0.15s ease; pointer-events: none;
+}
+.sfide-vista .sv-fisso.is-agganciata::before { opacity: 1; }
+
+/* BARRA FINO AL BORDO: agganciata a top 0, copre la fascia della fotocamera; le schede stanno sotto il foro (padding), a riposo il margine
+   negativo la porta fino al bordo dello schermo. */
+.sfide-vista .sv-fisso {
+    top: 0;
+    padding-top: calc(var(--mm-fotocamera, 0px) + 8px);
+    margin-top: calc(-1 * (var(--mm-fotocamera, 0px) + 30px));
+}
+@media (max-width: 600px) { .sfide-vista .sv-fisso { margin-top: calc(-1 * (var(--mm-fotocamera, 0px) + 14px)); } }
+@media (max-height: 500px) and (orientation: landscape) { .sfide-vista .sv-fisso { margin-top: calc(-1 * (var(--mm-fotocamera, 0px) + 8px)); } }
+.sfide-vista .sv-fisso::before { display: none; }
