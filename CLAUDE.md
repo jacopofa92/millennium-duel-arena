@@ -4260,6 +4260,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.96 (cache v606, su `main`): (1) **segnalini: il numero era CAPOVOLTO** (lo shader campionava l'atlante con `1.-l.y`, ma la tela 2D si carica senza flip: ora `l.y`; due cifre piu' vicine). (2) **Tag Team: il riquadro della squadra aperto si chiude con un tocco fuori** (`creaPannello` in tag-mode.js, ascolto `pointerdown` in capture sul documento). (3) **Nome e 'LP' dei duellanti**: nome in serif Palatino maiuscolo spaziato con riempimento oro (gradiente sul solo `.name-text`, ombra con `filter` sul contenitore) e 'LP' come incisione con filo verticale; **i numeri dei Life Point non si toccano** (scelta dell'utente: lo stile e' perfetto). Suite completa non eseguita.
 
+1.5.97 (cache v607, su `main`): la risposta del compagno nel Tag ('Seto Kaiba preferisce andare a turno...') resta visibile almeno 2,6 s: il timer fisso da 4 s scorreva quasi tutto sotto la scena del cambio turno (che nasconde gli avvisi, `body.tgs-turno-attivo`); ora conta solo il tempo in cui e' davvero a vista (tetto 12 s). Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

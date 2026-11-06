@@ -208,8 +208,19 @@
             ? `🔄 ${x.da} accetta: questo turno ${giochiTu ? 'giochi tu' : 'gioca lui'}`
             : `🔄 ${x.da} preferisce andare a turno: ${giochiTu ? 'giochi tu' : 'gioca lui'}`;
         avvisoRisposta.hidden = false;
-        clearTimeout(timerRisposta);
-        timerRisposta = window.setTimeout(() => { if (avvisoRisposta) avvisoRisposta.hidden = true; }, 4000);
+        // L'avviso nasce a inizio turno, proprio mentre la scena del cambio turno (3 s) tiene nascosti gli avvisi
+        // (body.tgs-turno-attivo): un timer fisso scorreva quasi tutto sotto la scena e restava mezzo secondo a vista. Si conta
+        // il tempo in cui e' DAVVERO visibile (almeno 2,5 s), con un tetto complessivo per non restare mai appeso.
+        clearInterval(timerRisposta);
+        let visibileMs = 0, totaleMs = 0;
+        timerRisposta = window.setInterval(() => {
+            totaleMs += 150;
+            if (!document.body.classList.contains('tgs-turno-attivo')) visibileMs += 150;
+            if (visibileMs >= 2600 || totaleMs >= 12000) {
+                clearInterval(timerRisposta);
+                if (avvisoRisposta) avvisoRisposta.hidden = true;
+            }
+        }, 150);
     }
 
     /**
