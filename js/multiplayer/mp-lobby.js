@@ -389,6 +389,9 @@
             const titolo = el.querySelector('.mp-term-title');
             titolo.classList.remove('is-glitch'); void titolo.offsetWidth; titolo.classList.add('is-glitch');
         }
+        // Il corpo ha un'altezza massima (due righe in orizzontale, sei in verticale) e nasconde cio' che avanza: senza questo restavano
+        // fuori proprio le righe nuove, e la riga attiva non si leggeva. Si porta in fondo ad ogni giro (anche mentre la riga si scrive).
+        corpo.scrollTop = corpo.scrollHeight;
         if (attesa.righe > righePrima) tieniInVista(el);
         $('mpTermFoot').textContent = `TENTATIVO ${Math.max(1, attesa.tentativo)}`
             + (secondi >= 25 ? ' · PUÒ SERVIRE FINO A UN MINUTO: RESTA SU QUESTA PAGINA' : '');
@@ -763,11 +766,15 @@
         const sotto = $('mpSottotitolo');
         if (titolo) titolo.textContent = modo.titolo;
         if (sotto) sotto.textContent = modo.descrizione;
+        // L'emblema dell'intestazione: l'icona a tema della modalita' (stessa tabella del menu e della barra in basso).
+        const emblema = $('mpHeroIcon');
+        if (emblema && modo.icona && window.Icons) { emblema.dataset.icon = modo.icona; Icons.hydrate(emblema.parentNode); }
         // I premi della modalita' (Rewards.modalitaHtml): oggi solo l'Assalto al Boss ne ha di suoi.
         if (modo.id === 'raid' && sotto && window.Rewards && !$('mpPremiModo')) {
             const box = document.createElement('div');
             box.id = 'mpPremiModo';
-            sotto.insertAdjacentElement('afterend', box);
+            // Sotto l'intestazione intera (emblema + testi), non dentro la colonna dei testi.
+            (sotto.closest('.mp-hero') || sotto).insertAdjacentElement('afterend', box);
             Rewards.montaPremiModalita(box, 'raid');
         }
         const sp = $('mpSpecchioGroup');
@@ -826,6 +833,8 @@
         applicaModoDellaSala();
         attivaRegolaDelModo();
         setupArena = window.DuelSetup.mount($('mpSetupMount'), {
+            // Compatto: la lista delle musiche e' di una ventina di tracce e da sola occupava mezza sala; cosi' scorre in una finestra.
+            compact: true,
             readOnly: !sonoHost,
             initial: scelta,
             onChange: (sel) => {

@@ -155,24 +155,36 @@
             <!-- ============ Ingresso ============ -->
             <div data-vista="ingresso">
                 <div class="mp-screen">
-                    <h2 class="mp-title" id="mpTitolo">Duello Multiplayer</h2>
-                    <p class="mp-sub" id="mpSottotitolo">Sfida un amico online, in tempo reale</p>
+                    <!-- Intestazione: l'emblema della modalita' (icona a tema, scelta in mp-lobby.js da MP_MODI) accanto a titolo e descrizione. -->
+                    <header class="mp-hero">
+                        <span class="mp-hero-emblema" aria-hidden="true"><span class="icon" id="mpHeroIcon" data-icon="multiplayer"></span></span>
+                        <div class="mp-hero-testi">
+                            <h2 class="mp-title" id="mpTitolo">Duello Multiplayer</h2>
+                            <p class="mp-sub" id="mpSottotitolo">Sfida un amico online, in tempo reale</p>
+                        </div>
+                    </header>
 
                     <div class="mp-choice">
-                        <button type="button" class="mp-tab active" id="mpTabCreate"><span class="mp-tab-icon">🏛️</span>Crea Stanza</button>
-                        <button type="button" class="mp-tab" id="mpTabJoin"><span class="mp-tab-icon">🔑</span>Entra con codice</button>
+                        <button type="button" class="mp-tab active" id="mpTabCreate"><span class="mp-tab-icon icon" data-icon="arena"></span>Crea Stanza</button>
+                        <button type="button" class="mp-tab" id="mpTabJoin"><span class="mp-tab-icon icon" data-icon="login"></span>Entra con codice</button>
                     </div>
 
-                    <div class="mp-lobby-panel" id="mpPanelCreate">
+                    <div class="mp-lobby-panel mp-scheda" id="mpPanelCreate">
                         <p>Apri una stanza, scegli arena e musica mentre aspetti, e il duello parte appena arriva il tuo avversario.</p>
+                        <!-- I tre passi sono una vera sequenza: la numerazione dice l'ordine. -->
+                        <ol class="mp-passi">
+                            <li><b>Apri la stanza</b><span>ricevi un codice di cinque lettere</span></li>
+                            <li><b>Condividi il codice</b><span>con chi vuoi sfidare</span></li>
+                            <li><b>Scegliete arena e mazzo</b><span>poi premete «Sono pronto»</span></li>
+                        </ol>
                         <!-- Solo nel Tag Team (?modo=tag): il formato decide quanti posti ha la stanza (js/multiplayer/mp-tag-sala.js). -->
                         <div class="tg-formati" id="mpTagFormato" hidden></div>
                         <button type="button" class="mp-btn mp-btn--primary" id="mpCreateBtn">Apri la stanza</button>
                     </div>
 
-                    <div class="mp-lobby-panel" id="mpPanelJoin" style="display:none;">
+                    <div class="mp-lobby-panel mp-scheda" id="mpPanelJoin" style="display:none;">
                         <p>Inserisci il codice che ti ha dato chi ha creato la stanza.</p>
-                        <input type="text" id="mpJoinCode" maxlength="5" placeholder="A3K9Q" class="mp-code-input">
+                        <input type="text" id="mpJoinCode" maxlength="5" placeholder="A3K9Q" class="mp-code-input" autocomplete="off" autocapitalize="characters" spellcheck="false">
                         <button type="button" class="mp-btn mp-btn--primary" id="mpJoinBtn">Entra nella Stanza</button>
                     </div>
 
@@ -191,7 +203,10 @@
             <!-- ============ Sala d'attesa ============ -->
             <div data-vista="attesa">
                 <div class="mp-screen">
-                    <div class="mp-room-code-box" id="mpRoomCodeBox">
+                    <!-- Due colonne su schermo largo: a sinistra la stanza (codice e posti), a destra le scelte. Su telefono una sotto l'altra. -->
+                    <div class="mp-attesa-griglia">
+                    <div class="mp-col-stanza">
+                    <div class="mp-room-code-box mp-scheda" id="mpRoomCodeBox">
                         <span class="mp-room-code-label">Codice della stanza</span>
                         <div class="mp-code-tiles" id="mpCodeTiles"></div>
                         <!-- Il codice anche come testo unico: le tessere qui
@@ -200,7 +215,7 @@
                              (una persona con screen reader, o un test) voglia
                              il codice intero in un colpo solo. -->
                         <span class="mp-room-code" id="mpRoomCodeValue" hidden>-----</span>
-                        <button type="button" class="mp-copy-btn" id="mpCopyBtn">📋 Copia codice</button>
+                        <button type="button" class="mp-copy-btn" id="mpCopyBtn"><span class="icon" data-icon="save"></span> Copia codice</button>
                     </div>
 
                     <div class="mp-seats">
@@ -221,6 +236,9 @@
                         </div>
                     </div>
                     <p class="mp-occupancy"><strong id="mpOccupancy">1</strong> / 2 duellanti nella stanza</p>
+                    </div><!-- /mp-col-stanza -->
+
+                    <div class="mp-col-setup">
 
                     <!-- Il mazzo è una scelta PERSONALE: sta fuori dal
                          riquadro delle impostazioni condivise, che l'ospite
@@ -285,6 +303,8 @@
                         </div>
                         <div id="mpSetupMount"></div>
                     </div>
+                    </div><!-- /mp-col-setup -->
+                    </div><!-- /mp-attesa-griglia -->
 
                     <!-- Il duello non comincia da sé quando la stanza si
                          riempie: parte quando LO DICONO ENTRAMBI. Prima si
@@ -317,7 +337,7 @@
                         <span class="mp-room-code-label">Codice della stanza</span>
                         <div class="mp-code-tiles" id="mpTagCodice"></div>
                         <span class="mp-room-code" id="mpTagCodiceTesto" hidden>-----</span>
-                        <button type="button" class="mp-copy-btn" id="mpTagCopia">📋 Copia codice</button>
+                        <button type="button" class="mp-copy-btn" id="mpTagCopia"><span class="icon" data-icon="save"></span> Copia codice</button>
                     </div>
                     <div class="tg-sala" id="mpTagSala"></div>
                     <div class="mp-own">

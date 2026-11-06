@@ -532,7 +532,7 @@
 // v576: gabbia d'acciaio e Spade Rivelatrici ridisegnate per il campo zenitale.
 // v577: ripristinato l'effetto precedente delle Spade e rimosso il rendering WebGL della Gabbia.
 // v578: Spade Rivelatrici riportate alla resa WebGL precedente al cambio prospettico.
-const CACHE_NAME = 'ygo-duel-arena-v582';
+const CACHE_NAME = 'ygo-duel-arena-v583';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare

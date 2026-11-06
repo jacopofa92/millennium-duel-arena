@@ -1176,3 +1176,99 @@ body.ha-tab-bar .mp-lobby { padding-bottom: calc(var(--mm-barra-h) + 190px); }
     body.ha-tab-bar .mp-ready { padding: 12px; }
     body.ha-tab-bar .mp-ready-nota { font-size: 0.74rem; }
 }
+
+
+/* =====================================================================
+   REDESIGN 1.5.73 - schermate "Apri stanza" di tutte le modalita'
+   ---------------------------------------------------------------------
+   Ingresso: intestazione con l'emblema della modalita' (icona a tema), scelta Crea/Entra a segmenti con icone del gioco, scheda con
+   i tre passi (una vera sequenza) e il pulsante. Sala d'attesa: schede (stessa superficie di Tag, Negozio e Profilo, --sup-riquadro),
+   due colonne su schermo largo (la stanza a sinistra e ferma, le scelte a destra), posti affiancati anche su telefono.
+   NON toccato: la console KaibaCorp (#mpStatus, mp-term-fx.js), la barra "Sono pronto" e i selettori condivisi (duel-setup.css).
+   Il prefisso .mp-lobby alza la specificita' sopra le regole "body.ha-tab-bar ..." di REWORK 1.4.171, che stanno piu' sopra.
+   ===================================================================== */
+
+/* Una sola superficie per le schede: quella del resto dell'app. */
+.mp-lobby .mp-scheda,
+.mp-lobby .mp-own,
+.mp-lobby .mp-setup,
+.mp-lobby .mp-room-code-box {
+    background: var(--sup-riquadro, linear-gradient(150deg, rgba(40, 32, 20, .84), rgba(18, 16, 22, .88)));
+    border: 1px solid var(--sup-bordo, rgba(247, 215, 116, .3));
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin: 0 0 12px;
+    min-width: 0;
+}
+.mp-lobby .mp-setup[hidden] { display: none; }
+
+/* Intestazione */
+.mp-lobby .mp-hero { display: flex; align-items: center; gap: 14px; margin: 2px 0 16px; min-width: 0; }
+.mp-lobby .mp-hero-emblema {
+    flex: none; width: 58px; height: 58px; display: grid; place-items: center; border-radius: 50%;
+    font-size: 1.75rem; color: var(--kc-gold);
+    background: radial-gradient(circle at 50% 35%, rgba(247, 215, 116, .28), rgba(20, 15, 12, .95));
+    box-shadow: 0 0 0 2px rgba(247, 215, 116, .5), 0 0 24px rgba(247, 215, 116, .22), inset 0 0 12px rgba(0, 0, 0, .55);
+}
+.mp-lobby .mp-hero-testi { min-width: 0; }
+.mp-lobby .mp-hero .mp-title { margin: 0; font-size: clamp(1.2rem, 4.6vw, 1.6rem); letter-spacing: .02em; text-transform: none; overflow-wrap: anywhere; }
+.mp-lobby .mp-hero .mp-title::before, .mp-lobby .mp-hero .mp-title::after { display: none; }
+.mp-lobby .mp-hero .mp-sub { margin: 4px 0 0; font-size: .86rem; line-height: 1.4; letter-spacing: 0; text-transform: none; color: #cfc3a2; }
+
+/* Crea / Entra a segmenti, con le icone del gioco */
+.mp-lobby .mp-choice { margin-bottom: 12px; }
+.mp-lobby .mp-tab { min-width: 0; }
+.mp-lobby .mp-tab .mp-tab-icon { font-size: 1.2rem; }
+.mp-lobby .mp-tab .themed-icon { vertical-align: -.2em; }
+
+/* Scheda di creazione / ingresso */
+.mp-lobby .mp-scheda > p { margin: 0 0 14px; padding: 0; border: 0; font-size: .88rem; line-height: 1.5; color: #cfc3a2; }
+.mp-lobby .mp-passi { list-style: none; counter-reset: passo; display: flex; flex-direction: column; gap: 10px; margin: 0 0 16px; padding: 0; }
+.mp-lobby .mp-passi li { counter-increment: passo; display: grid; grid-template-columns: 28px minmax(0, 1fr); column-gap: 12px; align-items: center; }
+.mp-lobby .mp-passi li::before {
+    content: counter(passo); grid-row: 1 / span 2; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+    font-weight: 800; font-size: .8rem; color: #2a1c05;
+    background: linear-gradient(145deg, var(--kc-gold), var(--kc-gold-strong)); box-shadow: 0 0 12px rgba(247, 215, 116, .3);
+}
+.mp-lobby .mp-passi b { font-size: .9rem; color: var(--kc-ink); font-weight: 700; }
+.mp-lobby .mp-passi span { font-size: .78rem; color: var(--kc-ink-dim); }
+.mp-lobby .mp-scheda .mp-code-input { margin-bottom: 12px; box-sizing: border-box; padding-left: calc(15px + .44em); }
+.mp-lobby .mp-advanced { margin-top: 14px; }
+
+/* Sala d'attesa: due colonne su schermo largo */
+.mp-lobby .mp-attesa-griglia { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
+.mp-lobby .mp-col-stanza, .mp-lobby .mp-col-setup { min-width: 0; }
+@media (min-width: 900px) {
+    .mp-lobby .mp-attesa-griglia { grid-template-columns: minmax(320px, 400px) minmax(0, 1fr); gap: 0 18px; align-items: start; }
+    .mp-lobby .mp-col-stanza { position: sticky; top: 12px; }
+}
+
+/* Codice stanza: scheda compatta */
+.mp-lobby .mp-room-code-box { text-align: center; padding: 14px 12px 16px; }
+.mp-lobby .mp-room-code-label { margin-bottom: 10px; }
+.mp-lobby .mp-copy-btn { margin-top: 12px; display: inline-flex; align-items: center; gap: 8px; }
+.mp-lobby .mp-copy-btn .themed-icon { vertical-align: -.15em; }
+
+/* I due posti sempre affiancati (a telefono prima si impilavano e la sala era altissima) */
+.mp-lobby .mp-seats { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 8px; margin-bottom: 8px; }
+.mp-lobby .mp-seat { min-width: 0; min-height: 138px; padding: 16px 8px; gap: 8px; }
+.mp-lobby .mp-seat-avatar { width: 60px; height: 60px; font-size: 1.6rem; }
+.mp-lobby .mp-seat-name, .mp-lobby .mp-seat-role { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mp-lobby .mp-seat-role { font-size: .64rem; letter-spacing: .08em; }
+.mp-lobby .mp-seat::before, .mp-lobby .mp-seat::after { width: 20px; height: 20px; }
+.mp-lobby .mp-vs { font-size: .8rem; }
+.mp-lobby .mp-occupancy { margin: 0 0 12px; text-align: center; }
+
+/* Schede delle scelte: l'intestazione sta in colonna se non c'e' posto, con la nota sotto il titolo */
+.mp-lobby .mp-setup-head { flex-wrap: wrap; gap: 2px 10px; margin-bottom: 10px; }
+.mp-lobby .mp-setup-note { text-align: left; flex: 1 1 auto; min-width: 0; }
+.mp-lobby .mp-own .ds-setup, .mp-lobby .mp-setup .ds-setup { max-width: 100%; }
+
+/* La console di connessione resta atmosfera sotto le schede: mai piu' larga della colonna */
+.mp-lobby .mp-lobby-status { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
+
+/* Ingresso su schermo largo: una colonna centrata (sul telefono e' gia' tutta larghezza), console di connessione allineata ad essa. */
+@media (min-width: 700px) {
+    .mp-lobby[data-schermata="ingresso"] [data-vista="ingresso"] .mp-screen,
+    .mp-lobby[data-schermata="ingresso"] .mp-lobby-status { max-width: 580px; margin-left: auto; margin-right: auto; }
+}
