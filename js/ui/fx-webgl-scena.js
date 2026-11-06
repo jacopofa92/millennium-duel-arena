@@ -1628,7 +1628,20 @@ float dado(vec2 q,float v){
     }
     window.FX.registerBackend('webgl', { requires: ['FxWebglPronto'], impls: imp });
     // Lo shader di scena e' grande: lo si compila a pagina tranquilla, non al primo effetto.
-    const scaldaTutto = () => Object.keys(CORPI).forEach((tipo) => window.FxWebgl.scalda('scena-' + tipo, sorgente(Number(tipo))));
+    // UX fluida: prima TUTTI i corpi si compilavano in un solo blocco (misurato ~170 ms di freeze a CPU 4x, proprio
+    // mentre il duello comincia). Ora uno per volta, ognuno in un suo momento libero: il browser puo' disegnare fra
+    // un'compilazione e l'altra e nessun fotogramma salta piu' di una frazione di quel tempo.
+    const scaldaTutto = () => {
+        const coda = Object.keys(CORPI);
+        const prossimo = () => {
+            const tipo = coda.shift();
+            if (tipo === undefined) return;
+            try { window.FxWebgl.scalda('scena-' + tipo, sorgente(Number(tipo))); } catch (e) { /* e' solo un'ottimizzazione */ }
+            if (window.requestIdleCallback) window.requestIdleCallback(prossimo, { timeout: 4000 });
+            else setTimeout(prossimo, 400);
+        };
+        prossimo();
+    };
     if (window.requestIdleCallback) window.requestIdleCallback(scaldaTutto, { timeout: 5000 });
     else setTimeout(scaldaTutto, 3000);
     window.FxWebglScena = { T: T, C: C, Scena: Scena, esegui: esegui, NOMI: Object.keys(imp) };

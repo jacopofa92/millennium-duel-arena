@@ -750,7 +750,16 @@ void main(){
         try {
             if (!window.FxWebglPronto || !assicuraCanvas()) return;
             adattaDimensioni();
-            programma('buco-nero', FS_BH); programma('spade', FS_SPADE); programma('raigeki', FS_RAIGEKI);
+            // UX fluida: un programma per volta, ognuno in un momento libero (prima tutti e tre nello stesso blocco).
+            const coda = [['buco-nero', FS_BH], ['spade', FS_SPADE], ['raigeki', FS_RAIGEKI]];
+            const prossimo = () => {
+                const p = coda.shift();
+                if (!p) return;
+                try { programma(p[0], p[1]); } catch (e) { /* e' solo un'ottimizzazione */ }
+                if (window.requestIdleCallback) window.requestIdleCallback(prossimo, { timeout: 3000 });
+                else setTimeout(prossimo, 300);
+            };
+            prossimo();
         } catch (e) { /* e' solo un'ottimizzazione */ }
     }
     if (window.requestIdleCallback) window.requestIdleCallback(riscalda, { timeout: 4000 });

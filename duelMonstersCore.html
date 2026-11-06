@@ -5734,7 +5734,8 @@
      caricamento pigro sarà necessaria in quel momento. -->
 <script>
     window.addEventListener('load', () => {
-        ['js/vendor/gsap.min.js', 'js/vendor/pixi.min.js'].forEach((src) => {
+        // UX fluida: Pixi (779 KB, ~210 ms di esecuzione a CPU 4x proprio durante la cinematica VS) non lo usa nessuno: non si carica piu'.
+        ['js/vendor/gsap.min.js'].forEach((src) => {
             const tag = document.createElement('script');
             tag.src = src;
             document.body.appendChild(tag);

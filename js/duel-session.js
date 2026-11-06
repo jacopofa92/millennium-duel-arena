@@ -670,6 +670,35 @@
         // resterebbe a coprire il campo per sempre).
         if (window.PageLoader) PageLoader.hide();
 
+        // UX fluida: il PRIMO layout di testo con kanji e simboli e' lento (il browser cerca il font di ripiego per
+        // ogni glifo: misurato ~40 ms per i kanji e ~45 per le emoji a CPU 4x, e il campo ne usa decine fra Attributi,
+        // Magie, Trappole). Succedeva dentro la costruzione del campo, cioe' nel freeze dopo la morra. Qui si
+        // "assaggiano" una volta sola durante la schermata VS, quando lo schermo e' coperto e la CPU e' libera.
+        const scaldaFont = () => {
+            try {
+                const d = document.createElement('div');
+                d.setAttribute('aria-hidden', 'true');
+                d.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;pointer-events:none;white-space:nowrap';
+                d.textContent = '光闇炎水風地神魔罠 ⚔️🛡️✨⭐🔥💧◆◇★☆⚡';
+                // Una carta di ogni tipo, fuori schermo: riscalda anche gli stili e il layout della carta stessa
+                // (misurato ~100 ms in meno nella costruzione del campo a CPU 4x).
+                try {
+                    if (window.CardRenderer && typeof cardDatabase !== 'undefined') {
+                        ['monster', 'spell', 'trap'].forEach((tipo) => {
+                            const c = cardDatabase.find((x) => x.type === tipo);
+                            if (c) d.appendChild(window.CardRenderer.createCardElement(c, { miniatura: true }));
+                        });
+                    }
+                } catch (e) { /* idem */ }
+                d.style.width = '240px';
+                d.style.whiteSpace = 'normal';
+                document.body.appendChild(d);
+                d.getBoundingClientRect();   // forza il layout: e' qui che il browser sceglie i font
+                setTimeout(() => d.remove(), 50);
+            } catch (e) { /* e' solo un'ottimizzazione */ }
+        };
+        setTimeout(scaldaFont, 350);
+
         // Restrizione di provenienza (?origin=): se il mazzo attivo non è
         // ammesso il duello non comincia affatto — niente cinematica,
         // niente pescate, solo la spiegazione e la via del ritorno.
