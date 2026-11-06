@@ -295,6 +295,14 @@
             pannello.classList.toggle('is-aperta');
             aggiornaPannello(posto);
         });
+        // Un tocco FUORI dal riquadro aperto lo chiude (come ogni finestra del gioco). In capture: nessun gestore del duello che
+        // fermi la propagazione (trascinamenti, carte) deve poterlo impedire. Il tocco prosegue normalmente verso il suo bersaglio.
+        document.addEventListener('pointerdown', (e) => {
+            if (!pannello.classList.contains('is-aperta')) return;
+            if (e.target instanceof Node && pannello.contains(e.target)) return;
+            pannello.classList.remove('is-aperta');
+            aggiornaPannello(posto);
+        }, true);
         pannelli[posto] = pannello;
     }
 

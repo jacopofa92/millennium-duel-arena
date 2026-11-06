@@ -921,10 +921,25 @@
         }
         /* Nome e LP: la fascia scura dietro basta a renderli leggibili, la
            pillola dei LP diventa una cifra grande con l'etichetta "LP". */
+        /* NOME: serif di sistema piu' signorile, maiuscolo spaziato, riempimento oro chiaro -> oro caldo (come i titoli dei
+           menu) con ombra scura per restare leggibile su ogni arena. Il gradiente sta sul solo testo (.name-text): la corona del
+           turno e' un fratello e resta com'e'. L'ombra e' un filter sul contenitore perche' text-shadow non si vede su un testo
+           col riempimento ritagliato. */
         .player-info.side-player .duelist-name {
-            font-family: Georgia, 'Times New Roman', serif;
-            letter-spacing: 0.03em;
+            font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, 'Times New Roman', serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
             color: #fbefd0;
+            text-shadow: none;
+            filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 8px rgba(0, 0, 0, 0.5));
+        }
+        .player-info.side-player .duelist-name .name-text {
+            background: linear-gradient(180deg, #fff8e0 0%, #f6dd95 52%, #d4a940 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
         }
         .player-info.side-player .life-points {
             background: none;
@@ -945,13 +960,19 @@
             font-size: clamp(0.95rem, 1.9vw, 1.55rem);
         }
         .player-info.side-player .life-points::before {
+            /* "LP" come una piccola incisione: stesso serif del nome, oro, e un filo verticale che lo separa dalla cifra. */
             content: 'LP';
-            font-size: clamp(0.55rem, 0.95vw, 0.8rem);
-            font-weight: 700;
-            letter-spacing: 0.12em;
+            font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, 'Times New Roman', serif;
+            font-size: clamp(0.58rem, 1vw, 0.84rem);
+            font-weight: 800;
+            letter-spacing: 0.2em;
             color: #f7d774;
-            margin-right: 2px;
+            text-shadow: 0 0 8px rgba(247, 215, 116, 0.45), 0 1px 2px rgba(0, 0, 0, 0.85);
+            margin-right: 3px;
+            padding-right: 7px;
+            border-right: 1px solid rgba(247, 215, 116, 0.5);
             align-self: center;
+            line-height: 1.5;
         }
         /* Tag Zona Bandite: stesso "pill" del Cimitero/LP ma viola, sotto
            i LP nella colonna dei dettagli — vedi renderBanishedBadge() in

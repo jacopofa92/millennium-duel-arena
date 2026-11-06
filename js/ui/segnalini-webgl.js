@@ -45,7 +45,8 @@ vec2 cifra(vec2 q, vec2 c, float h, float d){
   float w=h*.667;
   vec2 l=(q-c)/vec2(w,h)+.5;
   if(l.x<0.||l.x>1.||l.y<0.||l.y>1.) return vec2(0.);
-  vec4 t=texture2D(uAtl,vec2((d+l.x)/10.,1.-l.y));
+  // l.y cresce verso il BASSO come le righe della tela 2D caricata senza flip: niente "1.-" (era il numero capovolto).
+  vec4 t=texture2D(uAtl,vec2((d+l.x)/10.,l.y));
   return vec2(t.a,t.r);
 }
 
@@ -84,7 +85,7 @@ void main(){
   float uni=v-dec*10.;
   vec2 ca;
   if(v<10.){ ca=cifra(q,vec2(0.,.02),.86,uni); }
-  else { vec2 a=cifra(q,vec2(-.27,.02),.72,dec); vec2 b=cifra(q,vec2(.27,.02),.72,uni); ca=vec2(max(a.x,b.x),max(a.y,b.y)); }
+  else { vec2 a=cifra(q,vec2(-.23,.02),.72,dec); vec2 b=cifra(q,vec2(.23,.02),.72,uni); ca=vec2(max(a.x,b.x),max(a.y,b.y)); }
   vec3 numCol=mix(vec3(.22,.11,.01),vec3(1.,.97,.86),ca.y);
   col=mix(col,numCol,ca.x*cov);
 
