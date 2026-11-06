@@ -28,7 +28,7 @@
         'Torre dei Duellanti': 'Venti piani, un solo percorso',
         'Rivincite': 'Rigioca i rivali battuti',
         'Duello della Settimana': 'Una regola nuova ogni lunedì',
-        'Caccia al Boss': '8 turni per abbatterlo',
+        'Caccia al Boss': '12 turni per abbatterlo',
         'Duello Libero': 'Scegli avversario e arena',
         'Puzzle': 'Vinci con la mano data',
         'Tag Team': 'Tu e un compagno contro uno',

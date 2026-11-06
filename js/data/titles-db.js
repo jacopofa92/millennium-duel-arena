@@ -102,7 +102,7 @@ const titoliSpecialiDatabase = [
         richiede: { sfide: ['settimana-tutti-i-livelli'] } },
     { id: 't-caccia-1', gruppo: 'Modalità', nome: 'Cacciatore di Boss', come: 'Sconfiggi un Boss nella Caccia al Boss',
         richiede: { sfide: ['caccia-prima'] } },
-    { id: 't-caccia-veloce', gruppo: 'Modalità', nome: 'Cacciatore Fulmineo', come: 'Sconfiggi un Boss entro 5 turni',
+    { id: 't-caccia-veloce', gruppo: 'Modalità', nome: 'Cacciatore Fulmineo', come: 'Sconfiggi un Boss entro 8 turni',
         richiede: { sfide: ['caccia-veloce'] } },
     { id: 't-caccia-10', gruppo: 'Modalità', nome: 'Cacciatore Leggendario', come: 'Sconfiggi 10 Boss nella Caccia al Boss',
         richiede: { sfide: ['caccia-dieci'] } },

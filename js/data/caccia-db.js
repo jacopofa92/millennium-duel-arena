@@ -18,9 +18,9 @@ const cacciaDatabase = {
     /** Life Point del Boss (il giocatore parte con quelli di sempre: 8000). */
     lpBoss: 12000,
     /** Quanti turni DEL GIOCATORE ha per vincere (il primo conta, anche se non si può attaccare). */
-    turni: 8,
+    turni: 12,
     livello: 'Difficile',
-    premio: { crediti: 1500, stelle: 3, bonusVeloce: { entroTurni: 5, stelle: 1 } },
+    premio: { crediti: 1500, stelle: 3, bonusVeloce: { entroTurni: 8, stelle: 1 } },
     /** I Boss, uno a settimana. `titolo` è la frase che li presenta. */
     boss: [
         { id: 'kaiba',     titolo: 'Il Presidente della KaibaCorp non ha mai perso senza una buona scusa.' },

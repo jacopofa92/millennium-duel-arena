@@ -67,7 +67,7 @@ module.exports = {
                     out.cacciaDopo = Caccia.registraVittoria(2);
                     out.migliore = Caccia.stato().migliorTurni;
                     SaveManager.setModeState('caccia', null);
-                    out.cacciaLenta = Caccia.registraVittoria(8);
+                    out.cacciaLenta = Caccia.registraVittoria(9);
                     return out;
                 });
                 t.assert(r.prima !== r.dopo, `Cambia a mezzanotte di lunedì (UTC): ${r.prima} -> ${r.dopo}`);
@@ -80,7 +80,7 @@ module.exports = {
                 t.assert(r.altroLivello.primaVolta && r.altroLivello.premio.stelle === 1, `Un livello nuovo paga di nuovo (Difficile: crediti e 1 Stella): ${JSON.stringify(r.altroLivello)}`);
                 t.assert(r.cacciaVeloce.primaVolta && r.cacciaVeloce.premio.stelle === 4 && r.cacciaVeloce.premio.veloce, `Caccia vinta in 4 turni: 3 Stelle + 1 di bonus: ${JSON.stringify(r.cacciaVeloce)}`);
                 t.assert(!r.cacciaDopo.primaVolta && !r.cacciaDopo.premio && r.migliore === 2, 'La seconda caccia vinta non paga ma migliora il record di turni');
-                t.assert(r.cacciaLenta.premio.stelle === 3 && !r.cacciaLenta.premio.veloce, `Vinta in 8 turni: niente bonus (${JSON.stringify(r.cacciaLenta)})`);
+                t.assert(r.cacciaLenta.premio.stelle === 3 && !r.cacciaLenta.premio.veloce, `Vinta in 9 turni: niente bonus (${JSON.stringify(r.cacciaLenta)})`);
             } finally {
                 await page.close();
             }
@@ -232,7 +232,7 @@ module.exports = {
                 }));
                 t.assert(c.lp === c.atteso, `Il Boss parte con ${c.atteso} Life Point (${c.lp})`);
                 t.assert(c.comincia === 'player', 'Comincia il giocatore');
-                t.assert(/Turno \d+ di 8/.test(c.riquadro), `Il riquadro mostra i turni: "${c.riquadro}"`);
+                t.assert(/Turno \d+ di 12/.test(c.riquadro), `Il riquadro mostra i turni: "${c.riquadro}"`);
                 t.assert(c.tentativi === 1, 'Il tentativo è contato');
 
                 // Finiti i turni la caccia è persa: si simula l'inizio del turno successivo all'ultimo.

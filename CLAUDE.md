@@ -4234,6 +4234,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.83 (cache v593, su `main`): avviso del Duello della Settimana corretto: 'Il tuo mazzo non rispetta la regola' al posto di 'Questa settimana non puoi giocare' (e sui livelli spenti 'Serve un mazzo che rispetti la regola'): il problema e' il mazzo attivo, non la settimana. Suite completa non eseguita.
 
+1.5.84 (cache v594, su `main`): **Caccia al Boss: 12 turni (erano 8) e bonus 'caccia veloce' entro 8 turni (erano 5)**, dopo una simulazione di 1.920 duelli senza interfaccia (16 mazzi Starter/Structure con IA Difficile contro i 12 Boss a 12.000 LP, 10 semi ciascuno): entro 8 turni si vinceva il 9,0% dei duelli (38% delle vittorie possibili), entro 12 il 15,5% (66%), senza limite il 23,6%; il bonus entro 5 turni scattava nell'1,6%. Mediana dei turni delle vittorie: 10. Boss piu' duri: Gozaburo e Kaiba; piu' facili: Lumis e Yami Yugi. Cambiati `caccia-db.js` (turni, bonusVeloce), il testo della Sfida 'Sconfiggi un Boss entro 8 turni' e del titolo Cacciatore Fulmineo, il sottotitolo nel menu e gli spec. Lo strumento di misura sta in scratchpad (si riscrive in 40 righe: `giocaPartita` con `primaDelTurno: 'gameState.botLP = 12000;'`, turni del giocatore = ceil(turno/2)). Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

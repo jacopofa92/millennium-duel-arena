@@ -1230,7 +1230,7 @@ const challengesDatabase = [
     {
         id: 'caccia-veloce', sezione: 'modalita', modalita: 'caccia',
         icon: '⚡', label: 'Caccia lampo',
-        description: 'Sconfiggi un Boss entro 5 turni',
+        description: 'Sconfiggi un Boss entro 8 turni',
         type: 'cacciaVeloce', match: {}, target: 1,
         reward: { credits: 500 }
     },
