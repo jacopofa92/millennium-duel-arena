@@ -70,7 +70,11 @@
         btn.className = 'mpchat-btn';
         btn.hidden = true;
         btn.setAttribute('aria-label', 'Apri la chat');
-        btn.innerHTML = '<span class="mpchat-ico" aria-hidden="true">💬</span><span class="mpchat-badge" hidden>0</span>';
+        // L'icona e' quella del tema (icon-library.js: oro su pietra); l'emoji resta solo se la libreria non c'e'.
+        btn.innerHTML = '<span class="mpchat-ico" aria-hidden="true"></span><span class="mpchat-badge" hidden>0</span>';
+        const icoEl = btn.querySelector('.mpchat-ico');
+        const svg = (window.Icons && Icons.buildIcon) ? Icons.buildIcon('chat') : null;
+        if (svg) icoEl.appendChild(svg); else icoEl.textContent = '💬';
 
         const pannello = document.createElement('div');
         pannello.id = 'mpChatPanel';
@@ -109,12 +113,19 @@
         };
         btn.addEventListener('click', () => (aperto ? chiudi() : apri()));
         // La tastiera compare e scompare: il pannello si rimette a posto ogni volta (vedi sistemaTastiera).
-        el.input.addEventListener('focus', () => { sistemaTastiera(); setTimeout(sistemaTastiera, 300); });
+        el.input.addEventListener('focus', inseguiTastiera);
         el.input.addEventListener('blur', () => setTimeout(sistemaTastiera, 50));
         if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', sistemaTastiera);
             window.visualViewport.addEventListener('scroll', sistemaTastiera);
         }
+        window.addEventListener('resize', sistemaTastiera);
+        // Toccando Invia o una frase la tastiera NON deve chiudersi (il campo perderebbe il fuoco, il riquadro si sposterebbe e il
+        // tocco andrebbe perso): si impedisce il trasferimento del fuoco sul pulsante.
+        pannello.addEventListener('pointerdown', (e) => {
+            const t = /** @type {HTMLElement} */ (e.target);
+            if (t.closest && t.closest('.mpchat-invia, .mpchat-frase')) e.preventDefault();
+        });
         /** @type {HTMLElement} */ (pannello.querySelector('.mpchat-chiudi')).addEventListener('click', chiudi);
         el.silenzia.addEventListener('click', () => {
             silenziato = !silenziato;
@@ -134,7 +145,7 @@
 
     function aggiornaSilenzio() {
         if (!el) return;
-        el.silenzia.textContent = silenziato ? '🔕 Silenziata' : '🔔 Silenzia';
+        el.silenzia.textContent = silenziato ? 'Silenziata' : 'Silenzia';
         el.silenzia.setAttribute('aria-pressed', String(silenziato));
     }
 
@@ -157,12 +168,26 @@
             p.style.removeProperty('max-height');
             return;
         }
-        const coperto = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+        // Si posiziona con TOP e altezza dell'area visibile, non con "bottom": con la tastiera sovrapposta (Chrome) il bordo basso
+        // del riquadro fisso resta dietro di lei, e con la pagina ridimensionata (WebView) "bottom" e' gia' sopra la tastiera; top +
+        // visualViewport vale per entrambi i casi.
         p.classList.add('mpchat-tastiera');
-        p.style.top = 'auto';
-        p.style.bottom = (coperto + 8) + 'px';
+        p.style.bottom = 'auto';
         p.style.maxHeight = Math.max(170, vv.height - 16) + 'px';
+        p.style.top = (vv.offsetTop + 8) + 'px';
+        const alto = Math.min(p.offsetHeight, vv.height - 16);
+        p.style.top = Math.max(vv.offsetTop + 8, vv.offsetTop + vv.height - alto - 8) + 'px';
         el.log.scrollTop = el.log.scrollHeight;
+    }
+
+    /** Dopo il fuoco la tastiera impiega qualche istante a comparire: si ricontrolla a intervalli, finche' il campo ha il fuoco. */
+    function inseguiTastiera() {
+        let n = 0;
+        const giro = () => {
+            sistemaTastiera();
+            if (el && document.activeElement === el.input && ++n < 14) setTimeout(giro, 120);
+        };
+        giro();
     }
 
     function apri() {

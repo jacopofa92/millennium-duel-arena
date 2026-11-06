@@ -184,6 +184,13 @@
             <circle cx="8.5" cy="8.5" r="1.6" fill="currentColor"/>
             <path d="M11.7 11.7 L19.5 19.5 M15.5 15.5 V18.5 M18 18 V21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         `,
+        // Chat — fumetto pieno con tre punti incisi (stesso stile "pietra e oro" delle altre icone).
+        chat: `
+            <path d="M5 4.5 H19 A2.5 2.5 0 0 1 21.5 7 V14 A2.5 2.5 0 0 1 19 16.5 H11.5 L7 20.8 V16.5 H5 A2.5 2.5 0 0 1 2.5 14 V7 A2.5 2.5 0 0 1 5 4.5 Z" fill="currentColor"/>
+            <circle cx="8" cy="10.5" r="1.3" fill="#0b0d1c" opacity="0.7"/>
+            <circle cx="12" cy="10.5" r="1.3" fill="#0b0d1c" opacity="0.7"/>
+            <circle cx="16" cy="10.5" r="1.3" fill="#0b0d1c" opacity="0.7"/>
+        `,
         // Registrati — scintilla a 4 punte (nuovo inizio), stesso motivo dorato del logo del menu.
         signup: `
             <path d="M12 2 L14.1 9.1 L21 12 L14.1 14.9 L12 22 L9.9 14.9 L3 12 L9.9 9.1 Z" fill="currentColor"/>

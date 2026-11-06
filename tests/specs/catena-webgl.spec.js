@@ -92,7 +92,7 @@ module.exports = {
                 };
             });
             assert(due.root && due.canvas && due.carte === 3 && due.cartaVera, `A Catena decisa c'e' la scena con tre carte vere: ${JSON.stringify(due)}`);
-            assert(due.slotMostro === 10, `Una maglia WebGL viene ancorata sopra ognuno dei dieci slot Mostro: ${JSON.stringify(due.slotMostro)}`);
+            assert(due.slotMostro === 0, `Niente catene lunghe sopra le file Mostro (staccate da ogni carta): ${JSON.stringify(due.slotMostro)}`);
             assert(due.ingressi.some((i) => i.lato === 'dal-basso' && i.fotogrammi.some((f) => f.includes('72vh'))),
                 `La carta del giocatore piomba dal basso con prospettiva: ${JSON.stringify(due.ingressi)}`);
             assert(due.numeri.join(',') === '1,2,3', `Le carte portano il numero del loro Link: ${JSON.stringify(due.numeri)}`);

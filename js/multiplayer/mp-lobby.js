@@ -952,7 +952,6 @@
         // Una stanza da più di 2 posti è del Tag Team: la sala è un'altra (js/multiplayer/mp-tag-sala.js).
         if (msg.capienza > 2 || (window.MpTagSala && MpTagSala.aspettaStanza())) return;
         entraInSala(msg.code);
-        showStatus('🕐 Condividi il codice e attendi il tuo avversario...');
     });
 
     /**

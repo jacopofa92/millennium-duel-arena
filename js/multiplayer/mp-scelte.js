@@ -123,11 +123,15 @@
                 if (svg) imgEl.appendChild(svg); else imgEl.textContent = o.glifo ? o.glifo() : '';
             }
             imgEl.classList.toggle('is-vuota', !url);
-            bottone.querySelector('b').textContent = o.valore();
+            scorrevole(bottone.querySelector('b'), o.valore());
             const d = o.dettaglio ? o.dettaglio() : '';
             const em = bottone.querySelector('em');
-            em.textContent = d;
+            scorrevole(em, d);
             em.hidden = !d;
+        }
+        // Se il riquadro cambia misura (o era nascosto quando e' stato scritto) il testo si ricontrolla.
+        if (window.ResizeObserver) {
+            new ResizeObserver(() => { misura(bottone.querySelector('b')); misura(bottone.querySelector('em')); }).observe(bottone);
         }
         bottone.onclick = () => apri(o.titoloModale || o.titolo, o.corpo, {
             alApertura: o.alApertura,
@@ -135,6 +139,33 @@
         });
         aggiorna();
         return { aggiorna, bottone };
+    }
+
+    /**
+     * Scrive un testo in una riga che puo' non bastare ("Structure Deck: Lo Stregone del Drago..."): se non ci sta, scorre
+     * avanti e indietro invece di tagliarsi con i puntini. Il testo sta in un figlio (.mp-scorri) che si misura contro il
+     * contenitore; con "riduci movimento" restano i puntini.
+     */
+    function scorrevole(el, testo) {
+        el.textContent = '';
+        const s = document.createElement('span');
+        s.className = 'mp-scorri';
+        s.textContent = testo;
+        el.appendChild(s);
+        el.title = testo;
+        misura(el);
+    }
+    function misura(el) {
+        const s = el && el.firstElementChild;
+        if (!s || !s.classList.contains('mp-scorri')) return;
+        const troppo = s.offsetWidth - el.clientWidth;
+        const muovi = troppo > 2 && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+        el.classList.toggle('is-scorre', muovi);
+        if (muovi) {
+            el.style.setProperty('--scorri-d', troppo + 'px');
+            // ~40 px al secondo, piu' una pausa a ogni estremo (nei keyframe).
+            el.style.setProperty('--scorri-t', Math.max(5, troppo / 40 + 3) + 's');
+        }
     }
 
     window.MpScelte = { tessera, apri, chiudi };

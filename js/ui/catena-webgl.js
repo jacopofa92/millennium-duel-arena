@@ -154,7 +154,8 @@ void tratto(vec2 P, vec2 A, vec2 B, vec3 st, float fl, float idx, inout vec4 col
   float pp = fract(uT * .5 + idx * .31) * (len + uL);
   float pulse = exp(-pow((s - pp) / (uL * 1.3), 2.));
   float flash = fl * exp(-pow((s - len * .5) / (len * .7), 2.));
-  bestC += oc * (pulse * .9 + flash * .9) + vec3(1.) * flash * .5;
+  // L'acciaio resta acciaio: il colore di chi attiva e' solo un'ombra di luce, non un neon.
+  bestC += oc * (pulse * .45 + flash * .6) + vec3(1.) * flash * .4;
 
   float cv = bestCov * vis;
   col.rgb = bestC * cv + col.rgb * (1. - cv);
@@ -162,7 +163,7 @@ void tratto(vec2 P, vec2 A, vec2 B, vec3 st, float fl, float idx, inout vec4 col
   // Ombra morbida attorno alle maglie, e alone del colore di chi ha attivato il Link.
   float sh = (1. - smoothstep(0., uL * .32, bestD)) * .5 * vis * (1. - cv);
   col.a = col.a + sh * (1. - col.a);
-  glow += oc * exp(-max(bestD, 0.) / (uL * .22)) * vis * (.2 + pulse * .8 + flash * 1.6);
+  glow += oc * exp(-max(bestD, 0.) / (uL * .22)) * vis * (.08 + pulse * .45 + flash * 1.2);
 }
 
 void main(){
@@ -256,6 +257,8 @@ void main(){
    rimpicciolire il contenitore spostava le maglie fuori dalle carte (era il difetto della striscia "buggata"). */
 #catenaGL.cgl-compatta .cgl-buio{opacity:0!important}
 #catenaGL.cgl-compatta .cgl-titolo,#catenaGL.cgl-compatta .cgl-chi{display:none}
+/* Il banner di fase ("MAIN PHASE 1"...) non deve filtrare dietro la scena a tutto schermo e confonderla. */
+body.cgl-scena-piena #phaseAnnouncement{visibility:hidden!important}
 #catenaGL.cgl-compatta .cgl-carta{filter:drop-shadow(0 0 6px var(--cgl-c)) drop-shadow(0 4px 6px rgba(0,0,0,.6))}
 #catenaGL canvas{position:absolute;left:0;top:0;width:100%;height:100%}
 .cgl-buio{position:absolute;inset:0;transition:opacity .3s ease;
@@ -267,7 +270,8 @@ void main(){
 .cgl-num{position:absolute;z-index:2;line-height:.8;font-family:'Arial Black','Segoe UI Black',Impact,system-ui,sans-serif;font-style:italic;font-weight:900;color:#fff;
   -webkit-text-stroke:.045em var(--cgl-c);paint-order:stroke fill;
   text-shadow:0 0 .22em var(--cgl-c),0 0 .55em var(--cgl-c),0 .06em .18em rgba(0,0,0,.7)}
-.cgl-chi{position:absolute;left:50%;top:100%;transform:translateX(-50%);margin-top:.5em;z-index:2;white-space:nowrap;
+.cgl-etichette{position:absolute;inset:0;pointer-events:none}
+.cgl-chi{position:absolute;left:0;top:0;white-space:nowrap;
   padding:.18em .9em .2em;border-radius:999px;font-family:system-ui,'Segoe UI',sans-serif;font-weight:900;letter-spacing:.16em;color:#fff;
   background:linear-gradient(180deg,var(--cgl-c),rgba(0,0,0,.55));border:1px solid rgba(255,255,255,.55);
   box-shadow:0 0 .9em var(--cgl-c),0 .2em .5em rgba(0,0,0,.6);text-shadow:0 1px 3px rgba(0,0,0,.85)}
@@ -358,6 +362,11 @@ void main(){
         livello.className = 'cgl-carte';
         root.appendChild(livello);
         root.appendChild(canvas);
+        // Le scritte TU / AVVERSARIO stanno SOPRA la catena (che e' disegnata sopra le carte): un livello a parte,
+        // riposizionato a ogni fotogramma sulla carta (vedi frame), altrimenti una maglia le attraversava.
+        const etichette = document.createElement('div');
+        etichette.className = 'cgl-etichette';
+        root.appendChild(etichette);
         const titolo = document.createElement('div');
         titolo.className = 'cgl-titolo';
         titolo.textContent = 'CATENA';
@@ -378,11 +387,12 @@ void main(){
         gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
         st = {
-            root, canvas, gl, prog, livello, titolo,
+            root, canvas, gl, prog, livello, titolo, etichette,
             u: (nome) => gl.getUniformLocation(prog, nome),
             voci: [], boom: [], rid: 0, t0: performance.now(), chiudendo: false, tChiusura: 0,
             ultimoAggiorna: performance.now(), animTitolo: null, W: 0, H: 0, scala: 1, L: 40,
-            slotEl: ['bot', 'player'].flatMap((owner) => Array.from(document.querySelectorAll(`#${owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard'} .field-slot[data-owner="${owner}"][data-type="monster"]`)).sort((a, b) => Number(/** @type {HTMLElement} */ (a).dataset.index) - Number(/** @type {HTMLElement} */ (b).dataset.index)).slice(0, 5)),
+            // Niente piu' maglie sopra le file Mostro: erano due catene lunghe quanto lo schermo, staccate da ogni carta.
+            slotEl: [],
             adatta: 1, dtMedio: 0, ultimoFrame: 0, contaFrame: 0
         };
         ridimensiona();
@@ -471,12 +481,7 @@ void main(){
                 }
                 const ang = v1 + o1;
                 // La scritta di chi e' la carta sta dal lato OPPOSTO al numero, cosi' i due non si sovrappongono.
-                if (v.chi) {
-                    const sotto = v1 === 't';
-                    v.chi.style.top = sotto ? '100%' : 'auto';
-                    v.chi.style.bottom = sotto ? 'auto' : '100%';
-                    v.chi.style.margin = sotto ? '.5em 0 0' : '0 0 .5em';
-                }
+                if (v.chi) v.chiSotto = v1 === 't';
                 const fuori = -d.larga * .16;
                 num.style.top = num.style.bottom = num.style.left = num.style.right = 'auto';
                 if (ang[0] === 't') num.style.top = (fuori * 1.1) + 'px'; else num.style.bottom = (fuori * 1.1) + 'px';
@@ -504,7 +509,7 @@ void main(){
         chi.textContent = link.owner === 'bot' ? 'AVVERSARIO' : 'TU';
         dentro.appendChild(cartaBox);
         dentro.appendChild(num);
-        dentro.appendChild(chi);
+        st.etichette.appendChild(chi);
         pos.appendChild(dentro);
         st.livello.appendChild(pos);
         const voce = {
@@ -579,11 +584,14 @@ void main(){
         const r = voce.el.getBoundingClientRect();
         spara(r.left + r.width / 2, r.top + r.height / 2, 2);
         try {
-            const gr = 1.2;
+            // In miniatura (la scena si e' fatta da parte per lasciar vedere gli effetti) niente lampo di luminosita': una carta
+            // chiara (Forza Riflessa) diventava una macchia bianca. Si ingrandisce appena, resta leggibile.
+            const mini = st.compatta;
+            const gr = mini ? 1.1 : 1.2;
             voce.dentro.animate([
                 { transform: 'scale(1)', filter: 'brightness(1)', offset: 0, easing: 'cubic-bezier(.2,.9,.3,1)' },
-                { transform: `scale(${gr + .06})`, filter: 'brightness(1.55)', offset: .28, easing: 'ease-in-out' },
-                { transform: `scale(${gr})`, filter: 'brightness(1.15)', offset: 1 }
+                { transform: `scale(${gr + .04})`, filter: `brightness(${mini ? 1.12 : 1.55})`, offset: .28, easing: 'ease-in-out' },
+                { transform: `scale(${gr})`, filter: `brightness(${mini ? 1.04 : 1.15})`, offset: 1 }
             ], { duration: 760, fill: 'both' });
             voce.num.animate([
                 { transform: 'scale(1)', offset: 0 }, { transform: 'scale(1.5)', offset: .3 }, { transform: 'scale(1.2)', offset: 1 }
@@ -604,9 +612,9 @@ void main(){
                 { transform: 'scale(1.2) translateY(0)', offset: 0 },
                 { transform: 'scale(.6) translateY(-40px) rotate(-8deg)', offset: 1 }
             ], { duration: 420, easing: 'ease-in', fill: 'both' });
-            a.onfinish = () => el.remove();
-        } catch (e) { el.remove(); }
-        setTimeout(() => el.remove(), 600);
+            a.onfinish = () => { el.remove(); if (voce.chi) voce.chi.remove(); };
+        } catch (e) { el.remove(); if (voce.chi) voce.chi.remove(); }
+        setTimeout(() => { el.remove(); if (voce.chi) voce.chi.remove(); }, 600);
         riposiziona();
     }
 
@@ -654,6 +662,7 @@ void main(){
         const inAttesa = !!resolvingLink && performance.now() - st.tDecisa < HOLD_DECISA_MS;
         st.compatta = !!resolvingLink && !inAttesa;
         st.root.classList.toggle('cgl-compatta', st.compatta);
+        document.body.classList.toggle('cgl-scena-piena', !st.compatta);
         riposiziona();
         st.voci.forEach((v) => { if (!v.animato) { v.animato = true; animaIngresso(v); } });
         if (resolvingLink && !inAttesa) {
@@ -679,6 +688,7 @@ void main(){
         st = null;
         cancelAnimationFrame(s.rid);
         window.removeEventListener('resize', ridimensiona);
+        document.body.classList.remove('cgl-scena-piena');
         if (s.animTitolo) { try { s.animTitolo.cancel(); } catch (e) { /* gia' finita */ } }
         s.root.remove();
         rilascia(s.gl);
@@ -719,6 +729,16 @@ void main(){
             const r = v.el.getBoundingClientRect();
             return { x: r.left + r.width / 2, y: r.top + r.height / 2, hw: r.width / 2, hh: r.height / 2 };
         });
+        // Le scritte TU / AVVERSARIO seguono la carta (anche mentre piomba o esce), dal lato opposto al numero.
+        vive().forEach((v) => {
+            if (!v.chi) return;
+            const r = v.el.getBoundingClientRect();
+            v.chi.style.left = (r.left + r.width / 2) + 'px';
+            v.chi.style.top = (v.chiSotto === false ? r.top - 6 : r.bottom + 6) + 'px';
+            v.chi.style.transform = v.chiSotto === false ? 'translate(-50%,-100%)' : 'translate(-50%,0)';
+            const o = parseFloat(getComputedStyle(v.el).opacity) * parseFloat(getComputedStyle(v.dentro).opacity);
+            v.chi.style.opacity = String(Number.isFinite(o) ? o : 1);
+        });
         for (let i = 1; i < vv.length; i++) {
             const v = vv[i];
             const seg = i - 1;
@@ -728,12 +748,22 @@ void main(){
             let dx = b.x - a.x, dy = b.y - a.y;
             const len = Math.hypot(dx, dy) || 1;
             dx /= len; dy /= len;
-            const bordo = (c) => Math.min(c.hw / Math.max(Math.abs(dx), 1e-3), c.hh / Math.max(Math.abs(dy), 1e-3)) * 0.8;
-            let sa = bordo(a), sb = len - bordo(b);
-            // Se le carte quasi si toccano la catena resta lunga almeno un paio di maglie, centrata fra le due.
-            if (sb - sa < s.L * 1.6) { const m = (sa + sb) / 2; sa = m - s.L * 0.8; sb = m + s.L * 0.8; }
-            Pa[seg * 2] = a.x + dx * sa; Pa[seg * 2 + 1] = a.y + dy * sa;
-            Pb[seg * 2] = a.x + dx * sb; Pb[seg * 2 + 1] = a.y + dy * sb;
+            // Come in Master Duel la catena e' AGGANCIATA ai ANGOLI: parte dall'angolo della carta piu' vicino all'altra e
+            // arriva all'angolo piu' vicino dell'altra (un poco dentro la cornice), invece di correre centro-bordo.
+            const angolo = (c, sx, sy) => ({ x: c.x + sx * c.hw * 0.78, y: c.y + sy * c.hh * 0.78 });
+            const pa = angolo(a, Math.sign(dx) || 1, Math.sign(dy) || 1);
+            const pb = angolo(b, -(Math.sign(dx) || 1), -(Math.sign(dy) || 1));
+            let ex = pb.x - pa.x, ey = pb.y - pa.y;
+            const lenC = Math.hypot(ex, ey);
+            // Se gli angoli quasi si toccano la catena resta lunga almeno un paio di maglie, centrata fra i due.
+            if (lenC < s.L * 1.6) {
+                const mx = (pa.x + pb.x) / 2, my = (pa.y + pb.y) / 2;
+                const ux = lenC > 1e-3 ? ex / lenC : dx, uy = lenC > 1e-3 ? ey / lenC : dy;
+                pa.x = mx - ux * s.L * 0.8; pa.y = my - uy * s.L * 0.8;
+                pb.x = mx + ux * s.L * 0.8; pb.y = my + uy * s.L * 0.8;
+            }
+            Pa[seg * 2] = pa.x; Pa[seg * 2 + 1] = pa.y;
+            Pb[seg * 2] = pb.x; Pb[seg * 2 + 1] = pb.y;
             S[seg * 3] = easeOut((now - v.tRivela) / 460);
             S[seg * 3 + 1] = v.risolvendo ? easeOut((now - v.tRisolve - 180) / 520) : 0;
             S[seg * 3 + 2] = v.owner;

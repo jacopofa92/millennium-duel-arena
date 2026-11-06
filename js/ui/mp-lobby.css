@@ -1348,3 +1348,22 @@ body.ha-tab-bar .mp-lobby { padding-bottom: calc(var(--mm-barra-h) + 190px); }
 /* `hidden` deve vincere sui display dei componenti (il selettore del formato del Tag e l'intestazione vecchia delle scelte). */
 .mp-lobby .tg-formati[hidden], .mp-lobby .mp-setup-head[hidden] { display: none; }
 .mp-lobby .mp-premi-sala .sl-premi > summary { font-weight: 600; font-size: .86rem; }
+
+/* Testo che non ci sta nelle tessere della sala (mazzo, arena, duellante): scorre avanti e indietro invece dei puntini (mp-scelte.js, scorrevole). */
+.mp-lobby .mp-scorri { display: inline-block; white-space: nowrap; }
+.mp-lobby .mp-tessera-testi .is-scorre { text-overflow: clip; }
+.mp-lobby .mp-tessera-testi .is-scorre .mp-scorri { animation: mpScorri var(--scorri-t, 6s) ease-in-out infinite alternate; }
+@keyframes mpScorri { 0%, 18% { transform: translateX(0); } 82%, 100% { transform: translateX(calc(-1 * var(--scorri-d, 0px))); } }
+
+/* Posti della sala 1 contro 1 (Duello, Specchio, Assalto al Boss): la pedina e' la FIGURA INTERA scontornata, come nelle schede della sala
+   Tag Team (.tg-ritratto in mp-tag-sala.css), non piu' un tondo che ne ritaglia la testa. Il tondo resta per i segnaposto (❔, 🧑). */
+.mp-lobby .mp-seat-avatar--img.mp-seat-avatar--pedina {
+    width: 100%; height: 112px; margin: 0;
+    border: 0; border-radius: 0; box-shadow: none; background-color: transparent;
+    background-size: contain; background-position: 50% 100%; background-repeat: no-repeat;
+    filter: drop-shadow(0 0 14px rgba(247, 215, 116, .5)) drop-shadow(0 6px 8px rgba(0, 0, 0, .7));
+}
+.mp-lobby .mp-seat--filled .mp-seat-avatar--img.mp-seat-avatar--pedina { animation: none; filter: drop-shadow(0 0 14px rgba(120, 255, 170, .5)) drop-shadow(0 6px 8px rgba(0, 0, 0, .7)); }
+/* I due posti allineano l'avatar in alto: uno puo' avere la figura intera (112px) e l'altro ancora il segnaposto tondo. */
+.mp-lobby .mp-seat { justify-content: flex-start; }
+.mp-lobby .mp-seat--empty .mp-seat-avatar { margin-top: 26px; margin-bottom: 26px; }

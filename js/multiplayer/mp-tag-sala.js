@@ -293,7 +293,7 @@
         if (g.CardRenderer && g.CardRenderer.precaricaMazzoAttivo) g.CardRenderer.precaricaMazzoAttivo();
         mostraCodice();
         montaPersonali();
-        status(sonoHost() ? '🕐 Condividi il codice: chi entra prende un posto libero.' : 'Scegli un posto libero e conferma quando sei pronto.');
+        if (!sonoHost()) status('Scegli un posto libero e conferma quando sei pronto.');
         if (i.precaricaArena) i.precaricaArena();
     }
 
