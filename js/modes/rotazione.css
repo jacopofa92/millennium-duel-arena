@@ -94,8 +94,9 @@
     cursor: default;
 }
 .rz-lato { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
-.rz-lato-pedina { width: min(100%, 150px); aspect-ratio: 1 / 1; display: grid; place-items: end center; }
-.rz-lato-pedina img { width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%; }
+.rz-lato-pedina { position: relative; width: min(100%, 150px); aspect-ratio: 1 / 1; }
+/* Posizionata dentro il riquadro quadrato (non nel flusso): altrimenti un file piu' alto che largo (mirror 274x320) allungava il suo riquadro e le due pedine non avevano la stessa altezza. */
+.rz-lato-pedina img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%; }
 .rz-lato--io img { filter: drop-shadow(0 0 18px rgba(52, 152, 219, .6)) drop-shadow(0 10px 14px rgba(0, 0, 0, .75)); }
 .rz-lato--loro img { filter: drop-shadow(0 0 18px rgba(231, 76, 60, .6)) drop-shadow(0 10px 14px rgba(0, 0, 0, .75)); }
 .rz-lato-nome { font-family: Georgia, serif; font-weight: 700; color: #fff4d0; text-align: center; font-size: .98rem; line-height: 1.15; text-wrap: balance; }
@@ -167,3 +168,14 @@
     .rz-hero-sfondo, .rz-medaglione, .rz-cta::after, .rz-main > *, .rz-boss-figura img, .rz-lp-barra i { animation: none; }
     .rz-tempo-barra i { transition: none; }
 }
+
+/* ---------- avviso espandibile (come "Premi di questa modalita'") ---------- */
+.rz-avviso { border: 1px solid rgba(247, 180, 90, .55); border-radius: 12px; background: linear-gradient(180deg, rgba(120, 70, 20, .35), rgba(40, 24, 8, .55)); padding: 0 14px; }
+.rz-avviso[hidden] { display: none; }
+.rz-avviso summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 10px; padding: 12px 0; color: #ffd9a8; font-weight: 700; font-size: .92rem; }
+.rz-avviso summary::-webkit-details-marker { display: none; }
+.rz-avviso summary::after { content: '▸'; margin-left: auto; color: #ffd9a8; transition: transform .2s; }
+.rz-avviso[open] summary::after { transform: rotate(90deg); }
+.rz-avviso-icona { font-size: 1.15rem; }
+.rz-avviso-corpo { padding: 0 0 14px; }
+.rz-avviso-corpo p { margin: 0 0 12px; color: var(--ink-dim, #b9ae92); font-size: .9rem; line-height: 1.5; }

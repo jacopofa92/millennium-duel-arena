@@ -220,6 +220,54 @@
             regolaMazzi('structure', 'Mazzi a tema già specializzati (Draghi, Zombie, Guerrieri...), più cari degli Starter perché più utili a costruirsi un mazzo vero.'));
         secStructure.grid.classList.add('decks');
 
+        // ---- Cambio valute (entro un tetto settimanale: vedi ShopCatalog.CONVERSIONI)
+        const secCambio = sezione('🔁 Cambio valute',
+            'Puoi trasformare una valuta in un\'altra, ma <strong>solo entro un limite ogni settimana</strong> (si azzera il lunedì). '
+            + 'Il cambio va in un verso solo: le <strong>Carte Locazione e le Carte del Millennio</strong> non si trasformano fra loro e non si ricomprano con i crediti.');
+        secCambio.grid.className = 'cambio-lista';
+
+        function renderConversioni() {
+            secCambio.grid.innerHTML = '';
+            ShopCatalog.CONVERSIONI.forEach((conv) => {
+                const st = ShopCatalog.statoConversione(conv.id);
+                const riga = el('div', 'cambio-riga');
+                const da = VALUTE[conv.da], a = VALUTE[conv.a];
+                const prezzo = el('div', 'cambio-prezzo');
+                prezzo.appendChild(el('span', 'cambio-da', `${da.icon} ${numero(conv.costo)}`));
+                prezzo.appendChild(el('span', 'cambio-freccia', '→'));
+                prezzo.appendChild(el('span', 'cambio-a', `${a.icon} ${numero(conv.ottieni)}`));
+                riga.appendChild(prezzo);
+                riga.appendChild(el('div', 'cambio-nome', `${nomeValuta(conv.da, 2)} in ${nomeValuta(conv.a, conv.ottieni)}`));
+                riga.appendChild(el('div', 'cambio-tetto', `Questa settimana: ${st.fatte}/${conv.tettoSettimana}`));
+                const azioni = el('div', 'cambio-azioni');
+                const uno = el('button', 'buy-btn', 'Cambia 1');
+                uno.type = 'button';
+                uno.disabled = st.massimo < 1;
+                uno.onclick = () => faiCambio(conv.id, 1);
+                azioni.appendChild(uno);
+                if (st.massimo > 1) {
+                    const tutti = el('button', 'buy-btn alt', `Cambia ${st.massimo}`);
+                    tutti.type = 'button';
+                    tutti.onclick = () => faiCambio(conv.id, st.massimo);
+                    azioni.appendChild(tutti);
+                }
+                riga.appendChild(azioni);
+                // Perche' e' spento: tetto finito oppure saldo che non basta (altrimenti il pulsante grigio non dice nulla).
+                if (st.massimo < 1) {
+                    riga.appendChild(el('div', 'cambio-motivo', st.restanti === 0
+                        ? 'Tetto della settimana raggiunto: riprende lunedì.'
+                        : `Ti servono ${numero(conv.costo)} ${nomeValuta(conv.da, conv.costo)}.`));
+                }
+                secCambio.grid.appendChild(riga);
+            });
+        }
+
+        function faiCambio(id, quante) {
+            const r = ShopCatalog.converti(id, quante);
+            if (r.ok && window.NativeHaptics) NativeHaptics.light();
+            refresh();
+        }
+
         // ---- Regole dell'economia
         const secRegole = el('section', 'shop-section');
         const rulesBox = el('div', 'rules-box');
@@ -665,6 +713,7 @@
             if (!window.ServerDate) return;
             secCarte.timer.textContent = formattaAttesa(ServerDate.msToNextDay());
             secBuste.timer.textContent = formattaAttesa(ServerDate.msToNextWeek());
+            secCambio.timer.textContent = formattaAttesa(ServerDate.msToNextWeek());
         }
 
         /**
@@ -686,6 +735,7 @@
             renderCarteDelGiorno();
             renderBuste();
             renderMazzi();
+            renderConversioni();
             aggiornaTimer();
             aggiornaEtichetteMazzi();
         }

@@ -617,7 +617,70 @@
         return elenco.find((d) => d.packId === packId) || null;
     }
 
+    // ================================================================
+    // CAMBIO VALUTE — entro un tetto settimanale
+    // ================================================================
+    // Scelte dell'utente: 500 crediti = 1 Stella; 20 Stelle = 1 Carta Locazione; 20 Stelle = 1 Carta del Millennio;
+    // NESSUN cambio fra Carte Locazione e Carte del Millennio, e niente che trasformi Stelle in crediti. Un solo verso
+    // per coppia di proposito: e' l'unico modo di non avere cicli di andata e ritorno. Il TETTO (per settimana, riparte
+    // il lunedi' con la chiave settimana del server) e' la parte regolabile: le Carte Locazione e del Millennio aprono i
+    // mazzi avanzati, quindi senza un tetto i tornei diventerebbero saltabili spendendo Stelle. Numeri di partenza: con
+    // ~72 Stelle, ~5 Locazioni e ~2,6 Millennio a settimana (tools/simula-economia.js, Difficile) i tetti aggiungono al piu'
+    // il 14% di Stelle, il 40% di Locazioni e il 38% di Millennio.
+    const CONVERSIONI = [
+        { id: 'crediti-stelle', da: 'credits', a: 'starChips', costo: 500, ottieni: 1, tettoSettimana: 10 },
+        { id: 'stelle-locazione', da: 'starChips', a: 'locatorCards', costo: 20, ottieni: 1, tettoSettimana: 2 },
+        { id: 'stelle-millennio', da: 'starChips', a: 'millenniumCards', costo: 20, ottieni: 1, tettoSettimana: 1 }
+    ];
+    const CHIAVE_CONVERSIONI = 'negozioConversioni';
+
+    function chiaveSettimana() {
+        if (window.ServerDate && typeof ServerDate.weekKey === 'function') return ServerDate.weekKey();
+        return new Date().toISOString().slice(0, 10);
+    }
+
+    /** Quante unita' di ogni cambio sono state fatte QUESTA settimana: { 'crediti-stelle': 3, ... }. */
+    function conversioniFatte() {
+        const s = window.SaveManager && SaveManager.getModeState ? SaveManager.getModeState(CHIAVE_CONVERSIONI) : null;
+        return s && s.settimana === chiaveSettimana() && s.fatte ? s.fatte : {};
+    }
+
+    /**
+     * Lo stato di un cambio per l'interfaccia: { conv, fatte, restanti, massimo } dove `massimo` e' quante volte si puo'
+     * farlo ADESSO (tetto rimasto e saldo disponibile).
+     */
+    function statoConversione(id) {
+        const conv = CONVERSIONI.find((c) => c.id === id);
+        if (!conv) return null;
+        const fatte = Number(conversioniFatte()[id]) || 0;
+        const restanti = Math.max(0, conv.tettoSettimana - fatte);
+        const saldo = window.SaveManager ? (SaveManager.getCurrency()[conv.da] || 0) : 0;
+        return { conv: conv, fatte: fatte, restanti: restanti, massimo: Math.min(restanti, Math.floor(saldo / conv.costo)) };
+    }
+
+    /**
+     * Fa il cambio `quante` volte (tutto o niente). Torna { ok, motivo?, pagato, ottenuto }. Il saldo e il tetto si
+     * ricontrollano QUI: il pulsante e' gia' spento quando non si puo', ma un doppio click non deve poter passare.
+     */
+    function converti(id, quante) {
+        const n = Math.floor(Number(quante) || 0);
+        const st = statoConversione(id);
+        if (!st || n < 1) return { ok: false, motivo: 'Quantita\' non valida.' };
+        if (n > st.restanti) return { ok: false, motivo: st.restanti === 0 ? 'Tetto della settimana raggiunto.' : 'Oltre il tetto della settimana.' };
+        const pagato = st.conv.costo * n;
+        if ((SaveManager.getCurrency()[st.conv.da] || 0) < pagato) return { ok: false, motivo: 'Saldo insufficiente.' };
+        SaveManager.addCurrency(st.conv.da, -pagato);
+        SaveManager.addCurrency(st.conv.a, st.conv.ottieni * n);
+        const fatte = Object.assign({}, conversioniFatte());
+        fatte[id] = (Number(fatte[id]) || 0) + n;
+        SaveManager.setModeState(CHIAVE_CONVERSIONI, { settimana: chiaveSettimana(), fatte: fatte });
+        return { ok: true, pagato: pagato, ottenuto: st.conv.ottieni * n };
+    }
+
     window.ShopCatalog = {
+        CONVERSIONI: CONVERSIONI,
+        statoConversione: statoConversione,
+        converti: converti,
         PREZZI: PREZZI,
         PREZZI_MAZZI: PREZZI_MAZZI,
         BUSTE: BUSTE,

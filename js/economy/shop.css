@@ -454,3 +454,23 @@
     .shop-root .shop-grid.packs,
     .shop-root .shop-grid.decks { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
 }
+
+/* ---- Cambio valute: una riga per cambio (prezzo -> cosa ottieni, tetto della settimana, pulsanti) ---- */
+.shop-root .cambio-lista { display: flex; flex-direction: column; gap: 10px; }
+.shop-root .cambio-riga {
+    display: grid; grid-template-columns: auto 1fr auto; gap: 4px 14px; align-items: center;
+    padding: 12px 14px; border-radius: 12px; border: 1px solid var(--sup-bordo, rgba(247, 215, 116, .3)); background: var(--sup-riquadro, rgba(16, 13, 9, .82));
+}
+.shop-root .cambio-prezzo { grid-row: 1 / span 2; display: flex; align-items: center; gap: 8px; font-size: 1.15rem; font-weight: 800; color: var(--shop-gold); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.shop-root .cambio-freccia { color: #b9ae92; font-weight: 400; }
+.shop-root .cambio-nome { font-size: .92rem; color: #f3ecd9; }
+.shop-root .cambio-tetto { grid-column: 2; font-size: .78rem; color: #b9ae92; }
+.shop-root .cambio-azioni { grid-column: 3; grid-row: 1 / span 2; display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.shop-root .cambio-motivo { grid-column: 1 / -1; font-size: .78rem; color: #e0a37a; }
+@media (max-width: 520px) {
+    .shop-root .cambio-riga { grid-template-columns: 1fr auto; }
+    .shop-root .cambio-prezzo { grid-row: 1; }
+    .shop-root .cambio-nome { grid-column: 1; grid-row: 2; }
+    .shop-root .cambio-tetto { grid-column: 1; grid-row: 3; }
+    .shop-root .cambio-azioni { grid-column: 2; grid-row: 1 / span 3; flex-direction: column; align-items: stretch; }
+}
