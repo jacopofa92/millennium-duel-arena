@@ -456,6 +456,17 @@
                     <span class="switch-thumb"></span>
                 </label>
             </div>
+            <div class="settings-row">
+                <div>
+                    <div class="settings-row-label">Evidenzia le carte giocabili</div>
+                    <div class="settings-row-sub">Acceso: in duello un alone luminoso segna cosa puoi fare adesso. <strong>Bianco</strong>: mostro che puoi Evocare o Settare. <strong>Verde</strong>: carta con un effetto attivabile (in mano o sul Terreno). <strong>Arancio</strong>: mostro che può attaccare. <strong>Viola</strong>: Extra Deck con una Fusione evocabile. Le caselle libere dove puoi Evocare si accendono piano.</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="evidenziaGiocabiliToggleInput">
+                    <span class="switch-track"></span>
+                    <span class="switch-thumb"></span>
+                </label>
+            </div>
         </div>
 
         <div class="settings-more">Altre impostazioni in arrivo.</div>
@@ -626,6 +637,15 @@
         rapideProprieToggle.checked = SaveManager.getSetting('magieRapideSuPropriaAttivazione') === true;
         rapideProprieToggle.addEventListener('change', () => {
             SaveManager.setSetting('magieRapideSuPropriaAttivazione', rapideProprieToggle.checked);
+            if (window.NativeHaptics) NativeHaptics.light();
+        });
+    }
+    // --- Evidenzia le carte giocabili (default acceso) ---
+    const evidenziaToggle = document.getElementById('evidenziaGiocabiliToggleInput');
+    if (evidenziaToggle && window.SaveManager) {
+        evidenziaToggle.checked = SaveManager.getSetting('evidenziaGiocabili') !== false;
+        evidenziaToggle.addEventListener('change', () => {
+            SaveManager.setSetting('evidenziaGiocabili', evidenziaToggle.checked);
             if (window.NativeHaptics) NativeHaptics.light();
         });
     }

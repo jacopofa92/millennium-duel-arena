@@ -780,6 +780,9 @@ function ridisegnaDuello() {
     // Tavola del Destino: campo nel Regno delle Ombre e lettere di fumo (js/ui/tavola-del-destino.js), solo lettura dello stato.
     if (window.TavolaDestino) TavolaDestino.sync();
     updatePhaseIndicator();
+    // L'alone sulle carte giocabili e le caselle che si accendono (js/ui/evidenzia-giocabili.js): solo lettura dello stato, DOPO la
+    // fase (serve gameState.phase aggiornata) e dopo i render, perche' si applica ai nodi vivi.
+    if (window.EvidenziaGiocabili) EvidenziaGiocabili.aggiorna();
 }
 
 /**
