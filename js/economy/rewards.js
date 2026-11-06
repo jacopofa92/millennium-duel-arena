@@ -573,6 +573,77 @@
     }
 
     /**
+     * Anteprima di cosa paga una VITTORIA fuori dai tornei (Duello Libero,
+     * Tag Team locale) al livello `difficulty` ('Facile'|'Medio'|'Difficile').
+     * Legge le STESSE costanti di forDuel, quindi non puo' andare alla
+     * deriva. Non assegna nulla: solo lettura (anche dello stato di oggi,
+     * che dice se la prossima vittoria e' la prima o e' gia' a meta' premio).
+     *
+     * Le probabilita' dei ritrovamenti sono quelle EFFETTIVE, non quelle
+     * scritte in tabella: rollDrop si ferma al primo che esce (Stella, poi
+     * Locazione, poi Millennio), quindi la Locazione puo' uscire solo se la
+     * Stella e' mancata, e cosi' via. Mostrare 3% quando in realta' e'
+     * ~2,7% sarebbe una piccola bugia.
+     */
+    function preview(difficulty) {
+        const base = WIN_CREDITS[difficulty] || 0;
+        const giorno = dayKey();
+        let vittorieOggi = 0;
+        try { vittorieOggi = window.SaveManager ? (SaveManager.getDailyEconomy(giorno).wins || 0) : 0; } catch (e) { /* noop */ }
+        const prossima = vittorieOggi + 1;
+        const ridotta = prossima > DIMINISHING_AFTER_WINS;
+        let restante = 1;
+        const drops = DROPS.map((d) => {
+            const nominale = d.chanceByDifficulty ? (d.chanceByDifficulty[difficulty] || 0) : d.chance;
+            const effettiva = restante * nominale;
+            restante *= (1 - nominale);
+            return { currency: d.currency, icon: d.icon, nome: d.nome, chance: effettiva };
+        });
+        return {
+            difficulty: difficulty,
+            crediti: ridotta ? Math.round(base * DIMINISHING_FACTOR) : base,
+            creditiPieni: base,
+            ridotta: ridotta,
+            vittorieOggi: vittorieOggi,
+            primaDelGiorno: prossima === 1,
+            bonusPrimaDelGiorno: FIRST_WIN_OF_DAY_BONUS,
+            soglia: DIMINISHING_AFTER_WINS,
+            perdita: LOSS_CREDITS,
+            traguardoOgni: STAR_MILESTONE_EVERY,
+            traguardoStelle: STAR_MILESTONE_REWARD[difficulty] || 0,
+            drops: drops
+        };
+    }
+
+    /** Percentuale leggibile: 9% -> "9%", 0,78% -> "0,8%". */
+    function percento(p) {
+        const v = p * 100;
+        const t = v >= 10 ? String(Math.round(v)) : String(Math.round(v * 10) / 10);
+        return t.replace('.', ',') + '%';
+    }
+
+    /**
+     * L'anteprima come HTML (stile in js/economy/rewards.css, classe
+     * .rw-anteprima). `contesto` e' una frase corta che dice a quale modalita'
+     * si riferisce; l'elenco e' lo stesso per tutte quelle che passano da
+     * forDuel. Sicuro con innerHTML: tutto testo scritto in questo file.
+     */
+    function previewHtml(difficulty, contesto, senzaTitolo) {
+        const p = preview(difficulty);
+        const nomeLivello = { Facile: 'Facile', Medio: 'Normale', Difficile: 'Difficile' }[difficulty] || 'Normale';
+        const righe = [];
+        righe.push(`<li><span class="rw-ico">💰</span><span><b>+${p.crediti} crediti</b> per ogni vittoria a ${nomeLivello}${p.ridotta ? ` <em>(oggi sei oltre la ${p.soglia}ª vittoria: valgono la metà, base ${p.creditiPieni})</em>` : ` <em>(dalla ${p.soglia + 1}ª vittoria del giorno la metà)</em>`}</span></li>`);
+        if (p.primaDelGiorno) righe.push(`<li><span class="rw-ico">🌅</span><span><b>+${p.bonusPrimaDelGiorno} crediti</b> in più: sarebbe la tua prima vittoria di oggi</span></li>`);
+        else righe.push(`<li><span class="rw-ico">🌅</span><span>Bonus prima vittoria del giorno (+${p.bonusPrimaDelGiorno}) già preso oggi</span></li>`);
+        righe.push(`<li><span class="rw-ico">🎯</span><span><b>+${p.traguardoStelle} ${p.traguardoStelle === 1 ? 'Stella' : 'Stelle'}</b> ogni ${p.traguardoOgni} vittorie a ${nomeLivello}</span></li>`);
+        p.drops.forEach((d) => {
+            righe.push(`<li><span class="rw-ico">${d.icon}</span><span>${d.nome}: <b>${percento(d.chance)}</b> a ogni vittoria</span></li>`);
+        });
+        righe.push(`<li class="rw-nota"><span class="rw-ico">🤝</span><span>Se perdi: +${p.perdita} crediti. Se abbandoni: niente. Ritrovamenti: al massimo uno per duello.</span></li>`);
+        return `<div class="rw-anteprima">${senzaTitolo ? '' : `<div class="rw-titolo">Premi in caso di vittoria${contesto ? ' · ' + contesto : ''}</div>`}<ul>${righe.join('')}</ul></div>`;
+    }
+
+    /**
      * Il testo delle regole, per la schermata che le spiega (Negozio e
      * riepilogo premi). Sta qui e non nelle pagine così non può andare
      * alla deriva rispetto ai numeri veri: se cambia una costante qui
@@ -652,6 +723,8 @@
         STELLE_PER_ARCO_STORIA: STELLE_PER_ARCO_STORIA,
         CREDITI_PER_ARCO_STORIA: CREDITI_PER_ARCO_STORIA,
         previewChallenge: previewChallenge,
+        preview: preview,
+        previewHtml: previewHtml,
         rulesSummary: rulesSummary,
         summaryHtml: summaryHtml,
         CURRENCY_META: CURRENCY_META,

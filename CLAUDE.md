@@ -4204,6 +4204,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.47 (cache v556, su `main`): **frasi dello splash d'apertura meno "teatrali"** (richiesta dell'utente: cringe). Ora dicono cosa succede davvero: `Carico le carte…`, `Preparo l'arena…`, `Controllo il tuo profilo…`, `Pronto.` (index.html, due punti, e `FRASI` in `splash-webgl.js`). Il loader delle altre pagine dice gia' solo `Caricamento…`. Suite completa non eseguita.
 
+1.5.69 (cache v579, su `main`): **Duello Libero e Tag Team locale mostrano i premi della vittoria al livello scelto** (richiesta dell'utente). `Rewards.preview(difficulty)` / `Rewards.previewHtml(difficulty, contesto, senzaTitolo)` in `rewards.js` leggono le STESSE costanti di `forDuel` (crediti per livello, bonus prima vittoria del giorno, meta' dopo la 5a vittoria, Stelle ogni 10 vittorie, ritrovamenti) e lo stato di oggi (se la prossima vittoria e' la prima o e' gia' a meta' premio): **mai ricopiare questi numeri in una pagina**. Le probabilita' dei ritrovamenti sono quelle EFFETTIVE, perche' `rollDrop` si ferma al primo che esce (Locazione ~2,7% e Millennio ~0,78% a Difficile, non 3% e 0,8%). Duello Libero: `<details class="sl-premi">` dentro la finestra di `sfida-libera.js` (sommario sempre visibile, si aggiorna al cambio livello); Tag: riquadro `#premiTag` in `tag.html` (contro il Boss vale Difficile). Il Tag locale paga come ogni duello libero (passa da `Rewards.forDuel`); il Raid in rete paga altro (`forRaid`) e non e' coperto. Le due pagine caricano ora `rewards.js/.css`. Spec `premi-anteprima-duello-libero-e-tag`. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

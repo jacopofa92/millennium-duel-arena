@@ -33,6 +33,7 @@
 <link rel="stylesheet" href="js/modes/mode-pages.css">
 <link rel="stylesheet" href="js/ui/deck-box.css">
 <link rel="stylesheet" href="js/ui/duel-setup.css">
+<link rel="stylesheet" href="js/economy/rewards.css">
 <style>
     /* =================================================================
        Tag Team, pagina di scelta. Un TABELLONE invece di elenchi aperti:
@@ -179,6 +180,9 @@
             <div class="tg-regola" id="regolaTurni"></div>
         </section>
 
+        <!-- Cosa paga una vittoria al livello scelto (numeri da Rewards.preview). -->
+        <section class="tg-regole" aria-label="Premi della vittoria" id="premiTag"></section>
+
         <!-- Mazzo, arena e musica: lo stesso selettore del Duello Libero (js/ui/duel-setup.js). -->
         <section class="tg-regole tg-setup" aria-label="Mazzo, arena e musica">
             <div class="tg-regola-nome">Il tuo mazzo, l'arena e la musica</div>
@@ -231,6 +235,7 @@
 <script src="js/data/arena-options.js"></script>
 <script src="js/data/starter-structure-decks.js"></script>
 <script src="js/ui/deck-box.js"></script>
+<script src="js/economy/rewards.js"></script>
 <script src="js/ui/duel-setup.js"></script>
 <script src="js/audio/audio-manager.js"></script>
 <script src="js/native/app-back-button.js"></script>
@@ -481,6 +486,13 @@
         const livello = LIVELLI.find((l) => l.valore === scelta.livello);
         if (controBoss) regola($('regolaLivello'), 'Livello', el('p', 'tg-regola-fissa', 'Il Boss gioca sempre il mazzo al completo.'));
         else regola($('regolaLivello'), 'Livello', interruttore(LIVELLI, scelta.livello, (v) => { scelta.livello = v; }, 'Livello degli avversari'), livello.desc);
+        // Premi: contro il Boss si gioca sempre a Difficile (tagDatabase.livelloBoss); altrimenti il livello scelto.
+        // Il Tag passa da Rewards.forDuel come ogni duello libero: stessi crediti, stesso bonus, stessi ritrovamenti.
+        const premi = $('premiTag');
+        if (window.Rewards && Rewards.previewHtml) {
+            premi.hidden = false;
+            premi.innerHTML = Rewards.previewHtml(controBoss ? tagDatabase.livelloBoss : scelta.livello, 'Tag Team');
+        } else premi.hidden = true;
         const lp = regoleLp();
         regola($('regolaLp'), 'Life Point', interruttore(lp, scelta.lp, (v) => { scelta.lp = v; }, 'Life Point'), (lp.find((r) => r.valore === scelta.lp) || {}).desc);
         regola($('regolaTurni'), 'Turni', interruttore(REGOLE_SCAMBIO, scelta.scambio, (v) => { scelta.scambio = v; }, 'Turni nella squadra'), (REGOLE_SCAMBIO.find((r) => r.valore === scelta.scambio) || {}).desc);

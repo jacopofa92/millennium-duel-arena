@@ -102,6 +102,10 @@
                                     <span class="sl-liv-testo"><b>${l.label}</b><small>${l.desc}</small></span>
                                 </button>`).join('')}
                         </div>
+                        <details class="sl-premi" data-sl="premi">
+                            <summary data-sl="premiSommario"></summary>
+                            <div data-sl="premiCorpo"></div>
+                        </details>
                     </div>
                 </section>
                 <footer class="sl-piede">
@@ -140,6 +144,20 @@
             btn.setAttribute('aria-checked', String(scelto));
             btn.classList.toggle('is-scelto', scelto);
         });
+        mostraPremi();
+    }
+
+    // I premi della vittoria al livello scelto. I numeri li legge Rewards
+    // (js/economy/rewards.js): questa finestra non ne ricopia nessuno.
+    function mostraPremi() {
+        const box = el('premi');
+        if (!box) return;
+        if (!window.Rewards || !Rewards.preview) { box.hidden = true; return; }
+        box.hidden = false;
+        const p = Rewards.preview(livello);
+        const nome = (LIVELLI.find((l) => l.key === livello) || {}).label || '';
+        el('premiSommario').textContent = `🎁 Premi della vittoria a ${nome}: +${p.crediti} crediti${p.primaDelGiorno ? ` (+${p.bonusPrimaDelGiorno} oggi)` : ''}`;
+        el('premiCorpo').innerHTML = Rewards.previewHtml(livello, '', true);
     }
 
     function mostraRitratto(character) {
