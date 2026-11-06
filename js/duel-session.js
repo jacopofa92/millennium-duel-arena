@@ -653,9 +653,50 @@
         } catch (e) { return null; }
     }
 
+    /**
+     * Le SQUADRE del duello, per la schermata VS (js/ui/duel-cinematics.js): { player: [membri], opponent: [membri] }, il primo
+     * di ogni elenco e' chi sta davanti. Un membro ha la stessa forma di session.player/opponent ({ id, name, title, image, icon }).
+     * `null` se il duello e' un normale 1 contro 1: la schermata VS resta quella di sempre.
+     * Fonti: Tag Team locale e della Storia/Tutorial (parametri `partner`, `character2`, `boss`) e Tag Team in rete
+     * (window.MP_TAG.posti). Solo identita' per il disegno: nessuna regola legge questo campo.
+     */
+    function squadreDelDuello() {
+        const identita = (id) => {
+            const c = typeof characterDatabase !== 'undefined' ? characterDatabase.find((x) => x.id === id) : null;
+            return c ? { id: c.id, name: c.name, title: c.title || '', image: c.image || null, icon: '🧑‍🎤' } : null;
+        };
+        // Tag in rete: la disposizione della stanza dice chi siede dove.
+        if (window.MULTIPLAYER_MODE && window.MP_TAG && window.MP_TAG.posti) {
+            const posti = window.MP_TAG.posti;
+            const mio = String(window.MP_MIO_POSTO || 'A0');
+            const membri = (lettera) => Object.keys(posti).filter((k) => k.charAt(0) === lettera).sort().map((k) => {
+                if (k === mio) return session.player;
+                const s = posti[k];
+                if (s.tipo === 'ia') return identita(s.personaggio) || { id: String(s.personaggio), name: String(s.personaggio), title: '', image: null, icon: '🤖' };
+                const p = pedinaMultiplayer(s.pedina);
+                return { id: p ? p.id : 'player', name: pulisciNomeGiocatore(s.nome) || 'Giocatore', title: '', image: p ? p.image : 'images/characters/mirror.jpg', icon: '🧑' };
+            });
+            const miaSq = mio.charAt(0);
+            const mia = membri(miaSq), loro = membri(miaSq === 'A' ? 'B' : 'A');
+            return mia.length + loro.length > 2 ? { player: mia, opponent: loro, boss: !!window.MP_TAG.boss } : null;
+        }
+        // Tag locale (anche della Storia e del Tutorial): compagno e secondo avversario arrivano dall'URL.
+        const compagno = params.get('partner');
+        if (!compagno) return null;
+        const mia = [session.player];
+        const c = identita(compagno);
+        if (c) mia.push(c);
+        const loro = [session.opponent];
+        const boss = params.get('boss') === '1';
+        const secondo = boss ? null : identita(params.get('character2') || '');
+        if (secondo) loro.push(secondo);
+        return mia.length + loro.length > 2 ? { player: mia, opponent: loro, boss: boss } : null;
+    }
+
     function start() {
         if (session.started) return;
         session.started = true;
+        try { session.squadre = squadreDelDuello(); } catch (e) { session.squadre = null; }
         // Di chi e' questo duello: se a fine partita l'account collegato e' un altro (un'altra scheda ha fatto uscire
         // e rientrare qualcuno mentre si giocava), il risultato NON si scrive nel salvataggio di chi c'e' adesso.
         session.accountId = accountDelDuello();

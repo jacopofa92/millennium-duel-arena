@@ -217,6 +217,35 @@
 }
 .di-duelist--player .di-figura img { object-position: 78% 100%; filter: drop-shadow(0 0 24px rgba(52, 152, 219, .6)) drop-shadow(0 12px 20px rgba(0, 0, 0, .75)); }
 .di-duelist--opponent .di-figura img { object-position: 22% 100%; filter: drop-shadow(0 0 24px rgba(231, 76, 60, .6)) drop-shadow(0 12px 20px rgba(0, 0, 0, .75)); }
+/* --- Tag Team: piu' duellanti sullo stesso lato (2 contro 1, 2 contro 2) ---
+   Una scena sola per lato: chi sta davanti e' grande e verso il centro, gli altri piu' piccoli, scuri e dietro, verso il bordo.
+   Le pedine si dimensionano sulla larghezza della scena (container query): su un telefono in verticale mezzo schermo e'
+   largo ~200px e dimensionarle solo sull'altezza le farebbe uscire. Un solo blocco di nomi per lato ("con ..."). */
+.di-duelist--squadra { width: 54%; }
+.di-duelist--squadra.di-duelist--player { left: 0; }
+.di-duelist--squadra.di-duelist--opponent { right: 0; }
+.di-scena { position: relative; flex: 1; min-height: 0; width: 100%; container-type: size; }
+.di-ped { position: absolute; bottom: 0; aspect-ratio: 1 / 1; }
+.di-ped .di-figura { width: 100%; height: 100%; }
+.di-ped .di-figura img { width: 100%; height: 100%; max-height: none; aspect-ratio: auto; object-fit: contain; object-position: 50% 100%; }
+.di-duelist--squadra .di-ped .di-figura img { object-position: 50% 100%; }
+.di-ped--fronte { z-index: 3; height: min(100cqh, 76cqw); }
+.di-ped--socio { z-index: 2; height: min(80cqh, 60cqw); }
+.di-ped--socio .di-figura img { filter: brightness(.68) saturate(.8) drop-shadow(0 0 16px rgba(0, 0, 0, .7)) !important; }
+.di-duelist--player .di-ped--fronte { right: 0; } .di-duelist--player .di-ped--socio { left: 0; }
+.di-duelist--opponent .di-ped--fronte { left: 0; } .di-duelist--opponent .di-ped--socio { right: 0; }
+/* Un lato solo, accanto a una squadra (2 contro 1): la pedina sta sul suo mezzo schermo come sempre. */
+.di-duelist-con { color: #bcae86; font-size: clamp(10px, 1.3vw, 15px); text-align: center; letter-spacing: .04em; text-shadow: 0 2px 8px #000; max-width: 100%; }
+.di-duelist-con b { color: #f4ead0; font-weight: 700; }
+/* La striscia con la forma dello scontro, in alto. */
+.di-formato {
+    position: absolute; top: calc(env(safe-area-inset-top, 0px) + 7%); left: 50%; transform: translateX(-50%);
+    color: #f7d774; font-weight: 800; letter-spacing: .3em; font-size: clamp(10px, 1.5vw, 15px); text-transform: uppercase;
+    padding: 6px 16px; border-top: 1px solid rgba(247, 215, 116, .5); border-bottom: 1px solid rgba(247, 215, 116, .5);
+    white-space: nowrap; opacity: 0; animation: diFormatoIn .5s ease .5s forwards;
+}
+@keyframes diFormatoIn { from { opacity: 0; transform: translate(-50%, -6px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@media (prefers-reduced-motion: reduce) { .di-formato { animation: none; opacity: 1; } }
 .di-duelist .duelist-avatar {
     width: clamp(96px, 17vw, 170px);
     height: clamp(96px, 17vw, 170px);

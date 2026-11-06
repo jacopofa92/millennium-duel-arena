@@ -93,6 +93,45 @@
         return block;
     }
 
+    /**
+     * Un lato con PIU' di un duellante (Tag Team): le pedine insieme su una scena sola (quella di chi sta davanti, grande e verso
+     * il centro; le altre piu' piccole e scure dietro, verso il bordo) e un solo blocco di nomi: il nome del primo, "con <altri>"
+     * e l'etichetta. Il disegno e' quello della proposta approvata dall'utente (2 contro 2 e 2 contro 1).
+     */
+    function buildSquadBlock(membri, role, roleLabel) {
+        const block = document.createElement('div');
+        block.className = 'di-duelist di-duelist--' + role + ' di-duelist--squadra';
+        const scena = document.createElement('div');
+        scena.className = 'di-scena';
+        membri.forEach((m, i) => {
+            const fig = figureFor(m, true);
+            if (!fig) return;
+            const ped = document.createElement('div');
+            ped.className = 'di-ped ' + (i === 0 ? 'di-ped--fronte' : 'di-ped--socio');
+            ped.appendChild(fig);
+            scena.appendChild(ped);
+        });
+        block.appendChild(scena);
+        const name = document.createElement('div');
+        name.className = 'di-duelist-name';
+        name.textContent = membri[0].name;
+        block.appendChild(name);
+        if (membri.length > 1) {
+            const con = document.createElement('div');
+            con.className = 'di-duelist-con';
+            con.append('con ');
+            const b = document.createElement('b');
+            b.textContent = membri.slice(1).map((m) => m.name).join(' e ');
+            con.appendChild(b);
+            block.appendChild(con);
+        }
+        const badge = document.createElement('div');
+        badge.className = 'di-duelist-role';
+        badge.textContent = roleLabel;
+        block.appendChild(badge);
+        return block;
+    }
+
     function playIntro(session, onCurtainUp) {
         const existing = document.getElementById('duelIntroOverlay');
         if (existing) existing.remove();
@@ -114,15 +153,34 @@
 
         const stage = document.createElement('div');
         stage.className = 'di-stage';
-        stage.appendChild(buildDuelistBlock(session.player, 'player', 'Tu'));
+        // Tag Team: un lato puo' avere piu' duellanti (session.squadre, js/duel-session.js). Un 1 contro 1 resta com'e' sempre.
+        const sq = session.squadre && session.squadre.player && session.squadre.opponent ? session.squadre : null;
+        const opponentRole = session.squadre && session.squadre.boss ? 'Boss'
+            : (session.isMultiplayer ? 'Online' : (session.difficultyLabel || session.difficulty || 'Sfidante'));
+        if (sq) {
+            const nPlayer = sq.player.length, nOpp = sq.opponent.length;
+            overlay.classList.add('di-a-squadre');
+            const formato = document.createElement('div');
+            formato.className = 'di-formato';
+            formato.textContent = nPlayer + ' contro ' + nOpp;
+            stage.appendChild(formato);
+            stage.appendChild(nPlayer > 1 ? buildSquadBlock(sq.player, 'player', 'Tu e il compagno') : buildDuelistBlock(sq.player[0], 'player', 'Tu'));
+        } else {
+            stage.appendChild(buildDuelistBlock(session.player, 'player', 'Tu'));
+        }
 
         const vs = document.createElement('div');
         vs.className = 'di-vs';
         vs.textContent = 'VS';
         stage.appendChild(vs);
 
-        const opponentRole = session.isMultiplayer ? 'Online' : (session.difficultyLabel || session.difficulty || 'Sfidante');
-        stage.appendChild(buildDuelistBlock(session.opponent, 'opponent', opponentRole));
+        if (sq) {
+            stage.appendChild(sq.opponent.length > 1
+                ? buildSquadBlock(sq.opponent, 'opponent', opponentRole)
+                : buildDuelistBlock(sq.opponent[0], 'opponent', opponentRole));
+        } else {
+            stage.appendChild(buildDuelistBlock(session.opponent, 'opponent', opponentRole));
+        }
         overlay.appendChild(stage);
 
         const loading = document.createElement('div');
