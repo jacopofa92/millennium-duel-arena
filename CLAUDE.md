@@ -4232,6 +4232,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.82 (cache v592, su `main`): **restyling di Duello della Settimana e Caccia al Boss** (`js/modes/rotazione.css`, nuovo, in APP_SHELL; sopra `mode-pages.css`). Le due pagine diventano schede evento: *Settimana* ha una copertina con l'arena, il medaglione della regola, il titolo e una barra del tempo che si svuota verso il cambio di regola; un faccia a faccia con le pedine (tu / avversario); tre livelli come medaglie bronzo/argento/oro con il premio come gettone (verde se gia' preso). *Caccia* ha la copertina con l'arena di Zorc, la pedina grande del Boss, la barra Life Point rossa a parallelogramma, gli 8 turni come pallini (quelli del record si accendono) e il pulsante 'Inizia la caccia' in rosso con luce che scorre. Il testo 'Come funziona' passa in un blocco richiudibile. Id e classi usati dagli spec restano (#regolaTitolo, #livelli .mp-scelta[data-livello], #boss .mp-titolo, #vai, #premio, #premiModalita). Solo grafica e testi: nessuna regola cambia. Spec `modalita-settimana-e-caccia`, `premi-nelle-modalita`, `sfide-settimana-e-caccia` verdi. Suite completa non eseguita.
 
+1.5.83 (cache v593, su `main`): avviso del Duello della Settimana corretto: 'Il tuo mazzo non rispetta la regola' al posto di 'Questa settimana non puoi giocare' (e sui livelli spenti 'Serve un mazzo che rispetti la regola'): il problema e' il mazzo attivo, non la settimana. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

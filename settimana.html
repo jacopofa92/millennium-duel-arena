@@ -148,7 +148,7 @@
         const avviso = document.getElementById('avviso');
         if (verifica.ok) { avviso.hidden = true; avviso.innerHTML = ''; } else {
             avviso.hidden = false;
-            const titolo = verifica.nessunMazzo ? 'Non hai un mazzo attivo' : 'Questa settimana non puoi giocare';
+            const titolo = verifica.nessunMazzo ? 'Non hai un mazzo attivo' : 'Il tuo mazzo non rispetta la regola';
             // I nomi delle carte fuori regola: il mazzo e' suo e lo sistema lui, quindi gli si dice QUALI sono (le prime sei).
             const elencoFuori = (verifica.fuori || []).slice(0, 6).map((f) => `${f.nome}${f.qty > 1 ? ' ×' + f.qty : ''}`).join(', ')
                 + ((verifica.fuori || []).length > 6 ? ` e altre ${(verifica.fuori || []).length - 6}` : '');
@@ -174,7 +174,7 @@
             b.querySelector('.mp-scelta-icona').textContent = preso ? '✅' : l.icona;
             b.querySelector('.mp-scelta-nome').textContent = l.nome;
             // Descrizione del livello e, sotto, il premio come "gettone": oro se e' ancora da prendere, verde se e' gia' preso.
-            b.querySelector('.mp-scelta-desc').textContent = !verifica.ok ? 'Non disponibile questa settimana: vedi l\'avviso qui sopra.' : l.desc;
+            b.querySelector('.mp-scelta-desc').textContent = !verifica.ok ? 'Serve un mazzo che rispetti la regola: vedi l\'avviso qui sopra.' : l.desc;
             if (verifica.ok) {
                 const chip = document.createElement('span');
                 chip.className = 'rz-premio-chip' + (preso ? ' is-preso' : '');
