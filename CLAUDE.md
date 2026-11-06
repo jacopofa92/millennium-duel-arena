@@ -4270,6 +4270,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.101 (cache v611, su `main`): stessa regola delle barre fisse anche per i **filtri della Cartoteca**, le **tab di Creazione Deck** (ora sticky) e l'**intestazione dell'editor** (`top: 0`, fotocamera nel padding, margine negativo a riposo: vedi menu-mobile.css). Le tab di Creazione Deck sbordavano di 14px per lato sotto i 480px (margine -22px su un padding di 8px): i margini seguono ora il padding di `.list-main` a ogni misura. Suite completa non eseguita.
 
+1.5.102 (cache v612, su `main`): (1) le tab di Creazione Deck hanno lo **stesso stile del Negozio** (icona sopra, nome sotto, quattro colonne uguali, barra d'oro). (2) **Cambio scheda senza scatti** in Creazione Deck, Negozio e Sfide: si riparte dall'alto in modo ISTANTANEO (`scrollTo({behavior:'instant'})`, non piu' `scrollIntoView`, che con `scroll-behavior` smooth scorreva a scatti), i contenitori hanno un'altezza minima (70dvh) e `overflow-anchor: none`, cosi' il documento non si accorcia di colpo e la barra in basso non balla. **Regola per una nuova pagina a schede: reset istantaneo dello scorrimento + altezza minima del contenuto.** Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

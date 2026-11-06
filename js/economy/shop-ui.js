@@ -379,10 +379,8 @@
                 const p = voci.find((v) => v.sc.id === id).pannello;
                 try { p.animate([{ transform: 'translateX(' + (direzione * 46) + 'px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 260, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }); } catch (e) { /* senza animazione si cambia lo stesso */ }
             }
-            // Cambiando scheda si riparte dall'alto del contenuto, sotto la parte fissa.
-            if (prima !== id && fisso.getBoundingClientRect().top <= (parseFloat(getComputedStyle(fisso).top) || 0) + 1) {
-                root.scrollIntoView({ block: 'start' });
-            }
+            // Cambiando scheda si riparte dall'alto in modo ISTANTANEO (niente scorrimento animato o a scatti, niente barra in basso che balla).
+            if (prima !== id && window.scrollY > 0) window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
         }
         voci.forEach((v, i) => {
             v.bottone.onclick = () => {

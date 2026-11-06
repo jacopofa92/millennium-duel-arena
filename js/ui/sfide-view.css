@@ -352,3 +352,7 @@
 @media (max-width: 600px) { .sfide-vista .sv-fisso { margin-top: calc(-1 * (var(--mm-fotocamera, 0px) + 14px)); } }
 @media (max-height: 500px) and (orientation: landscape) { .sfide-vista .sv-fisso { margin-top: calc(-1 * (var(--mm-fotocamera, 0px) + 8px)); } }
 .sfide-vista .sv-fisso::before { display: none; }
+
+/* Altezza stabile fra le sezioni (scatti di scorrimento, barra in basso che si muove). */
+.sfide-vista { overflow-anchor: none; }
+.sfide-vista .sv-corpo { min-height: 70dvh; overflow-x: clip; }

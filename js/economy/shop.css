@@ -539,3 +539,7 @@
 @media (min-width: 601px) { .shop-root .shop-fisso { margin-top: calc(-1 * (var(--mm-fotocamera, 0px) + 26px)); } }
 @media (max-height: 500px) and (orientation: landscape) { .shop-root .shop-fisso { margin-top: calc(-1 * (var(--mm-fotocamera, 0px) + 8px)); } }
 .shop-root .shop-fisso::before { display: none; }
+
+/* Altezza stabile fra le schede: la pagina non si accorcia di colpo cambiando scheda (scatti di scorrimento, barra in basso che si muove). */
+.shop-root { overflow-anchor: none; }
+.shop-root .shop-pannelli { min-height: 70dvh; }

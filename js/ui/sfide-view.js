@@ -333,8 +333,8 @@
             if (direzione && !riduciMovimento) {
                 try { corpo.animate([{ transform: 'translateX(' + (direzione * 46) + 'px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 260, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }); } catch (e) { /* cambia lo stesso */ }
             }
-            const alto = root.querySelector('.sv-fisso').getBoundingClientRect().bottom;
-            if (corpo.getBoundingClientRect().top < alto) corpo.scrollIntoView({ block: 'start' });
+            // Si riparte dall'alto in modo ISTANTANEO (niente scorrimento a scatti, niente barra in basso che balla).
+            if (window.scrollY > 0) window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
         }
         root.querySelector('.sv-sezioni').addEventListener('click', (e) => {
             const tab = e.target.closest('.sv-tab');

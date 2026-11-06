@@ -1264,6 +1264,17 @@
     @media (max-height: 500px) and (orientation: landscape) {
         .list-tabs { margin: calc(-1 * (8px + var(--mm-fotocamera, 0px))) -14px 12px; padding: var(--mm-fotocamera, 0px) 14px 0; }
     }
+
+    /* TAB nello stile del Negozio: icona sopra e nome sotto, quattro colonne uguali, barra d'oro sotto quella attiva. */
+    .list-tab { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px 9px; font-size: 0.66rem; letter-spacing: 0.1em; }
+    .list-tab-icona { font-size: 1.3rem; line-height: 1; display: flex; }
+    .list-tab.active .list-tab-icona { filter: drop-shadow(0 0 7px rgba(247, 215, 116, 0.55)); }
+    .list-tab-nome { font-weight: 800; text-transform: uppercase; }
+    .list-tabs { padding-bottom: 0; }
+    @media (max-width: 520px) { .list-tab { padding: 6px 2px 9px; font-size: 0.66rem; letter-spacing: 0.08em; } }
+    /* Il contenuto non deve cambiare altezza di colpo passando da una scheda all'altra (scatti di scorrimento, barra in basso che si muove). */
+    .list-main { overflow-anchor: none; overflow-x: clip; }
+    #screenList .list-main > div[id^="panel"] { min-height: 70dvh; }
 </style>
 </head>
 <!-- data-card-badges accende su questa pagina i bollini "copie massime"
@@ -1277,10 +1288,10 @@
     <div class="screen" id="screenList">
         <div class="list-main">
             <div class="list-tabs" role="tablist">
-                <button type="button" class="list-tab active" id="tabMine" role="tab">I Miei Deck</button>
-                <button type="button" class="list-tab" id="tabOpponents" role="tab">Deck degli Avversari</button>
-                <button type="button" class="list-tab" id="tabStarter" role="tab">Starter Deck</button>
-                <button type="button" class="list-tab" id="tabStructure" role="tab">Structure Deck</button>
+                <button type="button" class="list-tab active" id="tabMine" role="tab"><span class="list-tab-icona" data-icon="deckBuilder"></span><span class="list-tab-nome">I miei</span></button>
+                <button type="button" class="list-tab" id="tabOpponents" role="tab"><span class="list-tab-icona" data-icon="duel"></span><span class="list-tab-nome">Avversari</span></button>
+                <button type="button" class="list-tab" id="tabStarter" role="tab"><span class="list-tab-icona" data-icon="cards"></span><span class="list-tab-nome">Starter</span></button>
+                <button type="button" class="list-tab" id="tabStructure" role="tab"><span class="list-tab-icona" data-icon="collection"></span><span class="list-tab-nome">Structure</span></button>
                 <span class="list-tab-barra" aria-hidden="true"></span>
             </div>
 
@@ -2848,6 +2859,9 @@
     function vaiTab(tabId, direzione) {
         const prima = tabAttiva;
         tabAttiva = tabId;
+        // Cambiando scheda si riparte dall'alto in modo ISTANTANEO: una pagina piu' corta della posizione di scorrimento attuale scattava
+        // da sola (e la barra in basso, legata all'altezza del documento, ballava).
+        if (window.scrollY > 0) window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
         Object.entries(LIST_TABS).forEach(([otherTabId, panelId]) => {
             $(otherTabId).classList.toggle('active', otherTabId === tabId);
             $(otherTabId).setAttribute('aria-selected', String(otherTabId === tabId));
