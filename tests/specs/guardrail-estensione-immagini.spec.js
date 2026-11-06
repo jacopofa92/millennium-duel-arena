@@ -17,7 +17,9 @@ const RADICE = path.join(__dirname, '..', '..');
 // `dist` è la copia minificata che crea `npm run pubblica` (non versionata):
 // è un'uscita di build, e dopo una correzione ai sorgenti resta vecchia
 // finché non si rilancia la pubblicazione.
-const SALTA = /(^|\/)(node_modules|\.git|android|vendor|dist)(\/|$)|package-lock/;
+// graphify-out: il grafo generato da graphify (manifest e indici che elencano i percorsi di TUTTO il progetto, compresi quelli che
+// questo guardrail vieta nel codice): e' un'uscita di strumento, come dist, non codice del gioco.
+const SALTA = /(^|\/)(node_modules|\.git|android|vendor|dist|graphify-out)(\/|$)|package-lock/;
 
 // File che il codice nomina ma che possono non esistere: ognuno ha un
 // ripiego dichiarato accanto al punto d'uso.

@@ -532,7 +532,16 @@
 // v576: gabbia d'acciaio e Spade Rivelatrici ridisegnate per il campo zenitale.
 // v577: ripristinato l'effetto precedente delle Spade e rimosso il rendering WebGL della Gabbia.
 // v578: Spade Rivelatrici riportate alla resa WebGL precedente al cambio prospettico.
-const CACHE_NAME = 'ygo-duel-arena-v584';
+const CACHE_NAME = 'ygo-duel-arena-v585';
+
+// CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
+// Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento
+// del gioco (e si aggiorna spesso) si perdevano TUTTE le illustrazioni gia' scaricate, da riscaricare una a una — il peggio proprio
+// su una connessione lenta. Ora un rilascio rinnova solo l'app shell e le carte restano sul telefono.
+// REGOLA NUOVA: un'immagine NUOVA (nome nuovo) non richiede nulla; un'immagine che CAMBIA contenuto tenendo lo STESSO nome si vedrebbe
+// vecchia per sempre (cache-first): in quel caso, e solo in quel caso, si cambia il suffisso qui sotto (-v1 -> -v2), che scarta
+// l'intera cache dei media. Tutti i commenti storici qui sopra che dicono "il bump serve" per un media vanno letti cosi'.
+const MEDIA_CACHE = 'ygo-duel-arena-media-v1';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare
@@ -835,7 +844,8 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys()
-            .then((keys) => Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))))
+            // Si butta tutto tranne l'app shell corrente e la cache dei media (vedi MEDIA_CACHE).
+            .then((keys) => Promise.all(keys.filter((k) => k !== CACHE_NAME && k !== MEDIA_CACHE).map((k) => caches.delete(k))))
             .then(() => self.clients.claim())
     );
 });
@@ -964,7 +974,8 @@ self.addEventListener('fetch', (event) => {
                     const copy = response.clone();
                     // Anche la cache al primo uso deve completare la propria
                     // scrittura dentro la vita della richiesta del worker.
-                    return caches.open(CACHE_NAME)
+                    // Nella cache dei media, che sopravvive agli aggiornamenti (vedi MEDIA_CACHE in cima).
+                    return caches.open(MEDIA_CACHE)
                         .then((cache) => cache.put(req, copy).catch(() => {}))
                         .then(() => response);
                 }

@@ -423,6 +423,9 @@
         aggiornaSetupPerRuolo();
         costruisciSelettori();
         mostraSchermata('attesa');
+        // In sala si aspetta l'avversario (anche minuti): tempo perfetto per scaricare in disparte le miniature del proprio mazzo,
+        // cosi' il duello non le trova da scaricare (card-renderer.js; non fa nulla con "risparmio dati").
+        if (window.CardRenderer && CardRenderer.precaricaMazzoAttivo) CardRenderer.precaricaMazzoAttivo();
         // Solo ORA le scatole hanno una larghezza vera: finché la sala era
         // nascosta ogni misura valeva zero, e nessun nome sarebbe mai
         // risultato troppo lungo da far scorrere.

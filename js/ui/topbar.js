@@ -53,6 +53,7 @@
      *   sta per duellare (Duello Libero, Tornei): altrove il ritratto da
      *   solo basta, e il mazzo sarebbe un'informazione fuori contesto.
      *   Richiede js/ui/deck-switcher.js caricato dalla pagina.
+     * @param {boolean} [opts.avatar=true] - `false` nasconde il ritratto del giocatore (pagine dove non serve)
      * @param {string} [opts.profileHref] - destinazione del ritratto se non c'è onProfile
  *   (vedi js/ui/deck-switcher.js).
  * @param {function} [opts.onProfile] - cosa fare al tocco sul ritratto

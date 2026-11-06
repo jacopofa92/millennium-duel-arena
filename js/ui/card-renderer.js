@@ -181,6 +181,16 @@
     }
 
     /**
+     * Il glifo del SEGNAPOSTO nella finestra dell'illustrazione, finche' l'immagine non arriva (rete lenta): lo stesso kanji del
+     * badge in alto a destra (Attributo per i mostri, 魔 Magia / 罠 Trappola), non un'emoji di sistema. Il colore lo da' il CSS
+     * dall'Attributo o dal tipo (`data-attr` / `data-ctype` sulla finestra, vedi card.css); qui c'e' solo il carattere.
+     */
+    function segnapostoArte(card) {
+        if (card.type === 'monster') return ATTRIBUTE_ICON[card.attribute] || TYPE_ICON.monster;
+        return TYPE_KANJI[card.type] || TYPE_ICON[card.type] || '';
+    }
+
+    /**
      * Il fallback CSS vero e proprio: replica il layout di una carta
      * Yu-Gi-Oh reale (barra nome+attributo, stelle Livello, finestra
      * immagine con placeholder, riga razza/tipo, riga ATK/DEF). Non
@@ -222,7 +232,7 @@
                     ${topBadge}
                 </div>
                 ${stars}
-                <div class="card-frame-art"><div class="card-frame-art-icon">${TYPE_ICON[card.type] || ''}</div></div>
+                <div class="card-frame-art" data-attr="${card.attribute || ''}" data-ctype="${card.type}"><div class="card-frame-art-icon">${segnapostoArte(card)}</div></div>
                 <div class="card-frame-typeline">${typeLineText(card)}</div>
                 ${stats}
             </div>
@@ -302,7 +312,18 @@
      * @param {'attack'|'defense'} position - orientamento (solo mostri).
      */
     function createCardElement(card, isFaceDown = false, position = 'attack', opzioni) {
-        const miniatura = !!(opzioni && opzioni.miniatura);
+        // Come si carica l'illustrazione (opzioni.miniatura):
+        //   true   = SOLO la miniatura da 256px (~13 KB): per le carte PICCOLE (mano, campo, elenchi), dove i 624px (~76 KB)
+        //            dell'intera sono solo peso: su rete lenta e' la differenza fra vedere la carta e vedere il segnaposto;
+        //   false  = SOLO l'illustrazione intera;
+        //   assente = PROGRESSIVA: la miniatura subito (di solito gia' in cache, perche' la carta e' stata vista in mano o sul
+        //            campo) e, quando l'intera e' arrivata, la si sostituisce. Per tutto cio' che si ingrandisce (attivazione a
+        //            centro schermo, pannello info, Catena, effetti).
+        const modoImmagine = (opzioni && opzioni.miniatura === true) ? 'miniatura' : ((opzioni && opzioni.miniatura === false) ? 'piena' : 'progressiva');
+        const percorsoPieno = card ? getCardImagePath(card) : '';
+        const percorsoMini = card ? getCardThumbPath(card) : '';
+        // Una carta custom o di un altro set non ha miniatura (getCardThumbPath torna lo stesso percorso): per lei vale sempre l'intera.
+        const miniatura = modoImmagine !== 'piena' && !!percorsoMini && percorsoMini !== percorsoPieno;
         const el = document.createElement('div');
         el.className = 'card';
         if (card) {
@@ -370,13 +391,22 @@
             artImg.onload = () => {
                 el.classList.add('art-loaded');
                 if (artIcon) setTimeout(() => artIcon.remove(), 260);
+                // Progressiva: appena c'e' la miniatura si scarica l'intera in disparte, e SOLO a intera arrivata (quindi
+                // sicuramente valida e in cache) la si mette al posto della miniatura: nessun buco, nessun segnaposto che torna.
+                // `piena` fa da guardia: la sostituzione rilancia onload, che non deve ripartire da capo.
+                if (modoImmagine === 'progressiva' && miniatura && !artImg.dataset.piena) {
+                    artImg.dataset.piena = '1';
+                    const grande = new Image();
+                    grande.onload = () => { artImg.src = percorsoPieno; };
+                    grande.src = percorsoPieno;
+                }
             };
             // Se manca la miniatura si riprova UNA volta con l'illustrazione intera, poi si rinuncia.
             artImg.onerror = () => {
-                if (miniatura && !artImg.dataset.piena) { artImg.dataset.piena = '1'; assegnaSorgenteImmagine(artImg, getCardImagePath(card)); return; }
+                if (miniatura && !artImg.dataset.piena) { artImg.dataset.piena = '1'; assegnaSorgenteImmagine(artImg, percorsoPieno); return; }
                 artImg.remove();
             };
-            assegnaSorgenteImmagine(artImg, miniatura ? getCardThumbPath(card) : getCardImagePath(card));
+            assegnaSorgenteImmagine(artImg, miniatura ? percorsoMini : percorsoPieno);
             // Vedi il commento gemello in applyCardBackVisual() più sopra:
             // stesso sfarfallio, stessa causa (ricreazione totale ad ogni
             // renderFields()), stesso rimedio — se il browser ha già
@@ -792,6 +822,60 @@
         return el;
     }
 
+    // ------------------------------------------------------------------
+    // Precaricamento delle miniature, a bassa priorita'
+    // ------------------------------------------------------------------
+    // Scarica in anticipo le miniature da 256px (~13 KB l'una) di carte che stanno per servire, cosi' quando compaiono sono gia' in cache
+    // e non si vede il segnaposto. Regole: una sola richiesta per percorso, a distanza di qualche decina di millisecondi l'una
+    // dall'altra (mai una raffica che rubi banda a quello che serve DAVVERO adesso), `fetchPriority: 'low'`, e NIENTE con "risparmio dati"
+    // o rete 2G: li' un download che nessuno ha chiesto e' proprio quello che l'utente non vuole.
+    const percorsiPrecaricati = new Set();
+    const immaginiTrattenute = [];   // senza un riferimento il browser puo' abbandonare la richiesta prima che finisca
+    function reteDaRisparmiare() {
+        const conn = navigator.connection;
+        return !!(conn && (conn.saveData || /(^|-)2g$/.test(conn.effectiveType || '')));
+    }
+    /**
+     * @param {Array<object|number>} carte  carte (o `{ id, qty }` di un mazzo, o semplici id) di cui scaricare la miniatura
+     * @param {{ intervalloMs?: number, limite?: number }} [opzioni]
+     * @returns {number} quante richieste sono state programmate
+     */
+    function precaricaMiniature(carte, opzioni) {
+        if (!Array.isArray(carte) || carte.length === 0 || reteDaRisparmiare()) return 0;
+        const o = opzioni || {};
+        const intervallo = o.intervalloMs != null ? o.intervalloMs : 90;
+        const limite = o.limite || 120;
+        let n = 0;
+        carte.forEach((voce) => {
+            if (n >= limite || voce == null) return;
+            const card = typeof voce === 'object' ? voce : { id: voce };
+            if (card.id == null || (typeof card.id === 'number' && card.id < 0)) return;
+            const percorso = getCardThumbPath(card);
+            // Carte custom e di altri set non hanno miniatura: il loro percorso e' quello dell'intera, che non si scarica "al buio".
+            if (!percorso || percorso === getCardImagePath(card) || percorsiPrecaricati.has(percorso)) return;
+            percorsiPrecaricati.add(percorso);
+            const ritardo = n * intervallo;
+            n++;
+            setTimeout(() => {
+                try {
+                    const img = new Image();
+                    img.decoding = 'async';
+                    if ('fetchPriority' in img) img.fetchPriority = 'low';
+                    img.src = percorso;
+                    immaginiTrattenute.push(img);
+                    if (immaginiTrattenute.length > 200) immaginiTrattenute.shift();
+                } catch (e) { /* un'immagine in meno: niente di grave */ }
+            }, ritardo);
+        });
+        return n;
+    }
+    /** Le miniature del mazzo attivo del giocatore (Main ed Extra Deck): per i momenti d'attesa (sala del Multiplayer, ecc.). */
+    function precaricaMazzoAttivo() {
+        const mazzo = (window.SaveManager && SaveManager.getActiveDeck) ? SaveManager.getActiveDeck() : null;
+        if (!mazzo) return 0;
+        return precaricaMiniature([].concat(mazzo.main || [], mazzo.extra || []));
+    }
+
     window.CartaViva = { rendi: rendiCartaViva };
 
     window.CardRenderer = {
@@ -806,7 +890,9 @@
         rendiCartaViva,
         iniziaImmaginiDifferite,
         terminaImmaginiDifferite,
-        caricaImmaginiDifferite
+        caricaImmaginiDifferite,
+        precaricaMiniature,
+        precaricaMazzoAttivo
     };
     // Alias globali: così le pagine/i file esistenti che già chiamano
     // createCardElement(...)/getCardImagePath(...) senza prefisso

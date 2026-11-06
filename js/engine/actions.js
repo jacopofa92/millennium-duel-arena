@@ -520,7 +520,7 @@ function flyCardToSlot(card, fromSource, toEl, onArrive, hideEl, isFaceDown = fa
     // il difetto segnalato. createCardElement (card-renderer.js) applica
     // già la classe .defense-pos (rotate(90deg) via CSS, vedi
     // duelMonstersCore.html) quando position è 'defense'.
-    const ghost = createCardElement(card, isFaceDown, position);
+    const ghost = createCardElement(card, isFaceDown, position, { miniatura: true });   // misura da campo: basta la miniatura
     ghost.classList.add('card-fly-ghost');
     // Il fantasma sta GIÀ nella casella d'arrivo (misure finali) e viene riportato visivamente sul punto di
     // partenza con un transform: l'animazione cambia solo il transform (compositor), non left/top/width/height
@@ -2433,7 +2433,7 @@ window.DuelEngineUI = {
                 // verrebbe disegnata coricata.
                 item.appendChild(card.__mostraCoperta
                     ? createCardElement(card, true, 'defense')
-                    : createCardElement(card));
+                    : createCardElement(card, false, 'attack', { miniatura: true }));
                 item.onmouseenter = () => showCardInfo(card);
                 if (selezionabile) {
                     item.onclick = () => {

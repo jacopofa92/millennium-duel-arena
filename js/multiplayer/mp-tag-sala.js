@@ -289,6 +289,8 @@
         if (msg.tu) io = msg.tu;
         const i = interna();
         if (i.mostraSchermata) i.mostraSchermata('tag');
+        // Come nella sala a due: l'attesa e' il momento per scaricare in disparte le miniature del proprio mazzo.
+        if (g.CardRenderer && g.CardRenderer.precaricaMazzoAttivo) g.CardRenderer.precaricaMazzoAttivo();
         mostraCodice();
         montaPersonali();
         status(sonoHost() ? '🕐 Condividi il codice: chi entra prende un posto libero.' : 'Scegli un posto libero e conferma quando sei pronto.');

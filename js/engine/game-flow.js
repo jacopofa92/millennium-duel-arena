@@ -1009,7 +1009,7 @@ function renderChainStack(resolvingLink) {
         const thumb = document.createElement('div');
         thumb.className = 'chain-stack-thumb';
         if (typeof createCardElement === 'function') {
-            const mini = createCardElement(link.card);
+            const mini = createCardElement(link.card, false, 'attack', { miniatura: true });
             mini.style.setProperty('--card-w', 'var(--chain-card-w)');
             mini.style.setProperty('--card-h', 'calc(var(--chain-card-w) / var(--card-ratio))');
             thumb.appendChild(mini);
@@ -1091,7 +1091,7 @@ function renderFields() {
         }
         if (fieldSpellSlotState) {
             const visuallyFaceDown = fieldSpellSlotState.isFaceDown;
-            const fieldSpellCardEl = createCardElement(fieldSpellSlotState.card, visuallyFaceDown, 'attack');
+            const fieldSpellCardEl = createCardElement(fieldSpellSlotState.card, visuallyFaceDown, 'attack', { miniatura: true });
             fieldSpellCardEl.onclick = (event) => {
                 event.stopPropagation();
                 if (!dragState) {
@@ -1152,7 +1152,8 @@ function renderFields() {
                 // SCHERMO: solo la resa visiva cambia, slot.isFaceDown
                 // resta true ovunque nella logica di gioco.
                 const visuallyFaceDown = slot.isFaceDown && !(isMonsterRow && window.DuelEngine && DuelEngine.isRevealedFor(owner));
-                const cardEl = createCardElement(slot.card, visuallyFaceDown, slot.position);
+                // Carta piccola sul campo: basta la miniatura da 256px (13 KB contro 76 KB dell'intera), vedi card-renderer.js.
+                const cardEl = createCardElement(slot.card, visuallyFaceDown, slot.position, { miniatura: true });
                 cardEl.onclick = (event) => {
                     event.stopPropagation();
                     if (!dragState) {
@@ -2290,11 +2291,19 @@ window.addEventListener('resize', () => {
 function renderPlayerHand() {
     const handEl = document.getElementById('playerHand');
     if (!handEl) return;
+    // Una volta per duello, appena c'e' la prima mano: si scaricano in disparte (bassa priorita', a rate, mai con "risparmio dati")
+    // le miniature del resto del mazzo del giocatore e di qualche carta dell'avversario. Cosi' le pescate e le Evocazioni successive
+    // trovano l'immagine gia' in cache invece del segnaposto, anche su una rete lenta (card-renderer.js, precaricaMiniature).
+    if (!window.__miniatureAnticipate && window.CardRenderer && CardRenderer.precaricaMiniature && gameState.playerHand && gameState.playerHand.length) {
+        window.__miniatureAnticipate = true;
+        CardRenderer.precaricaMiniature([].concat(gameState.playerDeck || [], gameState.botHand || [], (gameState.botDeck || []).slice(0, 12)), { limite: 70 });
+    }
     if (window.CardRenderer) CardRenderer.iniziaImmaginiDifferite();
     try {
     const nuoveCarte = [];
     gameState.playerHand.forEach((card, index) => {
-        const cardEl = createCardElement(card);
+        // Mano: carte piccole, miniatura (card-renderer.js). Quando serve grande (pannello info, attivazione) si carica l'intera.
+        const cardEl = createCardElement(card, false, 'attack', { miniatura: true });
         const pendingDraw = gameState._pendingDrawAnimation;
         if (pendingDraw && pendingDraw.owner === 'player' && Array.isArray(pendingDraw.uids)
             && pendingDraw.uids.includes(card.uid)) {
@@ -2361,7 +2370,7 @@ function renderBotHand() {
     const revealed = !!gameState.bothHandsRevealed;
     const nuoveCarte = [];
     gameState.botHand.forEach((card) => {
-        const cardEl = revealed ? createCardElement(card) : CardRenderer.renderCardBack();
+        const cardEl = revealed ? createCardElement(card, false, 'attack', { miniatura: true }) : CardRenderer.renderCardBack();
         cardEl.__renderSignature = firmaRenderStabile(cardEl);
         nuoveCarte.push(cardEl);
     });

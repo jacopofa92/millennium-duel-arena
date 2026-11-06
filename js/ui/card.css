@@ -402,16 +402,45 @@
    dissolvenza: comunica "sta ancora caricando" invece di un'attesa
    muta che sembra un caricamento "a metà" incompiuto. Pulsa l'ICONA
    segnaposto (non lo sfondo, già troppo tenue per notarsi bene). */
-.card:not(.has-image):not(.art-loaded):not(.face-down) .card-frame-art-icon {
-    animation: cardArtShimmer 1400ms ease-in-out infinite;
+/* SEGNAPOSTO A TEMA (rete lenta, finche' l'illustrazione non arriva): niente emoji di sistema. La finestra prende il colore
+   dell'Attributo (o del tipo, per Magie e Trappole: `data-attr` / `data-ctype`, scritti da card-renderer.js), il glifo e' lo STESSO
+   kanji del badge in alto a destra, grande e tenue, e un riflesso di luce la attraversa come una carta olografica "in arrivo"
+   (solo `transform`: costa niente anche con molte carte in mano e sul campo). Appena l'immagine e' pronta (.has-image/.art-loaded)
+   i selettori smettono di corrispondere e resta l'illustrazione. */
+.card .card-frame-art[data-attr="LUCE"]     { --seg-a: rgba(247, 222, 130, .62); --seg-b: rgba(96, 72, 14, .92); }
+.card .card-frame-art[data-attr="OSCURITÀ"] { --seg-a: rgba(139, 107, 201, .6);  --seg-b: rgba(28, 14, 52, .94); }
+.card .card-frame-art[data-attr="TERRA"]    { --seg-a: rgba(203, 163, 108, .58); --seg-b: rgba(54, 36, 16, .94); }
+.card .card-frame-art[data-attr="VENTO"]    { --seg-a: rgba(120, 214, 168, .56); --seg-b: rgba(14, 58, 42, .94); }
+.card .card-frame-art[data-attr="ACQUA"]    { --seg-a: rgba(110, 178, 232, .58); --seg-b: rgba(12, 40, 70, .94); }
+.card .card-frame-art[data-attr="FUOCO"]    { --seg-a: rgba(240, 130, 70, .6);   --seg-b: rgba(66, 20, 8, .94); }
+.card .card-frame-art[data-attr="DIVINO"]   { --seg-a: rgba(255, 226, 120, .66); --seg-b: rgba(110, 64, 6, .94); }
+.card .card-frame-art[data-ctype="spell"]   { --seg-a: rgba(26, 188, 156, .6);   --seg-b: rgba(5, 52, 44, .94); }
+.card .card-frame-art[data-ctype="trap"]    { --seg-a: rgba(209, 98, 164, .6);   --seg-b: rgba(54, 14, 42, .94); }
+.card:not(.has-image):not(.art-loaded):not(.face-down) .card-frame-art {
+    background: radial-gradient(ellipse at 50% 32%, var(--seg-a, rgba(255,255,255,0.16)), var(--seg-b, rgba(0,0,0,0.28)) 82%);
 }
-@keyframes cardArtShimmer {
-    0%, 100% { opacity: 0.35; }
-    50% { opacity: 0.9; }
+.card:not(.has-image):not(.art-loaded):not(.face-down) .card-frame-art::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.26) 50%, transparent 62%);
+    transform: translateX(-110%);
+    animation: cardArtSweep 1700ms ease-in-out infinite;
+}
+@keyframes cardArtSweep {
+    from { transform: translateX(-110%); }
+    to { transform: translateX(110%); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .card:not(.has-image):not(.art-loaded):not(.face-down) .card-frame-art::after { animation: none; transform: none; opacity: .5; }
 }
 .card .card-frame-art-icon {
-    font-size: 22cqw;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
+    font-size: 40cqw;
+    font-weight: 900;
+    font-family: 'Yu Mincho', 'Hiragino Mincho ProN', 'Noto Serif CJK JP', 'MS Mincho', serif;
+    color: rgba(255, 255, 255, 0.3);
+    text-shadow: 0 0 0.35em rgba(255, 255, 255, 0.25);
     line-height: 1;
 }
 /* Illustrazione ritagliata (card.artOnly, vedi js/cards-db.js): riempie

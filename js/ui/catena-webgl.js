@@ -382,7 +382,7 @@ void main(){
             u: (nome) => gl.getUniformLocation(prog, nome),
             voci: [], boom: [], rid: 0, t0: performance.now(), chiudendo: false, tChiusura: 0,
             ultimoAggiorna: performance.now(), animTitolo: null, W: 0, H: 0, scala: 1, L: 40,
-            slotEl: ['bot', 'player'].flatMap((owner) => Array.from(document.querySelectorAll(`#${owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard'} .field-slot[data-owner="${owner}"][data-type="monster"]`)).sort((a, b) => Number(a.dataset.index) - Number(b.dataset.index)).slice(0, 5)),
+            slotEl: ['bot', 'player'].flatMap((owner) => Array.from(document.querySelectorAll(`#${owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard'} .field-slot[data-owner="${owner}"][data-type="monster"]`)).sort((a, b) => Number(/** @type {HTMLElement} */ (a).dataset.index) - Number(/** @type {HTMLElement} */ (b).dataset.index)).slice(0, 5)),
             adatta: 1, dtMedio: 0, ultimoFrame: 0, contaFrame: 0
         };
         ridimensiona();
