@@ -833,8 +833,6 @@
         applicaModoDellaSala();
         attivaRegolaDelModo();
         setupArena = window.DuelSetup.mount($('mpSetupMount'), {
-            // Compatto: la lista delle musiche e' di una ventina di tracce e da sola occupava mezza sala; cosi' scorre in una finestra.
-            compact: true,
             readOnly: !sonoHost,
             initial: scelta,
             onChange: (sel) => {

@@ -1223,15 +1223,6 @@ body.ha-tab-bar .mp-lobby { padding-bottom: calc(var(--mm-barra-h) + 190px); }
 
 /* Scheda di creazione / ingresso */
 .mp-lobby .mp-scheda > p { margin: 0 0 14px; padding: 0; border: 0; font-size: .88rem; line-height: 1.5; color: #cfc3a2; }
-.mp-lobby .mp-passi { list-style: none; counter-reset: passo; display: flex; flex-direction: column; gap: 10px; margin: 0 0 16px; padding: 0; }
-.mp-lobby .mp-passi li { counter-increment: passo; display: grid; grid-template-columns: 28px minmax(0, 1fr); column-gap: 12px; align-items: center; }
-.mp-lobby .mp-passi li::before {
-    content: counter(passo); grid-row: 1 / span 2; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
-    font-weight: 800; font-size: .8rem; color: #2a1c05;
-    background: linear-gradient(145deg, var(--kc-gold), var(--kc-gold-strong)); box-shadow: 0 0 12px rgba(247, 215, 116, .3);
-}
-.mp-lobby .mp-passi b { font-size: .9rem; color: var(--kc-ink); font-weight: 700; }
-.mp-lobby .mp-passi span { font-size: .78rem; color: var(--kc-ink-dim); }
 .mp-lobby .mp-scheda .mp-code-input { margin-bottom: 12px; box-sizing: border-box; padding-left: calc(15px + .44em); }
 .mp-lobby .mp-advanced { margin-top: 14px; }
 
@@ -1271,4 +1262,17 @@ body.ha-tab-bar .mp-lobby { padding-bottom: calc(var(--mm-barra-h) + 190px); }
 @media (min-width: 700px) {
     .mp-lobby[data-schermata="ingresso"] [data-vista="ingresso"] .mp-screen,
     .mp-lobby[data-schermata="ingresso"] .mp-lobby-status { max-width: 580px; margin-left: auto; margin-right: auto; }
+}
+
+/* Foro della fotocamera: sul telefono la sala non deve cominciare sotto di lui. --mm-fotocamera (menu-mobile.css) e' il margine che
+   il menu usa per il logo: env(safe-area-inset-top) vale 0 anche nell'APK a tutto schermo, quindi c'e' un minimo fisso di 30px.
+   In orizzontale il foro sta su un lato: un po' di margine a destra e sinistra, cosi' niente finisce sotto di lui. */
+@media (pointer: coarse) and (orientation: portrait) {
+    .mp-lobby-wrap, body.ha-tab-bar .mp-lobby-wrap { padding-top: calc(var(--mm-fotocamera, 30px) + 8px); }
+}
+@media (pointer: coarse) and (orientation: landscape) {
+    .mp-lobby-wrap, body.ha-tab-bar .mp-lobby-wrap {
+        padding-left: max(env(safe-area-inset-left, 0px), 32px);
+        padding-right: max(env(safe-area-inset-right, 0px), 32px);
+    }
 }

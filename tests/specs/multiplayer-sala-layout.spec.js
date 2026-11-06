@@ -32,13 +32,15 @@ module.exports = {
                         const m = await page.evaluate(() => ({
                             sw: document.documentElement.scrollWidth, iw: innerWidth,
                             emblema: !!document.querySelector('.mp-hero-emblema svg.themed-icon'),
-                            passi: document.querySelectorAll('.mp-passi li').length,
+                            passi: document.querySelectorAll('.mp-passi').length,
                             tabSvg: document.querySelectorAll('.mp-tab svg.themed-icon').length,
                             scheda: Math.round(document.getElementById('mpPanelCreate').getBoundingClientRect().width)
                         }));
                         t.assert(m.sw <= m.iw + 1, `${modo} ${w}px: la pagina sborda (${m.sw} > ${m.iw})`);
                         t.assert(m.emblema, `${modo}: manca l'emblema a tema nell'intestazione`);
-                        t.assert(m.passi === 3 && m.tabSvg === 2, `${modo}: passi o icone dei segmenti mancanti ${JSON.stringify(m)}`);
+                        // I tre passi numerati sono stati tolti su richiesta dell'utente: non devono tornare.
+                        t.assert(m.passi === 0, `${modo}: i passi numerati sono tornati`);
+                        t.assert(m.tabSvg === 2, `${modo}: icone dei segmenti mancanti ${JSON.stringify(m)}`);
                         if (w >= 700) t.assert(m.scheda <= 600, `${modo} ${w}px: la scheda di ingresso non e' una colonna (larga ${m.scheda})`);
                     } finally { await ctx.close(); }
                 }
@@ -100,10 +102,41 @@ module.exports = {
                     });
                     t.assert(Math.abs(m.tuTop - m.luiTop) < 2 && m.tuDx <= m.luiSx, `${w}px: i due posti non sono affiancati ${JSON.stringify(m)}`);
                     t.assert(m.sw <= m.iw + 1, `${w}px: la sala sborda`);
-                    // La lista delle musiche e' compatta: scorre dentro una finestra invece di occupare mezza sala.
-                    const tracce = await page.evaluate(() => { const e = document.querySelector('#mpSetupMount .ds-tracks'); return e ? { h: Math.round(e.getBoundingClientRect().height), scroll: e.scrollHeight > e.clientHeight } : null; });
-                    t.assert(tracce && tracce.h <= 200 && tracce.scroll, `${w}px: la lista delle musiche non e' compatta ${JSON.stringify(tracce)}`);
+                    // Arena e musica restano il selettore di sempre (non compatto): su richiesta dell'utente era meglio cosi'.
+                    const compatto = await page.evaluate(() => !!document.querySelector('#mpSetupMount .ds-setup--compact'));
+                    t.assert(!compatto, `${w}px: il selettore arena/musica della sala non deve essere compatto`);
                 } finally { await ctx.close(); }
+            }
+
+            // --- Foro della fotocamera: su telefono la sala non comincia sotto di lui ---
+            {
+                const touch = async (w, h) => {
+                    const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: true, isMobile: true, deviceScaleFactor: 2, serviceWorkers: 'block' });
+                    await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
+                    const page = await ctx.newPage();
+                    await page.goto(URL('duello'));
+                    await page.waitForSelector('#mpCreateBtn');
+                    return { ctx, page };
+                };
+                {
+                    const { ctx, page } = await touch(390, 844);
+                    try {
+                        const ingresso = await page.evaluate(() => document.querySelector('.mp-hero').getBoundingClientRect().top);
+                        t.assert(ingresso >= 30, `ingresso: l'intestazione comincia a ${ingresso}px, sotto il foro della fotocamera (minimo 30)`);
+                        await page.click('#mpCreateBtn');
+                        await page.waitForSelector('#mpCodeTiles .mp-code-tile', { timeout: 30000 });
+                        await page.evaluate(() => window.scrollTo(0, 0));
+                        const sala = await page.evaluate(() => document.getElementById('mpRoomCodeBox').getBoundingClientRect().top);
+                        t.assert(sala >= 30, `sala: il codice comincia a ${sala}px, sotto il foro della fotocamera (minimo 30)`);
+                    } finally { await ctx.close(); }
+                }
+                {
+                    const { ctx, page } = await touch(844, 390);
+                    try {
+                        const sx = await page.evaluate(() => document.querySelector('.mp-hero').getBoundingClientRect().left);
+                        t.assert(sx >= 30, `orizzontale: l'intestazione comincia a ${sx}px dal bordo, troppo vicino al foro della fotocamera (minimo 30)`);
+                    } finally { await ctx.close(); }
+                }
             }
         } finally { muto.close(); }
     }

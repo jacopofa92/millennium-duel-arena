@@ -323,7 +323,6 @@
         }
         if (g.DuelSetup && $('mpTagArena') && !setupArena) {
             setupArena = g.DuelSetup.mount($('mpTagArena'), {
-                compact: true, // la lista delle musiche scorre in una finestra invece di occupare mezza sala
                 readOnly: !sonoHost(),
                 initial: { field: g.ArenaOptions.RANDOM, music: g.ArenaOptions.RANDOM, origin: 'all' },
                 onChange: (sel) => {
