@@ -91,6 +91,17 @@
         if (r.tipo !== 'colpo') return 'tipo di messaggio del raid sconosciuto';
         return intero(r.inflitti) && r.inflitti > -1000000 && r.inflitti < 1000000 ? null : 'danno non valido';
     }
+    /**
+     * Chat delle stanze (js/multiplayer/mp-chat.js). Anche questa viaggia dentro un `ready`, campo `chat`: o una frase rapida (`frase`,
+     * un id) o un testo libero (`testo`), piu' il nome di chi scrive. Si controlla la forma e i limiti; il testo viene comunque
+     * ripulito da chi lo riceve e mostrato solo come testo.
+     */
+    function controlloChat(c) {
+        if (!oggetto(c)) return 'messaggio della chat non valido';
+        if (c.nome !== undefined && !(typeof c.nome === 'string' && c.nome.length <= 40)) return 'nome della chat non valido';
+        if (c.frase !== undefined) return typeof c.frase === 'string' && c.frase.length > 0 && c.frase.length <= 20 ? null : 'frase non valida';
+        return typeof c.testo === 'string' && c.testo.length > 0 && c.testo.length <= 200 ? null : 'testo della chat non valido';
+    }
     const POSTI_TAG = ['A0', 'A1', 'B0', 'B1'];
 
     /**
@@ -140,6 +151,8 @@
             if (a.pedina !== undefined && !(typeof a.pedina === 'string' && a.pedina.length > 0 && a.pedina.length <= 40)) return 'pedina non valida';
             // Un ready puo' portare un messaggio del Raid (vedi controlloRaid): sono danni e campo, non una dichiarazione.
             if (a.raid !== undefined) return controlloRaid(a.raid);
+            // ...o un messaggio della chat (vedi controlloChat).
+            if (a.chat !== undefined) return controlloChat(a.chat);
             return null;
         },
         'rps': (a) => {

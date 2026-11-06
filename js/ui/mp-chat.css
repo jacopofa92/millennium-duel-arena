@@ -1,0 +1,55 @@
+/*
+ * mp-chat.css — pulsante e pannello della chat Multiplayer (js/multiplayer/mp-chat.js).
+ * Posizione: in sala il pulsante sta in basso a destra sopra la barra; in duello (body.mp-in-duello) sta a destra, sotto la striscia
+ * Tempo/Turno/Abbandona, dove il campo non arriva. Le due posizioni sono variabili (--mpchat-*): per ritoccarle basta cambiare quelle.
+ */
+.mpchat-btn {
+    --mpchat-bottom: calc(var(--mm-barra-h, 0px) + 92px);
+    position: fixed; right: 12px; bottom: var(--mpchat-bottom); z-index: 9000;
+    width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(247, 215, 116, .6);
+    background: radial-gradient(circle at 35% 28%, rgba(60, 46, 20, .95), rgba(16, 13, 9, .95));
+    color: #f7d774; display: grid; place-items: center; cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .5), 0 0 12px rgba(247, 215, 116, .22);
+}
+.mpchat-btn[hidden] { display: none; }
+.mpchat-ico { font-size: 1.25rem; line-height: 1; }
+.mpchat-badge {
+    position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px;
+    background: #e8402c; color: #fff; font: 800 .7rem/18px Arial, sans-serif; text-align: center; border: 1px solid #ffd9cf;
+}
+.mpchat-badge[hidden] { display: none; }
+body.mp-in-duello .mpchat-btn { bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 96px); right: 8px; width: 38px; height: 38px; opacity: .85; }
+body.mp-in-duello .mpchat-ico { font-size: 1.05rem; }
+
+.mpchat-pannello {
+    position: fixed; right: 10px; bottom: calc(var(--mm-barra-h, 0px) + 146px); z-index: 9001;
+    width: min(92vw, 340px); max-height: min(60vh, 420px); display: flex; flex-direction: column; gap: 8px;
+    padding: 10px; border-radius: 14px; border: 1px solid rgba(247, 215, 116, .4);
+    background: rgba(14, 11, 8, .96); color: #f3ecd9; box-shadow: 0 14px 34px rgba(0, 0, 0, .6);
+    font-family: Arial, sans-serif;
+}
+.mpchat-pannello[hidden] { display: none; }
+body.mp-in-duello .mpchat-pannello { bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 140px); right: 8px; max-height: min(52vh, 380px); }
+.mpchat-testa { display: flex; align-items: center; gap: 8px; }
+.mpchat-testa strong { color: #f7d774; letter-spacing: .12em; text-transform: uppercase; font-size: .78rem; margin-right: auto; }
+.mpchat-silenzia, .mpchat-chiudi { background: transparent; border: 1px solid rgba(247, 215, 116, .3); color: #cdbf9a; border-radius: 8px; padding: 4px 8px; font-size: .74rem; cursor: pointer; }
+.mpchat-chiudi { font-size: 1rem; line-height: 1; padding: 2px 9px; }
+.mpchat-log { flex: 1 1 auto; min-height: 90px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; padding: 4px 2px; font-size: .85rem; line-height: 1.35; overscroll-behavior: contain; -webkit-user-select: text; user-select: text; }
+.mpchat-riga-msg { word-break: break-word; }
+.mpchat-nome { color: #9fd0ff; font-weight: 700; }
+.mpchat-mio .mpchat-nome { color: #f7d774; }
+.mpchat-nota { color: #9a8f74; font-style: italic; font-size: .78rem; }
+.mpchat-frasi { display: flex; flex-wrap: wrap; gap: 5px; }
+.mpchat-frase { background: rgba(247, 215, 116, .1); border: 1px solid rgba(247, 215, 116, .35); color: #f3ecd9; border-radius: 999px; padding: 5px 10px; font-size: .76rem; cursor: pointer; }
+.mpchat-frase:active { transform: scale(.96); }
+.mpchat-riga { display: flex; gap: 6px; }
+.mpchat-input { flex: 1; min-width: 0; padding: 9px 10px; border-radius: 10px; border: 1px solid rgba(247, 215, 116, .35); background: rgba(255, 255, 255, .06); color: #f3ecd9; font-size: .92rem; -webkit-user-select: text; user-select: text; }
+.mpchat-invia { padding: 9px 14px; border-radius: 10px; border: 0; background: linear-gradient(180deg, #f7d774, #f39c12); color: #2a1c05; font-weight: 800; cursor: pointer; }
+.mpchat-toast {
+    position: fixed; right: 64px; bottom: calc(var(--mm-barra-h, 0px) + 98px); z-index: 9000; max-width: min(70vw, 280px);
+    padding: 8px 12px; border-radius: 12px; background: rgba(14, 11, 8, .94); border: 1px solid rgba(247, 215, 116, .45); color: #f3ecd9; font: .84rem/1.35 Arial, sans-serif;
+    animation: mpchatToast .25s ease-out;
+}
+.mpchat-toast[hidden] { display: none; }
+@keyframes mpchatToast { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .mpchat-toast { animation: none; } }

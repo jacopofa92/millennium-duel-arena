@@ -1115,6 +1115,13 @@
             if (motivo) { console.warn('Multiplayer: messaggio "' + azione.kind + '" scartato (' + motivo + ')'); return; }
         }
 
+        // Chat della stanza (js/multiplayer/mp-chat.js): viaggia dentro un 'ready' col campo `chat` e va smistata PRIMA di tutto, o
+        // verrebbe letta come una dichiarazione di 'pronto'. `msg.da` e' l'id pubblico di chi scrive (utile nel Tag, con piu' persone).
+        if (azione.kind === 'ready' && azione.chat) {
+            if (window.MpChat) MpChat.ricevi(azione.chat, msg.da);
+            return;
+        }
+
         // Raid cooperativo: danno e campo del compagno (js/multiplayer/mp-raid.js) viaggiano dentro un 'ready' col campo
         // `raid`: vanno smistati PRIMA, o verrebbero letti come una dichiarazione di 'pronto'.
         if (azione.kind === 'ready' && azione.raid) {
