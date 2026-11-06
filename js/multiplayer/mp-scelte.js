@@ -113,6 +113,9 @@
             const imgEl = bottone.querySelector('.mp-tessera-img');
             const url = o.img ? o.img() : null;
             imgEl.style.backgroundImage = url ? `url("${url}")` : '';
+            // Una figura scontornata (la pedina) si mostra INTERA; un'arena o un ritratto riempiono il riquadro.
+            imgEl.style.backgroundSize = o.contieni ? 'contain' : '';
+            imgEl.style.backgroundPosition = o.contieni ? 'center bottom' : '';
             imgEl.textContent = '';
             if (!url) {
                 // Senza immagine (mazzo, arena casuale): l'icona a tema del gioco, o il glifo se la libreria non c'e'.

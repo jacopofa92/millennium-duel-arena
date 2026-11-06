@@ -470,8 +470,9 @@
         if (!el) return;
         if (pedina) {
             el.textContent = '';
-            el.style.backgroundImage = `url("${pedina.image}")`;
+            el.style.backgroundImage = `url("${pedina.pawn || pedina.image}")`;
             el.classList.add('mp-seat-avatar--img');
+            el.classList.toggle('mp-seat-avatar--pedina', !!pedina.pawn);
             el.title = pedina.name;
         } else {
             el.textContent = segnaposto || '🧑';
@@ -864,7 +865,8 @@
         const mazzoAttivo = () => (window.SaveManager && SaveManager.getActiveDeck) ? SaveManager.getActiveDeck() : null;
         tessereSala.pedina = MpScelte.tessera($('mpPedinaGroup'), {
             corpo: $('mpPedina'), titolo: 'Il tuo duellante',
-            img: () => MpPedina.scelta().image,
+            img: () => MpPedina.scelta().pawn,
+            contieni: true,
             valore: () => MpPedina.scelta().name,
             dettaglio: () => 'Lo vede anche l\'avversario'
         });

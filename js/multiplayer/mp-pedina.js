@@ -16,8 +16,14 @@
     'use strict';
 
     const CHIAVE = 'ygoMpPedina';
-    /** @type {{ id: string, name: string, image: string }} */
-    const PREDEFINITA = { id: 'player', name: 'Te stesso', image: 'images/characters/mirror.jpg' };
+    /** @type {{ id: string, name: string, image: string, pawn?: string }} */
+    const PREDEFINITA = { id: 'player', name: 'Te stesso', image: 'images/characters/mirror.jpg', pawn: 'images/characters/pedine/mirror.png' };
+
+    /** La figura scontornata (con trasparenza) di un ritratto: e' QUELLA che si mostra nella scelta. Il ritratto pieno (`image`) resta per il resto del duello. */
+    function pedinaDi(c) {
+        const pawn = typeof getCharacterPawnImage === 'function' ? getCharacterPawnImage(c.image) : null;
+        return { id: c.id, name: c.name, image: c.image, pawn: pawn || c.image };
+    }
 
     /** @returns {any[]} */
     function personaggi() {
@@ -31,14 +37,14 @@
             : () => true;
         return [PREDEFINITA].concat(personaggi()
             .filter((c) => c.image && c.image !== PREDEFINITA.image && sbloccato(c.id))
-            .map((c) => ({ id: c.id, name: c.name, image: c.image })));
+            .map(pedinaDi));
     }
 
     /** Da un id (anche ricevuto dalla rete) alla pedina vera; un id sconosciuto da' quella predefinita. */
     function risolvi(id) {
         if (id && id !== PREDEFINITA.id) {
             const c = personaggi().find((x) => x.id === id);
-            if (c && c.image) return { id: c.id, name: c.name, image: c.image };
+            if (c && c.image) return pedinaDi(c);
         }
         return PREDEFINITA;
     }
@@ -62,7 +68,7 @@
      * Disegna il selettore dentro `contenitore`: la pedina attuale (un tocco apre l'elenco) e, aperto, una griglia di
      * ritratti. `onChange(pedina)` scatta alla scelta.
      * @param {HTMLElement} contenitore
-     * @param {{ onChange?: (pedina: { id: string, name: string, image: string }) => void }} [opzioni]
+     * @param {{ onChange?: (pedina: { id: string, name: string, image: string, pawn?: string }) => void }} [opzioni]
      */
     function monta(contenitore, opzioni) {
         if (!contenitore) return;
@@ -80,7 +86,7 @@
         const griglia = /** @type {HTMLElement} */ (contenitore.querySelector('.mp-pedina-griglia'));
 
         function aggiorna() {
-            ritratto.style.backgroundImage = `url("${attuale.image}")`;
+            ritratto.style.backgroundImage = `url("${attuale.pawn || attuale.image}")`;
             nome.textContent = attuale.name;
             griglia.querySelectorAll('.mp-pedina-voce').forEach((v) => v.classList.toggle('is-scelta', v.getAttribute('data-id') === attuale.id));
         }
@@ -94,7 +100,7 @@
                 b.title = p.name;
                 const img = document.createElement('span');
                 img.className = 'mp-pedina-voce-img';
-                img.style.backgroundImage = `url("${p.image}")`;
+                img.style.backgroundImage = `url("${p.pawn || p.image}")`;
                 const t = document.createElement('span');
                 t.className = 'mp-pedina-voce-nome';
                 t.textContent = p.name;

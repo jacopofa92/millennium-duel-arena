@@ -326,7 +326,7 @@
         if (gruppo('mpTagPedina')) {
             tessere.pedina = g.MpScelte.tessera(gruppo('mpTagPedina'), {
                 corpo: $('mpTagPedina'), titolo: 'Il tuo duellante',
-                img: () => g.MpPedina.scelta().image, valore: () => g.MpPedina.scelta().name, dettaglio: () => 'Lo vedono tutti'
+                img: () => g.MpPedina.scelta().pawn, contieni: true, valore: () => g.MpPedina.scelta().name, dettaglio: () => 'Lo vedono tutti'
             });
         }
         if (gruppo('mpTagMazzi')) {

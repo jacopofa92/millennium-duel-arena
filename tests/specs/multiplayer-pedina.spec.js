@@ -39,7 +39,7 @@ module.exports = {
 
             // Predefinito: nessuno ha toccato niente, e il posto avversario mostra lo specchio.
             const predefinita = await A.evaluate(() => document.getElementById('mpSeatYouAvatar').style.backgroundImage);
-            assert(/mirror\.jpg/.test(predefinita), 'Senza scelta la pedina e\' quella personale di sempre (lo specchio): ' + predefinita);
+            assert(/mirror\.(jpg|png)/.test(predefinita), 'Senza scelta la pedina e\' quella personale di sempre (lo specchio): ' + predefinita);
 
             // A sceglie Solomon Muto, B Yugi Muto (entrambi sbloccati dall'inizio).
             const scegli = async (page, id) => {
@@ -53,10 +53,10 @@ module.exports = {
             await scegli(B, 'yugiMuto');
 
             // Ognuno vede la propria pedina sul proprio posto e quella dell'altro sul posto avversario.
-            await A.waitForFunction(() => /yugiMuto\.jpg/.test(document.getElementById('mpSeatOppAvatar').style.backgroundImage), null, { timeout: 10000 });
-            await B.waitForFunction(() => /solomonMuto\.jpg/.test(document.getElementById('mpSeatOppAvatar').style.backgroundImage), null, { timeout: 10000 });
+            await A.waitForFunction(() => /yugiMuto\.(jpg|png)/.test(document.getElementById('mpSeatOppAvatar').style.backgroundImage), null, { timeout: 10000 });
+            await B.waitForFunction(() => /solomonMuto\.(jpg|png)/.test(document.getElementById('mpSeatOppAvatar').style.backgroundImage), null, { timeout: 10000 });
             const miaA = await A.evaluate(() => document.getElementById('mpSeatYouAvatar').style.backgroundImage);
-            assert(/solomonMuto\.jpg/.test(miaA), 'La propria scelta compare sul proprio posto: ' + miaA);
+            assert(/solomonMuto\.(jpg|png)/.test(miaA), 'La propria scelta compare sul proprio posto: ' + miaA);
 
             // Un id inventato non puo' far caricare un'immagine qualunque: si cerca nell'elenco locale.
             const sconosciuta = await A.evaluate(() => MpPedina.risolvi('../../etc/passwd').id);
