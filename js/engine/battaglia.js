@@ -101,17 +101,23 @@ function puoAttaccareDirettamente(attackerOwner, attackerIndex) {
  * altro, così due finestre di risposta non si sovrappongono mai.
  */
 /**
- * UN ATTACCO ALLA VOLTA. Finche' una battaglia non e' finita del tutto (dichiarazione, risposte in Catena, calcolo, animazione)
- * nessun altro attacco puo' partire: chi e' veloce con piu' mostri poteva dichiararne un secondo, o ripetere lo stesso, prima
- * che il primo avesse segnato `hasAttacked`, e le due battaglie si sovrapponevano. Il blocco sta in gameState.attaccoInCorso
- * ({ turno, dal }): lo prende resolveAttack appena l'attacco e' valido e lo rilascia in `done`, qualunque strada prenda.
- * Rete di sicurezza: un blocco di un turno passato, a partita finita o vecchio di 5 minuti non conta (se una strada non
- * chiamasse mai `done`, il duello non deve restare senza attacchi per sempre).
+ * UN ATTACCO ALLA VOLTA. Chi e' veloce con piu' mostri poteva dichiararne un secondo, o ripetere lo stesso, prima che il primo
+ * avesse segnato `hasAttacked`, e le due battaglie si sovrapponevano. Il blocco sta in gameState.attaccoInCorso ({ turno, dal }):
+ * lo prende resolveAttack appena l'attacco e' valido. SCELTA DELL'UTENTE: non si aspetta tutta la battaglia (con le animazioni
+ * erano ~2 secondi di mani legate). Il blocco copre solo il tratto in cui due attacchi potrebbero pestarsi i piedi, cioe' dalla
+ * dichiarazione al CALCOLO DEL DANNO: appena il danno e' applicato (e `hasAttacked` segnato) si rilascia, e la coda di animazioni
+ * non blocca piu' nessuno. Un attacco rifiutato non da' nessun messaggio.
+ * Tetto: se non c'e' una Catena o una finestra di risposta aperta (dove aspettare chi decide e' giusto), il blocco scade da solo
+ * dopo TETTO_ATTACCO_MS: se una strada non lo rilasciasse mai, il duello non resta senza attacchi. Vale anche per un blocco di
+ * un turno passato o a partita finita.
  */
+const TETTO_ATTACCO_MS = 900;
 function attaccoInCorso() {
     const b = typeof gameState !== 'undefined' && gameState ? gameState.attaccoInCorso : null;
     if (!b) return false;
-    if (b.turno !== gameState.turn || gameState.gameOver || Date.now() - b.dal > 300000) {
+    const aspettaUnaRisposta = window.DuelEngine && (DuelEngine.isChainActive() || (DuelEngine.isPriorityWindowOpen && DuelEngine.isPriorityWindowOpen()));
+    const scaduto = !aspettaUnaRisposta && Date.now() - b.dal > TETTO_ATTACCO_MS;
+    if (b.turno !== gameState.turn || gameState.gameOver || scaduto || Date.now() - b.dal > 300000) {
         gameState.attaccoInCorso = null;
         return false;
     }
@@ -123,11 +129,14 @@ function resolveAttack(attackerOwner, attackerIndex, targetIndex, onComplete) {
     /** @type {{ turno: number, dal: number } | null} */
     let blocco = null;
     // Ogni uscita di questa funzione passa da qui: rilascia il blocco "un attacco alla volta" e poi avvisa chi aspettava.
-    const done = function () {
+    const rilascia = function () {
         if (blocco) {
             if (gameState.attaccoInCorso === blocco) gameState.attaccoInCorso = null;
             blocco = null;
         }
+    };
+    const done = function () {
+        rilascia();
         doneUtente();
     };
     // Una volta che i LP di qualcuno sono a zero il duello è chiuso: qui
@@ -298,9 +307,8 @@ function resolveAttack(attackerOwner, attackerIndex, targetIndex, onComplete) {
     gameState.patricianAttackChoiceDone.delete(patricianKey);
     // Un attacco alla volta (vedi attaccoInCorso qui sopra). Si prende QUI e non all'inizio: la scelta del Patrizio dell'Oscurita'
     // richiama resolveAttack da dentro la sua callback, e quella chiamata deve poter partire. Un attacco rifiutato per il blocco
-    // non conta come fatto: l'attaccante potra' riprovare appena la battaglia in corso e' finita.
+    // non conta come fatto (l'attaccante potra' riprovare appena il danno dell'altro e' applicato) e non scrive nulla nel registro.
     if (attaccoInCorso()) {
-        addToLog('⏳ Aspetta che l\'attacco in corso finisca prima di dichiararne un altro.');
         doneUtente();
         return;
     }
@@ -592,6 +600,9 @@ function resolveAttack(attackerOwner, attackerIndex, targetIndex, onComplete) {
             }
             resolveBattleDamage(attackerOwner, effectiveDefenderOwner, attackerIndex, effectiveTargetIndex, attackState.damageNegated, attackState.attackerAtkZeroed);
             attackerSlot.hasAttacked = true;
+            // Danno applicato e mostro segnato: da qui un altro attacco non puo' piu' pestarsi i piedi con questo. Le animazioni
+            // che restano (circa 700 ms) non devono tenere nessuno fermo.
+            rilascia();
             // Attacco extra nella stessa Battle Phase: SOLO se l'attaccante
             // è sopravvissuto a QUESTA battaglia (attackerField[attackerIndex]
             // è ancora lui stesso, non null/un altro mostro). Il NUMERO di
@@ -1536,7 +1547,6 @@ function eseguiAttacco(posto, c, extra) {
     // Un attacco alla volta: va controllato PRIMA dei costi qui sotto (Life Point, Sacrificio), che resolveAttack non puo'
     // restituire se poi rifiuta l'attacco perche' un'altra battaglia e' ancora in corso.
     if (attaccoInCorso()) {
-        addToLog('⏳ Aspetta che l\'attacco in corso finisca prima di dichiararne un altro.');
         rifiutato();
         return;
     }

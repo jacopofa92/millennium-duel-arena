@@ -34,6 +34,9 @@ module.exports = {
         t.assert(JSON.stringify(subito.subito.fine) === JSON.stringify(['b', 'a2']), `gli attacchi rifiutati avvisano comunque chi li aspettava: ${JSON.stringify(subito.subito.fine)}`);
         t.assert(subito.subito.hasAttackedB === false, 'un attacco rifiutato non segna il mostro come "ha gia\' attaccato"');
 
+        // Il blocco si rilascia appena il danno e' applicato (hasAttacked segnato), NON a fine animazione: la coda di ~700 ms non tiene fermo nessuno.
+        await t.page.waitForFunction(() => gameState.playerMonsterField[0] && gameState.playerMonsterField[0].hasAttacked && !gameState.attaccoInCorso, null, { timeout: 10000 });
+        const subitoDopoDanno = await t.evaluate(() => window.__fine.indexOf('a') < 0);
         await t.page.waitForFunction(() => window.__fine.indexOf('a') >= 0, null, { timeout: 10000 });
         const dopo = await t.evaluate(() => ({
             lp: window.__lp0 - gameState.botLP,
@@ -42,6 +45,7 @@ module.exports = {
             hasAttackedB: gameState.playerMonsterField[1] && gameState.playerMonsterField[1].hasAttacked
         }));
         t.assert(dopo.lp === 1000, `ha colpito UN solo mostro (1000 di danno, non 2500 ne' 3500): ${dopo.lp}`);
+        t.assert(subitoDopoDanno, 'il blocco e\' stato rilasciato al danno, prima che la battaglia avesse finito le animazioni');
         t.assert(dopo.blocco === null, 'finita la battaglia il blocco e\' rilasciato');
         t.assert(dopo.hasAttackedA === true && dopo.hasAttackedB === false, 'solo il primo ha attaccato, il secondo puo\' farlo ora');
 
@@ -50,6 +54,10 @@ module.exports = {
         await t.page.waitForFunction(() => window.__fine2 === true, null, { timeout: 10000 });
         const finale = await t.evaluate(() => window.__lp0 - gameState.botLP);
         t.assert(finale === 2500, `poi il secondo attacca: 1000 + 1500 = 2500, trovato ${finale}`);
+
+        // Tetto: senza Catena ne' finestre di risposta, un blocco vecchio di oltre un secondo non tiene fermo nessuno.
+        const scaduto = await t.evaluate(() => { gameState.attaccoInCorso = { turno: gameState.turn, dal: Date.now() - 1500 }; return attaccoInCorso(); });
+        t.assert(scaduto === false, 'il blocco scade da solo dopo il tetto');
 
         // Rete di sicurezza: un blocco di un altro turno non conta.
         const vecchio = await t.evaluate(() => {
