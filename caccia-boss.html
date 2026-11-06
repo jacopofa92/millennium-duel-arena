@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="js/ui/menu-mobile.css">
 <link rel="stylesheet" href="js/ui/deck-switcher.css">
 <link rel="stylesheet" href="js/modes/mode-pages.css">
+<link rel="stylesheet" href="js/modes/rotazione.css">
 <link rel="stylesheet" href="js/economy/rewards.css">
 <title>Yu-Gi-Oh! Millennium Duel Arena — Caccia al Boss</title>
 </head>
@@ -38,20 +39,41 @@
     <script src="js/ui/page-loader.js"></script>
     <div id="topbarMount"></div>
 
-    <main class="mp-main">
-        <p class="mp-intro">Un Boss nuovo ogni lunedì, uguale per tutti. Ha molti più Life Point del solito e il suo mazzo più forte, ma tu hai un numero limitato di turni: se non lo batti in tempo, la caccia è persa. Puoi riprovare quante volte vuoi.</p>
-        <div class="mp-riepilogo" id="riepilogo"></div>
-
-        <section class="mp-pannello">
-            <div class="mp-voce" id="boss"></div>
-            <p id="bossFrase"></p>
-            <p id="regole"></p>
+    <main class="mp-main rz-main">
+        <!-- Copertina del Boss: pedina grande, barra Life Point e turni (stile condiviso: js/modes/rotazione.css). -->
+        <section class="rz-hero rz-hero--caccia">
+            <div class="rz-hero-sfondo"></div>
+            <div class="rz-top"><span class="rz-kicker">Caccia al Boss</span><span class="rz-etichetta" id="rzTempoEtichetta"></span></div>
+            <div class="rz-boss-scena">
+                <div class="rz-boss-testi">
+                    <div id="boss" class="rz-boss-nome"></div>
+                    <p class="rz-frase" id="bossFrase"></p>
+                </div>
+                <div class="rz-boss-figura" id="rzBossFigura" aria-hidden="true"></div>
+            </div>
+            <div class="rz-lp">
+                <div class="rz-lp-testa"><span>Life Point del Boss</span><b id="rzLp"></b></div>
+                <div class="rz-lp-barra"><i></i></div>
+            </div>
+            <div class="rz-turni">
+                <span class="rz-turni-lab">Turni</span>
+                <div class="rz-pallini" id="rzPallini"></div>
+                <span class="rz-turni-nota" id="rzTurniNota"></span>
+            </div>
+            <p class="rz-sotto" id="regole"></p>
         </section>
+
+        <div class="mp-riepilogo" id="riepilogo"></div>
 
         <div class="mp-sezione">Premi</div>
         <section class="mp-pannello" id="premio"></section>
 
-        <button type="button" class="mp-btn" id="vai">🏹 Inizia la caccia</button>
+        <button type="button" class="mp-btn rz-cta" id="vai">🏹 Inizia la caccia</button>
+
+        <details class="rz-come">
+            <summary>Come funziona</summary>
+            <p>Un Boss nuovo ogni lunedì, uguale per tutti. Ha molti più Life Point del solito e il suo mazzo più forte, ma tu hai un numero limitato di turni: se non lo batti in tempo, la caccia è persa. Puoi riprovare quante volte vuoi.</p>
+        </details>
     </main>
 
 <script src="js/data/cards-data.generated.js"></script>
@@ -87,17 +109,31 @@
             `<span>⏳ Cambia tra <strong>${giorni > 0 ? giorni + ' g ' : ''}${ore} h</strong></span>`;
 
         const el = document.getElementById('boss');
-        el.innerHTML = '<div class="mp-emblema"></div><div><div class="mp-titolo"></div><div class="mp-desc"></div></div>';
+        el.innerHTML = '<div class="mp-titolo"></div><div class="mp-desc"></div>';
         el.querySelector('.mp-titolo').textContent = pers.name;
-        el.querySelector('.mp-desc').textContent = `${cacciaDatabase.lpBoss.toLocaleString('it-IT')} Life Point · mazzo Difficile`;
-        const emb = el.querySelector('.mp-emblema');
-        emb.textContent = (pers.name || '?').charAt(0);
+        el.querySelector('.mp-desc').textContent = pers.title || 'Boss della settimana';
+        // La pedina grande del Boss (scontornata); se il file manca resta il riquadro vuoto, la scheda si legge lo stesso.
+        const fig = document.getElementById('rzBossFigura');
+        fig.innerHTML = '';
         if (pers.image) {
             const img = document.createElement('img');
             img.alt = '';
-            img.onload = () => { emb.textContent = ''; emb.appendChild(img); };
+            img.draggable = false;
             img.src = getCharacterPawnImage(pers.image);
+            fig.appendChild(img);
         }
+        document.getElementById('rzLp').textContent = cacciaDatabase.lpBoss.toLocaleString('it-IT');
+        document.getElementById('rzTempoEtichetta').textContent = `Cambia tra ${giorni > 0 ? giorni + ' g ' : ''}${ore} h`;
+        // I turni come pallini: se la caccia e' gia' stata vinta, quelli usati dal record migliore si accendono.
+        const pal = document.getElementById('rzPallini');
+        pal.innerHTML = '';
+        for (let i = 0; i < cacciaDatabase.turni; i++) {
+            const p = document.createElement('span');
+            if (stato.migliorTurni != null && i < stato.migliorTurni) p.className = 'is-usato';
+            pal.appendChild(p);
+        }
+        document.getElementById('rzTurniNota').textContent = stato.migliorTurni != null
+            ? `Record: ${stato.migliorTurni} su ${cacciaDatabase.turni}` : `${cacciaDatabase.turni} turni tuoi`;
         document.getElementById('bossFrase').textContent = b.titolo;
         document.getElementById('regole').textContent = `Hai ${cacciaDatabase.turni} turni tuoi per portare il Boss a zero. Comincia sempre tu. I tuoi Life Point sono quelli di un duello normale.`;
 

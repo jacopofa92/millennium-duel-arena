@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="js/ui/menu-mobile.css">
 <link rel="stylesheet" href="js/ui/deck-switcher.css">
 <link rel="stylesheet" href="js/modes/mode-pages.css">
+<link rel="stylesheet" href="js/modes/rotazione.css">
 <link rel="stylesheet" href="js/economy/rewards.css">
 <title>Yu-Gi-Oh! Millennium Duel Arena — Duello della Settimana</title>
 </head>
@@ -38,25 +39,36 @@
     <script src="js/ui/page-loader.js"></script>
     <div id="topbarMount"></div>
 
-    <main class="mp-main">
-        <p class="mp-intro">Una regola nuova ogni lunedì, uguale per tutti. Vale per tutti i mostri del tuo mazzo: se anche uno solo non la rispetta non si gioca (non cambiamo mai le tue carte). Il mazzo dell'avversario invece si adatta da solo. Magie e Trappole non contano.</p>
-        <div class="mp-riepilogo" id="riepilogo"></div>
-
-        <section class="mp-pannello" id="pannelloRegola">
-            <h2 id="regolaTitolo"></h2>
-            <p id="regolaDesc"></p>
+    <main class="mp-main rz-main">
+        <!-- Copertina: la regola della settimana come un'insegna (stile condiviso con la Caccia al Boss: js/modes/rotazione.css). -->
+        <section class="rz-hero rz-hero--settimana" id="pannelloRegola">
+            <div class="rz-hero-sfondo"></div>
+            <div class="rz-top"><span class="rz-kicker">Duello della Settimana</span><span class="rz-etichetta" id="rzSettimana"></span></div>
+            <div class="rz-regola">
+                <div class="rz-medaglione" id="rzIcona" aria-hidden="true"></div>
+                <h1 class="rz-titolo" id="regolaTitolo"></h1>
+            </div>
+            <p class="rz-sotto" id="regolaDesc"></p>
+            <div class="rz-tempo"><div class="rz-tempo-barra"><i id="rzTempoBarra"></i></div><span id="rzTempoTesto"></span></div>
         </section>
+
+        <div class="mp-riepilogo" id="riepilogo"></div>
 
         <!-- Se col mazzo attivo la regola non si puo' rispettare, qui compare un avviso ben visibile con cosa fare (scrivi()). -->
         <section class="mp-avviso" id="avviso" hidden></section>
 
-        <div id="premiModalita" hidden></div>
-
         <div class="mp-sezione">Il tuo avversario</div>
-        <div class="mp-elenco"><div class="mp-voce" id="avversario"></div></div>
+        <div class="rz-faccia" id="avversario"></div>
 
         <div class="mp-sezione">Scegli il livello</div>
-        <div class="mp-scelte" id="livelli"></div>
+        <div class="mp-scelte rz-livelli" id="livelli"></div>
+
+        <div id="premiModalita" hidden></div>
+
+        <details class="rz-come">
+            <summary>Come funziona</summary>
+            <p>Una regola nuova ogni lunedì, uguale per tutti. Vale per tutti i mostri del tuo mazzo: se anche uno solo non la rispetta non si gioca (non cambiamo mai le tue carte). Il mazzo dell'avversario invece si adatta da solo. Magie e Trappole non contano.</p>
+        </details>
     </main>
 
 <script src="js/data/cards-data.generated.js"></script>
@@ -92,32 +104,46 @@
         const stato = Settimana.stato();
         const avv = characterDatabase.find((c) => c.id === idAvv) || { id: idAvv, name: idAvv };
 
-        document.getElementById('regolaTitolo').textContent = r.icona + ' ' + r.titolo;
+        // Titolo e medaglione separati: il medaglione e' l'icona della regola, il titolo la regola in parole.
+        document.getElementById('regolaTitolo').textContent = r.titolo;
+        document.getElementById('rzIcona').textContent = r.icona;
 
         const vinte = LIVELLI.filter((l) => stato.vinte[l.id]).length;
         const ms = Settimana.msAlProssimo();
         const giorni = Math.floor(ms / 86400000);
         const ore = Math.floor((ms % 86400000) / 3600000);
+        const tempo = (giorni > 0 ? giorni + ' g ' : '') + ore + ' h';
+        // Quanto della settimana e' passato: la barra si svuota verso il cambio di regola.
+        const resto = Math.max(0, Math.min(1, ms / (7 * 86400000)));
+        document.getElementById('rzTempoBarra').style.width = Math.round(resto * 100) + '%';
+        document.getElementById('rzTempoTesto').innerHTML = `Cambia tra <strong>${tempo}</strong>`;
+        document.getElementById('rzSettimana').textContent = vinte + '/3 premi';
         document.getElementById('riepilogo').innerHTML =
             `<span>🏅 Premi presi <strong>${vinte}/3</strong></span>` +
-            `<span>⏳ Cambia tra <strong>${giorni > 0 ? giorni + ' g ' : ''}${ore} h</strong></span>`;
+            `<span>⏳ Cambia tra <strong>${tempo}</strong></span>`;
 
+        // Faccia a faccia: tu a sinistra, l'avversario della settimana a destra (pedine scontornate).
         const a = document.getElementById('avversario');
-        a.innerHTML = '<div class="mp-emblema"></div><div><div class="mp-titolo"></div><div class="mp-desc"></div></div>';
-        a.querySelector('.mp-titolo').textContent = avv.name;
-        a.querySelector('.mp-desc').textContent = avv.title || 'Duellante';
-        const emb = a.querySelector('.mp-emblema');
-        emb.textContent = (avv.name || '?').charAt(0);
-        if (avv.image) {
-            const img = document.createElement('img');
-            img.alt = '';
-            img.onload = () => { emb.textContent = ''; emb.appendChild(img); };
-            img.src = getCharacterPawnImage(avv.image);
-        }
+        const lato = (cls, nome, sotto, immagine) => {
+            const d = document.createElement('div');
+            d.className = 'rz-lato ' + cls;
+            const p = document.createElement('div');
+            p.className = 'rz-lato-pedina';
+            if (immagine) { const im = document.createElement('img'); im.alt = ''; im.draggable = false; im.src = immagine; p.appendChild(im); }
+            const n = document.createElement('div'); n.className = 'rz-lato-nome'; n.textContent = nome;
+            const s = document.createElement('div'); s.className = 'rz-lato-sotto'; s.textContent = sotto;
+            d.append(p, n, s);
+            return d;
+        };
+        a.innerHTML = '';
+        const io = (window.SaveManager && SaveManager.hasSave() && SaveManager.getPlayerName()) || 'Tu';
+        const vs = document.createElement('div'); vs.className = 'rz-vs'; vs.textContent = 'VS';
+        a.append(lato('rz-lato--io', io, 'Il tuo mazzo attivo', 'images/characters/pedine/mirror.png'), vs,
+            lato('rz-lato--loro', avv.name, avv.title || 'Duellante', avv.image ? getCharacterPawnImage(avv.image) : null));
 
         // Il giocatore usa solo carte che possiede: se col suo mazzo attivo la regola non si può rispettare, non si gioca.
         const verifica = Settimana.verificaMazzo(SaveManager.getActiveDeck());
-        document.getElementById('regolaDesc').textContent = 'Questa settimana si gioca solo con questi mostri. Nel tuo mazzo (anche nell\'Extra Deck) devono essere tutti così: se ce n\'è uno che non rispetta la regola non si gioca, e nessuna carta viene cambiata al posto tuo.';
+        document.getElementById('regolaDesc').textContent = 'Tutti i mostri del tuo mazzo, Extra Deck compreso, devono rispettarla: se uno no, non si gioca. Non cambiamo mai le tue carte.';
         // Avviso: la causa in chiaro e due strade per risolverla (non solo i pulsanti spenti).
         const avviso = document.getElementById('avviso');
         if (verifica.ok) { avviso.hidden = true; avviso.innerHTML = ''; } else {
@@ -147,9 +173,15 @@
             b.innerHTML = '<span class="mp-scelta-icona"></span><span><span class="mp-scelta-nome"></span><span class="mp-scelta-desc"></span></span>';
             b.querySelector('.mp-scelta-icona').textContent = preso ? '✅' : l.icona;
             b.querySelector('.mp-scelta-nome').textContent = l.nome;
-            b.querySelector('.mp-scelta-desc').textContent = !verifica.ok ? 'Non disponibile questa settimana: vedi l\'avviso qui sopra.' : l.desc + ' ' + (preso
-                ? 'Premio di questa settimana già preso.'
-                : `Prima vittoria: ${premio.crediti} Crediti${premio.stelle ? ' e ' + premio.stelle + ' Stella' : ''}.`);
+            // Descrizione del livello e, sotto, il premio come "gettone": oro se e' ancora da prendere, verde se e' gia' preso.
+            b.querySelector('.mp-scelta-desc').textContent = !verifica.ok ? 'Non disponibile questa settimana: vedi l\'avviso qui sopra.' : l.desc;
+            if (verifica.ok) {
+                const chip = document.createElement('span');
+                chip.className = 'rz-premio-chip' + (preso ? ' is-preso' : '');
+                chip.textContent = preso ? '✅ Premio preso'
+                    : `🏆 ${premio.crediti} Crediti${premio.stelle ? ' + ' + premio.stelle + ' Stella' : ''}`;
+                b.querySelector('.mp-scelta-desc').parentNode.appendChild(chip);
+            }
             b.disabled = !verifica.ok;
             if (!verifica.ok) b.style.opacity = '.45';
             b.addEventListener('click', () => {
