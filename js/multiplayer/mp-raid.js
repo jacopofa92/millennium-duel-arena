@@ -122,5 +122,15 @@
     /** Dopo una caduta di linea: ridice al compagno quanto ho fatto. */
     function ridici() { ultimoInviato = null; ultimoCampo = null; }
 
-    window.MpRaid = { avvia, ricevi, ridici };
+    /**
+     * Quanta parte della barra comune (0..1) ho tolto IO. Serve al premio del Raid (Rewards.forRaid): chi resta a guardare mentre il
+     * compagno fa tutto non deve prendere il premio. Calcolato come nel tick: cio' che manca alla barra, meno cio' che ha fatto il compagno.
+     * Senza un duello in corso (o una barra nota) torna 1, cosi' un chiamante che non sa niente del Raid non toglie premi a nessuno.
+     */
+    function contributo() {
+        if (!lp || typeof gameState === 'undefined' || !gameState || typeof gameState.botLP !== 'number') return 1;
+        return Math.max(0, Math.min(1, (lp - gameState.botLP - compagno) / lp));
+    }
+
+    window.MpRaid = { avvia, ricevi, ridici, contributo };
 })();

@@ -877,10 +877,36 @@
         // js/economy/rewards.js: qui si chiama e si passa il risultato alla
         // schermata, che mostra ogni voce CON la sua spiegazione.
         let rewards = [];
-        if (window.Rewards && window.MP_RAID && playerWon === true && !abbandono && typeof Rewards.forRaid === 'function') {
-            // Raid cooperativo (Multiplayer, js/multiplayer/mp-raid.js): la vittoria paga il premio del Raid, non quello di un
-            // Duello Libero. Una sconfitta o un abbandono restano quelli di sempre, qui sotto.
-            rewards = Rewards.forRaid({ bossNome: (session.opponent && session.opponent.name) || '' });
+        // Turni TUOI giocati (il contatore dei turni conta quelli di entrambi): serve a non premiare un duello online chiuso subito.
+        const turniTuoi = (typeof gameState !== 'undefined' && gameState && gameState.turn > 0) ? Math.ceil(gameState.turn / 2) : 0;
+        if (window.Rewards && window.MP_RAID && typeof Rewards.forRaid === 'function') {
+            // Raid cooperativo (Multiplayer, js/multiplayer/mp-raid.js): paga il premio del Raid per OGNI esito (vittoria, partecipazione,
+            // niente), non quello di un Duello Libero. Il premio dipende dal Boss e da quanta barra hai tolto TU (MpRaid.contributo).
+            const contributo = (window.MpRaid && typeof MpRaid.contributo === 'function') ? MpRaid.contributo() : 1;
+            rewards = Rewards.forRaid({
+                won: playerWon === true, abbandono: abbandono, contributo: contributo,
+                bossId: (session.opponent && session.opponent.id) || '',
+                bossNome: (session.opponent && session.opponent.name) || ''
+            });
+        } else if (window.Rewards && mode === 'multiplayer' && typeof Rewards.forOnline === 'function') {
+            // Duello, Duello a Specchio e Tag Team online: avversario anonimo (nessun record e nessuna difficolta'), quindi premi propri
+            // (Rewards.forOnline) e non quelli di un Duello Libero. Il Tag porta con se' la composizione della stanza.
+            let tag = null;
+            if (window.MP_TAG && window.MP_TAG.posti) {
+                const posti = window.MP_TAG.posti;
+                const miaSq = String(window.MP_MIO_POSTO || 'A0').charAt(0);
+                const avversari = Object.keys(posti).filter((k) => k.charAt(0) !== miaSq).map((k) => posti[k]);
+                const miei = Object.keys(posti).filter((k) => k.charAt(0) === miaSq && k !== window.MP_MIO_POSTO).map((k) => posti[k]);
+                tag = {
+                    formato: window.MP_TAG.boss ? 'boss' : window.MP_TAG.formato,
+                    iaAvversarie: avversari.filter((p) => p.tipo === 'ia').map((p) => (p.boss ? 'boss' : p.ia)),
+                    alleatoIA: miei.some((p) => p.tipo === 'ia')
+                };
+            }
+            rewards = Rewards.forOnline({
+                won: playerWon === true, pareggio: playerWon === 'draw', abbandono: abbandono, turniTuoi: turniTuoi,
+                formato: tag ? 'tag' : (window.MP_SPECCHIO_ID ? 'specchio' : 'duello'), tag: tag
+            });
         } else if (window.Rewards) {
             rewards = Rewards.forDuel({
                 won: playerWon === true,

@@ -484,36 +484,263 @@
         return rewards;
     }
 
-    /** Premio del Raid cooperativo (Multiplayer, "Assalto al Boss"), per chi ha il Boss a zero con la sua barra (richiesta dell'utente). */
-    const CREDITI_RAID = 500;
-    const STELLE_RAID = 2;
-    /** Quante volte al giorno il Raid vinto paga (la giornata e' quella del server, come le altre regole giornaliere). */
+    // ================================================================
+    // BATTAGLIE ONLINE (Multiplayer): Assalto al Boss, Duello, Duello a Specchio, Tag Team in rete
+    // ================================================================
+    // Stato proprio, in `save.modalita.online` (non in dailyEconomy): cosi' le vittorie online NON consumano il bonus "prima vittoria
+    // del giorno" e non avvicinano la sesta vittoria da cui i crediti contro l'IA si dimezzano (prima lo facevano). I campi del giorno
+    // ripartono col cambio di giornata (quella del server); serie, contatore delle 10 vittorie e Boss gia' battuti restano.
+    const ONLINE_STATO = 'online';
+
+    /** Premio del Raid per Boss, in base ai Life Point della barra comune (js/data/raid-db.js): piu' alta la barra, piu' si vince. */
+    const RAID_PREMI = [
+        { finoALp: 16000, crediti: 500, stelle: 2 },
+        { finoALp: 18000, crediti: 600, stelle: 2 },
+        { finoALp: Infinity, crediti: 750, stelle: 3 }
+    ];
+    /** Il premio base del primo scaglione (compatibilita': esposto come prima). */
+    const CREDITI_RAID = RAID_PREMI[0].crediti;
+    const STELLE_RAID = RAID_PREMI[0].stelle;
+    /** Quante volte al giorno il Raid vinto paga, e SU BOSS DIVERSI (la giornata e' quella del server). */
     const RAID_AL_GIORNO = 2;
+    /** Quanta parte della barra comune bisogna aver tolto PERSONALMENTE per avere il premio (o la partecipazione): niente premio a chi resta a guardare. */
+    const RAID_CONTRIBUTO_MINIMO = 0.25;
+    /** Una volta sola per Boss, la prima volta che lo si batte (oltre al premio normale). */
+    const RAID_PRIMO_BOSS = { crediti: 300, stelle: 1 };
+
+    /** Duello e Duello a Specchio online (nessuna difficolta': l'avversario e' una persona). */
+    const ONLINE_VITTORIA = 50;               // come una vittoria a Normale contro l'IA
+    const ONLINE_VITTORIE_PIENE = 5;          // le prime N del giorno a premio pieno...
+    const ONLINE_VITTORIE_META = 5;           // ...le N successive a meta'; poi niente (restano record e Sfide)
+    const ONLINE_SCONFITTA = 15;
+    const ONLINE_SCONFITTE_PREMIATE = 5;
+    const ONLINE_TURNI_MINIMI = 4;            // turni TUOI: chi si arrende subito non guadagna niente
+    const ONLINE_STELLA_OGNI = 10;            // una Stella ogni N vittorie online premiate (Duello e Specchio)
+    const ONLINE_SERIE = 3;                   // N vittorie online di fila: bonus, una volta al giorno
+    const ONLINE_SERIE_BONUS = 50;
+
+    /** Tag Team in rete. I numeri contro l'IA sono quelli di WIN_CREDITS (a Facile/Normale/Difficile). */
+    const TAG_PERSONE = 60;                   // 2 contro 2 tutti umani
+    const TAG_BOSS = 150;                     // 2 contro 1 contro il Boss (mazzo Difficile)
+    const TAG_BOSS_AL_GIORNO = 2;
+    const TAG_COMPAGNO_IA = 0.75;             // un compagno IA rende la squadra piu' forte: -25%
+    /** Ogni vittoria in Tag online da' anche una Stella (richiesta dell'utente), fino a questo tetto giornaliero. */
+    const TAG_STELLE_AL_GIORNO = 3;
+
+    /** Stato online di OGGI: il resto resta fra un giorno e l'altro. Non scrive nulla (lo fa salvaOnline). */
+    function statoOnline(giorno) {
+        const s = (window.SaveManager && SaveManager.getModeState) ? SaveManager.getModeState(ONLINE_STATO) : null;
+        const st = Object.assign({ serie: 0, milestone: 0, bossBattuti: {} }, s || {});
+        st.bossBattuti = Object.assign({}, st.bossBattuti);
+        if (st.giorno !== giorno) {
+            st.giorno = giorno;
+            st.vittorie = 0; st.sconfitte = 0; st.tagStelle = 0; st.tagBoss = 0; st.bonusSerie = false; st.raidBoss = [];
+        }
+        st.raidBoss = (st.raidBoss || []).slice();
+        return st;
+    }
+    function salvaOnline(st) { if (window.SaveManager && SaveManager.setModeState) SaveManager.setModeState(ONLINE_STATO, st); }
+
+    /** Il premio del Raid per un Boss di `lp` Life Point. */
+    function premioRaid(lp) {
+        return RAID_PREMI.find((p) => (Number(lp) || 0) <= p.finoALp) || RAID_PREMI[0];
+    }
+    /** I Life Point della barra comune di un Boss (da raid-db.js, se la pagina lo carica). */
+    function lpBossRaid(bossId) {
+        const b = (window.RAID_BOSSES || []).find((x) => x.id === bossId);
+        return b ? b.lp : RAID_PREMI[0].finoALp;
+    }
 
     /**
-     * Premio per il Raid VINTO: sostituisce quello di un Duello Libero normale (che e' pensato per un duello 1 contro 1 e
-     * non e' il motivo per cui si fa un Raid). Paga chi e' ancora in piedi quando la barra comune arriva a zero; chi era
-     * gia' a terra ha perso il suo duello e non prende nulla (come un duello perso). Un abbandono non paga: vale come ovunque.
+     * Premio del Raid (Assalto al Boss), a fine duello, per OGNI esito. Sostituisce quello di un Duello Libero.
+     *  - `won`: la barra comune e' arrivata a zero. `contributo`: la quota della barra tolta da te (0..1).
+     *  - Vittoria con almeno il 25% della barra tolta da te: premio del Boss (500/600/750 crediti e 2/2/3 Stelle), fino a 2 volte al
+     *    giorno e su Boss DIVERSI; la prima volta contro ciascun Boss c'e' in piu' un bonus una tantum.
+     *  - Sconfitta con almeno il 25%: partecipazione. Meno del 25% (chi resta a guardare), abbandono: niente.
      * Accredita e torna le voci, ciascuna con la sua spiegazione.
      */
     function forRaid(opts) {
         const rewards = [];
         if (!window.SaveManager) return rewards;
         const o = opts || {};
-        // Al giorno se ne riscuote un numero limitato (richiesta dell'utente: 2): oltre, la vittoria conta per record e Sfide ma
-        // non paga, e la schermata finale lo dice invece di restare vuota.
+        const vinto = o.won !== false;
+        if (o.abbandono) return [nota('🏳️', 'Raid abbandonato: niente premio')];
+        const contributo = typeof o.contributo === 'number' ? o.contributo : 1;
+        const soglia = Math.round(RAID_CONTRIBUTO_MINIMO * 100);
+        if (contributo < RAID_CONTRIBUTO_MINIMO) {
+            return [nota('🐉', `Hai inflitto meno del ${soglia}% della barra del Boss (${Math.round(contributo * 100)}%): per il premio del Raid serve fare almeno la tua parte`)];
+        }
+        if (!vinto) {
+            SaveManager.addCurrency('credits', LOSS_CREDITS);
+            return [voce('credits', LOSS_CREDITS, `Premio di partecipazione al Raid (hai tolto il ${Math.round(contributo * 100)}% della barra)`)];
+        }
         const giorno = dayKey();
-        const riscosse = Number(SaveManager.getDailyEconomy(giorno).raidWins) || 0;
-        if (riscosse >= RAID_AL_GIORNO) {
+        const st = statoOnline(giorno);
+        const boss = o.bossId || '';
+        const premio = premioRaid(o.lp || lpBossRaid(boss));
+        const spiegazione = `Raid cooperativo vinto${o.bossNome ? ': ' + o.bossNome : ''}`;
+        const primaVolta = !!boss && !st.bossBattuti[boss];
+        // Il bonus della prima volta e' una conquista del Boss, non del giorno: spetta anche se i premi di oggi sono finiti.
+        if (primaVolta) {
+            st.bossBattuti[boss] = true;
+            SaveManager.addCurrency('credits', RAID_PRIMO_BOSS.crediti);
+            SaveManager.addCurrency('starChips', RAID_PRIMO_BOSS.stelle);
+            rewards.push(voce('credits', RAID_PRIMO_BOSS.crediti, `Prima volta che batti ${o.bossNome || 'questo Boss'} in Raid (una volta sola)`));
+            rewards.push(voce('starChips', RAID_PRIMO_BOSS.stelle, `Prima volta che batti ${o.bossNome || 'questo Boss'} in Raid (una volta sola)`));
+            if (window.ChallengeTracker) ChallengeTracker.recordProgress('raidBossBattuto', { bossId: boss });
+        }
+        if (st.raidBoss.length >= RAID_AL_GIORNO) {
             rewards.push(nota('🐉', `Premio del Raid già riscosso ${RAID_AL_GIORNO} volte oggi: torna domani`));
+        } else if (boss && st.raidBoss.indexOf(boss) !== -1) {
+            rewards.push(nota('🐉', 'Oggi hai già riscosso il premio per questo Boss: prova un Boss diverso (se ne riscuotono 2 al giorno, su Boss diversi)'));
+        } else {
+            if (boss) st.raidBoss.push(boss); else st.raidBoss.push('?' + st.raidBoss.length);
+            SaveManager.addCurrency('credits', premio.crediti);
+            rewards.push(voce('credits', premio.crediti, spiegazione));
+            SaveManager.addCurrency('starChips', premio.stelle);
+            rewards.push(voce('starChips', premio.stelle, spiegazione));
+        }
+        salvaOnline(st);
+        return rewards;
+    }
+
+    /**
+     * I crediti di base di una vittoria in Tag online, dalla composizione: contro persone, contro l'IA (a Facile/Normale/Difficile,
+     * come contro l'IA) o contro il Boss; -25% con un compagno IA. Un punto solo, usato sia dal pagamento sia dal riassunto in sala.
+     * `tag`: { iaAvversarie: ['easy'|'medium'|'hard'|'boss', ...], alleatoIA: bool }.
+     */
+    function tagBase(tag) {
+        const liv = { easy: 'Facile', medium: 'Medio', hard: 'Difficile' };
+        const ia = (tag && tag.iaAvversarie) || [];
+        let base, etichetta, boss = false;
+        if (ia.indexOf('boss') !== -1) {
+            boss = true;
+            base = TAG_BOSS;
+            etichetta = 'Vittoria in Tag online contro il Boss';
+        } else if (ia.length > 0) {
+            base = Math.max.apply(null, ia.map((l) => WIN_CREDITS[liv[l]] || WIN_CREDITS.Medio));
+            etichetta = `Vittoria in Tag online contro l'IA (${NOME_LIVELLO[liv[ia[0]]] || 'Normale'})`;
+        } else {
+            base = TAG_PERSONE;
+            etichetta = 'Vittoria in Tag online contro altre persone';
+        }
+        if (tag && tag.alleatoIA) { base = Math.round(base * TAG_COMPAGNO_IA); etichetta += ' (compagno IA: -25%)'; }
+        return { base: base, etichetta: etichetta, boss: boss };
+    }
+
+    /**
+     * Il riassunto, in una riga, di cosa paga una vittoria con la scelta CORRENTE della sala (come "Premi della vittoria a Normale:
+     * +50 crediti" in Duello Libero): cambia col Boss scelto, col formato e col livello dell'IA nel Tag.
+     * `modo`: 'duello' | 'specchio' | 'raid' | 'tag'. `ctx`: { bossId, bossNome } per il Raid, { iaAvversarie, alleatoIA } per il Tag.
+     */
+    function sommarioOnline(modo, ctx) {
+        const c = ctx || {};
+        if (modo === 'raid') {
+            // Senza un Boss scelto (ingresso, sala ancora vuota) si dice da quanto si parte.
+            if (!c.bossId) return `da +${RAID_PREMI[0].crediti} crediti e +${RAID_PREMI[0].stelle} Stelle, secondo il Boss`;
+            const p = premioRaid(lpBossRaid(c.bossId));
+            return `${c.bossNome ? 'contro ' + c.bossNome + ': ' : ''}+${p.crediti} crediti e +${p.stelle} ${p.stelle === 1 ? 'Stella' : 'Stelle'}`;
+        }
+        if (modo === 'tag') {
+            if (c.generico) return `da +${WIN_CREDITS.Facile} a +${TAG_BOSS} crediti e +1 Stella, secondo gli avversari`;
+            const t = tagBase(c);
+            return `+${t.base} crediti e +1 Stella`;
+        }
+        return `+${ONLINE_VITTORIA} crediti (le prime ${ONLINE_VITTORIE_PIENE} del giorno) e 1 Stella ogni ${ONLINE_STELLA_OGNI}`;
+    }
+
+    /**
+     * Premio di un duello ONLINE che non e' un Raid: Duello, Duello a Specchio, Tag Team in rete (modalita' 'multiplayer').
+     * `opts`: { won, pareggio, abbandono, turniTuoi, formato: 'duello'|'specchio'|'tag',
+     *           tag: { formato: '2v2'|'2v1'|'boss', iaAvversarie: ['easy'|'medium'|'hard'|'boss'...], alleatoIA: bool } }.
+     * Regole (vedi modalitaHtml('online-duello') e ('online-tag') per come le legge il giocatore): premio solo se il duello e' durato
+     * almeno 4 turni tuoi; tetto giornaliero (5 vittorie piene + 5 a meta'); sconfitta con partecipazione (5 al giorno); una Stella
+     * ogni 10 vittorie online (Duello/Specchio); in Tag ogni vittoria da' 1 Stella fino a 3 al giorno; serie di 3 di fila = bonus.
+     */
+    function forOnline(opts) {
+        const rewards = [];
+        if (!window.SaveManager) return rewards;
+        const o = opts || {};
+        const giorno = dayKey();
+        const st = statoOnline(giorno);
+        if (o.abbandono) {
+            st.serie = 0;
+            salvaOnline(st);
+            return [nota('🏳️', 'Duello online abbandonato: niente premio')];
+        }
+        if (o.pareggio) return [nota('🤝', 'Pareggio: nessun premio')];
+        if ((Number(o.turniTuoi) || 0) < ONLINE_TURNI_MINIMI) {
+            return [nota('⏱️', `Duello chiuso prima del ${ONLINE_TURNI_MINIMI}° turno tuo: niente premio (serve a non regalare vittorie arrendendosi subito)`)];
+        }
+        const tag = o.formato === 'tag' ? (o.tag || { formato: '2v2', iaAvversarie: [], alleatoIA: false }) : null;
+        if (window.ChallengeTracker) ChallengeTracker.recordProgress('onlineDuelPlayed', {});
+        const tagInfo = tag ? tagBase(tag) : null;
+
+        if (!o.won) {
+            st.serie = 0;
+            if (st.sconfitte < ONLINE_SCONFITTE_PREMIATE) {
+                SaveManager.addCurrency('credits', ONLINE_SCONFITTA);
+                rewards.push(voce('credits', ONLINE_SCONFITTA, `Premio di partecipazione online (sconfitta n.${st.sconfitte + 1} di oggi, se ne premiano ${ONLINE_SCONFITTE_PREMIATE})`));
+            } else {
+                rewards.push(nota('🤝', `Partecipazione online già riscossa ${ONLINE_SCONFITTE_PREMIATE} volte oggi`));
+            }
+            st.sconfitte++;
+            salvaOnline(st);
             return rewards;
         }
-        SaveManager.recordDailyRaidWin(giorno);
-        const spiegazione = `Raid cooperativo vinto${o.bossNome ? ': ' + o.bossNome : ''}`;
-        SaveManager.addCurrency('credits', CREDITI_RAID);
-        rewards.push(voce('credits', CREDITI_RAID, spiegazione));
-        SaveManager.addCurrency('starChips', STELLE_RAID);
-        rewards.push(voce('starChips', STELLE_RAID, spiegazione));
+
+        // ---- Vittoria: crediti ----
+        const prima = st.vittorie;
+        st.vittorie++;
+        const fattore = prima < ONLINE_VITTORIE_PIENE ? 1 : (prima < ONLINE_VITTORIE_PIENE + ONLINE_VITTORIE_META ? 0.5 : 0);
+        let base = ONLINE_VITTORIA;
+        let etichetta = o.formato === 'specchio' ? 'Vittoria online a Specchio' : 'Vittoria online';
+        let bossTag = false;
+        if (tagInfo) {
+            base = tagInfo.base;
+            etichetta = tagInfo.etichetta;
+            bossTag = tagInfo.boss;
+        }
+        // Contro il Boss in Tag i crediti pieni si prendono 2 volte al giorno, come il resto del tetto.
+        const bossEsaurito = bossTag && st.tagBoss >= TAG_BOSS_AL_GIORNO;
+        if (bossTag) st.tagBoss++;
+        const crediti = bossEsaurito ? 0 : Math.round(base * fattore);
+        if (crediti > 0) {
+            SaveManager.addCurrency('credits', crediti);
+            rewards.push(voce('credits', crediti, `${etichetta}${fattore < 1 ? ' — dalla ' + (ONLINE_VITTORIE_PIENE + 1) + 'ª vittoria online del giorno valgono la metà' : ''}`));
+        } else {
+            rewards.push(nota('🏆', bossEsaurito
+                ? `Premio in crediti contro il Boss già riscosso ${TAG_BOSS_AL_GIORNO} volte oggi`
+                : `Hai già avuto i premi in crediti di ${ONLINE_VITTORIE_PIENE + ONLINE_VITTORIE_META} vittorie online oggi: la vittoria conta per record e Sfide`));
+        }
+        // ---- Stelle ----
+        if (tag) {
+            // In Tag ogni vittoria da' 1 Stella, con un tetto giornaliero SUO (non dipende dal tetto dei crediti).
+            if (st.tagStelle < TAG_STELLE_AL_GIORNO) {
+                st.tagStelle++;
+                SaveManager.addCurrency('starChips', 1);
+                rewards.push(voce('starChips', 1, `Vittoria in Tag online: una Stella per vittoria, fino a ${TAG_STELLE_AL_GIORNO} al giorno (oggi ${st.tagStelle}/${TAG_STELLE_AL_GIORNO})`));
+            } else {
+                rewards.push(nota('⭐', `Stelle del Tag online già prese ${TAG_STELLE_AL_GIORNO} volte oggi: torna domani`));
+            }
+        } else if (fattore > 0) {
+            st.milestone++;
+            if (st.milestone >= ONLINE_STELLA_OGNI) {
+                st.milestone -= ONLINE_STELLA_OGNI;
+                SaveManager.addCurrency('starChips', 1);
+                rewards.push(voce('starChips', 1, `${ONLINE_STELLA_OGNI} vittorie online (Duello e Specchio)`));
+            }
+        }
+        // ---- Serie ----
+        st.serie++;
+        if (st.serie === ONLINE_SERIE && window.ChallengeTracker) ChallengeTracker.recordProgress('onlineSerie', {});
+        if (st.serie >= ONLINE_SERIE && !st.bonusSerie) {
+            st.bonusSerie = true;
+            SaveManager.addCurrency('credits', ONLINE_SERIE_BONUS);
+            rewards.push(voce('credits', ONLINE_SERIE_BONUS, `${ONLINE_SERIE} vittorie online di fila (una volta al giorno)`));
+        }
+        if (window.ChallengeTracker) ChallengeTracker.recordProgress('onlineWin', { formato: o.formato || 'duello' });
+        salvaOnline(st);
         return rewards;
     }
 
@@ -641,7 +868,7 @@
         '🌅': 'medal', '🎯': 'target', '🏹': 'target', '🤝': 'defensePos', '⚔️': 'attackPos',
         '📅': 'arena', '🗼': 'tower', '🎁': 'shop', '🖼️': 'collection', '🧩': 'puzzle',
         '🎓': 'rules', 'ℹ️': 'rules', '🗺️': 'map', '👑': 'crown', '🏆': 'tournament',
-        '🏟️': 'arena', '✨': 'star'
+        '🏟️': 'arena', '✨': 'star', '🤖': 'sandbox', '⏱️': 'rules'
     };
     /** Il segnaposto <span data-icon> per un'emoji (Icons.hydrate lo sostituisce con l'SVG); l'emoji se non ha icona. */
     function icona(emoji) {
@@ -750,9 +977,36 @@
             standard = () => righeVittoriaTuttiILivelli().join('');
         } else if (id === 'raid') {
             titolo = 'Premi dell\'Assalto al Boss';
-            speciali.push(riga('🗼', `Boss a zero sulla barra comune e tu ancora in piedi: <b>+${CREDITI_RAID} crediti</b> e <b>+${stelle(STELLE_RAID)}</b>, fino a <b>${RAID_AL_GIORNO} volte al giorno</b>. Oltre, la vittoria conta per record e Sfide ma non paga.`));
+            const soglia = Math.round(RAID_CONTRIBUTO_MINIMO * 100);
+            // Il premio dipende dal Boss (la sua barra comune): si elencano i Boss veri se la pagina li conosce.
+            const bossNomi = (window.RAID_BOSSES && window.characterDatabase)
+                ? window.RAID_BOSSES.map((b) => { const c = window.characterDatabase.find((x) => x.id === b.id); return { nome: c ? c.name : b.id, lp: b.lp }; })
+                : [];
+            RAID_PREMI.forEach((p, i) => {
+                const prec = i === 0 ? 0 : RAID_PREMI[i - 1].finoALp;
+                const dentro = bossNomi.filter((b) => b.lp > prec && b.lp <= p.finoALp);
+                const chi = dentro.length ? dentro.map((b) => `${b.nome} (${n(b.lp)} LP)`).join(', ') : (isFinite(p.finoALp) ? `barra fino a ${n(p.finoALp)} LP` : `barra oltre ${n(prec)} LP`);
+                speciali.push(riga(i === 0 ? '🗼' : '🏆', `${chi}: <b>+${n(p.crediti)} crediti</b> e <b>+${stelle(p.stelle)}</b>${i === 0 ? ` — Boss a zero e tu hai tolto almeno il <b>${soglia}%</b> della barra, fino a <b>${RAID_AL_GIORNO} volte al giorno</b> su Boss diversi` : ''}`));
+            });
+            speciali.push(riga('✨', `La prima volta che batti ciascun Boss: <b>+${RAID_PRIMO_BOSS.crediti} crediti</b> e <b>+${stelle(RAID_PRIMO_BOSS.stelle)}</b>, una volta sola.`));
             speciali.push(riga('ℹ️', 'Questo premio prende il posto di quello di un Duello Libero: niente bonus della prima vittoria, Stelle ogni 10 vittorie o ritrovamenti.'));
-            speciali.push(riga('🤝', `Se eri già a terra quando il Boss cade, o perdi: +${LOSS_CREDITS} crediti di partecipazione. Se abbandoni: niente.`, 'rw-nota'));
+            speciali.push(riga('🤝', `Se perdi ma hai tolto almeno il ${soglia}% della barra: +${LOSS_CREDITS} crediti di partecipazione. Sotto il ${soglia}% (o se abbandoni): niente.`, 'rw-nota'));
+        } else if (id === 'online-duello') {
+            titolo = o.specchio ? 'Premi del Duello a Specchio online' : 'Premi del Duello online';
+            speciali.push(riga('💰', `Vittoria: <b>+${ONLINE_VITTORIA} crediti</b> le prime ${ONLINE_VITTORIE_PIENE} del giorno, <b>+${Math.round(ONLINE_VITTORIA / 2)}</b> dalla ${ONLINE_VITTORIE_PIENE + 1}ª alla ${ONLINE_VITTORIE_PIENE + ONLINE_VITTORIE_META}ª. Poi niente (restano record e Sfide).`));
+            speciali.push(riga('🎯', `Ogni ${ONLINE_STELLA_OGNI} vittorie online: <b>+${stelle(1)}</b>.`));
+            speciali.push(riga('🌅', `${ONLINE_SERIE} vittorie online di fila: <b>+${ONLINE_SERIE_BONUS} crediti</b>, una volta al giorno.`));
+            speciali.push(riga('🤝', `Sconfitta: +${ONLINE_SCONFITTA} crediti di partecipazione, le prime ${ONLINE_SCONFITTE_PREMIATE} del giorno. Abbandono: niente.`));
+            speciali.push(riga('⏱️', `Il premio c'è solo se il duello è durato almeno ${ONLINE_TURNI_MINIMI} turni tuoi: arrendersi subito non rende niente.`, 'rw-nota'));
+            speciali.push(riga('ℹ️', 'Qui non ci sono ritrovamenti (Stella, Locazione, Millennio) e le vittorie online non consumano il bonus della prima vittoria contro l\'IA.', 'rw-nota'));
+        } else if (id === 'online-tag') {
+            titolo = 'Premi del Tag Team online';
+            speciali.push(riga('💰', `2 contro 2 tra persone: <b>+${TAG_PERSONE} crediti</b> a ogni giocatore della squadra vincente.`));
+            speciali.push(riga('🤖', `Con l'IA tra gli avversari: <b>+${WIN_CREDITS.Facile} / +${WIN_CREDITS.Medio} / +${WIN_CREDITS.Difficile}</b> crediti (Facile / Normale / Difficile), come contro l'IA.`));
+            speciali.push(riga('🏆', `2 contro 1 contro il Boss: <b>+${TAG_BOSS} crediti</b>, ${TAG_BOSS_AL_GIORNO} volte al giorno.`));
+            speciali.push(riga('⭐', `Ogni vittoria: <b>+${stelle(1)}</b>, fino a ${TAG_STELLE_AL_GIORNO} Stelle al giorno.`));
+            speciali.push(riga('🤝', `Con un compagno IA i crediti valgono il ${Math.round(TAG_COMPAGNO_IA * 100)}%. Sconfitta: +${ONLINE_SCONFITTA} crediti, le prime ${ONLINE_SCONFITTE_PREMIATE} del giorno.`));
+            speciali.push(riga('⏱️', `Il premio c'è solo se il duello è durato almeno ${ONLINE_TURNI_MINIMI} turni tuoi. Le vittorie online dopo la ${ONLINE_VITTORIE_PIENE}ª del giorno pagano la metà dei crediti, dopo la ${ONLINE_VITTORIE_PIENE + ONLINE_VITTORIE_META}ª niente (le Stelle hanno il loro tetto).`, 'rw-nota'));
         } else if (id === 'puzzle') {
             titolo = 'Premi dei Puzzle';
             speciali.push(riga('🧩', `Prima soluzione di un puzzle: <b>+${puzzleCrediti(1)}</b> (difficoltà 1) · <b>+${puzzleCrediti(2)}</b> (difficoltà 2) · <b>+${puzzleCrediti(3)}</b> (difficoltà 3) crediti. Rifarlo non paga di nuovo.`));
@@ -807,6 +1061,25 @@
         if (!html) { el.hidden = true; return; }
         el.hidden = false;
         el.innerHTML = `<details class="rw-modo"><summary>${icona('🎁')} Premi di questa modalità</summary>${html}</details>`;
+        idrata(el);
+    }
+
+    /**
+     * Il riquadro dei premi DENTRO la sala (come quello del Duello Libero): la riga di riassunto sempre visibile — con la scelta
+     * corrente, vedi sommarioOnline — e, toccandola, l'elenco completo della modalita'. Si richiama ad ogni cambio di scelta (Boss,
+     * formato, livello dell'IA): conserva lo stato aperto/chiuso.
+     * @param {Element|string} destinazione  @param {string} modo 'duello'|'specchio'|'raid'|'tag'  @param {object} [ctx]
+     */
+    function montaPremiSala(destinazione, modo, ctx) {
+        const el = typeof destinazione === 'string' ? document.querySelector(destinazione) : destinazione;
+        if (!el) return;
+        const id = modo === 'tag' ? 'online-tag' : (modo === 'raid' ? 'raid' : 'online-duello');
+        const html = modalitaHtml(id, { specchio: modo === 'specchio' });
+        if (!html) { el.hidden = true; return; }
+        const prima = el.querySelector('details');
+        const aperto = !!(prima && prima.open);
+        el.hidden = false;
+        el.innerHTML = `<details class="sl-premi"${aperto ? ' open' : ''}><summary>${icona('🎁')} Premi della vittoria: ${sommarioOnline(modo, ctx)}</summary>${html}</details>`;
         idrata(el);
     }
 
@@ -884,6 +1157,17 @@
         forStoryCampaign: forStoryCampaign,
         forStoryArc: forStoryArc,
         forRaid: forRaid,
+        forOnline: forOnline,
+        RAID_PREMI: RAID_PREMI,
+        RAID_CONTRIBUTO_MINIMO: RAID_CONTRIBUTO_MINIMO,
+        RAID_PRIMO_BOSS: RAID_PRIMO_BOSS,
+        ONLINE: {
+            VITTORIA: ONLINE_VITTORIA, VITTORIE_PIENE: ONLINE_VITTORIE_PIENE, VITTORIE_META: ONLINE_VITTORIE_META,
+            SCONFITTA: ONLINE_SCONFITTA, SCONFITTE_PREMIATE: ONLINE_SCONFITTE_PREMIATE, TURNI_MINIMI: ONLINE_TURNI_MINIMI,
+            STELLA_OGNI: ONLINE_STELLA_OGNI, SERIE: ONLINE_SERIE, SERIE_BONUS: ONLINE_SERIE_BONUS,
+            TAG_PERSONE: TAG_PERSONE, TAG_BOSS: TAG_BOSS, TAG_BOSS_AL_GIORNO: TAG_BOSS_AL_GIORNO,
+            TAG_COMPAGNO_IA: TAG_COMPAGNO_IA, TAG_STELLE_AL_GIORNO: TAG_STELLE_AL_GIORNO
+        },
         CREDITI_RAID: CREDITI_RAID,        STELLE_RAID: STELLE_RAID,
         RAID_AL_GIORNO: RAID_AL_GIORNO,
         STELLE_PER_ARCO_STORIA: STELLE_PER_ARCO_STORIA,
@@ -893,6 +1177,9 @@
         previewHtml: previewHtml,
         modalitaHtml: modalitaHtml,
         montaPremiModalita: montaPremiModalita,
+        montaPremiSala: montaPremiSala,
+        sommarioOnline: sommarioOnline,
+        tagBase: tagBase,
         idrata: idrata,
         icona: icona,
         puzzleCrediti: puzzleCrediti,

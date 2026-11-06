@@ -33,14 +33,25 @@ module.exports = {
                             sw: document.documentElement.scrollWidth, iw: innerWidth,
                             emblema: !!document.querySelector('.mp-hero-emblema svg.themed-icon'),
                             passi: document.querySelectorAll('.mp-passi').length,
-                            tabSvg: document.querySelectorAll('.mp-tab svg.themed-icon').length,
-                            scheda: Math.round(document.getElementById('mpPanelCreate').getBoundingClientRect().width)
+                            tabSvg: document.querySelectorAll('.mp-azioni svg.themed-icon').length,
+                            azioni: document.querySelectorAll('.mp-azioni .mp-btn').length,
+                            testoSpiegazione: /Apri una stanza|scegli arena e musica mentre aspetti/i.test(document.getElementById('mpLobby').textContent),
+                            vecchieSchede: !!document.getElementById('mpTabCreate') || !!document.getElementById('mpPanelCreate'),
+                            codiceVisibile: getComputedStyle(document.getElementById('mpPanelJoin')).display !== 'none',
+                            scheda: Math.round(document.querySelector('.mp-azioni').getBoundingClientRect().width)
                         }));
+                        // Due azioni sole (Crea stanza / Entra con codice), niente frase di spiegazione, il campo del codice solo a richiesta.
+                        t.assert(m.azioni === 2, `${modo}: le azioni dell'ingresso devono essere due (sono ${m.azioni})`);
+                        t.assert(!m.testoSpiegazione && !m.vecchieSchede, `${modo}: la frase di spiegazione o le vecchie schede sono tornate`);
+                        t.assert(!m.codiceVisibile, `${modo}: il campo del codice deve comparire solo toccando "Entra con codice"`);
+                        await page.click('#mpTabJoin');
+                        t.assert(await page.evaluate(() => getComputedStyle(document.getElementById('mpPanelJoin')).display !== 'none' && document.activeElement === document.getElementById('mpJoinCode')), `${modo}: "Entra con codice" deve mostrare il campo e dargli il fuoco`);
+                        await page.click('#mpTabJoin');
                         t.assert(m.sw <= m.iw + 1, `${modo} ${w}px: la pagina sborda (${m.sw} > ${m.iw})`);
                         t.assert(m.emblema, `${modo}: manca l'emblema a tema nell'intestazione`);
                         // I tre passi numerati sono stati tolti su richiesta dell'utente: non devono tornare.
                         t.assert(m.passi === 0, `${modo}: i passi numerati sono tornati`);
-                        t.assert(m.tabSvg === 2, `${modo}: icone dei segmenti mancanti ${JSON.stringify(m)}`);
+                        t.assert(m.tabSvg === 2, `${modo}: icone delle due azioni mancanti ${JSON.stringify(m)}`);
                         if (w >= 700) t.assert(m.scheda <= 600, `${modo} ${w}px: la scheda di ingresso non e' una colonna (larga ${m.scheda})`);
                     } finally { await ctx.close(); }
                 }
@@ -105,6 +116,31 @@ module.exports = {
                     // Arena e musica restano il selettore di sempre (non compatto): su richiesta dell'utente era meglio cosi'.
                     const compatto = await page.evaluate(() => !!document.querySelector('#mpSetupMount .ds-setup--compact'));
                     t.assert(!compatto, `${w}px: il selettore arena/musica della sala non deve essere compatto`);
+
+                    // La sala e' CORTA: pedina, mazzo e arena+musica sono tre righe riassuntive, non tre selettori aperti.
+                    const corta = await page.evaluate(() => ({ fondo: document.getElementById('mpSetup').getBoundingClientRect().bottom + window.scrollY, ih: innerHeight, tessere: document.querySelectorAll('.mp-tessera').length }));
+                    t.assert(corta.tessere === 3, `${w}px: servono tre riquadri riassuntivi (pedina, mazzo, arena e musica), ce ne sono ${corta.tessere}`);
+                    t.assert(corta.fondo <= corta.ih * 1.6, `${w}px: la sala e' ancora troppo lunga (finisce a ${Math.round(corta.fondo)}px su uno schermo di ${corta.ih})`);
+
+                    // Un tocco sul riquadro apre la finestra con il selettore vero; Esc la chiude e lo rimette a posto.
+                    await page.click('#mpPedinaGroup .mp-tessera');
+                    const aperta = await page.evaluate(() => ({ visibile: !document.getElementById('mpModale').hidden, dentro: !!document.querySelector('#mpModaleCorpo .mp-pedina-attuale') }));
+                    t.assert(aperta.visibile && aperta.dentro, `${w}px: il riquadro del duellante deve aprire la finestra col selettore ${JSON.stringify(aperta)}`);
+                    await page.keyboard.press('Escape');
+                    const chiusa = await page.evaluate(() => ({ nascosta: document.getElementById('mpModale').hidden, aPosto: document.getElementById('mpPedina').parentElement.classList.contains('mp-deposito') }));
+                    t.assert(chiusa.nascosta && chiusa.aPosto, `${w}px: chiusa la finestra il selettore deve tornare nel suo deposito ${JSON.stringify(chiusa)}`);
+
+                    // Cambiare arena dalla finestra aggiorna il riquadro con il suo nome.
+                    await page.click('#mpSetup .mp-tessera');
+                    await page.waitForSelector('#mpModaleCorpo .ds-field:not(.ds-field--random)', { timeout: 5000 });
+                    const scelta = await page.evaluate(() => {
+                        const el = document.querySelectorAll('#mpModaleCorpo .ds-field:not(.ds-field--random)')[2];
+                        el.click();
+                        return { file: el.dataset.file, nome: ArenaOptions.nomeCampo(el.dataset.file) };
+                    });
+                    await page.click('.mp-modale-fatto');
+                    const tessera = await page.evaluate(() => document.querySelector('#mpSetup .mp-tessera b').textContent);
+                    t.assert(tessera === scelta.nome, `${w}px: il riquadro dell'arena dice "${tessera}" invece di "${scelta.nome}"`);
                 } finally { await ctx.close(); }
             }
 

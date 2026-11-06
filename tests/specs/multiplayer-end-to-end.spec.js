@@ -115,6 +115,8 @@ module.exports = {
             // 'all' e non il default 'yu-gi-oh': una scelta che coincide col
             // default non dimostrerebbe che ha viaggiato davvero.
             const CARTE = 'all';
+            // Arena, musica e carte ammesse si scelgono nella finestra del riquadro "Arena e musica" (js/multiplayer/mp-scelte.js).
+            await pageA.click('#mpSetup .mp-tessera');
             await pageA.waitForSelector('.ds-field[data-file="' + ARENA + '"]');
             await pageA.click('.ds-field[data-file="' + ARENA + '"]');
             await pageA.click('.ds-track[data-file="' + MUSICA + '"]');
@@ -127,6 +129,7 @@ module.exports = {
             assert(sceltoDaHost.campo === ARENA, `L'arena cliccata deve risultare selezionata (ottenuto: ${sceltoDaHost.campo})`);
             assert(sceltoDaHost.musica === MUSICA, `La traccia cliccata deve risultare selezionata (ottenuto: ${sceltoDaHost.musica})`);
             assert(sceltoDaHost.postiOccupati === '1', 'Prima che arrivi l\'avversario la stanza deve dirsi occupata da 1 duellante');
+            await pageA.click('.mp-modale-fatto');   // la finestra delle scelte si richiude, lasciando liberi gli altri pulsanti
 
             await pageB.click('#mpTabJoin');
             await pageB.fill('#mpJoinCode', code);

@@ -67,7 +67,8 @@
         { id: 'torre', titolo: '🗼 Torre dei Duellanti' },
         { id: 'settimana', titolo: '📅 Duello della Settimana' },
         { id: 'caccia', titolo: '🏹 Caccia al Boss' },
-        { id: 'tag', titolo: '🤝 Tag Team' }
+        { id: 'tag', titolo: '🤝 Tag Team' },
+        { id: 'online', titolo: '🌐 Battaglie online' }
     ];
 
     function escape(s) {

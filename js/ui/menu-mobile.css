@@ -21,7 +21,9 @@
 .menu-shell--app .menu-logo {
     flex: 0 0 auto;
     margin-top: calc(var(--mm-fotocamera, 0px) + 6px);
-    height: clamp(84px, 15dvh, 128px);
+    /* Il blocco e' piu' basso di prima (era clamp(84px, 15dvh, 128px)): il box del giocatore sale di ~30px. Il logo disegnato (h1 a scala
+       .5) e' alto circa 89px: sotto i 92px il box lo toccherebbe, da qui il minimo. */
+    height: clamp(92px, 12.5dvh, 108px);
     width: 100%;
     display: flex;
     justify-content: center;
@@ -51,9 +53,10 @@
     margin: 4px 14px 0;
     padding: 8px 12px;
     border-radius: 14px;
-    background: linear-gradient(180deg, rgba(34, 28, 16, 0.82), rgba(14, 12, 8, 0.82));
-    border: 1px solid rgba(247, 215, 116, 0.28);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    /* TRASPARENTE (richiesta dell'utente): resta solo il filo d'oro, la scena del menu si vede attraverso. */
+    background: transparent;
+    border: 1px solid rgba(247, 215, 116, 0.22);
+    box-shadow: none;
 }
 .mm-giocatore { display: flex; align-items: center; gap: 9px; min-width: 0; }
 .mm-avatar {
@@ -323,6 +326,6 @@ body.mp-in-duello .mm-barra, body.mp-in-duello .mm-spazio { display: none !impor
    e' nascosto). Il box del profilo scende con il logo (margine sopra) cosi' non resta schiacciato sotto di lui. ---- */
 @media (pointer: coarse) and (orientation: portrait) {
     :root { --mm-fotocamera: max(env(safe-area-inset-top, 0px), 30px); }
-    .menu-shell--app .menu-logo { height: clamp(96px, 15.5dvh, 132px); }
-    .menu-shell--app .mm-testa { margin-top: 12px; }
+    .menu-shell--app .menu-logo { height: clamp(92px, 12.5dvh, 108px); }
+    .menu-shell--app .mm-testa { margin-top: 4px; }
 }

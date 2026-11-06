@@ -314,10 +314,72 @@
         if (copia) copia.onclick = () => { if (navigator.clipboard) navigator.clipboard.writeText(codice).then(() => status('✅ Codice copiato negli appunti!')); };
     }
 
+    /** Le tre scelte personali come riquadri + finestra (js/multiplayer/mp-scelte.js): stesso schema della sala 1 contro 1. */
+    const tessere = { pedina: null, mazzo: null, arena: null };
+
+    function creaTessere() {
+        if (!g.MpScelte || tessere.pedina) return;
+        const AO = g.ArenaOptions;
+        const random = AO ? AO.RANDOM : 'random';
+        const mazzoAttivo = () => (g.SaveManager && g.SaveManager.getActiveDeck) ? g.SaveManager.getActiveDeck() : null;
+        const gruppo = (id) => { const e = $(id); return e ? e.parentElement : null; };
+        if (gruppo('mpTagPedina')) {
+            tessere.pedina = g.MpScelte.tessera(gruppo('mpTagPedina'), {
+                corpo: $('mpTagPedina'), titolo: 'Il tuo duellante',
+                img: () => g.MpPedina.scelta().image, valore: () => g.MpPedina.scelta().name, dettaglio: () => 'Lo vedono tutti'
+            });
+        }
+        if (gruppo('mpTagMazzi')) {
+            tessere.mazzo = g.MpScelte.tessera(gruppo('mpTagMazzi'), {
+                corpo: $('mpTagMazzi'), titolo: 'Il tuo mazzo', icona: 'cards', glifo: () => '🃏',
+                valore: () => { const m = mazzoAttivo(); return m ? m.name : 'Mazzo generato al momento'; },
+                dettaglio: () => {
+                    const m = mazzoAttivo();
+                    if (!m) return 'Non hai ancora un mazzo tuo';
+                    return `${(m.main || []).reduce((tot, v) => tot + (v.qty || 1), 0)} carte · lo scegli solo per te`;
+                },
+                alApertura: () => { if (setupMazzi) setupMazzi.refresh(); }
+            });
+        }
+        if (gruppo('mpTagArena')) {
+            tessere.arena = g.MpScelte.tessera(gruppo('mpTagArena'), {
+                corpo: $('mpTagArena'), titolo: 'Arena e musica', icona: 'arena', glifo: () => '🏟️',
+                img: () => { const s = setupArena ? setupArena.getSelection() : scelta; return (AO && s.field && s.field !== random) ? AO.previewFor(s.field) : null; },
+                valore: () => { const s = setupArena ? setupArena.getSelection() : scelta; return (AO && s.field && s.field !== random) ? AO.nomeCampo(s.field) : 'Arena casuale'; },
+                dettaglio: () => {
+                    const s = setupArena ? setupArena.getSelection() : scelta;
+                    const musica = (AO && s.music && s.music !== random) ? '♪ ' + AO.nomeTraccia(s.music) : '♪ Musica casuale';
+                    return sonoHost() ? musica : `${musica} · scelte dall'host`;
+                },
+                alApertura: () => { if (setupArena) setupArena.refresh(); }
+            });
+        }
+    }
+
+    /**
+     * I premi con la composizione CORRENTE della stanza: contro persone, contro l'IA (livello scelto dall'host) o contro il Boss, e se
+     * un posto della mia squadra lo giochera' l'IA. Un posto vuoto oggi sara' un'IA alla partenza: e' un'anteprima onesta, non una promessa.
+     */
+    function aggiornaPremi() {
+        const box = $('mpTagPremi');
+        if (!box || !g.Rewards || !g.Rewards.montaPremiSala) return;
+        if (!stato) { g.Rewards.montaPremiSala(box, 'tag', { generico: true }); return; }
+        const mio = postoDi(io);
+        const miaSquadra = mio ? mio.charAt(0) : 'A';
+        const ia = [];
+        let alleatoIA = false;
+        FORMATI[stato.formato].posti.forEach((k) => {
+            if (stato.posti[k]) return;   // occupato da una persona
+            if (k.charAt(0) === miaSquadra) alleatoIA = true;
+            else ia.push(stato.formato === '2v1' && k === 'B0' && stato.boss ? 'boss' : stato.livelloIA);
+        });
+        g.Rewards.montaPremiSala(box, 'tag', { iaAvversarie: ia, alleatoIA: alleatoIA });
+    }
+
     /** Pedina, mazzo, arena e musica: gli stessi componenti della sala 1 contro 1. */
     function montaPersonali() {
         if (g.MpPedina && $('mpTagPedina')) {
-            MpPedina.monta($('mpTagPedina'), { onChange: () => annunciaIo() });
+            MpPedina.monta($('mpTagPedina'), { onChange: () => { annunciaIo(); if (tessere.pedina) tessere.pedina.aggiorna(); } });
         }
         if (g.DuelSetup && $('mpTagMazzi') && !setupMazzi) {
             setupMazzi = g.DuelSetup.mount($('mpTagMazzi'), { decks: true, arena: false, deckLabel: false, onDeckChange: (m) => status(`🃏 Duellerai con "${m.name}".`) });
@@ -335,6 +397,7 @@
                 onPreviewBlocked: () => status('🔇 Il browser ha bloccato l\'anteprima: tocca lo schermo e riprova.', true)
             });
         }
+        creaTessere();
     }
 
     function annunciaIo() {
@@ -476,6 +539,8 @@
         aggiornaPronto();
         if (setupArena && setupArena.setReadOnly) setupArena.setReadOnly(!sonoHost());
         if (!sonoHost() && setupArena && setupArena.showSelection && stato.campo) setupArena.showSelection({ field: stato.campo, music: stato.musica });
+        if (tessere.arena) tessere.arena.aggiorna();
+        aggiornaPremi();
     }
 
     function regole() {

@@ -491,6 +491,24 @@
     }
 
     /**
+     * Le Sfide del Tag Team valgono anche in RETE (prima no: online compariva solo la riga a schermo). Il formato e il livello si
+     * ricavano dalla disposizione della stanza (window.MP_TAG): il livello e' quello degli avversari IA (il Boss conta Difficile),
+     * vuoto se gli avversari sono tutti persone.
+     */
+    function registraSfideInRete() {
+        const t = g.MP_TAG;
+        if (!g.ChallengeTracker || !t || !t.posti) return;
+        const miaSq = String(g.MP_MIO_POSTO || 'A0').charAt(0);
+        const ia = Object.keys(t.posti).filter((k) => k.charAt(0) !== miaSq).map((k) => t.posti[k]).filter((p) => p.tipo === 'ia');
+        const nomi = { easy: 'Facile', medium: 'Medio', hard: 'Difficile' };
+        const livello = ia.some((p) => p.boss) ? 'Difficile' : (ia.length ? (nomi[ia[0].ia] || '') : '');
+        const dati = { formato: t.boss ? 'boss' : (t.formato === '2v2' ? '2v2' : '2v1'), livello: livello };
+        g.ChallengeTracker.recordProgress('tagWin', dati);
+        const r = g.TagTeam && g.TagTeam.riassunto('player');
+        if (r && r.membri.every((/** @type {any} */ m) => m.vivo)) g.ChallengeTracker.recordProgress('tagWinSenzaKo', dati);
+    }
+
+    /**
      * @param {boolean} vinto @param {boolean} abbandono
      * @returns {VoceEsito[]}
      */
@@ -597,6 +615,7 @@
     function chiudiInRete(vinto, abbandono) {
         document.body.classList.remove('tag-turno-compagno');
         if (abbandono) return [{ nota: true, icon: '🤝', rule: 'Duello Tag Team in rete abbandonato.' }];
+        if (vinto) registraSfideInRete();
         return [{ nota: true, icon: '🤝', rule: vinto ? 'Vittoria della tua squadra in Tag Team.' : 'Sconfitta della tua squadra in Tag Team.' }];
     }
 

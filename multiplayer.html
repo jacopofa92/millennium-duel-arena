@@ -164,22 +164,20 @@
                         </div>
                     </header>
 
-                    <div class="mp-choice">
-                        <button type="button" class="mp-tab active" id="mpTabCreate"><span class="mp-tab-icon icon" data-icon="arena"></span>Crea Stanza</button>
-                        <button type="button" class="mp-tab" id="mpTabJoin"><span class="mp-tab-icon icon" data-icon="login"></span>Entra con codice</button>
+                    <!-- Solo nel Tag Team (?modo=tag): il formato decide quanti posti ha la stanza (js/multiplayer/mp-tag-sala.js). -->
+                    <div class="tg-formati mp-scheda" id="mpTagFormato" hidden></div>
+
+                    <!-- DUE azioni sole: crei una stanza (si apre subito) oppure entri in quella di qualcuno col suo codice.
+                         Prima erano tre cose che si somigliavano (due schede e "Apri la stanza"), e non era chiaro cosa facesse cosa. -->
+                    <div class="mp-azioni">
+                        <button type="button" class="mp-btn mp-btn--primary" id="mpCreateBtn"><span class="icon" data-icon="arena"></span> Crea stanza</button>
+                        <button type="button" class="mp-btn mp-btn--secondario" id="mpTabJoin" aria-expanded="false"><span class="icon" data-icon="login"></span> Entra con codice</button>
                     </div>
 
-                    <div class="mp-lobby-panel mp-scheda" id="mpPanelCreate">
-                        <p>Apri una stanza, scegli arena e musica mentre aspetti, e il duello parte appena arriva il tuo avversario.</p>
-                        <!-- Solo nel Tag Team (?modo=tag): il formato decide quanti posti ha la stanza (js/multiplayer/mp-tag-sala.js). -->
-                        <div class="tg-formati" id="mpTagFormato" hidden></div>
-                        <button type="button" class="mp-btn mp-btn--primary" id="mpCreateBtn">Apri la stanza</button>
-                    </div>
-
-                    <div class="mp-lobby-panel mp-scheda" id="mpPanelJoin" style="display:none;">
-                        <p>Inserisci il codice che ti ha dato chi ha creato la stanza.</p>
-                        <input type="text" id="mpJoinCode" maxlength="5" placeholder="A3K9Q" class="mp-code-input" autocomplete="off" autocapitalize="characters" spellcheck="false">
-                        <button type="button" class="mp-btn mp-btn--primary" id="mpJoinBtn">Entra nella Stanza</button>
+                    <!-- Il campo del codice compare solo se tocchi "Entra con codice". -->
+                    <div class="mp-lobby-panel mp-scheda mp-join" id="mpPanelJoin" hidden>
+                        <input type="text" id="mpJoinCode" maxlength="5" placeholder="A3K9Q" aria-label="Codice della stanza" class="mp-code-input" autocomplete="off" autocapitalize="characters" spellcheck="false">
+                        <button type="button" class="mp-btn mp-btn--primary" id="mpJoinBtn">Entra</button>
                     </div>
 
                     <!-- Nell'uso normale l'indirizzo non va toccato: sta
@@ -233,6 +231,8 @@
                     </div><!-- /mp-col-stanza -->
 
                     <div class="mp-col-setup">
+                    <!-- Cosa paga una vittoria con la scelta CORRENTE (Boss, ecc.), come in Duello Libero: riga sempre visibile, tocco per l'elenco. -->
+                    <div class="mp-premi-sala" id="mpPremiSala" hidden></div>
 
                     <!-- Il mazzo è una scelta PERSONALE: sta fuori dal
                          riquadro delle impostazioni condivise, che l'ospite
@@ -334,6 +334,8 @@
                         <button type="button" class="mp-copy-btn" id="mpTagCopia"><span class="icon" data-icon="save"></span> Copia codice</button>
                     </div>
                     <div class="tg-sala" id="mpTagSala"></div>
+                    <!-- Cosa paga una vittoria con la composizione corrente della stanza (riga sempre visibile, tocco per l'elenco). -->
+                    <div class="mp-premi-sala" id="mpTagPremi" hidden></div>
                     <div class="mp-own">
                         <div class="mp-setup-head">
                             <span class="mp-setup-title">Il tuo duellante</span>
@@ -436,6 +438,7 @@
 <script src="js/multiplayer/mp-passo-comune.js"></script>
 <script src="js/data/character-unlocks.js"></script>
 <script src="js/multiplayer/mp-pedina.js"></script>
+<script src="js/multiplayer/mp-scelte.js"></script>
 <script src="js/multiplayer/mp-term-fx.js"></script>
 <script src="js/multiplayer/mp-lobby.js"></script>
 <!-- Tag Team in rete: la sala a 3-4 posti (dopo mp-lobby.js, di cui riusa la partenza: window.MpSalaInterna). -->

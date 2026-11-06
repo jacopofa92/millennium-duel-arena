@@ -87,14 +87,26 @@ module.exports = {
         // Assalto al Boss (Multiplayer): i numeri sono quelli con cui forRaid paga davvero.
         await verifica('multiplayer.html?modo=raid', '#mpPremiModo .rw-anteprima',
             () => ['+' + Rewards.CREDITI_RAID + ' crediti', Rewards.STELLE_RAID + ' Stelle', Rewards.RAID_AL_GIORNO + ' volte al giorno',
-                '+' + Rewards.LOSS_CREDITS + ' crediti di partecipazione'],
+                '+' + Rewards.LOSS_CREDITS + ' crediti di partecipazione', Math.round(Rewards.RAID_CONTRIBUTO_MINIMO * 100) + '%',
+                '+' + Rewards.RAID_PREMI[2].crediti + ' crediti', 'prima volta'],
             null, 'Raid');
+        // Duello e Specchio online (stessa tabella), Tag Team in rete: ognuno dichiara i suoi premi prima di aprire la stanza.
+        await verifica('multiplayer.html?modo=duello', '#mpPremiModo .rw-anteprima',
+            () => ['+' + Rewards.ONLINE.VITTORIA + ' crediti', 'Ogni ' + Rewards.ONLINE.STELLA_OGNI + ' vittorie online',
+                '+' + Rewards.ONLINE.SCONFITTA + ' crediti di partecipazione', Rewards.ONLINE.TURNI_MINIMI + ' turni tuoi'],
+            null, 'Duello online');
+        await verifica('multiplayer.html?modo=specchio', '#mpPremiModo .rw-anteprima',
+            () => ['Specchio', '+' + Rewards.ONLINE.VITTORIA + ' crediti'], null, 'Specchio online');
+        await verifica('multiplayer.html?modo=tag', '#mpPremiModo .rw-anteprima',
+            () => ['+' + Rewards.ONLINE.TAG_PERSONE + ' crediti', '+' + Rewards.ONLINE.TAG_BOSS + ' crediti',
+                'fino a ' + Rewards.ONLINE.TAG_STELLE_AL_GIORNO + ' Stelle al giorno'], null, 'Tag online');
+        // La riga di riassunto e' SEMPRE visibile (come "Premi della vittoria a Normale" in Duello Libero), prima ancora di aprire l'elenco.
         {
             const { page } = await pagina(t, 'multiplayer.html?modo=duello', null);
             try {
-                await page.waitForSelector('#mpSottotitolo', { timeout: 15000 });
-                await page.waitForTimeout(500);
-                t.assert(await page.evaluate(() => !document.getElementById('mpPremiModo')), 'Il Duello normale non deve mostrare i premi del Raid');
+                await page.waitForSelector('#mpPremiModo summary', { timeout: 15000 });
+                const riga = await page.evaluate(() => document.querySelector('#mpPremiModo summary').textContent);
+                t.assert(/Premi della vittoria/.test(riga) && riga.includes('+50 crediti'), `riassunto non visibile o senza cifre: ${riga}`);
             } finally { await page.close(); }
         }
 

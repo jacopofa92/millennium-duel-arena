@@ -1417,6 +1417,61 @@ const challengesDatabase = [
     },
 
     // ================================================================
+    // BATTAGLIE ONLINE (sezione Modalita', gruppo "Battaglie online"): onlineDuelPlayed / onlineWin / onlineSerie si registrano in
+    // Rewards.forOnline (Duello, Specchio, Tag in rete: solo se il duello e' durato abbastanza, vedi js/economy/rewards.js) e
+    // raidBossBattuto in Rewards.forRaid (la prima volta contro ciascun Boss). Le Sfide del Tag Team valgono anche in rete.
+    // ================================================================
+    {
+        id: 'online-gioca', sezione: 'modalita', modalita: 'online',
+        icon: '🌐', label: 'Giocatore di rete',
+        description: 'Gioca 10 duelli online fino alla fine (vinti o persi)',
+        type: 'onlineDuelPlayed', match: {}, target: 10,
+        reward: { credits: 300 }
+    },
+    {
+        id: 'online-prima', sezione: 'modalita', modalita: 'online',
+        icon: '🌐', label: 'La prima vittoria online',
+        description: 'Vinci un duello online (Duello, Duello a Specchio o Tag Team)',
+        type: 'onlineWin', match: {}, target: 1,
+        reward: { credits: 150 }
+    },
+    {
+        id: 'online-dieci', sezione: 'modalita', modalita: 'online',
+        icon: '🌐', label: 'Duellante affermato',
+        description: 'Vinci 10 duelli online',
+        type: 'onlineWin', match: {}, target: 10,
+        reward: { credits: 500 }
+    },
+    {
+        id: 'online-cinquanta', sezione: 'modalita', modalita: 'online',
+        icon: '🌐', label: 'Campione della rete',
+        description: 'Vinci 50 duelli online',
+        type: 'onlineWin', match: {}, target: 50,
+        reward: { credits: 1500 }
+    },
+    {
+        id: 'online-serie', sezione: 'modalita', modalita: 'online',
+        icon: '🔥', label: 'In serie',
+        description: 'Vinci 3 duelli online di fila',
+        type: 'onlineSerie', match: {}, target: 1,
+        reward: { credits: 300 }
+    },
+    {
+        id: 'online-raid-tre', sezione: 'modalita', modalita: 'online',
+        icon: '🐉', label: 'Cacciatori di Boss',
+        description: 'Batti 3 Boss diversi in Assalto al Boss',
+        type: 'raidBossBattuto', match: {}, target: 3,
+        reward: { credits: 600 }
+    },
+    {
+        id: 'online-raid-tutti', sezione: 'modalita', modalita: 'online',
+        icon: '🐲', label: 'Nessun Boss sopravvive',
+        description: 'Batti tutti i Boss di Assalto al Boss, ciascuno almeno una volta',
+        type: 'raidBossBattuto', match: {}, target: 5,
+        reward: { credits: 1200 }
+    },
+
+    // ================================================================
     // TRAGUARDO FINALE: 'sfideCompletate' non si incrementa con un evento, il suo progresso E' il numero di Sfide completate
     // (di qualunque sezione, vedi riconciliaMeta in js/challenges/challenge-tracker.js). Il premio e' una carta unica, una copia
     // sola (limit 1 in cards.json), che non si trova in nessun altro modo: Conto alla Rovescia Finale (id 1283).

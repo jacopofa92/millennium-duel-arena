@@ -43,8 +43,11 @@ module.exports = {
 
             // A sceglie Solomon Muto, B Yugi Muto (entrambi sbloccati dall'inizio).
             const scegli = async (page, id) => {
+                // La scelta sta in una finestra: prima si tocca il riquadro "Il tuo duellante" (js/multiplayer/mp-scelte.js).
+                await page.click('#mpPedinaGroup .mp-tessera');
                 await page.click('.mp-pedina-attuale');
                 await page.click(`.mp-pedina-voce[data-id="${id}"]`);
+                await page.click('.mp-modale-fatto');
             };
             await scegli(A, 'solomonMuto');
             await scegli(B, 'yugiMuto');

@@ -116,25 +116,19 @@
     // Ingresso: scelta crea/entra, connessione
     // ============================================================
     function initLobbyUI() {
-        const tabCreate = $('mpTabCreate');
+        // Due azioni: "Crea stanza" (apre subito la stanza) ed "Entra con codice" (mostra il campo del codice, e tocca di nuovo per richiuderlo).
         const tabJoin = $('mpTabJoin');
-        const panelCreate = $('mpPanelCreate');
         const panelJoin = $('mpPanelJoin');
-
-        tabCreate.onclick = () => {
-            tabCreate.classList.add('active');
-            tabJoin.classList.remove('active');
-            panelCreate.style.display = '';
-            panelJoin.style.display = 'none';
-            showStatus('');
-        };
         tabJoin.onclick = () => {
-            tabJoin.classList.add('active');
-            tabCreate.classList.remove('active');
-            panelJoin.style.display = '';
-            panelCreate.style.display = 'none';
+            const apri = panelJoin.hidden;
+            panelJoin.hidden = !apri;
+            tabJoin.classList.toggle('active', apri);
+            tabJoin.setAttribute('aria-expanded', String(apri));
             showStatus('');
+            if (apri) { try { $('mpJoinCode').focus({ preventScroll: false }); } catch (e) { /* senza focus resta cliccabile */ } }
         };
+        // Invio nel campo del codice = Entra.
+        $('mpJoinCode').addEventListener('keydown', (ev) => { if (ev.key === 'Enter') { ev.preventDefault(); handleJoinRoom(); } });
 
         $('mpCreateBtn').onclick = handleCreateRoom;
         $('mpJoinBtn').onclick = handleJoinRoom;
@@ -553,6 +547,8 @@
     // ============================================================
     let setupArena = null;
     let setupMazzi = null;
+    /** Le tre scelte personali come riquadri (pedina, mazzo, arena e musica): vedi js/multiplayer/mp-scelte.js. */
+    const tessereSala = { pedina: null, mazzo: null, arena: null };
 
     // ============================================================
     // DUELLO A SPECCHIO
@@ -600,6 +596,7 @@
                 ? (packId ? `Giocate entrambi: ${nomeMazzoSpecchio(packId)}` : 'Giocate entrambi lo stesso mazzo')
                 : 'Spento: ognuno usa il proprio mazzo';
         }
+        aggiornaPremiSala();
     }
 
     function costruisciSpecchio() {
@@ -692,6 +689,7 @@
         if (!nota) return;
         const b = id ? bossPerId(id) : null;
         nota.textContent = id ? `Contro ${b ? b.nome : id}: barra comune` : 'Spento: duello uno contro uno';
+        aggiornaPremiSala();   // il premio dipende dal Boss scelto
     }
 
     function costruisciRaid() {
@@ -773,12 +771,14 @@
         const emblema = $('mpHeroIcon');
         if (emblema && modo.icona && window.Icons) { emblema.dataset.icon = modo.icona; Icons.hydrate(emblema.parentNode); }
         // I premi della modalita' (Rewards.modalitaHtml): oggi solo l'Assalto al Boss ne ha di suoi.
-        if (modo.id === 'raid' && sotto && window.Rewards && !$('mpPremiModo')) {
+        // Ogni modalita' dice cosa paga PRIMA di aprire la stanza (riga di riassunto sempre visibile, tocco per l'elenco), come in Duello Libero.
+        if (sotto && window.Rewards && Rewards.montaPremiSala && !$('mpPremiModo')) {
             const box = document.createElement('div');
             box.id = 'mpPremiModo';
+            box.className = 'mp-premi-sala';
             // Sotto l'intestazione intera (emblema + testi), non dentro la colonna dei testi.
             (sotto.closest('.mp-hero') || sotto).insertAdjacentElement('afterend', box);
-            Rewards.montaPremiModalita(box, 'raid');
+            Rewards.montaPremiSala(box, modo.id, modo.id === 'tag' ? { generico: true } : {});
         }
         const sp = $('mpSpecchioGroup');
         const rd = $('mpRaidGroup');
@@ -820,6 +820,7 @@
         MpPedina.monta($('mpPedina'), {
             onChange: (p) => {
                 mostraPedinaNelPosto('mpSeatYouAvatar', p);
+                if (tessereSala.pedina) tessereSala.pedina.aggiorna();
                 if (avversarioInStanza) annunciaStato();
             }
         });
@@ -848,6 +849,72 @@
             },
             onPreviewBlocked: () => showStatus('🔇 Il browser ha bloccato l\'anteprima: tocca lo schermo e riprova.', true)
         });
+        creaTessereSala();
+        aggiornaPremiSala();
+    }
+
+    /**
+     * La sala era lunghissima (griglia di pedine, scaffale dei mazzi, arene e una ventina di musiche, tutto aperto): ora pedina,
+     * mazzo e arena+musica sono UNA riga ciascuna col valore corrente, e un tocco apre una finestra per cambiare (mp-scelte.js).
+     */
+    function creaTessereSala() {
+        if (!window.MpScelte || tessereSala.pedina) return;
+        const AO = window.ArenaOptions;
+        const random = AO ? AO.RANDOM : 'random';
+        const mazzoAttivo = () => (window.SaveManager && SaveManager.getActiveDeck) ? SaveManager.getActiveDeck() : null;
+        tessereSala.pedina = MpScelte.tessera($('mpPedinaGroup'), {
+            corpo: $('mpPedina'), titolo: 'Il tuo duellante',
+            img: () => MpPedina.scelta().image,
+            valore: () => MpPedina.scelta().name,
+            dettaglio: () => 'Lo vede anche l\'avversario'
+        });
+        tessereSala.mazzo = MpScelte.tessera($('mpDeckGroup'), {
+            corpo: $('mpDecks'), titolo: 'Il tuo mazzo', icona: 'cards', glifo: () => '🃏',
+            valore: () => { const m = mazzoAttivo(); return m ? m.name : 'Mazzo generato al momento'; },
+            dettaglio: () => {
+                const m = mazzoAttivo();
+                if (!m) return 'Non hai ancora un mazzo tuo';
+                const n = (m.main || []).reduce((tot, v) => tot + (v.qty || 1), 0);
+                return `${n} carte · lo scegli solo per te`;
+            },
+            alApertura: () => { if (setupMazzi) setupMazzi.refresh(); }
+        });
+        tessereSala.arena = MpScelte.tessera($('mpSetup'), {
+            corpo: $('mpSetupMount'), titolo: 'Arena e musica', icona: 'arena', glifo: () => '🏟️',
+            img: () => { const s = setupArena ? setupArena.getSelection() : scelta; return (AO && s.field && s.field !== random) ? AO.previewFor(s.field) : null; },
+            valore: () => { const s = setupArena ? setupArena.getSelection() : scelta; return (AO && s.field && s.field !== random) ? AO.nomeCampo(s.field) : 'Arena casuale'; },
+            dettaglio: () => {
+                const s = setupArena ? setupArena.getSelection() : scelta;
+                const musica = (AO && s.music && s.music !== random) ? '♪ ' + AO.nomeTraccia(s.music) : '♪ Musica casuale';
+                return sonoHost ? musica : `${musica} · scelte dall'host`;
+            },
+            alApertura: () => { if (setupArena) setupArena.refresh(); }
+        });
+    }
+
+    /** La modalita' di QUESTA stanza, dalle regole accese (e, se non ce ne sono, da quella scelta dal menu). */
+    function modoCorrenteSala() {
+        const raid = $('mpRaidOn'), spec = $('mpSpecchioOn');
+        if (raid && raid.checked) return 'raid';
+        if (spec && spec.checked) return 'specchio';
+        const m = modoDellaSala();
+        return m && m.id !== 'tag' ? m.id : 'duello';
+    }
+
+    /** Il riquadro dei premi della sala, con la scelta corrente (Boss del Raid, ecc.), come in Duello Libero. */
+    function aggiornaPremiSala() {
+        const el = $('mpPremiSala');
+        if (!el || !window.Rewards || !Rewards.montaPremiSala) return;
+        const modo = modoCorrenteSala();
+        const ctx = {};
+        if (modo === 'raid') {
+            const menu = $('mpRaidBoss');
+            const id = (menu && menu.value) || scelta.raid || null;
+            const b = id ? bossPerId(id) : null;
+            ctx.bossId = id;
+            ctx.bossNome = b ? b.nome : '';
+        }
+        Rewards.montaPremiSala(el, modo, ctx);
     }
 
     /**
@@ -1104,6 +1171,7 @@
     /** L'ospite vede evidenziate, in sola lettura, le scelte dell'host. */
     function mostraSceltaRicevuta(config) {
         if (setupArena) setupArena.showSelection(config);
+        if (tessereSala.arena) tessereSala.arena.aggiorna();
     }
 
     // ============================================================
