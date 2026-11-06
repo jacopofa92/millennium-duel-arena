@@ -4256,6 +4256,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.94 (cache v604, su `main`): le catene della Catena WebGL non finiscono piu' con un taglio netto sull'angolo: agli estremi si dissolvono in circa una maglia (`rampa` in `tratto`, accorciata sulle catene corte) e gli attacchi stanno al 62% dell'angolo, cosi' affondano nella carta. Suite completa non eseguita.
 
+1.5.95 (cache v605, su `main`): **tessere bloccate del menu app con le catene** (`menu-mobile.js/.css`, richiesta dell'utente con un riferimento): due catene di ferro e oro in croce sulla DIAGONALE vera della tessera (striscia di maglie in un SVG ripetuto, `rotate: atan2(100cqh, 100cqw)` dentro un overlay `.mm-catene` che e' un container `size`, con ripiego a 24 gradi) e un sigillo tondo con la serratura al centro; il contenuto si spegne (opacita' .42) invece dell'intera tessera, 'Da sbloccare' senza emoji, e un tocco fa tintinnare le catene (`.mm-scossa`, fermo con riduci movimento). Solo grafica: la logica di `ModeUnlocks` non cambia. Suite completa non eseguita.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**

@@ -111,8 +111,11 @@
             b.className = 'mm-tessera' + (larga ? ' mm-tessera--larga' : '') + (!acc.sbloccato ? ' mm-tessera--bloccata' : '');
             b.innerHTML = `<span class="mm-tessera-icona" data-icon="${esc(item.icon)}"></span>`
                 + `<span class="mm-tessera-testi"><span class="mm-tessera-nome">${esc(item.label)}</span>`
-                + (sotto ? `<span class="mm-tessera-sotto">${esc(!acc.sbloccato ? '🔒 Da sbloccare' : sotto)}</span>` : '')
-                + '</span>';
+                + (sotto ? `<span class="mm-tessera-sotto">${esc(!acc.sbloccato ? 'Da sbloccare' : sotto)}</span>` : '')
+                + '</span>'
+                // Tessera bloccata: due catene in croce e il sigillo con la serratura al centro (stile del gioco: ferro scuro e oro).
+                + (!acc.sbloccato ? '<span class="mm-catene" aria-hidden="true"><i class="mm-catena mm-catena--a"></i><i class="mm-catena mm-catena--b"></i>'
+                    + '<span class="mm-sigillo"><svg viewBox="0 0 24 24"><path d="M12 5.2a3.6 3.6 0 0 0-1.9 6.7L9 18.6h6l-1.1-6.7A3.6 3.6 0 0 0 12 5.2z" fill="currentColor"/></svg></span></span>' : '');
             // UX fluida: al primo contatto col dito la pagina di destinazione comincia a scaricarsi, cosi' al "click"
             // (qualche decina di ms dopo) e' gia' in arrivo. Solo link a pagine locali e sbloccate; una volta per tessera.
             if (item.href && acc.sbloccato && /^[\w-]+\.html/.test(item.href)) {
@@ -125,7 +128,13 @@
                 }, { passive: true });
             }
             b.addEventListener('click', () => {
-                if (!acc.sbloccato) { toast('🔒 ' + acc.motivo); if (window.NativeHaptics) window.NativeHaptics.light(); return; }
+                if (!acc.sbloccato) {
+                    toast('🔒 ' + acc.motivo);
+                    if (window.NativeHaptics) window.NativeHaptics.light();
+                    // Le catene tintinnano: un breve scossone, a dire "chiuso".
+                    b.classList.remove('mm-scossa'); void b.offsetWidth; b.classList.add('mm-scossa');
+                    return;
+                }
                 if (window.NativeHaptics) window.NativeHaptics.light();
                 azione(item);
             });

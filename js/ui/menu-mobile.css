@@ -135,7 +135,32 @@
 .mm-tessera--larga .mm-tessera-icona { font-size: 2rem; }
 .mm-tessera--larga .mm-tessera-nome { font-size: 1.12rem; }
 .mm-griglia--una .mm-tessera { flex-direction: row; align-items: center; justify-content: flex-start; gap: 14px; min-height: 64px; }
-.mm-tessera--bloccata { opacity: 0.5; filter: saturate(0.4); }
+/* TESSERA BLOCCATA: il contenuto si spegne, due catene di ferro la attraversano in croce e un sigillo con la serratura le tiene
+   insieme (stessa idea delle carte "chiuse" dei giochi mobile, ma in ferro scuro e oro come il resto del menu). Le catene non sono
+   immagini: una striscia di maglie in un'immagine SVG ripetuta, ruotata sulla diagonale vera della tessera (container query). */
+.mm-tessera--bloccata { filter: saturate(0.55); background: linear-gradient(150deg, rgba(26, 22, 16, 0.92), rgba(12, 11, 10, 0.94)); }
+.mm-tessera--bloccata .mm-tessera-icona, .mm-tessera--bloccata .mm-tessera-testi { opacity: 0.42; }
+.mm-catene { position: absolute; inset: 0; container-type: size; pointer-events: none; overflow: hidden; border-radius: inherit; }
+.mm-catena {
+    position: absolute; left: 50%; top: 50%; width: 150cqw; height: 21px; translate: -50% -50%; rotate: 24deg;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 16'><ellipse cx='10' cy='8' rx='8.6' ry='5.4' fill='none' stroke='%23120f0a' stroke-width='4.6'/><ellipse cx='10' cy='8' rx='8.6' ry='5.4' fill='none' stroke='%23857451' stroke-width='2.6'/><path d='M3.4 6.2A8 5 0 0 1 12 3.2' fill='none' stroke='%23e9d9a4' stroke-width='.9' stroke-linecap='round'/><rect x='21' y='5.2' width='13' height='5.6' rx='2.8' fill='%23706142' stroke='%23120f0a' stroke-width='1.4'/><path d='M23 6.6H31' stroke='%23d9c88e' stroke-width='.8' stroke-linecap='round'/></svg>") repeat-x 0 50% / auto 100%;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.75));
+}
+.mm-catena--b { rotate: -24deg; }
+@supports (rotate: atan2(1px, 1px)) {
+    .mm-catena { rotate: atan2(100cqh, 100cqw); }
+    .mm-catena--b { rotate: calc(-1 * atan2(100cqh, 100cqw)); }
+}
+.mm-sigillo {
+    position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: 34px; height: 34px; border-radius: 50%;
+    display: grid; place-items: center; color: #f7d774;
+    background: radial-gradient(circle at 50% 35%, #3a3120, #14100a 75%);
+    border: 2px solid #c9a64a; box-shadow: 0 0 0 2px #120f0a, 0 0 14px rgba(247, 215, 116, 0.45), 0 3px 8px rgba(0, 0, 0, 0.7);
+}
+.mm-sigillo svg { width: 18px; height: 18px; filter: drop-shadow(0 0 3px rgba(247, 215, 116, 0.6)); }
+.mm-scossa .mm-catene { animation: mmScossa 0.38s ease-in-out; }
+@keyframes mmScossa { 0%, 100% { transform: none; } 18% { transform: translateX(-3px) rotate(-1.2deg); } 40% { transform: translateX(3px) rotate(1deg); } 62% { transform: translateX(-2px); } 82% { transform: translateX(1.5px); } }
+@media (prefers-reduced-motion: reduce) { .mm-scossa .mm-catene { animation: none; } }
 .mm-tessera--esci { margin-top: 6px; flex-direction: row; align-items: center; justify-content: flex-start; gap: 14px; min-height: 56px; border-color: rgba(214, 90, 80, 0.45); }
 .mm-versione { margin: 4px 0 0; text-align: center; font-size: 0.7rem; color: #8a7d5b; letter-spacing: 0.08em; }
 
