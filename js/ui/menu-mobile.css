@@ -246,9 +246,25 @@ body.ha-tab-bar .cartoteca-filters { top: 0 !important; }
 .mm-corpo { touch-action: pan-y; }
 .mm-da-destra { animation: mmDaDestra 0.26s cubic-bezier(0.22, 0.8, 0.3, 1); }
 .mm-da-sinistra { animation: mmDaSinistra 0.26s cubic-bezier(0.22, 0.8, 0.3, 1); }
-@keyframes mmDaDestra { from { opacity: 0.2; transform: translateX(38px); } to { opacity: 1; transform: none; } }
-@keyframes mmDaSinistra { from { opacity: 0.2; transform: translateX(-38px); } to { opacity: 1; transform: none; } }
+@keyframes mmDaDestra { from { opacity: 0; transform: translateX(56px); } to { opacity: 1; transform: none; } }
+@keyframes mmDaSinistra { from { opacity: 0; transform: translateX(-56px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .mm-da-destra, .mm-da-sinistra { animation: none; } }
+/* UX fluida: le tessere della tab appena aperta salgono una dopo l'altra (solo al cambio tab, che e' quando c'e' mm-da-*),
+   e l'icona della tab accesa fa un piccolo rimbalzo + la lineetta d'oro si allarga: il ridisegno ricrea i pulsanti, quindi
+   senza animazione la tab "scattava" invece di accendersi. */
+.mm-da-destra .mm-tessera, .mm-da-sinistra .mm-tessera { animation: mmTesseraSu 0.34s cubic-bezier(0.22, 0.8, 0.3, 1) both; }
+.mm-da-destra .mm-tessera:nth-child(2), .mm-da-sinistra .mm-tessera:nth-child(2) { animation-delay: 0.04s; }
+.mm-da-destra .mm-tessera:nth-child(3), .mm-da-sinistra .mm-tessera:nth-child(3) { animation-delay: 0.08s; }
+.mm-da-destra .mm-tessera:nth-child(4), .mm-da-sinistra .mm-tessera:nth-child(4) { animation-delay: 0.12s; }
+.mm-da-destra .mm-tessera:nth-child(n+5), .mm-da-sinistra .mm-tessera:nth-child(n+5) { animation-delay: 0.16s; }
+@keyframes mmTesseraSu { from { opacity: 0; transform: translateY(14px) scale(0.97); } to { opacity: 1; transform: none; } }
+.mm-tab--attiva .mm-tab-icona { animation: mmTabPop 0.32s cubic-bezier(0.3, 1.5, 0.5, 1); }
+.mm-tab--attiva::before { animation: mmTabBarra 0.28s ease-out; }
+@keyframes mmTabPop { from { transform: translateY(2px) scale(0.85); } to { transform: translateY(-2px) scale(1.1); } }
+@keyframes mmTabBarra { from { width: 6px; opacity: 0.4; } to { width: 28px; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+    .mm-da-destra .mm-tessera, .mm-da-sinistra .mm-tessera, .mm-tab--attiva .mm-tab-icona, .mm-tab--attiva::before { animation: none; }
+}
 
 /* ---- barra giocatore: schermate a rotazione (valute, altre valute, titolo), una sopra l'altra nella stessa cella ---- */
 .mm-valute { display: grid; flex: 0 1 auto; min-width: 0; justify-items: end; align-items: center; }

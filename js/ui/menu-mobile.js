@@ -113,6 +113,17 @@
                 + `<span class="mm-tessera-testi"><span class="mm-tessera-nome">${esc(item.label)}</span>`
                 + (sotto ? `<span class="mm-tessera-sotto">${esc(!acc.sbloccato ? '🔒 Da sbloccare' : sotto)}</span>` : '')
                 + '</span>';
+            // UX fluida: al primo contatto col dito la pagina di destinazione comincia a scaricarsi, cosi' al "click"
+            // (qualche decina di ms dopo) e' gia' in arrivo. Solo link a pagine locali e sbloccate; una volta per tessera.
+            if (item.href && acc.sbloccato && /^[\w-]+\.html/.test(item.href)) {
+                b.addEventListener('pointerdown', () => {
+                    if (b.dataset.precaricata) return;
+                    b.dataset.precaricata = '1';
+                    const l = document.createElement('link');
+                    l.rel = 'prefetch'; l.href = item.href;
+                    document.head.appendChild(l);
+                }, { passive: true });
+            }
             b.addEventListener('click', () => {
                 if (!acc.sbloccato) { toast('🔒 ' + acc.motivo); if (window.NativeHaptics) window.NativeHaptics.light(); return; }
                 if (window.NativeHaptics) window.NativeHaptics.light();
@@ -221,6 +232,9 @@
             b.addEventListener('click', () => {
                 if (window.NativeHaptics) window.NativeHaptics.light();
                 if (t.link) { window.location.href = t.link; return; }
+                if (t.id === corrente) return;   // gia' qui: niente ridisegno (prima ripartiva da capo la scena)
+                // Il contenuto nuovo entra dal lato verso cui si trova la tab toccata, come nello swipe.
+                direzione = tab.findIndex((x) => x.id === t.id) > tab.findIndex((x) => x.id === corrente) ? 1 : -1;
                 try { sessionStorage.setItem(CHIAVE_TAB, t.id); } catch (e) { /* noop */ }
                 stato.ridisegna();
             });
@@ -240,24 +254,78 @@
             if (window.NativeHaptics) window.NativeHaptics.light();
             stato.ridisegna();
         };
-        let x0 = null, y0 = 0, t0 = 0;
+        // UX fluida: il contenuto SEGUE il dito mentre si trascina (con resistenza ai bordi, dove non c'e' un'altra tab),
+        // poi al rilascio o scorre via e la tab accanto entra dal lato giusto, oppure torna al suo posto con una molla.
+        // Prima il gesto non mostrava nulla finche' non era finito: sembrava un tocco ignorato e poi uno scatto.
+        const ridotto = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        let x0 = null, y0 = 0, t0 = 0, trascina = false, bloccato = false, dxCorrente = 0;
+        const corpoAttuale = () => lista.querySelector('.mm-corpo');
+        const posizione = (dx) => {
+            const c = corpoAttuale();
+            if (!c) return;
+            const i = ordine.indexOf(corrente);
+            const alBordo = (dx > 0 && i <= 0) || (dx < 0 && i >= ordine.length - 1);
+            const d = alBordo ? dx * 0.28 : dx;   // contro il bordo la tab "resiste": non c'e' niente oltre
+            c.style.transition = 'none';
+            c.style.transform = 'translateX(' + d.toFixed(1) + 'px)';
+            c.style.opacity = String(Math.max(0.35, 1 - Math.abs(d) / (lista.clientWidth * 1.2)));
+        };
+        const tornaAlPosto = () => {
+            const c = corpoAttuale();
+            if (!c) return;
+            c.style.transition = ridotto ? 'none' : 'transform 0.28s cubic-bezier(0.2, 1.1, 0.3, 1), opacity 0.2s ease';
+            c.style.transform = '';
+            c.style.opacity = '';
+        };
         lista.ontouchstart = (e) => {
             if (e.touches.length !== 1) { x0 = null; return; }
             x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
+            trascina = false; bloccato = false; dxCorrente = 0;
+        };
+        lista.ontouchmove = (e) => {
+            if (x0 === null || bloccato) return;
+            const t = e.touches[0];
+            const dx = t.clientX - x0, dy = t.clientY - y0;
+            if (!trascina) {
+                if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { bloccato = true; return; }   // e' uno scorrimento verticale: non toccarlo
+                if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+                trascina = true;
+            }
+            dxCorrente = dx;
+            if (!ridotto) posizione(dx);
         };
         lista.ontouchend = (e) => {
             if (x0 === null) return;
             const t = e.changedTouches[0];
             const dx = t.clientX - x0, dy = t.clientY - y0;
-            x0 = null;
-            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.6 && Date.now() - t0 < 700) vai(dx < 0 ? 1 : -1);
+            const veloce = Date.now() - t0 < 350;
+            const abbastanza = Math.abs(dx) > Math.max(60, lista.clientWidth * 0.22) || (veloce && Math.abs(dx) > 40);
+            const verso = dx < 0 ? 1 : -1;
+            const i = ordine.indexOf(corrente) + verso;
+            const esiste = i >= 0 && i < ordine.length;
+            const eraTrascinamento = trascina;
+            x0 = null; trascina = false;
+            if (!eraTrascinamento && !(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.6)) return;
+            if (abbastanza && esiste && Math.abs(dx) > Math.abs(dy) * 1.4) {
+                const c = corpoAttuale();
+                if (c && !ridotto) {
+                    // Esce nella direzione del dito, poi entra la nuova tab (vai() la fa arrivare dal lato opposto).
+                    c.style.transition = 'transform 0.14s ease-in, opacity 0.14s ease-in';
+                    c.style.transform = 'translateX(' + (verso > 0 ? '-' : '') + Math.round(lista.clientWidth * 0.5) + 'px)';
+                    c.style.opacity = '0';
+                    setTimeout(() => vai(verso), 130);
+                } else vai(verso);
+            } else if (eraTrascinamento) {
+                tornaAlPosto();
+                if (window.NativeHaptics && !esiste) window.NativeHaptics.light();
+            }
         };
-        lista.ontouchcancel = () => { x0 = null; };
+        lista.ontouchcancel = () => { const era = trascina; x0 = null; trascina = false; if (era) tornaAlPosto(); };
     }
 
     /** Spegne la veste "app" (il menu torna quello di sempre): serve quando la finestra esce dal telefono. */
     function spegni(shell, lista) {
-        lista.ontouchstart = lista.ontouchend = lista.ontouchcancel = null;
+        lista.ontouchstart = lista.ontouchmove = lista.ontouchend = lista.ontouchcancel = null;
         fermaRotazione();
         shell.classList.remove('menu-shell--app');
         lista.className = 'menu-list';
