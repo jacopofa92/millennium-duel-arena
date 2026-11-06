@@ -748,6 +748,11 @@
             speciali.push(riga('🎁', `Dopo ogni piano scegli fra <b>Ristoro</b> (+${db.recuperoLp} Life Point) e un <b>oggetto</b> per la scalata.`));
             speciali.push(riga('🖼️', 'Illustrazioni alternative di alcune carte: una a sorte superando il piano 15 e una conquistando la Torre, finché ne restano da sbloccare.'));
             standard = () => righeVittoriaTuttiILivelli().join('');
+        } else if (id === 'raid') {
+            titolo = 'Premi dell\'Assalto al Boss';
+            speciali.push(riga('🗼', `Boss a zero sulla barra comune e tu ancora in piedi: <b>+${CREDITI_RAID} crediti</b> e <b>+${stelle(STELLE_RAID)}</b>, fino a <b>${RAID_AL_GIORNO} volte al giorno</b>. Oltre, la vittoria conta per record e Sfide ma non paga.`));
+            speciali.push(riga('ℹ️', 'Questo premio prende il posto di quello di un Duello Libero: niente bonus della prima vittoria, Stelle ogni 10 vittorie o ritrovamenti.'));
+            speciali.push(riga('🤝', `Se eri già a terra quando il Boss cade, o perdi: +${LOSS_CREDITS} crediti di partecipazione. Se abbandoni: niente.`, 'rw-nota'));
         } else if (id === 'puzzle') {
             titolo = 'Premi dei Puzzle';
             speciali.push(riga('🧩', `Prima soluzione di un puzzle: <b>+${puzzleCrediti(1)}</b> (difficoltà 1) · <b>+${puzzleCrediti(2)}</b> (difficoltà 2) · <b>+${puzzleCrediti(3)}</b> (difficoltà 3) crediti. Rifarlo non paga di nuovo.`));
@@ -879,8 +884,7 @@
         forStoryCampaign: forStoryCampaign,
         forStoryArc: forStoryArc,
         forRaid: forRaid,
-        CREDITI_RAID: CREDITI_RAID,
-        STELLE_RAID: STELLE_RAID,
+        CREDITI_RAID: CREDITI_RAID,        STELLE_RAID: STELLE_RAID,
         RAID_AL_GIORNO: RAID_AL_GIORNO,
         STELLE_PER_ARCO_STORIA: STELLE_PER_ARCO_STORIA,
         CREDITI_PER_ARCO_STORIA: CREDITI_PER_ARCO_STORIA,

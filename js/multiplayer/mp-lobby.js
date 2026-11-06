@@ -763,6 +763,13 @@
         const sotto = $('mpSottotitolo');
         if (titolo) titolo.textContent = modo.titolo;
         if (sotto) sotto.textContent = modo.descrizione;
+        // I premi della modalita' (Rewards.modalitaHtml): oggi solo l'Assalto al Boss ne ha di suoi.
+        if (modo.id === 'raid' && sotto && window.Rewards && !$('mpPremiModo')) {
+            const box = document.createElement('div');
+            box.id = 'mpPremiModo';
+            sotto.insertAdjacentElement('afterend', box);
+            Rewards.montaPremiModalita(box, 'raid');
+        }
         const sp = $('mpSpecchioGroup');
         const rd = $('mpRaidGroup');
         document.body.classList.add('mp-modo-' + modo.id);

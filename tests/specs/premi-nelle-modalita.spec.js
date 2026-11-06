@@ -84,6 +84,20 @@ module.exports = {
             },
             () => { if (!SaveManager.hasSave()) SaveManager.createNew('Torneista'); }, 'Tornei');
 
+        // Assalto al Boss (Multiplayer): i numeri sono quelli con cui forRaid paga davvero.
+        await verifica('multiplayer.html?modo=raid', '#mpPremiModo .rw-anteprima',
+            () => ['+' + Rewards.CREDITI_RAID + ' crediti', Rewards.STELLE_RAID + ' Stelle', Rewards.RAID_AL_GIORNO + ' volte al giorno',
+                '+' + Rewards.LOSS_CREDITS + ' crediti di partecipazione'],
+            null, 'Raid');
+        {
+            const { page } = await pagina(t, 'multiplayer.html?modo=duello', null);
+            try {
+                await page.waitForSelector('#mpSottotitolo', { timeout: 15000 });
+                await page.waitForTimeout(500);
+                t.assert(await page.evaluate(() => !document.getElementById('mpPremiModo')), 'Il Duello normale non deve mostrare i premi del Raid');
+            } finally { await page.close(); }
+        }
+
         // I due numeri che stavano nel codice delle modalita' devono ora venire da Rewards (nessuna copia a mano).
         const puzzle = fs.readFileSync(path.join(RADICE, 'js', 'modes', 'puzzle-mode.js'), 'utf8');
         t.assert(puzzle.includes('Rewards.puzzleCrediti'), 'puzzle-mode.js deve leggere i crediti da Rewards.puzzleCrediti');
