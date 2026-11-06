@@ -301,3 +301,36 @@
     .sfide-vista .sv-griglia { grid-template-columns: repeat(auto-fill, minmax(74px, 1fr)); gap: 8px; }
     .sfide-vista .sv-anello { width: 42px; height: 42px; }
 }
+
+/* =====================================================================
+   SCHEDE FISSE e icone a tema (richiesta dell'utente): le sezioni restano agganciate sotto la fotocamera frontale mentre si scorre;
+   icona sopra e nome sotto come le tab del menu, barra d'oro sotto quella attiva; il contenuto si cambia anche con lo swipe laterale.
+   ===================================================================== */
+.sfide-vista .sv-fisso {
+    position: sticky; top: var(--mm-fotocamera, 0px); z-index: 40; margin: -30px -22px 14px; padding: 8px 22px 0;
+    background: linear-gradient(180deg, rgba(14, 11, 8, 0.97), rgba(14, 11, 8, 0.92));
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(247, 215, 116, 0.28); box-shadow: 0 8px 18px rgba(0, 0, 0, 0.45);
+}
+@media (max-width: 600px) { .sfide-vista .sv-fisso { margin: -14px -8px 14px; padding: 8px 8px 0; } }
+.sfide-vista .sv-sezioni { position: relative; gap: 0; margin: 0; padding: 0; overflow: visible; }
+.sfide-vista .sv-tab {
+    flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px 9px;
+    border: 0; border-radius: 0; background: transparent; color: #9d9071; font-size: 0.66rem; -webkit-tap-highlight-color: transparent;
+    transition: color 0.2s ease;
+}
+.sfide-vista .sv-tab.is-attiva { background: transparent; border: 0; color: #f7d774; }
+.sfide-vista .sv-tab.is-attiva .sv-tab-icona { filter: drop-shadow(0 0 7px rgba(247, 215, 116, 0.55)); }
+.sfide-vista .sv-tab-icona { font-size: 1.3rem; line-height: 1; display: flex; }
+.sfide-vista .sv-tab-nome { font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+.sfide-vista .sv-tab-barra {
+    position: absolute; left: 0; bottom: 0; height: 3px; width: 10px; border-radius: 3px 3px 0 0;
+    background: linear-gradient(90deg, #f7d774, #f39c12); box-shadow: 0 0 10px rgba(247, 215, 116, 0.6);
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), width 0.28s cubic-bezier(0.22, 1, 0.36, 1); pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) { .sfide-vista .sv-tab-barra { transition: none; } }
+.sfide-vista .sv-corpo { touch-action: pan-y; min-height: 60vh; }
+/* Le icone delle Sfide, dei titoli e dei segni stanno nel tondo con il colore oro del tema. */
+.sfide-vista .sv-icona .emoji-tema { width: 1.15em; height: 1.15em; margin: 0; color: var(--sv-oro); filter: drop-shadow(0 0 4px rgba(247, 215, 116, 0.35)); }
+.sfide-vista .sv-gruppo .emoji-tema, .sfide-vista .sv-premio-voce .emoji-tema { color: var(--sv-oro); }
+.sfide-vista .sv-spunta .emoji-tema { width: 0.9em; height: 0.9em; margin: 0; color: #1c1620; }

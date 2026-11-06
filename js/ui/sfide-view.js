@@ -51,11 +51,11 @@
     ];
 
     const SEZIONI = [
-        { id: 'giornaliere', etichetta: '☀️ Oggi' },
-        { id: 'settimanali', etichetta: '📅 Settimana' },
-        { id: 'generiche', etichetta: '🏆 Sfide' },
-        { id: 'storie', etichetta: '📖 Storie' },
-        { id: 'modalita', etichetta: '🎮 Modalità' }
+        { id: 'giornaliere', etichetta: 'Oggi', icona: 'star' },
+        { id: 'settimanali', etichetta: 'Settimana', icona: 'calendar' },
+        { id: 'generiche', etichetta: 'Sfide', icona: 'tournament' },
+        { id: 'storie', etichetta: 'Storie', icona: 'story' },
+        { id: 'modalita', etichetta: 'Modalità', icona: 'sandbox' }
     ];
 
     // Titolo e ordine dei gruppi nella sezione "Modalità": la chiave è il
@@ -122,9 +122,13 @@
         if (!root) return null;
         root.classList.add('sfide-vista');
         root.innerHTML = `
-            <div class="sv-sezioni" role="tablist">
-                ${SEZIONI.map((s, i) => `<button type="button" class="sv-tab${i === 0 ? ' is-attiva' : ''}" data-sezione="${s.id}" role="tab">${s.etichetta}</button>`).join('')}
+            <div class="sv-fisso">
+                <div class="sv-sezioni" role="tablist">
+                    ${SEZIONI.map((s, i) => `<button type="button" class="sv-tab${i === 0 ? ' is-attiva' : ''}" data-sezione="${s.id}" role="tab"><span class="sv-tab-icona" data-icon="${s.icona}"></span><span class="sv-tab-nome">${s.etichetta}</span></button>`).join('')}
+                    <span class="sv-tab-barra" aria-hidden="true"></span>
+                </div>
             </div>
+            <div class="sv-corpo">
             <div class="sv-riepilogo">
                 <span class="sv-riepilogo-etichetta" data-sv="etichetta">Sfide completate</span>
                 <span class="sv-riepilogo-valore" data-sv="valore">0/0</span>
@@ -135,6 +139,7 @@
             </div>
             <div class="sv-griglia" data-sv="griglia"></div>
             <p class="sv-nota">Ogni Sfida paga <strong>una volta sola</strong>, nel momento in cui la completi: il premio ti viene accreditato subito e te lo dice un avviso, ovunque tu sia quando succede.</p>
+            </div>
             <div class="sv-dettaglio-fondo" data-sv="dettaglio" hidden>
                 <div class="sv-dettaglio" role="dialog" aria-modal="true">
                     <button type="button" class="sv-chiudi" data-sv="chiudi" aria-label="Chiudi">✕</button>
@@ -282,7 +287,7 @@
             riepilogo('Sfide delle modalità', fatte, totali);
         }
 
-        function refresh() {
+        function disegna() {
             renderRotazione();
             if (sezioneAttiva === 'giornaliere' || sezioneAttiva === 'settimanali') {
                 renderMissioni(sezioneAttiva === 'giornaliere' ? 'daily' : 'weekly');
@@ -296,15 +301,90 @@
             griglia.innerHTML = '';
             disegnaGruppi(griglia, ordinaInGruppi(sfide));
         }
+        // Le icone delle Sfide e i titoli dei gruppi nascono come emoji: si cambiano con le icone del tema (ogni emoji sconosciuta
+        // diventa la medaglia), come le icone delle schede.
+        function refresh() {
+            disegna();
+            if (window.EmojiTema) EmojiTema.idrata(root, { fallback: 'medal' });
+        }
 
+        // ---- Schede FISSE in alto (sotto la fotocamera) e SWIPE laterale sul contenuto, come nel menu principale.
+        const ORDINE = SEZIONI.map((s) => s.id);
+        const barra = root.querySelector('.sv-tab-barra');
+        const corpo = root.querySelector('.sv-corpo');
+        const riduciMovimento = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+        function posizionaBarra() {
+            const tab = root.querySelector('.sv-tab.is-attiva');
+            if (!tab || !tab.offsetWidth) return;
+            barra.style.width = tab.offsetWidth + 'px';
+            barra.style.transform = 'translateX(' + tab.offsetLeft + 'px)';
+        }
+        /** direzione: +1 la nuova sezione sta a destra (il contenuto entra da destra), -1 a sinistra, 0 senza animazione. */
+        function vaiSezione(id, direzione) {
+            if (id === sezioneAttiva) return;
+            sezioneAttiva = id;
+            root.querySelectorAll('.sv-tab').forEach((b) => {
+                const attiva = b.dataset.sezione === id;
+                b.classList.toggle('is-attiva', attiva);
+                b.setAttribute('aria-selected', String(attiva));
+            });
+            posizionaBarra();
+            refresh();
+            if (direzione && !riduciMovimento) {
+                try { corpo.animate([{ transform: 'translateX(' + (direzione * 46) + 'px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 260, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }); } catch (e) { /* cambia lo stesso */ }
+            }
+            const alto = root.querySelector('.sv-fisso').getBoundingClientRect().bottom;
+            if (corpo.getBoundingClientRect().top < alto) corpo.scrollIntoView({ block: 'start' });
+        }
         root.querySelector('.sv-sezioni').addEventListener('click', (e) => {
             const tab = e.target.closest('.sv-tab');
             if (!tab) return;
-            sezioneAttiva = tab.dataset.sezione;
-            root.querySelectorAll('.sv-tab').forEach((b) => b.classList.toggle('is-attiva', b === tab));
+            const verso = ORDINE.indexOf(tab.dataset.sezione) > ORDINE.indexOf(sezioneAttiva) ? 1 : -1;
             if (window.NativeHaptics) NativeHaptics.light();
-            refresh();
+            vaiSezione(tab.dataset.sezione, verso);
         });
+        (function swipe() {
+            let x0 = null, y0 = 0, t0 = 0, orizzontale = false, verticale = false, dx = 0;
+            corpo.addEventListener('touchstart', (e) => {
+                if (e.touches.length !== 1 || !q('dettaglio').hidden) { x0 = null; return; }
+                x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
+                orizzontale = verticale = false; dx = 0;
+            }, { passive: true });
+            corpo.addEventListener('touchmove', (e) => {
+                if (x0 === null || verticale) return;
+                const mx = e.touches[0].clientX - x0, my = e.touches[0].clientY - y0;
+                if (!orizzontale) {
+                    if (Math.abs(my) > 10 && Math.abs(my) > Math.abs(mx)) { verticale = true; return; }
+                    if (Math.abs(mx) < 12 || Math.abs(mx) < Math.abs(my) * 1.4) return;
+                    orizzontale = true;
+                }
+                const i = ORDINE.indexOf(sezioneAttiva);
+                const senzaVicina = (mx > 0 && i === 0) || (mx < 0 && i === ORDINE.length - 1);
+                dx = senzaVicina ? mx * 0.25 : mx;
+                corpo.style.transform = 'translateX(' + dx + 'px)';
+                corpo.style.opacity = String(Math.max(0.35, 1 - Math.abs(dx) / (corpo.clientWidth * 1.1)));
+            }, { passive: true });
+            corpo.addEventListener('touchend', () => {
+                if (x0 === null || !orizzontale) { x0 = null; return; }
+                const veloce = Math.abs(dx) > 40 && Date.now() - t0 < 320;
+                const lungo = Math.abs(dx) > corpo.clientWidth * 0.22;
+                const i = ORDINE.indexOf(sezioneAttiva);
+                const prossima = dx < 0 ? i + 1 : i - 1;
+                corpo.style.transform = ''; corpo.style.opacity = '';
+                x0 = null;
+                if ((veloce || lungo) && prossima >= 0 && prossima < ORDINE.length) {
+                    if (window.NativeHaptics) NativeHaptics.light();
+                    vaiSezione(ORDINE[prossima], dx < 0 ? 1 : -1);
+                } else if (Math.abs(dx) > 4 && !riduciMovimento) {
+                    try { corpo.animate([{ transform: 'translateX(' + dx + 'px)' }, { transform: 'none' }], { duration: 240, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }); } catch (e) { /* torna al posto */ }
+                }
+            }, { passive: true });
+            corpo.addEventListener('touchcancel', () => { corpo.style.transform = ''; corpo.style.opacity = ''; x0 = null; }, { passive: true });
+        })();
+        if (window.Icons) Icons.hydrate(root.querySelector('.sv-sezioni'));
+        window.addEventListener('resize', posizionaBarra);
+        requestAnimationFrame(posizionaBarra);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(posizionaBarra);
 
         // La rotazione si appoggia all'orario del SERVER: si chiede subito e
         // si ridisegna quando arriva — intanto la schermata mostra comunque

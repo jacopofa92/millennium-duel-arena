@@ -474,3 +474,50 @@
     .shop-root .cambio-tetto { grid-column: 1; grid-row: 3; }
     .shop-root .cambio-azioni { grid-column: 2; grid-row: 1 / span 3; flex-direction: column; align-items: stretch; }
 }
+
+/* =====================================================================
+   SCHEDE del Negozio e portafoglio FISSO in alto (richiesta dell'utente)
+   ===================================================================== */
+/* Parte fissa: i saldi e la riga delle schede restano agganciati sotto la fotocamera frontale (--mm-fotocamera, menu-mobile.css). */
+.shop-root .shop-fisso {
+    position: sticky; top: var(--mm-fotocamera, 0px); z-index: 40;
+    margin: 0 -8px 14px; padding: 8px 8px 0;
+    background: linear-gradient(180deg, rgba(14, 11, 8, 0.97), rgba(14, 11, 8, 0.93));
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(247, 215, 116, 0.28); box-shadow: 0 8px 18px rgba(0, 0, 0, 0.45);
+}
+@media (min-width: 601px) { .shop-root .shop-fisso { margin-left: -18px; margin-right: -18px; padding-left: 18px; padding-right: 18px; } }
+.shop-root .shop-fisso .wallet-row { flex-wrap: nowrap; gap: 6px; margin-bottom: 6px; }
+.shop-root .shop-fisso .wallet-tile { flex: 1 1 0; min-width: 0; gap: 6px; padding: 6px 8px; border-width: 1px; border-radius: 11px; box-shadow: none; }
+.shop-root .shop-fisso .wallet-icon { font-size: 1.15rem; display: flex; }
+.shop-root .shop-fisso .wallet-value { font-size: 0.95rem; }
+.shop-root .shop-fisso .wallet-label { display: none; }
+@media (min-width: 700px) { .shop-root .shop-fisso .wallet-label { display: block; font-size: 0.58rem; } }
+@media (max-width: 380px) { .shop-root .shop-fisso .wallet-value { font-size: 0.82rem; } .shop-root .shop-fisso .wallet-tile { padding: 5px 6px; gap: 4px; } }
+
+/* La riga delle schede: icona sopra e nome sotto, come le tab del menu, con la barra d'oro che scivola sotto quella attiva. */
+.shop-root .shop-tabs { position: relative; display: flex; }
+.shop-root .shop-tab {
+    flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px 9px;
+    border: 0; background: transparent; color: #9d9071; font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent;
+    transition: color 0.2s ease;
+}
+.shop-root .shop-tab-icona { font-size: 1.3rem; line-height: 1; display: flex; }
+.shop-root .shop-tab-nome { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+.shop-root .shop-tab:hover { color: #e9dcae; }
+.shop-root .shop-tab.attiva { color: #f7d774; }
+.shop-root .shop-tab.attiva .shop-tab-icona { filter: drop-shadow(0 0 7px rgba(247, 215, 116, 0.55)); }
+.shop-root .shop-tab-barra {
+    position: absolute; left: 0; bottom: 0; height: 3px; width: 10px; border-radius: 3px 3px 0 0;
+    background: linear-gradient(90deg, #f7d774, #f39c12); box-shadow: 0 0 10px rgba(247, 215, 116, 0.6);
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), width 0.28s cubic-bezier(0.22, 1, 0.36, 1); pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) { .shop-root .shop-tab-barra { transition: none; } }
+.shop-root .shop-pannelli { touch-action: pan-y; min-height: 60vh; overflow-x: clip; }
+.shop-root .shop-pannello { will-change: transform; }
+
+/* Icone a tema inline (valute, titoli, segni): in riga col testo, della misura del testo. */
+.shop-root .shop-ico { width: 1.05em; height: 1.05em; vertical-align: -0.18em; margin: 0 0.12em; }
+.shop-root .shop-head h2 .shop-ico { width: 1.2em; height: 1.2em; margin-right: 0.35em; color: var(--shop-gold); }
+.shop-root .shop-ico--eye { color: #d7b8ff; }
+.shop-root .shop-ico--map { color: #8fe0ff; }

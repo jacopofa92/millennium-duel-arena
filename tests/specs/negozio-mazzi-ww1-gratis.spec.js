@@ -46,7 +46,8 @@ module.exports = {
             await page.waitForFunction(() => !!(window.ShopCatalog && window.ShopUI));
             await page.evaluate(() => { if (!SaveManager.hasSave()) SaveManager.createNew('Prova'); });
             await page.reload();
-            await page.waitForSelector('.deck-box');
+            await page.click('.shop-tab >> nth=2');   // i mazzi stanno nella scheda Deck
+        await page.waitForSelector('.deck-box:visible');
             const prima = await page.evaluate(() => ({ posseduto: SaveManager.ownsPack('starter_ww1_regio_esercito'), bottoni: Array.from(document.querySelectorAll('.buy-btn')).filter((b) => /Gratis/.test(b.textContent)).length }));
             assert(prima.bottoni >= 2 && !prima.posseduto, `i pulsanti "Gratis" ci sono: ${JSON.stringify(prima)}`);
             await page.locator('.buy-btn', { hasText: 'Gratis' }).first().click();

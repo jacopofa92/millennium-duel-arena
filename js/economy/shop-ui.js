@@ -136,6 +136,7 @@
         const valori = {};
         Object.keys(VALUTE).forEach((chiave) => {
             const tile = el('div', 'wallet-tile');
+            tile.title = VALUTE[chiave].etichetta;
             tile.appendChild(el('div', 'wallet-icon', VALUTE[chiave].icon));
             const box = el('div');
             const val = el('div', 'wallet-value', '0');
@@ -169,7 +170,7 @@
             const grid = el('div', 'shop-grid');
             sec.appendChild(grid);
             root.appendChild(sec);
-            return { grid: grid, timer: timer };
+            return { grid: grid, timer: timer, sec: sec };
         }
 
         const secCarte = sezione('🗓️ Carte in rotazione',
@@ -288,8 +289,9 @@
         // Strumento temporaneo richiesto per provare la nuova cerimonia,
         // invisibile a chiunque non sia amministratore. Non accredita la
         // carta: mostra soltanto l'animazione con Kuriboo (id 861).
+        let adminTools = null;
         if (adminPuoRiacquistareMazzi()) {
-            const adminTools = el('section', 'shop-section shop-admin-tools');
+            adminTools = el('section', 'shop-section shop-admin-tools');
             adminTools.appendChild(el('h2', null, 'Strumenti Admin'));
             adminTools.appendChild(el('p', 'shop-rule', 'Anteprima temporanea: non modifica la collezione.'));
             const provaDrop = el('button', 'buy-btn admin-drop-preview', 'Prova animazione ricompensa · Kuriboo');
@@ -303,6 +305,156 @@
             adminTools.appendChild(provaDrop);
             root.appendChild(adminTools);
         }
+
+        // ---- SCHEDE (richiesta dell'utente): Carte, Buste, Deck, Cambio, Info. In cima, FISSI sotto la fotocamera, restano il portafoglio
+        // e la riga delle schede; si cambia toccando o con lo SWIPE laterale sul contenuto (il pannello segue il dito, con resistenza oltre
+        // la prima e l'ultima scheda, come nel menu principale).
+        const SCHEDE = [
+            { id: 'carte', nome: 'Carte', icona: 'cards', sezioni: [secCarte.sec] },
+            { id: 'buste', nome: 'Buste', icona: 'pack', sezioni: [secBuste.sec] },
+            { id: 'deck', nome: 'Deck', icona: 'deckBuilder', sezioni: [secStarter.sec, secStructure.sec] },
+            { id: 'cambio', nome: 'Cambio', icona: 'exchange', sezioni: [secCambio.sec] },
+            { id: 'info', nome: 'Info', icona: 'bulb', sezioni: [secRegole].concat(adminTools ? [adminTools] : []) }
+        ];
+        const fisso = el('div', 'shop-fisso');
+        const tabs = el('div', 'shop-tabs');
+        tabs.setAttribute('role', 'tablist');
+        const barra = el('span', 'shop-tab-barra');
+        barra.setAttribute('aria-hidden', 'true');
+        const pannelli = el('div', 'shop-pannelli');
+        let schedaAttiva = 'carte';
+        try { const s = sessionStorage.getItem('ygoNegozioScheda'); if (SCHEDE.some((x) => x.id === s)) schedaAttiva = s; } catch (e) { /* sessionStorage negato */ }
+        const voci = SCHEDE.map((sc) => {
+            const pannello = el('div', 'shop-pannello');
+            sc.sezioni.forEach((s) => pannello.appendChild(s));
+            pannelli.appendChild(pannello);
+            const bottone = el('button', 'shop-tab');
+            bottone.type = 'button';
+            bottone.setAttribute('role', 'tab');
+            const ico = el('span', 'shop-tab-icona');
+            ico.dataset.icon = sc.icona;
+            bottone.appendChild(ico);
+            bottone.appendChild(el('span', 'shop-tab-nome', sc.nome));
+            tabs.appendChild(bottone);
+            return { sc, pannello, bottone };
+        });
+        tabs.appendChild(barra);
+        root.insertBefore(fisso, root.firstChild);
+        fisso.appendChild(walletRow);
+        fisso.appendChild(tabs);
+        root.appendChild(pannelli);
+
+        const riduciMovimento = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+        function posizionaBarra() {
+            const v = voci.find((x) => x.sc.id === schedaAttiva);
+            if (!v || !v.bottone.offsetWidth) return;
+            barra.style.width = v.bottone.offsetWidth + 'px';
+            barra.style.transform = 'translateX(' + v.bottone.offsetLeft + 'px)';
+        }
+        /** direzione: +1 la nuova scheda sta a destra (il contenuto entra da destra), -1 a sinistra, 0 senza animazione. */
+        function vaiScheda(id, direzione) {
+            const prima = schedaAttiva;
+            schedaAttiva = id;
+            try { sessionStorage.setItem('ygoNegozioScheda', id); } catch (e) { /* solo per questa pagina */ }
+            voci.forEach((v) => {
+                const attiva = v.sc.id === id;
+                v.bottone.classList.toggle('attiva', attiva);
+                v.bottone.setAttribute('aria-selected', String(attiva));
+                v.pannello.style.display = attiva ? '' : 'none';
+            });
+            posizionaBarra();
+            if (direzione && prima !== id && !riduciMovimento) {
+                const p = voci.find((v) => v.sc.id === id).pannello;
+                try { p.animate([{ transform: 'translateX(' + (direzione * 46) + 'px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 260, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }); } catch (e) { /* senza animazione si cambia lo stesso */ }
+            }
+            // Cambiando scheda si riparte dall'alto del contenuto, sotto la parte fissa.
+            if (prima !== id && fisso.getBoundingClientRect().top <= (parseFloat(getComputedStyle(fisso).top) || 0) + 1) {
+                root.scrollIntoView({ block: 'start' });
+            }
+        }
+        voci.forEach((v, i) => {
+            v.bottone.onclick = () => {
+                if (v.sc.id === schedaAttiva) return;
+                const ia = voci.findIndex((x) => x.sc.id === schedaAttiva);
+                vaiScheda(v.sc.id, i > ia ? 1 : -1);
+                if (window.NativeHaptics) NativeHaptics.light();
+            };
+        });
+        window.addEventListener('resize', posizionaBarra);
+
+        (function swipe() {
+            let x0 = null, y0 = 0, t0 = 0, orizzontale = false, verticale = false, dx = 0;
+            const corrente = () => voci.find((v) => v.sc.id === schedaAttiva).pannello;
+            const indice = () => voci.findIndex((v) => v.sc.id === schedaAttiva);
+            pannelli.addEventListener('touchstart', (e) => {
+                // Un gesto che parte dentro un'apertura di busta o su un elemento che scorre da solo non cambia scheda.
+                if (e.touches.length !== 1 || pullBackdrop.classList.contains('open')) { x0 = null; return; }
+                x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
+                orizzontale = verticale = false; dx = 0;
+            }, { passive: true });
+            pannelli.addEventListener('touchmove', (e) => {
+                if (x0 === null || verticale) return;
+                const mx = e.touches[0].clientX - x0, my = e.touches[0].clientY - y0;
+                if (!orizzontale) {
+                    if (Math.abs(my) > 10 && Math.abs(my) > Math.abs(mx)) { verticale = true; return; }
+                    if (Math.abs(mx) < 12 || Math.abs(mx) < Math.abs(my) * 1.4) return;
+                    orizzontale = true;
+                }
+                const i = indice();
+                const senzaVicina = (mx > 0 && i === 0) || (mx < 0 && i === voci.length - 1);
+                dx = senzaVicina ? mx * 0.25 : mx;
+                corrente().style.transform = 'translateX(' + dx + 'px)';
+                corrente().style.opacity = String(Math.max(0.35, 1 - Math.abs(dx) / (pannelli.clientWidth * 1.1)));
+            }, { passive: true });
+            pannelli.addEventListener('touchend', () => {
+                if (x0 === null || !orizzontale) { x0 = null; return; }
+                const veloce = Math.abs(dx) > 40 && Date.now() - t0 < 320;
+                const lungo = Math.abs(dx) > pannelli.clientWidth * 0.22;
+                const i = indice();
+                const prossima = dx < 0 ? i + 1 : i - 1;
+                const p = corrente();
+                p.style.transform = ''; p.style.opacity = '';
+                x0 = null;
+                if ((veloce || lungo) && prossima >= 0 && prossima < voci.length) {
+                    vaiScheda(voci[prossima].sc.id, dx < 0 ? 1 : -1);
+                    if (window.NativeHaptics) NativeHaptics.light();
+                } else if (Math.abs(dx) > 4 && !riduciMovimento) {
+                    try { p.animate([{ transform: 'translateX(' + dx + 'px)' }, { transform: 'none' }], { duration: 240, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }); } catch (e) { /* torna al posto */ }
+                }
+            }, { passive: true });
+            pannelli.addEventListener('touchcancel', () => { const p = corrente(); p.style.transform = ''; p.style.opacity = ''; x0 = null; }, { passive: true });
+        })();
+
+        // ---- Icone a tema al posto delle emoji (valute, titoli, segni): vedi idrataEmoji. Le sezioni si ridisegnano a ogni refresh.
+        const MAPPA_ICONE = { '💰': 'coin', '⭐': 'star', '★': 'star', '🃏': 'map', '🔱': 'eye', '👁': 'eye', '🗓': 'calendar', '📅': 'calendar',
+            '📦': 'pack', '🎓': 'cards', '🏗': 'deckBuilder', '🔁': 'exchange', '💡': 'bulb', '🎁': 'shop', '🌅': 'medal', '🎯': 'target',
+            '🏹': 'target', '🤝': 'defensePos', '⚔': 'attackPos', '🗼': 'tower', '🧩': 'puzzle', '👑': 'crown', '🏆': 'tournament',
+            '🏟': 'arena', '✨': 'star', '⏱': 'rules', '🗺': 'map', 'ℹ': 'rules', '🖼': 'collection', '🤖': 'sandbox', '✓': 'check', '✦': 'star' };
+        const RE_ICONE = new RegExp('(' + Object.keys(MAPPA_ICONE).map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\uFE0F?', 'g');
+        function idrataEmoji(radiceDom) {
+            if (!window.Icons || !Icons.buildIcon) return;
+            const nodi = [];
+            const camminatore = document.createTreeWalker(radiceDom, NodeFilter.SHOW_TEXT);
+            while (camminatore.nextNode()) { if (RE_ICONE.test(camminatore.currentNode.nodeValue)) nodi.push(camminatore.currentNode); RE_ICONE.lastIndex = 0; }
+            nodi.forEach((nodo) => {
+                const testo = nodo.nodeValue;
+                const frammento = document.createDocumentFragment();
+                let ultimo = 0, m;
+                RE_ICONE.lastIndex = 0;
+                while ((m = RE_ICONE.exec(testo))) {
+                    if (m.index > ultimo) frammento.appendChild(document.createTextNode(testo.slice(ultimo, m.index)));
+                    const svg = Icons.buildIcon(MAPPA_ICONE[m[1]]);
+                    if (svg) { svg.classList.add('shop-ico', 'shop-ico--' + MAPPA_ICONE[m[1]]); frammento.appendChild(svg); } else frammento.appendChild(document.createTextNode(m[0]));
+                    ultimo = m.index + m[0].length;
+                }
+                if (ultimo < testo.length) frammento.appendChild(document.createTextNode(testo.slice(ultimo)));
+                nodo.parentNode.replaceChild(frammento, nodo);
+            });
+        }
+        if (window.Icons) Icons.hydrate(tabs);
+        vaiScheda(schedaAttiva, 0);
+        requestAnimationFrame(posizionaBarra);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(posizionaBarra);
 
         // ---- Modale di apertura busta
         const pullBackdrop = el('div', 'shop-pull-backdrop');
@@ -738,9 +890,12 @@
             renderConversioni();
             aggiornaTimer();
             aggiornaEtichetteMazzi();
+            idrataEmoji(root);
+            posizionaBarra();
         }
 
         aggiornaPortafoglio();
+        idrataEmoji(root);
         // La data va chiesta al server PRIMA di decidere l'offerta: con
         // l'orologio locale basterebbe spostare l'ora del telefono per far
         // ruotare le carte a piacere (vedi js/cloud/server-date.js).

@@ -677,3 +677,21 @@ body::before {
 .mp-avviso-link { display: inline-block; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(247, 215, 116, 0.55);
     color: var(--gold); text-decoration: none; font-weight: 700; font-size: 0.85rem; background: rgba(0, 0, 0, 0.25); }
 .mp-avviso-link:active { transform: scale(0.97); }
+
+/* Riepilogo FISSO in cima (Puzzle: Risolti e Stelle): resta agganciato sotto la fotocamera frontale mentre si scorre l'elenco. */
+.mp-riepilogo--fisso {
+    position: sticky; top: var(--mm-fotocamera, 0px); z-index: 40; margin-top: 0;
+    background: linear-gradient(180deg, rgba(14, 11, 8, 0.97), rgba(14, 11, 8, 0.92));
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); box-shadow: 0 8px 18px rgba(0, 0, 0, 0.45);
+}
+.mp-riepilogo .themed-icon { color: var(--gold, #f7d774); vertical-align: -0.2em; }
+.mp-emblema .themed-icon { width: 1.25em; height: 1.25em; color: var(--gold, #f7d774); filter: drop-shadow(0 0 5px rgba(247, 215, 116, 0.4)); }
+
+/* Torre dei Duellanti: pulsanti e icone nel linguaggio del tema (icona del tema in riga col testo, oro sul fondo scuro). */
+.mp-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.mp-btn .themed-icon { width: 1.15em; height: 1.15em; flex: none; }
+.torre-record i { display: grid; place-items: center; }
+.torre-record i .themed-icon { width: 1.25rem; height: 1.25rem; color: #c99d50; filter: drop-shadow(0 0 5px rgba(217, 170, 80, 0.4)); }
+.torre-layout .emoji-tema, .mp-oggetto .emoji-tema, .tw .emoji-tema, .mp-pannello .emoji-tema { color: #f2cf77; }
+.tw-cima-corona .emoji-tema { width: 2.2rem; height: 2.2rem; margin: 0; filter: drop-shadow(0 0 10px rgba(247, 215, 116, 0.6)); }
+.mp-btn--pericolo .themed-icon { color: var(--danger, #e0806b); }

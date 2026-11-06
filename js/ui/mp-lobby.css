@@ -1270,7 +1270,8 @@ body.ha-tab-bar .mp-lobby { padding-bottom: calc(var(--mm-barra-h) + 190px); }
    il menu usa per il logo: env(safe-area-inset-top) vale 0 anche nell'APK a tutto schermo, quindi c'e' un minimo fisso di 30px.
    In orizzontale il foro sta su un lato: un po' di margine a destra e sinistra, cosi' niente finisce sotto di lui. */
 @media (pointer: coarse) and (orientation: portrait) {
-    .mp-lobby-wrap, body.ha-tab-bar .mp-lobby-wrap { padding-top: calc(var(--mm-fotocamera, 30px) + 8px); }
+    /* Il margine sotto il foro lo da' gia' il body (menu-mobile.css: body.ha-tab-bar { padding-top }): qui un respiro soltanto. */
+    .mp-lobby-wrap, body.ha-tab-bar .mp-lobby-wrap { padding-top: 8px; }
 }
 @media (pointer: coarse) and (orientation: landscape) {
     .mp-lobby-wrap, body.ha-tab-bar .mp-lobby-wrap {
@@ -1367,3 +1368,43 @@ body.ha-tab-bar .mp-lobby { padding-bottom: calc(var(--mm-barra-h) + 190px); }
 /* I due posti allineano l'avatar in alto: uno puo' avere la figura intera (112px) e l'altro ancora il segnaposto tondo. */
 .mp-lobby .mp-seat { justify-content: flex-start; }
 .mp-lobby .mp-seat--empty .mp-seat-avatar { margin-top: 26px; margin-bottom: 26px; }
+
+/* =====================================================================
+   INGRESSO SENZA SCORRIMENTO (richiesta dell'utente: "i menu online prima di entrare nella stanza non devono scorrere")
+   La schermata d'ingresso (Crea stanza / Entra con codice, e la scelta del formato nel Tag) sta TUTTA nello schermo, sotto la fotocamera
+   e sopra la barra in basso, a ogni misura: la pagina non scorre, il contenuto si centra e si compatta dove serve. La sala d'attesa
+   (data-schermata="attesa") scorre come prima, e anche l'ingresso quando compare la console di connessione KaibaCorp (#mpStatus non vuoto).
+   ===================================================================== */
+html:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty),
+body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) { overflow: hidden; overscroll-behavior: none; }
+body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) { height: 100dvh; box-sizing: border-box; }
+body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mm-spazio { display: none; }
+body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-lobby-wrap,
+body.ha-tab-bar:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-lobby-wrap {
+    box-sizing: border-box; min-height: 0; height: calc(100dvh - var(--mm-fotocamera, 0px) - var(--mm-barra-h, 0px));
+    align-items: center; padding-top: 6px; padding-bottom: 6px;
+}
+body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-lobby { padding-bottom: 0; }
+@media (max-height: 760px) {
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-hero { margin-bottom: 10px; gap: 10px; }
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-hero-emblema { width: 52px; height: 52px; }
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-hero .mp-sub { font-size: .78rem; line-height: 1.3; margin-top: 2px; }
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-lobby .mp-azioni { gap: 8px; margin-bottom: 8px; }
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-lobby .mp-azioni .mp-btn { padding: 12px 10px; }
+    /* Tag: i due formati affiancati; la spiegazione la porta solo quello scelto. */
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .tg-formati { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0 0 8px; }
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .tg-formato { padding: 9px 10px; }
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .tg-formato:not(.is-scelto) small { display: none; }
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .tg-formato small { font-size: .7rem; line-height: 1.25; }
+}
+@media (max-height: 560px) {
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-hero { margin-bottom: 6px; }
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-hero-emblema { width: 40px; height: 40px; }
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-hero .mp-title { font-size: 1.05rem; }
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-hero .mp-sub { display: none; }
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-lobby .mp-azioni { grid-template-columns: 1fr 1fr; }
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-lobby .mp-azioni .mp-btn { padding: 9px 8px; font-size: .82rem; }
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .tg-formato small { display: none; }
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .tg-formato { padding: 6px 10px; }
+    body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-advanced { margin-top: 6px; }
+}

@@ -133,31 +133,53 @@
         margin: 0 auto;
         padding: 24px 22px 60px;
     }
+    /* TAB della lista (I Miei Deck / Avversari / Starter / Structure): una riga sola, scorrevole se non ci stanno, con una barra
+       d'oro che scivola sotto la tab attiva; il contenuto si cambia anche con lo swipe laterale (vedi "Tabs & bootstrap"). */
     .list-tabs {
+        position: relative;
         display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 20px;
-        max-width: 640px;
+        flex-wrap: nowrap;
+        gap: 0;
+        margin: 0 -22px 20px;
+        padding: 0 22px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        border-bottom: 1px solid rgba(247, 215, 116, 0.22);
     }
+    .list-tabs::-webkit-scrollbar { display: none; }
     .list-tab {
-        flex: 1 1 130px;
-        padding: 10px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.18);
-        background: rgba(255,255,255,0.05);
-        color: #cdd6ea;
-        font-weight: 700;
-        font-size: 0.85rem;
+        flex: 0 0 auto;
+        padding: 13px 16px 12px;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: #a99f86;
+        font-weight: 800;
+        font-size: 0.78rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        white-space: nowrap;
         cursor: pointer;
         font-family: inherit;
-        transition: all 0.2s ease;
+        transition: color 0.2s ease;
+        -webkit-tap-highlight-color: transparent;
     }
-    .list-tab.active {
-        background: linear-gradient(135deg, rgba(243,156,18,0.9), rgba(192,57,43,0.6));
-        border-color: var(--gold-strong);
-        color: #1a1408;
+    .list-tab:hover { color: #e9dcae; }
+    .list-tab.active { color: #f7d774; text-shadow: 0 0 10px rgba(247, 215, 116, 0.35); }
+    .list-tab-barra {
+        position: absolute; left: 0; bottom: -1px; height: 3px; width: 10px; border-radius: 3px 3px 0 0;
+        background: linear-gradient(90deg, #f7d774, #f39c12); box-shadow: 0 0 10px rgba(247, 215, 116, 0.6);
+        transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), width 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+        pointer-events: none;
     }
+    @media (max-width: 520px) { .list-tab { padding: 13px 12px 12px; font-size: 0.72rem; letter-spacing: 0.06em; } }
+    @media (prefers-reduced-motion: reduce) { .list-tab-barra { transition: none; } }
+    /* Icone a tema (js/ui/icon-library.js) nei pulsanti: in riga col testo, della stessa misura e dello stesso colore. */
+    .new-deck-btn, .editor-action-btn, .deck-card-btn, .editor-tab, .filter-reset, .deck-card-active-badge { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .deck-card-btn .themed-icon, .new-deck-btn .themed-icon, .editor-action-btn .themed-icon, .editor-tab .themed-icon, .filter-reset .themed-icon { width: 1.1em; height: 1.1em; }
+    .deck-card-active-badge .themed-icon { width: 1em; height: 1em; }
+    .search-bar-icon .themed-icon { width: 1.1em; height: 1.1em; }
     .new-deck-btn {
         border: none;
         border-radius: 999px;
@@ -1237,15 +1259,16 @@
     <!-- Schermata: elenco deck -->
     <div class="screen" id="screenList">
         <div class="list-main">
-            <div class="list-tabs">
-                <button type="button" class="list-tab active" id="tabMine">I Miei Deck</button>
-                <button type="button" class="list-tab" id="tabOpponents">Deck degli Avversari</button>
-                <button type="button" class="list-tab" id="tabStarter">Starter Deck</button>
-                <button type="button" class="list-tab" id="tabStructure">Structure Deck</button>
+            <div class="list-tabs" role="tablist">
+                <button type="button" class="list-tab active" id="tabMine" role="tab">I Miei Deck</button>
+                <button type="button" class="list-tab" id="tabOpponents" role="tab">Deck degli Avversari</button>
+                <button type="button" class="list-tab" id="tabStarter" role="tab">Starter Deck</button>
+                <button type="button" class="list-tab" id="tabStructure" role="tab">Structure Deck</button>
+                <span class="list-tab-barra" aria-hidden="true"></span>
             </div>
 
             <div id="panelMine">
-                <button type="button" class="new-deck-btn" id="newDeckBtn">➕ Nuovo Deck</button>
+                <button type="button" class="new-deck-btn" id="newDeckBtn"><span class="icon" data-icon="plus"></span> Nuovo Deck</button>
                 <div class="deck-grid" id="myDecksGrid"></div>
             </div>
 
@@ -1272,14 +1295,14 @@
             <input type="text" id="deckNameInput" placeholder="Nome del Deck" maxlength="40">
             <span class="count-badge" id="mainCountBadge">Main: 0/40-60</span>
             <span class="count-badge" id="extraCountBadge">Extra: 0/15</span>
-            <button type="button" class="editor-action-btn save" id="saveDeckBtn">💾 Salva</button>
-            <button type="button" class="editor-action-btn cancel" id="cancelEditBtn">✖ Annulla</button>
+            <button type="button" class="editor-action-btn save" id="saveDeckBtn"><span class="icon" data-icon="save"></span> Salva</button>
+            <button type="button" class="editor-action-btn cancel" id="cancelEditBtn"><span class="icon" data-icon="close"></span> Annulla</button>
             <!-- Solo su schermi stretti (vedi il CSS): mazzo e ricerca in due
                  schede invece di una pagina lunghissima. Stanno nella barra
                  fissa, così restano sempre a portata di dito. -->
             <div class="editor-tabs" role="tablist">
-                <button type="button" class="editor-tab" id="tabMazzoBtn" role="tab" data-scheda="mazzo">🃏 Il mio mazzo <span class="editor-tab-count" id="tabMazzoCount">0</span></button>
-                <button type="button" class="editor-tab" id="tabCarteBtn" role="tab" data-scheda="carte">➕ Aggiungi carte</button>
+                <button type="button" class="editor-tab" id="tabMazzoBtn" role="tab" data-scheda="mazzo"><span class="icon" data-icon="cards"></span> Il mio mazzo <span class="editor-tab-count" id="tabMazzoCount">0</span></button>
+                <button type="button" class="editor-tab" id="tabCarteBtn" role="tab" data-scheda="carte"><span class="icon" data-icon="plus"></span> Aggiungi carte</button>
             </div>
         </div>
         <div class="editor-body">
@@ -1307,7 +1330,7 @@
             <div class="editor-right">
                 <div class="filter-bar-top">
                     <div class="search-bar">
-                        <span class="search-bar-icon">🔍</span>
+                        <span class="search-bar-icon" data-icon="search"></span>
                         <input type="text" id="editorSearchInput" placeholder="Cerca una carta per nome..." autocomplete="off">
                     </div>
                     <select class="filter-sort" id="editorSortSelect">
@@ -1373,7 +1396,7 @@
                                 <input type="number" id="editorDefMax" placeholder="Max">
                             </div>
                         </div>
-                        <button type="button" class="filter-reset" id="editorResetBtn">✖ Azzera filtri</button>
+                        <button type="button" class="filter-reset" id="editorResetBtn"><span class="icon" data-icon="close"></span> Azzera filtri</button>
                     </div>
                 </div>
                 <div class="cartoteca-pager" id="editorPagerTop" hidden></div>
@@ -1453,6 +1476,19 @@
     // schermate in cui si costruisce invece di duellare.
     initAudioManager({ trackSrc: 'audio/soundtracks/16. Duel Ground.mp3' });
     Icons.hydrate();
+    // I pulsanti dei mazzi e il resto dell'elenco si ridisegnano da soli: le icone nuove si idratano qui (solo i segnaposto ancora vuoti,
+    // altrimenti l'osservatore riscriverebbe le proprie stesse modifiche all'infinito).
+    (function idrataDinamiche() {
+        let attesa = 0;
+        const idrata = () => {
+            attesa = 0;
+            document.querySelectorAll('[data-icon]:empty').forEach((el) => {
+                const svg = Icons.buildIcon(el.dataset.icon);
+                if (svg) el.appendChild(svg);
+            });
+        };
+        new MutationObserver(() => { if (!attesa) attesa = requestAnimationFrame(idrata); }).observe(document.body, { childList: true, subtree: true });
+    })();
 
     const MAX_DECKS = 30;
     const MAIN_MIN = 40;
@@ -1816,7 +1852,7 @@
             const box = document.createElement('div');
             box.className = 'deck-box' + (isActive ? ' is-active' : '');
             box.innerHTML = `
-                ${deckBoxMarkup(deck, { ribbon: isActive ? '⭐ Mazzo Corrente' : '' })}
+                ${deckBoxMarkup(deck, { ribbon: isActive ? '<span class="icon" data-icon="star"></span> Mazzo Corrente' : '' })}
                 <div class="deck-box-info">
                     <div class="deck-card-sub">Aggiornato: ${new Date(deck.updatedAt || Date.now()).toLocaleDateString('it-IT')}</div>
                     <div class="deck-card-counts">
@@ -1825,10 +1861,10 @@
                     </div>
                     ${originSummary ? `<div class="deck-card-sub deck-card-origins">${originSummary}</div>` : ''}
                     <div class="deck-card-actions">
-                        <button type="button" class="deck-card-btn activate ${isActive ? 'is-active' : ''}" ${isActive ? 'disabled' : ''}>${isActive ? '⭐ In Uso' : '☆ Usa nei Duelli'}</button>
-                        <button type="button" class="deck-card-btn edit">✏️ Modifica</button>
-                        <button type="button" class="deck-card-btn clone">📋 Clona</button>
-                        <button type="button" class="deck-card-btn delete" ${decks.length <= 1 ? 'disabled title="Devi avere almeno un deck: non puoi eliminare l\'unico che hai."' : ''}>🗑️ Elimina</button>
+                        <button type="button" class="deck-card-btn activate ${isActive ? 'is-active' : ''}" ${isActive ? 'disabled' : ''}>${isActive ? '<span class="icon" data-icon="star"></span> In Uso' : '<span class="icon" data-icon="duel"></span> Usa nei Duelli'}</button>
+                        <button type="button" class="deck-card-btn edit"><span class="icon" data-icon="pencil"></span> Modifica</button>
+                        <button type="button" class="deck-card-btn clone"><span class="icon" data-icon="clone"></span> Clona</button>
+                        <button type="button" class="deck-card-btn delete" ${decks.length <= 1 ? 'disabled title="Devi avere almeno un deck: non puoi eliminare l\'unico che hai."' : ''}><span class="icon" data-icon="trash"></span> Elimina</button>
                     </div>
                 </div>
             `;
@@ -1943,7 +1979,7 @@
                         <span>Extra: ${extraCount}</span>
                     </div>
                     <div class="deck-card-actions">
-                        ${owned ? '<button type="button" class="deck-card-btn clone">📋 Clona</button>' : ''}
+                        ${owned ? '<button type="button" class="deck-card-btn clone"><span class="icon" data-icon="clone"></span> Clona</button>' : ''}
                         <button type="button" class="deck-card-btn view">👁 Visualizza</button>
                     </div>
                     ${owned ? '' : '<span class="pack-locked-note">🔒 Non ancora posseduto — vai al Negozio</span>'}
@@ -2771,17 +2807,96 @@
     // ============================================================
     // Tabs & bootstrap
     // ============================================================
-    // 4 tab, un solo pannello visibile alla volta: { bottone: pannello },
-    // invece di 4 handler quasi identici copiati a mano.
+    // 4 tab, un solo pannello visibile alla volta: { bottone: pannello }. Si cambia toccando la tab o con lo SWIPE laterale sul
+    // contenuto: durante il gesto il pannello segue il dito (con resistenza oltre la prima/ultima tab), al rilascio cambia tab se il
+    // gesto e' lungo o veloce, altrimenti torna al posto. Come nel menu principale (js/ui/menu-mobile.js).
     const LIST_TABS = { tabMine: 'panelMine', tabOpponents: 'panelOpponents', tabStarter: 'panelStarter', tabStructure: 'panelStructure' };
-    Object.keys(LIST_TABS).forEach((tabId) => {
+    const LIST_ORDER = Object.keys(LIST_TABS);
+    const riduciMovimento = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let tabAttiva = 'tabMine';
+
+    function posizionaBarra() {
+        const barra = document.querySelector('.list-tab-barra');
+        const tab = $(tabAttiva);
+        if (!barra || !tab) return;
+        barra.style.width = tab.offsetWidth + 'px';
+        barra.style.transform = `translateX(${tab.offsetLeft}px)`;
+        // La tab attiva resta in vista nella riga scorrevole.
+        const riga = tab.parentElement;
+        const sx = tab.offsetLeft - (riga.clientWidth - tab.offsetWidth) / 2;
+        if (riga.scrollWidth > riga.clientWidth) riga.scrollTo({ left: Math.max(0, sx), behavior: riduciMovimento ? 'auto' : 'smooth' });
+    }
+
+    /** direzione: +1 = la nuova tab sta a destra (il contenuto entra da destra), -1 = a sinistra, 0 = nessuna animazione. */
+    function vaiTab(tabId, direzione) {
+        const prima = tabAttiva;
+        tabAttiva = tabId;
+        Object.entries(LIST_TABS).forEach(([otherTabId, panelId]) => {
+            $(otherTabId).classList.toggle('active', otherTabId === tabId);
+            $(otherTabId).setAttribute('aria-selected', String(otherTabId === tabId));
+            $(panelId).style.display = otherTabId === tabId ? '' : 'none';
+        });
+        posizionaBarra();
+        if (direzione && prima !== tabId && !riduciMovimento) {
+            try {
+                $(LIST_TABS[tabId]).animate(
+                    [{ transform: `translateX(${direzione * 46}px)`, opacity: 0 }, { transform: 'none', opacity: 1 }],
+                    { duration: 260, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+            } catch (e) { /* senza animazione si cambia lo stesso */ }
+        }
+    }
+    LIST_ORDER.forEach((tabId) => {
         $(tabId).onclick = () => {
-            Object.entries(LIST_TABS).forEach(([otherTabId, panelId]) => {
-                $(otherTabId).classList.toggle('active', otherTabId === tabId);
-                $(panelId).style.display = otherTabId === tabId ? '' : 'none';
-            });
+            if (tabId === tabAttiva) return;
+            vaiTab(tabId, LIST_ORDER.indexOf(tabId) > LIST_ORDER.indexOf(tabAttiva) ? 1 : -1);
         };
     });
+    window.addEventListener('resize', posizionaBarra);
+    requestAnimationFrame(posizionaBarra);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(posizionaBarra);
+
+    (function swipeTraLeTab() {
+        const area = document.querySelector('.list-main');
+        if (!area) return;
+        let x0 = null, y0 = 0, t0 = 0, orizzontale = false, verticale = false, dx = 0;
+        const pannello = () => $(LIST_TABS[tabAttiva]);
+        area.addEventListener('touchstart', (e) => {
+            // Un gesto che parte sulla riga delle tab la scorre soltanto; una finestra aperta non si tocca.
+            if (e.touches.length !== 1 || e.target.closest('.list-tabs') || $('screenList').style.display === 'none') { x0 = null; return; }
+            x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
+            orizzontale = verticale = false; dx = 0;
+        }, { passive: true });
+        area.addEventListener('touchmove', (e) => {
+            if (x0 === null || verticale) return;
+            const mx = e.touches[0].clientX - x0, my = e.touches[0].clientY - y0;
+            if (!orizzontale) {
+                if (Math.abs(my) > 10 && Math.abs(my) > Math.abs(mx)) { verticale = true; return; }   // scorrimento verticale: non si tocca
+                if (Math.abs(mx) < 12 || Math.abs(mx) < Math.abs(my) * 1.4) return;
+                orizzontale = true;
+            }
+            const i = LIST_ORDER.indexOf(tabAttiva);
+            const senzaVicina = (mx > 0 && i === 0) || (mx < 0 && i === LIST_ORDER.length - 1);
+            dx = senzaVicina ? mx * 0.25 : mx;
+            pannello().style.transform = `translateX(${dx}px)`;
+            pannello().style.opacity = String(Math.max(0.35, 1 - Math.abs(dx) / (area.clientWidth * 1.1)));
+        }, { passive: true });
+        area.addEventListener('touchend', () => {
+            if (x0 === null || !orizzontale) { x0 = null; return; }
+            const veloce = Math.abs(dx) > 40 && Date.now() - t0 < 320;
+            const lungo = Math.abs(dx) > area.clientWidth * 0.22;
+            const i = LIST_ORDER.indexOf(tabAttiva);
+            const prossima = dx < 0 ? i + 1 : i - 1;
+            const p = pannello();
+            p.style.transform = ''; p.style.opacity = '';
+            x0 = null;
+            if ((veloce || lungo) && prossima >= 0 && prossima < LIST_ORDER.length) {
+                vaiTab(LIST_ORDER[prossima], dx < 0 ? 1 : -1);
+            } else if (Math.abs(dx) > 4 && !riduciMovimento) {
+                try { p.animate([{ transform: `translateX(${dx}px)` }, { transform: 'none' }], { duration: 240, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }); } catch (e) { /* torna al posto */ }
+            }
+        }, { passive: true });
+        area.addEventListener('touchcancel', () => { const p = pannello(); p.style.transform = ''; p.style.opacity = ''; x0 = null; }, { passive: true });
+    })();
 
     $('newDeckBtn').onclick = () => {
         const decks = loadDecks();

@@ -39,8 +39,7 @@
     <div id="topbarMount"></div>
 
     <main class="mp-main">
-        <p class="mp-intro">Una situazione già pronta e un solo turno a disposizione: porta a zero i Life Point dell'avversario prima di passare il turno. Tre stelle se lo risolvi al primo tentativo.</p>
-        <div class="mp-riepilogo" id="riepilogo"></div>
+        <div class="mp-riepilogo mp-riepilogo--fisso" id="riepilogo"></div>
         <div id="premiModalita" hidden></div>
         <div id="elenco"></div>
     </main>
@@ -65,6 +64,10 @@
 
     const LIVELLI = { 1: 'Per cominciare', 2: 'Ci vuole un\'idea', 3: 'Da maestri' };
     const stato = SaveManager.getModeState('puzzle') || {};
+    // Le icone di ogni puzzle sono quelle del tema (js/ui/icon-library.js), scelte per cio' che il puzzle insegna; i dati (puzzles-db.js)
+    // tengono l'emoji storica come chiave, un puzzle nuovo senza voce qui prende il Puzzle del Millennio.
+    const ICONA_PUZZLE = { '🪓': 'attackPos', '🌀': 'crown', '🐛': 'defensePos', '🎩': 'eye', '💗': 'exchange', '♻️': 'graveyard',
+        '🔮': 'target', '🌪️': 'fieldSpell', '◉': 'arena', '⚖️': 'rules', '🌙': 'duel', '🕯️': 'tower' };
     const nomeDi = (id) => {
         const c = (typeof characterDatabase !== 'undefined') ? characterDatabase.find((x) => x.id === id) : null;
         return c ? c.name : '';
@@ -78,8 +81,8 @@
         stelleTotali += s.stelle || 0;
     });
     document.getElementById('riepilogo').innerHTML =
-        `<span>🧩 Risolti <strong>${risolti}/${puzzlesDatabase.length}</strong></span>` +
-        `<span>⭐ Stelle <strong>${stelleTotali}/${puzzlesDatabase.length * 3}</strong></span>`;
+        `<span><span class="icon" data-icon="puzzle"></span> Risolti <strong>${risolti}/${puzzlesDatabase.length}</strong></span>` +
+        `<span><span class="icon" data-icon="star"></span> Stelle <strong>${stelleTotali}/${puzzlesDatabase.length * 3}</strong></span>`;
 
     const elenco = document.getElementById('elenco');
     [1, 2, 3].forEach((liv) => {
@@ -99,7 +102,7 @@
             a.href = 'duelMonstersCore.html?mode=puzzle&puzzle=' + encodeURIComponent(p.id)
                 + '&character=' + encodeURIComponent(p.personaggio || 'kaiba');
             a.innerHTML = `
-                <div class="mp-emblema" aria-hidden="true">${p.emblema || '🧩'}</div>
+                <div class="mp-emblema" aria-hidden="true"><span class="icon" data-icon="${ICONA_PUZZLE[p.emblema] || 'puzzle'}"></span></div>
                 <div>
                     <div class="mp-titolo"></div>
                     <div class="mp-desc"></div>
@@ -122,6 +125,7 @@
         });
         elenco.appendChild(lista);
     });
+    Icons.hydrate();
 </script>
 </body>
 </html>

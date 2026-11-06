@@ -39,7 +39,7 @@
     <div id="topbarMount"></div>
 
     <main class="mp-main torre-main">
-        <div class="mp-riepilogo" id="record"></div>
+        <div class="mp-riepilogo mp-riepilogo--fisso" id="record"></div>
         <div id="premiModalita" hidden></div>
         <div id="esito"></div>
         <div id="contenuto" class="torre-layout"></div>
@@ -80,6 +80,7 @@
 <script src="js/native/haptics.js"></script>
 <script src="js/native/native-save-backup.js"></script>
 <script src="js/ui/icon-library.js"></script>
+<script src="js/ui/emoji-tema.js"></script>
 <script src="js/ui/deck-switcher.js"></script>
 <script src="js/ui/video-quality.js"></script>
 <script src="js/ui/torre-ambiente-webgl.js"></script>
@@ -97,12 +98,24 @@
     const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const haptic = () => { if (window.NativeHaptics) NativeHaptics.light(); };
 
+    // Tutto cio' che la pagina ridisegna (scalata, premi, esito) passa da qui: i segnaposto data-icon vuoti diventano icone del tema e le
+    // emoji restanti (oggetti, corona, carta fidata) pure; ogni emoji sconosciuta diventa la medaglia. Idempotente.
+    (function idrataSempre() {
+        let attesa = 0;
+        const idrata = () => {
+            attesa = 0;
+            document.querySelectorAll('[data-icon]:empty').forEach((el) => { const svg = Icons.buildIcon(el.dataset.icon); if (svg) el.appendChild(svg); });
+            if (window.EmojiTema) EmojiTema.idrata(document.querySelector('.torre-main') || document.body, { fallback: 'medal' });
+        };
+        new MutationObserver(() => { if (!attesa) attesa = requestAnimationFrame(idrata); }).observe(document.body, { childList: true, subtree: true });
+    })();
+
     function disegna() {
         const s = Torre.stato();
         document.getElementById('record').innerHTML =
-            `<span class="torre-record"><i aria-hidden="true">◆</i><small>Record</small><strong>${s.record.pianoMassimo}<b>/${Torre.piani()}</b></strong></span>` +
-            `<span class="torre-record"><i aria-hidden="true">↻</i><small>Scalate</small><strong>${s.record.tentativi}</strong></span>` +
-            `<span class="torre-record"><i aria-hidden="true">♛</i><small>Conquiste</small><strong>${s.record.conquiste}</strong></span>`;
+            `<span class="torre-record"><i aria-hidden="true"><span class="icon" data-icon="tower"></span></i><small>Record</small><strong>${s.record.pianoMassimo}<b>/${Torre.piani()}</b></strong></span>` +
+            `<span class="torre-record"><i aria-hidden="true"><span class="icon" data-icon="rematch"></span></i><small>Scalate</small><strong>${s.record.tentativi}</strong></span>` +
+            `<span class="torre-record"><i aria-hidden="true"><span class="icon" data-icon="crown"></span></i><small>Conquiste</small><strong>${s.record.conquiste}</strong></span>`;
         disegnaEsito(s);
         const box = document.getElementById('contenuto');
         box.innerHTML = '';
@@ -133,7 +146,7 @@
         const ok = document.createElement('button');
         ok.type = 'button';
         ok.className = 'mp-btn mp-btn--secondario';
-        ok.textContent = 'Ho capito';
+        ok.innerHTML = '<span class="icon" data-icon="check"></span> Ho capito';
         ok.onclick = () => { Torre.esitoMostrato(); disegna(); };
         p.appendChild(ok);
         box.appendChild(p);
@@ -155,7 +168,7 @@
         b.type = 'button';
         b.className = 'mp-btn';
         b.id = 'iniziaScalata';
-        b.textContent = 'Entra nella Torre';
+        b.innerHTML = '<span class="icon" data-icon="tower"></span> Entra nella Torre';
         b.onclick = () => { haptic(); Torre.nuovaScalata(); disegna(); };
         p.appendChild(b);
         return p;
@@ -192,12 +205,12 @@
         sfida.className = 'mp-btn';
         sfida.id = 'sfidaPiano';
         sfida.href = Torre.urlDuello(sc);
-        sfida.textContent = `⚔️ Sfida il piano ${sc.piano}`;
+        sfida.innerHTML = `<span class="icon" data-icon="attackPos"></span> Sfida il piano ${sc.piano}`;
         sfida.onclick = haptic;
         const lascia = document.createElement('button');
         lascia.type = 'button';
         lascia.className = 'mp-btn mp-btn--pericolo';
-        lascia.textContent = 'Abbandona la scalata';
+        lascia.innerHTML = '<span class="icon" data-icon="close"></span> Abbandona la scalata';
         lascia.id = 'abbandonaScalata';
         lascia.onclick = () => {
             haptic();

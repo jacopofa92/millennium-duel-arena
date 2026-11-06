@@ -153,7 +153,7 @@ module.exports = {
                 assert(r.spazio, file + ': manca lo spazio in fondo (.mm-spazio)');
                 if (file === 'cartoteca.html') assert(/carte/i.test(r.badge), 'cartoteca.html: il badge con il numero di carte deve stare nella barra in basso');
                 assert(!r.backVisibile, file + ': il medaglione Indietro flottante non serve piu (la voce madre della barra fa da Indietro)');
-                if (r.filtri !== null) assert(r.filtri <= 1, file + ': i filtri sticky devono stare in cima (top ' + r.filtri + ')');
+                if (r.filtri !== null) assert(r.filtri <= 32, file + ': i filtri sticky devono stare in cima, sotto la fotocamera (top ' + r.filtri + ')');
                 assert(r.extra <= 1, file + ': scorre di lato di ' + r.extra + 'px');
             } finally { await context.close(); }
         }

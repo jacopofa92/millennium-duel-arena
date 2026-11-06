@@ -53,15 +53,16 @@ module.exports = {
             const bottoni = await page.evaluate(() => [...document.querySelectorAll('.shop-grid:not(.packs):not(.decks) .shop-item')].map((item) => {
                 const badge = item.querySelector('.shop-badge');
                 const b = item.querySelector('.buy-btn');
-                return { rarita: badge ? badge.textContent.trim().toLowerCase() : '', disabilitato: b.disabled, testo: b.textContent };
+                // La Stella e' un'icona del tema (classe shop-ico--star), non piu' l'emoji nel testo.
+                return { rarita: badge ? badge.textContent.trim().toLowerCase() : '', disabilitato: b.disabled, testo: b.textContent, stella: !!b.querySelector('.shop-ico--star') || /⭐/.test(b.textContent) };
             }));
             const trova = (re) => bottoni.find((b) => re.test(b.rarita));
             const comune = trova(/comun/);
             const rara = trova(/^rar/);
             const superRara = trova(/super/);
-            assert(comune && !comune.disabilitato && !/⭐/.test(comune.testo), `Pulsante di una comune: ${JSON.stringify(comune)}`);
-            assert(rara && !rara.disabilitato && !/⭐/.test(rara.testo), `Pulsante di una rara: ${JSON.stringify(rara)}`);
-            assert(superRara && superRara.disabilitato && /⭐/.test(superRara.testo), `Pulsante di una Super: ${JSON.stringify(superRara)}`);
+            assert(comune && !comune.disabilitato && !comune.stella, `Pulsante di una comune: ${JSON.stringify(comune)}`);
+            assert(rara && !rara.disabilitato && !rara.stella, `Pulsante di una rara: ${JSON.stringify(rara)}`);
+            assert(superRara && superRara.disabilitato && superRara.stella, `Pulsante di una Super: ${JSON.stringify(superRara)}`);
 
             // Comprare davvero una rara senza Stelle: scala solo 450 Crediti.
             const prima = await page.evaluate(() => SaveManager.getCurrency().credits);

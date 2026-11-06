@@ -191,6 +191,46 @@
             <circle cx="12" cy="10.5" r="1.3" fill="#0b0d1c" opacity="0.7"/>
             <circle cx="16" cy="10.5" r="1.3" fill="#0b0d1c" opacity="0.7"/>
         `,
+        // Azioni dell'editor dei mazzi (stesso tratto pieno e arrotondato delle altre): aggiungi, chiudi, clona, elimina, conferma.
+        plus: `
+            <path d="M12 4.5v15M4.5 12h15" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        `,
+        close: `
+            <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        `,
+        clone: `
+            <rect x="8.5" y="8.5" width="12" height="12" rx="2.2" fill="currentColor"/>
+            <path d="M15.5 4.5H6.2a1.7 1.7 0 0 0-1.7 1.7v9.3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M11.5 14.5h6M14.5 11.5v6" stroke="#0b0d1c" stroke-width="1.6" stroke-linecap="round" opacity="0.65"/>
+        `,
+        trash: `
+            <path d="M4 7h16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M9.2 7V4.8h5.6V7" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M6.2 7.8l1 11.4a1.3 1.3 0 0 0 1.3 1.2h7a1.3 1.3 0 0 0 1.3-1.2l1-11.4z" fill="currentColor"/>
+            <path d="M10 11v6M14 11v6" stroke="#0b0d1c" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+        `,
+        check: `
+            <path d="M4.5 12.8l4.7 4.7L19.5 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        `,
+        // Negozio: schede e sezioni (calendario, busta di carte, cambio, lampadina).
+        calendar: `
+            <rect x="3.5" y="5.5" width="17" height="15" rx="2" fill="currentColor"/>
+            <path d="M3.5 10h17" stroke="#0b0d1c" stroke-width="1.4" opacity="0.6"/>
+            <path d="M8 3.5v4M16 3.5v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="8.5" cy="14" r="1.1" fill="#0b0d1c" opacity="0.6"/><circle cx="12" cy="14" r="1.1" fill="#0b0d1c" opacity="0.6"/><circle cx="15.5" cy="14" r="1.1" fill="#0b0d1c" opacity="0.6"/>
+        `,
+        pack: `
+            <path d="M6 3.5h12l1.5 3-1.5 1V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7.5l-1.5-1z" fill="currentColor"/>
+            <path d="M6 7.5h12" stroke="#0b0d1c" stroke-width="1.2" opacity="0.55"/>
+            <path d="M12 11l1.4 2.9 3.1.4-2.3 2.1.6 3.1L12 17.9l-2.8 1.6.6-3.1-2.3-2.1 3.1-.4z" fill="#0b0d1c" opacity="0.6"/>
+        `,
+        exchange: `
+            <path d="M4 8.5h13l-3.2-3.2M20 15.5H7l3.2 3.2" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        `,
+        bulb: `
+            <path d="M12 3.5a6 6 0 0 0-3.4 10.9c.6.5.9 1.2.9 1.9v.7h5v-.7c0-.7.3-1.4.9-1.9A6 6 0 0 0 12 3.5z" fill="currentColor"/>
+            <path d="M9.8 19h4.4M10.6 21h2.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        `,
         // Registrati — scintilla a 4 punte (nuovo inizio), stesso motivo dorato del logo del menu.
         signup: `
             <path d="M12 2 L14.1 9.1 L21 12 L14.1 14.9 L12 22 L9.9 14.9 L3 12 L9.9 9.1 Z" fill="currentColor"/>

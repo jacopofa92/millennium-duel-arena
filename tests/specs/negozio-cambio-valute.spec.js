@@ -67,7 +67,8 @@ module.exports = {
 
             // L'interfaccia: la sezione c'e', una riga per cambio, con tetto e pulsanti.
             await page.reload();
-            await page.waitForSelector('.cambio-riga', { timeout: 15000 });
+            await page.click('.shop-tab >> nth=3');   // il cambio sta nella scheda Cambio
+        await page.waitForSelector('.cambio-riga', { timeout: 15000 });
             const righe = await page.$$eval('.cambio-riga', (els) => els.map((e) => e.textContent.replace(/\s+/g, ' ')));
             assert(righe.length === 3, `una riga per cambio nel Negozio: ${righe.length}`);
             assert(righe.every((t) => /Questa settimana: \d+\/\d+/.test(t)), `ogni riga dice il tetto: ${JSON.stringify(righe)}`);
