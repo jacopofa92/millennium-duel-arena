@@ -108,6 +108,13 @@
             toast: toast, silenzia: /** @type {HTMLElement} */ (pannello.querySelector('.mpchat-silenzia'))
         };
         btn.addEventListener('click', () => (aperto ? chiudi() : apri()));
+        // La tastiera compare e scompare: il pannello si rimette a posto ogni volta (vedi sistemaTastiera).
+        el.input.addEventListener('focus', () => { sistemaTastiera(); setTimeout(sistemaTastiera, 300); });
+        el.input.addEventListener('blur', () => setTimeout(sistemaTastiera, 50));
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', sistemaTastiera);
+            window.visualViewport.addEventListener('scroll', sistemaTastiera);
+        }
         /** @type {HTMLElement} */ (pannello.querySelector('.mpchat-chiudi')).addEventListener('click', chiudi);
         el.silenzia.addEventListener('click', () => {
             silenziato = !silenziato;
@@ -131,6 +138,33 @@
         el.silenzia.setAttribute('aria-pressed', String(silenziato));
     }
 
+    /**
+     * TASTIERA DEL TELEFONO. Quando si scrive, la tastiera copre la meta' bassa dello schermo e, con un pannello ancorato in basso (sala) o
+     * a meta' altezza (duello), copriva proprio la riga dove si scrive. Finche' il campo ha il fuoco il pannello si ancora al FONDO
+     * dell'area davvero visibile (visualViewport: tolta la tastiera) e non e' mai piu' alto di quella: la riga di scrittura resta sopra la
+     * tastiera. Per fare spazio le frasi rapide si nascondono (si usano a tastiera chiusa). Se la tastiera ridimensiona gia' la pagina
+     * (WebView con adjustResize) la parte coperta e' 0 e il pannello sta semplicemente sul fondo.
+     */
+    function sistemaTastiera() {
+        if (!el || !aperto) return;
+        const scrive = document.activeElement === el.input;
+        const vv = window.visualViewport;
+        const p = el.pannello;
+        if (!scrive || !vv) {
+            p.classList.remove('mpchat-tastiera');
+            p.style.removeProperty('top');
+            p.style.removeProperty('bottom');
+            p.style.removeProperty('max-height');
+            return;
+        }
+        const coperto = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+        p.classList.add('mpchat-tastiera');
+        p.style.top = 'auto';
+        p.style.bottom = (coperto + 8) + 'px';
+        p.style.maxHeight = Math.max(170, vv.height - 16) + 'px';
+        el.log.scrollTop = el.log.scrollHeight;
+    }
+
     function apri() {
         if (!el) return;
         aperto = true;
@@ -146,6 +180,8 @@
         if (!el) return;
         aperto = false;
         el.pannello.hidden = true;
+        el.pannello.classList.remove('mpchat-tastiera');
+        ['top', 'bottom', 'max-height'].forEach((k) => el.pannello.style.removeProperty(k));
         document.body.classList.remove('mpchat-aperta');
     }
     function aggiornaBadge() {
@@ -235,7 +271,7 @@
         ['room-created', 'room-ready', 'room-update'].forEach((evento) => net.on(evento, () => attivaChat(true)));
     }
 
-    window.MpChat = { avvia: avvia, ricevi: ricevi, attiva: attivaChat, FRASI: FRASI, _pulisci: pulisci };
+    window.MpChat = { avvia: avvia, ricevi: ricevi, attiva: attivaChat, FRASI: FRASI, _pulisci: pulisci, _sistemaTastiera: sistemaTastiera };
     // Si aggancia da sola alla rete della pagina (multiplayer.html): nessuna chiamata da fare altrove.
     if (window.DuelNetwork) {
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => avvia(window.DuelNetwork));

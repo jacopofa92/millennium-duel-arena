@@ -53,3 +53,7 @@ body.mp-in-duello .mpchat-pannello { bottom: auto; top: calc(env(safe-area-inset
 .mpchat-toast[hidden] { display: none; }
 @keyframes mpchatToast { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .mpchat-toast { animation: none; } }
+
+/* Tastiera aperta (js/multiplayer/mp-chat.js, sistemaTastiera): il pannello sta sul fondo dell'area visibile; si fa spazio togliendo le frasi rapide. */
+.mpchat-pannello.mpchat-tastiera .mpchat-frasi { display: none; }
+.mpchat-pannello.mpchat-tastiera .mpchat-log { min-height: 60px; }

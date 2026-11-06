@@ -85,6 +85,29 @@ module.exports = {
             const visto = await B.evaluate(() => /non deve vedere/.test(document.querySelector('.mpchat-log').textContent));
             assert(!visto && righeB2 === righeB, `silenziata, la chat non mostra i messaggi in entrata (la nota di sistema c'e' gia' al momento di righeB): ${righeB} -> ${righeB2}`);
 
+            // Tastiera del telefono: con il campo in focus e una tastiera che copre la parte bassa, il pannello (sala e duello) resta
+            // tutto nell'area visibile e la riga di scrittura sta sopra la tastiera. La tastiera si finge con un visualViewport ridotto.
+            for (const inDuello of [false, true]) {
+                const r = await A.evaluate((duello) => {
+                    document.body.classList.toggle('mp-in-duello', duello);
+                    const finto = { height: 480, offsetTop: 0, addEventListener() {}, removeEventListener() {} };
+                    Object.defineProperty(window, 'visualViewport', { configurable: true, value: finto });
+                    const input = document.querySelector('.mpchat-input');
+                    input.focus();
+                    MpChat._sistemaTastiera();
+                    const p = document.getElementById('mpChatPanel').getBoundingClientRect();
+                    const i = input.getBoundingClientRect();
+                    const out = { fondoPannello: Math.round(p.bottom), cimaPannello: Math.round(p.top), fondoInput: Math.round(i.bottom), visibile: 480, frasiNascoste: getComputedStyle(document.querySelector('.mpchat-frasi')).display === 'none' };
+                    input.blur();
+                    MpChat._sistemaTastiera();
+                    out.dopo = document.getElementById('mpChatPanel').style.bottom;
+                    document.body.classList.remove('mp-in-duello');
+                    return out;
+                }, inDuello);
+                assert(r.fondoInput <= r.visibile && r.fondoPannello <= r.visibile && r.cimaPannello >= 0, `${inDuello ? 'in duello' : 'in sala'}: con la tastiera il pannello sta nell'area visibile (${JSON.stringify(r)})`);
+                assert(r.frasiNascoste, 'con la tastiera aperta le frasi rapide si nascondono per fare spazio');
+                assert(r.dopo === '', 'chiusa la tastiera il pannello torna alla posizione di prima');
+            }
             // Forma del messaggio: validata dal protocollo.
             const forma = await A.evaluate(() => ({
                 ok: ProtocolloMP.motivoRifiuto({ kind: 'ready', pronto: true, chat: { frase: 'gg', nome: 'A' } }),
