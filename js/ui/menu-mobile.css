@@ -374,3 +374,10 @@ body.mp-in-duello .mm-barra, body.mp-in-duello .mm-spazio { display: none !impor
 /* UX fluida: transizione fra pagine breve anche dal menu (index.html non carica topbar.css; vedi il commento li'). */
 ::view-transition-old(root) { animation-duration: 120ms; }
 ::view-transition-new(root) { animation-duration: 160ms; }
+
+/* CARD DEI TORNEI BLOCCATE (tornei.html): stesse catene in croce delle tessere chiuse del menu; il motivo resta leggibile. */
+.tourney-card--bloccato { position: relative; overflow: hidden; filter: saturate(0.55); cursor: not-allowed; }
+.tourney-card--bloccato .tourney-name-row, .tourney-card--bloccato .tourney-desc, .tourney-card--bloccato .tourney-sigillo, .tourney-card--bloccato .tourney-arte { opacity: 0.4; }
+.tourney-card--bloccato .tourney-motivo { margin-top: 6px; font-size: 0.78rem; line-height: 1.3; color: #f0dca0; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9); position: relative; z-index: 4; }
+.tourney-card--bloccato .tourney-soon { color: #f7d774; }
+.tourney-card--bloccato .mm-catene { z-index: 3; }

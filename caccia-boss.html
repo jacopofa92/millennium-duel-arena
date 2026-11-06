@@ -68,18 +68,20 @@
         <div class="mp-sezione">Premi</div>
         <section class="mp-pannello" id="premio"></section>
 
-        <button type="button" class="mp-btn rz-cta" id="vai">🏹 Inizia la caccia</button>
-
         <details class="rz-come">
             <summary>Come funziona</summary>
             <p>Un Boss nuovo ogni lunedì, uguale per tutti. Ha molti più Life Point del solito e il suo mazzo più forte, ma tu hai un numero limitato di turni: se non lo batti in tempo, la caccia è persa. Puoi riprovare quante volte vuoi.</p>
         </details>
+
+        <button type="button" class="mp-btn rz-cta" id="vai">🏹 Inizia la caccia</button>
     </main>
 
 <script src="js/data/cards-data.generated.js"></script>
 <script src="js/data/characters-db.js"></script>
 <script src="js/data/caccia-db.js"></script>
 <script src="js/save-manager.js"></script>
+<script src="js/modes/mode-unlocks.js"></script>
+<script>ModeUnlocks.proteggiPagina('caccia');</script>
 <script src="js/cloud/server-date.js"></script>
 <script src="js/modes/caccia.js"></script>
 <script src="js/audio/audio-manager.js"></script>

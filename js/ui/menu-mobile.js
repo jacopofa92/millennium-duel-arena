@@ -114,8 +114,7 @@
                 + (sotto ? `<span class="mm-tessera-sotto">${esc(!acc.sbloccato ? 'Da sbloccare' : sotto)}</span>` : '')
                 + '</span>'
                 // Tessera bloccata: due catene in croce e il sigillo con la serratura al centro (stile del gioco: ferro scuro e oro).
-                + (!acc.sbloccato ? '<span class="mm-catene" aria-hidden="true"><i class="mm-catena mm-catena--a"></i><i class="mm-catena mm-catena--b"></i>'
-                    + '<span class="mm-sigillo"><svg viewBox="0 0 24 24"><path d="M12 5.2a3.6 3.6 0 0 0-1.9 6.7L9 18.6h6l-1.1-6.7A3.6 3.6 0 0 0 12 5.2z" fill="currentColor"/></svg></span></span>' : '');
+                + (!acc.sbloccato ? (window.ModeUnlocks && window.ModeUnlocks.CATENE_HTML || '') : '');
             // UX fluida: al primo contatto col dito la pagina di destinazione comincia a scaricarsi, cosi' al "click"
             // (qualche decina di ms dopo) e' gia' in arrivo. Solo link a pagine locali e sbloccate; una volta per tessera.
             if (item.href && acc.sbloccato && /^[\w-]+\.html/.test(item.href)) {

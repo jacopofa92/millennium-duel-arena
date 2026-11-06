@@ -65,6 +65,7 @@
     const pulisci = (t) => String(t == null ? '' : t).replace(/[\u0000-\u001f\u007f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 24);
     function mioNome() { return pulisci((g.SaveManager && SaveManager.getPlayerName && SaveManager.getPlayerName()) || '') || 'Giocatore'; }
     function personaggio(id) { return (typeof characterDatabase !== 'undefined' ? characterDatabase : []).find((c) => c.id === id) || null; }
+    function sbloccato(id) { return !g.CharacterUnlocks || g.CharacterUnlocks.sbloccato(id); }
     function nomePersonaggio(id) { const c = personaggio(id); return c ? c.name : id; }
 
     /**
@@ -74,7 +75,8 @@
      */
     function duellantiIA() {
         const ids = [];
-        const aggiungi = (id) => { if (id && ids.indexOf(id) === -1 && personaggio(id)) ids.push(id); };
+        // Come in Duello Libero (js/data/character-unlocks.js): l'host puo' mettere solo i Duellanti che ha sbloccato.
+        const aggiungi = (id) => { if (id && ids.indexOf(id) === -1 && personaggio(id) && sbloccato(id)) ids.push(id); };
         (typeof tagDatabase !== 'undefined' ? tagDatabase.compagniProposti : []).forEach(aggiungi);
         if (typeof getCharacterDeck === 'function') {
             (typeof characterDatabase !== 'undefined' ? characterDatabase : []).forEach((c) => { if (getCharacterDeck(c.id, 'medium')) aggiungi(c.id); });
@@ -82,7 +84,7 @@
         (g.RAID_BOSSES || []).forEach((b) => aggiungi(b.id));
         return ids;
     }
-    function bossDisponibili() { return (g.RAID_BOSSES || []).filter((b) => personaggio(b.id)); }
+    function bossDisponibili() { return (g.RAID_BOSSES || []).filter((b) => personaggio(b.id) && sbloccato(b.id)); }
 
     // ------------------------------------------------------------------
     // Ingresso: il formato si sceglie prima di aprire la stanza
@@ -133,7 +135,7 @@
         const ia = {};
         const dueIA = duellantiIA();
         FORMATI[formato].posti.forEach((p, i) => { ia[p] = dueIA[i % Math.max(1, dueIA.length)] || 'yugiMuto'; });
-        if (formato === '2v1' && personaggio('kaiba')) ia.B0 = 'kaiba';
+        if (formato === '2v1' && personaggio('kaiba') && sbloccato('kaiba')) ia.B0 = 'kaiba';
         return {
             formato, posti, ia,
             livelloIA: 'medium',

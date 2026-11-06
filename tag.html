@@ -33,6 +33,7 @@
 <link rel="stylesheet" href="js/modes/mode-pages.css">
 <link rel="stylesheet" href="js/ui/deck-box.css">
 <link rel="stylesheet" href="js/ui/duel-setup.css">
+<link rel="stylesheet" href="js/ui/scelte-tessere.css">
 <link rel="stylesheet" href="js/economy/rewards.css">
 <style>
     /* =================================================================
@@ -128,7 +129,8 @@
     .tg-voce:disabled { cursor: not-allowed; opacity: 0.38; }
     .tg-voce-foto { flex: 0 0 auto; aspect-ratio: 1; background: #15110c center / cover no-repeat; }
     .tg-voce-nome { padding: 8px 10px 10px; font: 0.92rem/1.25 Georgia, 'Times New Roman', serif; color: var(--ink); overflow-wrap: anywhere; }
-    .tg-voce-preso { position: absolute; left: 6px; top: 6px; padding: 2px 7px; border-radius: 999px; background: rgba(10, 8, 5, 0.85); color: var(--ink); font: 600 0.65rem Arial, sans-serif; }
+    .tg-voce--bloccata { opacity: 0.45; filter: grayscale(0.7); cursor: not-allowed; }
+.tg-voce-preso { position: absolute; left: 6px; top: 6px; padding: 2px 7px; border-radius: 999px; background: rgba(10, 8, 5, 0.85); color: var(--ink); font: 600 0.65rem Arial, sans-serif; }
     .tg-foglio-vuoto { grid-column: 1 / -1; color: var(--ink-dim); font-size: 0.9rem; text-align: center; padding: 24px 0; }
     body.tg-foglio-aperto { overflow: hidden; }
 
@@ -183,10 +185,12 @@
         <!-- Cosa paga una vittoria al livello scelto (numeri da Rewards.preview). -->
         <section class="tg-regole" aria-label="Premi della vittoria" id="premiTag"></section>
 
-        <!-- Mazzo, arena e musica: lo stesso selettore del Duello Libero (js/ui/duel-setup.js). -->
-        <section class="tg-regole tg-setup" aria-label="Mazzo, arena e musica">
-            <div class="tg-regola-nome">Il tuo mazzo, l'arena e la musica</div>
-            <div id="setupDuello"></div>
+        <!-- Mazzo, arena e musica: due riquadri riassuntivi; un tocco apre la finestra con il selettore vero del Duello Libero
+             (js/ui/duel-setup.js), come nella sala Multiplayer (js/multiplayer/mp-scelte.js). -->
+        <section class="tg-regole tg-setup tg-scelte" aria-label="Mazzo, arena e musica">
+            <div class="tg-regola-nome">Mazzo, arena e musica</div>
+            <div class="tg-scelta-gruppo"><div id="setupMazzo"></div></div>
+            <div class="tg-scelta-gruppo"><div id="setupArena"></div></div>
         </section>
 
         <details class="tg-come">
@@ -236,7 +240,9 @@
 <script src="js/data/starter-structure-decks.js"></script>
 <script src="js/ui/deck-box.js"></script>
 <script src="js/economy/rewards.js"></script>
+<script src="js/data/character-unlocks.js"></script>
 <script src="js/ui/duel-setup.js"></script>
+<script src="js/multiplayer/mp-scelte.js"></script>
 <script src="js/audio/audio-manager.js"></script>
 <script src="js/native/app-back-button.js"></script>
 <script src="js/native/haptics.js"></script>
@@ -251,9 +257,11 @@
     Icons.hydrate();
 
     (function () {
-    // Compagni e avversari: TUTTI i personaggi con un mazzo vero (js/data/character-decks.js), senza
-    // restrizioni di sblocco o di serie (decisione dell'autore). I compagni proposti vengono per primi.
+    // Compagni e avversari: i personaggi con un mazzo vero (js/data/character-decks.js). Come in Duello Libero (js/data/character-unlocks.js)
+    // si possono SCEGLIERE solo quelli sbloccati (all'inizio Yugi e il nonno, gli altri battendoli in un Torneo o nella Storia); gli altri
+    // si vedono, spenti, con scritto come guadagnarli. I compagni proposti vengono per primi.
     const haMazzo = (id) => !!getCharacterDeck(id, 'medium');
+    const sbl = (id) => !window.CharacterUnlocks || CharacterUnlocks.sbloccato(id);
     const tutti = characterDatabase.filter((c) => haMazzo(c.id));
     const proposti = tagDatabase.compagniProposti.map((id) => tutti.find((c) => c.id === id)).filter(Boolean);
     const compagni = proposti.concat(tutti.filter((c) => proposti.indexOf(c) === -1));
@@ -289,17 +297,17 @@
 
     const scelta = {
         formato: 1,
-        compagno: compagni[0] ? compagni[0].id : null,
-        avversario: (avversari.find((c) => c.id === 'kaiba') || avversari[0] || {}).id || null,
+        compagno: (compagni.find((c) => sbl(c.id)) || {}).id || null,
+        avversario: (avversari.find((c) => c.id === 'kaiba' && sbl(c.id)) || avversari.find((c) => sbl(c.id)) || {}).id || null,
         avversario2: null,
-        boss: bosses[0] ? bosses[0].id : null,
+        boss: (bosses.find((c) => sbl(c.id)) || {}).id || null,
         livello: 'Medio',
         lp: tagDatabase.regolaLpPredefinita,
         scambio: tagDatabase.scambioPredefinito
     };
     // Il tuo compagno non può essere anche un avversario (né il Boss).
-    const disponibili = () => avversari.filter((c) => c.id !== scelta.compagno);
-    const bossDisponibili = () => bosses.filter((c) => c.id !== scelta.compagno);
+    const disponibili = () => avversari.filter((c) => c.id !== scelta.compagno && sbl(c.id));
+    const bossDisponibili = () => bosses.filter((c) => c.id !== scelta.compagno && sbl(c.id));
     // Il secondo avversario predefinito: il primo disponibile diverso dal primo avversario.
     const secondoPredefinito = () => (disponibili().find((c) => c.id !== scelta.avversario) || {}).id || null;
 
@@ -442,10 +450,13 @@
             b.type = 'button';
             b.setAttribute('aria-pressed', String(c.id === attuale));
             const preso = presi[c.id];
-            b.disabled = !!preso;
-            if (preso) b.title = `Già in partita come ${preso.toLowerCase()}`;
+            const bloccato = !sbl(c.id);
+            b.disabled = !!preso || bloccato;
+            if (bloccato) { b.classList.add('tg-voce--bloccata'); b.title = window.CharacterUnlocks ? CharacterUnlocks.comeSbloccare(c) : 'Da sbloccare'; }
+            else if (preso) b.title = `Già in partita come ${preso.toLowerCase()}`;
             b.append(foto('tg-voce-foto', c.image), el('span', 'tg-voce-nome', c.name));
-            if (preso) b.append(el('span', 'tg-voce-preso', preso));
+            if (bloccato) b.append(el('span', 'tg-voce-preso', 'Da sbloccare'));
+            else if (preso) b.append(el('span', 'tg-voce-preso', preso));
             b.onclick = () => {
                 tocco();
                 scelta[ruolo.chiave] = c.id;
@@ -519,8 +530,33 @@
     }
 
     // Mazzo (è il mazzo attivo del gioco), arena e musica: stesso componente del Duello Libero.
-    const setup = window.DuelSetup ? DuelSetup.mount($('setupDuello'), { decks: true, deckLabel: false }) : null;
+    const AO = window.ArenaOptions;
+    const CASUALE = AO ? AO.RANDOM : 'random';
+    const setupMazzi = window.DuelSetup ? DuelSetup.mount($('setupMazzo'), { decks: true, arena: false, deckLabel: false }) : null;
+    const setup = window.DuelSetup ? DuelSetup.mount($('setupArena'), {}) : null;   // arena, musica e "carte ammesse"
+    if (setupMazzi) setupMazzi.refresh();
     if (setup) setup.refresh();
+    // I selettori sono nella finestra, non a vista: qui restano due righe con il valore corrente (js/multiplayer/mp-scelte.js).
+    if (window.MpScelte) {
+        const mazzoAttivo = () => (window.SaveManager && SaveManager.getActiveDeck) ? SaveManager.getActiveDeck() : null;
+        const sceltaArena = () => (setup ? setup.getSelection() : {});
+        MpScelte.tessera($('setupMazzo').parentElement, {
+            corpo: $('setupMazzo'), titolo: 'Il tuo mazzo', icona: 'cards', glifo: () => '🃏',
+            valore: () => { const m = mazzoAttivo(); return m ? m.name : 'Mazzo generato al momento'; },
+            dettaglio: () => {
+                const m = mazzoAttivo();
+                return m ? `${(m.main || []).reduce((tot, v) => tot + (v.qty || 1), 0)} carte` : 'Non hai ancora un mazzo tuo';
+            },
+            alApertura: () => { if (setupMazzi) setupMazzi.refresh(); }
+        });
+        MpScelte.tessera($('setupArena').parentElement, {
+            corpo: $('setupArena'), titolo: 'Arena e musica', icona: 'arena', glifo: () => '🏟️',
+            img: () => { const s = sceltaArena(); return (AO && s.field && s.field !== CASUALE) ? AO.previewFor(s.field) : null; },
+            valore: () => { const s = sceltaArena(); return (AO && s.field && s.field !== CASUALE) ? AO.nomeCampo(s.field) : 'Arena casuale'; },
+            dettaglio: () => { const s = sceltaArena(); return (AO && s.music && s.music !== CASUALE) ? '♪ ' + AO.nomeTraccia(s.music) : '♪ Musica casuale'; },
+            alApertura: () => { if (setup) setup.refresh(); }
+        });
+    }
 
     document.getElementById('vai').onclick = () => {
         const controBoss = scelta.formato === BOSS;

@@ -658,6 +658,11 @@
 <script src="js/native/haptics.js"></script>
 <script src="js/native/native-save-backup.js"></script>
 <script src="js/save-manager.js"></script>
+<script src="js/data/story-campaigns.js"></script>
+<script src="js/data/story-ritocchi.js"></script>
+<script src="js/story/story-ritocchi.js"></script>
+<script src="js/modes/mode-unlocks.js"></script>
+<script>ModeUnlocks.proteggiPagina('tornei');</script>
 <script src="js/economy/card-acquisition.js"></script>
 <script src="js/economy/rewards.js"></script>
 <script src="js/ui/icon-library.js"></script>
@@ -764,6 +769,9 @@
         }
     ];
 
+    // Quale blocco di ModeUnlocks governa ogni torneo.
+    const MODO_SBLOCCO = { duelistKingdom: 'torneo-regno', battleCity: 'torneo-battlecity', kaibaTournament: 'torneo-kaiba' };
+
     (function riflettiProgressoTornei() {
         if (!window.SaveManager) return;
 
@@ -792,6 +800,25 @@
             const avanzamento = document.getElementById(torneo.prefisso + 'Progress');
             const abbandona = document.getElementById(torneo.prefisso + 'Abandon');
             if (!badge) return;
+
+            // TORNEO BLOCCATO (js/modes/mode-unlocks.js): catene in croce come le tessere chiuse del menu e il motivo scritto; un tocco
+            // non apre il torneo, fa solo tintinnare le catene.
+            const accesso = window.ModeUnlocks ? ModeUnlocks.stato(MODO_SBLOCCO[torneo.id]) : { sbloccato: true, motivo: '' };
+            if (!accesso.sbloccato && card) {
+                card.classList.add('tourney-card--bloccato');
+                card.insertAdjacentHTML('beforeend', ModeUnlocks.CATENE_HTML);
+                badge.textContent = 'Da sbloccare';
+                const motivo = document.createElement('div');
+                motivo.className = 'tourney-motivo';
+                motivo.textContent = accesso.motivo;
+                card.querySelector('.tourney-body').appendChild(motivo);
+                card.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    if (window.NativeHaptics) NativeHaptics.light();
+                    card.classList.remove('mm-scossa'); void card.offsetWidth; card.classList.add('mm-scossa');
+                });
+                return;
+            }
 
             // Lo storico (tentativi/completamenti) sopravvive al reset dello
             // stato della singola partita, quindi si mostra SEMPRE, anche

@@ -790,6 +790,12 @@
                 torneoId: esito.torneoId, opponentId: esito.opponentId || null,
                 tappaId: esito.tappaId || null
             };
+            // Kaiba battuto nel torneo del presente di Memorie Proibite: apre il Torneo Kaiba dei Tornei (mode-unlocks.js), per sempre.
+            if (esito.playerWon === true && esito.tappaId === 'fm-3t-kaiba' && window.SaveManager) {
+                const acq = SaveManager.getCardAcquisitionState();
+                acq.torneiSbloccati = Object.assign({}, acq.torneiSbloccati, { kaiba: true });
+                SaveManager.setCardAcquisitionState(acq);
+            }
             if (esito.playerWon !== true) {
                 // In un TORNEO si ricomincia dal primo incontro; in
                 // un'AREA si resta dov'eravamo e si riprova quella tappa.

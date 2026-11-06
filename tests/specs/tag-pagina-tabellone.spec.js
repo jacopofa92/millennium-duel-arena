@@ -27,8 +27,11 @@ module.exports = {
                     titolo: document.getElementById('titoloAvv').textContent,
                     largo: document.documentElement.scrollWidth - innerWidth
                 }));
-                t.assert(await page.isVisible('#setupDuello .ds-group') && (await page.locator('#setupDuello [data-field], #setupDuello .ds-opt, #setupDuello button').count()) > 3,
-                    `${w}px: la pagina offre mazzo, arena e musica`);
+                // Mazzo, arena e musica sono due RIQUADRI riassuntivi; il selettore vero sta nella finestra che si apre al tocco.
+                t.assert((await page.locator('.tg-scelte .mp-tessera').count()) === 2 && !(await page.isVisible('#setupArena .ds-group')), `px: mazzo e arena sono due riquadri, senza il selettore intero a vista`);
+                await page.click('.tg-scelte .mp-tessera >> nth=1');
+                t.assert(await page.isVisible('#mpModale .ds-group') && (await page.locator('#mpModale button, #mpModale [data-field], #mpModale .ds-opt').count()) > 3, `px: toccando il riquadro si apre la finestra con arena e musica`);
+                await page.click('#mpModale .mp-modale-fatto');
                 const unoControUno = await conta();
                 t.assert(unoControUno.tuoi === 2 && unoControUno.avv === 1, `${w}px, 2 contro 1: tu + compagno contro un avversario: ` + JSON.stringify(unoControUno));
                 t.assert(unoControUno.largo <= 0, `${w}px: nessuno scorrimento laterale`);

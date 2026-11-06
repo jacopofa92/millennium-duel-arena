@@ -1328,7 +1328,7 @@
                             // Storia: la campagna a capitoli, con i Duellanti e i filmati.
                             { icon: 'story', label: 'Storia', action: 'link', href: 'storia.html' },
                             // Una sola fonte per la selezione dei tornei: la pagina autonoma contiene avanzamento, abbandono e premi.
-                            { icon: 'tournament', label: 'Tornei', action: 'link', href: 'tornei.html' },
+                            { icon: 'tournament', label: 'Tornei', action: 'link', href: 'tornei.html', richiedeModalita: 'tornei' },
                             { icon: 'tower', label: 'Torre dei Duellanti', action: 'link', href: 'torre.html', richiedeModalita: 'torre' },
                             // Rivincite: rigioca i Duellanti gia' battuti nella Storia, quindi sta con la campagna e non con l'allenamento.
                             { icon: 'rematch', label: 'Rivincite', action: 'link', href: 'rivincite.html', richiedeModalita: 'rivincite' }
@@ -1338,8 +1338,8 @@
                         icon: 'star', label: 'Settimanali', action: 'submenu',
                         children: [
                             // Le due modalita' a rotazione settimanale (regola e Boss nuovi ogni lunedi', uguali per tutti).
-                            { icon: 'star', label: 'Duello della Settimana', action: 'link', href: 'settimana.html' },
-                            { icon: 'skull', label: 'Caccia al Boss', action: 'link', href: 'caccia-boss.html' }
+                            { icon: 'star', label: 'Duello della Settimana', action: 'link', href: 'settimana.html', richiedeModalita: 'settimana' },
+                            { icon: 'skull', label: 'Caccia al Boss', action: 'link', href: 'caccia-boss.html', richiedeModalita: 'caccia' }
                         ]
                     },
                     {
