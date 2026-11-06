@@ -369,3 +369,7 @@
         .cartoteca-grid { gap: 8px; }
     }
 }
+
+/* Badge a due righe (barra in basso): carte possedute sul totale e artwork alternativi posseduti sul totale. */
+.cartoteca-count:has(> span) { display: inline-flex; flex-direction: column; align-items: center; gap: 1px; line-height: 1.15; text-align: center; }
+.cartoteca-count > span:nth-child(2) { opacity: 0.8; font-size: 0.9em; }

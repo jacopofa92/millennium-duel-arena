@@ -106,7 +106,9 @@ module.exports = {
                         if (nuovo.length !== mazzo.length) problemi.push(`${regola.id}: ${nuovo.length} carte invece di ${mazzo.length}`);
                         if (illegali) problemi.push(`${regola.id}: ${illegali} mostri non ammessi`);
                         if (troppe) problemi.push(`${regola.id}: carte con più di 3 copie`);
-                        if (nuovo.filter((c) => c.type !== 'monster').length !== magie) problemi.push(`${regola.id}: Magie/Trappole cambiate`);
+                        // Magie e Trappole restano com'erano, tranne con la regola 'soloMostri' (il mazzo non puo' averne: diventano mostri).
+                        const nonMostri = nuovo.filter((c) => c.type !== 'monster').length;
+                        if (regola.filtro.tipo === 'soloMostri' ? nonMostri !== 0 : nonMostri !== magie) problemi.push(`${regola.id}: Magie/Trappole cambiate`);
                         if (new Set(nuovo.map((c) => c.uid)).size !== nuovo.length) problemi.push(`${regola.id}: uid ripetuti`);
                         if (sostituite < 0) problemi.push(`${regola.id}: conteggio assurdo`);
                     });

@@ -134,7 +134,13 @@
     // La Cartoteca vera e' js/ui/cartoteca-view.js (la stessa della vista del menu): qui solo la cornice della pagina.
     const conteggio = document.getElementById('resultCount');
     CartotecaView.mount(document.getElementById('cartoteca-root'), {
-        onConteggio: (testo) => { if (conteggio) conteggio.textContent = testo; }
+        // Il badge della barra in basso: carte possedute (senza doppioni) sul totale e artwork alternativi posseduti sul totale.
+        onConteggio: (testo, c) => {
+            if (!conteggio) return;
+            conteggio.title = testo;
+            if (!c) { conteggio.textContent = testo; return; }
+            conteggio.innerHTML = `<span>${c.possedute}/${c.totale} carte</span><span>${c.artworkPossedute}/${c.artworkTotale} artwork</span>`;
+        }
     });
 </script>
 </body>

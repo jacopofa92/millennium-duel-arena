@@ -416,6 +416,25 @@
          * impaginare, una barra con tutti i pulsanti spenti sarebbe solo
          * rumore.
          */
+        /**
+         * Quante carte DIVERSE si possiedono (i doppioni non contano) sul totale del catalogo, e quante illustrazioni alternative sono
+         * sbloccate sul totale. Un amministratore le ha tutte.
+         */
+        function conteggiPossesso() {
+            const catalogo = (typeof cardDatabase !== 'undefined' && Array.isArray(cardDatabase)) ? cardDatabase : [];
+            const admin = !!(window.CloudSync && typeof CloudSync.isAdmin === 'function' && CloudSync.isAdmin());
+            let possedute = catalogo.length;
+            if (!admin && window.SaveManager && SaveManager.getCollection) {
+                const raccolta = SaveManager.getCollection();
+                possedute = catalogo.filter((c) => Number(raccolta[c.id]) > 0).length;
+            }
+            let artTot = 0, artPoss = 0;
+            if (window.ArtworkAlternativi) {
+                ArtworkAlternativi.carte().forEach((id) => { artTot += ArtworkAlternativi.numero(id); artPoss += ArtworkAlternativi.sbloccate(id); });
+            }
+            return { possedute: possedute, totale: catalogo.length, artworkPossedute: artPoss, artworkTotale: artTot };
+        }
+
         function renderPager(el, totalPages, total, firstIndex, shown) {
             if (totalPages <= 1) { el.hidden = true; el.innerHTML = ''; return; }
             el.hidden = false;
@@ -490,7 +509,7 @@
             }
             renderPager(q('pagerTop'), totalPages, results.length, firstIndex, pageCards.length);
             renderPager(q('pagerBottom'), totalPages, results.length, firstIndex, pageCards.length);
-            if (opzioni.onConteggio) opzioni.onConteggio(`${results.length} cart${results.length === 1 ? 'a' : 'e'}`);
+            if (opzioni.onConteggio) opzioni.onConteggio(`${results.length} cart${results.length === 1 ? 'a' : 'e'}`, conteggiPossesso());
         }
 
         // La scheda della carta è quella condivisa da tutto il gioco

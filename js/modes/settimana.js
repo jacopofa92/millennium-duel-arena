@@ -92,7 +92,20 @@ const Settimana = (function () {
         if (f.tipo === 'attributo') return carta.attribute === f.valore;
         if (f.tipo === 'razza') return carta.race === f.valore;
         if (f.tipo === 'livelloMax') return (carta.level || 0) <= f.valore;
+        // Regole sul genere di mostri: vanilla = Normale senza effetto (`vanilla: true` in cards.json), effetto = tutti gli altri.
+        if (f.tipo === 'vanilla') return carta.vanilla === true;
+        if (f.tipo === 'effetto') return carta.vanilla !== true;
         return true;
+    }
+
+    /** La regola vieta anche le carte che NON sono mostri (Magie e Trappole)? Solo 'soloMostri'. */
+    function vietaNonMostri(r) {
+        return r.filtro.tipo === 'soloMostri';
+    }
+
+    /** Una carta (mostro o no) e' fuori regola? Un mostro la rispetta o no; una Magia/Trappola e' fuori solo se la regola le vieta. */
+    function fuoriRegola(r, carta) {
+        return carta.type === 'monster' ? !ammette(r, carta) : vietaNonMostri(r);
     }
 
     /** Una carta che si può mettere nel mazzo come rimpiazzo: mostro normale, non divino, non della Grande Guerra. */
@@ -106,7 +119,10 @@ const Settimana = (function () {
 
     /** Quanto un candidato è lontano dalla carta da sostituire: prima il Livello, poi l'ATK. */
     function distanza(da, candidata) {
-        return Math.abs((da.level || 0) - (candidata.level || 0)) * 600 + Math.abs((da.attack || 0) - (candidata.attack || 0));
+        // Una Magia o una Trappola da rimpiazzare con un mostro (regola 'soloMostri') non ha Livello ne' ATK: si mira a un mostro medio.
+        const livello = da.type === 'monster' ? (da.level || 0) : 4;
+        const attacco = da.type === 'monster' ? (da.attack || 0) : 1600;
+        return Math.abs(livello - (candidata.level || 0)) * 600 + Math.abs(attacco - (candidata.attack || 0));
     }
 
     /**
@@ -126,7 +142,7 @@ const Settimana = (function () {
         const tenute = [];
         const daSostituire = [];
         mazzo.forEach((c) => {
-            if (c.type === 'monster' && !ammette(r, c)) { daSostituire.push(c); return; }
+            if (fuoriRegola(r, c)) { daSostituire.push(c); return; }
             tenute.push(c);
             copie.set(c.id, (copie.get(c.id) || 0) + 1);
         });
@@ -157,7 +173,8 @@ const Settimana = (function () {
     /**
      * Il giocatore puo' fare il Duello della Settimana col suo mazzo? SOLO se TUTTI i mostri del mazzo (Main ed Extra Deck)
      * rispettano la regola. Nessuna carta viene mai cambiata al suo posto: se qualcuna non la rispetta il duello non si
-     * gioca e si dice quali sono (il mazzo e' suo, lo sistema lui). Magie e Trappole non contano.
+     * gioca e si dice quali sono (il mazzo e' suo, lo sistema lui). Magie e Trappole non contano, tranne con la regola 'soloMostri'
+     * (il mazzo non puo' averne: ogni Magia o Trappola e' una carta fuori regola).
      * Torna { ok, mancano, fuori } (fuori = [{ id, nome, qty }], mancano = quante carte in tutto), oppure
      * { ok: false, mancano: 0, fuori: [], nessunMazzo: true } se non ha un mazzo attivo.
      * @param {{ main: { id: number, qty: number }[], extra?: { id: number, qty: number }[] } | null} spec
@@ -169,7 +186,7 @@ const Settimana = (function () {
         const fuori = [];
         (spec.main || []).concat(spec.extra || []).forEach((e) => {
             const modello = cardDatabase.find((c) => c.id === e.id);
-            if (!modello || modello.type !== 'monster' || ammette(r, modello)) return;
+            if (!modello || !fuoriRegola(r, modello)) return;
             const gia = fuori.find((f) => f.id === e.id);
             if (gia) gia.qty += (e.qty || 1);
             else fuori.push({ id: e.id, nome: modello.name, qty: e.qty || 1 });
@@ -190,6 +207,7 @@ const Settimana = (function () {
         stato: stato,
         registraVittoria: registraVittoria,
         ammette: ammette,
+        fuoriRegola: fuoriRegola,
         conformaMazzo: conformaMazzo,
         conformaExtra: conformaExtra,
         verificaMazzo: verificaMazzo

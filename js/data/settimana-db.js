@@ -13,7 +13,9 @@
  * il duello è un duello normale.
  *
  * `filtro.tipo`: 'attributo' (valore = attributo, come scritto in cards.json),
- * 'razza' (valore = razza), 'livelloMax' (valore = Livello massimo).
+ * 'razza' (valore = razza), 'livelloMax' (valore = Livello massimo), e tre regole sul GENERE di mostri:
+ * 'soloMostri' (il mazzo non ha Magie ne' Trappole: riguarda anche le carte non mostro), 'vanilla' (solo mostri senza effetto,
+ * quelli con `vanilla: true` in cards.json) e 'effetto' (solo mostri con effetto, cioe' non vanilla).
  *
  * L'ORDINE conta: la regola della settimana è quella di posto (numero della
  * settimana) % lunghezza, quindi due settimane di fila sono sempre diverse e
@@ -35,7 +37,11 @@ const settimanaDatabase = {
         { id: 'razza-demone',    icona: '😈', titolo: 'Solo mostri Demone',        filtro: { tipo: 'razza', valore: 'Demone' } },
         { id: 'attr-vento',      icona: '🌪️', titolo: 'Solo mostri VENTO',         filtro: { tipo: 'attributo', valore: 'VENTO' } },
         { id: 'razza-zombie',    icona: '🧟', titolo: 'Solo mostri Zombie',        filtro: { tipo: 'razza', valore: 'Zombie' } },
-        { id: 'liv-3',           icona: '🌿', titolo: 'Solo mostri fino al Livello 3', filtro: { tipo: 'livelloMax', valore: 3 } }
+        { id: 'liv-3',           icona: '🌿', titolo: 'Solo mostri fino al Livello 3', filtro: { tipo: 'livelloMax', valore: 3 } },
+        // In fondo, cosi' le regole gia' note non cambiano posto.
+        { id: 'solo-mostri',     icona: '⚔️', titolo: 'Deck di soli mostri (niente Magie né Trappole)', filtro: { tipo: 'soloMostri' } },
+        { id: 'solo-vanilla',    icona: '📜', titolo: 'Solo mostri senza effetto (Normali)', filtro: { tipo: 'vanilla' } },
+        { id: 'solo-effetto',    icona: '🪄', titolo: 'Solo mostri con effetto', filtro: { tipo: 'effetto' } }
     ],
     /** Chi sfida questa settimana: stesso ragionamento delle regole (posto % lunghezza, con un passo diverso). */
     avversari: ['rex', 'weevil', 'mako', 'mai', 'joey', 'bandit_keith', 'bakura', 'arkana', 'strings', 'odion', 'lumis', 'umbra',

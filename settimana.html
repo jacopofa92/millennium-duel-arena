@@ -84,6 +84,7 @@
 <script src="js/native/haptics.js"></script>
 <script src="js/native/native-save-backup.js"></script>
 <script src="js/ui/icon-library.js"></script>
+<script src="js/ui/emoji-tema.js"></script>
 <script src="js/ui/deck-switcher.js"></script>
 <script src="js/ui/topbar.js"></script>
     <script src="js/ui/tab-bar.js"></script>
@@ -132,6 +133,7 @@
         // Titolo e medaglione separati: il medaglione e' l'icona della regola, il titolo la regola in parole.
         document.getElementById('regolaTitolo').textContent = r.titolo;
         document.getElementById('rzIcona').textContent = r.icona;
+        if (window.EmojiTema) EmojiTema.idrata(document.getElementById('rzIcona'), { fallback: 'medal' });
 
         const vinte = LIVELLI.filter((l) => stato.vinte[l.id]).length;
         const ms = Settimana.msAlProssimo();

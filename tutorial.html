@@ -148,6 +148,8 @@
         .tut-stato { grid-column: 2; justify-self: start; }
     }
     @media (prefers-reduced-motion: reduce) { .tut-lezione { transition: none; } }
+    .tut-emblema .themed-icon { width: 1.35em; height: 1.35em; color: #f7d774; filter: drop-shadow(0 0 5px rgba(247, 215, 116, 0.4)); }
+    .tut-stato .emoji-tema { color: inherit; }
 </style>
 </head>
 <body>
@@ -155,10 +157,6 @@
     <div id="topbarMount"></div>
 
     <main>
-        <div class="tut-intro">
-            <img src="images/characters/solomonMuto.jpg" alt="" onerror="this.remove()">
-            <p>Ogni lezione è un piccolo duello preparato: il nonno ti spiega una cosa alla volta e ti indica cosa toccare. Puoi rifarle quando vuoi.</p>
-        </div>
         <div id="premiModalita" hidden></div>
         <div class="tut-sezione">Le basi</div>
         <div class="tut-elenco" id="elencoBasi"></div>
@@ -167,7 +165,7 @@
         <div class="tut-sezione">Consultazione</div>
         <div class="tut-elenco">
             <a class="tut-lezione" href="regole.html" data-voce="regole">
-                <div class="tut-emblema" aria-hidden="true">📖</div>
+                <div class="tut-emblema" aria-hidden="true"><span class="icon" data-icon="story"></span></div>
                 <div>
                     <div class="tut-titolo">Regole del Duello</div>
                     <div class="tut-desc">Consulta fasi, Evocazioni, combattimento, Magie, Trappole e glossario.</div>
@@ -184,6 +182,7 @@
 <script src="js/native/haptics.js"></script>
 <script src="js/native/native-save-backup.js"></script>
 <script src="js/ui/icon-library.js"></script>
+<script src="js/ui/emoji-tema.js"></script>
 <script src="js/ui/deck-switcher.js"></script>
 <script src="js/ui/topbar.js"></script>
     <script src="js/ui/tab-bar.js"></script>
@@ -197,21 +196,21 @@
     // Le lezioni: l'id è il valore di ?lezione= letto da
     // js/tutorial/tutorial-duel.js, che ne contiene preparazione e passi.
     const LEZIONI = [
-        { id: 'nonno', gruppo: 'basi', emblema: '🎓', titolo: 'Lezione col nonno', desc: 'Evocare, piazzare una Trappola, attaccare: il primo duello completo, passo per passo.', durata: '5 minuti' },
-        { id: 'campo', gruppo: 'brevi', emblema: '🗺️', titolo: 'Il campo di gioco', desc: 'Mostri, Magie e Trappole, Terreno, Cimitero, Extra Deck, Deck e come si vince: un giro del campo.', durata: '2 minuti' },
-        { id: 'battaglia', gruppo: 'brevi', emblema: '⚔️', titolo: 'Attacco e Difesa', desc: 'ATK contro ATK e ATK contro DEF: chi vince, chi perde Life Point e come cambiare Posizione.', durata: '2 minuti' },
-        { id: 'catena', gruppo: 'brevi', emblema: '⛓️', titolo: 'La Catena', desc: 'Rispondere a una carta dell\'avversario, e perché l\'ultima attivata si risolve per prima.', durata: '2 minuti' },
-        { id: 'fusione', gruppo: 'brevi', emblema: '🌀', titolo: 'La Fusione', desc: 'Unire due mostri in un Mostro Fusione dell\'Extra Deck.', durata: '1 minuto' },
-        { id: 'speciale', gruppo: 'brevi', emblema: '✨', titolo: 'L\'Evocazione Speciale', desc: 'Rianimare un mostro dal Cimitero e usare i Cannoni dell\'Extra Deck senza Polimerizzazione.', durata: '2 minuti' },
-        { id: 'flip', gruppo: 'brevi', emblema: '🐛', titolo: 'I mostri Flip', desc: 'Un mostro coperto che, girato a faccia in su, scatena il suo effetto.', durata: '1 minuto' },
-        { id: 'continue', gruppo: 'brevi', emblema: '♾️', titolo: 'Carte che restano sul campo', desc: 'Magie Continue e Magie Terreno: effetti che durano finché la carta resta lì.', durata: '1 minuto' },
-        { id: 'equip', gruppo: 'brevi', emblema: '🪓', titolo: 'Gli Equipaggiamenti', desc: 'Potenziare il mostro giusto e capire fin dove arriva il suo nuovo ATK.', durata: '1 minuto' },
-        { id: 'rituale', gruppo: 'brevi', emblema: '🕯️', titolo: 'L\'Evocazione Rituale', desc: 'Offrire Livelli sufficienti per richiamare un potente Mostro Rituale.', durata: '2 minuti' },
-        { id: 'rapida', gruppo: 'brevi', emblema: '🌙', titolo: 'Le Magie Rapide', desc: 'Usare Libro della Luna per cambiare posizione e spezzare un attacco.', durata: '1 minuto' },
+        { id: 'nonno', gruppo: 'basi', icona: 'rules', titolo: 'Lezione col nonno', desc: 'Evocare, piazzare una Trappola, attaccare: il primo duello completo, passo per passo.', durata: '5 minuti' },
+        { id: 'campo', gruppo: 'brevi', icona: 'map', titolo: 'Il campo di gioco', desc: 'Mostri, Magie e Trappole, Terreno, Cimitero, Extra Deck, Deck e come si vince: un giro del campo.', durata: '2 minuti' },
+        { id: 'battaglia', gruppo: 'brevi', icona: 'attackPos', titolo: 'Attacco e Difesa', desc: 'ATK contro ATK e ATK contro DEF: chi vince, chi perde Life Point e come cambiare Posizione.', durata: '2 minuti' },
+        { id: 'catena', gruppo: 'brevi', icona: 'exchange', titolo: 'La Catena', desc: 'Rispondere a una carta dell\'avversario, e perché l\'ultima attivata si risolve per prima.', durata: '2 minuti' },
+        { id: 'fusione', gruppo: 'brevi', icona: 'fusionDeck', titolo: 'La Fusione', desc: 'Unire due mostri in un Mostro Fusione dell\'Extra Deck.', durata: '1 minuto' },
+        { id: 'speciale', gruppo: 'brevi', icona: 'star', titolo: 'L\'Evocazione Speciale', desc: 'Rianimare un mostro dal Cimitero e usare i Cannoni dell\'Extra Deck senza Polimerizzazione.', durata: '2 minuti' },
+        { id: 'flip', gruppo: 'brevi', icona: 'eye', titolo: 'I mostri Flip', desc: 'Un mostro coperto che, girato a faccia in su, scatena il suo effetto.', durata: '1 minuto' },
+        { id: 'continue', gruppo: 'brevi', icona: 'fieldSpell', titolo: 'Carte che restano sul campo', desc: 'Magie Continue e Magie Terreno: effetti che durano finché la carta resta lì.', durata: '1 minuto' },
+        { id: 'equip', gruppo: 'brevi', icona: 'duel', titolo: 'Gli Equipaggiamenti', desc: 'Potenziare il mostro giusto e capire fin dove arriva il suo nuovo ATK.', durata: '1 minuto' },
+        { id: 'rituale', gruppo: 'brevi', icona: 'graveyard', titolo: 'L\'Evocazione Rituale', desc: 'Offrire Livelli sufficienti per richiamare un potente Mostro Rituale.', durata: '2 minuti' },
+        { id: 'rapida', gruppo: 'brevi', icona: 'target', titolo: 'Le Magie Rapide', desc: 'Usare Libro della Luna per cambiare posizione e spezzare un attacco.', durata: '1 minuto' },
         // Duello guidato a squadre: tu e Joey contro il nonno (`extra` aggiunge il compagno all'indirizzo del duello).
-        { id: 'tag', gruppo: 'brevi', emblema: '🤝', titolo: 'Il Tag Team', desc: 'Un duello in coppia con Joey: lo scambio fra compagni a inizio turno e come si gioca in squadra.', durata: '3 minuti', extra: '&partner=joey' },
+        { id: 'tag', gruppo: 'brevi', icona: 'multiplayer', titolo: 'Il Tag Team', desc: 'Un duello in coppia con Joey: lo scambio fra compagni a inizio turno e come si gioca in squadra.', durata: '3 minuti', extra: '&partner=joey' },
         // Senza duello: una pagina che si sfoglia (href proprio invece del duello preparato).
-        { id: 'tagRegole', gruppo: 'brevi', emblema: '📜', titolo: 'Tag Team: le regole', desc: 'Formati, Life Point, cosa succede quando un duellante cade e chi puoi attaccare. Da leggere prima o dopo il duello.', durata: '2 minuti', href: 'tutorial-tag.html' }
+        { id: 'tagRegole', gruppo: 'brevi', icona: 'story', titolo: 'Tag Team: le regole', desc: 'Formati, Life Point, cosa succede quando un duellante cade e chi puoi attaccare. Da leggere prima o dopo il duello.', durata: '2 minuti', href: 'tutorial-tag.html' }
     ];
     // Tutte le lezioni si giocano in città (campo "La Città").
     const URL_DUELLO = 'duelMonstersCore.html?mode=tutorial&character=solomonMuto&difficulty=Facile&field=citta.jpg';
@@ -225,11 +224,11 @@
         a.href = l.href || (URL_DUELLO + '&lezione=' + l.id + (l.extra || ''));
         a.dataset.lezione = l.id;
         a.innerHTML = `
-            <div class="tut-emblema" aria-hidden="true">${l.emblema}</div>
+            <div class="tut-emblema" aria-hidden="true"><span class="icon" data-icon="${l.icona}"></span></div>
             <div>
                 <div class="tut-titolo"></div>
                 <div class="tut-desc"></div>
-                <div class="tut-meta">⏱ ${l.durata}</div>
+                <div class="tut-meta">${l.durata}</div>
             </div>
             <div class="tut-stato${fatta(l) ? ' tut-stato--fatta' : ''}">${fatta(l) ? '✓ Completata' : 'Da fare'}</div>`;
         a.querySelector('.tut-titolo').textContent = l.titolo;
@@ -237,6 +236,9 @@
         a.addEventListener('click', () => { if (window.NativeHaptics) NativeHaptics.light(); });
         document.getElementById(l.gruppo === 'basi' ? 'elencoBasi' : 'elencoBrevi').appendChild(a);
     });
+    // Icone del tema nelle lezioni (e la spunta di "Completata").
+    Icons.hydrate(document.querySelector('main'));
+    if (window.EmojiTema) EmojiTema.idrata(document.querySelector('main'));
 </script>
 </body>
 </html>

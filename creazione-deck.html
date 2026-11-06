@@ -233,6 +233,12 @@
        (rimosso su richiesta esplicita dell'utente): a segnalarlo resta
        il badge "⭐ Mazzo Corrente" sotto la scatola. */
     .deck-box.locked .deck-box-art { filter: grayscale(0.8) brightness(0.62); }
+    /* Mazzo non ancora posseduto: due catene di ferro in croce e il sigillo con la serratura sulla scatola (stesso effetto delle tessere chiuse del menu). */
+    /* Le catene stanno sulla FACCIA della scatola, sotto il coperchio col nome (che resta leggibile): piu' sottili e con un sigillo piu' piccolo. */
+    .deck-box.locked .mm-catene { z-index: 5; inset: 30% 0 0 0; border-radius: 0; }
+    .deck-box.locked .mm-catena { height: 11px; }
+    .deck-box.locked .mm-sigillo { width: 26px; height: 26px; border-width: 2px; }
+    .deck-box.locked .mm-sigillo svg { width: 14px; height: 14px; }
     .deck-box.locked .deck-box-info { opacity: 0.75; }
 
     /* Blocco informazioni: fuori dalla scatola, piatto e nitido. */
@@ -1482,6 +1488,7 @@
 <script src="js/data/character-decks.js"></script>
 <script src="js/data/starter-structure-decks.js"></script>
 <script src="js/ui/icon-library.js"></script>
+<script src="js/modes/mode-unlocks.js"></script>
 <script src="js/ui/deck-switcher.js"></script>
 <script src="js/ui/topbar.js"></script>
     <script src="js/ui/tab-bar.js"></script>
@@ -1999,7 +2006,7 @@
             const box = document.createElement('div');
             box.className = 'deck-box' + (owned ? '' : ' locked');
             box.innerHTML = `
-                ${deckBoxMarkup(pack, { emblem: owned ? '' : '🔒' })}
+                ${deckBoxMarkup(pack, {})}
                 <div class="deck-box-info">
                     <div class="pack-card-desc">${pack.description}</div>
                     <div class="deck-card-counts">
@@ -2008,9 +2015,9 @@
                     </div>
                     <div class="deck-card-actions">
                         ${owned ? '<button type="button" class="deck-card-btn clone"><span class="icon" data-icon="clone"></span> Clona</button>' : ''}
-                        <button type="button" class="deck-card-btn view">👁 Visualizza</button>
+                        <button type="button" class="deck-card-btn view"><span class="icon" data-icon="eye"></span> Visualizza</button>
                     </div>
-                    ${owned ? '' : '<span class="pack-locked-note">🔒 Non ancora posseduto — vai al Negozio</span>'}
+                    ${owned ? '' : '<span class="pack-locked-note">Non ancora posseduto — vai al Negozio</span>'}
                 </div>
             `;
             if (owned) {
@@ -2020,6 +2027,7 @@
             // contiene un pacchetto è esattamente ciò che serve per
             // decidere se comprarlo.
             box.querySelector('.view').onclick = () => openDeckCardsModal(pack.name, pack);
+                        if (!owned) { const faccia = box.querySelector('.dbx-front'); if (faccia && window.ModeUnlocks) faccia.insertAdjacentHTML('beforeend', ModeUnlocks.CATENE_HTML); }
             grid.appendChild(box);
         });
         fitDeckBoxNames(grid);
