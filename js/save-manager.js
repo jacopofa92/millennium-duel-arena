@@ -42,13 +42,15 @@
         // (più fedele alle regole, più domande). Vedi findQuickPlaySpellCandidates.
         magieRapideTurnoAvversario: false,
         magieRapideSuPropriaAttivazione: false,
+        // Alone attorno alle carte che puoi giocare adesso (js/ui/evidenzia-giocabili.js). Acceso di default.
+        evidenziaGiocabili: true,
         musicVolume: 0.55, musicMuted: false,
         sfxVolume: 0.6, sfxMuted: false
     };
     const SETTINGS_CACHE_KEYS = {
         videoDetail: 'ygoVideoDetail', videoDetailScelto: 'ygoVideoDetailScelto',
         summonVideos: 'ygoSummonVideos', hologram: 'ygoHologram', haptics: 'ygoHapticsEnabled',
-        cardGyro: 'ygoGiroscopioCarte', magieRapideTurnoAvversario: 'ygoMagieRapideAvversario', magieRapideSuPropriaAttivazione: 'ygoMagieRapidePropria',
+        cardGyro: 'ygoGiroscopioCarte', magieRapideTurnoAvversario: 'ygoMagieRapideAvversario', magieRapideSuPropriaAttivazione: 'ygoMagieRapidePropria', evidenziaGiocabili: 'ygoEvidenziaGiocabili',
         musicVolume: 'duelArenaMusicVolume', musicMuted: 'duelArenaMusicMuted',
         sfxVolume: 'duelArenaSfxVolume', sfxMuted: 'duelArenaSfxMuted'
     };
@@ -79,6 +81,8 @@
             if (rapide === 'on' || rapide === 'off') settings.magieRapideTurnoAvversario = rapide === 'on';
             const rapideProprie = localStorage.getItem(SETTINGS_CACHE_KEYS.magieRapideSuPropriaAttivazione);
             if (rapideProprie === 'on' || rapideProprie === 'off') settings.magieRapideSuPropriaAttivazione = rapideProprie === 'on';
+            const evidenzia = localStorage.getItem(SETTINGS_CACHE_KEYS.evidenziaGiocabili);
+            if (evidenzia === 'on' || evidenzia === 'off') settings.evidenziaGiocabili = evidenzia === 'on';
             const haptics = localStorage.getItem(SETTINGS_CACHE_KEYS.haptics);
             if (haptics === '0' || haptics === '1') settings.haptics = haptics === '1';
             ['musicVolume', 'sfxVolume'].forEach((key) => {
@@ -117,6 +121,7 @@
             localStorage.setItem(SETTINGS_CACHE_KEYS.haptics, settings.haptics ? '1' : '0');
             localStorage.setItem(SETTINGS_CACHE_KEYS.magieRapideTurnoAvversario, settings.magieRapideTurnoAvversario ? 'on' : 'off');
             localStorage.setItem(SETTINGS_CACHE_KEYS.magieRapideSuPropriaAttivazione, settings.magieRapideSuPropriaAttivazione ? 'on' : 'off');
+            localStorage.setItem(SETTINGS_CACHE_KEYS.evidenziaGiocabili, settings.evidenziaGiocabili ? 'on' : 'off');
             localStorage.setItem(SETTINGS_CACHE_KEYS.musicVolume, String(settings.musicVolume));
             localStorage.setItem(SETTINGS_CACHE_KEYS.musicMuted, String(settings.musicMuted));
             localStorage.setItem(SETTINGS_CACHE_KEYS.sfxVolume, String(settings.sfxVolume));

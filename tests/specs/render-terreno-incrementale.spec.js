@@ -59,6 +59,12 @@ module.exports = {
                 gameState.playerGraveyard.length = Math.floor(rnd() * 4);
             };
 
+            // L'alone delle carte giocabili (evidenzia-giocabili.js) si aggiunge ai nodi VIVI dopo il ridisegno: qui si chiama
+            // renderFields() da solo (senza il passo dell'alone), quindi si spegne il modulo e si tolgono le sue classi, che
+            // altrimenti resterebbero nel DOM incrementale e non in quello ricostruito da zero.
+            window.EvidenziaGiocabili = null;
+            document.querySelectorAll('.slot-libera').forEach((e) => e.classList.remove('slot-libera'));
+            document.querySelectorAll('.glow-giocabile').forEach((e) => e.classList.remove('glow-giocabile', 'glow-bianco', 'glow-verde', 'glow-attacco'));
             let diversi = 0;
             let primaDifferenza = null;
             const STATI = 40;
