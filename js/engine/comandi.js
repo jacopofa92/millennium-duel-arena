@@ -132,6 +132,10 @@ const Comandi = (function () {
         // E nemmeno con un'Evocazione Tributo a meta' (Tributi gia' pagati): vale per ogni strada verso una nuova fase, compreso il
         // pulsante delle fasi e "Fine turno" che non passano da nextPhase().
         if (Tavolo.ePersona(posto) && EventiDuello.chiedi('evocazione-in-sospeso', false) === true) return false;
+        // Nemmeno a battaglia in corso (un attacco alla volta, attaccoInCorso in battaglia.js): chiudere la Battle Phase o il
+        // turno a meta' di un attacco lo lascerebbe a risolversi nella fase sbagliata. Solo per la persona: l'IA aspetta da
+        // sola la fine di ogni attacco e un comando remoto arriva gia' a battaglia finita.
+        if (Tavolo.ePersona(posto) && typeof attaccoInCorso === 'function' && attaccoInCorso()) return false;
         switch (c.verso) {
             case 'battle': enterBattlePhase(); return true;
             case 'main2': enterMainPhase2(); return true;

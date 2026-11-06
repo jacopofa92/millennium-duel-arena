@@ -100,8 +100,36 @@ function puoAttaccareDirettamente(attackerOwner, attackerIndex) {
  * eventuale "vuoi rispondere?" del giocatore) prima di dichiararne un
  * altro, così due finestre di risposta non si sovrappongono mai.
  */
+/**
+ * UN ATTACCO ALLA VOLTA. Finche' una battaglia non e' finita del tutto (dichiarazione, risposte in Catena, calcolo, animazione)
+ * nessun altro attacco puo' partire: chi e' veloce con piu' mostri poteva dichiararne un secondo, o ripetere lo stesso, prima
+ * che il primo avesse segnato `hasAttacked`, e le due battaglie si sovrapponevano. Il blocco sta in gameState.attaccoInCorso
+ * ({ turno, dal }): lo prende resolveAttack appena l'attacco e' valido e lo rilascia in `done`, qualunque strada prenda.
+ * Rete di sicurezza: un blocco di un turno passato, a partita finita o vecchio di 5 minuti non conta (se una strada non
+ * chiamasse mai `done`, il duello non deve restare senza attacchi per sempre).
+ */
+function attaccoInCorso() {
+    const b = typeof gameState !== 'undefined' && gameState ? gameState.attaccoInCorso : null;
+    if (!b) return false;
+    if (b.turno !== gameState.turn || gameState.gameOver || Date.now() - b.dal > 300000) {
+        gameState.attaccoInCorso = null;
+        return false;
+    }
+    return true;
+}
+
 function resolveAttack(attackerOwner, attackerIndex, targetIndex, onComplete) {
-    const done = typeof onComplete === 'function' ? onComplete : function () {};
+    const doneUtente = typeof onComplete === 'function' ? onComplete : function () {};
+    /** @type {{ turno: number, dal: number } | null} */
+    let blocco = null;
+    // Ogni uscita di questa funzione passa da qui: rilascia il blocco "un attacco alla volta" e poi avvisa chi aspettava.
+    const done = function () {
+        if (blocco) {
+            if (gameState.attaccoInCorso === blocco) gameState.attaccoInCorso = null;
+            blocco = null;
+        }
+        doneUtente();
+    };
     // Una volta che i LP di qualcuno sono a zero il duello è chiuso: qui
     // passano TUTTI gli attacchi (giocatore, bot e mosse remote), quindi
     // basta questo controllo perché nulla si muova più sotto la schermata
@@ -268,6 +296,16 @@ function resolveAttack(attackerOwner, attackerIndex, targetIndex, onComplete) {
         }
     }
     gameState.patricianAttackChoiceDone.delete(patricianKey);
+    // Un attacco alla volta (vedi attaccoInCorso qui sopra). Si prende QUI e non all'inizio: la scelta del Patrizio dell'Oscurita'
+    // richiama resolveAttack da dentro la sua callback, e quella chiamata deve poter partire. Un attacco rifiutato per il blocco
+    // non conta come fatto: l'attaccante potra' riprovare appena la battaglia in corso e' finita.
+    if (attaccoInCorso()) {
+        addToLog('⏳ Aspetta che l\'attacco in corso finisca prima di dichiararne un altro.');
+        doneUtente();
+        return;
+    }
+    blocco = { turno: gameState.turn, dal: Date.now() };
+    gameState.attaccoInCorso = blocco;
     // Divieto di essere scelto come BERSAGLIO per QUESTO SOLO mostro
     // difensore (es. Capitano Predone id 714: "l'avversario non può
     // bersagliare i Guerrieri con gli attacchi, eccetto questa carta") —
@@ -1495,6 +1533,13 @@ function eseguiAttacco(posto, c, extra) {
     // Un attacco rifiutato chiama comunque alTermine: chi lo aspetta (l'IA)
     // resterebbe fermo per sempre.
     const rifiutato = () => { if (alTermine) alTermine(); };
+    // Un attacco alla volta: va controllato PRIMA dei costi qui sotto (Life Point, Sacrificio), che resolveAttack non puo'
+    // restituire se poi rifiuta l'attacco perche' un'altra battaglia e' ancora in corso.
+    if (attaccoInCorso()) {
+        addToLog('⏳ Aspetta che l\'attacco in corso finisca prima di dichiararne un altro.');
+        rifiutato();
+        return;
+    }
     const attackerSlot = Tavolo.mostri(posto)[c.attaccante];
     if (!attackerSlot) { rifiutato(); return; }
     const def = window.DuelEngine && DuelEngine.getDefinition(attackerSlot.card.id);

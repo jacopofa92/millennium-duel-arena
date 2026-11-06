@@ -2107,6 +2107,12 @@ function executeAttack(attackerIndex, targetIndex) {
         addToLog('⏳ Aspetta che la Catena si risolva prima di attaccare.');
         return;
     }
+    // Un attacco alla volta (attaccoInCorso, battaglia.js): se la battaglia precedente non e' del tutto finita non se ne
+    // dichiara un'altra, e il pannello informazioni qui sotto non va nemmeno toccato.
+    if (typeof attaccoInCorso === 'function' && attaccoInCorso()) {
+        addToLog('⏳ Aspetta che l\'attacco in corso finisca prima di dichiararne un altro.');
+        return;
+    }
     // Il pannello informazioni carta (hover/tap su una carta qualsiasi)
     // può restare aperto da prima del trascinamento — richiesta esplicita
     // dell'utente: dichiarare un attacco (bersaglio mostro o diretto) lo
