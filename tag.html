@@ -69,6 +69,7 @@
     button.tg-posto { cursor: pointer; }
     button.tg-posto:hover, button.tg-posto:focus-visible { border-color: var(--gold); box-shadow: 0 0 16px rgba(247, 215, 116, 0.22); outline: none; }
     /* I ritratti sono QUADRATI (es. 968x968): un riquadro largo e basso li tagliava. Foto sempre quadrate. */
+    .tg-pedina { background-size: contain !important; background-position: center bottom !important; }
     .tg-posto-foto { flex: 0 0 auto; aspect-ratio: 1; background: #15110c center / cover no-repeat; }
     /* Un posto solo (2 contro 1, Boss): foto quadrata a sinistra e testo a destra, invece di una foto enorme. */
     .tg-posti--uno .tg-posto { flex-direction: row; align-items: center; }
@@ -323,7 +324,13 @@
     /** Il ritratto di un personaggio come sfondo (l'immagine intera, inquadrata sul volto). */
     const foto = (classe, img) => {
         const f = el('span', classe);
-        if (img) f.style.backgroundImage = `url("${img}")`;
+        // Si usa la PEDINA scontornata (come nel resto del gioco), non il ritratto pieno del Duello Libero:
+        // figura intera, quindi 'contain' invece di 'cover'. Ripiego sul ritratto se la pedina manca.
+        const pedina = img && window.getCharacterPawnImage ? getCharacterPawnImage(img) : null;
+        if (pedina) {
+            f.classList.add('tg-pedina');
+            f.style.backgroundImage = `url("${pedina}")`;
+        } else if (img) f.style.backgroundImage = `url("${img}")`;
         return f;
     };
 
