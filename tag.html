@@ -233,6 +233,7 @@
 <script src="js/data/character-decks.js"></script>
 <script src="js/data/tag-db.js"></script>
 <script src="js/data/raid-db.js"></script>
+<script src="js/data/incubo-db.js"></script>
 <!-- Per il selettore di mazzo, arena e musica (stesse dipendenze della sala Multiplayer). -->
 <script src="js/data/custom-taxonomy.js"></script>
 <script src="js/data/custom-cards.js"></script>
@@ -276,6 +277,11 @@
     // I Boss del Raid (js/data/raid-db.js): solo l'elenco, i Life Point del Boss a squadre sono tagDatabase.lpBoss.
     const bosses = (window.RAID_BOSSES || []).map((b) => characterDatabase.find((c) => c.id === b.id)).filter((c) => c && haMazzo(c.id));
     const BOSS = 3;
+    // Il Boss gioca sempre il mazzo al completo; l'INCUBO lo fa giocare a copione (js/modes/incubo.js, numeri in js/data/incubo-db.js).
+    const LIVELLI_BOSS = [
+        { valore: 'boss', nome: 'Normale', desc: 'Il Boss gioca il suo mazzo al completo.' },
+        { valore: 'incubo', nome: 'Incubo', desc: 'Mano sempre giocabile e, ogni tanto, la sua carta simbolo entra in campo. Premi più ricchi.' }
+    ];
     // I numeri dipendono dal formato (D19: nel 2 contro 1, e quindi anche contro il Boss, la coppia ha 4000 a testa).
     const regoleLp = () => {
         const lp = tagDatabase.lpSquadra(scelta.formato !== 2);
@@ -304,6 +310,7 @@
         avversario2: null,
         boss: (bosses.find((c) => sbl(c.id)) || {}).id || null,
         livello: 'Medio',
+        incubo: false,
         lp: tagDatabase.regolaLpPredefinita,
         scambio: tagDatabase.scambioPredefinito
     };
@@ -503,14 +510,21 @@
 
         // Il Boss gioca sempre il mazzo al completo: niente scelta del livello.
         const livello = LIVELLI.find((l) => l.valore === scelta.livello);
-        if (controBoss) regola($('regolaLivello'), 'Livello', el('p', 'tg-regola-fissa', 'Il Boss gioca sempre il mazzo al completo.'));
-        else regola($('regolaLivello'), 'Livello', interruttore(LIVELLI, scelta.livello, (v) => { scelta.livello = v; }, 'Livello degli avversari'), livello.desc);
+        // Il Boss gioca sempre il mazzo al completo; si sceglie se in versione normale o INCUBO (js/modes/incubo.js).
+        if (controBoss) {
+            regola($('regolaLivello'), 'Livello', interruttore(LIVELLI_BOSS, scelta.incubo ? 'incubo' : 'boss', (v) => { scelta.incubo = v === 'incubo'; }, 'Livello del Boss'),
+                scelta.incubo ? LIVELLI_BOSS[1].desc : LIVELLI_BOSS[0].desc);
+        } else regola($('regolaLivello'), 'Livello', interruttore(LIVELLI, scelta.livello, (v) => { scelta.livello = v; }, 'Livello degli avversari'), livello.desc);
         // Premi: contro il Boss si gioca sempre a Difficile (tagDatabase.livelloBoss); altrimenti il livello scelto.
         // Il Tag passa da Rewards.forDuel come ogni duello libero: stessi crediti, stesso bonus, stessi ritrovamenti.
         const premi = $('premiTag');
         if (window.Rewards && Rewards.previewHtml) {
             premi.hidden = false;
             premi.innerHTML = Rewards.previewHtml(controBoss ? tagDatabase.livelloBoss : scelta.livello, 'Tag Team');
+            if (controBoss && scelta.incubo) {
+                const f = (window.incuboDatabase && incuboDatabase.bonusPremi) || 0.25;
+                premi.append(el('p', 'tg-regola-aiuto', `Livello Incubo: +${Math.round(f * 100)}% su crediti e Stelle e, una volta al giorno, 1 Carta Locazione e 1 Carta del Millennio.`));
+            }
             Rewards.idrata(premi);
         } else premi.hidden = true;
         const lp = regoleLp();
@@ -533,7 +547,7 @@
         const forte = (testo) => el('strong', null, testo);
         riepilogo.replaceChildren('Tu e ', forte(compagno.name), ' contro ', forte(avversario.name));
         if (avversario2) riepilogo.append(' e ', forte(avversario2.name));
-        riepilogo.append(controBoss ? ' · Boss' : ` · ${livello.nome}`);
+        riepilogo.append(controBoss ? (scelta.incubo ? ' · Boss Incubo' : ' · Boss') : ` · ${livello.nome}`);
         vai.disabled = false;
     }
 
@@ -590,6 +604,7 @@
             + '&character=' + encodeURIComponent(avversario)
             + (scelta.formato === 2 ? '&character2=' + encodeURIComponent(scelta.avversario2) : '')
             + (controBoss ? '&boss=1' : '')
+            + (controBoss && scelta.incubo ? '&incubo=1' : '')
             + '&difficulty=' + encodeURIComponent(controBoss ? tagDatabase.livelloBoss : scelta.livello)
             + '&partner=' + encodeURIComponent(scelta.compagno)
             + '&lp=' + encodeURIComponent(scelta.lp)

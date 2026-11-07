@@ -624,6 +624,42 @@
     }
 
     /**
+     * Livello INCUBO dei Boss (js/modes/incubo.js, numeri in js/data/incubo-db.js): su una VITTORIA i crediti e le Stelle gia' pagati
+     * dal duello crescono del 25%, e una volta al giorno si vincono 1 Carta Locazione e 1 Carta del Millennio. Si applica a qualunque
+     * modalita' che passi di qui (Assalto al Boss, Tag contro un Boss): prende l'elenco di voci gia' prodotto e ci aggiunge le sue.
+     */
+    function applicaIncubo(rewards, opts) {
+        const out = (rewards || []).slice();
+        if (!window.SaveManager || !(opts && opts.vinto)) return out;
+        const db = window.incuboDatabase || {};
+        const frazione = typeof db.bonusPremi === 'number' ? db.bonusPremi : 0.25;
+        const perCento = Math.round(frazione * 100);
+        ['credits', 'starChips'].forEach((valuta) => {
+            const totale = out.filter((v) => v && !v.nota && v.currency === valuta).reduce((s, v) => s + (v.amount || 0), 0);
+            const extra = Math.round(totale * frazione);
+            if (extra > 0) {
+                SaveManager.addCurrency(valuta, extra);
+                out.push(voce(valuta, extra, `Livello Incubo: +${perCento}% sui premi di questo duello`));
+            }
+        });
+        const giorno = dayKey();
+        const s = Object.assign({ giorno: null, carte: false }, (SaveManager.getModeState && SaveManager.getModeState('incubo')) || {});
+        if (s.giorno !== giorno) { s.giorno = giorno; s.carte = false; }
+        if (!s.carte) {
+            s.carte = true;
+            const spiegazione = 'Livello Incubo vinto: una volta al giorno';
+            SaveManager.addCurrency('locatorCards', 1);
+            SaveManager.addCurrency('millenniumCards', 1);
+            out.push(voce('locatorCards', 1, spiegazione));
+            out.push(voce('millenniumCards', 1, spiegazione));
+        } else {
+            out.push(nota('🌙', 'Carta Locazione e Carta del Millennio del livello Incubo: oggi le hai già vinte, tornano domani'));
+        }
+        if (SaveManager.setModeState) SaveManager.setModeState('incubo', s);
+        return out;
+    }
+
+    /**
      * I crediti di base di una vittoria in Tag online, dalla composizione: contro persone, contro l'IA (a Facile/Normale/Difficile,
      * come contro l'IA) o contro il Boss; -25% con un compagno IA. Un punto solo, usato sia dal pagamento sia dal riassunto in sala.
      * `tag`: { iaAvversarie: ['easy'|'medium'|'hard'|'boss', ...], alleatoIA: bool }.
@@ -658,6 +694,13 @@
             // Senza un Boss scelto (ingresso, sala ancora vuota) si dice da quanto si parte.
             if (!c.bossId) return `da +${RAID_PREMI[0].crediti} crediti e +${RAID_PREMI[0].stelle} Stelle, secondo il Boss`;
             const p = premioRaid(lpBossRaid(c.bossId));
+            if (c.incubo) {
+                // Livello Incubo: +25% (stessa regola di applicaIncubo) e le due carte del giorno.
+                const f = (window.incuboDatabase && incuboDatabase.bonusPremi) || 0.25;
+                const cr = p.crediti + Math.round(p.crediti * f);
+                const st = p.stelle + Math.round(p.stelle * f);
+                return `${c.bossNome ? 'contro ' + c.bossNome + ' (Incubo): ' : 'Incubo: '}+${cr} crediti e +${st} Stelle, più 1 Carta Locazione e 1 Carta del Millennio al giorno`;
+            }
             return `${c.bossNome ? 'contro ' + c.bossNome + ': ' : ''}+${p.crediti} crediti e +${p.stelle} ${p.stelle === 1 ? 'Stella' : 'Stelle'}`;
         }
         if (modo === 'tag') {
@@ -1184,6 +1227,7 @@
         forStoryArc: forStoryArc,
         forTorre: forTorre,
         forRaid: forRaid,
+        applicaIncubo: applicaIncubo,
         forOnline: forOnline,
         RAID_PREMI: RAID_PREMI,
         RAID_CONTRIBUTO_MINIMO: RAID_CONTRIBUTO_MINIMO,

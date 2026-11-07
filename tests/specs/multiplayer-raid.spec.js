@@ -46,7 +46,9 @@ module.exports = {
             const bloccato = await ospite.evaluate(() => document.getElementById('mpRaidOn').disabled);
             assert(bloccato, 'L\'ospite vede il raid in sola lettura');
             await host.check('#mpRaidOn');
-            await host.selectOption('#mpRaidBoss', BOSS);
+            // Il Boss si sceglie dalla tessera "Il Boss" (finestra con una scheda per Boss), non piu' da un menu a tendina.
+            await host.click('#mpRaidGroup .mp-tessera');
+            await host.click('.mp-boss-voce[data-boss="' + BOSS + '"]');
             await ospite.waitForFunction((id) => document.getElementById('mpRaidOn').checked && document.getElementById('mpRaidBoss').value === id, BOSS, { timeout: 10000 });
 
             await host.click('#mpReadyBtn');

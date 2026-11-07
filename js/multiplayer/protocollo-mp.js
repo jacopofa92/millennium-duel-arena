@@ -143,6 +143,8 @@
             if (a.specchio !== undefined && !testo(a.specchio)) return 'mazzo a specchio non valido';
             // Raid cooperativo: id del Boss (facoltativo, esclusivo con lo specchio).
             if (a.raid !== undefined && !testo(a.raid)) return 'boss del raid non valido';
+            // Livello Incubo del Raid (facoltativo: un client vecchio non lo manda e gioca il Boss di sempre).
+            if (a.raidIncubo !== undefined && typeof a.raidIncubo !== 'boolean') return 'livello incubo non valido';
             return null;
         },
         'ready': (a) => {

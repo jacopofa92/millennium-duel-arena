@@ -25,6 +25,8 @@ const ASSEGNAZIONI_AMMESSE = new Set([
     'ModalitaDuello', 'Torre', 'preparaManiIniziali', 'DuelDialogues', 'onbeforeunload',
     'puzzlesDatabase', 'rivinciteDatabase', 'torreDatabase', 'settimanaDatabase', 'cacciaDatabase',
     'TagTeam', 'ModeUnlocks',
+    // Livello Incubo dei Boss (js/modes/incubo.js): espone solo `attivo()`, letto da duel-session.js per i premi.
+    'Incubo',
     // Aggancio generico dell'annuncio del cambio turno (letto da game-flow.js senza sapere quale modalita' lo usa).
     'AnnuncioTurnoModalita',
     // Aggancio con cui la lezione guidata del Tutorial (js/tutorial/tutorial-duel.js) avvia la preparazione del Tag Team.

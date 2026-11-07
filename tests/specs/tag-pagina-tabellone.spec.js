@@ -71,10 +71,10 @@ module.exports = {
                     t.assert((await page.textContent('#postiAvv .tg-posto:nth-child(2) .tg-posto-nome')) === scelto, `${w}px: il posto mostra chi hai scelto (${scelto})`);
                 }
 
-                // Boss: un posto solo, niente scelta del livello.
+                // Boss: un posto solo, e come livello solo Normale o Incubo.
                 await page.click('#formati button:nth-child(3)');
                 const boss = await conta();
-                t.assert(boss.avv === 1 && /Boss/.test(boss.titolo) && (await page.isHidden('#regolaLivello .tg-seg')), `${w}px, Boss: un posto e livello fisso: ` + JSON.stringify(boss));
+                t.assert(boss.avv === 1 && /Boss/.test(boss.titolo) && (await page.locator('#regolaLivello .tg-seg button').count()) === 2, `${w}px, Boss: un posto e livello Normale/Incubo: ` + JSON.stringify(boss));
 
                 // Inizia: si va al duello con i parametri scelti.
                 await page.click('#formati button:nth-child(1)');

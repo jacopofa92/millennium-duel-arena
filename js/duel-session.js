@@ -994,6 +994,10 @@
                     ? Math.max(0, 8000 - gameState.playerLP) : 8000
             });
         }
+        // Livello Incubo dei Boss (js/modes/incubo.js): +25% sui premi e le due carte del giorno, solo sulla vittoria.
+        if (window.Rewards && typeof Rewards.applicaIncubo === 'function' && window.Incubo && Incubo.attivo()) {
+            rewards = Rewards.applicaIncubo(rewards, { vinto: playerWon === true && !abbandono });
+        }
         // Lo sblocco di un Duellante si annuncia nello stesso elenco delle
         // ricompense, con la regola che l'ha prodotto: è un guadagno come
         // gli altri, e un guadagno che il giocatore non vede è un guadagno

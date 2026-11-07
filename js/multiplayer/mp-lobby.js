@@ -76,7 +76,7 @@
     let avversarioCollegato = false;
 
     // Scelte correnti: RANDOM finché non si tocca nulla.
-    const scelta = { field: window.ArenaOptions.RANDOM, music: window.ArenaOptions.RANDOM, origin: 'yu-gi-oh', specchio: null, raid: null };
+    const scelta = { field: window.ArenaOptions.RANDOM, music: window.ArenaOptions.RANDOM, origin: 'yu-gi-oh', specchio: null, raid: null, raidIncubo: false };
 
     function $(id) { return document.getElementById(id); }
 
@@ -732,6 +732,86 @@
         aggiornaPremiSala();   // il premio dipende dal Boss scelto
     }
 
+    /** La tessera "Il Boss" (pedina, nome, Life Point) e il suo aggiornamento, costruiti da costruisciRaid. */
+    let tesseraBoss = null;
+    let aggiornaListaBoss = () => {};
+
+    /** Il premio base di un Boss, per la scheda nella finestra di scelta. */
+    function premioBossBreve(lp) {
+        const tabella = (window.Rewards && Rewards.RAID_PREMI) || [];
+        const p = tabella.find((x) => lp <= x.finoALp) || tabella[0];
+        return p ? `+${p.crediti} crediti · +${p.stelle} Stelle` : '';
+    }
+
+    /**
+     * La scelta del Boss: una tessera nello stile delle altre scelte della sala (pedina, mazzo, arena) che apre una finestra con una
+     * scheda per Boss. Il <select> #mpRaidBoss resta la fonte del valore (e nasconde da se'): la tessera lo legge e lo scrive.
+     */
+    function costruisciTesseraBoss(gruppo, menu, spunta, elenco, applica) {
+        if (!window.MpScelte || tesseraBoss || !gruppo) return;
+        const pedinaDi = (id) => {
+            const c = typeof characterDatabase !== 'undefined' ? characterDatabase.find((x) => x.id === id) : null;
+            return c && typeof window.getCharacterPawnImage === 'function' ? window.getCharacterPawnImage(c.image) : (c ? c.image : null);
+        };
+        const corpo = document.createElement('div');
+        corpo.className = 'mp-boss-lista';
+        corpo.id = 'mpRaidBossLista';
+        gruppo.appendChild(corpo);
+        aggiornaListaBoss = () => {
+            corpo.replaceChildren(...elenco.map((b) => {
+                const voce = document.createElement('button');
+                voce.type = 'button';
+                voce.className = 'mp-boss-voce';
+                voce.setAttribute('aria-pressed', String(menu.value === b.id && spunta.checked));
+                voce.dataset.boss = b.id;
+                voce.disabled = !sonoHost;
+                const img = document.createElement('span');
+                img.className = 'mp-boss-img';
+                const url = pedinaDi(b.id);
+                if (url) img.style.backgroundImage = `url("${url}")`;
+                const nome = document.createElement('b');
+                nome.textContent = b.nome;
+                const lp = document.createElement('small');
+                lp.textContent = `${b.lp.toLocaleString('it-IT')} Life Point`;
+                const premio = document.createElement('em');
+                premio.textContent = premioBossBreve(b.lp);
+                voce.append(img, nome, lp, premio);
+                voce.onclick = () => {
+                    if (!sonoHost) return;
+                    spunta.checked = true;
+                    menu.value = b.id;
+                    applica();
+                    MpScelte.chiudi();
+                };
+                return voce;
+            }));
+        };
+        aggiornaListaBoss();
+        const attuale = () => bossPerId(menu.value) || elenco[0];
+        tesseraBoss = MpScelte.tessera(gruppo, {
+            corpo, titolo: 'Il Boss', titoloModale: 'Scegli il Boss', icona: 'dragon', glifo: () => '🐉',
+            img: () => pedinaDi(attuale().id),
+            contieni: true,
+            valore: () => attuale().nome,
+            dettaglio: () => `${attuale().lp.toLocaleString('it-IT')} Life Point${scelta.raidIncubo ? ' · Incubo' : ''}`,
+            alApertura: () => aggiornaListaBoss()
+        });
+        // Il livello Incubo: una riga sotto la tessera. Lo decide l'host come il Boss.
+        const riga = document.createElement('label');
+        riga.className = 'mp-incubo-riga';
+        riga.id = 'mpRaidIncuboRiga';
+        riga.innerHTML = '<input type="checkbox" id="mpRaidIncubo"><span><b>Livello Incubo</b>'
+            + '<small>Il Boss gioca a copione: mano sempre giocabile e, ogni tanto, la sua carta simbolo entra in campo. Premi +25% e, una volta al giorno, Carta Locazione e Carta del Millennio.</small></span>';
+        gruppo.appendChild(riga);
+        const incubo = riga.querySelector('input');
+        incubo.onchange = () => {
+            scelta.raidIncubo = incubo.checked;
+            if (tesseraBoss) tesseraBoss.aggiorna();
+            aggiornaPremiSala();
+            if (sonoHost && avversarioInStanza && !duelloGiaAvviato) inviaConfigHost();
+        };
+    }
+
     function costruisciRaid() {
         const spunta = $('mpRaidOn');
         const menu = $('mpRaidBoss');
@@ -747,7 +827,10 @@
         });
         const applica = () => {
             scelta.raid = spunta.checked ? menu.value : null;
-            menu.hidden = !spunta.checked;
+            // Il <select> non si mostra piu': la scelta e' la tessera "Il Boss" (costruisciTesseraBoss).
+            menu.hidden = true;
+            if (tesseraBoss) tesseraBoss.aggiorna();
+            aggiornaListaBoss();
             if (spunta.checked) {
                 // Raid e specchio si escludono: nel Raid ognuno gioca il proprio mazzo.
                 const sp = $('mpSpecchioOn');
@@ -759,6 +842,7 @@
         };
         spunta.onchange = applica;
         menu.onchange = applica;
+        costruisciTesseraBoss($('mpRaidGroup'), menu, spunta, elenco, applica);
         aggiornaRaidPerRuolo();
     }
 
@@ -770,6 +854,9 @@
         menu.disabled = !sonoHost;
         const riga = spunta.closest('.mp-specchio-riga');
         if (riga) riga.classList.toggle('is-sola-lettura', !sonoHost);
+        const incubo = $('mpRaidIncubo');
+        if (incubo) { incubo.disabled = !sonoHost; const r = $('mpRaidIncuboRiga'); if (r) r.classList.toggle('is-sola-lettura', !sonoHost); }
+        aggiornaListaBoss();
     }
 
     function mostraRaidRicevuto(config) {
@@ -778,7 +865,10 @@
         if (!spunta || !menu) return;
         const id = config && typeof config.raid === 'string' ? config.raid : null;
         spunta.checked = !!id;
-        menu.hidden = !id;
+        menu.hidden = true;   // la scelta e' la tessera "Il Boss"
+        scelta.raidIncubo = !!(id && config.raidIncubo === true);
+        const incubo = $('mpRaidIncubo');
+        if (incubo) incubo.checked = scelta.raidIncubo;
         if (id) {
             if (![...menu.options].some((o) => o.value === id)) {
                 const o = document.createElement('option');
@@ -788,6 +878,8 @@
             }
             menu.value = id;
         }
+        if (tesseraBoss) tesseraBoss.aggiorna();
+        aggiornaListaBoss();
         mostraRegolaRaid(id);
     }
 
@@ -954,6 +1046,7 @@
             const b = id ? bossPerId(id) : null;
             ctx.bossId = id;
             ctx.bossNome = b ? b.nome : '';
+            ctx.incubo = !!scelta.raidIncubo;
         }
         Rewards.montaPremiSala(el, modo, ctx);
     }
@@ -1018,7 +1111,7 @@
         };
         const specchio = specchioRisolto();
         if (specchio) config.specchio = specchio;
-        if (scelta.raid) config.raid = scelta.raid;
+        if (scelta.raid) { config.raid = scelta.raid; if (scelta.raidIncubo) config.raidIncubo = true; }
         net.sendAction(config);
         configRicevuta = config;
     }
@@ -1357,7 +1450,8 @@
             music: window.ArenaOptions.risolviTraccia(scelta.music),
             origin: scelta.origin,
             specchio: specchioRisolto() || undefined,
-            raid: scelta.raid || undefined
+            raid: scelta.raid || undefined,
+            raidIncubo: (scelta.raid && scelta.raidIncubo) ? true : undefined
         };
         contoAllaRovescia(config, () => {
             // Raid: nessuna morra, ognuno gioca il suo duello contro il Boss.
@@ -1507,6 +1601,8 @@
         // Raid: il Boss e' un Duellante in Duello Libero, a Difficile. Fuori dal Raid questi parametri non ci sono.
         if (config.raid && bossPerId(config.raid)) { params.set('mode', 'free'); params.set('character', config.raid); params.set('difficulty', 'Difficile'); }
         else { params.delete('mode'); params.delete('character'); params.delete('difficulty'); }
+        // Livello Incubo (js/modes/incubo.js): il Boss gioca a copione. Lo decide l'host e viaggia in room-config.
+        if (config.raid && config.raidIncubo === true && bossPerId(config.raid)) params.set('incubo', '1'); else params.delete('incubo');
         // Stesso parametro del Duello Libero: js/duel-session.js lo legge
         // come `allowedOrigin` e BLOCCA davvero un mazzo che non lo
         // rispetta. Ogni client controlla il proprio mazzo contro la

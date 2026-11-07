@@ -123,7 +123,7 @@ module.exports = {
                     t.assert(!compatto, `${w}px: il selettore arena/musica della sala non deve essere compatto`);
 
                     // La sala e' CORTA: pedina, mazzo e arena+musica sono tre righe riassuntive, non tre selettori aperti.
-                    const corta = await page.evaluate(() => ({ fondo: document.getElementById('mpSetup').getBoundingClientRect().bottom + window.scrollY, ih: innerHeight, tessere: document.querySelectorAll('.mp-tessera').length }));
+                    const corta = await page.evaluate(() => ({ fondo: document.getElementById('mpSetup').getBoundingClientRect().bottom + window.scrollY, ih: innerHeight, tessere: document.querySelectorAll('.mp-tessera:not(#mpRaidGroup .mp-tessera)').length }));
                     t.assert(corta.tessere === 3, `${w}px: servono tre riquadri riassuntivi (pedina, mazzo, arena e musica), ce ne sono ${corta.tessere}`);
                     t.assert(corta.fondo <= corta.ih * 1.6, `${w}px: la sala e' ancora troppo lunga (finisce a ${Math.round(corta.fondo)}px su uno schermo di ${corta.ih})`);
 
