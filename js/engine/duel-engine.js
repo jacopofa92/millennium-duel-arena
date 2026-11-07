@@ -1765,7 +1765,9 @@
             // una riga per carta. Le altre provenienze non si animano da
             // qui: la mano ha già il proprio volo, l'Extra Deck la propria
             // cinematica, un Token non viene da nessuna parte.
+            // (Un mostro che torna COPERTO non fa il viaggio a faccia in su dal Cimitero: rivelerebbe cosa e'.)
             if (fromZone === 'graveyard' && !(visualOptions && visualOptions.skipGraveyardTravel)
+                && !(position === 'defense' && !(visualOptions && visualOptions.faceUp))
                 && window.FX && typeof FX.playCardFromGraveyard === 'function') {
                 FX.playCardFromGraveyard(card, owner, owner, slotIndex);
             }
@@ -1795,7 +1797,10 @@
                 // un mostro già sul Terreno sia arrivato lì.
                 wasSpecialSummoned: true
             };
-            if (window.DuelDialogues) DuelDialogues.summon(owner, card);
+            // Un mostro che arriva COPERTO (es. Momonga, Mago Apprendista: 'defense' senza `faceUp`) non si annuncia: niente dialogo,
+            // grido, cinematica ne' suono dedicati alla carta, che rivelerebbero all'avversario cosa e' stato messo coperto.
+            const arrivaCoperta = !!field[slotIndex].isFaceDown;
+            if (window.DuelDialogues && !arrivaCoperta) DuelDialogues.summon(owner, card);
             fireTrigger(
                 TRIGGER.ON_SPECIAL_SUMMON,
                 makeContext(owner, { summonedCard: card, summonedSlotIndex: slotIndex, summonedPosition: position, summonedFromZone: fromZone }),
@@ -1817,6 +1822,7 @@
                         const mostraEvocazione = () => {
                             EventiDuello.emetti('impatto-campo', owner, slotIndex, 'monster');
                             EventiDuello.emetti('cambio-posizione', owner, slotIndex, position);
+                            if (arrivaCoperta) { if (window.SFX) SFX.place(); return; }
                             const cardEl = PortaUI.query(`#${owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard'} .field-slot[data-type="monster"][data-index="${slotIndex}"] .card`);
                             // Una Fusione in WebGL ha gia' mostrato la sua seconda parte (illustrazione, nome, stelle, ATK/DEF): niente doppione.
                             const giaMostrata = !!(window.FX && FX.rivelazioneFusioneFatta && FX.rivelazioneFusioneFatta(card));
@@ -1827,7 +1833,8 @@
                         // la parte VISIVA dell'Evocazione (lo stato è già
                         // cambiato: la Special Summon è sincrona, vedi
                         // js/ui/grido-evocazione.js). Senza grido parte subito.
-                        EventiDuello.attendi('grido-evocazione', { posto: owner, carta: card, speciale: true }, mostraEvocazione);
+                        if (arrivaCoperta) mostraEvocazione();
+                        else EventiDuello.attendi('grido-evocazione', { posto: owner, carta: card, speciale: true }, mostraEvocazione);
                     }, visualDelay);
                 }
             );

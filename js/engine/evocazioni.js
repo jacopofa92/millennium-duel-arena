@@ -343,6 +343,14 @@ function eseguiEvocazioneNormale(posto, c, extra) {
         setTimeout(() => {
             EventiDuello.emetti('impatto-campo', posto, slotIndex, 'monster');
             EventiDuello.emetti('cambio-posizione', posto, slotIndex, position);
+            // Un mostro piazzato COPERTO (Set, anche con Tributo: Tribute Set) non si annuncia: l'avversario non deve sapere cosa
+            // e' stato messo. Niente cinematica di Evocazione (per i Livelli 7+ mostrerebbe nome e Attributo), niente video o
+            // suono dedicati alla carta (rivelerebbero quale e'): solo il suono generico del Set, come per una Magia/Trappola
+            // coperta. (Il grido del duellante e il dialogo sono gia' esclusi piu' sopra.)
+            if (isFaceDown) {
+                if (window.SFX) SFX.place();
+                return;
+            }
             if (window.FX) {
                 const cardEl = PortaUI.query(`#${posto}FieldBoard .field-slot[data-type="monster"][data-index="${slotIndex}"] .card`);
                 FX.playMonsterSummonEffect(card, cardEl);
