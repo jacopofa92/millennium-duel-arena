@@ -53,6 +53,9 @@ const ROOM_TTL_MS = 30 * 60 * 1000; // le stanze inutilizzate scadono dopo 30 mi
 // farlo richiederebbe salvare l'intera partita lato server, che oggi resta
 // solo un relay cieco tra due client autorevoli.
 const RECONNECT_GRACE_MS = 45 * 1000;
+// Ping verso i client (vedi KEEPALIVE piu' sotto). Configurabile solo per le prove.
+const PING_INTERVAL_MS = Number(process.env.PING_INTERVAL_MS) || 25 * 1000;
+const SILENZIO_MAX_MS = PING_INTERVAL_MS * 3;
 // Validazione di FORMA (non delle regole del duello — vedi handleClientMessage
 // più sotto) contro un client rotto o malevolo che inondasse il relay.
 const RATE_LIMIT_WINDOW_MS = 1000;
@@ -170,7 +173,8 @@ function decodeFrames(buffer) {
         } else if (opcode === 0x1) {
             messages.push(payload.toString('utf8'));
         }
-        // opcode 0x9 (ping) / 0xA (pong) ignorati: i browser gestiscono da soli il keepalive
+        // opcode 0x9 (ping) / 0xA (pong) ignorati qui: il keepalive lo fa il server (KEEPALIVE, piu' sotto) e ogni dato ricevuto,
+        // pong compresi, aggiorna `ultimoSegnale` nel gestore 'data'.
 
         offset = cursor + payloadLen;
     }
@@ -516,9 +520,15 @@ server.on('upgrade', (req, socket) => {
 
     socket.roomCode = null;
     socket.playerId = null;
+    // Keepalive (vedi PING_INTERVAL_MS): Nagle spento per la latenza dei messaggi del duello, keepalive TCP contro i NAT dei telefoni.
+    try { socket.setNoDelay(true); socket.setKeepAlive(true, 20000); } catch (e) { /* socket gia' chiuso */ }
+    socket.ultimoSegnale = Date.now();
+    collegati.add(socket);
     let buffer = Buffer.alloc(0);
 
     socket.on('data', (chunk) => {
+        // Qualunque dato (un messaggio, o la risposta a un ping) dice che dall'altra parte c'e' ancora qualcuno.
+        socket.ultimoSegnale = Date.now();
         buffer = Buffer.concat([buffer, chunk]);
         const { messages, rest } = decodeFrames(buffer);
         buffer = rest;
@@ -533,9 +543,29 @@ server.on('upgrade', (req, socket) => {
 
     // Chiusura/errore: NON un abbandono volontario (quello è 'leave-room'
     // sopra) — apre solo la finestra di grazia, vedi handleSocketClose.
-    socket.on('close', () => handleSocketClose(socket));
-    socket.on('error', () => handleSocketClose(socket));
+    socket.on('close', () => { collegati.delete(socket); handleSocketClose(socket); });
+    socket.on('error', () => { collegati.delete(socket); handleSocketClose(socket); });
 });
+
+// ------------------------------------------------------------
+// KEEPALIVE. Nessun lato mandava mai un ping: il browser non lo fa (l'API WebSocket non lo espone) e il server ignorava quelli
+// altrui, scrivendolo perfino in un commento sbagliato ("i browser gestiscono da soli il keepalive"). Una connessione ferma in una
+// sala d'attesa non porta traffico, e il proxy di Render (come qualunque NAT mobile) la chiude dopo un po' di silenzio: il giocatore
+// vedeva "Connessione persa" / "Impossibile riconnettersi" proprio mentre aspettava l'avversario. Il server manda un ping ogni
+// PING_INTERVAL_MS (il browser risponde da solo con un pong, e il traffico tiene viva la linea in entrambe le direzioni); un socket
+// che non da' alcun segnale per 3 intervalli e' morto davvero e si chiude, aprendo la finestra di grazia come ogni altra caduta.
+// ------------------------------------------------------------
+const PING_FRAME = Buffer.from([0x89, 0x00]);
+const collegati = new Set();
+const keepaliveInterval = setInterval(() => {
+    const ora = Date.now();
+    collegati.forEach((socket) => {
+        if (socket.destroyed) { collegati.delete(socket); return; }
+        if (ora - socket.ultimoSegnale > SILENZIO_MAX_MS) { socket.destroy(); return; }
+        try { socket.write(PING_FRAME); } catch (e) { /* chiuso: lo gestisce 'close' */ }
+    });
+}, PING_INTERVAL_MS);
+keepaliveInterval.unref();
 
 // Pulizia periodica delle stanze abbandonate/scadute
 const cleanupInterval = setInterval(() => {

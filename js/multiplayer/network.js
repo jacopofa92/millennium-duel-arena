@@ -28,7 +28,9 @@
 (function () {
     'use strict';
 
-    const RECONNECT_DELAYS_MS = [1000, 2000, 4000, 8000];
+    // Sei tentativi in ~31 s di attese (piu' il tempo di ogni tentativo): il server tiene il posto 45 s (RECONNECT_GRACE_MS), quindi
+    // arrendersi dopo 15 s (i quattro di prima) lasciava metà della finestra inutilizzata su una linea che stava solo tornando.
+    const RECONNECT_DELAYS_MS = [1000, 2000, 4000, 8000, 8000, 8000];
 
     // Un singolo tentativo di apertura resta breve: se il server non c'è,
     // o l'indirizzo è sbagliato, l'errore deve arrivare subito.

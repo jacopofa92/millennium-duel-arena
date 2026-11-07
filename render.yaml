@@ -54,3 +54,12 @@ services:
     # sapere che il processo è vivo, e a chiunque per controllare a occhio
     # se il server è sveglio aprendo l'indirizzo nel browser.
     healthCheckPath: /
+    # Si ridistribuisce SOLO quando cambia il relay (o la forma dei messaggi che controlla). Prima ogni push su main, anche di
+    # una carta o di un'immagine, faceva ripartire il processo: tutte le stanze e le partite in corso sparivano all'istante
+    # ("impossibile collegarsi al server" mentre si era in sala, proprio durante le prove). Il file protocollo-mp.js e' condiviso
+    # coi client: se cambia, il relay deve ripartire con quello nuovo.
+    buildFilter:
+      paths:
+        - server/**
+        - js/multiplayer/protocollo-mp.js
+        - render.yaml
