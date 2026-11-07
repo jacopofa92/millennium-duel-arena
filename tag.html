@@ -73,7 +73,8 @@
     .tg-posto-foto { flex: 0 0 auto; aspect-ratio: 1; background: #15110c center / cover no-repeat; }
     /* Un posto solo (2 contro 1, Boss): foto quadrata a sinistra e testo a destra, invece di una foto enorme. */
     .tg-posti--uno .tg-posto { flex-direction: row; align-items: center; }
-    .tg-posti--uno .tg-posto-foto { flex: 0 0 auto; width: min(46%, 220px); }
+    /* La pedina riempie l'altezza della tessera (le pedine sono quasi quadrate: la larghezza decide quanto cresce). */
+    .tg-posti--uno .tg-posto-foto { flex: 0 0 auto; width: min(54%, 300px); aspect-ratio: auto; align-self: stretch; min-height: 280px; }
     .tg-posti--uno .tg-posto-testo { padding: 12px 14px; }
     .tg-posti--uno .tg-posto-nome { font-size: 1.15rem; }
     .tg-posto-testo { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px 10px; }
@@ -140,7 +141,7 @@
         .tg-tavolo { grid-template-columns: minmax(0, 1fr); gap: 8px; }
         .tg-vs { justify-self: center; font-size: 1.1rem; }
         .tg-lato { padding: 10px; }
-        .tg-posti--uno .tg-posto-foto { width: 42%; }
+        .tg-posti--uno .tg-posto-foto { width: 48%; min-height: 200px; }
         .tg-regola { grid-template-columns: minmax(0, 1fr); }
         .tg-regola-aiuto { grid-column: 1; }
         .tg-seg button small { display: none; }
