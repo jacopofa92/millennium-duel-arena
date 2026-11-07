@@ -41,6 +41,17 @@ const JOBS = [
         quality: 0.72
     },
     {
+        // Pose "danno/sorpresa" delle pedine (1254x1254, ~1,7 MB l'una): nel duello compaiono in un riquadro da ~50px, quindi si
+        // usa questa copia da 320px CON trasparenza (la figura e' scontornata: senza canale alpha avrebbe uno sfondo pieno).
+        nome: 'pedine-danno',
+        source: path.join(ROOT, 'images', 'characters', 'pedine-danno-sorpresa'),
+        output: path.join(ROOT, 'images', 'characters', 'pedine-danno-sorpresa', 'thumbs'),
+        width: 320,
+        height: 320,
+        quality: 0.82,
+        alpha: true
+    },
+    {
         source: path.join(ROOT, 'images', 'fields'),
         output: path.join(ROOT, 'images', 'fields', 'thumbs'),
         width: 480,
@@ -54,20 +65,21 @@ const IMAGE_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 async function converti(page, input, job) {
     const mime = path.extname(input).toLowerCase() === '.png' ? 'image/png' : 'image/jpeg';
     const dataUrl = `data:${mime};base64,${fs.readFileSync(input).toString('base64')}`;
-    const webp = await page.evaluate(async ({ dataUrl, width, height, quality }) => {
+    const webp = await page.evaluate(async ({ dataUrl, width, height, quality, alpha }) => {
         const image = new Image();
         image.src = dataUrl;
         await image.decode();
         const canvas = document.createElement('canvas');
         canvas.width = width;
         canvas.height = height;
-        const ctx = canvas.getContext('2d', { alpha: false });
-        const scale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
+        const ctx = canvas.getContext('2d', { alpha: !!alpha });
+        // Con trasparenza (una figura scontornata) si mostra INTERA (contain); senza, il riquadro si riempie (cover).
+        const scale = (alpha ? Math.min : Math.max)(width / image.naturalWidth, height / image.naturalHeight);
         const w = image.naturalWidth * scale;
         const h = image.naturalHeight * scale;
         ctx.drawImage(image, (width - w) / 2, (height - h) / 2, w, h);
         return canvas.toDataURL('image/webp', quality).split(',')[1];
-    }, { dataUrl, width: job.width, height: job.height, quality: job.quality });
+    }, { dataUrl, width: job.width, height: job.height, quality: job.quality, alpha: !!job.alpha });
     const output = path.join(job.output, path.parse(input).name + '.webp');
     fs.writeFileSync(output, Buffer.from(webp, 'base64'));
     return output;
