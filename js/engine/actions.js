@@ -1459,6 +1459,17 @@ function openSummonModal(card, slotIndex, handIndex, fromRect, opzioni) {
         return;
     }
 
+    // Conclude l'Evocazione scelta E spegne `gameState.pendingSummon`. Prima il flag veniva azzerato solo ANNULLANDO: dopo
+    // un'Evocazione riuscita restava acceso per tutto il duello, e isGameplaySelectionActive() (game-flow.js) lo leggeva
+    // come "scelta in corso", sopprimendo il pannello info delle carte (segnalato dall'utente: in Battle Phase toccando
+    // una carta della mano non compariva nulla; in Main Phase il ramo della mano riapre il pannello da solo, e il difetto
+    // non si vedeva). Il rettangolo di partenza si legge PRIMA di azzerare: serve all'animazione di volo.
+    const concludiEvocazione = (posizione) => {
+        const partenza = gameState.pendingSummon ? gameState.pendingSummon.fromRect : fromRect;
+        gameState.pendingSummon = null;
+        summonMonster(card, slotIndex, posizione, handIndex, partenza);
+    };
+
     // Dopo un Tributo non c'è nulla da scegliere sulla Posizione: un'Evocazione
     // Tributo si fa sempre scoperta in Attacco (regola in eseguiEvocazioneNormale,
     // evocazioni.js), a meno che la carta non dica il contrario (def.canTributeSet).
@@ -1467,9 +1478,7 @@ function openSummonModal(card, slotIndex, handIndex, fromRect, opzioni) {
     if (opzioni && opzioni.dopoTributo && !(defTributo && defTributo.canTributeSet)) {
         gameState.pendingSummon = { card, slotIndex, handIndex, fromRect };
         const slotElTributo = document.querySelector(`.field-slot[data-owner="player"][data-type="monster"][data-index="${slotIndex}"]`);
-        maybeAskRaLpChoice(card, slotElTributo, () => {
-            summonMonster(card, slotIndex, 'attack', handIndex, gameState.pendingSummon && gameState.pendingSummon.fromRect);
-        });
+        maybeAskRaLpChoice(card, slotElTributo, () => concludiEvocazione('attack'));
         return;
     }
 
@@ -1514,16 +1523,12 @@ function openSummonModal(card, slotIndex, handIndex, fromRect, opzioni) {
     pop.querySelector('#qpSummonAttack').onclick = () => {
         closeQuickPopover();
         clearPendingVisual();
-        maybeAskRaLpChoice(card, slotEl, () => {
-            summonMonster(card, slotIndex, 'attack', handIndex, gameState.pendingSummon && gameState.pendingSummon.fromRect);
-        });
+        maybeAskRaLpChoice(card, slotEl, () => concludiEvocazione('attack'));
     };
     pop.querySelector('#qpSummonDefense').onclick = () => {
         closeQuickPopover();
         clearPendingVisual();
-        maybeAskRaLpChoice(card, slotEl, () => {
-            summonMonster(card, slotIndex, 'defense', handIndex, gameState.pendingSummon && gameState.pendingSummon.fromRect);
-        });
+        maybeAskRaLpChoice(card, slotEl, () => concludiEvocazione('defense'));
     };
     const cancelBtn = pop.querySelector('#qpSummonCancel');
     if (cancelBtn) {
