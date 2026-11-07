@@ -4304,6 +4304,8 @@ priorità o richiedono un refactor ampio):
 
 1.5.118 (cache v628, su `main`): **la posa di danno conta SOLO il danno subito, mai un costo pagato in LP** (richiesta dell'utente: 'i sacrifici voluti NON devono essere considerati'). La 1.5.116 confrontava i Life Point prima e dopo e quindi scattava anche per Ra, i mantenimenti e ogni costo. Ora `ACTIONS.dealDamage` (duel-engine.js, l'unico punto del danno di battaglia ed effetti) emette il nuovo evento `danno-subito` (owner, amount, nell'elenco EVENTI) e game-flow.js lo gira a `PosaDanno.danno`; un costo si sottrae direttamente (`gameState[lpKey] -= n`, 11 punti, tutti costi: Ra, mantenimenti da Standby, ecc.) e non passa da li'. Il 10% si calcola sui LP di prima (LP attuali + danno). Spec `posa-danno` esteso (un costo da 3500 non fa niente, `dealDamage` vero si). **Regola: un nuovo costo in LP si sottrae direttamente, mai con `dealDamage` (che e' danno: blocchi, Sosia, posa).** Suite completa non eseguita.
 
+**PROVATO SUL CAMPO (2026-11-08, versione 1.5.118, cache v628): Tag Team online, 2 persone vere contro 1 IA, "tutto ok, funzionato tutto perfettamente"** (prova dell'utente con un amico, su relay e sito pubblicati). Punto fermo: a questa versione il Tag in rete 2 contro 1 e la connessione al relay (con keepalive, 1.5.117) reggono. Se in futuro qualcosa si rompe nel Tag in rete, confrontare con questo stato. **Non coperto da questa prova**: 2 contro 2 con quattro persone, Boss in rete, livello Incubo (il Raid non e' stato menzionato), caduta di linea a tre.
+
 ## Carte con limiti noti (da riprendere)
 
 **Fonte di verità: `grep missingEffectNote data/cards.json`, e nient'altro.**
