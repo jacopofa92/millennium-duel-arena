@@ -179,7 +179,8 @@
         const url = net.normalizeServerUrl(typed);
         if (url !== typed) $('mpServerUrl').value = url;
 
-        showStatus('🔌 Connessione al server...');
+        // Niente testo in #mpStatus: ora racconta tutto il modale della console, e un messaggio qui sotto spostava la pagina dietro.
+        showStatus('');
         avviaAttesaServer();
         try {
             await net.connect(url);
@@ -193,13 +194,16 @@
             fermaAttesaServer();
             try { accessoConcesso(); } catch (e) { /* la scenetta non deve mai far fallire il collegamento */ }
             if (SCENETTA_MS) await new Promise((resolve) => setTimeout(resolve, SCENETTA_MS));
-            if (document.querySelector('#mpStatus .mp-term.is-ok')) showStatus('✅ Connesso al server.');
+            const concesso = !!document.querySelector('#mpTermModal .mp-term.is-ok');
+            chiudiTerminale();
+            if (concesso) showStatus('✅ Connesso al server.');
             return true;
         } catch (err) {
             fermaAttesaServer();
             try { connessioneRifiutata(); } catch (e) { /* idem */ }
-            // Il messaggio d'errore arriva subito dopo il lampo rosso; i pulsanti si riattivano senza aspettare.
-            setTimeout(() => showStatus('❌ Impossibile connettersi: ' + err.message, true), 600);
+            // Il lampo rosso resta a vista per un istante, poi il modale si chiude e il messaggio d'errore compare in pagina;
+            // i pulsanti si riattivano senza aspettare.
+            setTimeout(() => { chiudiTerminale(); showStatus('❌ Impossibile connettersi: ' + err.message, true); }, riduciMovimento ? 300 : 1100);
             return false;
         }
     }
@@ -231,24 +235,28 @@
     // nessuno gioca e ci mette circa un minuto a tornare su. Senza questo
     // messaggio l'attesa sembrerebbe un blocco.
     net.on('connect-waking', (info) => {
+        // Il modale esiste solo durante un collegamento avviato da questa sala (ensureConnected): senza il timer nessuno lo chiuderebbe.
+        if (!attesa.timer) return;
         attesa.risveglio = true;
         attesa.tentativo = (info && info.attempt) || (attesa.tentativo + 1);
         mostraAttesaServer();
     });
 
-    // --- Attesa del server, scritta in pagina -------------------------
-    // Mentre il server gratuito si sveglia (fino a circa un minuto) la riga
-    // di stato sotto i pulsanti racconta cosa succede e cambia frase ogni
-    // pochi secondi, con il tempo trascorso: nessuna finestra sopra la
-    // pagina, il resto della lobby resta com'è (richiesta esplicita
-    // dell'utente: "niente modali"). Il tempo è reale; le frasi sono solo
-    // compagnia, non descrivono passaggi veri del server.
+    // --- Attesa del server, in un MODALE ------------------------------
+    // Mentre il server gratuito si sveglia (fino a circa un minuto) un
+    // terminale della KaibaCorp racconta cosa succede e cambia frase ogni
+    // pochi secondi, con il tempo trascorso. Prima stava dentro la riga di
+    // stato (`#mpStatus`), in fondo alla pagina: sul telefono finiva sotto
+    // la piega e la barra di navigazione, e spostava il resto della sala.
+    // Ora (richiesta dell'utente, 2026-11-07) e' un modale a tutto schermo
+    // (`#mpTermModal`) creato da ospiteTerminale() e tolto da
+    // chiudiTerminale() a fine collegamento (riuscito o no): `#mpStatus`
+    // resta solo per i messaggi di testo. Il tempo è reale; le frasi sono
+    // solo compagnia, non descrivono passaggi veri del server.
     //
-    // Aspetto: un piccolo terminale della KaibaCorp DENTRO la riga di stato
-    // (`#mpStatus`), con titolo che glitcha (separazione RGB), scanline,
-    // righe che si scrivono lettera per lettera e una barra senza fine.
-    // Vive solo finché dura l'attesa: il prossimo `showStatus` sostituisce
-    // tutto col suo testo, quindi non serve mai "chiuderlo".
+    // Aspetto: un terminale della KaibaCorp con titolo che glitcha
+    // (separazione RGB), scanline, righe che si scrivono lettera per
+    // lettera e una barra senza fine.
     // Le prime quattro scorrono veloci (sono il collegamento vero, di solito una frazione di secondo); le altre
     // compaiono solo se il server dorme e ci mette a svegliarsi.
     const FRASI_ATTESA = [
@@ -304,17 +312,30 @@
         // Sfondo WebGL "KaibaCorp System" dietro la console (js/multiplayer/mp-term-fx.js): niente se manca WebGL.
         if (attesa.fx) attesa.fx.ferma();
         attesa.fx = window.MpTermFx ? MpTermFx.monta(el.querySelector('.mp-term')) : null;
-        tieniInVista(el);
     }
 
-    /**
-     * La console sta in fondo alla pagina, sotto il pulsante di apertura: sul telefono compariva sotto la piega e la barra di
-     * navigazione in basso la copriva a meta'. La si porta a vista, ferma sopra la barra (il margine e' `scroll-margin-bottom`
-     * di #mpStatus nel CSS), e di nuovo ogni volta che la console cresce con una riga in piu'.
-     */
-    function tieniInVista(el) {
-        const vai = () => { try { el.scrollIntoView({ block: 'end', behavior: riduciMovimento ? 'auto' : 'smooth' }); } catch (e) { /* vecchi browser: resta dov'e' */ } };
-        requestAnimationFrame(vai);
+    /** Il modale che ospita la console: lo crea alla prima richiesta, a tutto schermo e sopra la barra di navigazione. */
+    function ospiteTerminale() {
+        let m = $('mpTermModal');
+        if (!m) {
+            m = document.createElement('div');
+            m.id = 'mpTermModal';
+            m.className = 'mp-term-modal';
+            m.setAttribute('role', 'dialog');
+            m.setAttribute('aria-modal', 'true');
+            m.setAttribute('aria-label', 'Connessione al server');
+            document.body.appendChild(m);
+            document.body.classList.add('mp-term-aperto');
+        }
+        return m;
+    }
+
+    /** Toglie il modale (e lo sfondo WebGL, rilasciando il contesto). Sicuro da chiamare piu' volte. */
+    function chiudiTerminale() {
+        if (attesa.fx) { try { attesa.fx.ferma(); } catch (e) { /* gia' fermo */ } attesa.fx = null; }
+        const m = $('mpTermModal');
+        if (m) m.remove();
+        document.body.classList.remove('mp-term-aperto');
     }
 
     /** Una riga di byte in esadecimale, per il flusso di dati che scorre sotto il titolo (solo decorazione). */
@@ -326,7 +347,7 @@
 
     /** Collegamento riuscito: la console lo dice ("accesso concesso") prima di lasciare il posto al messaggio normale. */
     function accessoConcesso() {
-        const term = document.querySelector('#mpStatus .mp-term');
+        const term = document.querySelector('#mpTermModal .mp-term');
         if (!term) return Promise.resolve();
         term.classList.add('is-ok');
         const stato = $('mpTermStato'); if (stato) stato.textContent = 'ACCESSO CONCESSO // UPLINK STABILE';
@@ -346,7 +367,7 @@
 
     /** Collegamento fallito: un attimo di "rifiutato" in rosso prima del messaggio d'errore. */
     function connessioneRifiutata() {
-        const term = document.querySelector('#mpStatus .mp-term');
+        const term = document.querySelector('#mpTermModal .mp-term');
         if (!term) return Promise.resolve();
         term.classList.add('is-err');
         const stato = $('mpTermStato'); if (stato) stato.textContent = 'CONNESSIONE RIFIUTATA // UPLINK PERSO';
@@ -356,8 +377,7 @@
 
     function mostraAttesaServer() {
         if (!attesa.risveglio && !attesa.visibile) return;
-        const el = $('mpStatus');
-        if (!el) return;
+        const el = ospiteTerminale();
         if (!el.querySelector('.mp-term')) costruisciTerminaleAttesa(el);
         const ms = Math.max(0, Date.now() - attesa.inizio);
         const secondi = Math.round(ms / 1000);
@@ -386,7 +406,6 @@
         // Il corpo ha un'altezza massima (due righe in orizzontale, sei in verticale) e nasconde cio' che avanza: senza questo restavano
         // fuori proprio le righe nuove, e la riga attiva non si leggeva. Si porta in fondo ad ogni giro (anche mentre la riga si scrive).
         corpo.scrollTop = corpo.scrollHeight;
-        if (attesa.righe > righePrima) tieniInVista(el);
         $('mpTermFoot').textContent = `TENTATIVO ${Math.max(1, attesa.tentativo)}`
             + (secondi >= 25 ? ' · PUÒ SERVIRE FINO A UN MINUTO: RESTA SU QUESTA PAGINA' : '');
     }

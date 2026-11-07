@@ -464,11 +464,11 @@
     -webkit-mask-image: radial-gradient(ellipse 62% 66% at 50% 50%, #000 40%, transparent 100%); mask-image: radial-gradient(ellipse 62% 66% at 50% 50%, #000 40%, transparent 100%); }
 /* NESSUN riquadro: la connessione e' atmosfera dietro poche righe di testo che
    galleggiano. Qui sotto si toglie alla console di una volta tutto cio' che la faceva sembrare una finestra. */
-#mpStatus .mp-term { background: none; border: 0; clip-path: none; box-shadow: none !important; padding: 4px 0; transform: none; animation: none; max-width: none; overflow: visible; }
-#mpStatus .mp-term::before, #mpStatus .mp-term::after, #mpStatus .mp-term-circuit { display: none; }
-#mpStatus .mp-term-emblem { background: none; border: 0; box-shadow: none; clip-path: none; }
-#mpStatus .mp-term-clock { background: none; box-shadow: none; color: #f7d774; padding: 0; }
-#mpStatus .mp-term-head { border-bottom: 0; }
+#mpTermModal .mp-term { background: none; border: 0; clip-path: none; box-shadow: none !important; padding: 4px 0; transform: none; animation: none; max-width: none; overflow: visible; }
+#mpTermModal .mp-term::before, #mpTermModal .mp-term::after, #mpTermModal .mp-term-circuit { display: none; }
+#mpTermModal .mp-term-emblem { background: none; border: 0; box-shadow: none; clip-path: none; }
+#mpTermModal .mp-term-clock { background: none; box-shadow: none; color: #f7d774; padding: 0; }
+#mpTermModal .mp-term-head { border-bottom: 0; }
 .mp-term-hex { position: relative; display: flex; overflow: hidden; margin: 0 0 6px; height: 1em; font: 500 .55rem/1 ui-monospace, Consolas, monospace; letter-spacing: .12em; color: rgba(110, 221, 255, .38); white-space: nowrap; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
 .mp-term-hex span { flex: none; animation: mpTermHex 7s linear infinite; }
 @keyframes mpTermHex { to { transform: translateX(-100%); } }
@@ -1408,3 +1408,21 @@ body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-lobby { p
     body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .tg-formato { padding: 6px 10px; }
     body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-advanced { margin-top: 6px; }
 }
+
+/* ===== Console KaibaCorp in un MODALE (2026-11-07) =====
+   Prima stava in #mpStatus, in fondo alla pagina: sul telefono finiva sotto la piega e la barra di navigazione. Ora e' un
+   modale a tutto schermo creato da mp-lobby.js (ospiteTerminale/chiudiTerminale), sopra barra di tab, chat e ogni altro livello
+   della sala. La console resta "senza riquadro" (regole #mpTermModal .mp-term piu' sopra): galleggia su un fondo scuro. */
+.mp-term-modal {
+    position: fixed; inset: 0; z-index: 100000;
+    display: grid; place-items: center;
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    /* Opaco: con un po' di trasparenza la pagina dietro (titoli, pulsanti) traspariva e si sovrapponeva alle righe della console. */
+    background: radial-gradient(ellipse at 50% 40%, rgb(6, 20, 36), rgb(2, 5, 12) 75%);
+    overflow: hidden;
+    animation: mpTermModalIn .25s ease-out both;
+}
+.mp-term-modal .mp-term { width: min(460px, 100%); margin: 0; }
+body.mp-term-aperto { overflow: hidden; }
+@keyframes mpTermModalIn { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .mp-term-modal { animation: none; } }

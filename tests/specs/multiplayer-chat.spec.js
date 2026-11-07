@@ -108,6 +108,28 @@ module.exports = {
                 assert(r.frasiNascoste, 'con la tastiera aperta le frasi rapide si nascondono per fare spazio');
                 assert(r.dopo === '', 'chiusa la tastiera il pannello torna alla posizione di prima');
             }
+            // Tastiera che NON riduce visualViewport (Chrome su Android con la tastiera sovrapposta, certe WebView: segnalato
+            // dall'utente il 2026-11-07, la chat finiva dietro la tastiera). `visualViewport.height` resta quello dello schermo
+            // intero, quindi il pannello non puo' fidarsi di lui per stare sul fondo: deve stare in ALTO, nella meta' che la
+            // tastiera non copre mai.
+            for (const inDuello of [false, true]) {
+                const r = await A.evaluate((duello) => {
+                    document.body.classList.toggle('mp-in-duello', duello);
+                    const finto = { height: innerHeight, offsetTop: 0, addEventListener() {}, removeEventListener() {} };
+                    Object.defineProperty(window, 'visualViewport', { configurable: true, value: finto });
+                    const input = document.querySelector('.mpchat-input');
+                    input.focus();
+                    MpChat._sistemaTastiera();
+                    const p = document.getElementById('mpChatPanel').getBoundingClientRect();
+                    const i = input.getBoundingClientRect();
+                    const out = { schermo: innerHeight, fondoPannello: Math.round(p.bottom), cimaPannello: Math.round(p.top), fondoInput: Math.round(i.bottom) };
+                    input.blur();
+                    MpChat._sistemaTastiera();
+                    document.body.classList.remove('mp-in-duello');
+                    return out;
+                }, inDuello);
+                assert(r.fondoInput <= r.schermo * 0.5 && r.cimaPannello >= 0, `${inDuello ? 'in duello' : 'in sala'}: con una tastiera che non riduce il viewport la riga di scrittura deve stare nella meta' alta (${JSON.stringify(r)})`);
+            }
             // Forma del messaggio: validata dal protocollo.
             const forma = await A.evaluate(() => ({
                 ok: ProtocolloMP.motivoRifiuto({ kind: 'ready', pronto: true, chat: { frase: 'gg', nome: 'A' } }),

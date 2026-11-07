@@ -56,7 +56,7 @@ body.mp-in-duello .mpchat-pannello { bottom: auto; top: calc(env(safe-area-inset
 
 /* Tastiera aperta (js/multiplayer/mp-chat.js, sistemaTastiera): il pannello sta sul fondo dell'area visibile; si fa spazio togliendo le frasi rapide. */
 .mpchat-pannello.mpchat-tastiera .mpchat-frasi { display: none; }
-.mpchat-pannello.mpchat-tastiera .mpchat-log { min-height: 60px; }
+.mpchat-pannello.mpchat-tastiera .mpchat-log { min-height: 36px; }
 
 /* Icona del tema (icon-library.js) al posto dell'emoji; il campo a 16px evita lo zoom automatico dei telefoni al fuoco. */
 .mpchat-ico svg { width: 24px; height: 24px; display: block; }

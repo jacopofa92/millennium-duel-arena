@@ -63,25 +63,30 @@ module.exports = {
                 try {
                     await page.evaluate((p) => { document.getElementById('mpServerUrl').value = 'ws://127.0.0.1:' + p; }, porta);
                     await page.click('#mpCreateBtn');
-                    await page.waitForSelector('#mpStatus .mp-term .mp-term-line.is-attiva', { timeout: 10000 });
+                    // Dal 2026-11-07 la console e' un MODALE a tutto schermo (#mpTermModal), non piu' una riga in fondo alla pagina.
+                    await page.waitForSelector('#mpTermModal .mp-term .mp-term-line.is-attiva', { timeout: 10000 });
                     await page.waitForTimeout(2500);
                     const m = await page.evaluate(() => {
                         const r = (e) => e.getBoundingClientRect();
-                        const st = r(document.getElementById('mpStatus'));
+                        const modale = r(document.getElementById('mpTermModal'));
+                        const term = r(document.querySelector('#mpTermModal .mp-term'));
                         const corpo = document.getElementById('mpTermBody');
                         const attiva = corpo.querySelector('.is-attiva');
-                        const barra = document.querySelector('.mm-ctx, [class*="mm-barra"], #mmTabBar');
+                        const cima = document.elementFromPoint(innerWidth / 2, innerHeight / 2);
                         return {
-                            sw: document.documentElement.scrollWidth, iw: innerWidth,
-                            stSx: st.left, stDx: st.right,
+                            sw: document.documentElement.scrollWidth, iw: innerWidth, ih: innerHeight,
+                            modale, term,
+                            sopraTutto: !!cima && !!cima.closest('#mpTermModal'),
                             attivaVisibile: !!attiva && r(attiva).bottom <= r(corpo).bottom + 1 && r(attiva).top >= r(corpo).top - 1,
-                            sopraBarra: barra ? st.bottom <= r(barra).top + 1 : true
+                            statusVuoto: document.getElementById('mpStatus').textContent.trim() === ''
                         };
                     });
                     t.assert(m.sw <= m.iw + 1, `console ${w}px: la pagina sborda (${m.sw} > ${m.iw})`);
-                    t.assert(m.stSx >= -1 && m.stDx <= m.iw + 1, `console ${w}px: fuori dallo schermo (${m.stSx}..${m.stDx})`);
+                    t.assert(m.modale.width >= m.iw - 1 && m.modale.height >= m.ih - 1, `console ${w}x${h}: il modale non copre lo schermo`);
+                    t.assert(m.term.left >= -1 && m.term.right <= m.iw + 1 && m.term.top >= -1 && m.term.bottom <= m.ih + 1, `console ${w}x${h}: la console esce dallo schermo`);
+                    t.assert(m.sopraTutto, `console ${w}x${h}: il modale non sta sopra la barra e il resto della sala`);
                     t.assert(m.attivaVisibile, `console ${w}x${h}: la riga attiva e' tagliata fuori dal corpo della console`);
-                    t.assert(m.sopraBarra, `console ${w}x${h}: finisce sotto la barra di navigazione`);
+                    t.assert(m.statusVuoto, `console ${w}x${h}: il testo di stato in pagina non deve comparire mentre il modale e' aperto`);
                 } finally { await ctx.close(); }
             }
 

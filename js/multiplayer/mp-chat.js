@@ -168,15 +168,22 @@
             p.style.removeProperty('max-height');
             return;
         }
-        // Si posiziona con TOP e altezza dell'area visibile, non con "bottom": con la tastiera sovrapposta (Chrome) il bordo basso
-        // del riquadro fisso resta dietro di lei, e con la pagina ridimensionata (WebView) "bottom" e' gia' sopra la tastiera; top +
-        // visualViewport vale per entrambi i casi.
+        // Mentre si scrive il pannello sta in ALTO, attaccato al margine superiore dell'area visibile, mai sul fondo.
+        // PERCHE': la versione precedente lo ancorava in basso usando `vv.height`, ma non tutti i browser lo riducono quando
+        // compare la tastiera (Chrome su Android con la tastiera "sovrapposta", certe WebView, lo screenshot dell'utente su
+        // Samsung): `vv.height` restava quello dello schermo intero e il pannello finiva DIETRO la tastiera. In alto la tastiera
+        // non arriva mai, qualunque cosa il browser faccia: serve solo `vv.offsetTop`, che segue lo scorrimento visivo.
+        // L'altezza si limita a una frazione dello schermo (la tastiera ne copre fino al 50%), e a `vv.height` se questo e' stato
+        // davvero ridotto (pagina ridimensionata, telefono in orizzontale).
+        const schermo = Math.max(window.innerHeight, vv.height);
+        const tastieraNonRiduceVv = vv.height > schermo * 0.8;
+        const maxAlto = tastieraNonRiduceVv ? schermo * 0.4 : vv.height - 16;
+        // Sotto la fotocamera frontale (su telefono in verticale) finche' la pagina non e' scorsa visivamente.
+        const sopra = vv.offsetTop < 4 ? 32 : 8;
         p.classList.add('mpchat-tastiera');
         p.style.bottom = 'auto';
-        p.style.maxHeight = Math.max(170, vv.height - 16) + 'px';
-        p.style.top = (vv.offsetTop + 8) + 'px';
-        const alto = Math.min(p.offsetHeight, vv.height - 16);
-        p.style.top = Math.max(vv.offsetTop + 8, vv.offsetTop + vv.height - alto - 8) + 'px';
+        p.style.maxHeight = Math.max(150, maxAlto) + 'px';
+        p.style.top = (vv.offsetTop + sopra) + 'px';
         el.log.scrollTop = el.log.scrollHeight;
     }
 

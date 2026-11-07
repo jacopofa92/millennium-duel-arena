@@ -19,9 +19,12 @@ module.exports = {
         t.assert(fx.includes('MpTermFx') && fx.includes('WEBGL_lose_context') && fx.includes('prefers-reduced-motion'), 'Lo sfondo WebGL della console si spegne da solo e rispetta il movimento ridotto');
         t.assert(js.includes('accessoConcesso') && js.includes('connessioneRifiutata') && js.includes('MpTermFx.monta'), 'La console annuncia accesso concesso / rifiutato e monta lo sfondo');
         t.assert(css.includes('.mp-term.is-ok') && css.includes('.mp-term.is-err') && css.includes('.mp-term-gl'), 'Stili di esito e di sfondo presenti');
-        t.assert(css.includes('#mpStatus .mp-term { background: none') && !/\.mp-term-gl \{[^}]*position: fixed/.test(css),
-            'Nessun riquadro e niente a tutto schermo: l\'effetto sta dentro la console, dietro le righe di testo');
+        t.assert(css.includes('#mpTermModal .mp-term { background: none') && !/\.mp-term-gl \{[^}]*position: fixed/.test(css),
+            'Nessun riquadro: l\'effetto sta dentro la console, dietro le righe di testo (lo sfondo WebGL non e\' a tutto schermo)');
         t.assert(!/\.mp-term-emblem::(before|after)/.test(css), 'L\'emblema KC non ha piu\' i due rettangoli che ruotano');
-        t.assert(!js.includes('class="modal') && !js.includes('showModal'), 'Il risveglio del server non deve tornare a essere un modale');
+        // Dal 2026-11-07 la console sta in un MODALE (richiesta dell'utente), non piu' dentro #mpStatus in fondo alla pagina.
+        t.assert(js.includes('ospiteTerminale') && js.includes('chiudiTerminale') && css.includes('.mp-term-modal'),
+            'La console di connessione deve vivere nel modale #mpTermModal');
+        t.assert(/\.mp-term-modal \{[^}]*position: fixed[^}]*inset: 0/.test(css), 'Il modale deve coprire tutto lo schermo');
     }
 };
