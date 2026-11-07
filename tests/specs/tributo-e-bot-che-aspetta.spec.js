@@ -1,8 +1,9 @@
 // Tre difetti segnalati giocando, un solo spec:
 //
-//  1) Un'Evocazione Tributo non si può Settare: sacrificare mostri e metterlo
-//     coperto in Difesa non è permesso (a meno che la carta lo dica). Vale per
-//     chiunque Evochi: persona, IA, comando arrivato dall'altro client.
+//  1) TRIBUTE SET (regola vera, ripristinata il 2026-11-07): sacrificare mostri e metterlo coperto in Difesa e' permesso,
+//     come per un mostro da Livello 4. Fanno eccezione i mostri che "non possono essere Posizionati Normalmente" (i Dei Egizi,
+//     def.cannotBeSet): per loro un Tributo e' sempre Attacco. Vale per chiunque Evochi: persona, IA, comando arrivato
+//     dall'altro client.
 //  2) Drago Mascherato: chi controlla la Summon sceglie la Posizione, e un
 //     mostro in Difesa scelto così resta SCOPERTO (Special Summon).
 //  3) Il bot aspetta le scelte del giocatore: se un attacco fa partire una
@@ -12,7 +13,7 @@
 const { openDuel, freezeNaturalGameLoop } = require('../helpers/harness');
 
 module.exports = {
-    name: 'Tributo non si Setta, Drago Mascherato sceglie la Posizione, il bot aspetta le scelte del giocatore',
+    name: 'Tribute Set permesso (non per i Dei), Drago Mascherato sceglie la Posizione, il bot aspetta le scelte del giocatore',
     standalone: true,
     async run({ browser, assert }) {
         const context = await browser.newContext({ serviceWorkers: 'block', viewport: { width: 1400, height: 900 } });
@@ -64,10 +65,27 @@ module.exports = {
                 await new Promise((r) => setTimeout(r, 1500));
                 const sp = gameState.botMonsterField.find((x) => x && x.card.uid === 'piccolo');
                 out.senzaTributo = sp ? { posizione: sp.position, coperto: sp.isFaceDown } : null;
+                // Un Dio Egizio (Obelisco, id 30: cannotBeSet) con 3 Tributi: Difesa chiesta, Attacco ottenuto.
+                svuota();
+                gameState.hasNormalSummoned = false;
+                for (let i = 0; i < 3; i++) gameState.botMonsterField[i] = { card: mk(4, 'dio-' + i), position: 'attack', isFaceDown: false };
+                const dio = mk(30, 'obelisco');
+                gameState.botHand.push(dio);
+                await new Promise((resolve) => {
+                    Comandi.esegui('bot', { tipo: 'tributa', indici: [0, 1, 2], perCarta: dio.uid, attesaMs: 0 }, {
+                        dopo: () => {
+                            Comandi.esegui('bot', { tipo: 'evoca', carta: dio.uid, mano: gameState.botHand.indexOf(dio), casella: 0, posizione: 'defense' }, { alTermine: resolve });
+                        }
+                    });
+                });
+                await new Promise((r) => setTimeout(r, 1500));
+                const sd = gameState.botMonsterField.find((x) => x && x.card.uid === 'obelisco');
+                out.dio = sd ? { posizione: sd.position, coperto: sd.isFaceDown } : null;
                 return out;
             });
-            assert(tributo.player && tributo.player.posizione === 'attack' && !tributo.player.coperto, 'persona: Tributo + Difesa deve diventare Attacco scoperto: ' + JSON.stringify(tributo.player));
-            assert(tributo.bot && tributo.bot.posizione === 'attack' && !tributo.bot.coperto, 'IA: Tributo + Difesa deve diventare Attacco scoperto: ' + JSON.stringify(tributo.bot));
+            assert(tributo.player && tributo.player.posizione === 'defense' && tributo.player.coperto, 'persona: Tributo + Difesa e\' un Tribute Set (Difesa coperta): ' + JSON.stringify(tributo.player));
+            assert(tributo.bot && tributo.bot.posizione === 'defense' && tributo.bot.coperto, 'IA: Tributo + Difesa e\' un Tribute Set (Difesa coperta): ' + JSON.stringify(tributo.bot));
+            assert(tributo.dio && tributo.dio.posizione === 'attack' && !tributo.dio.coperto, 'un Dio Egizio non si Setta, nemmeno con un Tributo: ' + JSON.stringify(tributo.dio));
             if (tributo.senzaTributo) {
                 assert(tributo.senzaTributo.posizione === 'defense' && tributo.senzaTributo.coperto, 'senza Tributo il Set in Difesa resta possibile: ' + JSON.stringify(tributo.senzaTributo));
             }

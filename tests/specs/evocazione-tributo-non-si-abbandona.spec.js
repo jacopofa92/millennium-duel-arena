@@ -68,6 +68,9 @@ module.exports = {
 
             // 4) si sceglie la casella: l'Evocazione si completa davvero
             await page.evaluate(() => handleSlotClick('player', 'monster', 3));
+            // Dal 2026-11-07 (Tribute Set) dopo la casella si sceglie anche la Posizione: Attacco o Difesa coperta.
+            await page.waitForSelector('#quickPopover #qpSummonAttack', { timeout: 5000 });
+            await page.click('#qpSummonAttack');
             await page.waitForFunction(() => gameState.playerMonsterField.some((s) => s && s.card.uid === 'alto'), null, { timeout: 10000 });
             const fine = await stato();
             assert(fine.incampo && !fine.inMano && !fine.scelta, `l'Evocazione deve concludersi: ${JSON.stringify(fine)}`);

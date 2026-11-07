@@ -534,18 +534,12 @@
         // mostri nemici appena Evocati. Senza questa stima l'IA rifiutava
         // SEMPRE i tre Tributi, rendendo la Divinità una carta morta.
         const valoreControllo = card.id === 31 && previste.atk > 0 ? 2000 : 0;
-        // Un'Evocazione Tributo esce SEMPRE scoperta in Attacco (eseguiEvocazioneNormale, evocazioni.js: non si puo' Settare dopo
-        // un Tributo, a meno di def.canTributeSet): la DEF non protegge niente, conta solo l'ATK. Prima la stima credeva di poter
-        // mettere il mostro in Difesa, quindi un muro come Mura Labirintiche (0/3000) "valeva" 3000 e il bot lo Evocava
-        // sacrificando mostri, per poi vederlo in Attacco con 0 ATK (segnalato dall'utente: Fratelli Paradosso).
+        // Dopo un Tributo si puo' Settare (Tribute Set: coperto in Difesa) oppure Evocare in Attacco, tranne per chi non puo' essere
+        // Posizionato Normalmente (def.cannotBeSet: i Dei Egizi), che esce sempre in Attacco: per quelli conta solo l'ATK.
         const defTributo = window.DuelEngine && DuelEngine.getDefinition ? DuelEngine.getDefinition(card.id) : null;
-        const sempreInAttacco = !(defTributo && defTributo.canTributeSet);
-        if (sempreInAttacco) {
-            const atkSulCampo = previste.atk + valoreControllo;
-            // Senza ATK non colpisce e muore a qualunque attacco: mai un Tributo per lui.
+        const atkSulCampo = previste.atk + valoreControllo;
+        if (defTributo && defTributo.cannotBeSet) {
             if (atkSulCampo <= 0) return false;
-            // Con ATK basso ma DEF alta sarebbe un muro in Posizione di Attacco: vale solo se l'ATK da solo supera il
-            // valore sacrificato (un vero upgrade offensivo), altrimenti e' uno spreco.
             return atkSulCampo >= sacrificedValue;
         }
         const piccoStimato = Math.max(previste.atk, previste.def) + valoreControllo;
@@ -557,22 +551,31 @@
         // un'evocazione offensivamente valida di per sé, nessun bisogno
         // di guardare la DEF né il campo avversario.
         if (previste.atk + valoreControllo >= sacrificedValue) return true;
-        // Da qui in poi il nuovo ATK è PIÙ BASSO del valore sacrificato:
-        // l'unica ragione per accettare comunque il tributo è che la DEF
-        // più alta serva DAVVERO a sopravvivere a una minaccia reale —
-        // un mostro avversario scoperto in Attacco il cui ATK batte il
-        // nuovo ATK (lo distruggerebbe comunque restando in Attacco) ma
-        // NON la sua DEF (ci si difende restando vivi). Campo avversario
-        // vuoto o senza una simile minaccia -> nessun bisogno di questa
-        // DEF, il tributo va rifiutato a favore di un candidato più
-        // offensivo.
-        const opponentField = Tavolo.mostri(Tavolo.avversario(owner), gameState);
+        // Da qui in poi il nuovo ATK è PIÙ BASSO del valore sacrificato e la DEF più alta: un muro. Si accetta (regola scelta
+        // dall'utente, 2026-11-07) in due casi soltanto:
+        //  a) il mostro ha MOLTA difesa (WALL_DEF_ALTA e piu': Mura Labirintiche, Muro-Ombra...), anche con ATK bassissimo: e' un
+        //     vero muro, vale il sacrificio;
+        //  b) si e' in SVANTAGGIO e la DEF serve a stabilizzare: una minaccia avversaria scoperta che batte il nuovo ATK ma non la
+        //     sua DEF (ci si difende restando vivi), oppure meno Life Point o meno mostri dell'avversario.
+        // In vantaggio, e con una DEF non eccezionale, il tributo si rifiuta a favore di un candidato piu' offensivo.
+        if (previste.def >= WALL_DEF_ALTA) return true;
+        const avversario = Tavolo.avversario(owner);
+        const opponentField = Tavolo.mostri(avversario, gameState);
         const strongestOpposingAtk = (opponentField || []).reduce((max, slot) => {
             if (!slot || slot.isFaceDown || slot.position !== 'attack') return max;
             return Math.max(max, effAtk(slot.card));
         }, 0);
-        return strongestOpposingAtk > previste.atk && strongestOpposingAtk <= previste.def;
+        if (strongestOpposingAtk > previste.atk && strongestOpposingAtk <= previste.def) return true;
+        const mieiLp = Tavolo.lp(owner, gameState) || 0;
+        const lpAvv = Tavolo.lp(avversario, gameState) || 0;
+        const mieiMostri = (Tavolo.mostri(owner, gameState) || []).filter(Boolean).length;
+        const mostriAvv = (opponentField || []).filter(Boolean).length;
+        const inSvantaggio = mieiLp < lpAvv || mieiMostri < mostriAvv;
+        return inSvantaggio && mostriAvv > 0;
     }
+
+    // DEF da cui un mostro conta come "muro vero": vale un Tributo anche con ATK bassissimo (vedi isTributeSummonWorthwhile).
+    const WALL_DEF_ALTA = 2500;
 
     // Aggressività stimata (0 = molto trattenuta/imprevedibile, 1 = gioca
     // quasi sempre la mossa oggettivamente più forte) per un elenco

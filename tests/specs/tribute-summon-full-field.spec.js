@@ -30,11 +30,12 @@ module.exports = {
 
         await t.evaluate(() => { handleTributeSelectClick(0); });
         await t.page.waitForTimeout(900);
-        // Dopo un Tributo la Posizione non si sceglie più: un'Evocazione Tributo si
-        // fa sempre scoperta in Attacco (vedi eseguiEvocazioneNormale, evocazioni.js),
-        // quindi nessun popover Attacco/Difesa e la carta arriva da sola.
-        const popover = await t.evaluate(() => !!document.getElementById('quickPopover'));
-        t.assert(!popover, 'Dopo il Sacrificio non deve chiedere Attacco/Difesa: un Tributo si Evoca sempre in Attacco');
+        // Dopo un Tributo si sceglie la Posizione: Evocazione Tributo (Attacco) o Tribute Set (Difesa coperta), come per ogni
+        // mostro (regola ripristinata il 2026-11-07). Qui si sceglie l'Attacco.
+        await t.page.waitForSelector('#quickPopover #qpSummonAttack', { timeout: 5000 });
+        const senzaAnnulla = await t.evaluate(() => !document.getElementById('qpSummonCancel'));
+        t.assert(senzaAnnulla, 'Dopo il Sacrificio il Tributo e\' gia\' pagato: nessun pulsante Annulla');
+        await t.page.click('#qpSummonAttack');
         await t.page.waitForTimeout(1500);
         const final = await t.evaluate(() => {
             const s = gameState.playerMonsterField[0];

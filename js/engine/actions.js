@@ -1477,12 +1477,12 @@ function openSummonModal(card, slotIndex, handIndex, fromRect, opzioni) {
         summonMonster(card, slotIndex, posizione, handIndex, partenza);
     };
 
-    // Dopo un Tributo non c'è nulla da scegliere sulla Posizione: un'Evocazione
-    // Tributo si fa sempre scoperta in Attacco (regola in eseguiEvocazioneNormale,
-    // evocazioni.js), a meno che la carta non dica il contrario (def.canTributeSet).
-    // Chiedere "Attacco o Difesa" per poi ignorare la Difesa sarebbe una scelta finta.
+    // Dopo un Tributo si sceglie comunque la Posizione: Evocazione Tributo (Attacco, scoperta) o TRIBUTE SET (Difesa, coperta),
+    // come per qualunque altro mostro (regola in eseguiEvocazioneNormale, evocazioni.js). Fa eccezione chi "non puo' essere
+    // Posizionato Normalmente" (def.cannotBeSet: i tre Dei Egizi): un Tributo per loro vuol dire solo Attacco, quindi nessuna
+    // scelta da offrire (sarebbe finta: la Difesa verrebbe ignorata).
     const defTributo = window.DuelEngine && DuelEngine.getDefinition(card.id);
-    if (opzioni && opzioni.dopoTributo && !(defTributo && defTributo.canTributeSet)) {
+    if (opzioni && opzioni.dopoTributo && defTributo && defTributo.cannotBeSet) {
         gameState.pendingSummon = { card, slotIndex, handIndex, fromRect };
         const slotElTributo = document.querySelector(`.field-slot[data-owner="player"][data-type="monster"][data-index="${slotIndex}"]`);
         maybeAskRaLpChoice(card, slotElTributo, () => concludiEvocazione('attack'));

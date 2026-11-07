@@ -465,12 +465,12 @@ function evocaSeConviene(io) {
 function botSummonMonster(card, tributeIndices, emptySlotHint, position, faceDown, io = 'bot') {
     segnaMossa();
     position = position === 'defense' ? 'defense' : 'attack';
-    // Un'Evocazione Tributo si fa sempre scoperta in Attacco (regola generale,
-    // vedi eseguiEvocazioneNormale in evocazioni.js): l'IA non deve nemmeno
-    // pagare il Tributo pensando di Settare il mostro. Segnalato giocando: il
-    // bot sacrificava mostri per un Drago Bianco Occhi Blu coperto in Difesa.
+    // Dopo un Tributo si puo' Settare (Tribute Set: coperto in Difesa) o Evocare in Attacco, come per ogni mostro; l'esecutore
+    // (eseguiEvocazioneNormale, evocazioni.js) rifiuta la Difesa solo per chi non puo' essere Posizionato Normalmente
+    // (def.cannotBeSet: i Dei Egizi). Qui la stessa regola serve a non annunciare un Set che non avverra': per loro, Attacco.
+    // (Fino al 2026-11-07 ogni Tributo forzava l'Attacco: un muro da Tributo usciva con 0 ATK, segnalato dall'utente.)
     const defTributo = window.DuelEngine && DuelEngine.getDefinition(card.id);
-    if (tributeIndices && tributeIndices.length > 0 && !(defTributo && defTributo.canTributeSet)) position = 'attack';
+    if (tributeIndices && tributeIndices.length > 0 && defTributo && defTributo.cannotBeSet) position = 'attack';
     const customDef = window.DuelEngine && DuelEngine.getDefinition(card.id);
     if (customDef && typeof customDef.beginCustomNormalSummon === 'function') {
         return new Promise((resolve) => {

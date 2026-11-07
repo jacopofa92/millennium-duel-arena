@@ -252,19 +252,19 @@ function eseguiEvocazioneNormale(posto, c, extra) {
     if (c.pagaLpRa !== undefined) card._raPayLp = c.pagaLpRa;
     const slotIndex = c.casella;
     let position = c.posizione;
-    // REGOLA GENERALE: un'Evocazione Tributo si fa sempre scoperta in Attacco.
-    // Non si può pagare il Tributo e Settare il mostro (coperto in Difesa),
-    // a meno che il testo della carta non lo dica (def.canTributeSet: oggi
-    // nessuna). Vale per la persona, per l'IA e per un comando arrivato
-    // dall'altro client, perché questo è l'unico punto da cui passa
-    // l'Evocazione Normale. Il marcatore lo mette 'tributa' (eseguiTributo).
+    // TRIBUTE SET (regola vera, ripristinata il 2026-11-07 su richiesta dell'utente): pagato il Tributo si puo' scegliere fra
+    // un'Evocazione Tributo (scoperta in Attacco) e un TRIBUTE SET (coperta in Difesa), come per un mostro da Livello 4. Prima il
+    // motore forzava sempre l'Attacco, e un muro come Mura Labirintiche (0/3000, Livello 5) poteva uscire solo con 0 ATK in Attacco.
+    // Restano esclusi i mostri che "non possono essere Posizionati Normalmente" (def.cannotBeSet: i tre Dei Egizi): per loro un
+    // Tributo vuol dire Attacco. Vale per la persona, per l'IA e per un comando arrivato dall'altro client, perche' questo e' l'unico
+    // punto da cui passa l'Evocazione Normale. Il marcatore lo mette 'tributa' (eseguiTributo).
     const eraTributo = card._tributoPerEvocazione === true;
     delete card._tributoPerEvocazione;
     if (eraTributo && position === 'defense') {
         const defTributo = window.DuelEngine && DuelEngine.getDefinition(card.id);
-        if (!(defTributo && defTributo.canTributeSet)) {
+        if (defTributo && defTributo.cannotBeSet) {
             position = 'attack';
-            addToLog(`🔺 Un'Evocazione Tributo non si può Settare: ${card.name} viene Evocata scoperta in Posizione di Attacco.`);
+            addToLog(`🔺 ${card.name} non può essere Settata, nemmeno con un Tributo: viene Evocata scoperta in Posizione di Attacco.`);
         }
     }
     const fromRect = extra && extra.partenza ? extra.partenza : null;
