@@ -13,9 +13,8 @@ module.exports = {
         await page.waitForSelector('#botInfo .duelist-avatar--corner img');
 
         const colpo = (lato, persi) => page.evaluate(({ lato, persi }) => {
-            window.PosaDanno.sync();   // fotografa i LP di adesso
-            gameState[lato + 'LP'] -= persi;
-            EventiDuello.emetti('life-points');
+            gameState[lato + 'LP'] -= persi;   // la stessa cosa che fa ACTIONS.dealDamage
+            EventiDuello.emetti('danno-subito', lato, persi);
         }, { lato, persi });
         const posa = (lato) => page.evaluate((l) => {
             const img = document.querySelector(`#${l}Info .duelist-avatar--corner img.posa-danno`);
@@ -40,8 +39,18 @@ module.exports = {
         t.assert(await page.evaluate(() => !document.querySelector('#botInfo .duelist-avatar--corner').classList.contains('posa-danno-attiva')), 'A posa finita la pedina normale torna visibile');
 
         // 4) Soglia relativa: a pochi LP anche 10% basta (500 su 4000).
-        await page.evaluate(() => { gameState.botLP = 4000; window.PosaDanno.sync(); });
+        await page.evaluate(() => { gameState.botLP = 4000; });
         await colpo('bot', 500);
+        await attendi('bot');
+
+        // 4b) Un COSTO pagato in LP (Ra, ecc.) si sottrae direttamente e non e' un danno: niente posa, nemmeno se enorme.
+        await page.waitForFunction(() => !document.querySelector('#botInfo .duelist-avatar--corner img.posa-danno'), null, { timeout: 5000 });
+        await page.evaluate(() => { gameState.botLP -= 3500; EventiDuello.emetti('life-points'); EventiDuello.emetti('ridisegna'); });
+        await page.waitForTimeout(700);
+        t.assert((await posa('bot')) === null, 'Un costo pagato in Life Point non e\' un danno: niente posa');
+
+        // 4c) Il danno VERO passa da ACTIONS.dealDamage (battaglia ed effetti): li' la posa parte.
+        await page.evaluate(() => { gameState.botLP = 8000; DuelEngine.actions.dealDamage('bot', 2000); });
         await attendi('bot');
 
         // 5) Nessuna posa per quel nome (un file che non esiste): non succede niente e nessun errore.

@@ -112,22 +112,17 @@
         });
     }
 
-    /** Ultimi Life Point visti: la prima lettura di un duello non e' mai un danno. */
-    let ultimo = null;
-
-    function sync() {
-        if (spenta || typeof gameState === 'undefined' || !gameState) return;
-        const ora = { player: gameState.playerLP, bot: gameState.botLP };
-        const prima = ultimo;
-        ultimo = ora;
-        if (!prima) return;
-        ['player', 'bot'].forEach((lato) => {
-            const era = prima[lato], adesso = ora[lato];
-            if (typeof era !== 'number' || typeof adesso !== 'number' || adesso >= era) return;
-            const persi = era - adesso;
-            if (persi >= SOGLIA_ASSOLUTA || persi / Math.max(era, 1) >= SOGLIA_RELATIVA) mostra(lato);
-        });
+    /**
+     * Un danno SUBITO (lo avvisa game-flow.js dall'evento 'danno-subito', che parte da ACTIONS.dealDamage: battaglia ed effetti).
+     * Un costo pagato in Life Point (Ra, ecc.) si sottrae direttamente e non arriva mai qui: i sacrifici voluti non sono un danno.
+     * `owner`: chi l'ha subito; `amount`: quanto. I Life Point sono gia' scesi, quindi quelli di prima sono LP + amount.
+     */
+    function danno(owner, amount) {
+        if (spenta || typeof gameState === 'undefined' || !gameState || !(amount > 0)) return;
+        if (owner !== 'player' && owner !== 'bot') return;
+        const adesso = owner === 'player' ? gameState.playerLP : gameState.botLP;
+        const prima = (Number(adesso) || 0) + amount;
+        if (amount >= SOGLIA_ASSOLUTA || amount / Math.max(prima, 1) >= SOGLIA_RELATIVA) mostra(owner);
     }
-
-    window.PosaDanno = { sync: sync, _soglia: { assoluta: SOGLIA_ASSOLUTA, relativa: SOGLIA_RELATIVA, durata: DURATA_MS } };
+    window.PosaDanno = { danno: danno, _soglia: { assoluta: SOGLIA_ASSOLUTA, relativa: SOGLIA_RELATIVA, durata: DURATA_MS } };
 })();

@@ -1490,6 +1490,9 @@
                 return;
             }
             gameState[lpKeyOf(owner)] -= amount;
+            // Danno SUBITO (battaglia o effetto): e' l'unico segnale per la posa di danno/sorpresa. Un costo pagato in Life Point
+            // (Ra, ecc.) si sottrae direttamente e NON passa da qui, quindi non e' un danno.
+            if (amount > 0) EventiDuello.emetti('danno-subito', owner, amount);
             if (amount > 0 && window.DuelDialogues) DuelDialogues.say(owner, 'damaged');
             // Sosia (id 204, Trappola Continua): "Quando subisci danno
             // dall'effetto di un mostro controllato dal tuo avversario:

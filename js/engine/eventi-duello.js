@@ -54,6 +54,7 @@
         'ridisegna': '() lo stato è cambiato: ridisegnare il duello',
         'catena': '(linkInRisoluzione?) la pila della Catena è cambiata',
         'life-points': '() i Life Points sono cambiati',
+        'danno-subito': '(owner, amount) un giocatore ha SUBITO danno (battaglia o effetto, passa da ACTIONS.dealDamage): mai un costo pagato in Life Point, che si sottrae direttamente',
         'annuncio-fase': '(titolo, sottotitolo?, variante?) inizia una fase',
         'annuncio-turno': '(parolaSinistra, parolaDestra, sottotitolo) inizia un turno',
         'orologio': '() è cambiato il turno: aggiornare il contatore',

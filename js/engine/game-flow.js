@@ -64,6 +64,8 @@ EventiDuello.ascolta('mazzo-rimescolato', (owner) => {
 EventiDuello.ascolta('attesa-decisione-remota', mostraAttesaDecisioneRemota);
 EventiDuello.ascolta('effetto-battaglia', showBattleEffect);
 EventiDuello.ascolta('danno-fluttuante', showFloatingDamage);
+// La posa di danno/sorpresa (js/ui/posa-danno.js): solo il danno SUBITO, mai un costo pagato in Life Point.
+EventiDuello.ascolta('danno-subito', (owner, amount) => { if (window.PosaDanno) PosaDanno.danno(owner, amount); });
 EventiDuello.ascolta('avviso-attacco-diretto', () => showDirectAttackWarning());
 EventiDuello.ascolta('cambio-posizione', showPositionEffect);
 EventiDuello.ascolta('fine-duello', chiudiDuelloASchermo);
@@ -726,8 +728,6 @@ function renderLifePoints() {
 
     renderBanishedBadge('player');
     renderBanishedBadge('bot');
-    // La posa di "danno/sorpresa" del duellante che ha perso molti Life Point (solo grafica, js/ui/posa-danno.js).
-    if (window.PosaDanno) PosaDanno.sync();
 }
 
 /**
