@@ -188,7 +188,18 @@
         spawnParticles(x, y, { count: 32, colors: ['#ffdf8c', '#e74c3c', '#ffffff'], speed: 6.5, life: 650 });
     }
 
-    /** Distruzione Magia/Trappola: frattura olografica, mai esplosiva. */
+    // Durata della SCOSSA di una Magia/Trappola distrutta, prima che voli al Cimitero (richiesta dell'utente: "un secondo").
+    // Con "riduci movimento" la scossa si salta e resta una breve pausa.
+    const DURATA_SCOSSA_ST_MS = 1000;
+    const DURATA_SCOSSA_ST_RIDOTTA_MS = 350;
+
+    /**
+     * Distruzione Magia/Trappola (richiesta dell'utente, 2026-11-07): la carta SCUOTE sul posto per circa un secondo con una
+     * scossa che cresce e si illumina (la scansione le scorre sopra), poi esplode in schegge d'energia con un colpo sul campo e
+     * ne parte il suo fantasma che VOLA al Cimitero. Mai l'esplosione dei mostri. Solo grafica: la regola (carta al Cimitero,
+     * trigger) e' gia' avvenuta quando questa parte, e il volo parte da un timer visivo, non delle regole.
+     * `zone === 'fieldSpell'` per la Magia Terreno. Torna false se la carta non e' a schermo (nessuna animazione).
+     */
     function playSpellTrapDestroyEffect(card, owner, index, zone) {
         const boardId = owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard';
         const type = zone === 'fieldSpell' ? 'field-spell' : 'st';
@@ -205,12 +216,15 @@
             width: rect.width + 'px', height: rect.height + 'px'
         });
         scena.style.setProperty('--fx-st-color', kind === 'trap' ? '#ef75cb' : '#55f2cf');
+        const scossa = fxPrefersReducedMotion() ? DURATA_SCOSSA_ST_RIDOTTA_MS : DURATA_SCOSSA_ST_MS;
         const fantasma = source.cloneNode(true);
         fantasma.classList.add('fx-st-shatter-card');
         scena.appendChild(fantasma);
         const scan = document.createElement('i');
         scan.className = 'fx-st-shatter-scan';
+        scan.style.animationDuration = Math.round(scossa * 0.9) + 'ms';
         scena.appendChild(scan);
+        // Le schegge partono SOLO alla fine della scossa (il colpo), non all'inizio.
         for (let i = 0; i < 10; i++) {
             const shard = document.createElement('b');
             shard.className = 'fx-st-energy-shard';
@@ -221,12 +235,42 @@
             shard.style.setProperty('--fx-st-dx', (Math.random() * 70 - 35) + 'px');
             shard.style.setProperty('--fx-st-dy', (-24 - Math.random() * 80) + 'px');
             shard.style.setProperty('--fx-st-rot', (Math.random() * 70 - 35) + 'deg');
-            shard.style.animationDelay = (80 + i * 24) + 'ms';
+            shard.style.animationDelay = (scossa - 40 + i * 24) + 'ms';
             scena.appendChild(shard);
         }
+        scena.style.setProperty('--fx-st-scossa', scossa + 'ms');
         document.body.appendChild(scena);
         source.classList.add('fx-st-source-vanish');
-        setTimeout(() => scena.remove(), 900);
+
+        // Il Cimitero si misura ORA (il Terreno puo' ridisegnarsi nel frattempo, ma la sua posizione e' stabile).
+        const verso = zoneRect(owner, 'graveyard');
+        const colore = kind === 'trap' ? ['#ef75cb', '#ffd2f1', '#ffffff'] : ['#55f2cf', '#d5fff6', '#ffffff'];
+        const centroX = rect.left + rect.width / 2;
+        const centroY = rect.top + rect.height / 2;
+
+        // Il colpo finale: scossa leggera del campo e un getto di particelle, un istante prima che la carta parta.
+        setTimeout(() => {
+            if (!fxPrefersReducedMotion()) {
+                const contenitore = document.querySelector('.game-container') || document.body;
+                contenitore.classList.add('fx-shake');
+                setTimeout(() => contenitore.classList.remove('fx-shake'), 380);
+            }
+            spawnParticles(centroX, centroY, { count: 22, colors: colore, speed: 5, life: 600, gravity: 0.05 });
+        }, Math.max(0, scossa - 80));
+
+        // Fine della scossa: il fantasma che tremava lascia il posto alla carta che vola al Cimitero (stessa posizione e misura).
+        setTimeout(() => {
+            fantasma.style.visibility = 'hidden';
+            if (verso) {
+                playCardTravel(card, rect, verso, {
+                    duration: 650,
+                    scaleTo: 0.45,
+                    spin: -8,
+                    glow: kind === 'trap' ? 'rgba(239, 117, 203, 0.9)' : 'rgba(85, 242, 207, 0.9)'
+                });
+            }
+        }, scossa);
+        setTimeout(() => scena.remove(), scossa + 900);
         return true;
     }
 

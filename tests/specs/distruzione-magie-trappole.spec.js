@@ -18,7 +18,8 @@ module.exports = {
             const fieldScene = document.querySelector('.fx-st-shatter--field');
             return {
                 stScene: !!stScene,
-                stAnimation: !!stStyle && stStyle.animationName === 'fxStSignalBreak',
+                // Dal 2026-11-07 la carta SCUOTE per un secondo (poi vola al Cimitero): vedi distruzione-magie-trappole-scossa-e-volo.
+                stAnimation: !!stStyle && stStyle.animationName === 'fxStShake',
                 noExplosion,
                 stRemoved: gameState.playerSTField[0] === null,
                 fieldScene: !!fieldScene,

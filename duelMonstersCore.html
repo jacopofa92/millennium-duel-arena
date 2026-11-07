@@ -729,23 +729,24 @@
             filter: saturate(0.6) brightness(0.82);
             transition: filter 0.4s ease;
         }
-        /* Nome lungo: va a capo su due righe invece di essere troncato (l'h3 ha la regola nowrap +
-           ellipsis piu' sopra, che qui va annullata: .player-info h3 pesa piu' di .duelist-name).
-           Oltre la seconda riga resta l'ellissi, e il titolo (tooltip) ha il nome intero. */
-        .player-info.side-player .duelist-details { max-width: min(54vw, 340px); }
+        /* Il NOME sta su UNA RIGA sola (richiesta dell'utente: "non andare a capo, Pegasus puo' estendersi ancora oltre").
+           Prima andava a capo su due o tre righe e spezzava le parole ("MAXIMILLIO / N PEGASUS"), perche' sul telefono il nome
+           era limitato a 32vw. Ora ha tutto lo spazio fino al bordo opposto (meno ~170px per l'avatar e il cluster Tempo/Turno/
+           Difficolta'/Abbandona dall'altra parte); se proprio non ci sta, ellissi, e il titolo (tooltip) ha il nome intero. */
+        .player-info.side-player .duelist-details { max-width: min(calc(100vw - 170px), 620px); min-width: 0; }
         .player-info.side-player .duelist-name {
-            white-space: normal;
-            overflow: visible;
-            text-overflow: clip;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             flex-wrap: nowrap;
             line-height: 1.12;
-            overflow-wrap: anywhere;
+            max-width: 100%;
         }
         .player-info.side-player .duelist-name .name-text {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
+            display: block;
             overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             min-width: 0;
             /* Larghezza del testo (non del contenitore): la corona resta attaccata al nome. */
             width: max-content;
@@ -4660,7 +4661,8 @@
             .player-info.side-player { gap: 6px; }
             .remote-choice-wait { gap: 6px; padding: 6px 9px; font-size: 0.66rem; }
             .duelist-avatar--corner { width: 48px; height: 48px; font-size: 0.78rem; border-width: 2px; }
-            .duelist-details .duelist-name { font-size: clamp(0.62rem, 3vw, 0.8rem); max-width: 32vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            /* Niente piu' tetto a 32vw: il nome ha tutta la riga (vedi la regola generale sopra), sempre su una riga sola. */
+            .duelist-details .duelist-name { font-size: clamp(0.62rem, 3vw, 0.8rem); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
             .life-points { font-size: clamp(0.6rem, 3.2vw, 0.8rem); padding: 2px 10px 2px 7px; }
 
             /* Il pannello descrizione carta esce dal flusso della colonna
