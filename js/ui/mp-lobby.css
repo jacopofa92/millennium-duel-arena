@@ -1415,7 +1415,7 @@ body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-lobby { p
    della sala. La console resta "senza riquadro" (regole #mpTermModal .mp-term piu' sopra): galleggia su un fondo scuro. */
 .mp-term-modal {
     position: fixed; inset: 0; z-index: 100000;
-    display: grid; place-items: center;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
     padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
     /* Opaco: con un po' di trasparenza la pagina dietro (titoli, pulsanti) traspariva e si sovrapponeva alle righe della console. */
     background: radial-gradient(ellipse at 50% 40%, rgb(6, 20, 36), rgb(2, 5, 12) 75%);
@@ -1426,3 +1426,17 @@ body:has(#mpLobby[data-schermata="ingresso"]):has(#mpStatus:empty) .mp-lobby { p
 body.mp-term-aperto { overflow: hidden; }
 @keyframes mpTermModalIn { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .mp-term-modal { animation: none; } }
+/* Pulsante "Annulla" del modale di connessione: stesso linguaggio della console (filo ciano, angoli smussati), ben a portata di pollice. */
+.mp-term-annulla {
+    min-width: 168px; min-height: 48px; padding: 12px 28px;
+    border-radius: 999px; border: 1px solid rgba(127, 227, 255, .45);
+    background: rgba(6, 24, 40, .7); color: #cfeeff;
+    font: 700 .82rem/1 'Segoe UI', Roboto, Arial, sans-serif; letter-spacing: .16em; text-transform: uppercase;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 0 18px rgba(80, 200, 255, .15), inset 0 0 0 1px rgba(255, 255, 255, .04);
+    transition: background .15s ease, border-color .15s ease, transform .12s ease;
+}
+.mp-term-annulla:hover { background: rgba(14, 44, 68, .85); border-color: rgba(160, 238, 255, .8); }
+.mp-term-annulla:active { transform: scale(.96); }
+.mp-term-annulla:focus-visible { outline: 2px solid #f7d774; outline-offset: 3px; }
+.mp-term-annulla:disabled { opacity: .5; cursor: default; }

@@ -88,6 +88,8 @@
         let idPubblico = null;
         let intentionalClose = false;
         let reconnectTimer = null;
+        /** Stato del collegamento in corso (vedi connect/annullaConnessione), null quando non ce n'e' uno. */
+        let connessioneInCorso = null;
         const listeners = {};
 
         function on(event, callback) {
@@ -101,7 +103,7 @@
         }
 
         /** Apre un WebSocket "nudo" verso `url` — usata sia per la prima connessione (connect) sia per ogni tentativo di riconnessione, senza duplicare la gestione degli eventi. */
-        function openSocket(url) {
+        function openSocket(url, controllo) {
             return new Promise((resolve, reject) => {
                 let settled = false;
                 let socket;
@@ -111,6 +113,8 @@
                     reject(err);
                     return;
                 }
+                // Lo ricorda chi sta collegando, cosi' annullaConnessione() puo' chiuderlo mentre si sta ancora aprendo.
+                if (controllo) controllo.socket = socket;
 
                 const timeoutId = setTimeout(() => {
                     if (!settled) {
@@ -182,19 +186,45 @@
             lastUrl = url;
             const deadline = Date.now() + ((options && options.totalTimeoutMs) || CONNECT_TOTAL_BUDGET_MS);
             let attempt = 0;
+            // Stato di QUESTO collegamento, letto da annullaConnessione(): il socket in apertura, l'attesa fra due tentativi
+            // e il segno di annullamento.
+            const controllo = { annullato: false, socket: null, timer: null, interrompiAttesa: null };
+            connessioneInCorso = controllo;
+            const erroreAnnullata = () => { const e = new Error('Connessione annullata.'); e.annullata = true; return e; };
 
-            const attemptOnce = () => openSocket(url).then((socket) => {
+            const attemptOnce = () => openSocket(url, controllo).then((socket) => {
+                // Annullata proprio mentre il socket si apriva: non resta aperto a nessuno.
+                if (controllo.annullato) { try { socket.close(); } catch (e) { /* noop */ } throw erroreAnnullata(); }
                 ws = socket;
             }).catch((err) => {
+                if (controllo.annullato) throw erroreAnnullata();
                 attempt++;
                 // Niente altri giri se non c'è tempo nemmeno per uno:
                 // meglio l'errore vero che un'attesa fino allo scadere.
                 if (Date.now() + CONNECT_RETRY_DELAY_MS + CONNECT_ATTEMPT_TIMEOUT_MS > deadline) throw err;
                 emit('connect-waking', { attempt: attempt, remainingMs: Math.max(0, deadline - Date.now()) });
-                return new Promise((resolve) => setTimeout(resolve, CONNECT_RETRY_DELAY_MS)).then(attemptOnce);
+                return new Promise((resolve, reject) => {
+                    controllo.interrompiAttesa = () => reject(erroreAnnullata());
+                    controllo.timer = setTimeout(() => { controllo.timer = null; controllo.interrompiAttesa = null; resolve(); }, CONNECT_RETRY_DELAY_MS);
+                }).then(attemptOnce);
             });
 
-            return attemptOnce();
+            const fine = () => { if (connessioneInCorso === controllo) connessioneInCorso = null; };
+            return attemptOnce().then((v) => { fine(); return v; }, (e) => { fine(); throw e; });
+        }
+
+        /**
+         * Interrompe il collegamento in corso (tentativo aperto o attesa fra due tentativi): la promessa di `connect` fallisce con
+         * un errore con `annullata: true`. Torna false se non c'era nulla da annullare (gia' connessi, o gia' falliti).
+         */
+        function annullaConnessione() {
+            const c = connessioneInCorso;
+            if (!c) return false;
+            c.annullato = true;
+            if (c.timer) { clearTimeout(c.timer); c.timer = null; }
+            if (c.interrompiAttesa) { const f = c.interrompiAttesa; c.interrompiAttesa = null; f(); }
+            if (c.socket) { try { c.socket.close(); } catch (e) { /* noop */ } }
+            return true;
         }
 
         /**
@@ -289,7 +319,7 @@
             if (ws) ws.close();
         }
 
-        return { connect, on, createRoom, joinRoom, sendAction, leaveRoom, lockRoom, close, normalizeServerUrl, idPubblico: () => idPubblico, _simulateUnexpectedDisconnect };
+        return { connect, annullaConnessione, on, createRoom, joinRoom, sendAction, leaveRoom, lockRoom, close, normalizeServerUrl, idPubblico: () => idPubblico, _simulateUnexpectedDisconnect };
     }
 
     window.DuelNetwork = createNetworkClient();

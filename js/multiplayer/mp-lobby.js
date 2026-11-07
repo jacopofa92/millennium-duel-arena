@@ -189,6 +189,8 @@
             // continuano a scorrere) fino a (minimo - durata della scenetta finale), poi "accesso concesso".
             const minimo = durataMinimaAttesa();
             const SCENETTA_MS = riduciMovimento ? 0 : 850;
+            // Collegati: da qui non c'e' piu' nulla da annullare, il pulsante sparisce (resta solo la scenetta finale).
+            const bottoneAnnulla = $('mpTermAnnulla'); if (bottoneAnnulla) bottoneAnnulla.remove();
             const resto = Math.max(0, minimo - SCENETTA_MS - (Date.now() - attesa.inizio));
             if (resto > 0) await new Promise((resolve) => setTimeout(resolve, resto));
             fermaAttesaServer();
@@ -200,6 +202,12 @@
             return true;
         } catch (err) {
             fermaAttesaServer();
+            // Annullato dalla persona: niente lampo rosso ne' errore, il modale si chiude subito e la sala resta com'era.
+            if (err && err.annullata) {
+                chiudiTerminale();
+                showStatus('Connessione annullata.');
+                return false;
+            }
             try { connessioneRifiutata(); } catch (e) { /* idem */ }
             // Il lampo rosso resta a vista per un istante, poi il modale si chiude e il messaggio d'errore compare in pagina;
             // i pulsanti si riattivano senza aspettare.
@@ -307,12 +315,22 @@
                 </div>
                 <div class="mp-term-bar"><span></span></div>
                 <div class="mp-term-meta"><span id="mpTermFoot"></span><b>KC-NET // TLS</b></div>
-            </div>`;
+            </div>
+            <button type="button" class="mp-term-annulla" id="mpTermAnnulla">Annulla</button>`;
+        const annulla = el.querySelector('#mpTermAnnulla');
+        if (annulla) annulla.addEventListener('click', annullaCollegamento);
         attesa.righe = 0;
         // Sfondo WebGL "KaibaCorp System" dietro la console (js/multiplayer/mp-term-fx.js): niente se manca WebGL.
         if (attesa.fx) attesa.fx.ferma();
         attesa.fx = window.MpTermFx ? MpTermFx.monta(el.querySelector('.mp-term')) : null;
     }
+
+    /** "Annulla" del modale (o tasto Esc): interrompe il collegamento. ensureConnected vede l'errore `annullata` e chiude il modale. */
+    function annullaCollegamento() {
+        const b = $('mpTermAnnulla'); if (b) b.disabled = true;
+        net.annullaConnessione();
+    }
+    function suEscDelModale(e) { if (e.key === 'Escape') annullaCollegamento(); }
 
     /** Il modale che ospita la console: lo crea alla prima richiesta, a tutto schermo e sopra la barra di navigazione. */
     function ospiteTerminale() {
@@ -326,6 +344,7 @@
             m.setAttribute('aria-label', 'Connessione al server');
             document.body.appendChild(m);
             document.body.classList.add('mp-term-aperto');
+            document.addEventListener('keydown', suEscDelModale);
         }
         return m;
     }
@@ -336,6 +355,7 @@
         const m = $('mpTermModal');
         if (m) m.remove();
         document.body.classList.remove('mp-term-aperto');
+        document.removeEventListener('keydown', suEscDelModale);
     }
 
     /** Una riga di byte in esadecimale, per il flusso di dati che scorre sotto il titolo (solo decorazione). */

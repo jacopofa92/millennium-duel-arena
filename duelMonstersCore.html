@@ -4107,8 +4107,44 @@
            voci vanno a capo in due colonne. Un elenco lungo (i Tipi di
            mostro per Il Cacciatore dalle 7 Armi) scorre dentro il
            riquadro invece di uscire dallo schermo. */
+        /* RIFATTO (2026-11-07, "bruttino, anche come pulsanti"): riquadro di vetro scuro con filo d'oro in alto, titolo in
+           serif con un sottile divisore, voci come pulsanti larghi da pollice (almeno 52px) con un numero tondo a sinistra e una
+           freccia a destra. Il numero e la freccia sono CSS generato (counter + ::before/::after), NON markup: il testo del
+           pulsante resta la sola etichetta (gli spec e le carte leggono quello). Le liste lunghe (piu' di 5 voci: i Tipi di
+           mostro de Il Cacciatore dalle 7 Armi) vanno in due colonne, senza numeri. */
         .quick-popover.quick-popover--options {
-            width: min(88vw, 340px);
+            width: min(92vw, 380px);
+            padding: 20px 16px 14px;
+            border-radius: 18px;
+            border: 1px solid rgba(247,215,116,0.6);
+            background: linear-gradient(165deg, rgba(36,27,15,0.985) 0%, rgba(13,10,7,0.995) 100%);
+            box-shadow:
+                inset 0 0 0 1px rgba(247,215,116,0.12),
+                0 22px 54px rgba(0,0,0,0.65),
+                0 0 34px rgba(243,156,18,0.16);
+        }
+        .quick-popover.quick-popover--options::before {
+            content: '';
+            position: absolute;
+            left: 22px;
+            right: 22px;
+            top: -1px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #f7d774, transparent);
+        }
+        .quick-popover--options .quick-popover-title {
+            font-family: 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+            font-size: 1.12rem;
+            letter-spacing: 0.07em;
+            margin-bottom: 10px;
+        }
+        .quick-popover--options .quick-popover-title::after {
+            content: '';
+            display: block;
+            width: 64px;
+            height: 2px;
+            margin: 9px auto 0;
+            background: linear-gradient(90deg, transparent, rgba(247,215,116,0.9), transparent);
         }
         .quick-popover-text {
             font-size: 0.72rem;
@@ -4116,35 +4152,106 @@
             line-height: 1.35;
             margin: -2px 0 9px;
         }
+        .quick-popover--options .quick-popover-text {
+            font-size: 0.86rem;
+            color: #cfc2a3;
+            line-height: 1.4;
+            margin: 0 0 14px;
+        }
         .quick-popover-actions--options {
-            max-height: min(52vh, 320px);
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            gap: 9px;
+            counter-reset: opzione;
+            max-height: min(52vh, 360px);
             overflow-y: auto;
             padding: 2px;
         }
-        .quick-popover-actions--options .quick-popover-option {
-            flex: 1 1 calc(50% - 6px);
-            min-height: 34px;
-            display: inline-flex;
+        .quick-popover.quick-popover--options .quick-popover-option {
+            position: relative;
+            display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 6px;
-            text-align: center;
-            line-height: 1.2;
+            justify-content: flex-start;
+            gap: 12px;
+            width: 100%;
+            min-height: 52px;
+            padding: 10px 38px 10px 12px;
+            border-radius: 13px;
+            text-align: left;
+            font-size: 0.96rem;
+            font-weight: 700;
+            line-height: 1.25;
+            color: #f6eedb;
+            background: linear-gradient(180deg, rgba(66,50,26,0.6) 0%, rgba(26,19,10,0.9) 100%);
+            border: 1px solid rgba(247,215,116,0.4);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 3px 10px rgba(0,0,0,0.4);
+            transition: transform 0.12s ease, border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+            -webkit-tap-highlight-color: transparent;
         }
-        .quick-popover-option-icon { font-size: 0.95rem; line-height: 1; }
-        /* Telefono in verticale: due opzioni affiancate (es. "Chi affronti in questo turno?" del Tag Team, con un testo lungo per
-           voce) diventavano due ovali stretti con il testo su sei righe. Qui le voci vanno UNA SOTTO L'ALTRA, a tutta larghezza,
-           con angoli normali e il testo allineato a sinistra accanto all'icona. */
-        @media (max-width: 620px) and (orientation: portrait) {
-            .quick-popover-actions--options { flex-direction: column; flex-wrap: nowrap; }
-            .quick-popover-actions--options .quick-popover-option {
-                flex: 0 0 auto;
-                width: 100%;
-                justify-content: flex-start;
-                text-align: left;
-                border-radius: 14px;
-                padding: 8px 12px;
-            }
+        /* Numero tondo (1, 2, 3...) generato dal CSS. */
+        .quick-popover.quick-popover--options .quick-popover-option::before {
+            counter-increment: opzione;
+            content: counter(opzione);
+            flex: 0 0 auto;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 0.86rem;
+            font-weight: 800;
+            color: #2a1c05;
+            background: radial-gradient(circle at 35% 30%, #fbe9a6, #f0b43a 70%);
+            box-shadow: 0 0 10px rgba(243,156,18,0.35);
+        }
+        /* Freccia a destra: dice che il tocco sceglie subito. */
+        .quick-popover.quick-popover--options .quick-popover-option::after {
+            content: '\203A';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-52%);
+            font-size: 1.6rem;
+            line-height: 1;
+            color: rgba(247,215,116,0.85);
+        }
+        .quick-popover.quick-popover--options .quick-popover-option:hover,
+        .quick-popover.quick-popover--options .quick-popover-option:focus-visible {
+            border-color: rgba(247,215,116,0.9);
+            background: linear-gradient(180deg, rgba(96,72,34,0.7) 0%, rgba(38,27,12,0.95) 100%);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 0 16px rgba(243,156,18,0.3);
+            outline: none;
+        }
+        .quick-popover.quick-popover--options .quick-popover-option:active { transform: scale(0.98); }
+        /* "Annulla": un pulsante secondario, piu' basso e senza numero ne' freccia. */
+        .quick-popover.quick-popover--options .quick-popover-option.cancel {
+            justify-content: center;
+            min-height: 44px;
+            margin-top: 4px;
+            padding: 8px 14px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #bdb6a4;
+            background: none;
+            border: 1px solid rgba(180,190,210,0.3);
+            box-shadow: none;
+        }
+        .quick-popover.quick-popover--options .quick-popover-option.cancel::before,
+        .quick-popover.quick-popover--options .quick-popover-option.cancel::after { content: none; }
+        .quick-popover.quick-popover--options .quick-popover-option.cancel:hover { color: #f6eedb; border-color: rgba(220,226,240,0.6); background: rgba(255,255,255,0.05); box-shadow: none; }
+        .quick-popover-option-icon { font-size: 1.05rem; line-height: 1; }
+        /* Piu' di 6 voci: due colonne, senza numero ne' freccia (sono categorie da scorrere, non una scelta fra pochi effetti). */
+        .quick-popover-actions--options:has(.quick-popover-option:nth-child(7)) {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        .quick-popover-actions--options:has(.quick-popover-option:nth-child(7)) .quick-popover-option { min-height: 44px; padding: 8px 10px; font-size: 0.86rem; justify-content: center; text-align: center; }
+        .quick-popover-actions--options:has(.quick-popover-option:nth-child(7)) .quick-popover-option::before,
+        .quick-popover-actions--options:has(.quick-popover-option:nth-child(7)) .quick-popover-option::after { content: none; }
+        .quick-popover-actions--options:has(.quick-popover-option:nth-child(7)) .quick-popover-option.cancel { grid-column: 1 / -1; }
+        @media (prefers-reduced-motion: reduce) {
+            .quick-popover.quick-popover--options .quick-popover-option { transition: none; }
         }
         @keyframes quickPopoverIn {
             0% { opacity: 0; transform: scale(0.75); }

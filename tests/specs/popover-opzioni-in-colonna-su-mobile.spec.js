@@ -51,6 +51,8 @@ module.exports = {
         t.assert(telefono.b.every((x) => parseFloat(x.raggio) < 30) && telefono.dentro, 'Telefono in verticale: niente ovali e il riquadro sta nello schermo: ' + JSON.stringify(telefono));
 
         const largo = await prova(1400, 900, false);
-        t.assert(largo.b.length === 2 && largo.b[1].l >= largo.b[0].r - 1 && Math.abs(largo.b[1].t - largo.b[0].t) < 4, 'Schermo largo: le due opzioni restano affiancate: ' + JSON.stringify(largo.b));
+        // Dal rifacimento del 2026-11-07 le voci sono pulsanti larghi UNO SOTTO L'ALTRO a ogni larghezza (con numero e freccia): le
+        // opzioni affiancate sono rimaste solo per le liste lunghe (7 o piu' voci, a due colonne).
+        t.assert(largo.b.length === 2 && largo.b[1].t >= largo.b[0].b - 1 && Math.abs(largo.b[1].l - largo.b[0].l) < 4, 'Schermo largo: le due opzioni stanno una sotto l\'altra: ' + JSON.stringify(largo.b));
     }
 };

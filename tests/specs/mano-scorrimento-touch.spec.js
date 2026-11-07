@@ -38,12 +38,14 @@ module.exports = {
             if (rilascia) document.dispatchEvent(ev('pointerup', x0 + punti[punti.length - 1][0], y0 + punti[punti.length - 1][1]));
             return letti;
         }, [da, punti, rilascia]);
-        const larghezza = () => t.evaluate(() => document.querySelector('#playerHand .card').offsetWidth);
+        // Passo FRA DUE CARTE (da centro a centro, in layout): la mano e' stretta (le carte si sovrappongono di poco), quindi non
+        // coincide piu' con la larghezza di una carta.
+        const larghezza = () => t.evaluate(() => { const c = document.querySelectorAll('#playerHand .card'); return c[1].offsetLeft - c[0].offsetLeft; });
 
         // 1) Main Phase: scorrimento laterale = una carta alla volta, nessun trascinamento
         await prepara('main1');
         const w = await larghezza();
-        let r = await gesto(0, [[12, 1], [w * 0.8, 2], [w * 1.6, 3], [w * 2.6, 3]], true);
+        let r = await gesto(0, [[12, 1], [w * 0.8, 2], [w * 1.6, 3], [w * 2.2, 3]], true);
         t.assert(r.every((x) => !x.fantasma && !x.sorgenteNascosta), 'Scorrendo di lato non deve nascere il fantasma del trascinamento: ' + JSON.stringify(r));
         t.assert(r[1].alte[1] && r[1].alte.filter(Boolean).length === 1, 'Sopra la seconda carta si solleva solo la seconda: ' + JSON.stringify(r[1]));
         t.assert(r[3].alte[2] && r[3].alte.filter(Boolean).length === 1, 'Oltre, si solleva solo la terza: ' + JSON.stringify(r[3]));
@@ -59,7 +61,7 @@ module.exports = {
 
         // 3) Scorrimento che poi sale oltre la mano: diventa il trascinamento della carta che aveva sotto
         await prepara('main1');
-        r = await gesto(0, [[12, 0], [w * 1.5, 2], [w * 1.5, -120]], false);
+        r = await gesto(0, [[12, 0], [w * 1.0, 2], [w * 1.0, -120]], false);
         t.assert(r[2].fantasma, 'Salendo oltre la mano dopo lo scorrimento il gesto diventa un trascinamento: ' + JSON.stringify(r[2]));
         const cartaTrascinata = await t.evaluate(() => (dragState && dragState.card && dragState.card.uid) || null);
         t.assert(cartaTrascinata === 'sc-1', 'Si trascina la carta che era sotto il dito (la seconda): ' + cartaTrascinata);

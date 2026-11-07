@@ -2241,17 +2241,22 @@ function fitHandCardsInOneRow(handEl) {
     if (available <= 0) return;
     const style = getComputedStyle(handEl);
     const gapPx = parseFloat(style.columnGap || style.gap) || 0;
-    const cardWidth = cards[0].getBoundingClientRect().width;
+    // Larghezza di LAYOUT (non il rettangolo disegnato): con il ventaglio le carte sono ruotate e quello e' piu' largo.
+    const cardWidth = cards[0].offsetWidth;
     if (cardWidth <= 0) return;
+    // Mano SEMPRE stretta (richiesta dell'utente: "senza quello spazio fra una carta e l'altra"): anche con poche carte
+    // quelle vicine si toccano e si sovrappongono di poco (4% della larghezza), invece di restare a `gap` di distanza. La riga e'
+    // centrata (justify-content: center di .hand), quindi la mano resta al centro qualunque sia il numero di carte.
+    const sovrapposizioneBase = gapPx + cardWidth * 0.04;
     const naturalWidth = cardWidth * cards.length + gapPx * (cards.length - 1);
-    if (naturalWidth <= available) return; // ci sta già su una riga sola, nessuna sovrapposizione necessaria
-    const overlapPerCard = (naturalWidth - available) / (cards.length - 1);
+    // Se nemmeno cosi' ci stanno, la sovrapposizione cresce quanto serve per stare su una riga sola.
+    const sovrapposizioneNecessaria = naturalWidth > available ? (naturalWidth - available) / (cards.length - 1) : 0;
     // Mai sovrapporre più dell'85% di una carta: oltre quella soglia
     // resterebbe visibile solo un bordo, illeggibile — meglio restare
     // leggermente più larghi dello spazio "ideale" (un piccolo overflow
     // orizzontale contenuto da .hand { overflow: visible } esistente)
     // che rendere le carte inutilizzabili.
-    const cappedOverlap = Math.min(overlapPerCard, cardWidth * 0.85);
+    const cappedOverlap = Math.min(Math.max(sovrapposizioneBase, sovrapposizioneNecessaria), cardWidth * 0.85);
     cards.forEach((c, i) => {
         if (i === 0) return;
         c.style.marginLeft = `-${cappedOverlap}px`;
