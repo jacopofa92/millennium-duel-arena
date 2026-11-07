@@ -1,0 +1,120 @@
+/* sala-tavolo.css — la sala unica a tavolo (js/multiplayer/sala-tavolo.js). Stessa lingua del resto dell'app: vetro scuro, filo d'oro,
+   serif per i titoli, niente rimbalzi nei movimenti. Le misure scalano con --st-fig (l'altezza della figura nello slot). */
+.st-sala {
+    --st-fig: 150px;
+    --st-oro: #f7d774;
+    --st-ink: #f4ead2;
+    --st-dim: #c9bb96;
+    --st-sup: var(--sup-riquadro, linear-gradient(150deg, rgba(40, 32, 20, .84), rgba(18, 16, 22, .88)));
+    --st-bordo: var(--sup-bordo, rgba(247, 215, 116, .3));
+    display: flex; flex-direction: column; gap: 14px;
+    width: min(100%, 980px); margin: 0 auto; color: var(--st-ink);
+    font-family: Arial, sans-serif;
+}
+
+/* ---------- Il tavolo: squadra B in alto, il centro, squadra A in basso ---------- */
+.st-tavolo { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 14px 12px; border-radius: 20px;
+    background: radial-gradient(120% 90% at 50% 50%, rgba(247, 215, 116, .07), transparent 60%), var(--st-sup); border: 1px solid var(--st-bordo); }
+.st-squadra { display: flex; flex-direction: column; gap: 8px; }
+.st-squadra-titolo { margin: 0; font: normal .82rem/1.2 Georgia, 'Times New Roman', serif; letter-spacing: .18em; text-transform: uppercase; text-align: center; color: var(--st-oro); }
+.st-squadra--b .st-squadra-titolo { color: #f1a0b0; }
+.st-riga { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+/* ---------- La fascia centrale: dove sta il tuo token finche' non scegli ---------- */
+.st-centro { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    min-height: calc(var(--st-fig) + 44px); }
+.st-centro::before, .st-centro::after { content: ''; position: absolute; top: 50%; height: 1px; width: calc(50% - var(--st-fig) * .8);
+    background: linear-gradient(90deg, transparent, rgba(247, 215, 116, .5)); }
+.st-centro::before { left: 0; }
+.st-centro::after { right: 0; transform: scaleX(-1); }
+.st-vs { position: absolute; top: 4px; font: normal 1rem/1 Georgia, 'Times New Roman', serif; letter-spacing: .3em; color: var(--st-oro); opacity: .8; }
+.st-ancora { width: calc(var(--st-fig) * .85); height: var(--st-fig); border-radius: 18px; border: 1px dashed rgba(247, 215, 116, .45);
+    background: rgba(247, 215, 116, .05); transition: opacity .3s; }
+.st-ancora.is-vuota { opacity: .35; border-style: solid; border-color: rgba(247, 215, 116, .2); background: none; }
+.st-centro-testo { margin: 0; min-height: 1.1em; font-size: .78rem; letter-spacing: .06em; color: var(--st-dim); text-align: center; }
+
+/* ---------- Il token: il TUO duellante, scivola fra il centro e gli slot ---------- */
+.st-token { position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none; will-change: transform;
+    background: center bottom / contain no-repeat; filter: drop-shadow(0 10px 14px rgba(0, 0, 0, .6)) drop-shadow(0 0 10px rgba(247, 215, 116, .35));
+    transition: transform .55s cubic-bezier(.2, .8, .2, 1), width .55s cubic-bezier(.2, .8, .2, 1), height .55s cubic-bezier(.2, .8, .2, 1); }
+.st-token.is-seduto { filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .6)) drop-shadow(0 0 14px rgba(110, 224, 255, .5)); }
+
+/* ---------- Gli slot ---------- */
+.st-cella { position: relative; }
+.st-slot { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; width: calc(var(--st-fig) * 1.05);
+    padding: 12px 10px 10px; border-radius: 16px; cursor: pointer; font: inherit; color: inherit; text-align: center;
+    background: var(--st-sup); border: 1px solid var(--st-bordo); transition: border-color .2s, box-shadow .2s, transform .15s; }
+.st-slot:disabled { cursor: default; }
+.st-slot:not(:disabled):active { transform: scale(.98); }
+.st-angoli { position: absolute; inset: 6px; pointer-events: none; border-radius: 10px;
+    background:
+        linear-gradient(var(--st-ang, rgba(247, 215, 116, .7)), var(--st-ang, rgba(247, 215, 116, .7))) top left / 12px 2px no-repeat,
+        linear-gradient(var(--st-ang, rgba(247, 215, 116, .7)), var(--st-ang, rgba(247, 215, 116, .7))) top left / 2px 12px no-repeat,
+        linear-gradient(var(--st-ang, rgba(247, 215, 116, .7)), var(--st-ang, rgba(247, 215, 116, .7))) bottom right / 12px 2px no-repeat,
+        linear-gradient(var(--st-ang, rgba(247, 215, 116, .7)), var(--st-ang, rgba(247, 215, 116, .7))) bottom right / 2px 12px no-repeat; }
+.st-fig { display: grid; place-items: center; width: 100%; height: var(--st-fig); background: center bottom / contain no-repeat; font: normal 2.4rem/1 Georgia, serif; color: rgba(247, 215, 116, .45); }
+.st-etichetta { margin-top: 10px; font: 600 .66rem/1.2 Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--st-dim); }
+.st-nome { font: normal 1rem/1.2 Georgia, 'Times New Roman', serif; overflow-wrap: anywhere; }
+.st-sotto { font-size: .72rem; line-height: 1.3; color: var(--st-dim); }
+.st-pronto-segno { position: absolute; top: 8px; right: 8px; padding: 2px 7px; border-radius: 999px; font: 700 .6rem/1.3 Arial, sans-serif; letter-spacing: .08em;
+    font-style: normal; color: #06240f; background: #7ee2a0; }
+
+/* libero: invita a sedersi (ciano, come i posti liberi delle sale) */
+.st-slot--libero { --st-ang: rgba(110, 224, 255, .8); border-color: rgba(110, 224, 255, .4); background: linear-gradient(160deg, rgba(14, 40, 54, .6), rgba(12, 16, 24, .85)); }
+.st-slot--libero:not(:disabled):hover, .st-slot--libero:not(:disabled):focus-visible { border-color: rgba(160, 238, 255, .95); box-shadow: 0 0 0 1px rgba(160, 238, 255, .5), 0 0 22px rgba(110, 224, 255, .25); }
+.st-slot--libero .st-sotto { color: #8fdcf0; }
+/* il tuo: la figura la disegna il token, qui resta la cornice evidenziata */
+.st-slot--io { --st-ang: rgba(110, 224, 255, .9); border-color: rgba(110, 224, 255, .8); box-shadow: 0 0 0 1px rgba(110, 224, 255, .4), 0 0 24px rgba(110, 224, 255, .2); }
+.st-slot--boss { --st-ang: rgba(255, 120, 130, .9); border-color: rgba(255, 120, 130, .55); }
+.st-slot--ia .st-sotto { color: #b6a8ff; }
+
+/* menu dell'host */
+.st-menu-btn { position: absolute; top: 6px; left: 6px; z-index: 4; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font: 700 .8rem/1 Arial, sans-serif; letter-spacing: -.05em; color: var(--st-oro);
+    background: rgba(10, 8, 5, .78); border: 1px solid rgba(247, 215, 116, .5); }
+.st-menu { position: absolute; top: 40px; left: 6px; z-index: 6; display: flex; flex-direction: column; min-width: 180px; padding: 6px; border-radius: 12px;
+    background: rgba(18, 14, 10, .97); border: 1px solid var(--st-bordo); box-shadow: 0 14px 30px rgba(0, 0, 0, .6); }
+.st-menu button { padding: 11px 12px; border: 0; background: none; text-align: left; font: inherit; font-size: .88rem; color: var(--st-ink); border-radius: 8px; cursor: pointer; }
+.st-menu button:hover, .st-menu button:focus-visible { background: rgba(247, 215, 116, .12); }
+
+/* ---------- Regole della stanza (chip) ---------- */
+.st-regole { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.st-chip { display: flex; flex-direction: column; gap: 1px; padding: 8px 14px; border-radius: 12px; text-align: left; font: inherit; color: var(--st-ink);
+    background: var(--st-sup); border: 1px solid var(--st-bordo); }
+.st-chip small { font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: var(--st-dim); }
+.st-chip b { font: normal .95rem/1.2 Georgia, 'Times New Roman', serif; }
+.st-chip--modificabile { cursor: pointer; border-color: rgba(247, 215, 116, .55); }
+.st-chip:disabled { cursor: default; opacity: 1; }
+
+/* ---------- Scelte personali ---------- */
+.st-personali { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.st-tessera { display: flex; align-items: center; gap: 12px; padding: 8px 12px 8px 8px; border-radius: 14px; text-align: left; font: inherit; color: inherit; cursor: pointer;
+    background: var(--st-sup); border: 1px solid var(--st-bordo); }
+.st-tessera-img { flex: 0 0 auto; display: grid; place-items: center; width: 54px; height: 54px; border-radius: 12px; background: #15110c center bottom / contain no-repeat; color: var(--st-oro); font-size: 1.4rem; }
+.st-tessera-testi { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.st-tessera-testi small { font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: var(--st-dim); }
+.st-tessera-testi b { font: normal 1rem/1.2 Georgia, serif; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.st-tessera-testi em { font-style: normal; font-size: .74rem; color: var(--st-dim); }
+.st-tessera-cambia { font: 700 .72rem/1 Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--st-oro); }
+
+/* ---------- Barra: codice, stato, pronto ---------- */
+.st-barra { display: flex; align-items: center; gap: 14px; padding: 10px 14px; border-radius: 16px; background: var(--st-sup); border: 1px solid var(--st-bordo); }
+.st-codice { display: flex; flex-direction: column; }
+.st-codice small { font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--st-dim); }
+.st-codice b { font: 700 1.1rem/1.2 'Courier New', monospace; letter-spacing: .25em; }
+.st-stato-sala { flex: 1; margin: 0; font-size: .85rem; color: var(--st-dim); }
+.st-pronto-btn { min-height: 48px; padding: 0 22px; border-radius: 14px; border: 0; cursor: pointer; font: normal 1rem/1 Georgia, 'Times New Roman', serif;
+    color: #231707; background: linear-gradient(180deg, #f8dc82, #e9a21d); }
+.st-pronto-btn:disabled { opacity: .4; cursor: default; }
+.st-pronto-btn.is-attivo { background: linear-gradient(180deg, #7ee2a0, #38a866); color: #06240f; }
+
+/* ---------- Telefono: figure piu' piccole, due slot per riga ---------- */
+@media (max-width: 760px) {
+    .st-sala { --st-fig: 104px; }
+    .st-riga { gap: 8px; }
+    .st-slot { width: calc(var(--st-fig) * 1.3); padding: 10px 6px 8px; }
+    .st-centro { min-height: calc(var(--st-fig) + 36px); }
+    .st-barra { flex-wrap: wrap; }
+    .st-stato-sala { order: 3; flex-basis: 100%; }
+    .st-pronto-btn { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .st-token { transition: none; } }
