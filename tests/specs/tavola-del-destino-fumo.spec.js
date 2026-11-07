@@ -1,9 +1,9 @@
-// Tavola del Destino: campo nel Regno delle Ombre e lettere D-E-A-T-H di fumo sopra le carte scoperte
+// Tavola del Destino: campo nel Regno delle Ombre e seduta spiritica D-E-A-T-H sopra le carte scoperte
 // (js/ui/tavola-del-destino.js). Si usano solo due carte, perche' con tutte e cinque scatta la vittoria.
 const { openDuel } = require('../helpers/harness');
 
 module.exports = {
-    name: 'Tavola del Destino: velo scuro e lettere di fumo sulle carte scoperte, sparisce con le carte',
+    name: 'Tavola del Destino: velo scuro e seduta spiritica sulle carte scoperte, sparisce con le carte',
     async run({ page, assert }) {
         const errori = [];
         page.on('pageerror', (e) => errori.push(e.message));
@@ -18,7 +18,7 @@ module.exports = {
             };
             const stato = () => ({
                 velo: !!document.getElementById('tavolaDestinoLayer'),
-                tela: !!document.getElementById('tavolaDestinoFumo'),
+                tela: !!document.getElementById('tavolaDestinoSeduta'),
                 testi: document.querySelectorAll('#tavolaDestinoTesti .td-lettera').length,
                 lettere: TavolaDestino.lettere().map((l) => l.lettera).join('')
             });
@@ -30,7 +30,7 @@ module.exports = {
             window.TAVOLA_DESTINO_FUMO_OFF = true;
             metti(866, 0, false); metti(867, 1, false); updateUI();
             const testo = stato();
-            // Fumo ("Alti"): una tela, nessun testo
+            // Seduta ("Alti"): una tela, nessun testo
             window.TAVOLA_DESTINO_FUMO_OFF = false;
             window.VideoQuality = Object.assign({}, window.VideoQuality, { isAlti: () => true });
             TavolaDestino.sync();
@@ -45,9 +45,10 @@ module.exports = {
         });
         assert(!a.nessuna.velo && !a.coperta.velo, `Senza carte scoperte non c'e' nulla: ${JSON.stringify(a)}`);
         assert(a.testo.velo && a.testo.testi === 2 && a.testo.lettere === 'DE', `Velo e lettere D, E (ripiego): ${JSON.stringify(a.testo)}`);
-        assert(a.fumo.velo && a.fumo.tela && a.fumo.testi === 0, `Con i Dettagli Alti c'e' la tela del fumo: ${JSON.stringify(a.fumo)}`);
+        assert(a.fumo.velo && a.fumo.tela && a.fumo.testi === 0, `Con i Dettagli Alti c'e' la tela della seduta spiritica: ${JSON.stringify(a.fumo)}`);
         assert(Number(a.z) < Number(a.gz), `Il velo sta sotto le carte: ${JSON.stringify({ z: a.z, gz: a.gz })}`);
         assert(!a.dopo.velo && !a.dopo.tela && a.dopo.testi === 0, `Tolte le carte sparisce tutto: ${JSON.stringify(a.dopo)}`);
         assert(errori.length === 0, `Errori: ${errori.join(' | ')}`);
     }
 };
+

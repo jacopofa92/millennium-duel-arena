@@ -86,10 +86,14 @@
         // e ad ogni conquista, se ne vince UNA dal bacino di quella fonte, finche' il bacino non e' finito.
         /** @type {(fonte: string, perche: string) => VoceEsito[]} */
         const arte = (fonte, perche) => (window.ArtworkAlternativi ? ArtworkAlternativi.premiaDaFonte(fonte, perche) : []);
+        // Premi di PIANO (torreDatabase.premiPiano: 1 Carta Locazione al piano 15, 1 Carta del Millennio al 20): accreditati qui,
+        // una volta per piano superato, e mostrati nella schermata di fine duello.
+        /** @type {(piano: number) => VoceEsito[]} */
+        const premiPiano = (piano) => (window.Rewards && typeof Rewards.forTorre === 'function' ? Rewards.forTorre(piano) : []);
         if (r.esito === 'conquistata') {
             /** @type {VoceEsito[]} */
             const voci = [{ nota: true, icon: '🗼', rule: `Torre conquistata! Hai superato tutti i ${Torre.piani()} piani in una sola scalata.` }];
-            return voci.concat(arte('torre-conquistata', 'Torre conquistata'));
+            return voci.concat(premiPiano(r.piano), arte('torre-conquistata', 'Torre conquistata'));
         }
         if (r.esito === 'salito') {
             /** @type {VoceEsito[]} */
@@ -98,7 +102,7 @@
                 icon: '🗼',
                 rule: `Piano ${r.piano} superato: al piano ${r.piano + 1} riparti con ${Math.max(1, lp)} Life Point. Prima di salire scegli fra Ristoro e un oggetto.`
             }];
-            return voci.concat(r.piano === 15 ? arte('torre-piano-15', 'Piano 15 della Torre superato') : []);
+            return voci.concat(premiPiano(r.piano), r.piano === 15 ? arte('torre-piano-15', 'Piano 15 della Torre superato') : []);
         }
         return [{
             nota: true,

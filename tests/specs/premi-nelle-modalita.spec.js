@@ -62,7 +62,7 @@ module.exports = {
             () => { if (!SaveManager.hasSave()) SaveManager.createNew('Rivale'); SaveManager.setStoryState('anime', { finita: true }); }, 'Rivincite');
 
         await verifica('torre.html', '#premiModalita .rw-anteprima',
-            () => ['piani 1–4 Facile', 'Ristoro', 'piano 15'],
+            () => ['piani 1–4 Facile', 'Ristoro', 'piano 15', '+1 Carta Locazione', '+1 Carta del Millennio', 'piano 20'],
             () => {
                 if (!SaveManager.hasSave()) SaveManager.createNew('Scalatore');
                 const s = SaveManager.getCardAcquisitionState();

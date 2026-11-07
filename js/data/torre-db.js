@@ -18,10 +18,18 @@
  *
  * Forme: `PianoTorre`, `FasciaTorre`, `OggettoTorre` in types/modalita.d.ts.
  */
-/** @type {{ piani: number, lpIniziali: number, recuperoLp: number, fasce: FasciaTorre[], boss: { [piano: number]: PianoTorre }, oggetti: OggettoTorre[] }} */
+/** @type {{ piani: number, lpIniziali: number, recuperoLp: number, premiPiano: { [piano: number]: { locatorCards?: number, millenniumCards?: number } }, fasce: FasciaTorre[], boss: { [piano: number]: PianoTorre }, oggetti: OggettoTorre[] }} */
 const torreDatabase = {
     piani: 20,
     lpIniziali: 8000,
+    // PREMI DI PIANO (richiesta dell'utente, 2026-11-07): superando il piano 15 si vince 1 Carta Locazione, superando il piano 20
+    // (la Torre conquistata) 1 Carta del Millennio. Valgono ad OGNI scalata che arriva li'. Sono in aggiunta al premio normale del
+    // duello e alle illustrazioni alternative. La chiave e' il piano appena superato; Rewards.forTorre li accredita e la pagina
+    // (Rewards.modalitaHtml('torre')) li legge da qui: un premio cambiato qui cambia anche l'informazione.
+    premiPiano: {
+        15: { locatorCards: 1 },
+        20: { millenniumCards: 1 }
+    },
     /** Quanti Life Point ridà il premio "Ristoro" (mai oltre i Life Point iniziali). */
     recuperoLp: 2500,
     // La scalata si svolge tutta dentro il Castello di Pegasus: cambiano

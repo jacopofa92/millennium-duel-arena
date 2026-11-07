@@ -37,8 +37,8 @@
 @keyframes td-scorri-b { from { transform: translate(0, 0) rotate(0deg); } to { transform: translate(-42vmax, -10vmax) rotate(-12deg); } }
 @keyframes td-scorri-c { from { transform: translate(-12vmax, 0) scale(1); } to { transform: translate(22vmax, -8vmax) scale(1.2); } }
 
-/* Il fumo: una tela a tutto schermo SOPRA le carte (sono le lettere "sopra la carta") ma sotto i modali e gli annunci */
-#tavolaDestinoFumo {
+/* La seduta spiritica: una tela 2D a tutto schermo SOPRA le carte (sigilli, fili, fuoco fatuo) ma sotto i modali e gli annunci */
+#tavolaDestinoSeduta {
     position: fixed;
     inset: 0;
     width: 100vw;
@@ -47,18 +47,21 @@
     pointer-events: none;
 }
 
-/* Ripiego senza tela: lettere di testo sfumate che respirano, in un contenitore sul body (z-index 32 come la tela) */
+/* Ripiego senza tela (Dettagli Normali o movimento ridotto): la lettera dentro un anello di luce, ferma, in un contenitore sul
+   body (z-index 32 come la tela) */
 #tavolaDestinoTesti { position: fixed; inset: 0; z-index: 32; pointer-events: none; }
 #tavolaDestinoTesti .td-lettera {
     position: fixed;
     transform: translate(-50%, -50%);
-    font: 900 40px/1 Impact, "Arial Black", "Segoe UI Black", sans-serif;
-    color: rgba(225, 205, 255, .55);
-    text-shadow: 0 0 14px rgba(170, 120, 255, .85), 0 0 34px rgba(110, 50, 190, .8);
-    filter: blur(1.6px);
-    animation: td-lettera-respira 3.4s ease-in-out infinite alternate;
+    display: flex; align-items: center; justify-content: center;
+    box-sizing: border-box;
+    border: 1.5px solid rgba(246, 242, 255, .85);
+    border-radius: 50%;
+    font: 700 40px/1 "Cinzel Decorative", "Cinzel", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+    color: rgba(246, 242, 255, .95);
+    text-shadow: 0 0 10px rgba(172, 122, 255, .95), 0 0 24px rgba(110, 50, 190, .8);
+    box-shadow: 0 0 10px rgba(172, 122, 255, .6), inset 0 0 10px rgba(130, 205, 255, .35);
 }
-@keyframes td-lettera-respira { from { opacity: .55; } to { opacity: .95; } }
 @media (prefers-reduced-motion: reduce) {
     #tavolaDestinoLayer .td-buio, #tavolaDestinoLayer .td-nebbia, #tavolaDestinoTesti .td-lettera { animation: none; }
 }

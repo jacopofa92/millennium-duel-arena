@@ -484,6 +484,25 @@
         return rewards;
     }
 
+    /**
+     * Premio di PIANO della Torre dei Duellanti (js/data/torre-db.js, `premiPiano`): 1 Carta Locazione superando il piano 15,
+     * 1 Carta del Millennio superando il 20. Accredita e torna le voci con la spiegazione; vuoto per ogni altro piano. Lo chiama
+     * la modalita' (js/modes/torre-mode.js) a duello VINTO, una volta per piano superato.
+     */
+    function forTorre(piano) {
+        const rewards = [];
+        const db = window.torreDatabase;
+        const premi = db && db.premiPiano && db.premiPiano[piano];
+        if (!premi || !window.SaveManager) return rewards;
+        Object.keys(premi).forEach((valuta) => {
+            const quanti = premi[valuta];
+            if (!quanti) return;
+            SaveManager.addCurrency(valuta, quanti);
+            rewards.push(voce(valuta, quanti, `Piano ${piano} della Torre dei Duellanti superato`));
+        });
+        return rewards;
+    }
+
     // ================================================================
     // BATTAGLIE ONLINE (Multiplayer): Assalto al Boss, Duello, Duello a Specchio, Tag Team in rete
     // ================================================================
@@ -973,6 +992,13 @@
             const fasce = db.fasce.map((f) => `piani ${f.daPiano}–${f.aPiano} ${NOME_LIVELLO[f.livello] || f.livello}`).join(' · ');
             speciali.push(riga('🗼', `Il livello cresce con i piani (${fasce}); i Boss dei piani ${Object.keys(db.boss).join(', ')} hanno il loro. Ogni piano vinto paga come un duello a quel livello.`));
             speciali.push(riga('🎁', `Dopo ogni piano scegli fra <b>Ristoro</b> (+${db.recuperoLp} Life Point) e un <b>oggetto</b> per la scalata.`));
+            // I premi di piano si leggono da torreDatabase.premiPiano (la stessa tabella che li accredita): niente numeri ricopiati qui.
+            Object.keys(db.premiPiano || {}).forEach((piano) => {
+                const p = db.premiPiano[piano];
+                const parti = Object.keys(p).filter((v) => p[v]).map((v) => `<b>+${p[v]} ${(CURRENCY_META[v] || { nome: v }).nome.replace(/^Carte /, 'Carta ')}</b>`);
+                const icona1 = Object.keys(p).map((v) => (CURRENCY_META[v] || {}).icon).filter(Boolean)[0] || '🎁';
+                if (parti.length) speciali.push(riga(icona1, `Superando il <b>piano ${piano}</b>${Number(piano) === db.piani ? ' (la Torre conquistata)' : ''}: ${parti.join(' e ')}, ad ogni scalata che ci arriva.`));
+            });
             speciali.push(riga('🖼️', 'Illustrazioni alternative di alcune carte: una a sorte superando il piano 15 e una conquistando la Torre, finché ne restano da sbloccare.'));
             standard = () => righeVittoriaTuttiILivelli().join('');
         } else if (id === 'raid') {
@@ -1156,6 +1182,7 @@
         forChallenge: forChallenge,
         forStoryCampaign: forStoryCampaign,
         forStoryArc: forStoryArc,
+        forTorre: forTorre,
         forRaid: forRaid,
         forOnline: forOnline,
         RAID_PREMI: RAID_PREMI,

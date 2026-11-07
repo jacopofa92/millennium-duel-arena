@@ -191,10 +191,38 @@ module.exports = {
                 await Promise.all([p.waitForURL(/mode=torre&piano=20/), p.click('#sfidaPiano')]);
                 await aspettaDuello(p);
                 t.assert(await p.evaluate(() => DuelSession.opponent.id) === 'yamiYugi', 'Al piano 20 il boss è Yami Yugi');
+                const prima = await p.evaluate(() => SaveManager.getCurrency().millenniumCards || 0);
                 await p.evaluate(() => endDuel(true));
                 await p.waitForFunction(() => Torre.stato().record.conquiste === 1, null, { timeout: 15000 });
-                const s = await p.evaluate(() => ({ stato: Torre.stato(), sfida: SaveManager.getChallengeProgress('torre-conquistata') }));
+                const s = await p.evaluate(() => ({ stato: Torre.stato(), sfida: SaveManager.getChallengeProgress('torre-conquistata'), millennio: SaveManager.getCurrency().millenniumCards || 0 }));
                 t.assert(!s.stato.inCorso && s.stato.ultimoEsito.conquistata && s.sfida.completed, `Torre conquistata e Sfida completata: ${JSON.stringify(s)}`);
+                // Premio di piano (2026-11-07): superare il piano 20 vale 1 Carta del Millennio, in piu' del normale premio del duello.
+                t.assert(s.millennio >= prima + 1, `Il piano 20 paga 1 Carta del Millennio (prima ${prima}, ora ${s.millennio})`);
+            } finally {
+                await p.close();
+            }
+        }
+
+        // Piano 15 superato: 1 Carta Locazione (premio di piano); il piano 14, invece, non ne paga.
+        for (const [piano, paga] of [[14, false], [15, true]]) {
+            const { page: p } = await nuovaPagina(t);
+            try {
+                await p.goto(PAGINA);
+                await p.evaluate((pn) => {
+                    if (!SaveManager.hasSave()) SaveManager.createNew('Scalatore');
+                    const s = Torre.nuovaScalata();
+                    s.inCorso.piano = pn;
+                    SaveManager.setModeState('torre', s);
+                }, piano);
+                await p.reload();
+                await Promise.all([p.waitForURL(new RegExp(`mode=torre&piano=${piano}`)), p.click('#sfidaPiano')]);
+                await aspettaDuello(p);
+                const prima = await p.evaluate(() => SaveManager.getCurrency().locatorCards || 0);
+                await p.evaluate(() => endDuel(true));
+                await p.waitForFunction((pn) => { const e = Torre.stato().inCorso; return e && e.piano === pn + 1; }, piano, { timeout: 15000 });
+                const dopo = await p.evaluate(() => SaveManager.getCurrency().locatorCards || 0);
+                if (paga) t.assert(dopo >= prima + 1, `Il piano 15 paga 1 Carta Locazione (prima ${prima}, ora ${dopo})`);
+                else t.assert(dopo - prima <= 1, `Il piano ${piano} non ha un premio di piano (solo l'eventuale drop del duello): ${prima} -> ${dopo}`);
             } finally {
                 await p.close();
             }
