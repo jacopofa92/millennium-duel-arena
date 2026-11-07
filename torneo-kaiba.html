@@ -521,8 +521,10 @@
 <script src="js/ui/story-cutscene.js"></script>
 <script src="js/data/tournament-dialogues.js"></script>
 <script src="js/ui/icon-library.js"></script>
+<script src="js/ui/emoji-tema.js"></script>
 <script>
     Icons.hydrate();
+    if (window.EmojiTema) EmojiTema.segui(document.getElementById('content'));
     // La data del Negozio e dei bonus giornalieri viene dal server, non
     // dall'orologio del dispositivo (vedi js/cloud/server-date.js): la
     // sincronizzazione parte subito, così è già pronta quando serve.

@@ -276,6 +276,13 @@
                 }
 
                 const haBersaglioFavorevole = bersagliValutabili.some((bersaglio) => atk > statRilevante(bersaglio));
+                // Un MURO in Attacco (0 ATK, o DEF molto piu' alta dell'ATK e senza bersagli che batte) non colpisce niente e
+                // muore a qualunque attacco: passa in Difesa anche senza una minaccia in campo. Succede dopo un'Evocazione
+                // Tributo, che esce sempre in Attacco (Mura Labirintiche, Muro-Ombra...).
+                const def = slot.card.defense || 0;
+                // (Con il campo avversario vuoto un muro con un po' di ATK attacca direttamente: non va in Difesa, o oscillerebbe
+                // ogni turno fra le due regole.)
+                if (atk <= 0 || (campoAvversario.length > 0 && !haBersaglioFavorevole && def - atk >= 1000 && atk < 1800)) return true;
                 if (haBersaglioFavorevole || minacceScoperte.length === 0) return false;
                 const minacciaMassima = minacceScoperte.reduce((massimo, slot) => Math.max(massimo, effAtk(slot.card)), 0);
                 return minacciaMassima > atk;
@@ -527,6 +534,20 @@
         // mostri nemici appena Evocati. Senza questa stima l'IA rifiutava
         // SEMPRE i tre Tributi, rendendo la Divinità una carta morta.
         const valoreControllo = card.id === 31 && previste.atk > 0 ? 2000 : 0;
+        // Un'Evocazione Tributo esce SEMPRE scoperta in Attacco (eseguiEvocazioneNormale, evocazioni.js: non si puo' Settare dopo
+        // un Tributo, a meno di def.canTributeSet): la DEF non protegge niente, conta solo l'ATK. Prima la stima credeva di poter
+        // mettere il mostro in Difesa, quindi un muro come Mura Labirintiche (0/3000) "valeva" 3000 e il bot lo Evocava
+        // sacrificando mostri, per poi vederlo in Attacco con 0 ATK (segnalato dall'utente: Fratelli Paradosso).
+        const defTributo = window.DuelEngine && DuelEngine.getDefinition ? DuelEngine.getDefinition(card.id) : null;
+        const sempreInAttacco = !(defTributo && defTributo.canTributeSet);
+        if (sempreInAttacco) {
+            const atkSulCampo = previste.atk + valoreControllo;
+            // Senza ATK non colpisce e muore a qualunque attacco: mai un Tributo per lui.
+            if (atkSulCampo <= 0) return false;
+            // Con ATK basso ma DEF alta sarebbe un muro in Posizione di Attacco: vale solo se l'ATK da solo supera il
+            // valore sacrificato (un vero upgrade offensivo), altrimenti e' uno spreco.
+            return atkSulCampo >= sacrificedValue;
+        }
         const piccoStimato = Math.max(previste.atk, previste.def) + valoreControllo;
         // Mai in perdita netta pura, indipendentemente dal campo
         // avversario: se NESSUNA statistica del nuovo mostro supera il

@@ -2368,7 +2368,9 @@ function renderPlayerHand() {
         // popover apriva e richiudeva quasi subito) finché un vero
         // trascinamento non bypassava del tutto questo doppio percorso.
         cardEl.onpointerdown = (event) => {
-            if (gameState.currentPlayer !== 'player' || isDraggingAttack) return;
+            // Anche nel turno dell'avversario la carta si puo' sollevare e leggere (consultazione): startHandCardDrag
+            // lascia il gesto a un semplice tap (dragEnabled falso) e handleCardClickInner non esegue nessuna azione.
+            if (isDraggingAttack) return;
             startHandCardDrag(event, card, index, 'player');
         };
         cardEl.onmouseenter = () => {

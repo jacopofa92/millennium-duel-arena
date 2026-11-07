@@ -935,9 +935,11 @@
 <script src="js/ui/story-cutscene.js"></script>
 <script src="js/data/tournament-dialogues.js"></script>
 <script src="js/ui/icon-library.js"></script>
+<script src="js/ui/emoji-tema.js"></script>
 <script src="js/ui/board-pieces.js"></script>
 <script>
     Icons.hydrate();
+    if (window.EmojiTema) EmojiTema.segui(document.getElementById('content'));
     // La data dei bonus giornalieri viene dal server, non dall'orologio
     // del dispositivo (vedi js/cloud/server-date.js).
     if (window.ServerDate) ServerDate.sync();

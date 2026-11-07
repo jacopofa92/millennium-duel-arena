@@ -91,7 +91,10 @@
     .main {
         position: relative;
         z-index: 1;
-        padding: 20px 18px 60px;
+        /* 74px in alto, come torneo-kaiba.html e torneo-battle-city.html: l'HUD fisso (Stelle, mazzo, menu) occupa i primi ~70px e
+           con soli 20px finiva SOPRA le schermate a riquadro (Duello in sospeso, eliminazione, Castello...). La mappa a
+           tutto schermo azzera il padding (.main.map-mode). */
+        padding: 74px 18px 60px;
         max-width: 760px;
         margin: 0 auto;
     }
@@ -540,7 +543,9 @@
         padding: 34px 24px;
         box-shadow: 0 16px 40px rgba(0,0,0,0.4);
     }
-    .center-panel .cp-icon { font-size: 3rem; margin-bottom: 14px; }
+    .center-panel .cp-icon { font-size: 3rem; margin-bottom: 14px; color: var(--gold); line-height: 1; }
+    /* L'emoji e' diventata l'icona del tema (EmojiTema.segui): oro, tonda di misura e centrata. */
+    .center-panel .cp-icon .emoji-tema { width: 1em; height: 1em; margin: 0; vertical-align: middle; filter: drop-shadow(0 4px 10px rgba(243,156,18,0.35)); }
     .center-panel h2 { font-size: 1.3rem; margin-bottom: 10px; color: var(--gold); }
     .center-panel p { color: var(--ink); font-size: 0.92rem; line-height: 1.6; margin-bottom: 22px; }
 
@@ -648,11 +653,17 @@
         transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
     .big-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(243,156,18,0.5); }
+    /* Secondario nello stesso linguaggio oro-e-pietra del resto: vetro scuro con filo d'oro, non piu' un blu-grigio estraneo. */
     .big-btn.secondary {
-        color: #f2f6ff;
-        background: linear-gradient(145deg, #4a5a72, #2f3b4d);
-        box-shadow: 0 10px 26px rgba(0,0,0,0.4);
+        color: #f7d774;
+        background: linear-gradient(160deg, rgba(40,32,20,0.92), rgba(16,14,20,0.96));
+        border: 1px solid rgba(247,215,116,0.5);
+        box-shadow: 0 10px 26px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
     }
+    .big-btn.secondary:hover { border-color: rgba(247,215,116,0.9); box-shadow: 0 10px 26px rgba(0,0,0,0.4), 0 0 16px rgba(243,156,18,0.3); }
+    .big-btn { justify-content: center; text-align: center; }
+    /* I due pulsanti affiancati dei riquadri (Torna al menu / Gioca ancora) restano su una riga sola. */
+    .center-panel .modal-actions .big-btn { flex: 1 1 150px; white-space: nowrap; padding: 14px 14px; }
 
     /* --- Toast di risultato (prize/malus/duello) --- */
     .result-toast {
@@ -799,7 +810,8 @@
     .loot-empty { color: var(--ink-dim); font-size: 0.85rem; text-align: center; padding: 20px 0; }
 
     @media (max-width: 480px) {
-        .main { padding: 14px 10px 40px; }
+        /* Sotto la fotocamera (safe area) + l'HUD da 44px + un respiro: prima solo 14px, quindi stelle, mazzo e menu coprivano il riquadro. */
+        .main { padding: calc(max(10px, env(safe-area-inset-top, 10px)) + 60px) 10px 40px; }
         .map-viewport { height: 360px; }
         .tournament-start { width: calc(100vw - 20px); padding: 22px 16px 20px; margin-top: 0; }
         .start-rules { grid-template-columns: 1fr; gap: 5px; }
@@ -815,6 +827,15 @@
     @media (max-height: 520px) and (orientation: landscape) {
         .main:not(.map-mode) { padding-top: max(10px, env(safe-area-inset-top, 10px)); padding-bottom: 10px; }
         .tournament-start { padding: 12px 18px; width: min(760px, calc(100vw - 110px - env(safe-area-inset-left) - env(safe-area-inset-right))); }
+        /* Le altre schermate a riquadro (Duello in sospeso, eliminazione, Castello): in orizzontale l'HUD sta ai due lati (stelle a
+           sinistra, mazzo e menu a destra), quindi il riquadro lascia ~125px per parte invece di allargarsi sotto di loro. */
+        .center-panel:not(.tournament-start) {
+            max-width: calc(100vw - 250px - env(safe-area-inset-left) - env(safe-area-inset-right));
+            margin-left: auto; margin-right: auto;
+            padding: 18px 20px;
+        }
+        .center-panel:not(.tournament-start) .cp-icon { font-size: 2rem; margin-bottom: 6px; }
+        .center-panel:not(.tournament-start) p { margin-bottom: 14px; }
         .tournament-start .cp-icon { display: none; }
         .start-kicker { margin-bottom: 3px; }
         .tournament-start h2 { margin-bottom: 4px; font-size: 1.16rem; }
@@ -949,8 +970,12 @@
 <script src="js/ui/story-cutscene.js"></script>
 <script src="js/data/tournament-dialogues.js"></script>
 <script src="js/ui/icon-library.js"></script>
+<script src="js/ui/emoji-tema.js"></script>
 <script>
     Icons.hydrate();
+    // Ogni schermata a riquadro (Campione, Eliminato, Duello in sospeso...) si ridisegna con innerHTML: le emoji diventano
+    // le icone del tema da sole, senza ricordarsi di farlo dopo ogni render.
+    if (window.EmojiTema) EmojiTema.segui(document.getElementById('content'));
     // La data dei bonus giornalieri viene dal server, non dall'orologio
     // del dispositivo (vedi js/cloud/server-date.js).
     if (window.ServerDate) ServerDate.sync();

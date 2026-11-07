@@ -62,7 +62,7 @@
         // arrivano qui solo per essere mostrate: questo file non tocca
         // mai le valute.
         const premiEl = /** @type {HTMLElement} */ (el.querySelector('.challenge-banner-rewards'));
-        const voci = def.rewards || [];
+        const voci = Array.isArray(def.rewards) ? def.rewards : [];
         // Testo costruito qui da valori di nostri file di dati (icona,
         // nome valuta, importo numerico), mai da input dell'utente.
         premiEl.innerHTML = voci.length === 0 ? '' : voci.map((r) =>
@@ -98,13 +98,17 @@
      */
     function show(def, premi) {
         if (!def) return;
-        queue.push(Object.assign({}, def, { rewards: premi || def.rewards || [] }));
+        // Solo un ELENCO vale come elenco di premi: `premi` puo' arrivare da forEach(show), che come secondo argomento passa
+        // l'indice (1, 2...), e `1.map` lanciava "r.map is not a function" dal secondo banner in coda in poi.
+        const elencoPremi = Array.isArray(premi) ? premi : (Array.isArray(def.rewards) ? def.rewards : []);
+        queue.push(Object.assign({}, def, { rewards: elencoPremi }));
         showNext();
     }
 
     function init() {
         if (window.ChallengeTracker && typeof ChallengeTracker.drainPendingBanners === 'function') {
-            ChallengeTracker.drainPendingBanners().forEach(show);
+            // Una funzione che scarta gli argomenti extra di forEach (indice e array): vedi il commento in show().
+            ChallengeTracker.drainPendingBanners().forEach((def) => show(def));
         }
     }
 

@@ -173,6 +173,13 @@ function handleCardClickInner(card, sourceType, sourceIndex, sourceOwner, isFace
         || startsSelectedTribute;
     if (gameplayOnly) updateCardInfoPanel(null);
     else updateCardInfoPanel(card, { sourceType, sourceOwner, isFaceDown });
+    if (gameState.currentPlayer !== 'player' && !isDraggingAttack
+        && sourceType === 'hand' && sourceOwner === 'player' && !gameplayOnly) {
+        // Turno dell'avversario: la carta in mano si solleva e mostra le sue info (consultazione), ma NON si puo' fare
+        // nessuna azione (nessun popover, Evocazione o attivazione): si esce subito dopo.
+        selectHandCardForInspection(card, sourceIndex, sourceOwner);
+        return;
+    }
     if (gameState.currentPlayer !== 'player' || isDraggingAttack) return;
     const isMainPhase = gameState.phase === 'main1' || gameState.phase === 'main2';
     // Le Magie Veloci (subtype 'quick-play') sono per testo reale attivabili

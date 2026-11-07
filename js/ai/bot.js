@@ -413,11 +413,18 @@ function attemptBotHandSpecialSummon(io) {
         if (gameState.currentPlayer !== io || gameState.gameOver || !window.BotAI) return Promise.resolve();
         const decision = BotAI.chooseHandSpecialSummon(gameState, io);
         if (!decision) return Promise.resolve();
+        // Posizione: quella che la carta impone (def.specialSummonFixedPosition), altrimenti la stessa scelta dell'Evocazione
+        // Normale (un muro come Mura Labirintiche va in Difesa, non in Attacco con 0 ATK). Una Special Summon e' sempre
+        // scoperta: la Difesa qui e' scoperta, non coperta.
+        const defCarta = window.DuelEngine && DuelEngine.getDefinition ? DuelEngine.getDefinition(decision.card.id) : null;
+        const posturaScelta = window.AI_SHARED ? AI_SHARED.decideMonsterPosture(decision.card, gameState, io) : null;
+        const posizioneSpeciale = (defCarta && defCarta.specialSummonFixedPosition)
+            || (posturaScelta && posturaScelta.position === 'defense' ? 'defense' : 'attack');
         const started = Comandi.esegui(io, {
             tipo: 'specialeDaMano',
             carta: decision.card.uid,
             mano: decision.handIndex,
-            posizione: 'attack'
+            posizione: posizioneSpeciale
         });
         if (started) { segnaMossa(); updateUI(); }
         return Promise.resolve();
@@ -537,7 +544,10 @@ async function botPerformAttacks(giro = 0, soloUids = null, io = 'bot') {
     // così l'IA non spreca la sua valutazione (chooseAttackTarget) su un
     // candidato che verrebbe comunque respinto.
     let attackers = Tavolo.mostri(io).map((slot, index) => ({ slot, index })).filter(item => item.slot && !item.slot.hasAttacked && item.slot.position === 'attack'
-        && (!soloUids || soloUids.has(item.slot.card.uid)));
+        && (!soloUids || soloUids.has(item.slot.card.uid))
+        // Un mostro con 0 ATK (o meno) effettivo non fa danno a nessuno: attaccare significa solo farlo distruggere (o colpire
+        // per zero). Resta fermo; di norma passera' in Difesa al turno dopo (choosePositionChanges).
+        && !(window.AI_SHARED && AI_SHARED.effAtk && AI_SHARED.effAtk(item.slot.card) <= 0));
     if (window.BotAI) {
         attackers = BotAI.orderAttackers(attackers, io);
         const difensori = Tavolo.mostri(Tavolo.avversario(io))

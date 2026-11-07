@@ -1126,13 +1126,13 @@
             <div class="reward-summary-title">${titolo || 'Ricompense'}</div>
             ${voci.map((r) => (r.nota ? `
                 <div class="reward-row reward-row--nota">
-                    <span class="reward-icon">${r.icon}</span>
+                    <span class="reward-icon">${icona(r.icon)}</span>
                     <span class="reward-text">
                         <span class="reward-rule">${r.rule}</span>
                     </span>
                 </div>` : `
                 <div class="reward-row">
-                    <span class="reward-icon">${r.icon}</span>
+                    <span class="reward-icon">${icona(r.icon)}</span>
                     <span class="reward-text">
                         <span class="reward-amount">+${r.amount} ${r.nome}</span>
                         <span class="reward-rule">${r.rule}</span>

@@ -15,7 +15,7 @@
 
     // Emoji -> nome icona di icon-library.js. Raggruppate per significato, non una a una.
     const GRUPPI = {
-        attackPos: ['⚔', '🗡', '🔥', '⚡', '🪓', '🔪'],
+        attackPos: ['⚔', '🗡', '🔥', '⚡', '🪓', '🔪', '🥊'],
         defensePos: ['🛡', '🪤', '🚧'],
         target: ['🎯', '🏹', '🎣', '🔺'],
         medal: ['🏅', '🥇', '🥈', '🥉', '🎖', '🌟', '🌠', '❤', '💍', '🟤', '🌸'],
@@ -23,7 +23,7 @@
         crown: ['👑', '♛'],
         star: ['⭐', '★', '✨', '💎', '☆'],
         puzzle: ['🧩'],
-        tower: ['🗼', '🏛', '🏢', '🏙', '🧱', '🚪', '🏔'],
+        tower: ['🗼', '🏛', '🏢', '🏙', '🧱', '🚪', '🏔', '🏰'],
         fusionDeck: ['🐲', '🐉', '🦖', '🐘', '🦅', '🐺', '🐧', '🦋', '🐛', '🪽', '🪶', '🐍', '🦂'],
         skull: ['🩸', '💀', '💔', '😈', '👹', '👻', '🕸', '🕳', '☠'],
         multiplayer: ['🌐', '🤝'],
@@ -39,7 +39,7 @@
         collection: ['🏺', '🗿', '⚱', '🖼'],
         profile: ['🧍', '🕴'],
         graveyard: ['♻', '🌀'],
-        exchange: ['🔁', '⛓'],
+        exchange: ['🔁', '🔄', '⛓'],
         bulb: ['💡'],
         coin: ['💰', '🪙'],
         map: ['🗺'],
@@ -89,10 +89,32 @@
         });
     }
 
+    /**
+     * Tiene un contenitore sempre "a tema": ad ogni cambio del suo contenuto idrata i segnaposto <span data-icon> (Icons.hydrate)
+     * e sostituisce le emoji (idrata). Serve alle pagine che ridisegnano una schermata con `innerHTML` (le tre pagine dei tornei:
+     * Campione, Eliminato, Duello in sospeso...) senza dover ricordare di chiamarlo dopo ogni render. L'osservatore si scollega
+     * mentre lavora, cosi' le proprie modifiche non lo richiamano; `idrata` e' comunque idempotente.
+     */
+    function segui(radice, opzioni) {
+        if (!radice || !window.MutationObserver) return;
+        const config = { childList: true, subtree: true };
+        const lavora = () => {
+            osservatore.disconnect();
+            try {
+                if (window.Icons && Icons.hydrate) Icons.hydrate(radice);
+                idrata(radice, opzioni);
+            } finally {
+                osservatore.observe(radice, config);
+            }
+        };
+        const osservatore = new MutationObserver(lavora);
+        lavora();
+    }
+
     // Stile minimo: in riga col testo, della sua misura.
     const stile = document.createElement('style');
     stile.textContent = '.emoji-tema { width: 1.1em; height: 1.1em; vertical-align: -0.2em; margin: 0 0.15em; }';
     document.head.appendChild(stile);
 
-    window.EmojiTema = { idrata: idrata, MAPPA: MAPPA };
+    window.EmojiTema = { idrata: idrata, segui: segui, MAPPA: MAPPA };
 })();
