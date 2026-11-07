@@ -2193,6 +2193,40 @@ function showPositionEffect(owner, index, position) {
  * dal listener 'resize' più sotto per un cambio di orientamento/
  * ridimensionamento senza un vero aggiornamento di stato.
  */
+/**
+ * Ventaglio della mano: ogni carta riceve una piccola inclinazione e un
+ * abbassamento che crescono verso i lati, scritti come variabili CSS
+ * (--fan-a, --fan-y) lette dalle proprietà `rotate`/`translate` di
+ * duelMonstersCore.html. PERCHE' non `transform`: la mano lo usa già per
+ * sollevamento, selezione, :active e per il volo FLIP del trascinamento, e
+ * una seconda scrittura li romperebbe; `rotate` e `translate` si compongono
+ * con `transform` senza toccarlo. Solo grafica: nessuna regola lo legge.
+ * Sotto le 3 carte la mano resta piatta. La mano del bot è capovolta (i lati
+ * salgono, perché sta in cima e guarda il tavolo).
+ */
+function applicaVentaglioMano(handEl, cards) {
+    const n = cards.length;
+    const bot = handEl.classList.contains('hand--bot');
+    const w = n ? cards[0].offsetWidth : 0;
+    const tMax = (n - 1) / 2;
+    cards.forEach((c, i) => {
+        if (n < 3 || w <= 0) {
+            c.style.removeProperty('--fan-a');
+            c.style.removeProperty('--fan-y');
+            return;
+        }
+        const t = i - (n - 1) / 2;
+        // Passo angolare: 3,4 gradi fra carte vicine, ma l'apertura totale non supera ~14 gradi
+        // (con più carte le esterne sbordavano dallo schermo di un telefono stretto).
+        const passo = Math.min(3.4, 14 / (n - 1));
+        const segno = bot ? -1 : 1;
+        c.style.setProperty('--fan-a', (t * passo * segno).toFixed(2) + 'deg');
+        // Le carte ESTERNE restano sulla linea di base e la centrale si alza: la mano del giocatore sta gia'
+        // a filo del bordo inferiore dello schermo e abbassare i lati li tagliava (misurato fino a 19px).
+        c.style.setProperty('--fan-y', ((t * t - tMax * tMax) * w * 0.010 * segno).toFixed(2) + 'px');
+    });
+}
+
 function fitHandCardsInOneRow(handEl) {
     if (!handEl) return;
     const cards = Array.from(handEl.children);
@@ -2201,6 +2235,7 @@ function fitHandCardsInOneRow(handEl) {
     // margin negativo applicato a una misurazione precedente falserebbe
     // quella nuova.
     cards.forEach((c) => { c.style.marginLeft = ''; });
+    applicaVentaglioMano(handEl, cards);
     if (cards.length < 2) return;
     const available = handEl.clientWidth;
     if (available <= 0) return;

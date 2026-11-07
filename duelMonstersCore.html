@@ -2301,6 +2301,26 @@
            non toccare quegli altri contesti) e può finire sotto la riga
            Magie/Trappole del campo appena sopra. */
         .hand .card:hover { z-index: 80; }
+        /* VENTAGLIO (valori scritti da applicaVentaglioMano in game-flow.js). `rotate`/`translate` e non
+           `transform`: quello è della selezione, dell'hover e del volo del trascinamento. Il perno sta sotto la
+           carta, come in una mano vera. Una carta sfiorata o selezionata si raddrizza e perde l'abbassamento. */
+        .hand .card {
+            rotate: var(--fan-a, 0deg);
+            translate: 0 var(--fan-y, 0px);
+            transform-origin: 50% 130%;
+        }
+        .hand--bot .card { transform-origin: 50% -30%; }
+        .hand:not(.hand--bot) .card.selected,
+        .hand:not(.hand--bot) .card:hover { rotate: 0deg; translate: 0 0; }
+        .hand .card.dragging-source { rotate: 0deg; translate: 0 0; }
+        /* Telefono in ORIZZONTALE: la mano sta già sul bordo dello schermo e le carte laterali, abbassate,
+           verrebbero tagliate (misurato su 780x360 e 915x412): resta piatta come prima. */
+        @media (max-height: 520px) and (orientation: landscape) {
+            .hand .card, .hand--bot .card { rotate: 0deg; translate: 0 0; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .hand .card { transition: none; }
+        }
         /* FLUIDITÀ della mano. La regola di base (.card in card.css) anima transform E box-shadow per 0,3 s
            con `ease`: l'ombra costringe a ridipingere la carta (con il suo container query e l'overflow)
            a ogni fotogramma, e 0,3 s di curva simmetrica fa partire il sollevamento piano e fermare
@@ -2309,7 +2329,8 @@
         .hand .card {
             /* Sollevare e abbassare condividono la stessa curva morbida (partenza dolce, arrivo che si posa);
                l'alone cambia con lo stesso ritmo invece di comparire di scatto. */
-            transition: transform 0.3s cubic-bezier(0.22, 0.8, 0.25, 1), box-shadow 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.22, 0.8, 0.25, 1), box-shadow 0.3s ease,
+                        rotate 0.3s cubic-bezier(0.22, 0.8, 0.25, 1), translate 0.3s cubic-bezier(0.22, 0.8, 0.25, 1);
             will-change: transform;
             -webkit-tap-highlight-color: transparent;
         }
