@@ -1,0 +1,4 @@
+/* Posa di danno/sorpresa (js/ui/posa-danno.js): la pedina normale si spegne mentre la posa e' a vista.
+   La geometria della posa e' quella di ogni altra immagine del riquadro (stesse regole di .is-pedina). */
+.duelist-avatar.posa-danno-attiva img:not(.posa-danno) { opacity: 0; }
+.duelist-avatar img.posa-danno { transition: none; pointer-events: none; }

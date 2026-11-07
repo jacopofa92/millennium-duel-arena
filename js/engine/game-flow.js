@@ -726,6 +726,8 @@ function renderLifePoints() {
 
     renderBanishedBadge('player');
     renderBanishedBadge('bot');
+    // La posa di "danno/sorpresa" del duellante che ha perso molti Life Point (solo grafica, js/ui/posa-danno.js).
+    if (window.PosaDanno) PosaDanno.sync();
 }
 
 /**
