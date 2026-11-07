@@ -600,14 +600,22 @@ function handleDragMove(event) {
                 }
             } else {
                 // La carta sotto il dito: per posizione orizzontale (il dito puo' scivolare un poco sopra o sotto la mano) fra quelle visibili.
+                // Si usa il riquadro di LAYOUT (offsetLeft/offsetWidth), non quello disegnato: con il ventaglio
+                // (rotate) il rettangolo visibile e' piu' largo e invaderebbe le carte vicine.
+                const sinistraDestra = (el) => {
+                    const p = el.offsetParent;
+                    if (!p) { const b = el.getBoundingClientRect(); return [b.left, b.right]; }
+                    const l = p.getBoundingClientRect().left + p.clientLeft + el.offsetLeft - p.scrollLeft;
+                    return [l, l + el.offsetWidth];
+                };
                 let idx = -1;
                 for (let i = 0; i < carte.length; i++) {
-                    const b = carte[i].getBoundingClientRect();
-                    if (event.clientX >= b.left && event.clientX <= b.right) { idx = i; }
+                    const [l, r2] = sinistraDestra(carte[i]);
+                    if (event.clientX >= l && event.clientX <= r2) { idx = i; }
                 }
                 if (idx < 0 && carte.length) {
-                    const primo = carte[0].getBoundingClientRect(), ultimo = carte[carte.length - 1].getBoundingClientRect();
-                    idx = event.clientX < primo.left ? 0 : (event.clientX > ultimo.right ? carte.length - 1 : -1);
+                    const primo = sinistraDestra(carte[0]), ultimo = sinistraDestra(carte[carte.length - 1]);
+                    idx = event.clientX < primo[0] ? 0 : (event.clientX > ultimo[1] ? carte.length - 1 : -1);
                 }
                 const card = idx >= 0 ? gameState.playerHand[idx] : null;
                 if (card && idx !== dragState.scrubIndex) {

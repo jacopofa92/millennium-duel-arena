@@ -19,7 +19,11 @@ module.exports = {
         const gesto = (da, punti, rilascia) => t.evaluate(([da, punti, rilascia]) => {
             const carte = [...document.querySelectorAll('#playerHand .card')];
             const b = carte[da].getBoundingClientRect();
-            const x0 = b.left + b.width / 2, y0 = b.top + b.height / 2;
+            // Il punto di partenza e' il centro di LAYOUT della carta (offsetLeft), non quello del rettangolo
+            // disegnato: con il ventaglio la carta e' ruotata e il centro visibile si sposta di lato.
+            const p = carte[da].offsetParent;
+            const x0 = p ? p.getBoundingClientRect().left + p.clientLeft + carte[da].offsetLeft + carte[da].offsetWidth / 2 : b.left + b.width / 2;
+            const y0 = b.top + b.height / 2;
             const ev = (tipo, x, y) => new PointerEvent(tipo, { pointerId: 7, pointerType: 'touch', isPrimary: true, bubbles: true, cancelable: true, clientX: x, clientY: y });
             carte[da].dispatchEvent(ev('pointerdown', x0, y0));
             const letti = [];
@@ -34,7 +38,7 @@ module.exports = {
             if (rilascia) document.dispatchEvent(ev('pointerup', x0 + punti[punti.length - 1][0], y0 + punti[punti.length - 1][1]));
             return letti;
         }, [da, punti, rilascia]);
-        const larghezza = () => t.evaluate(() => document.querySelector('#playerHand .card').getBoundingClientRect().width);
+        const larghezza = () => t.evaluate(() => document.querySelector('#playerHand .card').offsetWidth);
 
         // 1) Main Phase: scorrimento laterale = una carta alla volta, nessun trascinamento
         await prepara('main1');
