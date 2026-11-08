@@ -1060,7 +1060,8 @@
         const meta = ROUND_META.champion;
         roundBar.style.display = 'flex';
         roundBar.textContent = vinto ? `${meta.icona} Campione` : '💀 Eliminato';
-        menuFab.style.display = 'block';
+        // Torneo finito (Campione o Eliminato): il menu (bottino, sospendi, abbandona) non serve piu'.
+        menuFab.style.display = 'none';
         hudBackBtn.style.display = 'none';
 
         const persoContro = state.lostAt ? nameOf(state.lostAt.opponentId) : null;

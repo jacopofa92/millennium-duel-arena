@@ -28,6 +28,7 @@
  *     nascondiEspelli?: boolean (nessuna voce "Allontana"), inPiedi?: [{ id, nome, pedina?, io? }] (in stanza ma senza posto),
  *     assegna?: id (l'host sta mettendo a sedere quella persona: ogni posto diventa un bersaglio, evento 'assegna-posto')
  *   }
+ *   Una regola puo' portare `aiuto` (la frase che dice cosa cambia); un elenco lungo di opzioni si sceglie in una finestra (MpScelte).
  *   Un posto libero puo' portare `daIA: true` (se resta vuoto lo gioca l'IA: per il via conta come occupato), `pedina` (chi lo giochera' se resta vuoto, mostrato in ombra) e `voci` (le voci del menu host).
  *   Altri eventi: 'in-piedi'(id) · 'assegna-posto'(posto) · 'copia-codice'(codice)
  *   Un posto puo' portare `sotto` (la riga sotto il nome) e, se libero, `nome`; una regola puo' portare `apri: true` (chip che apre
@@ -212,25 +213,72 @@
             });
         }
 
+        /** Un elenco lungo di opzioni (mazzi, Boss...) si sceglie in una finestra, non girando fra i valori uno alla volta. */
+        function sceglidaElenco(r) {
+            if (!window.MpScelte) {
+                const i = r.opzioni.indexOf(r.valore);
+                emetti('regola', { chiave: r.chiave, valore: r.opzioni[(i + 1) % r.opzioni.length] });
+                return;
+            }
+            const corpo = el('div', 'st-lista');
+            r.opzioni.forEach((o) => {
+                const v = el('button', 'st-lista-voce' + (o === r.valore ? ' is-scelto' : ''), o);
+                v.type = 'button';
+                v.onclick = () => { window.MpScelte.chiudi(); if (o !== r.valore) emetti('regola', { chiave: r.chiave, valore: o }); };
+                corpo.append(v);
+            });
+            window.MpScelte.apri(r.etichetta, corpo);
+        }
+
+        /**
+         * Le opzioni della partita: un pannello a righe. Ogni riga ha il nome, una frase che dice cosa cambia e il controllo:
+         * due o tre scelte stanno in un selettore a segmenti (si vedono tutte, si tocca quella che si vuole); le altre (arena, mazzo,
+         * Boss) sono un riquadro col valore corrente che apre la scelta. Per chi non e' host le righe sono in sola lettura.
+         */
         function disegnaRegole() {
             fascia.replaceChildren();
-            (stato.regole || []).forEach((r) => {
-                const c = el('button', 'st-chip' + (r.modificabile && stato.host ? ' st-chip--modificabile' : '') + (r.img ? ' st-chip--img' : ''));
-                c.type = 'button';
-                if (r.img) { const mi = el('span', 'st-chip-img'); mi.style.backgroundImage = `url("${r.img}")`; c.append(mi); }
-                const testi = el('span', 'st-chip-testi');
-                testi.append(el('small', null, r.etichetta), el('b', null, String(r.valore)));
-                c.append(testi);
-                const puoi = r.modificabile && stato.host && (r.apri || (r.opzioni && r.opzioni.length > 1));
-                c.disabled = !puoi;
-                if (r.modificabile && !stato.host) c.title = 'La decide l\'host';
-                c.onclick = () => {
-                    // `apri`: la scelta ha una sua finestra (arena, Boss...), la apre chi usa il componente.
-                    if (r.apri) { tocco(); emetti('regola', { chiave: r.chiave, apri: true }); return; }
-                    const i = r.opzioni.indexOf(r.valore);
-                    emetti('regola', { chiave: r.chiave, valore: r.opzioni[(i + 1) % r.opzioni.length] });
-                };
-                fascia.append(c);
+            const lista = stato.regole || [];
+            fascia.hidden = !lista.length;
+            if (!lista.length) return;
+            fascia.append(el('h3', 'st-opzioni-titolo', stato.host ? 'Opzioni della partita' : 'Opzioni della partita · le decide l\'host'));
+            lista.forEach((r) => {
+                const puoi = !!(r.modificabile && stato.host && (r.apri || (r.opzioni && r.opzioni.length > 1)));
+                const riga = el('div', 'st-opz' + (puoi ? '' : ' is-letta'));
+                riga.dataset.chiave = r.chiave;
+                const testa = el('div', 'st-opz-testa');
+                testa.append(el('b', null, r.etichetta));
+                if (r.aiuto) testa.append(el('small', null, r.aiuto));
+                riga.append(testa);
+                if (!r.apri && r.opzioni && r.opzioni.length >= 2 && r.opzioni.length <= 3) {
+                    const seg = el('div', 'st-seg');
+                    seg.setAttribute('role', 'radiogroup');
+                    seg.setAttribute('aria-label', r.etichetta);
+                    r.opzioni.forEach((o) => {
+                        const v = el('button', 'st-seg-voce' + (o === r.valore ? ' is-scelto' : ''), o);
+                        v.type = 'button';
+                        v.setAttribute('role', 'radio');
+                        v.setAttribute('aria-checked', String(o === r.valore));
+                        v.disabled = !puoi;
+                        v.onclick = () => { if (o !== r.valore) { tocco(); emetti('regola', { chiave: r.chiave, valore: o }); } };
+                        seg.append(v);
+                    });
+                    riga.append(seg);
+                } else {
+                    const c = el('button', 'st-opz-valore');
+                    c.type = 'button';
+                    c.disabled = !puoi;
+                    if (r.img) { const mi = el('span', 'st-opz-img'); mi.style.backgroundImage = `url("${r.img}")`; c.append(mi); }
+                    c.append(el('span', 'st-opz-testo', String(r.valore)));
+                    if (puoi) c.append(el('span', 'st-opz-freccia', '›'));
+                    c.onclick = () => {
+                        tocco();
+                        // `apri`: la scelta ha una sua finestra (arena, Boss...), la apre chi usa il componente.
+                        if (r.apri) emetti('regola', { chiave: r.chiave, apri: true });
+                        else sceglidaElenco(r);
+                    };
+                    riga.append(c);
+                }
+                fascia.append(riga);
             });
         }
 

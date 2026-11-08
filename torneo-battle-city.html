@@ -1576,7 +1576,8 @@
     function renderHud(state) {
         const started = !!state && !state.eliminated;
         locatorBar.style.display = started ? 'flex' : 'none';
-        menuFab.style.display = state ? 'block' : 'none';
+        // Torneo finito (Campione o Eliminato): il menu (bottino, sospendi, abbandona) non serve piu'.
+        menuFab.style.display = (state && !state.eliminated && state.phase !== 'champion') ? 'block' : 'none';
         if (!started) return;
         locatorCount.textContent = state.locators;
         locatorPips.innerHTML = '';

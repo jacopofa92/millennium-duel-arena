@@ -201,3 +201,58 @@
     background: linear-gradient(150deg, rgba(40, 32, 20, .8), rgba(14, 12, 18, .88)); border: 1px solid rgba(247, 215, 116, .3); }
 .st-picker-ia-voce.is-scelto { border-color: #f7d774; box-shadow: 0 0 14px rgba(247, 215, 116, .35); }
 .st-picker-ia-img { width: 100%; height: 86px; background: center bottom / contain no-repeat; }
+
+/* ---------- Opzioni della partita: righe con selettore a segmenti ---------- */
+.st-regole { display: flex; flex-direction: column; gap: 0; padding: 6px 14px; border-radius: 18px; background: var(--st-sup); border: 1px solid var(--st-bordo); }
+.st-regole[hidden] { display: none; }
+.st-opzioni-titolo { margin: 8px 0 4px; font: normal .8rem/1.2 Georgia, 'Times New Roman', serif; letter-spacing: .2em; text-transform: uppercase; color: var(--st-oro); }
+.st-opz { display: flex; flex-direction: column; gap: 8px; padding: 12px 0; border-top: 1px solid rgba(247, 215, 116, .14); }
+.st-opzioni-titolo + .st-opz { border-top: 0; }
+.st-opz-testa { display: flex; flex-direction: column; gap: 2px; }
+.st-opz-testa b { font: 600 .74rem/1.2 Arial, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--st-ink); }
+.st-opz-testa small { font-size: .78rem; line-height: 1.35; color: var(--st-dim); }
+.st-seg { display: flex; padding: 3px; gap: 3px; border-radius: 14px; background: rgba(8, 10, 16, .55); border: 1px solid rgba(247, 215, 116, .22); }
+.st-seg-voce { flex: 1 1 0; min-height: 44px; padding: 0 8px; border: 0; border-radius: 11px; cursor: pointer; font: normal .95rem/1.15 Georgia, 'Times New Roman', serif; color: var(--st-dim); background: transparent; transition: background .2s, color .2s, box-shadow .2s; }
+.st-seg-voce.is-scelto { color: #231707; background: linear-gradient(180deg, #f8dc82, #e9a21d); box-shadow: 0 0 14px rgba(247, 215, 116, .3); }
+.st-seg-voce:disabled { cursor: default; }
+.st-seg-voce:disabled:not(.is-scelto) { opacity: .55; }
+.st-opz-valore { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 14px 6px 8px; width: 100%; text-align: left; border-radius: 14px; cursor: pointer; font: inherit; color: var(--st-ink);
+    background: rgba(8, 10, 16, .55); border: 1px solid rgba(247, 215, 116, .35); }
+.st-opz-valore:disabled { cursor: default; border-color: rgba(247, 215, 116, .18); }
+.st-opz-img { flex: 0 0 auto; width: 68px; height: 40px; border-radius: 9px; background: center / cover no-repeat; border: 1px solid rgba(247, 215, 116, .4); }
+.st-opz-testo { flex: 1; min-width: 0; font: normal 1rem/1.25 Georgia, 'Times New Roman', serif; overflow-wrap: anywhere; }
+.st-opz-freccia { font-size: 1.6rem; line-height: 1; color: var(--st-oro); }
+.st-lista { display: flex; flex-direction: column; gap: 8px; padding: 4px; }
+.st-lista-voce { min-height: 48px; padding: 0 14px; text-align: left; border-radius: 12px; cursor: pointer; font: normal 1rem/1.2 Georgia, serif; color: #f4ead2;
+    background: linear-gradient(150deg, rgba(40, 32, 20, .8), rgba(14, 12, 18, .88)); border: 1px solid rgba(247, 215, 116, .3); }
+.st-lista-voce.is-scelto { border-color: #f7d774; box-shadow: 0 0 14px rgba(247, 215, 116, .35); }
+
+/* ---------- "Sono pronto" sempre in vista: la barra e' ancorata in basso, sopra la barra di navigazione ---------- */
+.st-sala { padding-bottom: 132px; }
+.st-barra { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--mm-barra-h, 0px) + 10px); z-index: 60; width: min(calc(100vw - 24px), 960px);
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 4px 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, .55);
+    background: linear-gradient(150deg, rgba(40, 32, 20, .96), rgba(14, 12, 18, .97)); }
+.st-barra .st-stato-sala { margin: 0; min-width: 0; font-size: .82rem; color: var(--st-dim); }
+.st-barra .st-pronto-btn { min-height: 50px; }
+@media (max-width: 640px) {
+    .st-barra { grid-template-columns: auto 1fr; }
+    .st-barra .st-stato-sala { grid-column: 1 / -1; grid-row: 2; font-size: .76rem; }
+    .st-barra .st-pronto-btn { grid-column: 2; grid-row: 1; }
+    .st-sala { padding-bottom: 148px; }
+}
+/* ---------- "Uscire dalla stanza?" ---------- */
+.st-uscita { position: fixed; inset: 0; z-index: 10300; display: grid; place-items: center; padding: 20px; background: rgba(4, 3, 8, .8); }
+.st-uscita[hidden] { display: none; }
+.st-uscita-card { width: min(100%, 360px); padding: 22px 20px 18px; border-radius: 20px; text-align: center; color: #f4ead2; font-family: Arial, sans-serif;
+    background: linear-gradient(150deg, rgba(40, 32, 20, .97), rgba(14, 12, 18, .98)); border: 1px solid rgba(247, 215, 116, .5); box-shadow: 0 20px 50px rgba(0, 0, 0, .6); }
+.st-uscita-card h3 { margin: 0 0 8px; font: normal 1.25rem/1.2 Georgia, 'Times New Roman', serif; color: #f7d774; }
+.st-uscita-card p { margin: 0 0 18px; font-size: .9rem; line-height: 1.45; color: #c9bb96; }
+.st-uscita-azioni { display: flex; gap: 10px; }
+.st-uscita-azioni button { flex: 1; min-height: 50px; border-radius: 14px; cursor: pointer; font: normal 1rem/1 Georgia, 'Times New Roman', serif; }
+.st-uscita-resta { border: 0; color: #231707; background: linear-gradient(180deg, #f8dc82, #e9a21d); }
+.st-uscita-esci { color: #ff9aa8; background: rgba(255, 120, 140, .08); border: 1px solid rgba(255, 120, 140, .5); }
+
+/* La chat sta sopra la barra del pronto. */
+body:has(.st-barra) .mpchat-btn { bottom: calc(var(--mm-barra-h, 0px) + 150px); }
+body:has(.st-barra) .mpchat-pannello { bottom: calc(var(--mm-barra-h, 0px) + 204px); }
+body:has(.st-barra) .mpchat-toast { bottom: calc(var(--mm-barra-h, 0px) + 156px); }

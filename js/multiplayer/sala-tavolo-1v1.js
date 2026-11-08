@@ -39,7 +39,7 @@
         // Cosa paga una vittoria con la scelta corrente: il riquadro di sempre (lo riempie Rewards) passa sotto le regole del tavolo.
         const premi = document.getElementById('mpPremiSala');
         const fascia = radice.querySelector('.st-regole');
-        if (premi && fascia) fascia.insertAdjacentElement('afterend', premi);
+        if (premi) radice.appendChild(premi);   // i premi sono l'ultima cosa, sotto tutto
 
         const az = interna.azioni;
         vista.su('pronto', () => az.pronto());
@@ -97,16 +97,16 @@
         const regole = [];
         if (f.modo === 'specchio') {
             const nomi = ['Un mazzo a caso'].concat(f.specchioOpzioni.map((o) => o.nome));
-            regole.push({ chiave: 'specchio', etichetta: 'Mazzo comune', valore: f.specchioNome || 'Un mazzo a caso', opzioni: nomi, modificabile: true });
+            regole.push({ chiave: 'specchio', etichetta: 'Mazzo comune', aiuto: 'Tutti e due giocate con lo stesso mazzo.', valore: f.specchioNome || 'Un mazzo a caso', opzioni: nomi, modificabile: true });
         }
         if (raid && f.boss) {
             const bossC = personaggio(f.boss.id);
-            regole.push({ chiave: 'boss', etichetta: 'Boss', valore: f.boss.nome, apri: true, modificabile: true, img: bossC ? bossC.image : '' });
-            regole.push({ chiave: 'incubo', etichetta: 'Livello', valore: f.incubo ? 'Incubo' : 'Normale', opzioni: ['Normale', 'Incubo'], modificabile: true });
+            regole.push({ chiave: 'boss', etichetta: 'Boss', aiuto: ` Life Point, in comune fra i cacciatori.`, valore: f.boss.nome, apri: true, modificabile: true, img: bossC ? bossC.image : '' });
+            regole.push({ chiave: 'incubo', etichetta: 'Livello', aiuto: f.incubo ? 'Il Boss gioca a copione. Premi +25%.' : 'Il Boss gioca normalmente.', valore: f.incubo ? 'Incubo' : 'Normale', opzioni: ['Normale', 'Incubo'], modificabile: true });
         }
         const random = AO ? AO.RANDOM : 'random';
         const haCampo = AO && f.field && f.field !== random;
-        regole.push({ chiave: 'arena', etichetta: 'Arena e musica', valore: haCampo ? AO.nomeCampo(f.field) : 'Arena casuale', img: haCampo ? AO.previewFor(f.field) : '', apri: true, modificabile: true });
+        regole.push({ chiave: 'arena', etichetta: 'Arena e musica', aiuto: 'Valgono per tutti i giocatori.', valore: haCampo ? AO.nomeCampo(f.field) : 'Arena casuale', img: haCampo ? AO.previewFor(f.field) : '', apri: true, modificabile: true });
 
         const mazzo = f.mazzo;
         const nCarte = mazzo ? (mazzo.main || []).reduce((t, v) => t + (v.qty || 1), 0) : 0;

@@ -78,4 +78,10 @@
 }
 @media (prefers-reduced-motion: reduce) { .si-sigillo::before, .si-giro, .si-pillola--sveglia::before { animation: none; } }
 
-.si-ingresso[hidden], .si-porte[hidden], .si-collegamento[hidden], .si-premi[hidden] { display: none !important; }
+.si-ingresso[hidden], .si-porte[hidden], .si-collegamento[hidden], .si-premi[hidden], .si-pillola[hidden] { display: none !important; }
+/* Con la tastiera aperta la scheda del codice sale in cima alla vista (sala-ingresso.js): serve spazio sotto per poterla portare su,
+   e un margine per non finire sotto la fotocamera. */
+.si-ingresso.is-tastiera { padding-bottom: 65vh; }
+.si-porta { scroll-margin-top: calc(var(--mm-fotocamera, 0px) + 12px); }
+/* Sotto la fotocamera del telefono (stessa variabile del menu), come il resto delle pagine con la barra in basso. */
+.si-ingresso { padding-top: calc(var(--mm-fotocamera, 0px) + 12px); }

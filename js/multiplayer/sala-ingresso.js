@@ -67,6 +67,21 @@
         const btnEntra = el('button', 'si-btn si-btn--ciano', 'Entra');
         btnEntra.type = 'button';
         btnEntra.disabled = true;
+        /**
+         * Scrivendo il codice compare la tastiera, che su telefono copre il fondo dello schermo: la scheda con le caselle deve restare in
+         * vista. Non ci si fida di `visualViewport` (su alcuni Chrome/WebView la tastiera non lo riduce): si da' alla pagina spazio sotto
+         * (`is-tastiera`) e si porta la scheda in CIMA alla vista, dove nessuna tastiera arriva. Si ripete un paio di volte perche'
+         * la tastiera impiega un attimo ad aprirsi e ridimensiona la pagina mentre lo fa.
+         */
+        let timerVista = [];
+        const tastieraAperta = (aperta) => {
+            timerVista.forEach(clearTimeout);
+            timerVista = [];
+            radice.classList.toggle('is-tastiera', aperta);
+            if (!aperta) return;
+            const portaInVista = () => { if (radice.classList.contains('is-tastiera')) portaEntra.scrollIntoView({ block: 'start', behavior: 'smooth' }); };
+            [60, 350, 800].forEach((ms) => timerVista.push(setTimeout(portaInVista, ms)));
+        };
         const codiceCorrente = () => caselle.map((c) => c.value).join('');
         const aggiornaBottone = () => { btnEntra.disabled = codiceCorrente().length < LUNGHEZZA; };
         const entra = () => { if (codiceCorrente().length === LUNGHEZZA) { tocco(); emetti('entra', codiceCorrente()); } };
@@ -91,7 +106,11 @@
                 else if (ev.key === 'ArrowRight' && i < LUNGHEZZA - 1) caselle[i + 1].focus();
                 else if (ev.key === 'Enter') entra();
             });
-            c.addEventListener('focus', () => c.select());
+            c.addEventListener('focus', () => { c.select(); tastieraAperta(true); });
+            c.addEventListener('blur', () => {
+                // Passando da una casella alla successiva il fuoco esce e rientra: si chiude solo se non rientra in nessuna.
+                setTimeout(() => { if (!caselle.includes(/** @type {any} */ (document.activeElement))) tastieraAperta(false); }, 160);
+            });
             // Incollare un codice intero lo distribuisce sulle caselle.
             c.addEventListener('paste', (ev) => {
                 const testo = ((ev.clipboardData && ev.clipboardData.getData('text')) || '').toUpperCase().split('').filter((x) => ALFABETO.test(x)).slice(0, LUNGHEZZA);
@@ -141,7 +160,10 @@
             const svg = icona(stato.modo.icona);
             if (svg) sigillo.append(svg); else sigillo.textContent = '◈';
             const s = stato.server || { stato: 'online', url: '' };
+            // Senza uno stato noto (la sala vera non lo sa prima di collegarsi) la pillola non c'e': meglio niente di una bugia.
+            pillola.hidden = !s.stato;
             pillola.className = 'si-pillola si-pillola--' + s.stato;
+            pillola.hidden = !s.stato;
             pillola.textContent = s.stato === 'online' ? 'Server online' : (s.stato === 'sveglia' ? 'Server in risveglio…' : 'Server non raggiungibile');
             if (document.activeElement !== urlInput) urlInput.value = s.url || '';
 

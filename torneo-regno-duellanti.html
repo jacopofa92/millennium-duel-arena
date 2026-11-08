@@ -2611,7 +2611,9 @@
             return;
         }
         hudBackBtn.style.display = 'none';
-        menuFab.style.display = 'flex';
+        // Torneo finito (Campione o Eliminato): il menu (bottino, sospendi, abbandona) non serve, le due schermate hanno
+        // gia' i loro pulsanti e il premio. Ci si arriva dal "Torna al menu" della schermata stessa.
+        menuFab.style.display = (state.eliminated || state.castleStage === 'champion') ? 'none' : 'flex';
 
         // Un esito di duello fresco per QUESTO torneo va sempre applicato
         // per primo, prima di decidere cos'altro mostrare — altrimenti si

@@ -23,24 +23,24 @@ module.exports = {
                 page.on('pageerror', (e) => errori.push(`[${etichetta}] ${e.message}`));
                 await page.addInitScript((c) => { window.AUTH_GATE_SKIP = true; window.DUEL_RPS_SKIP = true; window.DUEL_FAST_OPENING = true; if (c) window.SALA_CLASSICA = true; }, !!classica);
                 await page.goto(statics.origin + '/multiplayer.html' + query, { waitUntil: 'load' });
-                await page.waitForSelector('#mpCreateBtn');
+                await page.waitForSelector(classica ? '#mpCreateBtn' : '.si-btn--oro');
                 await page.waitForFunction(() => { const el = document.getElementById('pageLoader'); return !el || el.classList.contains('page-loader-hidden'); }, { timeout: 15000 });
                 await page.evaluate(() => { const a = document.querySelector('.mp-advanced'); if (a) a.open = true; });
-                await page.fill('#mpServerUrl', room.wsUrl);
+                await page.evaluate((u) => { document.getElementById('mpServerUrl').value = u; }, room.wsUrl);
                 return page;
             };
+            // L'ingresso a cinque caselle: si scrive il codice e si preme Entra.
+            const entra = async (page, codice) => { await page.click('.si-casella >> nth=0'); await page.keyboard.type(codice); await page.click('.si-btn--ciano'); };
             const codiceDi = async (page) => (await page.textContent('.st-codice b')).trim();
 
             // ---- Specchio ----
             const host = await apri('host', '?modo=specchio');
             const ospite = await apri('ospite', '?modo=specchio');
-            await host.click('#mpCreateBtn');
+            await host.click('.si-btn--oro');
             await host.waitForSelector('.st-sala .st-slot', { timeout: 15000 });
             const codice = await codiceDi(host);
             assert(/^[A-Z0-9]{5}$/.test(codice), `Il codice sta nel tavolo: ${codice}`);
-            await ospite.click('#mpTabJoin');
-            await ospite.fill('#mpJoinCode', codice);
-            await ospite.click('#mpJoinBtn');
+            await entra(ospite, codice);
             await ospite.waitForSelector('.st-sala .st-slot', { timeout: 20000 });
             // I due client si vedono: lo slot dell'avversario passa da libero a persona.
             await host.waitForSelector('.st-slot--persona', { timeout: 20000 });
@@ -52,10 +52,12 @@ module.exports = {
             assert(premi, 'I premi sono dentro il tavolo e si vedono');
 
             // L'host cambia il mazzo comune dal tavolo (giro fra le opzioni): l'ospite lo vede.
-            const prima = await host.textContent('.st-chip:has(small:text-is("Mazzo comune")) b');
-            await host.click('.st-chip:has(small:text-is("Mazzo comune"))');
-            await ospite.waitForFunction((v) => { const b = document.querySelector('.st-chip:has(small) b'); return [...document.querySelectorAll('.st-chip')].some((c) => /Mazzo comune/.test(c.textContent) && !c.textContent.includes(v)); }, prima, { timeout: 10000 });
-            const ospiteNonModifica = await ospite.evaluate(() => [...document.querySelectorAll('.st-chip')].find((c) => /Mazzo comune/.test(c.textContent)).disabled);
+            const riga = '.st-opz[data-chiave="specchio"]';
+            const prima = (await host.textContent(riga + ' .st-opz-testo')).trim();
+            await host.click(riga + ' .st-opz-valore');
+            await host.click('.st-lista-voce:not(.is-scelto) >> nth=0');
+            await ospite.waitForFunction((v) => { const e = document.querySelector('.st-opz[data-chiave="specchio"] .st-opz-testo'); return !!e && e.textContent.trim() !== v; }, prima, { timeout: 10000 });
+            const ospiteNonModifica = await ospite.evaluate(() => document.querySelector('.st-opz[data-chiave="specchio"] .st-opz-valore').disabled);
             assert(ospiteNonModifica, 'Il mazzo comune lo decide l\'host: per l\'ospite il tasto e\' spento');
 
             // Pronti tutti e due: parte il conto alla rovescia con le schede.
@@ -70,12 +72,10 @@ module.exports = {
             const a = await apri('tag-host', '?modo=tag');
             const b = await apri('tag-ospite', '?modo=tag');
             await a.click('[data-formato="2v2"]');
-            await a.click('#mpCreateBtn');
+            await a.click('.si-btn--oro');
             await a.waitForSelector('.st-sala .st-slot', { timeout: 15000 });
             const codiceTag = await codiceDi(a);
-            await b.click('#mpTabJoin');
-            await b.fill('#mpJoinCode', codiceTag);
-            await b.click('#mpJoinBtn');
+            await entra(b, codiceTag);
             await b.waitForSelector('.st-sala .st-slot', { timeout: 20000 });
             const inPiedi = await b.evaluate(() => !document.querySelector('.st-slot--io'));
             assert(inPiedi, 'Chi entra nel Tag comincia in piedi (nessun posto suo)');
@@ -93,6 +93,16 @@ module.exports = {
             const bloccato = await b.evaluate(() => document.querySelector('.st-slot--io').disabled);
             assert(bloccato, 'Un ospite non puo\' alzarsi da solo dal suo posto');
 
+            // ---- Uscita dalla stanza: sempre una domanda ----
+            await a.click('.mm-ctx-padre');
+            assert(await a.evaluate(() => !document.querySelector('.st-uscita').hidden), 'Toccare "Online" con la stanza aperta chiede conferma');
+            assert(a.url().includes('multiplayer.html'), 'Finche\' non si conferma si resta nella pagina');
+            await a.click('.st-uscita-resta');
+            await a.goBack();
+            await a.waitForFunction(() => !document.querySelector('.st-uscita').hidden, null, { timeout: 5000 });
+            await a.click('.st-uscita-resta');
+            assert(a.url().includes('multiplayer.html'), 'Il gesto Indietro non fa uscire senza conferma');
+            assert(await a.evaluate(() => !!document.querySelector('.st-barra') && getComputedStyle(document.querySelector('.st-barra')).position === 'fixed'), 'La barra "Sono pronto" e\' ancorata in basso');
             // ---- Ritorno alla sala classica ----
             const c = await apri('classica', '?modo=specchio', true);
             await c.click('#mpCreateBtn');

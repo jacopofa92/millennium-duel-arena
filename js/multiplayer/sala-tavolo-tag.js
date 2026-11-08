@@ -67,7 +67,7 @@
         // Cosa paga una vittoria con la composizione corrente: il riquadro di sempre (lo riempie Rewards) passa sotto le regole del tavolo.
         const premi = document.getElementById('mpTagPremi');
         const fascia = radice.querySelector('.st-regole');
-        if (premi && fascia) fascia.insertAdjacentElement('afterend', premi);
+        if (premi) radice.appendChild(premi);   // i premi sono l'ultima cosa, sotto tutto
 
         const az = sala.azioni;
         vista.su('prendi-posto', (k) => az.prendiPosto(k));
@@ -127,17 +127,17 @@
         });
 
         const regole = [
-            { chiave: 'regolaLp', etichetta: 'Life Point', valore: etichetta(LP, f.regolaLp), opzioni: LP.map((x) => x[1]), modificabile: true },
-            { chiave: 'scambio', etichetta: 'Turni nella squadra', valore: etichetta(TURNI, f.scambio), opzioni: TURNI.map((x) => x[1]), modificabile: true },
-            { chiave: 'livelloIA', etichetta: 'Livello IA', valore: etichetta(LIVELLI, f.livelloIA), opzioni: LIVELLI.map((x) => x[1]), modificabile: true }
+            { chiave: 'regolaLp', etichetta: 'Life Point', aiuto: f.regolaLp === 'lato' ? 'La squadra ha un solo totale di Life Point.' : 'Ogni giocatore ha i suoi Life Point.', valore: etichetta(LP, f.regolaLp), opzioni: LP.map((x) => x[1]), modificabile: true },
+            { chiave: 'scambio', etichetta: 'Turni nella squadra', aiuto: f.scambio === 'libero' ? 'I compagni si alternano e possono chiedere lo scambio.' : 'I compagni si alternano a ogni turno.', valore: etichetta(TURNI, f.scambio), opzioni: TURNI.map((x) => x[1]), modificabile: true },
+            { chiave: 'livelloIA', etichetta: 'Livello IA', aiuto: 'Vale per i posti lasciati liberi.', valore: etichetta(LIVELLI, f.livelloIA), opzioni: LIVELLI.map((x) => x[1]), modificabile: true }
         ];
         if (f.formato === '2v1') {
             const attuale = f.bossDisponibili.find((b) => b.id === f.boss);
-            regole.push({ chiave: 'boss', etichetta: 'Duellante solo', valore: attuale ? 'Boss: ' + attuale.nome : NESSUN_BOSS, opzioni: [NESSUN_BOSS].concat(f.bossDisponibili.map((b) => b.nome)), modificabile: true });
+            regole.push({ chiave: 'boss', etichetta: 'Duellante solo', aiuto: 'Un Boss al posto dell\'avversario singolo.', valore: attuale ? 'Boss: ' + attuale.nome : NESSUN_BOSS, opzioni: [NESSUN_BOSS].concat(f.bossDisponibili.map((b) => b.nome)), modificabile: true });
         }
         const random = AO ? AO.RANDOM : 'random';
         const haCampo = AO && f.campo && f.campo !== random;
-        regole.push({ chiave: 'arena', etichetta: 'Arena e musica', valore: haCampo ? AO.nomeCampo(f.campo) : 'Arena casuale', img: haCampo ? AO.previewFor(f.campo) : '', apri: true, modificabile: true });
+        regole.push({ chiave: 'arena', etichetta: 'Arena e musica', aiuto: 'Valgono per tutti i giocatori.', valore: haCampo ? AO.nomeCampo(f.campo) : 'Arena casuale', img: haCampo ? AO.previewFor(f.campo) : '', apri: true, modificabile: true });
 
         const mazzo = f.mazzo;
         const nCarte = mazzo ? (mazzo.main || []).reduce((t, v) => t + (v.qty || 1), 0) : 0;
