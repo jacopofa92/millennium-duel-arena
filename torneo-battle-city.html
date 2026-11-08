@@ -877,7 +877,22 @@
         body[data-quartiere="parco"] .city-cell { width: 48px; height: 48px; }
         body[data-quartiere="parco"] .city-cell > .cell-label { font-size: .4rem; }
     }
-    @media (prefers-reduced-motion: reduce) {
+    /* Telefono in verticale: la camera segue il giocatore e si puo' trascinare il fondale; durante il trascinamento niente transizioni. */
+    @media (orientation: portrait) {
+        body.city-map-active { touch-action: none; transition: background-position .46s cubic-bezier(.22,.8,.22,1); }
+        body.camera-trascina, body.camera-trascina .city-cell, body.camera-trascina .city-player-token { transition: none !important; }
+        /* Intestazione compatta: una riga, senza il suggerimento, cosi' non copre i nodi in alto. */
+        .sector-hint { display: none; }
+        .sector-head { top: 58px; padding: 5px 10px; }
+        .item-row { top: 92px; }
+    }
+    /* Schermo orizzontale: l'intestazione sta su una riga sola e non copre i nodi in alto a sinistra. */
+    @media (orientation: landscape) {
+        .sector-head { width: auto; max-width: 420px; white-space: nowrap; }
+        .sector-hint { display: none; }
+        .sector-title { white-space: nowrap; }
+        .item-row { top: 20px; left: 290px; width: auto; max-width: calc(100vw - 420px); flex-wrap: nowrap; }
+    }    @media (prefers-reduced-motion: reduce) {
         .city-cell, .city-cell::before, .city-player-token { transition-duration: .01ms; }
         .city-transition { transition: none; }
         .city-cell.reachable::before, .city-player-token::before,
@@ -1174,30 +1189,28 @@
         return .5;
     }
     /**
-     * Come il fondale viene posato sullo schermo. In orizzontale e' la solita copertura (`cover`). In VERTICALE (telefono) la
-     * copertura mostrerebbe solo una striscia stretta e i nodi dovrebbero accalcarsi li': il fondale si rimpicciolisce quanto
-     * serve perche' tutti i nodi stiano in larghezza (mai oltre la copertura), centrato sui nodi, e quel che resta sopra e
-     * sotto e' riempito dalla stessa immagine scurita (vedi applyPhaseBackdrop). `zoomOut` lo dice a chi deve adattarsi.
+     * Come il fondale viene posato sullo schermo. In ORIZZONTALE e' la solita copertura (`cover`). In VERTICALE (telefono) il fondale
+     * copre TUTTO lo schermo (un po' piu' grande della copertura, 1,1x) e la camera segue il giocatore: `cameraPivot` e' il punto
+     * dell'illustrazione (pixel) da tenere al centro, `cameraPan` lo spostamento dato col dito (si azzera a ogni mossa). La camera non
+     * esce mai dall'immagine, tranne 12px in alto (sotto l'intestazione): li' si vede la stessa immagine scurita (vedi applyPhaseBackdrop).
      */
+    let cameraPivot = null;
+    const cameraPan = { x: 0, y: 0 };
     function proiezioneFondale(district) {
         const [iw, ih] = district.imageSize;
         const vw = window.innerWidth, vh = window.innerHeight;
         const cover = Math.max(vw / iw, vh / ih);
-        const layout = CITY_LAYOUTS[district.id];
-        if (layout && vw < vh) {
-            const activeNodes = layout.nodes;
-            const xs = activeNodes.map((n) => n[0]), ys = activeNodes.map((n) => n[1]);
-            const minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs), minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
-            const scala = Math.min(cover, (vw * 0.94) / Math.max(1, maxX - minX), (vh * 0.78) / Math.max(1, maxY - minY));
-            if (scala < cover - 0.0001) {
-                const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
-                return { scale: scala, width: iw * scala, height: ih * scala, x0: vw / 2 - cx * scala, y0: vh * 0.5 - cy * scala, zoomOut: true };
-            }
+        if (vw < vh) {
+            const s = cover * 1.1, width = iw * s, height = ih * s;
+            const piv = cameraPivot || [iw / 2, ih / 2];
+            let x0 = vw / 2 - piv[0] * s + cameraPan.x, y0 = vh * 0.55 - piv[1] * s + cameraPan.y;
+            x0 = Math.min(0, Math.max(vw - width, x0));
+            y0 = Math.min(12, Math.max(vh - height, y0));
+            return { scale: s, width: width, height: height, x0: x0, y0: y0, zoomOut: false, verticale: true };
         }
         const width = iw * cover, height = ih * cover;
-        return { scale: cover, width: width, height: height, x0: (vw - width) * alignamentoFondale(district), y0: (vh - height) * .5, zoomOut: false };
-    }
-    /** Converte un punto in PIXEL dell'illustrazione sorgente nella posizione sullo schermo, con la stessa proiezione del fondale. */
+        return { scale: cover, width: width, height: height, x0: (vw - width) * alignamentoFondale(district), y0: (vh - height) * .5, zoomOut: false, verticale: false };
+    }    /** Converte un punto in PIXEL dell'illustrazione sorgente nella posizione sullo schermo, con la stessa proiezione del fondale. */
     function puntoMappaSchermo(district, point) {
         const p = proiezioneFondale(district);
         return { x: p.x0 + point[0] * p.scale, y: p.y0 + point[1] * p.scale };
@@ -1960,14 +1973,13 @@
             const align = Math.round(alignamentoFondale(district) * 100);
             document.body.style.backgroundPosition = `${align}% center, 50% 50%`;
             const pr = proiezioneFondale(district);
-            if (pr.zoomOut) {
-                // Telefono in verticale: la mappa intera dei nodi in larghezza, e sopra/sotto la stessa immagine scurita (vedi proiezioneFondale).
+            if (pr.verticale) {
+                // Telefono in verticale: fondale piu' grande dello schermo, la camera segue il giocatore (vedi proiezioneFondale); sotto, la stessa immagine scurita.
                 document.body.style.backgroundImage = `url('${src}'), linear-gradient(rgba(4,8,18,.8), rgba(4,8,18,.8)), url('${src}')`;
                 document.body.style.backgroundSize = `${pr.width.toFixed(1)}px ${pr.height.toFixed(1)}px, auto, cover`;
                 document.body.style.backgroundPosition = `${pr.x0.toFixed(1)}px ${pr.y0.toFixed(1)}px, 0 0, 50% 50%`;
                 document.body.style.backgroundRepeat = 'no-repeat';
-            }
-            document.body.dataset.quartiere = district.id;
+            }            document.body.dataset.quartiere = district.id;
             document.body.dataset.ora = oraDelDistretto(state);
         } else {
             document.body.style.backgroundPosition = 'center center';
@@ -2435,6 +2447,8 @@
             const state = loadState();
             if (state && state.phase === 'city') {
                 const district = CITY_DISTRICTS[Math.max(0, Math.min(CITY_DISTRICTS.length - 1, state.sector - 1))];
+                if (window.innerWidth < window.innerHeight && window.AmbienteWebGL && document.body.dataset.ambienteCity) { AmbienteWebGL.ferma(); delete document.body.dataset.ambienteCity; }
+                cittaCorrente = { state: state, district: district };
                 applyPhaseBackdrop('city', state);
                 posizionaCaselleCitta(document.getElementById('cityGrid'), district);
                 aggiornaLuceCitta(state);
@@ -2443,6 +2457,37 @@
         }, 120);
     });
 
+    /**
+     * Telefono in verticale: si trascina il fondale col dito per guardare il resto del quartiere (la camera poi torna sul giocatore a ogni
+     * mossa). Ignora i tocchi su caselle, pulsanti, pannelli e finestre: restano tutti cliccabili come prima.
+     */
+    (function () {
+        let inizio = null, raf = 0;
+        const riposa = () => {
+            raf = 0;
+            if (!cittaCorrente) return;
+            applyPhaseBackdrop('city', cittaCorrente.state);
+            posizionaCaselleCitta(document.getElementById('cityGrid'), cittaCorrente.district);
+            layoutCityOverlay(document.getElementById('cityGrid'));
+        };
+        document.addEventListener('pointerdown', (e) => {
+            if (window.innerWidth >= window.innerHeight || !document.body.classList.contains('city-map-active') || !cittaCorrente) return;
+            if (e.target.closest && e.target.closest('button, a, input, .city-cell, .hud-top, .sector-head, .item-row, .sector-actions, .modal-backdrop, .panel, .result-toast, .locator-bar')) return;
+            inizio = { x: e.clientX, y: e.clientY, px: cameraPan.x, py: cameraPan.y, mosso: false };
+        });
+        document.addEventListener('pointermove', (e) => {
+            if (!inizio) return;
+            const dx = e.clientX - inizio.x, dy = e.clientY - inizio.y;
+            if (!inizio.mosso && Math.hypot(dx, dy) < 6) return;
+            inizio.mosso = true;
+            document.body.classList.add('camera-trascina');
+            cameraPan.x = inizio.px + dx; cameraPan.y = inizio.py + dy;
+            if (!raf) raf = requestAnimationFrame(riposa);
+        });
+        const fine = () => { inizio = null; document.body.classList.remove('camera-trascina'); };
+        document.addEventListener('pointerup', fine);
+        document.addEventListener('pointercancel', fine);
+    })();
     /**
      * Riga sotto l'intestazione del distretto: Radar potenziato (si tocca
      * per usarlo), Scudo del Duel Disk (solo indicatore: scatta da solo),
@@ -2513,8 +2558,18 @@
         showToast(`📡 Radar potenziato: ${nuove ? `<strong>${nuove} isolati rivelati</strong>` : '<strong>segnale ripristinato</strong>'}${eraBlackout ? ', il blackout è finito' : ''}.`);
     }
 
+    /** Camera del telefono in verticale: tiene al centro il nodo del giocatore e azzera lo spostamento dato col dito. */
+    let cittaCorrente = null;
+    function impostaCamera(state) {
+        const distretto = CITY_DISTRICTS[Math.max(0, Math.min(CITY_DISTRICTS.length - 1, state.sector - 1))];
+        const nodo = state.grid && CITY_LAYOUTS[distretto.id].nodes[state.grid.playerIndex];
+        cameraPivot = nodo || null;
+        cameraPan.x = 0; cameraPan.y = 0;
+        cittaCorrente = { state: state, district: distretto };
+    }
     function renderCity(state) {
         document.body.classList.add('city-map-active');
+        impostaCamera(state);
         applyPhaseBackdrop('city', state);
         applyPhaseTrack('city');
         mainEl.classList.add('map-mode');
@@ -2522,7 +2577,7 @@
 
         const district = CITY_DISTRICTS[Math.max(0, Math.min(CITY_DISTRICTS.length - 1, state.sector - 1))];
         // Le luci WebGL sono tarate sulla copertura del fondale: col fondale rimpicciolito (telefono in verticale) non coinciderebbero.
-        if (window.AmbienteWebGL && document.body.dataset.ambienteCity !== district.id && !proiezioneFondale(district).zoomOut) {
+        if (window.AmbienteWebGL && document.body.dataset.ambienteCity !== district.id && window.innerWidth >= window.innerHeight) {
             AmbienteWebGL.ferma();
             const overlay = document.getElementById('cityAmbient');
             AmbienteWebGL.avviaMappa(district.ambient, overlay, {
