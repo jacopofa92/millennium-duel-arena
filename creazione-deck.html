@@ -1196,6 +1196,15 @@
         text-align: center;
     }
     .confirm-card p { margin-bottom: 18px; color: #dbe6ff; }
+    /* Icona a tema in cima al riquadro (js/ui/icon-library.js): rossa per eliminare, oro per le altre conferme (es. uscire senza salvare). */
+    .confirm-icona { display: grid; place-items: center; width: 54px; height: 54px; margin: 0 auto 12px; border-radius: 50%; color: #f7d774;
+        background: radial-gradient(closest-side, rgba(247, 215, 116, .16), transparent 80%); border: 1px solid rgba(247, 215, 116, .5); }
+    .confirm-icona svg { width: 28px; height: 28px; }
+    .confirm-card.confirm-oro { border-color: rgba(247, 215, 116, .55); }
+    .confirm-card.confirm-oro .confirm-btn.yes { background: linear-gradient(180deg, #f8dc82, #e9a21d); border-color: transparent; box-shadow: none; color: #231707; }
+    .confirm-card:not(.confirm-oro) .confirm-icona { color: #ff8a80; border-color: rgba(255, 99, 99, .55); background: radial-gradient(closest-side, rgba(255, 99, 99, .14), transparent 80%); }
+    .toast-icona { display: inline-grid; vertical-align: -4px; width: 20px; height: 20px; margin-right: 8px; }
+    .toast-icona svg { width: 20px; height: 20px; }
     .confirm-actions { display: flex; gap: 10px; justify-content: center; }
     .confirm-btn { border: none; border-radius: 999px; padding: 10px 18px; font-weight: 700; cursor: pointer; font-family: inherit; transition: box-shadow 0.2s ease; }
     .confirm-btn.yes {
@@ -1454,7 +1463,8 @@
 
 
     <div class="confirm-backdrop" id="confirmBackdrop">
-        <div class="confirm-card">
+        <div class="confirm-card" id="confirmCard">
+            <span class="confirm-icona" id="confirmIcona" aria-hidden="true"></span>
             <p id="confirmMessage">Sei sicuro?</p>
             <div class="confirm-actions">
                 <button type="button" class="confirm-btn yes" id="confirmYesBtn">Sì, elimina</button>
@@ -1792,7 +1802,12 @@
         const toast = $('toast');
         toast.textContent = '';
         const testo = document.createElement('span');
-        testo.textContent = text;
+        // Le emoji iniziali (spunta, avviso) diventano le icone del tema, della stessa libreria del resto del gioco.
+        const m = /^(✅|⚠️|❌)\s*/.exec(String(text));
+        const nomeIcona = m ? { '✅': 'check', '⚠️': 'bulb', '❌': 'close' }[m[1]] : null;
+        const svg = (nomeIcona && window.Icons && Icons.buildIcon) ? Icons.buildIcon(nomeIcona) : null;
+        if (svg) { const i = document.createElement('span'); i.className = 'toast-icona'; i.appendChild(svg); toast.appendChild(i); }
+        testo.textContent = svg ? String(text).slice(m[0].length) : text;
         toast.appendChild(testo);
         if (azione) {
             const b = document.createElement('button');
@@ -1811,8 +1826,18 @@
         toastTimeout = setTimeout(() => toast.classList.remove('show'), azione ? 4500 : 2600);
     }
 
-    function askConfirm(message, onYes) {
+    /** `opzioni.icona`: icona a tema in cima (default: cestino); `opzioni.si`/`no`: testi dei pulsanti; `opzioni.oro`: stile neutro invece di quello d'allarme. */
+    function askConfirm(message, onYes, opzioni) {
+        const o = opzioni || {};
         $('confirmMessage').textContent = message;
+        const ico = $('confirmIcona');
+        ico.replaceChildren();
+        const svg = (window.Icons && Icons.buildIcon) ? Icons.buildIcon(o.icona || 'trash') : null;
+        if (svg) ico.appendChild(svg);
+        ico.hidden = !svg;
+        $('confirmCard').classList.toggle('confirm-oro', !!o.oro);
+        $('confirmYesBtn').textContent = o.si || 'Sì, elimina';
+        $('confirmNoBtn').textContent = o.no || 'Annulla';
         $('confirmBackdrop').classList.add('open');
         $('confirmYesBtn').onclick = () => {
             $('confirmBackdrop').classList.remove('open');
@@ -2957,7 +2982,7 @@
 
     $('saveDeckBtn').onclick = saveCurrentDeck;
     $('cancelEditBtn').onclick = () => {
-        askConfirm('Le modifiche non salvate andranno perse. Continuare?', closeEditor);
+        askConfirm('Le modifiche non salvate andranno perse. Continuare?', closeEditor, { icona: 'save', oro: true, si: 'Esci senza salvare', no: 'Resta' });
     };
 
     // ============================================================
@@ -2989,7 +3014,7 @@
         askConfirm('Vuoi uscire dall\'editor? Le modifiche al deck non salvate andranno perse.', () => {
             uscitaConfermata = true;
             location.href = a.href;
-        });
+        }, { icona: 'save', oro: true, si: 'Esci senza salvare', no: 'Resta' });
     }, true);
 
     // Chiudere o ricaricare la scheda con modifiche non salvate: avviso del browser (sull'APK non compare, li' c'e' il tasto Indietro sotto).
@@ -3005,7 +3030,7 @@
         NativeBackButton.setHandler(() => {
             if (!editingDeck) return false;
             if ($('confirmBackdrop').classList.contains('open')) { $('confirmBackdrop').classList.remove('open'); return true; }
-            if (editorConModifiche()) askConfirm('Vuoi uscire dall\'editor? Le modifiche al deck non salvate andranno perse.', closeEditor);
+            if (editorConModifiche()) askConfirm('Vuoi uscire dall\'editor? Le modifiche al deck non salvate andranno perse.', closeEditor, { icona: 'save', oro: true, si: 'Esci senza salvare', no: 'Resta' });
             else closeEditor();
             return true;
         });
