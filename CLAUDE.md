@@ -5192,6 +5192,8 @@ Matrice completa di bilanciamento (2026-10-25, senza modifiche al gioco): `tools
 
 1.6.10 (cache v658, su `main`): **Battle City: in verticale il fondale copre tutto lo schermo e in orizzontale l'intestazione non copre piu' i nodi.** (1) Via il rimpicciolimento da telefono (zoomOut, con le barre scurite): in verticale proiezioneFondale posa il fondale a 1,1x la copertura e la CAMERA segue il giocatore (cameraPivot, rimessa a ogni render da impostaCamera); si puo' anche trascinare il fondale col dito (cameraPan, ignora caselle, pulsanti e pannelli, si azzera alla mossa successiva; in trascinamento niente transizioni). La camera non esce dall'immagine tranne 12px in alto, dove si vede la stessa immagine scurita. Le luci WebGL partono solo in orizzontale (le coordinate non coinciderebbero) e si fermano se si ruota in verticale. (2) Intestazione compatta: senza il suggerimento, una riga sola; in orizzontale Radar e Scudo passano in alto accanto alle Carte Locazione; in verticale la riga degli oggetti sale a 92px. Il grafo dei nodi e' lo stesso nelle due orientazioni. Non provato sul telefono vero. Suite completa non eseguita.
 
+1.6.11 (cache v659, su `main`): **Battle City: il trascinamento del fondale non fa piu' sfarfallare i nodi.** Prima ogni passo ridisegnava caselle, strade e pedina; ora durante il trascinamento si sposta solo #cityGrid con un 	ransform (compositor) piu' la posizione del fondale, e al rilascio si riposa tutto una volta (le transizioni tornano due fotogrammi dopo, per non far scivolare le caselle dal vecchio posto). Non provato sul telefono vero. Suite completa non eseguita.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.

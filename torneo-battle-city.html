@@ -2463,17 +2463,32 @@
      */
     (function () {
         let inizio = null, raf = 0;
-        const riposa = () => {
+        // Durante il trascinamento si muove SOLO il contenitore (transform, sul compositor) e la posizione del fondale: caselle, strade e
+        // pedina non vengono ridisegnate a ogni passo (era quello a farle sfarfallare). Al rilascio si riposano una volta sola.
+        const sposta = () => {
             raf = 0;
+            if (!cittaCorrente || !inizio) return;
+            const pr = proiezioneFondale(cittaCorrente.district);
+            const grid = document.getElementById('cityGrid');
+            if (grid) grid.style.transform = `translate(${(pr.x0 - inizio.x0).toFixed(1)}px, ${(pr.y0 - inizio.y0).toFixed(1)}px)`;
+            const pos = document.body.style.backgroundPosition.split(',');
+            pos[0] = `${pr.x0.toFixed(1)}px ${pr.y0.toFixed(1)}px`;
+            document.body.style.backgroundPosition = pos.join(',');
+        };
+        const riposa = () => {
             if (!cittaCorrente) return;
+            const grid = document.getElementById('cityGrid');
+            if (grid) grid.style.transform = '';
             applyPhaseBackdrop('city', cittaCorrente.state);
-            posizionaCaselleCitta(document.getElementById('cityGrid'), cittaCorrente.district);
-            layoutCityOverlay(document.getElementById('cityGrid'));
+            posizionaCaselleCitta(grid, cittaCorrente.district);
+            layoutCityOverlay(grid);
+            aggiornaLuceCitta(cittaCorrente.state);
         };
         document.addEventListener('pointerdown', (e) => {
             if (window.innerWidth >= window.innerHeight || !document.body.classList.contains('city-map-active') || !cittaCorrente) return;
             if (e.target.closest && e.target.closest('button, a, input, .city-cell, .hud-top, .sector-head, .item-row, .sector-actions, .modal-backdrop, .panel, .result-toast, .locator-bar')) return;
-            inizio = { x: e.clientX, y: e.clientY, px: cameraPan.x, py: cameraPan.y, mosso: false };
+            const pr = proiezioneFondale(cittaCorrente.district);
+            inizio = { x: e.clientX, y: e.clientY, px: cameraPan.x, py: cameraPan.y, mosso: false, x0: pr.x0, y0: pr.y0 };
         });
         document.addEventListener('pointermove', (e) => {
             if (!inizio) return;
@@ -2482,12 +2497,19 @@
             inizio.mosso = true;
             document.body.classList.add('camera-trascina');
             cameraPan.x = inizio.px + dx; cameraPan.y = inizio.py + dy;
-            if (!raf) raf = requestAnimationFrame(riposa);
+            if (!raf) raf = requestAnimationFrame(sposta);
         });
-        const fine = () => { inizio = null; document.body.classList.remove('camera-trascina'); };
+        const fine = () => {
+            const mosso = inizio && inizio.mosso;
+            inizio = null;
+            if (!mosso) return;
+            if (raf) { cancelAnimationFrame(raf); raf = 0; }
+            riposa();
+            // Le transizioni tornano solo dopo che le caselle sono gia' al loro posto: altrimenti scivolerebbero dal vecchio.
+            requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.remove('camera-trascina')));
+        };
         document.addEventListener('pointerup', fine);
-        document.addEventListener('pointercancel', fine);
-    })();
+        document.addEventListener('pointercancel', fine);    })();
     /**
      * Riga sotto l'intestazione del distretto: Radar potenziato (si tocca
      * per usarlo), Scudo del Duel Disk (solo indicatore: scatta da solo),
