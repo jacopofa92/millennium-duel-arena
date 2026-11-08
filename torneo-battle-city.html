@@ -2470,7 +2470,11 @@
             if (!cittaCorrente || !inizio) return;
             const pr = proiezioneFondale(cittaCorrente.district);
             const grid = document.getElementById('cityGrid');
-            if (grid) grid.style.transform = `translate(${(pr.x0 - inizio.x0).toFixed(1)}px, ${(pr.y0 - inizio.y0).toFixed(1)}px)`;
+            const spost = `translate(${(pr.x0 - inizio.x0).toFixed(1)}px, ${(pr.y0 - inizio.y0).toFixed(1)}px)`;
+            if (grid) grid.style.transform = spost;
+            // Le finestre luminose dei palazzi sono ancorate al fondale: seguono il dito con lo stesso spostamento.
+            const amb = document.getElementById('cityAmbiente');
+            if (amb) amb.style.transform = spost;
             const pos = document.body.style.backgroundPosition.split(',');
             pos[0] = `${pr.x0.toFixed(1)}px ${pr.y0.toFixed(1)}px`;
             document.body.style.backgroundPosition = pos.join(',');
@@ -2479,6 +2483,8 @@
             if (!cittaCorrente) return;
             const grid = document.getElementById('cityGrid');
             if (grid) grid.style.transform = '';
+            const amb = document.getElementById('cityAmbiente');
+            if (amb) amb.style.transform = '';
             applyPhaseBackdrop('city', cittaCorrente.state);
             posizionaCaselleCitta(grid, cittaCorrente.district);
             layoutCityOverlay(grid);
