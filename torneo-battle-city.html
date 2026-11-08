@@ -881,6 +881,7 @@
     @media (orientation: portrait) {
         body.city-map-active { touch-action: none; transition: background-position .46s cubic-bezier(.22,.8,.22,1); }
         body.camera-trascina, body.camera-trascina .city-cell, body.camera-trascina .city-player-token { transition: none !important; }
+        body.camera-scorre .city-cell, body.camera-scorre .city-player-token { transition: none !important; }
         /* Intestazione compatta: una riga, senza il suggerimento, cosi' non copre i nodi in alto. */
         .sector-hint { display: none; }
         .sector-head { top: 58px; padding: 5px 10px; }
@@ -1201,14 +1202,14 @@
         const vw = window.innerWidth, vh = window.innerHeight;
         const cover = Math.max(vw / iw, vh / ih);
         if (vw < vh) {
-            const s = cover * 1.1, width = iw * s, height = ih * s;
+            // Niente scorrimento verticale: l'immagine sta tutta in altezza, appoggiata in basso, e lascia 70px in alto (dietro
+            // l'intestazione) dove si vede la stessa immagine scurita. Solo orizzontale: la camera segue il giocatore / il dito.
+            const s = Math.max((vh - 70) / ih, vw / iw), width = iw * s, height = ih * s;
             const piv = cameraPivot || [iw / 2, ih / 2];
-            let x0 = vw / 2 - piv[0] * s + cameraPan.x, y0 = vh * 0.55 - piv[1] * s + cameraPan.y;
+            let x0 = vw / 2 - piv[0] * s + cameraPan.x;
             x0 = Math.min(0, Math.max(vw - width, x0));
-            y0 = Math.min(12, Math.max(vh - height, y0));
-            return { scale: s, width: width, height: height, x0: x0, y0: y0, zoomOut: false, verticale: true };
-        }
-        const width = iw * cover, height = ih * cover;
+            return { scale: s, width: width, height: height, x0: x0, y0: vh - height, zoomOut: false, verticale: true };
+        }        const width = iw * cover, height = ih * cover;
         return { scale: cover, width: width, height: height, x0: (vw - width) * alignamentoFondale(district), y0: (vh - height) * .5, zoomOut: false, verticale: false };
     }    /** Converte un punto in PIXEL dell'illustrazione sorgente nella posizione sullo schermo, con la stessa proiezione del fondale. */
     function puntoMappaSchermo(district, point) {
@@ -2328,7 +2329,7 @@
         const perc = percorsoSmusso([da].concat(via || [], [a]));
         const dist = perc.lunghezza;
         const metti = (p) => { token.style.left = `${p.x}px`; token.style.top = `${p.y}px`; };
-        if (riduciMovimento() || dist < 2) { token.classList.remove('cammina'); metti(a); return; }
+        if (riduciMovimento() || dist < 2) { token.classList.remove('cammina'); metti(a); applicaCameraPendente(); return; }
         const durata = Math.max(380, Math.min(900, dist * 3.2));
         token.classList.add('cammina');
         let inizio = null, ultimaPolvere = 0;
@@ -2352,7 +2353,7 @@
                 pv.addEventListener('animationend', () => pv.remove());
             }
             if (t < 1) requestAnimationFrame(passo);
-            else { metti(a); token.classList.remove('cammina'); }
+            else { metti(a); token.classList.remove('cammina'); applicaCameraPendente(); }
         };
         requestAnimationFrame(passo);
     }
@@ -2482,13 +2483,7 @@
         const riposa = () => {
             if (!cittaCorrente) return;
             const grid = document.getElementById('cityGrid');
-            if (grid) grid.style.transform = '';
-            const amb = document.getElementById('cityAmbiente');
-            if (amb) amb.style.transform = '';
-            applyPhaseBackdrop('city', cittaCorrente.state);
-            posizionaCaselleCitta(grid, cittaCorrente.district);
-            layoutCityOverlay(grid);
-            aggiornaLuceCitta(cittaCorrente.state);
+            riposaCamera();
         };
         document.addEventListener('pointerdown', (e) => {
             if (window.innerWidth >= window.innerHeight || !document.body.classList.contains('city-map-active') || !cittaCorrente) return;
@@ -2502,7 +2497,7 @@
             if (!inizio.mosso && Math.hypot(dx, dy) < 6) return;
             inizio.mosso = true;
             document.body.classList.add('camera-trascina');
-            cameraPan.x = inizio.px + dx; cameraPan.y = inizio.py + dy;
+            cameraPan.x = inizio.px + dx; // solo in orizzontale: niente scorrimento verticale
             if (!raf) raf = requestAnimationFrame(sposta);
         });
         const fine = () => {
@@ -2588,14 +2583,64 @@
 
     /** Camera del telefono in verticale: tiene al centro il nodo del giocatore e azzera lo spostamento dato col dito. */
     let cittaCorrente = null;
+    let cameraDistretto = null, cameraPendente = null;
     function impostaCamera(state) {
         const distretto = CITY_DISTRICTS[Math.max(0, Math.min(CITY_DISTRICTS.length - 1, state.sector - 1))];
         const nodo = state.grid && CITY_LAYOUTS[distretto.id].nodes[state.grid.playerIndex];
-        cameraPivot = nodo || null;
-        cameraPan.x = 0; cameraPan.y = 0;
         cittaCorrente = { state: state, district: distretto };
+        cameraPan.x = 0; cameraPan.y = 0;
+        // Se la pedina sta per camminare la camera ASPETTA la fine della camminata e poi scivola (vedi applicaCameraPendente):
+        // spostare camera e pedina insieme faceva sfarfallare le caselle.
+        if (window.innerWidth < window.innerHeight && cameraPivot && cameraDistretto === distretto.id && nodo && nodo !== cameraPivot && !riduciMovimento()) {
+            cameraPendente = { nodo: nodo, distretto: distretto };
+        } else {
+            cameraPivot = nodo || null;
+            cameraPendente = null;
+        }
+        cameraDistretto = distretto.id;
     }
-    function renderCity(state) {
+    /** Riposa fondale, caselle, strade e luci sul punto di camera attuale (una volta sola, senza transizioni). */
+    function riposaCamera() {
+        if (!cittaCorrente) return;
+        const grid = document.getElementById('cityGrid');
+        if (grid) { grid.style.transition = ''; grid.style.transform = ''; }
+        const amb = document.getElementById('cityAmbiente');
+        if (amb) { amb.style.transition = ''; amb.style.transform = ''; }
+        applyPhaseBackdrop('city', cittaCorrente.state);
+        posizionaCaselleCitta(grid, cittaCorrente.district);
+        layoutCityOverlay(grid);
+        aggiornaLuceCitta(cittaCorrente.state);
+    }
+    /** Finita la camminata la camera scivola sul nuovo nodo: si muove solo il contenitore (transform) e il fondale, poi si riposa tutto. */
+    function applicaCameraPendente() {
+        const c = cameraPendente;
+        if (!c) return;
+        cameraPendente = null;
+        const grid = document.getElementById('cityGrid');
+        if (!grid || !cittaCorrente) { cameraPivot = c.nodo; return; }
+        const p0 = proiezioneFondale(c.distretto);
+        cameraPivot = c.nodo;
+        const p1 = proiezioneFondale(c.distretto);
+        const dx = p1.x0 - p0.x0;
+        if (Math.abs(dx) < 1) return;
+        const amb = document.getElementById('cityAmbiente');
+        const T = 'transform .5s cubic-bezier(.22,.8,.22,1)';
+        document.body.classList.add('camera-scorre');
+        grid.style.transition = T;
+        if (amb) amb.style.transition = 'opacity 1.6s ease, ' + T;
+        const mossa = `translate(${dx.toFixed(1)}px, 0)`;
+        requestAnimationFrame(() => {
+            grid.style.transform = mossa;
+            if (amb) amb.style.transform = mossa;
+            const pos = document.body.style.backgroundPosition.split(',');
+            pos[0] = `${p1.x0.toFixed(1)}px ${p1.y0.toFixed(1)}px`;
+            document.body.style.backgroundPosition = pos.join(',');
+        });
+        setTimeout(() => {
+            riposaCamera();
+            requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.remove('camera-scorre')));
+        }, 540);
+    }    function renderCity(state) {
         document.body.classList.add('city-map-active');
         impostaCamera(state);
         applyPhaseBackdrop('city', state);
@@ -2772,7 +2817,11 @@
         gridEl.dataset.reachable = Array.from(reachable).join(',');
         gridEl.dataset.percorso = (grid.percorso || []).join(',');
         aggiornaLuceCitta(state);
-        requestAnimationFrame(() => layoutCityOverlay(gridEl));
+        requestAnimationFrame(() => {
+            layoutCityOverlay(gridEl);
+            // Nessuna camminata partita (primo render, riposo): la camera in attesa va applicata subito.
+            setTimeout(() => { const tk = gridEl.querySelector('.city-player-token'); if (cameraPendente && !(tk && tk.classList.contains('cammina'))) applicaCameraPendente(); }, 40);
+        });
         // Consumata: l'animazione di comparsa del radar deve giocare una
         // volta sola, non ad ogni render successivo dello stesso settore.
         grid.cells.forEach((c) => { delete c.justRevealed; });

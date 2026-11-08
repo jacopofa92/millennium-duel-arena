@@ -5198,6 +5198,8 @@ Matrice completa di bilanciamento (2026-10-25, senza modifiche al gioco): `tools
 
 1.6.13 (cache v661, su `main`): Battle City: #cityAmbiente non ritaglia piu' (overflow: visible): le finestre luminose fuori schermo entrano in vista mentre si trascina il fondale, senza fascia vuota al bordo. Non provato sul telefono vero. Suite completa non eseguita.
 
+1.6.14 (cache v662, su `main`): **Battle City in verticale: camminata senza sfarfallio e solo scorrimento orizzontale.** (1) Prima camera e pedina si muovevano insieme (caselle in transizione mentre la pedina camminava in coordinate di schermo): ora la camera ASPETTA la fine della camminata (cameraPendente, pplicaCameraPendente), poi scivola con un 	ransform su #cityGrid e #cityAmbiente piu' la posizione del fondale, e solo alla fine si riposa tutto (iposaCamera, classe camera-scorre senza transizioni sulle caselle). Misurato fotogramma per fotogramma: nessun salto della pedina. (2) Niente scorrimento verticale: il fondale sta tutto in altezza, appoggiato in basso (scala (vh-70)/ih), con 70px in alto dietro l'intestazione dove si vede la stessa immagine scurita; la camera e il trascinamento col dito sono solo orizzontali. Non provato sul telefono vero. Suite completa non eseguita.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
