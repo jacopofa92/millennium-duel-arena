@@ -748,10 +748,10 @@
     "semantic_hash": ""
   },
   "js/ui/board-pieces.js": {
-    "mtime": 1791051683.448624,
-    "seen": 1793910198.2845256,
-    "ast_hash": "ab8046d5a6f62d7a58f3ee39aff77489",
-    "semantic_hash": "ab8046d5a6f62d7a58f3ee39aff77489"
+    "mtime": 1794159689.9967709,
+    "seen": 1794159924.2055068,
+    "ast_hash": "d8a1e9679ab75a5581a4cc61943bf240",
+    "semantic_hash": ""
   },
   "js/ui/bot-speed.js": {
     "mtime": 1792320742.212432,
@@ -1108,9 +1108,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794158643.9521759,
-    "seen": 1794158959.434788,
-    "ast_hash": "cf3f07016dcd91fca02daef65bcc81ef",
+    "mtime": 1794159782.1670485,
+    "seen": 1794159924.2395442,
+    "ast_hash": "9877c4ecd86f46fb00591297bcef840f",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1126,9 +1126,9 @@
     "semantic_hash": "57357a46c1d07a0fa18bbcd83581aaa6"
   },
   "package.json": {
-    "mtime": 1794158644.3572803,
-    "seen": 1794158959.4352922,
-    "ast_hash": "e27cd4b883ed43f972114a98c5e39e33",
+    "mtime": 1794159759.8785346,
+    "seen": 1794159924.2395442,
+    "ast_hash": "1659d538121f70031d340db3f0229a92",
     "semantic_hash": ""
   },
   "render.yaml": {
@@ -1527,9 +1527,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794158600.388728,
-    "seen": 1794158959.4729843,
-    "ast_hash": "584d01276f2eb01b99a24fd7589552d7",
+    "mtime": 1794159759.467904,
+    "seen": 1794159924.270217,
+    "ast_hash": "865ba2387f02f45548bda796748db8f9",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -4961,9 +4961,9 @@
     "semantic_hash": ""
   },
   "PROJECT_MAP.md": {
-    "mtime": 1794158645.2046273,
-    "seen": 1794158959.7726698,
-    "ast_hash": "2b6edf8644c7b8fa34ec2f2e36c0085d",
+    "mtime": 1794159782.5443811,
+    "seen": 1794159924.5373576,
+    "ast_hash": "d993633ec343afdf1c26a90f6589cd8e",
     "semantic_hash": ""
   },
   "PUBBLICAZIONE.md": {
@@ -5261,9 +5261,9 @@
     "semantic_hash": ""
   },
   "docs/planning/WORK_IN_PROGRESS.md": {
-    "mtime": 1794158645.6294994,
-    "seen": 1794158959.806391,
-    "ast_hash": "3163c54717c8cf778d029a1065ee7d94",
+    "mtime": 1794159782.956285,
+    "seen": 1794159924.5629983,
+    "ast_hash": "5bac6108b47bd4e17f76eee0e8912e5c",
     "semantic_hash": ""
   },
   "duelMonstersCore.html": {
@@ -5393,9 +5393,9 @@
     "semantic_hash": ""
   },
   "torneo-battle-city.html": {
-    "mtime": 1794158867.774873,
-    "seen": 1794158959.8178885,
-    "ast_hash": "f26fec5818a9cee072053fe6e545b67f",
+    "mtime": 1794160107.4031196,
+    "seen": 1794160183.7306485,
+    "ast_hash": "f2014d2ef43fb7491701d029317a7c48",
     "semantic_hash": ""
   },
   "torneo-kaiba.html": {

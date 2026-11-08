@@ -399,7 +399,13 @@
         box-shadow: 0 2px 8px rgba(0,0,0,.5), 0 0 10px rgba(34,211,238,.5);
     }
     .city-cell.reachable > .cell-label,
-    .city-cell.heliport > .cell-label { display: block; }
+    .city-cell.heliport > .cell-label,
+    .city-cell.district-gate > .cell-label { display: block; }
+    .city-cell.district-gate > .cell-label {
+        color: #071c29;
+        background: linear-gradient(180deg, #e5fbff, #54dff3);
+        box-shadow: 0 2px 8px rgba(0,0,0,.55), 0 0 14px rgba(63,225,255,.72);
+    }
     .city-cell.heliport > .cell-label {
         color: #2a0631;
         background: linear-gradient(180deg, #fbe0ff, #e879f9);
@@ -415,6 +421,7 @@
     .city-cell.hidden-cell:not(.reachable) { opacity: .48; }
     .city-cell.resolved:not(.reachable) { opacity: .4; filter: saturate(.25) brightness(.8); }
     .city-cell.heliport:not(.reachable) { opacity: .92; filter: none; }
+    .city-cell.district-gate:not(.reachable) { opacity: .88; filter: none; }
 
     /* Solo le celle ortogonalmente adiacenti al segnalino sono raggiungibili. */
     .city-cell.reachable { cursor: pointer; z-index: 5; }
@@ -584,6 +591,15 @@
         background: radial-gradient(ellipse, rgba(232,121,249,.42), rgba(77,18,86,.18) 58%, transparent 74%);
         animation: heliportPulse 1.4s ease-in-out infinite;
     }
+    .city-cell.district-gate::before {
+        border: 2px solid rgba(89,230,255,.9);
+        background: radial-gradient(ellipse, rgba(34,211,238,.36), rgba(3,44,64,.15) 60%, transparent 76%);
+        box-shadow: 0 0 20px rgba(34,211,238,.48), inset 0 0 10px rgba(125,243,255,.32);
+        animation: gatePulse 2s ease-in-out infinite;
+    }
+    .city-cell.district-gate.reachable { z-index: 6; }
+    .city-cell.district-gate.reachable .bp-piece { transform: translateY(-5px) scale(1.08); }
+    @keyframes gatePulse { 0%,100% { filter: brightness(.9); } 50% { filter: brightness(1.35); } }
     .city-cell.heliport .bp-rotor { transform-origin: 31.5px 15.6px; animation: rotorSpin .25s linear infinite; }
     @keyframes rotorSpin { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(.25); } }
     @keyframes heliportPulse {
@@ -1106,6 +1122,16 @@
             { kind: 'quest', count: 1 }, { kind: 'event', count: 4 }, { kind: 'shop', count: 2 }
         ] }
     ];
+    // I varchi sono celle di strada sul bordo della mappa: il giocatore
+    // cambia quartiere raggiungendoli, senza un pulsante di avanzamento.
+    // Gli indici d'ingresso speculari rendono leggibile il percorso anche
+    // quando si torna sui propri passi.
+    const DISTRICT_GATES = {
+        centro: [{ index: 2, to: 'parco', entry: 22 }, { index: 22, to: 'porto', entry: 2 }],
+        parco: [{ index: 22, to: 'centro', entry: 2 }, { index: 14, to: 'kaibacorp', entry: 10 }],
+        porto: [{ index: 2, to: 'centro', entry: 22 }, { index: 14, to: 'kaibacorp', entry: 22 }],
+        kaibacorp: [{ index: 10, to: 'parco', entry: 14 }, { index: 22, to: 'porto', entry: 14 }]
+    };
     const PHASE_IMAGES = {
         city:     { preferred: 'images/fields/citta.jpg', fallback: 'images/fields/citta.jpg' },
         airship:  { preferred: 'images/fields/dirigibileKaibaCorp.jpg', fallback: 'images/fields/dirigibileKaibaCorp.jpg' },
@@ -1323,6 +1349,8 @@
             cityTime: 0,
             citySweep: 0,
             grid: null,
+            districtMaps: {},
+            visitedDistricts: ['centro'],
             pendingEncounter: null,
             bracket: null,
             towerStage: null,
@@ -1368,6 +1396,11 @@
             state.cityTime = (state.locators || 0) >= FINALS_THRESHOLD - 2 ? 24 : (state.locators || 0) >= 2 ? 12 : 0;
         }
         if (!Number.isFinite(state.citySweep)) state.citySweep = Math.max(0, rawSector - CITY_DISTRICTS.length);
+        const visitatiStorici = CITY_DISTRICTS.slice(0, Math.min(CITY_DISTRICTS.length, rawSector)).map((d) => d.id);
+        if (!Array.isArray(state.visitedDistricts)) state.visitedDistricts = visitatiStorici;
+        const distrettoCorrente = CITY_DISTRICTS[state.sector - 1];
+        if (distrettoCorrente && !state.visitedDistricts.includes(distrettoCorrente.id)) state.visitedDistricts.push(distrettoCorrente.id);
+        if (!state.districtMaps || typeof state.districtMaps !== 'object') state.districtMaps = {};
         return state;
     }
     function loadState() { return migrateCityState(migrateCanonicalAirship(SaveManager.getTournamentState(TOURNAMENT_ID))); }
@@ -1406,18 +1439,20 @@
         quest:    { piece: 'quest',    label: 'Missione' },
         shop:     { piece: 'shop',     label: 'Negozio' },
         heliport: { piece: 'heliport', label: 'Decollo' },
+        districtGate: { piece: 'districtGate', label: 'Cambio quartiere' },
         start:    { piece: null,       label: '' }
     };
 
-    function buildSector(state) {
+    function buildSector(state, districtId, startIndex) {
         const total = GRID_W * GRID_H;
-        const district = CITY_DISTRICTS[Math.max(0, Math.min(CITY_DISTRICTS.length - 1, state.sector - 1))];
+        const district = CITY_DISTRICTS.find((d) => d.id === districtId) || CITY_DISTRICTS[Math.max(0, Math.min(CITY_DISTRICTS.length - 1, state.sector - 1))];
         const kinds = new Array(total).fill('empty');
-        // Il giocatore parte sempre al centro: da lì il radar illumina
-        // subito quattro direzioni diverse, invece di spingerlo contro un
-        // bordo con metà delle scelte già tagliate fuori.
-        const startIndex = Math.floor(total / 2);
-        const freeSlots = shuffle(kinds.map((_, i) => i).filter((i) => i !== startIndex));
+        // La prima mappa parte al centro; un quartiere visitato per la prima
+        // volta accoglie invece il giocatore dal varco d'ingresso.
+        startIndex = Number.isInteger(startIndex) ? startIndex : Math.floor(total / 2);
+        const gates = DISTRICT_GATES[district.id] || [];
+        const gateIndices = new Set(gates.map((gate) => gate.index));
+        const freeSlots = shuffle(kinds.map((_, i) => i).filter((i) => i !== startIndex && !gateIndices.has(i)));
         let cursor = 0;
         district.composition.forEach((entry) => {
             for (let i = 0; i < entry.count && cursor < freeSlots.length; i++, cursor++) {
@@ -1428,6 +1463,8 @@
         const usedCharacters = new Set();
         const cells = kinds.map((kind, index) => {
             const cell = { kind: kind, revealed: false, resolved: false };
+            const gate = gates.find((g) => g.index === index);
+            if (gate) Object.assign(cell, { kind: 'districtGate', destinationId: gate.to, destinationIndex: gate.entry, revealed: true });
             if (kind === 'duelist') {
                 const pool = PRELIM_IDS.filter((id) => !usedCharacters.has(id));
                 const characterId = pickRandom(pool.length ? pool : PRELIM_IDS);
@@ -1438,8 +1475,29 @@
             return cell;
         });
 
-        state.grid = { w: GRID_W, h: GRID_H, cells: cells, playerIndex: startIndex };
+        state.grid = { w: GRID_W, h: GRID_H, cells: cells, playerIndex: startIndex, districtId: district.id };
         revealAround(state, startIndex);
+    }
+
+    /** Aggiunge i varchi ai salvataggi già avviati senza cancellare nodi o incontri esistenti. */
+    function ensureDistrictGates(grid, districtId) {
+        if (!grid || !Array.isArray(grid.cells)) return;
+        grid.districtId = districtId;
+        (DISTRICT_GATES[districtId] || []).forEach((gate) => {
+            if (grid.cells.some((cell) => cell.kind === 'districtGate' && cell.destinationId === gate.to)) return;
+            let index = gate.index;
+            if (index === grid.playerIndex) {
+                const edge = grid.cells.map((cell, i) => i).filter((i) => i !== grid.playerIndex && (i < grid.w || i >= grid.w * (grid.h - 1) || i % grid.w === 0 || i % grid.w === grid.w - 1));
+                index = edge.find((i) => grid.cells[i].kind === 'empty') ?? edge.find((i) => grid.cells[i].resolved) ?? index;
+            }
+            const occupant = grid.cells[index];
+            if (occupant && occupant.kind !== 'empty' && occupant.kind !== 'districtGate') {
+                const empty = grid.cells.findIndex((cell, i) => i !== grid.playerIndex && cell.kind === 'empty');
+                if (empty >= 0) grid.cells[empty] = occupant;
+                else return;
+            }
+            grid.cells[index] = { kind: 'districtGate', destinationId: gate.to, destinationIndex: gate.entry, revealed: true, resolved: false };
+        });
     }
 
     /** Una cella Rare Hunter è una pattuglia anonima: l'identità viene
@@ -1545,12 +1603,12 @@
     }
     /** Il radar è "cieco" mentre dura il Blackout: le celle non ancora attraversate mostrano solo l'Ignoto. */
     function cellVisible(state, cell) {
-        return !!cell.revealed && (!(state.blackout > 0) || !!cell.resolved);
+        return !!cell.revealed && (!(state.blackout > 0) || !!cell.resolved || cell.kind === 'districtGate');
     }
 
     /** Vero quando nel settore non resta più nulla da fare: tutte le celle con un contenuto sono state risolte. */
     function sectorExhausted(state) {
-        return state.grid.cells.every((c) => c.resolved || c.kind === 'empty' || c.kind === 'heliport');
+        return state.grid.cells.every((c) => c.resolved || c.kind === 'empty' || c.kind === 'heliport' || c.kind === 'districtGate');
     }
 
     /**
@@ -1560,7 +1618,8 @@
      * città (più carte = più margine per le puntate delle finali).
      */
     function ensureHeliport(state) {
-        if (!state.grid || state.sector < CITY_DISTRICTS.length || state.locators < FINALS_THRESHOLD) return false;
+        const esplorati = Array.isArray(state.visitedDistricts) ? state.visitedDistricts : [];
+        if (!state.grid || state.sector !== CITY_DISTRICTS.length || CITY_DISTRICTS.some((d) => !esplorati.includes(d.id)) || state.locators < FINALS_THRESHOLD) return false;
         if (state.grid.cells.some((c) => c.kind === 'heliport')) return false;
         const candidates = state.grid.cells
             .map((c, i) => ({ c: c, i: i }))
@@ -1572,6 +1631,47 @@
         chosen.c.revealed = true;
         chosen.c.justRevealed = true;
         return true;
+    }
+
+    /** Attraversare un varco cambia quartiere e conserva la mappa lasciata. */
+    function travelToDistrict(state, gate, sourceIndex) {
+        const sourceId = state.grid.districtId || CITY_DISTRICTS[state.sector - 1].id;
+        const source = CITY_DISTRICTS.find((d) => d.id === sourceId);
+        const destination = CITY_DISTRICTS.find((d) => d.id === gate.destinationId);
+        if (!source || !destination) return;
+        const transition = document.getElementById('cityTransition');
+        if (transition.classList.contains('active')) return;
+        state.districtMaps[source.id] = state.grid;
+        const arrivo = Number.isInteger(gate.destinationIndex) ? gate.destinationIndex : Math.floor(GRID_W * GRID_H / 2);
+        let nextGrid = state.districtMaps[destination.id];
+        if (!nextGrid) {
+            buildSector(state, destination.id, arrivo);
+            nextGrid = state.grid;
+            state.districtMaps[destination.id] = nextGrid;
+        }
+        ensureDistrictGates(nextGrid, destination.id);
+        const backGate = nextGrid.cells.find((cell) => cell.kind === 'districtGate' && cell.destinationId === source.id);
+        if (backGate) backGate.destinationIndex = sourceIndex;
+        nextGrid.playerIndex = arrivo;
+        nextGrid.cells[arrivo].revealed = true;
+        revealAround({ grid: nextGrid }, arrivo);
+        state.grid = nextGrid;
+        state.sector = CITY_DISTRICTS.findIndex((d) => d.id === destination.id) + 1;
+        if (!state.visitedDistricts.includes(destination.id)) state.visitedDistricts.push(destination.id);
+        if (state.quest) logEvent(state, '🎯', 'Lasci il quartiere: la missione scade.');
+        state.quest = null;
+        state.blackout = 0;
+        transition.textContent = destination.nome;
+        transition.classList.add('active');
+        const completa = () => {
+            logEvent(state, '🚶', `Attraversi il varco e raggiungi ${destination.nome}.`);
+            saveState(state);
+            render();
+            if (riduciMovimento()) transition.classList.remove('active');
+            else window.setTimeout(() => transition.classList.remove('active'), 170);
+        };
+        if (riduciMovimento()) completa();
+        else window.setTimeout(completa, 230);
     }
 
     // ================================================================
@@ -2178,6 +2278,8 @@
 
         ensureExtras(state);
         const grid = state.grid;
+        grid.districtId = district.id;
+        ensureDistrictGates(grid, district.id);
         const reachable = new Set(neighborsOf(grid, grid.playerIndex));
         const exhausted = sectorExhausted(state);
 
@@ -2202,6 +2304,7 @@
                     <span>${BoardPieces.markup('event')}Evento</span>
                     <span>${BoardPieces.markup('quest')}Missione</span>
                     <span>${BoardPieces.markup('shop')}Negozio</span>
+                    <span>${BoardPieces.markup('districtGate')}Passaggio di quartiere</span>
                     <span>${BoardPieces.markup('heliport')}Decollo</span>
                     <span>${BoardPieces.markup('hidden')}Ignoto</span>
                 </div>
@@ -2240,9 +2343,10 @@
         if (titoloDistretto) titoloDistretto.innerHTML = `${district.nome}<small style="display:block;opacity:.62;font-size:.62rem;letter-spacing:.1em;margin-top:2px;">QUARTIERE ${state.sector} / ${CITY_DISTRICTS.length}${state.citySweep ? ` · PATTUGLIA ${state.citySweep + 1}` : ''}</small>`;
         const orologio = document.querySelector('.city-clock');
         if (orologio) orologio.textContent = oraDelDistretto(state) === 'giorno' ? 'Giorno' : oraDelDistretto(state) === 'tramonto' ? 'Tramonto' : 'Notte';
-        document.getElementById('sectorHint').textContent = state.locators >= FINALS_THRESHOLD
-            ? (state.sector >= CITY_DISTRICTS.length ? 'Zona di decollo aperta' : `Attraversa ancora ${CITY_DISTRICTS.length - state.sector} quartieri`)
-            : `Ti servono ancora ${FINALS_THRESHOLD - state.locators} Carta Locazione`;
+        const tuttiEsplorati = CITY_DISTRICTS.every((d) => state.visitedDistricts.includes(d.id));
+        document.getElementById('sectorHint').textContent = state.locators >= FINALS_THRESHOLD && tuttiEsplorati
+            ? 'Zona di decollo aperta: raggiungi il dirigibile nel distretto KaibaCorp'
+            : `Raggiungi i passaggi luminosi per spostarti tra i quartieri · ${Math.max(0, FINALS_THRESHOLD - state.locators)} Carte Locazione mancanti`;
         renderItemRow(state);
 
         grid.cells.forEach((cell, index) => {
@@ -2268,10 +2372,13 @@
                 el.classList.add('revealed');
                 if (cell.resolved) el.classList.add('resolved');
                 if (cell.kind === 'heliport') el.classList.add('heliport');
+                if (cell.kind === 'districtGate') el.classList.add('district-gate');
                 if (cell.justRevealed) el.classList.add('just-revealed');
                 const vuota = cell.kind === 'empty' || cell.kind === 'start';
                 piece = vuota ? null : (cell.resolved ? 'done' : meta.piece);
-                label = (vuota || cell.resolved) ? 'Libero' : meta.label;
+                label = cell.kind === 'districtGate'
+                    ? `Verso ${CITY_DISTRICTS.find((d) => d.id === cell.destinationId)?.nome || 'altro quartiere'}`
+                    : (vuota || cell.resolved) ? 'Libero' : meta.label;
                 // Il bersaglio della Missione: anello dorato ed etichetta dedicata.
                 if (state.quest && state.quest.cellIndex === index && !cell.resolved) {
                     el.classList.add('quest-target');
@@ -2317,7 +2424,7 @@
                 el.onclick = () => moveToCell(index);
                 el.tabIndex = 0;
                 el.removeAttribute('aria-disabled');
-                el.setAttribute('aria-label', veduta ? (meta.label || 'Isolato libero') : 'Isolato sconosciuto');
+                el.setAttribute('aria-label', veduta ? (label || meta.label || 'Isolato libero') : 'Isolato sconosciuto');
             } else {
                 el.onclick = null;
                 el.tabIndex = -1;
@@ -2341,50 +2448,23 @@
 
         const actions = document.getElementById('sectorActions');
         actions.innerHTML = '';
-        if (exhausted && !(state.sector >= CITY_DISTRICTS.length && state.locators >= FINALS_THRESHOLD)) {
+        if (exhausted && state.sector === CITY_DISTRICTS.length && state.locators < FINALS_THRESHOLD) {
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'big-btn';
-            const ultimoDistretto = state.sector >= CITY_DISTRICTS.length;
-            btn.textContent = ultimoDistretto
-                ? (state.locators >= FINALS_THRESHOLD ? 'Raggiungi il punto di decollo' : 'Cerca altre pattuglie nel quartiere')
-                : `Prosegui verso ${CITY_DISTRICTS[state.sector].nome}`;
+            btn.textContent = 'Chiama una nuova pattuglia';
             btn.onclick = () => {
-                const transition = document.getElementById('cityTransition');
-                if (transition.classList.contains('active')) return;
                 const s = loadState();
-                ensureExtras(s);
-                // La missione vale per UN distretto; il Blackout non si porta
-                // dietro nel successivo.
-                if (s.quest) logEvent(s, '🎯', 'Lasci il distretto: la missione è scaduta.');
-                s.quest = null;
-                s.blackout = 0;
-                const avanzaQuartiere = s.sector < CITY_DISTRICTS.length;
-                if (avanzaQuartiere) s.sector++;
-                else if (s.locators < FINALS_THRESHOLD) s.citySweep = (s.citySweep || 0) + 1;
-                else return;
-                const nextDistrict = CITY_DISTRICTS[s.sector - 1];
-                transition.textContent = avanzaQuartiere ? nextDistrict.nome : 'Pattuglia notturna';
-                transition.classList.add('active');
-                const cambia = () => {
-                    buildSector(s);
-                    logEvent(s, '🚶', avanzaQuartiere
-                        ? `Ti sposti in ${nextDistrict.nome}.`
-                        : `La notte cala sul distretto KaibaCorp: una nuova pattuglia blocca le strade${s.citySweep > 1 ? ` (${s.citySweep})` : ''}.`);
-                    saveState(s);
-                    render();
-                    if (riduciMovimento()) transition.classList.remove('active');
-                    else window.setTimeout(() => transition.classList.remove('active'), 170);
-                };
-                if (riduciMovimento()) cambia();
-                else window.setTimeout(cambia, 230);
+                const empty = s.grid.cells.map((cell, i) => ({ cell, i })).filter((v) => v.cell.kind === 'empty');
+                if (!empty.length) return;
+                const slot = pickRandom(empty);
+                s.citySweep = (s.citySweep || 0) + 1;
+                s.grid.cells[slot.i] = { kind: 'locator', revealed: true, resolved: false };
+                logEvent(s, '🚔', `Una nuova pattuglia attraversa il distretto KaibaCorp${s.citySweep > 1 ? ` (${s.citySweep})` : ''}.`);
+                saveState(s);
+                render();
             };
             actions.appendChild(btn);
-        } else if (exhausted) {
-            const hint = document.createElement('p');
-            hint.className = 'sector-hint';
-            hint.textContent = 'La zona di decollo è aperta: raggiungi il segnalino del dirigibile.';
-            actions.appendChild(hint);
         }
     }
 
@@ -2411,6 +2491,11 @@
         if (state.blackout > 0) {
             state.blackout--;
             if (state.blackout === 0) logEvent(state, '📡', 'Il segnale del radar è tornato.');
+        }
+
+        if (cell.kind === 'districtGate') {
+            travelToDistrict(state, cell, index);
+            return;
         }
 
         if (cell.resolved || cell.kind === 'empty') {
@@ -2533,7 +2618,7 @@
                 if (state.sector < CITY_DISTRICTS.length) {
                     cell.kind = 'empty'; cell.resolved = true;
                     saveState(state); render();
-                    showToast('🚁 Il dirigibile attende nel distretto KaibaCorp: attraversa prima gli altri quartieri.');
+                    showToast('🚁 Per raggiungere il dirigibile devi aver visitato tutti e quattro i quartieri.');
                     return;
                 }
                 enterAirship(state);

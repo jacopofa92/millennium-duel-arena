@@ -2,6 +2,17 @@
 
 Ultimo aggiornamento verificato: 2026-10-18.
 
+## Quartieri Battle City collegati (2026-11-08)
+
+La mappa del torneo ora permette di passare fra Centro, Parco, Porto e
+KaibaCorp raggiungendo i varchi luminosi ai bordi dei quartieri. I collegamenti
+sono bidirezionali e la posizione, gli incontri risolti e le risorse raccolte
+restano salvati quando si esce da una zona e vi si ritorna. La zona di decollo
+nel distretto KaibaCorp si apre dopo aver visitato tutti e quattro i quartieri
+e raccolto le sei Carte Locazione richieste. Le mappe sono gestite da
+`torneo-battle-city.html`; le pedine dei passaggi sono disegnate in
+`js/ui/board-pieces.js`.
+
 ## Grafo interrogabile del codice (2026-11-05)
 
 Graphify e' installato per Codex (`.codex/skills/graphify/`) e Claude Code

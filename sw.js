@@ -533,7 +533,8 @@
 // v577: ripristinato l'effetto precedente delle Spade e rimosso il rendering WebGL della Gabbia.
 // v578: Spade Rivelatrici riportate alla resa WebGL precedente al cambio prospettico.
 // v648: Battle City aggiunge quattro quartieri con fondali, orologio giorno-notte e ambiente WebGL dedicato.
-const CACHE_NAME = 'ygo-duel-arena-v648';
+// v649: i varchi cittadini permettono di passare liberamente fra quartieri salvandone lo stato.
+const CACHE_NAME = 'ygo-duel-arena-v649';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

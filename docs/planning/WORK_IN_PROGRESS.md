@@ -2,6 +2,14 @@
 
 Elenco di lavori consigliati, in ordine di valore. Spuntare `[x]` quando fatto.
 
+## Battle City — spostamento fra quartieri (chiuso in 1.6.1)
+
+- [x] Collegati Centro, Parco, Porto e KaibaCorp con varchi ben visibili e
+      attraversabili in entrambe le direzioni. Il giocatore può cambiare zona
+      in qualsiasi momento; ogni mappa conserva incontri e ricompense già
+      risolti. Il dirigibile si apre nel distretto KaibaCorp dopo aver visitato
+      tutti i quartieri e raccolto le sei Carte Locazione.
+
 ## Distruzione di una carta: niente doppio viaggio visivo — chiuso in 1.5.62
 
 La distruzione dei mostri usa la disintegrazione sulla carta vera; è stato

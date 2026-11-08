@@ -238,6 +238,16 @@
                 <rect x="40.6" y="21.4" width="13" height="6" rx="1.4" fill="#06202e" stroke="#22d3ee" stroke-width=".9" transform="skewY(-26.6) translate(0 18)"/>
                 <text x="47" y="26.4" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="4.4" font-weight="900" fill="#7df3ff" transform="skewY(-26.6) translate(0 18)">24H</text>
             </g>`,
+        // Varco stradale: due cartelli luminosi indicano che questo
+        // isolato porta in un altro quartiere. È distinto dalle icone degli
+        // incontri, così la navigazione resta leggibile anche da mobile.
+        districtGate: `${SHADOW}
+            <ellipse cx="32" cy="55" rx="17" ry="4.5" fill="url(#bp-glow-cyan)" class="bp-breathe"/>
+            <path d="M32 27 V53 M28.5 53 H35.5" stroke="#d3e5ef" stroke-width="3" stroke-linecap="round"/>
+            <path d="M32 28 L23 19 L32 10 L41 19 Z" fill="url(#bp-steel)" stroke="#e8fdff" stroke-width="1.2"/>
+            <path d="M32 14 L37 19 L32 24 L27 19 Z" fill="#06283c" stroke="#42e7ff" stroke-width="1"/>
+            <path d="M28.7 19 H35.2 M32 15.8 L35.2 19 L32 22.2" fill="none" stroke="#b9faff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="bp-blink"/>
+            <path d="M20 35 H44" stroke="#f7d774" stroke-width="1.5" stroke-dasharray="2 2" opacity=".8"/>`,
         // Zona di decollo: piazzola isometrica con la H, luci perimetrali
         // lampeggianti e l'elicottero sospeso con il rotore che gira.
         heliport: `${SHADOW}
