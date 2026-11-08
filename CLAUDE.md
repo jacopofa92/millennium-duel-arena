@@ -5196,6 +5196,8 @@ Matrice completa di bilanciamento (2026-10-25, senza modifiche al gioco): `tools
 
 1.6.12 (cache v660, su `main`): Battle City, trascinamento in verticale: anche le finestre luminose dei palazzi (#cityAmbiente) seguono il dito con lo stesso 	ransform del contenitore, invece di restare ferme fino al rilascio. Ai bordi, durante il trascinamento, manca la fascia di finestre nuova (appare al rilascio). Non provato sul telefono vero. Suite completa non eseguita.
 
+1.6.13 (cache v661, su `main`): Battle City: #cityAmbiente non ritaglia piu' (overflow: visible): le finestre luminose fuori schermo entrano in vista mentre si trascina il fondale, senza fascia vuota al bordo. Non provato sul telefono vero. Suite completa non eseguita.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.

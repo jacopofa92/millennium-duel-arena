@@ -574,7 +574,7 @@
     body.city-map-active[data-ora="tramonto"]::before { background: linear-gradient(180deg, rgba(255,136,69,.22), rgba(90,36,57,.19)); }
     body.city-map-active[data-ora="notte"]::before { background: linear-gradient(180deg, rgba(12,24,82,.42), rgba(5,9,34,.5)); }
     /* Finestre dei grattacieli che si accendono con il buio. */
-    #cityAmbiente { position: fixed; inset: 0; z-index: 3; pointer-events: none; opacity: 0; transition: opacity 1.6s ease; overflow: hidden; }
+    #cityAmbiente { position: fixed; inset: 0; z-index: 3; pointer-events: none; opacity: 0; transition: opacity 1.6s ease; overflow: visible; /* niente ritaglio: trascinando il fondale le finestre fuori schermo entrano in vista */ }
     body[data-ora="tramonto"] #cityAmbiente { opacity: .55; }
     body[data-ora="notte"] #cityAmbiente { opacity: 1; }
     #cityAmbiente .city-finestra { position: absolute; width: 5px; height: 7px; border-radius: 1px; background: #ffd98a; box-shadow: 0 0 8px 2px rgba(255,200,110,.7); animation: cityFinestra 4.5s ease-in-out infinite; }
