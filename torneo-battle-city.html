@@ -878,6 +878,8 @@
         body[data-quartiere="parco"] .city-cell > .cell-label { font-size: .4rem; }
     }
     /* Telefono in verticale: la camera segue il giocatore e si puo' trascinare il fondale; durante il trascinamento niente transizioni. */
+    /* La mappa della citta' non scorre mai: nemmeno di qualche decina di pixel (la pagina era alta piu' dello schermo). */
+    html:has(body.city-map-active), body.city-map-active { overflow: hidden; height: 100dvh; overscroll-behavior: none; }
     @media (orientation: portrait) {
         /* Intestazione compatta: una riga, senza il suggerimento, cosi' non copre i nodi in alto. */
         .sector-hint { display: none; }
