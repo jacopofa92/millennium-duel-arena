@@ -1,6 +1,60 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
-Ultimo aggiornamento verificato: 2026-10-18.
+Ultimo aggiornamento verificato: 2026-11-08.
+
+## Quartieri Battle City collegati (2026-11-08)
+
+La mappa del torneo ora permette di passare fra Centro, Parco, Porto e
+KaibaCorp raggiungendo i varchi luminosi ai bordi dei quartieri. I collegamenti
+sono bidirezionali e la posizione, gli incontri risolti e le risorse raccolte
+restano salvati quando si esce da una zona e vi si ritorna. La zona di decollo
+nel distretto KaibaCorp si apre dopo aver visitato tutti e quattro i quartieri
+e raccolto le sei Carte Locazione richieste. Le mappe sono gestite da
+`torneo-battle-city.html`; le pedine dei passaggi sono disegnate in
+`js/ui/board-pieces.js`.
+
+### Percorsi, ricompense e introduzione Battle City (1.6.4)
+
+Le pedine della mappa seguono ora percorsi normalizzati sulle immagini reali
+dei quartieri: sentieri del Parco, pavimentazioni del Porto e piazza pedonale
+KaibaCorp. Esistono coordinate distinte per il ritaglio verticale e il
+ridimensionamento riallinea mappa, pedine e overlay. Gli effetti ambientali
+restano specifici per quartiere; a KaibaCorp le luci pulsano in posizioni
+ancorate alle facciate e l'effetto WebGL usa solo bagliori discreti, senza
+scanner o raggi su tutta la scena.
+
+Le Locazioni raccolte restano nel torneo; i nodi esplorativi che ne assegnano
+una sono limitati a uno nel Centro e uno al Porto. La missione del Centro
+assegna crediti, non una terza Locazione. Le pattuglie aggiunte dopo aver
+esaurito la città richiedono un duello. Gli eventi possono assegnare piccole
+somme di crediti oppure sottrarle; lo Scudo protegge anche dai furti. La
+migrazione conserva gli oggetti già incassati e ribilancia solo i nodi non
+ancora risolti.
+
+La schermata introduttiva spiega le regole aggiornate: esplorazione tra
+quartieri collegati, due soli nodi di Carta Locazione (Centro e Porto), una
+missione del Centro pagata in crediti, eventi che possono dare o sottrarre
+crediti e pattuglie aggiuntive da affrontare in duello. Non descrive più il
+percorso come una griglia visibile.
+
+### Ritocco della mappa e limite delle ricompense (1.6.5)
+
+In tutta Battle City esistono al massimo due nodi di esplorazione che danno
+Carte Locazione: uno nel Centro e uno al Porto. La missione del Centro paga
+crediti (45–80) invece di una terza Carta Locazione; ogni quartiere offre
+inoltre un nodo crediti (25–50). Le migrazioni convertono le fonti extra dei
+salvataggi esistenti mantenendo le carte già riscosse. La generazione dei
+distretti applica il tetto globale anche se in futuro si aggiungono nodi alle
+composizioni.
+
+Nel Centro la testata e gli oggetti sono ancorati a un angolo libero; le pedine
+interattive sono più grandi e le coordinate seguono l'area aperta della piazza.
+Il Parco ha una disposizione dedicata ai vialetti, lampi WebGL color ambra
+ancorati ai lampioni, e una rete di percorsi che evita laghetto, aiuole e prato.
+Il passaggio giorno/tramonto/notte è stato allungato di 3,5 volte, con
+migrazione una tantum dell'orologio dei tornei già iniziati. Rimossa la legenda
+permanente in fondo alla mappa: le etichette dei nodi raggiungibili e le
+pedine rendono già riconoscibili gli incontri.
 
 ## Grafo interrogabile del codice (2026-11-05)
 
@@ -746,6 +800,17 @@ del protocollo corrente.
   d'interesse, leggermente sfalsati, galleggiano sul fondale. I nodi DOM
   restano persistenti durante gli spostamenti e un unico segnalino animato
   scorre fra gli isolati; su movimento ridotto la transizione viene rimossa.
+- La mappa del torneo Battle City ora attraversa quattro quartieri ordinati:
+  Centro di Domino, Parco cittadino, Porto di Domino e Distretto KaibaCorp.
+  Ogni quartiere conserva la griglia logica 5×5 e ha una distribuzione
+  tematica di duellanti, Rare Hunter, eventi, negozi e Carte Locazione; la
+  quarta zona ripropone pattuglie notturne se servono altre Carte Locazione.
+  L'orologio salvato avanza con gli spostamenti e di tre scatti dopo un duello,
+  passa da giorno a tramonto e si ferma alla notte. I fondali zenitali sono
+  `images/fields/citta.jpg` e `images/maps/battle_city_{parco,porto,kaibacorp}.jpg`;
+  gli ambienti WebGL sono configurati in `js/ui/ambiente-battle-city.js` e
+  vengono attivati dal torneo tramite `AmbienteWebGL.avviaMappa` con dettagli
+  video alti, rispettando movimento ridotto e ripiego senza WebGL.
 - Le campagne narrative non belliche hanno ulteriori raccordi: 2 scene in
   `anime`, 3 in `forbiddenMemories` e 4 in `freedom`. Le separazioni
   `dalla: 'tappe'` migrano i vecchi contatori lineari senza spostare il punto

@@ -310,10 +310,10 @@
     "semantic_hash": ""
   },
   "js/data/tournament-dialogues.js": {
-    "mtime": 1792243815.549582,
-    "seen": 1793910198.2513337,
-    "ast_hash": "543be4b7023e1b4e2fcdf256352e5d45",
-    "semantic_hash": "543be4b7023e1b4e2fcdf256352e5d45"
+    "mtime": 1794147513.9928372,
+    "seen": 1794147598.8418918,
+    "ast_hash": "03f1e020503fdf2635f013c8a93bc246",
+    "semantic_hash": ""
   },
   "js/dev/story-admin-tools.js": {
     "mtime": 1792320742.1901069,
@@ -742,16 +742,16 @@
     "semantic_hash": "c7988642b2752741fbb4c5ae1917ee92"
   },
   "js/ui/ambiente-webgl.js": {
-    "mtime": 1793545879.9157252,
-    "seen": 1793910198.2845256,
-    "ast_hash": "8b82185154a42b19455a3d18d373893c",
-    "semantic_hash": "8b82185154a42b19455a3d18d373893c"
+    "mtime": 1794146288.7088747,
+    "seen": 1794146508.9159963,
+    "ast_hash": "406d29d33521b345d5f2599ca532efbe",
+    "semantic_hash": ""
   },
   "js/ui/board-pieces.js": {
-    "mtime": 1791051683.448624,
-    "seen": 1793910198.2845256,
-    "ast_hash": "ab8046d5a6f62d7a58f3ee39aff77489",
-    "semantic_hash": "ab8046d5a6f62d7a58f3ee39aff77489"
+    "mtime": 1794159689.9967709,
+    "seen": 1794159924.2055068,
+    "ast_hash": "d8a1e9679ab75a5581a4cc61943bf240",
+    "semantic_hash": ""
   },
   "js/ui/bot-speed.js": {
     "mtime": 1792320742.212432,
@@ -1108,9 +1108,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794144753.6741438,
-    "seen": 1794145245.8754735,
-    "ast_hash": "0b7ade540e2b7f7a3b496c6f83ee86cc",
+    "mtime": 1794164609.0373294,
+    "seen": 1794164691.38266,
+    "ast_hash": "edc3a4636bf5b74f25748217b775d792",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1126,9 +1126,9 @@
     "semantic_hash": "57357a46c1d07a0fa18bbcd83581aaa6"
   },
   "package.json": {
-    "mtime": 1794144753.6797693,
-    "seen": 1794145245.876366,
-    "ast_hash": "904211fca7a38b5a79b1648017469a4a",
+    "mtime": 1794164609.3539562,
+    "seen": 1794164691.3838997,
+    "ast_hash": "4dda7be4052c130805e0751ab581db19",
     "semantic_hash": ""
   },
   "render.yaml": {
@@ -1479,9 +1479,9 @@
     "semantic_hash": "efa64494037957276d36994cacedfb26"
   },
   "scripts/build-ui-thumbnails.js": {
-    "mtime": 1794075844.2197714,
-    "seen": 1794145245.9029243,
-    "ast_hash": "f1cf7ab63a26112a377a666820d23088",
+    "mtime": 1794149691.208266,
+    "seen": 1794158959.467998,
+    "ast_hash": "3c7e86e5762ea668f731e4214affb602",
     "semantic_hash": ""
   },
   "scripts/check-syntax.js": {
@@ -1527,9 +1527,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794145173.875989,
-    "seen": 1794145245.9058142,
-    "ast_hash": "e457e1a63850dd65c6a022bf16e21bf5",
+    "mtime": 1794164609.703492,
+    "seen": 1794164691.4167023,
+    "ast_hash": "71e6b4450ddaba6ac547c585c0c7a2c6",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -4955,15 +4955,15 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1794144753.7377186,
-    "seen": 1794145246.1623785,
-    "ast_hash": "5a1da8d95e0e922ae2e9a968c26071bb",
+    "mtime": 1794160821.908412,
+    "seen": 1794162006.884625,
+    "ast_hash": "b2b1ac5e7c863aad8a96686c8f09d25f",
     "semantic_hash": ""
   },
   "PROJECT_MAP.md": {
-    "mtime": 1793910500.721673,
-    "seen": 1793912297.4187498,
-    "ast_hash": "4da1a1d48556d113a325cfe31b13c9d4",
+    "mtime": 1794164630.642292,
+    "seen": 1794164691.709933,
+    "ast_hash": "e515bc6ce5e5bd6e6b39a05796a33d80",
     "semantic_hash": ""
   },
   "PUBBLICAZIONE.md": {
@@ -5261,9 +5261,9 @@
     "semantic_hash": ""
   },
   "docs/planning/WORK_IN_PROGRESS.md": {
-    "mtime": 1793908997.5405169,
-    "seen": 1793912297.4187498,
-    "ast_hash": "a8efe02dbe3d5ff48f0aca3fd617e24e",
+    "mtime": 1794164630.971771,
+    "seen": 1794164691.7410238,
+    "ast_hash": "85cbd1ac498ddf93411c2d979d6418df",
     "semantic_hash": ""
   },
   "duelMonstersCore.html": {
@@ -5387,15 +5387,15 @@
     "semantic_hash": ""
   },
   "tornei.html": {
-    "mtime": 1794000170.982381,
-    "seen": 1794049281.0043015,
-    "ast_hash": "bab56ed5c3d4b72979797dac7bc1b9be",
+    "mtime": 1794160779.4479413,
+    "seen": 1794162006.9272757,
+    "ast_hash": "e5e96bba42f0c75eb6d7b473b2a92954",
     "semantic_hash": ""
   },
   "torneo-battle-city.html": {
-    "mtime": 1794138263.4998255,
-    "seen": 1794145246.1988297,
-    "ast_hash": "40a679b6d658a483f83642c9ef93a09b",
+    "mtime": 1794164584.208995,
+    "seen": 1794164691.7543364,
+    "ast_hash": "e0211e4772a18339a79f41d81ca62d79",
     "semantic_hash": ""
   },
   "torneo-kaiba.html": {
@@ -5405,9 +5405,9 @@
     "semantic_hash": ""
   },
   "torneo-regno-duellanti.html": {
-    "mtime": 1794138262.664198,
-    "seen": 1794145246.1988297,
-    "ast_hash": "b2087677fefef6556626ecb2ddb23cd7",
+    "mtime": 1794149715.1987295,
+    "seen": 1794158959.8178885,
+    "ast_hash": "be6b3feff3a932f9760af692acde5a6f",
     "semantic_hash": ""
   },
   "torre.html": {
@@ -23344,12 +23344,6 @@
     "ast_hash": "87a5b37e2dad2283a11309efe0749bc9",
     "semantic_hash": ""
   },
-  "images/maps/regno_dei_duellanti_castello_pegasus_torneo.jpg": {
-    "mtime": 1788706306.0,
-    "seen": 1793912297.4262056,
-    "ast_hash": "8d201aa2b8a1f87bf44c7bcbca657721",
-    "semantic_hash": ""
-  },
   "images/maps/storia_anime_battlecity1.jpg": {
     "mtime": 1790449143.861659,
     "seen": 1793912297.4262056,
@@ -23495,9 +23489,9 @@
     "semantic_hash": ""
   },
   "js/ui/emoji-tema.js": {
-    "mtime": 1794058416.1703951,
-    "seen": 1794145245.852079,
-    "ast_hash": "40601131d271106896e05674ba8374e3",
+    "mtime": 1794160635.0749433,
+    "seen": 1794162006.483815,
+    "ast_hash": "0b98fff4bcbce096c90d5bdc24affe11",
     "semantic_hash": ""
   },
   "js/ui/evidenzia-giocabili.js": {
@@ -24512,6 +24506,426 @@
     "mtime": 1794074141.070642,
     "seen": 1794145247.8943157,
     "ast_hash": "c1800ecfa33a01a77bedc0526607de36",
+    "semantic_hash": ""
+  },
+  "images/maps/regno_dei_duellanti_castello_pegasus_torneo_v2.jpg": {
+    "mtime": 1794147299.462123,
+    "seen": 1794147601.2596812,
+    "ast_hash": "4777d681164a0bd6c96a385f6c74d14b",
+    "semantic_hash": ""
+  },
+  "js/ui/ambiente-battle-city.js": {
+    "mtime": 1794161652.0399466,
+    "seen": 1794162006.470426,
+    "ast_hash": "c2f00081655bdeb632f3fd5501d819b1",
+    "semantic_hash": ""
+  },
+  "tests/specs/battle-city-citta-viva.spec.js": {
+    "mtime": 1794150536.5373006,
+    "seen": 1794158959.4999685,
+    "ast_hash": "2a9b80cf9e16bd82ef7e830e6061265e",
+    "semantic_hash": ""
+  },
+  "tests/specs/regno-mappa-viva.spec.js": {
+    "mtime": 1794149725.5294192,
+    "seen": 1794158959.6731389,
+    "ast_hash": "0cafaef09b1467434f7c58ebc0f5482a",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/albertoAngela.webp": {
+    "mtime": 1794149695.4499745,
+    "seen": 1794158961.5222645,
+    "ast_hash": "f124f279170524c6f47b0d4a7db98c94",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/alessandroBarbero.webp": {
+    "mtime": 1794149695.7722712,
+    "seen": 1794158961.5222645,
+    "ast_hash": "84898e4170462d42ec52ccd1237c8ce6",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/arkana.webp": {
+    "mtime": 1794149695.9994357,
+    "seen": 1794158961.5222645,
+    "ast_hash": "e12294b5c18337e7dd9c441730a85728",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/atem.webp": {
+    "mtime": 1794149696.2072136,
+    "seen": 1794158961.5222645,
+    "ast_hash": "117afebc7cda3f8b2e7f6b8c7a810985",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/banditKeith.webp": {
+    "mtime": 1794149696.488759,
+    "seen": 1794158961.5222645,
+    "ast_hash": "16e962d0f94c08ba0e938df2d10bfffd",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/bonz.webp": {
+    "mtime": 1794149696.6866834,
+    "seen": 1794158961.5222645,
+    "ast_hash": "655ed96c683a9c1721c5f49fbb04104b",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/crump.webp": {
+    "mtime": 1794149696.8664558,
+    "seen": 1794158961.5222645,
+    "ast_hash": "50cd0e031a61ee885a7376ec0f11cb34",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/darkNite.webp": {
+    "mtime": 1794149697.1242585,
+    "seen": 1794158961.5222645,
+    "ast_hash": "9fd28bf680ca0a1b3743133bf7a606f2",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/desertMage.webp": {
+    "mtime": 1794149697.3470178,
+    "seen": 1794158961.5222645,
+    "ast_hash": "1c008a3c97147ea2eda41fe9df1af357",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/dukeDevlin.webp": {
+    "mtime": 1794149697.574147,
+    "seen": 1794158961.5222645,
+    "ast_hash": "6ac4c889cebd73757c2deba338d8a943",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/espaRoba.webp": {
+    "mtime": 1794149697.7987058,
+    "seen": 1794158961.5222645,
+    "ast_hash": "9809f713d9b5bf7a2cd01978c8c93299",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/forestMage.webp": {
+    "mtime": 1794149698.0215538,
+    "seen": 1794158961.5222645,
+    "ast_hash": "0dbe6c11689e2bcd480482be0b36e515",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/gansley.webp": {
+    "mtime": 1794149698.221584,
+    "seen": 1794158961.5222645,
+    "ast_hash": "f5025d0f9f6994424565fcdc06771ec7",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/gozaburo.webp": {
+    "mtime": 1794149698.4495704,
+    "seen": 1794158961.5222645,
+    "ast_hash": "e5b8d4db37cc121dc3bcbce54313da97",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/heishin.webp": {
+    "mtime": 1794149698.7347777,
+    "seen": 1794158961.5222645,
+    "ast_hash": "442634a65e7a0aa475bb431750b153d7",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/highMageAnubisius.webp": {
+    "mtime": 1794149698.9377432,
+    "seen": 1794158961.5222645,
+    "ast_hash": "860d60f4871283e64308cf5cf795af35",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/highMageAtenza.webp": {
+    "mtime": 1794149699.1888206,
+    "seen": 1794158961.5222645,
+    "ast_hash": "30114f1e8dffaea1084afdbb86fd9b5a",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/highMageKepura.webp": {
+    "mtime": 1794149699.4001935,
+    "seen": 1794158961.5222645,
+    "ast_hash": "f69a1f9f2fc061f49e4e694174668c77",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/highMageMartis.webp": {
+    "mtime": 1794149699.6632695,
+    "seen": 1794158961.5222645,
+    "ast_hash": "5227b8bd5551176fac827772c508fd32",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/highMageSecmeton.webp": {
+    "mtime": 1794149699.9119036,
+    "seen": 1794158961.5222645,
+    "ast_hash": "8d8bfa85bcd59fd8828a5bcb4a28744a",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/ishizuIshtar.webp": {
+    "mtime": 1794149700.1147687,
+    "seen": 1794158961.5222645,
+    "ast_hash": "8d8cec23dcd56e3b1503d94bb4e6f430",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/joeyWheeler.webp": {
+    "mtime": 1794149700.3648274,
+    "seen": 1794158961.5222645,
+    "ast_hash": "3d22f8d91115647e9fd0552714e32fbd",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/johnson.webp": {
+    "mtime": 1794149700.54487,
+    "seen": 1794158961.5222645,
+    "ast_hash": "d27b1d84fabcb330d00a0d175cf4d40f",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/jono.webp": {
+    "mtime": 1794149700.735309,
+    "seen": 1794158961.5222645,
+    "ast_hash": "496715b25cf4f0e0d34b98076dd0e939",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/labyrinthMage.webp": {
+    "mtime": 1794149700.8988786,
+    "seen": 1794158961.5222645,
+    "ast_hash": "8829f975603b48ebe85610a774874ed0",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/lector.webp": {
+    "mtime": 1794149701.1140702,
+    "seen": 1794158961.5222645,
+    "ast_hash": "4ce6ecd57fea1022e6b91e0cf3b100c5",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/lumis.webp": {
+    "mtime": 1794149701.3389761,
+    "seen": 1794158961.5222645,
+    "ast_hash": "4a0173c5ba6c6ad7a9288d67a33d4a32",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/mageSoldier.webp": {
+    "mtime": 1794149701.5359373,
+    "seen": 1794158961.5222645,
+    "ast_hash": "82c3b207814770b7889c41ea5430cce7",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/maiValentine.webp": {
+    "mtime": 1794149701.808225,
+    "seen": 1794158961.5222645,
+    "ast_hash": "b38ad538d627f08ce5064c109b593efd",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/makoTsunami.webp": {
+    "mtime": 1794149702.0361688,
+    "seen": 1794158961.5222645,
+    "ast_hash": "6c1495af0f14c641104a6490911ba137",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/maximillionPegasus.webp": {
+    "mtime": 1794149702.277194,
+    "seen": 1794158961.5222645,
+    "ast_hash": "7059f600d27ed5b9746b204fbdd14c0c",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/meadowMage.webp": {
+    "mtime": 1794149702.488297,
+    "seen": 1794158961.5222645,
+    "ast_hash": "ad0ed0bd490084084f69093fd8205e4b",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/mountainMage.webp": {
+    "mtime": 1794149702.668102,
+    "seen": 1794158961.5222645,
+    "ast_hash": "165958b26d687022d4878c87f5878451",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/neku.webp": {
+    "mtime": 1794149702.8898983,
+    "seen": 1794158961.5222645,
+    "ast_hash": "eaa3d7452a734c7ad02372389dc5fa59",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/nesbitt.webp": {
+    "mtime": 1794149703.0304565,
+    "seen": 1794158961.5222645,
+    "ast_hash": "fffd70fd7a426f501a471634584edc82",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/nitemare.webp": {
+    "mtime": 1794149703.23449,
+    "seen": 1794158961.5222645,
+    "ast_hash": "2748f83a23ae29aeefecf01eeb5981e8",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/noah.webp": {
+    "mtime": 1794149703.4828215,
+    "seen": 1794158961.5222645,
+    "ast_hash": "dcbb838461f99f6336e0c81b11a9be71",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/oceanMage.webp": {
+    "mtime": 1794149703.6787498,
+    "seen": 1794158961.5222645,
+    "ast_hash": "b9eabc5785a9688612cda1bd38e172c0",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/odion.webp": {
+    "mtime": 1794149703.880449,
+    "seen": 1794158961.5222645,
+    "ast_hash": "e0ff1efd17493804396f8cd1cd88ac2c",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/panik.webp": {
+    "mtime": 1794149704.1101525,
+    "seen": 1794158961.5222645,
+    "ast_hash": "b9d0e03eb6059d78a128b4f842712dd0",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/paradoxBrothers.webp": {
+    "mtime": 1794149704.3344843,
+    "seen": 1794158961.5222645,
+    "ast_hash": "701b9a9535f01ac8ee43b2daa357ae33",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/priestSeto.webp": {
+    "mtime": 1794149704.7487092,
+    "seen": 1794158961.5222645,
+    "ast_hash": "beb6c6e9f5ea4de5c6a45f24261798fb",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/priestessIsis.webp": {
+    "mtime": 1794149704.4925427,
+    "seen": 1794158961.5222645,
+    "ast_hash": "56c55e26fe5d1d60185dd59d6fd13441",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/rexRaptor.webp": {
+    "mtime": 1794149704.9590518,
+    "seen": 1794158961.5222645,
+    "ast_hash": "40d205989d342ef8ee8e6099131325ec",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/rg.webp": {
+    "mtime": 1794149705.2163486,
+    "seen": 1794158961.5222645,
+    "ast_hash": "22c7c5d054554ef584c707a45413bd00",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/sebek.webp": {
+    "mtime": 1794149705.4489796,
+    "seen": 1794158961.5222645,
+    "ast_hash": "54e45314632f8dc75bbea3c6a0c23c64",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/seeker.webp": {
+    "mtime": 1794149705.6318865,
+    "seen": 1794158961.5222645,
+    "ast_hash": "19483351753dcbff26c2b1bd4643458d",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/serenityWheeler.webp": {
+    "mtime": 1794149705.7984273,
+    "seen": 1794158961.5222645,
+    "ast_hash": "23c62c08d3a29d05e046d41fc9f42fea",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/setoKaiba.webp": {
+    "mtime": 1794149706.023936,
+    "seen": 1794158961.5222645,
+    "ast_hash": "2c9a884bd94e1f7f6574d906e7e87799",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/shadi.webp": {
+    "mtime": 1794149706.1897507,
+    "seen": 1794158961.5222645,
+    "ast_hash": "fc4a80a266fc067cd808e38b3d609f85",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/simonMuran.webp": {
+    "mtime": 1794149706.3338406,
+    "seen": 1794158961.5222645,
+    "ast_hash": "a53795a609279bccf70280ffe8553b36",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/solomonMuto.webp": {
+    "mtime": 1794149706.5769863,
+    "seen": 1794158961.5222645,
+    "ast_hash": "2a17d732fe0ca50b8a62c050f3be3efe",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/strings.webp": {
+    "mtime": 1794149706.783638,
+    "seen": 1794158961.5222645,
+    "ast_hash": "3d5d5a52da891be27cbe1fa61cbfba0e",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/teaGardner.webp": {
+    "mtime": 1794149707.006418,
+    "seen": 1794158961.5222645,
+    "ast_hash": "31e6e7486ccd1e3d0c9742eb0a84a400",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/teana.webp": {
+    "mtime": 1794149707.184029,
+    "seen": 1794158961.5222645,
+    "ast_hash": "110d24522284a92babc92661b856b37f",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/tristanTaylor.webp": {
+    "mtime": 1794149707.3926697,
+    "seen": 1794158961.5222645,
+    "ast_hash": "66119e0173577acf5c59f22f0edbb8d5",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/umbra.webp": {
+    "mtime": 1794149707.5865402,
+    "seen": 1794158961.5222645,
+    "ast_hash": "c81dde344f870a13ff0cf7fa5eda9a0c",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/weevilUnderwood.webp": {
+    "mtime": 1794149707.8955648,
+    "seen": 1794158961.5222645,
+    "ast_hash": "a5cf946874934847d4612d3be5906b3b",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/yamiBakura.webp": {
+    "mtime": 1794149708.1448617,
+    "seen": 1794158961.5222645,
+    "ast_hash": "c1840360fb25fb217afbd43a495c6766",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/yamiMarik.webp": {
+    "mtime": 1794149708.4050148,
+    "seen": 1794158961.5222645,
+    "ast_hash": "ec2c9cea15f7cbd915782063bc6f903f",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/yamiYugi.webp": {
+    "mtime": 1794149708.6637695,
+    "seen": 1794158961.5222645,
+    "ast_hash": "32ff26826148020887bb381fabb6ee10",
+    "semantic_hash": ""
+  },
+  "images/characters/pedine-esclamazione/thumbs/yugiMuto.webp": {
+    "mtime": 1794149708.8600607,
+    "seen": 1794158961.5222645,
+    "ast_hash": "4098f32fd05d0b919b29c7f7937fdcc8",
+    "semantic_hash": ""
+  },
+  "images/maps/battle_city_kaibacorp.jpg": {
+    "mtime": 1794158239.0735993,
+    "seen": 1794158961.7240171,
+    "ast_hash": "81167d4038df04587c3d4a20d7b53064",
+    "semantic_hash": ""
+  },
+  "images/maps/battle_city_parco.jpg": {
+    "mtime": 1794158238.9037628,
+    "seen": 1794158961.7240171,
+    "ast_hash": "552f61ec18e23057c8615f60a660470e",
+    "semantic_hash": ""
+  },
+  "images/maps/battle_city_porto.jpg": {
+    "mtime": 1794158238.9869344,
+    "seen": 1794158961.7240171,
+    "ast_hash": "92708d8d183106b1b6f9ac0aa0990465",
+    "semantic_hash": ""
+  },
+  ".codex-attachments/39c90871-5523-41f1-a0a3-9457cf64f8c6/d6cd1886-e44a-4df9-9b03-ef6e054038e7/1000067993.jpg": {
+    "mtime": 1794164506.5296054,
+    "seen": 1794164691.7588103,
+    "ast_hash": "7bba664b31ec19db65fba45033894c45",
     "semantic_hash": ""
   },
   "package-lock.json": {

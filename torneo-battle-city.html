@@ -74,6 +74,24 @@
         background: #050912 center/cover fixed no-repeat;
         min-height: 100vh;
     }
+    .city-ambient {
+        position: fixed; inset: 0; z-index: 2;
+        pointer-events: none; overflow: hidden; transition: opacity 1.6s ease;
+    }
+    body[data-quartiere="parco"] .city-ambient { opacity: .42; }
+    body[data-quartiere="parco"][data-ora="tramonto"] .city-ambient { opacity: .74; }
+    body[data-quartiere="parco"][data-ora="notte"] .city-ambient { opacity: 1; }
+    .city-transition {
+        position: fixed; inset: 0; z-index: 6; display: grid; place-items: center;
+        pointer-events: none; opacity: 0; visibility: hidden;
+        color: #ffe6a6; font: 800 clamp(1rem, 3vw, 1.8rem) 'Arial', sans-serif;
+        letter-spacing: .16em; text-transform: uppercase; text-align: center;
+        text-shadow: 0 2px 18px #000, 0 0 28px rgba(78, 174, 255, .8);
+        background: radial-gradient(ellipse, rgba(6, 18, 36, .28), rgba(2, 5, 15, .86));
+        backdrop-filter: blur(3px);
+        transition: opacity .24s ease, visibility .24s;
+    }
+    .city-transition.active { opacity: 1; visibility: visible; }
     /* Lo sfondo cambia con la FASE del torneo (città → dirigibile → torre):
        impostato da applyPhaseBackdrop() come variabile, così basta una
        riga sola per ogni fase invece di tre classi con tre regole. Se
@@ -112,12 +130,11 @@
         margin: 0 auto;
     }
     .main.map-mode {
+        z-index: 4;
         width: 100%;
         max-width: none;
         min-height: 100dvh;
         margin: 0;
-        /* Poco spazio sotto: la legenda ancorata in fondo (vedi .legend)
-           deve stare a ridosso del bordo dello schermo, non a 24px. */
         padding: 74px clamp(10px, 2vw, 28px) 8px;
     }
     .main.map-mode #content {
@@ -272,8 +289,8 @@
        ===================================================================== */
     .sector-head {
         display: flex; align-items: center; justify-content: space-between;
-        align-self: center;
-        width: min(100%, 760px);
+        position: fixed !important; left: 16px; top: 62px;
+        width: min(360px, calc(100vw - 32px));
         gap: 10px; margin-bottom: 8px;
         padding: 8px 12px;
         border: 1px solid rgba(34, 211, 238, 0.18);
@@ -283,19 +300,29 @@
     }
     .sector-title { font-size: 0.95rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--bc-cyan-soft); }
     .sector-hint { color: var(--ink-dim); font-size: 0.75rem; text-align: right; }
+    .city-clock {
+        flex: 0 0 auto; padding: 5px 10px; border-radius: 999px;
+        color: #ffe3a1; background: rgba(7, 13, 25, .68);
+        font-size: .7rem; font-weight: 800; letter-spacing: .08em;
+        text-transform: uppercase; box-shadow: 0 0 14px rgba(255, 189, 91, .16);
+    }
+    body[data-ora="tramonto"] .city-clock { color: #ffc38f; box-shadow: 0 0 16px rgba(255, 113, 79, .25); }
+    body[data-ora="notte"] .city-clock { color: #a9d8ff; box-shadow: 0 0 17px rgba(83, 153, 255, .3); }
 
     .city-grid {
-        position: relative;
-        display: grid;
-        width: min(calc(100vw - clamp(20px, 4vw, 56px)), calc(100dvh - 265px));
-        min-width: min(92vw, 320px);
-        align-self: center;
-        gap: 0;
-        padding: clamp(4px, 1.2vmin, 12px);
+        position: fixed;
+        inset: 0;
+        display: block;
+        width: 100vw;
+        height: 100dvh;
+        padding: 0;
         border: 0;
         background: transparent;
         box-shadow: none;
+        z-index: 1;
+        pointer-events: none;
     }
+    .sector-head, .item-row, .sector-actions { z-index: 30; }
     /* Ogni casella è una PEDINA in piedi (js/ui/board-pieces.js, SVG con
        volume e ombra) appoggiata su un ALONE a terra (::before, un'ellisse
        schiacciata: è la prospettiva dall'alto dello sfondo). Erano emoji
@@ -307,9 +334,10 @@
        più spenta). Prima le caselle raggiungibili si distinguevano dalle
        altre solo per un anello ciano un filo più acceso. */
     .city-cell {
-        position: relative;
+        position: absolute;
         z-index: 1;
-        aspect-ratio: 1;
+        width: clamp(54px, 5.4vw, 100px);
+        height: clamp(60px, 8.2vh, 104px);
         appearance: none;
         font-family: inherit;
         border-radius: 50%;
@@ -323,8 +351,10 @@
         color: var(--ink-dim);
         cursor: default;
         overflow: visible;
-        left: var(--node-x, 0px);
-        top: var(--node-y, 0px);
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: auto;
         transition: transform .22s cubic-bezier(.2,.85,.2,1), filter .25s ease, opacity .25s ease;
     }
     .city-cell::before {
@@ -341,17 +371,22 @@
     }
     .city-cell > * { position: relative; z-index: 2; }
     .city-cell .bp-piece {
-        width: 76%;
+        width: 92%;
         height: auto;
         display: block;
         margin-top: -14%;
         filter: drop-shadow(0 2px 2px rgba(0,0,0,.45));
         transition: transform .25s cubic-bezier(.2,.85,.2,1);
     }
+    .city-cell.credits::before {
+        border-color: rgba(255, 210, 111, .42);
+        background: radial-gradient(ellipse, rgba(255,190,70,.44), rgba(255,166,40,.12) 58%, transparent 74%);
+        box-shadow: 0 0 16px rgba(255,190,70,.24);
+    }
     /* L'etichetta compare SOLO dove serve decidere: sulle caselle
        raggiungibili e sulla zona di decollo. Su tutte e 25 insieme era
        rumore, e con le pedine il tipo di casella si legge già a colpo
-       d'occhio (c'è anche la legenda). */
+       d'occhio, mentre le celle raggiungibili mostrano il proprio nome. */
     /* Targhetta appoggiata sul bordo basso del proprio alone, DENTRO la
        casella: sotto la casella cadeva nel varco da cui arriva il percorso
        della casella sopra il giocatore e lo copriva, e spostata sopra
@@ -375,7 +410,13 @@
         box-shadow: 0 2px 8px rgba(0,0,0,.5), 0 0 10px rgba(34,211,238,.5);
     }
     .city-cell.reachable > .cell-label,
-    .city-cell.heliport > .cell-label { display: block; }
+    .city-cell.heliport > .cell-label,
+    .city-cell.district-gate > .cell-label { display: block; }
+    .city-cell.district-gate > .cell-label {
+        color: #071c29;
+        background: linear-gradient(180deg, #e5fbff, #54dff3);
+        box-shadow: 0 2px 8px rgba(0,0,0,.55), 0 0 14px rgba(63,225,255,.72);
+    }
     .city-cell.heliport > .cell-label {
         color: #2a0631;
         background: linear-gradient(180deg, #fbe0ff, #e879f9);
@@ -391,6 +432,7 @@
     .city-cell.hidden-cell:not(.reachable) { opacity: .48; }
     .city-cell.resolved:not(.reachable) { opacity: .4; filter: saturate(.25) brightness(.8); }
     .city-cell.heliport:not(.reachable) { opacity: .92; filter: none; }
+    .city-cell.district-gate:not(.reachable) { opacity: .88; filter: none; }
 
     /* Solo le celle ortogonalmente adiacenti al segnalino sono raggiungibili. */
     .city-cell.reachable { cursor: pointer; z-index: 5; }
@@ -418,10 +460,10 @@
         animation: pieceFloat 1.8s ease-in-out infinite;
     }
     @media (hover: hover) and (pointer: fine) {
-        .city-cell.reachable:hover { transform: scale(1.1); z-index: 8; filter: brightness(1.15); }
+        .city-cell.reachable:hover { transform: translate(-50%, -50%) scale(1.1); z-index: 8; filter: brightness(1.15); }
     }
     .city-cell.reachable:focus-visible { outline: 2px solid #fff; outline-offset: -5px; }
-    .city-cell.reachable:active { transform: scale(0.94); }
+    .city-cell.reachable:active { transform: translate(-50%, -50%) scale(0.94); }
     @keyframes haloPulse {
         0%, 100% { box-shadow: 0 0 12px rgba(34,211,238,.45), inset 0 0 8px rgba(125,243,255,.35); }
         50%      { box-shadow: 0 0 26px rgba(34,211,238,.8), inset 0 0 12px rgba(125,243,255,.6); }
@@ -528,11 +570,17 @@
     body[data-ora="giorno"] #cityLuce { opacity: 0; }
     body[data-ora="tramonto"] #cityLuce { opacity: .55; background: linear-gradient(180deg, rgba(255,150,70,.7), rgba(180,60,90,.45) 70%, rgba(40,20,70,.4)); }
     body[data-ora="notte"] #cityLuce { opacity: .8; background: linear-gradient(180deg, rgba(20,30,90,.8), rgba(10,10,50,.75)); }
+    body.city-map-active[data-ora="giorno"]::before { background: linear-gradient(180deg, rgba(255,232,177,.02), rgba(28,61,99,.06)); }
+    body.city-map-active[data-ora="tramonto"]::before { background: linear-gradient(180deg, rgba(255,136,69,.22), rgba(90,36,57,.19)); }
+    body.city-map-active[data-ora="notte"]::before { background: linear-gradient(180deg, rgba(12,24,82,.42), rgba(5,9,34,.5)); }
     /* Finestre dei grattacieli che si accendono con il buio. */
     #cityAmbiente { position: fixed; inset: 0; z-index: 3; pointer-events: none; opacity: 0; transition: opacity 1.6s ease; overflow: hidden; }
     body[data-ora="tramonto"] #cityAmbiente { opacity: .55; }
     body[data-ora="notte"] #cityAmbiente { opacity: 1; }
     #cityAmbiente .city-finestra { position: absolute; width: 5px; height: 7px; border-radius: 1px; background: #ffd98a; box-shadow: 0 0 8px 2px rgba(255,200,110,.7); animation: cityFinestra 4.5s ease-in-out infinite; }
+    body[data-quartiere="parco"] #cityAmbiente .city-finestra { width: 3px; height: 3px; border-radius: 50%; background: #d7ff9c; box-shadow: 0 0 9px 3px rgba(183,255,133,.62); }
+    body[data-quartiere="porto"] #cityAmbiente .city-finestra { background: #91dcff; box-shadow: 0 0 8px 2px rgba(92,196,255,.65); }
+    body[data-quartiere="kaibacorp"] #cityAmbiente .city-finestra { background: #96caff; box-shadow: 0 0 10px 3px rgba(80,150,255,.72); }
     @keyframes cityFinestra { 0%,100% { opacity: .15; } 45%,60% { opacity: .95; } }
     /* Le Carte Locazione che volano dalla pedina al contatore (e quella persa che si stacca e cade). */
     .city-locazione-volo { position: fixed; left: 0; top: 0; z-index: 10090; width: 22px; height: 30px; pointer-events: none; border-radius: 4px;
@@ -554,6 +602,15 @@
         background: radial-gradient(ellipse, rgba(232,121,249,.42), rgba(77,18,86,.18) 58%, transparent 74%);
         animation: heliportPulse 1.4s ease-in-out infinite;
     }
+    .city-cell.district-gate::before {
+        border: 2px solid rgba(89,230,255,.9);
+        background: radial-gradient(ellipse, rgba(34,211,238,.36), rgba(3,44,64,.15) 60%, transparent 76%);
+        box-shadow: 0 0 20px rgba(34,211,238,.48), inset 0 0 10px rgba(125,243,255,.32);
+        animation: gatePulse 2s ease-in-out infinite;
+    }
+    .city-cell.district-gate.reachable { z-index: 6; }
+    .city-cell.district-gate.reachable .bp-piece { transform: translateY(-5px) scale(1.08); }
+    @keyframes gatePulse { 0%,100% { filter: brightness(.9); } 50% { filter: brightness(1.35); } }
     .city-cell.heliport .bp-rotor { transform-origin: 31.5px 15.6px; animation: rotorSpin .25s linear infinite; }
     @keyframes rotorSpin { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(.25); } }
     @keyframes heliportPulse {
@@ -568,44 +625,13 @@
     }
     .city-cell.just-revealed { animation: radarReveal 0.32s ease-out; }
 
-    /* ANCORATA IN BASSO (richiesta dell'utente): `margin-top: auto` la spinge
-       al fondo di #content, che occupa tutta l'altezza dello schermo, e
-       `sticky` la tiene a vista in fondo anche quando la mappa è più alta
-       dello schermo (telefoni piccoli). Prima restava appoggiata sotto la
-       griglia, a metà pagina. */
-    .legend {
-        align-self: center;
-        width: min(100%, 760px);
-        display: flex; flex-wrap: wrap; gap: 8px 14px;
-        margin-top: auto;
-        position: sticky;
-        bottom: calc(8px + env(safe-area-inset-bottom, 0px));
-        z-index: 4;
-        padding: 8px 12px;
-        border-radius: 12px;
-        border: 1px solid rgba(34, 211, 238, 0.14);
-        background: rgba(5, 12, 24, 0.52);
-        backdrop-filter: blur(6px);
-    }
-    .legend span { color: var(--ink-dim); font-size: 0.72rem; display: inline-flex; align-items: center; gap: 5px; }
-    .legend .bp-piece { width: 24px; height: 24px; flex: none; filter: drop-shadow(0 1px 1px rgba(0,0,0,.5)); }
-    /* Il campione "puoi andarci": lo stesso alone ciano delle caselle raggiungibili. */
-    .legend .legend-reach {
-        width: 22px; aspect-ratio: 2.6; flex: none;
-        border-radius: 50%;
-        border: 2px solid var(--bc-cyan);
-        background: radial-gradient(ellipse, rgba(34,211,238,.5), transparent 74%);
-        box-shadow: 0 0 8px rgba(34,211,238,.6);
-    }
-    .legend .legend-strong { color: #fff; font-weight: bold; }
-
     /* Oggetti del Duel Disk e missione in corso: una riga sotto
        l'intestazione del distretto. Pulsanti piccoli e leggibili: il Radar
        potenziato si usa toccandolo, lo Scudo è solo un indicatore (scatta da
        solo quando serve). */
     .item-row {
-        align-self: center;
-        width: min(100%, 760px);
+        position: fixed; left: 16px; top: 122px;
+        width: min(360px, calc(100vw - 32px));
         display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px;
         margin: 0 0 6px;
         min-height: 30px;
@@ -833,15 +859,20 @@
     @media (max-width: 480px) {
         .main { padding: 70px 10px 40px; }
         .city-grid { gap: 0; padding: 4px; }
-        .city-cell { border-radius: 7px; }
+        .city-cell { width: 54px; height: 60px; border-radius: 7px; }
         .city-cell > .cell-label { font-size: 0.44rem; padding: 1px 5px; }
-        .legend .bp-piece { width: 20px; height: 20px; }
+        .sector-head { left: 8px; top: 60px; width: min(310px, calc(100vw - 66px)); display: grid; grid-template-columns: 1fr auto; gap: 5px 8px; }
+        .item-row { left: 8px; top: 124px; width: min(310px, calc(100vw - 66px)); }
+        .sector-title { font-size: .78rem; letter-spacing: .08em; }
+        .sector-hint { grid-column: 1 / -1; text-align: left; font-size: .68rem; }
+        .city-clock { font-size: .62rem; padding: 4px 8px; }
         .panel { padding: 20px 16px; }
         .fighter { font-size: 0.7rem; }
         .fighter .avatar { width: 22px; height: 22px; }
     }
     @media (prefers-reduced-motion: reduce) {
         .city-cell, .city-cell::before, .city-player-token { transition-duration: .01ms; }
+        .city-transition { transition: none; }
         .city-cell.reachable::before, .city-player-token::before,
         .city-cell.reachable .bp-piece, .city-cell.heliport .bp-rotor,
         .city-routes .route-line { animation: none; }
@@ -852,6 +883,8 @@
 </style>
 </head>
 <body>
+    <div id="cityAmbient" class="city-ambient" aria-hidden="true"></div>
+    <div id="cityTransition" class="city-transition" aria-hidden="true"></div>
     <script src="js/ui/page-loader.js"></script>
     <div class="hud-top">
         <button type="button" class="hud-back-btn" id="hudBackBtn" aria-label="Torna ai Tornei">‹</button>
@@ -982,6 +1015,9 @@
 <script src="js/ui/icon-library.js"></script>
 <script src="js/ui/emoji-tema.js"></script>
 <script src="js/ui/board-pieces.js"></script>
+<script src="js/ui/video-quality.js"></script>
+<script src="js/ui/ambiente-webgl.js"></script>
+<script src="js/ui/ambiente-battle-city.js"></script>
 <script>
     Icons.hydrate();
     if (window.EmojiTema) EmojiTema.segui(document.getElementById('content'));
@@ -1007,6 +1043,8 @@
     // successiva va guadagnata. La regola "a zero sei fuori" resta: con
     // una sola in tasca, il primo duello perso puntandola è già decisivo.
     const STARTING_LOCATORS = 1;
+    /** I nodi esplorativi di tutta la città (non le carte vinte come posta) non superano questo totale. */
+    const MAX_CITY_LOCATOR_NODES = 2;
     /** Le 6 Carta Locazione che nell'anime aprono l'accesso alle finali sul dirigibile. */
     const FINALS_THRESHOLD = 6;
 
@@ -1048,6 +1086,100 @@
      * Quando arriveranno battleCity.jpg e torreKaiba.jpg non serve
      * toccare una riga di codice: basta metterli in images/fields/.
      */
+    const CITY_DISTRICTS = [
+        { id: 'centro', nome: 'Centro di Domino', image: 'images/fields/citta.jpg', ambient: 'battle-city-centro', aspect: 1, imageSize: [1254, 1254], composition: [
+            { kind: 'duelist', count: 7 }, { kind: 'hunter', count: 2 }, { kind: 'locator', count: 1 },
+            { kind: 'quest', count: 1 }, { kind: 'credits', count: 1 }, { kind: 'event', count: 4 }, { kind: 'shop', count: 2 }
+        ] },
+        { id: 'parco', nome: 'Parco cittadino', image: 'images/maps/battle_city_parco.jpg', ambient: 'battle-city-parco', aspect: 1.599, imageSize: [1586, 992], composition: [
+            { kind: 'duelist', count: 8 }, { kind: 'hunter', count: 1 }, { kind: 'credits', count: 1 },
+            { kind: 'event', count: 4 }, { kind: 'shop', count: 1 }
+        ] },
+        { id: 'porto', nome: 'Porto di Domino', image: 'images/maps/battle_city_porto.jpg', ambient: 'battle-city-porto', aspect: 1.599, imageSize: [1586, 992], composition: [
+            { kind: 'duelist', count: 7 }, { kind: 'hunter', count: 3 }, { kind: 'locator', count: 1 }, { kind: 'credits', count: 1 },
+            { kind: 'event', count: 4 }, { kind: 'shop', count: 1 }
+        ] },
+        { id: 'kaibacorp', nome: 'Distretto KaibaCorp', image: 'images/maps/battle_city_kaibacorp.jpg', ambient: 'battle-city-kaibacorp', aspect: 1.599, imageSize: [1586, 992], composition: [
+            { kind: 'duelist', count: 8 }, { kind: 'hunter', count: 2 }, { kind: 'credits', count: 1 },
+            { kind: 'event', count: 4 }, { kind: 'shop', count: 2 }
+        ] }
+    ];
+    // I varchi sono celle di strada sul bordo della mappa: il giocatore
+    // cambia quartiere raggiungendoli, senza un pulsante di avanzamento.
+    // Gli indici d'ingresso speculari rendono leggibile il percorso anche
+    // quando si torna sui propri passi.
+    const DISTRICT_GATES = {
+        centro: [{ index: 2, to: 'parco', entry: 22 }, { index: 22, to: 'porto', entry: 2 }],
+        parco: [{ index: 22, to: 'centro', entry: 2 }, { index: 14, to: 'kaibacorp', entry: 10 }],
+        porto: [{ index: 2, to: 'centro', entry: 22 }, { index: 14, to: 'kaibacorp', entry: 22 }],
+        kaibacorp: [{ index: 10, to: 'parco', entry: 14 }, { index: 22, to: 'porto', entry: 14 }]
+    };
+    // Punti normalizzati sul fondale reale, non su una scacchiera astratta:
+    // ogni percorso segue pavimentazioni, sentieri o banchine e gira attorno
+    // a edifici, aiuole e acqua. La variante verticale resta nella porzione
+    // effettivamente visibile quando il fondale largo viene ritagliato dal telefono.
+    const CITY_LAYOUTS = {
+        centro: {
+            wide: [[.31,.35],[.405,.35],[.5,.35],[.595,.35],[.69,.35], [.31,.425],[.405,.425],[.5,.425],[.595,.425],[.69,.425], [.31,.5],[.405,.5],[.5,.5],[.595,.5],[.69,.5], [.31,.575],[.405,.575],[.5,.575],[.595,.575],[.69,.575], [.31,.65],[.405,.65],[.5,.65],[.595,.65],[.69,.65]],
+            tall: [[.30,.30],[.40,.30],[.50,.30],[.60,.30],[.70,.30], [.30,.40],[.40,.40],[.50,.40],[.60,.40],[.70,.40], [.30,.50],[.40,.50],[.50,.50],[.60,.50],[.70,.50], [.30,.60],[.40,.60],[.50,.60],[.60,.60],[.70,.60], [.30,.70],[.40,.70],[.50,.70],[.60,.70],[.70,.70]],
+            edges: Array.from({ length: 25 }, (_, i) => i % 5 < 4 ? [i, i + 1] : null).filter(Boolean).concat(Array.from({ length: 20 }, (_, i) => [i, i + 5]))
+        },
+        parco: {
+            // La catena segue il bordo asfaltato del laghetto e poi i vialetti
+            // aperti attorno al prato fiorito: niente coordinate su acqua,
+            // chiome o aiuole; ogni tratto collega due punti sulla stessa via.
+            wide: [[.50,.15],[.50,.22],[.44,.20],[.38,.19],[.32,.19],[.26,.21],[.21,.25],[.17,.31],[.14,.38],[.13,.45],[.16,.51],[.20,.56],[.27,.58],[.33,.59],[.39,.61],[.45,.61],[.51,.60],[.57,.58],[.63,.56],[.69,.54],[.75,.51],[.81,.47],[.85,.41],[.83,.34],[.77,.29]],
+            // In verticale il crop centrale conserva la strada d'ingresso,
+            // la curva del ponte e il viale tra laghetto e giardino.
+            tall: [[.50,.22],[.50,.30],[.54,.34],[.58,.37],[.61,.41],[.62,.46],[.60,.51],[.58,.56],[.56,.61],[.54,.66],[.51,.70],[.48,.73],[.45,.74],[.42,.72],[.40,.68],[.39,.63],[.39,.58],[.40,.53],[.42,.49],[.44,.45],[.46,.41],[.48,.37],[.50,.43],[.49,.51],[.47,.59]],
+            edges: Array.from({ length: 24 }, (_, i) => [i, i + 1])
+        },
+        porto: {
+            wide: [[.20,.17],[.28,.17],[.36,.17],[.44,.17],[.52,.17],[.62,.17],[.72,.18],[.80,.22],[.86,.27],[.90,.32],[.92,.38],[.88,.43],[.82,.46],[.76,.48],[.70,.48],[.64,.46],[.58,.46],[.52,.46],[.46,.46],[.40,.46],[.34,.46],[.28,.46],[.22,.46],[.20,.40],[.20,.34]],
+            tall: [[.74,.22],[.78,.22],[.82,.22],[.86,.22],[.90,.22],[.94,.22],[.96,.26],[.96,.30],[.96,.34],[.94,.38],[.92,.42],[.90,.46],[.86,.48],[.82,.48],[.78,.48],[.74,.48],[.74,.44],[.74,.40],[.75,.36],[.76,.32],[.78,.28],[.82,.27],[.86,.28],[.90,.30],[.94,.32]],
+            edges: Array.from({ length: 24 }, (_, i) => [i, i + 1])
+        },
+        kaibacorp: {
+            wide: [[.42,.45],[.48,.44],[.54,.44],[.60,.45],[.65,.48],[.68,.53],[.69,.58],[.68,.63],[.64,.68],[.59,.71],[.53,.72],[.47,.72],[.41,.70],[.36,.67],[.32,.62],[.31,.57],[.32,.52],[.35,.48],[.38,.45],[.44,.48],[.50,.47],[.56,.48],[.62,.55],[.61,.61],[.57,.66]],
+            tall: [[.40,.45],[.45,.44],[.50,.44],[.55,.44],[.60,.45],[.62,.49],[.63,.54],[.63,.59],[.61,.64],[.58,.68],[.53,.70],[.48,.70],[.43,.69],[.39,.66],[.37,.62],[.37,.57],[.38,.52],[.40,.48],[.42,.46],[.45,.49],[.50,.48],[.55,.49],[.61,.54],[.60,.60],[.57,.64]],
+            edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[12,13],[13,14],[14,15],[15,16],[16,17],[17,18],[18,19],[19,20],[20,21],[6,22],[22,23],[23,24]]
+        }
+    };
+    const cityLinks = Object.fromEntries(Object.entries(CITY_LAYOUTS).map(([id, layout]) => {
+        const links = Array.from({ length: 25 }, () => []);
+        layout.edges.forEach(([a, b]) => {
+            if (a === b) return;
+            links[a].push(b);
+            links[b].push(a);
+        });
+        return [id, links];
+    }));
+    function alignamentoFondale(district) {
+        // I fondali sono composti attorno ai percorsi centrali. Sul Porto
+        // allineiamo il crop al margine destro per includere il viale urbano.
+        if (window.innerWidth < window.innerHeight && district.id === 'porto') return 1;
+        return .5;
+    }
+    /** Converte un punto dell'immagine sorgente nella stessa proiezione CSS `cover` usata dal fondale. */
+    function puntoMappaSchermo(district, point) {
+        const [iw, ih] = district.imageSize;
+        const scale = Math.max(window.innerWidth / iw, window.innerHeight / ih);
+        const width = iw * scale, height = ih * scale;
+        const alignX = alignamentoFondale(district);
+        const x0 = (window.innerWidth - width) * alignX;
+        const y0 = (window.innerHeight - height) * .5;
+        return { x: x0 + point[0] * width, y: y0 + point[1] * height };
+    }
+    function posizionaCaselleCitta(gridEl, district) {
+        if (!gridEl) return;
+        const layout = CITY_LAYOUTS[district.id];
+        const points = window.innerWidth < window.innerHeight ? layout.tall : layout.wide;
+        gridEl.querySelectorAll('.city-cell').forEach((el) => {
+            const p = puntoMappaSchermo(district, points[Number(el.dataset.index)]);
+            el.style.left = `${p.x}px`;
+            el.style.top = `${p.y}px`;
+        });
+    }
     const PHASE_IMAGES = {
         city:     { preferred: 'images/fields/citta.jpg', fallback: 'images/fields/citta.jpg' },
         airship:  { preferred: 'images/fields/dirigibileKaibaCorp.jpg', fallback: 'images/fields/dirigibileKaibaCorp.jpg' },
@@ -1205,6 +1337,13 @@
         "Un borseggiatore ti sfila una Carta Locazione dalla tasca e sparisce tra la folla.",
         "La polizia chiude l'isolato: per uscirne devi cedere una Carta Locazione a un Duellante compiacente."
     ];
+    const CREDITI_TROVATI = [20, 40];
+    const CREDITI_PERSI = [10, 25];
+    const EVENT_CREDIT_LOSS = [
+        "Un distributore KaibaCorp si inceppa e trattiene parte dei tuoi crediti.",
+        "Un borseggiatore ti sfila qualche credito prima di dileguarsi tra i vicoli.",
+        "Una riparazione d'emergenza al Duel Disk ti costa qualche credito."
+    ];
     const BLACKOUT_SCENES = [
         "Salta la corrente in tutto il distretto: il radar del tuo Duel Disk si spegne.",
         "Un disturbatore di frequenze della KaibaCorp manda in tilt il tuo radar.",
@@ -1262,7 +1401,12 @@
             difficulty: ['Facile', 'Medio', 'Difficile'].includes(difficulty) ? difficulty : 'Medio',
             locators: STARTING_LOCATORS,
             sector: 1,
+            cityTime: 0,
+            cityClockVersion: 2,
+            citySweep: 0,
             grid: null,
+            districtMaps: {},
+            visitedDistricts: ['centro'],
             pendingEncounter: null,
             bracket: null,
             towerStage: null,
@@ -1298,7 +1442,63 @@
         SaveManager.setTournamentState(TOURNAMENT_ID, state);
         return state;
     }
-    function loadState() { return migrateCanonicalAirship(SaveManager.getTournamentState(TOURNAMENT_ID)); }
+    function migrateCityState(state) {
+        if (!state || state.phase !== 'city') return state;
+        const rawSector = Number(state.sector) || 1;
+        state.sector = Math.max(1, Math.min(CITY_DISTRICTS.length, rawSector));
+        if (!Number.isFinite(state.cityTime)) {
+            // I salvataggi più vecchi deducevano la luce dalle Locazioni.
+            // Traduciamo direttamente ai nuovi intervalli più lunghi.
+            state.cityTime = (state.locators || 0) >= FINALS_THRESHOLD - 2 ? 84 : (state.locators || 0) >= 2 ? 42 : 0;
+            state.cityClockVersion = 2;
+        } else if (state.cityClockVersion !== 2) {
+            // Allunga una sola volta il tempo già trascorso senza riportare
+            // al giorno chi aveva già raggiunto il tramonto o la notte.
+            state.cityTime = Math.min(84, Math.round(state.cityTime * 3.5));
+            state.cityClockVersion = 2;
+        }
+        if (!Number.isFinite(state.citySweep)) state.citySweep = Math.max(0, rawSector - CITY_DISTRICTS.length);
+        const visitatiStorici = CITY_DISTRICTS.slice(0, Math.min(CITY_DISTRICTS.length, rawSector)).map((d) => d.id);
+        if (!Array.isArray(state.visitedDistricts)) state.visitedDistricts = visitatiStorici;
+        const distrettoCorrente = CITY_DISTRICTS[state.sector - 1];
+        if (distrettoCorrente && !state.visitedDistricts.includes(distrettoCorrente.id)) state.visitedDistricts.push(distrettoCorrente.id);
+        if (!state.districtMaps || typeof state.districtMaps !== 'object') state.districtMaps = {};
+        if (state.cityEconomyVersion !== 3) {
+            // In tutta la città esistono al massimo due nodi che danno una
+            // Carta Locazione: una al Centro e una al Porto. La missione
+            // resta, ma il suo premio diventa crediti. I nodi in eccesso di
+            // vecchi salvataggi si convertono in crediti se non riscossi.
+            const grids = new Map(Object.entries(state.districtMaps).filter(([, grid]) => grid));
+            if (state.grid) grids.set(state.grid.districtId || distrettoCorrente.id, state.grid);
+            let nodiLocazione = 0;
+            CITY_DISTRICTS.forEach((district) => {
+                const id = district.id;
+                const grid = grids.get(id);
+                if (!grid || !Array.isArray(grid.cells)) return;
+                grid.districtId = id;
+                grid.links = cityLinks[id] || grid.links;
+                grid.cells.forEach((cell) => {
+                    if (cell.kind !== 'locator') return;
+                    nodiLocazione++;
+                    if (nodiLocazione > MAX_CITY_LOCATOR_NODES) cell.kind = 'credits';
+                });
+                if (state.visitedDistricts.includes(id) && !grid.cells.some((cell) => cell.kind === 'credits')) {
+                    const i = grid.cells.findIndex((cell, index) => index !== grid.playerIndex && cell.kind === 'empty');
+                    if (i >= 0) grid.cells[i] = { kind: 'credits', revealed: false, resolved: false };
+                }
+            });
+            if (state.quest && Number(state.quest.sector) !== 1 && state.quest.districtId !== 'centro') {
+                logEvent(state, '🎯', 'La missione non riscossa viene rimossa con il nuovo bilanciamento dei quartieri.');
+                state.quest = null;
+            } else if (state.quest) {
+                state.quest.rewardCredits = state.quest.rewardCredits || QUEST_CREDIT_REWARD[0] + Math.floor(Math.random() * (QUEST_CREDIT_REWARD[1] - QUEST_CREDIT_REWARD[0] + 1));
+                delete state.quest.reward;
+            }
+            state.cityEconomyVersion = 3;
+        }
+        return state;
+    }
+    function loadState() { return migrateCityState(migrateCanonicalAirship(SaveManager.getTournamentState(TOURNAMENT_ID))); }
     function saveState(state) { SaveManager.setTournamentState(TOURNAMENT_ID, state); }
 
     /** Aggiunge una riga al diario (mai un push diretto su state.history: qui si normalizza anche il timestamp). */
@@ -1320,23 +1520,6 @@
      * permettere di AGGIRARE un Rare Hunter quando si è a corto di carte
      * — è proprio questa la scelta tattica che il Radar rende possibile.
      */
-    const SECTOR_COMPOSITION = [
-        { kind: 'duelist', count: 7 },
-        { kind: 'hunter', count: 2 },
-        // UNA sola Carta Locazione da raccogliere per distretto (erano 4:
-        // "troppe", segnalato dall'utente — con le 3 di partenza bastava un
-        // giro per arrivare a 6 senza duellare). Il grosso delle carte
-        // deve arrivare dai duelli puntati.
-        { kind: 'locator', count: 1 },
-        // Una Missione secondaria per distretto: una soffiata che indica un
-        // Duellante preciso da battere per un premio (vedi 'quest' in moveToCell).
-        { kind: 'quest', count: 1 },
-        { kind: 'event', count: 4 },
-        { kind: 'shop', count: 2 }
-        // il resto delle celle resta 'empty'
-    ];
-
-
     /**
      * `piece` è il tipo di pedina 3D di js/ui/board-pieces.js (null = la
      * casella ha solo l'alone a terra, nessuna pedina). Erano emoji: vedi
@@ -1347,31 +1530,48 @@
         duelist:  { piece: 'duelist',  label: 'Duellante' },
         hunter:   { piece: 'hunter',   label: 'Rare Hunter' },
         locator:  { piece: 'locator',  label: 'Locazione' },
+        credits:  { piece: 'credits',  label: 'Crediti' },
         event:    { piece: 'event',    label: 'Evento' },
         quest:    { piece: 'quest',    label: 'Missione' },
         shop:     { piece: 'shop',     label: 'Negozio' },
         heliport: { piece: 'heliport', label: 'Decollo' },
+        districtGate: { piece: 'districtGate', label: 'Cambio quartiere' },
         start:    { piece: null,       label: '' }
     };
 
-    function buildSector(state) {
+    function buildSector(state, districtId, startIndex) {
         const total = GRID_W * GRID_H;
+        const district = CITY_DISTRICTS.find((d) => d.id === districtId) || CITY_DISTRICTS[Math.max(0, Math.min(CITY_DISTRICTS.length - 1, state.sector - 1))];
         const kinds = new Array(total).fill('empty');
-        // Il giocatore parte sempre al centro: da lì il radar illumina
-        // subito quattro direzioni diverse, invece di spingerlo contro un
-        // bordo con metà delle scelte già tagliate fuori.
-        const startIndex = Math.floor(total / 2);
-        const freeSlots = shuffle(kinds.map((_, i) => i).filter((i) => i !== startIndex));
+        // La prima mappa parte al centro; un quartiere visitato per la prima
+        // volta accoglie invece il giocatore dal varco d'ingresso.
+        startIndex = Number.isInteger(startIndex) ? startIndex : Math.floor(total / 2);
+        const gates = DISTRICT_GATES[district.id] || [];
+        const gateIndices = new Set(gates.map((gate) => gate.index));
+        const freeSlots = shuffle(kinds.map((_, i) => i).filter((i) => i !== startIndex && !gateIndices.has(i)));
+        // Non dipendere solo dai numeri scritti nelle composition: un futuro
+        // nodo Locazione in un quarto aggiuntivo non deve superare il tetto
+        // globale, contando anche i distretti già generati e salvati.
+        const mappeEsistenti = new Set(Object.entries(state.districtMaps || {}).filter(([id, grid]) => id !== district.id && grid && Array.isArray(grid.cells)).map(([, grid]) => grid));
+        if (state.grid && state.grid.districtId !== district.id && Array.isArray(state.grid.cells)) mappeEsistenti.add(state.grid);
+        let nodiLocazione = Array.from(mappeEsistenti).reduce((totale, grid) => totale + grid.cells.filter((cell) => cell.kind === 'locator').length, 0);
         let cursor = 0;
-        SECTOR_COMPOSITION.forEach((entry) => {
+        district.composition.forEach((entry) => {
             for (let i = 0; i < entry.count && cursor < freeSlots.length; i++, cursor++) {
-                kinds[freeSlots[cursor]] = entry.kind;
+                let kind = entry.kind;
+                if (kind === 'locator') {
+                    if (nodiLocazione >= MAX_CITY_LOCATOR_NODES) kind = 'credits';
+                    else nodiLocazione++;
+                }
+                kinds[freeSlots[cursor]] = kind;
             }
         });
 
         const usedCharacters = new Set();
         const cells = kinds.map((kind, index) => {
             const cell = { kind: kind, revealed: false, resolved: false };
+            const gate = gates.find((g) => g.index === index);
+            if (gate) Object.assign(cell, { kind: 'districtGate', destinationId: gate.to, destinationIndex: gate.entry, revealed: true });
             if (kind === 'duelist') {
                 const pool = PRELIM_IDS.filter((id) => !usedCharacters.has(id));
                 const characterId = pickRandom(pool.length ? pool : PRELIM_IDS);
@@ -1382,8 +1582,31 @@
             return cell;
         });
 
-        state.grid = { w: GRID_W, h: GRID_H, cells: cells, playerIndex: startIndex };
+        state.grid = { w: GRID_W, h: GRID_H, cells: cells, playerIndex: startIndex, districtId: district.id };
+        state.grid.links = cityLinks[district.id];
         revealAround(state, startIndex);
+    }
+
+    /** Aggiunge i varchi ai salvataggi già avviati senza cancellare nodi o incontri esistenti. */
+    function ensureDistrictGates(grid, districtId) {
+        if (!grid || !Array.isArray(grid.cells)) return;
+        grid.districtId = districtId;
+        grid.links = cityLinks[districtId];
+        (DISTRICT_GATES[districtId] || []).forEach((gate) => {
+            if (grid.cells.some((cell) => cell.kind === 'districtGate' && cell.destinationId === gate.to)) return;
+            let index = gate.index;
+            if (index === grid.playerIndex) {
+                const edge = grid.cells.map((cell, i) => i).filter((i) => i !== grid.playerIndex && (i < grid.w || i >= grid.w * (grid.h - 1) || i % grid.w === 0 || i % grid.w === grid.w - 1));
+                index = edge.find((i) => grid.cells[i].kind === 'empty') ?? edge.find((i) => grid.cells[i].resolved) ?? index;
+            }
+            const occupant = grid.cells[index];
+            if (occupant && occupant.kind !== 'empty' && occupant.kind !== 'districtGate') {
+                const empty = grid.cells.findIndex((cell, i) => i !== grid.playerIndex && cell.kind === 'empty');
+                if (empty >= 0) grid.cells[empty] = occupant;
+                else return;
+            }
+            grid.cells[index] = { kind: 'districtGate', destinationId: gate.to, destinationIndex: gate.entry, revealed: true, resolved: false };
+        });
     }
 
     /** Una cella Rare Hunter è una pattuglia anonima: l'identità viene
@@ -1404,6 +1627,7 @@
 
     /** Indici ortogonalmente adiacenti a `index` (mai in diagonale: il movimento è a croce, come su una scacchiera di isolati). */
     function neighborsOf(grid, index) {
+        if (Array.isArray(grid.links)) return (grid.links[index] || []).filter((i) => Number.isInteger(i) && i >= 0 && i < grid.cells.length && i !== index);
         const x = index % grid.w;
         const y = Math.floor(index / grid.w);
         const out = [];
@@ -1455,8 +1679,10 @@
     };
     /** Per quante mosse il radar resta spento dopo un Blackout. */
     const BLACKOUT_MOVES = 3;
-    /** Premio della Missione secondaria, in Carta Locazione. */
-    const QUEST_REWARD = 2;
+    /** Premi piccoli e ripetibili per i nodi crediti e per la missione cittadina. */
+    const CREDIT_NODE_REWARD = [25, 50];
+    const QUEST_CREDIT_REWARD = [45, 80];
+    function randomCreditReward(range) { return range[0] + Math.floor(Math.random() * (range[1] - range[0] + 1)); }
 
     function ensureExtras(state) {
         if (!state.items || typeof state.items !== 'object') state.items = {};
@@ -1489,12 +1715,12 @@
     }
     /** Il radar è "cieco" mentre dura il Blackout: le celle non ancora attraversate mostrano solo l'Ignoto. */
     function cellVisible(state, cell) {
-        return !!cell.revealed && (!(state.blackout > 0) || !!cell.resolved);
+        return !!cell.revealed && (!(state.blackout > 0) || !!cell.resolved || cell.kind === 'districtGate');
     }
 
     /** Vero quando nel settore non resta più nulla da fare: tutte le celle con un contenuto sono state risolte. */
     function sectorExhausted(state) {
-        return state.grid.cells.every((c) => c.resolved || c.kind === 'empty' || c.kind === 'heliport');
+        return state.grid.cells.every((c) => c.resolved || c.kind === 'empty' || c.kind === 'heliport' || c.kind === 'districtGate');
     }
 
     /**
@@ -1504,7 +1730,8 @@
      * città (più carte = più margine per le puntate delle finali).
      */
     function ensureHeliport(state) {
-        if (!state.grid || state.locators < FINALS_THRESHOLD) return false;
+        const esplorati = Array.isArray(state.visitedDistricts) ? state.visitedDistricts : [];
+        if (!state.grid || state.sector !== CITY_DISTRICTS.length || CITY_DISTRICTS.some((d) => !esplorati.includes(d.id)) || state.locators < FINALS_THRESHOLD) return false;
         if (state.grid.cells.some((c) => c.kind === 'heliport')) return false;
         const candidates = state.grid.cells
             .map((c, i) => ({ c: c, i: i }))
@@ -1516,6 +1743,47 @@
         chosen.c.revealed = true;
         chosen.c.justRevealed = true;
         return true;
+    }
+
+    /** Attraversare un varco cambia quartiere e conserva la mappa lasciata. */
+    function travelToDistrict(state, gate, sourceIndex) {
+        const sourceId = state.grid.districtId || CITY_DISTRICTS[state.sector - 1].id;
+        const source = CITY_DISTRICTS.find((d) => d.id === sourceId);
+        const destination = CITY_DISTRICTS.find((d) => d.id === gate.destinationId);
+        if (!source || !destination) return;
+        const transition = document.getElementById('cityTransition');
+        if (transition.classList.contains('active')) return;
+        state.districtMaps[source.id] = state.grid;
+        const arrivo = Number.isInteger(gate.destinationIndex) ? gate.destinationIndex : Math.floor(GRID_W * GRID_H / 2);
+        let nextGrid = state.districtMaps[destination.id];
+        if (!nextGrid) {
+            buildSector(state, destination.id, arrivo);
+            nextGrid = state.grid;
+            state.districtMaps[destination.id] = nextGrid;
+        }
+        ensureDistrictGates(nextGrid, destination.id);
+        const backGate = nextGrid.cells.find((cell) => cell.kind === 'districtGate' && cell.destinationId === source.id);
+        if (backGate) backGate.destinationIndex = sourceIndex;
+        nextGrid.playerIndex = arrivo;
+        nextGrid.cells[arrivo].revealed = true;
+        revealAround({ grid: nextGrid }, arrivo);
+        state.grid = nextGrid;
+        state.sector = CITY_DISTRICTS.findIndex((d) => d.id === destination.id) + 1;
+        if (!state.visitedDistricts.includes(destination.id)) state.visitedDistricts.push(destination.id);
+        if (state.quest) logEvent(state, '🎯', 'Lasci il quartiere: la missione scade.');
+        state.quest = null;
+        state.blackout = 0;
+        transition.textContent = destination.nome;
+        transition.classList.add('active');
+        const completa = () => {
+            logEvent(state, '🚶', `Attraversi il varco e raggiungi ${destination.nome}.`);
+            saveState(state);
+            render();
+            if (riduciMovimento()) transition.classList.remove('active');
+            else window.setTimeout(() => transition.classList.remove('active'), 170);
+        };
+        if (riduciMovimento()) completa();
+        else window.setTimeout(completa, 230);
     }
 
     // ================================================================
@@ -1613,44 +1881,86 @@
         DuelMusic.setTrack(src, { restart: true });
     }
 
-    function applyPhaseBackdrop(phase) {
-        const src = resolvedPhaseImage[phase];
-        document.body.style.backgroundImage = src ? `url('${src}')` : '';
-        // La luce del distretto vale solo per la mappa della citta'.
-        if (phase !== 'city') delete document.body.dataset.ora;
+    function applyPhaseBackdrop(phase, state) {
+        const district = phase === 'city' && state
+            ? CITY_DISTRICTS[Math.max(0, Math.min(CITY_DISTRICTS.length - 1, (Number(state.sector) || 1) - 1))]
+            : null;
+        const src = district ? district.image : resolvedPhaseImage[phase];
+        // Un fondale dedicato per quartiere e un ripiego sotto: i PNG/JPG
+        // dei distretti si caricano solo quando servono, senza bloccare l'avvio.
+        document.body.style.backgroundImage = district
+            ? `url('${src}'), url('${PHASE_IMAGES.city.fallback}')`
+            : (src ? `url('${src}')` : '');
+        if (phase === 'city' && state) {
+            const align = Math.round(alignamentoFondale(district) * 100);
+            document.body.style.backgroundPosition = `${align}% center, 50% 50%`;
+            document.body.dataset.quartiere = district.id;
+            document.body.dataset.ora = oraDelDistretto(state);
+        } else {
+            document.body.style.backgroundPosition = 'center center';
+            delete document.body.dataset.quartiere;
+            delete document.body.dataset.ora;
+            if (window.AmbienteWebGL && document.body.dataset.ambienteCity) {
+                AmbienteWebGL.ferma();
+                delete document.body.dataset.ambienteCity;
+            }
+        }
     }
 
     // ---------------- Citta' viva: luce, Locazioni che volano, posa grido (solo presentazione) ----------------
     const PEDINA_GIOCATORE = 'images/characters/pedine/mirror.png';
 
-    /** La luce secondo i progressi: giorno all'inizio, tramonto a meta' strada, notte vicino al decollo. */
+    /** Ogni spostamento e duello fa avanzare il giorno; la notte e' un tetto, non un nuovo ciclo. */
     function oraDelDistretto(state) {
-        const l = state.locators || 0;
-        if (l >= FINALS_THRESHOLD - 2) return 'notte';
-        if (l >= 2) return 'tramonto';
+        const t = Math.max(0, Number(state.cityTime) || 0);
+        if (t >= 84) return 'notte';
+        if (t >= 42) return 'tramonto';
         return 'giorno';
+    }
+    function avanzaOrologioCitta(state, passi) {
+        state.cityTime = Math.min(84, Math.max(0, Number(state.cityTime) || 0) + passi);
     }
     /** Velo di luce e finestre dei grattacieli: creati UNA volta sul <body>, li mostra o nasconde il CSS su body[data-ora]. */
     function aggiornaLuceCitta(state) {
+        const district = CITY_DISTRICTS[Math.max(0, Math.min(CITY_DISTRICTS.length - 1, state.sector - 1))];
+        const ambEsistente = document.getElementById('cityAmbiente');
         if (!document.getElementById('cityLuce')) {
             const luce = document.createElement('div');
             luce.id = 'cityLuce';
             luce.setAttribute('aria-hidden', 'true');
             document.body.appendChild(luce);
+        }
+        if (!ambEsistente || ambEsistente.dataset.district !== district.id) {
+            if (ambEsistente) ambEsistente.remove();
             const amb = document.createElement('div');
             amb.id = 'cityAmbiente';
+            amb.dataset.district = district.id;
             amb.setAttribute('aria-hidden', 'true');
-            for (let i = 0; i < 26; i++) {
+            // Luci fisse sugli elementi riconoscibili di ogni fondale:
+            // finestre, lampioni, sentieri e banchine; mai una griglia casuale.
+            const puntiLuce = {
+                centro: [[.12,.28],[.22,.24],[.78,.23],[.88,.30],[.16,.67],[.84,.69],[.31,.17],[.69,.17]],
+                parco: [[.12,.08],[.26,.07],[.41,.08],[.58,.07],[.75,.08],[.91,.08],[.18,.37],[.40,.48],[.66,.45],[.85,.37],[.28,.70],[.62,.77],[.87,.67]],
+                porto: [[.12,.10],[.26,.10],[.41,.10],[.57,.10],[.74,.10],[.91,.13],[.18,.24],[.48,.24],[.78,.30],[.92,.42],[.22,.66],[.50,.71],[.80,.78]],
+                kaibacorp: [[.08,.04],[.18,.04],[.28,.04],[.39,.04],[.61,.04],[.72,.04],[.82,.04],[.92,.04],[.08,.23],[.12,.27],[.18,.22],[.22,.28],[.78,.23],[.84,.27],[.90,.22],[.94,.28],[.12,.84],[.22,.88],[.78,.88],[.88,.84]]
+            }[district.id] || [];
+            puntiLuce.forEach((point, i) => {
                 const f = document.createElement('span');
-                f.className = 'city-finestra';
-                f.style.left = (4 + Math.random() * 92).toFixed(1) + '%';
-                f.style.top = (6 + Math.random() * 70).toFixed(1) + '%';
-                f.style.animationDuration = (3.5 + Math.random() * 4).toFixed(1) + 's';
+                f.className = 'city-finestra' + (district.id === 'parco' ? ' luce-naturale' : district.id === 'porto' ? ' luce-porto' : '');
+                f.dataset.x = String(point[0]);
+                f.dataset.y = String(point[1]);
+                f.style.animationDuration = (3.5 + ((i * 7) % 4) * .7).toFixed(1) + 's';
                 f.style.animationDelay = (-Math.random() * 6).toFixed(1) + 's';
                 amb.appendChild(f);
-            }
+            });
             document.body.appendChild(amb);
         }
+        const amb = document.getElementById('cityAmbiente');
+        amb.querySelectorAll('.city-finestra').forEach((f) => {
+            const p = puntoMappaSchermo(district, [Number(f.dataset.x), Number(f.dataset.y)]);
+            f.style.left = `${p.x}px`;
+            f.style.top = `${p.y}px`;
+        });
         document.body.dataset.ora = oraDelDistretto(state);
     }
 
@@ -1763,12 +2073,14 @@
                 ${statsRow}
                 <ul class="rules-list">
                     <li><span>🃏</span><span>Parti con <strong>${STARTING_LOCATORS} Carta Locazione</strong>. Prima di ogni duello punti <strong>quante ne vuoi</strong>: chi vince si prende la posta.</span></li>
-                    <li><span>📡</span><span>Giri la città su una griglia di isolati. Il <strong>Radar del Duel Disk</strong> ti mostra sempre cosa c'è negli isolati confinanti: scegli tu dove passare.</span></li>
-                    <li><span>🛡️</span><span>Nei <strong>Negozi</strong> e in certi eventi trovi <strong>oggetti</strong>: il <strong>Radar potenziato</strong> (toccalo per rivelare tutto il distretto) e lo <strong>Scudo del Duel Disk</strong> (protegge da solo da un evento negativo o dimezza una posta persa). Attenzione ai <strong>Blackout</strong>: il radar si spegne per qualche mossa.</span></li>
-                    <li><span>🎯</span><span>Le <strong>Missioni</strong> ti indicano un Duellante preciso da battere nel distretto: premio extra di Carta Locazione.</span></li>
-                    <li><span>🚁</span><span>Con <strong>6 Carta Locazione</strong> si apre la zona di decollo: i <strong>quarti di finale sul dirigibile di Kaiba</strong>.</span></li>
+                    <li><span>📡</span><span>Esplora a piedi i quattro quartieri di Domino City e passa dall'uno all'altro dai varchi. Il <strong>Radar del Duel Disk</strong> rivela i punti vicini: scegli il percorso fra Duellanti, Rare Hunter ed eventi.</span></li>
+                    <li><span>🃏</span><span>Oltre alla carta iniziale, puoi trovare <strong>al massimo due Carte Locazione in tutta la città</strong>: una nel Centro e una al Porto. Nei quartieri trovi anche crediti; la missione del Centro assegna un premio in crediti.</span></li>
+                    <li><span>🛡️</span><span>Nei <strong>Negozi</strong> e in alcuni eventi trovi oggetti: il <strong>Radar potenziato</strong> rivela tutto il quartiere; lo <strong>Scudo del Duel Disk</strong> annulla un evento negativo o dimezza la posta persa. Attenzione ai <strong>Blackout</strong>: il radar si spegne per qualche mossa.</span></li>
+                    <li><span>💰</span><span>Gli eventi possono farti trovare o perdere <strong>crediti</strong>; alcuni mettono a rischio anche una Carta Locazione. Lo Scudo può proteggerti dalle perdite.</span></li>
+                    <li><span>🌇</span><span>Il tempo avanza mentre ti muovi e duelli: Domino passa dal <strong>giorno al tramonto e poi alla notte</strong>. La notte resta fino alla partenza del dirigibile.</span></li>
+                    <li><span>🚁</span><span>Attraversati tutti e quattro i quartieri, con <strong>6 Carte Locazione</strong> raggiungi i <strong>quarti di finale sul dirigibile di Kaiba</strong>.</span></li>
                     <li><span>🗼</span><span>Chi supera i quarti vola alla <strong>Torre Kaiba</strong> per semifinale e finale.</span></li>
-                    <li><span>💀</span><span>Se resti a <strong>zero Carta Locazione</strong> durante le preliminari, sei fuori dal torneo.</span></li>
+                    <li><span>💀</span><span>Se resti a <strong>zero Carte Locazione</strong> durante le preliminari, sei fuori dal torneo. Le pattuglie aggiunte dopo aver esplorato la città richiedono un duello.</span></li>
                 </ul>
                 <p style="color:var(--ink-dim); font-size:0.8rem; margin-bottom:10px;">Difficoltà di TUTTI i Duellanti del torneo:</p>
                 <div class="difficulty-row" id="difficultyRow">
@@ -2007,7 +2319,16 @@
     let cityLayoutTimer = null;
     window.addEventListener('resize', () => {
         clearTimeout(cityLayoutTimer);
-        cityLayoutTimer = setTimeout(() => layoutCityOverlay(document.getElementById('cityGrid')), 120);
+        cityLayoutTimer = setTimeout(() => {
+            const state = loadState();
+            if (state && state.phase === 'city') {
+                const district = CITY_DISTRICTS[Math.max(0, Math.min(CITY_DISTRICTS.length - 1, state.sector - 1))];
+                applyPhaseBackdrop('city', state);
+                posizionaCaselleCitta(document.getElementById('cityGrid'), district);
+                aggiornaLuceCitta(state);
+            }
+            layoutCityOverlay(document.getElementById('cityGrid'));
+        }, 120);
     });
 
     /**
@@ -2043,7 +2364,7 @@
             const chip = document.createElement('span');
             chip.className = 'item-btn item-passive item-chip-quest';
             chip.id = 'questChip';
-            chip.textContent = `🎯 Missione: batti ${nameOf(state.quest.characterId)} (+${state.quest.reward})`;
+            chip.textContent = `🎯 Missione: batti ${nameOf(state.quest.characterId)} (+${state.quest.rewardCredits} crediti)`;
             row.appendChild(chip);
         }
         if (state.blackout > 0) {
@@ -2082,13 +2403,28 @@
 
     function renderCity(state) {
         document.body.classList.add('city-map-active');
-        applyPhaseBackdrop('city');
+        applyPhaseBackdrop('city', state);
         applyPhaseTrack('city');
         mainEl.classList.add('map-mode');
         ensureHeliport(state);
 
+        const district = CITY_DISTRICTS[Math.max(0, Math.min(CITY_DISTRICTS.length - 1, state.sector - 1))];
+        if (window.AmbienteWebGL && document.body.dataset.ambienteCity !== district.id) {
+            AmbienteWebGL.ferma();
+            const overlay = document.getElementById('cityAmbient');
+            AmbienteWebGL.avviaMappa(district.ambient, overlay, {
+                larghezza: window.innerWidth, altezza: window.innerHeight,
+                ia: district.aspect, scala: Math.min(.48, 760 / Math.max(1, window.innerWidth))
+            });
+            // Anche un device con WebGL spento non deve riprovare a compilare
+            // shader a ogni render della stessa mappa.
+            document.body.dataset.ambienteCity = district.id;
+        }
+
         ensureExtras(state);
         const grid = state.grid;
+        grid.districtId = district.id;
+        ensureDistrictGates(grid, district.id);
         const reachable = new Set(neighborsOf(grid, grid.playerIndex));
         const exhausted = sectorExhausted(state);
 
@@ -2098,23 +2434,12 @@
         if (!sameSector) {
             content.innerHTML = `
                 <div class="sector-head">
-                    <div class="sector-title">Distretto ${state.sector}</div>
+                    <div class="sector-title">${district.nome}<small style="display:block;opacity:.62;font-size:.62rem;letter-spacing:.1em;margin-top:2px;">QUARTIERE ${state.sector} / ${CITY_DISTRICTS.length}${state.citySweep ? ` · PATTUGLIA ${state.citySweep + 1}` : ''}</small></div>
+                    <div class="city-clock" aria-live="polite">${oraDelDistretto(state) === 'giorno' ? 'Giorno' : oraDelDistretto(state) === 'tramonto' ? 'Tramonto' : 'Notte'}</div>
                     <div class="sector-hint" id="sectorHint"></div>
                 </div>
                 <div class="item-row" id="itemRow"></div>
                 <div class="city-grid" id="cityGrid" data-sector="${state.sector}" style="grid-template-columns: repeat(${grid.w}, 1fr);"></div>
-                <div class="legend">
-                    <span class="legend-strong"><i class="legend-reach"></i>Puoi andarci</span>
-                    <span>${BoardPieces.markup('player')}Sei qui</span>
-                    <span>${BoardPieces.markup('duelist')}Duellante</span>
-                    <span>${BoardPieces.markup('hunter', null, { image: 'images/characters/pedine/rareHunter.png' })}Rare Hunter</span>
-                    <span>${BoardPieces.markup('locator')}Carta Locazione</span>
-                    <span>${BoardPieces.markup('event')}Evento</span>
-                    <span>${BoardPieces.markup('quest')}Missione</span>
-                    <span>${BoardPieces.markup('shop')}Negozio</span>
-                    <span>${BoardPieces.markup('heliport')}Decollo</span>
-                    <span>${BoardPieces.markup('hidden')}Ignoto</span>
-                </div>
                 <div class="sector-actions" id="sectorActions"></div>`;
             gridEl = document.getElementById('cityGrid');
             // Strato dei percorsi: PRIMO figlio della griglia e z-index 0,
@@ -2146,9 +2471,14 @@
             gridEl.appendChild(token);
         }
 
-        document.getElementById('sectorHint').textContent = state.locators >= FINALS_THRESHOLD
-            ? 'Zona di decollo aperta 🚁'
-            : `Ti servono ancora ${FINALS_THRESHOLD - state.locators} Carta Locazione`;
+        const titoloDistretto = document.querySelector('.sector-title');
+        if (titoloDistretto) titoloDistretto.innerHTML = `${district.nome}<small style="display:block;opacity:.62;font-size:.62rem;letter-spacing:.1em;margin-top:2px;">QUARTIERE ${state.sector} / ${CITY_DISTRICTS.length}${state.citySweep ? ` · PATTUGLIA ${state.citySweep + 1}` : ''}</small>`;
+        const orologio = document.querySelector('.city-clock');
+        if (orologio) orologio.textContent = oraDelDistretto(state) === 'giorno' ? 'Giorno' : oraDelDistretto(state) === 'tramonto' ? 'Tramonto' : 'Notte';
+        const tuttiEsplorati = CITY_DISTRICTS.every((d) => state.visitedDistricts.includes(d.id));
+        document.getElementById('sectorHint').textContent = state.locators >= FINALS_THRESHOLD && tuttiEsplorati
+            ? 'Zona di decollo aperta: raggiungi il dirigibile nel distretto KaibaCorp'
+            : `Raggiungi i passaggi luminosi per spostarti tra i quartieri · ${Math.max(0, FINALS_THRESHOLD - state.locators)} Carte Locazione mancanti`;
         renderItemRow(state);
 
         grid.cells.forEach((cell, index) => {
@@ -2174,10 +2504,14 @@
                 el.classList.add('revealed');
                 if (cell.resolved) el.classList.add('resolved');
                 if (cell.kind === 'heliport') el.classList.add('heliport');
+                if (cell.kind === 'districtGate') el.classList.add('district-gate');
+                if (cell.kind === 'credits') el.classList.add('credits');
                 if (cell.justRevealed) el.classList.add('just-revealed');
                 const vuota = cell.kind === 'empty' || cell.kind === 'start';
                 piece = vuota ? null : (cell.resolved ? 'done' : meta.piece);
-                label = (vuota || cell.resolved) ? 'Libero' : meta.label;
+                label = cell.kind === 'districtGate'
+                    ? `Verso ${CITY_DISTRICTS.find((d) => d.id === cell.destinationId)?.nome || 'altro quartiere'}`
+                    : (vuota || cell.resolved) ? 'Libero' : meta.label;
                 // Il bersaglio della Missione: anello dorato ed etichetta dedicata.
                 if (state.quest && state.quest.cellIndex === index && !cell.resolved) {
                     el.classList.add('quest-target');
@@ -2201,11 +2535,13 @@
             // incontra davvero si decide solo entrandoci.
             const faccia = piece === 'hunter' ? 'images/characters/pedine/rareHunter.png'
                 : (nomeAvatar ? `images/characters/pedine/${nomeAvatar}.png` : null);
-            const signature = `${piece || '-'}|${label}|${faccia || ''}`;
-            if (el.dataset.content !== signature) {
+            const firma = `${piece || '-'}|${label}|${faccia || ''}`;
+            if (el.dataset.content !== firma) {
                 el.innerHTML = `${piece ? BoardPieces.markup(piece, null, faccia ? { image: faccia } : null) : ''}<div class="cell-label">${label}</div>`;
-                el.dataset.content = signature;
+                el.dataset.content = firma;
             }
+            el.title = `${label || 'Isolato'}${cell.kind === 'credits' && !cell.resolved ? ' — contiene crediti' : ''}`;
+            el.setAttribute('aria-label', `Casella ${index + 1}: ${label || 'Isolato'}`);
             // Il radar l'ha appena rivelata: un anello di luce che si allarga. Dopo il contenuto, che altrimenti lo cancellerebbe.
             if (veduta && cell.justRevealed) {
                 const ping = document.createElement('i');
@@ -2223,7 +2559,7 @@
                 el.onclick = () => moveToCell(index);
                 el.tabIndex = 0;
                 el.removeAttribute('aria-disabled');
-                el.setAttribute('aria-label', veduta ? (meta.label || 'Isolato libero') : 'Isolato sconosciuto');
+                el.setAttribute('aria-label', veduta ? (label || meta.label || 'Isolato libero') : 'Isolato sconosciuto');
             } else {
                 el.onclick = null;
                 el.tabIndex = -1;
@@ -2235,6 +2571,7 @@
         // esiste solo dopo il layout: da qui il requestAnimationFrame. Gli
         // indici servono anche al ridimensionamento, che ripete lo stesso
         // calcolo senza un render completo (vedi in fondo al file).
+        posizionaCaselleCitta(gridEl, district);
         gridEl.dataset.player = String(grid.playerIndex);
         gridEl.dataset.reachable = Array.from(reachable).join(',');
         gridEl.dataset.percorso = (grid.percorso || []).join(',');
@@ -2247,22 +2584,19 @@
 
         const actions = document.getElementById('sectorActions');
         actions.innerHTML = '';
-        if (exhausted) {
+        if (exhausted && state.sector === CITY_DISTRICTS.length && state.locators < FINALS_THRESHOLD) {
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'big-btn';
-            btn.textContent = '🚶 Prosegui verso il prossimo distretto';
+            btn.textContent = 'Chiama una nuova pattuglia';
             btn.onclick = () => {
                 const s = loadState();
-                ensureExtras(s);
-                // La missione vale per UN distretto; il Blackout non si porta
-                // dietro nel successivo.
-                if (s.quest) logEvent(s, '🎯', 'Lasci il distretto: la missione è scaduta.');
-                s.quest = null;
-                s.blackout = 0;
-                s.sector++;
-                buildSector(s);
-                logEvent(s, '🚶', `Ti sposti nel Distretto ${s.sector}.`);
+                const empty = s.grid.cells.map((cell, i) => ({ cell, i })).filter((v) => v.cell.kind === 'empty');
+                if (!empty.length) return;
+                const slot = pickRandom(empty);
+                s.citySweep = (s.citySweep || 0) + 1;
+                s.grid.cells[slot.i] = { kind: 'hunter', revealed: true, resolved: false };
+                logEvent(s, '🚔', `Una pattuglia di Rare Hunter blocca una strada di KaibaCorp${s.citySweep > 1 ? ` (${s.citySweep})` : ''}. Per tentare di recuperare Carte Locazione dovrai affrontarla.`);
                 saveState(s);
                 render();
             };
@@ -2279,6 +2613,7 @@
         const cell = grid.cells[index];
 
         ensureExtras(state);
+        avanzaOrologioCitta(state, 1);
         // Il cammino fatto nel distretto (per le orme): additivo, nasce vuoto in un distretto nuovo.
         if (!Array.isArray(grid.percorso)) grid.percorso = [grid.playerIndex];
         grid.percorso.push(index);
@@ -2292,6 +2627,11 @@
         if (state.blackout > 0) {
             state.blackout--;
             if (state.blackout === 0) logEvent(state, '📡', 'Il segnale del radar è tornato.');
+        }
+
+        if (cell.kind === 'districtGate') {
+            travelToDistrict(state, cell, index);
+            return;
         }
 
         if (cell.resolved || cell.kind === 'empty') {
@@ -2311,6 +2651,16 @@
                 if (window.NativeHaptics) NativeHaptics.success();
                 render();
                 showToast(`🃏 ${scene} <strong>+1 Carta Locazione</strong>.`);
+                return;
+            }
+            case 'credits': {
+                cell.resolved = true;
+                const crediti = randomCreditReward(CREDIT_NODE_REWARD);
+                SaveManager.addCurrency('credits', crediti);
+                logEvent(state, '💰', `Trovi ${crediti} crediti per strada.`);
+                saveState(state);
+                render();
+                showToast(`💰 Hai trovato <strong>${crediti} crediti</strong>.`);
                 return;
             }
             case 'shop': {
@@ -2348,33 +2698,36 @@
                     return;
                 }
                 const scelto = pickRandom(bersagli);
-                state.quest = { characterId: scelto.c.characterId, cellIndex: scelto.i, reward: QUEST_REWARD, sector: state.sector };
+                state.quest = { characterId: scelto.c.characterId, cellIndex: scelto.i, rewardCredits: randomCreditReward(QUEST_CREDIT_REWARD), sector: state.sector, districtId: grid.districtId };
                 // La soffiata dice anche DOVE: la casella del bersaglio si rivela.
                 if (!scelto.c.revealed) { scelto.c.revealed = true; scelto.c.justRevealed = true; }
                 const scenaMissione = pickRandom(QUEST_SCENES);
-                logEvent(state, '🎯', `${scenaMissione} Missione: sconfiggi ${nameOf(scelto.c.characterId)} (+${QUEST_REWARD}).`);
+                logEvent(state, '🎯', `${scenaMissione} Missione: sconfiggi ${nameOf(scelto.c.characterId)} (+${state.quest.rewardCredits} crediti).`);
                 saveState(state);
                 if (window.NativeHaptics) NativeHaptics.success();
                 render();
-                showToast(`🎯 ${scenaMissione} <strong>Missione: sconfiggi ${nameOf(scelto.c.characterId)}</strong> in questo distretto per <strong>+${QUEST_REWARD} Carta Locazione</strong>.`);
+                showToast(`🎯 ${scenaMissione} <strong>Missione: sconfiggi ${nameOf(scelto.c.characterId)}</strong> in questo distretto per <strong>+${state.quest.rewardCredits} crediti</strong>.`);
                 return;
             }
             case 'event': {
                 cell.resolved = true;
-                // Tre esiti: buono (40%), cattivo (35%: −1 Carta Locazione) e
-                // Blackout (25%: radar spento per qualche mossa, ma nessuna
-                // carta persa). Lo Scudo protegge dai due cattivi.
+                // Quattro esiti: un aiuto (34%), rischio di perdere una
+                // Locazione (28%), blackout (20%) o furto di crediti (18%).
+                // Lo Scudo può assorbire entrambe le perdite e il blackout.
                 const roll = Math.random();
-                if (roll < 0.4) {
+                if (roll < 0.34) {
                     const scene = pickRandom(EVENT_GOOD);
                     revealRandomCells(state, 2);
-                    // Ogni tanto il buon incontro lascia anche un oggetto.
-                    const oggetto = Math.random() < 0.3 ? giveRandomItem(state) : null;
-                    logEvent(state, '✨', scene + (oggetto ? ` Ottieni: ${ITEMS[oggetto].nome}.` : ''));
+                    const oggetto = Math.random() < 0.22 ? giveRandomItem(state) : null;
+                    const crediti = Math.random() < 0.34
+                        ? CREDITI_TROVATI[0] + Math.floor(Math.random() * (CREDITI_TROVATI[1] - CREDITI_TROVATI[0] + 1))
+                        : 0;
+                    if (crediti) SaveManager.addCurrency('credits', crediti);
+                    logEvent(state, '✨', scene + (oggetto ? ` Ottieni: ${ITEMS[oggetto].nome}.` : '') + (crediti ? ` Ritrovi ${crediti} crediti.` : ''));
                     saveState(state);
                     render();
-                    showToast(`✨ ${scene}${oggetto ? ` <strong>${ITEMS[oggetto].icon} ${ITEMS[oggetto].nome}</strong>.` : ''}`);
-                } else if (roll < 0.75) {
+                    showToast(`✨ ${scene}${oggetto ? ` <strong>${ITEMS[oggetto].icon} ${ITEMS[oggetto].nome}</strong>.` : ''}${crediti ? ` <strong>+${crediti} crediti.</strong>` : ''}`);
+                } else if (roll < 0.62) {
                     const scene = pickRandom(EVENT_BAD);
                     if (consumeShield(state)) {
                         logEvent(state, '🛡️', `${scene} Lo Scudo del Duel Disk assorbe il colpo.`);
@@ -2390,7 +2743,7 @@
                         render();
                         showToast(`⚠️ ${scene} <strong>−1 Carta Locazione</strong>.`);
                     }
-                } else {
+                } else if (roll < 0.82) {
                     const scene = pickRandom(BLACKOUT_SCENES);
                     if (consumeShield(state)) {
                         logEvent(state, '🛡️', `${scene} Lo Scudo del Duel Disk lo respinge.`);
@@ -2405,10 +2758,33 @@
                         render();
                         showToast(`📴 ${scene} <strong>Radar spento per ${BLACKOUT_MOVES} mosse</strong>: le celle nuove non si vedono finché non ci passi.`);
                     }
+                } else {
+                    const scena = pickRandom(EVENT_CREDIT_LOSS);
+                    if (consumeShield(state)) {
+                        logEvent(state, '🛡️', `${scena} Lo Scudo del Duel Disk protegge i tuoi crediti.`);
+                        saveState(state);
+                        render();
+                        showToast(`🛡️ ${scena} <strong>Lo Scudo ti protegge: nessun credito perso.</strong>`);
+                    } else {
+                        const persi = CREDITI_PERSI[0] + Math.floor(Math.random() * (CREDITI_PERSI[1] - CREDITI_PERSI[0] + 1));
+                        SaveManager.addCurrency('credits', -persi);
+                        logEvent(state, '💸', `${scena} Perdi ${persi} crediti.`);
+                        saveState(state);
+                        render();
+                        showToast(`💸 ${scena} <strong>−${persi} crediti.</strong>`);
+                    }
                 }
                 return;
             }
             case 'heliport': {
+                // Vecchi salvataggi potevano aprire il decollo appena raccolte
+                // sei Locazioni. Le quattro tappe urbane ora restano obbligatorie.
+                if (state.sector < CITY_DISTRICTS.length) {
+                    cell.kind = 'empty'; cell.resolved = true;
+                    saveState(state); render();
+                    showToast('🚁 Per raggiungere il dirigibile devi aver visitato tutti e quattro i quartieri.');
+                    return;
+                }
                 enterAirship(state);
                 return;
             }
@@ -2802,6 +3178,7 @@
         // Reazione IN CARATTERE dell'AVVERSARIO (mai del giocatore): se
         // il giocatore vince, il Duellante dice una battuta da 'lose'.
         const reaction = getQuote(enc.characterId, won ? 'lose' : 'win');
+        if (state.phase === 'city') avanzaOrologioCitta(state, 3);
         state.pendingEncounter = null;
 
         // --- Tabellone: vittoria-o-fuori, nessuna posta ---
@@ -2870,9 +3247,10 @@
             // nella sua casella, in questo distretto.
             let bonusMissione = '';
             if (state.quest && enc.cellIndex === state.quest.cellIndex && enc.characterId === state.quest.characterId) {
-                state.locators += state.quest.reward;
-                logEvent(state, '🎯', `Missione compiuta: ${name} battuto (+${state.quest.reward}).`);
-                bonusMissione = ` <strong>Missione compiuta: +${state.quest.reward} Carta Locazione!</strong>`;
+                const premioCrediti = Number(state.quest.rewardCredits) || randomCreditReward(QUEST_CREDIT_REWARD);
+                SaveManager.addCurrency('credits', premioCrediti);
+                logEvent(state, '🎯', `Missione compiuta: ${name} battuto (+${premioCrediti} crediti).`);
+                bonusMissione = ` <strong>Missione compiuta: +${premioCrediti} crediti!</strong>`;
                 state.quest = null;
             }
             if (window.NativeHaptics) NativeHaptics.success();

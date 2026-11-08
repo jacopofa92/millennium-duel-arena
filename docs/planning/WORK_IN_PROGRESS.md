@@ -2,6 +2,36 @@
 
 Elenco di lavori consigliati, in ordine di valore. Spuntare `[x]` quando fatto.
 
+## Battle City — spostamento fra quartieri (chiuso in 1.6.1)
+
+- [x] Collegati Centro, Parco, Porto e KaibaCorp con varchi ben visibili e
+      attraversabili in entrambe le direzioni. Il giocatore può cambiare zona
+      in qualsiasi momento; ogni mappa conserva incontri e ricompense già
+      risolti. Il dirigibile si apre nel distretto KaibaCorp dopo aver visitato
+      tutti i quartieri e raccolto le sei Carte Locazione.
+
+## Battle City — percorsi, economia e istruzioni (chiuso in 1.6.5)
+
+- [x] Posizionare i nodi sulle superfici percorribili dei quattro fondali,
+      con layout dedicato al ritaglio verticale e riallineamento su resize.
+- [x] Ridurre le Carte Locazione gratuite e le missioni; gli incontri di
+      recupero aggiunti dopo l'esplorazione richiedono un duello. Le carte già
+      raccolte non vengono toccate dalla migrazione dei salvataggi.
+- [x] Aggiungere eventi di crediti trovati/persi e far proteggere entrambe le
+      perdite dallo Scudo; rendere gli effetti ambientali specifici della scena
+      (luci localizzate sulle facciate KaibaCorp, niente scanner globale).
+- [x] Allineare le istruzioni iniziali alle fonti effettive delle Carte
+      Locazione e alla navigazione tra quartieri; descrivere gli eventi con
+      crediti e rimuovere il riferimento esplicito alla griglia.
+- [x] Limitare a due in tutta la città i nodi di esplorazione che assegnano
+      Carte Locazione (Centro e Porto); la missione del Centro paga crediti.
+      Aggiunto un nodo crediti per quartiere e una migrazione che converte le
+      fonti extra nei salvataggi in corso senza ritirare le carte già riscosse.
+- [x] Liberare i nodi coperti dalla testata, aumentarne l'area interattiva,
+      ridisegnare il percorso del Parco sui vialetti, aggiungere luce WebGL
+      calda ai lampioni e rallentare il passaggio giorno/tramonto/notte.
+      Rimossa la legenda fissa in fondo alla mappa Battle City.
+
 ## Distruzione di una carta: niente doppio viaggio visivo — chiuso in 1.5.62
 
 La distruzione dei mostri usa la disintegrazione sulla carta vera; è stato
@@ -503,6 +533,8 @@ Decisioni aperte dell'utente: i 6 PNG di avatar non usati; le regole del
       PNG col nome dell'avatar, nessun ripiego sulla pedina generica.
 - [x] Dirigibile riallineato all'anime: otto finalisti, soli quarti e
       migrazione non distruttiva dei precedenti salvataggi a 32 posti.
+- [x] Città del torneo divisa in quattro quartieri con fondali dedicati,
+      progressione giorno/tramonto/notte persistente e ambienti WebGL.
 ## Correzioni decisioni IA condivise (2026-10-18)
 
 - L'IA non attiva una seconda copia di `Mondo dei Toon` mentre ne controlla già una scoperta.
