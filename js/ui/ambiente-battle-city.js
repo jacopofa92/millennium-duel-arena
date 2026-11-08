@@ -35,9 +35,10 @@
         'battle-city-kaibacorp': {
             pal: [rgb(110, 185, 255), rgb(255, 204, 122), rgb(196, 223, 255)],
             fondo: [
-                ['scan', 'A', { a: .12 }],
-                ['raggi', 'C', { ox: .5, oy: .8, cnt: 4, a: .16, area: [.25, .25, .75, 1] }],
-                ['particelle', 'B', { vx: 0, vy: .02, dens: 6, dim: .04, lamp: 1, osc: .2, a: .38 }]
+                // Riflessi luminosi minuti sulla fascia degli edifici: le
+                // finestre vere sono pulsate in overlay, ancorate al fondale.
+                // Niente scanner o raggi estesi che lavano tutta la mappa.
+                ['particelle', 'B', { vx: .002, vy: -.003, dens: 2, dim: .016, lamp: .85, osc: .65, a: .12, area: [.08, .02, .92, .36] }]
             ],
             ev: { ogni: [8, 16], dur: 1.6 }
         }

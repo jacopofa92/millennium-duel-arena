@@ -309,17 +309,19 @@
     body[data-ora="notte"] .city-clock { color: #a9d8ff; box-shadow: 0 0 17px rgba(83, 153, 255, .3); }
 
     .city-grid {
-        position: relative;
-        display: grid;
-        width: min(calc(100vw - clamp(20px, 4vw, 56px)), calc(100dvh - 265px));
-        min-width: min(92vw, 320px);
-        align-self: center;
-        gap: 0;
-        padding: clamp(4px, 1.2vmin, 12px);
+        position: fixed;
+        inset: 0;
+        display: block;
+        width: 100vw;
+        height: 100dvh;
+        padding: 0;
         border: 0;
         background: transparent;
         box-shadow: none;
+        z-index: 1;
+        pointer-events: none;
     }
+    .sector-head, .item-row, .sector-actions { position: relative; z-index: 30; }
     /* Ogni casella è una PEDINA in piedi (js/ui/board-pieces.js, SVG con
        volume e ombra) appoggiata su un ALONE a terra (::before, un'ellisse
        schiacciata: è la prospettiva dall'alto dello sfondo). Erano emoji
@@ -331,9 +333,10 @@
        più spenta). Prima le caselle raggiungibili si distinguevano dalle
        altre solo per un anello ciano un filo più acceso. */
     .city-cell {
-        position: relative;
+        position: absolute;
         z-index: 1;
-        aspect-ratio: 1;
+        width: clamp(28px, 4.2vw, 78px);
+        height: clamp(30px, 6vh, 82px);
         appearance: none;
         font-family: inherit;
         border-radius: 50%;
@@ -347,8 +350,10 @@
         color: var(--ink-dim);
         cursor: default;
         overflow: visible;
-        left: var(--node-x, 0px);
-        top: var(--node-y, 0px);
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: auto;
         transition: transform .22s cubic-bezier(.2,.85,.2,1), filter .25s ease, opacity .25s ease;
     }
     .city-cell::before {
@@ -449,10 +454,10 @@
         animation: pieceFloat 1.8s ease-in-out infinite;
     }
     @media (hover: hover) and (pointer: fine) {
-        .city-cell.reachable:hover { transform: scale(1.1); z-index: 8; filter: brightness(1.15); }
+        .city-cell.reachable:hover { transform: translate(-50%, -50%) scale(1.1); z-index: 8; filter: brightness(1.15); }
     }
     .city-cell.reachable:focus-visible { outline: 2px solid #fff; outline-offset: -5px; }
-    .city-cell.reachable:active { transform: scale(0.94); }
+    .city-cell.reachable:active { transform: translate(-50%, -50%) scale(0.94); }
     @keyframes haloPulse {
         0%, 100% { box-shadow: 0 0 12px rgba(34,211,238,.45), inset 0 0 8px rgba(125,243,255,.35); }
         50%      { box-shadow: 0 0 26px rgba(34,211,238,.8), inset 0 0 12px rgba(125,243,255,.6); }
@@ -1105,21 +1110,21 @@
      * toccare una riga di codice: basta metterli in images/fields/.
      */
     const CITY_DISTRICTS = [
-        { id: 'centro', nome: 'Centro di Domino', image: 'images/fields/citta.jpg', ambient: 'battle-city-centro', aspect: 1, composition: [
+        { id: 'centro', nome: 'Centro di Domino', image: 'images/fields/citta.jpg', ambient: 'battle-city-centro', aspect: 1, imageSize: [1254, 1254], composition: [
             { kind: 'duelist', count: 7 }, { kind: 'hunter', count: 2 }, { kind: 'locator', count: 1 },
             { kind: 'quest', count: 1 }, { kind: 'event', count: 4 }, { kind: 'shop', count: 2 }
         ] },
-        { id: 'parco', nome: 'Parco cittadino', image: 'images/maps/battle_city_parco.jpg', ambient: 'battle-city-parco', aspect: 1.5, composition: [
-            { kind: 'duelist', count: 8 }, { kind: 'hunter', count: 1 }, { kind: 'locator', count: 1 },
-            { kind: 'quest', count: 1 }, { kind: 'event', count: 5 }, { kind: 'shop', count: 1 }
+        { id: 'parco', nome: 'Parco cittadino', image: 'images/maps/battle_city_parco.jpg', ambient: 'battle-city-parco', aspect: 1.599, imageSize: [1586, 992], composition: [
+            { kind: 'duelist', count: 8 }, { kind: 'hunter', count: 1 },
+            { kind: 'event', count: 4 }, { kind: 'shop', count: 1 }
         ] },
-        { id: 'porto', nome: 'Porto di Domino', image: 'images/maps/battle_city_porto.jpg', ambient: 'battle-city-porto', aspect: 1.5, composition: [
-            { kind: 'duelist', count: 7 }, { kind: 'hunter', count: 3 }, { kind: 'locator', count: 2 },
-            { kind: 'quest', count: 1 }, { kind: 'event', count: 5 }, { kind: 'shop', count: 1 }
+        { id: 'porto', nome: 'Porto di Domino', image: 'images/maps/battle_city_porto.jpg', ambient: 'battle-city-porto', aspect: 1.599, imageSize: [1586, 992], composition: [
+            { kind: 'duelist', count: 7 }, { kind: 'hunter', count: 3 }, { kind: 'locator', count: 1 },
+            { kind: 'event', count: 4 }, { kind: 'shop', count: 1 }
         ] },
-        { id: 'kaibacorp', nome: 'Distretto KaibaCorp', image: 'images/maps/battle_city_kaibacorp.jpg', ambient: 'battle-city-kaibacorp', aspect: 1.5, composition: [
-            { kind: 'duelist', count: 8 }, { kind: 'hunter', count: 2 }, { kind: 'locator', count: 1 },
-            { kind: 'quest', count: 1 }, { kind: 'event', count: 4 }, { kind: 'shop', count: 2 }
+        { id: 'kaibacorp', nome: 'Distretto KaibaCorp', image: 'images/maps/battle_city_kaibacorp.jpg', ambient: 'battle-city-kaibacorp', aspect: 1.599, imageSize: [1586, 992], composition: [
+            { kind: 'duelist', count: 8 }, { kind: 'hunter', count: 2 },
+            { kind: 'event', count: 4 }, { kind: 'shop', count: 2 }
         ] }
     ];
     // I varchi sono celle di strada sul bordo della mappa: il giocatore
@@ -1132,6 +1137,67 @@
         porto: [{ index: 2, to: 'centro', entry: 22 }, { index: 14, to: 'kaibacorp', entry: 22 }],
         kaibacorp: [{ index: 10, to: 'parco', entry: 14 }, { index: 22, to: 'porto', entry: 14 }]
     };
+    // Punti normalizzati sul fondale reale, non su una scacchiera astratta:
+    // ogni percorso segue pavimentazioni, sentieri o banchine e gira attorno
+    // a edifici, aiuole e acqua. La variante verticale resta nella porzione
+    // effettivamente visibile quando il fondale largo viene ritagliato dal telefono.
+    const CITY_LAYOUTS = {
+        centro: {
+            wide: [[.31,.28],[.405,.28],[.5,.28],[.595,.28],[.69,.28], [.31,.39],[.405,.39],[.5,.39],[.595,.39],[.69,.39], [.31,.5],[.405,.5],[.5,.5],[.595,.5],[.69,.5], [.31,.61],[.405,.61],[.5,.61],[.595,.61],[.69,.61], [.31,.72],[.405,.72],[.5,.72],[.595,.72],[.69,.72]],
+            tall: [[.30,.30],[.40,.30],[.50,.30],[.60,.30],[.70,.30], [.30,.40],[.40,.40],[.50,.40],[.60,.40],[.70,.40], [.30,.50],[.40,.50],[.50,.50],[.60,.50],[.70,.50], [.30,.60],[.40,.60],[.50,.60],[.60,.60],[.70,.60], [.30,.70],[.40,.70],[.50,.70],[.60,.70],[.70,.70]],
+            edges: Array.from({ length: 25 }, (_, i) => i % 5 < 4 ? [i, i + 1] : null).filter(Boolean).concat(Array.from({ length: 20 }, (_, i) => [i, i + 5]))
+        },
+        parco: {
+            wide: [[.50,.10],[.50,.18],[.50,.27],[.45,.35],[.37,.40],[.28,.42],[.20,.40],[.13,.36],[.34,.48],[.43,.48],[.52,.49],[.62,.48],[.72,.46],[.82,.43],[.89,.40],[.53,.60],[.54,.69],[.51,.77],[.57,.78],[.56,.74],[.57,.70],[.58,.65],[.78,.34],[.87,.34],[.93,.36]],
+            tall: [[.50,.09],[.50,.16],[.50,.24],[.47,.32],[.43,.38],[.40,.43],[.38,.48],[.39,.53],[.44,.57],[.50,.60],[.55,.64],[.57,.70],[.55,.77],[.51,.83],[.46,.85],[.40,.84],[.37,.81],[.37,.76],[.55,.78],[.56,.74],[.57,.70],[.58,.65],[.63,.38],[.63,.35],[.62,.32]],
+            edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[4,9],[9,10],[10,11],[11,12],[12,13],[13,14],[14,15],[15,16],[16,17],[13,18],[18,19],[19,20],[20,21],[3,22],[22,23],[23,24]]
+        },
+        porto: {
+            wide: [[.12,.17],[.22,.17],[.32,.17],[.42,.17],[.52,.17],[.62,.17],[.72,.18],[.80,.22],[.86,.27],[.90,.32],[.92,.38],[.88,.43],[.82,.46],[.76,.48],[.70,.48],[.64,.46],[.58,.46],[.52,.46],[.46,.46],[.40,.46],[.34,.46],[.28,.46],[.22,.46],[.16,.46],[.12,.40]],
+            tall: [[.74,.22],[.78,.22],[.82,.22],[.86,.22],[.90,.22],[.94,.22],[.96,.26],[.96,.30],[.96,.34],[.94,.38],[.92,.42],[.90,.46],[.86,.48],[.82,.48],[.78,.48],[.74,.48],[.74,.44],[.74,.40],[.75,.36],[.76,.32],[.78,.28],[.82,.27],[.86,.28],[.90,.30],[.94,.32]],
+            edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[12,13],[13,14],[14,15],[15,16],[16,17],[17,18],[18,19],[19,20],[20,21],[21,22],[22,23],[23,24]]
+        },
+        kaibacorp: {
+            wide: [[.42,.45],[.48,.44],[.54,.44],[.60,.45],[.65,.48],[.68,.53],[.69,.58],[.68,.63],[.64,.68],[.59,.71],[.53,.72],[.47,.72],[.41,.70],[.36,.67],[.32,.62],[.31,.57],[.32,.52],[.35,.48],[.38,.45],[.44,.48],[.50,.47],[.56,.48],[.62,.55],[.61,.61],[.57,.66]],
+            tall: [[.40,.45],[.45,.44],[.50,.44],[.55,.44],[.60,.45],[.62,.49],[.63,.54],[.63,.59],[.61,.64],[.58,.68],[.53,.70],[.48,.70],[.43,.69],[.39,.66],[.37,.62],[.37,.57],[.38,.52],[.40,.48],[.42,.46],[.45,.49],[.50,.48],[.55,.49],[.61,.54],[.60,.60],[.57,.64]],
+            edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[12,13],[13,14],[14,15],[15,16],[16,17],[17,18],[18,19],[19,20],[20,21],[6,22],[22,23],[23,24]]
+        }
+    };
+    const cityLinks = Object.fromEntries(Object.entries(CITY_LAYOUTS).map(([id, layout]) => {
+        const links = Array.from({ length: 25 }, () => []);
+        layout.edges.forEach(([a, b]) => {
+            if (a === b) return;
+            links[a].push(b);
+            links[b].push(a);
+        });
+        return [id, links];
+    }));
+    function alignamentoFondale(district) {
+        // I fondali sono composti attorno ai percorsi centrali. Sul Porto
+        // allineiamo il crop al margine destro per includere il viale urbano.
+        if (window.innerWidth < window.innerHeight && district.id === 'porto') return 1;
+        return .5;
+    }
+    /** Converte un punto dell'immagine sorgente nella stessa proiezione CSS `cover` usata dal fondale. */
+    function puntoMappaSchermo(district, point) {
+        const [iw, ih] = district.imageSize;
+        const scale = Math.max(window.innerWidth / iw, window.innerHeight / ih);
+        const width = iw * scale, height = ih * scale;
+        const alignX = alignamentoFondale(district);
+        const x0 = (window.innerWidth - width) * alignX;
+        const y0 = (window.innerHeight - height) * .5;
+        return { x: x0 + point[0] * width, y: y0 + point[1] * height };
+    }
+    function posizionaCaselleCitta(gridEl, district) {
+        if (!gridEl) return;
+        const layout = CITY_LAYOUTS[district.id];
+        const points = window.innerWidth < window.innerHeight ? layout.tall : layout.wide;
+        gridEl.querySelectorAll('.city-cell').forEach((el) => {
+            const p = puntoMappaSchermo(district, points[Number(el.dataset.index)]);
+            el.style.left = `${p.x}px`;
+            el.style.top = `${p.y}px`;
+        });
+    }
     const PHASE_IMAGES = {
         city:     { preferred: 'images/fields/citta.jpg', fallback: 'images/fields/citta.jpg' },
         airship:  { preferred: 'images/fields/dirigibileKaibaCorp.jpg', fallback: 'images/fields/dirigibileKaibaCorp.jpg' },
@@ -1289,6 +1355,13 @@
         "Un borseggiatore ti sfila una Carta Locazione dalla tasca e sparisce tra la folla.",
         "La polizia chiude l'isolato: per uscirne devi cedere una Carta Locazione a un Duellante compiacente."
     ];
+    const CREDITI_TROVATI = [20, 40];
+    const CREDITI_PERSI = [10, 25];
+    const EVENT_CREDIT_LOSS = [
+        "Un distributore KaibaCorp si inceppa e trattiene parte dei tuoi crediti.",
+        "Un borseggiatore ti sfila qualche credito prima di dileguarsi tra i vicoli.",
+        "Una riparazione d'emergenza al Duel Disk ti costa qualche credito."
+    ];
     const BLACKOUT_SCENES = [
         "Salta la corrente in tutto il distretto: il radar del tuo Duel Disk si spegne.",
         "Un disturbatore di frequenze della KaibaCorp manda in tilt il tuo radar.",
@@ -1401,6 +1474,29 @@
         const distrettoCorrente = CITY_DISTRICTS[state.sector - 1];
         if (distrettoCorrente && !state.visitedDistricts.includes(distrettoCorrente.id)) state.visitedDistricts.push(distrettoCorrente.id);
         if (!state.districtMaps || typeof state.districtMaps !== 'object') state.districtMaps = {};
+        if (state.cityEconomyVersion !== 2) {
+            // Mantieni le Locazioni gia' raccolte; rimuovi solo quelle ancora
+            // disponibili oltre il nuovo limite per quartiere, anche nei
+            // salvataggi con piu' mappe gia' esplorate.
+            const grids = new Map(Object.entries(state.districtMaps).filter(([, grid]) => grid));
+            if (state.grid) grids.set(state.grid.districtId || distrettoCorrente.id, state.grid);
+            const limitiLocazioni = { centro: 1, parco: 0, porto: 1, kaibacorp: 0 };
+            grids.forEach((grid, id) => {
+                if (!Array.isArray(grid.cells)) return;
+                grid.districtId = id;
+                grid.links = cityLinks[id] || grid.links;
+                const disponibili = grid.cells.filter((cell) => cell.kind === 'locator' && !cell.resolved);
+                disponibili.slice(limitiLocazioni[id] || 0).forEach((cell) => { cell.kind = 'event'; });
+                if (id !== 'centro') grid.cells.forEach((cell) => {
+                    if (cell.kind === 'quest' && !cell.resolved) cell.kind = 'event';
+                });
+            });
+            if (state.quest && Number(state.quest.sector) !== 1 && state.quest.districtId !== 'centro') {
+                logEvent(state, '🎯', 'La missione non riscossa viene rimossa con il nuovo bilanciamento dei quartieri.');
+                state.quest = null;
+            } else if (state.quest) state.quest.reward = QUEST_REWARD;
+            state.cityEconomyVersion = 2;
+        }
         return state;
     }
     function loadState() { return migrateCityState(migrateCanonicalAirship(SaveManager.getTournamentState(TOURNAMENT_ID))); }
@@ -1476,6 +1572,7 @@
         });
 
         state.grid = { w: GRID_W, h: GRID_H, cells: cells, playerIndex: startIndex, districtId: district.id };
+        state.grid.links = cityLinks[district.id];
         revealAround(state, startIndex);
     }
 
@@ -1483,6 +1580,7 @@
     function ensureDistrictGates(grid, districtId) {
         if (!grid || !Array.isArray(grid.cells)) return;
         grid.districtId = districtId;
+        grid.links = cityLinks[districtId];
         (DISTRICT_GATES[districtId] || []).forEach((gate) => {
             if (grid.cells.some((cell) => cell.kind === 'districtGate' && cell.destinationId === gate.to)) return;
             let index = gate.index;
@@ -1518,6 +1616,7 @@
 
     /** Indici ortogonalmente adiacenti a `index` (mai in diagonale: il movimento è a croce, come su una scacchiera di isolati). */
     function neighborsOf(grid, index) {
+        if (Array.isArray(grid.links)) return (grid.links[index] || []).filter((i) => Number.isInteger(i) && i >= 0 && i < grid.cells.length && i !== index);
         const x = index % grid.w;
         const y = Math.floor(index / grid.w);
         const out = [];
@@ -1570,7 +1669,7 @@
     /** Per quante mosse il radar resta spento dopo un Blackout. */
     const BLACKOUT_MOVES = 3;
     /** Premio della Missione secondaria, in Carta Locazione. */
-    const QUEST_REWARD = 2;
+    const QUEST_REWARD = 1;
 
     function ensureExtras(state) {
         if (!state.items || typeof state.items !== 'object') state.items = {};
@@ -1780,9 +1879,12 @@
             ? `url('${src}'), url('${PHASE_IMAGES.city.fallback}')`
             : (src ? `url('${src}')` : '');
         if (phase === 'city' && state) {
+            const align = Math.round(alignamentoFondale(district) * 100);
+            document.body.style.backgroundPosition = `${align}% center, 50% 50%`;
             document.body.dataset.quartiere = district.id;
             document.body.dataset.ora = oraDelDistretto(state);
         } else {
+            document.body.style.backgroundPosition = 'center center';
             delete document.body.dataset.quartiere;
             delete document.body.dataset.ora;
             if (window.AmbienteWebGL && document.body.dataset.ambienteCity) {
@@ -1807,25 +1909,45 @@
     }
     /** Velo di luce e finestre dei grattacieli: creati UNA volta sul <body>, li mostra o nasconde il CSS su body[data-ora]. */
     function aggiornaLuceCitta(state) {
+        const district = CITY_DISTRICTS[Math.max(0, Math.min(CITY_DISTRICTS.length - 1, state.sector - 1))];
+        const ambEsistente = document.getElementById('cityAmbiente');
         if (!document.getElementById('cityLuce')) {
             const luce = document.createElement('div');
             luce.id = 'cityLuce';
             luce.setAttribute('aria-hidden', 'true');
             document.body.appendChild(luce);
+        }
+        if (!ambEsistente || ambEsistente.dataset.district !== district.id) {
+            if (ambEsistente) ambEsistente.remove();
             const amb = document.createElement('div');
             amb.id = 'cityAmbiente';
+            amb.dataset.district = district.id;
             amb.setAttribute('aria-hidden', 'true');
-            for (let i = 0; i < 26; i++) {
+            // Luci fisse sugli elementi riconoscibili di ogni fondale:
+            // finestre, lampioni, sentieri e banchine; mai una griglia casuale.
+            const puntiLuce = {
+                centro: [[.12,.28],[.22,.24],[.78,.23],[.88,.30],[.16,.67],[.84,.69],[.31,.17],[.69,.17]],
+                parco: [[.12,.08],[.26,.07],[.41,.08],[.58,.07],[.75,.08],[.91,.08],[.18,.37],[.40,.48],[.66,.45],[.85,.37],[.28,.70],[.62,.77],[.87,.67]],
+                porto: [[.12,.10],[.26,.10],[.41,.10],[.57,.10],[.74,.10],[.91,.13],[.18,.24],[.48,.24],[.78,.30],[.92,.42],[.22,.66],[.50,.71],[.80,.78]],
+                kaibacorp: [[.08,.04],[.18,.04],[.28,.04],[.39,.04],[.61,.04],[.72,.04],[.82,.04],[.92,.04],[.08,.23],[.12,.27],[.18,.22],[.22,.28],[.78,.23],[.84,.27],[.90,.22],[.94,.28],[.12,.84],[.22,.88],[.78,.88],[.88,.84]]
+            }[district.id] || [];
+            puntiLuce.forEach((point, i) => {
                 const f = document.createElement('span');
-                f.className = 'city-finestra';
-                f.style.left = (4 + Math.random() * 92).toFixed(1) + '%';
-                f.style.top = (6 + Math.random() * 70).toFixed(1) + '%';
-                f.style.animationDuration = (3.5 + Math.random() * 4).toFixed(1) + 's';
+                f.className = 'city-finestra' + (district.id === 'parco' ? ' luce-naturale' : district.id === 'porto' ? ' luce-porto' : '');
+                f.dataset.x = String(point[0]);
+                f.dataset.y = String(point[1]);
+                f.style.animationDuration = (3.5 + ((i * 7) % 4) * .7).toFixed(1) + 's';
                 f.style.animationDelay = (-Math.random() * 6).toFixed(1) + 's';
                 amb.appendChild(f);
-            }
+            });
             document.body.appendChild(amb);
         }
+        const amb = document.getElementById('cityAmbiente');
+        amb.querySelectorAll('.city-finestra').forEach((f) => {
+            const p = puntoMappaSchermo(district, [Number(f.dataset.x), Number(f.dataset.y)]);
+            f.style.left = `${p.x}px`;
+            f.style.top = `${p.y}px`;
+        });
         document.body.dataset.ora = oraDelDistretto(state);
     }
 
@@ -2183,7 +2305,16 @@
     let cityLayoutTimer = null;
     window.addEventListener('resize', () => {
         clearTimeout(cityLayoutTimer);
-        cityLayoutTimer = setTimeout(() => layoutCityOverlay(document.getElementById('cityGrid')), 120);
+        cityLayoutTimer = setTimeout(() => {
+            const state = loadState();
+            if (state && state.phase === 'city') {
+                const district = CITY_DISTRICTS[Math.max(0, Math.min(CITY_DISTRICTS.length - 1, state.sector - 1))];
+                applyPhaseBackdrop('city', state);
+                posizionaCaselleCitta(document.getElementById('cityGrid'), district);
+                aggiornaLuceCitta(state);
+            }
+            layoutCityOverlay(document.getElementById('cityGrid'));
+        }, 120);
     });
 
     /**
@@ -2436,6 +2567,7 @@
         // esiste solo dopo il layout: da qui il requestAnimationFrame. Gli
         // indici servono anche al ridimensionamento, che ripete lo stesso
         // calcolo senza un render completo (vedi in fondo al file).
+        posizionaCaselleCitta(gridEl, district);
         gridEl.dataset.player = String(grid.playerIndex);
         gridEl.dataset.reachable = Array.from(reachable).join(',');
         gridEl.dataset.percorso = (grid.percorso || []).join(',');
@@ -2459,8 +2591,8 @@
                 if (!empty.length) return;
                 const slot = pickRandom(empty);
                 s.citySweep = (s.citySweep || 0) + 1;
-                s.grid.cells[slot.i] = { kind: 'locator', revealed: true, resolved: false };
-                logEvent(s, '🚔', `Una nuova pattuglia attraversa il distretto KaibaCorp${s.citySweep > 1 ? ` (${s.citySweep})` : ''}.`);
+                s.grid.cells[slot.i] = { kind: 'hunter', revealed: true, resolved: false };
+                logEvent(s, '🚔', `Una pattuglia di Rare Hunter blocca una strada di KaibaCorp${s.citySweep > 1 ? ` (${s.citySweep})` : ''}. Per tentare di recuperare Carte Locazione dovrai affrontarla.`);
                 saveState(s);
                 render();
             };
@@ -2565,20 +2697,23 @@
             }
             case 'event': {
                 cell.resolved = true;
-                // Tre esiti: buono (40%), cattivo (35%: −1 Carta Locazione) e
-                // Blackout (25%: radar spento per qualche mossa, ma nessuna
-                // carta persa). Lo Scudo protegge dai due cattivi.
+                // Quattro esiti: un aiuto (34%), rischio di perdere una
+                // Locazione (28%), blackout (20%) o furto di crediti (18%).
+                // Lo Scudo può assorbire entrambe le perdite e il blackout.
                 const roll = Math.random();
-                if (roll < 0.4) {
+                if (roll < 0.34) {
                     const scene = pickRandom(EVENT_GOOD);
                     revealRandomCells(state, 2);
-                    // Ogni tanto il buon incontro lascia anche un oggetto.
-                    const oggetto = Math.random() < 0.3 ? giveRandomItem(state) : null;
-                    logEvent(state, '✨', scene + (oggetto ? ` Ottieni: ${ITEMS[oggetto].nome}.` : ''));
+                    const oggetto = Math.random() < 0.22 ? giveRandomItem(state) : null;
+                    const crediti = Math.random() < 0.34
+                        ? CREDITI_TROVATI[0] + Math.floor(Math.random() * (CREDITI_TROVATI[1] - CREDITI_TROVATI[0] + 1))
+                        : 0;
+                    if (crediti) SaveManager.addCurrency('credits', crediti);
+                    logEvent(state, '✨', scene + (oggetto ? ` Ottieni: ${ITEMS[oggetto].nome}.` : '') + (crediti ? ` Ritrovi ${crediti} crediti.` : ''));
                     saveState(state);
                     render();
-                    showToast(`✨ ${scene}${oggetto ? ` <strong>${ITEMS[oggetto].icon} ${ITEMS[oggetto].nome}</strong>.` : ''}`);
-                } else if (roll < 0.75) {
+                    showToast(`✨ ${scene}${oggetto ? ` <strong>${ITEMS[oggetto].icon} ${ITEMS[oggetto].nome}</strong>.` : ''}${crediti ? ` <strong>+${crediti} crediti.</strong>` : ''}`);
+                } else if (roll < 0.62) {
                     const scene = pickRandom(EVENT_BAD);
                     if (consumeShield(state)) {
                         logEvent(state, '🛡️', `${scene} Lo Scudo del Duel Disk assorbe il colpo.`);
@@ -2594,7 +2729,7 @@
                         render();
                         showToast(`⚠️ ${scene} <strong>−1 Carta Locazione</strong>.`);
                     }
-                } else {
+                } else if (roll < 0.82) {
                     const scene = pickRandom(BLACKOUT_SCENES);
                     if (consumeShield(state)) {
                         logEvent(state, '🛡️', `${scene} Lo Scudo del Duel Disk lo respinge.`);
@@ -2608,6 +2743,21 @@
                         if (window.NativeHaptics) NativeHaptics.error();
                         render();
                         showToast(`📴 ${scene} <strong>Radar spento per ${BLACKOUT_MOVES} mosse</strong>: le celle nuove non si vedono finché non ci passi.`);
+                    }
+                } else {
+                    const scena = pickRandom(EVENT_CREDIT_LOSS);
+                    if (consumeShield(state)) {
+                        logEvent(state, '🛡️', `${scena} Lo Scudo del Duel Disk protegge i tuoi crediti.`);
+                        saveState(state);
+                        render();
+                        showToast(`🛡️ ${scena} <strong>Lo Scudo ti protegge: nessun credito perso.</strong>`);
+                    } else {
+                        const persi = CREDITI_PERSI[0] + Math.floor(Math.random() * (CREDITI_PERSI[1] - CREDITI_PERSI[0] + 1));
+                        SaveManager.addCurrency('credits', -persi);
+                        logEvent(state, '💸', `${scena} Perdi ${persi} crediti.`);
+                        saveState(state);
+                        render();
+                        showToast(`💸 ${scena} <strong>−${persi} crediti.</strong>`);
                     }
                 }
                 return;

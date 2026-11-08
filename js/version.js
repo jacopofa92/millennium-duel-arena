@@ -32,6 +32,8 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.6.3 — Battle City: percorsi allineati ai fondali, luci ambientali localizzate e meno Carte Locazione gratuite; eventi con crediti trovati o persi.
+ * 1.6.2 — Tornei: aggiornamento delle schermate di selezione.
  * 1.6.1 — Battle City: i quattro quartieri sono collegati da varchi attraversabili in entrambe le direzioni; il progresso di ciascuna mappa resta salvato.
  * 1.5.68 — Spade Rivelatrici ripristinate alla resa WebGL precedente alla revisione di orientamento e prospettiva.
  * 1.5.67 — Ripristinato l'effetto precedente delle Spade Rivelatrici; rimossa la resa visiva WebGL della Gabbia d'Acciaio dell'Incubo.
@@ -804,4 +806,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.6.2';
+window.GAME_VERSION = '1.6.3';
