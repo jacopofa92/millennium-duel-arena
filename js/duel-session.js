@@ -885,6 +885,13 @@
         // record, Sfide generiche o premi di fine duello), decide tutto lui.
         if (ModalitaExtra.esclusiva()) { ModalitaExtra.finisciEsclusiva(playerWon, abbandono); return; }
 
+        // Statistiche del Profilo (js/stats/statistiche.js): un conto per modalita', la serie di vittorie e i turni. Un abbandono e' una
+        // sconfitta (come per il record V/S); Demo, Sandbox e Tutorial non sono partite e il contatore li ignora da solo.
+        if (window.Statistiche) {
+            const turniTuoi = (typeof gameState !== 'undefined' && gameState && gameState.turn) ? Math.ceil(gameState.turn / 2) : 0;
+            Statistiche.registraDuello(mode, playerWon === 'draw' ? 'pareggio' : ((playerWon === true && !abbandono) ? 'vinto' : 'perso'), turniTuoi);
+        }
+
         // Missioni generiche ("Gioca 1 Duello fino alla fine"): conta un duello GIOCATO, vinto, perso o pareggiato, perche' una
         // missione per chi comincia non deve punire chi perde. Non conta un abbandono (niente premi per chi lascia, vedi i
         // premi qui sotto), ne' il banco di prova del Demo e della sandbox, che non sono partite.

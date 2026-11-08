@@ -51,7 +51,14 @@ module.exports = {
             t.assert(/mancano 14 punti \(21\/35\)/.test(testata.progresso), `Progresso verso il prossimo titolo: ${testata.progresso}`);
             t.assert(testata.vinti === '6' && testata.pct === '75%', `Riepilogo: ${JSON.stringify(testata)}`);
             t.assert(!testata.emoji, 'Le statistiche non devono più usare emoji di sistema');
-            t.assert(!testata.vintiNelleStatistiche, 'I duelli giocati stanno nella testata, non ripetuti nelle statistiche');
+            // Le statistiche hanno un blocco generale e UNA SCHEDA PER MODALITA' (richiesta dell'utente).
+            const stat = await page.evaluate(() => ({
+                generale: /In generale/.test(document.getElementById('statsMount').textContent) && /Duelli giocati/.test(document.getElementById('statsMount').textContent),
+                perModalita: /Per modalit/.test(document.getElementById('statsMount').textContent),
+                schede: Array.from(document.querySelectorAll('#statsMount .pst-mod')).map((e) => e.dataset.modalita)
+            }));
+            t.assert(stat.generale && stat.perModalita, `le statistiche hanno il blocco generale e quello per modalita': ${JSON.stringify(stat)}`);
+            t.assert(['libero', 'storia', 'tornei', 'torre', 'rivincita', 'settimana', 'caccia', 'tag', 'online', 'puzzle', 'tutorial'].every((id) => stat.schede.includes(id)), `una scheda per ogni modalita': ${JSON.stringify(stat.schede)}`);
 
 
             // --- Titoli speciali: si sbloccano con le SFIDE completate (permanenti), si scelgono e restano ------------------
@@ -117,8 +124,8 @@ module.exports = {
             await page.waitForFunction(() => document.querySelector('.phr-nome') && document.querySelector('.phr-nome').textContent === 'Seto');
             t.assert(await page.evaluate(() => SaveManager.getPlayerName()) === 'Seto', 'Il nome cambiato con la matita va nel salvataggio');
 
-            await page.locator('.phr-mazzo').nth(1).click();
-            t.assert(await page.evaluate(() => SaveManager.getActiveDeckId()) === 'secondo-mazzo', 'Un tocco su un mazzo lo rende quello attivo');
+            // La lista dei mazzi NON sta piu' nel Profilo (richiesta dell'utente): si gestiscono da Creazione Deck.
+            t.assert(await page.evaluate(() => !document.querySelector('.phr-mazzo') && !/I tuoi mazzi/i.test(document.getElementById('heroMount').textContent)), 'Il Profilo non elenca piu\' i mazzi');
 
             // Il Profilo e' UNA sola pagina (profilo.html): il menu non ne ha piu' una copia come vista.
             t.assert(!fs.readFileSync(path.join(RADICE, 'index.html'), 'utf8').includes('id="view-profilo"'), 'index.html non deve contenere una seconda copia del Profilo');

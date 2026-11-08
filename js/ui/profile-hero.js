@@ -94,7 +94,13 @@
         while (i + 1 < TITOLI.length && punti >= TITOLI[i + 1].da) i++;
         const prossimo = TITOLI[i + 1] || null;
         const avanzamento = prossimo ? Math.round(((punti - TITOLI[i].da) / (prossimo.da - TITOLI[i].da)) * 100) : 100;
-        const giocati = vinti + persi;
+        // I pareggi non stanno nel record V/S ma nel contatore per modalita' (js/stats/statistiche.js): contano come duelli giocati, come nelle Statistiche.
+        let pareggi = 0;
+        if (window.Statistiche) {
+            const mod = Statistiche.leggi().modalita;
+            Object.keys(mod).forEach((id) => { pareggi += (mod[id] && mod[id].pareggi) || 0; });
+        }
+        const giocati = vinti + persi + pareggi;
         // Il titolo mostrato: lo speciale scelto dal giocatore se lo ha ancora sbloccato, altrimenti quello della scala.
         const tuttiSpeciali = speciali(save);
         const sceltoId = save.player && save.player.titoloScelto;
@@ -129,8 +135,6 @@
         const save = SaveManager.load() || SaveManager.createNew('Giocatore');
         const s = calcola(save);
         const wallet = SaveManager.getCurrency();
-        const decks = save.decks || [];
-        const attivo = SaveManager.getActiveDeckId ? SaveManager.getActiveDeckId() : null;
         el.classList.add('profile-hero');
 
         // I titoli speciali, per gruppo nell'ordine del catalogo. La sezione resta aperta dopo aver scelto un titolo (render
@@ -233,11 +237,6 @@
                     <div class="phr-pillola" title="Carte Locazione">${icona('map')}<strong>${wallet.locatorCards || 0}</strong><span>Locazione</span></div>
                     <div class="phr-pillola" title="Carte del Millennio">${icona('eye')}<strong>${wallet.millenniumCards || 0}</strong><span>Millennio</span></div>
                 </div>
-            </div>
-
-            <div class="phr-sezione">
-                <div class="phr-sezione-titolo">${icona('cards')} I tuoi mazzi <span class="phr-conta">${decks.length}</span> <a href="creazione-deck.html" class="phr-link">Gestisci ›</a></div>
-                <div class="phr-mazzi" data-phr="mazzi"></div>
             </div>`;
 
         // Nome: testo scritto dal giocatore, quindi textContent.
@@ -279,33 +278,7 @@
         const reset = el.querySelector('[data-phr="titolo-scala"]');
         if (reset) reset.onclick = () => { SaveManager.setTitoloScelto(null); toast('Titolo a punti ripristinato.'); render(el, opzioni); };
 
-        // Mazzi: una scatola piccola per mazzo; un tocco su uno non attivo
-        // lo rende quello con cui si gioca.
-        const fila = el.querySelector('[data-phr="mazzi"]');
-        if (decks.length === 0) {
-            fila.innerHTML = '<div class="phr-vuoto">Nessun mazzo ancora: creane uno da Gestisci.</div>';
-        }
-        decks.forEach((deck) => {
-            const conta = (deck.main || []).reduce((n, e) => n + (e.qty || 0), 0);
-            const inUso = deck.id === attivo;
-            const b = document.createElement('button');
-            b.type = 'button';
-            b.className = 'phr-mazzo' + (inUso ? ' is-attivo' : '');
-            b.title = inUso ? 'Mazzo in uso' : 'Usa questo mazzo';
-            b.innerHTML = (window.DeckBox ? DeckBox.markup({ name: deck.name, color: deck.color || DeckBox.colorForId(deck.id) }) : '')
-                + '<span class="phr-mazzo-nome"></span>'
-                + `<span class="phr-mazzo-sub">${conta} carte</span>`
-                + `<span class="phr-mazzo-stato">${inUso ? 'In uso' : 'Usa'}</span>`;
-            b.querySelector('.phr-mazzo-nome').textContent = deck.name || '(senza nome)';
-            b.onclick = () => {
-                if (inUso || !SaveManager.setActiveDeckId) return;
-                SaveManager.setActiveDeckId(deck.id);
-                toast(`Ora giochi con «${deck.name || 'il mazzo scelto'}».`);
-                render(el, opzioni);
-            };
-            fila.appendChild(b);
-        });
-
+        // (La lista dei mazzi non sta piu' nel Profilo: richiesta dell'utente. I mazzi si gestiscono da Creazione Deck.)
         if (window.Icons) Icons.hydrate(el);
     }
 

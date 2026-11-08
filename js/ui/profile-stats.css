@@ -107,7 +107,30 @@
 /* Un nome di Duellante è più lungo di un numero: un filo più piccolo. */
 .profile-stats .pst-voce--nome .pst-valore { font-size: 0.95rem; color: var(--pst-testo); white-space: normal; line-height: 1.2; }
 
+/* ---- Per modalità: una scheda per ogni modo di giocare ---------------- */
+.profile-stats .pst-gruppo-nota { margin: -4px 0 10px; font-size: 0.76rem; line-height: 1.4; color: var(--pst-tenue); }
+.profile-stats .pst-mod-griglia { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.profile-stats .pst-mod { display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 14px;
+    background: var(--sup-riquadro, linear-gradient(150deg, rgba(40, 32, 20, .84), rgba(18, 16, 22, .88))); border: 1px solid var(--sup-bordo, rgba(247, 215, 116, .3)); }
+.profile-stats .pst-mod-testa { display: flex; align-items: center; gap: 10px; }
+.profile-stats .pst-mod-ico { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; color: var(--pst-oro);
+    background: rgba(247, 215, 116, .1); border: 1px solid rgba(247, 215, 116, .35); }
+.profile-stats .pst-mod-ico svg { width: 20px; height: 20px; }
+.profile-stats .pst-mod-nome { font: normal 1rem/1.2 Georgia, 'Times New Roman', serif; color: var(--pst-testo); }
+.profile-stats .pst-mod-duelli { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 8px 4px; border-radius: 10px; background: rgba(0, 0, 0, .25); text-align: center; }
+.profile-stats .pst-mod-duelli strong { display: block; font-size: 1.15rem; font-weight: 800; color: var(--pst-testo); line-height: 1.1; }
+.profile-stats .pst-mod-duelli small { font-size: .58rem; letter-spacing: .1em; text-transform: uppercase; color: var(--pst-tenue); }
+.profile-stats .pst-mod-duelli .pst-v strong { color: var(--pst-vinti); }
+.profile-stats .pst-mod-duelli .pst-p strong { color: var(--pst-persi); }
+.profile-stats .pst-mod-vuoto { padding: 8px; border-radius: 10px; background: rgba(0, 0, 0, .2); font-size: .78rem; text-align: center; color: var(--pst-tenue); }
+.profile-stats .pst-mod-righe { display: flex; flex-direction: column; gap: 6px; margin: 0; }
+.profile-stats .pst-mod-righe > div { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding-top: 6px; border-top: 1px solid rgba(247, 215, 116, .12); font-size: .84rem; }
+.profile-stats .pst-mod-righe dt { color: var(--pst-tenue); }
+.profile-stats .pst-mod-righe dd { margin: 0; font-weight: 700; color: var(--pst-testo); text-align: right; }
+.profile-stats .pst-mod-righe small { font-weight: 400; color: var(--pst-tenue); }
+
 @media (max-width: 480px) {
+    .profile-stats .pst-mod-griglia { grid-template-columns: minmax(0, 1fr); }
     .profile-stats .pst-griglia { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
     /* Su due colonne l'ultima voce di un gruppo dispari resterebbe da sola
        a metà riga: prende tutta la riga. */
