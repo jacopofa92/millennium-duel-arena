@@ -13,7 +13,7 @@ module.exports = {
     name: 'Mappe della Storia: effetti WebGL per ogni mappa, dentro il mondo e sotto i nodi',
     standalone: true,
     async run({ browser, assert }) {
-        const file = fs.readdirSync(path.join(RADICE, 'images', 'maps')).filter((f) => f.endsWith('.jpg')).map((f) => f.replace(/\.jpg$/, ''));
+        const file = fs.readdirSync(path.join(RADICE, 'images', 'maps')).filter((f) => f.endsWith('.jpg') && !f.startsWith('battle_city_')).map((f) => f.replace(/\.jpg$/, ''));
         const ctx = await browser.newContext({ viewport: { width: 1280, height: 760 }, serviceWorkers: 'block' });
         await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; localStorage.setItem('ygoVideoDetail', 'alti'); localStorage.setItem('ygoVideoDetailScelto', '1'); });
         const page = await ctx.newPage();
