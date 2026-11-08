@@ -2629,13 +2629,13 @@
         camminaLungoCurva(canvas, from, to, onDone);
     }
 
-    /** Se esiste la posa di sorpresa della pedina (images/characters/pedine-danno-sorpresa/thumbs), la mostra al posto di quella normale. */
+    /** Se esiste la posa "grido" della pedina (images/characters/pedine-esclamazione/thumbs, NON quella di danno subito), la mostra al posto di quella normale. */
     function sorprendi(nodo) {
         const src = nodo.dataset && nodo.dataset.pedina;
         const img = nodo.querySelector('.map-pedina-img');
         if (!src || !img || nodo.classList.contains('mystery')) return;
         const nome = src.split('/').pop().replace(/\.[a-z0-9]+$/i, '');
-        const posa = 'images/characters/pedine-danno-sorpresa/thumbs/' + nome + '.webp';
+        const posa = 'images/characters/pedine-esclamazione/thumbs/' + nome + '.webp';
         const prova = new Image();
         prova.onload = () => { img.src = posa; };
         prova.src = posa;

@@ -52,6 +52,17 @@ const JOBS = [
         alpha: true
     },
     {
+        // Pose "grido" delle pedine (1254x1254, 1,5-2,5 MB l'una): sulla mappa del Regno dei Duellanti compaiono a ~94px quando si va
+        // verso uno sfidante, quindi si usa questa copia da 320px CON trasparenza (stessa regola delle pose di danno).
+        nome: 'pedine-esclamazione',
+        source: path.join(ROOT, 'images', 'characters', 'pedine-esclamazione'),
+        output: path.join(ROOT, 'images', 'characters', 'pedine-esclamazione', 'thumbs'),
+        width: 320,
+        height: 320,
+        quality: 0.82,
+        alpha: true
+    },
+    {
         source: path.join(ROOT, 'images', 'fields'),
         output: path.join(ROOT, 'images', 'fields', 'thumbs'),
         width: 480,

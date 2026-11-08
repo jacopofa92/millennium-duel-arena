@@ -5174,6 +5174,8 @@ Matrice completa di bilanciamento (2026-10-25, senza modifiche al gioco): `tools
 
 1.5.130 (cache v643, su `main`): **Regno dei Duellanti: un torneo GIA' INIZIATO prima della nuova partenza ha i bivi tutti in alto** (segnalato dall'utente con uno screenshot: i primi bivi erano generati con la vecchia origine (130,320) e uscivano tutti sopra la pedina, ora a (130,610)). `renderMap` ridispone UNA volta il primo bivio (`assignChoicePositions` sugli stessi `pendingRoutes`: cambiano solo le posizioni, gli incontri restano) se il torneo non ha ancora fatto passi, e segna `state.approdoV2`. Un torneo nuovo non ne ha bisogno. Spec `regno-mappa-viva` esteso. Suite completa non eseguita.
 
+1.5.131 (cache v644, su `main`): **Regno dei Duellanti: andando verso uno sfidante la pedina fa la posa GRIDO, non quella di danno subito.** `sorprendi()` in torneo-regno-duellanti.html legge ora `images/characters/pedine-esclamazione/thumbs/<nome>.webp` (nuovo job `pedine-esclamazione` di scripts/build-ui-thumbnails.js: 62 miniature da 320px con trasparenza, perche' le PNG originali pesano 1,5-2,5 MB). Spec `regno-mappa-viva` esteso. Suite completa non eseguita.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.

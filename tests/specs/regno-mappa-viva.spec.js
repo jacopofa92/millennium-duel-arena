@@ -92,6 +92,10 @@ module.exports = {
             await page.waitForSelector('.map-node.choice');
             const vecchio = await page.evaluate(() => ({ alte: [...document.querySelectorAll('.map-node.choice')].map((e) => parseFloat(e.style.top)), v2: SaveManager.getTournamentState('duelistKingdom').approdoV2, tipi: SaveManager.getTournamentState('duelistKingdom').pendingRoutes.map((r) => r.kind) }));
             t.assert(vecchio.alte.some((y) => y < 590) && vecchio.alte.some((y) => y > 630) && vecchio.v2 === true && vecchio.tipi.join() === 'opponent,prize', `un torneo gia' iniziato si ridispone in alto e in basso, stessi incontri: ${JSON.stringify(vecchio)}`);
+            // Andando verso uno sfidante la pedina fa la posa "grido" (e ne esiste la miniatura), mai quella di danno subito.
+            const src = require('fs').readFileSync(path.join(__dirname, '..', '..', 'torneo-regno-duellanti.html'), 'utf8');
+            t.assert(/pedine-esclamazione\/thumbs\//.test(src) && !/pedine-danno-sorpresa/.test(src), 'la mappa usa la posa grido, non quella di danno');
+            t.assert(require('fs').readdirSync(path.join(__dirname, '..', '..', 'images', 'characters', 'pedine-esclamazione', 'thumbs')).length >= 60, 'miniature delle pose grido presenti');
             t.assert(errori.length === 0, `nessun errore: ${errori.join(' | ')}`);
         } finally {
             await page.close();
