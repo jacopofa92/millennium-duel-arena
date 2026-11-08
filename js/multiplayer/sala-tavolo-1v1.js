@@ -7,8 +7,7 @@
  *      documento, nascosti ma vivi — attraverso `MpSalaInterna.azioni`.
  * Cosi' i protocolli, i test e il comportamento sono quelli di prima, e solo il disegno cambia.
  *
- * ACCESA SOLO SU RICHIESTA, per ora: `?sala=tavolo` nell'indirizzo (o `localStorage.ygoSalaTavolo = '1'`). Senza, la sala resta
- * quella di sempre. Spegnerla di nuovo e' `?sala=classica` (e toglie il segno ricordato).
+ * E' la sala di serie. Nessun parametro nell'indirizzo: solo i test che guardano la sala vecchia la spengono (`window.SALA_CLASSICA`).
  *
  * Posti: i due ruoli li decide il server, quindi qui sono FISSI (`postoFisso`): l'host sta in A0, lo sfidante in B0 (nel Raid in A1,
  * accanto all'host, contro il Boss in B0). Un posto da scegliere vale solo dove i posti sono davvero liberi: nel Tag (mp-tag-sala).

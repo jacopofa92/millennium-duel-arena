@@ -8,7 +8,7 @@
  * puo' sempre intervenire: tocca una persona in piedi e poi il posto dove metterla (se e' occupato si scambiano), alza o scambia chi e'
  * seduto, cambia il duellante che giochera' l'IA in un posto lasciato libero.
  *
- * Accesa solo su richiesta, come la sala a due: `?sala=tavolo` (vedi SalaTavolo.acceso).
+ * E' la sala di serie, come quella a due (vedi SalaTavolo.acceso).
  */
 (function () {
     'use strict';

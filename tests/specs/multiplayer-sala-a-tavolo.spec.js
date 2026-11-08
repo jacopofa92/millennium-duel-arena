@@ -5,7 +5,7 @@
 //    possa cambiare il mazzo comune dal tavolo e l'ospite lo veda cambiare; i premi stiano nella sala; "Sono pronto" di entrambi
 //    faccia partire il conto alla rovescia (schede con arena e musica);
 //  - Tag Team: chi entra sia in piedi, prenda un posto libero, l'host lo alzi e lo rimetta in un altro posto;
-//  - `?sala=classica` riporti la sala vecchia (e non il tavolo).
+//  - con il flag di test `SALA_CLASSICA` si veda la sala vecchia (e non il tavolo).
 // `standalone: true`: due pagine e un relay vero (vedi multiplayer-specchio.spec.js).
 const { startStaticServer, startRoomServer } = require('../helpers/local-servers');
 
@@ -17,11 +17,11 @@ module.exports = {
         const room = await startRoomServer();
         const errori = [];
         try {
-            const apri = async (etichetta, query) => {
+            const apri = async (etichetta, query, classica) => {
                 const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, serviceWorkers: 'block' });
                 const page = await context.newPage();
                 page.on('pageerror', (e) => errori.push(`[${etichetta}] ${e.message}`));
-                await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.DUEL_RPS_SKIP = true; window.DUEL_FAST_OPENING = true; });
+                await page.addInitScript((c) => { window.AUTH_GATE_SKIP = true; window.DUEL_RPS_SKIP = true; window.DUEL_FAST_OPENING = true; if (c) window.SALA_CLASSICA = true; }, !!classica);
                 await page.goto(statics.origin + '/multiplayer.html' + query, { waitUntil: 'load' });
                 await page.waitForSelector('#mpCreateBtn');
                 await page.waitForFunction(() => { const el = document.getElementById('pageLoader'); return !el || el.classList.contains('page-loader-hidden'); }, { timeout: 15000 });
@@ -94,11 +94,11 @@ module.exports = {
             assert(bloccato, 'Un ospite non puo\' alzarsi da solo dal suo posto');
 
             // ---- Ritorno alla sala classica ----
-            const c = await apri('classica', '?modo=specchio&sala=classica');
+            const c = await apri('classica', '?modo=specchio', true);
             await c.click('#mpCreateBtn');
             await c.waitForFunction(() => { const el = document.getElementById('mpRoomCodeValue'); return el && /^[A-Z0-9]{5}$/.test(el.textContent.trim()); }, { timeout: 15000 });
             const classica = await c.evaluate(() => !document.querySelector('.mp-tavolo-radice') && document.getElementById('mpSeatYouName').offsetParent !== null);
-            assert(classica, 'Con ?sala=classica si vede la sala vecchia, senza il tavolo');
+            assert(classica, 'Con il flag di test si vede la sala vecchia, senza il tavolo');
 
             assert(errori.length === 0, `Nessun errore di pagina: ${errori.join(' | ')}`);
         } finally {
