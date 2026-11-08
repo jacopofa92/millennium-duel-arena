@@ -1,4 +1,4 @@
-// Battle City, quartieri a 20 nodi sulle strade vere (1.6.4): ogni quartiere ha 20 nodi connessi, con anelli (almeno due vie dove
+// Battle City, quartieri a 20 nodi sulle tavole quadrate, dentro le zone sicure (1.6.17; prima 1.6.4): ogni quartiere ha 20 nodi connessi, con anelli (almeno due vie dove
 // la geometria lo permette), nodi ben distanziati, varchi che si corrispondono fra quartieri, e le mappe salvate con 25 caselle si
 // rigenerano senza far ricomparire una Locazione gia' raccolta. La posizione "su una superficie percorribile" non si puo' misurare
 // da un test: la si guarda sugli sfondi (vedi il commento di CITY_LAYOUTS); qui si sorvegliano le proprieta' del grafo.
@@ -56,10 +56,13 @@ module.exports = {
                 const adj = L.nodes.map(() => []); L.edges.forEach(([a, b]) => { adj[a].push(b); adj[b].push(a); });
                 const visti = new Set([0]); const coda = [0];
                 while (coda.length) { const x = coda.pop(); adj[x].forEach((y) => { if (!visti.has(y)) { visti.add(y); coda.push(y); } }); }
-                const xs = L.nodes.map((p) => p[0]);
-                return { id: d.id, n: L.nodes.length, connesso: visti.size === L.nodes.length, minX: Math.min.apply(null, xs), maxX: Math.max.apply(null, xs) };
+                const xs = L.nodes.map((p) => p[0]), ys = L.nodes.map((p) => p[1]);
+                return { id: d.id, n: L.nodes.length, connesso: visti.size === L.nodes.length, minX: Math.min.apply(null, xs), maxX: Math.max.apply(null, xs), minY: Math.min.apply(null, ys), maxY: Math.max.apply(null, ys) };
             }));
-            verticale.forEach((v) => t.assert(v.n === 20 && v.connesso && v.minX >= 580 && v.maxX <= 1110, `${v.id} (verticale): 20 nodi connessi nella fascia centrale ${v.minX}-${v.maxX}`));            t.assert(analisi.varchiOk, 'I varchi si corrispondono fra i quartieri (andata e ritorno)');
+            verticale.forEach((v) => t.assert(v.n === 20 && v.connesso && v.minX >= 360 && v.maxX <= 894 && v.minY >= 120 && v.maxY <= 1130, `${v.id} (verticale): 20 nodi connessi nella zona che si vede su ogni telefono (x ${v.minX}-${v.maxX}, y ${v.minY}-${v.maxY})`));            // Disegno ORIZZONTALE: nodi dentro la fascia che si vede su ogni schermo largo (y 370-885) e sotto l'intestazione.
+            const orizzontale = await page.evaluate(() => CITY_DISTRICTS.map((d) => { const ys = CITY_LAYOUTS[d.id].nodes.map((p) => p[1]), xs = CITY_LAYOUTS[d.id].nodes.map((p) => p[0]); return { id: d.id, minY: Math.min.apply(null, ys), maxY: Math.max.apply(null, ys), minX: Math.min.apply(null, xs), maxX: Math.max.apply(null, xs) }; }));
+            orizzontale.forEach((v) => t.assert(v.minY >= 380 && v.maxY <= 880 && v.minX >= 100 && v.maxX <= 1150, ` (orizzontale): nodi nella zona sicura (x ${v.minX}-${v.maxX}, y ${v.minY}-${v.maxY})`));
+            t.assert(analisi.varchiOk, 'I varchi si corrispondono fra i quartieri (andata e ritorno)');
 
             // Migrazione: una mappa salvata con 25 caselle e una Locazione gia' raccolta si rigenera a 20 senza rimettere la Locazione.
             const migrato = await page.evaluate(() => {

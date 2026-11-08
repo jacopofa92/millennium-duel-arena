@@ -535,8 +535,8 @@
 // v648: Battle City aggiunge quattro quartieri con fondali, orologio giorno-notte e ambiente WebGL dedicato.
 // v650: i varchi cittadini permettono di passare liberamente fra quartieri salvandone lo stato.
 // v653: Battle City: nodi crediti, massimo due nodi Locazione, layout e luci Parco aggiornati.
-// v655: quattro fondali Battle City panoramici sostituiti con asset 16:9 a nome nuovo.
-const CACHE_NAME = 'ygo-duel-arena-v664';
+// v665: fondali Battle City quadrati 1254x1254, con percorsi ed effetti riallineati.
+const CACHE_NAME = 'ygo-duel-arena-v666';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento
