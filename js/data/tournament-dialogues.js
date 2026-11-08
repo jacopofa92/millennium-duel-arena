@@ -154,7 +154,7 @@
             castle: {
                 titolo: 'Castello di Pegasus',
                 sottotitolo: 'Le finali',
-                sfondo: ['images/maps/regno_dei_duellanti_castello_pegasus_torneo.jpg'],
+                sfondo: ['images/maps/regno_dei_duellanti_castello_pegasus_torneo_v2.jpg'],
                 battute: [
                     { testo: 'Dieci Stelle dell\'Esagono. Il portone del castello si apre e la sala delle finali ti aspetta: marmo a scacchiera, candelabri, e i pegasi di pietra a guardia delle pareti.' },
                     { chi: 'pegasus', testo: 'Ma guarda un po\' chi ce l\'ha fatta! Ti ho osservato per tutta l\'isola, sai. Ho persino preparato il tuo posto a tavola.' },
@@ -183,7 +183,7 @@
             castleFinal: {
                 titolo: 'La Finale',
                 sottotitolo: 'Nella sala del Castello',
-                sfondo: ['images/maps/regno_dei_duellanti_castello_pegasus_torneo.jpg'],
+                sfondo: ['images/maps/regno_dei_duellanti_castello_pegasus_torneo_v2.jpg'],
                 battute: (ctx) => [
                     { testo: 'I servitori portano via il tavolo della semifinale. Sotto le vetrate restano due sedie soltanto.' },
                     {
@@ -198,7 +198,7 @@
             pegasus: {
                 titolo: 'Il Duello Finale',
                 sottotitolo: 'Maximillion Pegasus',
-                sfondo: ['images/maps/regno_dei_duellanti_castello_pegasus_torneo.jpg'],
+                sfondo: ['images/maps/regno_dei_duellanti_castello_pegasus_torneo_v2.jpg'],
                 battute: [
                     { testo: 'La sala si svuota. Resta solo un tavolo, e l\'uomo che ha inventato questo gioco.' },
                     { chi: 'pegasus', testo: 'Sai qual è la parte più deliziosa, caro il mio duellante? Che io le tue carte le ho disegnate tutte. Ogni singola.' },
@@ -209,7 +209,7 @@
             champion: {
                 titolo: 'Campione',
                 sottotitolo: 'Regno dei Duellanti',
-                sfondo: ['images/maps/regno_dei_duellanti_castello_pegasus_torneo.jpg'],
+                sfondo: ['images/maps/regno_dei_duellanti_castello_pegasus_torneo_v2.jpg'],
                 battute: [
                     { testo: 'L\'Occhio del Millennio si spegne. Pegasus resta seduto, a lungo, senza dire niente.' },
                     { chi: 'pegasus', testo: 'Battuto... e nel mio stesso gioco. Congratulazioni: il titolo è tuo, e me lo sono meritato tutto.' }

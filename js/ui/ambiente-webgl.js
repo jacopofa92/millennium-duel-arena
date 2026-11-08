@@ -1335,7 +1335,7 @@ vec4 m_scintillaP(vec2 uv,float asp,float t,vec3 c,vec2 f,float s,float seed,flo
      * i nodi e le linee stanno sopra, nell'ordine del DOM.
      * @param {string} nome  chiave di MAPPE (nome del file dell'immagine senza estensione)
      * @param {HTMLElement} contenitore
-     * @param {{ larghezza: number, altezza: number, scala?: number, ia?: number }} op
+     * @param {{ larghezza: number, altezza: number, scala?: number, ia?: number, fondo?: Array<[string,string,Record<string, any>]>, pal?: number[][] }} op
      */
     function avviaMappa(nome, contenitore, op) {
         ferma();
@@ -1346,13 +1346,21 @@ vec4 m_scintillaP(vec2 uv,float asp,float t,vec3 c,vec2 f,float s,float seed,flo
         const altezza = op.altezza || contenitore.clientHeight || 941;
         const scala = op.scala || Math.min(0.5, 760 / larghezza);
         // `ia`: il rapporto d'aspetto dell'IMMAGINE sotto (default: quello del contenitore, che nelle mappe coincide).
-        const c = Object.assign({}, campo, { ia: op.ia || larghezza / altezza });
+        // Le mappe a nodi possono sovrapporre effetti ancorati a dettagli
+        // del mondo (per esempio acqua e focolari) senza duplicare la
+        // configurazione condivisa in MAPPE. `fondo` e `pal` sono override
+        // locali: gli altri utilizzatori continuano a leggere i dati base.
+        const c = Object.assign({}, campo, {
+            ia: op.ia || larghezza / altezza,
+            ...(Array.isArray(op.fondo) ? { fondo: op.fondo } : {}),
+            ...(Array.isArray(op.pal) ? { pal: op.pal } : {})
+        });
         const src = componi(c, 'fondo');
         if (!src) return false;
         const p = creaPiano('fondo', src, scala, () => [larghezza, altezza], contenitore);
         if (!p) return false;
         piani = [p];
-        campoAttivo = campo;
+        campoAttivo = c;
         scalaAttuale = scala;
         t0 = performance.now();
         ultimoDisegno = 0; ultimoRaf = 0; mediaFrame = 16; lentoDa = 0;
