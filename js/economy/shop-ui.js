@@ -684,7 +684,11 @@
 
                 const riga = el('div', 'buy-row');
                 const apri = () => {
+                    // Limite giornaliero (solo la Busta Base): si ricontrolla QUI, il pulsante spento non basta contro un doppio tocco.
+                    const lim = ShopCatalog.limiteBustaOggi(busta.id);
+                    if (lim && lim.restanti < 1) { refresh(); return; }
                     if (!pagaComposto(busta.costo)) return;
+                    ShopCatalog.registraAcquistoBusta(busta.id);
                     const estratte = ShopCatalog.apriBusta(busta);
                     const nuove = estratte.filter((id) => SaveManager.getOwnedCount(id) === 0);
                     estratte.forEach((id) => SaveManager.addOwnedCards(id, 1));
@@ -709,7 +713,18 @@
                     }
                     refresh();
                 };
-                riga.appendChild(pulsanteComposto(busta.costo, '', false, apri));
+                const limiteOggi = ShopCatalog.limiteBustaOggi(busta.id);
+                const bottone = pulsanteComposto(busta.costo, '', false, apri);
+                if (limiteOggi) {
+                    // Il conto di oggi si vede SEMPRE, non solo a limite raggiunto: si capisce quanto manca prima di arrivarci.
+                    const nota = el('div', 'shop-item-meta', limiteOggi.restanti > 0
+                        ? `Oggi: ${limiteOggi.fatte} / ${limiteOggi.limite} acquistate.`
+                        : `Limite di oggi raggiunto (${limiteOggi.limite}): torna domani.`);
+                    nota.dataset.limiteBusta = busta.id;
+                    item.appendChild(nota);
+                    if (limiteOggi.restanti < 1) { bottone.disabled = true; bottone.textContent = 'Limite di oggi raggiunto'; }
+                }
+                riga.appendChild(bottone);
                 item.appendChild(riga);
                 secBuste.grid.appendChild(item);
             });

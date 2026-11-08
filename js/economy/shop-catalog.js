@@ -677,7 +677,46 @@
         return { ok: true, pagato: pagato, ottenuto: st.conv.ottieni * n };
     }
 
+    // ================================================================
+    // LIMITE GIORNALIERO DELLE BUSTE
+    // ================================================================
+    // La Busta Base (la piu' economica: solo Crediti) si compra al massimo 10 volte al giorno; le altre buste non hanno limite
+    // (scelta dell'utente). Il giorno e' quello del SERVER (ServerDate.dayKey, UTC), come la rotazione delle carte: cambiare l'ora
+    // del telefono non azzera il conto. Il conteggio vive in un contenitore a parte, con la chiave del giorno dentro: cambiata la
+    // chiave si butta, e il salvataggio non cresce di un blocco per ogni giorno passato.
+    const LIMITE_BUSTE_GIORNO = { base: 10 };
+    const CHIAVE_BUSTE_GIORNO = 'negozioBusteGiorno';
+
+    function chiaveGiorno() {
+        if (window.ServerDate && typeof ServerDate.dayKey === 'function') return ServerDate.dayKey();
+        return new Date().toISOString().slice(0, 10);
+    }
+
+    function busteFatteOggi() {
+        const s = window.SaveManager && SaveManager.getModeState ? SaveManager.getModeState(CHIAVE_BUSTE_GIORNO) : null;
+        return s && s.giorno === chiaveGiorno() && s.fatte ? s.fatte : {};
+    }
+
+    /** Lo stato del limite di una busta oggi: { limite, fatte, restanti }, o null se quella busta non ha limite. */
+    function limiteBustaOggi(id) {
+        const limite = LIMITE_BUSTE_GIORNO[id];
+        if (!limite) return null;
+        const fatte = Number(busteFatteOggi()[id]) || 0;
+        return { limite: limite, fatte: fatte, restanti: Math.max(0, limite - fatte) };
+    }
+
+    /** Segna un acquisto di oggi (da chiamare quando la busta e' davvero stata comprata). */
+    function registraAcquistoBusta(id) {
+        if (!LIMITE_BUSTE_GIORNO[id]) return;
+        const fatte = Object.assign({}, busteFatteOggi());
+        fatte[id] = (Number(fatte[id]) || 0) + 1;
+        SaveManager.setModeState(CHIAVE_BUSTE_GIORNO, { giorno: chiaveGiorno(), fatte: fatte });
+    }
+
     window.ShopCatalog = {
+        LIMITE_BUSTE_GIORNO: LIMITE_BUSTE_GIORNO,
+        limiteBustaOggi: limiteBustaOggi,
+        registraAcquistoBusta: registraAcquistoBusta,
         CONVERSIONI: CONVERSIONI,
         statoConversione: statoConversione,
         converti: converti,

@@ -5162,6 +5162,8 @@ Matrice completa di bilanciamento (2026-10-25, senza modifiche al gioco): `tools
 
 1.5.124 (cache v634, su `main`): **Creazione Deck: riquadro di conferma e avviso 'Deck salvato' con le icone del tema** (`askConfirm(messaggio, onYes, { icona, si, no, oro })` in creazione-deck.html: cestino rosso per eliminare, icona `save` oro per 'uscire senza salvare', che prima mostrava un 'Si, elimina' fuori luogo con bordo rosso; `showToast` converte le emoji iniziali spunta/avviso/errore nelle icone `check`/`bulb`/`close`). Suite completa non eseguita.
 
+1.5.125 (cache v635, su `main`): **Busta Base al massimo 10 al giorno, le altre buste senza limite** (richiesta dell'utente). `ShopCatalog.LIMITE_BUSTE_GIORNO` (oggi solo `base: 10`), `limiteBustaOggi(id)` e `registraAcquistoBusta(id)`; il conto vive in `save.modalita.negozioBusteGiorno` con la chiave del giorno del SERVER (`ServerDate.dayKey`, UTC) dentro, come le conversioni valute con la settimana: cambiata la chiave si butta. Il Negozio scrive 'Oggi: n / 10 acquistate' e a limite raggiunto spegne il pulsante; il limite si ricontrolla anche dentro `apri` (doppio tocco). Un limite nuovo per un'altra busta e' una riga in `LIMITE_BUSTE_GIORNO`. Spec `negozio-buste-limite-giornaliero`. Suite completa non eseguita.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
