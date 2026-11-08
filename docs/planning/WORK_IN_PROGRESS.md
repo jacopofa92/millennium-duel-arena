@@ -10,7 +10,7 @@ Elenco di lavori consigliati, in ordine di valore. Spuntare `[x]` quando fatto.
       risolti. Il dirigibile si apre nel distretto KaibaCorp dopo aver visitato
       tutti i quartieri e raccolto le sei Carte Locazione.
 
-## Battle City — percorsi aderenti ai fondali ed economia (chiuso in 1.6.3)
+## Battle City — percorsi, economia e istruzioni (chiuso in 1.6.4)
 
 - [x] Posizionare i nodi sulle superfici percorribili dei quattro fondali,
       con layout dedicato al ritaglio verticale e riallineamento su resize.
@@ -20,6 +20,9 @@ Elenco di lavori consigliati, in ordine di valore. Spuntare `[x]` quando fatto.
 - [x] Aggiungere eventi di crediti trovati/persi e far proteggere entrambe le
       perdite dallo Scudo; rendere gli effetti ambientali specifici della scena
       (luci localizzate sulle facciate KaibaCorp, niente scanner globale).
+- [x] Allineare le istruzioni iniziali alle fonti effettive delle Carte
+      Locazione e alla navigazione tra quartieri; descrivere gli eventi con
+      crediti e rimuovere il riferimento esplicito alla griglia.
 
 ## Distruzione di una carta: niente doppio viaggio visivo — chiuso in 1.5.62
 

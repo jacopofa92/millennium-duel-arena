@@ -13,7 +13,7 @@ e raccolto le sei Carte Locazione richieste. Le mappe sono gestite da
 `torneo-battle-city.html`; le pedine dei passaggi sono disegnate in
 `js/ui/board-pieces.js`.
 
-### Percorsi e ricompense Battle City (1.6.3)
+### Percorsi, ricompense e introduzione Battle City (1.6.4)
 
 Le pedine della mappa seguono ora percorsi normalizzati sulle immagini reali
 dei quartieri: sentieri del Parco, pavimentazioni del Porto e piazza pedonale
@@ -29,6 +29,12 @@ una Locazione. Le pattuglie aggiunte dopo aver esaurito la città richiedono un
 duello. Gli eventi possono assegnare piccole somme di crediti oppure sottrarle;
 lo Scudo protegge anche dai furti. La migrazione conserva gli oggetti già
 incassati e ribilancia solo i nodi non ancora risolti.
+
+La schermata introduttiva spiega le regole aggiornate: esplorazione tra
+quartieri collegati, due Carte Locazione da trovare (Centro e Porto), una sola
+missione nel Centro, eventi che possono dare o sottrarre crediti e pattuglie
+aggiuntive da affrontare in duello. Non descrive più il percorso come una
+griglia visibile.
 
 ## Grafo interrogabile del codice (2026-11-05)
 
