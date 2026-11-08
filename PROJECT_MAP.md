@@ -56,6 +56,18 @@ migrazione una tantum dell'orologio dei tornei già iniziati. Rimossa la legenda
 permanente in fondo alla mappa: le etichette dei nodi raggiungibili e le
 pedine rendono già riconoscibili gli incontri.
 
+### Fondali Battle City adattabili (1.6.7)
+
+I quattro quartieri usano un solo fondale panoramico 16:9 ciascuno, con lo
+spazio percorribile e i punti di riferimento raccolti nella fascia centrale:
+il ritaglio desktop 16:9 conserva l'intera scena, mentre in verticale la stessa
+immagine viene centrata e riempie lo spazio residuo con una sfocatura derivata
+dallo stesso file. Non esistono varianti desktop e mobile. Gli asset sono
+`images/maps/battle_city_*_v2.jpg`; coordinate dei nodi e luci WebGL sono
+aggiornate alle nuove dimensioni 1672×941. Il Parco usa un tracciato verticale
+proprio per tenere le pedine sui vialetti attorno allo stagno anche sul telefono.
+I nomi nuovi evitano che la cache media cache-first riutilizzi i vecchi fondali.
+
 ## Grafo interrogabile del codice (2026-11-05)
 
 Graphify e' installato per Codex (`.codex/skills/graphify/`) e Claude Code

@@ -20,7 +20,7 @@
                 // Bagliori caldi localizzati sulle lampade dipinte lungo i
                 // vialetti. Coordinate normalizzate del fondale, asse Y verso
                 // l'alto come richiesto dal modulo WebGL `alone`.
-                ['alone', 'vec3(1.,.72,.32)', { pts: [[.09,.52,.46],[.31,.92,.46],[.47,.68,.46],[.69,.82,.46],[.90,.72,.46],[.28,.50,.46],[.37,.37,.46],[.81,.48,.46],[.81,.35,.46]], sz: .055, ia: 1.599, a: .62 }],
+                ['alone', 'vec3(1.,.72,.32)', { pts: [[.37,.97,.46],[.61,.97,.46],[.18,.71,.46],[.82,.68,.46],[.15,.31,.46],[.81,.29,.46],[.35,.09,.46],[.61,.09,.46],[.55,.52,.46]], sz: .055, ia: 1672 / 941, a: .62 }],
                 // Particelle piccole e lente suggeriscono foglie e pulviscolo senza strisce uniformi.
                 ['particelle', 'B', { vx: .045, vy: -.025, dens: 8, dim: .055, lamp: .25, osc: .5, forma: 2, a: .34 }]
             ],
@@ -29,7 +29,7 @@
         'battle-city-porto': {
             pal: [rgb(98, 204, 235), rgb(255, 178, 105), rgb(207, 237, 255)],
             fondo: [
-                ['caustiche', 'A', { sc: 5.5, a: .19, area: [0, .05, .46, .98] }],
+                ['caustiche', 'A', { sc: 5.5, a: .19, area: [0, .05, .30, .98] }],
                 ['nebbia', 'C', { sc: 1.4, vel: .22, a: .13, y0: -.25, y1: .5 }],
                 ['particelle', 'B', { vx: .02, vy: .015, dens: 6, dim: .045, lamp: .7, osc: .3, a: .4 }]
             ],
