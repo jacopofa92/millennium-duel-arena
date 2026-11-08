@@ -17,7 +17,7 @@ module.exports = {
         const browser = t.browser;
         const nuova = async (w, h, modo) => {
             const ctx = await browser.newContext({ viewport: { width: w, height: h }, serviceWorkers: 'block' });
-            await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
+            await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.SALA_CLASSICA = true; });
             const page = await ctx.newPage();
             await page.goto(URL(modo));
             await page.waitForSelector('#mpCreateBtn');
@@ -153,7 +153,7 @@ module.exports = {
             {
                 const touch = async (w, h) => {
                     const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: true, isMobile: true, deviceScaleFactor: 2, serviceWorkers: 'block' });
-                    await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
+                    await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.SALA_CLASSICA = true; });
                     const page = await ctx.newPage();
                     await page.goto(URL('duello'));
                     await page.waitForSelector('#mpCreateBtn');

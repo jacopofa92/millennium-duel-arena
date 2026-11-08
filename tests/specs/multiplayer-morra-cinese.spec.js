@@ -31,7 +31,7 @@ module.exports = {
                 const page = await context.newPage();
                 page.on('pageerror', (err) => pageErrors.push(`[${label}] ${err.message}`));
                 // Niente DUEL_RPS_SKIP: la morra è proprio quello che si prova.
-                await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
+                await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.SALA_CLASSICA = true; });
                 await page.goto(statics.origin + '/multiplayer.html', { waitUntil: 'load' });
                 await page.waitForSelector('#mpCreateBtn');
                 await page.waitForFunction(() => {

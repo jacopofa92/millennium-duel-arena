@@ -37,6 +37,10 @@
         schermata.appendChild(radice);
         schermata.classList.add('mp-tavolo-attivo');
         vista = window.SalaTavolo.monta(radice, {});
+        // Cosa paga una vittoria con la scelta corrente: il riquadro di sempre (lo riempie Rewards) passa sotto le regole del tavolo.
+        const premi = document.getElementById('mpPremiSala');
+        const fascia = radice.querySelector('.st-regole');
+        if (premi && fascia) fascia.insertAdjacentElement('afterend', premi);
 
         const az = interna.azioni;
         vista.su('pronto', () => az.pronto());

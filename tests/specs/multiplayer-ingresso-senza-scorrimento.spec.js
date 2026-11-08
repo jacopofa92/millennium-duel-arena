@@ -12,7 +12,7 @@ module.exports = {
             for (const modo of ['duello', 'specchio', 'raid', 'tag']) {
                 const mob = w < 900;
                 const ctx = await browser.newContext({ viewport: { width: w, height: h }, isMobile: mob, hasTouch: mob, serviceWorkers: 'block' });
-                await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
+                await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.SALA_CLASSICA = true; });
                 const page = await ctx.newPage();
                 try {
                     await page.goto(url(modo));

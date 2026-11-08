@@ -351,16 +351,20 @@
         };
     }
 
-    /** La sala a tavolo e' accesa? Solo su richiesta, per ora: ?sala=tavolo (e si ricorda), ?sala=classica la spegne. */
+    /**
+     * La sala a tavolo e' la sala di serie. Si torna alla vecchia solo per diagnosi: `?sala=classica` (si ricorda sul dispositivo),
+     * `?sala=tavolo` la riaccende, `window.SALA_CLASSICA = true` la spegne (i test che guardano gli elementi della sala vecchia).
+     */
     function acceso() {
+        if (window.SALA_CLASSICA === true) return false;
         const params = new URLSearchParams(location.search);
         try {
-            if (params.get('sala') === 'tavolo') localStorage.setItem('ygoSalaTavolo', '1');
-            else if (params.get('sala') === 'classica') localStorage.removeItem('ygoSalaTavolo');
+            if (params.get('sala') === 'classica') localStorage.setItem('ygoSalaTavolo', '0');
+            else if (params.get('sala') === 'tavolo') localStorage.removeItem('ygoSalaTavolo');
         } catch (e) { /* senza memoria locale vale solo il parametro */ }
-        if (params.get('sala') === 'tavolo') return true;
         if (params.get('sala') === 'classica') return false;
-        try { return localStorage.getItem('ygoSalaTavolo') === '1'; } catch (e) { return false; }
+        if (params.get('sala') === 'tavolo') return true;
+        try { return localStorage.getItem('ygoSalaTavolo') !== '0'; } catch (e) { return true; }
     }
 
     window.SalaTavolo = { monta, acceso };

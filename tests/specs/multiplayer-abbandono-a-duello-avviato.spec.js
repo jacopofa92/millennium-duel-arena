@@ -32,7 +32,7 @@ module.exports = {
             const openLobby = async (label) => {
                 const page = await context.newPage();
                 page.on('pageerror', (err) => pageErrors.push(`[${label}] ${err.message}`));
-                await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.DUEL_RPS_SKIP = true; });
+                await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.SALA_CLASSICA = true; window.DUEL_RPS_SKIP = true; });
                 await page.goto(statics.origin + '/multiplayer.html', { waitUntil: 'load' });
                 await page.waitForSelector('#mpCreateBtn');
                 await page.waitForFunction(() => {

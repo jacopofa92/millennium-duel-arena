@@ -25,7 +25,7 @@ module.exports = {
                 const context = await browser.newContext({ viewport: { width: 1280, height: 860 }, serviceWorkers: 'block' });
                 const page = await context.newPage();
                 page.on('pageerror', (e) => errori.push(`[${etichetta}] ${e.message}`));
-                await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
+                await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.SALA_CLASSICA = true; });
                 await page.goto(statics.origin + '/multiplayer.html' + (modo ? '?modo=' + modo : ''), { waitUntil: 'load' });
                 await page.waitForSelector('#mpCreateBtn');
                 await page.waitForFunction(() => { const el = document.getElementById('pageLoader'); return !el || el.classList.contains('page-loader-hidden'); }, { timeout: 15000 });

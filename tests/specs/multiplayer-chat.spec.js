@@ -18,7 +18,7 @@ module.exports = {
             const apri = async (label) => {
                 const page = await context.newPage();
                 page.on('pageerror', (e) => errori.push(`[${label}] ${e.message}`));
-                await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.DUEL_RPS_SKIP = true; window.DUEL_FAST_OPENING = true; });
+                await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.SALA_CLASSICA = true; window.DUEL_RPS_SKIP = true; window.DUEL_FAST_OPENING = true; });
                 await page.goto(statics.origin + '/multiplayer.html', { waitUntil: 'load' });
                 await page.waitForSelector('#mpCreateBtn');
                 await page.waitForFunction(() => { const el = document.getElementById('pageLoader'); return !el || el.classList.contains('page-loader-hidden'); }, null, { timeout: 15000 });

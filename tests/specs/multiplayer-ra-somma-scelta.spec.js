@@ -23,7 +23,7 @@ module.exports = {
                 const page = await context.newPage();
                 page.on('pageerror', (err) => pageErrors.push(`[${label}] ${err.message}`));
                 page.on('console', (m) => { if (m.type() === 'error' && m.text().includes('PassoComune')) divergenze.push(`[${label}] ${m.text()}`); });
-                await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.DUEL_RPS_SKIP = true; });
+                await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.SALA_CLASSICA = true; window.DUEL_RPS_SKIP = true; });
                 await page.goto(statics.origin + '/multiplayer.html', { waitUntil: 'load' });
                 await page.waitForSelector('#mpCreateBtn');
                 await page.waitForFunction(() => { const el = document.getElementById('pageLoader'); return !el || el.classList.contains('page-loader-hidden'); }, null, { timeout: 15000 });

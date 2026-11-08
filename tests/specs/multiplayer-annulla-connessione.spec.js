@@ -18,7 +18,7 @@ module.exports = {
         await new Promise((r) => muto.listen(0, '127.0.0.1', r));
         const porta = muto.address().port;
         const ctx = await t.browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
-        await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
+        await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.SALA_CLASSICA = true; });
         const page = await ctx.newPage();
         try {
             await page.goto(URL);

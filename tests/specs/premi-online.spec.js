@@ -10,7 +10,7 @@ module.exports = {
         const page = await t.browser.newPage();
         const errori = [];
         page.on('pageerror', (e) => errori.push(e.message));
-        await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
+        await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.SALA_CLASSICA = true; });
         try {
             await page.goto(url);
             await page.waitForFunction(() => !!(window.Rewards && window.SaveManager && window.RAID_BOSSES));

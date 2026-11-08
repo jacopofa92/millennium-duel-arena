@@ -10,7 +10,7 @@ async function pagina(t, file, preparazione) {
     const page = await t.browser.newPage({ viewport: { width: 1280, height: 900 } });
     const errori = [];
     page.on('pageerror', (e) => errori.push(e.message));
-    await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
+    await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.SALA_CLASSICA = true; });
     if (preparazione) {
         await page.goto(url('index.html'));
         await page.evaluate(preparazione);
