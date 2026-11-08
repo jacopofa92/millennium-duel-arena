@@ -1,0 +1,81 @@
+/* sala-ingresso.css — la schermata prima della sala (js/multiplayer/sala-ingresso.js). Stessa lingua della sala a tavolo:
+   vetro scuro, filo d'oro, serif per i titoli. Due porte affiancate (impilate su telefono): oro per aprire, ciano per entrare. */
+.si-ingresso {
+    --si-oro: #f7d774;
+    --si-ink: #f4ead2;
+    --si-dim: #c9bb96;
+    --si-sup: linear-gradient(150deg, rgba(40, 32, 20, .8), rgba(14, 12, 18, .88));
+    --si-bordo: rgba(247, 215, 116, .3);
+    display: flex; flex-direction: column; align-items: center; gap: 18px;
+    width: min(100%, 760px); margin: 0 auto; padding: 8px 0 20px; color: var(--si-ink); font-family: Arial, sans-serif;
+}
+
+/* ---------- Intestazione: il sigillo della modalita' ---------- */
+.si-hero { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.si-sigillo { position: relative; display: grid; place-items: center; width: 96px; height: 96px; border-radius: 50%; color: var(--si-oro);
+    background: radial-gradient(closest-side, rgba(247, 215, 116, .16), transparent 75%); border: 1px solid rgba(247, 215, 116, .5);
+    box-shadow: 0 0 34px rgba(247, 215, 116, .2), inset 0 0 22px rgba(247, 215, 116, .12); font-size: 2.2rem; }
+.si-sigillo::before { content: ''; position: absolute; inset: -9px; border-radius: 50%; border: 1px dashed rgba(247, 215, 116, .4); animation: siGira 24s linear infinite; }
+.si-sigillo svg { width: 46px; height: 46px; }
+@keyframes siGira { to { transform: rotate(360deg); } }
+.si-titolo { margin: 6px 0 0; font: normal 1.7rem/1.15 Georgia, 'Times New Roman', serif; letter-spacing: .06em; color: var(--si-oro); }
+.si-descr { margin: 0; max-width: 520px; font-size: .92rem; line-height: 1.45; color: var(--si-dim); }
+.si-premi { margin: 2px 0 0; padding: 6px 14px; border-radius: 999px; font-size: .78rem; color: var(--si-oro); background: rgba(247, 215, 116, .08); border: 1px solid rgba(247, 215, 116, .3); }
+
+/* ---------- Le due porte ---------- */
+.si-porte { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; }
+.si-porta { display: flex; flex-direction: column; gap: 12px; padding: 20px 18px; border-radius: 20px; background: var(--si-sup); border: 1px solid var(--si-bordo); backdrop-filter: blur(3px);
+    transition: border-color .25s, box-shadow .25s; }
+.si-porta h2 { margin: 0; font: normal 1.15rem/1.2 Georgia, 'Times New Roman', serif; }
+.si-porta p { margin: 0; flex: 1; font-size: .86rem; line-height: 1.45; color: var(--si-dim); }
+.si-porta--crea { border-color: rgba(247, 215, 116, .55); }
+.si-porta--crea:hover, .si-porta--crea:focus-within { box-shadow: 0 0 30px rgba(247, 215, 116, .16); }
+.si-porta--entra { border-color: rgba(110, 224, 255, .4); }
+.si-porta--entra:hover, .si-porta--entra:focus-within { border-color: rgba(110, 224, 255, .85); box-shadow: 0 0 30px rgba(110, 224, 255, .14); }
+
+/* ---------- Il codice: cinque caselle ---------- */
+.si-codice { display: flex; gap: 8px; justify-content: center; }
+.si-casella { width: 100%; max-width: 54px; aspect-ratio: 1; min-height: 48px; padding: 0; text-align: center; text-transform: uppercase; border-radius: 12px; outline: none;
+    font: 700 1.5rem/1 'Courier New', monospace; color: var(--si-ink); background: rgba(8, 10, 16, .7); border: 1px solid rgba(110, 224, 255, .4);
+    transition: border-color .2s, box-shadow .2s, transform .15s; }
+.si-casella:focus { border-color: rgba(160, 238, 255, .95); box-shadow: 0 0 0 2px rgba(110, 224, 255, .3), 0 0 18px rgba(110, 224, 255, .25); transform: translateY(-2px); }
+.si-casella:not(:placeholder-shown), .si-casella[value]:not([value=""]) { border-color: rgba(110, 224, 255, .7); }
+
+/* ---------- Pulsanti ---------- */
+.si-btn { min-height: 50px; padding: 0 22px; border: 0; border-radius: 14px; cursor: pointer; font: normal 1.02rem/1 Georgia, 'Times New Roman', serif; transition: transform .15s, opacity .2s; }
+.si-btn:not(:disabled):active { transform: scale(.97); }
+.si-btn:disabled { opacity: .4; cursor: default; }
+.si-btn--oro { color: #231707; background: linear-gradient(180deg, #f8dc82, #e9a21d); }
+.si-btn--ciano { color: #052029; background: linear-gradient(180deg, #a6efff, #4cc3e0); }
+.si-btn--tenue { color: var(--si-ink); background: rgba(247, 215, 116, .1); border: 1px solid var(--si-bordo); }
+
+/* ---------- Collegamento in corso / errore ---------- */
+.si-collegamento { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; padding: 30px 18px; border-radius: 20px; background: var(--si-sup); border: 1px solid var(--si-bordo); text-align: center; }
+.si-giro { width: 46px; height: 46px; border-radius: 50%; border: 3px solid rgba(247, 215, 116, .2); border-top-color: var(--si-oro); animation: siGira 1s linear infinite; }
+.si-msg { margin: 0; max-width: 420px; font-size: .95rem; line-height: 1.45; }
+.si-azioni { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.si-collegamento.is-errore { border-color: rgba(255, 120, 140, .6); }
+.si-collegamento.is-errore .si-giro { animation: none; border-color: rgba(255, 120, 140, .7); }
+.si-collegamento.is-errore .si-giro::after { content: '!'; display: grid; place-items: center; height: 100%; font: 700 1.5rem/1 Georgia, serif; color: #ff8a9a; }
+
+/* ---------- Piede: stato del server ---------- */
+.si-piede { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.si-pillola { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border-radius: 999px; font-size: .75rem; color: var(--si-dim); background: rgba(10, 8, 5, .6); border: 1px solid var(--si-bordo); }
+.si-pillola::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #7ee2a0; box-shadow: 0 0 8px #7ee2a0; }
+.si-pillola--sveglia::before { background: var(--si-oro); box-shadow: 0 0 8px var(--si-oro); animation: siRespiro 1.4s ease-in-out infinite; }
+.si-pillola--offline::before { background: #ff8a9a; box-shadow: 0 0 8px #ff8a9a; }
+@keyframes siRespiro { 50% { opacity: .35; } }
+.si-avanzate summary { cursor: pointer; font-size: .74rem; color: var(--si-dim); text-align: center; list-style: none; }
+.si-avanzate summary::-webkit-details-marker { display: none; }
+.si-avanzate[open] summary { margin-bottom: 8px; }
+.si-url { width: min(86vw, 380px); min-height: 40px; padding: 0 12px; border-radius: 10px; font: inherit; font-size: .85rem; color: var(--si-ink); background: rgba(8, 10, 16, .7); border: 1px solid var(--si-bordo); }
+
+@media (max-width: 640px) {
+    .si-porte { grid-template-columns: 1fr; }
+    .si-titolo { font-size: 1.45rem; }
+    .si-sigillo { width: 80px; height: 80px; }
+    .si-casella { max-width: 58px; }
+}
+@media (prefers-reduced-motion: reduce) { .si-sigillo::before, .si-giro, .si-pillola--sveglia::before { animation: none; } }
+
+.si-ingresso[hidden], .si-porte[hidden], .si-collegamento[hidden], .si-premi[hidden] { display: none !important; }

@@ -80,6 +80,13 @@
 
     function $(id) { return document.getElementById(id); }
 
+    // Chi disegna la sala in un altro modo (la sala a tavolo, js/multiplayer/sala-tavolo-1v1.js) si iscrive qui e viene avvisato ad
+    // ogni cambio di stato; legge poi `MpSalaInterna.fotografia()`. La logica di rete resta tutta in questo file.
+    const ascoltatoriVista = [];
+    function notificaVista() {
+        ascoltatoriVista.forEach((fn) => { try { fn(); } catch (e) { console.warn('Vista della sala:', e); } });
+    }
+
     function showStatus(text, isError) {
         const el = $('mpStatus');
         if (!el) return;
@@ -463,6 +470,7 @@
         // nascosta ogni misura valeva zero, e nessun nome sarebbe mai
         // risultato troppo lungo da far scorrere.
         if (setupMazzi) setupMazzi.refresh();
+        notificaVista();
     }
 
     function mostraCodice(code) {
@@ -954,6 +962,7 @@
                 mostraPedinaNelPosto('mpSeatYouAvatar', p);
                 if (tessereSala.pedina) tessereSala.pedina.aggiorna();
                 if (avversarioInStanza) annunciaStato();
+                notificaVista();
             }
         });
         mostraPedinaNelPosto('mpSeatYouAvatar', MpPedina.scelta());
@@ -1036,6 +1045,7 @@
 
     /** Il riquadro dei premi della sala, con la scelta corrente (Boss del Raid, ecc.), come in Duello Libero. */
     function aggiornaPremiSala() {
+        notificaVista();   // cambia ogni volta che cambia una regola della stanza (specchio, Boss, Incubo)
         const el = $('mpPremiSala');
         if (!el || !window.Rewards || !Rewards.montaPremiSala) return;
         const modo = modoCorrenteSala();
@@ -1114,6 +1124,7 @@
         if (scelta.raid) { config.raid = scelta.raid; if (scelta.raidIncubo) config.raidIncubo = true; }
         net.sendAction(config);
         configRicevuta = config;
+        notificaVista();
     }
 
     net.on('room-ready', (msg) => {
@@ -1210,6 +1221,7 @@
                         : 'Il duello comincia quando siete pronti tutti e due.';
         }
 
+        notificaVista();
         if (sonoPronto && avversarioPronto && avversarioInStanza && avversarioCollegato) {
             if (btn) btn.disabled = true;
             avviaQuandoPronti();
@@ -1312,6 +1324,7 @@
     function mostraSceltaRicevuta(config) {
         if (setupArena) setupArena.showSelection(config);
         if (tessereSala.arena) tessereSala.arena.aggiorna();
+        notificaVista();
     }
 
     // ============================================================
@@ -1548,23 +1561,37 @@
         // provenienza inventata dal giocatore (crea-carta.html) è testo
         // libero suo, e arriva per giunta dalla rete.
         const riepilogo = overlay.querySelector('.mp-countdown-arena');
-        const rigaArena = document.createElement('div');
-        rigaArena.textContent = `🏟️ ${window.ArenaOptions.nomeCampo(config.field)} · 🎵 ${window.ArenaOptions.nomeTraccia(config.music)}`;
-        const rigaCarte = document.createElement('div');
-        rigaCarte.textContent = `🗂️ ${window.DuelSetup.originLabel(config.origin)}`;
-        riepilogo.append(rigaArena, rigaCarte);
+        // Una scheda per informazione, con l'icona a tema del gioco (la stessa libreria del menu e del Profilo) al posto delle emoji.
+        // Tutto in textContent: il nome di una provenienza (crea-carta.html) e' testo libero del giocatore e per giunta arriva dalla rete.
+        const AO = window.ArenaOptions;
+        const scheda = (icona, etichetta, valore, immagine) => {
+            const riga = document.createElement('div');
+            riga.className = 'mp-conto-scheda';
+            const ico = document.createElement('span');
+            ico.className = 'mp-conto-ico';
+            if (immagine) ico.style.backgroundImage = `url("${immagine}")`;
+            else {
+                const svg = (window.Icons && Icons.buildIcon) ? Icons.buildIcon(icona) : null;
+                if (svg) ico.appendChild(svg);
+            }
+            const testi = document.createElement('span');
+            testi.className = 'mp-conto-testi';
+            const et = document.createElement('small');
+            et.textContent = etichetta;
+            const val = document.createElement('b');
+            val.textContent = valore;
+            testi.append(et, val);
+            riga.append(ico, testi);
+            riepilogo.appendChild(riga);
+        };
+        scheda('arena', 'Arena', AO.nomeCampo(config.field), AO.previewFor ? AO.previewFor(config.field) : '');
+        scheda('audio', 'Musica', AO.nomeTraccia(config.music));
+        scheda('cards', 'Carte ammesse', window.DuelSetup.originLabel(config.origin));
         if (config.raid) {
             const b = bossPerId(config.raid);
-            const rigaRaid = document.createElement('div');
-            rigaRaid.textContent = `🐉 Raid contro ${b ? b.nome : config.raid}`;
-            riepilogo.append(rigaRaid);
+            scheda('target', 'Assalto al Boss', b ? b.nome : config.raid);
         }
-        if (config.specchio) {
-            const rigaSpecchio = document.createElement('div');
-            rigaSpecchio.textContent = `🪞 Duello a specchio: ${nomeMazzoSpecchio(config.specchio)}`;
-            riepilogo.append(rigaSpecchio);
-        }
-
+        if (config.specchio) scheda('clone', 'Duello a specchio', nomeMazzoSpecchio(config.specchio));
         let n = CONTO_ALLA_ROVESCIA_DA;
         const passo = () => {
             if (n === 0) {
@@ -1851,7 +1878,42 @@
         loadDuelArena,
         precaricaArena,
         /** La partenza è decisa: niente più "pronto" della sala 1 contro 1. */
-        segnaAvviato: () => { duelloGiaAvviato = true; }
+        segnaAvviato: () => { duelloGiaAvviato = true; },
+
+        // ---- Per la sala a tavolo (sala-tavolo-1v1.js): lo stato della sala 1 contro 1 e i gesti che la guidano ----
+        suCambio(fn) { ascoltatoriVista.push(fn); },
+        /** Tutto cio' che serve a disegnare la sala; null finche' non si e' in una stanza. */
+        fotografia() {
+            if (!codiceStanza) return null;
+            const sel = setupArena ? setupArena.getSelection() : scelta;
+            const menuBoss = $('mpRaidBoss');
+            const bossId = $('mpRaidOn') && $('mpRaidOn').checked ? ((menuBoss && menuBoss.value) || scelta.raid || null) : null;
+            const boss = bossId ? bossPerId(bossId) : null;
+            const specId = scelta.specchio || (configRicevuta && configRicevuta.specchio) || ($('mpSpecchioOn') && $('mpSpecchioOn').checked ? ($('mpSpecchioMazzo') || {}).value : null);
+            return {
+                codice: codiceStanza, sonoHost, sonoPronto, avversarioInStanza, avversarioPronto, avversarioCollegato,
+                pedinaAvversario, nomeAvversario, nomeMio: nomeMio(), pedinaMia: window.MpPedina ? MpPedina.scelta() : null,
+                modo: modoCorrenteSala(), field: sel && sel.field, music: sel && sel.music,
+                specchio: specchioRisolto() || (typeof specId === 'string' ? specId : null),
+                specchioNome: specId && specId !== SPECCHIO_CASUALE ? nomeMazzoSpecchio(specId) : (specId ? 'Un mazzo a caso' : null),
+                specchioOpzioni: mazziPerSpecchio().map((d) => ({ id: d.packId, nome: d.name })),
+                boss: boss ? { id: boss.id, nome: boss.nome, lp: boss.lp } : null, incubo: !!scelta.raidIncubo,
+                mazzo: (window.SaveManager && SaveManager.getActiveDeck) ? SaveManager.getActiveDeck() : null,
+                avviato: duelloGiaAvviato
+            };
+        },
+        /** I gesti della sala a tavolo, tradotti nei controlli che la sala di sempre ha gia' (che restano nascosti ma vivi). */
+        azioni: {
+            pronto() { const b = $('mpReadyBtn'); if (b && !b.disabled) b.click(); },
+            apriPedina() { if (tessereSala.pedina && tessereSala.pedina.bottone) tessereSala.pedina.bottone.click(); },
+            apriMazzo() { if (tessereSala.mazzo && tessereSala.mazzo.bottone) tessereSala.mazzo.bottone.click(); },
+            apriArena() { if (tessereSala.arena && tessereSala.arena.bottone) tessereSala.arena.bottone.click(); },
+            apriBoss() { if (tesseraBoss && tesseraBoss.bottone) tesseraBoss.bottone.click(); },
+            /** Specchio: sceglie un mazzo per id (o SPECCHIO_CASUALE) con lo stesso <select> di sempre. */
+            impostaSpecchio(id) { const m = $('mpSpecchioMazzo'); const s = $('mpSpecchioOn'); if (!m || !s || !sonoHost) return; s.checked = true; m.value = id; if (m.onchange) m.onchange(); },
+            impostaIncubo(attivo) { const i = $('mpRaidIncubo'); if (!i || !sonoHost) return; i.checked = !!attivo; if (i.onchange) i.onchange(); },
+            casuale: SPECCHIO_CASUALE
+        }
     };
 
     // ============================================================

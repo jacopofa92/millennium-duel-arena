@@ -59,6 +59,9 @@
     const scelta = { field: null, music: null };
 
     function $(id) { return document.getElementById(id); }
+    // Chi disegna la sala in un altro modo (js/multiplayer/sala-tavolo-tag.js) si iscrive qui: ogni ridisegno lo avvisa.
+    const ascoltatoriVista = [];
+    function notificaVista() { ascoltatoriVista.forEach((fn) => { try { fn(); } catch (e) { console.warn('Vista della sala Tag:', e); } }); }
     function interna() { return g.MpSalaInterna || {}; }
     function status(testo, errore) { if (interna().showStatus) interna().showStatus(testo, errore); }
     function sonoHost() { return !!io && io === host; }
@@ -543,6 +546,7 @@
         if (!sonoHost() && setupArena && setupArena.showSelection && stato.campo) setupArena.showSelection({ field: stato.campo, music: stato.musica });
         if (tessere.arena) tessere.arena.aggiorna();
         aggiornaPremi();
+        notificaVista();
     }
 
     function regole() {
@@ -662,6 +666,55 @@
         capienzaRichiesta,
         /** Vero se la prossima 'room-created' è una stanza del Tag Team (mp-lobby.js la lascia a questa sala). */
         aspettaStanza: () => richiestaInCorso,
+        // ---- Per la sala a tavolo (sala-tavolo-tag.js): lo stato della sala e i gesti che la guidano ----
+        suCambio(fn) { ascoltatoriVista.push(fn); },
+        fotografia() {
+            if (!stato || !attiva) return null;
+            const sel = setupArena ? setupArena.getSelection() : scelta;
+            const mazzo = (g.SaveManager && g.SaveManager.getActiveDeck) ? g.SaveManager.getActiveDeck() : null;
+            return {
+                formato: stato.formato, posti: stato.posti, persone: stato.persone, ia: stato.ia, boss: stato.boss,
+                livelloIA: stato.livelloIA, regolaLp: stato.regolaLp, scambio: stato.scambio,
+                campo: sel && sel.field, musica: sel && sel.music,
+                io, host, sonoHost: sonoHost(), presenti, codice, mioPronto, assegna: spostando, avviata,
+                pedinaMia: g.MpPedina ? MpPedina.scelta() : null, nomeMio: mioNome(), mazzo,
+                collegati: presenti.reduce((m, p) => { m[p.id] = !!p.collegato; return m; }, {}),
+                duellantiIA: duellantiIA().map((id) => ({ id, nome: nomePersonaggio(id), image: (personaggio(id) || {}).image || '' })),
+                bossDisponibili: bossDisponibili().map((b) => ({ id: b.id, nome: nomePersonaggio(b.id) })),
+                nomiSquadra: NOMI_SQUADRA, postiDelFormato: FORMATI[stato.formato].posti
+            };
+        },
+        azioni: {
+            prendiPosto: (k) => chiediPosto(k),
+            /** Solo l'host si alza: per un ospite il protocollo non ha il messaggio "mi alzo". */
+            alzati() {
+                if (!sonoHost() || !stato || avviata) return;
+                const mio = postoDi(io);
+                if (!mio) return;
+                stato.posti[mio] = null; mioPronto = false; togliPronti(); allineaAiPresenti(); pubblica();
+            },
+            pronto() { const b = /** @type {HTMLButtonElement | null} */ ($('mpTagPronto')); if (b && !b.disabled) b.click(); },
+            apriPedina() { if (tessere.pedina && tessere.pedina.bottone) tessere.pedina.bottone.click(); },
+            apriMazzo() { if (tessere.mazzo && tessere.mazzo.bottone) tessere.mazzo.bottone.click(); },
+            apriArena() { if (tessere.arena && tessere.arena.bottone) tessere.arena.bottone.click(); },
+            /** Host: una persona seduta torna in piedi. */
+            alzaPersona(k) { if (!sonoHost() || !stato || avviata || !stato.posti[k]) return; stato.posti[k] = null; togliPronti(); allineaAiPresenti(); pubblica(); },
+            /** Host: scambio il mio posto con quello di `k`. */
+            scambiaConMe(k) { if (!sonoHost() || !stato || avviata) return; siedi(io, k); allineaAiPresenti(); pubblica(); },
+            /** Host: metto `chi` (in piedi o seduto) nel posto `k`; se e' occupato i due si scambiano. */
+            assegna(chi, k) { if (!sonoHost() || !stato || avviata) return; siedi(chi, k); spostando = null; allineaAiPresenti(); pubblica(); },
+            scegliAssegna(chi) { spostando = spostando === chi ? null : chi; disegna(); },
+            scegliIA(k, id) { if (!sonoHost() || !stato || !(k in stato.ia)) return; stato.ia[k] = id; togliPronti(); pubblica(); },
+            impostaRegola(chiave, valore) {
+                if (!sonoHost() || !stato) return;
+                if (chiave === 'livelloIA') stato.livelloIA = valore;
+                else if (chiave === 'regolaLp') stato.regolaLp = valore;
+                else if (chiave === 'scambio') stato.scambio = valore;
+                else if (chiave === 'boss') stato.boss = valore || null;
+                else return;
+                togliPronti(); pubblica();
+            }
+        },
         /** Per i test: lo stato della sala e chi sono. */
         _stato: () => ({ io, host, presenti, stato, avviata }),
         /** Per le prove a vista: disegna la sala con uno stato dato, senza rete. */

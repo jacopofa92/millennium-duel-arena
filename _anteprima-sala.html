@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sala a tavolo — anteprima</title>
+<link rel="stylesheet" href="js/ui/topbar.css">
+<link rel="stylesheet" href="js/ui/sala-tavolo.css">
+<link rel="stylesheet" href="js/ui/sala-ingresso.css">
+<style>
+    /* Pagina di PROVA della sala unica: nessuna rete, nessun salvataggio. Serve a giudicare la UX prima di toccare le sale vere. */
+    body { margin: 0; min-height: 100dvh; color: #f4ead2; font-family: Arial, sans-serif;
+        background: radial-gradient(120% 80% at 50% 0%, #2a2114 0%, #120f0b 55%, #0a0806 100%); }
+    .an-pagina { display: flex; flex-direction: column; gap: 14px; padding: 14px 12px calc(28px + env(safe-area-inset-bottom, 0px)); }
+    .an-prove { max-width: 980px; width: 100%; margin: 0 auto; border-radius: 14px; border: 1px dashed rgba(247, 215, 116, .4); background: rgba(10, 8, 5, .7); position: relative; z-index: 2; }
+    .an-prove summary { cursor: pointer; padding: 10px 14px; font-size: .85rem; color: #f7d774; list-style: none; }
+    .an-prove summary::-webkit-details-marker { display: none; }
+    .an-prove-corpo { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 0 14px 14px; }
+    .an-prove label { display: flex; align-items: center; gap: 6px; font-size: .82rem; }
+    .an-prove select, .an-prove button { min-height: 38px; padding: 0 12px; border-radius: 10px; border: 1px solid rgba(247, 215, 116, .45); background: rgba(10, 8, 5, .8); color: #f4ead2; font: inherit; font-size: .82rem; }
+    .an-prove button { cursor: pointer; }
+    .an-toast { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 50; padding: 10px 16px; border-radius: 12px; background: rgba(18, 14, 10, .95);
+        border: 1px solid rgba(247, 215, 116, .5); font-size: .85rem; opacity: 0; pointer-events: none; transition: opacity .25s; }
+    .an-toast.is-visibile { opacity: 1; }
+    #ingresso, #sala { position: relative; z-index: 1; }
+</style>
+</head>
+<body>
+<main class="an-pagina">
+    <details class="an-prove" open>
+        <summary>Strumenti di prova (non fanno parte della sala)</summary>
+        <div class="an-prove-corpo">
+            <label>Modalità
+                <select id="anModo">
+                    <option value="duello">Duello</option>
+                    <option value="specchio">Duello a specchio</option>
+                    <option value="boss">Assalto al Boss</option>
+                    <option value="tag21">Tag Team 2 contro 1</option>
+                    <option value="tag22">Tag Team 2 contro 2</option>
+                </select>
+            </label>
+            <label><input type="checkbox" id="anHost" checked> Sono l'host</label>
+            <label>Server
+                <select id="anServer"><option value="online">online</option><option value="sveglia">in risveglio</option><option value="offline">non raggiungibile</option></select>
+            </label>
+            <button type="button" id="anAmico">Entra un amico</button>
+            <button type="button" id="anAmicoPronto">Amici pronti</button>
+            <button type="button" id="anIngresso">Torna all'ingresso</button>
+        </div>
+    </details>
+
+    <div id="ingresso"></div>
+    <div id="sala" hidden></div>
+</main>
+<div class="an-toast" id="anToast" role="status"></div>
+
+<script src="js/data/arena-options.js"></script>
+<script src="js/data/characters-db.js"></script>
+<script src="js/ui/icon-library.js"></script>
+<script src="js/multiplayer/sala-ingresso.js"></script>
+<script src="js/multiplayer/sala-tavolo.js"></script>
+<script>
+(function () {
+    'use strict';
+    const $ = (id) => document.getElementById(id);
+    const personaggio = (id) => characterDatabase.find((c) => c.id === id) || characterDatabase[0];
+    const AO = window.ArenaOptions;
+    const IA = ['kaiba', 'mai', 'joey', 'pegasus', 'marik', 'bakura'];
+    const AMICI = [['Marco', 'joey'], ['Giulia', 'mai'], ['Luca', 'solomonMuto'], ['Sara', 'bakura']];
+    const BOSS = ['kaiba', 'marik', 'yamiYugi', 'pegasus', 'nitemare'];
+    const ARENE = ['anticoEgittoNotte_1.jpg', 'arenaRegnoDeiDuellanti.jpg', 'rovine_1.jpg', 'dirigibileKaibaCorp.jpg'];
+    const nomeArena = (f) => (AO ? AO.nomeCampo(f) : f);
+    const sfondoArena = (f) => 'images/fields/mobile/' + f;
+
+    // Descrizione delle modalità: QUANTI posti e di che tipo. È l'unica cosa che cambia fra una modalità e l'altra.
+    const MODI = {
+        duello: { titolo: 'Duello', descr: 'Uno contro uno con il tuo mazzo. Chi vince prende i premi online.', icona: 'multiplayer', premi: 'Vittoria: +50 crediti (le prime 5 del giorno)',
+            A: ['Squadra A', ['A0']], B: ['Squadra B', ['B0']], ia: false, regole: () => [] },
+        specchio: { titolo: 'Duello a specchio', descr: 'Stesso mazzo per tutti e due: vince chi gioca meglio, non chi ha le carte migliori.', icona: 'cards', premi: 'Vittoria: +50 crediti (le prime 5 del giorno)',
+            A: ['Squadra A', ['A0']], B: ['Squadra B', ['B0']], ia: false,
+            regole: () => [{ chiave: 'mazzo', etichetta: 'Mazzo comune', valore: 'Starter Yugi', opzioni: ['Starter Yugi', 'Starter Kaiba', 'Starter Joey'], modificabile: true }] },
+        boss: { titolo: 'Assalto al Boss', descr: 'Affrontate insieme un Boss: la sua barra dei Life Point è una sola, i danni si sommano.', icona: 'multiplayer', premi: 'Boss battuto: +500 crediti e +2 Stelle',
+            A: ['Cacciatori', ['A0', 'A1']], B: ['Il Boss', ['B0']], ia: false, boss: 'B0',
+            regole: () => [
+                { chiave: 'boss', etichetta: 'Boss', valore: personaggio('kaiba').name, opzioni: BOSS.map((b) => personaggio(b).name), modificabile: true },
+                { chiave: 'incubo', etichetta: 'Livello', valore: 'Normale', opzioni: ['Normale', 'Incubo'], modificabile: true }
+            ] },
+        tag21: { titolo: 'Tag Team 2 contro 1', descr: 'Tu e un compagno (persona o IA) contro un solo avversario, con la vita divisa fra voi due.', icona: 'multiplayer', premi: 'Vittoria: da +30 a +80 crediti secondo l\'IA',
+            A: ['Squadra A', ['A0', 'A1']], B: ['Squadra B', ['B0']], ia: true,
+            regole: () => [{ chiave: 'livello', etichetta: 'Livello IA', valore: 'Normale', opzioni: ['Facile', 'Normale', 'Difficile'], modificabile: true }] },
+        tag22: { titolo: 'Tag Team 2 contro 2', descr: 'Due squadre da due: a turni alterni, scegliete chi affrontare.', icona: 'multiplayer', premi: 'Vittoria: da +30 a +80 crediti secondo le IA',
+            A: ['Squadra A', ['A0', 'A1']], B: ['Squadra B', ['B0', 'B1']], ia: true,
+            regole: () => [{ chiave: 'livello', etichetta: 'Livello IA', valore: 'Normale', opzioni: ['Facile', 'Normale', 'Difficile'], modificabile: true }] }
+    };
+
+    const io = { id: 'io', nome: 'Tu', pedina: personaggio('yugiMuto').image };
+    let stato;
+    let arena = ARENE[0];
+    let timerConto = 0;
+
+    function nuovoStato(modo) {
+        const m = MODI[modo];
+        const slot = {};
+        [...m.A[1], ...m.B[1]].forEach((id) => { slot[id] = { tipo: 'libero' }; });
+        if (m.boss) slot[m.boss] = { tipo: 'boss', nome: personaggio('kaiba').name, pedina: personaggio('kaiba').image };
+        return {
+            modo, squadre: { A: { nome: m.A[0], posti: m.A[1] }, B: { nome: m.B[0], posti: m.B[1] } }, slot, io, ioPosto: null,
+            host: $('anHost').checked, consentiIA: m.ia, pronto: false, codice: 'K7P2Q',
+            sagoma: 'images/characters/pedine/mirror.png',
+            regole: m.regole().concat([{ chiave: 'arena', etichetta: 'Arena e musica', valore: nomeArena(arena), img: AO ? AO.previewFor(arena) : '', opzioni: ARENE.map(nomeArena), modificabile: true }]),
+            personali: [
+                { chiave: 'duellante', titolo: 'Il tuo duellante', valore: personaggio('yugiMuto').name, dettaglio: 'Lo vedono tutti', pedina: personaggio('yugiMuto').image },
+                { chiave: 'mazzo', titolo: 'Il tuo mazzo', valore: 'Mazzo generato al momento', dettaglio: 'Lo scegli solo per te', icona: 'cards' }
+            ]
+        };
+    }
+
+    // Il mazzo personale non conta nello Specchio (si gioca il mazzo comune): lo si dice invece di nasconderlo e basta.
+    function ritocca() {
+        if (stato.modo === 'specchio') stato.personali[1] = { chiave: 'mazzo', titolo: 'Il tuo mazzo', valore: 'Si gioca il mazzo comune', dettaglio: 'Deciso dall\'host', icona: 'cards' };
+        stato.host = $('anHost').checked;
+        stato.arenaImg = sfondoArena(arena);
+    }
+
+    const sala = SalaTavolo.monta($('sala'), {});
+    const ingresso = SalaIngresso.monta($('ingresso'));
+    const toast = (t) => { const e = $('anToast'); e.textContent = t; e.classList.add('is-visibile'); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove('is-visibile'), 1800); };
+    const prossimaIA = (attuale) => { const i = IA.indexOf(attuale); return IA[(i + 1) % IA.length]; };
+
+    // ---------- Sala ----------
+    const mostra = () => { ritocca(); sala.imposta(stato); controllaAvvio(); };
+    // Tutti pronti: parte un conto alla rovescia (qui finto) e il tavolo si accende.
+    function controllaAvvio() {
+        const ids = Object.keys(stato.slot);
+        const tutti = stato.pronto && stato.ioPosto && ids.every((id) => id === stato.ioPosto || ['ia', 'boss'].includes(stato.slot[id].tipo) || (stato.slot[id].tipo === 'persona' && stato.slot[id].pronto));
+        if (tutti && !stato.avvio && !timerConto) {
+            let n = 3;
+            stato.avvio = n;
+            sala.imposta(stato);
+            timerConto = setInterval(() => {
+                n -= 1;
+                if (n <= 0) { clearInterval(timerConto); timerConto = 0; stato.avvio = 0; sala.imposta(stato); toast('Qui partirebbe il duello'); return; }
+                stato.avvio = n; sala.imposta(stato);
+            }, 900);
+        } else if (!tutti && timerConto) { clearInterval(timerConto); timerConto = 0; stato.avvio = 0; sala.imposta(stato); }
+    }
+    sala.su('prendi-posto', (id) => { stato.ioPosto = id; mostra(); });
+    sala.su('lascia-posto', () => { stato.ioPosto = null; stato.pronto = false; mostra(); });
+    sala.su('pronto', (v) => { stato.pronto = v; mostra(); });
+    sala.su('personale', (k) => toast(k === 'duellante' ? 'Qui si aprirebbe la scelta del duellante' : 'Qui si aprirebbe la scelta del mazzo'));
+    sala.su('regola', ({ chiave, valore }) => {
+        const r = stato.regole.find((x) => x.chiave === chiave);
+        if (!r) return;
+        r.valore = valore;
+        if (chiave === 'arena') { arena = ARENE.find((f) => nomeArena(f) === valore) || arena; r.img = AO ? AO.previewFor(arena) : ''; }
+        if (chiave === 'boss') {
+            const p = BOSS.map(personaggio).find((c) => c.name === valore);
+            if (p) stato.slot.B0 = { tipo: 'boss', nome: p.name, pedina: p.image };
+        }
+        mostra();
+    });
+    sala.su('azione-host', ({ tipo, posto }) => {
+        const s = stato.slot[posto];
+        if (tipo === 'sposta-al-centro' || tipo === 'espelli' || tipo === 'togli-ia') stato.slot[posto] = { tipo: 'libero' };
+        else if (tipo === 'scambia' && stato.ioPosto) {
+            // L'host prende il posto dell'altro; l'altro va dove stava l'host.
+            const mio = stato.ioPosto;
+            stato.slot[mio] = Object.assign({}, s);
+            stato.slot[posto] = { tipo: 'libero' };
+            stato.ioPosto = posto;
+        } else if (tipo === 'cambia-ia') { const p = personaggio(prossimaIA(s.id)); stato.slot[posto] = { tipo: 'ia', id: p.id, nome: p.name, pedina: p.image }; }
+        else if (tipo === 'metti-ia') { const p = personaggio(IA[Math.floor(Math.random() * IA.length)]); stato.slot[posto] = { tipo: 'ia', id: p.id, nome: p.name, pedina: p.image }; }
+        mostra();
+    });
+
+    // ---------- Ingresso ----------
+    let fase = { fase: 'riposo' };
+    let ultimaAzione = null;
+    const mostraIngresso = () => {
+        const m = MODI[$('anModo').value];
+        ingresso.imposta({
+            modo: { titolo: m.titolo, descrizione: m.descr, icona: m.icona }, premi: m.premi,
+            server: { stato: $('anServer').value, url: 'wss://millennium-duel-arena-relay.onrender.com' },
+            fase: fase.fase, messaggio: fase.messaggio
+        });
+    };
+    const vaiInSala = (comeHost) => {
+        $('anHost').checked = comeHost;
+        stato = nuovoStato($('anModo').value);
+        if (!comeHost) {
+            // Entrato con un codice: ci sono gia' un paio di persone, e la tua scelta e' ancora da fare.
+            const m = MODI[$('anModo').value];
+            const primo = m.A[1][0];
+            const [nome, pid] = AMICI[0];
+            stato.slot[primo] = { tipo: 'persona', id: 'amico0', nome, pedina: personaggio(pid).image, pronto: false };
+        }
+        $('ingresso').hidden = true;
+        $('sala').hidden = false;
+        mostra();
+    };
+    const collega = (azione, codice) => {
+        ultimaAzione = [azione, codice];
+        if ($('anServer').value === 'offline') { fase = { fase: 'errore', messaggio: 'Il server non risponde. Controlla la connessione o riprova fra poco.' }; return mostraIngresso(); }
+        fase = { fase: 'collego', messaggio: $('anServer').value === 'sveglia' ? 'Il server si sta svegliando: può volerci fino a un minuto…' : (azione === 'crea' ? 'Apro la stanza…' : `Cerco la stanza ${codice}…`) };
+        mostraIngresso();
+        collega.t = setTimeout(() => { fase = { fase: 'riposo' }; vaiInSala(azione === 'crea'); }, $('anServer').value === 'sveglia' ? 2600 : 1100);
+    };
+    ingresso.su('crea', () => collega('crea'));
+    ingresso.su('entra', (codice) => collega('entra', codice));
+    ingresso.su('annulla', () => { clearTimeout(collega.t); fase = { fase: 'riposo' }; mostraIngresso(); });
+    ingresso.su('riprova', () => collega(...ultimaAzione));
+
+    const tornaIngresso = () => {
+        clearInterval(timerConto); timerConto = 0;
+        $('sala').hidden = true; $('ingresso').hidden = false; fase = { fase: 'riposo' }; mostraIngresso(); ingresso.azzera();
+    };
+
+    $('anModo').onchange = () => { if ($('sala').hidden) mostraIngresso(); else { stato = nuovoStato($('anModo').value); mostra(); } };
+    $('anHost').onchange = () => { if (!$('sala').hidden) mostra(); };
+    $('anServer').onchange = mostraIngresso;
+    $('anIngresso').onclick = tornaIngresso;
+    $('anAmico').onclick = () => {
+        if ($('sala').hidden) return toast('Prima entra in una stanza');
+        // Un amico si siede nel primo slot libero: prima la squadra avversaria nelle sfide uno contro uno, la tua nelle altre.
+        const ordine = ['duello', 'specchio'].includes(stato.modo) ? ['B', 'A'] : ['A', 'B'];
+        const libero = ordine.flatMap((q) => stato.squadre[q].posti).find((id) => stato.slot[id].tipo === 'libero' && id !== stato.ioPosto);
+        if (!libero) return toast('Non ci sono posti liberi');
+        const n = Object.values(stato.slot).filter((x) => x.tipo === 'persona').length;
+        const [nome, pid] = AMICI[n % AMICI.length];
+        stato.slot[libero] = { tipo: 'persona', id: 'amico' + n, nome, pedina: personaggio(pid).image, pronto: false };
+        mostra();
+    };
+    $('anAmicoPronto').onclick = () => {
+        if ($('sala').hidden) return;
+        Object.values(stato.slot).forEach((s) => { if (s.tipo === 'persona') s.pronto = true; });
+        mostra();
+    };
+
+    // Lo sfondo della sala sta dietro anche all'ingresso: parte gia' con l'arena, cosi' la schermata non e' mai un fondo piatto.
+    mostraIngresso();
+})();
+</script>
+</body>
+</html>

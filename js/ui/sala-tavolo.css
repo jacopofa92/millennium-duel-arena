@@ -1,0 +1,203 @@
+/* sala-tavolo.css — la sala unica a tavolo (js/multiplayer/sala-tavolo.js). Stessa lingua del resto dell'app: vetro scuro, filo d'oro,
+   serif per i titoli, niente rimbalzi nei movimenti. Le misure scalano con --st-fig (l'altezza della figura nello slot).
+   Colori delle squadre: A = ciano (la tua), B = rosso (di fronte). */
+.st-sala {
+    --st-fig: 170px;
+    --st-oro: #f7d774;
+    --st-ink: #f4ead2;
+    --st-dim: #c9bb96;
+    --st-sup: linear-gradient(150deg, rgba(40, 32, 20, .78), rgba(14, 12, 18, .86));
+    --st-bordo: rgba(247, 215, 116, .3);
+    --st-a: 110, 224, 255;
+    --st-b: 255, 120, 140;
+    position: relative; isolation: isolate;
+    display: flex; flex-direction: column; gap: 14px;
+    width: min(100%, 980px); margin: 0 auto; color: var(--st-ink);
+    font-family: Arial, sans-serif;
+}
+
+/* ---------- Sfondo: l'arena scelta, sfocata e scurita ---------- */
+.st-sfondo { position: fixed; inset: -30px; z-index: -1; background: center / cover no-repeat; filter: blur(14px) brightness(.45) saturate(1.1); transform: scale(1.04); transition: background-image .4s; }
+.st-sfondo::after { content: ''; position: absolute; inset: 0; background: radial-gradient(90% 70% at 50% 40%, transparent 30%, rgba(6, 5, 4, .75) 100%); }
+
+/* ---------- Il tavolo: squadra B in alto, il centro, squadra A in basso ---------- */
+.st-tavolo { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 16px 12px; border-radius: 22px;
+    background: radial-gradient(120% 90% at 50% 50%, rgba(247, 215, 116, .08), transparent 62%), rgba(10, 8, 6, .55);
+    border: 1px solid var(--st-bordo); backdrop-filter: blur(3px); transition: box-shadow .5s, border-color .5s; }
+.st-tavolo.is-tutti-pronti { border-color: rgba(247, 215, 116, .85); box-shadow: 0 0 0 1px rgba(247, 215, 116, .35), 0 0 46px rgba(247, 215, 116, .22), inset 0 0 60px rgba(247, 215, 116, .08); }
+.st-squadra { display: flex; flex-direction: column; gap: 8px; }
+.st-squadra-titolo { margin: 0; font: normal .8rem/1.2 Georgia, 'Times New Roman', serif; letter-spacing: .22em; text-transform: uppercase; text-align: center; color: rgb(var(--st-a)); }
+.st-squadra--b .st-squadra-titolo { color: rgb(var(--st-b)); }
+.st-riga { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+
+/* ---------- La fascia centrale: dove sta il tuo token finche' non scegli, e l'emblema VS ---------- */
+.st-centro { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: calc(var(--st-fig) * .78 + 70px); }
+.st-centro::before, .st-centro::after { content: ''; position: absolute; top: 50%; height: 2px; width: calc(50% - var(--st-fig) * .75); transition: background .5s, box-shadow .5s;
+    background: linear-gradient(90deg, transparent, rgba(247, 215, 116, .45)); }
+.st-centro::before { left: 0; }
+.st-centro::after { right: 0; transform: scaleX(-1); }
+.st-tavolo.is-tutti-pronti .st-centro::before, .st-tavolo.is-tutti-pronti .st-centro::after { background: linear-gradient(90deg, transparent, #f7d774); box-shadow: 0 0 12px rgba(247, 215, 116, .8); }
+.st-emblema { position: absolute; top: 2px; display: grid; place-items: center; width: 46px; height: 46px; transition: opacity .3s; }
+.st-emblema.is-nascosto { opacity: 0; }
+.st-emblema-anello { position: absolute; inset: 0; border-radius: 50%; border: 1.5px dashed rgba(247, 215, 116, .7); animation: stGira 14s linear infinite; }
+.st-emblema-testo { font: normal .95rem/1 Georgia, 'Times New Roman', serif; letter-spacing: .12em; color: var(--st-oro); }
+.st-tavolo.is-tutti-pronti .st-emblema-anello { border-style: solid; border-color: #f7d774; box-shadow: 0 0 14px rgba(247, 215, 116, .7); animation-duration: 5s; }
+@keyframes stGira { to { transform: rotate(360deg); } }
+.st-ancora { margin-top: 48px; width: calc(var(--st-fig) * .72); height: calc(var(--st-fig) * .78); border-radius: 18px; border: 1px dashed rgba(247, 215, 116, .45);
+    background: rgba(247, 215, 116, .05); transition: opacity .3s; }
+.st-ancora.is-vuota { opacity: .3; border-style: solid; border-color: rgba(247, 215, 116, .2); background: none; }
+.st-centro-testo { margin: 0; min-height: 1.1em; font-size: .78rem; letter-spacing: .06em; color: var(--st-dim); text-align: center; }
+.st-tavolo.is-tutti-pronti .st-centro-testo { color: var(--st-oro); letter-spacing: .16em; text-transform: uppercase; }
+.st-conto { position: absolute; display: grid; place-items: center; opacity: 0; font: normal 5.2rem/1 Georgia, 'Times New Roman', serif; color: var(--st-oro); pointer-events: none;
+    text-shadow: 0 0 28px rgba(247, 215, 116, .9), 0 4px 18px rgba(0, 0, 0, .8); }
+.st-conto.is-visibile { opacity: 1; animation: stConto .9s ease-out; }
+@keyframes stConto { from { transform: scale(1.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* ---------- Il token: il TUO duellante, scivola fra il centro e gli slot ---------- */
+.st-token { position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none; will-change: transform;
+    background: center bottom / contain no-repeat; filter: drop-shadow(0 10px 14px rgba(0, 0, 0, .6)) drop-shadow(0 0 10px rgba(247, 215, 116, .35));
+    transition: transform .55s cubic-bezier(.2, .8, .2, 1), width .55s cubic-bezier(.2, .8, .2, 1), height .55s cubic-bezier(.2, .8, .2, 1), filter .3s; }
+.st-token.is-seduto { filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .6)) drop-shadow(0 0 16px rgba(var(--st-a), .55)); }
+.st-token.is-in-moto { filter: drop-shadow(0 12px 16px rgba(0, 0, 0, .55)) drop-shadow(0 0 22px rgba(247, 215, 116, .95)) brightness(1.12); }
+
+/* ---------- Gli slot ---------- */
+.st-cella { position: relative; }
+.st-slot { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; width: calc(var(--st-fig) * 1.0);
+    padding: 12px 10px 10px; border-radius: 18px; cursor: pointer; font: inherit; color: inherit; text-align: center;
+    background: var(--st-sup); border: 1px solid var(--st-bordo); transition: border-color .25s, box-shadow .25s, transform .15s; overflow: hidden; }
+.st-slot:disabled { cursor: default; }
+.st-slot:not(:disabled):active { transform: scale(.98); }
+.st-angoli { position: absolute; inset: 6px; pointer-events: none; border-radius: 10px;
+    background:
+        linear-gradient(var(--st-ang, rgba(247, 215, 116, .7)), var(--st-ang, rgba(247, 215, 116, .7))) top left / 12px 2px no-repeat,
+        linear-gradient(var(--st-ang, rgba(247, 215, 116, .7)), var(--st-ang, rgba(247, 215, 116, .7))) top left / 2px 12px no-repeat,
+        linear-gradient(var(--st-ang, rgba(247, 215, 116, .7)), var(--st-ang, rgba(247, 215, 116, .7))) bottom right / 12px 2px no-repeat,
+        linear-gradient(var(--st-ang, rgba(247, 215, 116, .7)), var(--st-ang, rgba(247, 215, 116, .7))) bottom right / 2px 12px no-repeat; }
+/* la base luminosa sotto la figura: il colore della squadra */
+.st-base { position: absolute; left: 50%; bottom: 74px; width: 78%; height: 28px; transform: translateX(-50%); border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(var(--st-colore, var(--st-a)), .5), transparent); filter: blur(2px); }
+.st-squadra--b { --st-colore: var(--st-b); }
+.st-squadra--a { --st-colore: var(--st-a); }
+.st-fig { position: relative; display: grid; place-items: center; width: 100%; height: var(--st-fig); background: center bottom / contain no-repeat; font: normal 2.4rem/1 Georgia, serif; color: rgba(247, 215, 116, .45); }
+.st-etichetta { margin-top: 10px; font: 600 .66rem/1.2 Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--st-dim); }
+.st-nome { font: normal 1rem/1.2 Georgia, 'Times New Roman', serif; overflow-wrap: anywhere; }
+.st-sotto { font-size: .72rem; line-height: 1.3; color: var(--st-dim); }
+.st-pronto-segno { position: absolute; top: 8px; right: 8px; padding: 2px 7px; border-radius: 999px; font: 700 .6rem/1.3 Arial, sans-serif; letter-spacing: .08em;
+    font-style: normal; color: #06240f; background: #7ee2a0; }
+
+/* libero: invita a sedersi; con una figura in ombra (sagoma) al posto del punto interrogativo */
+.st-slot--libero { --st-ang: rgba(var(--st-colore, var(--st-a)), .85); border-color: rgba(var(--st-colore, var(--st-a)), .4); background: linear-gradient(160deg, rgba(14, 30, 44, .55), rgba(12, 14, 22, .8)); }
+.st-squadra--b .st-slot--libero { background: linear-gradient(160deg, rgba(44, 16, 24, .55), rgba(16, 12, 16, .8)); }
+.st-slot--libero:not(:disabled):hover, .st-slot--libero:not(:disabled):focus-visible { border-color: rgba(var(--st-colore, var(--st-a)), .95); box-shadow: 0 0 0 1px rgba(var(--st-colore, var(--st-a)), .5), 0 0 26px rgba(var(--st-colore, var(--st-a)), .28); }
+.st-slot--libero .st-sotto { color: rgb(var(--st-colore, var(--st-a))); }
+.st-slot--libero .st-base { opacity: .45; }
+.st-con-sagoma .st-slot--libero .st-fig::before { content: ''; position: absolute; inset: 0; background: var(--st-sagoma) center bottom / contain no-repeat; filter: brightness(0) invert(1); opacity: .13; }
+.st-slot--libero .st-fig::after { content: ''; position: absolute; left: 50%; top: 42%; width: 48px; height: 48px; margin: -24px 0 0 -24px; border-radius: 50%;
+    border: 1.5px dashed rgba(var(--st-colore, var(--st-a)), .7); animation: stRespiro 2.4s ease-in-out infinite; }
+@keyframes stRespiro { 0%, 100% { transform: scale(.9); opacity: .45; } 50% { transform: scale(1.12); opacity: .95; } }
+/* il tuo: la figura la disegna il token, qui resta la cornice evidenziata */
+.st-slot--io { --st-ang: rgba(var(--st-a), .9); border-color: rgba(var(--st-a), .85); box-shadow: 0 0 0 1px rgba(var(--st-a), .4), 0 0 26px rgba(var(--st-a), .22); }
+.st-slot--boss { --st-ang: rgba(255, 110, 120, .95); border-color: rgba(255, 110, 120, .6); background: radial-gradient(90% 70% at 50% 40%, rgba(120, 20, 30, .45), rgba(18, 10, 12, .9)); box-shadow: 0 0 30px rgba(255, 70, 90, .25); }
+.st-slot--boss .st-base { background: radial-gradient(closest-side, rgba(255, 70, 90, .65), transparent); }
+.st-slot--ia .st-sotto { color: #b6a8ff; }
+/* pronto: il bordo diventa verde e respira piano */
+.st-slot.is-pronto { border-color: rgba(126, 226, 160, .85); animation: stPronto 2.2s ease-in-out infinite; }
+@keyframes stPronto { 0%, 100% { box-shadow: 0 0 0 1px rgba(126, 226, 160, .3), 0 0 14px rgba(126, 226, 160, .15); } 50% { box-shadow: 0 0 0 1px rgba(126, 226, 160, .6), 0 0 28px rgba(126, 226, 160, .35); } }
+/* chi si siede ENTRA: sale dal basso con una dissolvenza (mai un rimbalzo) */
+.st-entra .st-fig { animation: stEntra .55s cubic-bezier(.2, .8, .2, 1); }
+.st-entra { animation: stLampo .7s ease-out; }
+@keyframes stEntra { from { transform: translateY(26px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes stLampo { 0% { box-shadow: 0 0 0 0 rgba(247, 215, 116, .8); } 100% { box-shadow: 0 0 0 22px rgba(247, 215, 116, 0); } }
+
+/* menu dell'host */
+.st-menu-btn { position: absolute; top: 6px; left: 6px; z-index: 4; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font: 700 .8rem/1 Arial, sans-serif; letter-spacing: -.05em; color: var(--st-oro);
+    background: rgba(10, 8, 5, .78); border: 1px solid rgba(247, 215, 116, .5); }
+.st-menu { position: absolute; top: 40px; left: 6px; z-index: 6; display: flex; flex-direction: column; min-width: 180px; padding: 6px; border-radius: 12px;
+    background: rgba(18, 14, 10, .97); border: 1px solid var(--st-bordo); box-shadow: 0 14px 30px rgba(0, 0, 0, .6); }
+.st-menu button { padding: 11px 12px; border: 0; background: none; text-align: left; font: inherit; font-size: .88rem; color: var(--st-ink); border-radius: 8px; cursor: pointer; }
+.st-menu button:hover, .st-menu button:focus-visible { background: rgba(247, 215, 116, .12); }
+
+/* ---------- Regole della stanza (chip) ---------- */
+.st-regole { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.st-chip { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-radius: 14px; text-align: left; font: inherit; color: var(--st-ink);
+    background: var(--st-sup); border: 1px solid var(--st-bordo); backdrop-filter: blur(3px); }
+.st-chip-testi { display: flex; flex-direction: column; gap: 1px; }
+.st-chip small { font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: var(--st-dim); }
+.st-chip b { font: normal .95rem/1.2 Georgia, 'Times New Roman', serif; }
+.st-chip-img { flex: 0 0 auto; width: 64px; height: 38px; border-radius: 8px; background: center / cover no-repeat; border: 1px solid rgba(247, 215, 116, .4); }
+.st-chip--modificabile { cursor: pointer; border-color: rgba(247, 215, 116, .55); }
+.st-chip:disabled { cursor: default; opacity: 1; }
+
+/* ---------- Scelte personali ---------- */
+.st-personali { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.st-tessera { display: flex; align-items: center; gap: 12px; padding: 8px 12px 8px 8px; border-radius: 14px; text-align: left; font: inherit; color: inherit; cursor: pointer;
+    background: var(--st-sup); border: 1px solid var(--st-bordo); backdrop-filter: blur(3px); }
+.st-tessera-img { flex: 0 0 auto; display: grid; place-items: center; width: 54px; height: 54px; border-radius: 12px; background: #15110c center bottom / contain no-repeat; color: var(--st-oro); font-size: 1.4rem; }
+.st-tessera-img svg { width: 28px; height: 28px; }
+.st-tessera-testi { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.st-tessera-testi small { font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: var(--st-dim); }
+.st-tessera-testi b { font: normal 1rem/1.2 Georgia, serif; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.st-tessera-testi em { font-style: normal; font-size: .74rem; color: var(--st-dim); }
+.st-tessera-cambia { font: 700 .72rem/1 Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--st-oro); }
+
+/* ---------- Barra: codice, stato, pronto ---------- */
+.st-barra { display: flex; align-items: center; gap: 14px; padding: 10px 14px; border-radius: 16px; background: var(--st-sup); border: 1px solid var(--st-bordo); backdrop-filter: blur(3px); transition: border-color .4s, box-shadow .4s; }
+.st-barra.is-pronti { border-color: rgba(247, 215, 116, .8); box-shadow: 0 0 26px rgba(247, 215, 116, .2); }
+.st-codice { display: flex; flex-direction: column; }
+.st-codice small { font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--st-dim); }
+.st-codice b { font: 700 1.1rem/1.2 'Courier New', monospace; letter-spacing: .25em; }
+.st-stato-sala { flex: 1; margin: 0; font-size: .85rem; color: var(--st-dim); }
+.st-pronto-btn { min-height: 48px; padding: 0 22px; border-radius: 14px; border: 0; cursor: pointer; font: normal 1rem/1 Georgia, 'Times New Roman', serif;
+    color: #231707; background: linear-gradient(180deg, #f8dc82, #e9a21d); transition: transform .15s; }
+.st-pronto-btn:not(:disabled):active { transform: scale(.97); }
+.st-pronto-btn:disabled { opacity: .4; cursor: default; }
+.st-pronto-btn.is-attivo { background: linear-gradient(180deg, #7ee2a0, #38a866); color: #06240f; }
+
+/* ---------- Telefono: figure piu' piccole, due slot per riga ---------- */
+@media (max-width: 760px) {
+    .st-sala { --st-fig: 112px; }
+    .st-riga { gap: 8px; }
+    .st-slot { width: calc(var(--st-fig) * 1.3); padding: 10px 6px 8px; }
+    .st-base { bottom: 62px; }
+    .st-centro { min-height: calc(var(--st-fig) * .78 + 60px); }
+    .st-conto { font-size: 4rem; }
+    .st-barra { flex-wrap: wrap; }
+    .st-stato-sala { order: 3; flex-basis: 100%; }
+    .st-pronto-btn { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .st-token, .st-emblema-anello, .st-slot.is-pronto, .st-slot--libero .st-fig::after, .st-entra, .st-entra .st-fig, .st-conto.is-visibile { animation: none; transition: none; }
+}
+
+.st-sala[hidden], .si-ingresso[hidden] { display: none !important; }
+
+/* ---------- Montata dentro la sala vera (multiplayer.html, ?sala=tavolo) ---------- */
+/* La sala di sempre resta nel documento (i suoi controlli servono: il tavolo li pilota), ma non si vede. */
+.mp-screen.mp-tavolo-attivo > :not(.mp-tavolo-radice) { display: none !important; }
+.mp-tavolo-radice { width: 100%; }
+.st-codice { cursor: pointer; background: none; border: 0; padding: 0; color: inherit; font: inherit; text-align: left; }
+
+/* ---------- Sale a posti fissi (1 contro 1, Raid): nessun "centro" da attraversare, il tavolo si compatta ---------- */
+.st-sala.st-fissa { --st-fig: clamp(96px, 17vh, 150px); }
+.st-fissa .st-ancora { display: none; }
+.st-fissa .st-centro { min-height: 58px; }
+.st-fissa .st-centro::before, .st-fissa .st-centro::after { width: calc(50% - 56px); }
+
+/* ---------- Chi e' in piedi, posti-bersaglio, posti IA in ombra ---------- */
+.st-inpiedi { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; margin: 12px 0 0; }
+.st-inpiedi[hidden] { display: none; }
+.st-inpiedi-titolo { font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--st-dim); }
+.st-inpiedi-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px 0 6px; border-radius: 999px; font: inherit; font-size: .82rem; color: var(--st-ink);
+    background: var(--st-sup); border: 1px solid var(--st-bordo); cursor: pointer; }
+.st-inpiedi-chip:disabled { cursor: default; }
+.st-inpiedi-chip.is-scelto { border-color: var(--st-oro); box-shadow: 0 0 14px rgba(247, 215, 116, .35); }
+.st-inpiedi-fig { width: 26px; height: 26px; border-radius: 50%; background: center top / cover no-repeat; border: 1px solid rgba(247, 215, 116, .4); }
+.st-fig--ia { opacity: .38; filter: grayscale(.45); }
+.st-slot.is-bersaglio { border-color: var(--st-oro); box-shadow: 0 0 0 2px rgba(247, 215, 116, .28), 0 0 22px rgba(247, 215, 116, .3); cursor: pointer; }
+
+/* ---------- Scelta del duellante IA di un posto (finestra di MpScelte) ---------- */
+.st-picker-ia { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; padding: 4px; }
+.st-picker-ia-voce { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 6px; border-radius: 14px; cursor: pointer; color: #f4ead2; font: inherit; font-size: .78rem;
+    background: linear-gradient(150deg, rgba(40, 32, 20, .8), rgba(14, 12, 18, .88)); border: 1px solid rgba(247, 215, 116, .3); }
+.st-picker-ia-voce.is-scelto { border-color: #f7d774; box-shadow: 0 0 14px rgba(247, 215, 116, .35); }
+.st-picker-ia-img { width: 100%; height: 86px; background: center bottom / contain no-repeat; }
