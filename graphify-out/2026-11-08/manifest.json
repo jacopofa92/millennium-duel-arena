@@ -310,10 +310,10 @@
     "semantic_hash": ""
   },
   "js/data/tournament-dialogues.js": {
-    "mtime": 1792243815.549582,
-    "seen": 1793910198.2513337,
-    "ast_hash": "543be4b7023e1b4e2fcdf256352e5d45",
-    "semantic_hash": "543be4b7023e1b4e2fcdf256352e5d45"
+    "mtime": 1794147513.9928372,
+    "seen": 1794147598.8418918,
+    "ast_hash": "03f1e020503fdf2635f013c8a93bc246",
+    "semantic_hash": ""
   },
   "js/dev/story-admin-tools.js": {
     "mtime": 1792320742.1901069,
@@ -742,10 +742,10 @@
     "semantic_hash": "c7988642b2752741fbb4c5ae1917ee92"
   },
   "js/ui/ambiente-webgl.js": {
-    "mtime": 1793545879.9157252,
-    "seen": 1793910198.2845256,
-    "ast_hash": "8b82185154a42b19455a3d18d373893c",
-    "semantic_hash": "8b82185154a42b19455a3d18d373893c"
+    "mtime": 1794146288.7088747,
+    "seen": 1794146508.9159963,
+    "ast_hash": "406d29d33521b345d5f2599ca532efbe",
+    "semantic_hash": ""
   },
   "js/ui/board-pieces.js": {
     "mtime": 1791051683.448624,
@@ -1527,9 +1527,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794145173.875989,
-    "seen": 1794145245.9058142,
-    "ast_hash": "e457e1a63850dd65c6a022bf16e21bf5",
+    "mtime": 1794147514.3551579,
+    "seen": 1794147598.9829504,
+    "ast_hash": "328f49dd57f213e3ac81a67d274cc766",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -5405,9 +5405,9 @@
     "semantic_hash": ""
   },
   "torneo-regno-duellanti.html": {
-    "mtime": 1794138262.664198,
-    "seen": 1794145246.1988297,
-    "ast_hash": "b2087677fefef6556626ecb2ddb23cd7",
+    "mtime": 1794147513.6020625,
+    "seen": 1794147599.3615365,
+    "ast_hash": "da5536d9003d1f28fb8dedefc533a76a",
     "semantic_hash": ""
   },
   "torre.html": {
@@ -23344,12 +23344,6 @@
     "ast_hash": "87a5b37e2dad2283a11309efe0749bc9",
     "semantic_hash": ""
   },
-  "images/maps/regno_dei_duellanti_castello_pegasus_torneo.jpg": {
-    "mtime": 1788706306.0,
-    "seen": 1793912297.4262056,
-    "ast_hash": "8d201aa2b8a1f87bf44c7bcbca657721",
-    "semantic_hash": ""
-  },
   "images/maps/storia_anime_battlecity1.jpg": {
     "mtime": 1790449143.861659,
     "seen": 1793912297.4262056,
@@ -24512,6 +24506,12 @@
     "mtime": 1794074141.070642,
     "seen": 1794145247.8943157,
     "ast_hash": "c1800ecfa33a01a77bedc0526607de36",
+    "semantic_hash": ""
+  },
+  "images/maps/regno_dei_duellanti_castello_pegasus_torneo_v2.jpg": {
+    "mtime": 1794147299.462123,
+    "seen": 1794147601.2596812,
+    "ast_hash": "4777d681164a0bd6c96a385f6c74d14b",
     "semantic_hash": ""
   },
   "package-lock.json": {

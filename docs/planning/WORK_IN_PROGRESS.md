@@ -503,6 +503,8 @@ Decisioni aperte dell'utente: i 6 PNG di avatar non usati; le regole del
       PNG col nome dell'avatar, nessun ripiego sulla pedina generica.
 - [x] Dirigibile riallineato all'anime: otto finalisti, soli quarti e
       migrazione non distruttiva dei precedenti salvataggi a 32 posti.
+- [x] Città del torneo divisa in quattro quartieri con fondali dedicati,
+      progressione giorno/tramonto/notte persistente e ambienti WebGL.
 ## Correzioni decisioni IA condivise (2026-10-18)
 
 - L'IA non attiva una seconda copia di `Mondo dei Toon` mentre ne controlla già una scoperta.

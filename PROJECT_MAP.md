@@ -746,6 +746,17 @@ del protocollo corrente.
   d'interesse, leggermente sfalsati, galleggiano sul fondale. I nodi DOM
   restano persistenti durante gli spostamenti e un unico segnalino animato
   scorre fra gli isolati; su movimento ridotto la transizione viene rimossa.
+- La mappa del torneo Battle City ora attraversa quattro quartieri ordinati:
+  Centro di Domino, Parco cittadino, Porto di Domino e Distretto KaibaCorp.
+  Ogni quartiere conserva la griglia logica 5×5 e ha una distribuzione
+  tematica di duellanti, Rare Hunter, eventi, negozi e Carte Locazione; la
+  quarta zona ripropone pattuglie notturne se servono altre Carte Locazione.
+  L'orologio salvato avanza con gli spostamenti e di tre scatti dopo un duello,
+  passa da giorno a tramonto e si ferma alla notte. I fondali zenitali sono
+  `images/fields/citta.jpg` e `images/maps/battle_city_{parco,porto,kaibacorp}.jpg`;
+  gli ambienti WebGL sono configurati in `js/ui/ambiente-battle-city.js` e
+  vengono attivati dal torneo tramite `AmbienteWebGL.avviaMappa` con dettagli
+  video alti, rispettando movimento ridotto e ripiego senza WebGL.
 - Le campagne narrative non belliche hanno ulteriori raccordi: 2 scene in
   `anime`, 3 in `forbiddenMemories` e 4 in `freedom`. Le separazioni
   `dalla: 'tappe'` migrano i vecchi contatori lineari senza spostare il punto

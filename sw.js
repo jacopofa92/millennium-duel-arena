@@ -532,7 +532,8 @@
 // v576: gabbia d'acciaio e Spade Rivelatrici ridisegnate per il campo zenitale.
 // v577: ripristinato l'effetto precedente delle Spade e rimosso il rendering WebGL della Gabbia.
 // v578: Spade Rivelatrici riportate alla resa WebGL precedente al cambio prospettico.
-const CACHE_NAME = 'ygo-duel-arena-v647';
+// v648: Battle City aggiunge quattro quartieri con fondali, orologio giorno-notte e ambiente WebGL dedicato.
+const CACHE_NAME = 'ygo-duel-arena-v648';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento
@@ -801,6 +802,7 @@ const APP_SHELL = [
     'js/ui/story-cutscene.css',
     'js/data/tournament-dialogues.js',
     'js/ui/ambiente-webgl.js',
+    'js/ui/ambiente-battle-city.js',
     'js/ui/ambiente-mappe-storia.js',
     'js/ui/ambiente-menu.js',
     'js/ui/field-ambience.js',
