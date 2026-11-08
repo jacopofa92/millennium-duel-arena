@@ -1,5 +1,5 @@
 /**
- * sala-tavolo.js — la SALA UNICA a tavolo per tutte le modalità online (fase 1: solo anteprima, nessuna rete).
+ * sala-tavolo.js — la SALA UNICA a tavolo per tutte le modalità online (anteprima, nessuna rete).
  * ---------------------------------------------------------------------------------------------------------
  * Oggi le sale online sono tre (Duello/Specchio/Raid condividono la sala a due posti, il Tag Team ne ha una sua) e si siedono in modi
  * diversi. Qui c'e' UN componente: la modalita' non decide la pagina, decide solo QUANTI posti ci sono e di che tipo, piu' le regole.
@@ -9,7 +9,7 @@
  * richiama `imposta` con lo stato nuovo. Cosi' lo stesso disegno regge una sala finta e una vera senza cambiare riga.
  *
  * Il gesto centrale: il TUO token sta al CENTRO del tavolo finche' non scegli. Tocchi uno slot libero e il token ci scivola (un
- * movimento morbido, niente rimbalzi); ritocchi il tuo slot e torni al centro. L'host puo' sempre intervenire (menu "⋯" sugli slot).
+ * movimento morbido, niente rimbalzi); ritocchi il tuo slot e torni al centro. L'host puo' sempre intervenire (menu "•••" sugli slot).
  *
  * Forma dello stato:
  *   {
@@ -17,9 +17,11 @@
  *     slot: { A0: { tipo: 'libero' | 'persona' | 'ia' | 'boss', id?, nome?, pedina?, pronto? }, ... },
  *     io: { id, nome, pedina }, ioPosto: 'A0' | null, host: boolean (io sono l'host),
  *     consentiIA: boolean,
- *     regole: [{ chiave, etichetta, valore, opzioni?: [..], modificabile: boolean }],
- *     personali: [{ chiave, titolo, valore, dettaglio?, pedina?, icona? }],
- *     codice: 'K7P2Q', pronto: boolean (io)
+ *     regole: [{ chiave, etichetta, valore, img?, opzioni?: [..], modificabile: boolean }],
+ *     personali: [{ chiave, titolo, valore, dettaglio?, pedina?, icona?, glifo? }],
+ *     codice: 'K7P2Q', pronto: boolean (io),
+ *     arenaImg?: 'percorso dello sfondo', sagoma?: 'percorso di una figura da mostrare in ombra negli slot liberi',
+ *     avvio?: 3 | 2 | 1 (conto alla rovescia: lo decide chi usa il componente)
  *   }
  * Eventi: 'prendi-posto'(posto) · 'lascia-posto'() · 'pronto'(bool) · 'azione-host'({ tipo, posto }) · 'regola'({ chiave, valore })
  *         · 'personale'(chiave)
@@ -33,6 +35,7 @@
         if (testo != null) e.textContent = testo;
         return e;
     };
+    const tocco = () => { try { if (window.NativeHaptics && window.NativeHaptics.light) window.NativeHaptics.light(); } catch (e) { /* senza vibrazione */ } };
 
     /** La figura intera di un personaggio (pedina scontornata), se la pagina sa risolverla. */
     function pedinaDi(percorso) {
@@ -46,17 +49,25 @@
         let stato = null;
         let menuAperto = null;       // id del posto con il menu host aperto
         let ultimoAncoraKey = null;  // dove stava il token: serve a sapere se si e' mosso (per l'animazione)
+        let tipiPrecedenti = null;   // id -> tipo all'ultimo disegno: chi si siede ENTRA con una piccola apparizione
+        let timerMoto = 0;
 
         radice.classList.add('st-sala');
         radice.innerHTML = '';
 
+        // Lo sfondo e' l'arena scelta, sfocata e scurita: la sala cambia atmosfera con il campo. Sta dietro a tutto.
+        const sfondo = el('div', 'st-sfondo');
+        sfondo.setAttribute('aria-hidden', 'true');
         const tavolo = el('div', 'st-tavolo');
         const sqB = el('section', 'st-squadra st-squadra--b');
         const centro = el('div', 'st-centro');
         const sqA = el('section', 'st-squadra st-squadra--a');
         const ancoraCentro = el('div', 'st-ancora');
+        const emblema = el('div', 'st-emblema');
+        emblema.innerHTML = '<span class="st-emblema-anello"></span><span class="st-emblema-testo">VS</span>';
         const etCentro = el('p', 'st-centro-testo');
-        centro.append(el('span', 'st-vs', 'VS'), ancoraCentro, etCentro);
+        const conto = el('div', 'st-conto');
+        centro.append(emblema, ancoraCentro, etCentro, conto);
         const token = el('div', 'st-token');
         token.setAttribute('aria-hidden', 'true');
         tavolo.append(sqB, centro, sqA, token);
@@ -70,7 +81,7 @@
         const codiceEl = el('div', 'st-codice');
         barra.append(codiceEl, stato_riga, bottonePronto);
 
-        radice.append(tavolo, fascia, personali, barra);
+        radice.append(sfondo, tavolo, fascia, personali, barra);
 
         // Un tocco fuori chiude il menu dell'host.
         document.addEventListener('pointerdown', (ev) => {
@@ -85,14 +96,18 @@
             const s = stato.slot[id] || { tipo: 'libero' };
             const mio = stato.ioPosto === id;
             const wrap = el('div', 'st-cella');
-            const b = el('button', 'st-slot st-slot--' + (mio ? 'io' : s.tipo));
+            const entra = tipiPrecedenti && tipiPrecedenti[id] === 'libero' && (s.tipo === 'persona' || s.tipo === 'ia');
+            const pronto = (mio && stato.pronto) || (!mio && s.tipo === 'persona' && s.pronto);
+            const b = el('button', 'st-slot st-slot--' + (mio ? 'io' : s.tipo) + (pronto ? ' is-pronto' : '') + (entra ? ' st-entra' : ''));
             b.type = 'button';
             b.dataset.posto = id;
             const angoli = el('span', 'st-angoli');
             angoli.setAttribute('aria-hidden', 'true');
+            const base = el('span', 'st-base');
+            base.setAttribute('aria-hidden', 'true');
             const fig = el('span', 'st-fig');
             if (!mio && (s.tipo === 'persona' || s.tipo === 'ia' || s.tipo === 'boss') && s.pedina) fig.style.backgroundImage = `url("${pedinaDi(s.pedina)}")`;
-            if (!mio && s.tipo === 'libero') fig.textContent = '?';
+            if (!mio && s.tipo === 'libero' && !stato.sagoma) fig.textContent = '?';
             const et = el('span', 'st-etichetta', `${nomeSquadra(squadra)} · ${indice + 1}`);
             let nome, sotto;
             if (mio) { nome = stato.io.nome; sotto = stato.pronto ? 'Pronto' : 'Il tuo posto: tocca per tornare al centro'; }
@@ -102,12 +117,14 @@
             else { nome = s.nome || 'Giocatore'; sotto = s.pronto ? 'Pronto' : 'Non ancora pronto'; }
             const n = el('b', 'st-nome', nome);
             const sub = el('small', 'st-sotto', sotto);
-            b.append(angoli, fig, et, n, sub);
-            if ((mio && stato.pronto) || (!mio && s.tipo === 'persona' && s.pronto)) b.append(el('i', 'st-pronto-segno', 'PRONTO'));
+            b.append(angoli, base, fig, et, n, sub);
+            if (pronto) b.append(el('i', 'st-pronto-segno', 'PRONTO'));
             b.setAttribute('aria-label', `${et.textContent}: ${nome}. ${sotto}`);
             // Prendere posto: solo uno slot libero (o il proprio, per tornare al centro). Gli altri sono dell'host.
             b.disabled = !(mio || s.tipo === 'libero');
-            b.onclick = () => { if (mio) emetti('lascia-posto'); else if (s.tipo === 'libero') emetti('prendi-posto', id); };
+            b.onclick = () => {
+                if (mio) { tocco(); emetti('lascia-posto'); } else if (s.tipo === 'libero') { tocco(); emetti('prendi-posto', id); }
+            };
             wrap.append(b);
 
             // Menu dell'host: persone altrui, IA, e slot liberi dove si puo' mettere un'IA.
@@ -158,9 +175,12 @@
         function disegnaRegole() {
             fascia.replaceChildren();
             (stato.regole || []).forEach((r) => {
-                const c = el('button', 'st-chip' + (r.modificabile && stato.host ? ' st-chip--modificabile' : ''));
+                const c = el('button', 'st-chip' + (r.modificabile && stato.host ? ' st-chip--modificabile' : '') + (r.img ? ' st-chip--img' : ''));
                 c.type = 'button';
-                c.append(el('small', null, r.etichetta), el('b', null, String(r.valore)));
+                if (r.img) { const mi = el('span', 'st-chip-img'); mi.style.backgroundImage = `url("${r.img}")`; c.append(mi); }
+                const testi = el('span', 'st-chip-testi');
+                testi.append(el('small', null, r.etichetta), el('b', null, String(r.valore)));
+                c.append(testi);
                 const puoi = r.modificabile && stato.host && r.opzioni && r.opzioni.length > 1;
                 c.disabled = !puoi;
                 if (r.modificabile && !stato.host) c.title = 'La decide l\'host';
@@ -179,7 +199,10 @@
                 t.type = 'button';
                 const img = el('span', 'st-tessera-img');
                 if (p.pedina) img.style.backgroundImage = `url("${pedinaDi(p.pedina)}")`;
-                else img.textContent = p.glifo || '';
+                else {
+                    const svg = (p.icona && window.Icons && window.Icons.buildIcon) ? window.Icons.buildIcon(p.icona) : null;
+                    if (svg) img.append(svg); else img.textContent = p.glifo || '';
+                }
                 const testi = el('span', 'st-tessera-testi');
                 testi.append(el('small', null, p.titolo), el('b', null, p.valore));
                 if (p.dettaglio) testi.append(el('em', null, p.dettaglio));
@@ -189,7 +212,18 @@
             });
         }
 
-        function disegnaBarra() {
+        /** Tutti seduti e tutti pronti (io compreso): il tavolo si accende. */
+        function tuttiPronti() {
+            const ids = Object.keys(stato.slot);
+            if (!stato.ioPosto || !stato.pronto) return false;
+            return ids.every((id) => {
+                const s = stato.slot[id];
+                if (id === stato.ioPosto) return true;
+                return s.tipo === 'ia' || s.tipo === 'boss' || (s.tipo === 'persona' && s.pronto);
+            });
+        }
+
+        function disegnaBarra(pronti) {
             const posti = Object.keys(stato.slot);
             const liberi = posti.filter((id) => stato.slot[id].tipo === 'libero' && id !== stato.ioPosto).length;
             const seduto = !!stato.ioPosto;
@@ -204,8 +238,9 @@
             bottonePronto.disabled = !seduto;
             bottonePronto.textContent = stato.pronto ? 'Annulla pronto' : 'Sono pronto';
             bottonePronto.classList.toggle('is-attivo', !!stato.pronto);
-            bottonePronto.onclick = () => emetti('pronto', !stato.pronto);
+            bottonePronto.onclick = () => { tocco(); emetti('pronto', !stato.pronto); };
             codiceEl.replaceChildren(el('small', null, 'Codice stanza'), el('b', null, stato.codice || '-----'));
+            barra.classList.toggle('is-pronti', pronti);
         }
 
         /** Il token si muove con una transizione di `transform` verso il suo ancoraggio (il suo slot, o il centro). */
@@ -221,19 +256,36 @@
             token.style.width = a.width + 'px';
             token.style.height = a.height + 'px';
             token.style.transform = `translate(${Math.round(a.left - t.left)}px, ${Math.round(a.top - t.top)}px)`;
-            if (!anima) { void token.offsetWidth; token.style.transition = ''; }
+            if (anima) {
+                // Per la durata dello spostamento il token e' piu' luminoso: una scia di luce dorata dietro di lui.
+                token.classList.add('is-in-moto');
+                clearTimeout(timerMoto);
+                timerMoto = setTimeout(() => token.classList.remove('is-in-moto'), 600);
+            } else { void token.offsetWidth; token.style.transition = ''; }
         }
 
         function disegna() {
+            const pronti = tuttiPronti();
+            radice.style.setProperty('--st-sagoma', stato.sagoma ? `url("${pedinaDi(stato.sagoma)}")` : 'none');
+            radice.classList.toggle('st-con-sagoma', !!stato.sagoma);
+            sfondo.style.backgroundImage = stato.arenaImg ? `url("${stato.arenaImg}")` : 'none';
             disegnaSquadra(sqB, 'B');
             disegnaSquadra(sqA, 'A');
-            etCentro.textContent = stato.ioPosto ? '' : 'Sei al centro: scegli dove giocare';
+            tavolo.classList.toggle('is-tutti-pronti', pronti);
+            if (stato.avvio) { etCentro.textContent = ''; conto.textContent = String(stato.avvio); conto.classList.add('is-visibile'); }
+            else {
+                conto.classList.remove('is-visibile');
+                etCentro.textContent = pronti ? 'Tutti pronti' : (stato.ioPosto ? '' : 'Sei al centro: scegli dove giocare');
+            }
+            emblema.classList.toggle('is-nascosto', !!stato.avvio);
             ancoraCentro.classList.toggle('is-vuota', !!stato.ioPosto);
             if (stato.io.pedina) token.style.backgroundImage = `url("${pedinaDi(stato.io.pedina)}")`;
             token.classList.toggle('is-seduto', !!stato.ioPosto);
             disegnaRegole();
             disegnaPersonali();
-            disegnaBarra();
+            disegnaBarra(pronti);
+            tipiPrecedenti = {};
+            Object.keys(stato.slot).forEach((id) => { tipiPrecedenti[id] = stato.slot[id].tipo; });
             const chiave = stato.ioPosto || 'centro';
             const anima = ultimoAncoraKey !== null && ultimoAncoraKey !== chiave;
             ultimoAncoraKey = chiave;
