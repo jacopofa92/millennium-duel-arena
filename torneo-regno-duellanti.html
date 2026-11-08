@@ -61,7 +61,7 @@
        state.castleReached/atKaibaGate, mai per le schermate precedenti
        (mappa del bosco, schermata iniziale). */
     body.castle-mode {
-        background-image: url('images/maps/regno_dei_duellanti_castello_pegasus_torneo.jpg');
+        background-image: url('images/maps/regno_dei_duellanti_castello_pegasus_torneo_v2.jpg');
     }
     body::before {
         content: '';
@@ -195,9 +195,8 @@
 
     /* =====================================================================
        MAPPA — sostituisce le vecchie "card" testuali dei percorsi: una
-       vera mappa a scorrimento verticale (stile "isola vista dall'alto",
-       terreno boschivo simulato in puro CSS con gradienti radiali
-       ripetuti — nessuna immagine reale necessaria) con un sentiero di
+       vera mappa a scorrimento (stile "isola vista dall'alto",
+       terreno boschivo dipinto e ripetibile, con un sentiero di
        pallini collegati da linee (SVG), esattamente come descritto:
        "muoversi in una mappa... percorsi (linee)... pallini (sfidanti,
        premi, malus)". Cresce verso il basso man mano che si avanza (il
@@ -291,6 +290,74 @@
             linear-gradient(180deg, rgba(4,15,8,0.28), transparent 13% 84%, rgba(3,12,7,0.42));
         box-shadow: inset 0 0 110px rgba(3,12,7,0.38);
     }
+    /* Piccolo accampamento sulla riva, fissato al mondo della mappa:
+       resta fermo rispetto al terreno anche quando il giocatore trascina.
+       Il WebGL ambientale gli disegna sopra la fiamma; qui restano soltanto
+       pietre, legna e braci statiche, senza una seconda animazione CSS. */
+    .map-campfire {
+        position: absolute;
+        left: 221px;
+        top: 632px;
+        width: 82px;
+        height: 72px;
+        z-index: 2;
+        pointer-events: none;
+        filter: drop-shadow(0 5px 8px rgba(0,0,0,0.72));
+    }
+    .map-campfire-stones { position: absolute; inset: 5px 7px 3px; }
+    .map-campfire-stones i {
+        position: absolute;
+        width: 17px;
+        height: 12px;
+        border: 1px solid rgba(194,177,139,0.5);
+        border-radius: 48% 54% 45% 55%;
+        background: linear-gradient(145deg,#958c72,#514d40 62%,#302f29);
+        box-shadow: inset 1px 1px 2px rgba(255,239,193,0.24), 0 2px 3px rgba(0,0,0,0.55);
+    }
+    .map-campfire-stones i:nth-child(1) { left: 31px; top: 0; transform: rotate(12deg); }
+    .map-campfire-stones i:nth-child(2) { left: 50px; top: 6px; transform: rotate(48deg); }
+    .map-campfire-stones i:nth-child(3) { left: 59px; top: 24px; transform: rotate(82deg); }
+    .map-campfire-stones i:nth-child(4) { left: 48px; top: 43px; transform: rotate(24deg); }
+    .map-campfire-stones i:nth-child(5) { left: 29px; top: 47px; transform: rotate(-12deg); }
+    .map-campfire-stones i:nth-child(6) { left: 10px; top: 39px; transform: rotate(34deg); }
+    .map-campfire-stones i:nth-child(7) { left: 2px; top: 20px; transform: rotate(78deg); }
+    .map-campfire-stones i:nth-child(8) { left: 12px; top: 4px; transform: rotate(-24deg); }
+    .map-campfire-logs {
+        position: absolute;
+        left: 19px;
+        top: 25px;
+        width: 46px;
+        height: 22px;
+        border-radius: 50%;
+        background: radial-gradient(ellipse,rgba(240,105,28,0.52),rgba(58,30,19,0.86) 53%,transparent 72%);
+    }
+    .map-campfire-logs::before,
+    .map-campfire-logs::after {
+        content: '';
+        position: absolute;
+        left: 5px;
+        top: 8px;
+        width: 37px;
+        height: 7px;
+        border: 1px solid rgba(188,130,75,0.65);
+        border-radius: 5px;
+        background: linear-gradient(180deg,#805536,#3b261c 70%,#211b17);
+        box-shadow: inset 0 1px 1px rgba(255,210,145,0.28), 0 2px 3px rgba(0,0,0,0.6);
+    }
+    .map-campfire-logs::before { transform: rotate(28deg); }
+    .map-campfire-logs::after { transform: rotate(-31deg); }
+    .map-campfire-embers {
+        position: absolute;
+        left: 33px;
+        top: 32px;
+        width: 15px;
+        height: 8px;
+        border-radius: 50%;
+        background: radial-gradient(ellipse,#ffe89a 0 12%,#ff8d37 35%,rgba(203,48,14,0.58) 68%,transparent 100%);
+        filter: blur(1px);
+    }
+    body[data-luogo="isola"] .map-canvas > .aw-canvas--fondo { z-index: 3; }
+
     /* DENTRO IL CASTELLO il bosco lascia il posto alle sale di Pegasus —
        stessa mappa a nodi, stesso modo di scorrerla, un altro luogo. Basta
        cambiare l'immagine: la geometria dei pallini non c'entra nulla con
@@ -302,10 +369,14 @@
         background-color: #0a0710;
         background-image:
             linear-gradient(180deg, rgba(8,4,14,0.34) 0%, rgba(8,4,14,0.14) 45%, rgba(8,4,14,0.46) 100%),
-            url('images/maps/regno_dei_duellanti_castello_pegasus_torneo.jpg');
+            url('images/maps/regno_dei_duellanti_castello_pegasus_torneo_v2.jpg');
+        /* Il corridoio continua senza salti a sinistra/destra e non riparte
+           da una seconda sala a metà viewport in verticale. */
+        background-repeat: no-repeat, repeat-x;
+        background-size: 100% 100%, 1536px max(100%, 1024px);
     }
     body[data-luogo="castello"] .map-viewport { background: #0a0710; }
-    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; }
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 4; }
     .map-node {
         position: absolute;
         transform: translate(-50%, -50%);
@@ -314,7 +385,7 @@
         align-items: center;
         gap: 5px;
         width: 88px;
-        z-index: 3;
+        z-index: 5;
     }
     .map-node-dot {
         width: 54px;
@@ -532,6 +603,114 @@
         transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1), top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 5;
         pointer-events: none;
+    }
+
+    /* =====================================================================
+       MAPPA VIVA (1.5.129): pedine al posto dei cerchi, sentieri curvi con
+       le orme, luce che cambia con l'avanzare del torneo, Castello che si
+       accende, Stelle che volano. Tutto presentazione: nessuna regola.
+       ===================================================================== */
+    /* --- Pedine: figure intere con i piedi sul punto del sentiero ------------------- */
+    .map-node.pedina { width: 112px; margin-top: -34px; }
+    .map-node.pedina .map-node-dot,
+    .map-node.current.pedina .map-node-dot,
+    .map-node.choice.pedina .map-node-dot,
+    .map-node.choice.duel.pedina .map-node-dot,
+    .map-node.choice.mystery.pedina .map-node-dot {
+        width: 84px; height: 94px; border: 0; border-radius: 0; background: none; box-shadow: none; overflow: visible;
+        animation: none; font-size: 1rem; align-items: flex-end;
+    }
+    /* L'ombra a terra: ancora la figura al sentiero. */
+    .map-node.pedina .map-node-dot::before {
+        content: ''; position: absolute; left: 50%; bottom: -3px; width: 62px; height: 16px; transform: translateX(-50%);
+        border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 0, 0, .6), transparent); z-index: 0;
+    }
+    .map-node-dot .map-pedina-img {
+        position: absolute; inset: auto; left: 50%; bottom: 3px; width: auto; height: 100%; max-width: none; object-fit: contain; object-position: center bottom;
+        transform: translateX(-50%); transform-origin: 50% 100%; z-index: 1; filter: drop-shadow(0 5px 5px rgba(0, 0, 0, .6));
+        animation: mapPedinaRespiro 2.8s ease-in-out infinite; transition: filter .3s, opacity .25s;
+    }
+    @keyframes mapPedinaRespiro { 0%, 100% { transform: translateX(-50%) scaleY(1); } 50% { transform: translateX(-50%) scaleY(1.03) translateY(-1px); } }
+    /* "Sei qui": la tua pedina porta un anello dorato ai piedi. */
+    .map-node.current.pedina .map-node-dot::after {
+        content: ''; position: absolute; left: 50%; bottom: -8px; width: 78px; height: 24px; transform: translateX(-50%); border-radius: 50%;
+        border: 2px solid rgba(247, 215, 116, .9); box-shadow: 0 0 14px rgba(247, 215, 116, .6); animation: mapAnelloSei 1.9s ease-in-out infinite; z-index: 0;
+    }
+    @keyframes mapAnelloSei { 0%, 100% { opacity: .95; transform: translateX(-50%) scale(1); } 50% { opacity: .45; transform: translateX(-50%) scale(1.12); } }
+    .map-node.current.dead-here.pedina .map-pedina-img { filter: grayscale(1) drop-shadow(0 5px 5px rgba(0, 0, 0, .6)); }
+    /* Durante il viaggio la pedina ferma lascia il posto a quella che cammina. */
+    .map-node.is-partito .map-pedina-img, .map-node.is-partito .map-node-dot::after { opacity: 0; }
+    /* Gli sfidanti noti: richiamo con un anello dorato a terra invece del pallino che pulsa. */
+    .map-node.choice.pedina .map-node-dot::after {
+        content: ''; position: absolute; left: 50%; bottom: -8px; width: 72px; height: 22px; transform: translateX(-50%); border-radius: 50%;
+        border: 2px dashed rgba(232, 184, 74, .75); animation: mapAnelloSei 1.6s ease-in-out infinite; z-index: 0;
+    }
+    .map-node.choice.pedina:hover .map-pedina-img, .map-node.choice.pedina:focus-visible .map-pedina-img { transform: translateX(-50%) translateY(-6px) scale(1.06); animation: none; filter: drop-shadow(0 8px 8px rgba(0, 0, 0, .55)) drop-shadow(0 0 10px rgba(247, 215, 116, .7)); }
+    .map-node.choice.pedina:focus-visible .map-node-dot { outline: none; }
+    .map-node.map-node-chosen.pedina .map-node-dot { transform: none; box-shadow: none; }
+    /* Gli ignoti: una sagoma scura con un punto interrogativo che galleggia. */
+    .map-node.choice.mystery.pedina .map-pedina-img { filter: brightness(0) drop-shadow(0 0 9px rgba(150, 190, 255, .95)); opacity: .78; }
+    .map-node.choice.mystery.pedina .map-node-dot::after { border-color: rgba(150, 190, 255, .6); }
+    .map-punto-int { position: absolute; left: 50%; top: -6px; transform: translateX(-50%); z-index: 2; font: 700 1.6rem/1 Georgia, 'Times New Roman', serif; color: #cfe0ff;
+        text-shadow: 0 0 12px rgba(150, 190, 255, .95); animation: mapPuntoInt 1.7s ease-in-out infinite; pointer-events: none; }
+    @keyframes mapPuntoInt { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-6px); } }
+    /* Le tappe gia' fatte restano pietre piccole, non pedine. */
+    .map-node.win .map-node-dot, .map-node.lose .map-node-dot, .map-node.prize .map-node-dot, .map-node.malus .map-node-dot, .map-node.start .map-node-dot { width: 40px; height: 40px; font-size: 1.1rem; }
+
+    /* --- La pedina che cammina lungo il sentiero (muove JS con requestAnimationFrame) ---- */
+    .map-camminatore { position: absolute; width: 84px; height: 94px; margin: -94px 0 0 -42px; z-index: 6; pointer-events: none; }
+    .map-camminatore img { position: absolute; left: 0; bottom: 3px; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; filter: drop-shadow(0 5px 5px rgba(0, 0, 0, .6));
+        transform-origin: 50% 100%; animation: mapCammina .3s ease-in-out infinite; }
+    .map-camminatore.verso-sinistra img { transform: scaleX(-1); animation-name: mapCamminaSx; }
+    @keyframes mapCammina { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-9px) rotate(3deg); } }
+    @keyframes mapCamminaSx { 0%, 100% { transform: scaleX(-1) translateY(0) rotate(-3deg); } 50% { transform: scaleX(-1) translateY(-9px) rotate(3deg); } }
+    .map-polvere { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: radial-gradient(circle, rgba(226, 205, 160, .8), rgba(226, 205, 160, 0) 70%);
+        z-index: 5; pointer-events: none; animation: mapPolvere .8s ease-out forwards; }
+    @keyframes mapPolvere { from { opacity: .8; transform: translateY(0) scale(.6); } to { opacity: 0; transform: translateY(-10px) scale(2.1); } }
+
+    /* --- Sentieri curvi e orme --------------------------------------------------------- */
+    .map-line.path-line { stroke: rgba(150, 112, 64, .55); stroke-width: 15; stroke-linecap: round; stroke-dasharray: none; filter: blur(.4px); }
+    .map-orme ellipse { fill: rgba(251, 238, 205, .82); }
+    .map-orme { filter: drop-shadow(0 1px 1px rgba(40, 24, 8, .7)); pointer-events: none; }
+    .map-line.choice-line { stroke-width: 5; }
+
+    /* --- "Centra su di me" ------------------------------------------------------------- */
+    .map-centra { position: fixed; right: max(14px, env(safe-area-inset-right)); bottom: max(58px, calc(env(safe-area-inset-bottom) + 46px)); z-index: 7; width: 44px; height: 44px; border-radius: 50%;
+        border: 1px solid rgba(247, 215, 116, .45); background: linear-gradient(150deg, rgba(20, 20, 26, .88), rgba(12, 12, 16, .92)); color: var(--gold); font-size: 1.3rem; cursor: pointer;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, .45); display: grid; place-items: center; }
+
+    /* --- La luce del mondo: alba, giorno, tramonto, crepuscolo, notte (body[data-ora]) ---- */
+    #mapLuce, #mapAmbiente { position: fixed; inset: 0; pointer-events: none; opacity: 0; transition: opacity 1.2s ease; }
+    #mapLuce { z-index: 4; mix-blend-mode: overlay; transition: opacity 1.2s ease, background 2s ease; }
+    #mapAmbiente { z-index: 5; overflow: hidden; }
+    body.map-active #mapLuce, body.map-active #mapAmbiente { opacity: 1; }
+    body[data-ora="alba"] #mapLuce { background: linear-gradient(180deg, rgba(255, 140, 130, .5), rgba(255, 210, 150, .28) 55%, rgba(120, 150, 255, .2)); }
+    body[data-ora="giorno"] #mapLuce { background: linear-gradient(180deg, rgba(255, 248, 215, .12), rgba(255, 240, 200, .04)); }
+    body[data-ora="tramonto"] #mapLuce { background: linear-gradient(180deg, rgba(255, 110, 50, .5), rgba(255, 170, 80, .3) 55%, rgba(130, 60, 120, .3)); }
+    body[data-ora="crepuscolo"] #mapLuce { background: linear-gradient(180deg, rgba(120, 70, 190, .55), rgba(180, 90, 140, .3) 60%, rgba(40, 30, 110, .4)); }
+    body[data-ora="notte"] #mapLuce { background: linear-gradient(180deg, rgba(20, 30, 110, .65), rgba(30, 40, 110, .5)); }
+    .map-foglia { position: absolute; top: -30px; width: 14px; height: 9px; border-radius: 80% 0 80% 0; background: #7fb35a; opacity: 0; animation: mapFoglia 11s linear infinite; }
+    @keyframes mapFoglia { 0% { transform: translate(0, 0) rotate(0); opacity: 0; } 8% { opacity: .85; } 100% { transform: translate(-120px, 110vh) rotate(540deg); opacity: .5; } }
+    .map-lucciola { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: #f6ff9a; box-shadow: 0 0 10px 3px rgba(246, 255, 154, .8); opacity: 0; animation: mapLucciola 4.5s ease-in-out infinite; }
+    @keyframes mapLucciola { 0%, 100% { opacity: 0; transform: translate(0, 0); } 30%, 70% { opacity: .95; } 50% { transform: translate(24px, -18px); } }
+    body[data-ora="crepuscolo"] .map-foglia, body[data-ora="notte"] .map-foglia { display: none; }
+    body[data-ora="alba"] .map-lucciola, body[data-ora="giorno"] .map-lucciola, body[data-ora="tramonto"] .map-lucciola { display: none; }
+
+    /* --- Il Castello nella barra delle Stelle: un anello che si riempie e poi si accende ------ */
+    .stars-castello { --p: 0; position: relative; width: 30px; height: 30px; margin-left: 4px; border-radius: 50%; display: grid; place-items: center; color: rgba(255, 255, 255, .55);
+        background: conic-gradient(var(--gold) calc(var(--p) * 1%), rgba(255, 255, 255, .14) 0); }
+    .stars-castello::before { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: #14141a; }
+    .stars-castello .icon, .stars-castello svg { position: relative; width: 16px; height: 16px; }
+    .stars-castello.acceso { color: #e9c8ff; box-shadow: 0 0 0 2px rgba(190, 120, 255, .55), 0 0 16px rgba(190, 120, 255, .8); animation: mapCastelloAcceso 1.8s ease-in-out infinite; }
+    @keyframes mapCastelloAcceso { 0%, 100% { box-shadow: 0 0 0 2px rgba(190, 120, 255, .55), 0 0 10px rgba(190, 120, 255, .6); } 50% { box-shadow: 0 0 0 3px rgba(220, 170, 255, .8), 0 0 22px rgba(210, 150, 255, .95); } }
+    .stars-bar.pop { animation: mapStellePop .45s ease-out; }
+    @keyframes mapStellePop { 0% { transform: scale(1); } 40% { transform: scale(1.16); } 100% { transform: scale(1); } }
+    .map-stella-volo { position: fixed; left: 0; top: 0; width: 20px; height: 20px; margin: -10px 0 0 -10px; z-index: 9000; pointer-events: none; color: #ffd75a; filter: drop-shadow(0 0 6px rgba(255, 215, 90, .9)); }
+    .map-stella-volo.persa { color: #ff8a7a; filter: drop-shadow(0 0 6px rgba(255, 138, 122, .9)); }
+    .map-stella-volo svg { width: 100%; height: 100%; }
+    @media (prefers-reduced-motion: reduce) {
+        .map-pedina-img, .map-node.current.pedina .map-node-dot::after, .map-node.choice.pedina .map-node-dot::after, .map-punto-int, .map-foglia, .map-lucciola, .stars-castello.acceso { animation: none !important; }
+        .map-camminatore img { animation: none; }
     }
 
     /* --- Schermata centrale generica (inizio/eliminazione/castello) --- */
@@ -856,6 +1035,7 @@
         <button type="button" class="hud-back-btn" id="hudBackBtn" style="display:none;" aria-label="Torna ai Tornei">‹</button>
         <div class="stars-bar" id="starsBar" style="display:none;">
             <span>⭐</span><span class="stars-count" id="starsCount">0</span>
+            <span class="stars-castello" id="starsCastello" title="Castello di Pegasus: servono 10 Stelle" aria-hidden="true"><span class="icon" data-icon="tower"></span></span>
         </div>
         <div class="hud-right">
             <div id="hudDeckMount"></div>
@@ -971,6 +1151,9 @@
 <script src="js/data/tournament-dialogues.js"></script>
 <script src="js/ui/icon-library.js"></script>
 <script src="js/ui/emoji-tema.js"></script>
+<script src="js/ui/video-quality.js"></script>
+<script src="js/ui/ambiente-webgl.js"></script>
+<script src="js/ui/ambiente-mappe-storia.js"></script>
 <script>
     Icons.hydrate();
     // Ogni schermata a riquadro (Campione, Eliminato, Duello in sospeso...) si ridisegna con innerHTML: le emoji diventano
@@ -1203,6 +1386,7 @@
         const prima = (typeof state.stars === 'number') ? state.stars : 0;
         state.stars = Math.max(0, prima + amount);
         saveState(state);
+        volaStelle(state.stars - prima);   // solo grafica: le Stelle volano al contatore (o cadono, se perse)
         return state.stars;
     }
 
@@ -1580,6 +1764,9 @@
     // sentiero prima che si ricongiunga.
     // ----------------------------------------------------------------
     const MAP_WORLD_HEIGHT = 640;
+    // Sull'isola il mondo e' piu' alto (la fascia dei nodi arriva sotto il fiume, dove si parte), cosi' dall'approdo i bivi possono diramarsi sia in alto sia in basso.
+    // Il Castello resta alto 640.
+    const MAP_ISOLA_ALTEZZA = 900;
     // Zona morta in alto (sotto l'HUD flottante fisso + il banner
     // "Raccogli 10 Stelle...") e in basso, entro cui un pallino (e la sua
     // etichetta) non deve mai finire — la mappa è a tutto schermo (vedi
@@ -1610,12 +1797,32 @@
     const ICON_FOR_KIND = { win: '⚔️', lose: '💀', prize: '🎁', malus: '⚠️', start: '🏝️' };
     const MAP_START_POS = { x: MAP_START_X, y: MAP_WORLD_HEIGHT / 2 };
 
+    /**
+     * Il centro del falo': al CENTRO della prima schermata e IN BASSO, sotto il fiume e lontano da lui (su telefono in verticale un po' piu'
+     * in alto: la legenda fissa occupa l'ultimo tratto). Dipende solo dalla finestra, non dal percorso: il mondo cresce verso destra, il falo' no.
+     */
+    function centroFalo() {
+        const alt = Math.max(MAP_ISOLA_ALTEZZA, window.innerHeight);
+        return { x: Math.max(121, window.innerWidth / 2), y: alt - (window.innerHeight > window.innerWidth ? 150 : 90) };
+    }
+    /**
+     * Dove parte il giocatore sull'isola: A SINISTRA, poco sotto il fiume (la sponda sud, a sinistra, sta a y~590 sul fondale 1536x1024).
+     * Da qui nascono i primi bivi, sparsi a caso verso destra come sempre. Il falo' NON c'entra: sta al centro, in basso (centroFalo).
+     */
+    const MAP_APPRODO_Y = 610;   // poco sotto la sponda sud del fiume a sinistra (~590): da qui i bivi vanno sia in alto sia in basso
+    function posizioneApprodo() {
+        return { x: MAP_START_X, y: MAP_APPRODO_Y };
+    }
+
     function randomBetween(min, max) { return min + Math.random() * (max - min); }
-    function clampMapY(y) { return Math.max(MAP_TOP_PADDING, Math.min(MAP_WORLD_HEIGHT - MAP_BOTTOM_PADDING, y)); }
+    /** Il limite basso della fascia dei nodi: piu' in basso sull'isola, quello di sempre nel Castello. */
+    function bassoDi(state) { return (state && state.castleReached) ? MAP_WORLD_HEIGHT - MAP_BOTTOM_PADDING : MAP_ISOLA_ALTEZZA - MAP_BOTTOM_PADDING; }
+    function clampMapY(y, basso) { return Math.max(MAP_TOP_PADDING, Math.min(basso === undefined ? MAP_WORLD_HEIGHT - MAP_BOTTOM_PADDING : basso, y)); }
 
     /** Posizione dell'ultimo pallino del sentiero (l'ultima tappa risolta, o il punto di partenza se il torneo è appena iniziato) — punto di partenza per posizionare la prossima tappa/i prossimi bivi. */
     function lastNodePosition(state) {
-        if (state.history.length === 0) return MAP_START_POS;
+        // Sull'isola si parte dal FALO' (vedi posizioneApprodo); nel Castello, che non ha il falo', resta il punto d'origine di sempre.
+        if (state.history.length === 0) return state.castleReached ? MAP_START_POS : posizioneApprodo();
         const last = state.history[state.history.length - 1];
         return { x: last.x, y: last.y };
     }
@@ -1634,7 +1841,7 @@
             kind: kind,
             label: label,
             x: haPos ? pos.x : from.x + MAP_NODE_SPACING_X + randomBetween(-MAP_NODE_SPACING_X_JITTER, MAP_NODE_SPACING_X_JITTER),
-            y: haPos ? pos.y : clampMapY(from.y + randomBetween(-MAP_NODE_Y_DRIFT, MAP_NODE_Y_DRIFT))
+            y: haPos ? pos.y : clampMapY(from.y + randomBetween(-MAP_NODE_Y_DRIFT, MAP_NODE_Y_DRIFT), bassoDi(state))
         });
     }
 
@@ -1663,15 +1870,16 @@
         const from = lastNodePosition(state);
         const baseX = from.x + MAP_CHOICE_SPACING_X + randomBetween(-MAP_CHOICE_SPACING_X_JITTER, MAP_CHOICE_SPACING_X_JITTER);
         const n = routes.length;
-        const usableHeight = MAP_WORLD_HEIGHT - MAP_TOP_PADDING - MAP_BOTTOM_PADDING;
+        const basso = bassoDi(state);
+        const usableHeight = basso - MAP_TOP_PADDING;
         const totalSpread = Math.min(usableHeight, n <= 2 ? 170 : 320);
         const step = n > 1 ? totalSpread / (n - 1) : 0;
         const halfSpread = totalSpread / 2;
-        const anchorY = Math.max(MAP_TOP_PADDING + halfSpread, Math.min(MAP_WORLD_HEIGHT - MAP_BOTTOM_PADDING - halfSpread, from.y));
+        const anchorY = Math.max(MAP_TOP_PADDING + halfSpread, Math.min(basso - halfSpread, from.y));
         routes.forEach((route, i) => {
             const evenY = anchorY + (i - (n - 1) / 2) * step;
             route.x = baseX + randomBetween(-25, 25);
-            route.y = clampMapY(evenY + randomBetween(-20, 20));
+            route.y = clampMapY(evenY + randomBetween(-20, 20), basso);
         });
         // I vicoli ciechi già scoperti restano disegnati dove stavano le
         // scelte di un bivio precedente, quindi un bivio nuovo può nascere
@@ -1680,6 +1888,8 @@
         // insieme, così resta un ventaglio ordinato.
         const ostacoli = [];
         (state.closedBranches || []).forEach((b) => b.nodes.forEach((p) => ostacoli.push(p)));
+        // Anche il falo' (sull'isola) e' un ostacolo: un bivio non nasce sopra di lui.
+        if (!state.castleReached) ostacoli.push(centroFalo());
         const tocca = () => routes.some((r) => ostacoli.some((p) => Math.hypot(r.x - p.x, r.y - p.y) < 90));
         for (let tentativi = 0; tentativi < 6 && tocca(); tentativi++) {
             routes.forEach((r) => { r.x += 80; });
@@ -1731,7 +1941,276 @@
         }, true);
     }
 
+    function creaZoneFiume(canvasWidth, canvasHeight) {
+        // La tessera del bosco è 1536×1024 e il fiume la attraversa con
+        // una curva. Più rettangoli stretti seguono la sponda meglio di una
+        // fascia uniforme: le caustiche restano sull'acqua anche quando la
+        // mappa si ripete orizzontalmente o verticalmente.
+        const curva = [[0, 535], [180, 520], [360, 470], [560, 420], [760, 405], [960, 415], [1160, 460], [1360, 510], [1536, 535]];
+        const larghezzaTessera = 1536;
+        const altezzaTessera = 1024;
+        const zone = [];
+        for (let tileY = 0; tileY < canvasHeight; tileY += altezzaTessera) {
+            for (let tileX = 0; tileX < canvasWidth; tileX += larghezzaTessera) {
+                for (let i = 0; i < curva.length - 1; i++) {
+                    const [x0, y0] = curva[i];
+                    const [x1, y1] = curva[i + 1];
+                    const left = tileX + x0;
+                    const right = Math.min(canvasWidth, tileX + x1);
+                    const centerY = tileY + (y0 + y1) / 2;
+                    const halfBank = 54;
+                    if (left >= canvasWidth || centerY + halfBank < 0 || centerY - halfBank > canvasHeight) continue;
+                    zone.push([
+                        Math.max(0, left) / canvasWidth,
+                        Math.max(0, centerY - halfBank) / canvasHeight,
+                        right / canvasWidth,
+                        Math.min(canvasHeight, centerY + halfBank) / canvasHeight
+                    ]);
+                }
+            }
+        }
+        return zone;
+    }
+
+    function puntiLuceCastello(canvasWidth, canvasHeight) {
+        // Coordinate rilevate sul fondale 1536×1024: una fiamma per ogni
+        // candelabro. Il fondale si ripete solo in orizzontale; quando il
+        // viewport supera 1024px viene stirato in altezza per coprirlo tutto.
+        const candele = [
+            [116, 148, 0.2], [540, 220, 0.18], [660, 218, 0.18],
+            [872, 218, 0.18], [1000, 220, 0.18], [1418, 148, 0.2],
+            [160, 326, 0.2], [1375, 326, 0.2],
+            [72, 574, 0.19], [360, 574, 0.19], [1104, 574, 0.19], [1462, 574, 0.19],
+            [110, 874, 0.18], [445, 850, 0.18], [1100, 850, 0.18], [1450, 874, 0.18]
+        ];
+        const altezzaTessera = Math.max(1024, canvasHeight);
+        const punti = [];
+        for (let tileX = 0; tileX < canvasWidth; tileX += 1536) {
+            candele.forEach(([x, y, grandezza]) => {
+                const py = y * altezzaTessera / 1024;
+                if (tileX + x < canvasWidth && py < canvasHeight) {
+                    punti.push([(tileX + x) / canvasWidth, 1 - py / canvasHeight, grandezza]);
+                }
+            });
+        }
+        return punti;
+    }
+
+    function puntiRiflessiCastello(canvasWidth, canvasHeight) {
+        const dettagliOro = [[768, 419], [184, 422], [1345, 422], [768, 642], [518, 704], [1018, 704]];
+        const altezzaTessera = Math.max(1024, canvasHeight);
+        const punti = [];
+        for (let tileX = 0; tileX < canvasWidth; tileX += 1536) {
+            dettagliOro.forEach(([x, y]) => {
+                const py = y * altezzaTessera / 1024;
+                if (tileX + x < canvasWidth && py < canvasHeight) {
+                    punti.push([(tileX + x) / canvasWidth, 1 - py / canvasHeight, 0.008]);
+                }
+            });
+        }
+        return punti;
+    }
+
+    // ----------------------------------------------------------------
+    // MAPPA VIVA (1.5.129): curve, orme, pedina che cammina, camera, luce, Stelle che volano.
+    // Solo presentazione: lo stato del torneo non sa niente di tutto questo.
+    // ----------------------------------------------------------------
+    /** La pedina del giocatore sulla mappa (la stessa figura che lo rappresenta altrove). */
+    const PEDINA_GIOCATORE = 'images/characters/pedine/mirror.png';
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+    const riduciMovimento = () => !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+    /**
+     * Il punto di controllo della curva fra due punti. DETERMINISTICO: gli stessi due punti danno sempre la stessa curva (un seme dai
+     * numeri stessi), quindi ogni render ridisegna il sentiero identico e la pedina cammina proprio su quel tratto.
+     */
+    function curvaTra(a, b) {
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const h = Math.sin(a.x * 12.9898 + a.y * 78.233 + b.x * 37.719 + b.y * 4.581) * 43758.5453;
+        const r = h - Math.floor(h);
+        const lato = (r < 0.5 ? -1 : 1) * (0.1 + 0.16 * ((r * 7) % 1));   // 10%-26% della lunghezza, da una parte o dall'altra
+        return { x: (a.x + b.x) / 2 - dy * lato, y: (a.y + b.y) / 2 + dx * lato };
+    }
+    /** Il punto della curva a `t` (0 = partenza, 1 = arrivo): Bezier quadratica. */
+    function puntoCurva(a, b, t) {
+        const c = curvaTra(a, b), u = 1 - t;
+        return { x: u * u * a.x + 2 * u * t * c.x + t * t * b.x, y: u * u * a.y + 2 * u * t * c.y + t * t * b.y };
+    }
+    /** Le orme del tratto percorso: ellissi a coppie, una a sinistra e una a destra, girate lungo la direzione del cammino. */
+    function disegnaOrme(a, b) {
+        const g = document.createElementNS(SVG_NS, 'g');
+        g.setAttribute('class', 'map-orme');
+        const N = 40;
+        const punti = [puntoCurva(a, b, 0)];
+        let lungo = 0;
+        for (let i = 1; i <= N; i++) { const p = puntoCurva(a, b, i / N); lungo += Math.hypot(p.x - punti[i - 1].x, p.y - punti[i - 1].y); punti.push(p); }
+        const PASSO = 26;
+        let prossimo = 14, fatto = 0, lato = 1;
+        for (let i = 1; i <= N; i++) {
+            const p = punti[i], q = punti[i - 1];
+            const seg = Math.hypot(p.x - q.x, p.y - q.y) || 1;
+            while (prossimo <= fatto + seg) {
+                const k = (prossimo - fatto) / seg;
+                const x = q.x + (p.x - q.x) * k, y = q.y + (p.y - q.y) * k;
+                const ang = Math.atan2(p.y - q.y, p.x - q.x);
+                const nx = -Math.sin(ang), ny = Math.cos(ang);
+                const e = document.createElementNS(SVG_NS, 'ellipse');
+                e.setAttribute('cx', (x + nx * 5 * lato).toFixed(1)); e.setAttribute('cy', (y + ny * 5 * lato).toFixed(1));
+                e.setAttribute('rx', '2.6'); e.setAttribute('ry', '4.2');
+                e.setAttribute('transform', `rotate(${(ang * 180 / Math.PI + 90).toFixed(1)} ${(x + nx * 5 * lato).toFixed(1)} ${(y + ny * 5 * lato).toFixed(1)})`);
+                g.appendChild(e);
+                lato = -lato;
+                prossimo += PASSO;
+            }
+            fatto += seg;
+        }
+        return g;
+    }
+
+    /** La luce del mondo secondo dove si e': all'approdo l'alba, poi il giorno, il tramonto con le Stelle alte, il crepuscolo alla soglia del Castello, la notte dentro. */
+    function oraDelMondo(state, castleOnly) {
+        if (castleOnly || state.castleStage) return 'notte';
+        const stelle = (typeof state.stars === 'number') ? state.stars : 0;
+        if (stelle >= CASTLE_THRESHOLD) return 'crepuscolo';
+        if ((state.history || []).length <= 1 && !state.corridor) return 'alba';
+        if (stelle >= CASTLE_THRESHOLD - 3) return 'tramonto';
+        return 'giorno';
+    }
+
+    /** Foglie che cadono e lucciole: create UNA volta sola, la luce le mostra o le nasconde (CSS su body[data-ora]). */
+    function assicuraAmbiente() {
+        if (!document.getElementById('mapLuce')) {
+            const luce = document.createElement('div');
+            luce.id = 'mapLuce';
+            luce.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(luce);
+        }
+        if (document.getElementById('mapAmbiente')) return;
+        const amb = document.createElement('div');
+        amb.id = 'mapAmbiente';
+        amb.setAttribute('aria-hidden', 'true');
+        for (let i = 0; i < 9; i++) {
+            const f = document.createElement('span');
+            f.className = 'map-foglia';
+            f.style.left = (Math.random() * 100).toFixed(1) + '%';
+            f.style.animationDuration = (9 + Math.random() * 8).toFixed(1) + 's';
+            f.style.animationDelay = (-Math.random() * 14).toFixed(1) + 's';
+            f.style.background = ['#7fb35a', '#a8c46a', '#c9a24a'][i % 3];
+            amb.appendChild(f);
+        }
+        for (let i = 0; i < 12; i++) {
+            const l = document.createElement('span');
+            l.className = 'map-lucciola';
+            l.style.left = (Math.random() * 100).toFixed(1) + '%';
+            l.style.top = (20 + Math.random() * 70).toFixed(1) + '%';
+            l.style.animationDuration = (3.5 + Math.random() * 3).toFixed(1) + 's';
+            l.style.animationDelay = (-Math.random() * 6).toFixed(1) + 's';
+            amb.appendChild(l);
+        }
+        document.body.appendChild(amb);
+    }
+
+    /** L'anello del Castello nella barra delle Stelle: si riempie con le Stelle e si accende alla soglia. */
+    function aggiornaCastelloHud(stelle) {
+        const c = document.getElementById('starsCastello');
+        if (!c) return;
+        c.style.setProperty('--p', String(Math.min(100, Math.round((stelle / CASTLE_THRESHOLD) * 100))));
+        c.classList.toggle('acceso', stelle >= CASTLE_THRESHOLD);
+        c.title = stelle >= CASTLE_THRESHOLD ? 'Il Castello di Pegasus ti aspetta!' : `Castello di Pegasus: servono ${CASTLE_THRESHOLD} Stelle (ne hai ${stelle})`;
+    }
+
+    const STELLA_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8-6.3 3.8 1.7-7L2 9.2l7.1-.6z"/></svg>';
+    /**
+     * Le Stelle guadagnate volano dalla pedina al contatore; quelle perse si staccano dal contatore e cadono. Un livello a parte sul <body>
+     * (sopravvive al ridisegno della mappa). Si legge la posizione ADESSO, dopo un attimo: la pedina e' quella del nuovo ridisegno.
+     */
+    function volaStelle(delta) {
+        if (!delta || riduciMovimento()) return;
+        setTimeout(() => {
+            const barra = document.getElementById('starsBar');
+            if (!barra || barra.offsetParent === null) return;
+            const rb = barra.getBoundingClientRect();
+            const pedina = document.querySelector('.map-node.current .map-pedina-img');
+            const rp = pedina ? pedina.getBoundingClientRect() : { left: innerWidth / 2 - 20, top: innerHeight / 2, width: 40, height: 40 };
+            const dalla = { x: rp.left + rp.width / 2, y: rp.top + rp.height * 0.35 };
+            const alla = { x: rb.left + rb.width * 0.3, y: rb.top + rb.height / 2 };
+            const n = Math.min(Math.abs(delta), 8);
+            const persa = delta < 0;
+            for (let i = 0; i < n; i++) {
+                const s = document.createElement('span');
+                s.className = 'map-stella-volo' + (persa ? ' persa' : '');
+                s.innerHTML = STELLA_SVG;
+                document.body.appendChild(s);
+                const da = persa ? alla : dalla, a = persa ? { x: alla.x + (Math.random() - 0.5) * 60, y: alla.y + 140 + Math.random() * 60 } : alla;
+                const metaX = (da.x + a.x) / 2 + (Math.random() - 0.5) * 90, metaY = Math.min(da.y, a.y) - 40 - Math.random() * 50;
+                const anim = s.animate([
+                    { transform: `translate(${da.x}px, ${da.y}px) scale(.5)`, opacity: 0 },
+                    { transform: `translate(${metaX}px, ${metaY}px) scale(1.15)`, opacity: 1, offset: 0.45 },
+                    { transform: `translate(${a.x}px, ${a.y}px) scale(${persa ? 0.6 : 0.9})`, opacity: persa ? 0 : 1 }
+                ], { duration: 760 + i * 70, delay: i * 80, easing: 'cubic-bezier(.3,.7,.35,1)', fill: 'both' });
+                anim.onfinish = () => {
+                    s.remove();
+                    if (!persa && i === n - 1) { barra.classList.remove('pop'); void barra.offsetWidth; barra.classList.add('pop'); }
+                };
+            }
+        }, 380);
+    }
+
+    /**
+     * La pedina del giocatore cammina lungo la curva da `da` a `a` (un frame alla volta), con la camera che la segue, un po' di polvere
+     * ai piedi e il verso (sinistra/destra) che segue la direzione. Chiama `onDone` ad arrivo. Solo grafica: se la mappa sparisce
+     * mentre cammina si chiude comunque.
+     */
+    function camminaLungoCurva(canvas, da, a, onDone, opzioni) {
+        const viewport = document.getElementById('mapViewport');
+        const dist = Math.hypot(a.x - da.x, a.y - da.y);
+        const calma = riduciMovimento();
+        const durata = calma ? 200 : Math.max(620, Math.min(1150, dist * 2.6));
+        const cam = document.createElement('div');
+        cam.className = 'map-camminatore' + (a.x < da.x ? ' verso-sinistra' : '');
+        const img = document.createElement('img');
+        img.alt = '';
+        img.src = PEDINA_GIOCATORE;
+        cam.appendChild(img);
+        cam.style.left = da.x + 'px';
+        cam.style.top = da.y + 'px';
+        canvas.appendChild(cam);
+        const partito = canvas.querySelector('.map-node.current');
+        if (partito && !(opzioni && opzioni.nonNascondere)) partito.classList.add('is-partito');
+        let inizio = null, ultimaPolvere = 0;
+        const facile = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+        const passo = (ora) => {
+            if (!canvas.isConnected) { onDone(); return; }
+            if (inizio === null) inizio = ora;
+            const t = Math.min(1, (ora - inizio) / durata);
+            const p = puntoCurva(da, a, facile(t));
+            cam.style.left = p.x + 'px';
+            cam.style.top = p.y + 'px';
+            if (!calma && ora - ultimaPolvere > 95 && t < 1) {
+                ultimaPolvere = ora;
+                const pv = document.createElement('i');
+                pv.className = 'map-polvere';
+                pv.style.left = (p.x + (Math.random() - 0.5) * 18) + 'px';
+                pv.style.top = (p.y - 2) + 'px';
+                canvas.appendChild(pv);
+                pv.addEventListener('animationend', () => pv.remove());
+            }
+            // La camera segue (se il mondo e' piu' grande della finestra): si avvicina al punto, senza strattoni.
+            if (viewport && !calma) {
+                viewport.scrollLeft += (p.x - viewport.clientWidth / 2 - viewport.scrollLeft) * 0.14;
+                viewport.scrollTop += (p.y - viewport.clientHeight / 2 - viewport.scrollTop) * 0.14;
+            }
+            if (t < 1) requestAnimationFrame(passo);
+            else { cam.remove(); onDone(); }
+        };
+        requestAnimationFrame(passo);
+    }
+
     function renderMap(state) {
+        // renderMap ricrea l'intero mondo. Chiudi il contesto WebGL legato
+        // alla tela precedente prima che venga staccata, così i render dopo
+        // un duello non accumulano canvas e richieste animation frame.
+        if (window.AmbienteWebGL) AmbienteWebGL.ferma();
         // Unica vera schermata "di gioco" del torneo: a tutto schermo,
         // niente più contenitore con bordo — vedi il commento su
         // .main.map-mode più sopra.
@@ -1756,7 +2235,7 @@
         const castleOnly = !!state.castleReached;
         const history = castleOnly
             ? (state.castleHistory || [])
-            : [Object.assign({ kind: 'start', label: "L'approdo sull'isola" }, MAP_START_POS)].concat(state.history);
+            : [Object.assign({ kind: 'start', label: "L'approdo sull'isola" }, posizioneApprodo())].concat(state.history);
         // Dentro un vicolo cieco il "sei qui" è il nodo del vicolo, e
         // l'unica scelta è il tratto successivo (se il vicolo è lungo 2);
         // le altre strade del bivio aspettano, nascoste, il ritorno.
@@ -1785,7 +2264,8 @@
         const rightmostX = closedBranches.reduce((max, b) => b.nodes.reduce((m, n) => Math.max(m, n.x), max),
             choices.reduce((max, c) => Math.max(max, c.x), corridor ? Math.max(...corridor.nodes.map((n) => n.x)) : current.x));
         const contentWidth = rightmostX + MAP_CHOICE_SPACING_X;
-        const contentHeight = MAP_WORLD_HEIGHT;
+        // Sull'isola il mondo arriva fino all'approdo (sotto il fiume): un po' piu' alto della fascia dei nodi, cosi' la pedina e la sua etichetta non finiscono fuori.
+        const contentHeight = castleOnly ? MAP_WORLD_HEIGHT : MAP_ISOLA_ALTEZZA;
         // Il canvas deve riempire SEMPRE almeno l'intero .map-viewport
         // (100vw/100dvh in map-mode), anche quando il sentiero generato dai
         // nodi è più piccolo dello schermo (monitor desktop ampi) — bug
@@ -1803,6 +2283,12 @@
         // il problema alla radice: 1 unità SVG = 1px CSS reale, sempre.
         const canvasWidth = Math.max(contentWidth, window.innerWidth);
         const canvasHeight = Math.max(contentHeight, window.innerHeight);
+        // Camera: la vista di prima (se c'e') si ripristina e poi scivola verso il nuovo centro, invece di saltare. La luce del mondo e
+        // l'ambiente (foglie, lucciole) si aggiornano qui, sul <body>, cosi' cambiano con dolcezza fra un render e l'altro.
+        const vecchioViewport = document.getElementById('mapViewport');
+        const scrollPrima = vecchioViewport ? { l: vecchioViewport.scrollLeft, t: vecchioViewport.scrollTop } : null;
+        document.body.dataset.ora = oraDelMondo(state, castleOnly);
+        assicuraAmbiente();
 
         content.innerHTML = `
             <div class="map-viewport" id="mapViewport">
@@ -1811,16 +2297,83 @@
                 </div>
             </div>
             ${castleOnly ? '' : '<div class="map-legend"><span><b>⚔️ Duello</b> sfidante già noto</span><span><b>❔ Ignoto</b> premio, insidia o vicolo cieco</span></div>'}
+            <button type="button" class="map-centra" id="mapCentra" aria-label="Centra su di me" title="Centra su di me">◎</button>
         `;
         const canvas = document.getElementById('mapCanvas');
         const svg = canvas.querySelector('svg');
+        const isCastleMap = !!state.castleStage;
+
+        if (!isCastleMap) {
+            // Mantieni l'accampamento dentro il mondo anche al primo render
+            // su mobile, quando il percorso non ha ancora fatto crescere
+            // la mappa fino alla sua larghezza finale.
+            // Il falo' sta al CENTRO della mappa e IN BASSO (centroFalo): e' anche il punto di partenza del giocatore (posizioneApprodo).
+            const campfireX = centroFalo().x - 41;
+            const campfireTop = centroFalo().y - 36;
+            const focolare = document.createElement('div');
+            focolare.className = 'map-campfire';
+            focolare.style.left = campfireX + 'px';
+            focolare.style.top = campfireTop + 'px';
+            focolare.setAttribute('aria-hidden', 'true');
+            focolare.innerHTML = '<span class="map-campfire-stones">' + '<i></i>'.repeat(8) + '</span><span class="map-campfire-logs"></span><span class="map-campfire-embers"></span>';
+            canvas.appendChild(focolare);
+
+            // Un solo pass WebGL per tutta la mappa: riflessi mossi nella
+            // curva del fiume e una fiamma puntuale sul focolare. La tela è
+            // dentro il mondo che scorre; gli effetti seguono quindi pan e
+            // trascinamento senza listener o coordinate sullo schermo.
+            if (window.AmbienteWebGL && AmbienteWebGL.haMappa('regno_dei_duellanti_bosco_torneo')) {
+                const rapporto = canvasWidth / canvasHeight;
+                AmbienteWebGL.avviaMappa('regno_dei_duellanti_bosco_torneo', canvas, {
+                    larghezza: canvasWidth,
+                    altezza: canvasHeight,
+                    scala: Math.min(0.5, 760 / canvasWidth),
+                    ia: rapporto,
+                    pal: [[0.34, 0.86, 0.68], [0.72, 0.92, 0.52], [0.48, 0.79, 0.94]],
+                    fondo: [
+                        ['caustiche', 'A', { sc: 7.5, a: 0.28, zone: creaZoneFiume(canvasWidth, canvasHeight), ia: rapporto, bordo: 0.008 }],
+                        ['fiamme', 'A', {
+                            pts: [[(campfireX + 41) / canvasWidth, 1 - (campfireTop + 38) / canvasHeight, 1.25]],
+                            ia: rapporto, sz: 0.78, a: 0.92,
+                            c1: [1, 0.77, 0.3], c2: [1, 0.2, 0.035]
+                        }]
+                    ]
+                });
+            }
+        } else if (window.AmbienteWebGL && AmbienteWebGL.haMappa('regno_dei_duellanti_castello_pegasus_torneo')) {
+            const rapporto = canvasWidth / canvasHeight;
+            AmbienteWebGL.avviaMappa('regno_dei_duellanti_castello_pegasus_torneo', canvas, {
+                larghezza: canvasWidth,
+                altezza: canvasHeight,
+                scala: Math.min(0.5, 760 / canvasWidth),
+                ia: rapporto,
+                pal: [[1, 0.78, 0.38], [0.55, 0.55, 0.85], [0.85, 0.48, 0.72]],
+                fondo: [
+                    ['fiamme', 'A', {
+                        pts: puntiLuceCastello(canvasWidth, canvasHeight),
+                        ia: rapporto, sz: 0.9, a: 0.78,
+                        c1: [1, 0.84, 0.48], c2: [0.95, 0.35, 0.08]
+                    }],
+                    ['brillo', 'A', {
+                        pts: puntiRiflessiCastello(canvasWidth, canvasHeight),
+                        ia: rapporto, sz: 1, a: 0.34, ex: 8, vel: 0.8
+                    }]
+                ]
+            });
+        }
 
         function addLine(a, b, extraClass, opts) {
             opts = opts || {};
-            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            // Un sentiero e' una CURVA, non una retta (la stessa per gli stessi due punti, vedi curvaTra). Gli attributi x1/y1/x2/y2 non servono
+            // al disegno di un <path> ma restano: dicono da dove a dove va il collegamento a chi lo legge (i test, le mappe di prova).
+            const c = curvaTra(a, b);
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            line.setAttribute('d', `M ${a.x} ${a.y} Q ${c.x} ${c.y} ${b.x} ${b.y}`);
             line.setAttribute('x1', a.x); line.setAttribute('y1', a.y);
             line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
             line.setAttribute('class', 'map-line' + (extraClass ? ' ' + extraClass : '') + (opts.appear ? ' map-line-appear' : ''));
+            // Il tratto gia' percorso lascia le orme sopra il sentiero battuto.
+            if (extraClass && /\bpath-line\b/.test(extraClass)) svg.appendChild(disegnaOrme(a, b));
             if (opts.appear && opts.delay) line.style.animationDelay = opts.delay + 's';
             if (typeof opts.routeIndex === 'number') line.dataset.routeIndex = String(opts.routeIndex);
             svg.appendChild(line);
@@ -1835,7 +2388,22 @@
             if (typeof opts.routeIndex === 'number') el.dataset.routeIndex = String(opts.routeIndex);
             el.style.left = pos.x + 'px';
             el.style.top = pos.y + 'px';
-            el.innerHTML = `<span class="map-node-dot">${opts.icon || '?'}</span><span class="map-node-label">${opts.label || ''}</span>`;
+            // Con una pedina il pallino diventa la figura intera (con l'icona solo come ripiego finche' l'immagine non c'e'): i piedi stanno sul punto.
+            el.innerHTML = `<span class="map-node-dot">${opts.pedina ? '' : (opts.icon || '?')}</span><span class="map-node-label">${opts.label || ''}</span>`;
+            if (opts.pedina) {
+                el.classList.add('pedina');
+                const dot = el.querySelector('.map-node-dot');
+                const img = document.createElement('img');
+                img.className = 'map-pedina-img';
+                img.alt = '';
+                img.draggable = false;
+                img.style.animationDelay = (-Math.random() * 2.8).toFixed(2) + 's';   // non respirano tutte insieme
+                img.onerror = () => { img.remove(); el.classList.remove('pedina'); dot.textContent = opts.icon || '?'; };
+                img.src = opts.pedina;
+                dot.appendChild(img);
+                el.dataset.pedina = opts.pedina;
+                if (opts.ignoto) { const q = document.createElement('span'); q.className = 'map-punto-int'; q.textContent = '?'; dot.appendChild(q); }
+            }
             // Ritratto dello sfidante dentro il pallino: l'icona resta
             // sotto come ripiego finché l'immagine non è caricata (o se non
             // esiste), così un file mancante non lascia un buco.
@@ -1898,6 +2466,7 @@
             addNode(node, isCurrent ? 'current' : node.kind, {
                 icon: ICON_FOR_KIND[node.kind] || '•',
                 label: castleOnly ? (node.label || '') : (isCurrent ? 'Sei qui' : (i === history.length - 1 ? 'Bivio' : '')),
+                pedina: isCurrent ? PEDINA_GIOCATORE : null,
                 appear: isCurrent
             });
         });
@@ -1906,6 +2475,7 @@
             addNode(corridor.nodes[corridor.at], 'current' + (corridor.finito ? ' dead-here' : ''), {
                 icon: corridor.finito ? '🚧' : '🌿',
                 label: corridor.finito ? 'Vicolo cieco' : 'Sei qui',
+                pedina: PEDINA_GIOCATORE,
                 appear: true
             });
         }
@@ -1959,11 +2529,16 @@
                 extraClass = 'castle duel';
                 image = opponent ? getCharacterImageFor(opponent.id, 'duelistKingdom') : null;
             }
+            // Gli sfidanti noti sono PEDINE in piedi sul punto (l'immagine che prima finiva ritagliata nel pallino e' gia' la pedina);
+            // gli ignoti sono una sagoma scura con un punto interrogativo. Il resto (Castello, "il sentiero prosegue", chiuso) resta un segno.
+            const sagomaIgnota = extraClass === 'mystery' && route.kind !== 'corridorStep';
             addNode(route, 'choice', {
                 extraClass,
                 icon,
                 label,
-                image,
+                image: null,
+                pedina: image || (sagomaIgnota ? PEDINA_GIOCATORE : null),
+                ignoto: sagomaIgnota,
                 tag,
                 onClick,
                 appear: justGeneratedRoutes,
@@ -1985,16 +2560,25 @@
         // requestAnimationFrame: al momento di questa chiamata il canvas è
         // appena stato inserito nel DOM, il browser non ha ancora calcolato
         // scrollWidth/clientHeight per il nuovo contenuto.
+        // Con la vista di prima si parte da LI' e si scivola: la camera non salta (la prima volta, o senza movimento ridotto, e' istantanea).
+        if (scrollPrima) { viewport.scrollLeft = scrollPrima.l; viewport.scrollTop = scrollPrima.t; }
+        // Un'opzione per ogni schermo: il punto su cui centrare dipende dal Castello e dal bivio (vedi il commento sotto).
+        const mediaScelte = choices.length ? choices.reduce((s, c) => s + c.x, 0) / choices.length : current.x;
+        const focus = castleOnly && choices[0] ? choices[0]
+            : { x: (current.x + mediaScelte) / 2, y: current.y };
+        const centraSu = (p, morbido) => viewport.scrollTo({
+            left: Math.max(0, p.x - viewport.clientWidth / 2), top: Math.max(0, p.y - viewport.clientHeight / 2),
+            behavior: (morbido && !riduciMovimento()) ? 'smooth' : 'auto'
+        });
         requestAnimationFrame(() => {
             // Fuori dal Castello si centra a metà fra "sei qui" e il bivio:
             // su un telefono, centrando solo "sei qui", gli sfidanti a
             // destra finivano fuori schermo proprio quando vanno scelti.
-            const mediaScelte = choices.length ? choices.reduce((s, c) => s + c.x, 0) / choices.length : current.x;
-            const focus = castleOnly && choices[0] ? choices[0]
-                : { x: (current.x + mediaScelte) / 2, y: current.y };
-            viewport.scrollLeft = Math.max(0, focus.x - viewport.clientWidth / 2);
-            viewport.scrollTop = Math.max(0, focus.y - viewport.clientHeight / 2);
+            centraSu(focus, !!scrollPrima);
         });
+        // "Centra su di me": riporta la vista sulla pedina (o sul bivio nel Castello, dove la pedina non c'e').
+        const tastoCentra = document.getElementById('mapCentra');
+        if (tastoCentra) tastoCentra.onclick = () => centraSu(castleOnly && choices[0] ? choices[0] : current, true);
     }
 
     // Durata del "viaggio" verso il nodo scelto — deve combaciare con la
@@ -2028,21 +2612,23 @@
             if (line.dataset.routeIndex !== String(index)) line.classList.add('map-line-declined');
         });
         chosenEl.classList.add('map-node-chosen');
+        // Lo sfidante scelto fa la posa di sorpresa (se la pedina ce l'ha): lo si nota prima ancora che la pedina arrivi.
+        sorprendi(chosenEl);
 
-        const traveler = document.createElement('div');
-        traveler.className = 'map-traveler';
-        traveler.style.left = from.x + 'px';
-        traveler.style.top = from.y + 'px';
-        canvas.appendChild(traveler);
-        // Forza un reflow prima di spostarlo: senza, il browser fonderebbe
-        // la posizione iniziale e quella finale nello stesso frame, senza
-        // alcuna transizione visibile (stesso principio già noto per le
-        // altre animazioni "from -> to" di questo motore).
-        void traveler.offsetWidth;
-        traveler.style.left = to.x + 'px';
-        traveler.style.top = to.y + 'px';
+        // La pedina del giocatore cammina lungo la CURVA fino al nodo scelto, con la camera che la segue; la risoluzione vera parte all'arrivo.
+        camminaLungoCurva(canvas, from, to, onDone);
+    }
 
-        setTimeout(onDone, MAP_TRAVEL_MS);
+    /** Se esiste la posa di sorpresa della pedina (images/characters/pedine-danno-sorpresa/thumbs), la mostra al posto di quella normale. */
+    function sorprendi(nodo) {
+        const src = nodo.dataset && nodo.dataset.pedina;
+        const img = nodo.querySelector('.map-pedina-img');
+        if (!src || !img || nodo.classList.contains('mystery')) return;
+        const nome = src.split('/').pop().replace(/\.[a-z0-9]+$/i, '');
+        const posa = 'images/characters/pedine-danno-sorpresa/thumbs/' + nome + '.webp';
+        const prova = new Image();
+        prova.onload = () => { img.src = posa; };
+        prova.src = posa;
     }
 
     function chooseRoute(state, index) {
@@ -2134,19 +2720,16 @@
         const canvas = document.getElementById('mapCanvas');
         const currentEl = canvas && canvas.querySelector('.map-node.current');
         if (!canvas || !currentEl || tappe.length === 0) { onDone(); return; }
-        const traveler = document.createElement('div');
-        traveler.className = 'map-traveler';
-        traveler.style.left = currentEl.style.left;
-        traveler.style.top = currentEl.style.top;
-        canvas.appendChild(traveler);
+        // La pedina ripercorre a ritroso il vicolo, un tratto curvo dopo l'altro.
+        let da = { x: parseFloat(currentEl.style.left), y: parseFloat(currentEl.style.top) };
         let i = 0;
         const passo = () => {
             if (i >= tappe.length) { onDone(); return; }
-            void traveler.offsetWidth;
-            traveler.style.left = tappe[i].x + 'px';
-            traveler.style.top = tappe[i].y + 'px';
+            const a = tappe[i];
             i++;
-            setTimeout(passo, MAP_TRAVEL_MS);
+            const partenza = da;
+            da = { x: a.x, y: a.y };
+            camminaLungoCurva(canvas, partenza, da, passo, { nonNascondere: false });
         };
         passo();
     }
@@ -2623,6 +3206,7 @@
 
         starsBar.style.display = 'flex';
         document.getElementById('starsCount').textContent = currentStars();
+        aggiornaCastelloHud(currentStars());
 
         if (state.eliminated) { renderEliminated(); return; }
         if (state.castleReached) {
