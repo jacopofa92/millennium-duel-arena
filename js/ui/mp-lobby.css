@@ -1457,3 +1457,20 @@ body.mp-term-aperto { overflow: hidden; }
 .mp-incubo-riga b { font: normal 1rem/1.2 Georgia, 'Times New Roman', serif; color: #f6b9c8; letter-spacing: .04em; }
 .mp-incubo-riga small { color: #d7c7c0; font: 400 .78rem/1.35 Arial, sans-serif; }
 .mp-incubo-riga.is-sola-lettura { cursor: default; opacity: .85; }
+/* Il conto alla rovescia: le informazioni della partita come schede con icona a tema (arena con la sua miniatura, musica, carte...). */
+.mp-countdown-arena { display: flex; flex-direction: column; gap: 8px; width: min(88vw, 360px); margin: 22px auto 0; text-shadow: none; }
+.mp-conto-scheda { display: flex; align-items: center; gap: 12px; padding: 8px 14px 8px 8px; text-align: left; border-radius: 14px;
+    background: linear-gradient(150deg, rgba(40, 32, 20, .78), rgba(14, 12, 18, .86)); border: 1px solid rgba(247, 215, 116, .3);
+    animation: mpContoScheda .5s ease both; }
+.mp-conto-scheda:nth-child(2) { animation-delay: .08s; }
+.mp-conto-scheda:nth-child(3) { animation-delay: .16s; }
+.mp-conto-scheda:nth-child(4) { animation-delay: .24s; }
+.mp-conto-scheda:nth-child(5) { animation-delay: .32s; }
+@keyframes mpContoScheda { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.mp-conto-ico { flex: 0 0 auto; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; color: var(--kc-gold, #f7d774);
+    background: rgba(247, 215, 116, .1) center / cover no-repeat; border: 1px solid rgba(247, 215, 116, .4); }
+.mp-conto-ico svg { width: 24px; height: 24px; }
+.mp-conto-testi { display: flex; flex-direction: column; min-width: 0; }
+.mp-conto-testi small { font: 600 .62rem/1.2 Arial, sans-serif; letter-spacing: .16em; text-transform: uppercase; color: var(--kc-ink-dim, #c9bb96); }
+.mp-conto-testi b { font: normal 1rem/1.25 Georgia, 'Times New Roman', serif; letter-spacing: .02em; color: var(--kc-ink, #f4ead2); overflow-wrap: anywhere; }
+@media (prefers-reduced-motion: reduce) { .mp-conto-scheda { animation: none; } }

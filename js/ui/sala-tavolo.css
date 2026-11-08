@@ -170,3 +170,34 @@
 }
 
 .st-sala[hidden], .si-ingresso[hidden] { display: none !important; }
+
+/* ---------- Montata dentro la sala vera (multiplayer.html, ?sala=tavolo) ---------- */
+/* La sala di sempre resta nel documento (i suoi controlli servono: il tavolo li pilota), ma non si vede. */
+.mp-screen.mp-tavolo-attivo > :not(.mp-tavolo-radice) { display: none !important; }
+.mp-tavolo-radice { width: 100%; }
+.st-codice { cursor: pointer; background: none; border: 0; padding: 0; color: inherit; font: inherit; text-align: left; }
+
+/* ---------- Sale a posti fissi (1 contro 1, Raid): nessun "centro" da attraversare, il tavolo si compatta ---------- */
+.st-sala.st-fissa { --st-fig: clamp(96px, 17vh, 150px); }
+.st-fissa .st-ancora { display: none; }
+.st-fissa .st-centro { min-height: 58px; }
+.st-fissa .st-centro::before, .st-fissa .st-centro::after { width: calc(50% - 56px); }
+
+/* ---------- Chi e' in piedi, posti-bersaglio, posti IA in ombra ---------- */
+.st-inpiedi { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; margin: 12px 0 0; }
+.st-inpiedi[hidden] { display: none; }
+.st-inpiedi-titolo { font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--st-dim); }
+.st-inpiedi-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px 0 6px; border-radius: 999px; font: inherit; font-size: .82rem; color: var(--st-ink);
+    background: var(--st-sup); border: 1px solid var(--st-bordo); cursor: pointer; }
+.st-inpiedi-chip:disabled { cursor: default; }
+.st-inpiedi-chip.is-scelto { border-color: var(--st-oro); box-shadow: 0 0 14px rgba(247, 215, 116, .35); }
+.st-inpiedi-fig { width: 26px; height: 26px; border-radius: 50%; background: center top / cover no-repeat; border: 1px solid rgba(247, 215, 116, .4); }
+.st-fig--ia { opacity: .38; filter: grayscale(.45); }
+.st-slot.is-bersaglio { border-color: var(--st-oro); box-shadow: 0 0 0 2px rgba(247, 215, 116, .28), 0 0 22px rgba(247, 215, 116, .3); cursor: pointer; }
+
+/* ---------- Scelta del duellante IA di un posto (finestra di MpScelte) ---------- */
+.st-picker-ia { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; padding: 4px; }
+.st-picker-ia-voce { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 6px; border-radius: 14px; cursor: pointer; color: #f4ead2; font: inherit; font-size: .78rem;
+    background: linear-gradient(150deg, rgba(40, 32, 20, .8), rgba(14, 12, 18, .88)); border: 1px solid rgba(247, 215, 116, .3); }
+.st-picker-ia-voce.is-scelto { border-color: #f7d774; box-shadow: 0 0 14px rgba(247, 215, 116, .35); }
+.st-picker-ia-img { width: 100%; height: 86px; background: center bottom / contain no-repeat; }
