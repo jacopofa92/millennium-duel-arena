@@ -748,9 +748,9 @@
     "semantic_hash": ""
   },
   "js/ui/board-pieces.js": {
-    "mtime": 1794166675.7232513,
-    "seen": 1794167492.2416556,
-    "ast_hash": "6528fd9ce3cc7632a9191985e653497c",
+    "mtime": 1794167865.0162692,
+    "seen": 1794171983.2340608,
+    "ast_hash": "fdebd568df723ea95885ae6f8cacc03d",
     "semantic_hash": ""
   },
   "js/ui/bot-speed.js": {
@@ -1108,9 +1108,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794167154.584836,
-    "seen": 1794167492.2859006,
-    "ast_hash": "cb0babd9f43a25bfded0df2a43c9015a",
+    "mtime": 1794171896.6308117,
+    "seen": 1794171983.2666962,
+    "ast_hash": "70410e68e311ced0c1eeb485def08edb",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1126,9 +1126,9 @@
     "semantic_hash": "57357a46c1d07a0fa18bbcd83581aaa6"
   },
   "package.json": {
-    "mtime": 1794167158.5173633,
-    "seen": 1794167492.2879634,
-    "ast_hash": "bfc68c2682d5a60dc887c20e6c698a6f",
+    "mtime": 1794171901.4594,
+    "seen": 1794171983.2677228,
+    "ast_hash": "2c1719208a643bda20410425a0426b7a",
     "semantic_hash": ""
   },
   "render.yaml": {
@@ -1527,9 +1527,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794167163.2349164,
-    "seen": 1794167492.3256586,
-    "ast_hash": "f6b2e70bdba0c7a9442714a9a74e3c7d",
+    "mtime": 1794171907.8135848,
+    "seen": 1794171983.2982454,
+    "ast_hash": "efd0b87abd7c438da0a9431566215955",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -1817,22 +1817,22 @@
     "semantic_hash": "5ea2154c4f56d641269fbcbf91b53d55"
   },
   "tests/specs/battle-city-mappa-pedine.spec.js": {
-    "mtime": 1791050825.0482967,
-    "seen": 1793910198.3460453,
-    "ast_hash": "23817cef9cb0883470c4a0604b7ef0dc",
-    "semantic_hash": "23817cef9cb0883470c4a0604b7ef0dc"
+    "mtime": 1794169208.1266918,
+    "seen": 1794171983.322729,
+    "ast_hash": "a4981c71250b970af0b5718e0abd5cea",
+    "semantic_hash": ""
   },
   "tests/specs/battle-city-oggetti-eventi.spec.js": {
-    "mtime": 1791051782.4668684,
-    "seen": 1793910198.3460453,
-    "ast_hash": "2d515ae4d15d2f0cb5ff5149715e73f1",
-    "semantic_hash": "2d515ae4d15d2f0cb5ff5149715e73f1"
+    "mtime": 1794169208.1256673,
+    "seen": 1794171983.322729,
+    "ast_hash": "1ac1a5536b463c2ca90087887ea08c53",
+    "semantic_hash": ""
   },
   "tests/specs/battle-city-prologo-mappa.spec.js": {
-    "mtime": 1791051734.8270042,
-    "seen": 1793910198.3471098,
-    "ast_hash": "6ac7e27ba52292604e2660e80dab58b1",
-    "semantic_hash": "6ac7e27ba52292604e2660e80dab58b1"
+    "mtime": 1794169126.6986687,
+    "seen": 1794171983.322729,
+    "ast_hash": "203e628915ec240226288f30cb4daf84",
+    "semantic_hash": ""
   },
   "tests/specs/battle-resolution.spec.js": {
     "mtime": 1791631155.132752,
@@ -4955,15 +4955,15 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1794160821.908412,
-    "seen": 1794162006.884625,
-    "ast_hash": "b2b1ac5e7c863aad8a96686c8f09d25f",
+    "mtime": 1794169358.40896,
+    "seen": 1794171983.5622127,
+    "ast_hash": "55633085fa30bddd90946d70c51ee983",
     "semantic_hash": ""
   },
   "PROJECT_MAP.md": {
-    "mtime": 1794167566.0516765,
-    "seen": 1794167628.4073565,
-    "ast_hash": "ed14c828bce9031af494cdf840890959",
+    "mtime": 1794171918.0281146,
+    "seen": 1794171983.5622127,
+    "ast_hash": "a7c2aada4622f31e4bbfeb31e2711150",
     "semantic_hash": ""
   },
   "PUBBLICAZIONE.md": {
@@ -5261,9 +5261,9 @@
     "semantic_hash": ""
   },
   "docs/planning/WORK_IN_PROGRESS.md": {
-    "mtime": 1794167139.7464492,
-    "seen": 1794167492.7256105,
-    "ast_hash": "7200ead59abf6505fd5a2633476123f7",
+    "mtime": 1794171926.6568298,
+    "seen": 1794171983.588228,
+    "ast_hash": "4fdeb48da54c98012805be7b02040a6f",
     "semantic_hash": ""
   },
   "duelMonstersCore.html": {
@@ -5387,15 +5387,15 @@
     "semantic_hash": ""
   },
   "tornei.html": {
-    "mtime": 1794160779.4479413,
-    "seen": 1794162006.9272757,
+    "mtime": 1794167865.0217798,
+    "seen": 1794171983.5984101,
     "ast_hash": "e5e96bba42f0c75eb6d7b473b2a92954",
     "semantic_hash": ""
   },
   "torneo-battle-city.html": {
-    "mtime": 1794167320.5640318,
-    "seen": 1794167492.739778,
-    "ast_hash": "9d1713f2b3677050727836a88caaa1ed",
+    "mtime": 1794172210.8311732,
+    "seen": 1794172260.4523242,
+    "ast_hash": "614744360fef1d7c034141933cb98b6f",
     "semantic_hash": ""
   },
   "torneo-kaiba.html": {
@@ -23489,9 +23489,9 @@
     "semantic_hash": ""
   },
   "js/ui/emoji-tema.js": {
-    "mtime": 1794160635.0749433,
-    "seen": 1794162006.483815,
-    "ast_hash": "0b98fff4bcbce096c90d5bdc24affe11",
+    "mtime": 1794167865.0173016,
+    "seen": 1794171983.242243,
+    "ast_hash": "5e227a5ad654f61ccda7252c31a6f4df",
     "semantic_hash": ""
   },
   "js/ui/evidenzia-giocabili.js": {
@@ -24515,15 +24515,15 @@
     "semantic_hash": ""
   },
   "js/ui/ambiente-battle-city.js": {
-    "mtime": 1794166821.8467016,
-    "seen": 1794167492.237965,
-    "ast_hash": "642e4314982fc8a43ef4443cc9231e1c",
+    "mtime": 1794171874.8141532,
+    "seen": 1794171983.2320497,
+    "ast_hash": "c8d3703212a1b3b1af36b35ea94e0ba4",
     "semantic_hash": ""
   },
   "tests/specs/battle-city-citta-viva.spec.js": {
-    "mtime": 1794150536.5373006,
-    "seen": 1794158959.4999685,
-    "ast_hash": "2a9b80cf9e16bd82ef7e830e6061265e",
+    "mtime": 1794169131.6585684,
+    "seen": 1794171983.322729,
+    "ast_hash": "1875c4fcde2e881e87d076274f8f2e67",
     "semantic_hash": ""
   },
   "tests/specs/regno-mappa-viva.spec.js": {
@@ -24904,28 +24904,40 @@
     "ast_hash": "4098f32fd05d0b919b29c7f7937fdcc8",
     "semantic_hash": ""
   },
-  "images/maps/battle_city_kaibacorp.jpg": {
-    "mtime": 1794158239.0735993,
-    "seen": 1794158961.7240171,
-    "ast_hash": "81167d4038df04587c3d4a20d7b53064",
-    "semantic_hash": ""
-  },
-  "images/maps/battle_city_parco.jpg": {
-    "mtime": 1794158238.9037628,
-    "seen": 1794158961.7240171,
-    "ast_hash": "552f61ec18e23057c8615f60a660470e",
-    "semantic_hash": ""
-  },
-  "images/maps/battle_city_porto.jpg": {
-    "mtime": 1794158238.9869344,
-    "seen": 1794158961.7240171,
-    "ast_hash": "92708d8d183106b1b6f9ac0aa0990465",
-    "semantic_hash": ""
-  },
   ".codex-attachments/39c90871-5523-41f1-a0a3-9457cf64f8c6/d6cd1886-e44a-4df9-9b03-ef6e054038e7/1000067993.jpg": {
     "mtime": 1794164506.5296054,
     "seen": 1794164691.7588103,
     "ast_hash": "7bba664b31ec19db65fba45033894c45",
+    "semantic_hash": ""
+  },
+  "tests/specs/battle-city-nodi-sulle-strade.spec.js": {
+    "mtime": 1794169235.0890472,
+    "seen": 1794171983.322729,
+    "ast_hash": "b1bbb0f85be8e723d2e54e353670ed74",
+    "semantic_hash": ""
+  },
+  "images/maps/battle_city_centro_v2.jpg": {
+    "mtime": 1794171651.2741318,
+    "seen": 1794171985.268843,
+    "ast_hash": "3482ccc786faacfbf6697d752ad43a66",
+    "semantic_hash": ""
+  },
+  "images/maps/battle_city_kaibacorp_v2.jpg": {
+    "mtime": 1794171651.531893,
+    "seen": 1794171985.268843,
+    "ast_hash": "902069d61039e60584fc0b8983954864",
+    "semantic_hash": ""
+  },
+  "images/maps/battle_city_parco_v2.jpg": {
+    "mtime": 1794171651.3604643,
+    "seen": 1794171985.268843,
+    "ast_hash": "b2a506d7bb2fc1bb40906f8ed842b30f",
+    "semantic_hash": ""
+  },
+  "images/maps/battle_city_porto_v2.jpg": {
+    "mtime": 1794171651.4400356,
+    "seen": 1794171985.268843,
+    "ast_hash": "5a98b887df23da8c89e33a154d84de94",
     "semantic_hash": ""
   },
   "package-lock.json": {

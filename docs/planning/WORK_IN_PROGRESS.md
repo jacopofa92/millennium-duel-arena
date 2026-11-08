@@ -10,7 +10,7 @@ Elenco di lavori consigliati, in ordine di valore. Spuntare `[x]` quando fatto.
       risolti. Il dirigibile si apre nel distretto KaibaCorp dopo aver visitato
       tutti i quartieri e raccolto le sei Carte Locazione.
 
-## Battle City — percorsi, economia e istruzioni (chiuso in 1.6.5)
+## Battle City — percorsi, economia, fondali e istruzioni (chiuso in 1.6.7)
 
 - [x] Posizionare i nodi sulle superfici percorribili dei quattro fondali,
       con layout dedicato al ritaglio verticale e riallineamento su resize.
@@ -31,6 +31,10 @@ Elenco di lavori consigliati, in ordine di valore. Spuntare `[x]` quando fatto.
       ridisegnare il percorso del Parco sui vialetti, aggiungere luce WebGL
       calda ai lampioni e rallentare il passaggio giorno/tramonto/notte.
       Rimossa la legenda fissa in fondo alla mappa Battle City.
+- [x] Sostituire i fondali dei quattro quartieri con un solo asset panoramico
+      16:9 per quartiere; tenere leggibile il corridoio centrale in verticale,
+      aggiornare coordinate dei nodi e delle luci e usare nomi nuovi per non
+      riutilizzare le vecchie immagini dalla cache media.
 
 ## Distruzione di una carta: niente doppio viaggio visivo — chiuso in 1.5.62
 

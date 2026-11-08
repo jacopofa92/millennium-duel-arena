@@ -870,6 +870,13 @@
         .fighter { font-size: 0.7rem; }
         .fighter .avatar { width: 22px; height: 22px; }
     }
+    /* Sul Parco in verticale i 20 nodi seguono due vialetti quasi paralleli:
+       un segnalino più basso del passo fra le tappe evita che i tocchi si
+       coprano, senza ridurre le pedine nelle altre mappe o in orizzontale. */
+    @media (max-width: 480px) and (orientation: portrait) {
+        body[data-quartiere="parco"] .city-cell { width: 48px; height: 48px; }
+        body[data-quartiere="parco"] .city-cell > .cell-label { font-size: .4rem; }
+    }
     @media (prefers-reduced-motion: reduce) {
         .city-cell, .city-cell::before, .city-player-token { transition-duration: .01ms; }
         .city-transition { transition: none; }
@@ -1087,19 +1094,19 @@
      * toccare una riga di codice: basta metterli in images/fields/.
      */
     const CITY_DISTRICTS = [
-        { id: 'centro', nome: 'Centro di Domino', image: 'images/fields/citta.jpg', ambient: 'battle-city-centro', aspect: 1, imageSize: [1254, 1254], composition: [
+        { id: 'centro', nome: 'Centro di Domino', image: 'images/maps/battle_city_centro_v2.jpg', ambient: 'battle-city-centro', aspect: 1672 / 941, imageSize: [1672, 941], composition: [
             { kind: 'duelist', count: 6 }, { kind: 'hunter', count: 2 }, { kind: 'locator', count: 1 },
             { kind: 'quest', count: 1 }, { kind: 'credits', count: 1 }, { kind: 'event', count: 2 }, { kind: 'shop', count: 2 }
         ] },
-        { id: 'parco', nome: 'Parco cittadino', image: 'images/maps/battle_city_parco.jpg', ambient: 'battle-city-parco', aspect: 1.599, imageSize: [1586, 992], composition: [
+        { id: 'parco', nome: 'Parco cittadino', image: 'images/maps/battle_city_parco_v2.jpg', ambient: 'battle-city-parco', aspect: 1672 / 941, imageSize: [1672, 941], composition: [
             { kind: 'duelist', count: 6 }, { kind: 'hunter', count: 1 }, { kind: 'credits', count: 1 },
             { kind: 'event', count: 3 }, { kind: 'shop', count: 1 }
         ] },
-        { id: 'porto', nome: 'Porto di Domino', image: 'images/maps/battle_city_porto.jpg', ambient: 'battle-city-porto', aspect: 1.599, imageSize: [1586, 992], composition: [
+        { id: 'porto', nome: 'Porto di Domino', image: 'images/maps/battle_city_porto_v2.jpg', ambient: 'battle-city-porto', aspect: 1672 / 941, imageSize: [1672, 941], composition: [
             { kind: 'duelist', count: 6 }, { kind: 'hunter', count: 2 }, { kind: 'locator', count: 1 }, { kind: 'credits', count: 1 },
             { kind: 'event', count: 3 }, { kind: 'shop', count: 1 }
         ] },
-        { id: 'kaibacorp', nome: 'Distretto KaibaCorp', image: 'images/maps/battle_city_kaibacorp.jpg', ambient: 'battle-city-kaibacorp', aspect: 1.599, imageSize: [1586, 992], composition: [
+        { id: 'kaibacorp', nome: 'Distretto KaibaCorp', image: 'images/maps/battle_city_kaibacorp_v2.jpg', ambient: 'battle-city-kaibacorp', aspect: 1672 / 941, imageSize: [1672, 941], composition: [
             { kind: 'duelist', count: 6 }, { kind: 'hunter', count: 2 }, { kind: 'credits', count: 1 },
             { kind: 'event', count: 3 }, { kind: 'shop', count: 2 }
         ] }
@@ -1136,29 +1143,30 @@
     })();
     const CITY_LAYOUTS = {
         centro: {
-            // Piazza aperta: griglia 4x4 (indici 0-15), due nodi sulla croce chiara al centro (16, 17) e i due varchi sulle strade
-            // laterali (18 verso il Parco, 19 verso il Porto). I varchi stanno ai lati perche' in orizzontale la piazza, quadrata,
-            // viene ritagliata sopra e sotto: un varco a nord o a sud sarebbe fuori schermo.
-            nodes: GRIGLIA_CENTRO.nodi.concat([[627, 375], [627, 700], [130, 570], [1125, 570]]),
-            edges: GRIGLIA_CENTRO.archi.concat([[16, 5], [16, 6], [17, 9], [17, 10], [18, 4, [[250, 520]]], [18, 8, [[250, 620]]], [19, 7, [[1010, 520]]], [19, 11, [[1010, 620]]]])
+            // Venti nodi sulla pavimentazione della nuova piazza panoramica:
+            // il vuoto centrale intorno alla fontana resta libero. I varchi
+            // 18 e 19 sono sui viali laterali e restano nel crop centrale mobile.
+            nodes: [[480,210],[660,210],[1012,210],[1192,210], [480,310],[660,310],[1012,310],[1192,310], [480,650],[660,650],[1012,650],[1192,650], [480,790],[660,790],[1012,790],[1192,790], [836,200],[836,800],[480,480],[1192,480]],
+            edges: GRIGLIA_CENTRO.archi.concat([[16,1],[16,2],[17,13],[17,14],[18,4],[18,8],[19,7],[19,11]])
         },
         parco: {
-            // Il viale centrale e i due anelli: quello a sinistra attorno al laghetto (col ponte), quello a destra attorno all'aiuola fiorita.
-            nodes: [[790, 70], [790, 200], [790, 330], [620, 345], [470, 172], [240, 235], [160, 420], [127, 700], [330, 740], [1000, 795], [640, 700], [800, 520], [790, 700], [790, 850], [930, 270], [1160, 245], [1430, 400], [1230, 500], [1000, 505], [790, 955]],
-            edges: [[0, 1], [1, 2], [1, 14, [[850, 215]]], [14, 15], [15, 16, [[1330, 285]]], [16, 17, [[1460, 450]]], [17, 18], [18, 11, [[880, 540]]], [2, 11], [11, 12], [12, 13], [13, 19],
-                [2, 3], [3, 4, [[560, 250], [540, 190]]], [4, 5, [[330, 185]]], [5, 6, [[170, 320]]], [6, 7, [[130, 560]]], [7, 8, [[150, 760]]], [8, 10, [[475, 795], [600, 765]]], [10, 12], [13, 9, [[880, 800]]]]
+            // Un anello di camminamenti: aggira lo stagno e il prato, passando
+            // sui vialetti esterni. I due varchi sono alle estremità del viale nord.
+            nodes: [[520,145],[410,200],[330,290],[275,400],[250,530],[285,650],[370,745],[500,795],[650,820],[820,825],[990,805],[1140,760],[1250,675],[1315,560],[1340,430],[1310,305],[1250,215],[1150,155],[990,110],[850,95]],
+            edges: Array.from({ length: 19 }, (_, i) => [i, i + 1]).concat([[19,0]]),
+            portrait: [[700,100],[620,185],[550,270],[520,355],[520,440],[520,525],[550,610],[620,695],[700,780],[780,850],[920,850],[1000,780],[1080,695],[1120,610],[1140,525],[1130,440],[1100,355],[1060,270],[1000,185],[920,100]]
         },
         porto: {
-            // Banchina alta, piazzale centrale fra i capannoni, moli e frangiflutti.
-            nodes: [[1140, 200], [900, 172], [720, 172], [560, 162], [300, 175], [480, 365], [710, 365], [980, 350], [1125, 300], [1125, 560], [1120, 780], [930, 480], [620, 485], [230, 375], [110, 460], [460, 590], [800, 640], [800, 770], [1480, 892], [430, 892]],
-            edges: [[0, 1], [1, 2], [2, 3], [3, 4], [2, 6, [[720, 260]]], [5, 6], [6, 7], [7, 8], [0, 8, [[1150, 250]]], [8, 9], [9, 10], [10, 18, [[1150, 850], [1205, 885]]], [18, 19],
-                [7, 11], [11, 12], [5, 12, [[500, 475]]], [5, 13], [13, 14], [5, 15, [[470, 480]]], [12, 16, [[790, 495]]], [16, 17], [9, 11, [[1040, 520]]]]
+            // Nodi su un reticolo di banchina asciutta: la fascia centrale
+            // resta la stessa anche sul telefono, con acqua ai lati.
+            nodes: [[650,250],[790,250],[930,250],[1070,250], [650,360],[790,360],[930,360],[1070,360], [650,470],[790,470],[930,470],[1070,470], [650,580],[790,580],[930,580],[1070,580], [650,700],[790,700],[930,700],[1070,700]],
+            edges: Array.from({ length: 20 }, (_, i) => i % 4 < 3 ? [i, i + 1] : null).filter(Boolean).concat(Array.from({ length: 16 }, (_, i) => [i, i + 4]))
         },
         kaibacorp: {
-            // Anello attorno all'aiuola della piazza, passerelle di vetro ai lati e strade esterne (18 verso il Parco, 19 verso il Porto).
-            nodes: [[795, 430], [630, 450], [960, 450], [595, 540], [995, 540], [630, 640], [980, 640], [720, 690], [870, 690], [795, 790], [440, 420], [1150, 420], [390, 312], [1200, 312], [390, 560], [1205, 560], [420, 690], [1180, 690], [200, 552], [1400, 548]],
-            edges: [[0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6], [5, 7], [6, 8], [7, 8], [7, 9], [8, 9], [1, 10], [2, 11], [10, 12], [11, 13],
-                [12, 14, [[330, 330], [325, 520]]], [13, 15, [[1260, 330], [1265, 520]]], [10, 14], [11, 15], [14, 16], [15, 17], [16, 7], [17, 8], [14, 18], [15, 19]]
+            // La piazza frontale KaibaCorp ha un asse libero tra i bacini e
+            // l'ingresso; i due varchi condividono il piazzale meridionale.
+            nodes: [[620,300],[770,300],[902,300],[1052,300], [620,400],[770,400],[902,400],[1052,400], [620,500],[770,500],[902,500],[1052,500], [620,600],[770,600],[902,600],[1052,600], [700,700],[800,700],[900,700],[1000,700]],
+            edges: Array.from({ length: 20 }, (_, i) => i % 4 < 3 ? [i, i + 1] : null).filter(Boolean).concat(Array.from({ length: 16 }, (_, i) => [i, i + 4]))
         }
     };
     const cityLinks = Object.fromEntries(Object.entries(CITY_LAYOUTS).map(([id, layout]) => {
@@ -1171,8 +1179,8 @@
         return [id, links];
     }));
     function alignamentoFondale(district) {
-        // Sul Porto in verticale il crop si allinea al margine destro per includere il viale urbano.
-        if (window.innerWidth < window.innerHeight && district.id === 'porto') return 1;
+        // Tutti i fondali responsive hanno il corridoio di gioco in asse: il
+        // ritaglio verticale resta centrato sulla stessa immagine panoramica.
         return .5;
     }
     /**
@@ -1187,7 +1195,8 @@
         const cover = Math.max(vw / iw, vh / ih);
         const layout = CITY_LAYOUTS[district.id];
         if (layout && vw < vh) {
-            const xs = layout.nodes.map((n) => n[0]), ys = layout.nodes.map((n) => n[1]);
+            const activeNodes = window.innerWidth < window.innerHeight && layout.portrait ? layout.portrait : layout.nodes;
+            const xs = activeNodes.map((n) => n[0]), ys = activeNodes.map((n) => n[1]);
             const minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs), minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
             const scala = Math.min(cover, (vw * 0.9) / Math.max(1, maxX - minX), (vh * 0.78) / Math.max(1, maxY - minY));
             if (scala < cover - 0.0001) {
@@ -1206,8 +1215,9 @@
     function posizionaCaselleCitta(gridEl, district) {
         if (!gridEl) return;
         const layout = CITY_LAYOUTS[district.id];
+        const activeNodes = window.innerWidth < window.innerHeight && layout.portrait ? layout.portrait : layout.nodes;
         gridEl.querySelectorAll('.city-cell').forEach((el) => {
-            const p = puntoMappaSchermo(district, layout.nodes[Number(el.dataset.index)]);
+            const p = puntoMappaSchermo(district, activeNodes[Number(el.dataset.index)]);
             el.style.left = `${p.x}px`;
             el.style.top = `${p.y}px`;
         });
@@ -2012,10 +2022,10 @@
             // Luci fisse sugli elementi riconoscibili di ogni fondale:
             // finestre, lampioni, sentieri e banchine; mai una griglia casuale.
             const puntiLuce = {
-                centro: [[.12,.28],[.22,.24],[.78,.23],[.88,.30],[.16,.67],[.84,.69],[.31,.17],[.69,.17]],
-                parco: [[.12,.08],[.26,.07],[.41,.08],[.58,.07],[.75,.08],[.91,.08],[.18,.37],[.40,.48],[.66,.45],[.85,.37],[.28,.70],[.62,.77],[.87,.67]],
-                porto: [[.12,.10],[.26,.10],[.41,.10],[.57,.10],[.74,.10],[.91,.13],[.18,.24],[.48,.24],[.78,.30],[.92,.42],[.22,.66],[.50,.71],[.80,.78]],
-                kaibacorp: [[.08,.04],[.18,.04],[.28,.04],[.39,.04],[.61,.04],[.72,.04],[.82,.04],[.92,.04],[.08,.23],[.12,.27],[.18,.22],[.22,.28],[.78,.23],[.84,.27],[.90,.22],[.94,.28],[.12,.84],[.22,.88],[.78,.88],[.88,.84]]
+                centro: [[.08,.10],[.18,.08],[.82,.08],[.92,.10],[.16,.35],[.84,.35],[.15,.66],[.85,.66],[.35,.09],[.65,.09]],
+                parco: [[.37,.04],[.61,.04],[.18,.29],[.82,.32],[.15,.70],[.81,.71],[.35,.91],[.61,.91],[.48,.22]],
+                porto: [[.39,.20],[.62,.20],[.35,.38],[.66,.38],[.36,.58],[.64,.58],[.36,.76],[.64,.76],[.26,.42],[.74,.42]],
+                kaibacorp: [[.25,.05],[.38,.05],[.50,.05],[.62,.05],[.75,.05],[.12,.13],[.88,.13],[.18,.30],[.82,.30],[.15,.48],[.85,.48],[.18,.76],[.82,.76],[.38,.26],[.62,.26]]
             }[district.id] || [];
             puntiLuce.forEach((point, i) => {
                 const f = document.createElement('span');
