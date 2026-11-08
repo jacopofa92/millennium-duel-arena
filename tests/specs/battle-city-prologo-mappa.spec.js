@@ -56,14 +56,14 @@ module.exports = {
                 `Lo sfondo della fase urbana deve essere citta.jpg: ${layout.background}`);
             t.assert(layout.gridBackground === 'rgba(0, 0, 0, 0)' && layout.gridBorder === '0px' && layout.modalitaCitta,
                 `La struttura della griglia non deve essere percepibile sopra la città: ${JSON.stringify(layout)}`);
-            t.assert(layout.buttons === 25, `Le 25 celle devono essere controlli interattivi accessibili (${layout.buttons})`);
+            t.assert(layout.buttons === 20, `Le 20 celle devono essere controlli interattivi accessibili (${layout.buttons})`);
             t.assert(layout.token, 'Il giocatore deve avere un segnalino persistente separato dalle celle');
 
             const fluidita = await page.evaluate(async () => {
                 const grid = document.getElementById('cityGrid');
                 const firstCell = grid.querySelector('.city-cell');
                 const token = grid.querySelector('.city-player-token');
-                const oldLeft = token.style.left;
+                const oldLeft = token.style.left + '|' + token.style.top;
                 const state = SaveManager.getTournamentState('battleCity');
                 const target = neighborsOf(state.grid, state.grid.playerIndex)[0];
                 state.grid.cells[target].kind = 'empty';
@@ -75,7 +75,7 @@ module.exports = {
                 return {
                     sameCell: firstCell === grid.querySelector('.city-cell'),
                     sameToken: token === grid.querySelector('.city-player-token'),
-                    moved: oldLeft !== token.style.left
+                    moved: oldLeft !== token.style.left + '|' + token.style.top
                 };
             });
             t.assert(fluidita.sameCell && fluidita.sameToken,

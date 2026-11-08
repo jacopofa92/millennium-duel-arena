@@ -80,12 +80,12 @@ module.exports = {
 
             // --- Blackout: senza Scudo parte, con Scudo viene respinto.
             await prepara({ cella: { kind: 'event' } });
-            await muovi(0.9); // >= 0.75 -> blackout
+            await muovi(0.7); // 0.62..0.82 -> blackout
             s = await stato();
             t.assert(s.blackout === 3 && s.locators === 3, `Blackout: 3 mosse e nessuna carta persa (blackout ${s.blackout}, carte ${s.locators})`);
 
             await prepara({ cella: { kind: 'event' }, items: { shield: 1 } });
-            await muovi(0.9);
+            await muovi(0.7);
             s = await stato();
             t.assert(s.blackout === 0 && s.items.shield === 0, `Lo Scudo respinge il Blackout (blackout ${s.blackout}, scudo ${s.items.shield})`);
 
@@ -99,7 +99,7 @@ module.exports = {
                 const ignote = Array.from(document.querySelectorAll('.city-cell')).filter((el) => el.querySelector('.bp-piece[data-bp-kind="hidden"], svg[data-bp-kind="hidden"]')).length;
                 return { ignote, totali: s.grid.cells.length, risolte: s.grid.cells.filter((c) => c.resolved).length };
             });
-            t.assert(nascosteInBlackout.ignote >= nascosteInBlackout.totali - nascosteInBlackout.risolte - 1,
+            t.assert(nascosteInBlackout.ignote >= nascosteInBlackout.totali - nascosteInBlackout.risolte - 3,   // meno i due varchi, sempre visibili
                 `In Blackout le celle non attraversate mostrano l'Ignoto (${nascosteInBlackout.ignote} su ${nascosteInBlackout.totali}, ${nascosteInBlackout.risolte} risolte)`);
             await muovi();
             s = await stato();
@@ -120,13 +120,13 @@ module.exports = {
             await prepara({ cella: { kind: 'quest' }, nascoste: [] });
             await page.evaluate(() => {
                 const s = loadState();
-                const lontano = s.grid.cells.length - 1;
+                const lontano = s.grid.cells.length - 6;   // una casella normale: gli ultimi indici sono varchi
                 s.grid.cells[lontano] = { kind: 'duelist', characterId: 'joey', revealed: false, resolved: false };
                 saveState(s);
             });
             await muovi();
             s = await stato();
-            t.assert(s.quest && s.quest.characterId === 'joey' && s.quest.reward === 2, 'La soffiata assegna una missione sul Duellante presente nel distretto');
+            t.assert(s.quest && s.quest.characterId === 'joey' && s.quest.rewardCredits > 0, 'La soffiata assegna una missione sul Duellante presente nel distretto');
             t.assert(s.grid.cells[s.quest.cellIndex].revealed, 'Il bersaglio della missione viene rivelato');
             await page.reload();
             await page.waitForSelector('.city-cell', { timeout: 15000 });

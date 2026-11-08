@@ -1088,65 +1088,81 @@
      */
     const CITY_DISTRICTS = [
         { id: 'centro', nome: 'Centro di Domino', image: 'images/fields/citta.jpg', ambient: 'battle-city-centro', aspect: 1, imageSize: [1254, 1254], composition: [
-            { kind: 'duelist', count: 7 }, { kind: 'hunter', count: 2 }, { kind: 'locator', count: 1 },
-            { kind: 'quest', count: 1 }, { kind: 'credits', count: 1 }, { kind: 'event', count: 4 }, { kind: 'shop', count: 2 }
+            { kind: 'duelist', count: 6 }, { kind: 'hunter', count: 2 }, { kind: 'locator', count: 1 },
+            { kind: 'quest', count: 1 }, { kind: 'credits', count: 1 }, { kind: 'event', count: 2 }, { kind: 'shop', count: 2 }
         ] },
         { id: 'parco', nome: 'Parco cittadino', image: 'images/maps/battle_city_parco.jpg', ambient: 'battle-city-parco', aspect: 1.599, imageSize: [1586, 992], composition: [
-            { kind: 'duelist', count: 8 }, { kind: 'hunter', count: 1 }, { kind: 'credits', count: 1 },
-            { kind: 'event', count: 4 }, { kind: 'shop', count: 1 }
+            { kind: 'duelist', count: 6 }, { kind: 'hunter', count: 1 }, { kind: 'credits', count: 1 },
+            { kind: 'event', count: 3 }, { kind: 'shop', count: 1 }
         ] },
         { id: 'porto', nome: 'Porto di Domino', image: 'images/maps/battle_city_porto.jpg', ambient: 'battle-city-porto', aspect: 1.599, imageSize: [1586, 992], composition: [
-            { kind: 'duelist', count: 7 }, { kind: 'hunter', count: 3 }, { kind: 'locator', count: 1 }, { kind: 'credits', count: 1 },
-            { kind: 'event', count: 4 }, { kind: 'shop', count: 1 }
+            { kind: 'duelist', count: 6 }, { kind: 'hunter', count: 2 }, { kind: 'locator', count: 1 }, { kind: 'credits', count: 1 },
+            { kind: 'event', count: 3 }, { kind: 'shop', count: 1 }
         ] },
         { id: 'kaibacorp', nome: 'Distretto KaibaCorp', image: 'images/maps/battle_city_kaibacorp.jpg', ambient: 'battle-city-kaibacorp', aspect: 1.599, imageSize: [1586, 992], composition: [
-            { kind: 'duelist', count: 8 }, { kind: 'hunter', count: 2 }, { kind: 'credits', count: 1 },
-            { kind: 'event', count: 4 }, { kind: 'shop', count: 2 }
+            { kind: 'duelist', count: 6 }, { kind: 'hunter', count: 2 }, { kind: 'credits', count: 1 },
+            { kind: 'event', count: 3 }, { kind: 'shop', count: 2 }
         ] }
     ];
-    // I varchi sono celle di strada sul bordo della mappa: il giocatore
-    // cambia quartiere raggiungendoli, senza un pulsante di avanzamento.
-    // Gli indici d'ingresso speculari rendono leggibile il percorso anche
-    // quando si torna sui propri passi.
+    // I varchi sono celle di strada: il giocatore cambia quartiere
+    // raggiungendoli, senza un pulsante di avanzamento. Ogni quartiere ha 20
+    // nodi (GRID_W x GRID_H); `entry` e' l'indice del varco speculare nel
+    // quartiere di arrivo, cosi' il percorso resta leggibile anche tornando indietro.
     const DISTRICT_GATES = {
-        centro: [{ index: 2, to: 'parco', entry: 22 }, { index: 22, to: 'porto', entry: 2 }],
-        parco: [{ index: 22, to: 'centro', entry: 2 }, { index: 14, to: 'kaibacorp', entry: 10 }],
-        porto: [{ index: 2, to: 'centro', entry: 22 }, { index: 14, to: 'kaibacorp', entry: 22 }],
-        kaibacorp: [{ index: 10, to: 'parco', entry: 14 }, { index: 22, to: 'porto', entry: 14 }]
+        centro: [{ index: 18, to: 'parco', entry: 0 }, { index: 19, to: 'porto', entry: 0 }],
+        parco: [{ index: 0, to: 'centro', entry: 18 }, { index: 19, to: 'kaibacorp', entry: 18 }],
+        porto: [{ index: 0, to: 'centro', entry: 19 }, { index: 18, to: 'kaibacorp', entry: 19 }],
+        kaibacorp: [{ index: 18, to: 'parco', entry: 19 }, { index: 19, to: 'porto', entry: 18 }]
     };
-    // Punti normalizzati sul fondale reale, non su una scacchiera astratta:
-    // ogni percorso segue pavimentazioni, sentieri o banchine e gira attorno
-    // a edifici, aiuole e acqua. La variante verticale resta nella porzione
-    // effettivamente visibile quando il fondale largo viene ritagliato dal telefono.
+    // Dove parte il giocatore la prima volta che apre il torneo (poi sempre dai varchi).
+    const DISTRICT_START = { centro: 5 };
+    /*
+     * I NODI stanno in PIXEL dell'illustrazione del quartiere (la stessa di `imageSize`), posati solo su superfici percorribili
+     * (vialetti, banchine, piazze, passerelle): mai su acqua, chiome, aiuole, edifici o pile di container. `edges` sono i
+     * collegamenti [a, b, via?]: `via` e' un elenco di punti intermedi (sempre in pixel) che fa seguire alla strada la curva
+     * vera della pavimentazione, cosi' i nodi restano pochi (decisioni) e le linee non tagliano gli ostacoli. Dove la
+     * geometria lo permette ogni nodo ha almeno due strade (anelli e incroci). Per spostare un nodo si cambia solo il
+     * numero qui: posizione, strade, orme e camminata della pedina lo seguono.
+     */
+    const GRIGLIA_CENTRO = (() => {
+        const xs = [340, 530, 720, 910], ys = [300, 450, 600, 750], nodi = [], archi = [];
+        ys.forEach((y) => xs.forEach((x) => nodi.push([x, y])));
+        for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) {
+            const i = r * 4 + c;
+            if (c < 3) archi.push([i, i + 1]);
+            if (r < 3) archi.push([i, i + 4]);
+        }
+        return { nodi: nodi, archi: archi };
+    })();
     const CITY_LAYOUTS = {
         centro: {
-            wide: [[.31,.35],[.405,.35],[.5,.35],[.595,.35],[.69,.35], [.31,.425],[.405,.425],[.5,.425],[.595,.425],[.69,.425], [.31,.5],[.405,.5],[.5,.5],[.595,.5],[.69,.5], [.31,.575],[.405,.575],[.5,.575],[.595,.575],[.69,.575], [.31,.65],[.405,.65],[.5,.65],[.595,.65],[.69,.65]],
-            tall: [[.30,.30],[.40,.30],[.50,.30],[.60,.30],[.70,.30], [.30,.40],[.40,.40],[.50,.40],[.60,.40],[.70,.40], [.30,.50],[.40,.50],[.50,.50],[.60,.50],[.70,.50], [.30,.60],[.40,.60],[.50,.60],[.60,.60],[.70,.60], [.30,.70],[.40,.70],[.50,.70],[.60,.70],[.70,.70]],
-            edges: Array.from({ length: 25 }, (_, i) => i % 5 < 4 ? [i, i + 1] : null).filter(Boolean).concat(Array.from({ length: 20 }, (_, i) => [i, i + 5]))
+            // Piazza aperta: griglia 4x4 (indici 0-15), due nodi sulla croce chiara al centro (16, 17) e i due varchi sulle strade
+            // laterali (18 verso il Parco, 19 verso il Porto). I varchi stanno ai lati perche' in orizzontale la piazza, quadrata,
+            // viene ritagliata sopra e sotto: un varco a nord o a sud sarebbe fuori schermo.
+            nodes: GRIGLIA_CENTRO.nodi.concat([[627, 375], [627, 700], [130, 570], [1125, 570]]),
+            edges: GRIGLIA_CENTRO.archi.concat([[16, 5], [16, 6], [17, 9], [17, 10], [18, 4, [[250, 520]]], [18, 8, [[250, 620]]], [19, 7, [[1010, 520]]], [19, 11, [[1010, 620]]]])
         },
         parco: {
-            // La catena segue il bordo asfaltato del laghetto e poi i vialetti
-            // aperti attorno al prato fiorito: niente coordinate su acqua,
-            // chiome o aiuole; ogni tratto collega due punti sulla stessa via.
-            wide: [[.50,.15],[.50,.22],[.44,.20],[.38,.19],[.32,.19],[.26,.21],[.21,.25],[.17,.31],[.14,.38],[.13,.45],[.16,.51],[.20,.56],[.27,.58],[.33,.59],[.39,.61],[.45,.61],[.51,.60],[.57,.58],[.63,.56],[.69,.54],[.75,.51],[.81,.47],[.85,.41],[.83,.34],[.77,.29]],
-            // In verticale il crop centrale conserva la strada d'ingresso,
-            // la curva del ponte e il viale tra laghetto e giardino.
-            tall: [[.50,.22],[.50,.30],[.54,.34],[.58,.37],[.61,.41],[.62,.46],[.60,.51],[.58,.56],[.56,.61],[.54,.66],[.51,.70],[.48,.73],[.45,.74],[.42,.72],[.40,.68],[.39,.63],[.39,.58],[.40,.53],[.42,.49],[.44,.45],[.46,.41],[.48,.37],[.50,.43],[.49,.51],[.47,.59]],
-            edges: Array.from({ length: 24 }, (_, i) => [i, i + 1])
+            // Il viale centrale e i due anelli: quello a sinistra attorno al laghetto (col ponte), quello a destra attorno all'aiuola fiorita.
+            nodes: [[790, 70], [790, 200], [790, 330], [620, 345], [470, 172], [240, 235], [160, 420], [127, 700], [330, 740], [1000, 795], [640, 700], [800, 520], [790, 700], [790, 850], [930, 270], [1160, 245], [1430, 400], [1230, 500], [1000, 505], [790, 955]],
+            edges: [[0, 1], [1, 2], [1, 14, [[850, 215]]], [14, 15], [15, 16, [[1330, 285]]], [16, 17, [[1460, 450]]], [17, 18], [18, 11, [[880, 540]]], [2, 11], [11, 12], [12, 13], [13, 19],
+                [2, 3], [3, 4, [[560, 250], [540, 190]]], [4, 5, [[330, 185]]], [5, 6, [[170, 320]]], [6, 7, [[130, 560]]], [7, 8, [[150, 760]]], [8, 10, [[475, 795], [600, 765]]], [10, 12], [13, 9, [[880, 800]]]]
         },
         porto: {
-            wide: [[.20,.17],[.28,.17],[.36,.17],[.44,.17],[.52,.17],[.62,.17],[.72,.18],[.80,.22],[.86,.27],[.90,.32],[.92,.38],[.88,.43],[.82,.46],[.76,.48],[.70,.48],[.64,.46],[.58,.46],[.52,.46],[.46,.46],[.40,.46],[.34,.46],[.28,.46],[.22,.46],[.20,.40],[.20,.34]],
-            tall: [[.74,.22],[.78,.22],[.82,.22],[.86,.22],[.90,.22],[.94,.22],[.96,.26],[.96,.30],[.96,.34],[.94,.38],[.92,.42],[.90,.46],[.86,.48],[.82,.48],[.78,.48],[.74,.48],[.74,.44],[.74,.40],[.75,.36],[.76,.32],[.78,.28],[.82,.27],[.86,.28],[.90,.30],[.94,.32]],
-            edges: Array.from({ length: 24 }, (_, i) => [i, i + 1])
+            // Banchina alta, piazzale centrale fra i capannoni, moli e frangiflutti.
+            nodes: [[1140, 200], [900, 172], [720, 172], [560, 162], [300, 175], [480, 365], [710, 365], [980, 350], [1125, 300], [1125, 560], [1120, 780], [930, 480], [620, 485], [230, 375], [110, 460], [460, 590], [800, 640], [800, 770], [1480, 892], [430, 892]],
+            edges: [[0, 1], [1, 2], [2, 3], [3, 4], [2, 6, [[720, 260]]], [5, 6], [6, 7], [7, 8], [0, 8, [[1150, 250]]], [8, 9], [9, 10], [10, 18, [[1150, 850], [1205, 885]]], [18, 19],
+                [7, 11], [11, 12], [5, 12, [[500, 475]]], [5, 13], [13, 14], [5, 15, [[470, 480]]], [12, 16, [[790, 495]]], [16, 17], [9, 11, [[1040, 520]]]]
         },
         kaibacorp: {
-            wide: [[.42,.45],[.48,.44],[.54,.44],[.60,.45],[.65,.48],[.68,.53],[.69,.58],[.68,.63],[.64,.68],[.59,.71],[.53,.72],[.47,.72],[.41,.70],[.36,.67],[.32,.62],[.31,.57],[.32,.52],[.35,.48],[.38,.45],[.44,.48],[.50,.47],[.56,.48],[.62,.55],[.61,.61],[.57,.66]],
-            tall: [[.40,.45],[.45,.44],[.50,.44],[.55,.44],[.60,.45],[.62,.49],[.63,.54],[.63,.59],[.61,.64],[.58,.68],[.53,.70],[.48,.70],[.43,.69],[.39,.66],[.37,.62],[.37,.57],[.38,.52],[.40,.48],[.42,.46],[.45,.49],[.50,.48],[.55,.49],[.61,.54],[.60,.60],[.57,.64]],
-            edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[12,13],[13,14],[14,15],[15,16],[16,17],[17,18],[18,19],[19,20],[20,21],[6,22],[22,23],[23,24]]
+            // Anello attorno all'aiuola della piazza, passerelle di vetro ai lati e strade esterne (18 verso il Parco, 19 verso il Porto).
+            nodes: [[795, 430], [630, 450], [960, 450], [595, 540], [995, 540], [630, 640], [980, 640], [720, 690], [870, 690], [795, 790], [440, 420], [1150, 420], [390, 312], [1200, 312], [390, 560], [1205, 560], [420, 690], [1180, 690], [200, 552], [1400, 548]],
+            edges: [[0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6], [5, 7], [6, 8], [7, 8], [7, 9], [8, 9], [1, 10], [2, 11], [10, 12], [11, 13],
+                [12, 14, [[330, 330], [325, 520]]], [13, 15, [[1260, 330], [1265, 520]]], [10, 14], [11, 15], [14, 16], [15, 17], [16, 7], [17, 8], [14, 18], [15, 19]]
         }
     };
     const cityLinks = Object.fromEntries(Object.entries(CITY_LAYOUTS).map(([id, layout]) => {
-        const links = Array.from({ length: 25 }, () => []);
+        const links = Array.from({ length: layout.nodes.length }, () => []);
         layout.edges.forEach(([a, b]) => {
             if (a === b) return;
             links[a].push(b);
@@ -1155,30 +1171,55 @@
         return [id, links];
     }));
     function alignamentoFondale(district) {
-        // I fondali sono composti attorno ai percorsi centrali. Sul Porto
-        // allineiamo il crop al margine destro per includere il viale urbano.
+        // Sul Porto in verticale il crop si allinea al margine destro per includere il viale urbano.
         if (window.innerWidth < window.innerHeight && district.id === 'porto') return 1;
         return .5;
     }
-    /** Converte un punto dell'immagine sorgente nella stessa proiezione CSS `cover` usata dal fondale. */
-    function puntoMappaSchermo(district, point) {
+    /**
+     * Come il fondale viene posato sullo schermo. In orizzontale e' la solita copertura (`cover`). In VERTICALE (telefono) la
+     * copertura mostrerebbe solo una striscia stretta e i nodi dovrebbero accalcarsi li': il fondale si rimpicciolisce quanto
+     * serve perche' tutti i nodi stiano in larghezza (mai oltre la copertura), centrato sui nodi, e quel che resta sopra e
+     * sotto e' riempito dalla stessa immagine scurita (vedi applyPhaseBackdrop). `zoomOut` lo dice a chi deve adattarsi.
+     */
+    function proiezioneFondale(district) {
         const [iw, ih] = district.imageSize;
-        const scale = Math.max(window.innerWidth / iw, window.innerHeight / ih);
-        const width = iw * scale, height = ih * scale;
-        const alignX = alignamentoFondale(district);
-        const x0 = (window.innerWidth - width) * alignX;
-        const y0 = (window.innerHeight - height) * .5;
-        return { x: x0 + point[0] * width, y: y0 + point[1] * height };
+        const vw = window.innerWidth, vh = window.innerHeight;
+        const cover = Math.max(vw / iw, vh / ih);
+        const layout = CITY_LAYOUTS[district.id];
+        if (layout && vw < vh) {
+            const xs = layout.nodes.map((n) => n[0]), ys = layout.nodes.map((n) => n[1]);
+            const minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs), minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
+            const scala = Math.min(cover, (vw * 0.9) / Math.max(1, maxX - minX), (vh * 0.78) / Math.max(1, maxY - minY));
+            if (scala < cover - 0.0001) {
+                const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+                return { scale: scala, width: iw * scala, height: ih * scala, x0: vw / 2 - cx * scala, y0: vh * 0.5 - cy * scala, zoomOut: true };
+            }
+        }
+        const width = iw * cover, height = ih * cover;
+        return { scale: cover, width: width, height: height, x0: (vw - width) * alignamentoFondale(district), y0: (vh - height) * .5, zoomOut: false };
+    }
+    /** Converte un punto in PIXEL dell'illustrazione sorgente nella posizione sullo schermo, con la stessa proiezione del fondale. */
+    function puntoMappaSchermo(district, point) {
+        const p = proiezioneFondale(district);
+        return { x: p.x0 + point[0] * p.scale, y: p.y0 + point[1] * p.scale };
     }
     function posizionaCaselleCitta(gridEl, district) {
         if (!gridEl) return;
         const layout = CITY_LAYOUTS[district.id];
-        const points = window.innerWidth < window.innerHeight ? layout.tall : layout.wide;
         gridEl.querySelectorAll('.city-cell').forEach((el) => {
-            const p = puntoMappaSchermo(district, points[Number(el.dataset.index)]);
+            const p = puntoMappaSchermo(district, layout.nodes[Number(el.dataset.index)]);
             el.style.left = `${p.x}px`;
             el.style.top = `${p.y}px`;
         });
+    }
+    /** I punti intermedi (in coordinate dello schermo) del collegamento da `a` a `b`, nel verso a→b; vuoto se il tratto e' diretto. */
+    function viaDelTratto(district, a, b) {
+        const layout = CITY_LAYOUTS[district.id];
+        if (!layout) return [];
+        const e = layout.edges.find((x) => (x[0] === a && x[1] === b) || (x[0] === b && x[1] === a));
+        if (!e || !e[2]) return [];
+        const pts = e[2].map((q) => puntoMappaSchermo(district, q));
+        return e[0] === a ? pts : pts.reverse();
     }
     const PHASE_IMAGES = {
         city:     { preferred: 'images/fields/citta.jpg', fallback: 'images/fields/citta.jpg' },
@@ -1463,6 +1504,27 @@
         const distrettoCorrente = CITY_DISTRICTS[state.sector - 1];
         if (distrettoCorrente && !state.visitedDistricts.includes(distrettoCorrente.id)) state.visitedDistricts.push(distrettoCorrente.id);
         if (!state.districtMaps || typeof state.districtMaps !== 'object') state.districtMaps = {};
+        if (state.cityLayoutVersion !== 4) {
+            // Rifacimento dei quartieri a 20 nodi sulle strade vere: le mappe salvate con un altro numero di caselle non
+            // hanno piu' una corrispondenza e si rigenerano al prossimo ingresso (il giocatore riparte dal varco). Una
+            // Locazione gia' raccolta non puo' ricomparire: il quartiere la ricorda in `locazioniRiscosse`.
+            const NUM = GRID_W * GRID_H;
+            const scarta = (id, grid) => {
+                if (grid.cells.some((cell) => cell.kind === 'locator' && cell.resolved)) (state.locazioniRiscosse = state.locazioniRiscosse || {})[id] = true;
+                if (state.quest && state.quest.districtId === id) state.quest = null;
+            };
+            Object.keys(state.districtMaps).forEach((id) => {
+                const grid = state.districtMaps[id];
+                if (grid && Array.isArray(grid.cells) && grid.cells.length !== NUM) { scarta(id, grid); delete state.districtMaps[id]; }
+            });
+            if (state.grid && Array.isArray(state.grid.cells) && state.grid.cells.length !== NUM) {
+                const id = state.grid.districtId || distrettoCorrente.id;
+                scarta(id, state.grid);
+                state.grid = null;
+                buildSector(state, id);
+            }
+            state.cityLayoutVersion = 4;
+        }
         if (state.cityEconomyVersion !== 3) {
             // In tutta la città esistono al massimo due nodi che danno una
             // Carta Locazione: una al Centro e una al Porto. La missione
@@ -1511,7 +1573,7 @@
     // FASE 1 — LA CITTÀ
     // ================================================================
     const GRID_W = 5;
-    const GRID_H = 5;
+    const GRID_H = 4;   // 20 nodi per quartiere (prima 25 su una scacchiera: ora i nodi stanno sulle strade vere, vedi CITY_LAYOUTS)
 
     /**
      * Composizione di un settore. I conteggi sono tarati perché un
@@ -1545,7 +1607,7 @@
         const kinds = new Array(total).fill('empty');
         // La prima mappa parte al centro; un quartiere visitato per la prima
         // volta accoglie invece il giocatore dal varco d'ingresso.
-        startIndex = Number.isInteger(startIndex) ? startIndex : Math.floor(total / 2);
+        startIndex = Number.isInteger(startIndex) ? startIndex : (Number.isInteger(DISTRICT_START[district.id]) ? DISTRICT_START[district.id] : ((DISTRICT_GATES[district.id] || [])[0] || { index: Math.floor(total / 2) }).index);
         const gates = DISTRICT_GATES[district.id] || [];
         const gateIndices = new Set(gates.map((gate) => gate.index));
         const freeSlots = shuffle(kinds.map((_, i) => i).filter((i) => i !== startIndex && !gateIndices.has(i)));
@@ -1560,7 +1622,8 @@
             for (let i = 0; i < entry.count && cursor < freeSlots.length; i++, cursor++) {
                 let kind = entry.kind;
                 if (kind === 'locator') {
-                    if (nodiLocazione >= MAX_CITY_LOCATOR_NODES) kind = 'credits';
+                    // `locazioniRiscosse`: quartieri la cui Locazione e' gia' stata presa prima del rifacimento a 20 nodi (migrateCityState).
+                    if (nodiLocazione >= MAX_CITY_LOCATOR_NODES || (state.locazioniRiscosse && state.locazioniRiscosse[district.id])) kind = 'credits';
                     else nodiLocazione++;
                 }
                 kinds[freeSlots[cursor]] = kind;
@@ -1891,9 +1954,19 @@
         document.body.style.backgroundImage = district
             ? `url('${src}'), url('${PHASE_IMAGES.city.fallback}')`
             : (src ? `url('${src}')` : '');
+        document.body.style.backgroundSize = '';
+        document.body.style.backgroundRepeat = '';
         if (phase === 'city' && state) {
             const align = Math.round(alignamentoFondale(district) * 100);
             document.body.style.backgroundPosition = `${align}% center, 50% 50%`;
+            const pr = proiezioneFondale(district);
+            if (pr.zoomOut) {
+                // Telefono in verticale: la mappa intera dei nodi in larghezza, e sopra/sotto la stessa immagine scurita (vedi proiezioneFondale).
+                document.body.style.backgroundImage = `url('${src}'), linear-gradient(rgba(4,8,18,.8), rgba(4,8,18,.8)), url('${src}')`;
+                document.body.style.backgroundSize = `${pr.width.toFixed(1)}px ${pr.height.toFixed(1)}px, auto, cover`;
+                document.body.style.backgroundPosition = `${pr.x0.toFixed(1)}px ${pr.y0.toFixed(1)}px, 0 0, 50% 50%`;
+                document.body.style.backgroundRepeat = 'no-repeat';
+            }
             document.body.dataset.quartiere = district.id;
             document.body.dataset.ora = oraDelDistretto(state);
         } else {
@@ -1957,7 +2030,8 @@
         }
         const amb = document.getElementById('cityAmbiente');
         amb.querySelectorAll('.city-finestra').forEach((f) => {
-            const p = puntoMappaSchermo(district, [Number(f.dataset.x), Number(f.dataset.y)]);
+            // data-x / data-y sono frazioni dell'immagine (0..1); puntoMappaSchermo vuole pixel dell'immagine.
+            const p = puntoMappaSchermo(district, [Number(f.dataset.x) * district.imageSize[0], Number(f.dataset.y) * district.imageSize[1]]);
             f.style.left = `${p.x}px`;
             f.style.top = `${p.y}px`;
         });
@@ -2163,27 +2237,58 @@
     const riduciMovimento = () => !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 
     /**
-     * Il punto di controllo della curva fra due punti. DETERMINISTICO (un seme dai numeri stessi): lo stesso tratto ridisegnato
-     * a ogni mossa e' sempre la stessa curva, e la pedina cammina proprio su quella. Piu' dolce che nel Regno (8%-18% della
-     * lunghezza): qui i tratti sono corti, fra isolati vicini.
+     * Il PERCORSO di un collegamento: i due capi piu' gli eventuali punti intermedi (`via`, vedi CITY_LAYOUTS), addolciti agli
+     * angoli (ogni vertice interno e' il punto di controllo di una curva fra i due punti medi vicini: segue il vialetto senza
+     * oscillare e senza uscirne, perche' passa SEMPRE per i capi e resta dentro il poligono dei punti). Con due soli punti e'
+     * una retta. Strade, frecce, orme e camminata della pedina leggono tutti da qui, quindi coincidono.
+     * Torna { d (path SVG), punto(t) (t in 0..1 per LUNGHEZZA), angolo(t) in gradi }.
      */
-    function curvaTra(a, b) {
-        // Punto di controllo A META' del tratto: la "curva" degenera in una RETTA. Le strade ondulate (1.5.132) non
-        // piacevano all'autore: la forma Q resta (strade, orme e camminata usano tutte questa funzione), per tornare
-        // a una curva basta spostare questo punto di lato.
-        return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    function percorsoSmusso(pts) {
+        const mid = (p, q) => ({ x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 });
+        const quad = [];   // { a, c, b }
+        if (pts.length === 2) {
+            quad.push({ a: pts[0], c: mid(pts[0], pts[1]), b: pts[1] });
+        } else {
+            let inizio = pts[0];
+            for (let i = 1; i < pts.length - 1; i++) {
+                const fine = i === pts.length - 2 ? pts[pts.length - 1] : mid(pts[i], pts[i + 1]);
+                quad.push({ a: inizio, c: pts[i], b: fine });
+                inizio = fine;
+            }
+        }
+        let d = `M${quad[0].a.x.toFixed(1)} ${quad[0].a.y.toFixed(1)}`;
+        const tabella = [{ p: quad[0].a, s: 0 }];
+        let totale = 0;
+        quad.forEach((q) => {
+            d += ` Q${q.c.x.toFixed(1)} ${q.c.y.toFixed(1)} ${q.b.x.toFixed(1)} ${q.b.y.toFixed(1)}`;
+            for (let k = 1; k <= 12; k++) {
+                const t = k / 12, u = 1 - t;
+                const p = { x: u * u * q.a.x + 2 * u * t * q.c.x + t * t * q.b.x, y: u * u * q.a.y + 2 * u * t * q.c.y + t * t * q.b.y };
+                const prec = tabella[tabella.length - 1].p;
+                totale += Math.hypot(p.x - prec.x, p.y - prec.y);
+                tabella.push({ p: p, s: totale });
+            }
+        });
+        const punto = (t) => {
+            const s = Math.max(0, Math.min(1, t)) * totale;
+            let i = 1;
+            while (i < tabella.length - 1 && tabella[i].s < s) i++;
+            const a = tabella[i - 1], b = tabella[i];
+            const k = b.s > a.s ? (s - a.s) / (b.s - a.s) : 0;
+            return { x: a.p.x + (b.p.x - a.p.x) * k, y: a.p.y + (b.p.y - a.p.y) * k };
+        };
+        const angolo = (t) => {
+            const p = punto(Math.max(0, t - 0.02)), q = punto(Math.min(1, t + 0.02));
+            return Math.atan2(q.y - p.y, q.x - p.x) * 180 / Math.PI;
+        };
+        return { d: d, punto: punto, angolo: angolo, lunghezza: totale };
     }
-    function puntoCurva(a, b, t) {
-        const c = curvaTra(a, b), u = 1 - t;
-        return { x: u * u * a.x + 2 * u * t * c.x + t * t * b.x, y: u * u * a.y + 2 * u * t * c.y + t * t * b.y };
-    }
-    /** Orme a coppie lungo la curva a→b (SVG come testo), girate nel verso del cammino. */
-    function ormeLungoCurva(a, b, passo) {
-        const N = 24, punti = [];
-        for (let i = 0; i <= N; i++) punti.push(puntoCurva(a, b, i / N));
-        let out = '', prossimo = passo * 0.6, fatto = 0, lato = 1;
+    /** Orme a coppie lungo un percorso, girate nel verso del cammino (SVG come testo). */
+    function ormeLungoPercorso(perc, passo) {
+        const N = 40;
+        let out = '', prossimo = passo * 0.6, fatto = 0, lato = 1, q = perc.punto(0);
         for (let i = 1; i <= N; i++) {
-            const p = punti[i], q = punti[i - 1];
+            const p = perc.punto(i / N);
             const seg = Math.hypot(p.x - q.x, p.y - q.y) || 1;
             while (prossimo <= fatto + seg) {
                 const k = (prossimo - fatto) / seg;
@@ -2195,31 +2300,35 @@
                 prossimo += passo;
             }
             fatto += seg;
+            q = p;
         }
         return out;
     }
 
     /**
-     * La pedina CAMMINA da `da` a `a` lungo la curva (un fotogramma alla volta), con un po' di polvere ai piedi e il verso
-     * (sinistra/destra) che segue la direzione. Solo grafica: se la griglia sparisce o parte un'altra camminata si ferma da sola.
-     * All'arrivo la posizione e' esattamente quella finale. Con "riduci movimento" si sposta e basta.
+     * La pedina CAMMINA da `da` a `a` lungo il percorso (un fotogramma alla volta; `via` = punti intermedi della strada), con un
+     * po' di polvere ai piedi e il verso (sinistra/destra) che segue la direzione. Solo grafica: se la griglia sparisce o parte
+     * un'altra camminata si ferma da sola. All'arrivo la posizione e' esattamente quella finale. Con "riduci movimento" si
+     * sposta e basta.
      */
-    function camminaPedina(gridEl, token, da, a) {
+    function camminaPedina(gridEl, token, da, a, via) {
         const id = (token._camminata = (token._camminata || 0) + 1);
-        const dist = Math.hypot(a.x - da.x, a.y - da.y);
+        const perc = percorsoSmusso([da].concat(via || [], [a]));
+        const dist = perc.lunghezza;
         const metti = (p) => { token.style.left = `${p.x}px`; token.style.top = `${p.y}px`; };
         if (riduciMovimento() || dist < 2) { token.classList.remove('cammina'); metti(a); return; }
-        const durata = Math.max(380, Math.min(540, dist * 3.2));
+        const durata = Math.max(380, Math.min(900, dist * 3.2));
         token.classList.add('cammina');
-        token.classList.toggle('verso-sinistra', a.x < da.x - 1);
         let inizio = null, ultimaPolvere = 0;
         const facile = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+        let xPrima = da.x;
         const passo = (ora) => {
             if (token._camminata !== id) return;
             if (!gridEl.isConnected) return;
             if (inizio === null) inizio = ora;
             const t = Math.min(1, (ora - inizio) / durata);
-            const p = puntoCurva(da, a, facile(t));
+            const p = perc.punto(facile(t));
+            if (Math.abs(p.x - xPrima) > 0.5) { token.classList.toggle('verso-sinistra', p.x < xPrima); xPrima = p.x; }
             metti(p);
             if (ora - ultimaPolvere > 90 && t < 1) {
                 ultimaPolvere = ora;
@@ -2242,15 +2351,18 @@
         const routes = gridEl.querySelector('.city-routes');
         const playerCell = gridEl.querySelector(`.city-cell[data-index="${gridEl.dataset.player}"]`);
         if (!token || !routes || !playerCell) return;
+        const district = CITY_DISTRICTS.find((d) => d.id === gridEl.dataset.district) || CITY_DISTRICTS[0];
 
         const gridRect = gridEl.getBoundingClientRect();
         const cellRect = playerCell.getBoundingClientRect();
         const centro = (r) => ({ x: r.left - gridRect.left + r.width / 2, y: r.top - gridRect.top + r.height / 2 });
+        // I punti intermedi stanno in coordinate dello schermo: si portano nel sistema della griglia.
+        const viaLocale = (a, b) => viaDelTratto(district, a, b).map((q) => ({ x: q.x - gridRect.left, y: q.y - gridRect.top }));
         const p = centro(cellRect);
 
-        // Il segnalino è un solo nodo persistente (le 25 celle non vengono
+        // Il segnalino è un solo nodo persistente (le caselle non vengono
         // distrutte e ricreate). La PRIMA volta si posa senza animazione; se
-        // cambia la casella del giocatore la pedina CAMMINA lungo la curva
+        // cambia la casella del giocatore la pedina CAMMINA lungo la strada
         // dalla casella di prima; al solo ridimensionamento si riposa e basta.
         token.style.width = `${Math.round(cellRect.width * 0.44)}px`;
         const cellaPrima = token.dataset.cella;
@@ -2260,7 +2372,8 @@
             token.style.top = `${p.y}px`;
         } else if (cellaPrima !== undefined && cellaPrima !== gridEl.dataset.player) {
             const prima = gridEl.querySelector(`.city-cell[data-index="${cellaPrima}"]`);
-            camminaPedina(gridEl, token, prima ? centro(prima.getBoundingClientRect()) : p, p);
+            const collegata = prima && neighborsOf({ links: cityLinks[district.id], cells: { length: GRID_W * GRID_H } }, Number(cellaPrima)).includes(Number(gridEl.dataset.player));
+            camminaPedina(gridEl, token, prima ? centro(prima.getBoundingClientRect()) : p, p, collegata ? viaLocale(Number(cellaPrima), Number(gridEl.dataset.player)) : []);
         } else if (!token.classList.contains('cammina')) {
             token.style.left = `${p.x}px`;
             token.style.top = `${p.y}px`;
@@ -2270,34 +2383,34 @@
         routes.setAttribute('viewBox', `0 0 ${gridRect.width} ${gridRect.height}`);
         const raggio = cellRect.width;
         // Dai due centri ai due capi di un tratto: appena fuori dalla pedina di partenza, prima di quella d'arrivo (la linea
-        // collega, non copre); verso l'alto si parte piu' lontano perche' la pedina si alza SOPRA il centro della casella e ci
-        // si ferma prima, sotto la targhetta d'arrivo (sta sul bordo basso del suo alone).
-        const capi = (da, verso) => {
+        // collega, non copre). `da` e `verso` sono la direzione di uscita e di arrivo: con punti intermedi non sono i due
+        // nodi ma il primo/ultimo punto della strada. Verso l'alto si parte piu' lontano perche' la pedina si alza SOPRA il
+        // centro della casella e ci si ferma prima, sotto la targhetta d'arrivo (sta sul bordo basso del suo alone).
+        const capo = (da, verso, partenza) => {
             const dx = verso.x - da.x, dy = verso.y - da.y;
             const lung = Math.hypot(dx, dy) || 1;
             const ux = dx / lung, uy = dy / lung;
             const suSu = uy < -0.5;
-            const partenza = suSu ? 0.32 : 0.26;
-            const arrivo = suSu ? 0.46 : 0.32;
-            return {
-                a: { x: da.x + ux * raggio * partenza, y: da.y + uy * raggio * partenza },
-                b: { x: verso.x - ux * raggio * arrivo, y: verso.y - uy * raggio * arrivo }
-            };
+            const f = partenza ? (suSu ? 0.32 : 0.26) : (suSu ? 0.46 : 0.32);
+            return { x: da.x + ux * raggio * f, y: da.y + uy * raggio * f };
+        };
+        /** Percorso fra due caselle collegate, accorciato ai capi. */
+        const percorsoTra = (ia, ib, ca, cb) => {
+            const via = viaLocale(ia, ib);
+            const dopoA = via.length ? via[0] : cb, primaB = via.length ? via[via.length - 1] : ca;
+            return percorsoSmusso([capo(ca, dopoA, true)].concat(via, [capo(cb, primaB, false)]));
         };
         const tratti = (gridEl.dataset.reachable || '').split(',').filter(Boolean).map((i) => {
             const cell = gridEl.querySelector(`.city-cell[data-index="${i}"]`);
             if (!cell) return '';
-            const { a, b } = capi(p, centro(cell.getBoundingClientRect()));
-            // Strada CURVA (stessa curva della camminata) con la freccia sul punto a meta', girata lungo la tangente.
-            const c = curvaTra(a, b);
-            const m = puntoCurva(a, b, 0.55);
-            const tg = 0.55, tx = 2 * (1 - tg) * (c.x - a.x) + 2 * tg * (b.x - c.x), ty = 2 * (1 - tg) * (c.y - a.y) + 2 * tg * (b.y - c.y);
-            const angolo = Math.atan2(ty, tx) * 180 / Math.PI;
+            const perc = percorsoTra(Number(gridEl.dataset.player), Number(i), p, centro(cell.getBoundingClientRect()));
+            // Strada con la freccia sul punto a meta', girata lungo la tangente.
+            const m = perc.punto(0.55);
+            const angolo = perc.angolo(0.55);
             const s = Math.max(5, raggio * 0.07);
-            const d = `M${a.x.toFixed(1)} ${a.y.toFixed(1)} Q${c.x.toFixed(1)} ${c.y.toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`;
             return `<g class="route">
-                <path class="route-glow" d="${d}"/>
-                <path class="route-line" d="${d}"/>
+                <path class="route-glow" d="${perc.d}"/>
+                <path class="route-line" d="${perc.d}"/>
                 <path class="route-arrow" d="M${-s} ${-s} L${s * 0.6} 0 L${-s} ${s}" transform="translate(${m.x.toFixed(1)} ${m.y.toFixed(1)}) rotate(${angolo.toFixed(1)})"/>
             </g>`;
         });
@@ -2308,8 +2421,7 @@
             const ca = gridEl.querySelector(`.city-cell[data-index="${percorso[k - 1]}"]`);
             const cb = gridEl.querySelector(`.city-cell[data-index="${percorso[k]}"]`);
             if (!ca || !cb || percorso[k - 1] === percorso[k]) continue;
-            const { a, b } = capi(centro(ca.getBoundingClientRect()), centro(cb.getBoundingClientRect()));
-            orme += ormeLungoCurva(a, b, Math.max(10, raggio * 0.2));
+            orme += ormeLungoPercorso(percorsoTra(Number(percorso[k - 1]), Number(percorso[k]), centro(ca.getBoundingClientRect()), centro(cb.getBoundingClientRect())), Math.max(10, raggio * 0.2));
         }
         routes.innerHTML = (orme ? `<g class="city-orme">${orme}</g>` : '') + tratti.join('');
     }
@@ -2409,7 +2521,8 @@
         ensureHeliport(state);
 
         const district = CITY_DISTRICTS[Math.max(0, Math.min(CITY_DISTRICTS.length - 1, state.sector - 1))];
-        if (window.AmbienteWebGL && document.body.dataset.ambienteCity !== district.id) {
+        // Le luci WebGL sono tarate sulla copertura del fondale: col fondale rimpicciolito (telefono in verticale) non coinciderebbero.
+        if (window.AmbienteWebGL && document.body.dataset.ambienteCity !== district.id && !proiezioneFondale(district).zoomOut) {
             AmbienteWebGL.ferma();
             const overlay = document.getElementById('cityAmbient');
             AmbienteWebGL.avviaMappa(district.ambient, overlay, {
@@ -2439,7 +2552,7 @@
                     <div class="sector-hint" id="sectorHint"></div>
                 </div>
                 <div class="item-row" id="itemRow"></div>
-                <div class="city-grid" id="cityGrid" data-sector="${state.sector}" style="grid-template-columns: repeat(${grid.w}, 1fr);"></div>
+                <div class="city-grid" id="cityGrid" data-sector="${state.sector}" data-district="${district.id}"style="grid-template-columns: repeat(${grid.w}, 1fr);"></div>
                 <div class="sector-actions" id="sectorActions"></div>`;
             gridEl = document.getElementById('cityGrid');
             // Strato dei percorsi: PRIMO figlio della griglia e z-index 0,

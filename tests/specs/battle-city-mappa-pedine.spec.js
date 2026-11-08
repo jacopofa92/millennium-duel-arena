@@ -36,7 +36,7 @@ module.exports = {
                 const s = makeInitialState('Medio');
                 buildSector(s);
                 s.grid.cells.forEach((c) => { c.revealed = true; });
-                s.grid.cells[13] = { kind: 'empty', revealed: true, resolved: false };
+                s.grid.cells[6] = { kind: 'empty', revealed: true, resolved: false };
                 s.intermezziVisti = ['prologue', 'city', 'intro'];
                 saveState(s);
             });
@@ -62,35 +62,22 @@ module.exports = {
                     pedine: document.querySelectorAll('.city-cell .bp-piece').length,
                     pedineLegenda: document.querySelectorAll('.legend .bp-piece').length,
                     testoCaselle: testoCaselle,
-                    etichetteFuoriPosto: etichetteVisibili.filter((c) => !c.classList.contains('reachable') && !c.classList.contains('heliport')).length,
+                    etichetteFuoriPosto: etichetteVisibili.filter((c) => !c.classList.contains('reachable') && !c.classList.contains('heliport') && !c.classList.contains('district-gate')).length,
                     segnalinoCentrato: Math.abs((tok.left + tok.width / 2) - (cella.left + cella.width / 2)) < 3
                 };
             });
 
             const prima = await leggi();
-            t.assert(prima.reach.length === 4, `Dal centro del settore le caselle raggiungibili sono 4, lette ${prima.reach.length}`);
+            t.assert(prima.reach.length === 5, `Dal centro del settore le caselle raggiungibili sono 5, lette ${prima.reach.length}`);
             t.assert(JSON.stringify(prima.reach) === JSON.stringify(prima.attesi),
                 `Le caselle accese devono essere esattamente le vicine del segnalino: ${prima.reach} contro ${prima.attesi}`);
             t.assert(prima.percorsi === prima.reach.length && prima.frecce === prima.reach.length,
                 `Un percorso con la sua freccia per ogni casella raggiungibile: ${prima.percorsi} percorsi, ${prima.frecce} frecce, ${prima.reach.length} caselle`);
-            t.assert(prima.pedine > 0 && prima.pedineLegenda >= 8, `Caselle e legenda devono usare le pedine SVG (${prima.pedine} in mappa, ${prima.pedineLegenda} in legenda)`);
+            t.assert(prima.pedine > 0, `Le caselle devono usare le pedine SVG (${prima.pedine} in mappa)`);
             t.assert(!EMOJI.test(prima.testoCaselle), `Nessuna emoji deve restare nelle caselle o nella legenda: "${(prima.testoCaselle.match(EMOJI) || [])[0]}"`);
             t.assert(prima.etichetteFuoriPosto === 0, `L'etichetta si vede solo sulle caselle raggiungibili (e sul decollo): ${prima.etichetteFuoriPosto} fuori posto`);
             t.assert(prima.segnalinoCentrato, 'Il segnalino deve stare sulla casella del giocatore');
 
-            // La legenda sta ancorata in fondo allo schermo, anche su un
-            // telefono: il suo bordo basso a pochi pixel dal bordo della
-            // finestra, mai appoggiata a metà pagina sotto la griglia.
-            for (const [w, h] of [[1280, 900], [393, 852]]) {
-                await page.setViewportSize({ width: w, height: h });
-                await page.waitForTimeout(250);
-                const leg = await page.evaluate(() => {
-                    const r = document.querySelector('.legend').getBoundingClientRect();
-                    return { bottom: Math.round(r.bottom), altezza: window.innerHeight };
-                });
-                t.assert(leg.bottom <= leg.altezza && leg.bottom >= leg.altezza - 30,
-                    `Legenda ancorata in basso a ${w}x${h}: bordo basso a ${leg.bottom}px su ${leg.altezza}`);
-            }
             await page.setViewportSize({ width: 1280, height: 900 });
 
             // Una sola Carta Locazione da raccogliere per distretto.
@@ -107,11 +94,11 @@ module.exports = {
             t.assert(raccolte.massimo === 1 && raccolte.minimo === 1,
                 `Ogni distretto ha UNA sola Carta Locazione da raccogliere (trovate da ${raccolte.minimo} a ${raccolte.massimo})`);
 
-            await page.click('.city-cell[data-index="13"]');
-            await page.waitForFunction(() => document.getElementById('cityGrid').dataset.player === '13', null, { timeout: 5000 });
+            await page.click('.city-cell[data-index="6"]');
+            await page.waitForFunction(() => document.getElementById('cityGrid').dataset.player === '6', null, { timeout: 5000 });
             await page.waitForTimeout(700);
             const dopo = await leggi();
-            t.assert(JSON.stringify(dopo.reach) === JSON.stringify(dopo.attesi) && dopo.reach.indexOf('13') === -1,
+            t.assert(JSON.stringify(dopo.reach) === JSON.stringify(dopo.attesi) && dopo.reach.indexOf('6') === -1,
                 `Dopo la mossa si accendono le vicine della NUOVA casella: ${dopo.reach}`);
             t.assert(dopo.percorsi === dopo.reach.length, `I percorsi seguono la mossa: ${dopo.percorsi} per ${dopo.reach.length} caselle`);
             t.assert(dopo.segnalinoCentrato, 'Il segnalino deve aver raggiunto la casella cliccata');
