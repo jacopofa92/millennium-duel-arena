@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.6.17 — Battle City: un solo fondale quadrato 1254x1254 per quartiere, nel formato di citta.jpg, con nodi ed effetti riallineati.
  * 1.6.7 — Battle City: un solo fondale panoramico 16:9 per quartiere, leggibile su desktop e telefono verticale con nodi riallineati.
  * 1.6.6 — Correzioni e rifiniture della mappa Battle City.
  * 1.6.5 — Battle City: tetto globale di due nodi Carta Locazione, ricompense crediti, mappa libera da sovrapposizioni, vialetti del Parco e lampioni WebGL, orologio più lento.
@@ -810,4 +811,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.6.16';
+window.GAME_VERSION = '1.6.17';

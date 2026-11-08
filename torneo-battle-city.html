@@ -870,9 +870,8 @@
         .fighter { font-size: 0.7rem; }
         .fighter .avatar { width: 22px; height: 22px; }
     }
-    /* Sul Parco in verticale i 20 nodi seguono due vialetti quasi paralleli:
-       un segnalino più basso del passo fra le tappe evita che i tocchi si
-       coprano, senza ridurre le pedine nelle altre mappe o in orizzontale. */
+    /* Sul telefono le pedine restano entro il minimo touch e non si coprono
+       nelle curve ravvicinate del Parco. */
     @media (max-width: 480px) and (orientation: portrait) {
         body[data-quartiere="parco"] .city-cell { width: 48px; height: 48px; }
         body[data-quartiere="parco"] .city-cell > .cell-label { font-size: .4rem; }
@@ -1109,19 +1108,19 @@
      * toccare una riga di codice: basta metterli in images/fields/.
      */
     const CITY_DISTRICTS = [
-        { id: 'centro', nome: 'Centro di Domino', image: 'images/maps/battle_city_centro_v2.jpg', ambient: 'battle-city-centro', aspect: 1672 / 941, imageSize: [1672, 941], composition: [
+        { id: 'centro', nome: 'Centro di Domino', image: 'images/maps/battle_city_centro_quadrato.jpg', ambient: 'battle-city-centro', aspect: 1, imageSize: [1254, 1254], composition: [
             { kind: 'duelist', count: 6 }, { kind: 'hunter', count: 2 }, { kind: 'locator', count: 1 },
             { kind: 'quest', count: 1 }, { kind: 'credits', count: 1 }, { kind: 'event', count: 2 }, { kind: 'shop', count: 2 }
         ] },
-        { id: 'parco', nome: 'Parco cittadino', image: 'images/maps/battle_city_parco_v2.jpg', ambient: 'battle-city-parco', aspect: 1672 / 941, imageSize: [1672, 941], composition: [
+        { id: 'parco', nome: 'Parco cittadino', image: 'images/maps/battle_city_parco_quadrato.jpg', ambient: 'battle-city-parco', aspect: 1, imageSize: [1254, 1254], composition: [
             { kind: 'duelist', count: 6 }, { kind: 'hunter', count: 1 }, { kind: 'credits', count: 1 },
             { kind: 'event', count: 3 }, { kind: 'shop', count: 1 }
         ] },
-        { id: 'porto', nome: 'Porto di Domino', image: 'images/maps/battle_city_porto_v2.jpg', ambient: 'battle-city-porto', aspect: 1672 / 941, imageSize: [1672, 941], composition: [
+        { id: 'porto', nome: 'Porto di Domino', image: 'images/maps/battle_city_porto_quadrato.jpg', ambient: 'battle-city-porto', aspect: 1, imageSize: [1254, 1254], composition: [
             { kind: 'duelist', count: 6 }, { kind: 'hunter', count: 2 }, { kind: 'locator', count: 1 }, { kind: 'credits', count: 1 },
             { kind: 'event', count: 3 }, { kind: 'shop', count: 1 }
         ] },
-        { id: 'kaibacorp', nome: 'Distretto KaibaCorp', image: 'images/maps/battle_city_kaibacorp_v2.jpg', ambient: 'battle-city-kaibacorp', aspect: 1672 / 941, imageSize: [1672, 941], composition: [
+        { id: 'kaibacorp', nome: 'Distretto KaibaCorp', image: 'images/maps/battle_city_kaibacorp_quadrato.jpg', ambient: 'battle-city-kaibacorp', aspect: 1, imageSize: [1254, 1254], composition: [
             { kind: 'duelist', count: 6 }, { kind: 'hunter', count: 2 }, { kind: 'credits', count: 1 },
             { kind: 'event', count: 3 }, { kind: 'shop', count: 2 }
         ] }
@@ -1131,75 +1130,60 @@
     // nodi (GRID_W x GRID_H); `entry` e' l'indice del varco speculare nel
     // quartiere di arrivo, cosi' il percorso resta leggibile anche tornando indietro.
     const DISTRICT_GATES = {
-        centro: [{ index: 9, to: 'parco', entry: 13 }, { index: 10, to: 'porto', entry: 0 }],
-        parco: [{ index: 13, to: 'centro', entry: 9 }, { index: 5, to: 'kaibacorp', entry: 6 }],
-        porto: [{ index: 0, to: 'centro', entry: 10 }, { index: 19, to: 'kaibacorp', entry: 13 }],
-        kaibacorp: [{ index: 6, to: 'parco', entry: 5 }, { index: 13, to: 'porto', entry: 19 }]
+        centro: [{ index: 0, to: 'parco', entry: 13 }, { index: 19, to: 'porto', entry: 0 }],
+        parco: [{ index: 13, to: 'centro', entry: 0 }, { index: 15, to: 'kaibacorp', entry: 0 }],
+        porto: [{ index: 0, to: 'centro', entry: 19 }, { index: 19, to: 'kaibacorp', entry: 19 }],
+        kaibacorp: [{ index: 0, to: 'parco', entry: 15 }, { index: 19, to: 'porto', entry: 19 }]
     };
     // Dove parte il giocatore la prima volta che apre il torneo (poi sempre dai varchi).
-    const DISTRICT_START = { centro: 14 };
+    const DISTRICT_START = { centro: 10 };
     /*
-     * I NODI stanno in PIXEL dell'illustrazione del quartiere (la stessa di `imageSize`, 1672x941), posati solo su superfici
-     * percorribili (vialetti, piazze, banchine): mai su acqua, chiome, aiuole, edifici o pile di container. `edges` sono i
-     * collegamenti [a, b, via?]: `via` e' un elenco di punti intermedi (sempre in pixel) che fa seguire alla strada la curva
-     * vera della pavimentazione (il ponte del Parco, i corridoi fra aiuole del Centro), cosi' i nodi restano pochi (decisioni)
-     * e le linee non tagliano gli ostacoli. Dove la geometria lo permette ogni nodo ha almeno due strade (anelli e incroci).
-     * Per spostare un nodo si cambia solo il numero qui: posizione, strade, orme e camminata della pedina lo seguono.
-     * Sul telefono in verticale il fondale si rimpicciolisce da solo (proiezioneFondale) finche' tutti i nodi stanno in
-     * larghezza: il Porto ha i nodi tutti sul viale centrale e resta a grandezza piena, gli altri tre sono piu' larghi.
+     * I NODI stanno in PIXEL delle tavole quadrate 1254x1254 (`imageSize`), posati solo su superfici percorribili (piazze, viali,
+     * banchine, rotonda): mai su acqua, aiuole, alberi, edifici o container. Le tavole sono "fittate" sullo schermo e quindi TAGLIATE:
+     *  - in ORIZZONTALE (copertura sulla larghezza, 16:9 o piu' largo) si vedono solo le righe centrali, circa y 340-915;
+     *  - in VERTICALE (telefono, fondale tutto in altezza) si vedono solo le colonne centrali, circa x 360-894 e y 130-1130.
+     * Per questo ogni nodo (varchi compresi) sta DENTRO queste zone sicure, mai ai bordi, e ogni quartiere ha due disegni: quello
+     * orizzontale (`nodes`/`edges`) in y 500-860 (sotto l'intestazione in alto a sinistra) e quello verticale (`portrait`).
+     * `edges` sono i collegamenti [a, b, via?]; `via` = punti intermedi che fanno seguire alla strada la pavimentazione vera.
+     * Gli indici dei varchi (DISTRICT_GATES) valgono in entrambi i disegni. Per spostare un nodo si cambia solo il numero qui.
      */
-    const CITY_LAYOUTS = {
-        centro: {
-            // Venti nodi sulla piazza: i viali laterali (9, 10 sono i varchi), la corona attorno alla fontana e il passaggio
-            // sotto l'arco. Gli anelli aggirano le aiuole con gli alberi: le strade 9-7 e 10-8 corrono nel corridoio fra
-            // l'aiuola lunga e l'isola degli alberi (y circa 510), la 6-10 passa sopra l'aiuola destra.
-            nodes: [[836,285],[660,275],[1015,275],[285,300],[1385,300],[440,400],[1235,400],[590,470],[1085,470],[270,520],[1400,520],[300,410],[620,650],[1055,650],[836,665],[600,800],[1090,800],[836,830],[265,700],[1405,700]],
-            edges: [[0,1],[0,2],[1,7],[2,8],[5,7],[6,8],[5,11],[3,11],[11,9],[9,18],[4,10],[6,10,[[1340,405]]],[10,19],[7,12],[8,13],[12,14],[13,14],[12,15],[13,16],[14,17],[9,7,[[420,512]]],[10,8,[[1260,512]]]]
-        },
-        parco: {
-            // Il giro dei camminamenti (0-15), una strada che taglia al centro (16-19) passando sul ponte di legno e un
-            // collegamento sotto il gazebo (16-4). I varchi sono sul lato sinistro (13) e destro (5).
-            nodes: [[620,105],[940,108],[1180,115],[1335,215],[1385,420],[1410,565],[1315,715],[1170,805],[940,822],[760,830],[560,832],[400,775],[310,690],[225,520],[270,380],[340,265],[955,265],[1030,400],[1025,555],[935,700]],
-            edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[12,13],[13,14],[14,15],[15,0,[[420,175],[500,130]]],[1,16],[16,17],[17,18,[[1000,440],[965,478],[1015,515]]],[18,19],[19,8],[17,4,[[1100,345],[1150,368],[1230,398],[1320,418]]]]
-        },
-        porto: {
-            // Reticolo di 4x5 sul grande viale centrale (la passeggiata resta la stessa a ogni larghezza): fra le lampade,
-            // lontano dai magazzini e dall'acqua. Varchi: 0 (alto a sinistra) e 19 (basso a destra).
-            nodes: (() => { const a = []; [190,345,500,660,820].forEach((y) => [720,805,890,975].forEach((x) => a.push([x, y]))); return a; })(),
-            edges: (() => { const e = []; for (let i = 0; i < 20; i++) { if (i % 4 < 3) e.push([i, i + 1]); if (i < 16) e.push([i, i + 4]); } e.push([0,5],[2,7],[8,13],[10,15],[12,17],[14,19]); return e; })()
-        },
-        kaibacorp: {
-            // La piazza frontale: l'asse centrale dall'ingresso al piazzale, la fascia trasversale sotto i giardini (6 e 13 sono
-            // i varchi sui lati) e la banchina in basso. I giardini con gli alberi e le due vasche con le cascate restano liberi.
-            nodes: [[836,650],[836,385],[836,470],[836,570],[836,730],[836,870],[350,570],[480,570],[610,570],[720,570],[950,570],[1060,570],[1190,570],[1325,570],[430,450],[1250,450],[520,880],[690,880],[990,880],[1160,880]],
-            edges: [[1,2],[2,3],[3,0],[0,4],[4,5],[6,7],[7,8],[8,9],[9,3],[3,10],[10,11],[11,12],[12,13],[14,7],[15,12],[14,8],[15,11],[16,17],[17,5],[5,18],[18,19],[2,9],[2,10],[0,9],[0,10]]
+    /** Maglia di `col` x `righe` nodi con i collegamenti ortogonali piu' una diagonale alternata (mai incrociata). */
+    const maglia = (xs, ys) => {
+        const nodes = [], edges = [];
+        ys.forEach((y) => xs.forEach((x) => nodes.push([x, y])));
+        const w = xs.length;
+        for (let r = 0; r < ys.length; r++) for (let c = 0; c < w; c++) {
+            const i = r * w + c;
+            if (c < w - 1) edges.push([i, i + 1]);
+            if (r < ys.length - 1) edges.push([i, i + w]);
+            if (r < ys.length - 1 && c < w - 1) edges.push((r + c) % 2 === 0 ? [i, i + w + 1] : [i + 1, i + w]);
         }
-    };    /*
-     * VERTICALE (telefono): il fondale copre lo schermo e NON scorre, quindi si vede solo la fascia centrale dell'illustrazione
-     * (le illustrazioni v2 sono pensate cosi'). Ogni quartiere ha un secondo disegno `portrait` ({ nodes, edges }) con gli stessi 20
-     * nodi e gli stessi indici dei varchi (DISTRICT_GATES), ma disposti sulle strade di quella fascia (x circa 600-1100). Il Porto
-     * ha gia' tutti i nodi sul viale centrale e usa lo stesso disegno. Ruotando lo schermo la pagina si ridisegna col disegno giusto.
-     */
-    CITY_LAYOUTS.centro.portrait = {
-        nodes: [[836,270],[700,270],[972,270],[622,390],[1050,390],[622,650],[1050,650],[700,655],[972,655],[622,480],[1050,480],[622,570],[1050,570],[610,740],[836,660],[770,800],[900,800],[836,740],[1065,740],[836,870]],
-        edges: [[0,1],[0,2],[1,3],[2,4],[3,9],[9,11],[11,5],[4,10],[10,12],[12,6],[5,7],[6,8],[7,14],[14,8],[14,17],[17,15],[17,16],[15,19],[16,19],[5,13],[6,18]]
+        return { nodes: nodes, edges: edges };
     };
-    CITY_LAYOUTS.parco.portrait = {
-        nodes: [[650,108],[735,108],[820,108],[885,108],[950,110],[1040,110],[950,200],[975,285],[1035,365],[985,465],[1030,550],[1000,630],[945,695],[655,832],[735,834],[880,755],[815,805],[900,828],[985,822],[1065,815]],
-        edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[4,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[12,15],[15,16],[16,14],[14,13],[16,17],[15,17],[17,18],[18,19]]
+    const PIAZZA_ORIZZONTALE = maglia([390, 510, 630, 750, 860], [520, 620, 720, 820]);
+    const CITY_LAYOUTS = {
+        // Piazze aperte: la maglia sta sul selciato, lontano da aiuole, edifici e (Porto) dal bordo del molo. 5x4 in orizzontale, 4x5 in verticale.
+        centro: Object.assign({}, PIAZZA_ORIZZONTALE, { portrait: maglia([430, 560, 690, 820], [370, 520, 670, 820, 940]) }),
+        porto: Object.assign({}, PIAZZA_ORIZZONTALE, { portrait: maglia([430, 560, 690, 820], [250, 400, 550, 700, 850]) }),
+        kaibacorp: Object.assign({}, PIAZZA_ORIZZONTALE, { portrait: maglia([430, 560, 690, 820], [400, 520, 640, 760, 880]) }),
+        parco: {
+            // Orizzontale: il viale orizzontale (8-15), la rotonda (2-5), il viale verticale (0,1,6,7) e il vialetto attorno al laghetto (16-19).
+            nodes: [[630,380],[630,445],[625,520],[712,605],[625,692],[538,605],[630,785],[630,860],[430,605],[330,605],[230,605],[815,605],[880,605],[150,605],[975,605],[1070,605],[775,538],[930,548],[1025,535],[1100,470]],
+            edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,2],[4,6],[6,7],[5,8],[8,9],[9,10],[10,13],[3,11],[11,12],[12,14],[14,15],[3,16,[[700,565],[745,552]]],[16,17],[17,18],[18,19]],
+            // Verticale: il viale (0-3, 8-11), la rotonda (4-7), il viale orizzontale (12-15) e il tratto alto e basso dell'anello (16-19).
+            portrait: {
+                nodes: [[630,160],[630,250],[630,340],[630,430],[625,520],[712,605],[625,692],[538,605],[630,790],[630,880],[630,970],[630,1060],[465,605],[395,605],[790,605],[862,605],[500,1115],[760,1115],[500,130],[760,130]],
+                edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,4],[6,8],[8,9],[9,10],[10,11],[7,12],[12,13],[5,14],[14,15],[11,16,[[630,1115]]],[11,17,[[630,1115]]],[0,18,[[630,128]]],[0,19,[[630,128]]]]
+            }
+        }
     };
-    CITY_LAYOUTS.kaibacorp.portrait = {
-        nodes: [[836,385],[770,450],[900,450],[740,570],[836,570],[930,570],[650,570],[765,670],[836,670],[910,670],[765,745],[836,745],[910,745],[1020,570],[765,820],[836,820],[910,820],[700,880],[836,880],[970,880]],
-        edges: [[0,1],[0,2],[1,3],[2,5],[1,4],[2,4],[6,3],[3,4],[4,5],[5,13],[3,7],[4,8],[5,9],[7,8],[8,9],[7,10],[8,11],[9,12],[10,11],[11,12],[10,14],[11,15],[12,16],[14,15],[15,16],[14,17],[15,18],[16,19],[17,18],[18,19]]
-    };
-    /** Il disegno (nodi e strade) in uso: quello verticale se lo schermo e' in piedi e il quartiere ne ha uno, altrimenti quello orizzontale. */
+    /** Il disegno (nodi e strade) in uso: quello verticale se lo schermo e' in piedi, altrimenti quello orizzontale. */
     function layoutAttivo(id) {
         const l = CITY_LAYOUTS[id];
         return (window.innerWidth < window.innerHeight && l.portrait) ? l.portrait : l;
     }
-    /** Come layoutAttivo ma per un orientamento dato (serve ai test): il disegno verticale di un quartiere o, se manca, quello orizzontale. */
-    function layoutAttivoPer(id) { return CITY_LAYOUTS[id].portrait || CITY_LAYOUTS[id]; }
-    const linksDi = (layout) => {
+    /** Il disegno verticale di un quartiere (serve ai test). */
+    function layoutAttivoPer(id) { return CITY_LAYOUTS[id].portrait || CITY_LAYOUTS[id]; }    const linksDi = (layout) => {
         const links = Array.from({ length: layout.nodes.length }, () => []);
         layout.edges.forEach(([a, b]) => { if (a === b) return; links[a].push(b); links[b].push(a); });
         return links;
@@ -1214,22 +1198,21 @@
     Object.keys(CITY_LAYOUTS).forEach((id) => {
         Object.defineProperty(cityLinks, id, { enumerable: true, get: () => (window.innerWidth < window.innerHeight ? cityLinksVerticali[id] : cityLinksOrizzontali[id]) });
     });    function alignamentoFondale(district) {
-        // Tutti i fondali responsive hanno il corridoio di gioco in asse: il
-        // ritaglio verticale resta centrato sulla stessa immagine panoramica.
+        // I fondali quadrati e i loro percorsi sono centrati sullo schermo.
         return .5;
     }
     /**
-     * Come il fondale viene posato sullo schermo. ORIZZONTALE: copertura (cover). VERTICALE: nessuno scorrimento, l'immagine sta tutta in
-     * altezza e si vede la fascia centrale (nodi col disegno portrait, vedi layoutAttivo).
+     * Il fondale quadrato copre lo schermo in orizzontale e resta intero in
+     * altezza sul telefono; la rete dei nodi e' unica per entrambi.
      */
     function proiezioneFondale(district) {
         const [iw, ih] = district.imageSize;
         const vw = window.innerWidth, vh = window.innerHeight;
         const cover = Math.max(vw / iw, vh / ih);
         if (vw < vh) {
-            // Nessuno scorrimento: l'immagine sta tutta in altezza, centrata in larghezza e appoggiata in basso, con 70px in alto
-            // (dietro l'intestazione) dove si vede la stessa immagine scurita. Si vede la fascia centrale: per questo i nodi hanno il
-            // disegno `portrait` (vedi layoutAttivo).
+            // Nessuno scorrimento: il fondale quadrato sta tutta in altezza,
+            // centrato in larghezza e appoggiato in basso, con 70px in alto
+            // dove si vede lo stesso fondale scurito.
             const s = Math.max((vh - 70) / ih, vw / iw), width = iw * s, height = ih * s;
             return { scale: s, width: width, height: height, x0: (vw - width) / 2, y0: vh - height, zoomOut: false, verticale: true };
         }        const width = iw * cover, height = ih * cover;
@@ -2047,11 +2030,10 @@
             // Luci fisse sugli elementi riconoscibili di ogni fondale:
             // finestre, lampioni, sentieri e banchine; mai una griglia casuale.
             const puntiLuce = {
-                centro: [[.08,.10],[.18,.08],[.82,.08],[.92,.10],[.16,.35],[.84,.35],[.15,.66],[.85,.66],[.35,.09],[.65,.09]],
-                parco: [[.37,.04],[.61,.04],[.18,.29],[.82,.32],[.15,.70],[.81,.71],[.35,.91],[.61,.91],[.48,.22]],
-                porto: [[.39,.20],[.62,.20],[.35,.38],[.66,.38],[.36,.58],[.64,.58],[.36,.76],[.64,.76],[.26,.42],[.74,.42]],
-                kaibacorp: [[.25,.05],[.38,.05],[.50,.05],[.62,.05],[.75,.05],[.12,.13],[.88,.13],[.18,.30],[.82,.30],[.15,.48],[.85,.48],[.18,.76],[.82,.76],[.38,.26],[.62,.26]]
-            }[district.id] || [];
+                centro: [[.28,.19],[.72,.19],[.18,.35],[.82,.35],[.18,.61],[.82,.61],[.50,.08],[.50,.84],[.14,.15],[.94,.51]],
+                parco: [[.42,.03],[.57,.03],[.68,.15],[.10,.38],[.38,.41],[.61,.41],[.40,.55],[.60,.55],[.89,.37]],
+                porto: [[.20,.06],[.18,.21],[.19,.42],[.79,.15],[.76,.16],[.81,.33],[.76,.43],[.79,.57],[.57,.75],[.28,.88],[.38,.88],[.88,.82]],
+                kaibacorp: [[.21,.15],[.79,.15],[.39,.23],[.69,.23],[.21,.30],[.79,.30],[.15,.40],[.85,.40],[.20,.61],[.80,.62],[.41,.77],[.70,.78]]            }[district.id] || [];
             puntiLuce.forEach((point, i) => {
                 const f = document.createElement('span');
                 f.className = 'city-finestra' + (district.id === 'parco' ? ' luce-naturale' : district.id === 'porto' ? ' luce-porto' : '');
