@@ -186,6 +186,17 @@
             <path d="M24.8 43 Q32 36.4 39.2 43 Q32 49.6 24.8 43 Z" fill="url(#bp-gold)" stroke="#fff3c0" stroke-width=".6"/>
             <circle cx="32" cy="43" r="3" fill="#3a0f52"/><circle cx="32" cy="43" r="1.3" fill="#f5d0fe" class="bp-eye"/>
             <path d="M32 49.6 V53" stroke="#fcd34d" stroke-width="1" stroke-linecap="round"/>`,
+        // Crediti: poche monete dorate tridimensionali, riconoscibili come
+        // ricompensa economica senza confonderle con le Carte Locazione.
+        credits: `${SHADOW}
+            <ellipse cx="32" cy="55" rx="17" ry="4.8" fill="url(#bp-glow-amber)" class="bp-breathe"/>
+            <ellipse cx="27" cy="45" rx="10" ry="4" fill="#8c5610" stroke="#ffe9a3" stroke-width="1"/>
+            <path d="M17 40 V45 C17 47.5 21.5 49 27 49 S37 47.5 37 45 V40" fill="#d99524" stroke="#fff0b7" stroke-width="1"/>
+            <ellipse cx="27" cy="40" rx="10" ry="4" fill="url(#bp-gold)" stroke="#fff4c2" stroke-width="1.2"/>
+            <ellipse cx="39" cy="48" rx="9" ry="3.7" fill="#9a6417" stroke="#ffdf8b" stroke-width="1"/>
+            <path d="M30 43 V48 C30 50.3 34.8 51.7 39 51.7 S48 50.3 48 48 V43" fill="#d39120" stroke="#ffeab0" stroke-width="1"/>
+            <ellipse cx="39" cy="43" rx="9" ry="3.7" fill="url(#bp-gold)" stroke="#fff4c2" stroke-width="1.2"/>
+            <path d="M26 38 l1.2 -2 1.2 2 2 .4 -1.6 1.3 .4 2 -2 -1 -1.8 1 .4 -2 -1.6 -1.3z" fill="#fff7d6" class="bp-blink"/>`,
         // Carta Locazione: carta in piedi, inclinata, con spessore, cornice
         // dorata, bersaglio del radar e una lama di luce olografica che la
         // attraversa ogni tanto (clip sulla sagoma della carta).

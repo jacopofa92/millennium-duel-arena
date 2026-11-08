@@ -23,18 +23,38 @@ restano specifici per quartiere; a KaibaCorp le luci pulsano in posizioni
 ancorate alle facciate e l'effetto WebGL usa solo bagliori discreti, senza
 scanner o raggi su tutta la scena.
 
-Le Locazioni raccolte restano nel torneo; quelle ancora da trovare sono
-limitate a una nel Centro e una al Porto, con una sola missione nel Centro da
-una Locazione. Le pattuglie aggiunte dopo aver esaurito la città richiedono un
-duello. Gli eventi possono assegnare piccole somme di crediti oppure sottrarle;
-lo Scudo protegge anche dai furti. La migrazione conserva gli oggetti già
-incassati e ribilancia solo i nodi non ancora risolti.
+Le Locazioni raccolte restano nel torneo; i nodi esplorativi che ne assegnano
+una sono limitati a uno nel Centro e uno al Porto. La missione del Centro
+assegna crediti, non una terza Locazione. Le pattuglie aggiunte dopo aver
+esaurito la città richiedono un duello. Gli eventi possono assegnare piccole
+somme di crediti oppure sottrarle; lo Scudo protegge anche dai furti. La
+migrazione conserva gli oggetti già incassati e ribilancia solo i nodi non
+ancora risolti.
 
 La schermata introduttiva spiega le regole aggiornate: esplorazione tra
-quartieri collegati, due Carte Locazione da trovare (Centro e Porto), una sola
-missione nel Centro, eventi che possono dare o sottrarre crediti e pattuglie
-aggiuntive da affrontare in duello. Non descrive più il percorso come una
-griglia visibile.
+quartieri collegati, due soli nodi di Carta Locazione (Centro e Porto), una
+missione del Centro pagata in crediti, eventi che possono dare o sottrarre
+crediti e pattuglie aggiuntive da affrontare in duello. Non descrive più il
+percorso come una griglia visibile.
+
+### Ritocco della mappa e limite delle ricompense (1.6.5)
+
+In tutta Battle City esistono al massimo due nodi di esplorazione che danno
+Carte Locazione: uno nel Centro e uno al Porto. La missione del Centro paga
+crediti (45–80) invece di una terza Carta Locazione; ogni quartiere offre
+inoltre un nodo crediti (25–50). Le migrazioni convertono le fonti extra dei
+salvataggi esistenti mantenendo le carte già riscosse. La generazione dei
+distretti applica il tetto globale anche se in futuro si aggiungono nodi alle
+composizioni.
+
+Nel Centro la testata e gli oggetti sono ancorati a un angolo libero; le pedine
+interattive sono più grandi e le coordinate seguono l'area aperta della piazza.
+Il Parco ha una disposizione dedicata ai vialetti, lampi WebGL color ambra
+ancorati ai lampioni, e una rete di percorsi che evita laghetto, aiuole e prato.
+Il passaggio giorno/tramonto/notte è stato allungato di 3,5 volte, con
+migrazione una tantum dell'orologio dei tornei già iniziati. Rimossa la legenda
+permanente in fondo alla mappa: le etichette dei nodi raggiungibili e le
+pedine rendono già riconoscibili gli incontri.
 
 ## Grafo interrogabile del codice (2026-11-05)
 

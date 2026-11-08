@@ -17,7 +17,10 @@
         'battle-city-parco': {
             pal: [rgb(189, 239, 156), rgb(255, 221, 151), rgb(228, 255, 202)],
             fondo: [
-                ['raggi', 'A', { ox: .76, oy: .95, cnt: 6, a: .28, area: [.2, .2, .95, 1] }],
+                // Bagliori caldi localizzati sulle lampade dipinte lungo i
+                // vialetti. Coordinate normalizzate del fondale, asse Y verso
+                // l'alto come richiesto dal modulo WebGL `alone`.
+                ['alone', 'vec3(1.,.72,.32)', { pts: [[.09,.52,.46],[.31,.92,.46],[.47,.68,.46],[.69,.82,.46],[.90,.72,.46],[.28,.50,.46],[.37,.37,.46],[.81,.48,.46],[.81,.35,.46]], sz: .055, ia: 1.599, a: .62 }],
                 // Particelle piccole e lente suggeriscono foglie e pulviscolo senza strisce uniformi.
                 ['particelle', 'B', { vx: .045, vy: -.025, dens: 8, dim: .055, lamp: .25, osc: .5, forma: 2, a: .34 }]
             ],
