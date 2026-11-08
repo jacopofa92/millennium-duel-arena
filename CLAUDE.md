@@ -5182,6 +5182,8 @@ Matrice completa di bilanciamento (2026-10-25, senza modifiche al gioco): `tools
 
 1.5.134 (cache v647, su `main`): **Battle City: strade e camminata di nuovo DRITTE** (l'autore: gli spostamenti ondulati non piacciono). `curvaTra` in torneo-battle-city.html restituisce ora il punto medio, quindi la Bezier degenera in una retta; la forma Q resta (strade, orme e camminata della pedina la usano tutte) e per riavere una curva basta spostare quel punto. Il Regno dei Duellanti tiene le sue curve (non segnalate). Spec battle-city 5/5. Suite completa non eseguita.
 
+1.6.2 (cache v650): **pagina Tornei: via l'intestazione (occhiello, filo e descrizione) e icone del tema al posto delle emoji** (sigilli con `arena`/`tower`/`tournament` via `data-icon`, badge/storico/Abbandona idratati da `EmojiTema.segui`; `▶` mappato su `duel` in emoji-tema.js). Spec tornei e premi-nelle-modalita verdi. Suite completa non eseguita.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.

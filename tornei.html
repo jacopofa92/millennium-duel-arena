@@ -288,6 +288,8 @@
         border: 1px solid rgba(247,215,116,0.45);
         box-shadow: 0 0 18px rgba(247,215,116,0.12), 0 6px 16px rgba(0,0,0,0.45);
     }
+    .tourney-sigillo .icon { display: flex; width: 56%; height: 56%; color: var(--gold-strong); }
+    .tourney-sigillo .icon svg { width: 100%; height: 100%; }
     .tourney-sigillo::after {
         content: '';
         position: absolute;
@@ -553,19 +555,13 @@
     <div id="topbarMount"></div>
 
     <main class="main">
-        <header class="tornei-intro">
-            <span class="tornei-occhiello">Tre strade per il titolo</span>
-            <div class="tornei-filo"><span class="tornei-rombo"></span></div>
-            <p class="page-intro">Ognuno con le proprie regole, i propri Duellanti e un modo tutto suo di farti arrivare in fondo: un'isola da esplorare, una città da girare col Duel Disk, un tabellone a eliminazione diretta.</p>
-        </header>
-
         <div class="tourney-list">
             <!-- --arte: l'arena vera in cui si duella in questo torneo
                  (stesse immagini del duello, vedi js/data/arena-options.js). -->
             <a class="tourney-card" href="torneo-regno-duellanti.html" id="duelistKingdomCard"
                style="--arte: url('images/maps/storia_anime_regno.jpg')">
                 <div class="tourney-arte" aria-hidden="true"></div>
-                <div class="tourney-sigillo">🏝️</div>
+                <div class="tourney-sigillo"><span class="icon" data-icon="arena"></span></div>
                 <div class="tourney-body">
                     <div class="tourney-name-row">
                         <span class="tourney-name">Regno dei Duellanti</span>
@@ -575,7 +571,7 @@
                     <div class="tourney-stato">
                         <span class="tourney-soon" id="duelistKingdomStatus">▶️ Gioca ora</span>
                         <span class="tourney-storico" id="duelistKingdomStorico"></span>
-                        <span class="tourney-abandon" id="duelistKingdomAbandon" role="button" tabindex="0" hidden>🚪 Abbandona</span>
+                        <span class="tourney-abandon" id="duelistKingdomAbandon" role="button" tabindex="0" hidden><span class="icon" data-icon="exit"></span> Abbandona</span>
                     </div>
                     <div class="tourney-avanzamento" id="duelistKingdomProgress" hidden>
                         <span class="ta-barra"><span class="ta-riempi"></span></span>
@@ -587,7 +583,7 @@
             <a class="tourney-card" href="torneo-battle-city.html" id="battleCityCard"
                style="--arte: url('images/maps/storia_anime_battlecity1.jpg')">
                 <div class="tourney-arte" aria-hidden="true"></div>
-                <div class="tourney-sigillo">🏙️</div>
+                <div class="tourney-sigillo"><span class="icon" data-icon="tower"></span></div>
                 <div class="tourney-body">
                     <div class="tourney-name-row">
                         <span class="tourney-name">Battle City</span>
@@ -597,7 +593,7 @@
                     <div class="tourney-stato">
                         <span class="tourney-soon" id="battleCityStatus">▶️ Gioca ora</span>
                         <span class="tourney-storico" id="battleCityStorico"></span>
-                        <span class="tourney-abandon" id="battleCityAbandon" role="button" tabindex="0" hidden>🚪 Abbandona</span>
+                        <span class="tourney-abandon" id="battleCityAbandon" role="button" tabindex="0" hidden><span class="icon" data-icon="exit"></span> Abbandona</span>
                     </div>
                     <div class="tourney-avanzamento" id="battleCityProgress" hidden>
                         <span class="ta-barra"><span class="ta-riempi"></span></span>
@@ -609,7 +605,7 @@
             <a class="tourney-card" href="torneo-kaiba.html" id="kaibaTournamentCard"
                style="--arte: url('images/fields/mobile/stadioKaiba.jpg')">
                 <div class="tourney-arte" aria-hidden="true"></div>
-                <div class="tourney-sigillo">🎮</div>
+                <div class="tourney-sigillo"><span class="icon" data-icon="tournament"></span></div>
                 <div class="tourney-body">
                     <div class="tourney-name-row">
                         <span class="tourney-name">Torneo Kaiba</span>
@@ -619,7 +615,7 @@
                     <div class="tourney-stato">
                         <span class="tourney-soon" id="kaibaTournamentStatus">▶️ Gioca ora</span>
                         <span class="tourney-storico" id="kaibaTournamentStorico"></span>
-                        <span class="tourney-abandon" id="kaibaTournamentAbandon" role="button" tabindex="0" hidden>🚪 Abbandona</span>
+                        <span class="tourney-abandon" id="kaibaTournamentAbandon" role="button" tabindex="0" hidden><span class="icon" data-icon="exit"></span> Abbandona</span>
                     </div>
                     <div class="tourney-avanzamento" id="kaibaTournamentProgress" hidden>
                         <span class="ta-barra"><span class="ta-riempi"></span></span>
@@ -666,6 +662,7 @@
 <script src="js/economy/card-acquisition.js"></script>
 <script src="js/economy/rewards.js"></script>
 <script src="js/ui/icon-library.js"></script>
+<script src="js/ui/emoji-tema.js"></script>
 <script src="js/ui/deck-box.js"></script>
 <script src="js/ui/deck-switcher.js"></script>
 <script src="js/ui/topbar.js"></script>
@@ -680,6 +677,8 @@
     // fuori dal duello vero e proprio (vedi commento in index.html).
     initAudioManager();
     Icons.hydrate();
+    // Badge, storico e Abbandona sono testo con emoji: si sostituiscono con le icone del tema (anche ai ridisegni).
+    EmojiTema.segui(document.querySelector('.tourney-list'));
 
     /**
      * Un descrittore per torneo, invece delle tre funzioni quasi identiche
