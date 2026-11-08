@@ -30,7 +30,7 @@
     const PREZZI = {
         cartaComune: 150, cartaRara: 450, cartaSuper: 900,
         cartaUltra: 1800, cartaLeggendaria: 3500,
-        bustaBase: 200,
+        bustaBase: 500,   // solo Crediti (niente Stella): richiesta dell'utente, il prezzo sale per compensare
         bustaAvanzata: 450,
         bustaLeggendaria: 900,
         /** La Leggendaria si può pagare anche con la valuta di Battle City. */
@@ -255,7 +255,7 @@
             // `colore` è l'unico valore da dare alla bustina: tutte le sue
             // sfumature sono derivate da lì con color-mix (--pack-base).
             colore: '#1d4f9e',
-            costo: { credits: PREZZI.bustaBase, starChips: 1 },
+            costo: { credits: PREZZI.bustaBase },
             carte: 10,
             composizione: { common: 9, rare: 1 },
             descrizione: '9 carte comuni e 1 rara garantita.'
