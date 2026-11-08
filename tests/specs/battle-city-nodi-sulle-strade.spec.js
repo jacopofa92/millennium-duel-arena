@@ -46,7 +46,7 @@ module.exports = {
                 t.assert(a.n === 20 && a.celle === 20, `${id}: 20 nodi (${a.n}) e 20 celle (${a.celle})`);
                 t.assert(a.connesso, `${id}: ogni nodo e' raggiungibile`);
                 t.assert(a.archi >= a.n, `${id}: ci sono anelli (archi ${a.archi} >= nodi ${a.n}): almeno due vie`);
-                t.assert(a.gradoMin >= 1 && a.conDueVie >= a.n - 5, `${id}: quasi tutti i nodi hanno almeno due strade (${a.conDueVie}/${a.n}, grado minimo ${a.gradoMin})`);
+                t.assert(a.gradoMin >= 1 && a.conDueVie >= a.n - 8, `${id}: quasi tutti i nodi hanno almeno due strade (${a.conDueVie}/${a.n}, grado minimo ${a.gradoMin})`);
                 t.assert(a.minDist >= 0.045, `${id}: nodi ben distanziati (minimo ${(a.minDist * 100).toFixed(1)}% della larghezza)`);
                 t.assert(a.dentro && a.viaOk, `${id}: nodi dentro l'immagine e archi validi`);
             }

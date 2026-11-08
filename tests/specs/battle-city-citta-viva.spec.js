@@ -19,19 +19,22 @@ module.exports = {
             await page.goto(url);
             await page.waitForFunction(() => !!(window.SaveManager && window.BoardPieces), null, { timeout: 25000 });
             const prepara = (extra) => page.evaluate((extra) => {
+                // La casella di prova e' la prima vicina del segnalino: il grafo di ogni quartiere ha il suo numero di strade.
                 if (!SaveManager.hasSave()) SaveManager.createNew('Tester');
                 const s = makeInitialState('Medio');
                 buildSector(s);
                 s.grid.cells.forEach((c) => { c.revealed = true; });
-                s.grid.cells[6] = { kind: 'empty', revealed: true, resolved: false };
+                const V = cityLinks[s.grid.districtId || 'centro'][s.grid.playerIndex][0];
+                s.grid.cells[V] = { kind: 'empty', revealed: true, resolved: false };
                 s.intermezziVisti = ['prologue', 'city', 'intro'];
                 s.locators = extra && extra.locators != null ? extra.locators : 1;
-                if (extra && extra.cella6) s.grid.cells[6] = Object.assign({ revealed: true, resolved: false }, extra.cella6 === 'duelist' ? { kind: 'duelist', characterId: PRELIM_IDS[0] } : { kind: extra.cella6 });
+                if (extra && extra.cella6) s.grid.cells[V] = Object.assign({ revealed: true, resolved: false }, extra.cella6 === 'duelist' ? { kind: 'duelist', characterId: PRELIM_IDS[0] } : { kind: extra.cella6 });
                 saveState(s);
+                return { V: V, n: cityLinks[s.grid.districtId || 'centro'][s.grid.playerIndex].length };
             }, extra);
 
             // --- pedina, strade curve ---
-            await prepara();
+            const { V, n: vicineAttese } = await prepara();
             await page.reload();
             await page.waitForSelector('.city-cell', { timeout: 15000 });
             await page.waitForFunction(() => document.querySelectorAll('.city-routes .route').length > 0, null, { timeout: 5000 });
@@ -42,12 +45,12 @@ module.exports = {
                 ora: document.body.dataset.ora, luce: !!document.getElementById('cityLuce')
             }));
             t.assert(/pedine\/mirror\.png/.test(base.pedina), `il segnalino e' la pedina del giocatore: ${base.pedina}`);
-            t.assert(base.n === 5 && base.curve, `le strade sono curve (Bezier), una per casella raggiungibile: ${JSON.stringify(base)}`);
+            t.assert(base.n === vicineAttese && base.curve, `le strade sono curve (Bezier), una per casella raggiungibile: ${JSON.stringify(base)}`);
             t.assert(base.ora === 'giorno' && base.luce, `con poche Locazioni e' giorno e il velo di luce esiste: ${base.ora}`);
 
             // --- la pedina cammina, poi arriva esatta; restano le orme ---
-            await page.click('.city-cell[data-index="6"]');
-            await page.waitForFunction(() => document.getElementById('cityGrid').dataset.player === '6', null, { timeout: 5000 });
+            await page.click(`.city-cell[data-index="${V}"]`);
+            await page.waitForFunction((v) => document.getElementById('cityGrid').dataset.player === String(v), V, { timeout: 5000 });
             const cammina = await page.evaluate(() => new Promise((ok) => {
                 const fine = Date.now() + 500;
                 const g = () => { if (document.querySelector('.city-player-token.cammina')) return ok(true); if (Date.now() > fine) return ok(false); requestAnimationFrame(g); };
@@ -66,7 +69,7 @@ module.exports = {
                 };
             });
             t.assert(dopo.centrato && !dopo.ancoraCammina, `a fine camminata la pedina sta esatta sulla casella: ${JSON.stringify(dopo)}`);
-            t.assert(/,6$/.test(dopo.percorso) && dopo.orme > 0, `il cammino lascia le orme: ${JSON.stringify(dopo)}`);
+            t.assert(new RegExp(',' + V + '$').test(dopo.percorso) && dopo.orme > 0, `il cammino lascia le orme: ${JSON.stringify(dopo)}`);
 
             // --- la luce segue il tempo che passa (cityTime) ---
             const luce = await page.evaluate(() => {
@@ -77,24 +80,24 @@ module.exports = {
             t.assert(luce[0] === 'giorno' && luce[42] === 'tramonto' && luce[84] === 'notte' && luce[90] === 'notte', `giorno, tramonto, notte: ${JSON.stringify(luce)}`);
 
             // --- una Locazione raccolta vola al contatore ---
-            await prepara({ locators: 1, cella6: 'locator' });
+            const V2 = (await prepara({ locators: 1, cella6: 'locator' })).V;
             await page.reload();
-            await page.waitForSelector('.city-cell.reachable[data-index="6"]', { timeout: 15000 });
-            await page.click('.city-cell[data-index="6"]');
+            await page.waitForSelector(`.city-cell.reachable[data-index="${V2}"]`, { timeout: 15000 });
+            await page.click(`.city-cell[data-index="${V2}"]`);
             await page.waitForSelector('.city-locazione-volo', { timeout: 3000 });
             t.assert(true, 'la Carta Locazione guadagnata vola al contatore');
 
             // --- verso uno sfidante: posa grido, poi la puntata ---
-            await prepara({ locators: 2, cella6: 'duelist' });
+            const V3 = (await prepara({ locators: 2, cella6: 'duelist' })).V;
             await page.reload();
-            await page.waitForSelector('.city-cell.reachable[data-index="6"]', { timeout: 15000 });
-            await page.click('.city-cell[data-index="6"]');
+            await page.waitForSelector(`.city-cell.reachable[data-index="${V3}"]`, { timeout: 15000 });
+            await page.click(`.city-cell[data-index="${V3}"]`);
             await page.waitForFunction(() => document.getElementById('wagerModal').classList.contains('open'), null, { timeout: 4000 });
-            const grido = await page.evaluate(() => ({
+            const grido = await page.evaluate((v) => ({
                 modale: (document.querySelector('#wagerPortrait img') || {}).src || '',
-                casella: (document.querySelector('.city-cell[data-index="6"] image') || { getAttribute: () => '' }).getAttribute('href') || '',
+                casella: (document.querySelector('.city-cell[data-index="' + v + '"] image') || { getAttribute: () => '' }).getAttribute('href') || '',
                 inSospeso: /Duello in sospeso/.test(document.getElementById('content').textContent)
-            }));
+            }), V3);
             t.assert(/pedine-esclamazione\/thumbs\//.test(grido.modale), `nella puntata lo sfidante fa la posa grido: ${grido.modale}`);
             t.assert(!/pedine-danno-sorpresa/.test(grido.modale + grido.casella), 'mai la posa di danno subito');
             t.assert(!grido.inSospeso, 'dietro la puntata c\'e\' la mappa, non la schermata "duello in sospeso"');

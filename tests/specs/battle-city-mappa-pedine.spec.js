@@ -31,14 +31,16 @@ module.exports = {
             // Settore costruito dal codice vero, con la casella a destra
             // dell'inizio forzata a "libera": cliccarla deve spostare il
             // segnalino senza aprire duelli o eventi.
-            await page.evaluate(() => {
+            const { V, vicine } = await page.evaluate(() => {
                 if (!SaveManager.hasSave()) SaveManager.createNew('Tester');
                 const s = makeInitialState('Medio');
                 buildSector(s);
                 s.grid.cells.forEach((c) => { c.revealed = true; });
-                s.grid.cells[6] = { kind: 'empty', revealed: true, resolved: false };
+                const V = cityLinks[s.grid.districtId || 'centro'][s.grid.playerIndex][0];
+                s.grid.cells[V] = { kind: 'empty', revealed: true, resolved: false };
                 s.intermezziVisti = ['prologue', 'city', 'intro'];
                 saveState(s);
+                return { V: V, vicine: cityLinks[s.grid.districtId || 'centro'][s.grid.playerIndex].length };
             });
             await page.reload();
             await page.waitForSelector('.city-cell', { timeout: 15000 });
@@ -68,7 +70,7 @@ module.exports = {
             });
 
             const prima = await leggi();
-            t.assert(prima.reach.length === 5, `Dal centro del settore le caselle raggiungibili sono 5, lette ${prima.reach.length}`);
+            t.assert(prima.reach.length === vicine, `Dal punto di partenza le caselle raggiungibili sono ${vicine}, lette ${prima.reach.length}`);
             t.assert(JSON.stringify(prima.reach) === JSON.stringify(prima.attesi),
                 `Le caselle accese devono essere esattamente le vicine del segnalino: ${prima.reach} contro ${prima.attesi}`);
             t.assert(prima.percorsi === prima.reach.length && prima.frecce === prima.reach.length,
@@ -94,11 +96,11 @@ module.exports = {
             t.assert(raccolte.massimo === 1 && raccolte.minimo === 1,
                 `Ogni distretto ha UNA sola Carta Locazione da raccogliere (trovate da ${raccolte.minimo} a ${raccolte.massimo})`);
 
-            await page.click('.city-cell[data-index="6"]');
-            await page.waitForFunction(() => document.getElementById('cityGrid').dataset.player === '6', null, { timeout: 5000 });
+            await page.click(`.city-cell[data-index="${V}"]`);
+            await page.waitForFunction((v) => document.getElementById('cityGrid').dataset.player === String(v), V, { timeout: 5000 });
             await page.waitForTimeout(700);
             const dopo = await leggi();
-            t.assert(JSON.stringify(dopo.reach) === JSON.stringify(dopo.attesi) && dopo.reach.indexOf('6') === -1,
+            t.assert(JSON.stringify(dopo.reach) === JSON.stringify(dopo.attesi) && dopo.reach.indexOf(String(V)) === -1,
                 `Dopo la mossa si accendono le vicine della NUOVA casella: ${dopo.reach}`);
             t.assert(dopo.percorsi === dopo.reach.length, `I percorsi seguono la mossa: ${dopo.percorsi} per ${dopo.reach.length} caselle`);
             t.assert(dopo.segnalinoCentrato, 'Il segnalino deve aver raggiunto la casella cliccata');

@@ -29,12 +29,12 @@ module.exports = {
                 buildSector(s);
                 s.grid.cells = s.grid.cells.map(() => ({ kind: 'empty', revealed: true, resolved: false }));
                 const w = s.grid.w;
-                const centro = Math.floor(s.grid.cells.length / 2);
+                const centro = DISTRICT_START[s.grid.districtId || 'centro'] != null ? DISTRICT_START[s.grid.districtId || 'centro'] : 0;
                 s.grid.playerIndex = centro;
                 s.grid.cells[centro].resolved = true;
-                const vicina = centro + 1;
+                const vicina = cityLinks[s.grid.districtId || 'centro'][centro][0];
                 s.grid.cells[vicina] = Object.assign({ revealed: true, resolved: false }, o.cella);
-                (o.nascoste || []).forEach((d) => { s.grid.cells[centro + d].revealed = false; });
+                s.grid.cells.map((c, i) => i).filter((i) => i !== centro && i !== vicina).slice(0, (o.nascoste || []).length).forEach((i) => { s.grid.cells[i].revealed = false; });
                 s.intermezziVisti = ['prologue', 'city', 'intro'];
                 s.locators = 3;
                 s.items = Object.assign({ radar: 0, shield: 0 }, o.items || {});
@@ -50,7 +50,7 @@ module.exports = {
                 if (r !== undefined) { const orig = Math.random; Math.random = () => r; window.__ripristina = () => { Math.random = orig; }; }
                 // Il giocatore sta al centro, la casella di prova è la sua destra
                 // (ricalcolata qui: un reload azzera le variabili della pagina).
-                moveToCell(loadState().grid.playerIndex + 1);
+                moveToCell(cityLinks[loadState().grid.districtId || 'centro'][loadState().grid.playerIndex][0]);
                 if (window.__ripristina) { window.__ripristina(); window.__ripristina = null; }
             }, rnd);
 
@@ -120,7 +120,7 @@ module.exports = {
             await prepara({ cella: { kind: 'quest' }, nascoste: [] });
             await page.evaluate(() => {
                 const s = loadState();
-                const lontano = s.grid.cells.length - 6;   // una casella normale: gli ultimi indici sono varchi
+                const lontano = s.grid.cells.length - 1;   // una casella normale: gli ultimi indici sono varchi
                 s.grid.cells[lontano] = { kind: 'duelist', characterId: 'joey', revealed: false, resolved: false };
                 saveState(s);
             });

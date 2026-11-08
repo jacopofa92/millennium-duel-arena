@@ -1116,60 +1116,50 @@
     // nodi (GRID_W x GRID_H); `entry` e' l'indice del varco speculare nel
     // quartiere di arrivo, cosi' il percorso resta leggibile anche tornando indietro.
     const DISTRICT_GATES = {
-        centro: [{ index: 18, to: 'parco', entry: 0 }, { index: 19, to: 'porto', entry: 0 }],
-        parco: [{ index: 0, to: 'centro', entry: 18 }, { index: 19, to: 'kaibacorp', entry: 18 }],
-        porto: [{ index: 0, to: 'centro', entry: 19 }, { index: 18, to: 'kaibacorp', entry: 19 }],
-        kaibacorp: [{ index: 18, to: 'parco', entry: 19 }, { index: 19, to: 'porto', entry: 18 }]
+        centro: [{ index: 9, to: 'parco', entry: 13 }, { index: 10, to: 'porto', entry: 0 }],
+        parco: [{ index: 13, to: 'centro', entry: 9 }, { index: 5, to: 'kaibacorp', entry: 6 }],
+        porto: [{ index: 0, to: 'centro', entry: 10 }, { index: 19, to: 'kaibacorp', entry: 13 }],
+        kaibacorp: [{ index: 6, to: 'parco', entry: 5 }, { index: 13, to: 'porto', entry: 19 }]
     };
     // Dove parte il giocatore la prima volta che apre il torneo (poi sempre dai varchi).
-    const DISTRICT_START = { centro: 5 };
+    const DISTRICT_START = { centro: 14 };
     /*
-     * I NODI stanno in PIXEL dell'illustrazione del quartiere (la stessa di `imageSize`), posati solo su superfici percorribili
-     * (vialetti, banchine, piazze, passerelle): mai su acqua, chiome, aiuole, edifici o pile di container. `edges` sono i
+     * I NODI stanno in PIXEL dell'illustrazione del quartiere (la stessa di `imageSize`, 1672x941), posati solo su superfici
+     * percorribili (vialetti, piazze, banchine): mai su acqua, chiome, aiuole, edifici o pile di container. `edges` sono i
      * collegamenti [a, b, via?]: `via` e' un elenco di punti intermedi (sempre in pixel) che fa seguire alla strada la curva
-     * vera della pavimentazione, cosi' i nodi restano pochi (decisioni) e le linee non tagliano gli ostacoli. Dove la
-     * geometria lo permette ogni nodo ha almeno due strade (anelli e incroci). Per spostare un nodo si cambia solo il
-     * numero qui: posizione, strade, orme e camminata della pedina lo seguono.
+     * vera della pavimentazione (il ponte del Parco, i corridoi fra aiuole del Centro), cosi' i nodi restano pochi (decisioni)
+     * e le linee non tagliano gli ostacoli. Dove la geometria lo permette ogni nodo ha almeno due strade (anelli e incroci).
+     * Per spostare un nodo si cambia solo il numero qui: posizione, strade, orme e camminata della pedina lo seguono.
+     * Sul telefono in verticale il fondale si rimpicciolisce da solo (proiezioneFondale) finche' tutti i nodi stanno in
+     * larghezza: il Porto ha i nodi tutti sul viale centrale e resta a grandezza piena, gli altri tre sono piu' larghi.
      */
-    const GRIGLIA_CENTRO = (() => {
-        const xs = [340, 530, 720, 910], ys = [300, 450, 600, 750], nodi = [], archi = [];
-        ys.forEach((y) => xs.forEach((x) => nodi.push([x, y])));
-        for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) {
-            const i = r * 4 + c;
-            if (c < 3) archi.push([i, i + 1]);
-            if (r < 3) archi.push([i, i + 4]);
-        }
-        return { nodi: nodi, archi: archi };
-    })();
     const CITY_LAYOUTS = {
         centro: {
-            // Venti nodi sulla pavimentazione della nuova piazza panoramica:
-            // il vuoto centrale intorno alla fontana resta libero. I varchi
-            // 18 e 19 sono sui viali laterali e restano nel crop centrale mobile.
-            nodes: [[480,210],[660,210],[1012,210],[1192,210], [480,310],[660,310],[1012,310],[1192,310], [480,650],[660,650],[1012,650],[1192,650], [480,790],[660,790],[1012,790],[1192,790], [836,200],[836,800],[480,480],[1192,480]],
-            edges: GRIGLIA_CENTRO.archi.concat([[16,1],[16,2],[17,13],[17,14],[18,4],[18,8],[19,7],[19,11]])
+            // Venti nodi sulla piazza: i viali laterali (9, 10 sono i varchi), la corona attorno alla fontana e il passaggio
+            // sotto l'arco. Gli anelli aggirano le aiuole con gli alberi: le strade 9-7 e 10-8 corrono nel corridoio fra
+            // l'aiuola lunga e l'isola degli alberi (y circa 510), la 6-10 passa sopra l'aiuola destra.
+            nodes: [[836,285],[660,275],[1015,275],[285,300],[1385,300],[440,400],[1235,400],[590,470],[1085,470],[270,520],[1400,520],[300,410],[620,650],[1055,650],[836,665],[600,800],[1090,800],[836,830],[265,700],[1405,700]],
+            edges: [[0,1],[0,2],[1,7],[2,8],[5,7],[6,8],[5,11],[3,11],[11,9],[9,18],[4,10],[6,10,[[1340,405]]],[10,19],[7,12],[8,13],[12,14],[13,14],[12,15],[13,16],[14,17],[9,7,[[420,512]]],[10,8,[[1260,512]]]]
         },
         parco: {
-            // Un anello di camminamenti: aggira lo stagno e il prato, passando
-            // sui vialetti esterni. I due varchi sono alle estremità del viale nord.
-            nodes: [[520,145],[410,200],[330,290],[275,400],[250,530],[285,650],[370,745],[500,795],[650,820],[820,825],[990,805],[1140,760],[1250,675],[1315,560],[1340,430],[1310,305],[1250,215],[1150,155],[990,110],[850,95]],
-            edges: Array.from({ length: 19 }, (_, i) => [i, i + 1]).concat([[19,0]]),
-            portrait: [[700,100],[620,185],[550,270],[520,355],[520,440],[520,525],[550,610],[620,695],[700,780],[780,850],[920,850],[1000,780],[1080,695],[1120,610],[1140,525],[1130,440],[1100,355],[1060,270],[1000,185],[920,100]]
+            // Il giro dei camminamenti (0-15), una strada che taglia al centro (16-19) passando sul ponte di legno e un
+            // collegamento sotto il gazebo (16-4). I varchi sono sul lato sinistro (13) e destro (5).
+            nodes: [[620,105],[940,108],[1180,115],[1335,215],[1385,420],[1410,565],[1315,715],[1170,805],[940,822],[760,830],[560,832],[400,775],[310,690],[225,520],[270,380],[340,265],[955,265],[1030,400],[1025,555],[935,700]],
+            edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[12,13],[13,14],[14,15],[15,0,[[420,175],[500,130]]],[1,16],[16,17],[17,18,[[1000,440],[965,478],[1015,515]]],[18,19],[19,8],[17,4,[[1100,345],[1150,368],[1230,398],[1320,418]]]]
         },
         porto: {
-            // Nodi su un reticolo di banchina asciutta: la fascia centrale
-            // resta la stessa anche sul telefono, con acqua ai lati.
-            nodes: [[650,250],[790,250],[930,250],[1070,250], [650,360],[790,360],[930,360],[1070,360], [650,470],[790,470],[930,470],[1070,470], [650,580],[790,580],[930,580],[1070,580], [650,700],[790,700],[930,700],[1070,700]],
-            edges: Array.from({ length: 20 }, (_, i) => i % 4 < 3 ? [i, i + 1] : null).filter(Boolean).concat(Array.from({ length: 16 }, (_, i) => [i, i + 4]))
+            // Reticolo di 4x5 sul grande viale centrale (la passeggiata resta la stessa a ogni larghezza): fra le lampade,
+            // lontano dai magazzini e dall'acqua. Varchi: 0 (alto a sinistra) e 19 (basso a destra).
+            nodes: (() => { const a = []; [190,345,500,660,820].forEach((y) => [720,805,890,975].forEach((x) => a.push([x, y]))); return a; })(),
+            edges: (() => { const e = []; for (let i = 0; i < 20; i++) { if (i % 4 < 3) e.push([i, i + 1]); if (i < 16) e.push([i, i + 4]); } e.push([0,5],[2,7],[8,13],[10,15],[12,17],[14,19]); return e; })()
         },
         kaibacorp: {
-            // La piazza frontale KaibaCorp ha un asse libero tra i bacini e
-            // l'ingresso; i due varchi condividono il piazzale meridionale.
-            nodes: [[620,300],[770,300],[902,300],[1052,300], [620,400],[770,400],[902,400],[1052,400], [620,500],[770,500],[902,500],[1052,500], [620,600],[770,600],[902,600],[1052,600], [700,700],[800,700],[900,700],[1000,700]],
-            edges: Array.from({ length: 20 }, (_, i) => i % 4 < 3 ? [i, i + 1] : null).filter(Boolean).concat(Array.from({ length: 16 }, (_, i) => [i, i + 4]))
+            // La piazza frontale: l'asse centrale dall'ingresso al piazzale, la fascia trasversale sotto i giardini (6 e 13 sono
+            // i varchi sui lati) e la banchina in basso. I giardini con gli alberi e le due vasche con le cascate restano liberi.
+            nodes: [[836,650],[836,385],[836,470],[836,570],[836,730],[836,870],[350,570],[480,570],[610,570],[720,570],[950,570],[1060,570],[1190,570],[1325,570],[430,450],[1250,450],[520,880],[690,880],[990,880],[1160,880]],
+            edges: [[1,2],[2,3],[3,0],[0,4],[4,5],[6,7],[7,8],[8,9],[9,3],[3,10],[10,11],[11,12],[12,13],[14,7],[15,12],[14,8],[15,11],[16,17],[17,5],[5,18],[18,19],[2,9],[2,10],[0,9],[0,10]]
         }
-    };
-    const cityLinks = Object.fromEntries(Object.entries(CITY_LAYOUTS).map(([id, layout]) => {
+    };    const cityLinks = Object.fromEntries(Object.entries(CITY_LAYOUTS).map(([id, layout]) => {
         const links = Array.from({ length: layout.nodes.length }, () => []);
         layout.edges.forEach(([a, b]) => {
             if (a === b) return;
@@ -1195,10 +1185,10 @@
         const cover = Math.max(vw / iw, vh / ih);
         const layout = CITY_LAYOUTS[district.id];
         if (layout && vw < vh) {
-            const activeNodes = window.innerWidth < window.innerHeight && layout.portrait ? layout.portrait : layout.nodes;
+            const activeNodes = layout.nodes;
             const xs = activeNodes.map((n) => n[0]), ys = activeNodes.map((n) => n[1]);
             const minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs), minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
-            const scala = Math.min(cover, (vw * 0.9) / Math.max(1, maxX - minX), (vh * 0.78) / Math.max(1, maxY - minY));
+            const scala = Math.min(cover, (vw * 0.94) / Math.max(1, maxX - minX), (vh * 0.78) / Math.max(1, maxY - minY));
             if (scala < cover - 0.0001) {
                 const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
                 return { scale: scala, width: iw * scala, height: ih * scala, x0: vw / 2 - cx * scala, y0: vh * 0.5 - cy * scala, zoomOut: true };
@@ -1215,7 +1205,7 @@
     function posizionaCaselleCitta(gridEl, district) {
         if (!gridEl) return;
         const layout = CITY_LAYOUTS[district.id];
-        const activeNodes = window.innerWidth < window.innerHeight && layout.portrait ? layout.portrait : layout.nodes;
+        const activeNodes = layout.nodes;
         gridEl.querySelectorAll('.city-cell').forEach((el) => {
             const p = puntoMappaSchermo(district, activeNodes[Number(el.dataset.index)]);
             el.style.left = `${p.x}px`;
