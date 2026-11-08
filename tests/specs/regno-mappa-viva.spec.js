@@ -82,6 +82,16 @@ module.exports = {
             t.assert(via.scelte.length >= 2 && via.scelte.every((x) => x > via.x + 100), `i primi bivi nascono da li' verso destra: ${JSON.stringify(via)}`);
             // Da li' i bivi si diramano sia verso l'alto sia verso il basso (non tutti dalla stessa parte).
             t.assert(via.alte.some((y) => y < via.y - 20) && via.alte.some((y) => y > via.y + 20), `i bivi vanno uno in alto e uno in basso: ${JSON.stringify(via)}`);
+            // Un torneo GIA' INIZIATO con la vecchia partenza (primo bivio tutto in alto) viene ridisposto una volta, con gli stessi incontri.
+            await page.evaluate(() => SaveManager.setTournamentState('duelistKingdom', {
+                step: 0, stars: 2, difficulty: 'Medio', castleReached: false, eliminated: false, atKaibaGate: false, pendingEncounter: null,
+                scenesShown: { prologue: true }, history: [],
+                pendingRoutes: [{ kind: 'opponent', characterId: 'mai', x: 330, y: 405 }, { kind: 'prize', amount: 1, x: 340, y: 235 }]
+            }));
+            await page.reload();
+            await page.waitForSelector('.map-node.choice');
+            const vecchio = await page.evaluate(() => ({ alte: [...document.querySelectorAll('.map-node.choice')].map((e) => parseFloat(e.style.top)), v2: SaveManager.getTournamentState('duelistKingdom').approdoV2, tipi: SaveManager.getTournamentState('duelistKingdom').pendingRoutes.map((r) => r.kind) }));
+            t.assert(vecchio.alte.some((y) => y < 590) && vecchio.alte.some((y) => y > 630) && vecchio.v2 === true && vecchio.tipi.join() === 'opponent,prize', `un torneo gia' iniziato si ridispone in alto e in basso, stessi incontri: ${JSON.stringify(vecchio)}`);
             t.assert(errori.length === 0, `nessun errore: ${errori.join(' | ')}`);
         } finally {
             await page.close();

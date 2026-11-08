@@ -2207,6 +2207,16 @@
     }
 
     function renderMap(state) {
+        // Un torneo iniziato PRIMA dell'approdo a sinistra sotto il fiume ha il primo bivio generato dalla vecchia partenza (piu' in alto):
+        // i suoi sentieri partirebbero tutti sopra la pedina. Finche' non si e' fatto nessun passo lo si ridispone una volta sola, tenendo
+        // gli stessi incontri (cambiano solo le posizioni). `approdoV2` segna che la partenza e' quella nuova.
+        if (!state.castleReached && !state.approdoV2) {
+            if (state.history.length === 0 && !state.corridor && Array.isArray(state.pendingRoutes) && state.pendingRoutes.length) {
+                assignChoicePositions(state, state.pendingRoutes);
+            }
+            state.approdoV2 = true;
+            saveState(state);
+        }
         // renderMap ricrea l'intero mondo. Chiudi il contesto WebGL legato
         // alla tela precedente prima che venga staccata, così i render dopo
         // un duello non accumulano canvas e richieste animation frame.
