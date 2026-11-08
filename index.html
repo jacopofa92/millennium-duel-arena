@@ -34,6 +34,7 @@
 <!-- Primo avvio (il negozio del nonno) e le battute che lo accompagnano. -->
 <link rel="stylesheet" href="js/ui/story-cutscene.css">
 <link rel="stylesheet" href="js/ui/onboarding.css">
+<link rel="stylesheet" href="js/economy/login-bonus.css">
 <!-- Banner "Sfida completata" accodato da altre pagine. -->
 <link rel="stylesheet" href="js/ui/challenge-banner.css">
 <title>Yu-Gi-Oh! Millennium Duel Arena — Menu</title>
@@ -1173,6 +1174,8 @@
     <script src="js/ui/challenge-banner.js"></script>
     <script src="js/ui/stato-salvataggio.js"></script>
     <script src="js/ui/icon-library.js"></script>
+    <script src="js/cloud/server-date.js"></script>
+    <script src="js/economy/login-bonus.js"></script>
     <script src="js/ui/menu-mobile.js"></script>
 <script src="js/ui/ambiente-webgl.js"></script>
 <script src="js/ui/ambiente-menu.js"></script>
@@ -1672,6 +1675,26 @@
             document.getElementById('gateShell').style.display = 'none';
             document.getElementById('menuShell').style.display = 'flex';
             renderMenu();
+            proponiLoginBonus();
+        }
+
+        /**
+         * Bonus d'accesso giornaliero (js/economy/login-bonus.js): una volta al giorno, alla prima apertura del menu. Non prima della lezione
+         * obbligatoria del primo avvio (non si interrompe), non senza la data del server (offline: si offre alla prossima apertura) e, se si
+         * preme "Dopo", non di nuovo finche' dura questa sessione (tornare al menu da un'altra pagina non deve riaprirlo).
+         */
+        let loginBonusProposto = false;
+        function proponiLoginBonus() {
+            if (loginBonusProposto || !window.LoginBonus || !window.SaveManager || !SaveManager.hasSave()) return;
+            const t = SaveManager.getTutorial ? SaveManager.getTutorial() : { daFare: false, completata: true };
+            if (t.daFare && !t.completata) return;
+            try { if (sessionStorage.getItem('ygoLoginBonusRimandato') === '1') return; } catch (e) { /* noop */ }
+            loginBonusProposto = true;
+            const mostra = () => LoginBonus.mostra(() => {
+                if (!LoginBonus.stato().disponibile) return;
+                try { sessionStorage.setItem('ygoLoginBonusRimandato', '1'); } catch (e) { /* noop */ }
+            });
+            if (window.ServerDate && typeof ServerDate.sync === 'function') ServerDate.sync().then(mostra, mostra); else mostra();
         }
 
         function passGate() {

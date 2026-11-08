@@ -543,3 +543,6 @@
 /* Altezza stabile fra le schede: la pagina non si accorcia di colpo cambiando scheda (scatti di scorrimento, barra in basso che si muove). */
 .shop-root { overflow-anchor: none; }
 .shop-root .shop-pannelli { min-height: 70dvh; }
+
+/* La Busta Base in regalo (bonus d'accesso): in evidenza sopra il pulsante a pagamento. */
+.shop-root .buy-btn.gratis { color: #231707; background: linear-gradient(180deg, #f8dc82, #e9a21d); border-color: transparent; font-weight: 700; }

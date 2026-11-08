@@ -683,12 +683,17 @@
                 item.appendChild(desc);
 
                 const riga = el('div', 'buy-row');
-                const apri = () => {
-                    // Limite giornaliero (solo la Busta Base): si ricontrolla QUI, il pulsante spento non basta contro un doppio tocco.
-                    const lim = ShopCatalog.limiteBustaOggi(busta.id);
-                    if (lim && lim.restanti < 1) { refresh(); return; }
-                    if (!pagaComposto(busta.costo)) return;
-                    ShopCatalog.registraAcquistoBusta(busta.id);
+                // `gratis`: la Busta Base in regalo del bonus d'accesso (LoginBonus.buoniBusta). Non costa Crediti e non conta nelle 10 al giorno.
+                const apri = (parti, gratis) => {
+                    if (gratis) {
+                        if (!window.LoginBonus || !LoginBonus.usaBuonoBusta()) { refresh(); return; }
+                    } else {
+                        // Limite giornaliero (solo la Busta Base): si ricontrolla QUI, il pulsante spento non basta contro un doppio tocco.
+                        const lim = ShopCatalog.limiteBustaOggi(busta.id);
+                        if (lim && lim.restanti < 1) { refresh(); return; }
+                        if (!pagaComposto(busta.costo)) return;
+                        ShopCatalog.registraAcquistoBusta(busta.id);
+                    }
                     const estratte = ShopCatalog.apriBusta(busta);
                     const nuove = estratte.filter((id) => SaveManager.getOwnedCount(id) === 0);
                     estratte.forEach((id) => SaveManager.addOwnedCards(id, 1));
@@ -723,6 +728,16 @@
                     nota.dataset.limiteBusta = busta.id;
                     item.appendChild(nota);
                     if (limiteOggi.restanti < 1) { bottone.disabled = true; bottone.textContent = 'Limite di oggi raggiunto'; }
+                }
+                // Buste Base in regalo (bonus d'accesso): un pulsante a parte, sopra quello a pagamento.
+                const regali = (busta.id === 'base' && window.LoginBonus) ? LoginBonus.buoniBusta() : 0;
+                if (regali > 0) {
+                    const gratis = el('button', 'buy-btn gratis');
+                    gratis.type = 'button';
+                    gratis.dataset.busta = 'regalo';
+                    gratis.textContent = regali > 1 ? `Apri gratis · ne hai ${regali}` : 'Apri gratis · in regalo';
+                    gratis.onclick = () => apri(null, true);
+                    riga.appendChild(gratis);
                 }
                 riga.appendChild(bottone);
                 item.appendChild(riga);

@@ -1,0 +1,46 @@
+/* login-bonus.css — il riquadro del bonus d'accesso (js/economy/login-bonus.js). Stessa lingua del resto: vetro scuro, filo d'oro, serif. */
+.lb-velo { position: fixed; inset: 0; z-index: 10400; display: grid; place-items: center; padding: 16px; background: rgba(4, 3, 8, .82); animation: lbVelo .25s ease both; }
+@keyframes lbVelo { from { opacity: 0; } to { opacity: 1; } }
+.lb-scheda { width: min(100%, 440px); max-height: calc(100dvh - 32px); overflow-y: auto; padding: 22px 18px 18px; border-radius: 22px; text-align: center; color: #f4ead2; font-family: Arial, sans-serif;
+    background: linear-gradient(150deg, rgba(40, 32, 20, .97), rgba(14, 12, 18, .98)); border: 1px solid rgba(247, 215, 116, .5); box-shadow: 0 24px 60px rgba(0, 0, 0, .65);
+    animation: lbScheda .4s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes lbScheda { from { opacity: 0; transform: translateY(18px) scale(.97); } to { opacity: 1; transform: none; } }
+.lb-sigillo { display: grid; place-items: center; width: 62px; height: 62px; margin: 0 auto 8px; border-radius: 50%; color: #f7d774;
+    background: radial-gradient(closest-side, rgba(247, 215, 116, .18), transparent 78%); border: 1px solid rgba(247, 215, 116, .5); box-shadow: 0 0 26px rgba(247, 215, 116, .22); }
+.lb-sigillo svg { width: 30px; height: 30px; }
+.lb-titolo { margin: 0; font: normal 1.4rem/1.2 Georgia, 'Times New Roman', serif; letter-spacing: .06em; color: #f7d774; }
+.lb-sotto { margin: 6px 0 14px; font-size: .84rem; line-height: 1.4; color: #c9bb96; }
+
+.lb-giorni { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+.lb-giorno { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 78px; padding: 8px 4px; border-radius: 12px;
+    background: rgba(8, 10, 16, .55); border: 1px solid rgba(247, 215, 116, .2); }
+.lb-giorno small { font: 600 .6rem/1 Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: #c9bb96; }
+.lb-giorno-voci { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.lb-giorno.is-ultimo { grid-column: span 2; }
+.lb-giorno.is-preso { opacity: .5; }
+.lb-giorno.is-oggi { border-color: #f7d774; background: rgba(247, 215, 116, .1); box-shadow: 0 0 18px rgba(247, 215, 116, .3); }
+.lb-spunta { position: absolute; top: 4px; right: 5px; width: 16px; height: 16px; color: #7ee2a0; }
+.lb-spunta svg { width: 16px; height: 16px; }
+
+.lb-voce { display: inline-flex; align-items: center; gap: 5px; font-size: .8rem; color: #f4ead2; }
+.lb-voce b { font-weight: 700; }
+.lb-voce-ico { display: inline-grid; width: 16px; height: 16px; color: #f7d774; }
+.lb-voce-ico svg { width: 16px; height: 16px; }
+.lb-voce--grande { font-size: 1.15rem; gap: 8px; padding: 6px 12px; border-radius: 999px; background: rgba(247, 215, 116, .1); border: 1px solid rgba(247, 215, 116, .4); }
+.lb-voce--grande .lb-voce-ico, .lb-voce--grande .lb-voce-ico svg { width: 22px; height: 22px; }
+
+.lb-oggi { margin-bottom: 10px; }
+.lb-oggi small { display: block; margin-bottom: 8px; font: 600 .66rem/1 Arial, sans-serif; letter-spacing: .18em; text-transform: uppercase; color: #c9bb96; }
+.lb-oggi-voci { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.lb-mensile { margin: 10px 0 14px; font-size: .78rem; line-height: 1.4; color: #c9bb96; }
+.lb-mensile[hidden] { display: none; }
+.lb-azioni { display: flex; gap: 10px; }
+.lb-btn { flex: 1; min-height: 50px; border: 0; border-radius: 14px; cursor: pointer; font: normal 1.02rem/1 Georgia, 'Times New Roman', serif; transition: transform .15s, opacity .2s; }
+.lb-btn:not(:disabled):active { transform: scale(.97); }
+.lb-btn:disabled { opacity: .5; cursor: default; }
+.lb-btn--oro { color: #231707; background: linear-gradient(180deg, #f8dc82, #e9a21d); }
+.lb-btn--tenue { flex: 0 0 34%; color: #f4ead2; background: rgba(247, 215, 116, .1); border: 1px solid rgba(247, 215, 116, .3); }
+.lb-scheda.is-riscosso .lb-giorni { opacity: .55; }
+.lb-scheda.is-riscosso .lb-oggi-voci { animation: lbPop .5s ease both; }
+@keyframes lbPop { 0% { transform: scale(.85); opacity: 0; } 60% { transform: scale(1.04); opacity: 1; } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .lb-velo, .lb-scheda, .lb-scheda.is-riscosso .lb-oggi-voci { animation: none; } }
