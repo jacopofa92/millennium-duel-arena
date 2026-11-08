@@ -504,6 +504,51 @@
         0%,100% { transform: translate(-50%, -50%) scale(.9); box-shadow: 0 0 10px rgba(251,191,36,.3); }
         50%     { transform: translate(-50%, -50%) scale(1.08); box-shadow: 0 0 20px rgba(251,191,36,.55); }
     }
+    /* --- CITTA' VIVA (1.5.132): la pedina vera cammina, strade curve con le orme, luce del distretto, Locazioni che volano --- */
+    /* Il segnalino e' la pedina del giocatore (non piu' la puntina SVG): in piedi sul punto, con l'alone ai piedi. */
+    .city-player-token .cp-pedina { width: 100%; height: auto; display: block; filter: drop-shadow(0 3px 3px rgba(0,0,0,.55)); transition: transform .18s ease; }
+    .city-player-token.verso-sinistra .cp-pedina { transform: scaleX(-1); }
+    /* Mentre cammina la posizione la scrive il JS a ogni fotogramma: nessuna transizione sopra. */
+    .city-player-token.cammina { transition: none; }
+    .city-player-token.cammina .cp-pedina { animation: cpPasso .26s ease-in-out infinite; }
+    @keyframes cpPasso { 0%,100% { translate: 0 0; } 50% { translate: 0 -5%; } }
+    .city-polvere {
+        position: absolute; z-index: 19; width: 9px; height: 9px; border-radius: 50%; pointer-events: none;
+        background: radial-gradient(circle, rgba(190,215,235,.7), rgba(190,215,235,0) 70%);
+        transform: translate(-50%, -50%); animation: cityPolvere .6s ease-out forwards;
+    }
+    @keyframes cityPolvere { to { opacity: 0; transform: translate(-50%, -110%) scale(2.4); } }
+    /* Le orme del tratto gia' percorso, nel colore ambra del segnalino. */
+    .city-routes .city-orme ellipse { fill: rgba(251,191,36,.34); }
+    /* Posa "grido" dello sfidante quando ci si va incontro: un guizzo, niente rimbalzi. */
+    .city-cell.grida .bp-piece { animation: cityGrido .5s ease-out both; }
+    @keyframes cityGrido { 0% { transform: translateY(0) scale(1); } 40% { transform: translateY(-9%) scale(1.14); } 100% { transform: translateY(-3%) scale(1.08); } }
+    /* La luce del distretto: velo fisso sopra lo sfondo (blend overlay, non copre ne' intercetta i tocchi) che vira col distretto. */
+    #cityLuce { position: fixed; inset: 0; z-index: 3; pointer-events: none; opacity: 0; mix-blend-mode: overlay; transition: opacity 1.6s ease, background 1.6s ease; }
+    body[data-ora="giorno"] #cityLuce { opacity: 0; }
+    body[data-ora="tramonto"] #cityLuce { opacity: .55; background: linear-gradient(180deg, rgba(255,150,70,.7), rgba(180,60,90,.45) 70%, rgba(40,20,70,.4)); }
+    body[data-ora="notte"] #cityLuce { opacity: .8; background: linear-gradient(180deg, rgba(20,30,90,.8), rgba(10,10,50,.75)); }
+    /* Finestre dei grattacieli che si accendono con il buio. */
+    #cityAmbiente { position: fixed; inset: 0; z-index: 3; pointer-events: none; opacity: 0; transition: opacity 1.6s ease; overflow: hidden; }
+    body[data-ora="tramonto"] #cityAmbiente { opacity: .55; }
+    body[data-ora="notte"] #cityAmbiente { opacity: 1; }
+    #cityAmbiente .city-finestra { position: absolute; width: 5px; height: 7px; border-radius: 1px; background: #ffd98a; box-shadow: 0 0 8px 2px rgba(255,200,110,.7); animation: cityFinestra 4.5s ease-in-out infinite; }
+    @keyframes cityFinestra { 0%,100% { opacity: .15; } 45%,60% { opacity: .95; } }
+    /* Le Carte Locazione che volano dalla pedina al contatore (e quella persa che si stacca e cade). */
+    .city-locazione-volo { position: fixed; left: 0; top: 0; z-index: 10090; width: 22px; height: 30px; pointer-events: none; border-radius: 4px;
+        background: linear-gradient(145deg, #fde68a, #d97706); border: 1px solid #fff3c4; box-shadow: 0 0 10px rgba(251,191,36,.9); }
+    .city-locazione-volo.persa { background: linear-gradient(145deg, #fca5a5, #b91c1c); border-color: #ffd6d6; box-shadow: 0 0 10px rgba(248,113,113,.9); }
+    .locator-bar.pop { animation: cityBarPop .45s ease-out; }
+    @keyframes cityBarPop { 30% { transform: scale(1.12); filter: brightness(1.5); } }
+    /* Lampo sulla casella rivelata dal radar. */
+    .city-radar-ping { position: absolute; inset: 8%; border-radius: 50%; z-index: 1; pointer-events: none;
+        border: 2px solid rgba(159,246,255,.9); animation: cityRadar .9s ease-out both; }
+    @keyframes cityRadar { from { transform: scale(.4); opacity: 1; } to { transform: scale(1.5); opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+        .city-polvere, .city-locazione-volo { display: none; }
+        .city-player-token.cammina .cp-pedina, .city-cell.grida .bp-piece, #cityAmbiente .city-finestra, .city-radar-ping { animation: none; display: none; }
+    }
+
     .city-cell.heliport::before {
         border: 2px solid var(--bc-magenta);
         background: radial-gradient(ellipse, rgba(232,121,249,.42), rgba(77,18,86,.18) 58%, transparent 74%);
@@ -1571,10 +1616,115 @@
     function applyPhaseBackdrop(phase) {
         const src = resolvedPhaseImage[phase];
         document.body.style.backgroundImage = src ? `url('${src}')` : '';
+        // La luce del distretto vale solo per la mappa della citta'.
+        if (phase !== 'city') delete document.body.dataset.ora;
     }
 
+    // ---------------- Citta' viva: luce, Locazioni che volano, posa grido (solo presentazione) ----------------
+    const PEDINA_GIOCATORE = 'images/characters/pedine/mirror.png';
+
+    /** La luce secondo i progressi: giorno all'inizio, tramonto a meta' strada, notte vicino al decollo. */
+    function oraDelDistretto(state) {
+        const l = state.locators || 0;
+        if (l >= FINALS_THRESHOLD - 2) return 'notte';
+        if (l >= 2) return 'tramonto';
+        return 'giorno';
+    }
+    /** Velo di luce e finestre dei grattacieli: creati UNA volta sul <body>, li mostra o nasconde il CSS su body[data-ora]. */
+    function aggiornaLuceCitta(state) {
+        if (!document.getElementById('cityLuce')) {
+            const luce = document.createElement('div');
+            luce.id = 'cityLuce';
+            luce.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(luce);
+            const amb = document.createElement('div');
+            amb.id = 'cityAmbiente';
+            amb.setAttribute('aria-hidden', 'true');
+            for (let i = 0; i < 26; i++) {
+                const f = document.createElement('span');
+                f.className = 'city-finestra';
+                f.style.left = (4 + Math.random() * 92).toFixed(1) + '%';
+                f.style.top = (6 + Math.random() * 70).toFixed(1) + '%';
+                f.style.animationDuration = (3.5 + Math.random() * 4).toFixed(1) + 's';
+                f.style.animationDelay = (-Math.random() * 6).toFixed(1) + 's';
+                amb.appendChild(f);
+            }
+            document.body.appendChild(amb);
+        }
+        document.body.dataset.ora = oraDelDistretto(state);
+    }
+
+    /**
+     * Le Carte Locazione guadagnate volano dalla pedina al contatore; quella persa si stacca dal contatore e cade. Un livello
+     * a parte sul <body> (sopravvive al ridisegno). La posizione si legge dopo un attimo: la pedina e' quella del nuovo render.
+     */
+    function volaLocazioni(delta) {
+        if (!delta || riduciMovimento()) return;
+        setTimeout(() => {
+            const barra = document.getElementById('locatorBar');
+            if (!barra || barra.offsetParent === null) return;
+            const rb = barra.getBoundingClientRect();
+            const pedina = document.querySelector('.city-player-token .cp-pedina');
+            const rp = pedina ? pedina.getBoundingClientRect() : { left: innerWidth / 2 - 20, top: innerHeight / 2, width: 40, height: 40 };
+            const dalla = { x: rp.left + rp.width / 2, y: rp.top + rp.height * 0.3 };
+            const alla = { x: rb.left + rb.width * 0.4, y: rb.top + rb.height / 2 };
+            const persa = delta < 0;
+            const n = Math.min(Math.abs(delta), 6);
+            for (let i = 0; i < n; i++) {
+                const c = document.createElement('span');
+                c.className = 'city-locazione-volo' + (persa ? ' persa' : '');
+                document.body.appendChild(c);
+                const da = persa ? alla : dalla;
+                const a = persa ? { x: alla.x + (Math.random() - 0.5) * 50, y: alla.y + 150 + Math.random() * 50 } : alla;
+                const metaX = (da.x + a.x) / 2 + (Math.random() - 0.5) * 80, metaY = Math.min(da.y, a.y) - 40 - Math.random() * 40;
+                const anim = c.animate([
+                    { transform: `translate(${da.x - 11}px, ${da.y - 15}px) scale(.5) rotate(-12deg)`, opacity: 0 },
+                    { transform: `translate(${metaX - 11}px, ${metaY - 15}px) scale(1.1) rotate(8deg)`, opacity: 1, offset: 0.45 },
+                    { transform: `translate(${a.x - 11}px, ${a.y - 15}px) scale(${persa ? 0.6 : 0.8}) rotate(0deg)`, opacity: persa ? 0 : 1 }
+                ], { duration: 760 + i * 70, delay: i * 90, easing: 'cubic-bezier(.3,.7,.35,1)', fill: 'both' });
+                anim.onfinish = () => {
+                    c.remove();
+                    if (!persa && i === n - 1) { barra.classList.remove('pop'); void barra.offsetWidth; barra.classList.add('pop'); }
+                };
+            }
+        }, 420);
+    }
+
+    /** Il nome del file di una pedina (e delle sue pose) dal percorso dell'avatar: joeyWheeler.jpg -> joeyWheeler. */
+    function nomePedina(character) {
+        return character && character.image ? character.image.split('/').pop().replace(/\.[^.]+$/, '') : null;
+    }
+    /** Percorso della miniatura della posa "grido" di un personaggio (non quella di danno subito). */
+    function percorsoPosaGrido(character) {
+        const nome = nomePedina(character);
+        return nome ? `images/characters/pedine-esclamazione/thumbs/${nome}.webp` : null;
+    }
+    /**
+     * Andando verso uno sfidante la sua pedina sulla mappa fa la posa grido (se esiste: si prova a caricarla, altrimenti resta
+     * la pedina normale). Funziona sul ritaglio dentro l'SVG della casella, che il render non ricostruisce finche' il contenuto non cambia.
+     */
+    function posaGridoSullaCasella(cellEl, character) {
+        const posa = percorsoPosaGrido(character);
+        const img = cellEl && cellEl.querySelector('image');
+        if (!posa || !img) return;
+        const prova = new Image();
+        prova.onload = () => {
+            img.setAttribute('href', posa);
+            img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', posa);
+            cellEl.classList.add('grida');
+        };
+        prova.src = posa;
+    }
+
+    let locazioniPrima = null;
     function renderHud(state) {
         const started = !!state && !state.eliminated;
+        if (started && typeof state.locators === 'number') {
+            if (locazioniPrima !== null && state.locators !== locazioniPrima) volaLocazioni(state.locators - locazioniPrima);
+            locazioniPrima = state.locators;
+        } else if (!started) {
+            locazioniPrima = null;
+        }
         locatorBar.style.display = started ? 'flex' : 'none';
         // Torneo finito (Campione o Eliminato): il menu (bottino, sospendi, abbandona) non serve piu'.
         menuFab.style.display = (state && !state.eliminated && state.phase !== 'champion') ? 'block' : 'none';
@@ -1698,6 +1848,83 @@
      * e dalla geometria reale delle caselle, quindi la si può richiamare
      * anche al ridimensionamento senza ridisegnare la città.
      */
+    const riduciMovimento = () => !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+    /**
+     * Il punto di controllo della curva fra due punti. DETERMINISTICO (un seme dai numeri stessi): lo stesso tratto ridisegnato
+     * a ogni mossa e' sempre la stessa curva, e la pedina cammina proprio su quella. Piu' dolce che nel Regno (8%-18% della
+     * lunghezza): qui i tratti sono corti, fra isolati vicini.
+     */
+    function curvaTra(a, b) {
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const h = Math.sin(a.x * 12.9898 + a.y * 78.233 + b.x * 37.719 + b.y * 4.581) * 43758.5453;
+        const r = h - Math.floor(h);
+        const lato = (r < 0.5 ? -1 : 1) * (0.08 + 0.1 * ((r * 7) % 1));
+        return { x: (a.x + b.x) / 2 - dy * lato, y: (a.y + b.y) / 2 + dx * lato };
+    }
+    function puntoCurva(a, b, t) {
+        const c = curvaTra(a, b), u = 1 - t;
+        return { x: u * u * a.x + 2 * u * t * c.x + t * t * b.x, y: u * u * a.y + 2 * u * t * c.y + t * t * b.y };
+    }
+    /** Orme a coppie lungo la curva a→b (SVG come testo), girate nel verso del cammino. */
+    function ormeLungoCurva(a, b, passo) {
+        const N = 24, punti = [];
+        for (let i = 0; i <= N; i++) punti.push(puntoCurva(a, b, i / N));
+        let out = '', prossimo = passo * 0.6, fatto = 0, lato = 1;
+        for (let i = 1; i <= N; i++) {
+            const p = punti[i], q = punti[i - 1];
+            const seg = Math.hypot(p.x - q.x, p.y - q.y) || 1;
+            while (prossimo <= fatto + seg) {
+                const k = (prossimo - fatto) / seg;
+                const x = q.x + (p.x - q.x) * k, y = q.y + (p.y - q.y) * k;
+                const ang = Math.atan2(p.y - q.y, p.x - q.x);
+                const cx = x - Math.sin(ang) * 3.4 * lato, cy = y + Math.cos(ang) * 3.4 * lato;
+                out += `<ellipse cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" rx="1.9" ry="3" transform="rotate(${(ang * 180 / Math.PI + 90).toFixed(1)} ${cx.toFixed(1)} ${cy.toFixed(1)})"/>`;
+                lato = -lato;
+                prossimo += passo;
+            }
+            fatto += seg;
+        }
+        return out;
+    }
+
+    /**
+     * La pedina CAMMINA da `da` a `a` lungo la curva (un fotogramma alla volta), con un po' di polvere ai piedi e il verso
+     * (sinistra/destra) che segue la direzione. Solo grafica: se la griglia sparisce o parte un'altra camminata si ferma da sola.
+     * All'arrivo la posizione e' esattamente quella finale. Con "riduci movimento" si sposta e basta.
+     */
+    function camminaPedina(gridEl, token, da, a) {
+        const id = (token._camminata = (token._camminata || 0) + 1);
+        const dist = Math.hypot(a.x - da.x, a.y - da.y);
+        const metti = (p) => { token.style.left = `${p.x}px`; token.style.top = `${p.y}px`; };
+        if (riduciMovimento() || dist < 2) { token.classList.remove('cammina'); metti(a); return; }
+        const durata = Math.max(380, Math.min(540, dist * 3.2));
+        token.classList.add('cammina');
+        token.classList.toggle('verso-sinistra', a.x < da.x - 1);
+        let inizio = null, ultimaPolvere = 0;
+        const facile = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+        const passo = (ora) => {
+            if (token._camminata !== id) return;
+            if (!gridEl.isConnected) return;
+            if (inizio === null) inizio = ora;
+            const t = Math.min(1, (ora - inizio) / durata);
+            const p = puntoCurva(da, a, facile(t));
+            metti(p);
+            if (ora - ultimaPolvere > 90 && t < 1) {
+                ultimaPolvere = ora;
+                const pv = document.createElement('i');
+                pv.className = 'city-polvere';
+                pv.style.left = `${p.x + (Math.random() - 0.5) * 12}px`;
+                pv.style.top = `${p.y}px`;
+                gridEl.appendChild(pv);
+                pv.addEventListener('animationend', () => pv.remove());
+            }
+            if (t < 1) requestAnimationFrame(passo);
+            else { metti(a); token.classList.remove('cammina'); }
+        };
+        requestAnimationFrame(passo);
+    }
+
     function layoutCityOverlay(gridEl) {
         if (!gridEl || !gridEl.isConnected) return;
         const token = gridEl.querySelector('.city-player-token');
@@ -1710,50 +1937,70 @@
         const centro = (r) => ({ x: r.left - gridRect.left + r.width / 2, y: r.top - gridRect.top + r.height / 2 });
         const p = centro(cellRect);
 
-        // Il segnalino è un solo nodo persistente: cambia coordinate con una
-        // transizione, mentre le 25 celle non vengono distrutte e ricreate.
-        if (!token.dataset.positioned) token.style.transition = 'none';
+        // Il segnalino è un solo nodo persistente (le 25 celle non vengono
+        // distrutte e ricreate). La PRIMA volta si posa senza animazione; se
+        // cambia la casella del giocatore la pedina CAMMINA lungo la curva
+        // dalla casella di prima; al solo ridimensionamento si riposa e basta.
         token.style.width = `${Math.round(cellRect.width * 0.44)}px`;
-        token.style.left = `${p.x}px`;
-        token.style.top = `${p.y}px`;
+        const cellaPrima = token.dataset.cella;
         if (!token.dataset.positioned) {
             token.dataset.positioned = '1';
-            requestAnimationFrame(() => { token.style.transition = ''; });
+            token.style.left = `${p.x}px`;
+            token.style.top = `${p.y}px`;
+        } else if (cellaPrima !== undefined && cellaPrima !== gridEl.dataset.player) {
+            const prima = gridEl.querySelector(`.city-cell[data-index="${cellaPrima}"]`);
+            camminaPedina(gridEl, token, prima ? centro(prima.getBoundingClientRect()) : p, p);
+        } else if (!token.classList.contains('cammina')) {
+            token.style.left = `${p.x}px`;
+            token.style.top = `${p.y}px`;
         }
+        token.dataset.cella = gridEl.dataset.player;
 
         routes.setAttribute('viewBox', `0 0 ${gridRect.width} ${gridRect.height}`);
         const raggio = cellRect.width;
-        const tratti = (gridEl.dataset.reachable || '').split(',').filter(Boolean).map((i) => {
-            const cell = gridEl.querySelector(`.city-cell[data-index="${i}"]`);
-            if (!cell) return '';
-            const t = centro(cell.getBoundingClientRect());
-            const dx = t.x - p.x;
-            const dy = t.y - p.y;
+        // Dai due centri ai due capi di un tratto: appena fuori dalla pedina di partenza, prima di quella d'arrivo (la linea
+        // collega, non copre); verso l'alto si parte piu' lontano perche' la pedina si alza SOPRA il centro della casella e ci
+        // si ferma prima, sotto la targhetta d'arrivo (sta sul bordo basso del suo alone).
+        const capi = (da, verso) => {
+            const dx = verso.x - da.x, dy = verso.y - da.y;
             const lung = Math.hypot(dx, dy) || 1;
-            const ux = dx / lung;
-            const uy = dy / lung;
-            // Si parte appena fuori dalla puntina e ci si ferma prima della
-            // pedina d'arrivo: la linea collega, non copre. Verso l'alto si
-            // parte più lontano, perché la puntina si alza SOPRA il centro
-            // della casella (la sua punta, non il baricentro, sta sul punto).
-            // E verso l'alto ci si ferma prima, sotto la targhetta della
-            // casella d'arrivo (sta sul bordo basso del suo alone).
+            const ux = dx / lung, uy = dy / lung;
             const suSu = uy < -0.5;
             const partenza = suSu ? 0.32 : 0.26;
             const arrivo = suSu ? 0.46 : 0.32;
-            const a = { x: p.x + ux * raggio * partenza, y: p.y + uy * raggio * partenza };
-            const b = { x: t.x - ux * raggio * arrivo, y: t.y - uy * raggio * arrivo };
-            const m = { x: a.x + (b.x - a.x) * 0.55, y: a.y + (b.y - a.y) * 0.55 };
-            const angolo = Math.atan2(dy, dx) * 180 / Math.PI;
+            return {
+                a: { x: da.x + ux * raggio * partenza, y: da.y + uy * raggio * partenza },
+                b: { x: verso.x - ux * raggio * arrivo, y: verso.y - uy * raggio * arrivo }
+            };
+        };
+        const tratti = (gridEl.dataset.reachable || '').split(',').filter(Boolean).map((i) => {
+            const cell = gridEl.querySelector(`.city-cell[data-index="${i}"]`);
+            if (!cell) return '';
+            const { a, b } = capi(p, centro(cell.getBoundingClientRect()));
+            // Strada CURVA (stessa curva della camminata) con la freccia sul punto a meta', girata lungo la tangente.
+            const c = curvaTra(a, b);
+            const m = puntoCurva(a, b, 0.55);
+            const tg = 0.55, tx = 2 * (1 - tg) * (c.x - a.x) + 2 * tg * (b.x - c.x), ty = 2 * (1 - tg) * (c.y - a.y) + 2 * tg * (b.y - c.y);
+            const angolo = Math.atan2(ty, tx) * 180 / Math.PI;
             const s = Math.max(5, raggio * 0.07);
-            const d = `M${a.x.toFixed(1)} ${a.y.toFixed(1)} L${b.x.toFixed(1)} ${b.y.toFixed(1)}`;
+            const d = `M${a.x.toFixed(1)} ${a.y.toFixed(1)} Q${c.x.toFixed(1)} ${c.y.toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`;
             return `<g class="route">
                 <path class="route-glow" d="${d}"/>
                 <path class="route-line" d="${d}"/>
                 <path class="route-arrow" d="M${-s} ${-s} L${s * 0.6} 0 L${-s} ${s}" transform="translate(${m.x.toFixed(1)} ${m.y.toFixed(1)}) rotate(${angolo.toFixed(1)})"/>
             </g>`;
         });
-        routes.innerHTML = tratti.join('');
+        // Le ORME del cammino fatto in questo distretto (ultime 8 tappe): sotto le strade, sbiadite.
+        const percorso = (gridEl.dataset.percorso || '').split(',').filter(Boolean);
+        let orme = '';
+        for (let k = Math.max(1, percorso.length - 8); k < percorso.length; k++) {
+            const ca = gridEl.querySelector(`.city-cell[data-index="${percorso[k - 1]}"]`);
+            const cb = gridEl.querySelector(`.city-cell[data-index="${percorso[k]}"]`);
+            if (!ca || !cb || percorso[k - 1] === percorso[k]) continue;
+            const { a, b } = capi(centro(ca.getBoundingClientRect()), centro(cb.getBoundingClientRect()));
+            orme += ormeLungoCurva(a, b, Math.max(10, raggio * 0.2));
+        }
+        routes.innerHTML = (orme ? `<g class="city-orme">${orme}</g>` : '') + tratti.join('');
     }
 
     // Al ridimensionamento (rotazione del telefono, finestra) le caselle si
@@ -1895,7 +2142,8 @@
             const token = document.createElement('div');
             token.className = 'city-player-token';
             token.setAttribute('aria-hidden', 'true');
-            token.innerHTML = `${BoardPieces.markup('player')}<small>Sei qui</small>`;
+            // La pedina VERA del giocatore (la stessa dei tornei e della Storia), non piu' la puntina SVG generica.
+            token.innerHTML = `<img class="cp-pedina" alt="" src="${PEDINA_GIOCATORE}"><small>Sei qui</small>`;
             gridEl.appendChild(token);
         }
 
@@ -1959,6 +2207,13 @@
                 el.innerHTML = `${piece ? BoardPieces.markup(piece, null, faccia ? { image: faccia } : null) : ''}<div class="cell-label">${label}</div>`;
                 el.dataset.content = signature;
             }
+            // Il radar l'ha appena rivelata: un anello di luce che si allarga. Dopo il contenuto, che altrimenti lo cancellerebbe.
+            if (veduta && cell.justRevealed) {
+                const ping = document.createElement('i');
+                ping.className = 'city-radar-ping';
+                ping.addEventListener('animationend', () => ping.remove());
+                el.appendChild(ping);
+            }
             if (isPlayer) el.classList.add('player');
 
             // Una cella è cliccabile solo se adiacente al segnalino. Le
@@ -1983,6 +2238,8 @@
         // calcolo senza un render completo (vedi in fondo al file).
         gridEl.dataset.player = String(grid.playerIndex);
         gridEl.dataset.reachable = Array.from(reachable).join(',');
+        gridEl.dataset.percorso = (grid.percorso || []).join(',');
+        aggiornaLuceCitta(state);
         requestAnimationFrame(() => layoutCityOverlay(gridEl));
         // Consumata: l'animazione di comparsa del radar deve giocare una
         // volta sola, non ad ogni render successivo dello stesso settore.
@@ -2023,6 +2280,10 @@
         const cell = grid.cells[index];
 
         ensureExtras(state);
+        // Il cammino fatto nel distretto (per le orme): additivo, nasce vuoto in un distretto nuovo.
+        if (!Array.isArray(grid.percorso)) grid.percorso = [grid.playerIndex];
+        grid.percorso.push(index);
+        if (grid.percorso.length > 12) grid.percorso.shift();
         grid.playerIndex = index;
         revealAround(state, index);
         if (window.NativeHaptics) NativeHaptics.light();
@@ -2162,8 +2423,16 @@
                     wager: null
                 };
                 saveState(state);
-                render();
-                promptWager(state);
+                // Si resta sulla mappa (non sulla schermata "duello in sospeso", che serve solo a chi ricarica): la pedina cammina
+                // fino allo sfidante, che grida (posa grido), e solo dopo si apre la puntata. Con "riduci movimento" subito.
+                renderCity(state);
+                const sfidante = cell.kind === 'duelist' ? getCharacter(cell.characterId) : null;
+                if (sfidante) posaGridoSullaCasella(document.querySelector(`.city-cell[data-index="${index}"]`), sfidante);
+                const apri = () => {
+                    const s = loadState();
+                    if (s && s.pendingEncounter && s.phase === 'city' && !document.getElementById('wagerModal').classList.contains('open')) promptWager(s);
+                };
+                if (riduciMovimento()) apri(); else setTimeout(apri, 700);
                 return;
             }
             default: {
@@ -2394,8 +2663,14 @@
             const img = document.createElement('img');
             img.alt = '';
             img.onload = () => portrait.classList.add('has-image');
-            img.onerror = () => img.remove();
-            img.src = getCharacterPawnImage(character.image);
+            // Lo sfidante grida: posa "grido" (miniatura), e se per lui non esiste ripiega sulla pedina normale.
+            const posa = percorsoPosaGrido(character);
+            const normale = getCharacterPawnImage(character.image);
+            img.onerror = () => {
+                if (posa && img.src.indexOf('pedine-esclamazione') !== -1) { img.src = normale; return; }
+                img.remove();
+            };
+            img.src = posa || normale;
             portrait.appendChild(img);
         }
         document.getElementById('wagerName').textContent = character ? character.name : 'Duellante';
