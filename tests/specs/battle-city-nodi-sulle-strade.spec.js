@@ -50,7 +50,16 @@ module.exports = {
                 t.assert(a.minDist >= 0.045, `${id}: nodi ben distanziati (minimo ${(a.minDist * 100).toFixed(1)}% della larghezza)`);
                 t.assert(a.dentro && a.viaOk, `${id}: nodi dentro l'immagine e archi validi`);
             }
-            t.assert(analisi.varchiOk, 'I varchi si corrispondono fra i quartieri (andata e ritorno)');
+            // Disegno VERTICALE (telefono): stessi 20 nodi, grafo connesso, nodi dentro la fascia centrale che si vede senza scorrere.
+            const verticale = await page.evaluate(() => CITY_DISTRICTS.map((d) => {
+                const L = layoutAttivoPer(d.id);
+                const adj = L.nodes.map(() => []); L.edges.forEach(([a, b]) => { adj[a].push(b); adj[b].push(a); });
+                const visti = new Set([0]); const coda = [0];
+                while (coda.length) { const x = coda.pop(); adj[x].forEach((y) => { if (!visti.has(y)) { visti.add(y); coda.push(y); } }); }
+                const xs = L.nodes.map((p) => p[0]);
+                return { id: d.id, n: L.nodes.length, connesso: visti.size === L.nodes.length, minX: Math.min.apply(null, xs), maxX: Math.max.apply(null, xs) };
+            }));
+            verticale.forEach((v) => t.assert(v.n === 20 && v.connesso && v.minX >= 580 && v.maxX <= 1110, `${v.id} (verticale): 20 nodi connessi nella fascia centrale ${v.minX}-${v.maxX}`));            t.assert(analisi.varchiOk, 'I varchi si corrispondono fra i quartieri (andata e ritorno)');
 
             // Migrazione: una mappa salvata con 25 caselle e una Locazione gia' raccolta si rigenera a 20 senza rimettere la Locazione.
             const migrato = await page.evaluate(() => {

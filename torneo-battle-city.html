@@ -879,9 +879,6 @@
     }
     /* Telefono in verticale: la camera segue il giocatore e si puo' trascinare il fondale; durante il trascinamento niente transizioni. */
     @media (orientation: portrait) {
-        body.city-map-active { touch-action: none; transition: background-position .46s cubic-bezier(.22,.8,.22,1); }
-        body.camera-trascina, body.camera-trascina .city-cell, body.camera-trascina .city-player-token { transition: none !important; }
-        body.camera-scorre .city-cell, body.camera-scorre .city-player-token { transition: none !important; }
         /* Intestazione compatta: una riga, senza il suggerimento, cosi' non copre i nodi in alto. */
         .sector-hint { display: none; }
         .sector-head { top: 58px; padding: 5px 10px; }
@@ -1175,40 +1172,64 @@
             nodes: [[836,650],[836,385],[836,470],[836,570],[836,730],[836,870],[350,570],[480,570],[610,570],[720,570],[950,570],[1060,570],[1190,570],[1325,570],[430,450],[1250,450],[520,880],[690,880],[990,880],[1160,880]],
             edges: [[1,2],[2,3],[3,0],[0,4],[4,5],[6,7],[7,8],[8,9],[9,3],[3,10],[10,11],[11,12],[12,13],[14,7],[15,12],[14,8],[15,11],[16,17],[17,5],[5,18],[18,19],[2,9],[2,10],[0,9],[0,10]]
         }
-    };    const cityLinks = Object.fromEntries(Object.entries(CITY_LAYOUTS).map(([id, layout]) => {
+    };    /*
+     * VERTICALE (telefono): il fondale copre lo schermo e NON scorre, quindi si vede solo la fascia centrale dell'illustrazione
+     * (le illustrazioni v2 sono pensate cosi'). Ogni quartiere ha un secondo disegno `portrait` ({ nodes, edges }) con gli stessi 20
+     * nodi e gli stessi indici dei varchi (DISTRICT_GATES), ma disposti sulle strade di quella fascia (x circa 600-1100). Il Porto
+     * ha gia' tutti i nodi sul viale centrale e usa lo stesso disegno. Ruotando lo schermo la pagina si ridisegna col disegno giusto.
+     */
+    CITY_LAYOUTS.centro.portrait = {
+        nodes: [[836,270],[700,270],[972,270],[622,390],[1050,390],[622,650],[1050,650],[700,655],[972,655],[622,480],[1050,480],[622,570],[1050,570],[610,740],[836,660],[770,800],[900,800],[836,740],[1065,740],[836,870]],
+        edges: [[0,1],[0,2],[1,3],[2,4],[3,9],[9,11],[11,5],[4,10],[10,12],[12,6],[5,7],[6,8],[7,14],[14,8],[14,17],[17,15],[17,16],[15,19],[16,19],[5,13],[6,18]]
+    };
+    CITY_LAYOUTS.parco.portrait = {
+        nodes: [[650,108],[735,108],[820,108],[885,108],[950,110],[1040,110],[950,200],[975,285],[1035,365],[985,465],[1030,550],[1000,630],[945,695],[655,832],[735,834],[880,755],[815,805],[900,828],[985,822],[1065,815]],
+        edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[4,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[12,15],[15,16],[16,14],[14,13],[16,17],[15,17],[17,18],[18,19]]
+    };
+    CITY_LAYOUTS.kaibacorp.portrait = {
+        nodes: [[836,385],[770,450],[900,450],[740,570],[836,570],[930,570],[650,570],[765,670],[836,670],[910,670],[765,745],[836,745],[910,745],[1020,570],[765,820],[836,820],[910,820],[700,880],[836,880],[970,880]],
+        edges: [[0,1],[0,2],[1,3],[2,5],[1,4],[2,4],[6,3],[3,4],[4,5],[5,13],[3,7],[4,8],[5,9],[7,8],[8,9],[7,10],[8,11],[9,12],[10,11],[11,12],[10,14],[11,15],[12,16],[14,15],[15,16],[14,17],[15,18],[16,19],[17,18],[18,19]]
+    };
+    /** Il disegno (nodi e strade) in uso: quello verticale se lo schermo e' in piedi e il quartiere ne ha uno, altrimenti quello orizzontale. */
+    function layoutAttivo(id) {
+        const l = CITY_LAYOUTS[id];
+        return (window.innerWidth < window.innerHeight && l.portrait) ? l.portrait : l;
+    }
+    /** Come layoutAttivo ma per un orientamento dato (serve ai test): il disegno verticale di un quartiere o, se manca, quello orizzontale. */
+    function layoutAttivoPer(id) { return CITY_LAYOUTS[id].portrait || CITY_LAYOUTS[id]; }
+    const linksDi = (layout) => {
         const links = Array.from({ length: layout.nodes.length }, () => []);
-        layout.edges.forEach(([a, b]) => {
-            if (a === b) return;
-            links[a].push(b);
-            links[b].push(a);
-        });
-        return [id, links];
-    }));
-    function alignamentoFondale(district) {
+        layout.edges.forEach(([a, b]) => { if (a === b) return; links[a].push(b); links[b].push(a); });
+        return links;
+    };
+    const cityLinksOrizzontali = {}, cityLinksVerticali = {};
+    Object.keys(CITY_LAYOUTS).forEach((id) => {
+        cityLinksOrizzontali[id] = linksDi(CITY_LAYOUTS[id]);
+        cityLinksVerticali[id] = CITY_LAYOUTS[id].portrait ? linksDi(CITY_LAYOUTS[id].portrait) : cityLinksOrizzontali[id];
+    });
+    /** Le strade di ogni quartiere: `cityLinks[id]` risponde col disegno dell'orientamento attuale. */
+    const cityLinks = {};
+    Object.keys(CITY_LAYOUTS).forEach((id) => {
+        Object.defineProperty(cityLinks, id, { enumerable: true, get: () => (window.innerWidth < window.innerHeight ? cityLinksVerticali[id] : cityLinksOrizzontali[id]) });
+    });    function alignamentoFondale(district) {
         // Tutti i fondali responsive hanno il corridoio di gioco in asse: il
         // ritaglio verticale resta centrato sulla stessa immagine panoramica.
         return .5;
     }
     /**
-     * Come il fondale viene posato sullo schermo. In ORIZZONTALE e' la solita copertura (`cover`). In VERTICALE (telefono) il fondale
-     * copre TUTTO lo schermo (un po' piu' grande della copertura, 1,1x) e la camera segue il giocatore: `cameraPivot` e' il punto
-     * dell'illustrazione (pixel) da tenere al centro, `cameraPan` lo spostamento dato col dito (si azzera a ogni mossa). La camera non
-     * esce mai dall'immagine, tranne 12px in alto (sotto l'intestazione): li' si vede la stessa immagine scurita (vedi applyPhaseBackdrop).
+     * Come il fondale viene posato sullo schermo. ORIZZONTALE: copertura (cover). VERTICALE: nessuno scorrimento, l'immagine sta tutta in
+     * altezza e si vede la fascia centrale (nodi col disegno portrait, vedi layoutAttivo).
      */
-    let cameraPivot = null;
-    const cameraPan = { x: 0, y: 0 };
     function proiezioneFondale(district) {
         const [iw, ih] = district.imageSize;
         const vw = window.innerWidth, vh = window.innerHeight;
         const cover = Math.max(vw / iw, vh / ih);
         if (vw < vh) {
-            // Niente scorrimento verticale: l'immagine sta tutta in altezza, appoggiata in basso, e lascia 70px in alto (dietro
-            // l'intestazione) dove si vede la stessa immagine scurita. Solo orizzontale: la camera segue il giocatore / il dito.
+            // Nessuno scorrimento: l'immagine sta tutta in altezza, centrata in larghezza e appoggiata in basso, con 70px in alto
+            // (dietro l'intestazione) dove si vede la stessa immagine scurita. Si vede la fascia centrale: per questo i nodi hanno il
+            // disegno `portrait` (vedi layoutAttivo).
             const s = Math.max((vh - 70) / ih, vw / iw), width = iw * s, height = ih * s;
-            const piv = cameraPivot || [iw / 2, ih / 2];
-            let x0 = vw / 2 - piv[0] * s + cameraPan.x;
-            x0 = Math.min(0, Math.max(vw - width, x0));
-            return { scale: s, width: width, height: height, x0: x0, y0: vh - height, zoomOut: false, verticale: true };
+            return { scale: s, width: width, height: height, x0: (vw - width) / 2, y0: vh - height, zoomOut: false, verticale: true };
         }        const width = iw * cover, height = ih * cover;
         return { scale: cover, width: width, height: height, x0: (vw - width) * alignamentoFondale(district), y0: (vh - height) * .5, zoomOut: false, verticale: false };
     }    /** Converte un punto in PIXEL dell'illustrazione sorgente nella posizione sullo schermo, con la stessa proiezione del fondale. */
@@ -1218,8 +1239,7 @@
     }
     function posizionaCaselleCitta(gridEl, district) {
         if (!gridEl) return;
-        const layout = CITY_LAYOUTS[district.id];
-        const activeNodes = layout.nodes;
+        const activeNodes = layoutAttivo(district.id).nodes;
         gridEl.querySelectorAll('.city-cell').forEach((el) => {
             const p = puntoMappaSchermo(district, activeNodes[Number(el.dataset.index)]);
             el.style.left = `${p.x}px`;
@@ -1228,7 +1248,7 @@
     }
     /** I punti intermedi (in coordinate dello schermo) del collegamento da `a` a `b`, nel verso a→b; vuoto se il tratto e' diretto. */
     function viaDelTratto(district, a, b) {
-        const layout = CITY_LAYOUTS[district.id];
+        const layout = layoutAttivo(district.id);
         if (!layout) return [];
         const e = layout.edges.find((x) => (x[0] === a && x[1] === b) || (x[0] === b && x[1] === a));
         if (!e || !e[2]) return [];
@@ -2329,7 +2349,7 @@
         const perc = percorsoSmusso([da].concat(via || [], [a]));
         const dist = perc.lunghezza;
         const metti = (p) => { token.style.left = `${p.x}px`; token.style.top = `${p.y}px`; };
-        if (riduciMovimento() || dist < 2) { token.classList.remove('cammina'); metti(a); applicaCameraPendente(); return; }
+        if (riduciMovimento() || dist < 2) { token.classList.remove('cammina'); metti(a); return; }
         const durata = Math.max(380, Math.min(900, dist * 3.2));
         token.classList.add('cammina');
         let inizio = null, ultimaPolvere = 0;
@@ -2353,7 +2373,7 @@
                 pv.addEventListener('animationend', () => pv.remove());
             }
             if (t < 1) requestAnimationFrame(passo);
-            else { metti(a); token.classList.remove('cammina'); applicaCameraPendente(); }
+            else { metti(a); token.classList.remove('cammina'); }
         };
         requestAnimationFrame(passo);
     }
@@ -2442,6 +2462,7 @@
     // Al ridimensionamento (rotazione del telefono, finestra) le caselle si
     // spostano: si riposano puntina e percorsi senza ridisegnare la città.
     let cityLayoutTimer = null;
+    let orientamentoCitta = window.innerWidth < window.innerHeight;
     window.addEventListener('resize', () => {
         clearTimeout(cityLayoutTimer);
         cityLayoutTimer = setTimeout(() => {
@@ -2449,7 +2470,6 @@
             if (state && state.phase === 'city') {
                 const district = CITY_DISTRICTS[Math.max(0, Math.min(CITY_DISTRICTS.length - 1, state.sector - 1))];
                 if (window.innerWidth < window.innerHeight && window.AmbienteWebGL && document.body.dataset.ambienteCity) { AmbienteWebGL.ferma(); delete document.body.dataset.ambienteCity; }
-                cittaCorrente = { state: state, district: district };
                 applyPhaseBackdrop('city', state);
                 posizionaCaselleCitta(document.getElementById('cityGrid'), district);
                 aggiornaLuceCitta(state);
@@ -2458,59 +2478,7 @@
         }, 120);
     });
 
-    /**
-     * Telefono in verticale: si trascina il fondale col dito per guardare il resto del quartiere (la camera poi torna sul giocatore a ogni
-     * mossa). Ignora i tocchi su caselle, pulsanti, pannelli e finestre: restano tutti cliccabili come prima.
-     */
-    (function () {
-        let inizio = null, raf = 0;
-        // Durante il trascinamento si muove SOLO il contenitore (transform, sul compositor) e la posizione del fondale: caselle, strade e
-        // pedina non vengono ridisegnate a ogni passo (era quello a farle sfarfallare). Al rilascio si riposano una volta sola.
-        const sposta = () => {
-            raf = 0;
-            if (!cittaCorrente || !inizio) return;
-            const pr = proiezioneFondale(cittaCorrente.district);
-            const grid = document.getElementById('cityGrid');
-            const spost = `translate(${(pr.x0 - inizio.x0).toFixed(1)}px, ${(pr.y0 - inizio.y0).toFixed(1)}px)`;
-            if (grid) grid.style.transform = spost;
-            // Le finestre luminose dei palazzi sono ancorate al fondale: seguono il dito con lo stesso spostamento.
-            const amb = document.getElementById('cityAmbiente');
-            if (amb) amb.style.transform = spost;
-            const pos = document.body.style.backgroundPosition.split(',');
-            pos[0] = `${pr.x0.toFixed(1)}px ${pr.y0.toFixed(1)}px`;
-            document.body.style.backgroundPosition = pos.join(',');
-        };
-        const riposa = () => {
-            if (!cittaCorrente) return;
-            const grid = document.getElementById('cityGrid');
-            riposaCamera();
-        };
-        document.addEventListener('pointerdown', (e) => {
-            if (window.innerWidth >= window.innerHeight || !document.body.classList.contains('city-map-active') || !cittaCorrente) return;
-            if (e.target.closest && e.target.closest('button, a, input, .city-cell, .hud-top, .sector-head, .item-row, .sector-actions, .modal-backdrop, .panel, .result-toast, .locator-bar')) return;
-            const pr = proiezioneFondale(cittaCorrente.district);
-            inizio = { x: e.clientX, y: e.clientY, px: cameraPan.x, py: cameraPan.y, mosso: false, x0: pr.x0, y0: pr.y0 };
-        });
-        document.addEventListener('pointermove', (e) => {
-            if (!inizio) return;
-            const dx = e.clientX - inizio.x, dy = e.clientY - inizio.y;
-            if (!inizio.mosso && Math.hypot(dx, dy) < 6) return;
-            inizio.mosso = true;
-            document.body.classList.add('camera-trascina');
-            cameraPan.x = inizio.px + dx; // solo in orizzontale: niente scorrimento verticale
-            if (!raf) raf = requestAnimationFrame(sposta);
-        });
-        const fine = () => {
-            const mosso = inizio && inizio.mosso;
-            inizio = null;
-            if (!mosso) return;
-            if (raf) { cancelAnimationFrame(raf); raf = 0; }
-            riposa();
-            // Le transizioni tornano solo dopo che le caselle sono gia' al loro posto: altrimenti scivolerebbero dal vecchio.
-            requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.remove('camera-trascina')));
-        };
-        document.addEventListener('pointerup', fine);
-        document.addEventListener('pointercancel', fine);    })();
+
     /**
      * Riga sotto l'intestazione del distretto: Radar potenziato (si tocca
      * per usarlo), Scudo del Duel Disk (solo indicatore: scatta da solo),
@@ -2583,63 +2551,11 @@
 
     /** Camera del telefono in verticale: tiene al centro il nodo del giocatore e azzera lo spostamento dato col dito. */
     let cittaCorrente = null;
-    let cameraDistretto = null, cameraPendente = null;
     function impostaCamera(state) {
         const distretto = CITY_DISTRICTS[Math.max(0, Math.min(CITY_DISTRICTS.length - 1, state.sector - 1))];
-        const nodo = state.grid && CITY_LAYOUTS[distretto.id].nodes[state.grid.playerIndex];
         cittaCorrente = { state: state, district: distretto };
-        cameraPan.x = 0; cameraPan.y = 0;
-        // Se la pedina sta per camminare la camera ASPETTA la fine della camminata e poi scivola (vedi applicaCameraPendente):
-        // spostare camera e pedina insieme faceva sfarfallare le caselle.
-        if (window.innerWidth < window.innerHeight && cameraPivot && cameraDistretto === distretto.id && nodo && nodo !== cameraPivot && !riduciMovimento()) {
-            cameraPendente = { nodo: nodo, distretto: distretto };
-        } else {
-            cameraPivot = nodo || null;
-            cameraPendente = null;
-        }
-        cameraDistretto = distretto.id;
-    }
-    /** Riposa fondale, caselle, strade e luci sul punto di camera attuale (una volta sola, senza transizioni). */
-    function riposaCamera() {
-        if (!cittaCorrente) return;
-        const grid = document.getElementById('cityGrid');
-        if (grid) { grid.style.transition = ''; grid.style.transform = ''; }
-        const amb = document.getElementById('cityAmbiente');
-        if (amb) { amb.style.transition = ''; amb.style.transform = ''; }
-        applyPhaseBackdrop('city', cittaCorrente.state);
-        posizionaCaselleCitta(grid, cittaCorrente.district);
-        layoutCityOverlay(grid);
-        aggiornaLuceCitta(cittaCorrente.state);
-    }
-    /** Finita la camminata la camera scivola sul nuovo nodo: si muove solo il contenitore (transform) e il fondale, poi si riposa tutto. */
-    function applicaCameraPendente() {
-        const c = cameraPendente;
-        if (!c) return;
-        cameraPendente = null;
-        const grid = document.getElementById('cityGrid');
-        if (!grid || !cittaCorrente) { cameraPivot = c.nodo; return; }
-        const p0 = proiezioneFondale(c.distretto);
-        cameraPivot = c.nodo;
-        const p1 = proiezioneFondale(c.distretto);
-        const dx = p1.x0 - p0.x0;
-        if (Math.abs(dx) < 1) return;
-        const amb = document.getElementById('cityAmbiente');
-        const T = 'transform .5s cubic-bezier(.22,.8,.22,1)';
-        document.body.classList.add('camera-scorre');
-        grid.style.transition = T;
-        if (amb) amb.style.transition = 'opacity 1.6s ease, ' + T;
-        const mossa = `translate(${dx.toFixed(1)}px, 0)`;
-        requestAnimationFrame(() => {
-            grid.style.transform = mossa;
-            if (amb) amb.style.transform = mossa;
-            const pos = document.body.style.backgroundPosition.split(',');
-            pos[0] = `${p1.x0.toFixed(1)}px ${p1.y0.toFixed(1)}px`;
-            document.body.style.backgroundPosition = pos.join(',');
-        });
-        setTimeout(() => {
-            riposaCamera();
-            requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.remove('camera-scorre')));
-        }, 540);
+        // Le strade del quartiere seguono l'orientamento attuale (vedi layoutAttivo).
+        if (state.grid) state.grid.links = cityLinks[distretto.id];
     }    function renderCity(state) {
         document.body.classList.add('city-map-active');
         impostaCamera(state);
@@ -2819,8 +2735,6 @@
         aggiornaLuceCitta(state);
         requestAnimationFrame(() => {
             layoutCityOverlay(gridEl);
-            // Nessuna camminata partita (primo render, riposo): la camera in attesa va applicata subito.
-            setTimeout(() => { const tk = gridEl.querySelector('.city-player-token'); if (cameraPendente && !(tk && tk.classList.contains('cammina'))) applicaCameraPendente(); }, 40);
         });
         // Consumata: l'animazione di comparsa del radar deve giocare una
         // volta sola, non ad ogni render successivo dello stesso settore.
