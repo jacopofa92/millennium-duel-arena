@@ -1856,11 +1856,10 @@
      * lunghezza): qui i tratti sono corti, fra isolati vicini.
      */
     function curvaTra(a, b) {
-        const dx = b.x - a.x, dy = b.y - a.y;
-        const h = Math.sin(a.x * 12.9898 + a.y * 78.233 + b.x * 37.719 + b.y * 4.581) * 43758.5453;
-        const r = h - Math.floor(h);
-        const lato = (r < 0.5 ? -1 : 1) * (0.08 + 0.1 * ((r * 7) % 1));
-        return { x: (a.x + b.x) / 2 - dy * lato, y: (a.y + b.y) / 2 + dx * lato };
+        // Punto di controllo A META' del tratto: la "curva" degenera in una RETTA. Le strade ondulate (1.5.132) non
+        // piacevano all'autore: la forma Q resta (strade, orme e camminata usano tutte questa funzione), per tornare
+        // a una curva basta spostare questo punto di lato.
+        return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
     }
     function puntoCurva(a, b, t) {
         const c = curvaTra(a, b), u = 1 - t;

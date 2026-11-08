@@ -5180,6 +5180,8 @@ Matrice completa di bilanciamento (2026-10-25, senza modifiche al gioco): `tools
 
 1.5.133 (cache v646, su `main`): versione di raccolta richiesta dall'utente: commit di TUTTO il working tree, comprese modifiche non mie fatte in parallelo (immagini della mappa del Regno `regno_dei_duellanti_bosco_torneo`/`castello_pegasus_torneo` e la nuova `_v2`, ritocchi a `js/data/tournament-dialogues.js` e `js/ui/ambiente-webgl.js`, `.codex-attachments/`, grafo `graphify-out/`). Non verificate da me una per una; nessuna suite eseguita. Suite completa non eseguita.
 
+1.5.134 (cache v647, su `main`): **Battle City: strade e camminata di nuovo DRITTE** (l'autore: gli spostamenti ondulati non piacciono). `curvaTra` in torneo-battle-city.html restituisce ora il punto medio, quindi la Bezier degenera in una retta; la forma Q resta (strade, orme e camminata della pedina la usano tutte) e per riavere una curva basta spostare quel punto. Il Regno dei Duellanti tiene le sue curve (non segnalate). Spec battle-city 5/5. Suite completa non eseguita.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
