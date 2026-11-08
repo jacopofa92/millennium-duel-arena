@@ -7,7 +7,7 @@ const RADICE = path.join(__dirname, '..', '..');
 const url = (f) => 'file:///' + path.join(RADICE, f).replace(/\\/g, '/');
 
 module.exports = {
-    name: 'Negozio: Busta Base solo Crediti, 10 al giorno; le altre buste senza limite',
+    name: 'Negozio: Buste Base, Avanzata e Leggendaria: 5 al giorno ciascuna (la Base solo Crediti)',
     standalone: true,
     async run({ browser, assert }) {
         const ctx = await browser.newContext({ viewport: { width: 1000, height: 900 }, serviceWorkers: 'block' });
@@ -26,9 +26,9 @@ module.exports = {
                 SaveManager.touch(save);
                 const base = ShopCatalog.BUSTE.find((b) => b.id === 'base');
                 const out = { costo: base.costo, limite: ShopCatalog.LIMITE_BUSTE_GIORNO };
-                for (let i = 0; i < 10; i++) ShopCatalog.registraAcquistoBusta('base');
+                for (let i = 0; i < 5; i++) ShopCatalog.registraAcquistoBusta('base');
                 out.dopo10 = ShopCatalog.limiteBustaOggi('base');
-                // Le altre buste non hanno limite.
+                // Le altre due buste hanno il loro conto, separato: la Base finita non le tocca.
                 out.avanzata = ShopCatalog.limiteBustaOggi('avanzata');
                 out.leggendaria = ShopCatalog.limiteBustaOggi('leggendaria');
                 // Cambiato il giorno, il conto riparte.
@@ -39,10 +39,10 @@ module.exports = {
                 return out;
             });
             assert(r.costo.credits === 500 && !('starChips' in r.costo), `la Busta Base costa solo Crediti: ${JSON.stringify(r.costo)}`);
-            assert(r.limite.base === 10 && Object.keys(r.limite).length === 1, `solo la Busta Base ha un limite: ${JSON.stringify(r.limite)}`);
-            assert(r.dopo10.restanti === 0 && r.dopo10.fatte === 10, `dopo 10 acquisti il limite e' raggiunto: ${JSON.stringify(r.dopo10)}`);
-            assert(r.avanzata === null && r.leggendaria === null, 'Avanzata e Leggendaria non hanno limite');
-            assert(r.domani.restanti === 10, `il giorno dopo il conto riparte: ${JSON.stringify(r.domani)}`);
+            assert(r.limite.base === 5 && r.limite.avanzata === 5 && r.limite.leggendaria === 5 && Object.keys(r.limite).length === 3, `le tre buste hanno limite 5: ${JSON.stringify(r.limite)}`);
+            assert(r.dopo10.restanti === 0 && r.dopo10.fatte === 5, `dopo 5 acquisti il limite e' raggiunto: ${JSON.stringify(r.dopo10)}`);
+            assert(r.avanzata.restanti === 5 && r.leggendaria.restanti === 5, 'Avanzata e Leggendaria hanno il loro conto, intatto');
+            assert(r.domani.restanti === 5, `il giorno dopo il conto riparte: ${JSON.stringify(r.domani)}`);
 
             // L'interfaccia: la Base e' spenta con il motivo, le altre no (le Stelle non ci sono, quindi ci si ferma al saldo).
             await page.reload();
@@ -54,7 +54,7 @@ module.exports = {
                 const b = item.querySelector('.buy-btn');
                 return { disabilitato: b.disabled, testo: b.textContent, nota: (item.querySelector('[data-limite-busta]') || {}).textContent || '' };
             });
-            assert(ui && ui.disabilitato && /Limite di oggi/.test(ui.testo) && /10/.test(ui.nota), `la Busta Base e' spenta a limite raggiunto: ${JSON.stringify(ui)}`);
+            assert(ui && ui.disabilitato && /Limite di oggi/.test(ui.testo) && /5/.test(ui.nota), `la Busta Base e' spenta a limite raggiunto: ${JSON.stringify(ui)}`);
 
             // Un solo acquisto vero dal pulsante, il giorno dopo: il conto segna 1 / 10 e i Crediti scendono di 500, senza toccare le Stelle.
             const fine = await page.evaluate(async () => {

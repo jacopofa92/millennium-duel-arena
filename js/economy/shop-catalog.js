@@ -680,11 +680,11 @@
     // ================================================================
     // LIMITE GIORNALIERO DELLE BUSTE
     // ================================================================
-    // La Busta Base (la piu' economica: solo Crediti) si compra al massimo 10 volte al giorno; le altre buste non hanno limite
-    // (scelta dell'utente). Il giorno e' quello del SERVER (ServerDate.dayKey, UTC), come la rotazione delle carte: cambiare l'ora
+    // Busta Base, Avanzata e Leggendaria: al massimo 5 al giorno CIASCUNA (scelta dell'utente; prima solo la Base, 10). Le buste tematiche e premium
+    // non hanno limite. Il giorno e' quello del SERVER (ServerDate.dayKey, UTC), come la rotazione delle carte: cambiare l'ora
     // del telefono non azzera il conto. Il conteggio vive in un contenitore a parte, con la chiave del giorno dentro: cambiata la
     // chiave si butta, e il salvataggio non cresce di un blocco per ogni giorno passato.
-    const LIMITE_BUSTE_GIORNO = { base: 10 };
+    const LIMITE_BUSTE_GIORNO = { base: 5, avanzata: 5, leggendaria: 5 };
     const CHIAVE_BUSTE_GIORNO = 'negozioBusteGiorno';
 
     function chiaveGiorno() {
