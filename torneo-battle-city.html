@@ -1064,6 +1064,19 @@
     // successiva va guadagnata. La regola "a zero sei fuori" resta: con
     // una sola in tasca, il primo duello perso puntandola è già decisivo.
     const STARTING_LOCATORS = 1;
+    /**
+     * Freni al guadagno di Locazioni dai duelli. Senza, con la posta libera (1 -> 2 -> 4 -> 8) bastavano 3 vittorie all-in
+     * e girare la citta' non serviva a niente. Ora: posta massima per duello e un tetto di Locazioni vinte in duello PER
+     * QUARTIERE (le sei servono, quindi vanno prese in almeno tre quartieri).
+     */
+    const WAGER_MAX = 2;
+    const LOC_DUELLI_PER_QUARTIERE = 2;
+    /** Quante Locazioni restano da vincere in duello nel quartiere attuale. */
+    function locazioniRimasteQuartiere(state) {
+        const id = state.grid && state.grid.districtId;
+        const vinte = (state.locatoriVinte && state.locatoriVinte[id]) || 0;
+        return Math.max(0, LOC_DUELLI_PER_QUARTIERE - vinte);
+    }
     /** I nodi esplorativi di tutta la città (non le carte vinte come posta) non superano questo totale. */
     const MAX_CITY_LOCATOR_NODES = 2;
     /** Le 6 Carta Locazione che nell'anime aprono l'accesso alle finali sul dirigibile. */
@@ -2631,7 +2644,7 @@
         const tuttiEsplorati = CITY_DISTRICTS.every((d) => state.visitedDistricts.includes(d.id));
         document.getElementById('sectorHint').textContent = state.locators >= FINALS_THRESHOLD && tuttiEsplorati
             ? 'Zona di decollo aperta: raggiungi l\'elicottero in questo quartiere'
-            : `Raggiungi i passaggi luminosi per spostarti tra i quartieri · ${Math.max(0, FINALS_THRESHOLD - state.locators)} Carte Locazione mancanti`;
+            : `Raggiungi i passaggi luminosi per spostarti tra i quartieri · ${Math.max(0, FINALS_THRESHOLD - state.locators)} Carte Locazione mancanti · duelli di questo quartiere ${LOC_DUELLI_PER_QUARTIERE - locazioniRimasteQuartiere(state)}/${LOC_DUELLI_PER_QUARTIERE}`;
         renderItemRow(state);
 
         grid.cells.forEach((cell, index) => {
@@ -3212,10 +3225,18 @@
 
         const forcedEl = document.getElementById('wagerForced');
         const boxEl = document.getElementById('wagerBox');
-        const max = state.locators;
+        const resto = locazioniRimasteQuartiere(state);
+        // La posta non supera il tetto per duello, ne' quello che si puo' ancora vincere in questo quartiere (rischio = guadagno).
+        const max = Math.min(WAGER_MAX, state.locators, resto);
         let value = 1;
 
-        if (enc.stage === 'hunter') {
+        if (enc.stage !== 'hunter' && resto <= 0) {
+            // Quartiere "esaurito": il duello si puo' giocare ma e' senza posta (non si vince ne' si perde nulla).
+            value = 0;
+            forcedEl.style.display = 'block';
+            forcedEl.innerHTML = `Le ${LOC_DUELLI_PER_QUARTIERE} Carte Locazione di questo quartiere sono già state vinte: questo duello è <strong>senza posta</strong>. Cerca le altre nei quartieri vicini.`;
+            boxEl.style.display = 'none';
+        } else if (enc.stage === 'hunter') {
             // I Rare Hunter non lasciano scegliere: è l'unico caso in cui
             // la puntata libera viene sospesa, e serve a rendere davvero
             // pericoloso entrare nella loro cella quando si è a corto di
@@ -3232,7 +3253,7 @@
             const slider = document.getElementById('wagerSlider');
             const minusBtn = document.getElementById('wagerMinus');
             const plusBtn = document.getElementById('wagerPlus');
-            ownedEl.textContent = `su ${max}`;
+            ownedEl.textContent = `(max ${max} · quartiere ${LOC_DUELLI_PER_QUARTIERE - resto}/${LOC_DUELLI_PER_QUARTIERE})`;
             slider.min = 1;
             slider.max = Math.max(1, max);
             const sync = (v) => {
@@ -3396,8 +3417,15 @@
         }
         ensureExtras(state);
         if (won) {
-            state.locators += enc.wager;
-            logEvent(state, '⚔️', `Vittoria su ${name} (+${enc.wager}).`);
+            // Il guadagno e' limitato dal tetto del quartiere (vedi LOC_DUELLI_PER_QUARTIERE).
+            const guadagno = Math.min(enc.wager, locazioniRimasteQuartiere(state));
+            state.locators += guadagno;
+            if (guadagno > 0) {
+                const idQ = state.grid && state.grid.districtId;
+                state.locatoriVinte = state.locatoriVinte || {};
+                state.locatoriVinte[idQ] = (state.locatoriVinte[idQ] || 0) + guadagno;
+            }
+            logEvent(state, '⚔️', `Vittoria su ${name} (+${guadagno}).`);
             // Missione secondaria: vale solo battendo il bersaglio indicato,
             // nella sua casella, in questo distretto.
             let bonusMissione = '';
@@ -3410,7 +3438,7 @@
             }
             if (window.NativeHaptics) NativeHaptics.success();
             saveState(state);
-            showToast(`⚔️ Hai sconfitto ${name}! <strong>+${enc.wager} Carta Locazione</strong>.${bonusMissione}`, reaction);
+            showToast(`⚔️ Hai sconfitto ${name}! ${guadagno > 0 ? `<strong>+${guadagno} Carta Locazione</strong>.` : '<strong>Nessuna Locazione: il quartiere ha già dato le sue.</strong>'}${bonusMissione}`, reaction);
         } else {
             // Lo Scudo del Duel Disk dimezza (per difetto) la posta persa:
             // con una sola Carta Locazione in gioco non si perde niente.

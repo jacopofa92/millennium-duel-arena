@@ -56,6 +56,14 @@
         el.style.cssText = 'position:fixed;top:4px;left:50%;transform:translateX(-50%);z-index:5000;pointer-events:none;'
             + 'padding:3px 12px;border-radius:999px;font:700 11px/1.4 system-ui,sans-serif;letter-spacing:.04em;white-space:nowrap;'
             + 'background:rgba(8,12,22,.78);border:1px solid rgba(247,215,116,.45)';
+        // Su telefono in verticale il centro in alto e' dove sta la fotocamera frontale: il riquadro scende a DESTRA,
+        // sotto il pulsante Abbandona (Tempo/Difficolta'/Abbandona occupano i primi ~55px).
+        if (!document.getElementById('cacciaRiquadroStile')) {
+            const st = document.createElement('style');
+            st.id = 'cacciaRiquadroStile';
+            st.textContent = '@media (orientation: portrait) and (pointer: coarse) { #cacciaRiquadro { top: 62px !important; left: auto !important; right: 10px !important; transform: none !important; } }';
+            document.head.appendChild(st);
+        }
         document.body.appendChild(el);
         return el;
     }
