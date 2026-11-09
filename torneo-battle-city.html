@@ -1797,7 +1797,7 @@
     }
     /** Il radar è "cieco" mentre dura il Blackout: le celle non ancora attraversate mostrano solo l'Ignoto. */
     function cellVisible(state, cell) {
-        return !!cell.revealed && (!(state.blackout > 0) || !!cell.resolved || cell.kind === 'districtGate');
+        return !!cell.revealed && (!(state.blackout > 0) || !!cell.resolved || cell.kind === 'districtGate' || cell.kind === 'heliport');
     }
 
     /** Vero quando nel settore non resta più nulla da fare: tutte le celle con un contenuto sono state risolte. */
@@ -1813,8 +1813,16 @@
      */
     function ensureHeliport(state) {
         const esplorati = Array.isArray(state.visitedDistricts) ? state.visitedDistricts : [];
-        if (!state.grid || state.sector !== CITY_DISTRICTS.length || CITY_DISTRICTS.some((d) => !esplorati.includes(d.id)) || state.locators < FINALS_THRESHOLD) return false;
+        // L'elicottero compare nel quartiere DOVE SI TROVA il giocatore (non solo in KaibaCorp: prima nasceva solo li' e chi
+        // aveva tutte le Locazioni altrove non lo vedeva mai). Ce n'e' uno solo in tutta la citta': se era rimasto in un
+        // altro quartiere si toglie di la' e si ripiazza qui, cosi' e' sempre a portata di vista.
+        if (!state.grid || CITY_DISTRICTS.some((d) => !esplorati.includes(d.id)) || state.locators < FINALS_THRESHOLD) return false;
         if (state.grid.cells.some((c) => c.kind === 'heliport')) return false;
+        Object.keys(state.districtMaps || {}).forEach((id) => {
+            const altra = state.districtMaps[id];
+            if (!altra || altra === state.grid || !Array.isArray(altra.cells)) return;
+            altra.cells.forEach((c) => { if (c.kind === 'heliport') { c.kind = 'empty'; c.resolved = true; } });
+        });
         const candidates = state.grid.cells
             .map((c, i) => ({ c: c, i: i }))
             .filter((e) => e.i !== state.grid.playerIndex && (e.c.kind === 'empty' || e.c.resolved));
@@ -2412,7 +2420,11 @@
             return { x: da.x + ux * raggio * f, y: da.y + uy * raggio * f };
         };
         /** Percorso fra due caselle collegate, accorciato ai capi. */
-        const percorsoTra = (ia, ib, ca, cb) => {
+        const percorsoTra = (ia, ib, ca0, cb0) => {
+            // Le pedine stanno un po' SOPRA il centro della casella (l'etichetta e l'ombra sono sotto): le strade puntano al
+            // corpo della pedina, non al punto fra pedina ed etichetta (prima sembravano sfasate verso il basso).
+            const su = raggio * 0.16;
+            const ca = { x: ca0.x, y: ca0.y - su }, cb = { x: cb0.x, y: cb0.y - su };
             const via = viaLocale(ia, ib);
             const dopoA = via.length ? via[0] : cb, primaB = via.length ? via[via.length - 1] : ca;
             return percorsoSmusso([capo(ca, dopoA, true)].concat(via, [capo(cb, primaB, false)]));
@@ -2618,7 +2630,7 @@
         if (orologio) orologio.textContent = oraDelDistretto(state) === 'giorno' ? 'Giorno' : oraDelDistretto(state) === 'tramonto' ? 'Tramonto' : 'Notte';
         const tuttiEsplorati = CITY_DISTRICTS.every((d) => state.visitedDistricts.includes(d.id));
         document.getElementById('sectorHint').textContent = state.locators >= FINALS_THRESHOLD && tuttiEsplorati
-            ? 'Zona di decollo aperta: raggiungi il dirigibile nel distretto KaibaCorp'
+            ? 'Zona di decollo aperta: raggiungi l\'elicottero in questo quartiere'
             : `Raggiungi i passaggi luminosi per spostarti tra i quartieri · ${Math.max(0, FINALS_THRESHOLD - state.locators)} Carte Locazione mancanti`;
         renderItemRow(state);
 
@@ -2922,7 +2934,7 @@
             case 'heliport': {
                 // Vecchi salvataggi potevano aprire il decollo appena raccolte
                 // sei Locazioni. Le quattro tappe urbane ora restano obbligatorie.
-                if (state.sector < CITY_DISTRICTS.length) {
+                if (CITY_DISTRICTS.some((d) => !(state.visitedDistricts || []).includes(d.id))) {
                     cell.kind = 'empty'; cell.resolved = true;
                     saveState(state); render();
                     showToast('🚁 Per raggiungere il dirigibile devi aver visitato tutti e quattro i quartieri.');
