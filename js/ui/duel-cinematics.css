@@ -889,7 +889,12 @@
     /* Il ritratto qui è un di più: a sinistra lo spazio verticale serve
        al titolo e al record, e chi hai appena battuto è già scritto nel
        sottotitolo. */
-    .do-portrait { display: none; }
+    /* La pedina di chi ha vinto resta a vista anche qui (prima era nascosta per far posto al testo): sta a sinistra del
+       titolo e occupa tutta l'altezza dell'intestazione; titolo, sottotitolo e record vanno nella colonna accanto. */
+    .do-header { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 12px; align-items: center; justify-items: center; }
+    .do-header > .do-portrait { grid-column: 1; grid-row: 1 / span 3; }
+    .do-header > :not(.do-portrait) { grid-column: 2; }
+    .do-figura img { height: clamp(84px, 30vh, 130px); max-width: 30vw; }
     .do-title { font-size: clamp(1.4rem, 9vh, 2.2rem); }
 }
 
