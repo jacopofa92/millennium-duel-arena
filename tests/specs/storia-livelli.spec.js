@@ -28,7 +28,7 @@ module.exports = {
         const livelliSulloSchermo = () => page.evaluate(() => ({
             visibile: !document.getElementById('livelliMount').hidden,
             pulsanti: [...document.querySelectorAll('#livelliMount .livello')].map((b) => ({
-                testo: b.textContent, attivo: b.classList.contains('livello--attivo'), spento: b.disabled
+                testo: b.textContent + (b.querySelector('.emoji-tema--lock') ? ' 🔒' : '') + (b.querySelector('.emoji-tema--check') ? ' ✓' : ''), attivo: b.classList.contains('livello--attivo'), spento: b.disabled
             }))
         }));
         const difficoltaDuello = () => page.evaluate(() => {

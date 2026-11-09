@@ -263,17 +263,20 @@
         const fondo = montaFondoFisso();
         const musicaPrima = window.DuelMusic && DuelMusic.getTrack ? DuelMusic.getTrack() : null;
         if (window.DuelMusic && DuelMusic.setTrack) { try { DuelMusic.setTrack(MUSICA); } catch (e) { /* la musica non deve fermare il primo avvio */ } }
-        const ripristina = () => {
-            fondo.remove();
+        const ripristinaMusica = () => {
             if (window.DuelMusic && DuelMusic.setTrack && musicaPrima) { try { DuelMusic.setTrack(musicaPrima); } catch (e) { /* noop */ } }
         };
         return avviaScene().then((esito) => {
             // Il primo avvio e' finito in QUESTA sessione: la lezione col nonno che segue non deve far ripartire la bottega
             // (vedi obbligaLezioneSeDaFare in index.html: se l'app si riapre senza questo segno, si ricomincia da capo).
             try { sessionStorage.setItem('ygoIntroInCorso', '1'); } catch (e) { /* noop */ }
-            ripristina();
+            ripristinaMusica();
+            // Lo sfondo NON si toglie subito: subito dopo parte la lezione col nonno (si cambia pagina) e, fra l'ultima scena e il
+            // caricamento del duello, sotto riaffiorava il login/il menu. Resta finche' la pagina non viene sostituita; se per
+            // un motivo qualunque la lezione non parte, si toglie da solo dopo 12 secondi cosi' non blocca il menu.
+            setTimeout(() => fondo.remove(), 12000);
             return esito;
-        }, (errore) => { ripristina(); throw errore; });
+        }, (errore) => { fondo.remove(); ripristinaMusica(); throw errore; });
     }
 
     function avviaScene() {

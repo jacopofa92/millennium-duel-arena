@@ -17,12 +17,12 @@
  * non serve un gradiente ripetuto in ogni singolo SVG — un solo punto
  * dove cambiare il colore-tema, se mai servisse.
  *
- * SOLO le icone "identitarie" (destinazioni di menu, titoli di sezione,
- * topbar) sono state ridisegnate qui: le emoji "funzionali" universali
- * già presenti nel resto del gioco (✅ conferma, ✖ annulla, ⚠️ avviso,
- * → frecce, 🗑️ elimina nei bottoni d'azione...) restano emoji di
- * sistema di proposito — sono glifi di INTERFACCIA che l'utente deve
- * riconoscere all'istante, non elementi "a tema" da ridisegnare.
+ * All'inizio c'erano solo le icone "identitarie" (menu, titoli, topbar) e le
+ * emoji funzionali (✅ conferma, ✖ annulla, ⚠️ avviso, 🗑️ elimina...) restavano
+ * di sistema. Dal 1.6.25 anche quei segni di interfaccia hanno la loro icona a tema
+ * (warning, info, lock, hourglass, heart, fist/hand/scissors, key, flag, plug, cart,
+ * list, tag, users, clock, minus, undo, ban) e js/ui/emoji-tema.js converte le emoji
+ * di sistema che compaiono nelle schermate: una emoji nuova si mappa li', non qui.
  */
 (function () {
     'use strict';
@@ -375,6 +375,91 @@
             <circle cx="12" cy="12" r="3.2" fill="currentColor"/>
             <path d="M12 2.5 V7 M12 17 V21.5 M2.5 12 H7 M17 12 H21.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             <path d="M12 2.5 L10.2 4.5 M12 2.5 L13.8 4.5 M21.5 12 L19.5 10.2 M21.5 12 L19.5 13.8 M12 21.5 L10.2 19.5 M12 21.5 L13.8 19.5 M2.5 12 L4.5 10.2 M2.5 12 L4.5 13.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        `,
+        // ---- Segni di INTERFACCIA a tema (avvisi, stati, comandi): prima restavano emoji di sistema (vedi EmojiTema). ----
+        warning: `
+            <path d="M12 3.2 L22 20.5 H2 Z" fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+            <path d="M12 9.6 V14.6" stroke="#0b0d1c" stroke-width="2.1" stroke-linecap="round"/>
+            <circle cx="12" cy="17.4" r="1.2" fill="#0b0d1c"/>
+        `,
+        info: `
+            <circle cx="12" cy="12" r="9.5" fill="currentColor"/>
+            <path d="M12 11 V17" stroke="#0b0d1c" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="12" cy="7.6" r="1.3" fill="#0b0d1c"/>
+        `,
+        lock: `
+            <rect x="5" y="10.5" width="14" height="10" rx="2" fill="currentColor"/>
+            <path d="M8 10.5 V8 a4 4 0 0 1 8 0 V10.5" fill="none" stroke="currentColor" stroke-width="2.2"/>
+            <circle cx="12" cy="15.2" r="1.5" fill="#0b0d1c"/>
+        `,
+        hourglass: `
+            <path d="M6 3 H18 M6 21 H18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M7.2 3.8 c0 4 3 5.5 4.8 8.2 -1.8 2.7 -4.8 4.2 -4.8 8.2 h9.6 c0 -4 -3 -5.5 -4.8 -8.2 1.8 -2.7 4.8 -4.2 4.8 -8.2 z" fill="currentColor"/>
+        `,
+        heart: `
+            <path d="M12 21 s-8.5 -5.2 -8.5 -11.2 A4.7 4.7 0 0 1 12 7.3 a4.7 4.7 0 0 1 8.5 2.5 C20.5 15.8 12 21 12 21 z" fill="currentColor"/>
+        `,
+        // Morra (sasso, carta, forbice): niente mani emoji.
+        fist: `
+            <path d="M4.6 15.6 L6.8 8.2 L12 4.6 L17.8 7.8 L19.6 14.8 L14.6 19.6 L8 19.2 Z" fill="currentColor"/>
+            <path d="M6.8 8.2 L10.6 11.2 L17.8 7.8 M10.6 11.2 L8 19.2 M10.6 11.2 L14.6 19.6" stroke="#0b0d1c" stroke-width="1.2" fill="none" opacity="0.55" stroke-linejoin="round"/>
+        `,
+        hand: `
+            <path d="M6 3.5 H14.5 L19 8 V20.5 H6 Z" fill="currentColor"/>
+            <path d="M14.5 3.5 V8 H19 Z" fill="#0b0d1c" opacity="0.5"/>
+            <path d="M8.8 12 H16.2 M8.8 15 H16.2 M8.8 18 H13.5" stroke="#0b0d1c" stroke-width="1.3" stroke-linecap="round" opacity="0.55"/>
+        `,
+        scissors: `
+            <circle cx="7" cy="17.6" r="2.9" fill="none" stroke="currentColor" stroke-width="2.2"/>
+            <circle cx="17" cy="17.6" r="2.9" fill="none" stroke="currentColor" stroke-width="2.2"/>
+            <path d="M8.7 15.3 L17.6 3.6 M15.3 15.3 L6.4 3.6" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
+        `,
+        key: `
+            <circle cx="8" cy="12" r="4.4" fill="none" stroke="currentColor" stroke-width="2.4"/>
+            <path d="M12.4 12 H21 M17.6 12 V15.4 M20.2 12 V14.6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        `,
+        flag: `
+            <path d="M6 21 V3.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M7 4.5 H18 L15.4 8.3 L18 12.1 H7 Z" fill="currentColor"/>
+        `,
+        plug: `
+            <path d="M9 3 V8 M15 3 V8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M6.5 8 H17.5 V11.5 a5.5 5.5 0 0 1 -11 0 Z" fill="currentColor"/>
+            <path d="M12 17 V21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        `,
+        cart: `
+            <path d="M3 4 H5.8 L8 15 H18.5 L20.5 7.5 H6.6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="9.3" cy="19" r="1.8" fill="currentColor"/><circle cx="17" cy="19" r="1.8" fill="currentColor"/>
+        `,
+        list: `
+            <rect x="5" y="4.5" width="14" height="16.5" rx="2" fill="currentColor"/>
+            <rect x="9" y="2.8" width="6" height="3.4" rx="1" fill="currentColor" stroke="#0b0d1c" stroke-width="0.9"/>
+            <path d="M8.5 11 H15.5 M8.5 14.2 H15.5 M8.5 17.4 H13" stroke="#0b0d1c" stroke-width="1.4" stroke-linecap="round" opacity="0.6"/>
+        `,
+        tag: `
+            <path d="M3.5 12.3 V4.5 H11.3 L20.3 13.5 a1.6 1.6 0 0 1 0 2.3 L14.8 21.3 a1.6 1.6 0 0 1 -2.3 0 Z" fill="currentColor"/>
+            <circle cx="8" cy="9" r="1.6" fill="#0b0d1c"/>
+        `,
+        users: `
+            <circle cx="9" cy="8" r="3.2" fill="currentColor"/>
+            <path d="M2.8 19.5 c0 -3.4 2.7 -5.5 6.2 -5.5 s6.2 2.1 6.2 5.5 Z" fill="currentColor"/>
+            <circle cx="17" cy="9" r="2.6" fill="currentColor" opacity="0.65"/>
+            <path d="M16.4 14.2 c3 0 5 1.8 5 4.8 h-4.2" fill="currentColor" opacity="0.65"/>
+        `,
+        clock: `
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/>
+            <path d="M12 6.5 V12 L15.6 14.2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        `,
+        minus: `
+            <path d="M5 12 H19" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        `,
+        undo: `
+            <path d="M8.5 6.5 L4 11 L8.5 15.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4.5 11 H15 a5 5 0 0 1 0 10 H11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+        `,
+        ban: `
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.4"/>
+            <path d="M5.8 18.2 L18.2 5.8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
         `
     };
 

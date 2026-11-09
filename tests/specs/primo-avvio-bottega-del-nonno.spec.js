@@ -61,6 +61,19 @@ module.exports = {
             await ctx.close();
         }
 
+        // 3) Il duello della lezione col nonno suona la musica dei duelli del primo arco dell'anime ("Preliminary Face-Off").
+        {
+            const ctx = await t.browser.newContext({ viewport: { width: 1100, height: 700 }, serviceWorkers: 'block' });
+            const page = await ctx.newPage();
+            page.on('pageerror', (e) => errori.push(e.message));
+            await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
+            await page.goto('file:///' + RADICE.replace(/\\/g, '/') + '/duelMonstersCore.html?mode=tutorial&character=solomonMuto&difficulty=Facile&field=citta.jpg');
+            await page.waitForFunction(() => window.DuelMusic && DuelMusic.getTrack, null, { timeout: 20000 });
+            const traccia = await page.evaluate(() => DuelMusic.getTrack());
+            t.assert(/Preliminary Face-Off/.test(traccia), `Nel duello tutorial suona la musica dei duelli del primo arco (${traccia})`);
+            await ctx.close();
+        }
+
         t.assert(errori.length === 0, 'Errori JS: ' + errori.join(' | '));
     }
 };

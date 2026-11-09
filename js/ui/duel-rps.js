@@ -31,10 +31,13 @@
     // `beats`: cosa batte questa scelta. Tre voci, nessun tabellone di
     // confronto da mantenere: chi vince si deduce da qui.
     const CHOICES = [
-        { id: 'sasso', label: 'Sasso', icon: '✊', beats: 'forbice' },
-        { id: 'carta', label: 'Carta', icon: '✋', beats: 'sasso' },
-        { id: 'forbice', label: 'Forbice', icon: '✌️', beats: 'carta' }
+        { id: 'sasso', label: 'Sasso', icon: '✊', ico: 'fist', beats: 'forbice' },
+        { id: 'carta', label: 'Carta', icon: '✋', ico: 'hand', beats: 'sasso' },
+        { id: 'forbice', label: 'Forbice', icon: '✌️', ico: 'scissors', beats: 'carta' }
     ];
+    /** L'icona a tema (js/ui/icon-library.js: sasso, carta, forbice) come markup; senza la libreria, l'emoji di prima. */
+    const icoHtml = (nome, emoji) => { const s = window.Icons && Icons.buildIcon ? Icons.buildIcon(nome) : null; return s ? s.outerHTML : emoji; };
+    const scegliIcona = (el, nome, emoji) => { el.innerHTML = icoHtml(nome, emoji); };
     // Le tre battute scandite mentre le mani oscillano, prima della
     // rivelazione: è il ritmo con cui si gioca davvero.
     const CHANT = ['Sasso…', 'Carta…', 'Forbice!'];
@@ -114,12 +117,12 @@
                     <div class="rps-arena">
                         <div class="rps-hand rps-hand--player">
                             <div class="rps-chi">${ritrattoMarkup(io)}<div class="rps-hand-name">${escapeText(playerName)}</div></div>
-                            <div class="rps-hand-icon" data-role="playerIcon">✊</div>
+                            <div class="rps-hand-icon" data-role="playerIcon">${icoHtml('fist', '✊')}</div>
                         </div>
                         <div class="rps-chant" data-role="chant">VS</div>
                         <div class="rps-hand rps-hand--bot">
                             <div class="rps-chi">${ritrattoMarkup(opponent)}<div class="rps-hand-name">${escapeText(opponentName)}</div></div>
-                            <div class="rps-hand-icon" data-role="botIcon">✊</div>
+                            <div class="rps-hand-icon" data-role="botIcon">${icoHtml('fist', '✊')}</div>
                         </div>
                     </div>
                     <div class="rps-phases">
@@ -129,7 +132,7 @@
                                 ${CHOICES.map((c, i) => `
                                     <button type="button" class="rps-choice" data-choice="${c.id}" style="--i:${i}" aria-keyshortcuts="${i + 1}">
                                         <span class="rps-choice-tasto" aria-hidden="true">${i + 1}</span>
-                                        <span class="rps-choice-icon">${c.icon}</span>
+                                        <span class="rps-choice-icon">${icoHtml(c.ico, c.icon)}</span>
                                         <span class="rps-choice-label">${c.label}</span>
                                         <span class="rps-choice-batte">batte ${choiceById(c.beats).label}</span>
                                     </button>
@@ -208,16 +211,16 @@
                 generazione++;
                 arena.classList.remove('is-revealed', 'is-win', 'is-lose', 'is-draw');
                 overlay.querySelectorAll('.rps-choice').forEach((b) => b.classList.remove('is-picked'));
-                playerIcon.textContent = '✊';
-                botIcon.textContent = '✊';
+                scegliIcona(playerIcon, 'fist', '✊');
+                scegliIcona(botIcon, 'fist', '✊');
                 chant.textContent = 'VS';
                 showPhase('pick');
             }
 
             function reveal(playerId, botId) {
                 const result = outcome(playerId, botId);
-                playerIcon.textContent = choiceById(playerId).icon;
-                botIcon.textContent = choiceById(botId).icon;
+                scegliIcona(playerIcon, choiceById(playerId).ico, choiceById(playerId).icon);
+                scegliIcona(botIcon, choiceById(botId).ico, choiceById(botId).icon);
                 chant.textContent = result === 'draw' ? '=' : 'VS';
                 arena.classList.remove('is-shooting');
                 arena.classList.add('is-revealed', 'is-' + result);
@@ -273,7 +276,7 @@
                             opts.inviaInizio(starter);
                             finish(starter);
                         };
-                        primary.textContent = '⚔️ Comincio io';
+                        primary.innerHTML = icoHtml('attackPos', '⚔️') + ' Comincio io';
                         primary.onclick = () => scegli('player');
                         useSecondary('🛡️ Comincia lui', () => scegli('bot'));
                     } else {
@@ -309,7 +312,7 @@
                     // vera, ed è anche la parte interessante (a volte
                     // conviene lasciare il primo turno all'avversario).
                     sub.textContent = 'Scegli chi gioca per primo:';
-                    primary.textContent = '⚔️ Comincio io';
+                    primary.innerHTML = icoHtml('attackPos', '⚔️') + ' Comincio io';
                     primary.onclick = () => finish('player');
                     useSecondary('🛡️ Comincia lui', () => finish('bot'));
                 } else {

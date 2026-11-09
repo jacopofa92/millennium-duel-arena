@@ -5587,7 +5587,11 @@
             && (avversarioDelDuello.duelTrackAutomatico
                 || (temaStoricoAmmesso && avversarioDelDuello.duelTrackSempre));
         const temaFisso = usaTemaAvversario ? avversarioDelDuello.duelTrack : null;
-        const finalTrack = temaFisso
+        // Le lezioni del Tutorial (mode=tutorial) suonano la musica dei duelli del primo arco narrativo dell'anime
+        // ("07. Preliminary Face-Off"): e' la musica con cui il gioco insegna, qualunque sia l'avversario (il nonno).
+        const finalTrack = modalitaDelDuello === 'tutorial'
+            ? 'audio/soundtracks/07. Preliminary Face-Off.mp3'
+            : temaFisso
             ? `audio/soundtracks/${temaFisso}`
             : (customMusic
                 ? `audio/soundtracks/${customMusic}`
@@ -5997,6 +6001,8 @@
      generiche di sistema — stesso window.Icons già usato nel resto del
      sito per i menu/topbar. -->
 <script src="js/ui/icon-library.js"></script>
+<script src="js/ui/emoji-tema.js"></script>
+<script>document.addEventListener('DOMContentLoaded', function () { if (window.EmojiTema) EmojiTema.automatico({ solo: ['.modal-backdrop', '.tribute-prompt'] }); });</script>
 <!-- Motore effetti-carta: duel-engine.js (le regole generiche) va PRIMA
      di card-effects.js (gli effetti delle singole carte, che si
      registrano nel motore appena caricati) e PRIMA di game-flow.js/

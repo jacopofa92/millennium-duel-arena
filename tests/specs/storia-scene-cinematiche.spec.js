@@ -153,7 +153,7 @@ module.exports = {
                     chi: s.querySelector('.sc-chi').textContent.trim(),
                     narratore: s.querySelector('.sc-box').classList.contains('is-narratore'),
                     sigillo: !!s.querySelector('.sc-ritratto.is-sigillo'),
-                    simbolo: (s.querySelector('.sc-sigillo') || {}).textContent || '',
+                    simbolo: ((s.querySelector('.sc-sigillo') || {}).textContent || '').trim() || ((s.querySelector('.sc-sigillo .emoji-tema--arena')) ? '🌊' : ''),
                     polvere: !!s.querySelector('.sc-polvere'),
                     lato: s.querySelector('.sc-ritratto').classList.contains('sc-ritratto--sx')
                         || s.querySelector('.sc-ritratto').classList.contains('sc-ritratto--dx'),

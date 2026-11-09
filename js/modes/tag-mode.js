@@ -127,20 +127,23 @@
         document.body.classList.toggle('tag-turno-compagno', turnoCompagno);
         if (avviso) {
             avviso.hidden = !turnoCompagno;
-            if (turnoCompagno) avviso.textContent = `🤝 Turno di ${m.nome}: gioca il tuo compagno`;
+            if (turnoCompagno) avviso.innerHTML = `${ico('multiplayer', '🤝')} Turno di ${escape(m.nome)}: gioca il tuo compagno`;
         }
     }
+
+    /** Icona a tema (js/ui/icon-library.js) come markup in riga col testo; senza la libreria, il glifo di prima. */
+    function ico(nome, glifo) { const s = g.Icons && g.Icons.buildIcon ? g.Icons.buildIcon(nome) : null; return s ? s.outerHTML : glifo; }
 
     function riga(m, posto) {
         const stato = !m.vivo
             ? `<span class="tag-stato tag-stato--fuori">${m.motivo === 'mazzo' ? 'Mazzo vuoto' : 'Eliminato'}</span>`
             : (m.davanti ? '<span class="tag-stato tag-stato--davanti">In campo</span>' : '<span class="tag-stato">In panchina</span>');
-        const lp = regolaLp === 'membro' ? `<span class="tag-lp" title="Life Point">❤ ${m.lp}</span>` : '';
+        const lp = regolaLp === 'membro' ? `<span class="tag-lp" title="Life Point">${ico('heart', '❤')} ${m.lp}</span>` : '';
         const chi = posto === 'bot' ? 'Avversario' : (m.controllore === 'persona' ? 'Tu' : (m.natura === 'persona' ? 'Compagno' : 'IA'));
         return `<div class="tag-membro${m.davanti ? ' is-davanti' : ''}${m.vivo ? '' : ' is-fuori'}" data-membro="${escape(m.id)}">`
             + `<div class="tag-membro-testa"><span class="tag-nome">${escape(m.nome)}</span><span class="tag-chi">${chi}</span></div>`
-            + `<div class="tag-membro-dati">${lp}<span title="Carte in mano">✋ ${m.mano}</span><span title="Carte nel Mazzo">🂠 ${m.mazzo}</span>`
-            + (m.davanti ? '' : `<span title="Mostri e Magie/Trappole sul suo campo">⚔ ${m.mostri} · ✦ ${m.magieTrappole}</span>`)
+            + `<div class="tag-membro-dati">${lp}<span title="Carte in mano">${ico('hand', '✋')} ${m.mano}</span><span title="Carte nel Mazzo">${ico('cards', '🂠')} ${m.mazzo}</span>`
+            + (m.davanti ? '' : `<span title="Mostri e Magie/Trappole sul suo campo">${ico('attackPos', '⚔')} ${m.mostri} · ${ico('star', '✦')} ${m.magieTrappole}</span>`)
             + `</div>${stato}</div>`;
     }
 
@@ -161,15 +164,15 @@
         const titolo = `<div class="tag-titolo">${nomeLato}${regolaLp === 'lato' ? ' · Life Point condivisi' : ''}</div>`;
         const altro = r.membri.find((m) => !m.davanti) || r.membri[0];
         const dati = [
-            regolaLp === 'membro' && altro.vivo ? `❤ ${altro.lp}` : '',
-            altro.vivo ? `✋ ${altro.mano}` : (altro.motivo === 'mazzo' ? 'Mazzo vuoto' : 'eliminato')
+            regolaLp === 'membro' && altro.vivo ? `${ico('heart', '❤')} ${altro.lp}` : '',
+            altro.vivo ? `${ico('hand', '✋')} ${altro.mano}` : (altro.motivo === 'mazzo' ? 'Mazzo vuoto' : 'eliminato')
         ].filter(Boolean).join(' · ');
         const aperto = pannello.classList.contains('is-aperta');
         // Nella pillola solo il primo nome: con nome e cognome non stava fra le carte su un telefono stretto.
         const breve = String(altro.nome || '').split(' ')[0];
-        const icona = posto === 'player' ? '🤝' : '⚔️';
-        const segnoRichiesta = r.richiesta != null ? ' · 🔄' : '';
-        pannello.innerHTML = `<button type="button" class="tag-compatto" aria-expanded="${aperto}" title="${escape(altro.nome)}">${icona} ${escape(breve)}<span>${escape(dati + segnoRichiesta)}</span><span aria-hidden="true">${aperto ? '▴' : '▾'}</span></button>`
+        const icona = posto === 'player' ? ico('multiplayer', '🤝') : ico('attackPos', '⚔️');
+        const segnoRichiesta = r.richiesta != null ? ` · ${ico('exchange', '🔄')}` : '';
+        pannello.innerHTML = `<button type="button" class="tag-compatto" aria-expanded="${aperto}" title="${escape(altro.nome)}">${icona} ${escape(breve)}<span>${dati + segnoRichiesta}</span><span aria-hidden="true">${aperto ? '▴' : '▾'}</span></button>`
             + `<div class="tag-dettagli">${titolo}${r.membri.map((m) => riga(m, posto)).join('')}${posto === 'player' ? richiestaScambio(r) : ''}</div>`;
         posizionaPillole();
     }

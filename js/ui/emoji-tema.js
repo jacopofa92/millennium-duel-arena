@@ -18,24 +18,52 @@
         attackPos: ['⚔', '🗡', '🔥', '⚡', '🪓', '🔪', '🥊'],
         defensePos: ['🛡', '🪤', '🚧'],
         target: ['🎯', '🏹', '🎣', '🔺'],
-        medal: ['🏅', '🥇', '🥈', '🥉', '🎖', '🌟', '🌠', '❤', '💍', '🟤', '🌸'],
+        medal: ['🏅', '🥇', '🥈', '🥉', '🎖', '🌟', '🌠', '💍', '🟤', '🌸'],
+        // Segni di interfaccia (1.6.25): avvisi, stati e comandi, prima emoji di sistema.
+        warning: ['⚠'],
+        info: ['ℹ'],
+        lock: ['🔒', '🔐'],
+        hourglass: ['⏳', '⌛'],
+        heart: ['❤', '💗', '💖'],
+        fist: ['✊'],
+        hand: ['✋', '🖐'],
+        scissors: ['✌'],
+        key: ['🔑'],
+        flag: ['🏳', '🏁'],
+        plug: ['🔌'],
+        cart: ['🛒'],
+        list: ['📋', '🗂', '📓'],
+        tag: ['🏷', '🎫'],
+        users: ['👥', '👤', '🧑'],
+        clock: ['🕓', '🕐'],
+        minus: ['➖'],
+        plus: ['➕'],
+        undo: ['↩'],
+        ban: ['🚫'],
+        trash: ['🗑'],
+        pencil: ['✏'],
+        search: ['🔍'],
+        cloudUp: ['⬆'],
+        cloudDown: ['⬇'],
+        cloud: ['☁'],
+        exit: ['🚪'],
         tournament: ['🏆', '🏟'],
         crown: ['👑', '♛'],
         star: ['⭐', '★', '✨', '💎', '☆'],
         puzzle: ['🧩'],
-        tower: ['🗼', '🏛', '🏢', '🏙', '🧱', '🚪', '🏔', '🏰'],
+        tower: ['🗼', '🏛', '🏢', '🏙', '🧱', '🏔', '🏰'],
         fusionDeck: ['🐲', '🐉', '🦖', '🐘', '🦅', '🐺', '🐧', '🦋', '🐛', '🪽', '🪶', '🐍', '🦂'],
         duel: ['▶'],
         skull: ['🩸', '💀', '💔', '😈', '👹', '👻', '🕸', '🕳', '☠'],
         multiplayer: ['🌐', '🤝'],
         story: ['📖', '📜', '📌', '📕', '📚'],
         pack: ['📦', '🎁'],
-        cards: ['🎴', '🃏', '🎩', '🎭', '🎲', '🎓'],
+        cards: ['🎴', '🃏', '🎩', '🎭', '🎲', '🎓', '🂠'],
         arena: ['🏝', '🌊', '🌑', '☀', '🌪', '🌅', '🌙'],
         eye: ['🔮', '🪄', '🧙', '🧠', '🔱', '👁', '📿', '🪞'],
         rules: ['⚖'],
         calendar: ['📅', '🗓'],
-        sandbox: ['🎮', '🎥', '📺', '🤖', '🔧'],
+        sandbox: ['🎮', '🎥', '📺', '🤖', '🔧', '🛠'],
         save: ['💾'],
         collection: ['🏺', '🗿', '⚱', '🖼'],
         profile: ['🧍', '🕴'],
@@ -45,7 +73,7 @@
         coin: ['💰', '🪙'],
         map: ['🗺'],
         check: ['✓', '✅', '✔'],
-        close: ['✕', '✖'],
+        close: ['✕', '✖', '❌'],
         fieldSpell: ['🌀']
     };
     const MAPPA = {};
@@ -57,13 +85,17 @@
     function idrata(radice, opzioni) {
         if (!radice || !window.Icons || !Icons.buildIcon) return;
         const fallback = opzioni && opzioni.fallback;
+        const escludi = (opzioni && opzioni.escludi) || '';
         const nodi = [];
         const cammina = document.createTreeWalker(radice, NodeFilter.SHOW_TEXT);
         while (cammina.nextNode()) {
             const n = cammina.currentNode;
-            if (n.parentNode && /^(SCRIPT|STYLE|TEXTAREA|INPUT)$/.test(n.parentNode.nodeName)) continue;
+            if (n.parentNode && /^(SCRIPT|STYLE|TEXTAREA|INPUT|OPTION|TITLE|NOSCRIPT)$/.test(n.parentNode.nodeName)) continue;
             RE.lastIndex = 0;
-            if (RE.test(n.nodeValue)) nodi.push(n);
+            if (!RE.test(n.nodeValue)) continue;
+            // `escludi`: sottoalberi da lasciare com'erano (un registro di cronaca, le carte). Si controlla solo per i nodi con emoji.
+            if (escludi && n.parentElement && n.parentElement.closest(escludi)) continue;
+            nodi.push(n);
         }
         nodi.forEach((nodo) => {
             const testo = nodo.nodeValue;
@@ -112,10 +144,49 @@
         lavora();
     }
 
+    /**
+     * Modalita' per una pagina intera: idrata subito e poi, ad ogni nodo AGGIUNTO o testo cambiato, solo quel pezzo (non rilegge
+     * tutto il documento: costa poco anche su pagine che ridisegnano spesso). Il testo che JS scrive dopo (avvisi, stati, schermate
+     * costruite con innerHTML) si converte da solo, senza che ogni punto si ricordi di chiamarlo.
+     *   EmojiTema.automatico();                                   // tutta la pagina
+     *   EmojiTema.automatico({ solo: ['#modale', '.hud'] });      // solo questi contenitori (il resto, es. un registro, resta com'e')
+     *   opzioni.escludi: selettore di sottoalberi da non toccare; opzioni.fallback: come per idrata.
+     */
+    function automatico(opzioni) {
+        opzioni = opzioni || {};
+        const escludi = opzioni.escludi || '';
+        const radici = opzioni.solo
+            ? [].concat.apply([], opzioni.solo.map((s) => Array.from(document.querySelectorAll(s))))
+            : [document.body];
+        const dentro = (el) => radici.some((r) => r === el || r.contains(el));
+        const saltato = (el) => !el.isConnected || (escludi && el.closest && el.closest(escludi)) || (el.closest && el.closest('svg'));
+        let inAttesa = new Set();
+        let pianificato = false;
+        const lavora = () => {
+            pianificato = false;
+            const elenco = Array.from(inAttesa);
+            inAttesa = new Set();
+            elenco.forEach((el) => { if (!saltato(el)) idrata(el, opzioni); });
+        };
+        const segna = (el) => {
+            if (!el || el.nodeType !== 1 || !dentro(el)) return;
+            inAttesa.add(el);
+            if (!pianificato) { pianificato = true; requestAnimationFrame(lavora); }
+        };
+        radici.forEach((r) => idrata(r, opzioni));
+        if (!window.MutationObserver) return;
+        new MutationObserver((mutazioni) => {
+            mutazioni.forEach((m) => {
+                if (m.type === 'characterData') segna(m.target.parentElement);
+                else m.addedNodes.forEach((n) => segna(n.nodeType === 1 ? n : n.parentElement));
+            });
+        }).observe(document.body, { childList: true, subtree: true, characterData: true });
+    }
+
     // Stile minimo: in riga col testo, della sua misura.
     const stile = document.createElement('style');
     stile.textContent = '.emoji-tema { width: 1.1em; height: 1.1em; vertical-align: -0.2em; margin: 0 0.15em; }';
     document.head.appendChild(stile);
 
-    window.EmojiTema = { idrata: idrata, segui: segui, MAPPA: MAPPA };
+    window.EmojiTema = { idrata: idrata, segui: segui, automatico: automatico, MAPPA: MAPPA };
 })();
