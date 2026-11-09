@@ -363,8 +363,49 @@
             else forgetApproved();
             if (profile.is_admin) rememberAdmin(userId);
             else forgetAdmin();
-            return approved;
+            // Approvato: si rinnova anche il cookie con cui il SERVER consegna il gioco (vedi sotto). Non approvato: lo si toglie.
+            return (approved ? aggiornaAccessoServer() : revocaAccessoServer()).then(() => approved);
         }).catch(() => wasApprovedOffline(userId));
+    }
+
+    // ------------------------------------------------------------------
+    // Cancello lato server (worker/gate.mjs). Il sito pubblicato consegna il gioco solo a chi ha il cookie `ygo_acc`, che
+    // il Worker emette dopo aver chiesto a Supabase se l'account e' approvato. Qui si chiede / si rinnova / si toglie.
+    // Funziona solo sul sito pubblicato: in locale (file://, localhost, test) /__acc non esiste e la chiamata non fa nulla.
+    // Il cookie e' HttpOnly: il gioco non lo vede, quindi ricorda in localStorage fino a quando ha chiesto il rinnovo.
+    // ------------------------------------------------------------------
+    const CHIAVE_ACCESSO_SERVER = 'ygoAccessoServerFino';
+    const RINNOVO_ACCESSO_MS = 3 * 3600 * 1000;   // il cookie dura 6 ore: si rinnova a meta' vita
+    function sulSitoPubblicato() {
+        const p = window.location.protocol, h = window.location.hostname;
+        return (p === 'https:' || p === 'http:') && h !== 'localhost' && h !== '127.0.0.1' && h !== '[::1]' && !/^(10|192\.168)\./.test(h);
+    }
+    function aggiornaAccessoServer(token, forza) {
+        if (typeof token === 'boolean') { forza = token; token = null; }
+        if (!sulSitoPubblicato() || typeof fetch !== 'function') return Promise.resolve();
+        const t = token || cachedAccessToken;
+        if (!t) return Promise.resolve();
+        let fino = 0;
+        try { fino = Number(localStorage.getItem(CHIAVE_ACCESSO_SERVER)) || 0; } catch (e) { /* noop */ }
+        // Il Worker, rimandandoci qui senza cookie, aggiunge ?accesso=1: allora si chiede comunque (cookie cancellato a mano).
+        const richiesto = /[?&]accesso=1(&|$)/.test(window.location.search);
+        if (!forza && !richiesto && fino > Date.now()) return Promise.resolve();
+        const controllo = typeof AbortController === 'function' ? new AbortController() : null;
+        const timer = setTimeout(() => { if (controllo) controllo.abort(); }, 5000);
+        return fetch('/__acc', { method: 'POST', credentials: 'same-origin', headers: { Authorization: 'Bearer ' + t }, signal: controllo ? controllo.signal : undefined })
+            .then((r) => {
+                try {
+                    if (r.ok) localStorage.setItem(CHIAVE_ACCESSO_SERVER, String(Date.now() + RINNOVO_ACCESSO_MS));
+                    else localStorage.removeItem(CHIAVE_ACCESSO_SERVER);
+                } catch (e) { /* noop */ }
+            })
+            .catch(() => { /* rete assente o cancello non presente: si riprova alla prossima verifica */ })
+            .then(() => clearTimeout(timer));
+    }
+    function revocaAccessoServer() {
+        try { localStorage.removeItem(CHIAVE_ACCESSO_SERVER); } catch (e) { /* noop */ }
+        if (!sulSitoPubblicato() || typeof fetch !== 'function') return Promise.resolve();
+        return fetch('/__acc', { method: 'DELETE', credentials: 'same-origin' }).catch(() => { /* noop */ }).then(() => undefined);
     }
 
     // ------------------------------------------------------------------
@@ -444,7 +485,8 @@
                 // Da qui partono le 48 ore (vedi "Durata della sessione").
                 segnaInizioSessione(data.user.id);
                 try { localStorage.removeItem(CHIAVE_AVVISO_SCADENZA); } catch (e) { /* noop */ }
-                return data.user;
+                // Prima di far entrare nel gioco il SERVER deve avere il cookie: altrimenti la prima pagina aperta verrebbe respinta.
+                return aggiornaAccessoServer(data.session && data.session.access_token, true).then(() => data.user);
             });
         });
     }
@@ -458,7 +500,7 @@
         // lasciare il posto a un altro account, anche se questo dispositivo non e' mai riuscito a sincronizzarlo).
         if (cachedUser && window.SaveManager && SaveManager.hasSave() && !proprietarioLocale()) assegnaProprietario();
         try { localStorage.removeItem(CHIAVE_SESSIONE); } catch (e) { /* noop */ }
-        return client.auth.signOut().then(({ error }) => { if (error) throw error; });
+        return revocaAccessoServer().then(() => client.auth.signOut()).then(({ error }) => { if (error) throw error; });
     }
 
     /**
