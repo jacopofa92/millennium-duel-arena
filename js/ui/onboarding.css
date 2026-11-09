@@ -17,8 +17,11 @@
     align-items: center;
     justify-content: center;
     gap: clamp(14px, 3vh, 26px);
-    padding: clamp(16px, 4vh, 40px) 16px;
-    overflow-y: auto;
+    padding: clamp(12px, 3dvh, 40px) 16px;
+    /* Nessuno scorrimento, ne' verticale ne' orizzontale: ogni schermata sta dentro lo schermo (le misure si adattano alla
+       sua ALTEZZA, vedi i dvh qui sotto). */
+    overflow: hidden;
+    box-sizing: border-box;
     background: #06050a;
     opacity: 0;
     transition: opacity 0.5s ease;
@@ -27,6 +30,9 @@
 
 /* Sfondo fisso del primo avvio: sotto le scene (20040) e sotto i dialoghi (20050), sopra tutto il resto, cosi' fra una scena
    e l'altra non riaffiora la schermata di accesso. Opaco: lo sfondo delle scene e' trasparente al 40%. */
+html.ob-attivo, html.ob-attivo body { overflow: hidden !important; overscroll-behavior: none; }
+.ob-scena, .ob-fondo-fisso { touch-action: none; overscroll-behavior: none; }
+.ob-input { touch-action: manipulation; }
 .ob-fondo-fisso { position: fixed; inset: 0; z-index: 20030; background: #06050a; overflow: hidden; }
 
 /* Il luogo: la bottega del nonno. Stessa idea degli intermezzi dei
@@ -49,7 +55,7 @@
 
 .ob-contenuto {
     position: relative;
-    width: min(880px, 94vw);
+    width: min(880px, 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -81,7 +87,7 @@
 
 /* --- Il nome ------------------------------------------------------- */
 .ob-campo {
-    width: min(420px, 90vw);
+    width: min(420px, 100%);
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -133,7 +139,7 @@
        schermata gira anche su telefoni lenti. */
     transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
-.ob-mazzo:hover { transform: translateY(-4px); border-color: rgba(247,215,116,0.6); }
+.ob-mazzo:hover { border-color: rgba(247,215,116,0.6); }
 .ob-mazzo:active { transform: translateY(-1px) scale(0.99); }
 .ob-mazzo.is-scelto {
     border-color: rgba(247,215,116,0.9);
@@ -145,7 +151,7 @@
    scatola diventi più grande del testo che la accompagna. */
 .ob-mazzo-box {
     width: 100%;
-    max-width: 160px;
+    max-width: min(160px, 22dvh);
 }
 
 .ob-mazzo-nome {
@@ -213,9 +219,28 @@
     color: #e8d9b6;
 }
 
-@media (max-width: 480px) {
-    .ob-mazzo { flex: 1 1 100%; padding: 14px 12px; }
-    .ob-mazzi { gap: 12px; }
+@media (max-width: 640px) {
+    /* Telefono: i due mazzi AFFIANCATI (impilati non stavano nello schermo senza scorrere). */
+    .ob-mazzi { flex-wrap: nowrap; gap: 10px; }
+    .ob-mazzo { flex: 1 1 0; min-width: 0; padding: 12px 8px; gap: 6px; }
+    .ob-mazzo-box { max-width: min(110px, 17dvh); }
+    .ob-mazzo-desc { font-size: 0.7rem; line-height: 1.35; }
+    .ob-mazzo-nome { font-size: 0.86rem; }
+    .ob-titolo { font-size: clamp(1.2rem, 5.4vw, 1.7rem); }
+    .ob-sottotitolo { font-size: 0.8rem; line-height: 1.4; }
+}
+
+/* Schermi bassi (telefono girato): tutto piu' compatto, sempre senza scorrere. */
+@media (max-height: 520px) {
+    .ob-scena { gap: 8px; padding: 8px 14px; }
+    .ob-contenuto { gap: 8px; }
+    .ob-occhiello { display: none; }
+    .ob-titolo { font-size: 1.15rem; }
+    .ob-sottotitolo { font-size: 0.72rem; line-height: 1.3; }
+    .ob-mazzo { padding: 8px 8px; gap: 4px; }
+    .ob-mazzo-box { max-width: min(84px, 16dvh); }
+    .ob-mazzo-desc, .ob-mazzo-conta { display: none; }
+    .ob-btn { padding: 10px 24px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

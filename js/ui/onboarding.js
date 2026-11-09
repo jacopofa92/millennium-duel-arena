@@ -261,6 +261,9 @@
      */
     function avvia() {
         const fondo = montaFondoFisso();
+        // La pagina sotto (accesso/menu) non deve scorrere mentre il primo avvio e' a schermo: niente scorrimento, da nessuna parte.
+        document.documentElement.classList.add('ob-attivo');
+        const togliFondo = () => { fondo.remove(); document.documentElement.classList.remove('ob-attivo'); };
         const musicaPrima = window.DuelMusic && DuelMusic.getTrack ? DuelMusic.getTrack() : null;
         if (window.DuelMusic && DuelMusic.setTrack) { try { DuelMusic.setTrack(MUSICA); } catch (e) { /* la musica non deve fermare il primo avvio */ } }
         const ripristinaMusica = () => {
@@ -274,9 +277,9 @@
             // Lo sfondo NON si toglie subito: subito dopo parte la lezione col nonno (si cambia pagina) e, fra l'ultima scena e il
             // caricamento del duello, sotto riaffiorava il login/il menu. Resta finche' la pagina non viene sostituita; se per
             // un motivo qualunque la lezione non parte, si toglie da solo dopo 12 secondi cosi' non blocca il menu.
-            setTimeout(() => fondo.remove(), 12000);
+            setTimeout(togliFondo, 12000);
             return esito;
-        }, (errore) => { fondo.remove(); ripristinaMusica(); throw errore; });
+        }, (errore) => { togliFondo(); ripristinaMusica(); throw errore; });
     }
 
     function avviaScene() {
