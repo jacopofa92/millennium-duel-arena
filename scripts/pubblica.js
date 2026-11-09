@@ -147,6 +147,20 @@ function controllaCacheServiceWorker() {
     return voci.length;
 }
 
+/**
+ * Elenco dei file CONSEGNABILI SENZA ACCESSO (worker/gate.mjs): serve per poter mostrare la schermata di accesso, e basta.
+ * Sono index.html e tutto cio' che index.html carica con <script src> / <link href> (i percorsi locali), piu' i file di
+ * servizio (manifest, Service Worker, stato dell'app). Le cartelle di sola grafica/audio le apre il Worker per prefisso.
+ * Tutto il resto (le altre pagine, il motore del duello, l'IA, i dati) richiede il cookie di accesso. Scritto in
+ * dist/_pubblici.json, che il Worker legge e non consegna a nessuno. Un file che index.html comincia a caricare diventa
+ * pubblico da solo; uno che smette di caricare torna riservato.
+ */
+function scriviElencoPubblico() {
+    const elenco = require('./elenco-pubblico').elencoPubblico(RADICE);
+    fs.writeFileSync(path.join(DIST, '_pubblici.json'), JSON.stringify({ pubblici: elenco }, null, 1), 'utf8');
+    return elenco.length;
+}
+
 function main() {
     const inizio = Date.now();
     svuota(DIST);
@@ -158,11 +172,13 @@ function main() {
     }
     CARTELLE.forEach(elaboraCartella);
     const voci = controllaCacheServiceWorker();
+    const pubbliche = scriviElencoPubblico();
     const kb = (n) => Math.round(n / 1024).toLocaleString('it-IT') + ' KB';
     console.log(`Copia pubblicata pronta in dist/ (${((Date.now() - inizio) / 1000).toFixed(1)}s)`);
     console.log(`  minificati: ${conteggio.js} JS, ${conteggio.css} CSS, ${conteggio.html} HTML — da ${kb(conteggio.primaByte)} a ${kb(conteggio.dopoByte)}`);
     console.log(`  copiati senza modifiche: ${conteggio.copiati} file (immagini, audio, video, font, librerie già minificate)`);
     console.log(`  cache del Service Worker: ${voci} voci, tutte presenti`);
+    console.log(`  file consegnabili senza accesso (cancello): ${pubbliche} voci in dist/_pubblici.json`);
 }
 
 try {

@@ -536,7 +536,7 @@
 // v650: i varchi cittadini permettono di passare liberamente fra quartieri salvandone lo stato.
 // v653: Battle City: nodi crediti, massimo due nodi Locazione, layout e luci Parco aggiornati.
 // v665: fondali Battle City quadrati 1254x1254, con percorsi ed effetti riallineati.
-const CACHE_NAME = 'ygo-duel-arena-v671';
+const CACHE_NAME = 'ygo-duel-arena-v672';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento
@@ -863,7 +863,19 @@ self.addEventListener('install', (event) => {
             // usa perché la pagina si apra con un errore (visto davvero su
             // telefono: "getCardTerms is not defined", .html nuovo e
             // cards-db.js vecchio).
-            .then((cache) => cache.addAll(APP_SHELL.map((url) => new Request(url, { cache: 'reload' }))))
+            // Come addAll (un file mancante, 404, ferma l'installazione), con UNA eccezione: 401. Il sito pubblicato ha un
+            // cancello (worker/gate.mjs) che risponde 401 ai file riservati finche' non si e' fatto l'accesso: prima del login
+            // quei file non si possono scaricare, e un'installazione che fallisse per questo non partirebbe mai. Si salta e
+            // la cache si riempie dopo: appena c'e' il cookie, la prossima installazione/aggiornamento prende tutto, e nel
+            // frattempo le pagine passano comunque dalla rete (network-first).
+            .then((cache) => Promise.all(APP_SHELL.map((url) => {
+                const req = new Request(url, { cache: 'reload' });
+                return fetch(req).then((risposta) => {
+                    if (risposta.ok) return cache.put(req, risposta);
+                    if (risposta.status === 401) return undefined;
+                    throw new Error('Impossibile mettere in cache ' + url + ' (' + risposta.status + ')');
+                });
+            })))
             // Attiva subito questa versione invece di aspettare che tutte le
             // schede aperte del gioco si chiudano — chi lo installa/aggiorna
             // vuole vedere l'effetto al prossimo avvio, non prima.
