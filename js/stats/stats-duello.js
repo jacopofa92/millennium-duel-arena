@@ -34,7 +34,25 @@
             else dati.dannoSubito += n;
         },
         /** Fotografia da mostrare a fine duello. `turni`, `lpFinali` li sa il chiamante (gameState). */
-        riepilogo() { return Object.assign({}, dati); }
+        riepilogo() { return Object.assign({}, dati); },
+        /**
+         * Confronta questo duello con i RECORD PERSONALI (salvati in save.modalita.recordDuello, quindi viaggiano col cloud)
+         * e li aggiorna. Torna quali sono nuovi: { dannoMax, dannoInflitto, turniVittoria } (true = battuto un record
+         * precedente; il PRIMO valore mai registrato non e' un "nuovo record", altrimenti ogni primo duello li festeggerebbe
+         * tutti). I turni contano solo in vittoria e il record e' il numero PIU' BASSO. Mai per Demo/Sandbox/Tutorial/Puzzle.
+         * @param {string} modalita  @param {boolean} vinto  @param {number} turni
+         */
+        record(modalita, vinto, turni) {
+            const nuovi = { dannoMax: false, dannoInflitto: false, turniVittoria: false };
+            if (['demo', 'sandbox', 'tutorial', 'puzzle'].indexOf(modalita) !== -1) return nuovi;
+            if (!window.SaveManager || !SaveManager.getModeState) return nuovi;
+            const r = Object.assign({ dannoMax: 0, dannoInflitto: 0, turniVittoria: 0 }, SaveManager.getModeState('recordDuello') || {});
+            if (dati.dannoMax > r.dannoMax) { nuovi.dannoMax = r.dannoMax > 0; r.dannoMax = dati.dannoMax; }
+            if (dati.dannoInflitto > r.dannoInflitto) { nuovi.dannoInflitto = r.dannoInflitto > 0; r.dannoInflitto = dati.dannoInflitto; }
+            if (vinto && turni > 0 && (r.turniVittoria === 0 || turni < r.turniVittoria)) { nuovi.turniVittoria = r.turniVittoria > 0; r.turniVittoria = turni; }
+            SaveManager.setModeState('recordDuello', r);
+            return nuovi;
+        }
     };
     window.StatsDuello = StatsDuello;
 

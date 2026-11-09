@@ -402,10 +402,14 @@
         if (window.StatsDuello && typeof gameState !== 'undefined' && gameState && gameState.turn > 0) {
             const s = StatsDuello.riepilogo();
             const n = (v) => Number(v).toLocaleString('it-IT');
+            const turniTuoi = Math.ceil(gameState.turn / 2);
+            // Record personali: "nuovo record" solo se si batte un valore precedente (vedi StatsDuello.record).
+            let rec = { dannoMax: false, dannoInflitto: false, turniVittoria: false };
+            try { rec = StatsDuello.record(String(session.mode || ''), playerWon, turniTuoi); } catch (e) { /* un guasto nei record non ferma la schermata */ }
             const voci = [
-                ['Turni', Math.ceil(gameState.turn / 2)],
-                ['Danno massimo', n(s.dannoMax)],
-                ['Danno inflitto', n(s.dannoInflitto)],
+                ['Turni', turniTuoi, rec.turniVittoria],
+                ['Danno massimo', n(s.dannoMax), rec.dannoMax],
+                ['Danno inflitto', n(s.dannoInflitto), rec.dannoInflitto],
                 ['Danno subito', n(s.dannoSubito)],
                 ['Life Point finali', n(Math.max(0, gameState.playerLP))],
                 ['Mostri evocati', s.mostri],
@@ -416,7 +420,7 @@
             const stats = document.createElement('div');
             stats.className = 'do-stats';
             stats.innerHTML = `<div class="do-rewards-title">Il duello in numeri</div><div class="do-stats-grid">`
-                + voci.map((v) => `<div class="do-stat"><span class="do-stat-val">${v[1]}</span><span class="do-stat-lab">${v[0]}</span></div>`).join('')
+                + voci.map((v) => `<div class="do-stat${v[2] ? ' do-stat--record' : ''}"><span class="do-stat-val">${v[1]}</span><span class="do-stat-lab">${v[0]}</span>${v[2] ? '<span class="do-stat-rec">Nuovo record!</span>' : ''}</div>`).join('')
                 + `</div>`;
             content.appendChild(stats);
         }
