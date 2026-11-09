@@ -636,10 +636,15 @@ function handleDragMove(event) {
         }
     }
 
-    if (!dragState.dragEnabled) return;
-
     const dx = event.clientX - dragState.startX;
     const dy = event.clientY - dragState.startY;
+    if (!dragState.dragEnabled) {
+        // Fuori dalla Main Phase (o nel turno avversario) niente fantasma, ma il MOVIMENTO va comunque registrato: senza,
+        // uno swipe verticale su una carta restava "nessun movimento" e al rilascio veniva letto come un tap, aprendo il
+        // box informazioni (e, su touch, un trascinamento non e' un tap: vedi handleDragEnd).
+        if (!dragState.moved && Math.hypot(dx, dy) > 8) dragState.moved = true;
+        return;
+    }
     if (!dragState.moved && Math.hypot(dx, dy) > 8) {
         dragState.moved = true;
         // Il vero trascinamento inizia SOLO ora: crea il fantasma ruotato e

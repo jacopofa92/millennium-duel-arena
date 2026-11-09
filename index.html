@@ -1296,7 +1296,18 @@
             // chiudendo l'app): si riparte dal dialogo del nonno da zero, non direttamente dalla lezione. Richiesta dell'utente.
             let introInCorso = false;
             try { introInCorso = sessionStorage.getItem('ygoIntroInCorso') === '1'; } catch (e) { /* noop */ }
-            if (!introInCorso && window.Onboarding) {
+            // MAI su un salvataggio che ha gia' un po' di storia: rifare la bottega riscrive nome e mazzo (Onboarding crea un
+            // salvataggio nuovo), e chi ha giocato ma non ha mai finito la lezione perderebbe i progressi. Vale solo se non c'e'
+            // traccia di gioco vero (nessun duello contato, nessun record, nessuna storia, nessun torneo).
+            const saveDiPartenza = (() => {
+                const s = SaveManager.load ? SaveManager.load() : null;
+                if (!s) return true;
+                const vuoto = (o) => !o || Object.keys(o).length === 0;
+                const stat = s.modalita && s.modalita.statistiche;
+                const duelli = stat && stat.modalita ? Object.keys(stat.modalita).reduce((n, k) => n + ((stat.modalita[k] && stat.modalita[k].giocati) || 0), 0) : 0;
+                return vuoto(s.records) && vuoto(s.story) && vuoto(s.tournaments) && vuoto(s.tournamentStats) && duelli === 0;
+            })();
+            if (!introInCorso && window.Onboarding && saveDiPartenza) {
                 if (!window.__introRiavviata) {
                     window.__introRiavviata = true;
                     Onboarding.avvia().then((esito) => {

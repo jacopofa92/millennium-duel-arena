@@ -54,12 +54,14 @@ module.exports = {
         // L'IA gioca davvero dal posto 'player': fra Yami Yugi e Kaiba (stesso
         // livello, mazzi di pari peso) su quattro partite a seme fisso ne
         // vince almeno una. Con l'IA ferma su quel lato perderebbe sempre.
+        // Dodici partite (si ferma alla prima vittoria): erano quattro, ma i mazzi di Kaiba sono diventati piu' forti (Divinita',
+        // limiti di copie) e Yami ne vince circa 3 su 12, quindi il campione di 4 poteva non contenerne nessuna con l'IA sana.
         let vittoriePlayer = 0;
-        for (let n = 0; n < 4; n++) {
+        for (let n = 0; n < 12 && vittoriePlayer === 0; n++) {
             const r = await giocaPartita({ avversario: 'kaiba', livello: 'hard', giocatore: 'yamiYugi', livelloGiocatore: 'hard', seme: 100, turni: 60 }, n);
             if (r.esito === true) vittoriePlayer++;
         }
-        assert(vittoriePlayer >= 1, `L'IA dal posto 'player' (Yami Yugi) non vince nessuna delle 4 partite contro Kaiba: gioca davvero da quel lato?`);
+        assert(vittoriePlayer >= 1, `L'IA dal posto 'player' (Yami Yugi) non vince nessuna delle 12 partite contro Kaiba: gioca davvero da quel lato?`);
 
         // Per l'audit fattoriale IA e deck avversario devono essere due
         // variabili indipendenti: stessa IA hard, ma liste easy/hard diverse.
@@ -79,7 +81,9 @@ module.exports = {
         // attuale (2026-10-21: il 235 con Pegasus/Joey non lo attraversava più,
         // trovato Bandit Keith/Mai col seme 8); l'asserzione `trovate` impedisce
         // che il test passi se in futuro il percorso non viene più esercitato.
-        const bersaglioSparito = await giocaPartita({ avversario: 'bandit_keith', giocatore: 'mai', livello: 'medium', seme: 8, turni: 60, cerca: 'non è più sul Terreno' }, 0);
+        // 2026-11-09: il seme 8 non attraversava piu' il caso (mazzi e IA cambiati, lo stesso era successo al 235); cercato di nuovo
+        // sulle coppie del roster, Bandit Keith/Mai a Normale lo attraversa col seme 37.
+        const bersaglioSparito = await giocaPartita({ avversario: 'bandit_keith', giocatore: 'mai', livello: 'medium', seme: 37, turni: 60, cerca: 'non è più sul Terreno' }, 0);
         assert(bersaglioSparito.trovate >= 1 && bersaglioSparito.esito !== null && !bersaglioSparito.erroriCarte.length,
             `La partita col bersaglio sparito prima del calcolo dei danni deve attraversare il caso e finire: ${JSON.stringify({ trovate: bersaglioSparito.trovate, esito: bersaglioSparito.esito })}`);
     }

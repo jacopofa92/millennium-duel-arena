@@ -24,8 +24,9 @@ module.exports = {
         });
         t.assert(avvio.aperto && avvio.inSospeso, 'Mostro Resuscitato con due Cimiteri pieni deve aprire la scelta');
 
-        // chiudo il riquadro con la X: la scelta deve restare aperta (riaperta), non sparire
-        await t.page.locator('#cardListPickerCloseBtn').click();
+        // Una scelta obbligatoria (1.4.141) non ha il pulsante Chiudi e un tocco fuori non fa niente: la Magia va portata a termine.
+        t.assert(await t.page.locator('#cardListPickerCloseBtn').isHidden(), 'Una scelta obbligatoria non mostra il pulsante Chiudi');
+        await t.page.evaluate(() => document.getElementById('cardListPickerModal').click());   // tocco sullo sfondo
         await t.page.waitForTimeout(150);
         const dopoChiusura = await t.evaluate(() => ({
             aperto: document.getElementById('cardListPickerModal').classList.contains('open'),

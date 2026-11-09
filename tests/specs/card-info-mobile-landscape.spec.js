@@ -106,6 +106,10 @@ module.exports = {
             // relativo catcher a tutto schermo. Il catcher deve avere un
             // foro sul pannello, altrimenti lo swipe non arriva al testo.
             await page.evaluate(() => {
+                // La cascata di fase del caricamento puo' aver gia' portato il duello oltre la Main Phase durante i passi
+                // precedenti: la Magia in mano offre "Attiva" solo nella propria Main Phase, quindi si riporta li'.
+                gameState.currentPlayer = 'player';
+                gameState.phase = 'main1';
                 gameState.playerHand = [{
                     ...cardDatabase.find((c) => c.id === 36),
                     uid: 'mobile-info-attivabile',

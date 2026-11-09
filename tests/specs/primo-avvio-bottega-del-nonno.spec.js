@@ -61,6 +61,28 @@ module.exports = {
             await ctx.close();
         }
 
+        // 2b) Salvataggio con GIA' una storia (un record contro qualcuno) e lezione mai finita: NON si rifa la bottega (riscriverebbe
+        // nome e mazzo e perderebbe i progressi), si va alla lezione come prima.
+        {
+            const ctx = await t.browser.newContext({ viewport: { width: 1100, height: 700 }, serviceWorkers: 'block' });
+            const page = await ctx.newPage();
+            page.on('pageerror', (e) => errori.push(e.message));
+            await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; try { sessionStorage.removeItem('ygoIntroInCorso'); } catch (e) { /* noop */ } });
+            await page.goto(url);
+            await page.waitForTimeout(2500);
+            await page.evaluate(() => {
+                const splash = document.getElementById('splashScreen');
+                if (splash) splash.style.display = 'none';
+                if (!SaveManager.hasSave()) SaveManager.createNew('Veterano');
+                const s = SaveManager.load(); s.records = { kaiba: { wins: 2, losses: 1 } }; SaveManager.touch(s);
+                SaveManager.setTutorial({ daFare: true });
+                window.showMenu();
+            });
+            await page.waitForURL(/duelMonstersCore\.html.*mode=tutorial/, { timeout: 8000 });
+            t.assert(!(await page.evaluate(() => !!document.querySelector('.ob-fondo-fisso'))), 'Con progressi gia\' fatti non si rifa la bottega');
+            await ctx.close();
+        }
+
         // 3) Il duello della lezione col nonno suona la musica dei duelli del primo arco dell'anime ("Preliminary Face-Off").
         {
             const ctx = await t.browser.newContext({ viewport: { width: 1100, height: 700 }, serviceWorkers: 'block' });
