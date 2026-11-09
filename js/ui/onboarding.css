@@ -25,6 +25,10 @@
 }
 .ob-scena.is-visibile { opacity: 1; }
 
+/* Sfondo fisso del primo avvio: sotto le scene (20040) e sotto i dialoghi (20050), sopra tutto il resto, cosi' fra una scena
+   e l'altra non riaffiora la schermata di accesso. Opaco: lo sfondo delle scene e' trasparente al 40%. */
+.ob-fondo-fisso { position: fixed; inset: 0; z-index: 20030; background: #06050a; overflow: hidden; }
+
 /* Il luogo: la bottega del nonno. Stessa idea degli intermezzi dei
    tornei — un fondo vero, velato, invece del nero. */
 .ob-sfondo {

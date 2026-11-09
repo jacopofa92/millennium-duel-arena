@@ -1290,6 +1290,21 @@
             if (!window.SaveManager || !SaveManager.hasSave() || !SaveManager.getTutorial) return false;
             const t = SaveManager.getTutorial();
             if (!t.daFare || t.completata) return false;
+            // Primo avvio NON concluso e app riaperta (il segno lo mette Onboarding.avvia alla fine, ed e' di SESSIONE: sparisce
+            // chiudendo l'app): si riparte dal dialogo del nonno da zero, non direttamente dalla lezione. Richiesta dell'utente.
+            let introInCorso = false;
+            try { introInCorso = sessionStorage.getItem('ygoIntroInCorso') === '1'; } catch (e) { /* noop */ }
+            if (!introInCorso && window.Onboarding) {
+                if (!window.__introRiavviata) {
+                    window.__introRiavviata = true;
+                    Onboarding.avvia().then((esito) => {
+                        window.__introRiavviata = false;
+                        if (esito && SaveManager.setTutorial) SaveManager.setTutorial({ daFare: true });
+                        window.location.href = TUTORIAL_URL;
+                    }).catch(() => { window.__introRiavviata = false; });
+                }
+                return true;
+            }
             let rimandi = 0;
             try { rimandi = parseInt(sessionStorage.getItem('ygoRimandiLezione') || '0', 10) || 0; } catch (e) { /* noop */ }
             if (rimandi >= 3) return false;

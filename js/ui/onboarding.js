@@ -235,11 +235,48 @@
         });
     }
 
+    /** La musica del Negozio: il nonno parla nella sua bottega, non nel menu. */
+    const MUSICA = 'audio/soundtracks/16. Duel Ground.mp3';
+
+    /**
+     * Sfondo FISSO dietro tutte le scene del primo avvio. Ogni scena (dialogo, nome, mazzo) si dissolve prima che arrivi la
+     * successiva: senza questo, fra una scena e l'altra riaffiorava quello che c'e' SOTTO, cioe' la schermata di accesso
+     * (segnalato da chi ha provato un account nuovo: "al cambio scena compare il login"). Sta sotto le scene (z-index) e si
+     * toglie solo a fine primo avvio.
+     */
+    function montaFondoFisso() {
+        const fondo = el('div', 'ob-fondo-fisso');
+        const img = el('div', 'ob-sfondo');
+        img.style.backgroundImage = `url('${SFONDO[0]}')`;
+        fondo.appendChild(img);
+        fondo.appendChild(el('div', 'ob-velo'));
+        document.body.appendChild(fondo);
+        return fondo;
+    }
+
     /**
      * L'intero primo avvio. Crea il salvataggio da sé — con il nome e il
      * mazzo scelti — e risolve con quello che è stato deciso.
+     * Durante tutto il primo avvio: sfondo fisso e musica del Negozio; a fine (o in caso di errore) si rimette tutto com'era.
      */
     function avvia() {
+        const fondo = montaFondoFisso();
+        const musicaPrima = window.DuelMusic && DuelMusic.getTrack ? DuelMusic.getTrack() : null;
+        if (window.DuelMusic && DuelMusic.setTrack) { try { DuelMusic.setTrack(MUSICA); } catch (e) { /* la musica non deve fermare il primo avvio */ } }
+        const ripristina = () => {
+            fondo.remove();
+            if (window.DuelMusic && DuelMusic.setTrack && musicaPrima) { try { DuelMusic.setTrack(musicaPrima); } catch (e) { /* noop */ } }
+        };
+        return avviaScene().then((esito) => {
+            // Il primo avvio e' finito in QUESTA sessione: la lezione col nonno che segue non deve far ripartire la bottega
+            // (vedi obbligaLezioneSeDaFare in index.html: se l'app si riapre senza questo segno, si ricomincia da capo).
+            try { sessionStorage.setItem('ygoIntroInCorso', '1'); } catch (e) { /* noop */ }
+            ripristina();
+            return esito;
+        }, (errore) => { ripristina(); throw errore; });
+    }
+
+    function avviaScene() {
         return dialogo([
             { testo: 'La porta del negozio di giochi si chiude alle tue spalle. Dentro sa di cartone e di legno vecchio; sugli scaffali, scatole di mazzi fino al soffitto.' },
             { chi: 'solomonMuto', testo: 'Benvenuto, benvenuto! Non ti avevo mai visto da queste parti... e credimi, io me li ricordo tutti quelli che entrano qui.' },
