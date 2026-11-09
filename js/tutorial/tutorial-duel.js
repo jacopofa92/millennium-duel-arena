@@ -135,6 +135,8 @@
         }
         return document.getElementById('phaseSideBtn');
     }
+    /** Il bersaglio di un passo che SPIEGA le fasi: il tondo laterale dove c'e', altrimenti la barra (telefono in verticale). */
+    function barraFasi() { return tondoVisibile() ? document.getElementById('phaseSideBtn') : document.getElementById('phaseStepper'); }
     const consentiFase = (fase) => [`.phase-step[data-phase="${fase}"]`, '#phaseSideBtn', '#phaseSideMenu'];
     function primaCasellaLibera(tipo) {
         const campo = tipo === 'monster' ? Tavolo.mostri('player') : Tavolo.magieTrappole('player');
@@ -180,7 +182,7 @@
         },
         {
             testo: 'Il turno è diviso in fasi. Adesso sei nella Main Phase 1: è qui che si evocano i mostri e si giocano Magie e Trappole.',
-            bersaglio: () => document.getElementById('phaseStepper'),
+            bersaglio: () => barraFasi(),
             avanti: true,
             pronto: () => gameState.phase === 'main1' && gameState.currentPlayer === 'player',
             attesa: 'Un attimo, il turno si sta preparando…'
@@ -809,7 +811,7 @@
         },
         {
             testo: 'E il turno ha le sue fasi: Draw, Standby, Main 1, Battle, Main 2, End. Puoi passare a quella che vuoi con la barra qui sopra, ma l\'ordine è sempre lo stesso.',
-            bersaglio: () => document.getElementById('phaseStepper'),
+            bersaglio: () => barraFasi(),
             avanti: true
         },
         { fine: true, testo: 'Lezione completata! Ora conosci le zone del campo: la prossima volta che una carta dice "Cimitero" o "Extra Deck" saprai dove guardare.' }
