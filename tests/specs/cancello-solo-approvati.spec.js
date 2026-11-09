@@ -51,6 +51,10 @@ module.exports = {
         const falso = await chiedi('/js/engine/duel-engine.js', { headers: { Cookie: 'ygo_acc=' + await G.creaCookie('altro', ID, adesso + 600) } });
         t.assert(falso.status === 401, 'Un cookie firmato con un altro segreto e\' respinto');
         t.assert((await chiedi('/js/engine/duel-engine.js', {}, Object.assign({}, env, { COOKIE_SECRET: undefined }))).status === 503, 'Senza segreto configurato il cancello resta CHIUSO per i file riservati (mai aperto)');
+        // Transizione: senza segreto E con CANCELLO_MODO = transizione il sito resta aperto (prima pubblicazione); con il segreto no.
+        const transizione = await chiedi('/js/engine/duel-engine.js', {}, Object.assign({}, env, { COOKIE_SECRET: undefined, CANCELLO_MODO: 'transizione' }));
+        t.assert(transizione.status === 200, 'In transizione, senza segreto, il sito resta aperto');
+        t.assert((await chiedi('/js/engine/duel-engine.js', {}, Object.assign({}, env, { CANCELLO_MODO: 'transizione' }))).status === 401, 'In transizione ma CON il segreto il cancello e\' chiuso');
         t.assert((await chiedi('/', {}, Object.assign({}, env, { COOKIE_SECRET: undefined }))).status === 200, '...ma la pagina di accesso resta raggiungibile');
 
         // 3) /__acc: il cookie lo da' solo un account approvato.

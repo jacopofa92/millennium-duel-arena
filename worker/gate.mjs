@@ -142,6 +142,11 @@ export default {
         const elenco = await caricaElenco(env);
         if (eAperto(url.pathname, elenco)) return env.ASSETS.fetch(request);
 
+        // MODALITA' DI TRANSIZIONE (vars.CANCELLO_MODO = "transizione" in wrangler.jsonc): Cloudflare permette di aggiungere un
+        // Secret solo a un Worker che ha gia' del codice, quindi la prima pubblicazione deve avvenire SENZA segreto. In questa
+        // modalita' e SOLO senza COOKIE_SECRET il sito resta aperto com'era. Appena il segreto c'e' il cancello si chiude da
+        // solo; poi si porta CANCELLO_MODO a "attivo", e senza segreto i file riservati restano chiusi (503).
+        if (!env.COOKIE_SECRET && env.CANCELLO_MODO === 'transizione') return env.ASSETS.fetch(request);
         if (!env.COOKIE_SECRET) return risposta('Cancello non configurato: manca COOKIE_SECRET', 503);
         if (await cookieValido(env.COOKIE_SECRET, leggiCookie(request, NOME_COOKIE))) {
             const r = await env.ASSETS.fetch(request);

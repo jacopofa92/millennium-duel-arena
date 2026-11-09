@@ -27,17 +27,15 @@ solo a chi ha il cookie `ygo_acc`.
   approvazione, non di copiare il codice a chi è approvato.
 - Offline (APK già usato): le pagine in cache del Service Worker si aprono anche senza rete, come prima.
 
-## Cosa fare su Cloudflare (UNA volta, prima del merge in `main`)
-1. Dashboard Cloudflare → Workers & Pages → `millennium-duel-arena` → **Settings → Variables and Secrets** →
-   aggiungi il **Secret** `COOKIE_SECRET` con una stringa casuale lunga (es. 40+ caratteri). Non va messo nel repository.
-2. **Settings → Build**: il comando di deploy oggi è
-   `npx wrangler deploy --assets=./dist --name=millennium-duel-arena --compatibility-date=2026-10-01`.
-   Con `wrangler.jsonc` nel repository basta `npx wrangler deploy` (il resto è nel file). Il comando vecchio funziona
-   ancora, ma conviene il nuovo.
-3. Fai il merge in `main` solo DOPO il punto 1: senza `COOKIE_SECRET` il Worker tiene chiusi i file riservati (risponde
-   503) e nessuno potrebbe giocare, te compreso. La pagina di accesso resta raggiungibile.
-4. Prova: finestra anonima → apri `.../duelMonstersCore.html` → deve riportare all'accesso. Accedi con un account
-   approvato → il gioco si apre. Con un account in attesa → "in attesa di approvazione".
+## Cosa fare su Cloudflare (in tre tempi)
+
+Cloudflare permette di aggiungere un Secret solo a un Worker che ha gia' del codice, quindi:
+
+1. **Merge in main con il cancello in transizione** (CANCELLO_MODO = transizione in wrangler.jsonc): il Worker parte, il sito resta aperto com'era.
+2. Dashboard Cloudflare -> Workers & Pages -> millennium-duel-arena -> **Settings -> Variables and secrets -> Add**: Secret COOKIE_SECRET, valore casuale lungo (40+ caratteri). Appena c'e', il cancello si chiude da solo.
+3. Portare CANCELLO_MODO a attivo (commit): da li' senza segreto i file riservati restano chiusi (503) invece di aprirsi.
+
+Prova: finestra anonima -> .../duelMonstersCore.html deve riportare all'accesso; con un account approvato il gioco si apre.
 
 ## Come tornare indietro
 Revert del merge e di nuovo il comando di deploy vecchio: il sito torna aperto com'era.
