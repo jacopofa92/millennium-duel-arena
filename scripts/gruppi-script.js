@@ -36,6 +36,8 @@ module.exports = {
         // Il canale con cui le regole avvisano l'interfaccia: prima di
         // chiunque emetta o ascolti.
         'js/engine/eventi-duello.js',
+        // I numeri del duello per la schermata di fine (ascolta eventi-duello).
+        'js/stats/stats-duello.js',
         // I due posti al tavolo e chi li controlla (persona, IA, remoto).
         'js/engine/tavolo.js',
         'js/engine/duel-engine.js',

@@ -3307,6 +3307,8 @@
             if (ctx.owner === 'player' && ctx.summonedCard && ctx.summonedCard.id !== -1 && window.ChallengeTracker) {
                 ChallengeTracker.recordProgress('summonMonster', { cardId: ctx.summonedCard.id });
             }
+            // Numeri della schermata di fine duello (js/stats/stats-duello.js): stessa condizione di sopra, senza dipendere dalle Sfide.
+            if (ctx.owner === 'player' && ctx.summonedCard && ctx.summonedCard.id !== -1 && window.StatsDuello) StatsDuello.registra('mostro');
             // Tribù dei D. (id 637): "Tutti i mostri sul tuo Terreno sono
             // considerati Tipo Drago fino alla End Phase" — un'Evocazione
             // (Normale o Special) di `ctx.owner` DOPO l'attivazione della
@@ -6517,6 +6519,12 @@
             // cardType ('spell'|'trap'|'monster') serve alle missioni generiche ("attiva 2 carte Magia o Trappola"): senza, l'unico
             // modo di contarle sarebbe elencare gli id di tutte le Magie.
             ChallengeTracker.recordProgress('activateCard', { cardId: card.id, cardType: card.type });
+        }
+
+        // Numeri della schermata di fine duello: Magie e Trappole attivate dal giocatore (i mostri con effetto non contano qui).
+        if (owner === 'player' && card && window.StatsDuello) {
+            if (card.type === 'spell') StatsDuello.registra('magia');
+            else if (card.type === 'trap') StatsDuello.registra('trappola');
         }
 
         // La vecchia Magia Terreno lascia lo slot solo dopo che la nuova

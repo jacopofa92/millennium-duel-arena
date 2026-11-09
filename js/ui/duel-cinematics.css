@@ -767,6 +767,32 @@
    riservato alla nota sotto un premio vero. */
 .do-reward-row--nota .do-reward-rule { font-size: 0.8rem; color: #c8d0e0; }
 
+/* Il duello in numeri: tre colonne di tessere (valore grande, etichetta piccola), stessa superficie dorata dei premi. */
+.do-stats {
+    margin-top: 12px;
+    width: min(430px, 100%);
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: rgba(247, 215, 116, 0.05);
+    border: 1px solid rgba(247, 215, 116, 0.28);
+    opacity: 0;
+    animation: doFadeUp 620ms ease 700ms forwards;
+    flex: none;
+}
+.do-stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.do-stat {
+    display: flex; flex-direction: column; align-items: center; gap: 1px;
+    padding: 6px 2px; border-radius: 9px; background: rgba(0, 0, 0, 0.22); min-width: 0;
+}
+.do-stat-val { font-size: 1.05rem; font-weight: 900; color: #f7d774; line-height: 1.1; }
+.do-stat-lab { font-size: 0.58rem; letter-spacing: 0.5px; text-transform: uppercase; color: #a9b4c9; text-align: center; line-height: 1.2; }
+@media (max-height: 560px) {
+    .do-stats { margin-top: 2px; padding: 6px 10px; }
+    .do-stat { padding: 3px 2px; }
+    .do-stat-val { font-size: 0.9rem; }
+}
+
 @keyframes doFadeUp {
     from { opacity: 0; transform: translateY(14px); }
     to { opacity: 1; transform: translateY(0); }
@@ -833,7 +859,7 @@
            tutta larghezza. Righe a contenuto e mai una `1fr`: una riga
            elastica stirerebbe il riquadro dei premi oltre il proprio
            bordo dorato, con le righe a traboccare fuori. */
-        grid-template-rows: auto auto;
+        grid-template-rows: auto auto auto;
         align-content: start;
         justify-items: center;
         column-gap: clamp(12px, 3vw, 28px);
@@ -857,8 +883,9 @@
     /* Pulsante e fascia sfumata attraversano ENTRAMBE le colonne: il
        pulsante è l'unica via d'uscita e non deve finire sotto una sola
        metà dello schermo. */
-    .do-continue { grid-column: 1 / -1; grid-row: 2; margin-top: 6px; }
-    .do-content::after { grid-column: 1 / -1; grid-row: 2; }
+    .do-stats { grid-column: 1 / -1; grid-row: 2; width: 100%; margin-top: 0; }
+    .do-continue { grid-column: 1 / -1; grid-row: 3; margin-top: 6px; }
+    .do-content::after { grid-column: 1 / -1; grid-row: 3; }
     /* Il ritratto qui è un di più: a sinistra lo spazio verticale serve
        al titolo e al record, e chi hai appena battuto è già scritto nel
        sottotitolo. */

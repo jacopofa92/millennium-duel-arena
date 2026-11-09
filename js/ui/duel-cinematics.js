@@ -397,6 +397,30 @@
             intestazione.appendChild(recordEl);
         }
 
+        // Numeri del duello appena giocato (js/stats/stats-duello.js per i conteggi, gameState per turni e Life Point).
+        // Solo lettura: se il modulo manca (pagine senza duello) o il duello non ha mosso niente, il riquadro non compare.
+        if (window.StatsDuello && typeof gameState !== 'undefined' && gameState && gameState.turn > 0) {
+            const s = StatsDuello.riepilogo();
+            const n = (v) => Number(v).toLocaleString('it-IT');
+            const voci = [
+                ['Turni', Math.ceil(gameState.turn / 2)],
+                ['Danno massimo', n(s.dannoMax)],
+                ['Danno inflitto', n(s.dannoInflitto)],
+                ['Danno subito', n(s.dannoSubito)],
+                ['Life Point finali', n(Math.max(0, gameState.playerLP))],
+                ['Mostri evocati', s.mostri],
+                ['Evocazioni Tributo', s.tributi],
+                ['Magie attivate', s.magie],
+                ['Trappole attivate', s.trappole]
+            ];
+            const stats = document.createElement('div');
+            stats.className = 'do-stats';
+            stats.innerHTML = `<div class="do-rewards-title">Il duello in numeri</div><div class="do-stats-grid">`
+                + voci.map((v) => `<div class="do-stat"><span class="do-stat-val">${v[1]}</span><span class="do-stat-lab">${v[0]}</span></div>`).join('')
+                + `</div>`;
+            content.appendChild(stats);
+        }
+
         // Riepilogo premi (js/economy/rewards.js, che li ha GIÀ accreditati
         // al salvataggio: qui si mostrano soltanto). Ogni voce porta con sé
         // la PROPRIA spiegazione — richiesta esplicita dell'utente: un

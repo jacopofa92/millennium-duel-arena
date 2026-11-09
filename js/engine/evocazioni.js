@@ -260,6 +260,7 @@ function eseguiEvocazioneNormale(posto, c, extra) {
     // punto da cui passa l'Evocazione Normale. Il marcatore lo mette 'tributa' (eseguiTributo).
     const eraTributo = card._tributoPerEvocazione === true;
     delete card._tributoPerEvocazione;
+    if (eraTributo && posto === 'player' && window.StatsDuello) StatsDuello.registra('tributo');
     if (eraTributo && position === 'defense') {
         const defTributo = window.DuelEngine && DuelEngine.getDefinition(card.id);
         if (defTributo && defTributo.cannotBeSet) {
