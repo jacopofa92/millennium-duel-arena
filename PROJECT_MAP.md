@@ -1,6 +1,24 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
-Ultimo aggiornamento verificato: 2026-11-08.
+Ultimo aggiornamento verificato: 2026-11-09.
+
+## Cancello lato server (1.6.23)
+
+Il sito su Cloudflare e' dietro un Worker (`worker/gate.mjs`, config in `wrangler.jsonc`): le pagine riservate, il motore,
+l'IA e i dati si consegnano solo con il cookie `ygo_acc`, emesso dopo aver verificato su Supabase che l'account e'
+approvato. `index.html` e i file che carica restano pubblici (elenco in `dist/_pubblici.json`, generato da
+`scripts/pubblica.js`). Il segreto `COOKIE_SECRET` vive solo su Cloudflare. Dettagli, rischi residui (relay Multiplayer non
+protetto) e rollback: `docs/planning/ACCESSO_SOLO_APPROVATI.md`. Dopo il login il client rinnova il cookie
+(`aggiornaAccessoServer` in `js/cloud/cloud-sync.js`).
+
+## Fondali Battle City quadrati (1.6.17)
+
+Centro, Parco, Porto e KaibaCorp usano ora un solo fondale quadrato ciascuno,
+1254×1254 come `images/fields/citta.jpg`. I file attivi sono
+`images/maps/battle_city_*_quadrato.jpg`; i vecchi panorami 16:9 sono stati
+rimossi. La stessa rete di nodi è centrata sulla piazza/vialetto centrale e
+funziona con la proiezione desktop 16:9 e con quella del telefono verticale.
+Le dimensioni e le luci WebGL sono riallineate alla tavola quadrata.
 
 ## Quartieri Battle City collegati (2026-11-08)
 
@@ -56,7 +74,7 @@ migrazione una tantum dell'orologio dei tornei già iniziati. Rimossa la legenda
 permanente in fondo alla mappa: le etichette dei nodi raggiungibili e le
 pedine rendono già riconoscibili gli incontri.
 
-### Fondali Battle City adattabili (1.6.7)
+### Fondali Battle City adattabili (1.6.7, sostituiti in 1.6.17)
 
 I quattro quartieri usano un solo fondale panoramico 16:9 ciascuno, con lo
 spazio percorribile e i punti di riferimento raccolti nella fascia centrale:
