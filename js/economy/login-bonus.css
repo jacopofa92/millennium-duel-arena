@@ -44,3 +44,6 @@
 .lb-scheda.is-riscosso .lb-oggi-voci { animation: lbPop .5s ease both; }
 @keyframes lbPop { 0% { transform: scale(.85); opacity: 0; } 60% { transform: scale(1.04); opacity: 1; } 100% { transform: none; } }
 @media (prefers-reduced-motion: reduce) { .lb-velo, .lb-scheda, .lb-scheda.is-riscosso .lb-oggi-voci { animation: none; } }
+
+/* Messaggio di errore del riquadro (salvataggio non riuscito: si puo' riprovare). */
+.lb-mensile.lb-errore { color: #ff9a8a; font-weight: 700; }

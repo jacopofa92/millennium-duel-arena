@@ -122,6 +122,10 @@
         const online = modi.online || {};
         const tutorial = (save.tutorial && save.tutorial.lezioni) || {};
         const accessi = (modi.loginBonus && modi.loginBonus.accessi) || 0;
+        // La ricevuta dell'ultimo bonus d'accesso riscosso (data e cosa e' arrivato): serve a controllare che il premio sia stato dato.
+        const ult = modi.loginBonus && modi.loginBonus.ultima;
+        const NOMI_BONUS = { credits: 'Crediti', starChips: 'Stelle', bustaBase: 'Busta Base', locatorCards: 'Carta Locazione' };
+        const ultimoBonus = ult && Array.isArray(ult.voci) && ult.data ? `Ultimo: ${String(ult.data).split('-').reverse().join('/')} · ${ult.voci.map((v) => (v.quantita > 1 || v.tipo === 'credits' || v.tipo === 'starChips' ? v.quantita + ' ' : '') + (NOMI_BONUS[v.tipo] || v.tipo)).join(', ')}` : '';
 
         return {
             giocati, vinti, persi, pareggi, st, piuBattuto, bestiaNera, duellantiBattuti,
@@ -131,7 +135,7 @@
             tappe, storieFinite, torneiVinti, torneiTentati, tornei,
             sfideFatte, sfideTotali: catalogoSfide ? catalogoSfide.length : null,
             sbloccati: sbloccati.size, rosterTotale: roster ? roster.length : null,
-            oggetti, oggettiTotali, accessi,
+            oggetti, oggettiTotali, accessi, ultimoBonus,
             settimana, caccia, torre, puzzleRisolti, puzzleTotali: puzzleIds.length, puzzleStelle, medaglieRivincite,
             bossOnline: Object.keys(online.bossBattuti || {}).length, serieOnline: online.serie || 0,
             lezioni: Object.keys(tutorial).filter((k) => tutorial[k]).length
@@ -243,7 +247,7 @@
             voce('freeDuel', suQuanti(s.sbloccati, s.rosterTotale), 'Duellanti sbloccati'),
             voce('tournament', String(s.torneiVinti), 'Tornei vinti', { nota: s.torneiTentati ? `su ${s.torneiTentati} ${s.torneiTentati === 1 ? 'tentativo' : 'tentativi'}` : '' }),
             voce('story', String(s.tappe), 'Tappe della Storia', { nota: s.storieFinite ? `${s.storieFinite} ${s.storieFinite === 1 ? 'storia completata' : 'storie completate'}` : '' }),
-            voce('calendar', String(s.accessi), 'Accessi giornalieri')
+            voce('calendar', String(s.accessi), 'Accessi giornalieri', { nota: s.ultimoBonus })
         ];
         const dal = s.st.dal ? `I conti per modalità partono dal ${s.st.dal.split('-').reverse().join('/')}: i duelli di prima sono solo nei totali.` : 'I conti per modalità partono dal prossimo duello.';
 

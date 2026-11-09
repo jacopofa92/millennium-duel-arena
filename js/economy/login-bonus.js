@@ -46,7 +46,8 @@
         return {
             ultimo: (s && typeof s.ultimo === 'string') ? s.ultimo : '',
             giorno: Math.max(0, Math.min(PREMI.length - 1, Number(s && s.giorno) || 0)),
-            accessi: Math.max(0, Number(s && s.accessi) || 0)
+            accessi: Math.max(0, Number(s && s.accessi) || 0),
+            ultima: (s && s.ultima && typeof s.ultima === 'object') ? s.ultima : null
         };
     }
 
@@ -77,27 +78,75 @@
             indice: s.giorno,
             premio: PREMI[s.giorno],
             accessi: s.accessi,
+            ultima: s.ultima,
             // Con questo accesso si scatta il premio mensile?
             scattaMensile: accessiDopo % MENSILE.ogni === 0,
             accessiAlMensile: MENSILE.ogni - (s.accessi % MENSILE.ogni)
         };
     }
 
-    /** Riscuote il premio di oggi. Torna { ok, voci: [{ tipo, quantita }], indice } (le voci servono a mostrarlo). */
+    let inCorso = false;
+    /**
+     * Riscuote il premio di oggi, SENZA possibilita' di darlo a meta'. Torna { ok, voci: [{ tipo, quantita }], indice, motivo }:
+     * `motivo` = 'non-disponibile' (gia' riscosso o senza data attendibile) o 'non-salvato' (la scrittura non e' andata: il
+     * salvataggio e' rimasto com'era e si puo' riprovare).
+     * Garanzie: (1) una sola scrittura per crediti, Stelle, buono, Carta Locazione e avanzamento del giorno (SaveManager.transazione);
+     * (2) lo stato di oggi si ricontrolla DENTRO la scrittura, quindi un doppio tocco o un'altra scheda non pagano due volte;
+     * (3) dopo la scrittura si rilegge e si confronta ogni importo con l'atteso: se qualcosa non torna, tutto viene annullato;
+     * (4) a premio dato si chiede subito il caricamento sul cloud (`sincronizzato` e' la Promise, che non blocca nessuno).
+     */
     function riscuoti() {
+        if (inCorso) return { ok: false, voci: [], motivo: 'non-disponibile' };
         const st = stato();
-        if (!st.disponibile) return { ok: false, voci: [] };
-        const p = st.premio;
-        const voci = [];
-        if (p.crediti) { SaveManager.addCurrency('credits', p.crediti); voci.push({ tipo: 'credits', quantita: p.crediti }); }
-        if (p.stelle) { SaveManager.addCurrency('starChips', p.stelle); voci.push({ tipo: 'starChips', quantita: p.stelle }); }
-        if (p.buonoBusta) { SaveManager.setModeState(CHIAVE_BUONI, { base: buoniBusta() + p.buonoBusta }); voci.push({ tipo: 'bustaBase', quantita: p.buonoBusta }); }
-        if (st.scattaMensile) { SaveManager.addCurrency('locatorCards', MENSILE.locazione); voci.push({ tipo: 'locatorCards', quantita: MENSILE.locazione, mensile: true }); }
-        // Il ciclo avanza di UN passo, qualunque sia il giorno in cui si torna: niente premi persi e niente premi saltati.
-        SaveManager.setModeState(CHIAVE, { ultimo: oggi(), giorno: (st.indice + 1) % PREMI.length, accessi: st.accessi + 1 });
-        return { ok: true, voci: voci, indice: st.indice };
+        if (!st.disponibile) return { ok: false, voci: [], motivo: 'non-disponibile' };
+        inCorso = true;
+        try {
+            const p = st.premio;
+            const giornoOggi = oggi();
+            const voci = [];
+            if (p.crediti) voci.push({ tipo: 'credits', quantita: p.crediti });
+            if (p.stelle) voci.push({ tipo: 'starChips', quantita: p.stelle });
+            if (p.buonoBusta) voci.push({ tipo: 'bustaBase', quantita: p.buonoBusta });
+            if (st.scattaMensile) voci.push({ tipo: 'locatorCards', quantita: MENSILE.locazione, mensile: true });
+            const CAMPO = { credits: 'credits', starChips: 'starChips', locatorCards: 'locatorCards' };
+            let prima = null;
+            const r = SaveManager.transazione((s) => {
+                const lb = s.modalita && s.modalita[CHIAVE];
+                if (lb && lb.ultimo === giornoOggi) return false;   // gia' riscosso (altra scheda, doppio tocco): niente
+                s.currency = s.currency || {};
+                s.modalita = s.modalita || {};
+                const buoniPrima = Math.max(0, Number(s.modalita[CHIAVE_BUONI] && s.modalita[CHIAVE_BUONI].base) || 0);
+                prima = { credits: s.currency.credits || 0, starChips: s.currency.starChips || 0, locatorCards: s.currency.locatorCards || 0, buoni: buoniPrima };
+                voci.forEach((v) => {
+                    if (CAMPO[v.tipo]) s.currency[CAMPO[v.tipo]] = (s.currency[CAMPO[v.tipo]] || 0) + v.quantita;
+                    else if (v.tipo === 'bustaBase') s.modalita[CHIAVE_BUONI] = { base: buoniPrima + v.quantita };
+                });
+                s.modalita[CHIAVE] = {
+                    ultimo: giornoOggi,
+                    giorno: (st.indice + 1) % PREMI.length,
+                    accessi: st.accessi + 1,
+                    // La ricevuta dell'ultima riscossione (si vede nel Profilo): data e cosa e' arrivato.
+                    ultima: { data: giornoOggi, giorno: st.indice + 1, voci: voci.map((v) => ({ tipo: v.tipo, quantita: v.quantita })) }
+                };
+            }, (salvato) => {
+                if (!salvato || !prima) return false;
+                const c = salvato.currency || {};
+                const m = salvato.modalita || {};
+                const atteso = (tipo) => voci.filter((v) => v.tipo === tipo).reduce((a, v) => a + v.quantita, 0);
+                return (c.credits || 0) === prima.credits + atteso('credits')
+                    && (c.starChips || 0) === prima.starChips + atteso('starChips')
+                    && (c.locatorCards || 0) === prima.locatorCards + atteso('locatorCards')
+                    && Math.max(0, Number(m[CHIAVE_BUONI] && m[CHIAVE_BUONI].base) || 0) === prima.buoni + atteso('bustaBase')
+                    && !!m[CHIAVE] && m[CHIAVE].ultimo === giornoOggi;
+            });
+            if (!r.ok) return { ok: false, voci: [], motivo: stato().disponibile ? 'non-salvato' : 'non-disponibile' };
+            // Subito sul cloud: il premio non deve restare solo su questo dispositivo.
+            const sincronizzato = (window.AutoSync && typeof AutoSync.caricaOra === 'function') ? AutoSync.caricaOra().catch(() => false) : Promise.resolve(false);
+            return { ok: true, voci: voci, indice: st.indice, sincronizzato: sincronizzato };
+        } finally {
+            inCorso = false;
+        }
     }
-
     // ------------------------------------------------------------------
     // Il riquadro
     // ------------------------------------------------------------------
@@ -130,12 +179,14 @@
         return c;
     }
 
-    /** Mostra il riquadro del bonus di oggi. `quandoFinito()` parte quando si chiude (riscosso o rimandato). */
+    /** Mostra il riquadro del bonus di oggi. `quandoFinito()` parte quando si chiude (solo dopo la riscossione). */
     function mostra(quandoFinito) {
         const st = stato();
         if (!st.disponibile) { if (quandoFinito) quandoFinito(); return; }
-        const fine = () => { velo.remove(); document.removeEventListener('keydown', suEsc); if (quandoFinito) quandoFinito(); };
-        const suEsc = (ev) => { if (ev.key === 'Escape') fine(); };
+        // Il riquadro NON si chiude da solo ne' con Esc, il tasto Indietro o un tocco fuori: si chiude solo dopo aver riscosso
+        // (richiesta dell'utente: il premio non deve potersi mancare, e non c'era modo di richiamarlo piu' tardi).
+        const fine = () => { velo.remove(); document.removeEventListener('keydown', blocca, true); if (quandoFinito) quandoFinito(); };
+        const blocca = (ev) => { if (ev.key === 'Escape') { ev.preventDefault(); ev.stopPropagation(); } };
 
         const velo = el('div', 'lb-velo');
         velo.setAttribute('role', 'dialog');
@@ -174,13 +225,26 @@
         const azioni = el('div', 'lb-azioni');
         const btnPrendi = el('button', 'lb-btn lb-btn--oro', 'Riscuoti');
         btnPrendi.type = 'button';
-        const btnDopo = el('button', 'lb-btn lb-btn--tenue', 'Dopo');
-        btnDopo.type = 'button';
-        btnDopo.onclick = fine;
         btnPrendi.onclick = () => {
             btnPrendi.disabled = true;
             const r = riscuoti();
-            if (!r.ok) { fine(); return; }
+            if (!r.ok) {
+                if (r.motivo === 'non-salvato') {
+                    // Il salvataggio non e' andato a buon fine e non e' stato toccato: si puo' riprovare.
+                    mensile.textContent = 'Non sono riuscito a salvare il premio. Non e\' stato toccato niente: riprova.';
+                    mensile.hidden = false; mensile.classList.add('lb-errore');
+                    btnPrendi.textContent = 'Riprova'; btnPrendi.disabled = false;
+                    return;
+                }
+                // Gia' riscosso (altra scheda o altro dispositivo): niente da pagare, si chiude.
+                sotto.textContent = 'Il bonus di oggi risulta gia\' riscosso.';
+                azioni.replaceChildren();
+                const chiudi = el('button', 'lb-btn lb-btn--oro', 'Fatto');
+                chiudi.type = 'button'; chiudi.onclick = fine;
+                azioni.appendChild(chiudi); chiudi.focus({ preventScroll: true });
+                return;
+            }
+            mensile.classList.remove('lb-errore');
             if (window.NativeHaptics && NativeHaptics.success) NativeHaptics.success();
             // Il riquadro diventa la ricevuta: cosa e' arrivato, dove lo si trova. Si chiude con "Fatto".
             scheda.classList.add('is-riscosso');
@@ -197,12 +261,12 @@
             azioni.appendChild(ok);
             ok.focus({ preventScroll: true });
         };
-        azioni.append(btnPrendi, btnDopo);
+        azioni.append(btnPrendi);
 
         scheda.append(sigillo, titolo, sotto, griglia, oggiBox, mensile, azioni);
         velo.appendChild(scheda);
         document.body.appendChild(velo);
-        document.addEventListener('keydown', suEsc);
+        document.addEventListener('keydown', blocca, true);
         setTimeout(() => btnPrendi.focus({ preventScroll: true }), 40);
     }
 

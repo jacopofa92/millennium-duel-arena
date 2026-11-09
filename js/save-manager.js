@@ -995,6 +995,36 @@
     }
 
     /**
+     * TRANSAZIONE: cambia piu' cose del salvataggio in UNA sola scrittura (tutto o niente) e poi controlla che sia andata davvero.
+     * `modifica(copia)` riceve una COPIA del salvataggio e la cambia; se torna `false` non si scrive niente. Dopo la scrittura si
+     * rilegge il salvataggio e si chiama `verifica(salvato)`: se risponde falso (o la scrittura e' fallita, per esempio spazio
+     * esaurito) il salvataggio torna com'era e il risultato e' { ok: false }. Serve a chi paga un premio: prima crediti, stato del
+     * giorno e buoni si scrivevano in passaggi separati, e un'interruzione a meta' dava il premio senza segnarlo (doppia
+     * riscossione) o lo segnava senza darlo.
+     * @param {(copia: any) => (boolean|void)} modifica
+     * @param {(salvato: any) => boolean} [verifica]
+     * @returns {{ ok: boolean, salvato?: any }}
+     */
+    function transazione(modifica, verifica) {
+        const prima = readRaw();
+        const attuale = load();
+        if (!attuale) return { ok: false };
+        const copia = JSON.parse(JSON.stringify(attuale));
+        try {
+            if (modifica(copia) === false) return { ok: false };
+            touch(copia);
+        } catch (e) {
+            if (prima) { try { writeRaw(prima); } catch (e2) { /* niente altro da fare */ } }
+            return { ok: false };
+        }
+        const dopo = readRaw();
+        if (verifica && !verifica(dopo)) {
+            if (prima) { try { writeRaw(prima); } catch (e) { /* niente altro da fare */ } }
+            return { ok: false };
+        }
+        return { ok: true, salvato: dopo };
+    }
+    /**
      * Stato persistente di UN torneo (es. 'duelistKingdom') — ogni pagina
      * torneo definisce da sola la FORMA del proprio oggetto stato (mappa
      * percorsa, passo attuale, ecc.), questo file si limita a
@@ -1517,6 +1547,7 @@
         impostaProprietario: impostaProprietario,
         touch: touch,
         onSaved: onSaved,
+        transazione: transazione,
         getSettings: getSettings,
         getSetting: getSetting,
         setSetting: setSetting,

@@ -1696,24 +1696,37 @@
         }
 
         /**
-         * Bonus d'accesso giornaliero (js/economy/login-bonus.js): una volta al giorno, alla prima apertura del menu. Non prima della lezione
-         * obbligatoria del primo avvio (non si interrompe), non senza la data del server (offline: si offre alla prossima apertura) e, se si
-         * preme "Dopo", non di nuovo finche' dura questa sessione (tornare al menu da un'altra pagina non deve riaprirlo).
+         * Bonus d'accesso giornaliero (js/economy/login-bonus.js): una volta al giorno, alla prima apertura del menu, e il riquadro
+         * NON si puo' rimandare: si chiude solo riscuotendo (vedi LoginBonus.mostra). Non prima della lezione obbligatoria del primo
+         * avvio (non si interrompe: finita la lezione si torna al menu e compare). Senza la data del server (offline) il bonus non
+         * e' verificabile e non si offre; invece di sparire in silenzio si riprova da solo, ogni 30 secondi e appena torna la rete,
+         * e compare appena la data e' attendibile.
          */
         let loginBonusProposto = false;
         function proponiLoginBonus() {
             if (loginBonusProposto || !window.LoginBonus || !window.SaveManager || !SaveManager.hasSave()) return;
             const t = SaveManager.getTutorial ? SaveManager.getTutorial() : { daFare: false, completata: true };
             if (t.daFare && !t.completata) return;
-            try { if (sessionStorage.getItem('ygoLoginBonusRimandato') === '1') return; } catch (e) { /* noop */ }
             loginBonusProposto = true;
-            const mostra = () => LoginBonus.mostra(() => {
-                if (!LoginBonus.stato().disponibile) return;
-                try { sessionStorage.setItem('ygoLoginBonusRimandato', '1'); } catch (e) { /* noop */ }
-            });
-            if (window.ServerDate && typeof ServerDate.sync === 'function') ServerDate.sync().then(mostra, mostra); else mostra();
+            /** Vero quando non c'e' piu' niente da fare: mostrato adesso, o gia' riscosso oggi (data attendibile e non disponibile). */
+            const tenta = () => {
+                if (document.querySelector('.lb-velo')) return true;
+                const st = LoginBonus.stato();
+                if (st.disponibile) { LoginBonus.mostra(); return true; }
+                return st.attendibile;
+            };
+            let timer = null;
+            const riprova = () => {
+                const dopo = () => { if (tenta()) { clearInterval(timer); window.removeEventListener('online', riprova); } };
+                if (window.ServerDate && typeof ServerDate.sync === 'function') ServerDate.sync().then(dopo, dopo); else dopo();
+            };
+            const dopoPrimoSync = () => {
+                if (tenta()) return;
+                timer = setInterval(riprova, 30000);
+                window.addEventListener('online', riprova);
+            };
+            if (window.ServerDate && typeof ServerDate.sync === 'function') ServerDate.sync().then(dopoPrimoSync, dopoPrimoSync); else dopoPrimoSync();
         }
-
         function passGate() {
             try { sessionStorage.setItem(GATE_SESSION_KEY, '1'); } catch (e) { /* noop */ }
             showMenu();
@@ -2205,6 +2218,8 @@
         if (window.MenuMobile && MenuMobile.mq) MenuMobile.mq.addEventListener('change', () => { if (document.getElementById('menuShell').style.display !== 'none') renderMenu(); });
         if (window.NativeBackButton) {
             NativeBackButton.setHandler(() => {
+                // Il riquadro del bonus d'accesso non si chiude con Indietro: si chiude solo riscuotendo.
+                if (document.querySelector('.lb-velo')) return true;
                 const openModal = document.querySelector('.menu-modal-backdrop.open');
                 if (openModal) { openModal.classList.remove('open'); return true; }
                 if (window.MenuMobile && MenuMobile.attivo() && MenuMobile.tabCorrente() !== 'duelli' && document.getElementById('menuShell').classList.contains('menu-shell--app')) {
