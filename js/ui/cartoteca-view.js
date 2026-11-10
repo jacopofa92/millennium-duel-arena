@@ -49,6 +49,7 @@
         </div>
     
         <div class="filter-panel" data-ct="filterPanel">
+            <label class="filter-group"><span><input type="checkbox" data-ct="ownedOnly"> Solo possedute</span></label>
             <div class="filter-row">
                 <div class="filter-group">
                     <span class="filter-group-label">Tipo Carta</span>
@@ -148,6 +149,7 @@
         const q = (nome) => /** @type {any} */ (root.querySelector('[data-ct="' + nome + '"]'));
 
         const state = {
+            ownedOnly: false,
             text: '',
             types: new Set(),
             levels: new Set(),
@@ -206,6 +208,10 @@
         }
 
         function initFilters() {
+            q('ownedOnly').addEventListener('change', (e) => {
+                state.ownedOnly = e.target.checked;
+                renderGrid();
+            });
             // Tipo carta
             buildChipGroup(
                 q('typeChips'),
@@ -337,6 +343,8 @@
             };
 
             q('resetBtn').onclick = () => {
+                state.ownedOnly = false;
+                q('ownedOnly').checked = false;
                 state.text = '';
                 state.types.clear();
                 state.levels.clear();
@@ -358,6 +366,7 @@
         }
 
         function cardMatchesFilters(card) {
+            if (state.ownedOnly && !(window.SaveManager && SaveManager.getOwnedCount(card.id) > 0)) return false;
             if (state.text) {
                 const haystack = normalize(card.name) + ' ' + normalize(card.effect || '');
                 if (!haystack.includes(state.text)) return false;
@@ -380,7 +389,7 @@
 
         /** Numero di filtri attivi in questo momento, per il badge sul pulsante "Filtri". */
         function countActiveFilters() {
-            return state.types.size + state.levels.size + state.categories.size + state.races.size +
+            return (state.ownedOnly ? 1 : 0) + state.types.size + state.levels.size + state.categories.size + state.races.size +
                 state.attributes.size + state.spellSubtypes.size + state.trapSubtypes.size + state.origins.size +
                 (state.atkMin !== null ? 1 : 0) + (state.atkMax !== null ? 1 : 0) +
                 (state.defMin !== null ? 1 : 0) + (state.defMax !== null ? 1 : 0);

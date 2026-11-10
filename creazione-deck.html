@@ -1394,6 +1394,7 @@
                     </button>
                 </div>
                 <div class="filter-panel" id="editorFilterPanel">
+                    <label class="filter-group"><span><input type="checkbox" id="editorOwnedOnly"> Solo possedute</span></label>
                     <div class="filter-row">
                         <div class="filter-group">
                             <span class="filter-group-label">Tipo</span>
@@ -2129,7 +2130,7 @@
     // Editor
     // ============================================================
     let editingDeck = null; // { id|null, name, main:[], extra:[] }
-    const editorFilters = { text: '', types: new Set(), levels: new Set(), categories: new Set(), races: new Set(), attributes: new Set(), spellSubtypes: new Set(), trapSubtypes: new Set(), atkMin: null, atkMax: null, defMin: null, defMax: null, sort: 'default', page: 1 };
+    const editorFilters = { ownedOnly: false, text: '', types: new Set(), levels: new Set(), categories: new Set(), races: new Set(), attributes: new Set(), spellSubtypes: new Set(), trapSubtypes: new Set(), atkMin: null, atkMax: null, defMin: null, defMax: null, sort: 'default', page: 1 };
     // Stesso taglio della Cartoteca (richiesta esplicita dell'utente):
     // con oltre 1000 carte, costruire tutte le tile in un colpo solo
     // rende lento ogni singolo tasto premuto nella ricerca, visto che
@@ -2638,6 +2639,8 @@
     }
 
     function resetEditorFilters() {
+        editorFilters.ownedOnly = false;
+        $('editorOwnedOnly').checked = false;
         editorFilters.text = '';
         editorFilters.types.clear();
         editorFilters.levels.clear();
@@ -2678,7 +2681,7 @@
     /** Numero di filtri attivi, per il badge sul pulsante "Filtri". */
     function countActiveEditorFilters() {
         const f = editorFilters;
-        return f.types.size + f.levels.size + f.categories.size + f.races.size + f.attributes.size +
+        return (f.ownedOnly ? 1 : 0) + f.types.size + f.levels.size + f.categories.size + f.races.size + f.attributes.size +
             f.spellSubtypes.size + f.trapSubtypes.size +
             (f.atkMin !== null ? 1 : 0) + (f.atkMax !== null ? 1 : 0) +
             (f.defMin !== null ? 1 : 0) + (f.defMax !== null ? 1 : 0);
@@ -2711,6 +2714,7 @@
     }
 
     function renderEditorFilterChips() {
+        $('editorOwnedOnly').onchange = (e) => { editorFilters.ownedOnly = e.target.checked; renderEditorResults(); };
         buildChipGroup($('editorTypeChips'), ['monster', 'spell', 'trap'], (v) => TYPE_ICON[v] + ' ' + TYPE_LABELS[v], editorFilters.types);
 
         const levels = [...new Set(cardDatabase.filter(c => c.type === 'monster').map(c => c.level))].sort((a, b) => a - b);
@@ -2765,6 +2769,7 @@
 
     function cardMatchesEditorFilters(card) {
         const f = editorFilters;
+        if (f.ownedOnly && ownedCountOf(card.id) <= 0) return false;
         if (f.text) {
             const haystack = normalize(card.name) + ' ' + normalize(card.effect || '');
             if (!haystack.includes(f.text)) return false;
