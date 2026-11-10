@@ -1,5 +1,24 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Filtri possesso e gestione utenze (10 novembre 2026)
+
+`js/ui/cartoteca-view.js` offre “Solo possedute” nella Cartoteca condivisa
+fra menu e pagina autonoma; `creazione-deck.html` offre lo stesso filtro
+durante la ricerca per aggiungere carte. Entrambi usano le copie effettive
+esposte da `SaveManager.getOwnedCount`, contano il filtro nel badge e lo
+spengono con “Azzera filtri”. Per admin resta la collezione completa prevista.
+
+`admin.html` e `js/cloud/cloud-sync.js` gestiscono sospensione reversibile e
+note private per account, conservando le bozze durante i cambi stato.
+`supabase/admin-utenze.sql` è l'aggiornamento per database esistenti (già
+applicato a DuelArena); `supabase/schema.sql` include le stesse regole.
+Note separate dai profili con RLS riservata agli admin; controlli online ogni
+minuto e al ritorno in primo piano. Le limitazioni offline sono documentate
+in `supabase/README.md`. Spec mirato: `filtri-possedute-admin-utenze`.
+
+La ricognizione dei premi, senza variazioni agli importi, è in
+`docs/economy/PREMI_TORNEI_2026-11-10.md`.
+
 Ultimo aggiornamento verificato: 2026-11-09.
 
 ## Cancello lato server (1.6.23)

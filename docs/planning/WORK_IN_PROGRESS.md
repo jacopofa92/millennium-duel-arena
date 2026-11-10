@@ -1,5 +1,19 @@
 # Work in progress — miglioramenti da seguire
 
+## Gestione utenze e filtri possesso — chiuso in 1.6.30
+
+- [x] Filtro “Solo possedute” in ricerca creazione deck e nella Cartoteca
+      condivisa, incluso badge e azzeramento.
+- [x] Sospendi/Riattiva nel pannello approvazioni, note private persistenti
+      per ogni account e conservazione delle bozze durante i cambi stato.
+- [x] Migrazione `supabase/admin-utenze.sql` applicata a DuelArena; RLS note,
+      sospensione e riattivazione verificate in transazione con rollback.
+- [x] Ricognizione premi tornei documentata in
+      `docs/economy/PREMI_TORNEI_2026-11-10.md`, senza ritoccare i premi.
+- [x] Spec `filtri-possedute-admin-utenze`, `admin-ultimo-accesso` e
+      `cancello-solo-approvati` passati; sintassi e typecheck passati.
+      Suite completa non eseguita.
+
 Elenco di lavori consigliati, in ordine di valore. Spuntare `[x]` quando fatto.
 
 ## Battle City — spostamento fra quartieri (chiuso in 1.6.1)
