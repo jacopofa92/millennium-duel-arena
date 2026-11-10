@@ -106,10 +106,10 @@
     "semantic_hash": "05dec56261ea505ef3d9cbf0562ac73f"
   },
   "js/cloud/auth-gate.js": {
-    "mtime": 1792320742.1745162,
-    "seen": 1793910198.2344966,
-    "ast_hash": "2f8e29b90b8433e56993c2a1c2d60e47",
-    "semantic_hash": "2f8e29b90b8433e56993c2a1c2d60e47"
+    "mtime": 1794333356.7281983,
+    "seen": 1794347532.9965756,
+    "ast_hash": "3224c25c2dd324a7b373c376bee278c3",
+    "semantic_hash": ""
   },
   "js/cloud/auto-sync.js": {
     "mtime": 1792839612.7794633,
@@ -118,9 +118,9 @@
     "semantic_hash": "8c2cb14300110211f2773c2af187c596"
   },
   "js/cloud/cloud-sync.js": {
-    "mtime": 1794253909.6846876,
-    "seen": 1794256471.8506293,
-    "ast_hash": "8bb9cd5e968dd61508582194d0c2a9df",
+    "mtime": 1794347376.411239,
+    "seen": 1794347532.9971113,
+    "ast_hash": "d661b8d961c132dd846d2943deaf7dfb",
     "semantic_hash": ""
   },
   "js/cloud/server-date.js": {
@@ -772,9 +772,9 @@
     "semantic_hash": ""
   },
   "js/ui/cartoteca-view.js": {
-    "mtime": 1794006517.4680004,
-    "seen": 1794049280.8452823,
-    "ast_hash": "0846edc441e424876b547ba5f8c2f1c8",
+    "mtime": 1794333268.3299549,
+    "seen": 1794347533.0600154,
+    "ast_hash": "c24aefdfc25c30b743e3c14b38a9f7a5",
     "semantic_hash": ""
   },
   "js/ui/catena-webgl.js": {
@@ -1108,9 +1108,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794265188.533308,
-    "seen": 1794332687.6299381,
-    "ast_hash": "f0f86b87ff3ca8b3681973ff1d3581f1",
+    "mtime": 1794347472.0991907,
+    "seen": 1794347533.0927575,
+    "ast_hash": "91c3192ac3cb31cef9a575779b8a3472",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1126,9 +1126,9 @@
     "semantic_hash": "57357a46c1d07a0fa18bbcd83581aaa6"
   },
   "package.json": {
-    "mtime": 1794265188.5355554,
-    "seen": 1794332687.631045,
-    "ast_hash": "29fa33acb7dfe2db5f6b777e7a253049",
+    "mtime": 1794347472.4323559,
+    "seen": 1794347533.0927575,
+    "ast_hash": "ce55c40480ad1131ffa7a245dcc50f3f",
     "semantic_hash": ""
   },
   "render.yaml": {
@@ -1527,9 +1527,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794265188.5385475,
-    "seen": 1794332687.6618207,
-    "ast_hash": "893a30385ada5c8bf985817a44edf967",
+    "mtime": 1794347473.1042495,
+    "seen": 1794347533.1220834,
+    "ast_hash": "9bbea1c45f797c2933c6247e93b53bec",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -1553,10 +1553,10 @@
     "ast_empty": true
   },
   "tests/helpers/finto-cloud.js": {
-    "mtime": 1792834853.3327048,
-    "seen": 1793910198.3229165,
-    "ast_hash": "6e48f762a6be7f946b9435fd80b4ebe4",
-    "semantic_hash": "6e48f762a6be7f946b9435fd80b4ebe4"
+    "mtime": 1794347236.7157202,
+    "seen": 1794347533.1241033,
+    "ast_hash": "7137a5b9e9d4204617b28f7089f4c67c",
+    "semantic_hash": ""
   },
   "tests/helpers/harness.js": {
     "mtime": 1791733561.5193336,
@@ -4961,9 +4961,9 @@
     "semantic_hash": ""
   },
   "PROJECT_MAP.md": {
-    "mtime": 1794256500.5933337,
-    "seen": 1794332687.9264905,
-    "ast_hash": "d7b59374f1615a845c9cbd7b5a2d24e9",
+    "mtime": 1794347334.3058724,
+    "seen": 1794347533.402151,
+    "ast_hash": "0da101b965e503ae64a9161ad91d603c",
     "semantic_hash": ""
   },
   "PUBBLICAZIONE.md": {
@@ -4979,9 +4979,9 @@
     "semantic_hash": ""
   },
   "admin.html": {
-    "mtime": 1794257123.0268328,
-    "seen": 1794332687.9274971,
-    "ast_hash": "43ae66b3abb3e4a49e6d48e17911837b",
+    "mtime": 1794347096.021918,
+    "seen": 1794347533.4036636,
+    "ast_hash": "7a98723c15272fe9f5d131fe13882184",
     "semantic_hash": ""
   },
   "assets/fonts/cinzel-decorative/OFL.txt": {
@@ -5027,9 +5027,9 @@
     "semantic_hash": ""
   },
   "creazione-deck.html": {
-    "mtime": 1794257123.0497305,
-    "seen": 1794332687.9295082,
-    "ast_hash": "4f0a38112ee0697e7c7d9922f378ff3f",
+    "mtime": 1794347376.0965095,
+    "seen": 1794347533.40691,
+    "ast_hash": "3e536891fd91267add579ce0f52a7991",
     "semantic_hash": ""
   },
   "docs/README.md": {
@@ -5261,9 +5261,9 @@
     "semantic_hash": ""
   },
   "docs/planning/WORK_IN_PROGRESS.md": {
-    "mtime": 1794180106.4560251,
-    "seen": 1794180220.5111468,
-    "ast_hash": "d860dee8cad15eb321f6e48a72dca8da",
+    "mtime": 1794347473.4528086,
+    "seen": 1794347533.430212,
+    "ast_hash": "e9e6ef597014f535b643b3a03e9b2509",
     "semantic_hash": ""
   },
   "duelMonstersCore.html": {
@@ -5297,9 +5297,9 @@
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1794264451.1501656,
-    "seen": 1794332687.9519477,
-    "ast_hash": "be9da81569e594016214875ae91ca38b",
+    "mtime": 1794347281.5848863,
+    "seen": 1794347533.4322166,
+    "ast_hash": "42d8a1f2cc7736a17a2257a8191a29f3",
     "semantic_hash": ""
   },
   "multiplayer.html": {
@@ -5369,9 +5369,9 @@
     "semantic_hash": ""
   },
   "supabase/README.md": {
-    "mtime": 1788812320.1217084,
-    "seen": 1793912297.4187498,
-    "ast_hash": "8ef7884f8795e9f9424bfe7cc5e05bb2",
+    "mtime": 1794347333.9516919,
+    "seen": 1794347533.43826,
+    "ast_hash": "75984eb38af22e67ec5c77e9747e09ef",
     "semantic_hash": ""
   },
   "tag.html": {
@@ -24988,10 +24988,22 @@
     "ast_hash": "22da5f767d23dc2d17c1c77cc81b4091",
     "semantic_hash": ""
   },
+  "tests/specs/filtri-possedute-admin-utenze.spec.js": {
+    "mtime": 1794347237.026847,
+    "seen": 1794347533.1951156,
+    "ast_hash": "f3339ab9516cbc7693ea2a96099485c6",
+    "semantic_hash": ""
+  },
+  "docs/economy/PREMI_TORNEI_2026-11-10.md": {
+    "mtime": 1794347333.632606,
+    "seen": 1794347533.4250877,
+    "ast_hash": "9a592554287385c3d364e3ef26c50ac0",
+    "semantic_hash": ""
+  },
   "package-lock.json": {
-    "mtime": 1792178378.680154,
-    "seen": 1793912297.48207,
-    "ast_hash": "01ad4d85c08f5ce75bd244bb65f99393",
+    "mtime": 1794347472.7662477,
+    "seen": 1794347535.242534,
+    "ast_hash": "5c40398ab069a6a35dfa9b7091fe62ad",
     "semantic_hash": ""
   }
 }

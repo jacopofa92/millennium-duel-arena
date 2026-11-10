@@ -1,5 +1,16 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Pedine nei dialoghi senza immagine rotta in uscita (1.6.31)
+
+`js/ui/story-cutscene.js` conserva il ritratto quando passa al narratore:
+prima rimuoveva `src` all'inizio della dissolvenza, rendendo visibile per
+alcuni fotogrammi il rettangolo del browser. L'immagine resta nascosta
+durante caricamento o errore; le entrate pendenti vengono invalidate dai
+cambi rapidi di battuta e dalla chiusura. Spec mirato
+`dialoghi-pedine-uscita-senza-lampeggio`, con campionamento per fotogramma,
+file lento, file mancante e cambio al narratore prima del frame d'ingresso.
+Verificato anche `storia-conversazioni-pedine`. Suite completa non eseguita.
+
 ## Filtri possesso e gestione utenze (10 novembre 2026)
 
 `js/ui/cartoteca-view.js` offre “Solo possedute” nella Cartoteca condivisa

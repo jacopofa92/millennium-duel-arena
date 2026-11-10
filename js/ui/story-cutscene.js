@@ -275,6 +275,7 @@
             let battitura = null;
             let completa = false;
             let chiusa = false;
+            let entrataRitratto = 0;
             // Ogni voce conserva il proprio lato per tutta la scena: uno
             // scambio fra due personaggi si legge cosi' come un vero campo/
             // controcampo, invece di una serie di ritratti tutti al centro.
@@ -331,6 +332,11 @@
             // come testo mentre l'immagine carica (stesso motivo per cui
             // le carte in duello hanno alt="").
             ritrattoImg.alt = '';
+            // Nessun rettangolo del browser mentre il file manca o è ancora in caricamento.
+            ritrattoImg.style.visibility = 'hidden';
+            ritrattoImg.addEventListener('load', () => {
+                if (ritrattoImg.naturalWidth > 0) ritrattoImg.style.visibility = '';
+            });
             // Il ripiego quando la faccia non c'è: un sigillo dorato col
             // simbolo della battuta (o l'iniziale del nome). Sta sempre
             // nel DOM e si accende solo quando serve — costruirlo al
@@ -349,11 +355,13 @@
              * tutti, anche per chi il ritratto non ce l'ha ancora).
              */
             function mostraSigillo(simbolo) {
-                ritrattoImg.removeAttribute('src');
                 ritratto.classList.add('is-sigillo');
+                ritrattoImg.style.visibility = 'hidden';
+                ritrattoImg.removeAttribute('src');
                 sigillo.textContent = simbolo || '✦';
             }
             ritrattoImg.addEventListener('error', () => {
+                ritrattoImg.style.visibility = 'hidden';
                 const ripiego = ritrattoImg.dataset.ripiego;
                 if (ripiego) { ritrattoImg.dataset.ripiego = ''; ritrattoImg.src = ripiego; return; }
                 mostraSigillo(ritrattoImg.dataset.simbolo);
@@ -480,6 +488,7 @@
                     // battute dello stesso personaggio non deve rifare
                     // l'entrata, altrimenti "sfarfalla" ad ogni riga.
                     if (ritratto.dataset.fonte !== (nuovaFonte || 'sigillo:' + nome)) {
+                        const entrata = ++entrataRitratto;
                         ritratto.dataset.fonte = nuovaFonte || 'sigillo:' + nome;
                         ritratto.classList.remove('is-sigillo');
                         // Il simbolo viene letto dal gestore d'errore, che
@@ -490,22 +499,28 @@
                         // e solo dopo il sigillo.
                         const avatarOriginale = riga.ritratto || ritrattoContesto || (chi && chi.image) || '';
                         ritrattoImg.dataset.ripiego = (avatarOriginale && avatarOriginale !== nuovaFonte) ? avatarOriginale : '';
-                        if (nuovaFonte) ritrattoImg.src = nuovaFonte;
+                        if (nuovaFonte) {
+                            ritrattoImg.style.visibility = 'hidden';
+                            ritrattoImg.src = nuovaFonte;
+                        }
                         else mostraSigillo(ritrattoImg.dataset.simbolo);
                         ritratto.style.transition = 'none';
                         ritratto.style.opacity = '0';
                         ritratto.style.transform = 'translate(var(--sc-ritratto-x, -50%), var(--sc-ritratto-y, 0)) scale(0.94)';
                         requestAnimationFrame(() => {
+                            if (chiusa || entrata !== entrataRitratto) return;
                             ritratto.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
                             ritratto.style.opacity = '1';
                             ritratto.style.transform = '';
                         });
                     }
                 } else {
+                    ++entrataRitratto;
                     chiEl.textContent = '';
                     ritratto.style.opacity = '0';
                     ritratto.dataset.fonte = '';
-                    ritrattoImg.removeAttribute('src');
+                    // Si sfuma la pedina ancora integra: togliere src qui
+                    // mostrava l'immagine rotta durante i 350 ms di uscita.
                 }
 
                 if (veloce) { mostraTutto(); return; }
