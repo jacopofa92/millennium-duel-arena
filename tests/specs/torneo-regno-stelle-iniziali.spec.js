@@ -89,8 +89,9 @@ module.exports = {
 
             await page.goto('file:///' + path.join(RADICE, 'tornei.html').replace(/\\/g, '/'));
             await page.waitForFunction(() => document.getElementById('duelistKingdomStatus'));
-            const riepilogo = await page.locator('#duelistKingdomStatus').textContent();
-            t.assert(/3\s*⭐/.test(riepilogo),
+            // Dal 1.6.25 l'emoji e' sostituita dall'icona del tema: si legge il numero e si accetta l'icona (o l'emoji di ripiego).
+            const riepilogo = await page.locator('#duelistKingdomStatus').evaluate((e) => e.textContent + (e.querySelector('[data-icon=\"star\"], .icon-star, svg') ? ' ⭐' : ''));
+            t.assert(/\(3\s*(⭐)?\s*\)?/.test(riepilogo) && /⭐/.test(riepilogo),
                 `La selezione dei tornei deve mostrare le 3 Stelle della scalata, non il portafoglio: ${riepilogo}`);
 
             t.assert(erroriPagina.length === 0, 'Nessun errore JS deve comparire in pagina: ' + erroriPagina.join(' | '));

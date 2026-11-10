@@ -25,8 +25,8 @@ module.exports = {
         const mig = await t.evaluate(() => {
             const parsed = {
                 player: { name: 'Prova', lastSaved: new Date().toISOString() },
-                decks: [{ id: 'd1', name: 'Test', main: [{ id: 616, qty: 2 }, { id: 55, qty: 2 }, { id: 668, qty: 1 }, { id: 10, qty: 3 }], extra: [] }],
-                collection: { 616: 2, 55: 2, 668: 1, 609: 1, 10: 3 },
+                decks: [{ id: 'd1', name: 'Test', main: [{ id: 616, qty: 2 }, { id: 55, qty: 2 }, { id: 668, qty: 1 }, { id: 4, qty: 3 }], extra: [] }],
+                collection: { 616: 2, 55: 2, 668: 1, 609: 1, 4: 3 },
                 activeDeckId: 'd1'
             };
             SaveManager.applyExternalSave(parsed);
@@ -36,10 +36,10 @@ module.exports = {
         t.assert(mig.collection[55] === 3 && mig.collection[616] === undefined, `616 -> 55 con tetto 3 copie (collezione: ${JSON.stringify(mig.collection)})`);
         t.assert(mig.collection[262] === 1 && mig.collection[668] === undefined, 'la copia di 668 passa a 262');
         t.assert(mig.collection[452] === 1 && mig.collection[609] === undefined, 'la copia di 609 passa a 452');
-        t.assert(mig.collection[10] === 3, 'le altre carte restano come sono');
+        t.assert(mig.collection[4] === 3, 'le altre carte restano come sono');
         const q = (id) => (mig.main.find((e) => e.id === id) || {}).qty;
         t.assert(q(55) === 3 && q(616) === undefined, `nel mazzo 616 e 55 si uniscono (max 3): ${JSON.stringify(mig.main)}`);
-        t.assert(q(262) === 1 && q(668) === undefined && q(10) === 3, 'nel mazzo 668 -> 262, le altre voci intatte');
+        t.assert(q(262) === 1 && q(668) === undefined && q(4) === 3, 'nel mazzo 668 -> 262, le altre voci intatte');
         const idem = await t.evaluate(() => JSON.stringify(SaveManager.load().collection));
         t.assert(idem === JSON.stringify(mig.collection), 'la migrazione e\' idempotente');
 
