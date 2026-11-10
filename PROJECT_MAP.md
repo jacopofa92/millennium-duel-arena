@@ -1,5 +1,15 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Due menu amministrativi (1.6.32)
+
+Il menu principale (`index.html`, `js/ui/menu-mobile.js`) offre agli admin
+due accessi: `admin.html?sezione=impostazioni` per autowin, editor mappa e
+sblocco delle Storie; `admin.html?sezione=utenti` per approvazioni,
+sospensioni e note private. Una sola pagina conserva logica e autorizzazioni
+comuni, mostrando esclusivamente la sezione scelta e adattando intestazione
+e barra contestuale. I vecchi link `admin.html` aprono Gestione utenti.
+L'elenco profili e le note vengono richiesti solo nella gestione utenze.
+
 ## Pedine nei dialoghi senza immagine rotta in uscita (1.6.31)
 
 `js/ui/story-cutscene.js` conserva il ritratto quando passa al narratore:

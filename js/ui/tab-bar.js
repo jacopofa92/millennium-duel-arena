@@ -46,7 +46,8 @@
         'regole.html': ['altro', 'Regole', 'rules'],
         'torre.html': ['duelli', 'Torre', 'tower'],
         'rivincite.html': ['duelli', 'Rivincite', 'rematch'],
-        'admin.html': ['altro', 'Admin', 'settings'],
+        'admin.html': () => new URLSearchParams(location.search).get('sezione') === 'impostazioni'
+            ? ['altro', 'Impostazioni admin', 'settings'] : ['altro', 'Gestione utenti', 'users'],
         // Multiplayer: la voce figlia e' la MODALITA' della sala (Duello, Duello a Specchio, Assalto al Boss), letta da ?modo= nella tabella di
         // js/multiplayer/mp-modi.js. A duello avviato la barra si spegne (body.mp-in-duello, vedi menu-mobile.css).
         'multiplayer.html': () => {

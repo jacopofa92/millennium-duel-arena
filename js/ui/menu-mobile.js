@@ -9,7 +9,7 @@
  *   - una barra giocatore in alto (nome, crediti, Stelle) che da' subito il senso dell'avanzamento;
  *   - niente drill-down: Duelli mostra i suoi gruppi (Campagna, Settimanali, Allenamento) come SEZIONI di tessere, la prima voce di
  *     ogni sezione e' una tessera larga "in evidenza";
- *   - "Altro" e' un foglio con Profilo, Impostazioni, (Admin) e Logout.
+ *   - "Altro" e' un foglio con Profilo, Impostazioni, le due voci admin quando autorizzate e Logout.
  *
  * NON ha dati suoi: legge le voci dello STESSO elenco del menu desktop (`voci`, FULL_MENU_ITEMS di index.html), quindi una voce nuova
  * compare qui da sola. Le uniche cose scritte qui sono i sottotitoli (`SOTTOTITOLI`, per etichetta) e quale voce sta in quale tab.
@@ -40,7 +40,8 @@
         'Creazione': 'Inventa le tue carte',
         'Profilo': 'Statistiche e titoli',
         'Impostazioni': 'Audio, video, regole',
-        'Admin': 'Pannello amministratore',
+        'Impostazioni admin': 'Autowin e strumenti di collaudo',
+        'Gestione utenti': 'Approvazioni, sospensioni e note',
         'Logout': 'Cambia account'
     };
 
@@ -67,14 +68,14 @@
     /**
      * Le tab. Ognuna ha un titolo, un'icona e come si riempie: `gruppi` = sezioni di tessere; `link` = la tab apre direttamente una
      * pagina; `foglio` = un elenco di voci semplici.
-     * @param {any[]} voci @param {boolean} admin @param {any} adminItem
+     * @param {any[]} voci @param {boolean} admin @param {any[]} adminItems
      */
-    function costruisciTab(voci, admin, adminItem) {
+    function costruisciTab(voci, admin, adminItems) {
         const duelli = trova(voci, 'Duelli');
         const carte = trova(voci, 'Carte');
         const online = trova(voci, 'Multiplayer');
         const altre = [trova(voci, 'Profilo'), trova(voci, 'Impostazioni')].filter(Boolean);
-        if (admin && adminItem) altre.push(adminItem);
+        if (admin && adminItems) altre.push(...adminItems);
         const logout = trova(voci, 'Logout');
         /** @type {any[]} */
         const tab = [];
@@ -93,10 +94,10 @@
 
     /** @param {any} ctx */
     function render(ctx) {
-        const { shell, lista, voci, admin, adminItem, azione, stato, toast } = ctx;
+        const { shell, lista, voci, admin, adminItems, azione, stato, toast } = ctx;
         const sfide = trova(voci, 'Sfide');
         shell.classList.add('menu-shell--app');
-        const tab = costruisciTab(voci, admin, adminItem);
+        const tab = costruisciTab(voci, admin, adminItems);
         let corrente = 'duelli';
         try { corrente = sessionStorage.getItem(CHIAVE_TAB) || 'duelli'; } catch (e) { /* noop */ }
         if (!tab.some((t) => t.id === corrente && !t.link)) corrente = 'duelli';

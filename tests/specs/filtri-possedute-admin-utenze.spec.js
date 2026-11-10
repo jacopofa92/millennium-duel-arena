@@ -37,6 +37,31 @@ module.exports = {
             const admin = page.locator('#adminUsersList .admin-row').filter({ hasText: 'admin@prova.it' });
             assert(await admin.getByRole('button', { name: 'Sospendi', exact: true }).count() === 0, 'Admin protetto da sospensione accidentale');
 
+            const lettureNote = () => cloud.richieste.filter((r) => r === 'admin_profile_notes:select').length;
+            const prima = lettureNote();
+            await page.getByRole('link', { name: 'Impostazioni admin', exact: true }).click();
+            await page.locator('#autowinToggle').waitFor({ state: 'visible' });
+            assert(!await page.locator('#adminUsersList').isVisible(), 'Impostazioni separate dalle utenze');
+            assert(lettureNote() === prima, 'Impostazioni non caricano elenco utenti e note');
+            const autowinPrima = await page.evaluate(() => StoryAutowin.acceso());
+            await page.locator('#autowinToggle').click();
+            assert(await page.evaluate(() => StoryAutowin.acceso()) !== autowinPrima, 'Autowin funziona nelle impostazioni admin');
+            await page.getByRole('link', { name: 'Gestione utenti', exact: true }).click();
+            await row().locator('textarea').waitFor();
+            assert(!await page.locator('#autowinToggle').isVisible(), 'Gestione utenti senza strumenti di collaudo');
+            assert(await row().locator('textarea').inputValue() === nota, 'Note conservate passando tra i due menu');
+
+            await page.goto(url('index.html'));
+            await page.waitForFunction(() => window.SaveManager && typeof window.showMenu === 'function');
+            await page.evaluate(() => CloudSync.waitForUser().then(() => CloudSync.ensureApprovedSession()));
+            const menuAdmin = await page.evaluate(() => {
+                if (!SaveManager.hasSave()) SaveManager.createNew('Test admin');
+                sessionStorage.setItem('ygoMenuTab', 'altro');
+                window.showMenu();
+                return document.querySelector('#menuShell').textContent;
+            });
+            assert(menuAdmin.includes('Impostazioni admin') && menuAdmin.includes('Gestione utenti'), 'Menu principale con due accessi admin');
+
             // Una sola carta posseduta: verifica la selezione reale, non soltanto lo stato del checkbox.
             for (const file of ['cartoteca.html', 'creazione-deck.html']) {
                 await page.goto(url(file));

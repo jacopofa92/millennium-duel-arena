@@ -1325,13 +1325,16 @@
             window.location.href = TUTORIAL_URL;
             return true;
         }
-        // Voce "Admin" (admin.html — approvazione registrazioni, vedi
+        // Voci amministrative (admin.html — due sezioni distinte, vedi
         // js/cloud/cloud-sync.js) aggiunta SOLO per chi ha is_admin=true
         // sul proprio profilo — appesa dinamicamente in renderMenu() più
         // sotto (non sempre presente in FULL_MENU_ITEMS: lo stato admin
         // arriva async da CloudSync.ensureApprovedSession(), già risolto
         // a questo punto perché il menu compare solo dopo passGate()).
-        const ADMIN_ITEM = { icon: 'settings', label: 'Admin', action: 'link', href: 'admin.html' };
+        const ADMIN_ITEMS = [
+            { icon: 'settings', label: 'Impostazioni admin', action: 'link', href: 'admin.html?sezione=impostazioni' },
+            { icon: 'users', label: 'Gestione utenti', action: 'link', href: 'admin.html?sezione=utenti' }
+        ];
         // "Logout" (non più "Esci"): un'app installata non si "chiude" da
         // dentro il menu — quell'azione (chiusura vera, vedi exitConfirmBtn)
         // ora vive solo sulla schermata di login (gateExitBtn qui sopra).
@@ -1505,7 +1508,7 @@
             // js/ui/menu-mobile.js. Legge le STESSE voci di FULL_MENU_ITEMS; senza salvataggio resta il menu ridotto di sempre.
             const modoApp = !!(window.MenuMobile && MenuMobile.attivo() && window.SaveManager && SaveManager.hasSave());
             if (modoApp) {
-                MenuMobile.render({ shell: document.getElementById('menuShell'), lista: list, voci: FULL_MENU_ITEMS, admin, adminItem: ADMIN_ITEM,
+                MenuMobile.render({ shell: document.getElementById('menuShell'), lista: list, voci: FULL_MENU_ITEMS, admin, adminItems: ADMIN_ITEMS,
                     azione: handleMenuAction, toast: showMenuToast, stato: { ridisegna: renderMenu } });
             } else if (openSubmenu) {
                 if (window.MenuMobile) MenuMobile.spegni(document.getElementById('menuShell'), list);
@@ -1517,7 +1520,7 @@
                 if (window.MenuMobile) MenuMobile.spegni(document.getElementById('menuShell'), list);
                 const items = (window.SaveManager && SaveManager.hasSave()) ? FULL_MENU_ITEMS : NEW_PLAYER_MENU_ITEMS;
                 items.forEach((item) => list.appendChild(buildMenuButton(item)));
-                if (admin) list.appendChild(buildMenuButton(ADMIN_ITEM));
+                if (admin) ADMIN_ITEMS.forEach((item) => list.appendChild(buildMenuButton(item)));
             }
             if (window.Icons) Icons.hydrate(list);
             try {

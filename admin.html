@@ -150,6 +150,10 @@
     .admin-pill.status-rejected { background: rgba(231,76,60,0.18); color: var(--danger); }
     .admin-pill.is-admin { background: rgba(93,173,226,0.18); color: #5dade2; margin-left: 6px; }
     .admin-row-actions { display: flex; gap: 8px; }
+    .admin-section[hidden] { display: none; }
+    .admin-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .admin-nav a { flex: 1 1 160px; text-align: center; text-decoration: none; color: var(--ink); background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; }
+    .admin-nav a[aria-current="page"] { color: var(--gold); background: rgba(247,215,116,0.12); }
     .admin-pill.status-suspended { background: rgba(231,76,60,0.18); color: var(--danger); }
     .admin-note { flex-basis: 100%; display: grid; gap: 6px; }
     .admin-note textarea { width: 100%; box-sizing: border-box; min-height: 65px; resize: vertical; background: rgba(0,0,0,0.25); color: var(--ink); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 8px; font: inherit; }
@@ -188,7 +192,11 @@
     <div id="topbarMount"></div>
 
     <div class="admin-shell">
-        <div class="admin-section">
+        <nav class="admin-nav" aria-label="Amministrazione">
+            <a href="admin.html?sezione=impostazioni" data-admin-link="impostazioni">Impostazioni admin</a>
+            <a href="admin.html?sezione=utenti" data-admin-link="utenti">Gestione utenti</a>
+        </nav>
+        <div class="admin-section" data-admin-sezione="utenti" hidden>
             <div class="admin-section-title">
                 🕓 Richieste in attesa <span class="admin-badge" id="adminPendingBadge" hidden>0</span>
             </div>
@@ -196,12 +204,12 @@
             <div class="admin-empty" id="adminPendingEmpty">Caricamento...</div>
         </div>
 
-        <div class="admin-section">
+        <div class="admin-section" data-admin-sezione="utenti" hidden>
             <div class="admin-section-title">👥 Tutti gli account</div>
             <div id="adminUsersList"></div>
         </div>
 
-        <div class="admin-section">
+        <div class="admin-section" data-admin-sezione="impostazioni" hidden>
             <div class="admin-section-title">⚡ Strumenti di collaudo</div>
             <div class="admin-row">
                 <div class="admin-row-email">
@@ -276,7 +284,14 @@
 <script src="js/story/story-ritocchi.js"></script>
 <script src="js/dev/story-admin-tools.js"></script>
 <script>
-    PageTopbar.render('#topbarMount', { icon: 'settings', title: 'Pannello Admin', subtitle: 'Approva o rifiuta le registrazioni' });
+    // Due voci di menu, una sola implementazione: conserva anche i vecchi link
+    // ad admin.html, che continuano ad aprire la gestione delle utenze.
+    const adminSezione = new URLSearchParams(location.search).get('sezione') === 'impostazioni' ? 'impostazioni' : 'utenti';
+    const adminTitolo = adminSezione === 'impostazioni' ? 'Impostazioni admin' : 'Gestione utenti';
+    document.title = 'Millennium Duel Arena — ' + adminTitolo;
+    document.querySelector('[data-admin-link="' + adminSezione + '"]').setAttribute('aria-current', 'page');
+    PageTopbar.render('#topbarMount', { icon: adminSezione === 'impostazioni' ? 'settings' : 'users', title: adminTitolo,
+        subtitle: adminSezione === 'impostazioni' ? 'Autowin e strumenti di collaudo' : 'Approvazioni, sospensioni e note private' });
     if (window.Icons) Icons.hydrate();
 </script>
 <script>
@@ -301,6 +316,7 @@
     })();
 
     function initAdminPanel() {
+        document.querySelectorAll('[data-admin-sezione]').forEach((el) => { el.hidden = el.dataset.adminSezione !== adminSezione; });
         const pendingList = document.getElementById('adminPendingList');
         const pendingEmpty = document.getElementById('adminPendingEmpty');
         const pendingBadge = document.getElementById('adminPendingBadge');
@@ -547,7 +563,7 @@
             }).catch((e) => showStatus(`⚠️ ${e.message}`, 'error'));
         }
 
-        render();
+        if (adminSezione === 'utenti') render();
     }
 </script>
 </body>
