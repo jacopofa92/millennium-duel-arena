@@ -17,7 +17,7 @@
 // =====================================================================
 
 function creaFintoCloud() {
-    const cloud = { saves: {}, custom_cards: {}, richieste: [], profili: [] };
+    const cloud = { saves: {}, custom_cards: {}, richieste: [], profili: [], noteAdmin: {} };
 
     function rispondi(q) {
         cloud.richieste.push(`${q.table}:${q.op}`);
@@ -26,7 +26,16 @@ function creaFintoCloud() {
         if (q.table === 'rpc') return { data: null, error: null };
         // L'elenco dei profili (pannello Admin: nessun filtro) arriva da cloud.profili; il profilo di UN utente resta quello di sempre.
         if (q.table === 'profiles' && q.op === 'select' && !q.filters.id && !q.filters.status) return { data: cloud.profili || [], error: null };
-        if (q.table === 'profiles') return { data: { status: 'approved', is_admin: true }, error: null };
+        if (q.table === 'profiles' && q.op === 'update') {
+            const p = cloud.profili.find((p) => p.id === q.filters.id);
+            if (p) Object.assign(p, q.payload);
+            return { data: null, error: null };
+        }
+        if (q.table === 'admin_profile_notes') {
+            if (q.op === 'select') return { data: Object.keys(cloud.noteAdmin).map((id) => ({ user_id: id, note: cloud.noteAdmin[id] })), error: null };
+            if (q.op === 'upsert') { cloud.noteAdmin[q.payload.user_id] = q.payload.note; return { error: null }; }
+        }
+        if (q.table === 'profiles') return { data: cloud.profili.find((p) => p.id === uid) || { status: 'approved', is_admin: true }, error: null };
         if (q.table === 'saves') {
             if (q.op === 'select') return { data: cloud.saves[uid] ? JSON.parse(JSON.stringify(cloud.saves[uid])) : null, error: null };
             if (q.op === 'upsert') { cloud.saves[q.payload.user_id] = { data: q.payload.data, updated_at: q.payload.updated_at }; return { error: null }; }

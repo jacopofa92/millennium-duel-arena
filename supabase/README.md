@@ -60,3 +60,25 @@ Nessun account è admin per default (altrimenti chiunque potrebbe auto-approvars
 - Le immagini delle carte custom restano incorporate come base64 dentro la riga `custom_cards.card` (stesso formato di oggi in localStorage), non in Supabase Storage — funziona, ma per molte carte con immagini pesanti converrebbe migrare a Storage in futuro.
 - Il Multiplayer (`server/server.js`) resta separato, non tocca Supabase — deliberatamente lasciato fuori da questa fase.
 - Nessuna notifica automatica (email/push) agli admin quando arriva una nuova registrazione: bisogna aprire `admin.html` per accorgersene (stesso limite del progetto Fioxify, da cui questo meccanismo è replicato).
+# Gestione utenze e note amministratore
+
+Per aggiornare un database già esistente, eseguire `admin-utenze.sql`.
+L'aggiornamento è già stato applicato al progetto DuelArena il 10 novembre
+2026. `schema.sql` include le stesse definizioni per le installazioni nuove.
+
+Lo stato `suspended` nega l'accesso e le operazioni su salvataggi e carte
+custom anche con un token ancora valido. La riattivazione riporta lo stato
+ad `approved`, senza cancellare progressi. Gli account admin non sono
+sospendibili. Il client riconferma lo stato ogni minuto in primo piano e
+quando torna visibile; offline conserva il comportamento di accesso già
+previsto dal gioco, quindi una revoca remota richiede una connessione.
+
+Le note (massimo 4000 caratteri) sono in `admin_profile_notes`, separata da
+`profiles` perché il giocatore può leggere il proprio profilo. Solo gli
+admin possono leggere o scrivere le note, tramite RLS. Sono condivise tra
+gli amministratori, mai consegnate al giocatore.
+
+Verifica sul database: inserimento temporaneo nota, sospensione,
+illeggibilità/riscrittura negata al giocatore, auto-riattivazione negata e
+riattivazione da admin; transazione interamente annullata con `ROLLBACK`.
+

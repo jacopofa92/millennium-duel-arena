@@ -150,6 +150,10 @@
     .admin-pill.status-rejected { background: rgba(231,76,60,0.18); color: var(--danger); }
     .admin-pill.is-admin { background: rgba(93,173,226,0.18); color: #5dade2; margin-left: 6px; }
     .admin-row-actions { display: flex; gap: 8px; }
+    .admin-pill.status-suspended { background: rgba(231,76,60,0.18); color: var(--danger); }
+    .admin-note { flex-basis: 100%; display: grid; gap: 6px; }
+    .admin-note textarea { width: 100%; box-sizing: border-box; min-height: 65px; resize: vertical; background: rgba(0,0,0,0.25); color: var(--ink); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 8px; font: inherit; }
+    .admin-note button { justify-self: start; }
     .admin-btn {
         border: none;
         border-radius: 8px;
@@ -302,6 +306,8 @@
         const pendingBadge = document.getElementById('adminPendingBadge');
         const usersList = document.getElementById('adminUsersList');
         const globalStatus = document.getElementById('adminGlobalStatus');
+        // Un cambio stato ridisegna l'elenco: conserva gli appunti ancora non salvati.
+        const noteInModifica = new Map();
 
         function showStatus(message, type) {
             globalStatus.textContent = message;
@@ -398,6 +404,7 @@
         })();
 
         function statusLabel(status) {
+            if (status === 'suspended') return 'Sospeso';
             return status === 'approved' ? 'Approvato' : status === 'rejected' ? 'Rifiutato' : 'In attesa';
         }
 
@@ -470,12 +477,49 @@
                 actions.appendChild(rejectBtn);
                 row.appendChild(actions);
             }
+            if (!showActions && !profile.is_admin) {
+                const action = document.createElement('button');
+                action.className = 'admin-btn ' + (profile.status === 'approved' ? 'reject' : 'approve');
+                action.textContent = profile.status === 'approved' ? 'Sospendi' : 'Riattiva';
+                action.onclick = () => {
+                    action.disabled = true;
+                    setStatus(profile.id, profile.status === 'approved' ? 'suspended' : 'approved', profile.email)
+                        .finally(() => { action.disabled = false; });
+                };
+                row.appendChild(action);
+            }
+            const notes = document.createElement('div');
+            notes.className = 'admin-note';
+            notes.appendChild(document.createTextNode('Note private amministratore'));
+            const input = document.createElement('textarea');
+            input.maxLength = 4000;
+            input.setAttribute('aria-label', 'Note private per ' + profile.email);
+            input.value = noteInModifica.has(profile.id) ? noteInModifica.get(profile.id) : (profile.admin_note || '');
+            input.oninput = () => noteInModifica.set(profile.id, input.value);
+            notes.appendChild(input);
+            const save = document.createElement('button');
+            save.type = 'button';
+            save.className = 'admin-btn approve';
+            save.textContent = 'Salva note';
+            save.onclick = () => {
+                save.disabled = true;
+                const valore = input.value;
+                CloudSync.adminSaveProfileNote(profile.id, valore)
+                    .then(() => {
+                        if (input.value === valore) noteInModifica.delete(profile.id);
+                        showStatus('Note salvate per ' + profile.email + '.', 'success');
+                    })
+                    .catch((e) => showStatus(e.message, 'error'))
+                    .finally(() => { save.disabled = false; });
+            };
+            notes.appendChild(save);
+            row.appendChild(notes);
             return row;
         }
 
         function setStatus(userId, status, email) {
             showStatus('⏳ Aggiornamento in corso...', '');
-            CloudSync.adminSetProfileStatus(userId, status).then(() => {
+            return CloudSync.adminSetProfileStatus(userId, status).then(() => {
                 showStatus(`✅ ${email} → ${statusLabel(status)}.`, 'success');
                 render();
             }).catch((e) => showStatus(`⚠️ ${e.message}`, 'error'));

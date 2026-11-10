@@ -1791,6 +1791,9 @@
         document.getElementById('gateTabRegister').onclick = () => switchGateTab('register');
 
         function showGate(blockedMessage) {
+            if (!blockedMessage && new URLSearchParams(window.location.search).get('blocked') === 'suspended') {
+                blockedMessage = 'Il tuo account è sospeso. Contatta l’amministratore.';
+            }
             // Sessione chiusa perché durava da più di 48 ore (cloud-sync.js):
             // lo si dice, invece di far sembrare un'uscita senza motivo.
             if (!blockedMessage && window.CloudSync && CloudSync.consumaAvvisoScadenza && CloudSync.consumaAvvisoScadenza()) {
@@ -2182,7 +2185,9 @@
                     if (v.azione === 'gate') { showGate(); return; }
                     if (v.azione === 'bloccato') {
                         const profile = CloudSync.getProfile();
-                        const message = profile && profile.status === 'rejected'
+                        const message = profile && profile.status === 'suspended'
+                            ? 'Il tuo account è sospeso. Contatta l’amministratore.'
+                            : profile && profile.status === 'rejected'
                             ? 'La tua registrazione non è stata approvata.'
                             : 'Il tuo account è in attesa di approvazione da parte di un amministratore.';
                         CloudSync.signOut().catch(() => { /* noop */ }).then(() => showGate(`⚠️ ${message}`));

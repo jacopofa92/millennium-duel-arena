@@ -246,6 +246,19 @@
     let cachedAccessToken = null;
 
     if (available) {
+        // Riconferma online anche a pagina aperta; offline vale l'ultimo stato confermato.
+        function controllaSospensione() {
+            if (!cachedUser || document.visibilityState !== 'visible') return;
+            const userId = cachedUser.id;
+            verificaOnline(userId).then((approved) => {
+                if (!cachedUser || cachedUser.id !== userId) return;
+                if (!approved && cachedProfile && cachedProfile.status === 'suspended') {
+                    signOut().catch(() => {}).then(() => { window.location.replace('index.html?blocked=suspended'); });
+                }
+            });
+        }
+        setInterval(controllaSospensione, 60000);
+        document.addEventListener('visibilitychange', controllaSospensione);
         initialSessionPromise = client.auth.getSession().then(({ data }) => {
             cachedUser = (data && data.session && data.session.user) || null;
             cachedAccessToken = (data && data.session && data.session.access_token) || null;
@@ -441,7 +454,8 @@
                 const messages = {
                     pending: 'Esiste già una registrazione in attesa di approvazione con questa email.',
                     approved: 'Esiste già un account con questa email. Prova ad accedere o usa "Password dimenticata?".',
-                    rejected: 'La registrazione con questa email non è stata approvata. Contatta l\'amministratore.'
+                    rejected: 'La registrazione con questa email non è stata approvata. Contatta l\'amministratore.',
+                    suspended: 'Questo account è sospeso. Contatta l’amministratore.'
                 };
                 throw new Error(messages[existingStatus] || 'Email già registrata.');
             }
@@ -472,9 +486,11 @@
                     forgetApproved();
                     return client.auth.signOut().then(() => {
                         throw new Error(
-                            profile.status === 'rejected'
-                                ? 'La tua registrazione non è stata approvata.'
-                                : 'Il tuo account è in attesa di approvazione da parte di un amministratore.'
+                            profile.status === 'suspended'
+                                ? 'Il tuo account è sospeso. Contatta l’amministratore.'
+                                : profile.status === 'rejected'
+                                    ? 'La tua registrazione non è stata approvata.'
+                                    : 'Il tuo account è in attesa di approvazione da parte di un amministratore.'
                         );
                     });
                 }
@@ -554,14 +570,29 @@
     /** Elenco completo di tutti i profili (in attesa + già decisi), più recenti prima — per il pannello Admin. */
     function adminListProfiles() {
         if (!available) return rejectUnavailable();
-        return client.from('profiles').select('id, email, status, is_admin, created_at, last_seen_at')
+        const profiles = client.from('profiles').select('id, email, status, is_admin, created_at, last_seen_at')
             .order('created_at', { ascending: false })
             .then(({ data, error }) => { if (error) throw error; return data; });
+        // Le note NON stanno in profiles: il giocatore può leggere il proprio
+        // profilo, mentre questa tabella è accessibile soltanto agli admin.
+        const notes = client.from('admin_profile_notes').select('user_id, note')
+            .then(({ data, error }) => { if (error) throw error; return data || []; });
+        return Promise.all([profiles, notes]).then(([rows, appunti]) => {
+            const byId = new Map(appunti.map((n) => [n.user_id, n.note]));
+            return rows.map((p) => Object.assign({}, p, { admin_note: byId.get(p.id) || '' }));
+        });
     }
 
-    /** Approva/rifiuta un account (status: 'approved' | 'rejected' | 'pending'). */
+    function adminSaveProfileNote(userId, note) {
+        if (!available) return rejectUnavailable();
+        return client.from('admin_profile_notes').upsert({ user_id: userId, note: note })
+            .then(({ error }) => { if (error) throw error; });
+    }
+
+    /** Approva, rifiuta o sospende un account; 'approved' riattiva anche un sospeso. */
     function adminSetProfileStatus(userId, status) {
         if (!available) return rejectUnavailable();
+        if (!['approved', 'rejected', 'pending', 'suspended'].includes(status)) return Promise.reject(new Error('Stato account non valido.'));
         return client.from('profiles').update({ status }).eq('id', userId)
             .then(({ error }) => { if (error) throw error; });
     }
@@ -1628,6 +1659,7 @@
         msDallUltimaRiconciliazione: msDallUltimaRiconciliazione,
         adminListProfiles: adminListProfiles,
         adminSetProfileStatus: adminSetProfileStatus,
+        adminSaveProfileNote: adminSaveProfileNote,
         adminPendingCount: adminPendingCount,
         pushSave: pushSave,
         pullSave: pullSave,

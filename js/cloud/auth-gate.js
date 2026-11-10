@@ -86,7 +86,7 @@
         return CloudSync.ensureApprovedSession().then(function (approved) {
             if (!approved) {
                 var profile = CloudSync.getProfile();
-                var reason = profile && profile.status === 'rejected' ? 'rejected' : 'pending';
+                var reason = profile && profile.status === 'suspended' ? 'suspended' : profile && profile.status === 'rejected' ? 'rejected' : 'pending';
                 CloudSync.signOut().catch(function () { /* noop */ }).then(function () {
                     redirectToLogin(reason);
                 });
