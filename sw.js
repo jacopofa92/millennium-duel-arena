@@ -837,7 +837,6 @@ const APP_SHELL = [
     'js/ui/tinta-campo.js',
     'js/data/arena-options.js',
     'js/data/tinte-campi.js',
-    'js/data/card-origins.generated.js',
     'js/data/deck-legality.js',
     'js/ui/card-detail.js',
     'js/ui/card-detail.css',
