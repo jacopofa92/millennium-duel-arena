@@ -1,5 +1,14 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Catena WebGL: ciclo di disegno più leggero (1.6.41)
+
+`js/ui/catena-webgl.js` memorizza i riferimenti agli uniformi quando crea la
+scena e riusa i buffer numerici in `frame()`. Le geometrie delle carte e
+delle maglie vengono lette prima di aggiornare le etichette, evitando di
+alternare letture del layout e scritture DOM nello stesso ciclo. Lo spec
+`tests/specs/catena-webgl.spec.js` controlla che le 13 ricerche degli uniformi
+avvengano solo all'avvio. Versione/cache: 1.6.41 / v691.
+
 ## Busta Base: preferenza per i vanilla (1.6.40)
 
 Nei nove slot comuni, `pescaPrivilegiandoVanilla` in

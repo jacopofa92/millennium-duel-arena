@@ -19,6 +19,12 @@ module.exports = {
         await ctx.addInitScript(() => {
             window.AUTH_GATE_SKIP = true; window.DUEL_FAST_OPENING = true; window.DUEL_RPS_SKIP = true;
             localStorage.setItem('ygoVideoDetail', 'alti'); localStorage.setItem('ygoVideoDetailScelto', '1');
+            const getUniformLocation = WebGLRenderingContext.prototype.getUniformLocation;
+            window.__catenaUniformQueries = 0;
+            WebGLRenderingContext.prototype.getUniformLocation = function (...args) {
+                if (this.canvas && this.canvas.closest('#catenaGL')) window.__catenaUniformQueries++;
+                return getUniformLocation.apply(this, args);
+            };
         });
         const page = await ctx.newPage();
         page.on('pageerror', (e) => errori.push(e.message));
@@ -92,6 +98,11 @@ module.exports = {
                 };
             });
             assert(due.root && due.canvas && due.carte === 3 && due.cartaVera, `A Catena decisa c'e' la scena con tre carte vere: ${JSON.stringify(due)}`);
+            const uniformiPrima = await page.evaluate(() => window.__catenaUniformQueries);
+            await page.waitForTimeout(250);
+            const uniformiDopo = await page.evaluate(() => window.__catenaUniformQueries);
+            assert(uniformiPrima === 13 && uniformiDopo === uniformiPrima,
+                `Gli uniformi WebGL si cercano una volta all'avvio e non nel ciclo animato: ${uniformiPrima} -> ${uniformiDopo}`);
             assert(due.slotMostro === 0, `Niente catene lunghe sopra le file Mostro (staccate da ogni carta): ${JSON.stringify(due.slotMostro)}`);
             assert(due.ingressi.some((i) => i.lato === 'dal-basso' && i.fotogrammi.some((f) => f.includes('72vh'))),
                 `La carta del giocatore piomba dal basso con prospettiva: ${JSON.stringify(due.ingressi)}`);

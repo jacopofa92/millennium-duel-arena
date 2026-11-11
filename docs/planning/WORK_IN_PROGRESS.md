@@ -1,5 +1,12 @@
 # Work in progress — miglioramenti da seguire
 
+## Fluidità della Catena WebGL — chiuso in 1.6.41
+
+- [x] Riuso dei riferimenti uniformi e dei buffer; letture delle geometrie
+      raccolte prima degli aggiornamenti DOM per evitare layout forzati.
+- [x] Spec verifica una sola ricerca iniziale per ciascuno dei 13 uniformi;
+      suite completa non eseguita.
+
 ## Vanilla privilegiati nella Busta Base — chiuso in 1.6.40
 
 - [x] Nei nove slot comuni, ogni mostro con flag `vanilla: true` ha peso

@@ -383,6 +383,11 @@ body.cgl-scena-piena #phaseAnnouncement{visibility:hidden!important}
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
         gl.useProgram(prog);
+        // I riferimenti agli uniformi non cambiano durante la scena: recuperarli
+        // nel ciclo di disegno aggiungeva 13 chiamate WebGL a ogni fotogramma.
+        const uniformi = Object.create(null);
+        ['r', 'k', 'uT', 'uL', 'uN', 'uPa', 'uPb', 'uS', 'uF', 'uB', 'uQ', 'uQN', 'uQAlpha']
+            .forEach((nome) => { uniformi[nome] = gl.getUniformLocation(prog, nome); });
         const buf = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buf);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
@@ -392,7 +397,12 @@ body.cgl-scena-piena #phaseAnnouncement{visibility:hidden!important}
 
         st = {
             root, canvas, gl, prog, livello, titolo, etichette,
-            u: (nome) => gl.getUniformLocation(prog, nome),
+            u: (nome) => uniformi[nome],
+            frameBuffers: {
+                Pa: new Float32Array(7 * 2), Pb: new Float32Array(7 * 2),
+                S: new Float32Array(7 * 3), F: new Float32Array(7),
+                Q: new Float32Array(40), B: new Float32Array(12)
+            },
             voci: [], boom: [], rid: 0, t0: performance.now(), chiudendo: false, tChiusura: 0,
             ultimoAggiorna: performance.now(), animTitolo: null, W: 0, H: 0, scala: 1, L: 40,
             // Niente piu' maglie sopra le file Mostro: erano due catene lunghe quanto lo schermo, staccate da ogni carta.
@@ -518,6 +528,7 @@ body.cgl-scena-piena #phaseAnnouncement{visibility:hidden!important}
         st.livello.appendChild(pos);
         const voce = {
             link, el: pos, dentro, num, chi, owner: link.owner === 'bot' ? 1 : 0,
+            geometria: { x: 0, y: 0, hw: 0, hh: 0, left: 0, top: 0, right: 0, bottom: 0, width: 0, height: 0, opacita: 1 },
             tNasc: performance.now(), tRivela: performance.now() + (istantanea ? 0 : 120),
             risolvendo: false, tRisolve: 0, fuori: false, istantanea
         };
@@ -723,30 +734,56 @@ body.cgl-scena-piena #phaseAnnouncement{visibility:hidden!important}
         }
         s.ultimoFrame = now;
 
-        const vv = vive().slice(-MAX_ANCORE);
-        const Pa = new Float32Array(7 * 2);
-        const Pb = new Float32Array(7 * 2);
-        const S = new Float32Array(7 * 3);
-        const F = new Float32Array(7);
-        const Q = new Float32Array(40);
-        const C = vv.map((v) => {
+        const voci = vive();
+        const inizioAncore = Math.max(0, voci.length - MAX_ANCORE);
+        const numeroAncore = voci.length - inizioAncore;
+        const { Pa, Pb, S, F, Q, B } = s.frameBuffers;
+        Pa.fill(0); Pb.fill(0); S.fill(0); F.fill(0); Q.fill(0); B.fill(0);
+
+        // Prima si leggono tutte le geometrie e le opacità. Solo dopo si
+        // aggiornano le etichette: alternare letture e scritture qui forzava
+        // il browser a ricalcolare il layout durante il disegno della scena.
+        voci.forEach((v) => {
             const r = v.el.getBoundingClientRect();
-            return { x: r.left + r.width / 2, y: r.top + r.height / 2, hw: r.width / 2, hh: r.height / 2 };
+            const g = v.geometria;
+            g.left = r.left; g.top = r.top; g.right = r.right; g.bottom = r.bottom;
+            g.width = r.width; g.height = r.height;
+            g.x = r.left + r.width / 2; g.y = r.top + r.height / 2;
+            g.hw = r.width / 2; g.hh = r.height / 2;
+            if (v.chi) {
+                const opacita = parseFloat(getComputedStyle(v.el).opacity)
+                    * parseFloat(getComputedStyle(v.dentro).opacity);
+                g.opacita = Number.isFinite(opacita) ? opacita : 1;
+            }
         });
-        // Le scritte TU / AVVERSARIO seguono la carta (anche mentre piomba o esce), dal lato opposto al numero.
-        vive().forEach((v) => {
+
+        const slotEl = s.slotEl.filter((el) => el.isConnected);
+        slotEl.forEach((el, i) => {
+            const r = el.getBoundingClientRect();
+            const j = i * 4;
+            // Sta sul bordo superiore del riquadro e lascia liberi testo e illustrazione.
+            Q[j] = r.left + Math.min(5, r.width * .08);
+            Q[j + 1] = r.top + 2;
+            Q[j + 2] = r.right - Math.min(5, r.width * .08);
+            Q[j + 3] = r.top + 2;
+        });
+
+        // Le etichette seguono le carte, ma le loro scritture arrivano dopo
+        // tutte le letture di layout del fotogramma.
+        voci.forEach((v) => {
             if (!v.chi) return;
-            const r = v.el.getBoundingClientRect();
-            v.chi.style.left = (r.left + r.width / 2) + 'px';
-            v.chi.style.top = (v.chiSotto === false ? r.top - 6 : r.bottom + 6) + 'px';
+            const g = v.geometria;
+            v.chi.style.left = g.x + 'px';
+            v.chi.style.top = (v.chiSotto === false ? g.top - 6 : g.bottom + 6) + 'px';
             v.chi.style.transform = v.chiSotto === false ? 'translate(-50%,-100%)' : 'translate(-50%,0)';
-            const o = parseFloat(getComputedStyle(v.el).opacity) * parseFloat(getComputedStyle(v.dentro).opacity);
-            v.chi.style.opacity = String(Number.isFinite(o) ? o : 1);
+            v.chi.style.opacity = String(g.opacita);
         });
-        for (let i = 1; i < vv.length; i++) {
-            const v = vv[i];
+
+        for (let i = 1; i < numeroAncore; i++) {
+            const v = voci[inizioAncore + i];
             const seg = i - 1;
-            const a = C[i - 1], b = C[i];
+            const a = voci[inizioAncore + i - 1].geometria;
+            const b = v.geometria;
             // La catena va dal BORDO di una carta al bordo dell'altra (non da centro a centro: coprirebbe l'illustrazione)
             // e si disegna SOPRA le carte, come in Master Duel: le prime maglie poggiano sulla cornice.
             let dx = b.x - a.x, dy = b.y - a.y;
@@ -774,18 +811,6 @@ body.cgl-scena-piena #phaseAnnouncement{visibility:hidden!important}
             const eta = (now - v.tRivela - 330) / 1000;
             F[seg] = eta > 0 ? Math.pow(Math.max(0, 1 - eta / 0.8), 2) : 0;
         }
-        const slotEl = s.slotEl.filter((el) => el.isConnected);
-        slotEl.forEach((el, i) => {
-            const r = el.getBoundingClientRect();
-            const j = i * 4;
-            // Sta sul bordo superiore del riquadro: la maglia è leggibile ma
-            // lascia liberi nome, illustrazione e interazione della carta.
-            Q[j] = r.left + Math.min(5, r.width * .08);
-            Q[j + 1] = r.top + 2;
-            Q[j + 2] = r.right - Math.min(5, r.width * .08);
-            Q[j + 3] = r.top + 2;
-        });
-        const B = new Float32Array(12);
         for (let i = 0; i < 3; i++) {
             const b = s.boom[i];
             const eta = b ? (now - b.t0) / 1000 : -1;
@@ -796,11 +821,12 @@ body.cgl-scena-piena #phaseAnnouncement{visibility:hidden!important}
         gl.uniform1f(s.u('k'), 1 / s.scala);
         gl.uniform1f(s.u('uT'), t);
         gl.uniform1f(s.u('uL'), s.L);
-        gl.uniform1f(s.u('uN'), Math.max(0, vv.length - 1));
+        gl.uniform1f(s.u('uN'), Math.max(0, numeroAncore - 1));
         gl.uniform2fv(s.u('uPa'), Pa);
         gl.uniform2fv(s.u('uPb'), Pb);
         gl.uniform3fv(s.u('uS'), S);
-        gl.uniform1fv(s.u('uF'), F);        gl.uniform4fv(s.u('uB'), B);
+        gl.uniform1fv(s.u('uF'), F);
+        gl.uniform4fv(s.u('uB'), B);
         gl.uniform4fv(s.u('uQ'), Q);
         gl.uniform1f(s.u('uQN'), slotEl.length);
         gl.uniform1f(s.u('uQAlpha'), s.compatta ? 0 : 1);
