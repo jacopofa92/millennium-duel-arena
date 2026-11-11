@@ -370,6 +370,28 @@
         return out;
     }
 
+    /** Pesca senza doppioni e dà ai mostri vanilla quattro volte il peso. */
+    function pescaPrivilegiandoVanilla(pool, quanti, random, db) {
+        if (!pool.length) return [];
+        const originali = pool.slice();
+        const rimanenti = pool.slice();
+        const uscita = [];
+        // Il flag `vanilla` è esplicito: alcuni mostri normali hanno una
+        // descrizione informativa nel campo effect, che non è un effetto.
+        const vanillaIds = new Set(db.filter((c) => c.type === 'monster' && c.vanilla === true)
+            .map((c) => c.id));
+        const peso = (id) => vanillaIds.has(id) ? 4 : 1;
+        while (uscita.length < quanti) {
+            if (!rimanenti.length) rimanenti.push(...originali);
+            const pesoTotale = rimanenti.reduce((totale, id) => totale + peso(id), 0);
+            let estrazione = random() * pesoTotale;
+            let indice = rimanenti.findIndex((id) => (estrazione -= peso(id)) < 0);
+            if (indice < 0) indice = rimanenti.length - 1;
+            uscita.push(rimanenti.splice(indice, 1)[0]);
+        }
+        return uscita;
+    }
+
     /**
      * Un'unica porta d'ingresso per i pool ordinari delle buste.
      *
@@ -517,7 +539,11 @@
                     .map((c) => c.id));
                 pool = themed.length ? themed : tuttoIlTema;
             }
-            estratte.push(...pescaConRipetizione(pool, busta.composizione[rarity], casuale));
+            const slot = busta.composizione[rarity];
+            const carteEstratte = busta.id === 'base' && rarity === 'common'
+                ? pescaPrivilegiandoVanilla(pool, slot, casuale, db)
+                : pescaConRipetizione(pool, slot, casuale);
+            estratte.push(...carteEstratte);
         });
         if (tema && busta.deboliGarantiti) {
             const mostriTema = db.filter((c) => c.type === 'monster'

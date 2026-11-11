@@ -1,5 +1,14 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Busta Base: preferenza per i vanilla (1.6.40)
+
+Nei nove slot comuni, `pescaPrivilegiandoVanilla` in
+`js/economy/shop-catalog.js` assegna peso 4 alle carte mostro con
+`vanilla: true` e peso 1 a ogni altra carta. Estrae senza doppioni finché il
+pool resta disponibile. Vale solo per gli slot comuni della Busta Base; lo
+slot raro e le altre buste mantengono la selezione precedente. Verificato
+nello spec `buste-tematiche-coerenti`. Versione/cache: 1.6.40 / v690.
+
 ## Busta Base: limite ATK dei mostri (1.6.39)
 
 `acquistabileInBusta` in `js/economy/shop-catalog.js` riceve ora la busta

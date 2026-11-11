@@ -30,14 +30,32 @@ module.exports = {
                     }));
                 const bustaBase = { id: 'base', carte: 10, composizione: { common: 9, rare: 1 } };
                 const apertureBaseFuoriSoglia = [];
-                for (let i = 0; i < 100; i++) {
-                    ShopCatalog.apriBusta(bustaBase).forEach((id) => {
-                        const carta = cardDatabase.find((c) => c.id === id);
-                        if (carta && carta.type === 'monster'
-                            && (!Number.isFinite(Number(carta.attack)) || Number(carta.attack) > 1200)) {
-                            apertureBaseFuoriSoglia.push(id);
-                        }
-                    });
+                let vanillaComuni = 0;
+                let slotComuni = 0;
+                const randomOriginale = Math.random;
+                let seme = 20261111;
+                Math.random = () => {
+                    seme = (seme * 1664525 + 1013904223) >>> 0;
+                    return seme / 4294967296;
+                };
+                try {
+                    for (let i = 0; i < 300; i++) {
+                        const carte = ShopCatalog.apriBusta(bustaBase);
+                        carte.forEach((id) => {
+                            const carta = cardDatabase.find((c) => c.id === id);
+                            if (carta && carta.type === 'monster'
+                                && (!Number.isFinite(Number(carta.attack)) || Number(carta.attack) > 1200)) {
+                                apertureBaseFuoriSoglia.push(id);
+                            }
+                        });
+                        carte.slice(0, 9).forEach((id) => {
+                            const carta = cardDatabase.find((c) => c.id === id);
+                            if (carta && carta.type === 'monster' && carta.vanilla === true) vanillaComuni++;
+                            slotComuni++;
+                        });
+                    }
+                } finally {
+                    Math.random = randomOriginale;
                 }
                 const risultati = ShopCatalog.TEMI.flatMap((tema) => [4, 2].map((deboli) => {
                     const busta = {
@@ -78,7 +96,7 @@ module.exports = {
                     }
                 }));
                 return { risultati, fughe, bossStructure, bossAmmessi,
-                    comuniBaseFuoriSoglia, apertureBaseFuoriSoglia };
+                    comuniBaseFuoriSoglia, apertureBaseFuoriSoglia, vanillaComuni, slotComuni };
             });
             const risultati = verifica.risultati;
             risultati.forEach((r) => {
@@ -99,6 +117,8 @@ module.exports = {
                 `Mostri oltre 1200 ATK ammessi nel pool comune/raro della Busta Base: ${verifica.comuniBaseFuoriSoglia.join(', ')}`);
             assert(verifica.apertureBaseFuoriSoglia.length === 0,
                 `Mostri oltre 1200 ATK usciti dalla Busta Base: ${verifica.apertureBaseFuoriSoglia.join(', ')}`);
+            assert(verifica.slotComuni === 2700 && verifica.vanillaComuni > verifica.slotComuni / 2,
+                `I vanilla devono essere privilegiati nelle 9 carte comuni: ${verifica.vanillaComuni}/${verifica.slotComuni}`);
 
             const simboli = await page.evaluate(() => ({
                 temi: ShopCatalog.TEMI.map((t) => ({

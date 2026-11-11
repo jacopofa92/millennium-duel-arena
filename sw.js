@@ -540,7 +540,8 @@
 // v687: i trigger dei mostri scoperti ingrandiscono la proiezione olografica.
 // v688: i boss degli Structure Deck non possono uscire da nessuna busta.
 // v689: la Busta Base esclude i mostri oltre 1200 ATK da ogni slot.
-const CACHE_NAME = 'ygo-duel-arena-v689';
+// v690: gli slot comuni della Busta Base privilegiano i mostri vanilla.
+const CACHE_NAME = 'ygo-duel-arena-v690';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

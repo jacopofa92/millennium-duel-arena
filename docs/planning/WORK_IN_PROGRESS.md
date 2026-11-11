@@ -1,5 +1,13 @@
 # Work in progress — miglioramenti da seguire
 
+## Vanilla privilegiati nella Busta Base — chiuso in 1.6.40
+
+- [x] Nei nove slot comuni, ogni mostro con flag `vanilla: true` ha peso
+      quadruplo rispetto a ciascun'altra carta; i sorteggi restano senza
+      doppioni finché il pool non si esaurisce. Lo slot raro resta invariato.
+- [x] Spec con seme riproducibile verifica che i vanilla superino metà degli
+      slot comuni. Suite completa non eseguita.
+
 ## Mostri più deboli nella Busta Base — chiuso in 1.6.39
 
 - [x] Limitati a massimo 1200 ATK tutti i mostri della Busta Base, compreso

@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.6.40 — Negozio: nella Busta Base i mostri vanilla hanno peso quadruplo negli slot comuni.
  * 1.6.39 — Negozio: nella Busta Base tutti i mostri, anche nello slot raro, hanno massimo 1200 ATK.
  * 1.6.38 — Negozio: i mostri copertina dei dieci Structure Deck TCG sono esclusi da tutte le buste.
  * 1.6.17 — Battle City: un solo fondale quadrato 1254x1254 per quartiere, nel formato di citta.jpg, con nodi ed effetti riallineati.
@@ -813,4 +814,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.6.39';
+window.GAME_VERSION = '1.6.40';
