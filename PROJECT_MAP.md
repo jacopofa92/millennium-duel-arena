@@ -16,6 +16,13 @@ non viene ridisegnato inutilmente quando i permessi coincidono. Suite completa
 tentata ma non completata: alcuni server locali Multiplayer non si avviano nei
 tempi previsti; i controlli mirati sono stati eseguiti separatamente.
 
+## Personaggi bloccati nel Duello Libero (1.6.35)
+
+I ritratti non sbloccati riusano l'overlay di catene e sigillo del menu;
+cliccandoli le catene tintinnano. `js/ui/scelta-duellante.js` condivide il
+componente fra la pagina autonoma e la vista del menu; `mode-unlocks.js`
+fornisce lo stesso markup e `menu-mobile.css` lo stile.
+
 ## Due menu amministrativi (1.6.32)
 
 Il menu principale (`index.html`, `js/ui/menu-mobile.js`) offre agli admin
@@ -56,7 +63,7 @@ in `supabase/README.md`. Spec mirato: `filtri-possedute-admin-utenze`.
 La ricognizione dei premi, senza variazioni agli importi, è in
 `docs/economy/PREMI_TORNEI_2026-11-10.md`.
 
-Ultimo aggiornamento verificato: 2026-11-09.
+Ultimo aggiornamento verificato: 2026-11-11.
 
 ## Cancello lato server (1.6.23)
 

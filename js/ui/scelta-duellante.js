@@ -83,6 +83,7 @@
         cube.innerHTML = `
             <div class="cube-portrait">
                 <span class="cube-portrait-fallback">🧑‍🎤</span>
+                ${bloccato && window.ModeUnlocks ? ModeUnlocks.CATENE_HTML : ''}
                 <div class="cube-name"></div>
             </div>
             <div class="cube-info">
@@ -118,6 +119,9 @@
         const scegli = () => {
             if (bloccato) {
                 if (opzioni.toast && window.CharacterUnlocks) opzioni.toast('🔒 ' + CharacterUnlocks.comeSbloccare(character));
+                cube.classList.remove('mm-scossa');
+                void cube.offsetWidth;
+                cube.classList.add('mm-scossa');
                 return;
             }
             if (opzioni.onScegli) opzioni.onScegli(character);

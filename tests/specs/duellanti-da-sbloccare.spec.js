@@ -64,6 +64,9 @@ module.exports = {
                 `Ogni Duellante deve comparire nella griglia, anche bloccato (${griglia.totali} su ${inizio.totale})`);
             t.assert(griglia.bloccati === inizio.totale - inizio.sbloccati.length,
                 `Tutti tranne gli iniziali devono risultare bloccati (${griglia.bloccati})`);
+            const cateneBloccati = await page.locator('.cube--bloccato .mm-catene').count();
+            t.assert(cateneBloccati === griglia.bloccati,
+                `Ogni ritratto bloccato deve mostrare le catene del menu (${cateneBloccati}/${griglia.bloccati})`);
 
             // --- Un bloccato non lancia un duello --------------------
             // Si clicca quello che il giocatore vedrebbe, e si controlla

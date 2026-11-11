@@ -204,18 +204,12 @@
     .cube--bloccato:hover { transform: none; }
     .cube--bloccato .cube-portrait img { filter: grayscale(1) brightness(0.4); }
     .cube--bloccato .cube-name { color: rgba(255,255,255,0.7); }
-    .cube--bloccato .cube-portrait::before {
-        content: '🔒';
-        position: absolute;
-        inset: 0;
-        display: grid;
-        place-items: center;
-        font-size: 1.9rem;
-        /* Sopra il ritratto ma sotto il nome, che resta la cosa da
-           leggere per prima. */
-        z-index: 2;
-        text-shadow: 0 2px 8px rgba(0,0,0,0.8);
-    }
+    /* Riusa le catene e il sigillo già usati per le modalità bloccate nel
+       menu. Restano sotto al nome e non intercettano i tocchi sul ritratto. */
+    .cube--bloccato .cube-portrait .mm-catene { z-index: 1; }
+    .cube--bloccato .cube-portrait .mm-catena { height: 15px; }
+    .cube--bloccato .cube-portrait .mm-sigillo { width: 30px; height: 30px; }
+    .cube--bloccato .cube-portrait .mm-sigillo svg { width: 16px; height: 16px; }
     .cube-locked {
         font-size: 0.68rem;
         font-weight: 700;
