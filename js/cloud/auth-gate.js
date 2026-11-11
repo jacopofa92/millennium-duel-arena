@@ -92,6 +92,13 @@
                 });
                 return;
             }
+            // La pagina di creazione carte è uno strumento amministrativo:
+            // nasconderne il collegamento nel menu non basta, perché un URL
+            // digitato o salvato nei preferiti aggirerebbe il controllo.
+            if (/** @type {any} */ (window).AUTH_GATE_ADMIN_ONLY && !CloudSync.isAdmin()) {
+                redirectToLogin('admin');
+                return;
+            }
             const contenuto = window.Contenuti && Contenuti.motivoPagina();
             if (contenuto) { Contenuti.blocca(contenuto); return; }
             removeOverlay();

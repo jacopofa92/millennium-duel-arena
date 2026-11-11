@@ -537,8 +537,8 @@
 // v653: Battle City: nodi crediti, massimo due nodi Locazione, layout e luci Parco aggiornati.
 // v665: fondali Battle City quadrati 1254x1254, con percorsi ed effetti riallineati.
 // v684: permessi WW1/WW2/Extra per account, relay Multiplayer autenticato.
-// v685: i personaggi bloccati del Duello Libero mostrano le catene del menu.
-const CACHE_NAME = 'ygo-duel-arena-v685';
+// v686: trigger automatici sollevano la carta nello slot; Crea Carta solo admin.
+const CACHE_NAME = 'ygo-duel-arena-v686';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

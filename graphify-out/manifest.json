@@ -106,9 +106,9 @@
     "semantic_hash": ""
   },
   "js/cloud/auth-gate.js": {
-    "mtime": 1794426409.3137326,
-    "seen": 1794427420.977242,
-    "ast_hash": "64b40934aa835c5e921f4577da2e0519",
+    "mtime": 1794429776.8139472,
+    "seen": 1794429848.2521398,
+    "ast_hash": "3cbebef90a18ae8fb9e7c3d9a812a51d",
     "semantic_hash": ""
   },
   "js/cloud/auto-sync.js": {
@@ -472,9 +472,9 @@
     "semantic_hash": "dcd14125a9faf5071dedc66d14fd61d0"
   },
   "js/engine/duel-engine.js": {
-    "mtime": 1794248691.5290432,
-    "seen": 1794256471.8672147,
-    "ast_hash": "220895f528dd1f05799e1b6749314c92",
+    "mtime": 1794429568.149795,
+    "seen": 1794429848.2878184,
+    "ast_hash": "0d9c3e3100c98d04b881de67d7400b98",
     "semantic_hash": ""
   },
   "js/engine/duel-sandbox.js": {
@@ -844,9 +844,9 @@
     "semantic_hash": ""
   },
   "js/ui/effects.js": {
-    "mtime": 1794065873.5812266,
-    "seen": 1794145245.852079,
-    "ast_hash": "1423b60cdc0f17fea190b417bf02e995",
+    "mtime": 1794429949.7576933,
+    "seen": 1794429999.4489334,
+    "ast_hash": "8806a06d3743b56b460f86e3ce1db5bb",
     "semantic_hash": ""
   },
   "js/ui/error-recovery.js": {
@@ -1108,9 +1108,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794427354.5510788,
-    "seen": 1794427421.0817227,
-    "ast_hash": "2190d57b5e79e5705a9fcac7b18bb284",
+    "mtime": 1794429657.1610782,
+    "seen": 1794429848.3470833,
+    "ast_hash": "98210b90cc25c6ac1edef715e1a9f622",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1126,9 +1126,9 @@
     "semantic_hash": "57357a46c1d07a0fa18bbcd83581aaa6"
   },
   "package.json": {
-    "mtime": 1794427353.90917,
-    "seen": 1794427421.0827928,
-    "ast_hash": "b238eddb86df1a210317288c0cf02f5a",
+    "mtime": 1794429656.5904932,
+    "seen": 1794429848.3470833,
+    "ast_hash": "d789605a9aaaa90bcd0a43af30769fda",
     "semantic_hash": ""
   },
   "render.yaml": {
@@ -1527,9 +1527,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794427354.8880281,
-    "seen": 1794427421.1196742,
-    "ast_hash": "34cffac6cd52804a37f6770b5348dbd2",
+    "mtime": 1794429657.4631827,
+    "seen": 1794429848.3811157,
+    "ast_hash": "dbedbe2d9589363dab39096537673d77",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -4961,9 +4961,9 @@
     "semantic_hash": ""
   },
   "PROJECT_MAP.md": {
-    "mtime": 1794427355.2193923,
-    "seen": 1794427421.458695,
-    "ast_hash": "9658a8a1c962ca02d30c2781025a79e5",
+    "mtime": 1794429657.7657743,
+    "seen": 1794429848.6507335,
+    "ast_hash": "33cb1db805d93af6e744c605403f62f9",
     "semantic_hash": ""
   },
   "PUBBLICAZIONE.md": {
@@ -5021,9 +5021,9 @@
     "semantic_hash": ""
   },
   "crea-carta.html": {
-    "mtime": 1794426409.224983,
-    "seen": 1794427421.4616868,
-    "ast_hash": "5a43d34a53bce017dd073fb53bac20ea",
+    "mtime": 1794429621.377233,
+    "seen": 1794429848.6567435,
+    "ast_hash": "bc51326ef47e7b6f40ca8da7296b4e66",
     "semantic_hash": ""
   },
   "creazione-deck.html": {
@@ -5297,9 +5297,9 @@
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1794426409.3137326,
-    "seen": 1794427421.482806,
-    "ast_hash": "3e9e34f97497468104cf0db21dbeca83",
+    "mtime": 1794429656.2880208,
+    "seen": 1794429848.6785645,
+    "ast_hash": "6eb7503257664793064fa17f164a240c",
     "semantic_hash": ""
   },
   "multiplayer.html": {
@@ -25042,10 +25042,16 @@
     "ast_hash": "e6e6b5f8ee630381cdb3438b4c958b83",
     "semantic_hash": ""
   },
+  "tests/specs/attivazione-automatica-sollevamento-slot.spec.js": {
+    "mtime": 1794429685.5137446,
+    "seen": 1794429848.3926766,
+    "ast_hash": "cf8949e82fd83b423166e47f0d1daf25",
+    "semantic_hash": ""
+  },
   "package-lock.json": {
-    "mtime": 1794427354.2311447,
-    "seen": 1794427423.432862,
-    "ast_hash": "4e49a690c295cc193ccb333b9d8833b6",
+    "mtime": 1794429656.8758945,
+    "seen": 1794429850.3116798,
+    "ast_hash": "97d061a52bcedc9faf87290bde31d53d",
     "semantic_hash": ""
   }
 }

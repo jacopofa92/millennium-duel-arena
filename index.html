@@ -1412,7 +1412,7 @@
                     // in index.html finche' la prova non e' confermata: per tornare indietro basta rimettere action:'view'.
                     { icon: 'collection', label: 'Cartoteca', action: 'link', href: 'cartoteca.html' },
                     { icon: 'deckBuilder', label: 'Creazione Deck', action: 'link', href: 'creazione-deck.html' },
-                    { icon: 'cardMaker', label: 'Creazione', action: 'link', href: 'crea-carta.html' }
+                    { icon: 'cardMaker', label: 'Creazione', action: 'link', href: 'crea-carta.html', soloAdmin: true }
                 ]
             },
             // Multiplayer: un sottomenu, una voce per modalita' (tabella unica in js/multiplayer/mp-modi.js). Ogni voce apre la
@@ -1800,6 +1800,9 @@
         function showGate(blockedMessage) {
             if (!blockedMessage && new URLSearchParams(window.location.search).get('blocked') === 'suspended') {
                 blockedMessage = 'Il tuo account è sospeso. Contatta l’amministratore.';
+            }
+            if (!blockedMessage && new URLSearchParams(window.location.search).get('blocked') === 'admin') {
+                blockedMessage = 'Questa funzione è riservata agli amministratori.';
             }
             // Sessione chiusa perché durava da più di 48 ore (cloud-sync.js):
             // lo si dice, invece di far sembrare un'uscita senza motivo.

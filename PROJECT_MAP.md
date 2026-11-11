@@ -1,5 +1,16 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Trigger automatici e Creazione carte riservata (1.6.36)
+
+Gli effetti automatici di carte ancora sul Terreno usano
+`FX.playAutomaticFieldActivation` in `js/ui/effects.js`: una copia visiva
+sollevata nello slot per 2 secondi, con lo stesso suono e la stessa
+tempistica dell'attivazione centrale. Gli effetti manuali e quelli delle carte
+che lasciano il campo mantengono il primo piano centrale. La voce “Creazione”
+è marcata `soloAdmin` nel menu desktop/mobile; `crea-carta.html` attiva anche
+il controllo amministratore del `auth-gate.js`, per bloccare l'accesso diretto.
+Non è stata eseguita la suite completa.
+
 ## Contenuti opzionali per account (1.6.34)
 
 `js/cloud/content-access.js` classifica i contenuti WW1, WW2 ed Extra/Freedom;

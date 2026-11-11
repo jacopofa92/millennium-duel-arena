@@ -1788,10 +1788,9 @@
     }
 
     // ============================================================
-    // 6bis) Attivazione carta a CENTRO SCHERMO — per OGNI Magia/Trappola o
-    // effetto Mostro che scatta o si attiva (manuale, es. cliccando
-    // "Attiva", o automatico, es. un onDestroy/onAttackDeclare/
-    // onStandbyPhase che scatta da solo): la carta appare grande al
+    // 6bis) Attivazione carta a CENTRO SCHERMO — per attivazioni manuali
+    // (es. cliccando "Attiva") e reazioni automatiche che hanno già lasciato
+    // il campo (es. onDestroy): la carta appare grande al
     // centro dello schermo (dimensione da "dettaglio carta", vedi
     // --info-card-w in duelMonstersCore.html), pulsa un paio di volte con un
     // effetto audio, poi sparisce con un fade. Durata totale ~2s — vedi
@@ -1892,6 +1891,43 @@
             backdrop.remove();
             wrapper.remove();
         }, 2000);
+    }
+
+    /** Trigger forzato su una carta che resta sul campo: duplica solo la sua
+     * resa visiva nello stesso slot, così l'animazione continua anche se il
+     * motore ridisegna il nodo reale durante la risoluzione dell'effetto. */
+    function playAutomaticFieldActivation(card) {
+        if (!card || !card.uid || typeof window.findFieldCardElementByUid !== 'function') return false;
+        const source = window.findFieldCardElementByUid(card.uid);
+        if (!source) return false;
+
+        const rect = source.getBoundingClientRect();
+        if (!rect.width || !rect.height) return false;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'fx-auto-field-lift';
+        wrapper.style.left = `${rect.left}px`;
+        wrapper.style.top = `${rect.top}px`;
+        wrapper.style.width = `${rect.width}px`;
+        wrapper.style.height = `${rect.height}px`;
+        const visual = source.cloneNode(true);
+        visual.removeAttribute('id');
+        visual.style.setProperty('--card-w', `${rect.width}px`);
+        visual.style.setProperty('--card-h', `${rect.height}px`);
+        wrapper.appendChild(visual);
+        document.body.appendChild(wrapper);
+
+        // Il suono è lo stesso della comparsa centrale, al medesimo istante
+        // (+260ms); anche il tempo totale resta pari ai 2 secondi già attesi
+        // dai trigger del motore.
+        setTimeout(() => {
+            const kind = card.type === 'trap' ? 'trappole' : 'magie';
+            if (window.AudioLibrary && AudioLibrary.tryPlayCardSound(card, kind)) return;
+            if (!window.SFX) return;
+            if (card.type === 'trap') SFX.activateTrap();
+            else SFX.activateSpell();
+        }, 260);
+        setTimeout(() => wrapper.remove(), ACTIVATE_CENTER_DURATION_MS);
+        return true;
     }
 
     // ============================================================
@@ -2699,12 +2735,10 @@
         // scavalcata — misurato: con il backend attivo non succedeva più
         // nulla. Qui invece vale per entrambi.
         //
-        // E sta su questo unico punto e non nei chiamanti perché di
-        // chiamanti ce ne sono tredici in js/engine/duel-engine.js:
-        // l'attivazione manuale, la risposta in Chain, e ognuno dei trigger
-        // reattivi (onFlip, onDestroy, onSummon, onPositionChange...).
-        // Questo è il passaggio obbligato di tutti, quindi il bagliore
-        // resta per costruzione insieme al suono di attivazione.
+        // I trigger automatici di carte ancora sul campo usano invece
+        // playAutomaticFieldActivation più sotto; qui il primo piano resta
+        // per le attivazioni manuali, le risposte in Chain e le carte ormai
+        // al Cimitero. La facciata mantiene per questi casi bagliore e suono.
         playCardActivateCenterScreen: (function () {
             const alCentro = viaBackend('playCardActivateCenterScreen', playCardActivateCenterScreen);
             return function (card) {
@@ -2735,6 +2769,10 @@
                 }, 60);
             };
         })(),
+        // Da usare solo per reazioni automatiche di carte che sono ancora
+        // sul Terreno. Il falso indica che la carta è uscita dal campo o il
+        // suo nodo non è disponibile: il chiamante può mantenere il fallback.
+        playAutomaticFieldActivation: playAutomaticFieldActivation,
         // Alcune risposte dalla mano vengono consumate quando si sceglie
         // il Link, ma il loro primo piano centrale parte più tardi (alla
         // risoluzione). Fotografare prima del consumo mantiene la vera

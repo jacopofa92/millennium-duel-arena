@@ -1143,7 +1143,9 @@
                         graveyardOf(owner).push(choice.card);
                     }
                     addToLog(`💀 ${owner === 'player' ? 'Hai' : 'Il bot ha'} attivato ${choice.card.name}!`);
-                    if (window.FX) FX.playCardActivateCenterScreen(choice.card);
+                    if (window.FX) {
+                        if (!choice.def.continuous || !FX.playAutomaticFieldActivation(choice.card)) FX.playCardActivateCenterScreen(choice.card);
+                    }
                     safeCallCardHandler(choice.card, 'onOwnSpellTrapDestroyed', () => choice.def.onOwnSpellTrapDestroyed(reactCtx(choice)));
                 }
             }
@@ -3267,7 +3269,7 @@
             // Tempesta di Piume delle Arpie (id 292): nega anche l'effetto
             // Flip, come l'Ignition qui sopra in canActivate.
             if (def && typeof def.onFlip === 'function' && !isMonsterCardEffectsNegated(ctx.owner, ctx.card.uid) && !gameState.flipEffectsGloballyNegated) {
-                if (window.FX) FX.playCardActivateCenterScreen(ctx.card);
+                if (window.FX) FX.playAutomaticFieldActivation(ctx.card);
                 safeCallCardHandler(ctx.card, 'onFlip', () => def.onFlip(ctx));
             }
             reactToAnyNormalOrFlipSummon(ctx.card, 'flip');
@@ -3332,7 +3334,7 @@
             // Tempesta di Piume delle Arpie (id 292): nega anche l'auto-
             // effetto "quando questa carta viene Evocata".
             if (typeof selfHandler === 'function' && !isMonsterCardEffectsNegated(ctx.owner, ctx.summonedCard.uid)) {
-                if (window.FX) FX.playCardActivateCenterScreen(ctx.summonedCard);
+                if (window.FX) FX.playAutomaticFieldActivation(ctx.summonedCard);
                 // `card` è la carta di cui si sta eseguendo l'effetto: qui è
                 // quella appena Evocata. NESSUN chiamante di questo trigger lo
                 // metteva nel contesto (passano solo summonedCard), quindi
@@ -3556,7 +3558,9 @@
                     graveyardOf(ownerOfDestroyed).push(choice.card);
                 }
                 addToLog(`💀 ${ownerOfDestroyed === 'player' ? 'Hai' : 'Il bot ha'} attivato ${choice.card.name}!`);
-                if (window.FX) FX.playCardActivateCenterScreen(choice.card);
+                if (window.FX) {
+                    if (!choice.def.continuous || !FX.playAutomaticFieldActivation(choice.card)) FX.playCardActivateCenterScreen(choice.card);
+                }
                 safeCallCardHandler(choice.card, 'onOwnMonsterDestroyed', () => choice.def.onOwnMonsterDestroyed(reactCtx(choice)));
             }
             // "Ogni volta che un TUO mostro (anche di un'altra carta) viene
@@ -3601,7 +3605,9 @@
                     graveyardOf(enemyOfDestroyedOwner).push(choice.card);
                 }
                 addToLog(`💀 ${enemyOfDestroyedOwner === 'player' ? 'Hai' : 'Il bot ha'} attivato ${choice.card.name}!`);
-                if (window.FX) FX.playCardActivateCenterScreen(choice.card);
+                if (window.FX) {
+                    if (!choice.def.continuous || !FX.playAutomaticFieldActivation(choice.card)) FX.playCardActivateCenterScreen(choice.card);
+                }
                 safeCallCardHandler(choice.card, 'onEnemyMonsterDestroyed', () => choice.def.onEnemyMonsterDestroyed(enemyReactCtx(choice)));
             }
             // Sorte LEGATA per-istanza: un mostro con
@@ -3639,7 +3645,7 @@
             // Tempesta di Piume delle Arpie (id 292): nega anche l'auto-
             // effetto "quando questa carta cambia Posizione".
             if (def && typeof def.onPositionChange === 'function' && !isMonsterCardEffectsNegated(ctx.owner, ctx.card.uid)) {
-                if (window.FX) FX.playCardActivateCenterScreen(ctx.card);
+                if (window.FX) FX.playAutomaticFieldActivation(ctx.card);
                 safeCallCardHandler(ctx.card, 'onPositionChange', () => def.onPositionChange(ctx));
             }
             finish();
@@ -3672,7 +3678,7 @@
                         activatedCard: ctx.card, activatedOwner: ctx.owner
                     });
                     if (typeof def.canActivateOnCardActivated === 'function' && !def.canActivateOnCardActivated(reactCtx)) return;
-                    if (window.FX) FX.playCardActivateCenterScreen(slot.card);
+                    if (window.FX) FX.playAutomaticFieldActivation(slot.card);
                     safeCallCardHandler(slot.card, 'onCardActivated', () => def.onCardActivated(reactCtx));
                 });
                 // Come sopra, ma per Magie/Trappole CONTINUE già scoperte sul
@@ -3689,7 +3695,7 @@
                         activatedCard: ctx.card, activatedOwner: ctx.owner
                     });
                     if (typeof def.canActivateOnCardActivated === 'function' && !def.canActivateOnCardActivated(reactCtx)) return;
-                    if (window.FX) FX.playCardActivateCenterScreen(slot.card);
+                    if (window.FX) FX.playAutomaticFieldActivation(slot.card);
                     safeCallCardHandler(slot.card, 'onCardActivated', () => def.onCardActivated(reactCtx));
                 });
                 // Alcune carte dichiarano espressamente di reagire dal
@@ -5792,7 +5798,7 @@
             if (isMonsterCardEffectsNegated(owner, slot.card.uid)) return;
             const def = getDefinition(slot.card.id);
             if (def && typeof def[handlerName] === 'function') {
-                if (window.FX) FX.playCardActivateCenterScreen(slot.card);
+                if (window.FX) FX.playAutomaticFieldActivation(slot.card);
                 safeCallCardHandler(slot.card, handlerName, () => def[handlerName](makeContext(owner, { card: slot.card, slot: slot, slotIndex: index })));
             }
         });
@@ -5800,7 +5806,7 @@
             if (!slot || slot.isFaceDown) return;
             const def = getDefinition(slot.card.id);
             if (def && typeof def[handlerName] === 'function') {
-                if (window.FX) FX.playCardActivateCenterScreen(slot.card);
+                if (window.FX) FX.playAutomaticFieldActivation(slot.card);
                 safeCallCardHandler(slot.card, handlerName, () => def[handlerName](makeContext(owner, { card: slot.card, slot: slot, index: index, zone: 'st' })));
             }
         });
@@ -5813,7 +5819,7 @@
         if (fs && !fs.isFaceDown) {
             const fsDef = getDefinition(fs.card.id);
             if (fsDef && typeof fsDef[handlerName] === 'function') {
-                if (window.FX) FX.playCardActivateCenterScreen(fs.card);
+                if (window.FX) FX.playAutomaticFieldActivation(fs.card);
                 safeCallCardHandler(fs.card, handlerName, () => fsDef[handlerName](makeContext(owner, { card: fs.card, zone: 'fieldSpell' })));
             }
         }

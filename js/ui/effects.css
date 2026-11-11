@@ -525,6 +525,32 @@
     60%      { filter: brightness(1.15) drop-shadow(0 0 10px rgba(247, 215, 116, 0.75)); }
 }
 
+/* I trigger automatici mostrano la carta nel suo slot: il wrapper conserva
+   intatta la rotazione 3D della carta (coperta/scoperta) e la solleva senza
+   alterare il transform applicato dal renderer. */
+.fx-auto-field-lift {
+    position: fixed;
+    z-index: 10030;
+    pointer-events: none;
+    transform-origin: center bottom;
+    animation: fxAutoFieldLift 2s cubic-bezier(.22,.72,.24,1) forwards;
+}
+.fx-auto-field-lift > .card {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+}
+@keyframes fxAutoFieldLift {
+    0%, 100% { opacity: 0; transform: translateY(0) scale(1); filter: brightness(1); }
+    12% { opacity: 1; }
+    28% { transform: translateY(-14px) scale(1.07); filter: brightness(1.4) drop-shadow(0 0 14px rgba(125,211,252,.9)); }
+    48% { opacity: 1; transform: translateY(-11px) scale(1.05); filter: brightness(1.2) drop-shadow(0 0 9px rgba(247,215,116,.75)); }
+    82% { opacity: .95; transform: translateY(-4px) scale(1.02); filter: brightness(1.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .fx-auto-field-lift { animation: none; opacity: 0; }
+}
+
 .fx-activate-overlay {
     position: fixed;
     pointer-events: none;
@@ -549,8 +575,8 @@
 }
 
 /* ============================================================
-   6bis) Attivazione carta a CENTRO SCHERMO — per OGNI Magia/Trappola o
-   effetto Mostro che scatta o si attiva (manuale o automatico): la carta
+   6bis) Attivazione carta a CENTRO SCHERMO — per le attivazioni manuali e
+   per le reazioni automatiche di carte che hanno già lasciato il campo: la carta
    compare grande al centro, pulsa con un suono (vedi
    playCardActivateCenterScreen in effects.js), poi sparisce con un fade.
    Durata totale ~2s, in 3 fasi: comparsa (0-15%), pulse (15-75%), fade
