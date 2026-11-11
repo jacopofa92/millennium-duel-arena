@@ -380,6 +380,12 @@ void main(){
                 }
                 ox = volo.ox; oy = volo.oy; sc = volo.sc;
             }
+            if (o.zoom && ora < o.zoom.finoA) {
+                const progresso = Math.max(0, Math.min(1, (ora - o.zoom.inizio) / o.zoom.durata));
+                sc *= 1 + 0.14 * Math.sin(Math.PI * progresso);
+            } else if (o.zoom) {
+                o.zoom = null;
+            }
             quad(o, voce, bob, ox, oy, sc, 1, volo ? 1 : 0, dis, nascita);
             disegnati++;
         });
@@ -428,6 +434,16 @@ void main(){
         nascondiPer(uid, ms) {
             const o = vivi.get(uid);
             if (o) o.nascostoFinoA = performance.now() + ms;
+        },
+        /** Ingrandisce per un istante una sola proiezione, senza ridimensionare la carta. */
+        zoom(uid, durataMs) {
+            const o = vivi.get(String(uid));
+            if (!o || guasto) return false;
+            const durata = durataMs || 2000;
+            const inizio = performance.now();
+            o.zoom = { inizio, durata, finoA: inizio + durata };
+            avvia();
+            return true;
         },
         /** Si vede adesso? (esiste, la texture e' pronta, non e' nascosto): serve a decidere se la carta deve restare ferma. */
         visibile(uid) {

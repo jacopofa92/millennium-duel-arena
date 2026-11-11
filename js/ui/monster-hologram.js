@@ -339,6 +339,24 @@
         }, durataMs);
     }
 
+    /** Breve zoom sulla proiezione del mostro, se il suo ologramma esiste. */
+    function zoom(uid, durataMs) {
+        if (!attivo() || !uid) return false;
+        if (window.MonsterHologramGL && MonsterHologramGL.zoom(uid, durataMs)) return true;
+        const item = vivi.get(String(uid));
+        if (!item) return false;
+        item.classList.remove('mh-trigger-zoom');
+        // Riavviare l'animazione per ogni trigger ravvicinato evita che il
+        // secondo effetto si perda mentre il primo zoom è ancora in corso.
+        void item.offsetWidth;
+        item.classList.add('mh-trigger-zoom');
+        setTimeout(() => {
+            const attuale = vivi.get(String(uid));
+            if (attuale) attuale.classList.remove('mh-trigger-zoom');
+        }, durataMs || 2000);
+        return true;
+    }
+
     // Un video fullscreen non deve contendersi la GPU con trasparenze e
     // scansioni nascoste dietro di lui. Il layer viene escluso dal layout e
     // riallineato al Terreno quando la cinematica termina.
@@ -360,7 +378,7 @@
     window.MonsterHolograms = {
         /** Il contenitore (creato se manca): ci disegna dentro anche il WebGL, ereditando opacità e nascondimenti. */
         layer: layer,
-        sync: sync, isAttivo: attivo, nascondiPer: nascondiPer,
+        sync: sync, isAttivo: attivo, nascondiPer: nascondiPer, zoom: zoom,
         sospendi: sospendi, riprendi: riprendi, isSospeso: () => sospeso
     };
 })();

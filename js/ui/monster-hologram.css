@@ -70,6 +70,17 @@
     visibility: hidden;
 }
 
+/* Trigger di un mostro già proiettato: ingrandisce per un istante la figura,
+   senza muovere la carta né interferire con il galleggiamento del wrapper. */
+.mh-item.mh-trigger-zoom .mh-art {
+    animation: mh-trigger-zoom 2s cubic-bezier(.2,.75,.25,1);
+}
+@keyframes mh-trigger-zoom {
+    0%, 100% { transform: scale(1); filter: saturate(.68) brightness(1.12) hue-rotate(-12deg) drop-shadow(0 0 5px rgba(120,215,255,.6)); }
+    36% { transform: scale(1.14); filter: saturate(.82) brightness(1.42) hue-rotate(-12deg) drop-shadow(0 0 15px rgba(150,230,255,.95)); }
+    68% { transform: scale(1.09); filter: saturate(.76) brightness(1.25) hue-rotate(-12deg) drop-shadow(0 0 10px rgba(247,215,116,.8)); }
+}
+
 /* La figura vera. L'arte della carta è un ritaglio RETTANGOLARE con il
    suo sfondo: senza maschera si vedrebbe un rettangolo che vola. La
    sfumatura sui bordi è ciò che la fa leggere come proiezione. */

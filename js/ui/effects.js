@@ -1901,6 +1901,19 @@
         const source = window.findFieldCardElementByUid(card.uid);
         if (!source) return false;
 
+        // I mostri scoperti sono proiettati su un livello autonomo. Quando
+        // quel livello è attivo, enfatizziamo la figura stessa: sollevare la
+        // carta romperebbe l'illusione di un ologramma ancorato allo slot.
+        if (card.type === 'monster' && window.HologramSetting && HologramSetting.isAttivo()
+            && window.MonsterHolograms && MonsterHolograms.zoom(card.uid, ACTIVATE_CENTER_DURATION_MS)) {
+            setTimeout(() => {
+                const kind = 'magie';
+                if (window.AudioLibrary && AudioLibrary.tryPlayCardSound(card, kind)) return;
+                if (window.SFX && typeof SFX.activateSpell === 'function') SFX.activateSpell();
+            }, 260);
+            return true;
+        }
+
         const rect = source.getBoundingClientRect();
         if (!rect.width || !rect.height) return false;
         const wrapper = document.createElement('div');

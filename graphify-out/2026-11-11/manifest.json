@@ -844,9 +844,9 @@
     "semantic_hash": ""
   },
   "js/ui/effects.js": {
-    "mtime": 1794429518.3413222,
-    "seen": 1794429848.3217752,
-    "ast_hash": "df5d527ceec6b58b7521b2711103a3e5",
+    "mtime": 1794429949.7576933,
+    "seen": 1794429999.4489334,
+    "ast_hash": "8806a06d3743b56b460f86e3ce1db5bb",
     "semantic_hash": ""
   },
   "js/ui/error-recovery.js": {

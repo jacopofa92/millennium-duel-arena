@@ -28,14 +28,30 @@ module.exports = {
             await new Promise((resolve) => setTimeout(resolve, durata));
             const rimosso = !document.querySelector('.fx-auto-field-lift');
 
+            let zoom = null;
+            const hologramSetting = window.HologramSetting;
+            const holograms = window.MonsterHolograms;
+            window.HologramSetting = { isAttivo: () => true };
+            window.MonsterHolograms = { zoom: (uid, ms) => { zoom = { uid, ms }; return true; } };
+            const attivatoMostro = FX.playAutomaticFieldActivation({ uid: 'auto-trigger-test', type: 'monster' });
+            const nienteSollevamento = !document.querySelector('.fx-auto-field-lift');
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            const stessoSuono = suono === 2;
+
             window.findFieldCardElementByUid = lookup;
             window.AudioLibrary = audio;
+            window.HologramSetting = hologramSetting;
+            window.MonsterHolograms = holograms;
             source.remove();
-            return { partito, posizione, nessunPrimoPiano, suonoAlMomentoGiusto, durata, rimosso };
+            return { partito, posizione, nessunPrimoPiano, suonoAlMomentoGiusto, durata, rimosso,
+                attivatoMostro, nienteSollevamento, stessoSuono, zoom };
         });
         assert(risultato.partito && risultato.posizione && risultato.nessunPrimoPiano,
             `Il trigger parte nello slot senza overlay centrale: ${JSON.stringify(risultato)}`);
         assert(risultato.suonoAlMomentoGiusto && risultato.durata === 2000 && risultato.rimosso,
             `Stesso suono e durata di 2 secondi: ${JSON.stringify(risultato)}`);
+        assert(risultato.attivatoMostro && risultato.nienteSollevamento
+            && risultato.zoom && risultato.zoom.ms === 2000 && risultato.stessoSuono,
+        `Con l'ologramma attivo si ingrandisce la proiezione per 2 secondi: ${JSON.stringify(risultato)}`);
     }
 };
