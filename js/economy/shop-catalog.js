@@ -258,7 +258,7 @@
             costo: { credits: PREZZI.bustaBase },
             carte: 10,
             composizione: { common: 9, rare: 1 },
-            descrizione: '9 carte comuni e 1 rara garantita.'
+            descrizione: '9 carte comuni e 1 rara garantita. I mostri hanno massimo 1200 ATK.'
         },
         {
             id: 'avanzata',
@@ -383,7 +383,7 @@
      * dopo averne meritato la prima copia) restano esplicite più sotto: non
      * devono mai entrare accidentalmente in un pool generico o tematico.
      */
-    function acquistabileInBusta(cardId) {
+    function acquistabileInBusta(cardId, busta) {
         if (window.Contenuti && !Contenuti.carta(cardId)) return false;
         // I mostri copertina degli Structure Deck sono ricompense esclusive
         // del relativo deck: non devono rientrare da buste generiche o a tema.
@@ -391,6 +391,15 @@
         if (typeof starterStructureDeckDatabase !== 'undefined'
             && starterStructureDeckDatabase.some((deck) => deck.kind === 'structure'
                 && deck.bossCardId === cardId)) return false;
+        // La Busta Base è la porta d'ingresso all'economia: può contenere
+        // Magie e Trappole comuni/rare, ma i suoi mostri restano tutti entro
+        // 1200 ATK. La regola vale anche per lo slot raro garantito.
+        if (busta && busta.id === 'base') {
+            const db = typeof cardDatabase !== 'undefined' ? cardDatabase : (window.cardDatabase || []);
+            const carta = db.find((c) => c.id === cardId);
+            if (carta && carta.type === 'monster'
+                && (!Number.isFinite(Number(carta.attack)) || Number(carta.attack) > 1200)) return false;
+        }
         return !!window.CardRarity && CardRarity.isPurchasable(cardId)
             && (!window.CardAcquisition || CardAcquisition.isSignatureUnlocked(cardId))
             && (!window.SaveManager || !window.CardAcquisition || !CardAcquisition.isModernSupport(cardId)
@@ -496,7 +505,7 @@
         });
         Object.keys(busta.composizione || {}).forEach((rarity) => {
             let pool = filtraSupportiRarissimi(CardRarity.idsByRarity(rarity)
-                .filter(acquistabileInBusta));
+                .filter((id) => acquistabileInBusta(id, busta)));
             if (tema) {
                 const themed = pool.filter((id) => { const c = db.find((x) => x.id === id); return c && tema.test(c); });
                 // Mai carte fuori tema. Se una fascia è troppo stretta si
@@ -504,7 +513,7 @@
                 // dagli altri slot e la bustina non tradisce il soggetto.
                 const tuttoIlTema = filtraSupportiRarissimi(db.filter((c) => (c.origin || 'yu-gi-oh') === 'yu-gi-oh'
                     && tema.test(c)
-                    && acquistabileInBusta(c.id))
+                    && acquistabileInBusta(c.id, busta))
                     .map((c) => c.id));
                 pool = themed.length ? themed : tuttoIlTema;
             }
@@ -513,7 +522,7 @@
         if (tema && busta.deboliGarantiti) {
             const mostriTema = db.filter((c) => c.type === 'monster'
                 && (c.origin || 'yu-gi-oh') === 'yu-gi-oh' && tema.test(c)
-                && acquistabileInBusta(c.id))
+                && acquistabileInBusta(c.id, busta))
                 .sort((a, b) => ((a.attack || 0) + (a.defense || 0)) - ((b.attack || 0) + (b.defense || 0)));
             const davveroDeboli = mostriTema.filter((c) => (c.level || 0) <= 4
                 && (c.attack || 0) <= 1400 && (c.defense || 0) <= 1600);
@@ -526,7 +535,7 @@
         }
         if (busta.legendaryChance && Math.random() < busta.legendaryChance) {
             const leggendarie = filtraSupportiRarissimi(CardRarity.idsByRarity('legendary')
-                .filter(acquistabileInBusta));
+                .filter((id) => acquistabileInBusta(id, busta)));
             if (leggendarie.length && estratte.length) estratte[estratte.length - 1] = pesca(leggendarie, 1, casuale)[0];
         }
         // L'Elefante Volante entra nelle sole buste Premium soltanto dopo

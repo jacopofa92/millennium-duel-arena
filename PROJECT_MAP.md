@@ -1,5 +1,13 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Busta Base: limite ATK dei mostri (1.6.39)
+
+`acquistabileInBusta` in `js/economy/shop-catalog.js` riceve ora la busta
+corrente e nella sola Busta Base esclude i mostri con ATK superiore a 1200
+o con ATK mancante/non valido. Vale per tutte le fasce, incluso lo slot raro;
+Magie e Trappole e le altre buste mantengono i pool precedenti. Lo spec è
+`tests/specs/buste-tematiche-coerenti.spec.js`. Versione/cache: 1.6.39 / v689.
+
 ## Buste e boss degli Structure Deck (1.6.38)
 
 `js/data/starter-structure-decks.js` dichiara `bossCardId` per ciascuno dei

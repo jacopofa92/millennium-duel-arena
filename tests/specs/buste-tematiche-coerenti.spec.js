@@ -21,6 +21,24 @@ module.exports = {
                 ]));
                 const bossAmmessi = bossStructure.filter((boss) =>
                     ShopCatalog.isCartaAmmessaInBusta(boss.id));
+                const comuniBaseFuoriSoglia = ['common', 'rare'].flatMap((rarity) =>
+                    CardRarity.idsByRarity(rarity).filter((id) => {
+                        const carta = cardDatabase.find((c) => c.id === id);
+                        return carta && carta.type === 'monster'
+                            && (!Number.isFinite(Number(carta.attack)) || Number(carta.attack) > 1200)
+                            && ShopCatalog.isCartaAmmessaInBusta(id, { id: 'base' });
+                    }));
+                const bustaBase = { id: 'base', carte: 10, composizione: { common: 9, rare: 1 } };
+                const apertureBaseFuoriSoglia = [];
+                for (let i = 0; i < 100; i++) {
+                    ShopCatalog.apriBusta(bustaBase).forEach((id) => {
+                        const carta = cardDatabase.find((c) => c.id === id);
+                        if (carta && carta.type === 'monster'
+                            && (!Number.isFinite(Number(carta.attack)) || Number(carta.attack) > 1200)) {
+                            apertureBaseFuoriSoglia.push(id);
+                        }
+                    });
+                }
                 const risultati = ShopCatalog.TEMI.flatMap((tema) => [4, 2].map((deboli) => {
                     const busta = {
                         id: (deboli === 2 ? 'premium-' : 'tema-') + tema.id,
@@ -59,7 +77,8 @@ module.exports = {
                         });
                     }
                 }));
-                return { risultati, fughe, bossStructure, bossAmmessi };
+                return { risultati, fughe, bossStructure, bossAmmessi,
+                    comuniBaseFuoriSoglia, apertureBaseFuoriSoglia };
             });
             const risultati = verifica.risultati;
             risultati.forEach((r) => {
@@ -76,6 +95,10 @@ module.exports = {
                 `Attesi i 10 boss degli Structure Deck TCG, trovati ${verifica.bossStructure.length}`);
             assert(verifica.bossAmmessi.length === 0,
                 `Boss Structure ammessi in busta: ${JSON.stringify(verifica.bossAmmessi)}`);
+            assert(verifica.comuniBaseFuoriSoglia.length === 0,
+                `Mostri oltre 1200 ATK ammessi nel pool comune/raro della Busta Base: ${verifica.comuniBaseFuoriSoglia.join(', ')}`);
+            assert(verifica.apertureBaseFuoriSoglia.length === 0,
+                `Mostri oltre 1200 ATK usciti dalla Busta Base: ${verifica.apertureBaseFuoriSoglia.join(', ')}`);
 
             const simboli = await page.evaluate(() => ({
                 temi: ShopCatalog.TEMI.map((t) => ({

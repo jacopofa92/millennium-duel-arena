@@ -1,5 +1,13 @@
 # Work in progress — miglioramenti da seguire
 
+## Mostri più deboli nella Busta Base — chiuso in 1.6.39
+
+- [x] Limitati a massimo 1200 ATK tutti i mostri della Busta Base, compreso
+      lo slot raro garantito. Magie e Trappole mantengono il pool attuale;
+      le altre buste non cambiano.
+- [x] Lo spec sulle buste verifica pool e aperture ripetute. Suite completa
+      non eseguita.
+
 ## Boss degli Structure Deck esclusi dalle buste — chiuso in 1.6.38
 
 - [x] Registrato il mostro copertina dei dieci Structure Deck TCG come boss
