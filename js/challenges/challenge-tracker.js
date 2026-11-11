@@ -23,7 +23,9 @@
     const PENDING_KEY = 'duelArenaPendingChallengeBanners';
 
     function getDefinitions() {
-        return (typeof challengesDatabase !== 'undefined') ? challengesDatabase : [];
+        return ((typeof challengesDatabase !== 'undefined') ? challengesDatabase : [])
+            .filter((c) => !window.Contenuti || ((!c.campaignId || Contenuti.campagna(c.campaignId))
+                && (!c.match || !c.match.characterId || Contenuti.personaggio(c.match.characterId))));
     }
 
     // ================================================================

@@ -1149,14 +1149,17 @@
          entrare nell'arena (vista Duello Libero): gli bastano le 50 carte
          non standard (file generato, ~5 KB) e le carte inventate dal
          giocatore qui sopra, non l'intera anagrafica. -->
-    <script src="js/data/card-origins.generated.js"></script>
     <script src="js/data/deck-legality.js"></script>
     <!-- Serve a SaveManager.createNew() -> makeStarterDeck(): il mazzo
          iniziale di un nuovo giocatore è il vero Starter Deck di Yugi. -->
     <script src="js/data/starter-structure-decks.js"></script>
     <script src="js/vendor/supabase.min.js"></script>
     <script src="js/cloud/supabase-config.js"></script>
-    <script src="js/cloud/cloud-sync.js"></script>
+    <!-- gruppo-script:contenuti -->
+    <script src="js/data/card-origins.generated.js"></script>
+    <script src="js/cloud/content-access.js"></script>
+<!-- /gruppo-script:contenuti -->
+<script src="js/cloud/cloud-sync.js"></script>
 <!-- Il menu allinea il salvataggio al cloud da sé, al proprio avvio e PRIMA
      di aprirsi (vedi initGate più sotto): auto-sync.js non deve farlo una
      seconda volta in parallelo. Va dichiarato prima di caricarlo. -->
@@ -1504,21 +1507,22 @@
             // amministratore: il menu si ridisegna ad ogni apertura, quindi
             // basta controllarlo qui, nel momento del disegno.
             const admin = !!(window.CloudSync && CloudSync.isAdmin());
+            const menuCompleto = window.Contenuti ? Contenuti.filtraMenu(FULL_MENU_ITEMS) : FULL_MENU_ITEMS;
             // ESPERIMENTO (branch experiment/menu-mobile-app): su telefono il menu e' una UI "app" (tab in basso, sezioni di tessere), vedi
             // js/ui/menu-mobile.js. Legge le STESSE voci di FULL_MENU_ITEMS; senza salvataggio resta il menu ridotto di sempre.
             const modoApp = !!(window.MenuMobile && MenuMobile.attivo() && window.SaveManager && SaveManager.hasSave());
             if (modoApp) {
-                MenuMobile.render({ shell: document.getElementById('menuShell'), lista: list, voci: FULL_MENU_ITEMS, admin, adminItems: ADMIN_ITEMS,
+                MenuMobile.render({ shell: document.getElementById('menuShell'), lista: list, voci: menuCompleto, admin, adminItems: ADMIN_ITEMS,
                     azione: handleMenuAction, toast: showMenuToast, stato: { ridisegna: renderMenu } });
             } else if (openSubmenu) {
                 if (window.MenuMobile) MenuMobile.spegni(document.getElementById('menuShell'), list);
                 list.appendChild(buildBackButton(openSubmenu.label));
                 openSubmenu.children
-                    .filter((item) => !item.soloAdmin || admin)
+                    .filter((item) => (!item.soloAdmin || admin) && (!window.Contenuti || Contenuti.voce(item)))
                     .forEach((item) => list.appendChild(buildMenuButton(item)));
             } else {
                 if (window.MenuMobile) MenuMobile.spegni(document.getElementById('menuShell'), list);
-                const items = (window.SaveManager && SaveManager.hasSave()) ? FULL_MENU_ITEMS : NEW_PLAYER_MENU_ITEMS;
+                const items = (window.SaveManager && SaveManager.hasSave()) ? menuCompleto : NEW_PLAYER_MENU_ITEMS;
                 items.forEach((item) => list.appendChild(buildMenuButton(item)));
                 if (admin) ADMIN_ITEMS.forEach((item) => list.appendChild(buildMenuButton(item)));
             }

@@ -21,6 +21,7 @@ module.exports = {
         const erroriPagina = [];
         page.on('pageerror', (e) => erroriPagina.push(e.message));
         await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
+        await require('../helpers/contenuti').consentiTuttiIContenuti(page);
 
         const RADICE = path.join(__dirname, '..', '..');
         const url = (q) => 'file:///' + path.join(RADICE, 'storia.html').replace(/\\/g, '/') + (q || '');

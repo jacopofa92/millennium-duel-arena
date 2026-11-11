@@ -93,10 +93,10 @@ async function startStaticServer(root = PROJECT_ROOT) {
  * produzione: `require.main === module` lì dentro fa da interruttore) e
  * aspetta che risponda davvero, invece di sperare in un ritardo fisso.
  */
-async function startRoomServer() {
+async function startRoomServer(extraEnv = {}) {
     const port = await findFreePort();
     const child = spawn(process.execPath, [path.join(PROJECT_ROOT, 'server', 'server.js')], {
-        env: Object.assign({}, process.env, { PORT: String(port) }),
+        env: Object.assign({}, process.env, { PORT: String(port) }, extraEnv),
         stdio: ['ignore', 'pipe', 'pipe']
     });
     const errors = [];
@@ -117,6 +117,7 @@ async function startRoomServer() {
         });
         if (alive) break;
         if (Date.now() > deadline) {
+            child.kill();
             throw new Error(`Il server di stanze non ha risposto entro 10s sulla porta ${port}: ${errors.join('')}`);
         }
         await new Promise((r) => setTimeout(r, 100));

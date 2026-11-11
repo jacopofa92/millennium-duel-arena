@@ -695,6 +695,8 @@
 
     /** Imposta quale mazzo salvato usare nei Duelli — deckId deve esistere tra SaveManager.getDecks(). */
     function setActiveDeckId(deckId) {
+        const candidato = getDecks().find((d) => d.id === deckId);
+        if (candidato && window.Contenuti && Contenuti.carteVietate(candidato).length) return false;
         const save = load() || createNew();
         if (!save.decks.some((d) => d.id === deckId)) return false;
         save.activeDeckId = deckId;
@@ -892,6 +894,7 @@
      * futuro e l'acquisizione di uno Starter/Structure Deck.
      */
     function addOwnedCards(cardId, qty) {
+        if (Number(qty) > 0 && window.Contenuti && !Contenuti.carta(cardId)) return getOwnedCount(cardId);
         const save = load() || createNew();
         save.collection = save.collection || {};
         const current = Number(save.collection[cardId]) || 0;
@@ -914,6 +917,7 @@
      * soltanto un deck che ne contiene 2 porta il possesso almeno a 2.
      */
     function addOwnedCardsFromDeck(deck) {
+        if (window.Contenuti && Contenuti.carteVietate(deck).length) return getCollection();
         const save = load() || createNew();
         save.collection = save.collection || {};
         [...((deck && deck.main) || []), ...((deck && deck.extra) || [])].forEach((entry) => {
@@ -1363,6 +1367,8 @@
      * carte che contiene (e il Negozio futuro non dovrà ricordarsene).
      */
     function addOwnedPack(packId) {
+        const candidato = typeof starterStructureDeckDatabase !== 'undefined' ? starterStructureDeckDatabase.find((p) => p.packId === packId) : null;
+        if (candidato && window.Contenuti && Contenuti.carteVietate(candidato).length) return getOwnedPacks();
         const save = load() || createNew();
         save.ownedPacks = save.ownedPacks || [];
         const isNew = save.ownedPacks.indexOf(packId) === -1;

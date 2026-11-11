@@ -131,7 +131,7 @@
     }
 
     window.ArenaOptions = {
-        FIELDS: FIELDS,
+        get FIELDS() { return FIELDS.filter((f) => !window.Contenuti || Contenuti.campo(f.file)); },
         TRACKS: TRACKS,
         RANDOM: RANDOM,
         imageFor: (file) => `images/fields/${file}`,
@@ -142,7 +142,7 @@
         audioFor: (file) => `audio/soundtracks/${file}`,
         nomeCampo: (file) => (FIELDS.find((f) => f.file === file) || {}).nome || 'Arena',
         nomeTraccia: (file) => (TRACKS.find((t) => t.file === file) || {}).nome || 'Colonna sonora',
-        risolviCampo: (scelta) => risolvi(scelta, FIELDS),
+        risolviCampo: (scelta) => risolvi(scelta, window.ArenaOptions.FIELDS),
         risolviTraccia: (scelta) => risolvi(scelta, TRACKS)
     };
 })();

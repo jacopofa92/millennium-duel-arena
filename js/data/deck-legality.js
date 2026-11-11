@@ -68,13 +68,14 @@
      * chi legge.
      */
     function carteNonAmmesse(mazzo, allowedOrigin) {
-        if (!mazzo || !allowedOrigin || allowedOrigin === 'all') return [];
+        const disabilitate = window.Contenuti ? Contenuti.carteVietate(mazzo) : [];
+        if (!mazzo || !allowedOrigin || allowedOrigin === 'all') return disabilitate;
         const idx = indice();
         // Nessun dato = nessun giudizio: vedi il commento in testa al file.
-        if (idx.size === 0) return [];
+        if (idx.size === 0) return disabilitate;
 
         const viste = new Set();
-        const fuori = [];
+        const fuori = [...disabilitate];
         [...(mazzo.main || []), ...(mazzo.extra || [])].forEach((voce) => {
             if (!voce || viste.has(voce.id)) return;
             viste.add(voce.id);
@@ -83,7 +84,7 @@
             // standard: è lo stesso assunto del motore (vedi il commento
             // su `origin` in js/data/cards-db.js).
             const provenienza = info ? info.origin : PREDEFINITA;
-            if (provenienza !== allowedOrigin) fuori.push((info && info.name) || `Carta #${voce.id}`);
+            if (provenienza !== allowedOrigin && !fuori.includes((info && info.name) || `Carta #${voce.id}`)) fuori.push((info && info.name) || `Carta #${voce.id}`);
         });
         return fuori;
     }

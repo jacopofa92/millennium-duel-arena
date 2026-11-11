@@ -92,6 +92,8 @@
                 });
                 return;
             }
+            const contenuto = window.Contenuti && Contenuti.motivoPagina();
+            if (contenuto) { Contenuti.blocca(contenuto); return; }
             removeOverlay();
         });
     }).catch(function () {

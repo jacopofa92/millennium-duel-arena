@@ -47,7 +47,8 @@
     function normale(t) {
         return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
     }
-    const roster = () => (typeof characterDatabase !== 'undefined' ? characterDatabase : []);
+    const roster = () => (typeof characterDatabase !== 'undefined' ? characterDatabase : [])
+        .filter((c) => !window.Contenuti || Contenuti.personaggio(c));
     const sbloccato = (c) => !(window.CharacterUnlocks && !CharacterUnlocks.sbloccato(c.id));
 
     function miniaturaRitratto(percorso) {

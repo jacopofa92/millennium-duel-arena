@@ -35,6 +35,12 @@ online. Nessun comando di pubblicazione da lanciare a mano.
    Deployments.
 3. **Render** ridistribuisce il server Multiplayer (`server/server.js`).
 
+Il relay di produzione richiede una sessione Supabase verificata (`RENDER=true`
+o `MP_REQUIRE_AUTH=1`). Quando si abilita questa protezione, pubblicare anche
+il client aggiornato: i vecchi client che non inviano il token vengono rifiutati.
+Lo sviluppo locale può continuare senza autenticazione se non imposta queste
+variabili.
+
 ## La copia minificata (`npm run pubblica`)
 
 Script: `scripts/pubblica.js`. Crea `dist/` da zero ogni volta (la cartella

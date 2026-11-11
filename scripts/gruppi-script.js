@@ -25,6 +25,7 @@
 'use strict';
 
 module.exports = {
+    contenuti: ['js/data/card-origins.generated.js', 'js/cloud/content-access.js'],
     // Il motore del duello e gli effetti delle carte. card-effects.js
     // (helper condivisi) va prima delle sue 8 parti, duel-engine.js prima
     // di tutto il resto. Un file nuovo del nucleo si aggiunge qui.

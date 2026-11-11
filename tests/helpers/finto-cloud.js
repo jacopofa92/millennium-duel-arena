@@ -21,6 +21,7 @@ function creaFintoCloud() {
 
     function rispondi(q) {
         cloud.richieste.push(`${q.table}:${q.op}`);
+        if (cloud.profiliOffline && q.table === 'profiles') return { data: null, error: { message: 'TypeError: Failed to fetch' } };
         const uid = q.filters.user_id || q.filters.id;
         // Una chiamata a funzione (client.rpc('segna_visto')): si registra in richieste come rpc:<nome>.
         if (q.table === 'rpc') return { data: null, error: null };

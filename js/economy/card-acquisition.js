@@ -135,6 +135,7 @@
     }
 
     function award(id, rule, key, shouldAnnounce) {
+        if (window.Contenuti && !Contenuti.carta(id)) return null;
         const s = state();
         if (key && s.claimed[key]) return null;
         if (!window.SaveManager || SaveManager.getOwnedCount(id) >= copyCapFor(id)) {

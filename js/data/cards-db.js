@@ -349,7 +349,7 @@ function getMonsterFilterCategory(card) {
 let _randomDrawPool = null;
 function getRandomDrawPool() {
     if (!_randomDrawPool) {
-        _randomDrawPool = cardDatabase.filter((c) => !c.extraDeck);
+        _randomDrawPool = cardDatabase.filter((c) => !c.extraDeck && (!window.Contenuti || Contenuti.carta(c)));
     }
     return _randomDrawPool;
 }

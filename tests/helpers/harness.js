@@ -45,6 +45,7 @@ async function openDuel(page, urlOverride, opzioni) {
     // al comportamento REALE del gate per un utente vero, che questo
     // flag non lo imposta mai.
     await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
+    await require('./contenuti').consentiTuttiIContenuti(page);
     // Stesso principio del flag qui sopra, per la morra cinese che decide
     // chi gioca per primo (js/ui/duel-rps.js): saltandola i test restano
     // deterministici (comincia sempre il giocatore, come prima che

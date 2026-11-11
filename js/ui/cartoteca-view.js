@@ -298,7 +298,7 @@
             CustomTaxonomy.listOrigins().forEach((o) => { customOriginLabels[o.key] = o.label; });
             buildChipGroup(
                 q('originChips'),
-                Object.keys(CARD_ORIGIN_LABELS).concat(customOrigins),
+                Object.keys(CARD_ORIGIN_LABELS).concat(customOrigins).filter((o) => !window.Contenuti || Contenuti.origine(o)),
                 (v) => CARD_ORIGIN_LABELS[v] || customOriginLabels[v] || v,
                 state.origins
             );
@@ -366,6 +366,7 @@
         }
 
         function cardMatchesFilters(card) {
+            if (window.Contenuti && !Contenuti.carta(card)) return false;
             if (state.ownedOnly && !(window.SaveManager && SaveManager.getOwnedCount(card.id) > 0)) return false;
             if (state.text) {
                 const haystack = normalize(card.name) + ' ' + normalize(card.effect || '');
@@ -430,7 +431,8 @@
          * sbloccate sul totale. Un amministratore le ha tutte.
          */
         function conteggiPossesso() {
-            const catalogo = (typeof cardDatabase !== 'undefined' && Array.isArray(cardDatabase)) ? cardDatabase : [];
+            const catalogo = ((typeof cardDatabase !== 'undefined' && Array.isArray(cardDatabase)) ? cardDatabase : [])
+                .filter((c) => !window.Contenuti || Contenuti.carta(c));
             const admin = !!(window.CloudSync && typeof CloudSync.isAdmin === 'function' && CloudSync.isAdmin());
             let possedute = catalogo.length;
             if (!admin && window.SaveManager && SaveManager.getCollection) {

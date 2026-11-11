@@ -70,6 +70,7 @@
     }
 
     function sbloccato(characterId) {
+        if (window.Contenuti && !Contenuti.personaggio(characterId)) return false;
         if (!characterId) return true;
         if (!attivo()) return true;
         if (INIZIALI.indexOf(characterId) !== -1) return true;

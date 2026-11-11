@@ -22,6 +22,10 @@
 <!-- Accesso obbligatorio (js/cloud/auth-gate.js). -->
 <script src="js/vendor/supabase.min.js"></script>
 <script src="js/cloud/supabase-config.js"></script>
+<!-- gruppo-script:contenuti -->
+<script src="js/data/card-origins.generated.js"></script>
+<script src="js/cloud/content-access.js"></script>
+<!-- /gruppo-script:contenuti -->
 <script src="js/cloud/cloud-sync.js"></script>
 <script src="js/cloud/auto-sync.js"></script>
 <script src="js/cloud/auth-gate.js"></script>
@@ -237,7 +241,6 @@
 <!-- Per il selettore di mazzo, arena e musica (stesse dipendenze della sala Multiplayer). -->
 <script src="js/data/custom-taxonomy.js"></script>
 <script src="js/data/custom-cards.js"></script>
-<script src="js/data/card-origins.generated.js"></script>
 <script src="js/data/deck-legality.js"></script>
 <script src="js/data/arena-options.js"></script>
 <script src="js/data/starter-structure-decks.js"></script>
@@ -267,7 +270,7 @@
     // si vedono, spenti, con scritto come guadagnarli. I compagni proposti vengono per primi.
     const haMazzo = (id) => !!getCharacterDeck(id, 'medium');
     const sbl = (id) => !window.CharacterUnlocks || CharacterUnlocks.sbloccato(id);
-    const tutti = characterDatabase.filter((c) => haMazzo(c.id));
+    const tutti = characterDatabase.filter((c) => haMazzo(c.id) && (!window.Contenuti || Contenuti.personaggio(c)));
     const proposti = tagDatabase.compagniProposti.map((id) => tutti.find((c) => c.id === id)).filter(Boolean);
     const compagni = proposti.concat(tutti.filter((c) => proposti.indexOf(c) === -1));
     const avversari = tutti;

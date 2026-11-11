@@ -38,6 +38,35 @@
 
 const http = require('http');
 const crypto = require('crypto');
+const AccessoContenuti = require('./accesso-contenuti');
+// Attivo nel deployment Render. In locale si può provare il solo protocollo
+// senza rete; per un relay esposto impostare SEMPRE MP_REQUIRE_AUTH=1.
+const REQUIRE_AUTH = process.env.MP_REQUIRE_AUTH === '1' || process.env.RENDER === 'true';
+const verificaAccount = AccessoContenuti.creaVerifica();
+async function autorizzaSocket(socket, msg) {
+    if (!REQUIRE_AUTH) { socket.contenuti = { uid: 'locale', ww1: true, ww2: true, extra: true }; return; }
+    const token = msg.accessToken || socket.accessToken;
+    const profile = await verificaAccount.verifica(token);
+    if (socket.contenuti && socket.contenuti.uid !== profile.uid) throw new Error('Account cambiato: esci dalla stanza e rientra.');
+    socket.accessToken = token;
+    socket.contenuti = profile;
+}
+async function profiliStanza(room) {
+    const profili = [];
+    for (const slot of room.players.values()) {
+        if (slot.socket && REQUIRE_AUTH) await autorizzaSocket(slot.socket, {});
+        profili.push(slot.socket ? slot.socket.contenuti : slot.contenuti);
+    }
+    return profili;
+}
+function richiestiStanza(room, escludi) {
+    const out = new Set();
+    for (const [key, item] of (room.contenutiScelti || new Map())) {
+        if (key === escludi) continue;
+        if (key === 'campo' || key === 'tag' || room.players.has(item.sender)) item.packs.forEach((p) => out.add(p));
+    }
+    return out;
+}
 
 const PORT = process.env.PORT || 8787;
 const WS_MAGIC = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
@@ -228,7 +257,7 @@ function pubblicoDi(room, playerId) {
 
 function nuovoSlot(room, socket) {
     room.prossimoPubblico += 1;
-    return { socket, disconnectTimer: null, pubblico: 'g' + room.prossimoPubblico };
+    return { socket, disconnectTimer: null, pubblico: 'g' + room.prossimoPubblico, contenuti: socket.contenuti };
 }
 
 /** Una capienza chiesta dal client: un intero fra 2 e 4, altrimenti 2 (la stanza di sempre). */
@@ -371,9 +400,8 @@ function validateGameAction(room, senderId, action) { // eslint-disable-line no-
     return null;
 }
 
-function handleClientMessage(socket, raw) {
-    if (Buffer.byteLength(raw, 'utf8') > MAX_MESSAGE_BYTES) return; // scartato in silenzio: troppo grande per essere un'azione legittima
-    if (isRateLimited(socket)) return;
+async function handleClientMessage(socket, raw) {
+    if (socket.destroyed) return;
 
     let msg;
     try {
@@ -386,6 +414,12 @@ function handleClientMessage(socket, raw) {
         sendJSON(socket, { type: 'error', message: 'Messaggio non valido.' });
         return;
     }
+
+    if (msg.type !== 'leave-room') {
+        try { await autorizzaSocket(socket, msg); }
+        catch (e) { sendJSON(socket, { type: 'error', message: e.message || 'Verifica account non riuscita.' }); return; }
+    }
+    if (socket.destroyed) return;
 
     switch (msg.type) {
         case 'create-room': {
@@ -419,6 +453,13 @@ function handleClientMessage(socket, raw) {
                 sendJSON(socket, { type: 'error', message: 'La stanza è già piena.' });
                 return;
             }
+            const incompatibile = AccessoContenuti.nonCompatibile(richiestiStanza(room), [...await profiliStanza(room), socket.contenuti]);
+            if (incompatibile) { sendJSON(socket, { type: 'error', message: incompatibile }); return; }
+            // Due ingressi possono aspettare Supabase insieme: riconferma il
+            // posto DOPO l'attesa, prima di modificare la stanza.
+            if (rooms.get(code) !== room || room.chiusa || room.players.size >= room.capienza || socket.destroyed) {
+                sendJSON(socket, { type: 'error', message: 'La stanza non è più disponibile o è piena.' }); return;
+            }
             const playerId = generatePlayerId();
             room.players.set(playerId, nuovoSlot(room, socket));
             socket.roomCode = code;
@@ -446,8 +487,15 @@ function handleClientMessage(socket, raw) {
                 sendJSON(socket, { type: 'error', message: 'Impossibile riprendere la stanza: sessione scaduta.' });
                 return;
             }
+            if (REQUIRE_AUTH && (!slot.contenuti || slot.contenuti.uid !== socket.contenuti.uid)) {
+                sendJSON(socket, { type: 'error', message: 'Questa stanza appartiene a un altro account.' }); return;
+            }
+            const incompatibile = AccessoContenuti.nonCompatibile(richiestiStanza(room), [socket.contenuti]);
+            if (incompatibile) { sendJSON(socket, { type: 'error', message: incompatibile }); return; }
             if (slot.disconnectTimer) { clearTimeout(slot.disconnectTimer); slot.disconnectTimer = null; }
+            if (slot.socket && slot.socket !== socket) slot.socket.destroy();
             slot.socket = socket;
+            slot.contenuti = socket.contenuti;
             socket.roomCode = code;
             socket.playerId = msg.playerId;
             sendJSON(socket, { type: 'rejoined', code, tu: slot.pubblico });
@@ -462,12 +510,30 @@ function handleClientMessage(socket, raw) {
             if (!room) return;
             // Senza nessun altro in stanza non c'è nessuno a cui inoltrare,
             // e nessun duello da controllare.
-            if (!otherPlayerId(room, socket.playerId)) return;
             const rifiuto = validateGameAction(room, socket.playerId, msg.action);
             if (rifiuto) {
                 sendJSON(socket, { type: 'error', message: 'Azione rifiutata dal server: ' + rifiuto + '.' });
                 return;
             }
+            const action = msg.action;
+            if ((action.kind === 'room-config' || (action.kind === 'tag-sala' && ['stato', 'via'].includes(action.tipo)))
+                && room.players.keys().next().value !== socket.playerId) {
+                sendJSON(socket, { type: 'error', message: 'Solo il creatore della stanza può configurare il tavolo.' }); return;
+            }
+            const packs = AccessoContenuti.richiesti(action);
+            const key = AccessoContenuti.chiave(action, socket.playerId);
+            // Consente di CORREGGERE una selezione revocata. Avanzamento e
+            // dichiarazione di pronto richiedono invece tutto il tavolo compatibile.
+            const modifica = key && !(action.kind === 'ready' && action.pronto) && !(action.kind === 'tag-sala' && action.tipo === 'via');
+            const richiesti = modifica ? packs : new Set([...richiestiStanza(room, key), ...packs]);
+            const incompatibile = AccessoContenuti.nonCompatibile(richiesti, await profiliStanza(room));
+            if (incompatibile) { sendJSON(socket, { type: 'error', message: incompatibile }); return; }
+            if (socket.destroyed || !room.players.has(socket.playerId) || room.players.get(socket.playerId).socket !== socket) return;
+            if (key) {
+                if (!room.contenutiScelti) room.contenutiScelti = new Map();
+                room.contenutiScelti.set(key, { sender: socket.playerId, packs });
+            }
+            if (!otherPlayerId(room, socket.playerId)) return;
             // A TUTTI gli altri (da 2 è uno solo), con l'id pubblico di chi manda.
             sendToOthers(room, socket.playerId, { type: 'game-action', action: msg.action, da: pubblicoDi(room, socket.playerId) });
             break;
@@ -483,6 +549,8 @@ function handleClientMessage(socket, raw) {
             if (!socket.roomCode || !socket.playerId) return;
             const room = rooms.get(socket.roomCode);
             if (!room || [...room.players.keys()][0] !== socket.playerId) return;
+            const incompatibile = AccessoContenuti.nonCompatibile(richiestiStanza(room), await profiliStanza(room));
+            if (incompatibile) { sendJSON(socket, { type: 'error', message: incompatibile }); return; }
             room.chiusa = true;
             break;
         }
@@ -537,7 +605,17 @@ server.on('upgrade', (req, socket) => {
                 socket.destroy();
                 return;
             }
-            handleClientMessage(socket, message);
+            // Il limite va applicato PRIMA della coda asincrona: altrimenti
+            // durante una verifica lenta un client potrebbe riempire la memoria.
+            if (Buffer.byteLength(message, 'utf8') > MAX_MESSAGE_BYTES || isRateLimited(socket)) continue;
+            socket.messaggiPendenti = (socket.messaggiPendenti || 0) + 1;
+            if (socket.messaggiPendenti > 64) { socket.destroy(); return; }
+            // Le verifiche account sono asincrone: ogni socket conserva l'ordine
+            // dei messaggi, senza far partire ready prima della creazione stanza.
+            socket.codaMessaggi = (socket.codaMessaggi || Promise.resolve())
+                .then(() => handleClientMessage(socket, message))
+                .catch((e) => sendJSON(socket, { type: 'error', message: e.message || 'Messaggio non autorizzato.' }))
+                .finally(() => { socket.messaggiPendenti--; });
         }
     });
 

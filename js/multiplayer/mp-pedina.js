@@ -27,7 +27,8 @@
 
     /** @returns {any[]} */
     function personaggi() {
-        return typeof characterDatabase !== 'undefined' ? characterDatabase : [];
+        return (typeof characterDatabase !== 'undefined' ? characterDatabase : [])
+            .filter((c) => !window.Contenuti || Contenuti.personaggio(c));
     }
 
     /** Le pedine fra cui si puo' scegliere: "Te stesso" e i Duellanti sbloccati. */

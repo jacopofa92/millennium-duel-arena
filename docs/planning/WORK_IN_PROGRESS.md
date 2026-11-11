@@ -1,5 +1,19 @@
 # Work in progress — miglioramenti da seguire
 
+## Contenuti opzionali per account (in lavorazione su branch dedicato)
+
+- [x] Interruttori WW1, WW2, Extra/Freedom per account nel pannello Gestione utenti.
+- [x] Nuovi account senza pacchetti opzionali; profili esistenti preservati;
+      admin sempre abilitati. Disattivare conserva carte, deck e progressi.
+- [x] Filtri e controlli per cataloghi, shop, storie, premi, deck, campi e avvio
+      duello; verifica Supabase del relay multiplayer anche per tag/raid/specchio.
+- [x] Spec mirati per privilegi, tentativi diretti, cache offline e cambio account;
+      suite completa non eseguita.
+- [ ] Ultimi test, typecheck/sintassi, Graphify, commit e push del branch.
+- [ ] Merge in `main` solo su richiesta dell'utente.
+
+Dettagli e limiti: `docs/planning/CONTENUTI_PER_UTENTE.md`.
+
 ## Gestione utenze e filtri possesso — chiuso in 1.6.30
 
 - [x] Filtro “Solo possedute” in ricerca creazione deck e nella Cartoteca

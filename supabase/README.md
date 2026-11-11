@@ -62,6 +62,31 @@ Nessun account è admin per default (altrimenti chiunque potrebbe auto-approvars
 - Nessuna notifica automatica (email/push) agli admin quando arriva una nuova registrazione: bisogna aprire `admin.html` per accorgersene (stesso limite del progetto Fioxify, da cui questo meccanismo è replicato).
 # Gestione utenze e note amministratore
 
+## Contenuti opzionali per account
+
+Per un database esistente eseguire `contenuti-per-utente.sql`. La migrazione
+è stata applicata al progetto DuelArena l'11 novembre 2026. Per installazioni
+nuove, `schema.sql` contiene le stesse colonne e protezioni.
+
+Ogni profilo ha tre permessi indipendenti: `content_ww1`, `content_ww2` e
+`content_extra`. Le registrazioni nuove partono con tutti disattivati; la
+migrazione mantiene l'accesso dei profili già presenti. Solo gli admin possono
+modificarli e gli admin hanno accesso completo in gioco. Disattivare un
+contenuto ne blocca cataloghi, uso, ricompense e avvio dei duelli, ma conserva
+collezione, deck e progressi.
+
+Il client conserva l'ultima autorizzazione online per uid, così lo stesso
+account già verificato può giocare offline. Al cambio account la cache non si
+trasferisce. Una revoca mentre il dispositivo è offline non è immediata. Il
+relay Render verifica il token e il profilo e controlla i requisiti di tutti i
+partecipanti; in produzione l'autenticazione è obbligatoria. Pubblicare il
+client aggiornato insieme al relay evita che vecchi client senza token vengano
+rifiutati.
+
+Le limitazioni di accesso sul browser non sono DRM: un client modificato può
+alterare i controlli locali. I permessi cloud e le azioni multiplayer sono
+convalidati dal database/relay.
+
 Per aggiornare un database già esistente, eseguire `admin-utenze.sql`.
 L'aggiornamento è già stato applicato al progetto DuelArena il 10 novembre
 2026. `schema.sql` include le stesse definizioni per le installazioni nuove.

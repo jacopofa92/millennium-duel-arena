@@ -34,10 +34,15 @@
     const RITRATTO = 'images/characters/mirror.jpg';
 
     function mazzi() {
-        return (window.SaveManager && SaveManager.getDecks && SaveManager.getDecks()) || [];
+        return ((window.SaveManager && SaveManager.getDecks && SaveManager.getDecks()) || [])
+            .filter((m) => !window.Contenuti || Contenuti.carteVietate(m).length === 0);
     }
 
     function mazzoCorrente() {
+        // La scatola attuale può essere disabilitata: non deve fingere che
+        // il mazzo attivo sia un altro, senza averlo davvero cambiato.
+        const attuale = window.SaveManager && SaveManager.getActiveDeck && SaveManager.getActiveDeck();
+        if (attuale) return attuale;
         const lista = mazzi();
         if (lista.length === 0) return null;
         const id = SaveManager.getActiveDeckId ? SaveManager.getActiveDeckId() : null;
@@ -176,7 +181,7 @@
         if (lista.length === 0) {
             const vuoto = document.createElement('div');
             vuoto.className = 'dsw-empty';
-            vuoto.textContent = 'Non hai ancora creato un mazzo: per ora si duella con un mazzo generato al momento.';
+            vuoto.textContent = 'Non hai mazzi utilizzabili con i contenuti abilitati. Puoi crearne o modificarne uno in Creazione deck.';
             overlay.appendChild(vuoto);
         } else {
             lista.forEach((mazzo, indice) => {

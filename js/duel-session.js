@@ -694,6 +694,19 @@
     }
 
     function start() {
+        if (window.Contenuti) {
+            const motivo = Contenuti.motivoPagina();
+            const usaMazzo = !['tutorial', 'sandbox', 'puzzle', 'incubo'].includes(mode) && !window.MP_SPECCHIO_ID && !window.MP_RAID;
+            const vietate = usaMazzo && window.SaveManager ? Contenuti.carteVietate(SaveManager.getActiveDeck()) : [];
+            if (!Contenuti.personaggio(session.opponent) || !Contenuti.personaggio(session.player)) {
+                Contenuti.blocca('Il personaggio di questo duello appartiene a un contenuto non abilitato.');
+                return;
+            }
+            if (motivo || vietate.length) {
+                Contenuti.blocca(motivo || 'Il mazzo contiene carte di un contenuto non abilitato: ' + vietate.slice(0, 5).join(', ') + '. Il mazzo è conservato: puoi cambiarlo in Creazione deck.');
+                return;
+            }
+        }
         if (session.started) return;
         session.started = true;
         try { session.squadre = squadreDelDuello(); } catch (e) { session.squadre = null; }

@@ -34,7 +34,8 @@
     const OUTCOME_KEY = 'ygoLastDuelOutcome';
 
     function getCampaigns() {
-        return (typeof storyCampaignsDatabase !== 'undefined') ? storyCampaignsDatabase : [];
+        return ((typeof storyCampaignsDatabase !== 'undefined') ? storyCampaignsDatabase : [])
+            .filter((c) => !window.Contenuti || Contenuti.campagna(c.id));
     }
 
     /**

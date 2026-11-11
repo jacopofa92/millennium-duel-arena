@@ -150,6 +150,10 @@
                             if (msg.code) roomCode = msg.code;
                         }
                         if (typeof msg.tu === 'string') idPubblico = msg.tu;
+                        if (msg.type === 'game-action' && window.Contenuti && !Contenuti.azioneMultiplayer(msg.action)) {
+                            emit('error', { message: 'La stanza usa contenuti non abilitati per il tuo account.' });
+                            return;
+                        }
                         emit(msg.type, msg);
                     });
                     socket.addEventListener('close', () => {
@@ -256,7 +260,7 @@
                     const onRejoinError = () => { off('rejoined', onRejoined); off('error', onRejoinError); emit('reconnect-failed'); };
                     on('rejoined', onRejoined);
                     on('error', onRejoinError);
-                    send({ type: 'rejoin-room', code: savedCode, playerId: savedPlayerId });
+                    send({ type: 'rejoin-room', code: savedCode, playerId: savedPlayerId, accessToken: window.CloudSync ? CloudSync.getAccessToken() : null });
                 }).catch(() => {
                     tryAutoReconnect(attempt + 1);
                 });
@@ -270,6 +274,8 @@
         }
 
         function send(obj) {
+            // Token sempre attuale, compresi i rinnovi di Supabase durante una partita lunga.
+            if (window.CloudSync && CloudSync.getAccessToken()) obj = { ...obj, accessToken: CloudSync.getAccessToken() };
             if (ws && ws.readyState === WebSocket.OPEN) {
                 ws.send(JSON.stringify(obj));
             }
@@ -277,7 +283,7 @@
 
         /** `capienza` (2-4) facoltativa: senza, la stanza da 2 di sempre. Un relay vecchio la ignora e risponde senza `capienza`. */
         function createRoom(capienza) {
-            send(capienza ? { type: 'create-room', capienza } : { type: 'create-room' });
+            send({ type: 'create-room', ...(capienza ? { capienza } : {}), accessToken: window.CloudSync ? CloudSync.getAccessToken() : null });
         }
 
         /** Solo l'host: la partita è partita, nessuno può più entrare nella stanza. */
@@ -286,10 +292,14 @@
         }
 
         function joinRoom(code) {
-            send({ type: 'join-room', code });
+            send({ type: 'join-room', code, accessToken: window.CloudSync ? CloudSync.getAccessToken() : null });
         }
 
         function sendAction(action) {
+            if (window.Contenuti && !Contenuti.azioneMultiplayer(action)) {
+                emit('error', { message: 'Questo contenuto non è abilitato per il tuo account.' });
+                return;
+            }
             send({ type: 'game-action', action });
         }
 

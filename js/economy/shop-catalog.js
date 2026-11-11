@@ -384,6 +384,7 @@
      * devono mai entrare accidentalmente in un pool generico o tematico.
      */
     function acquistabileInBusta(cardId) {
+        if (window.Contenuti && !Contenuti.carta(cardId)) return false;
         return !!window.CardRarity && CardRarity.isPurchasable(cardId)
             && (!window.CardAcquisition || CardAcquisition.isSignatureUnlocked(cardId))
             && (!window.SaveManager || !window.CardAcquisition || !CardAcquisition.isModernSupport(cardId)
@@ -415,6 +416,7 @@
     function carteDelGiorno() {
         const giorno = dayKey();
         const pool = (rarity) => window.CardRarity ? CardRarity.idsByRarity(rarity)
+            .filter((id) => !window.Contenuti || Contenuti.carta(id))
             .filter((id) => !window.CardAcquisition || CardAcquisition.isSignatureUnlocked(id)) : [];
         const giaComprata = (id) => !!(window.SaveManager && SaveManager.hasBoughtDailyShopCard(giorno, id));
         const giorni = Math.floor(Date.parse(giorno + 'T00:00:00Z') / 86400000);
@@ -575,6 +577,7 @@
             // esattamente nulla in cambio. Quando verrà riempito tornerà
             // in vetrina da solo, senza toccare niente qui.
             .filter((deck) => (deck.main || []).length > 0)
+            .filter((deck) => !window.Contenuti || Contenuti.carteVietate(deck).length === 0)
             .map((deck) => ({
             packId: deck.packId,
             nome: deck.name,

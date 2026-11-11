@@ -30,6 +30,7 @@ declare var CharacterUnlocks: any;
 declare var chiavePersonaggio: any;
 declare var createCardElement: any;
 declare var CustomCards: any;
+declare var Contenuti: any;
 declare var DeckBox: any;
 declare var DeckLegality: any;
 declare var DeckSwitcher: any;

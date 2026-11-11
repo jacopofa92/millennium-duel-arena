@@ -50,6 +50,9 @@ services:
     # centinaia di MB di dipendenza di TEST, inutile in produzione.
     buildCommand: echo "Nessuna dipendenza da installare"
     startCommand: node server/server.js
+    envVars:
+      - key: MP_REQUIRE_AUTH
+        value: "1"
     # server.js risponde già 200 su "/" (vedi lì): serve a Render per
     # sapere che il processo è vivo, e a chiunque per controllare a occhio
     # se il server è sveglio aprendo l'indirizzo nel browser.

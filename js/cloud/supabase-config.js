@@ -23,7 +23,11 @@
  * pubblico e preferisci non pubblicare comunque l'URL del tuo progetto,
  * aggiungi questo file a .gitignore e distribuiscilo separatamente.
  */
-window.SUPABASE_CONFIG = {
+(function () {
+const config = {
     url: 'https://yuadnvnkdppgjkagpcwt.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1YWRudm5rZHBwZ2prYWdwY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0Mjg1NzAsImV4cCI6MjEwMzAwNDU3MH0.q5g3iUoY4QVdNnHPpkrDcwqNVRV0Qq4n6PmX2DCu5b4'
 };
+if (typeof module !== 'undefined' && module.exports) module.exports = config;
+else window.SUPABASE_CONFIG = config;
+})();

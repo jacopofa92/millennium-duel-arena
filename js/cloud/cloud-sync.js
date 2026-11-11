@@ -140,11 +140,64 @@
 
     /** Interroga public.profiles per l'utente `userId` — status 'pending' di default se la riga non esiste ancora o la query fallisce (es. offline: vedi ensureApprovedSession, che non passa mai da qui per il percorso offline). */
     function fetchProfile(userId) {
-        return client.from('profiles').select('status, is_admin').eq('id', userId).single()
+        return client.from('profiles').select('status, is_admin, content_ww1, content_ww2, content_extra').eq('id', userId).single()
             .then(({ data, error }) => {
-                if (error) return { status: 'pending', is_admin: false };
+                if (error) {
+                    // PostgREST restituisce anche gli errori di rete come valori:
+                    // non sono una risposta del server che revoca l'approvazione.
+                    if (/failed to fetch|fetch failed|network|offline|timeout/i.test(error.message || '')) throw error;
+                    return { status: 'pending', is_admin: false };
+                }
+                if (data) rememberContents(userId, data);
                 return data;
             });
+    }
+
+    const CONTENT_PACKS = ['ww1', 'ww2', 'extra'];
+    function cachedContents(userId) {
+        try { return userId ? JSON.parse(localStorage.getItem('ygoContentAccess:' + userId) || '{}') : {}; }
+        catch (e) { return {}; }
+    }
+    function rememberContents(userId, profile) {
+        // Non trasforma un errore di rete o un vecchio mock in una revoca.
+        if (!CONTENT_PACKS.every((p) => typeof profile['content_' + p] === 'boolean')) return;
+        const prima = cachedContents(userId);
+        const primaAdmin = prima.is_admin || wasAdminOffline(userId);
+        const dopo = { is_admin: !!profile.is_admin };
+        CONTENT_PACKS.forEach((p) => { dopo[p] = profile['content_' + p]; });
+        try { localStorage.setItem('ygoContentAccess:' + userId, JSON.stringify(dopo)); } catch (e) { /* cache indisponibile */ }
+        if (CONTENT_PACKS.some((p) => !!(primaAdmin || prima[p]) !== !!(dopo.is_admin || dopo[p]))) {
+            setTimeout(() => {
+                if (cachedUser && cachedUser.id === userId) window.dispatchEvent(new Event('contenuti:aggiornati'));
+            }, 0);
+        }
+    }
+
+    /** Permessi dell'account, MAI del salvataggio importabile. Offline: ultimo profilo verificato per questo uid. */
+    function hasContent(pack) {
+        if (!CONTENT_PACKS.includes(pack)) return false;
+        let uid = cachedUser && cachedUser.id;
+        if (!uid) { try { uid = localStorage.getItem(APPROVED_UID_KEY); } catch (e) { /* noop */ } }
+        if (!uid) return false;
+        if (cachedProfile) {
+            if (cachedProfile.is_admin) return true;
+            if (cachedProfile.status !== 'approved') return false;
+            if (typeof cachedProfile['content_' + pack] === 'boolean') return cachedProfile['content_' + pack];
+        }
+        const cached = cachedContents(uid);
+        return !!(wasAdminOffline(uid) || cached.is_admin || cached[pack]);
+    }
+
+    function verificaCambioAccount(user) {
+        if (!user) return;
+        let precedente;
+        try { precedente = localStorage.getItem(APPROVED_UID_KEY); } catch (e) { /* noop */ }
+        if (precedente && precedente !== user.id) {
+            forgetApproved();
+            // Una pagina può essersi disegnata prima che Supabase restituisse
+            // il nuovo uid: la ripartenza impedisce di ereditare la vecchia UI.
+            setTimeout(() => window.dispatchEvent(new Event('contenuti:aggiornati')), 0);
+        }
     }
 
     // Promise risolta la PRIMA volta che la sessione persistita (se
@@ -261,6 +314,7 @@
         document.addEventListener('visibilitychange', controllaSospensione);
         initialSessionPromise = client.auth.getSession().then(({ data }) => {
             cachedUser = (data && data.session && data.session.user) || null;
+            verificaCambioAccount(cachedUser);
             cachedAccessToken = (data && data.session && data.session.access_token) || null;
             // Sessione più vecchia di 48 ore: si salva e si esce PRIMA di
             // dire a qualcuno che l'utente è collegato.
@@ -269,9 +323,11 @@
             return cachedUser;
         });
         client.auth.onAuthStateChange((event, session) => {
+            const precedente = cachedUser && cachedUser.id;
             cachedUser = (session && session.user) || null;
             cachedAccessToken = (session && session.access_token) || null;
-            if (!cachedUser) cachedProfile = null;
+            if (!cachedUser || cachedUser.id !== precedente) cachedProfile = null;
+            verificaCambioAccount(cachedUser);
             if (event === 'PASSWORD_RECOVERY') {
                 recoveryListeners.forEach((fn) => { try { fn(); } catch (e) { /* noop */ } });
             }
@@ -362,6 +418,7 @@
             fetchProfile(userId),
             new Promise((resolve) => setTimeout(() => resolve(null), 6000))
         ]).then((profile) => {
+            if (!cachedUser || cachedUser.id !== userId) return false;
             if (!profile) {
                 // Rete assente/troppo lenta: nessuna risposta entro il
                 // tetto d'attesa — ricade sull'ultimo stato confermato
@@ -570,7 +627,7 @@
     /** Elenco completo di tutti i profili (in attesa + già decisi), più recenti prima — per il pannello Admin. */
     function adminListProfiles() {
         if (!available) return rejectUnavailable();
-        const profiles = client.from('profiles').select('id, email, status, is_admin, created_at, last_seen_at')
+        const profiles = client.from('profiles').select('id, email, status, is_admin, created_at, last_seen_at, content_ww1, content_ww2, content_extra')
             .order('created_at', { ascending: false })
             .then(({ data, error }) => { if (error) throw error; return data; });
         // Le note NON stanno in profiles: il giocatore può leggere il proprio
@@ -586,6 +643,14 @@
     function adminSaveProfileNote(userId, note) {
         if (!available) return rejectUnavailable();
         return client.from('admin_profile_notes').upsert({ user_id: userId, note: note })
+            .then(({ error }) => { if (error) throw error; });
+    }
+
+    function adminSetProfileContents(userId, contents) {
+        if (!available) return rejectUnavailable();
+        const update = {};
+        CONTENT_PACKS.forEach((p) => { update['content_' + p] = contents[p] === true; });
+        return client.from('profiles').update(update).eq('id', userId)
             .then(({ error }) => { if (error) throw error; });
     }
 
@@ -1660,6 +1725,8 @@
         adminListProfiles: adminListProfiles,
         adminSetProfileStatus: adminSetProfileStatus,
         adminSaveProfileNote: adminSaveProfileNote,
+        adminSetProfileContents: adminSetProfileContents,
+        hasContent: hasContent,
         adminPendingCount: adminPendingCount,
         pushSave: pushSave,
         pullSave: pullSave,

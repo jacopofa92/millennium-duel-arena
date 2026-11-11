@@ -88,7 +88,7 @@ module.exports = {
 
         // --- 4) Il relay applica lo stesso controllo ---
         const vm = require('vm');
-        const pezzoServer = server.slice(server.indexOf('let ProtocolloMP = null;'), server.indexOf('function handleClientMessage'));
+        const pezzoServer = server.slice(server.indexOf('let ProtocolloMP = null;'), server.indexOf('async function handleClientMessage'));
         const contesto = { require: (p) => require(path.join(RADICE, 'server', p)), module: {}, console };
         vm.createContext(contesto);
         vm.runInContext(pezzoServer + '\nthis.validateGameAction = validateGameAction;', contesto);

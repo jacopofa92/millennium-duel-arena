@@ -199,6 +199,8 @@
             // che questo gruppo sostituisce.
             origin: (opts.initial && opts.initial.origin) || 'yu-gi-oh'
         };
+        if (window.Contenuti && !Contenuti.origine(scelta.origin)) scelta.origin = 'yu-gi-oh';
+        if (window.Contenuti && !Contenuti.campo(scelta.field)) scelta.field = window.ArenaOptions.RANDOM;
 
         radice.classList.add('ds-setup');
         // `compact`: per chi lo monta dentro una finestra che sotto ha
@@ -418,6 +420,7 @@
         voci.push({ key: 'all', label: 'Tutte le provenienze' });
 
         voci.forEach((voce) => {
+            if (window.Contenuti && !Contenuti.origine(voce.key)) return;
             const chip = document.createElement('button');
             chip.type = 'button';
             chip.className = 'ds-origin';

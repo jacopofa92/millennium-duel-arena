@@ -27,6 +27,10 @@
      rimanda a index.html se non c'è una sessione approvata. -->
 <script src="js/vendor/supabase.min.js"></script>
 <script src="js/cloud/supabase-config.js"></script>
+<!-- gruppo-script:contenuti -->
+<script src="js/data/card-origins.generated.js"></script>
+<script src="js/cloud/content-access.js"></script>
+<!-- /gruppo-script:contenuti -->
 <script src="js/cloud/cloud-sync.js"></script>
 <script src="js/cloud/auto-sync.js"></script>
 <script src="js/cloud/auth-gate.js"></script>
@@ -1903,6 +1907,7 @@
         const activeDeckId = window.SaveManager ? SaveManager.getActiveDeckId() : null;
 
         decks.forEach((deck) => {
+            const contenutoDisabilitato = window.Contenuti && Contenuti.carteVietate(deck).length > 0;
             const { mainCount, extraCount, valid } = deckValidityLabel(deck);
             const origins = getDeckOriginSummary(deck);
             const originSummary = origins.length === 0 ? ''
@@ -1923,6 +1928,7 @@
                         <span class="${extraCount <= EXTRA_MAX ? 'valid' : 'invalid'}">Extra: ${extraCount}/${EXTRA_MAX}</span>
                     </div>
                     ${originSummary ? `<div class="deck-card-sub deck-card-origins">${originSummary}</div>` : ''}
+                    ${contenutoDisabilitato ? '<div class="deck-card-sub invalid">Contenuto non abilitato — mazzo conservato, non utilizzabile</div>' : ''}
                     <div class="deck-card-actions">
                         <button type="button" class="deck-card-btn activate ${isActive ? 'is-active' : ''}" ${isActive ? 'disabled' : ''}>${isActive ? '<span class="icon" data-icon="star"></span> In Uso' : '<span class="icon" data-icon="duel"></span> Usa nei Duelli'}</button>
                         <button type="button" class="deck-card-btn edit"><span class="icon" data-icon="pencil"></span> Modifica</button>
@@ -1950,6 +1956,11 @@
 
     /** Imposta un deck come "corrente": quello che verrà usato nei Duelli (Demo/Libero/Multiplayer). */
     function setActiveDeckOwn(deckId) {
+        const candidato = loadDecks().find((d) => d.id === deckId);
+        if (candidato && window.Contenuti && Contenuti.carteVietate(candidato).length) {
+            showToast('Questo mazzo contiene carte di un contenuto non abilitato. Il mazzo resta salvato.', true);
+            return;
+        }
         if (window.SaveManager) SaveManager.setActiveDeckId(deckId);
         renderMyDecks();
         showToast('⭐ Mazzo impostato come corrente per i Duelli!');
@@ -1959,6 +1970,7 @@
         const grid = $('opponentDecksGrid');
         grid.innerHTML = '';
         characterDatabase.forEach((character) => {
+            if (window.Contenuti && !Contenuti.personaggio(character)) return;
             // Ogni Duellante ha TRE mazzi veri, non uno: getCharacterDeck
             // restituisce la variante molto indebolita per Facile, quella
             // leggermente indebolita per Normale, e quella piena (Dei
@@ -2027,6 +2039,7 @@
         grid.innerHTML = '';
         const packs = starterStructureDeckDatabase.filter((p) => p.kind === kind);
         packs.forEach((pack) => {
+            if (window.Contenuti && Contenuti.carteVietate(pack).length) return;
             const owned = window.SaveManager && SaveManager.ownsPack(pack.packId);
             const mainCount = deckListCountLocal(pack.main);
             const extraCount = deckListCountLocal(pack.extra);
@@ -2337,6 +2350,7 @@
      * ha, nemmeno se sarebbe illimitata.
      */
     function usableCopiesOf(card) {
+        if (window.Contenuti && !Contenuti.carta(card)) return 0;
         return Math.min(getCardCopyLimit(card), ownedCountOf(card.id));
     }
 
@@ -2768,6 +2782,7 @@
     }
 
     function cardMatchesEditorFilters(card) {
+        if (window.Contenuti && !Contenuti.carta(card)) return false;
         const f = editorFilters;
         if (f.ownedOnly && ownedCountOf(card.id) <= 0) return false;
         if (f.text) {

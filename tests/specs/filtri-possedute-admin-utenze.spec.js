@@ -50,6 +50,10 @@ module.exports = {
             await row().locator('textarea').waitFor();
             assert(!await page.locator('#autowinToggle').isVisible(), 'Gestione utenti senza strumenti di collaudo');
             assert(await row().locator('textarea').inputValue() === nota, 'Note conservate passando tra i due menu');
+            await row().locator('[data-content-pack="ww1"]').check();
+            await row().getByRole('button', { name: 'Salva contenuti', exact: true }).click();
+            await page.waitForFunction(() => document.getElementById('adminGlobalStatus').textContent.includes('Contenuti aggiornati'));
+            assert(cloud.profili[1].content_ww1 === true && cloud.profili[1].content_ww2 === false && cloud.profili[1].content_extra === false, 'Interruttori indipendenti salvati per il giocatore scelto');
 
             await page.goto(url('index.html'));
             await page.waitForFunction(() => window.SaveManager && typeof window.showMenu === 'function');

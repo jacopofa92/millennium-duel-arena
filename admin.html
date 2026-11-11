@@ -30,6 +30,10 @@
      pagina, DOPO che auth-gate.js ha già confermato l'accesso di base. -->
 <script src="js/vendor/supabase.min.js"></script>
 <script src="js/cloud/supabase-config.js"></script>
+<!-- gruppo-script:contenuti -->
+<script src="js/data/card-origins.generated.js"></script>
+<script src="js/cloud/content-access.js"></script>
+<!-- /gruppo-script:contenuti -->
 <script src="js/cloud/cloud-sync.js"></script>
 <script src="js/cloud/auto-sync.js"></script>
 <script src="js/cloud/auth-gate.js"></script>
@@ -530,6 +534,40 @@
             };
             notes.appendChild(save);
             row.appendChild(notes);
+            const contents = document.createElement('fieldset');
+            contents.className = 'admin-note';
+            contents.style.border = '0';
+            const legend = document.createElement('legend');
+            legend.textContent = 'Contenuti abilitati';
+            contents.appendChild(legend);
+            const checks = {};
+            ['ww1', 'ww2', 'extra'].forEach((pack) => {
+                const label = document.createElement('label');
+                const check = document.createElement('input');
+                check.type = 'checkbox';
+                check.checked = profile.is_admin || profile['content_' + pack] === true;
+                check.disabled = !!profile.is_admin;
+                check.setAttribute('data-content-pack', pack);
+                checks[pack] = check;
+                label.append(check, document.createTextNode(' ' + (pack === 'extra' ? 'Extra e Freedom' : pack.toUpperCase())));
+                contents.appendChild(label);
+            });
+            if (!profile.is_admin) {
+                const saveContents = document.createElement('button');
+                saveContents.className = 'admin-btn approve';
+                saveContents.textContent = 'Salva contenuti';
+                saveContents.onclick = () => {
+                    saveContents.disabled = true;
+                    const permessi = {};
+                    Object.keys(checks).forEach((p) => { permessi[p] = checks[p].checked; });
+                    CloudSync.adminSetProfileContents(profile.id, permessi)
+                        .then(() => showStatus('Contenuti aggiornati per ' + profile.email + '.', 'success'))
+                        .catch((e) => showStatus(e.message, 'error'))
+                        .finally(() => { saveContents.disabled = false; });
+                };
+                contents.appendChild(saveContents);
+            }
+            row.appendChild(contents);
             return row;
         }
 

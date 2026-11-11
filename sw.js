@@ -536,7 +536,7 @@
 // v650: i varchi cittadini permettono di passare liberamente fra quartieri salvandone lo stato.
 // v653: Battle City: nodi crediti, massimo due nodi Locazione, layout e luci Parco aggiornati.
 // v665: fondali Battle City quadrati 1254x1254, con percorsi ed effetti riallineati.
-const CACHE_NAME = 'ygo-duel-arena-v682';
+const CACHE_NAME = 'ygo-duel-arena-v683';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento
@@ -762,6 +762,10 @@ const APP_SHELL = [
     'js/multiplayer/network.js',
     'js/multiplayer/protocollo-mp.js',
     'js/cloud/auth-gate.js',
+    // gruppo-script:contenuti
+    'js/data/card-origins.generated.js',
+    'js/cloud/content-access.js',
+    // /gruppo-script:contenuti
     'js/cloud/cloud-sync.js',
     'js/cloud/auto-sync.js',
     'js/cloud/supabase-config.js',

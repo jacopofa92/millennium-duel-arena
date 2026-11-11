@@ -186,6 +186,7 @@
 
     function apri(character, opts) {
         if (!character) return;
+        if (window.Contenuti && !Contenuti.personaggio(character)) return;
         if (!radice) costruisci();
         personaggio = character;
         opzioni = opts || {};
