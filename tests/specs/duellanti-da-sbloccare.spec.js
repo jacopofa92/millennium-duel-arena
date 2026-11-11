@@ -16,6 +16,7 @@
 //
 // `standalone`: serve la pagina del Duello Libero, non quella del duello.
 const path = require('path');
+const { consentiTuttiIContenuti } = require('../helpers/contenuti.js');
 
 module.exports = {
     standalone: true,
@@ -27,6 +28,7 @@ module.exports = {
         const erroriPagina = [];
         page.on('pageerror', (e) => erroriPagina.push(e.message));
         await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
+        await consentiTuttiIContenuti(page);
 
         try {
             await page.goto(url);
@@ -139,6 +141,7 @@ module.exports = {
         const duello = await t.browser.newPage({ viewport: { width: 1200, height: 900 } });
         try {
             await duello.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
+            await consentiTuttiIContenuti(duello);
             const base = 'file:///' + path.join(RADICE, 'duelMonstersCore.html').replace(/\\/g, '/');
             await duello.goto(base + '?mode=story&campaign=anime&character=mako&difficulty=Medio&autowin=1');
             await duello.waitForFunction(() => sessionStorage.getItem('ygoLastDuelOutcome') !== null,

@@ -154,6 +154,7 @@
     }
 
     const CONTENT_PACKS = ['ww1', 'ww2', 'extra'];
+    const CONTENTS_ACTIVE_UID_KEY = 'ygoContentAccessActiveUid';
     function cachedContents(userId) {
         try { return userId ? JSON.parse(localStorage.getItem('ygoContentAccess:' + userId) || '{}') : {}; }
         catch (e) { return {}; }
@@ -191,13 +192,25 @@
     function verificaCambioAccount(user) {
         if (!user) return;
         let precedente;
-        try { precedente = localStorage.getItem(APPROVED_UID_KEY); } catch (e) { /* noop */ }
+        try {
+            precedente = localStorage.getItem(CONTENTS_ACTIVE_UID_KEY)
+                || localStorage.getItem(APPROVED_UID_KEY);
+        } catch (e) { /* noop */ }
         if (precedente && precedente !== user.id) {
+            const permessiPrima = cachedContents(precedente);
+            const permessiDopo = cachedContents(user.id);
+            const adminPrima = !!(permessiPrima.is_admin || wasAdminOffline(precedente));
+            const adminDopo = !!(permessiDopo.is_admin || wasAdminOffline(user.id));
+            const cambiaCatalogo = CONTENT_PACKS.some((pack) =>
+                !!(adminPrima || permessiPrima[pack]) !== !!(adminDopo || permessiDopo[pack]));
             forgetApproved();
-            // Una pagina può essersi disegnata prima che Supabase restituisse
-            // il nuovo uid: la ripartenza impedisce di ereditare la vecchia UI.
-            setTimeout(() => window.dispatchEvent(new Event('contenuti:aggiornati')), 0);
+            // Se gli accessi sono identici, conserviamo la pagina: evitare un
+            // reload a ogni cambio account non interferisce con il salvataggio.
+            // Se differiscono, una pagina già disegnata potrebbe mostrare il
+            // catalogo precedente; la ricarichiamo prima di usarlo.
+            if (cambiaCatalogo) setTimeout(() => window.dispatchEvent(new Event('contenuti:aggiornati')), 0);
         }
+        try { localStorage.setItem(CONTENTS_ACTIVE_UID_KEY, user.id); } catch (e) { /* noop */ }
     }
 
     // Promise risolta la PRIMA volta che la sessione persistita (se

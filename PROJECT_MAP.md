@@ -1,6 +1,6 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
-## Contenuti opzionali per account (branch `codex/contenuti-per-utente`)
+## Contenuti opzionali per account (1.6.34)
 
 `js/cloud/content-access.js` classifica i contenuti WW1, WW2 ed Extra/Freedom;
 `js/cloud/cloud-sync.js` legge permessi indipendenti dal profilo e li memorizza
@@ -10,7 +10,11 @@ e dati salvati restano integri: i filtri impediscono uso, ricompense e duelli
 non autorizzati. Il relay `server/accesso-contenuti.js` verifica token e flag di
 tutti i partecipanti prima di inoltrare le scelte opzionali. Migrazione live
 `supabase/contenuti-per-utente.sql`; dettagli, verifiche e limiti in
-`docs/planning/CONTENUTI_PER_UTENTE.md`. Suite completa non eseguita.
+`docs/planning/CONTENUTI_PER_UTENTE.md`. Sul cambio account, la pagina si
+aggiorna solo se cambiano i pacchetti effettivamente accessibili; il catalogo
+non viene ridisegnato inutilmente quando i permessi coincidono. Suite completa
+tentata ma non completata: alcuni server locali Multiplayer non si avviano nei
+tempi previsti; i controlli mirati sono stati eseguiti separatamente.
 
 ## Due menu amministrativi (1.6.32)
 

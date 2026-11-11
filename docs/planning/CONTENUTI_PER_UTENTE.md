@@ -23,7 +23,11 @@ sempre accesso completo. Disabilitare non cancella carte, deck o progressi.
       deck, pedine, tag, raid, specchio e riconnessioni.
 - [x] Copertura mirata per cache offline e cambio account, tentativi diretti,
       privilegi profilo, azioni Multiplayer e regressioni. Typecheck e gruppi
-      script verificati; suite completa non eseguita.
+      script verificati; suite completa tentata ma non completata. I test
+      Multiplayer che avviano server locali hanno avuto errori di avvio/timeout;
+      gli altri problemi rilevati sono annotati nell'esito dei controlli.
+- [x] Cambio account: ricarica la pagina solo se i permessi effettivi dei
+      pacchetti differiscono, evitando reload superflui tra account equivalenti.
 
 ## Falle da evitare
 
@@ -45,5 +49,5 @@ revoca o sospensione remota non può essere conosciuta senza rete. Il browser
 può essere modificato localmente, quindi il blocco offline non è DRM; i dati
 cloud e le operazioni Multiplayer sono invece controllati lato server.
 
-Lavoro sul branch `codex/contenuti-per-utente`. Non unire in main senza
-richiesta esplicita. Suite completa non autorizzata.
+Rilasciato in `main` con la versione 1.6.34. Il relay richiede autenticazione
+in produzione; l'attivazione della protezione va distribuita insieme al client.

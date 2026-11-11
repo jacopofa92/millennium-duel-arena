@@ -1,6 +1,6 @@
 # Work in progress — miglioramenti da seguire
 
-## Contenuti opzionali per account (in lavorazione su branch dedicato)
+## Contenuti opzionali per account — chiuso in 1.6.34
 
 - [x] Interruttori WW1, WW2, Extra/Freedom per account nel pannello Gestione utenti.
 - [x] Nuovi account senza pacchetti opzionali; profili esistenti preservati;
@@ -9,8 +9,11 @@
       duello; verifica Supabase del relay multiplayer anche per tag/raid/specchio.
 - [x] Spec mirati per privilegi, tentativi diretti, cache offline e cambio account;
       suite completa non eseguita.
-- [ ] Ultimi test, typecheck/sintassi, Graphify, commit e push del branch.
-- [ ] Merge in `main` solo su richiesta dell'utente.
+- [x] Verifiche mirate, typecheck, sintassi, gruppi script e Graphify aggiornati;
+      suite completa tentata ma non completata per errori di avvio dei relay
+      locali Multiplayer e altri fallimenti preesistenti/di ambiente.
+- [x] Rilasciato in `main`; relay multiplayer autenticato e versione/cache
+      aggiornate a 1.6.34 / v684.
 
 Dettagli e limiti: `docs/planning/CONTENUTI_PER_UTENTE.md`.
 
