@@ -8,6 +8,8 @@
     const NOMI = { ww1: 'WW1', ww2: 'WW2', extra: 'Extra' };
     function crea(permette, cataloghi) {
         cataloghi = cataloghi || {};
+        let elencoCarteCache = null;
+        let indiceCarteCache = new Map();
         const personaggi = () => typeof cataloghi.personaggi === 'function' ? cataloghi.personaggi() : [];
         const carte = () => typeof cataloghi.carte === 'function' ? cataloghi.carte() : [];
         function origine(origin) { return origin === 'ww1' || origin === 'ww2' ? origin : null; }
@@ -39,7 +41,16 @@
         }
         function campagna(id) { return id === 'freedom' ? 'extra' : origine(String(id || '').split('@')[0]); }
         function carta(c) {
-            if (typeof c === 'number' || typeof c === 'string') c = carte().find((x) => String(x.id) === String(c));
+            if (typeof c === 'number' || typeof c === 'string') {
+                const elenco = carte();
+                // I pool del Negozio classificano migliaia di carte per busta.
+                // L'indice evita una scansione lineare del catalogo per ogni id.
+                if (elenco !== elencoCarteCache) {
+                    elencoCarteCache = elenco;
+                    indiceCarteCache = new Map(elenco.map((x) => [String(x.id), x]));
+                }
+                c = indiceCarteCache.get(String(c));
+            }
             return c ? origine(c.origin) : null;
         }
         const ammesso = (pack) => !pack || !!permette(pack);
@@ -90,13 +101,22 @@
         };
     }
     if (typeof module !== 'undefined' && module.exports) { module.exports = { crea }; return; }
+    let carteIndicizzabili = null;
+    let databaseIndicizzato = null;
+    let eccezioniIndicizzate = null;
     root.Contenuti = crea((pack) => !!(root.CloudSync && root.CloudSync.hasContent(pack)), {
         personaggi: () => typeof characterDatabase !== 'undefined' ? characterDatabase : [],
         mazzi: () => typeof starterStructureDeckDatabase !== 'undefined' ? starterStructureDeckDatabase : [],
         carte: () => {
             const extra = root.CARD_ORIGIN_EXCEPTIONS || [];
             const db = typeof cardDatabase !== 'undefined' ? cardDatabase : [];
-            return extra.concat(db.filter((c) => !extra.some((x) => x.id === c.id)));
+            if (db !== databaseIndicizzato || extra !== eccezioniIndicizzate) {
+                databaseIndicizzato = db;
+                eccezioniIndicizzate = extra;
+                const idsEccezioni = new Set(extra.map((c) => String(c.id)));
+                carteIndicizzabili = extra.concat(db.filter((c) => !idsEccezioni.has(String(c.id))));
+            }
+            return carteIndicizzabili;
         }
     });
     root.Contenuti.motivoPagina = function () {
