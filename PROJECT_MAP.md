@@ -1,5 +1,14 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Buste e boss degli Structure Deck (1.6.38)
+
+`js/data/starter-structure-decks.js` dichiara `bossCardId` per ciascuno dei
+dieci Structure Deck TCG. `js/economy/shop-catalog.js` li esclude in
+`acquistabileInBusta`, il filtro condiviso dai pool normali, tematici, dai
+fallback e dalle carte base garantite. I guardrail sono nello spec
+`buste-tematiche-coerenti`; Divinità Egizie ed Exodia restano vietati come
+prima. Versione/cache: 1.6.38 / v688. Suite completa non eseguita.
+
 ## Trigger automatici e Creazione carte riservata (1.6.36–1.6.37)
 
 Gli effetti automatici di carte ancora sul Terreno usano

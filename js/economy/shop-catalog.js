@@ -385,6 +385,12 @@
      */
     function acquistabileInBusta(cardId) {
         if (window.Contenuti && !Contenuti.carta(cardId)) return false;
+        // I mostri copertina degli Structure Deck sono ricompense esclusive
+        // del relativo deck: non devono rientrare da buste generiche o a tema.
+        // Questo controllo unico copre anche i fallback e le carte base garantite.
+        if (typeof starterStructureDeckDatabase !== 'undefined'
+            && starterStructureDeckDatabase.some((deck) => deck.kind === 'structure'
+                && deck.bossCardId === cardId)) return false;
         return !!window.CardRarity && CardRarity.isPurchasable(cardId)
             && (!window.CardAcquisition || CardAcquisition.isSignatureUnlocked(cardId))
             && (!window.SaveManager || !window.CardAcquisition || !CardAcquisition.isModernSupport(cardId)
@@ -737,6 +743,8 @@
         segnaCartaDelGiornoComprata: segnaCartaDelGiornoComprata,
         busteDellaSettimana: busteDellaSettimana,
         apriBusta: apriBusta,
+        /** Verifica la regola di ottenibilità condivisa da tutti i pool delle buste. */
+        isCartaAmmessaInBusta: acquistabileInBusta,
         mazziInVendita: mazziInVendita
     };
 })();

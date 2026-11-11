@@ -12,7 +12,15 @@ module.exports = {
             await page.goto('file:///' + root + '/negozio.html');
             await page.waitForFunction(() => !!window.ShopCatalog && typeof cardDatabase !== 'undefined');
             const verifica = await page.evaluate(() => {
-                const vietate = Array.from(CardRarity.LOCKED_IDS);
+                const bossStructure = starterStructureDeckDatabase
+                    .filter((deck) => deck.kind === 'structure' && deck.bossCardId)
+                    .map((deck) => ({ deck: deck.packId, id: deck.bossCardId }));
+                const vietate = Array.from(new Set([
+                    ...CardRarity.LOCKED_IDS,
+                    ...bossStructure.map((boss) => boss.id)
+                ]));
+                const bossAmmessi = bossStructure.filter((boss) =>
+                    ShopCatalog.isCartaAmmessaInBusta(boss.id));
                 const risultati = ShopCatalog.TEMI.flatMap((tema) => [4, 2].map((deboli) => {
                     const busta = {
                         id: (deboli === 2 ? 'premium-' : 'tema-') + tema.id,
@@ -51,7 +59,7 @@ module.exports = {
                         });
                     }
                 }));
-                return { risultati, fughe };
+                return { risultati, fughe, bossStructure, bossAmmessi };
             });
             const risultati = verifica.risultati;
             risultati.forEach((r) => {
@@ -64,6 +72,10 @@ module.exports = {
             });
             assert(verifica.fughe.length === 0,
                 `Carte riservate comparse nei pool delle buste: ${JSON.stringify(verifica.fughe.slice(0, 10))}`);
+            assert(verifica.bossStructure.length === 10,
+                `Attesi i 10 boss degli Structure Deck TCG, trovati ${verifica.bossStructure.length}`);
+            assert(verifica.bossAmmessi.length === 0,
+                `Boss Structure ammessi in busta: ${JSON.stringify(verifica.bossAmmessi)}`);
 
             const simboli = await page.evaluate(() => ({
                 temi: ShopCatalog.TEMI.map((t) => ({

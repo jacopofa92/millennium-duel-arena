@@ -844,9 +844,9 @@
     "semantic_hash": ""
   },
   "js/ui/effects.js": {
-    "mtime": 1794429949.7576933,
-    "seen": 1794429999.4489334,
-    "ast_hash": "8806a06d3743b56b460f86e3ce1db5bb",
+    "mtime": 1794431077.522223,
+    "seen": 1794431196.0035176,
+    "ast_hash": "2aa8ca081eab7feb5e43a8ca74cdd1db",
     "semantic_hash": ""
   },
   "js/ui/error-recovery.js": {
@@ -946,16 +946,16 @@
     "semantic_hash": ""
   },
   "js/ui/monster-hologram-webgl.js": {
-    "mtime": 1792841140.3690364,
-    "seen": 1793910198.3022013,
-    "ast_hash": "7529af583b42284e1071399b26f8b4d1",
-    "semantic_hash": "7529af583b42284e1071399b26f8b4d1"
+    "mtime": 1794431077.2057912,
+    "seen": 1794431196.0035176,
+    "ast_hash": "891d3836d0b3c142a41f992b6a1e8cb8",
+    "semantic_hash": ""
   },
   "js/ui/monster-hologram.js": {
-    "mtime": 1792972074.0112157,
-    "seen": 1793910198.3032305,
-    "ast_hash": "8f5c55dffdcd23399928fb9dc8933ded",
-    "semantic_hash": "8f5c55dffdcd23399928fb9dc8933ded"
+    "mtime": 1794431076.9209857,
+    "seen": 1794431196.0035176,
+    "ast_hash": "aee4bcaaf5debcd31bf631924a203b5f",
+    "semantic_hash": ""
   },
   "js/ui/node-map.js": {
     "mtime": 1793057979.9087007,
@@ -1108,9 +1108,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794429657.1610782,
-    "seen": 1794429848.3470833,
-    "ast_hash": "98210b90cc25c6ac1edef715e1a9f622",
+    "mtime": 1794431122.1439977,
+    "seen": 1794431196.0136185,
+    "ast_hash": "11ec8f7139a6e60cd65689f4c422d079",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1126,9 +1126,9 @@
     "semantic_hash": "57357a46c1d07a0fa18bbcd83581aaa6"
   },
   "package.json": {
-    "mtime": 1794429656.5904932,
-    "seen": 1794429848.3470833,
-    "ast_hash": "d789605a9aaaa90bcd0a43af30769fda",
+    "mtime": 1794431122.4529722,
+    "seen": 1794431196.0136185,
+    "ast_hash": "320522b89a508ab5a898df7234b0818a",
     "semantic_hash": ""
   },
   "render.yaml": {
@@ -1527,9 +1527,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794429657.4631827,
-    "seen": 1794429848.3811157,
-    "ast_hash": "dbedbe2d9589363dab39096537673d77",
+    "mtime": 1794431123.0405912,
+    "seen": 1794431196.0570738,
+    "ast_hash": "3bc059e884c74d8c9c4f8dde79f9cc5a",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -4961,9 +4961,9 @@
     "semantic_hash": ""
   },
   "PROJECT_MAP.md": {
-    "mtime": 1794429657.7657743,
-    "seen": 1794429848.6507335,
-    "ast_hash": "33cb1db805d93af6e744c605403f62f9",
+    "mtime": 1794431123.3670728,
+    "seen": 1794431196.2982655,
+    "ast_hash": "09c7c9b1cdbd89dcb4d4756da45c5f42",
     "semantic_hash": ""
   },
   "PUBBLICAZIONE.md": {
@@ -25043,15 +25043,15 @@
     "semantic_hash": ""
   },
   "tests/specs/attivazione-automatica-sollevamento-slot.spec.js": {
-    "mtime": 1794429685.5137446,
-    "seen": 1794429848.3926766,
-    "ast_hash": "cf8949e82fd83b423166e47f0d1daf25",
+    "mtime": 1794431109.5924928,
+    "seen": 1794431196.0688243,
+    "ast_hash": "165ca64cc51a53514f7afae2925efba0",
     "semantic_hash": ""
   },
   "package-lock.json": {
-    "mtime": 1794429656.8758945,
-    "seen": 1794429850.3116798,
-    "ast_hash": "97d061a52bcedc9faf87290bde31d53d",
+    "mtime": 1794431122.7413764,
+    "seen": 1794431198.0113304,
+    "ast_hash": "4ba31d839bc88964f614d849f63422f0",
     "semantic_hash": ""
   }
 }

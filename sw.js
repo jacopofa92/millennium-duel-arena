@@ -538,7 +538,8 @@
 // v665: fondali Battle City quadrati 1254x1254, con percorsi ed effetti riallineati.
 // v684: permessi WW1/WW2/Extra per account, relay Multiplayer autenticato.
 // v687: i trigger dei mostri scoperti ingrandiscono la proiezione olografica.
-const CACHE_NAME = 'ygo-duel-arena-v687';
+// v688: i boss degli Structure Deck non possono uscire da nessuna busta.
+const CACHE_NAME = 'ygo-duel-arena-v688';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

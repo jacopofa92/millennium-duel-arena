@@ -552,6 +552,7 @@ const starterStructureDeckDatabase = [
     {
         packId: 'structure_sd1_dragons_roar',
         kind: 'structure',
+        bossCardId: 638, // Mostro copertina: Drago Oscuro Occhi Rossi
         name: 'Structure Deck: Dragon\'s Roar (SD1)',
         year: 2005,
         description: 'Mazzo tematico dedicato ai mostri Tipo Drago e alla loro potenza distruttiva.',
@@ -596,6 +597,7 @@ const starterStructureDeckDatabase = [
     {
         packId: 'structure_sd2_zombie_madness',
         kind: 'structure',
+        bossCardId: 656, // Mostro copertina: Genesi Vampira
         name: 'Structure Deck: Zombie Madness (SD2)',
         year: 2005,
         description: 'Mazzo tematico dedicato ai mostri Tipo Zombie e alla loro capacità di risorgere dal Cimitero.',
@@ -652,6 +654,7 @@ const starterStructureDeckDatabase = [
     {
         packId: 'structure_sd3_blaze_of_destruction',
         kind: 'structure',
+        bossCardId: 672, // Mostro copertina: Imperatore della Fiamma Infernale
         name: 'Structure Deck: Blaze of Destruction (SD3)',
         year: 2005,
         description: 'Mazzo tematico dedicato ai mostri Tipo Fuoco e agli effetti di danno diretto.',
@@ -698,6 +701,7 @@ const starterStructureDeckDatabase = [
     {
         packId: 'structure_sd4_fury_from_the_deep',
         kind: 'structure',
+        bossCardId: 691, // Mostro copertina: Signore Drago Oceanico - Neo-Daedalus
         name: 'Structure Deck: Fury from the Deep (SD4)',
         year: 2005,
         description: 'Mazzo tematico dedicato ai mostri Tipo Pesce e Serpente di Mare e al controllo del campo tramite "Umi".',
@@ -747,6 +751,7 @@ const starterStructureDeckDatabase = [
     {
         packId: 'structure_sd5_warriors_triumph',
         kind: 'structure',
+        bossCardId: 709, // Mostro copertina: Gilford la Leggenda
         name: 'Structure Deck: Warrior\'s Triumph (SD5)',
         year: 2006,
         description: 'Mazzo tematico dedicato ai mostri Tipo Guerriero e alle Magie/Trappole di supporto diretto.',
@@ -800,6 +805,7 @@ const starterStructureDeckDatabase = [
     {
         packId: 'structure_sd6_spellcasters_judgment',
         kind: 'structure',
+        bossCardId: 733, // Mostro copertina: Stregone Oscuro Eradicatore
         name: 'Structure Deck: Spellcaster\'s Judgment (SD6)',
         year: 2006,
         description: 'Mazzo tematico dedicato ai mostri Tipo Incantatore, con Mago Nero e Ragazza Maga Nera come punte di diamante.',
@@ -851,6 +857,7 @@ const starterStructureDeckDatabase = [
     {
         packId: 'structure_sd7_invincible_fortress',
         kind: 'structure',
+        bossCardId: 753, // Mostro copertina: Exxod, Maestro della Guardia
         name: 'Structure Deck: Invincible Fortress (SD7)',
         year: 2006,
         // Exxod è la SD7-EN001, la carta di punta con cui il mazzo è
@@ -905,6 +912,7 @@ const starterStructureDeckDatabase = [
     {
         packId: 'structure_sd8_lord_of_the_storm',
         kind: 'structure',
+        bossCardId: 772, // Mostro copertina: Simorgh, Volatile della Divinità
         name: 'Structure Deck: Lord of the Storm (SD8)',
         year: 2007,
         description: 'Mazzo tematico dedicato ai mostri Tipo Bestia Alata e agli effetti legati all\'Attributo VENTO.',
@@ -958,6 +966,7 @@ const starterStructureDeckDatabase = [
     {
         packId: 'structure_sd9_dinosaurs_rage',
         kind: 'structure',
+        bossCardId: 796, // Mostro copertina: Tiranno Super Conduttore
         name: 'Structure Deck: Dinosaur\'s Rage (SD9)',
         year: 2007,
         description: 'Mazzo tematico dedicato ai mostri Tipo Dinosauro e alla loro forza d\'attacco brutale.',
@@ -1009,6 +1018,7 @@ const starterStructureDeckDatabase = [
     {
         packId: 'structure_sd10_machine_revolt',
         kind: 'structure',
+        bossCardId: 824, // Mostro copertina: Drago Gadjiltron-Ingranaggio Antico
         name: 'Structure Deck: Machine Re-Volt (SD10)',
         year: 2007,
         description: 'Mazzo tematico dedicato ai mostri Tipo Macchina e alle loro combinazioni Union.',

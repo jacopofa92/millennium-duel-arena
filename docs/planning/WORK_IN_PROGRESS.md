@@ -1,5 +1,14 @@
 # Work in progress — miglioramenti da seguire
 
+## Boss degli Structure Deck esclusi dalle buste — chiuso in 1.6.38
+
+- [x] Registrato il mostro copertina dei dieci Structure Deck TCG come boss
+      dedicato; il filtro comune delle buste esclude questi ID anche dai pool
+      tematici, dai fallback e dalle creature base garantite.
+- [x] Spec mirato verifica tutti e dieci i boss e continua a controllare i
+      divieti già esistenti per Divinità Egizie ed Exodia. Suite completa non
+      eseguita.
+
 ## Contenuti opzionali per account — chiuso in 1.6.34
 
 - [x] Interruttori WW1, WW2, Extra/Freedom per account nel pannello Gestione utenti.
