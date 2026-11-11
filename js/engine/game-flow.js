@@ -11,6 +11,8 @@ let duelStartTime = null;
 let duelTimerInterval = null;
 let duelPauseStartedAt = null;
 let lifecyclePauseActive = false;
+const lifePointAnimations = new WeakMap();
+const lifePointPulseTimers = new WeakMap();
 
 /**
  * La metà "a schermo" di isBlockingModalOpen (js/engine/canale-partita.js,
@@ -685,17 +687,37 @@ function dealHandWithStagger(onComplete) {
 function animateLifePoints(el, newValue) {
     if (!el) return;
     const container = el.closest('.life-points');
-    const oldValue = parseInt(el.dataset.lpValue ?? el.textContent, 10) || 0;
+    const running = lifePointAnimations.get(el);
+    // renderLifePoints viene richiamata da ogni ridisegno. Se il bersaglio
+    // non è cambiato, lascia proseguire il conteggio in corso: scrivere qui
+    // il valore finale lo avrebbe fatto saltare al primo updateUI successivo.
+    if (running && running.target === newValue) return;
+
+    // Se arriva un altro danno/recupero durante il conteggio, riparti dal
+    // numero che il giocatore vede ora e cancella il vecchio RAF: due cicli
+    // indipendenti sullo stesso elemento si contendevano il testo.
+    const oldValue = running
+        ? (parseInt(el.textContent, 10) || 0)
+        : (parseInt(el.dataset.lpValue ?? el.textContent, 10) || 0);
+    if (running) {
+        cancelAnimationFrame(running.frameId);
+        lifePointAnimations.delete(el);
+    }
     el.dataset.lpValue = newValue;
     if (oldValue === newValue) {
         el.textContent = newValue;
         return;
     }
     if (container) {
+        const pulseTimer = lifePointPulseTimers.get(container);
+        if (pulseTimer) clearTimeout(pulseTimer);
         container.classList.remove('lp-hit', 'lp-heal');
         void container.offsetWidth;
         container.classList.add(newValue < oldValue ? 'lp-hit' : 'lp-heal');
-        setTimeout(() => container.classList.remove('lp-hit', 'lp-heal'), 1900);
+        lifePointPulseTimers.set(container, setTimeout(() => {
+            container.classList.remove('lp-hit', 'lp-heal');
+            lifePointPulseTimers.delete(container);
+        }, 1900));
     }
     // Conteggio quasi lineare (leggero ease-out solo in coda) invece che
     // una decelerazione immediata: si legge come i LP che "ticchettano"
@@ -705,14 +727,21 @@ function animateLifePoints(el, newValue) {
     // contatore finiva ben prima della fine dell'audio.
     const duration = 1900;
     const start = performance.now();
+    const animation = { target: newValue, frameId: 0 };
+    lifePointAnimations.set(el, animation);
     const step = (now) => {
+        if (lifePointAnimations.get(el) !== animation) return;
         const progress = Math.min((now - start) / duration, 1);
         const eased = 1 - Math.pow(1 - progress, 2);
         const current = Math.round(oldValue + (newValue - oldValue) * eased);
         el.textContent = Math.max(current, 0);
-        if (progress < 1) requestAnimationFrame(step);
+        if (progress < 1) animation.frameId = requestAnimationFrame(step);
+        else {
+            el.textContent = Math.max(newValue, 0);
+            lifePointAnimations.delete(el);
+        }
     };
-    requestAnimationFrame(step);
+    animation.frameId = requestAnimationFrame(step);
 }
 
 function renderLifePoints() {

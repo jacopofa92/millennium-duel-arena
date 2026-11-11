@@ -1,5 +1,15 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Conteggio Life Points stabile durante i ridisegni (1.6.42)
+
+`animateLifePoints` in `js/engine/game-flow.js` conserva il RAF attivo quando
+un nuovo render conferma lo stesso valore bersaglio; una variazione successiva
+annulla il ciclo precedente e riparte dal numero visibile. Lo spec
+`tests/specs/life-points-redraw.spec.js` copre ridisegno intermedio e danni
+ravvicinati. Il percorso reale della Magia dalla mano al Cimitero è già coperto
+da `tests/specs/mano-attivazione-chiude-box-info.spec.js`, che controlla che il
+viaggio parta dalle coordinate della carta in mano. Versione/cache: 1.6.42 / v692.
+
 ## Catena WebGL: ciclo di disegno più leggero (1.6.41)
 
 `js/ui/catena-webgl.js` memorizza i riferimenti agli uniformi quando crea la

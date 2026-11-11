@@ -1,5 +1,13 @@
 # Work in progress — miglioramenti da seguire
 
+## Conteggio Life Points e transizione Magia dalla mano — chiuso in 1.6.42
+
+- [x] Un ridisegno con lo stesso valore LP non tronca il conteggio; una nuova
+      variazione cancella l'animazione precedente e riparte dal numero visibile.
+- [x] Spec mirato per ridisegni e danni ravvicinati. La transizione reale della
+      Magia dalla mano al Cimitero era già coperta dallo spec UX della mano.
+- [x] Versione/cache: 1.6.42 / v692. Suite completa non eseguita.
+
 ## Fluidità della Catena WebGL — chiuso in 1.6.41
 
 - [x] Riuso dei riferimenti uniformi e dei buffer; letture delle geometrie

@@ -508,9 +508,9 @@
     "semantic_hash": "d42a1978c3cc7eebca874eb6aff40c39"
   },
   "js/engine/game-flow.js": {
-    "mtime": 1794078287.432955,
-    "seen": 1794145245.823113,
-    "ast_hash": "369285e9e947d445a0ac11396583d22d",
+    "mtime": 1794438155.3514404,
+    "seen": 1794438261.1395714,
+    "ast_hash": "a6aa86943a6f0e574bb6ebfbee5b730c",
     "semantic_hash": ""
   },
   "js/engine/passo-comune.js": {
@@ -1108,9 +1108,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794436712.5158951,
-    "seen": 1794436864.5464344,
-    "ast_hash": "618097263f9261949738aba325e02909",
+    "mtime": 1794438199.1803517,
+    "seen": 1794438261.2205858,
+    "ast_hash": "d5091879d3e079a78646213000f61e3d",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1126,9 +1126,9 @@
     "semantic_hash": "57357a46c1d07a0fa18bbcd83581aaa6"
   },
   "package.json": {
-    "mtime": 1794436712.835202,
-    "seen": 1794436864.5474784,
-    "ast_hash": "157cdbcf9204855c53adc321e925d1e7",
+    "mtime": 1794438199.5153828,
+    "seen": 1794438261.2205858,
+    "ast_hash": "be483b5b00501b5500e73b0c3f9a52cf",
     "semantic_hash": ""
   },
   "render.yaml": {
@@ -1527,9 +1527,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794436713.4529605,
-    "seen": 1794436864.5762744,
-    "ast_hash": "7b5d496b1880c04725f75143eedf0192",
+    "mtime": 1794438200.1879835,
+    "seen": 1794438261.2581422,
+    "ast_hash": "c033e4d7af7da81963ee946e9724e9f1",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -4961,9 +4961,9 @@
     "semantic_hash": ""
   },
   "PROJECT_MAP.md": {
-    "mtime": 1794436713.7855332,
-    "seen": 1794436864.8252544,
-    "ast_hash": "62bff7a7870fcdb50de8a27f4fc48868",
+    "mtime": 1794438200.5509913,
+    "seen": 1794438261.5658517,
+    "ast_hash": "c23e0cb9513303643876448d103ca594",
     "semantic_hash": ""
   },
   "PUBBLICAZIONE.md": {
@@ -5261,9 +5261,9 @@
     "semantic_hash": ""
   },
   "docs/planning/WORK_IN_PROGRESS.md": {
-    "mtime": 1794436714.1020663,
-    "seen": 1794436864.8515804,
-    "ast_hash": "35fc99feac10a421ea2317f5e8df9e7b",
+    "mtime": 1794438200.891032,
+    "seen": 1794438261.6003473,
+    "ast_hash": "8f597ea8c7cae8fbc0965d29c1166f52",
     "semantic_hash": ""
   },
   "duelMonstersCore.html": {
@@ -25048,10 +25048,16 @@
     "ast_hash": "165ca64cc51a53514f7afae2925efba0",
     "semantic_hash": ""
   },
+  "tests/specs/life-points-redraw.spec.js": {
+    "mtime": 1794438173.9160788,
+    "seen": 1794438261.3908823,
+    "ast_hash": "e01dd6fb4521f378cab3929d6b2be9dd",
+    "semantic_hash": ""
+  },
   "package-lock.json": {
-    "mtime": 1794436713.1526773,
-    "seen": 1794436866.5808752,
-    "ast_hash": "7adf2a01e6529e3ca617b50d4f478540",
+    "mtime": 1794438199.8428154,
+    "seen": 1794438263.5068667,
+    "ast_hash": "8898c239acc60b877bb873978657798e",
     "semantic_hash": ""
   }
 }

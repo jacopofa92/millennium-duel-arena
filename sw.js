@@ -542,7 +542,8 @@
 // v689: la Busta Base esclude i mostri oltre 1200 ATK da ogni slot.
 // v690: gli slot comuni della Busta Base privilegiano i mostri vanilla.
 // v691: la scena WebGL della Catena riduce le ricerche e le letture di layout per fotogramma.
-const CACHE_NAME = 'ygo-duel-arena-v691';
+// v692: i ridisegni non interrompono più il conteggio animato dei Life Points.
+const CACHE_NAME = 'ygo-duel-arena-v692';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento
