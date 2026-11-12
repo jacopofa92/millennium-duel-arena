@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.6.45 — Tipi: // @ts-check anche su duel-engine.js, battaglia.js, fasi.js, evocazioni.js, passo-comune.js e duel-sandbox.js (restano actions.js e game-flow.js). GameState.playerDeck e chain sono facoltativi (come nel codice), chain.resolving dichiarato. Nessun cambiamento di comportamento.
  * 1.6.44 — Tipi: i 9 file degli effetti delle carte (card-effects.js e card-effects-1..8.js) portano // @ts-check; types/motore.d.ts descrive Decisioni, Casuale, PortaUI e le firme vere di negateActivation/takeControl/drawCards/shuffleIntoDeck, e destroyedByOpponentCard e' Card|null. Nessun cambiamento di comportamento.
  * 1.6.43 — Duello: il CSS di duelMonstersCore.html (275 KB) e' diviso in 12 file contigui js/ui/duello-NN-*.css, senza cambiare nessuno stile.
  * 1.6.42 — Duello: i ridisegni non interrompono il conteggio dei Life Points; i conteggi ravvicinati si sostituiscono senza gare.
@@ -818,4 +819,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.6.44';
+window.GAME_VERSION = '1.6.45';

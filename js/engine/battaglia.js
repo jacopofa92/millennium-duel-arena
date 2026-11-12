@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * battaglia.js — la risoluzione di un attacco e del suo danno.
  * =====================================================================

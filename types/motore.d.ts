@@ -84,7 +84,8 @@ interface GameState {
     botLP: number;
     playerHand: Card[];
     botHand: Card[];
-    playerDeck: Card[];
+    /** Assente finche' resetGameState non costruisce un mazzo vero (Duello Demo, Multiplayer senza mazzo): vedi drawCardsToHand. */
+    playerDeck?: Card[];
     botDeck?: Card[];
     playerDeckCount: number;
     botDeckCount: number;
@@ -98,7 +99,8 @@ interface GameState {
     botGraveyard: Card[];
     playerBanished?: Card[];
     botBanished?: Card[];
-    chain: { links: any[]; active: boolean };
+    /** Creata da ensureChainState al primo bisogno, non da resetGameState. `resolving` e' vero mentre la Catena si risolve. */
+    chain?: { links: any[]; active: boolean; resolving?: boolean };
     [chiave: string]: any;
 }
 
@@ -386,6 +388,12 @@ declare var PortaUI: {
     queryAll(selettore: string): any;
     byId(id: string): any;
 };
+declare var CardRenderer: any;
+declare var StatsDuello: any;
+declare var FieldAmbience: any;
+declare var DUEL_ARENA_CUSTOM_FIELD: any;
+declare var initSandboxGame: any;
+declare var SandboxDuel: any;
 declare var EffectTemplates: any;
 declare var DuelDialogues: any;
 declare var DuelEngine: any;

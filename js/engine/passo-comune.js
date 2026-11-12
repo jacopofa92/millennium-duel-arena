@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * passo-comune.js — il Multiplayer "a passo comune".
  * =====================================================================
@@ -225,10 +226,11 @@ const PassoComune = (function () {
      * `iniziaHost` (default vero): chi ha il primo turno, deciso prima (la
      * morra cinese della sala d'attesa). Non cambia l'ordine di Tavolo, che
      * resta "prima l'host" su entrambi i client.
-     * @param {{ seme: number, sonoHost: boolean, mazzoHost: any, mazzoOspite: any, manoIniziale?: number, iniziaHost?: boolean }} o
+     * @param {{ seme: number, sonoHost: boolean, mazzoHost: any, mazzoOspite: any, manoIniziale?: number, iniziaHost?: boolean, squadre?: any }} o
      */
     function preparaDuello(o) {
-        if (o.squadre) return preparaDuelloAPosti(o);
+        // Con `squadre` la richiesta e' quella della variante a posti (altro formato, vedi preparaDuelloAPosti).
+        if (o.squadre) return preparaDuelloAPosti(/** @type {any} */ (o));
         Casuale.semina(o.seme);
         const host = o.sonoHost ? 'player' : 'bot';
         Tavolo.impostaPrimo(host);
@@ -668,4 +670,4 @@ const PassoComune = (function () {
 // (decisioni.js, tavolo.js, che leggono gli altri moduli da globalThis)
 // non lo troverebbe. Preso dal duello gemello: senza questa riga le
 // decisioni non viaggiavano affatto.
-globalThis.PassoComune = PassoComune;
+/** @type {any} */ (globalThis).PassoComune = PassoComune;
