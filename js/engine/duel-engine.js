@@ -781,6 +781,25 @@
     }
 
     const ACTIONS = {
+        /** Rimette una carta nel Deck corretto. Le Fusioni e le altre carte
+         * Extra Deck non possono entrare nel Deck principale, anche quando
+         * un effetto generico le recupera dal Cimitero o dal Terreno. */
+        returnCardToDeck(owner, card, placement, source) {
+            if (!card) return false;
+            const isExtra = !!card.extraDeck;
+            const destination = isExtra ? Tavolo.extraDeck(owner) : Tavolo.mazzo(owner);
+            if (!Array.isArray(destination)) return false;
+            if (source) {
+                animaTransizioneCarta(card, source, isExtra
+                    ? { kind: 'fusion', owner: owner }
+                    : { kind: 'deck', owner: owner }, isExtra ? 'fusion' : 'deck');
+            }
+            if (placement === 'bottom' && !isExtra) destination.unshift(card);
+            else destination.push(card);
+            if (!isExtra) gameState[Tavolo.chiave(owner, 'DeckCount')] = destination.length;
+            return true;
+        },
+
         /**
          * Distrugge il mostro nello slot indicato (owner+index, il
          * CONTROLLORE attuale) e lo manda al Cimitero — del vero
@@ -1928,7 +1947,14 @@
                 }
                 return false;
             }
+            const extraDeck = Tavolo.extraDeck(owner);
             cards.forEach((c) => {
+                if (c && c.extraDeck) {
+                    if (!Array.isArray(extraDeck)) return;
+                    animaTransizioneCarta(c, { kind: 'auto' }, { kind: 'fusion', owner: owner }, 'fusion');
+                    extraDeck.push(c);
+                    return;
+                }
                 animaTransizioneCarta(c, { kind: 'auto' }, { kind: 'deck', owner: owner }, 'deck');
                 deck.push(c);
             });
@@ -1937,6 +1963,7 @@
                 const j = Math.floor(Casuale.random() * (i + 1));
                 [deck[i], deck[j]] = [deck[j], deck[i]];
             }
+            gameState[Tavolo.chiave(owner, 'DeckCount')] = deck.length;
             EventiDuello.emetti('mazzo-rimescolato', owner);
             return true;
         },
@@ -1948,25 +1975,28 @@
             if (!slot || unaffectedBySourceCard(this, slot)) return null;
             const card = slot.card;
             const proprietario = slot.originalOwner || owner;
-            const deck = Tavolo.mazzo(proprietario);
+            const isExtraDeckCard = !!card.extraDeck;
+            const deck = isExtraDeckCard ? Tavolo.extraDeck(proprietario) : Tavolo.mazzo(proprietario);
             if (!Array.isArray(deck)) return null;
             field[index] = null;
             if (card.mustBanishOnLeavingField) {
                 ACTIONS.banish(proprietario, card);
                 return card;
             }
-            animaTransizioneCarta(card, { kind: 'field', owner: owner, index: index, type: 'monster' }, { kind: 'deck', owner: proprietario }, 'deck');
+            animaTransizioneCarta(card, { kind: 'field', owner: owner, index: index, type: 'monster' },
+                isExtraDeckCard ? { kind: 'fusion', owner: proprietario } : { kind: 'deck', owner: proprietario },
+                isExtraDeckCard ? 'fusion' : 'deck');
             // La cima è la fine dell'array: drawCardsToHand usa pop().
             deck.push(card);
-            if (!options || options.shuffle !== false) {
+            if (!isExtraDeckCard && (!options || options.shuffle !== false)) {
                 for (let i = deck.length - 1; i > 0; i--) {
                     const j = Math.floor(Casuale.random() * (i + 1));
                     [deck[i], deck[j]] = [deck[j], deck[i]];
                 }
             }
-            gameState[Tavolo.chiave(proprietario, 'DeckCount')] = deck.length;
+            if (!isExtraDeckCard) gameState[Tavolo.chiave(proprietario, 'DeckCount')] = deck.length;
             const def = getDefinition(card.id);
-            if (def && typeof def.onReturnedToDeckSelf === 'function') {
+            if (!isExtraDeckCard && def && typeof def.onReturnedToDeckSelf === 'function') {
                 safeCallCardHandler(card, 'onReturnedToDeckSelf', () => def.onReturnedToDeckSelf(makeContext(proprietario, {
                     card: card, slotIndex: index, wasFaceUp: !slot.isFaceDown
                 })));
@@ -5110,7 +5140,16 @@
             const duration = (window.FX && FX.ACTIVATE_CENTER_DURATION_MS) || 2000;
             const elapsed = link.activatedAt ? (Date.now() - link.activatedAt) : duration;
             const waitMs = Math.max(0, duration - elapsed);
-            dopoRegola(runHandler, waitMs);
+            dopoRegola(() => {
+                // La scena WebGL resta grande per il suo ingresso e poi si
+                // ritira nella colonna delle miniature. Solo dopo quel
+                // passaggio si risolve il Link: il suo handler puo' aprire
+                // una scelta e il modale non deve coprire la scena.
+                const attesaScena = window.CatenaGL
+                    && typeof CatenaGL.attendiMiniatura === 'function'
+                    && CatenaGL.attendiMiniatura(runHandler);
+                if (!attesaScena) runHandler();
+            }, waitMs);
         };
 
         resolveNext();
@@ -5616,6 +5655,40 @@
                 const fsDef = getDefinition(fs.card.id);
                 if (fsDef && typeof fsDef.onAnyNormalOrFlipSummon === 'function') {
                     safeCallCardHandler(fs.card, 'onAnyNormalOrFlipSummon', () => fsDef.onAnyNormalOrFlipSummon(makeContext(owner, Object.assign({ card: fs.card, zone: 'fieldSpell' }, extra))));
+                }
+            }
+        });
+    }
+
+    /**
+     * Un Set coperto non attiva gli effetti "quando Evocato" e non apre
+     * finestre di risposta, ma puo' comunque contare per carte che dicono
+     * esplicitamente "Evocazione Normale/Set" (es. Castello-Ingranaggio).
+     * Manteniamo questo evento separato per non rivelare o attivare per
+     * errore il mostro che e' stato appena coperto.
+     */
+    function notifyNormalSet(summonedCard) {
+        const extra = { summonedCard: summonedCard || null, summonedVia: 'set' };
+        Tavolo.ordine().forEach((owner) => {
+            fieldOf(owner).forEach((slot, index) => {
+                if (!slot || slot.isFaceDown) return;
+                const def = getDefinition(slot.card.id);
+                if (def && typeof def.onAnyNormalSet === 'function') {
+                    safeCallCardHandler(slot.card, 'onAnyNormalSet', () => def.onAnyNormalSet(makeContext(owner, Object.assign({ card: slot.card, slotIndex: index }, extra))));
+                }
+            });
+            stFieldOf(owner).forEach((slot, index) => {
+                if (!slot || slot.isFaceDown) return;
+                const def = getDefinition(slot.card.id);
+                if (def && typeof def.onAnyNormalSet === 'function') {
+                    safeCallCardHandler(slot.card, 'onAnyNormalSet', () => def.onAnyNormalSet(makeContext(owner, Object.assign({ card: slot.card, index: index, zone: 'st' }, extra))));
+                }
+            });
+            const fs = fieldSpellOf(owner);
+            if (fs && !fs.isFaceDown) {
+                const def = getDefinition(fs.card.id);
+                if (def && typeof def.onAnyNormalSet === 'function') {
+                    safeCallCardHandler(fs.card, 'onAnyNormalSet', () => def.onAnyNormalSet(makeContext(owner, Object.assign({ card: fs.card, zone: 'fieldSpell' }, extra))));
                 }
             }
         });
@@ -6599,6 +6672,7 @@
         register: register,
         getDefinition: getDefinition,
         fireTrigger: fireTrigger,
+        notifyNormalSet: notifyNormalSet,
         makeContext: makeContext,
         recomputeStaticEffects: recomputeStaticEffects,
         firePhaseTrigger: firePhaseTrigger,

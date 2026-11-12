@@ -1443,9 +1443,7 @@
                 if (idx === -1) return;
                 if (ctx.graveyardMoveNegated(ctx.owner)) return;
                 const [card] = grave.splice(idx, 1);
-                const deckKey = Tavolo.chiave(ctx.owner, 'Deck');
-                gameState[deckKey].unshift(card);
-                gameState[Tavolo.chiave(ctx.owner, 'DeckCount')] = gameState[deckKey].length;
+                ctx.returnCardToDeck(ctx.owner, card, 'bottom', { kind: 'graveyard', owner: ctx.owner });
                 ctx.log(`🔥 Sentinella Porpora rimanda ${card.name} in fondo al Deck!`);
             };
             if (!Decisioni.rispondeUnaPersona(ctx.owner)) { returnToDeck(stillInGrave[0]); return; }
@@ -1897,9 +1895,7 @@
                 if (idx === -1) return;
                 if (ctx.graveyardMoveNegated(ctx.owner)) return;
                 const [card] = grave.splice(idx, 1);
-                const deckKey = Tavolo.chiave(ctx.owner, 'Deck');
-                gameState[deckKey].push(card);
-                gameState[Tavolo.chiave(ctx.owner, 'DeckCount')] = gameState[deckKey].length;
+                ctx.returnCardToDeck(ctx.owner, card, 'top', { kind: 'graveyard', owner: ctx.owner });
                 ctx.log(`🐆 Signora Pantera rimanda ${card.name} in cima al Deck!`);
             };
             if (!Decisioni.rispondeUnaPersona(ctx.owner)) { returnToDeckTop(stillInGrave[0]); return; }
@@ -2073,7 +2069,14 @@
             if (ctx.milledByOwner !== ctx.opponent) return;
             const deckKey = Tavolo.chiave(ctx.owner, 'Deck');
             const graveKey = Tavolo.chiave(ctx.owner, 'Graveyard');
-            const merged = [...gameState[deckKey], ...gameState[graveKey]];
+            const carteRimischiate = [...gameState[deckKey], ...gameState[graveKey]];
+            const merged = carteRimischiate.filter((card) => !card.extraDeck);
+            carteRimischiate.filter((card) => card.extraDeck).forEach((card) => {
+                const giaNelDeck = gameState[deckKey].includes(card);
+                ctx.returnCardToDeck(ctx.owner, card, 'top', {
+                    kind: giaNelDeck ? 'deck' : 'graveyard', owner: ctx.owner
+                });
+            });
             // Math.random() e non ctx.random(): un RIMESCOLO non ha nulla
             // da accordare fra i due client di un Multiplayer. Quello che
             // cambia per entrambi — che il Cimitero si svuoti e il Deck
@@ -2721,9 +2724,7 @@
             if (idx === -1) return;
             if (ctx.graveyardMoveNegated(ctx.destroyedCardOwner)) return;
             const [card] = grave.splice(idx, 1);
-            const deckKey = Tavolo.chiave(ctx.destroyedCardOwner, 'Deck');
-            gameState[deckKey].push(card);
-            gameState[Tavolo.chiave(ctx.destroyedCardOwner, 'DeckCount')] = gameState[deckKey].length;
+            ctx.returnCardToDeck(ctx.destroyedCardOwner, card, 'top', { kind: 'graveyard', owner: ctx.destroyedCardOwner });
             ctx.log(`🦅 Saggio Falco Alato rimanda ${card.name} in cima al Deck avversario!`);
         }
     });
@@ -2738,9 +2739,7 @@
             if (idx === -1) return;
             if (ctx.graveyardMoveNegated(ctx.destroyedCardOwner)) return;
             const [card] = grave.splice(idx, 1);
-            const deckKey = Tavolo.chiave(ctx.destroyedCardOwner, 'Deck');
-            gameState[deckKey].push(card);
-            gameState[Tavolo.chiave(ctx.destroyedCardOwner, 'DeckCount')] = gameState[deckKey].length;
+            ctx.returnCardToDeck(ctx.destroyedCardOwner, card, 'top', { kind: 'graveyard', owner: ctx.destroyedCardOwner });
             ctx.log(`⚔️ Cavaliere Mistico dello Sciacallo rimanda ${card.name} in cima al Deck avversario!`);
         }
     });
@@ -4134,8 +4133,7 @@
                 const source = zones.find((zone) => zone.includes(chosen));
                 if (!source) return;
                 source.splice(source.indexOf(chosen), 1);
-                deck.push(chosen);
-                gameState[Tavolo.chiave(ctx.owner, 'DeckCount')] = deck.length;
+                ctx.returnCardToDeck(ctx.owner, chosen, 'top');
                 ctx.log(`${chosen.name} viene collocata in cima al Deck.`);
             });
         },
@@ -4552,7 +4550,7 @@
         });
         extra.splice(plan.extraDeckIndex, 1);
         const deck = Tavolo.mazzo(ctx.owner) || [];
-        deck.push(...materialCards);
+        materialCards.forEach((material) => ctx.returnCardToDeck(ctx.owner, material, 'top'));
         Casuale.mescola(deck);
         gameState[Tavolo.chiave(ctx.owner, 'DeckCount')] = deck.length;
         plan.fusion._fusionSummonedWithAlternative = usedAlternative;

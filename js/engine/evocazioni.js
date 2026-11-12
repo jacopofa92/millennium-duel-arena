@@ -367,6 +367,17 @@ function eseguiEvocazioneNormale(posto, c, extra) {
             }
         }, 30);
 
+        // Un Set coperto non e' una Evocazione scoperta: nessun onSummon,
+        // animazione dell'effetto della carta o risposta come Buco Trappola.
+        // Solo le carte che dichiarano "Evocazione Normale/Set" ricevono
+        // l'evento dedicato (es. Castello-Ingranaggio Antico).
+        if (isFaceDown) {
+            if (window.DuelEngine && typeof DuelEngine.notifyNormalSet === 'function') DuelEngine.notifyNormalSet(card);
+            updateUI();
+            fine();
+            return;
+        }
+
         // Finestra per un'eventuale risposta dell'avversario (es. Buco
         // Trappola) — vedi js/engine/duel-engine.js. È "fire and forget": se la
         // risposta distrugge il mostro appena Evocato, updateUI() nella

@@ -275,11 +275,9 @@
                     toShuffle.push(gameState[fieldSpellKey].card);
                     gameState[fieldSpellKey] = null;
                 }
-                deck.push(...toShuffle);
-                for (let i = deck.length - 1; i > 0; i--) {
-                    const j = Math.floor(Casuale.random() * (i + 1));
-                    [deck[i], deck[j]] = [deck[j], deck[i]];
-                }
+                // Un Fusion/Extra Deck mostro può trovarsi in Cimitero o sul
+                // Terreno: Giara rimette ogni carta nella zona corretta.
+                ctx.shuffleIntoDeck(owner, toShuffle);
                 ctx.drawCards(owner, Math.min(5, deck.length));
                 ctx.log(`🫙 ${owner === 'player' ? 'Rimescoli' : 'Il bot rimescola'} mano, Terreno e Cimitero nel Deck e pesc${owner === 'player' ? 'hi' : 'a'} 5 carte!`);
                 EventiDuello.emetti('mazzo-rimescolato', owner);

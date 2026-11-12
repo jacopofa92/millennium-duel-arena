@@ -337,14 +337,14 @@
                 });
             });
         },
-        // "Ogni Evocazione Normale/Set" — ctx.summonedVia distingue 'normal'
-        // (Evocazione Normale in Attacco O Set coperto: entrambe passano
-        // per TRIGGER.ON_NORMAL_SUMMON, vedi summonMonster in actions.js)
-        // da 'flip' (TRIGGER.ON_FLIP, un mostro già Set che si rivela in
-        // battaglia) — esclude correttamente il Flip Summon dal conteggio,
-        // come da testo reale.
+        // "Ogni Evocazione Normale"; il Set coperto usa l'hook separato
+        // onAnyNormalSet, per non trattarlo come un'Evocazione scoperta.
         onAnyNormalOrFlipSummon(ctx) {
             if (ctx.summonedVia !== 'normal') return;
+            ctx.card.counters = (ctx.card.counters || 0) + 1;
+            ctx.log(`⚙️ Castello-Ingranaggio Antico guadagna 1 Segnalino (${ctx.card.counters} totali)!`);
+        },
+        onAnyNormalSet(ctx) {
             ctx.card.counters = (ctx.card.counters || 0) + 1;
             ctx.log(`⚙️ Castello-Ingranaggio Antico guadagna 1 Segnalino (${ctx.card.counters} totali)!`);
         }

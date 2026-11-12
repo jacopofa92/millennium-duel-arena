@@ -1,5 +1,32 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Attivazione carta reale e ritorni Extra Deck (1.6.44)
+
+L'effetto automatico di sollevamento applica ora l'animazione al nodo della
+carta nello slot: non crea più un clone visibile sopra alla carta reale.
+L'helper `returnCardToDeck` e `shuffleIntoDeck` instradano le carte
+`extraDeck` nell'Extra Deck; lo stesso vale per i ritorni dal Terreno e per
+gli effetti generici di rimescolamento (Giara di Fibra, Cavaliere Pinguino,
+Sentinella Cremisi, Pantera Signora, Falcos, Sciacallo e Servitore
+dell'Anima). La prova di rimescolamento della Catena verifica LIFO e che la
+scena diventi miniatura prima della risoluzione. Spec specifici:
+`attivazione-automatica-sollevamento-slot.spec.js`,
+`extra-deck-non-entra-nel-mazzo.spec.js`. Suite completa non eseguita.
+Versione/cache: 1.6.44 / v694.
+
+## Catena, Set coperti e attivazioni ologramma (1.6.43)
+
+La risoluzione della Catena aspetta che la scena WebGL si ritiri nella
+colonna di miniature prima di eseguire gli effetti che possono aprire modali
+di scelta (`CatenaGL.attendiMiniatura`). Un Set coperto ora passa da
+`DuelEngine.notifyNormalSet`: non attiva `onSummon`, non mostra l'animazione
+automatica e non apre finestre di risposta; resta supportato il testo
+"Evocazione Normale/Set" del Castello-Ingranaggio Antico. Lo spec
+`breaker-set-coperto.spec.js` copre Breaker e il Castello. La scena olografica
+ora enfatizza l'attivazione con uno zoom più leggibile e un impulso luminoso
+ciano. Spec Catena: `chain-resolution.spec.js` verifica LIFO e l'ordine fra
+miniatura e risoluzione. Suite completa non eseguita. Versione/cache: 1.6.43 / v693.
+
 ## Conteggio Life Points stabile durante i ridisegni (1.6.42)
 
 `animateLifePoints` in `js/engine/game-flow.js` conserva il RAF attivo quando

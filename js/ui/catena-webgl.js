@@ -696,6 +696,22 @@ body.cgl-scena-piena #phaseAnnouncement{visibility:hidden!important}
         setTimeout(finisci, DUR_CHIUSURA_MS + 120);
     }
 
+    /**
+     * Aspetta che la scena grande si sia ritirata del tutto nella colonna
+     * delle miniature prima di lasciare partire l'effetto del Link. Gli
+     * handler possono aprire modali di scelta: avviarli durante il rientro
+     * coprirebbe la Catena e renderebbe il prompt difficile da leggere.
+     * Ritorna false quando non c'e' una scena WebGL da sincronizzare.
+     * @param {Function} callback
+     */
+    function attendiMiniatura(callback) {
+        if (!st || st.chiudendo || !st.tDecisa) return false;
+        const durataRientro = 520; // transizioni CSS di posizione e scala (500 ms) + margine
+        const attesa = Math.max(0, HOLD_DECISA_MS + durataRientro - (performance.now() - st.tDecisa));
+        setTimeout(() => { if (typeof callback === 'function') callback(); }, attesa);
+        return true;
+    }
+
     /** Smonta tutto: canvas rilasciato, DOM tolto. Una sola volta, qualunque strada abbia portato qui. */
     function finisci() {
         if (!st) return;
@@ -839,6 +855,7 @@ body.cgl-scena-piena #phaseAnnouncement{visibility:hidden!important}
         pronta,
         aggiorna,
         chiudi,
+        attendiMiniatura,
         /**
          * La scena sta mostrando QUESTO Link? Il motore lo chiede prima di rifare la carta grande a centro schermo alla
          * risoluzione: se la scena la mostra gia', un secondo effetto sulla stessa carta sarebbe solo confusione.

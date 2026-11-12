@@ -64,21 +64,37 @@ module.exports = {
         t.assert(r1.trapConsumed, 'Caso 1: la Trappola deve lasciare il Terreno dopo aver risposto');
         t.assert(r1.trapInGraveyard, 'Caso 1: la Trappola deve finire al Cimitero');
 
-        // --- Caso 2: due risposte incatenate allo stesso trigger, LIFO (l'ultima aggiunta risolve per prima). ---
+        // --- Caso 2: due risposte allo stesso trigger, con ordine LIFO verificato. ---
         const r2 = await t.evaluate(() => {
             return new Promise((resolve) => {
                 window.__testLog = [];
+                gameState.turn = 5;
                 gameState.botSTField = Array(5).fill(null);
                 gameState.botSTField[0] = { card: { id: 90003, uid: 'trap-onsummon-2', name: 'Test Trap OnSummon', type: 'trap' }, isFaceDown: true, setOnTurn: gameState.turn - 1 };
                 gameState.botHand = [{ id: 90005, uid: 'kuriboh-fake', name: 'Fake Kuriboh', type: 'monster' }];
+                // L'ordine di scelta deve essere ripetibile: la Trappola viene
+                // aggiunta per prima (campo prima della mano), Kuriboh per
+                // secondo. La Catena deve quindi risolverli nell'ordine opposto.
+                const chooseChainResponse = BotAI.chooseChainResponse;
+                BotAI.chooseChainResponse = (candidates) => candidates[0] || null;
                 DuelEngine.fireTrigger(
                     DuelEngine.TRIGGER.ON_NORMAL_SUMMON,
                     DuelEngine.makeContext('player', { summonedCard: { id: 90004, uid: 'fake-monster-2', name: 'Fake Monster', type: 'monster', attack: 100 }, summonedSlotIndex: 1, summonedPosition: 'attack' }),
-                    () => resolve({ log: window.__testLog.slice(), bothConsumed: gameState.botSTField[0] === null && gameState.botHand.length === 0 })
+                    () => {
+                        BotAI.chooseChainResponse = chooseChainResponse;
+                        resolve({
+                            log: window.__testLog.slice(),
+                            bothConsumed: gameState.botSTField[0] === null && gameState.botHand.length === 0
+                        });
+                    }
                 );
             });
         });
-        t.assert(r2.log.length > 0, 'Caso 2: almeno una risposta deve risolversi');
+        t.assert(r2.bothConsumed, 'Caso 2: entrambe le risposte devono essere aggiunte alla Catena');
+        t.assert(
+            JSON.stringify(r2.log) === JSON.stringify(['KURIBOH_RESOLVE', 'TRAP_ONSUMMON_RESOLVE']),
+            `Caso 2: l’ultima risposta deve risolversi per prima (ordine: ${r2.log.join(' → ')})`
+        );
 
         // --- Caso 3: attivazione manuale di una Magia, con una Trappola avversaria pronta a rispondere. ---
         const r3 = await t.evaluate(() => {
@@ -90,15 +106,27 @@ module.exports = {
                 gameState.botSTField = Array(5).fill(null);
                 gameState.botSTField[0] = { card: { id: 90002, uid: 'trap-fake', name: 'Fake Trap', type: 'trap' }, isFaceDown: true, setOnTurn: gameState.turn - 1 };
                 gameState.botGraveyard = [];
+                const attendiMiniatura = window.CatenaGL && CatenaGL.attendiMiniatura;
+                if (window.CatenaGL) {
+                    // Verifica che l'engine deleghi alla scena la sincronizzazione
+                    // prima di invocare gli effetti che possono aprire modali.
+                    CatenaGL.attendiMiniatura = (callback) => {
+                        window.__testLog.push('SCENA_MINIATURA');
+                        callback();
+                        return true;
+                    };
+                }
                 const activated = DuelEngine.activateCard('player', 'hand', 0);
                 const chainActiveRightAfterCall = DuelEngine.isChainActive();
                 const start = Date.now();
                 const poll = () => {
                     if (!DuelEngine.isChainActive() || Date.now() - start > 15000) {
+                        if (window.CatenaGL && attendiMiniatura) CatenaGL.attendiMiniatura = attendiMiniatura;
                         resolve({
                             activated,
                             chainActiveRightAfterCall,
                             log: window.__testLog.slice(),
+                            miniatureSyncSupported: typeof attendiMiniatura === 'function',
                             trapInGraveyard: gameState.botGraveyard.some((c) => c.id === 90002),
                             spellInGraveyard: gameState.playerGraveyard.some((c) => c.id === 90001),
                             chainActiveAfter: DuelEngine.isChainActive()
@@ -117,6 +145,11 @@ module.exports = {
         t.assert(r3.log.includes('SPELL_RESOLVE:player'), 'Caso 3: la Magia deve infine risolversi anche lei');
         t.assert(r3.trapInGraveyard, 'Caso 3: la Trappola deve finire al Cimitero');
         t.assert(r3.spellInGraveyard, 'Caso 3: la Magia deve finire al Cimitero');
+        const scenaPronta = r3.log.indexOf('SCENA_MINIATURA');
+        const primoEffetto = r3.log.indexOf('TRAP_RESOLVE:bot');
+        if (r3.miniatureSyncSupported) {
+            t.assert(scenaPronta !== -1 && scenaPronta < primoEffetto, 'Caso 3: la scena deve ridursi a miniatura prima della risoluzione e dei relativi modali');
+        }
 
         // --- Caso 4: sostituire la Magia Terreno non deve animare la vecchia
         // carta sopra l'attivazione della nuova, né perdere il suo slot sorgente. ---

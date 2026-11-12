@@ -47,6 +47,7 @@ uniform float uAlpha;    // 0..1: per far sparire/riapparire senza scatti
 uniform float uPx;       // pixel CSS per pixel del canvas (le scanline sono in px CSS)
 uniform float uGlitch;   // 0..1: durante il volo glitch e aberrazione sono al massimo
 uniform float uDis;      // -1 = intero; 0..1 = disintegrazione dal basso verso l'alto
+uniform float uActivate; // impulso breve: figura piu' leggibile quando un effetto automatico si attiva
 
 float h(float n){return fract(sin(n*91.3458)*47453.5453);}
 
@@ -102,6 +103,9 @@ void main(){
   float lum=dot(col,vec3(.299,.587,.114));
   col=mix(vec3(lum),col,.68)*vec3(.88,1.04,1.16)*1.12;
   col+=dietro*(1.-cov);
+  // L'attivazione deve leggersi anche su schermi piccoli: illumina la figura
+  // e il suo alone per un solo impulso, senza lampeggiare l'intero campo.
+  col+=vec3(.20,.72,1.)*(.20*cov+.52*max(cb-cov*.45,0.))*uActivate;
   float coperto=max(cov,cb*.6);
 
   // La maschera: il centro pieno, i bordi che si perdono nell'aria (la stessa dell'ologramma CSS).
@@ -209,7 +213,7 @@ void main(){
             if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error('link');
             gl.useProgram(prog);
             uni = {};
-            ['uRes', 'uTex', 'uT', 'uSeed', 'uBorn', 'uAsp', 'uImgAsp', 'uAlpha', 'uPx', 'uGlitch', 'uDis'].forEach((n) => { uni[n] = gl.getUniformLocation(prog, n); });
+            ['uRes', 'uTex', 'uT', 'uSeed', 'uBorn', 'uAsp', 'uImgAsp', 'uAlpha', 'uPx', 'uGlitch', 'uDis', 'uActivate'].forEach((n) => { uni[n] = gl.getUniformLocation(prog, n); });
             bufPos = gl.createBuffer();
             gl.enable(gl.BLEND);
             gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
@@ -304,7 +308,7 @@ void main(){
     }
 
     /** Disegna UN riquadro di ologramma (anche una copia-scia o uno che si disintegra). */
-    function quad(o, voce, bob, ox, oy, sc, alpha, glitch, dis, nascita) {
+    function quad(o, voce, bob, ox, oy, sc, alpha, glitch, dis, nascita, activation = 0) {
         const r = o.rect;
         const cx = r.left + r.w / 2 + ox; const cy = r.top + r.h / 2 + bob + oy;
         const hw = r.w / 2 * sc; const hh = r.h / 2 * sc;
@@ -327,6 +331,7 @@ void main(){
         gl.uniform1f(uni.uAlpha, alpha);
         gl.uniform1f(uni.uGlitch, glitch);
         gl.uniform1f(uni.uDis, dis);
+        gl.uniform1f(uni.uActivate, activation);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
@@ -380,13 +385,15 @@ void main(){
                 }
                 ox = volo.ox; oy = volo.oy; sc = volo.sc;
             }
+            let activationGlow = 0;
             if (o.zoom && ora < o.zoom.finoA) {
                 const progresso = Math.max(0, Math.min(1, (ora - o.zoom.inizio) / o.zoom.durata));
-                sc *= 1 + 0.14 * Math.sin(Math.PI * progresso);
+                activationGlow = Math.sin(Math.PI * progresso);
+                sc *= 1 + 0.20 * activationGlow;
             } else if (o.zoom) {
                 o.zoom = null;
             }
-            quad(o, voce, bob, ox, oy, sc, 1, volo ? 1 : 0, dis, nascita);
+            quad(o, voce, bob, ox, oy, sc, 1, volo ? 1 : 0, dis, nascita, activationGlow);
             disegnati++;
         });
         if (vivi.size) rid = requestAnimationFrame(disegna);

@@ -1893,9 +1893,9 @@
         }, 2000);
     }
 
-    /** Trigger forzato su una carta che resta sul campo: duplica solo la sua
-     * resa visiva nello stesso slot, così l'animazione continua anche se il
-     * motore ridisegna il nodo reale durante la risoluzione dell'effetto. */
+    /** Trigger automatico su una carta che resta sul campo: si anima il nodo
+     * reale nello slot. Un clone qui darebbe l'impressione che la carta vera
+     * resti ferma mentre una copia si solleva. */
     function playAutomaticFieldActivation(card) {
         if (!card || !card.uid || typeof window.findFieldCardElementByUid !== 'function') return false;
         const source = window.findFieldCardElementByUid(card.uid);
@@ -1914,20 +1914,13 @@
             return true;
         }
 
-        const rect = source.getBoundingClientRect();
-        if (!rect.width || !rect.height) return false;
-        const wrapper = document.createElement('div');
-        wrapper.className = 'fx-auto-field-lift';
-        wrapper.style.left = `${rect.left}px`;
-        wrapper.style.top = `${rect.top}px`;
-        wrapper.style.width = `${rect.width}px`;
-        wrapper.style.height = `${rect.height}px`;
-        const visual = source.cloneNode(true);
-        visual.removeAttribute('id');
-        visual.style.setProperty('--card-w', `${rect.width}px`);
-        visual.style.setProperty('--card-h', `${rect.height}px`);
-        wrapper.appendChild(visual);
-        document.body.appendChild(wrapper);
+        const slot = source.closest('.field-slot');
+        const animationTarget = slot || source;
+        animationTarget.classList.remove('fx-auto-field-lift-real');
+        // Forza il riavvio anche se lo stesso effetto automatico si attiva di
+        // nuovo sullo stesso slot prima che il browser scarichi la regola.
+        void animationTarget.offsetWidth;
+        animationTarget.classList.add('fx-auto-field-lift-real');
 
         // Il suono è lo stesso della comparsa centrale, al medesimo istante
         // (+260ms); anche il tempo totale resta pari ai 2 secondi già attesi
@@ -1939,7 +1932,7 @@
             if (card.type === 'trap') SFX.activateTrap();
             else SFX.activateSpell();
         }, 260);
-        setTimeout(() => wrapper.remove(), ACTIVATE_CENTER_DURATION_MS);
+        setTimeout(() => animationTarget.classList.remove('fx-auto-field-lift-real'), ACTIVATE_CENTER_DURATION_MS);
         return true;
     }
 

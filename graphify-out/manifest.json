@@ -418,10 +418,10 @@
     "semantic_hash": "a0d0ee4a5830ff7351a541eed7591355"
   },
   "js/engine/card-effects-4.js": {
-    "mtime": 1793555182.8793817,
-    "seen": 1793910198.2543685,
-    "ast_hash": "6200978cd9c6447adc3971002edc9667",
-    "semantic_hash": "6200978cd9c6447adc3971002edc9667"
+    "mtime": 1794440792.3405995,
+    "seen": 1794469661.8993924,
+    "ast_hash": "f3ba9b722b7492b5cf15031733d7b4ff",
+    "semantic_hash": ""
   },
   "js/engine/card-effects-5.js": {
     "mtime": 1792604170.7087324,
@@ -436,22 +436,22 @@
     "semantic_hash": "1082781f6209990a9f75a1720ef79ce5"
   },
   "js/engine/card-effects-7.js": {
-    "mtime": 1792772919.6063032,
-    "seen": 1793910198.2543685,
-    "ast_hash": "7e12c6dcd2aba2bc2b89df0fa4c02e9d",
-    "semantic_hash": "7e12c6dcd2aba2bc2b89df0fa4c02e9d"
+    "mtime": 1794439879.0099883,
+    "seen": 1794469661.9013867,
+    "ast_hash": "6dcfd759fb5246c97dbfc314b78e9139",
+    "semantic_hash": ""
   },
   "js/engine/card-effects-8.js": {
-    "mtime": 1793834612.424409,
-    "seen": 1793910198.2543685,
-    "ast_hash": "151cd38c7fbb995700d0f872b7a8d8bc",
-    "semantic_hash": "151cd38c7fbb995700d0f872b7a8d8bc"
+    "mtime": 1794469691.7989597,
+    "seen": 1794469779.9283826,
+    "ast_hash": "a7c84669f69c287493d4792d6359ea62",
+    "semantic_hash": ""
   },
   "js/engine/card-effects.js": {
-    "mtime": 1793535973.4806437,
-    "seen": 1793910198.2543685,
-    "ast_hash": "55f28bfa40f89f521eb4f0c8a4c98d79",
-    "semantic_hash": "55f28bfa40f89f521eb4f0c8a4c98d79"
+    "mtime": 1794469683.494186,
+    "seen": 1794469779.9283826,
+    "ast_hash": "d03b04e6048318f5b857fc44ae52b354",
+    "semantic_hash": ""
   },
   "js/engine/casuale.js": {
     "mtime": 1791272735.4297633,
@@ -472,9 +472,9 @@
     "semantic_hash": "dcd14125a9faf5071dedc66d14fd61d0"
   },
   "js/engine/duel-engine.js": {
-    "mtime": 1794429568.149795,
-    "seen": 1794429848.2878184,
-    "ast_hash": "0d9c3e3100c98d04b881de67d7400b98",
+    "mtime": 1794469498.3068993,
+    "seen": 1794469661.9028964,
+    "ast_hash": "1af7a6f8b6e931f77586e22163cd4372",
     "semantic_hash": ""
   },
   "js/engine/duel-sandbox.js": {
@@ -496,9 +496,9 @@
     "semantic_hash": ""
   },
   "js/engine/evocazioni.js": {
-    "mtime": 1794248692.3797867,
-    "seen": 1794256471.8672147,
-    "ast_hash": "22fff70b98698384894c40941c16f1f8",
+    "mtime": 1794439868.4829144,
+    "seen": 1794469661.9054165,
+    "ast_hash": "e7d2b2661f59754ee3c71e214b5394e7",
     "semantic_hash": ""
   },
   "js/engine/fasi.js": {
@@ -778,9 +778,9 @@
     "semantic_hash": ""
   },
   "js/ui/catena-webgl.js": {
-    "mtime": 1794436678.6857674,
-    "seen": 1794436864.5182972,
-    "ast_hash": "6fe2c6cb57d727ddcbd6629ad8b48379",
+    "mtime": 1794439622.9988282,
+    "seen": 1794439725.6939976,
+    "ast_hash": "ec8d327b795601fbc1885fe8e8d25053",
     "semantic_hash": ""
   },
   "js/ui/challenge-banner.js": {
@@ -844,9 +844,9 @@
     "semantic_hash": ""
   },
   "js/ui/effects.js": {
-    "mtime": 1794431077.522223,
-    "seen": 1794431196.0035176,
-    "ast_hash": "2aa8ca081eab7feb5e43a8ca74cdd1db",
+    "mtime": 1794440677.3485708,
+    "seen": 1794469661.9604802,
+    "ast_hash": "c274ac3c54dc704926818a419eeb33d9",
     "semantic_hash": ""
   },
   "js/ui/error-recovery.js": {
@@ -946,9 +946,9 @@
     "semantic_hash": ""
   },
   "js/ui/monster-hologram-webgl.js": {
-    "mtime": 1794431077.2057912,
-    "seen": 1794431196.0035176,
-    "ast_hash": "891d3836d0b3c142a41f992b6a1e8cb8",
+    "mtime": 1794440042.0551586,
+    "seen": 1794469661.9786556,
+    "ast_hash": "2a45f4742082ec6ad52dea20244c1782",
     "semantic_hash": ""
   },
   "js/ui/monster-hologram.js": {
@@ -1126,9 +1126,9 @@
     "semantic_hash": "57357a46c1d07a0fa18bbcd83581aaa6"
   },
   "package.json": {
-    "mtime": 1794438199.5153828,
-    "seen": 1794438261.2205858,
-    "ast_hash": "be483b5b00501b5500e73b0c3f9a52cf",
+    "mtime": 1794469477.6467016,
+    "seen": 1794469662.0068343,
+    "ast_hash": "55571010a5ffd57b4b1f7ac05447c98c",
     "semantic_hash": ""
   },
   "render.yaml": {
@@ -1527,9 +1527,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794438200.1879835,
-    "seen": 1794438261.2581422,
-    "ast_hash": "c033e4d7af7da81963ee946e9724e9f1",
+    "mtime": 1794469477.9520502,
+    "seen": 1794469662.0554533,
+    "ast_hash": "f2e0c5a62b20334cbcb906ccc36cfeaa",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -2003,10 +2003,10 @@
     "semantic_hash": "8e07fa64f040c0465c0779e8819abff4"
   },
   "tests/specs/chain-resolution.spec.js": {
-    "mtime": 1793908924.737073,
-    "seen": 1793910198.3611026,
-    "ast_hash": "4f576784c3306b5e0c4f6732a8dc516a",
-    "semantic_hash": "4f576784c3306b5e0c4f6732a8dc516a"
+    "mtime": 1794439667.6042306,
+    "seen": 1794439725.7970731,
+    "ast_hash": "0424138692f4f37903dfacb824838f12",
+    "semantic_hash": ""
   },
   "tests/specs/chain-stack-semi-3d.spec.js": {
     "mtime": 1790708485.833184,
@@ -4961,9 +4961,9 @@
     "semantic_hash": ""
   },
   "PROJECT_MAP.md": {
-    "mtime": 1794438200.5509913,
-    "seen": 1794438261.5658517,
-    "ast_hash": "c23e0cb9513303643876448d103ca594",
+    "mtime": 1794469478.243709,
+    "seen": 1794469662.51117,
+    "ast_hash": "69d5420092af0fe619fd36157c148d8c",
     "semantic_hash": ""
   },
   "PUBBLICAZIONE.md": {
@@ -25043,15 +25043,33 @@
     "semantic_hash": ""
   },
   "tests/specs/attivazione-automatica-sollevamento-slot.spec.js": {
-    "mtime": 1794431109.5924928,
-    "seen": 1794431196.0688243,
-    "ast_hash": "165ca64cc51a53514f7afae2925efba0",
+    "mtime": 1794469380.4795787,
+    "seen": 1794469662.071087,
+    "ast_hash": "179959ad744f1cfc33750dbf937051de",
     "semantic_hash": ""
   },
   "tests/specs/life-points-redraw.spec.js": {
     "mtime": 1794438173.9160788,
     "seen": 1794438261.3908823,
     "ast_hash": "e01dd6fb4521f378cab3929d6b2be9dd",
+    "semantic_hash": ""
+  },
+  "tests/specs/breaker-set-coperto.spec.js": {
+    "mtime": 1794439918.7092614,
+    "seen": 1794469662.1013288,
+    "ast_hash": "646ef24a66e8d165a3b2ab5ed14cb5c2",
+    "semantic_hash": ""
+  },
+  "tests/specs/extra-deck-non-entra-nel-mazzo.spec.js": {
+    "mtime": 1794469396.999511,
+    "seen": 1794469662.2002542,
+    "ast_hash": "c08b9e8f30aea0daa390a3b3e4eabe12",
+    "semantic_hash": ""
+  },
+  "tests/specs/pegasus-tributo-toon-ia.spec.js": {
+    "mtime": 1794469547.0381148,
+    "seen": 1794469662.3619273,
+    "ast_hash": "950868ec672015121b201955df1a3af1",
     "semantic_hash": ""
   },
   "package-lock.json": {

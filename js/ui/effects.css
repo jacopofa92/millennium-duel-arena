@@ -525,30 +525,30 @@
     60%      { filter: brightness(1.15) drop-shadow(0 0 10px rgba(247, 215, 116, 0.75)); }
 }
 
-/* I trigger automatici mostrano la carta nel suo slot: il wrapper conserva
-   intatta la rotazione 3D della carta (coperta/scoperta) e la solleva senza
-   alterare il transform applicato dal renderer. */
-.fx-auto-field-lift {
-    position: fixed;
-    z-index: 10030;
+/* L'attivazione automatica si vede sulla carta vera. `translate` e `scale`
+   sono proprietà indipendenti: non sovrascrivono transform/rotazione del
+   renderer, importante per le carte coperte e per la posa prospettica. */
+.field-slot.fx-auto-field-lift-real,
+.card.fx-auto-field-lift-real {
+    z-index: 10030 !important;
     pointer-events: none;
-    transform-origin: center bottom;
-    animation: fxAutoFieldLift 2s cubic-bezier(.22,.72,.24,1) forwards;
 }
-.fx-auto-field-lift > .card {
-    width: 100% !important;
-    height: 100% !important;
-    margin: 0 !important;
+.field-slot.fx-auto-field-lift-real > .card {
+    animation: fxAutoFieldLiftReal 2s cubic-bezier(.22,.72,.24,1) both;
 }
-@keyframes fxAutoFieldLift {
-    0%, 100% { opacity: 0; transform: translateY(0) scale(1); filter: brightness(1); }
-    12% { opacity: 1; }
-    28% { transform: translateY(-14px) scale(1.07); filter: brightness(1.4) drop-shadow(0 0 14px rgba(125,211,252,.9)); }
-    48% { opacity: 1; transform: translateY(-11px) scale(1.05); filter: brightness(1.2) drop-shadow(0 0 9px rgba(247,215,116,.75)); }
-    82% { opacity: .95; transform: translateY(-4px) scale(1.02); filter: brightness(1.08); }
+.card.fx-auto-field-lift-real {
+    animation: fxAutoFieldLiftReal 2s cubic-bezier(.22,.72,.24,1) both;
+}
+@keyframes fxAutoFieldLiftReal {
+    0%, 100% { translate: 0 0; scale: 1; filter: brightness(1); }
+    18% { translate: 0 -3px; scale: 1.015; filter: brightness(1.18) drop-shadow(0 0 7px rgba(125,211,252,.5)); }
+    36% { translate: 0 -12px; scale: 1.07; filter: brightness(1.42) drop-shadow(0 0 16px rgba(125,211,252,.95)); }
+    55% { translate: 0 -9px; scale: 1.055; filter: brightness(1.28) drop-shadow(0 0 12px rgba(247,215,116,.8)); }
+    82% { translate: 0 -3px; scale: 1.02; filter: brightness(1.1) drop-shadow(0 0 5px rgba(125,211,252,.45)); }
 }
 @media (prefers-reduced-motion: reduce) {
-    .fx-auto-field-lift { animation: none; opacity: 0; }
+    .field-slot.fx-auto-field-lift-real > .card,
+    .card.fx-auto-field-lift-real { animation: none; }
 }
 
 .fx-activate-overlay {

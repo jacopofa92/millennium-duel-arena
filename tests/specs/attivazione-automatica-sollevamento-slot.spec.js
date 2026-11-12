@@ -19,14 +19,15 @@ module.exports = {
             window.AudioLibrary = { tryPlayCardSound: () => { suono++; return true; } };
 
             const durata = FX.ACTIVATE_CENTER_DURATION_MS;
+            const cardBefore = document.querySelectorAll('.card[data-uid="auto-trigger-test"]').length;
             const partito = FX.playAutomaticFieldActivation({ uid: 'auto-trigger-test', type: 'spell' });
-            const wrapper = document.querySelector('.fx-auto-field-lift');
-            const posizione = wrapper && { left: wrapper.style.left, top: wrapper.style.top, width: wrapper.style.width };
+            const stessoNodoAnimato = source.classList.contains('fx-auto-field-lift-real');
+            const nessunClone = document.querySelectorAll('.card[data-uid="auto-trigger-test"]').length === cardBefore;
             const nessunPrimoPiano = !document.querySelector('.fx-activate-center-card, .fx-activate-center-backdrop');
             await new Promise((resolve) => setTimeout(resolve, 300));
             const suonoAlMomentoGiusto = suono === 1;
             await new Promise((resolve) => setTimeout(resolve, durata));
-            const rimosso = !document.querySelector('.fx-auto-field-lift');
+            const animazioneTerminata = !source.classList.contains('fx-auto-field-lift-real');
 
             let zoom = null;
             const hologramSetting = window.HologramSetting;
@@ -34,7 +35,7 @@ module.exports = {
             window.HologramSetting = { isAttivo: () => true };
             window.MonsterHolograms = { zoom: (uid, ms) => { zoom = { uid, ms }; return true; } };
             const attivatoMostro = FX.playAutomaticFieldActivation({ uid: 'auto-trigger-test', type: 'monster' });
-            const nienteSollevamento = !document.querySelector('.fx-auto-field-lift');
+            const nienteSollevamento = !source.classList.contains('fx-auto-field-lift-real');
             await new Promise((resolve) => setTimeout(resolve, 300));
             const stessoSuono = suono === 2;
 
@@ -43,12 +44,12 @@ module.exports = {
             window.HologramSetting = hologramSetting;
             window.MonsterHolograms = holograms;
             source.remove();
-            return { partito, posizione, nessunPrimoPiano, suonoAlMomentoGiusto, durata, rimosso,
+            return { partito, stessoNodoAnimato, nessunClone, nessunPrimoPiano, suonoAlMomentoGiusto, durata, animazioneTerminata,
                 attivatoMostro, nienteSollevamento, stessoSuono, zoom };
         });
-        assert(risultato.partito && risultato.posizione && risultato.nessunPrimoPiano,
-            `Il trigger parte nello slot senza overlay centrale: ${JSON.stringify(risultato)}`);
-        assert(risultato.suonoAlMomentoGiusto && risultato.durata === 2000 && risultato.rimosso,
+        assert(risultato.partito && risultato.stessoNodoAnimato && risultato.nessunClone && risultato.nessunPrimoPiano,
+            `Si anima la carta reale senza clone né overlay centrale: ${JSON.stringify(risultato)}`);
+        assert(risultato.suonoAlMomentoGiusto && risultato.durata === 2000 && risultato.animazioneTerminata,
             `Stesso suono e durata di 2 secondi: ${JSON.stringify(risultato)}`);
         assert(risultato.attivatoMostro && risultato.nienteSollevamento
             && risultato.zoom && risultato.zoom.ms === 2000 && risultato.stessoSuono,

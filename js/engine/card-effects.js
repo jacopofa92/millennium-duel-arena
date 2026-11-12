@@ -739,7 +739,12 @@
         }
         const chiaveDeck = Tavolo.chiave(ctx.owner, 'Deck');
         const chiaveConteggio = Tavolo.chiave(ctx.owner, 'DeckCount');
-        if (Array.isArray(gameState[chiaveDeck])) {
+        if (carta.extraDeck) {
+            if (!ctx.returnCardToDeck(ctx.owner, carta, 'top', { kind: 'graveyard', owner: ctx.owner })) {
+                grave.splice(i, 0, carta);
+                return false;
+            }
+        } else if (Array.isArray(gameState[chiaveDeck])) {
             // `pop()` pesca dalla FINE dell'array, quindi "in cima al
             // Deck" è la fine, non l'inizio (vedi drawCardsToHand).
             gameState[chiaveDeck].push(carta);
@@ -1666,6 +1671,24 @@
         }
         if (!indices) {
             const allIndices = field.map((s, i) => (s ? i : -1)).filter((i) => i !== -1);
+            if (Tavolo.eIA(ctx.owner)) {
+                // Per i costi automatici dell'IA non basta prendere la prima
+                // carta nello slot: con i Toon Pegasus sacrificava il Drago
+                // Toon Occhi Blu per pagare proprio un'altra copia. Prima si
+                // conservano le copie della carta evocata, poi si preferisce
+                // il mostro col valore attuale piu' basso; la carta resta
+                // comunque sacrificabile se e' l'unica scelta legale.
+                const valore = (index) => window.AI_SHARED && AI_SHARED.effAtk
+                    ? AI_SHARED.effAtk(field[index].card)
+                    : (window.DuelEngine && DuelEngine.getEffectiveAtk
+                        ? DuelEngine.getEffectiveAtk(field[index].card)
+                        : (field[index].card.attack || 0));
+                allIndices.sort((a, b) => {
+                    const stessaCartaA = field[a].card.id === ctx.card.id ? 1 : 0;
+                    const stessaCartaB = field[b].card.id === ctx.card.id ? 1 : 0;
+                    return stessaCartaA - stessaCartaB || valore(a) - valore(b);
+                });
+            }
             indices = tryAssign(allIndices);
         }
         if (!indices) return false;
