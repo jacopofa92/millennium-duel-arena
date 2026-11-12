@@ -25043,9 +25043,9 @@
     "semantic_hash": ""
   },
   "tests/specs/attivazione-automatica-sollevamento-slot.spec.js": {
-    "mtime": 1794470299.5822275,
-    "seen": 1794470399.6557589,
-    "ast_hash": "e74c5b8b160199c709c717da75f1a9e2",
+    "mtime": 1794470531.4458396,
+    "seen": 1794470591.175724,
+    "ast_hash": "2f61b5c92dbfed0b81a378263532724c",
     "semantic_hash": ""
   },
   "tests/specs/life-points-redraw.spec.js": {
