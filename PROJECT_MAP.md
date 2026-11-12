@@ -1,9 +1,10 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
-## Attivazione carta reale e ritorni Extra Deck (1.6.44)
+## Attivazione carta reale e ritorni Extra Deck (1.6.45)
 
-L'effetto automatico di sollevamento applica ora l'animazione al nodo della
-carta nello slot: non crea più un clone visibile sopra alla carta reale.
+L'effetto automatico di sollevamento applica ora l'animazione WAAPI al nodo
+della carta nello slot: non crea più un clone e non altera classi/stili DOM,
+quindi la firma usata da `riconciliaBoard` resta stabile durante il render.
 L'helper `returnCardToDeck` e `shuffleIntoDeck` instradano le carte
 `extraDeck` nell'Extra Deck; lo stesso vale per i ritorni dal Terreno e per
 gli effetti generici di rimescolamento (Giara di Fibra, Cavaliere Pinguino,
@@ -12,7 +13,7 @@ dell'Anima). La prova di rimescolamento della Catena verifica LIFO e che la
 scena diventi miniatura prima della risoluzione. Spec specifici:
 `attivazione-automatica-sollevamento-slot.spec.js`,
 `extra-deck-non-entra-nel-mazzo.spec.js`. Suite completa non eseguita.
-Versione/cache: 1.6.44 / v694.
+Versione/cache: 1.6.45 / v695.
 
 ## Catena, Set coperti e attivazioni ologramma (1.6.43)
 

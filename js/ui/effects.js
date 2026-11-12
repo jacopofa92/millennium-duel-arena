@@ -1914,13 +1914,32 @@
             return true;
         }
 
-        const slot = source.closest('.field-slot');
-        const animationTarget = slot || source;
-        animationTarget.classList.remove('fx-auto-field-lift-real');
-        // Forza il riavvio anche se lo stesso effetto automatico si attiva di
-        // nuovo sullo stesso slot prima che il browser scarichi la regola.
-        void animationTarget.offsetWidth;
-        animationTarget.classList.add('fx-auto-field-lift-real');
+        const durata = ACTIVATE_CENTER_DURATION_MS;
+        const preferisceMovimentoRidotto = window.matchMedia
+            && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (typeof source.animate === 'function' && !preferisceMovimentoRidotto) {
+            // Web Animations lavora sul nodo reale senza cambiare classi o
+            // stili HTML: la firma di renderFields resta stabile e il
+            // riconciliatore non ricrea la carta a metà del sollevamento.
+            const lift = source.animate([
+                { translate: '0 0', scale: '1', filter: 'brightness(1)', zIndex: '1' },
+                { offset: 0.18, translate: '0 -3px', scale: '1.015', filter: 'brightness(1.18) drop-shadow(0 0 7px rgba(125,211,252,.5))' },
+                { offset: 0.36, translate: '0 -12px', scale: '1.07', filter: 'brightness(1.42) drop-shadow(0 0 16px rgba(125,211,252,.95))', zIndex: '10030' },
+                { offset: 0.55, translate: '0 -9px', scale: '1.055', filter: 'brightness(1.28) drop-shadow(0 0 12px rgba(247,215,116,.8))', zIndex: '10030' },
+                { offset: 0.82, translate: '0 -3px', scale: '1.02', filter: 'brightness(1.1) drop-shadow(0 0 5px rgba(125,211,252,.45))', zIndex: '10030' },
+                { translate: '0 0', scale: '1', filter: 'brightness(1)', zIndex: '1' }
+            ], { duration: durata, easing: 'cubic-bezier(.22,.72,.24,1)', fill: 'both' });
+            // Rilascia subito il compositing al termine, senza lasciare
+            // trasformazioni persistenti sulla carta o sul suo renderer.
+            setTimeout(() => lift.cancel(), durata + 40);
+        } else {
+            // Fallback per WebView datate; i browser attuali usano il ramo
+            // WAAPI sopra, che non invalida la riconciliazione del campo.
+            source.classList.remove('fx-auto-field-lift-real');
+            void source.offsetWidth;
+            source.classList.add('fx-auto-field-lift-real');
+            setTimeout(() => source.classList.remove('fx-auto-field-lift-real'), durata);
+        }
 
         // Il suono è lo stesso della comparsa centrale, al medesimo istante
         // (+260ms); anche il tempo totale resta pari ai 2 secondi già attesi
@@ -1932,7 +1951,6 @@
             if (card.type === 'trap') SFX.activateTrap();
             else SFX.activateSpell();
         }, 260);
-        setTimeout(() => animationTarget.classList.remove('fx-auto-field-lift-real'), ACTIVATE_CENTER_DURATION_MS);
         return true;
     }
 

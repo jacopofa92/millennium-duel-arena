@@ -525,16 +525,12 @@
     60%      { filter: brightness(1.15) drop-shadow(0 0 10px rgba(247, 215, 116, 0.75)); }
 }
 
-/* L'attivazione automatica si vede sulla carta vera. `translate` e `scale`
-   sono proprietà indipendenti: non sovrascrivono transform/rotazione del
-   renderer, importante per le carte coperte e per la posa prospettica. */
-.field-slot.fx-auto-field-lift-real,
+/* Fallback per WebView senza Web Animations API; il percorso normale anima
+   il nodo reale via WAAPI senza mutarne la firma DOM. Proprietà indipendenti
+   preservano la rotazione/transform del renderer. */
 .card.fx-auto-field-lift-real {
     z-index: 10030 !important;
     pointer-events: none;
-}
-.field-slot.fx-auto-field-lift-real > .card {
-    animation: fxAutoFieldLiftReal 2s cubic-bezier(.22,.72,.24,1) both;
 }
 .card.fx-auto-field-lift-real {
     animation: fxAutoFieldLiftReal 2s cubic-bezier(.22,.72,.24,1) both;
@@ -547,7 +543,6 @@
     82% { translate: 0 -3px; scale: 1.02; filter: brightness(1.1) drop-shadow(0 0 5px rgba(125,211,252,.45)); }
 }
 @media (prefers-reduced-motion: reduce) {
-    .field-slot.fx-auto-field-lift-real > .card,
     .card.fx-auto-field-lift-real { animation: none; }
 }
 
