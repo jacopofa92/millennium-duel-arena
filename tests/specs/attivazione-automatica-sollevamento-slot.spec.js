@@ -16,7 +16,11 @@ module.exports = {
             window.findFieldCardElementByUid = (uid) => uid === 'auto-trigger-test' ? source : null;
             let suono = 0;
             const audio = window.AudioLibrary;
-            window.AudioLibrary = { tryPlayCardSound: () => { suono++; return true; } };
+            // Conserva gli altri metodi usati dal normale ciclo del duello
+            // (es. annunci di fase), sostituendo solo la riproduzione carta.
+            window.AudioLibrary = Object.assign(Object.create(audio), {
+                tryPlayCardSound: () => { suono++; return true; }
+            });
 
             const durata = FX.ACTIVATE_CENTER_DURATION_MS;
             const cardBefore = document.querySelectorAll('.card[data-uid="auto-trigger-test"]').length;
