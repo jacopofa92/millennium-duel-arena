@@ -1,5 +1,7 @@
 # TODO
 
+> **Stato al 12 novembre 2026**: lista storica del 9 ottobre. Il quadro aggiornato dei lavori aperti, con l'ordine consigliato, è in `VALUTAZIONE_2026-11-12.md` (stessa cartella) e in `WORK_IN_PROGRESS.md`. Il punto 1 (spazio su C:) va riverificato; i punti 3, 4 e 5 restano validi.
+
 Lista di lavoro aggiornata al 9 ottobre 2026. Codex riprende il 14 ottobre.
 
 ## 1. Liberare spazio sul disco C: — subito

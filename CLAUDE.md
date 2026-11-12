@@ -198,7 +198,7 @@ perde al prossimo build.
 
 ## Regole per il codice nuovo (sintesi; le motivazioni sono in docs/storia/)
 
-- **Modalita' nuove fuori dal motore**: vivono in js/modes/ e avvolgono la preparazione del duello (`preparaManiIniziali`); non si toccano js/engine/, effetti delle carte, IA, dati carte. Lo sorveglia `guardrail-modalita-fuori-dal-motore`. Un aggancio nuovo nel motore va approvato dall'autore e dichiarato nel guardrail.
+- **Modalita' nuove fuori dal motore**: vivono in `js/modes/` e avvolgono la preparazione del duello (`preparaManiIniziali`); non si toccano `js/engine/`, effetti delle carte, IA, dati carte. Lo sorveglia `guardrail-modalita-fuori-dal-motore`. Un aggancio nuovo nel motore va approvato dall'autore e dichiarato nel guardrail.
 - **Regole senza interfaccia**: un file di regola non usa `document.` (si passa da `PortaUI`) e non chiama per nome il disegno: avvisa col canale `EventiDuello` (`emetti`/`attendi`/`chiedi`, elenco chiuso `EVENTI`). Ogni scelta passa da `Decisioni.chiedi`, mai da `DuelEngineUI`.
 - **'player' e 'bot' sono solo i nomi dei due posti**: chi li controlla lo dice `Tavolo.controllore(posto)` ('persona'/'ia'/'remoto'); per decidere chi sceglie si chiede a `Tavolo`, mai al nome. Stato e IA si leggono con gli accessori di `Tavolo` (`Tavolo.mano(io)`...).
 - **Multiplayer a passo comune**: i due client eseguono tutta la partita e si scambiano comandi (`Comandi.esegui`) e decisioni. Quindi: casualita' di gioco solo da `ctx.random`/`Casuale` (mai `Math.random` nelle regole), timer delle regole da `PassoComune.dopo`, una mossa locale solo a duello fermo, uid deterministici. Un messaggio nuovo sul relay si fa viaggiare come campo in piu' di un tipo esistente.
