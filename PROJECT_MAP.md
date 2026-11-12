@@ -1,5 +1,15 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Artwork della pescata mantenuto a fine effetto (1.6.46)
+
+La firma del DOM usata da `reconcileHandCards` ignora `pending-deal` e
+`deal-in`: sono classi di animazione temporanee, non cambi della carta.
+Prima della correzione, dopo una pescata da effetto la firma conservava
+`pending-deal`; il render successivo sostituiva i nodi della mano e faceva
+ricaricare gli artwork. Lo spec `pescata-effetto-nessun-flash-preanimazione`
+ora verifica anche che nodi e immagini restino identici al render successivo.
+Suite completa non eseguita. Versione/cache: 1.6.46 / v696.
+
 ## Attivazione carta reale e ritorni Extra Deck (1.6.45)
 
 L'effetto automatico di sollevamento applica ora l'animazione WAAPI al nodo

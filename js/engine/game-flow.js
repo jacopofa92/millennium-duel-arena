@@ -2309,6 +2309,12 @@ function firmaRenderStabile(elemento) {
     // sostituito (immagine ricaricata e nessuna transizione, perché la carta nuova nasce già alzata).
     // La classe si riallinea sul nodo esistente in reconcileHandCards.
     copia.classList.remove('selected');
+    // Queste classi descrivono solo l'animazione di ingresso: pending-deal
+    // viene tolta da dealCardsWithStagger e deal-in subito dopo. Se restano
+    // nella firma memorizzata, il primo updateUI dopo una pescata trova una
+    // firma diversa e ricrea le carte appena pescate, facendo "rinfrescare"
+    // le illustrazioni a fine effetto (es. Anfora dell'Avidità).
+    copia.classList.remove('pending-deal', 'deal-in');
     // Un'immagine fallita viene rimossa da onerror; una appena costruita
     // esiste ancora fino a quel callback. In entrambi i casi la cornice
     // fallback descrive già interamente la carta e resta la firma stabile.

@@ -36,5 +36,21 @@ module.exports = {
         }));
         t.assert(final.every((v) => v && !v.pending && v.opacity > .5),
             'Dopo la distribuzione entrambe le carte devono essere normalmente visibili');
+
+        const refresh = await t.evaluate(() => {
+            const prima = ['draw-new-a', 'draw-new-b'].map((uid) =>
+                document.querySelector(`#playerHand .card[data-uid="${uid}"]`));
+            const artworkPrima = prima.map((el) => el && el.querySelector('.card-art-image, .card-image'));
+            updateUI();
+            const dopo = ['draw-new-a', 'draw-new-b'].map((uid) =>
+                document.querySelector(`#playerHand .card[data-uid="${uid}"]`));
+            const artworkDopo = dopo.map((el) => el && el.querySelector('.card-art-image, .card-image'));
+            return {
+                stessiNodi: prima.every((el, i) => el && el.isSameNode(dopo[i])),
+                stessoArtwork: artworkPrima.every((el, i) => !el || el.isSameNode(artworkDopo[i]))
+            };
+        });
+        t.assert(refresh.stessiNodi && refresh.stessoArtwork,
+            `Un render a fine effetto non deve ricreare le carte pescate né ricaricarne l’artwork: ${JSON.stringify(refresh)}`);
     }
 };
