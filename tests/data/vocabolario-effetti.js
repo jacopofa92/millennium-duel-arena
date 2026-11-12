@@ -95,6 +95,7 @@ module.exports = [
     "negatesEffectsOfBattleVictims",
     "onAnyMonsterReturnedToHand",
     "onAnyNormalOrFlipSummon",
+    "onAnyNormalSet",
     "onAnySpecialSummon",
     "onAttackDeclare",
     "onBanished",

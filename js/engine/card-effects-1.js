@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * card-effects-1.js — Effetti delle carte, parte 1 di 8.
  * =====================================================================
@@ -2112,7 +2113,7 @@
             } else if (roll <= 4) {
                 const grave = ctx.graveyard(ctx.owner);
                 let bestIndex = -1;
-                let bestCard = null;
+                let bestCard = /** @type {Card | null} */ (null);
                 grave.forEach((c, i) => {
                     if (c.type === 'monster' && (!bestCard || c.attack > bestCard.attack)) { bestCard = c; bestIndex = i; }
                 });
@@ -2901,7 +2902,8 @@
         activate(ctx) {
             const ownField = ctx.field(ctx.owner);
             let tributeIndex = -1;
-            let tributeCard = null;
+            // Il cast dice a TypeScript che la variabile cambia dentro la funzione del forEach: senza, la vede sempre null.
+            let tributeCard = /** @type {Card | null} */ (null);
             ownField.forEach((slot, i) => {
                 if (slot && !slot.isFaceDown && slot.card.race === 'Drago' && (!tributeCard || slot.card.attack > tributeCard.attack)) {
                     tributeIndex = i;

@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * card-effects.js — Gli effetti delle carte: helper condivisi e mappa.
  * =====================================================================

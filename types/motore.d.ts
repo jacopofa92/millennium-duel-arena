@@ -133,17 +133,23 @@ interface EngineActions {
     grantTemporaryAtkDefBonus(card: Card, atk: number, def: number, destroyAfter?: boolean): void;
     grantDamageStepOnlyBonus(card: Card, atk: number, def: number): void;
     clearTemporaryAtkDefBonus(): void;
-    destroyAllMonsters(owner: Owner): void;
+    /** Senza `owner` distrugge i mostri di entrambi i campi (Buco Nero). */
+    destroyAllMonsters(owner?: Owner): void;
     destroyAllCards(owner: Owner): void;
     overrideRaceUntilEndOfTurn(card: Card, newRace: string): void;
     /** Danno a `owner` (un valore negativo cura). */
     dealDamage(owner: Owner, amount: number): void;
-    negateActivation(): void;
-    drawCards(owner: Owner, amount: number): void;
+    /** Vero se l'attivazione in Catena e' stata davvero annullata (falso: nulla da annullare, o non annullabile). */
+    negateActivation(): boolean;
+    /** Torna quante carte ha pescato davvero (meno di `amount` a Deck finito). */
+    drawCards(owner: Owner, amount: number): number;
     specialSummon(owner: Owner, card: Card, slotIndex: number, position: Position, fromZone: FromZone, visualOptions?: object): boolean | void;
     findEmptyMonsterSlot(owner: Owner): number;
     createTokens(owner: Owner, count: number, template: Partial<Card>, options?: { cannotBeTributed?: boolean; [k: string]: any }): any;
-    shuffleIntoDeck(owner: Owner, cards: Card[]): void;
+    /** Falso se il rimescolo e' impossibile (nessun vero Deck salvato, es. Duello Demo): le carte restano a chi le ha. */
+    shuffleIntoDeck(owner: Owner, cards: Card[]): boolean;
+    /** Rimette una carta nel Deck corretto (le carte Extra Deck tornano all'Extra Deck). Falso se la carta non c'e' o non puo' tornare. */
+    returnCardToDeck(owner: Owner, card: Card, placement: 'top' | 'bottom' | string, source?: { kind: string; owner?: Owner; [k: string]: any }): boolean;
     searchDeckToHand(owner: Owner, matchFn: (c: Card) => boolean, maxCount?: number): Card[] | void;
     fusionSummon(owner: Owner, extraDeckIndex: number, materialLocations: any[], options?: object): any;
     banish(owner: Owner, card: Card, visualAlreadyStarted?: boolean): void;
@@ -152,7 +158,8 @@ interface EngineActions {
     banishFromGraveyard(owner: Owner, card: Card, actor?: Owner): boolean;
     banishTemporarily(owner: Owner, card: Card, returnTrigger: string, lockZoneIndex?: number): void;
     banishFromHandWithCountdown(owner: Owner, card: Card, standbys: number): void;
-    reviveFromGraveyardWithCountdown(owner: Owner, card: Card, standbys: number, position: Position): void;
+    /** `position` e' 'attack' se omessa. */
+    reviveFromGraveyardWithCountdown(owner: Owner, card: Card, standbys: number, position?: Position): void;
     queueDelayedDestroyAtOpponentEndPhase(queuedByOwner: Owner, targetOwner: Owner, targetCard: Card, ends: number): void;
     discardRandomFromHand(owner: Owner): Card | null | undefined;
     discardChosenFromHand(owner: Owner, handIndex: number): Card | null | undefined;
@@ -164,8 +171,9 @@ interface EngineActions {
     sendMonsterToGraveyard(owner: Owner, index: number): void;
     /** Manda dalla mano al Cimitero senza considerare la carta scartata. */
     sendChosenFromHandToGraveyard(owner: Owner, handIndex: number): any;
-    takeControl(newOwner: Owner, fromOwner: Owner, fromIndex: number, permanent?: boolean): void;
-    swapControl(ownerA: Owner, indexA: number, ownerB: Owner, indexB: number, permanent?: boolean): void;
+    /** Falso se la presa non e' avvenuta (casella vuota, mostro immune alla carta, nessuna casella libera). */
+    takeControl(newOwner: Owner, fromOwner: Owner, fromIndex: number, permanent?: boolean): boolean;
+    swapControl(ownerA: Owner, indexA: number, ownerB: Owner, indexB: number, permanent?: boolean): boolean | void;
 }
 
 /**
@@ -236,7 +244,8 @@ interface CardContext extends EngineActions {
     destroyedCardOwner?: Owner;
     destroyedByOwner?: Owner;
     destroyedByCard?: Card;
-    destroyedByOpponentCard?: boolean;
+    /** L'ALTRO mostro dello scontro, SOLO se distrutto in battaglia (null per un effetto Carta): serve a distinguere le due cose. */
+    destroyedByOpponentCard?: Card | null;
     destroyerCard?: Card;
     destroyedWasAttackPosition?: boolean;
     wasFaceDown?: boolean;
@@ -333,6 +342,52 @@ declare var cardDatabase: Card[];
  * passa a // @ts-check. Senza queste righe ogni file controllato
  * produrrebbe errori "non esiste su Window" per ogni riferimento.
  */
+/**
+ * Una scelta del duello (js/engine/decisioni.js). Descritta per intero nel commento di quel file:
+ * qui i campi che le carte usano davvero. Resta l'indice perche' ogni tipo di scelta ne porta di suoi
+ * (cartaInnesco e momento per 'risposta', postoAssoluto/locale per il passo comune a posti).
+ */
+interface RichiestaDecisione {
+    chi: Owner;
+    tipo?: 'carte' | 'opzioni' | 'posizione' | 'coppia' | 'presa-visione' | 'risposta';
+    candidati?: any[];
+    titolo?: string;
+    testo?: string;
+    vuota?: string;
+    ancora?: any;
+    mostra?: (candidato: any) => any;
+    /** Cosa sceglie il bot (o un duello senza interfaccia). Senza, il primo candidato. */
+    automatica?: (candidati: any[]) => any;
+    annullabile?: boolean;
+    automaticaSeUnica?: boolean;
+    [chiave: string]: any;
+}
+declare var Decisioni: {
+    /** Chiede la scelta a chi tocca (persona, bot, avversario remoto). Il risultato arriva SEMPRE a onDeciso, anche asincrono. */
+    chiedi(richiesta: RichiestaDecisione, onDeciso: (scelta: any) => void): void;
+    rispondeUnaPersona(chi: Owner | string, tipo?: string): boolean;
+    inSospeso(): null | { id: number; chi: string; tipo: string; titolo?: string; testo?: string; candidati: any[] };
+    rispondi(valore: any): boolean;
+    riproponi(): boolean;
+};
+/** La casualita' di GIOCO (js/engine/casuale.js): mai Math.random nelle regole. */
+declare var Casuale: {
+    random(): number;
+    intero(n: number): number;
+    mescola<T>(elenco: T[]): T[];
+    semina(seme: number): void;
+    libera(): void;
+    condivisa(): boolean;
+};
+/** L'unico punto da cui le regole toccano la pagina (js/engine/porta-ui.js): senza pagina risponde "nessun elemento". */
+declare var PortaUI: {
+    presente: boolean;
+    query(selettore: string): any;
+    queryAll(selettore: string): any;
+    byId(id: string): any;
+};
+declare var EffectTemplates: any;
+declare var DuelDialogues: any;
 declare var DuelEngine: any;
 declare var DuelEngineUI: any;
 declare var CardEffectsShared: any;

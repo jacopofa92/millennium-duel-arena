@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * card-effects-6.js — Effetti delle carte, parte 6 di 8.
  * =====================================================================
@@ -2363,7 +2364,7 @@
         activate(ctx) {
             const ownField = ctx.field(ctx.owner);
             let tributeIndex = -1;
-            let tributeCard = null;
+            let tributeCard = /** @type {Card | null} */ (null);
             ownField.forEach((slot, i) => {
                 if (slot && !slot.isFaceDown && slot.card.race === 'Dinosauro' && (!tributeCard || slot.card.attack < tributeCard.attack)) {
                     tributeIndex = i;

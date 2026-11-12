@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * card-effects-4.js — Effetti delle carte, parte 4 di 8.
  * =====================================================================
@@ -452,7 +453,7 @@
     // ================================================================
     CardEffects.register(215, {
         onOwnSpellTrapDestroyed(ctx) {
-            let target = null;
+            let target = /** @type {{ owner: Owner, index: number } | null} */ (null);
             let targetOwner = null;
             [ctx.opponent, ctx.owner].forEach((owner) => {
                 if (target) return;

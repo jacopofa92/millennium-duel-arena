@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * card-effects-5.js — Effetti delle carte, parte 5 di 8.
  * =====================================================================
@@ -2312,7 +2313,7 @@
             return Tavolo.ordine().some((owner) => ctx.field(owner).some((s) => s && !s.isFaceDown && s.position === 'attack'));
         },
         activate(ctx) {
-            let best = null;
+            let best = /** @type {{ owner: Owner, index: number, atk: number, card: Card } | null} */ (null);
             Tavolo.ordine().forEach((owner) => {
                 ctx.field(owner).forEach((slot, index) => {
                     if (!slot || slot.isFaceDown || slot.position !== 'attack') return;

@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * card-effects-2.js — Effetti delle carte, parte 2 di 8.
  * =====================================================================
@@ -117,7 +118,7 @@
         activate(ctx) {
             const ownField = ctx.field(ctx.owner);
             let tributeIndex = -1;
-            let tributeCard = null;
+            let tributeCard = /** @type {Card | null} */ (null);
             ownField.forEach((slot, i) => {
                 if (slot && !slot.isFaceDown && slot.card.attribute === 'OSCURITÀ' && slot.card.attack <= 1000) {
                     tributeIndex = i;

@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * card-effects-7.js — Effetti delle carte, parte 7 di 8.
  * =====================================================================
