@@ -1,0 +1,365 @@
+/* CSS del duello, parte 1 di 12, estratta da duelMonstersCore.html (righe 131-492 del vecchio blocco <style>).
+   Le parti vanno caricate IN ORDINE (la cascata dipende dall'ordine): 01 ... 12. Non riordinare le regole fra le parti
+   senza ripetere tools/impronta-stili-duello.js. I percorsi url() sono relativi a questo file. */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* Niente selezione di testo/pressione lunga sul contenuto del gioco (nomi
+       carte, personaggi, pulsanti...): su mobile un tocco prolungato apriva
+       il menu di sistema "Cerca su Google"/copia invece di far scattare
+       l'interazione del gioco. input/textarea/select restano selezionabili
+       normalmente, altrimenti non si potrebbe più scrivere nei campi.
+       -webkit-tap-highlight-color: via anche il rettangolo azzurrino che
+       il browser mobile dipinge sopra QUALUNQUE elemento toccato —
+       segnalato dall'utente tenendo premuto. Non toglie alcun riscontro
+       al tocco: i pulsanti del gioco hanno il proprio stato ":active",
+       che quel rettangolo si limitava a coprire con un colore di sistema
+       estraneo alla tavolozza. Il contorno di messa a fuoco da tastiera
+       resta intatto: quello NON passa da questa proprietà.
+       overscroll-behavior: niente rimbalzo elastico quando si trascina
+       la pagina oltre il bordo, e niente "tira per ricaricare" — su una
+       pagina di gioco quel gesto e' a un dito di distanza dal ricaricare
+       tutto a meta' duello. */
+    html, body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; overscroll-behavior-y: none; }
+    input, textarea, select { -webkit-user-select: text; user-select: text; }
+        :root {
+            /* Proporzioni reali di una carta Yu-Gi-Oh (larghezza/altezza ≈ 0.685).
+               Le dimensioni usano clamp(min, min(Xvh, Yvw), max): dipendono
+               SIA dall'altezza che dalla larghezza della finestra, non solo
+               dall'altezza come in passato. Così su schermi bassi E STRETTI
+               (es. telefono in orizzontale, 700x400) tutto si rimpicciolisce
+               per restare sempre dentro lo schermo senza clipping, mentre su
+               schermi grandi/ultrawide il campo può crescere ben oltre i
+               vecchi 1400px e sfruttare davvero tutto lo spazio disponibile. */
+            --card-w: clamp(46px, min(8.8vh, 7.6vw), 148px);
+            --card-h: calc(var(--card-w) / var(--card-ratio));
+            --hand-lift: clamp(4px, 1vh, 12px);
+            /* Distanza di #botInfo/#playerInfo dal proprio angolo schermo
+               (position:fixed, vedi più sotto) — condivisa con il
+               margine verticale della mano in verticale su mobile (vedi
+               @media (orientation: portrait)), così quella riga dedicata
+               resta sempre allineata a QUALUNQUE valore avesse davvero
+               l'offset dell'avatar, invece di un numero indovinato a
+               parte che rischierebbe di disallinearsi in futuro. */
+            --duelist-box-offset: clamp(8px, 2vh, 22px);
+
+            /* Carte in mano: più grandi delle carte sul campo, solo qui */
+            --hand-card-w: clamp(58px, min(11.4vh, 10vw), 186px);
+            --hand-card-h: calc(var(--hand-card-w) / var(--card-ratio));
+
+            /* Mano dell'AVVERSARIO: solo dorsi, per far vedere quante carte
+               ha senza rivelarne il contenuto — carte volutamente più
+               piccole di quelle del giocatore (sono informazione, non
+               interazione) così pesano poco sul budget verticale che ora
+               si divide tra tre righe invece di due (mano bot + campo +
+               mano giocatore). */
+            --bot-hand-card-w: clamp(24px, min(4.4vh, 3.8vw), 68px);
+            --bot-hand-card-h: calc(var(--bot-hand-card-w) / var(--card-ratio));
+
+            /* Slot del Terreno: più spazio intorno alla carta + più gap */
+            --field-slot-pad: clamp(6px, min(1.4vh, 1.2vw), 20px);
+            --field-slot-w: calc(var(--card-w) + var(--field-slot-pad));
+            --field-slot-h: calc(var(--card-h) + var(--field-slot-pad));
+            /* Un mostro in Posizione di Difesa è ruotato di 90° (vedi
+               .card.defense-pos), quindi la sua larghezza visibile diventa
+               la sua ALTEZZA (circa 1.46× la larghezza normale, essendo le
+               carte 0.685 larghezza/altezza) e sborda dal proprio slot. I
+               coefficienti vh/vw qui sotto sono calibrati apposta (stessa
+               proporzione di --card-w/--field-slot-pad) perché due mostri
+               adiacenti ENTRAMBI in Difesa non si tocchino più, a qualunque
+               dimensione schermo — non solo "un gap un po' più largo a
+               caso".*/
+            --field-gap: clamp(12px, min(2.9vh, 2.6vw), 36px);
+
+            /* Anteprima carta nel pannello descrizione */
+            --info-card-w: clamp(140px, 21vh, 250px);
+
+            /* Larghezza delle colonne laterali del campo (info giocatori):
+               si restringono su schermi stretti invece di restare fisse. */
+            --side-col-w: clamp(72px, 15vw, 190px);
+            /* Colonna destra: più ampia della sinistra perché ospita anche
+               il pannello descrizione carta. Sotto i 900px quel pannello
+               diventa un cassetto a scomparsa (vedi media query) e questa
+               variabile viene ridotta alla larghezza della colonna sinistra. */
+            --info-panel-w: clamp(190px, 21vw, 320px);
+        }
+        html {
+            height: 100%;
+        }
+        body {
+            height: 100dvh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background: url('../../images/fields/dirigibileKaibaCorp.jpg') center/cover no-repeat;
+            color: white;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+        }
+        /* Su schermi touch (telefoni/tablet, dove il risparmio di banda/CPU
+           conta davvero) usa la variante compressa del Terreno di default
+           — su desktop (pointer fine) resta quella originale qui sopra,
+           su richiesta esplicita dell'utente. Riguarda SOLO questo sfondo
+           CSS di default: la sovrascrittura dinamica per ?field=X (più
+           sotto in questo file) applica la stessa logica via JS. */
+        @media (pointer: coarse) {
+            body { background-image: url('../../images/fields/mobile/dirigibileKaibaCorp.jpg'); }
+        }
+        body::before {
+            /* Vignettatura ambientale attorno al campo: rende il centro
+               scena più "a fuoco", stile Master Duel. Puramente decorativa,
+               non interferisce con i click (pointer-events: none). */
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            background: radial-gradient(ellipse at 50% 46%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.32) 82%, rgba(0,0,0,0.55) 100%);
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        /* Stile per la freccia d'attacco SVG */
+        /* ============================================================
+           Banner "avversario disconnesso" durante un Duello Multiplayer
+           già avviato — vedi js/multiplayer.js. La lobby vera e propria
+           (creazione/adesione a una stanza) vive nella sua pagina
+           dedicata, multiplayer.html, non più qui.
+           ============================================================ */
+        .mp-opponent-left-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 20010;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, rgba(192,57,43,0.95), rgba(120,30,20,0.95));
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+        }
+        .mp-opponent-left-banner a {
+            color: #fff;
+            background: rgba(255,255,255,0.18);
+            padding: 6px 14px;
+            border-radius: 999px;
+            text-decoration: none;
+        }
+
+        #attack-arrow-svg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Rende l'SVG "trasparente" ai click */
+            z-index: 10000;
+            display: none; /* Nascosto di default */
+        }
+        /* Collegamento Equip<->mostro (vedi renderEquipLinks, game-flow.js):
+           z-index più basso della freccia d'attacco (10000), sempre presente
+           nel DOM ma vuoto quando non c'è alcun equip in campo — niente
+           display:none/block da alternare, il contenuto stesso decide se
+           si vede qualcosa. */
+        #equip-links-svg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 40;
+        }
+        .equip-link-line {
+            stroke: #f7d774;
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-dasharray: 5 6;
+            opacity: 0.95;
+            filter: drop-shadow(0 0 4px rgba(247, 215, 116, 0.85)) drop-shadow(0 0 9px rgba(247, 215, 116, 0.5));
+            animation: equipLinkFlow 1.4s linear infinite;
+        }
+        @keyframes equipLinkFlow {
+            to { stroke-dashoffset: -22; }
+        }
+        /* Pallini alle due estremità (mostro + Carta Equipaggiamento):
+           restano un indizio chiaro del collegamento anche quando il
+           segmento è cortissimo (slot verticalmente adiacenti) o quasi
+           del tutto coperto da un badge/etichetta sopra le carte. */
+        .equip-link-dot {
+            fill: #fff3cf;
+            stroke: #b8860b;
+            stroke-width: 1.5;
+            filter: drop-shadow(0 0 4px rgba(247, 215, 116, 0.9));
+        }
+        /* Freccia d'attacco: prima una semplice linea rossa piatta —
+           richiesta esplicita dell'utente di renderla "più figa". Ora un
+           tratto sfumato (giallo energia -> rosso attacco, stesso
+           #attackArrowGradient anche sulla punta) con un bagliore doppio
+           via drop-shadow (si applica all'intero risultato renderizzato
+           dell'elemento, punta della freccia inclusa, non solo al tratto)
+           e un flusso animato di trattini che scorre verso il bersaglio —
+           suggerisce energia in movimento invece di un segmento statico. */
+        /* Rifatta: tratto CURVO (un arco lieve, come la traiettoria di un colpo) con un alone largo sotto, i
+           trattini che scorrono verso il bersaglio, una punta nitida e, quando si aggancia un bersaglio,
+           un mirino che pulsa e colori più caldi. I colori sono variabili: lo stato "agganciato" li cambia. */
+        #attack-arrow-svg {
+            --freccia-c0: #fff0b8; --freccia-c1: #ff9d3f; --freccia-c2: #e74c3c;
+        }
+        #attack-arrow-svg.attack-arrow--locked {
+            --freccia-c0: #fff7d6; --freccia-c1: #ffcf5a; --freccia-c2: #ff4a2f;
+        }
+        #attack-arrow-glow {
+            fill: none;
+            stroke: url(#attackArrowGradient);
+            stroke-width: 18;
+            stroke-linecap: round;
+            opacity: 0.22;
+            filter: blur(5px);
+        }
+        #attack-arrow-svg.attack-arrow--locked #attack-arrow-glow { opacity: 0.4; stroke-width: 24; }
+        #attack-arrow-line {
+            fill: none;
+            stroke: url(#attackArrowGradient);
+            stroke-width: 6;
+            stroke-linecap: round;
+            stroke-dasharray: 14 9;
+            filter: drop-shadow(0 0 4px rgba(255, 170, 60, 0.85)) drop-shadow(0 0 11px rgba(231, 76, 60, 0.5));
+            animation: attackArrowFlow 0.5s linear infinite;
+        }
+        #attack-arrow-svg.attack-arrow--locked #attack-arrow-line {
+            stroke-width: 8;
+            animation-duration: 0.32s;
+        }
+        @keyframes attackArrowFlow {
+            to { stroke-dashoffset: -23; }
+        }
+        /* Mirino sul bersaglio agganciato. */
+        #attack-arrow-target {
+            fill: rgba(255, 90, 60, 0.12);
+            stroke: url(#attackArrowGradient);
+            stroke-width: 2.5;
+            stroke-dasharray: 7 6;
+            opacity: 0;
+            transform-box: fill-box;
+            transform-origin: center;
+            filter: drop-shadow(0 0 6px rgba(255, 120, 60, 0.85));
+            transition: opacity 0.12s ease-out;
+        }
+        #attack-arrow-svg.attack-arrow--locked #attack-arrow-target {
+            opacity: 1;
+            animation: attackArrowReticle 1.1s linear infinite;
+        }
+        @keyframes attackArrowReticle {
+            from { transform: rotate(0deg) scale(1); }
+            50%  { transform: rotate(180deg) scale(1.12); }
+            to   { transform: rotate(360deg) scale(1); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #attack-arrow-line, #attack-arrow-origin, #attack-arrow-svg.attack-arrow--locked #attack-arrow-target { animation: none; }
+        }
+        /* Anello pulsante nel punto di origine (il mostro che attacca) —
+           JS lo posiziona una sola volta all'inizio del trascinamento
+           (startAttackDrag, game-flow.js), non segue il puntatore come la
+           linea. */
+        #attack-arrow-origin {
+            fill: rgba(231, 76, 60, 0.18);
+            stroke: url(#attackArrowGradient);
+            stroke-width: 3;
+            filter: drop-shadow(0 0 8px rgba(255, 170, 60, 0.8));
+            transform-box: fill-box;
+            transform-origin: center;
+            animation: attackArrowPulse 1s ease-in-out infinite;
+        }
+        @keyframes attackArrowPulse {
+            0%, 100% { r: 9; opacity: 0.95; }
+            50% { r: 15; opacity: 0.45; }
+        }
+        /* Bersaglio "agganciato" mentre si trascina la freccia — lo stesso
+           mostro (o la mano del bot, per un attacco diretto) che verrebbe
+           colpito rilasciando ORA, calcolato dalla stessa identica euristica
+           di endAttackDrag/findNearestBotMonsterSlot: mai un'anteprima che
+           mente su cosa succederà davvero al rilascio. */
+        .field-slot.attack-target-hover {
+            outline: 3px solid rgba(231, 76, 60, 0.9);
+            outline-offset: 2px;
+            box-shadow: 0 0 18px 4px rgba(231, 76, 60, 0.55), inset 0 0 22px rgba(231, 76, 60, 0.3);
+            border-radius: 8px;
+            animation: attackTargetPulse 0.7s ease-in-out infinite;
+        }
+        @keyframes attackTargetPulse {
+            0%, 100% { box-shadow: 0 0 18px 4px rgba(231, 76, 60, 0.55), inset 0 0 22px rgba(231, 76, 60, 0.3); }
+            50% { box-shadow: 0 0 28px 9px rgba(231, 76, 60, 0.78), inset 0 0 32px rgba(231, 76, 60, 0.4); }
+        }
+        /* Attacco diretto "agganciato": la freccia si è attaccata alla mano
+           dell'avversario (vedi aggiornaAggancioDiretto in game-flow.js), e
+           la mano si accende come un bersaglio — stesso rosso del mostro
+           agganciato, perché è la stessa informazione: "rilascia qui e
+           colpisci questo". Giallo come le bande sarebbe stato più "a
+           tema", ma confonderebbe un bersaglio con un avviso. */
+        /* Si accendono le CARTE della mano, non il contenitore: la fila
+           della mano è larga quanto lo schermo, e un bordo su di lei
+           tagliava tutta la parte alta (visto in foto). */
+        .hand--bot.attack-target-hover .card {
+            outline: 2px solid rgba(231, 76, 60, 0.95);
+            outline-offset: 1px;
+            animation: attackTargetPulse 0.7s ease-in-out infinite;
+        }
+        .game-container {
+            /* Prima era bloccato a 1400px: su monitor grandi/ultrawide
+               lasciava il campo "isolato" in un'isola centrale con tutto
+               lo spazio attorno sprecato. Ora cresce fino al 98% della
+               finestra, sfruttando davvero tutta la superficie disponibile. */
+            max-width: min(2000px, 98vw);
+            width: 100%;
+            margin: 0 auto;
+            padding: clamp(6px, 1.5vh, 20px) clamp(6px, 2vw, 20px);
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+            /* Superficie di composizione PERMANENTE. Questo contenitore
+               viene traslato in tre momenti diversi (intro camera-3D,
+               annuncio "TURNO", scossa di ogni battaglia — vedi
+               js/ui/fx-gsap.js): senza questa riga il browser gli crea
+               una superficie da un milione di pixel quando la scossa
+               comincia e la butta via quando finisce, rasterizzando tutto
+               due volte ad ogni colpo. Misurato col profiler su un
+               attacco mostro-contro-mostro: la rasterizzazione passa da
+               ~1160ms a ~850ms in 2,6 secondi (-28%), e a gioco fermo
+               non costa nulla (59ms, zero frame persi).
+
+               EFFETTO COLLATERALE ACCETTATO, misurato e non dedotto:
+               `will-change: transform` rende questo contenitore il punto
+               di riferimento dei suoi discendenti `position: fixed`. I
+               badge di sistema sono già stati spostati fuori apposta
+               (vedi il commento sul loro markup, in fondo al body);
+               resta solo .card-info-panel, che su mobile è fisso e sta
+               nella colonna destra della griglia. Da aperto si sposta di
+               4px (8px su schermo orizzontale), verticale invariato, mai
+               ritagliato — e il rischio "scorre insieme al contenitore"
+               non si materializza: .game-container non ha mai spazio
+               scorribile a nessuna misura mobile provata (360/390/430
+               verticali, 844 orizzontale). Su desktop il pannello è
+               `position: relative` e non è toccato affatto. */
+            will-change: transform;
+        }
+        /* Un layer permanente grande quanto tutto il duello aiuta il PC ma
+           su WebView consuma una texture importante per l'intera partita.
+           Dopo diversi duelli la pressione sulla memoria del compositore
+           causava espulsioni e lampi. Su touch il layer viene promosso solo
+           quando una classe/GSAP lo anima davvero. */
+        @media (pointer: coarse) {
+            .game-container { will-change: auto; }
+            .game-container.camera-intro { will-change: transform, opacity, filter; }
+        }

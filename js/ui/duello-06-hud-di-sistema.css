@@ -1,0 +1,325 @@
+/* CSS del duello, parte 6 di 12, estratta da duelMonstersCore.html (righe 2641-2962 del vecchio blocco <style>).
+   Le parti vanno caricate IN ORDINE (la cascata dipende dall'ordine): 01 ... 12. Non riordinare le regole fra le parti
+   senza ripetere tools/impronta-stili-duello.js. I percorsi url() sono relativi a questo file. */
+        /* ============================================================
+           ANGOLO DI SISTEMA in alto a destra: tempo, turno, difficoltà e
+           Abbandona in UN pannello, con la stessa ombra a triangolo sfumato
+           delle plance dei duellanti. Prima erano tre pillole impilate con
+           posizioni in pixel ripetute a mano per ogni misura di schermo — ed
+           era lì che si scontravano.
+           - Tempo, Turno e Livello sono tre "letture": etichetta piccola in
+             oro sopra, valore sotto. La difficoltà la scrive duel-session.js
+             (testo + classe diff--facile/medio/difficile): l'etichetta
+             "Livello" arriva da un ::before, che quel testo non tocca.
+           - Abbandona è un pulsante tondo con la bandiera. Su desktop la
+             scritta si apre al passaggio del mouse/al focus; su telefono
+             resta solo l'icona, con un'area di tocco più grande del disegno.
+           - Su telefono le etichette spariscono (restano i valori) e in
+             verticale il pannello va su due righe, per restare stretto e mai
+             più alto della riga dell'avatar.
+           Il pannello è fisso e fuori da .game-container (vedi il commento
+           sul markup). z-index 15: sopra il campo, sotto plance (20),
+           ologrammi (30), linee Equip (40) e freccia d'attacco (10000).
+           ============================================================ */
+        .hud-sistema {
+            --hud-pad-y: clamp(8px, 1.2vh, 14px);
+            --hud-pad-x: clamp(12px, 1.4vw, 22px);
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 15;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: clamp(12px, 1.4vw, 22px);
+            padding: var(--hud-pad-y) var(--hud-pad-x);
+            isolation: isolate;
+        }
+        .hud-sistema::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: -55%;
+            bottom: -130%;
+            z-index: -1;
+            pointer-events: none;
+            background: linear-gradient(to bottom left,
+                rgba(6, 6, 12, 0.95) 0%,
+                rgba(6, 6, 12, 0.9) 16%,
+                rgba(6, 6, 12, 0.76) 30%,
+                rgba(6, 6, 12, 0.52) 42%,
+                rgba(6, 6, 12, 0.26) 52%,
+                rgba(6, 6, 12, 0.08) 59%,
+                rgba(6, 6, 12, 0) 64%);
+        }
+        .duel-timer-badge {
+            display: flex;
+            align-items: center;
+            gap: clamp(12px, 1.4vw, 22px);
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+        /* Una "lettura": etichetta sopra, valore sotto. Allineate a destra,
+           verso il bordo dello schermo. */
+        .hud-stat,
+        #difficultyBadge.duelist-difficulty {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            line-height: 1.05;
+        }
+        .hud-lab,
+        #difficultyBadge.duelist-difficulty::before {
+            font-family: inherit;
+            font-size: clamp(0.46rem, 0.7vw, 0.58rem);
+            font-weight: 800;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(247, 215, 116, 0.8);
+            margin-bottom: 3px;
+        }
+        .hud-val {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: clamp(0.9rem, 1.6vw, 1.3rem);
+            font-weight: 700;
+            color: #fbefd0;
+            letter-spacing: 0.03em;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+        }
+        /* Una sottile linea fra una lettura e l'altra, non un bordo: fa da
+           separatore senza chiudere niente in un riquadro. */
+        .hud-turno,
+        #difficultyBadge.duelist-difficulty {
+            position: relative;
+        }
+        .hud-turno::before,
+        #difficultyBadge.duelist-difficulty::after {
+            content: '';
+            position: absolute;
+            left: calc(-1 * clamp(6px, 0.7vw, 11px));
+            top: 15%;
+            bottom: 10%;
+            width: 1px;
+            background: linear-gradient(180deg, rgba(247, 215, 116, 0), rgba(247, 215, 116, 0.45), rgba(247, 215, 116, 0));
+        }
+        /* Difficoltà come lettura: niente pillola (i colori per livello di
+           duel-cinematics.css restano solo sul testo). Vuota (Duello Demo)
+           sparisce. */
+        #difficultyBadge.duelist-difficulty {
+            margin: 0;
+            padding: 0;
+            background: none;
+            border: none;
+            border-radius: 0;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: clamp(0.82rem, 1.35vw, 1.1rem);
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            text-transform: none;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+        }
+        #difficultyBadge.duelist-difficulty::before { content: 'Livello'; }
+        #difficultyBadge.duelist-difficulty:empty { display: none; }
+        /* Abbandona: tondo, rosso spento (un'azione distruttiva, non un
+           allarme). La scritta si apre allargando il pulsante verso sinistra. */
+        .surrender-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0;
+            height: clamp(30px, 3.2vw, 38px);
+            min-width: clamp(30px, 3.2vw, 38px);
+            padding: 0 clamp(7px, 0.75vw, 10px);
+            color: #ffb4a8;
+            background: radial-gradient(circle at 70% 35%, rgba(120, 34, 28, 0.95), rgba(42, 10, 12, 0.95));
+            border: 1px solid rgba(231, 76, 60, 0.45);
+            border-radius: 999px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: transform 0.2s ease, border-color 0.2s ease, gap 0.25s ease;
+        }
+        .surrender-btn .hud-icona { width: clamp(14px, 1.4vw, 18px); height: clamp(14px, 1.4vw, 18px); flex-shrink: 0; order: 2; }
+        .surrender-btn .hud-etichetta {
+            order: 1;
+            max-width: 0;
+            overflow: hidden;
+            opacity: 0;
+            font-size: clamp(0.62rem, 0.9vw, 0.74rem);
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            transition: max-width 0.3s ease, opacity 0.2s ease;
+        }
+        .surrender-btn:hover,
+        .surrender-btn:focus-visible { border-color: rgba(255, 130, 110, 0.8); gap: 7px; }
+        .surrender-btn:hover .hud-etichetta,
+        .surrender-btn:focus-visible .hud-etichetta { max-width: 120px; opacity: 1; }
+        .surrender-btn:active { transform: scale(0.94); }
+        .surrender-btn:focus-visible { outline: 2px solid #f7d774; outline-offset: 2px; }
+        @media (max-width: 900px), (hover: none) {
+            .surrender-btn:hover .hud-etichetta { max-width: 0; opacity: 0; }
+            .surrender-btn:hover { gap: 0; }
+            /* Area di tocco più grande del disegno (vicina ai 44px
+               consigliati) senza allargare il pannello. */
+            .surrender-btn::before {
+                content: '';
+                position: absolute;
+                inset: -8px;
+            }
+        }
+        /* Telefono: niente etichette, valori più piccoli. */
+        @media (max-width: 900px) {
+            .hud-sistema { --hud-pad-y: 6px; --hud-pad-x: 10px; gap: 10px; }
+            .duel-timer-badge { gap: 10px; }
+            .hud-lab, #difficultyBadge.duelist-difficulty::before { display: none; }
+            .hud-turno::before, #difficultyBadge.duelist-difficulty::after { left: -6px; }
+            .hud-val { font-size: 0.82rem; }
+            .hud-turno .hud-val::before { content: 'T'; font-size: 0.7em; color: rgba(247, 215, 116, 0.85); margin-right: 1px; }
+            #difficultyBadge.duelist-difficulty { font-size: 0.72rem; }
+            .surrender-btn { height: 28px; min-width: 28px; padding: 0 6px; }
+        }
+        /* Verticale stretto: due righe (tempo e turno sopra, livello e
+           Abbandona sotto). */
+        @media (orientation: portrait) and (max-width: 600px) {
+            .hud-sistema {
+                flex-wrap: wrap;
+                max-width: 140px;
+                row-gap: 5px;
+            }
+            .duel-timer-badge { width: 100%; justify-content: flex-end; }
+        }
+        /* Telefono in orizzontale (schermi molto bassi): ancora più compatto. */
+        @media (max-height: 420px) {
+            .hud-sistema { --hud-pad-y: 4px; --hud-pad-x: 8px; gap: 8px; }
+            .duel-timer-badge { gap: 8px; }
+            .hud-val { font-size: 0.72rem; }
+            #difficultyBadge.duelist-difficulty { font-size: 0.64rem; }
+            .surrender-btn { height: 24px; min-width: 24px; padding: 0 5px; }
+            .surrender-btn .hud-icona { width: 13px; height: 13px; }
+        }
+        .sandbox-field-tools {
+            position: fixed;
+            top: 82px;
+            right: 12px;
+            z-index: 15;
+            width: min(250px, calc(100vw - 24px));
+            padding: 9px 10px;
+            border: 1px solid rgba(93,210,255,0.42);
+            border-radius: 12px;
+            background: linear-gradient(145deg, rgba(8,28,42,0.94), rgba(8,15,27,0.92));
+            box-shadow: 0 8px 22px rgba(0,0,0,0.42), 0 0 18px rgba(48,181,255,0.12);
+        }
+        .sandbox-field-tools label {
+            display: block;
+            margin-bottom: 5px;
+            color: #9ddfff;
+            font-size: 0.58rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .sandbox-field-tools select {
+            width: 100%;
+            padding: 7px 8px;
+            color: #eefaff;
+            background: #101a26;
+            border: 1px solid rgba(157,223,255,0.35);
+            border-radius: 8px;
+            font: 700 0.7rem Arial, sans-serif;
+        }
+        @media (max-width: 900px) {
+            /* Telecamera d'ingresso molto più contenuta su schermi
+               stretti: qui il contenitore del campo occupa già tutta la
+               larghezza, quindi la zoomata pensata per il desktop lo
+               faceva sbordare da entrambi i lati trascinandosi dietro
+               anche i badge ai bordi. Vedi il commento esteso su
+               .game-container.camera-intro più sopra per la misura. */
+            .game-container.camera-intro {
+                /* Valori scelti MISURANDO, non a occhio: su uno schermo
+                   largo 393px il campo sbordava di 241px per lato coi
+                   valori desktop (1.7 / 58deg), 50px con 1.12/40deg,
+                   26px con 1.04/34deg e 13px con questi. Sotto i 28deg
+                   si guadagnano solo 3px e l'atterraggio in 3D smette di
+                   leggersi, quindi ci si ferma qui: resta la telecamera
+                   che scende, senza niente di tagliato ai bordi. */
+                --camera-intro-scale: 1;
+                --camera-intro-tilt: 0deg;
+                /* Misurato sul telefono vero (411x750): anche con 28deg il campo partiva 142px più in basso e
+                   sbordava di 15px per lato (scrollWidth 426, scrollHeight 777), e si leggeva come uno scroll
+                   diagonale di una frazione di secondo. Qui solo dissolvenza: niente inclinazione né spostamento. */
+                --camera-intro-shift: 0%;
+                /* Il contenitore non si muove e non ha filtri (blur/brightness su tutto lo schermo costano su
+                   telefono): solo una dissolvenza. La profondità la danno due cose a parte, più sotto: l'arena
+                   che arretra (body.intro-sfondo::after) e le righe del campo che entrano a cascata. */
+                animation: cameraIntroFadeMobile 1700ms ease-out both;
+                will-change: opacity;
+            }
+            @keyframes cameraIntroFadeMobile {
+                0%   { opacity: 0; }
+                30%  { opacity: 1; }
+                100% { opacity: 1; }
+            }
+            /* 1) ARENA CHE ARRETRA. Lo sfondo sta sul body (immagine impostata anche da JS): non si anima con
+               efficienza. Un livello fisso che lo COPIA (background: inherit) parte ingrandito e si riporta a 1x
+               con la sola transform. A fine animazione è identico allo sfondo vero, quindi togliere la classe non
+               produce alcuno scatto. Resta sotto la vignetta (z 1) e sotto il campo (z 2); HUD e bordi non si muovono. */
+            body.intro-sfondo::after {
+                content: '';
+                position: fixed;
+                inset: 0;
+                background: inherit;
+                z-index: 0;
+                pointer-events: none;
+                transform-origin: 50% 58%;
+                will-change: transform;
+                animation: introSfondoArretra 1500ms cubic-bezier(0.22, 0.7, 0.25, 1) both;
+            }
+            @keyframes introSfondoArretra {
+                from { transform: scale(1.13); }
+                to   { transform: scale(1); }
+            }
+            /* 2) CASELLE A CASCATA, dalla fila dell'avversario alla tua: ogni riga scivola giù di pochi pixel,
+               si distende e si accende col contorno luminoso già previsto per l'intro (.camera-intro .field-slot).
+               Nessuno spostamento globale: solo ciò che sta dentro ogni casella. */
+            .game-container.camera-intro .field-slot {
+                animation: introCasellaEntra 560ms cubic-bezier(0.22, 0.8, 0.25, 1) both;
+                animation-delay: 140ms;
+            }
+            .game-container.camera-intro .field-slot[data-owner="bot"][data-type="st"] { animation-delay: 140ms; }
+            .game-container.camera-intro .field-slot[data-owner="bot"][data-type="monster"] { animation-delay: 260ms; }
+            .game-container.camera-intro .field-slot[data-owner="player"][data-type="monster"] { animation-delay: 380ms; }
+            .game-container.camera-intro .field-slot[data-owner="player"][data-type="st"] { animation-delay: 500ms; }
+            @keyframes introCasellaEntra {
+                from { opacity: 0; transform: translateY(-12px) scale(0.93); }
+                to   { opacity: 1; transform: none; }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                body.intro-sfondo::after, .game-container.camera-intro .field-slot { animation: none; }
+            }
+        }
+        .phase-step.clickable {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.18), rgba(41, 128, 185, 0.18));
+            border-color: rgba(52, 152, 219, 0.35);
+            box-shadow: 0 0 12px rgba(52, 152, 219, 0.12);
+        }
+        .phase-step.disabled {
+            opacity: 0.48;
+            filter: saturate(.62);
+        }
+        .phase-step.clickable:not(.active) {
+            background: linear-gradient(135deg, rgba(31,30,31,.88), rgba(48,39,24,.78));
+            border-color: rgba(247,215,116,.3);
+            color: #d6cfbf;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.035), 0 2px 6px rgba(0,0,0,.18);
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .phase-step.clickable:hover {
+                transform: translateY(-2px);
+                border-color: rgba(247,215,116,.52);
+                background: linear-gradient(135deg, rgba(47,39,24,.9), rgba(64,45,17,.78));
+                box-shadow: 0 4px 10px rgba(0,0,0,.24);
+            }
+        }

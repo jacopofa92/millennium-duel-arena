@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.6.43 — Duello: il CSS di duelMonstersCore.html (275 KB) e' diviso in 12 file contigui js/ui/duello-NN-*.css, senza cambiare nessuno stile.
  * 1.6.42 — Duello: i ridisegni non interrompono il conteggio dei Life Points; i conteggi ravvicinati si sostituiscono senza gare.
  * 1.6.41 — Catena WebGL: uniformi e buffer riusati, misure del layout raggruppate per fotogramma.
  * 1.6.40 — Negozio: nella Busta Base i mostri vanilla hanno peso quadruplo negli slot comuni.
@@ -816,4 +817,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.6.42';
+window.GAME_VERSION = '1.6.43';

@@ -1,0 +1,233 @@
+/* CSS del duello, parte 10 di 12, estratta da duelMonstersCore.html (righe 4603-4832 del vecchio blocco <style>).
+   Le parti vanno caricate IN ORDINE (la cascata dipende dall'ordine): 01 ... 12. Non riordinare le regole fra le parti
+   senza ripetere tools/impronta-stili-duello.js. I percorsi url() sono relativi a questo file. */
+        /* ============================================================
+           Mobile, sia verticale che orizzontale: il duello ora si gioca
+           in entrambi gli orientamenti (richiesta esplicita dell'utente
+           — prima un overlay bloccava del tutto il verticale, invitando
+           a ruotare, e uno script provava a forzare l'orientamento
+           landscape via Screen Orientation API/Capacitor; entrambi
+           rimossi). Il blocco sotto era già tarato con clamp() dipendenti
+           sia da vh che da vw, quindi si applica a QUALUNQUE aspect
+           ratio stretto, non solo al landscape per cui era stato scritto
+           in origine — un telefono in verticale rientra comunque in
+           max-width:900px.
+           il campo resta lo stesso, ma i pannelli laterali si comprimono
+           al massimo, il pannello descrizione carta diventa un cassetto a
+           scomparsa (attivato dalla stessa classe .visible già gestita da
+           game-flow.js — nessuna modifica JS necessaria) e le etichette
+           testuali meno essenziali si nascondono per lasciare spazio al
+           terreno di gioco vero e proprio.
+           ============================================================ */
+        @media (max-width: 900px) {
+            :root {
+                /* Su mobile #botInfo/#playerInfo e .card-info-panel sono
+                   già position:fixed (vedi rispettivamente più sopra e la
+                   regola .card-info-panel qui sotto in questa stessa media
+                   query): le colonne laterali della grid .battlefield non
+                   hanno più alcun contenuto IN FLUSSO, quindi riservargli
+                   ancora 46-84px ciascuna era spazio sottratto per niente
+                   al terreno di gioco centrale — colpa scoperta insieme al
+                   fix di .battlefield-main min-width:0 qui sotto: quel fix
+                   corregge la colonna centrale (prima sbordava fuori
+                   schermo invece di restringersi), ma con le colonne
+                   laterali ancora larghe la traccia 1fr risultante era
+                   troppo stretta per il terreno, tagliando le etichette
+                   Cimitero/Terreno/Fusion ai bordi (verificato via
+                   Playwright). */
+                --side-col-w: clamp(2px, 1vw, 8px);
+                --info-panel-w: clamp(2px, 1vw, 8px);
+                /* --field-gap/--field-slot-pad di :root (righe ~54/66) sono
+                   tarati per schermi larghi: qui, con la traccia centrale
+                   ora correttamente vincolata (fix sopra), 7 colonne a
+                   quei valori restavano comunque più larghe dello spazio
+                   vero (misurato: riga da 436px contro ~375px disponibili)
+                   — ridotti apposta per il mobile, senza toccare --card-w
+                   (la dimensione della carta, già tarata a parte in questa
+                   sessione, resta invariata come richiesto). */
+                --field-slot-pad: clamp(2px, 0.3vw, 8px);
+                --field-gap: clamp(5px, 1.3vw, 20px);
+            }
+            .game-container { padding: 4px 4px; overflow-y: auto; }
+            /* Carte del modale di scelta multipla (#cardListPickerModal,
+               es. Cimitero/Extra Deck): sullo stesso schermo stretto la
+               riga carte + titolo + testo + pulsante Chiudi potevano
+               superare l'altezza disponibile — ridotta qui (proporzione
+               invariata, --card-h la deriva sempre da --card-w) invece
+               che sul campo, che ha già la sua taratura a parte. */
+            .card-list-item { --card-w: clamp(70px, 17vw, 130px); }
+            .battlefield { gap: 4px; padding: 4px 2px; }
+            .battlefield-side.left,
+            .battlefield-side.right { min-height: 0; }
+            /* Il box LP del Bot è allineato in alto (align-self: start):
+               senza questo margine finirebbe sotto ai pulsanti fissi
+               home/audio in alto a sinistra, sovrapponendosi. */
+            .battlefield-side.left { padding-top: clamp(30px, 9vh, 40px); }
+
+            .player-info.side-player { gap: 6px; }
+            .remote-choice-wait { gap: 6px; padding: 6px 9px; font-size: 0.66rem; }
+            .duelist-avatar--corner { width: 48px; height: 48px; font-size: 0.78rem; border-width: 2px; }
+            /* Niente piu' tetto a 32vw: il nome ha tutta la riga (vedi la regola generale sopra), sempre su una riga sola. */
+            .duelist-details .duelist-name { font-size: clamp(0.62rem, 3vw, 0.8rem); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            .life-points { font-size: clamp(0.6rem, 3.2vw, 0.8rem); padding: 2px 10px 2px 7px; }
+
+            /* Il pannello descrizione carta esce dal flusso della colonna
+               destra e diventa un cassetto che scivola da destra, sopra al
+               campo, ogni volta che riceve .visible (hover o tap su una
+               carta già lo fa, invariato in game-flow.js/actions.js). */
+            .card-info-panel {
+                position: fixed;
+                top: 50%;
+                right: 6px;
+                transform: translate(110%, -50%);
+                /* --info-card-w RIDEFINITA solo qui dentro (scoped a questo
+                   elemento e ai suoi figli, MAI la variabile globale in
+                   :root usata altrove) — richiesta esplicita dell'utente:
+                   il pannello, aperto ad ogni tap su una carta durante il
+                   duello, copriva su schermi piccoli una fetta larga dello
+                   schermo (~metà larghezza, fino all'82% dell'altezza).
+                   Anteprima carta più piccola + tetto d'altezza più basso
+                   lasciano visibile più campo di gioco dietro/intorno
+                   mentre resta aperto. */
+                --info-card-w: clamp(108px, 15vh, 190px);
+                width: calc(var(--info-card-w) + 28px);
+                max-height: 62dvh;
+                overflow-y: auto;
+                /* Il catcher dei pulsanti rapidi copre tutto il viewport a
+                   quota 100050. Il pannello deve stare sopra di lui:
+                   altrimenti una carta attivabile dalla mano mostra le
+                   informazioni ma intercetta ogni swipe prima del testo. */
+                z-index: 100052;
+                display: block;
+                transition: transform 0.28s cubic-bezier(0.16,0.84,0.44,1);
+                box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            }
+            .card-info-panel.visible {
+                transform: translate(0, -50%);
+            }
+            /* Testo della descrizione ridotto per il pannello più stretto
+               qui sopra (segue --info-card-w invece di un valore fisso più
+               largo): alle dimensioni base andava a capo su quasi ogni
+               parola. */
+            .card-info-title { font-size: 0.82rem; }
+            .card-info-content { font-size: 0.8rem; }
+            .card-info-name { font-size: 0.9rem; }
+            .card-info-meta { font-size: 0.72rem; }
+            .card-info-stats { font-size: 0.82rem; }
+            .card-info-close {
+                display: block;
+                position: absolute;
+                top: 6px;
+                right: 6px;
+                width: 26px;
+                height: 26px;
+                border-radius: 50%;
+                border: 1px solid rgba(255,255,255,0.3);
+                background: rgba(0,0,0,0.4);
+                color: #fff;
+                font-size: 0.75rem;
+                cursor: pointer;
+            }
+
+            .right-panel-stack { gap: 6px; }
+
+            /* Stepper di fase: pallini con un'ICONA per fase (non più il
+               solo numero, che da solo non diceva nulla su una fase senza
+               leggere la label — nascosta qui per spazio) — più grandi di
+               prima ("allarga di più"), niente testo per non occupare
+               spazio orizzontale prezioso su schermi stretti. Lo stepper
+               nel suo insieme si allarga per occupare TUTTA la larghezza
+               del campo (dalla colonna Cimitero del bot a quella del
+               giocatore, le due colonne speciali ai lati della griglia
+               Terreno) invece di restare un grappolo centrale stretto —
+               space-between spinge le 6 icone ai due estremi e le
+               distribuisce nel mezzo, nowrap le tiene su una riga sola. */
+            .phase-step .step-label { display: none; }
+            .phase-step .step-num {
+                display: grid;
+                right: -3px;
+                top: -4px;
+                min-width: 13px;
+                height: 13px;
+                font-size: 8px;
+            }
+            .phase-step .step-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 68%;
+                height: 68%;
+            }
+            /* Misure in cqw della BARRA (container phase-rail), non della
+               finestra: crescono con la fila del campo. Prima erano fisse a
+               40px, minuscole su un tablet dove la fila è larga quasi 500px. */
+            .phase-step {
+                flex: 0 0 auto;
+                width: clamp(36px, 10cqw, 54px);
+                min-width: 0;
+                max-width: none;
+                padding: 4px 0;
+                border-radius: 10px;
+                overflow: visible;
+            }
+            .phase-step .step-badge {
+                width: clamp(26px, 8cqw, 40px);
+                height: clamp(26px, 8cqw, 40px);
+                border-radius: 8px;
+            }
+            /* Niente trattini fra un pulsante e l'altro: con i pulsanti
+               distribuiti su tutta la fila non arriverebbero al vicino, e la
+               linea sottile della barra (.phase-stepper::before) li collega
+               già tutti. */
+            /* (Le frecce di sequenza fra le fasi, .phase-step::after, restano anche qui: vedi più in alto.) */
+            /* Una sola forma per pulsante: qui il pulsante è grande poco più
+               del quadratino dell'icona, e i due fondi uno dentro l'altro si
+               leggevano come un doppio riquadro. Il pulsante resta l'area da
+               toccare ma diventa trasparente; il quadratino porta tutto,
+               compreso il contorno della fase in cui puoi andare. */
+            .phase-stepper .phase-step,
+            .phase-stepper .phase-step.active,
+            .phase-stepper .phase-step.completed,
+            .phase-stepper .phase-step.clickable:not(.active) {
+                background: transparent;
+                border-color: transparent;
+                box-shadow: none;
+            }
+            .phase-stepper .phase-step.clickable:not(.active) .step-badge {
+                border-color: color-mix(in srgb, var(--fase-accento) 52%, transparent);
+                background: radial-gradient(circle at 34% 25%, color-mix(in srgb, var(--fase-accento) 42%, rgba(255,255,255,.14)), color-mix(in srgb, var(--fase-accento) 22%, rgba(39,36,30,.86)) 68%);
+                box-shadow: 0 3px 8px rgba(0,0,0,.2), 0 0 10px color-mix(in srgb, var(--fase-accento) 14%, transparent), inset 0 1px 0 rgba(255,255,255,.12);
+            }
+            .phase-stepper .phase-step.active .step-badge {
+                box-shadow: 0 0 16px color-mix(in srgb, var(--fase-accento) 42%, transparent), inset 0 1px 1px rgba(255,255,255,.18);
+            }
+            .phase-stepper {
+                /* I sei pulsanti vanno dall'INIZIO della casella Terreno alla
+                   FINE del Cimitero (richiesta dell'utente, 2026-10-16): il
+                   primo appoggiato al bordo sinistro, l'ultimo a quello
+                   destro, lo spazio diviso in mezzo. Prima erano raccolti al
+                   centro (justify-content:center), e su telefono lasciavano
+                   vuoti i due lati della fila. Padding orizzontale a zero per
+                   lo stesso motivo: la barra è già larga esatta quanto la
+                   fila (syncPhaseStepperToFieldWidth in game-flow.js). */
+                gap: clamp(2px, 1vw, 5px);
+                margin: 1px auto 3px;
+                width: min(100%, calc(var(--field-slot-w) + var(--field-slot-w) + var(--field-slot-w) + var(--field-slot-w) + var(--field-slot-w) + var(--field-slot-w) + var(--field-slot-w) + var(--field-gap) + var(--field-gap) + var(--field-gap) + var(--field-gap) + var(--field-gap) + var(--field-gap)));
+                padding: 3px 0;
+                border-radius: 13px;
+                justify-content: space-between;
+                flex-wrap: nowrap;
+            }
+
+            .hand { margin-top: clamp(4px, 1.4vh, 12px); gap: 4px; }
+
+            /* Tempo/Difficoltà/Abbandona: vedi .hud-sistema, che si adatta
+               da solo. */
+            .sandbox-field-tools { top: 82px; right: 6px; width: min(210px, calc(100vw - 12px)); }
+
+            /* La carta "compatta" (senza barra del nome, stelle e riga
+               Razza/Tipo, cornice sottile) che si vedeva qui su mobile ora
+               la decide la MISURA della carta, non la larghezza della
+               finestra: vedi "CARTA COMPATTA" in fondo a js/ui/card.css. */
+        }
+

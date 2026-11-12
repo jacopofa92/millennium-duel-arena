@@ -1,0 +1,556 @@
+/* CSS del duello, parte 8 di 12, estratta da duelMonstersCore.html (righe 3816-4368 del vecchio blocco <style>).
+   Le parti vanno caricate IN ORDINE (la cascata dipende dall'ordine): 01 ... 12. Non riordinare le regole fra le parti
+   senza ripetere tools/impronta-stili-duello.js. I percorsi url() sono relativi a questo file. */
+        /* ============================================================
+           Modali: cartiglio dorato, non pannello blu
+           ------------------------------------------------------------
+           Prima erano un rettangolo blu (#1f2a44 -> #304060) con angoli
+           molto morbidi, calato dentro un'arena nera e oro: parlavano
+           una lingua diversa dal resto del gioco e si leggevano come
+           una finestra di dialogo di un sito, non come parte del duello
+           (segnalato dall'utente: "con i box cosi' e sfondo blu sono un
+           po' brutti e cozzano").
+
+           Ora usano la stessa lingua di tutto il resto — nero/bruno
+           profondo, cornice dorata, titolo in maiuscoletto spaziato come
+           gli annunci di fase — cioe' un cartiglio.
+
+           NIENTE backdrop-filter: blur() sul velo: sfocare l'intero
+           schermo e' una delle cose piu' care che si possano chiedere al
+           browser, e in questa stessa sessione abbiamo appena tolto il
+           39% del lavoro di disegno durante una battaglia. Il distacco
+           dal fondo lo danno il velo scuro e la vignettatura, che non
+           costano nulla.
+           ============================================================ */
+        .modal-backdrop {
+            position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 100000;
+            padding: 20px;
+            background:
+                radial-gradient(ellipse at center, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.86) 70%, rgba(0,0,0,0.93) 100%);
+        }
+        .modal-backdrop.open { display: flex; }
+        /* Fine duello: nessun callback tardivo può riportare davanti (o
+           lasciare intravedere sotto) una conferma ormai priva di senso. */
+        body.duel-outcome-active .modal-backdrop {
+            display: none !important;
+            pointer-events: none !important;
+        }
+        .modal-card {
+            /* Vetro nero caldo: lascia intravedere l'arena sotto invece
+               di coprirla con un colore pieno estraneo. */
+            background: linear-gradient(160deg, rgba(26,20,13,0.97) 0%, rgba(14,11,8,0.98) 55%, rgba(20,15,10,0.97) 100%);
+            /* Doppia riga dorata (bordo + filo interno), come l'incisione
+               di un cartiglio: e' quello che lo lega al resto dell'arena
+               piu' del colore in se'. */
+            border: 1px solid rgba(247,215,116,0.75);
+            box-shadow:
+                inset 0 0 0 1px rgba(247,215,116,0.16),
+                inset 0 1px 0 rgba(255,255,255,0.05),
+                0 24px 60px rgba(0,0,0,0.6),
+                0 0 34px rgba(243,156,18,0.12);
+            border-radius: 12px;
+            width: min(92vw, 420px); padding: 22px 24px; text-align: center;
+            /* Rete di sicurezza per qualunque contenuto più alto dello
+               schermo (es. .modal-card-wide con la fila di carte, su
+               schermi mobile bassi): scorre invece di sbordare oltre il
+               viewport. */
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-card h3 {
+            font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+            margin-bottom: 14px;
+            padding-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            font-weight: 800;
+            color: #f7d774;
+            text-shadow: 0 0 14px rgba(243,156,18,0.45);
+            /* Filo dorato che sfuma ai lati: chiude il titolo senza
+               tagliare il riquadro con una riga netta da tabella. */
+            border-image: linear-gradient(90deg, transparent, rgba(247,215,116,0.55), transparent) 1;
+            border-bottom: 1px solid transparent;
+        }
+        .modal-card p { color: #e7dcc6; margin-bottom: 12px; }
+        .modal-preview {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .modal-preview-card {
+            transform: none;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+        .modal-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .modal-btn {
+            border: none; border-radius: 999px; padding: 12px 18px; cursor: pointer; font-weight: 700; color: white;
+            min-width: 140px; transition: transform 0.2s ease;
+        }
+        .modal-btn:hover { transform: translateY(-2px); }
+        /* Vetro scuro + bordo/bagliore luminoso (stessa lingua di
+           .gate-btn in index.html) invece del pieno piatto: brace per
+           l'Attacco, smeraldo per la Difesa, acciaio per Annulla. */
+        .modal-btn.attack {
+            background: linear-gradient(145deg, #3a1410, #1f0906);
+            border: 1px solid rgba(255,99,99,0.6);
+            box-shadow: 0 0 14px rgba(255,99,99,0.3), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+        .modal-btn.attack:hover { box-shadow: 0 0 20px rgba(255,99,99,0.5), inset 0 1px 0 rgba(255,255,255,0.1); }
+        .modal-btn.defense {
+            background: linear-gradient(145deg, #0e2a1c, #081b12);
+            border: 1px solid rgba(80,220,140,0.55);
+            box-shadow: 0 0 14px rgba(80,220,140,0.28), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+        .modal-btn.defense:hover { box-shadow: 0 0 20px rgba(80,220,140,0.45), inset 0 1px 0 rgba(255,255,255,0.1); }
+        /* Annulla: neutro CALDO, non grigio-bluastro. Con la cornice
+           dorata del cartiglio, un grigio freddo era l'ultimo pezzo che
+           tradiva la provenienza "pannello blu" di questi modali. */
+        .modal-btn.cancel {
+            background: linear-gradient(145deg, #2a241b, #16120d);
+            border: 1px solid rgba(247,215,116,0.35);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+        .modal-btn.cancel:hover { border-color: rgba(180,190,210,0.55); }
+
+        /* Box "lista carte a scorrimento" (#cardListPickerModal): stesso
+           linguaggio di .modal-card/.modal-backdrop, ma più largo e con una
+           fila di carte che scorre in orizzontale invece di un'unica
+           anteprima centrata — riusato per ogni effetto che deve mostrare
+           più carte insieme (mano dell'avversario, scavo nel Deck, ecc.). */
+        .modal-card-wide { width: min(94vw, 720px); }
+        .card-list-scroll {
+            display: flex;
+            gap: 14px;
+            overflow-x: auto;
+            padding: 10px 6px 18px;
+            scroll-snap-type: x proximity;
+            -webkit-overflow-scrolling: touch;
+            /* La fila SCORREVA già, ma non lo diceva: con più carte di
+               quante ne stanno, l'ultima restava tagliata di netto contro
+               il bordo e sembrava un difetto di impaginazione invece di
+               un invito a scorrere (visibile in uno screenshot del
+               picker a 4 carte). Sfumare i due bordi è l'affordance
+               standard: il taglio netto sparisce e si capisce che oltre
+               c'è dell'altro. La barra dorata qui sotto resta, per chi
+               usa il mouse.
+
+               SOLO il bordo destro, non entrambi: una sfumatura anche a
+               sinistra mangiava il bordo della PRIMA carta nello stato a
+               riposo — cioè quello che si vede ogni volta che il picker
+               si apre, e che quindi deve essere impeccabile. A destra
+               invece la sfumatura tocca l'ultima carta solo quando si è
+               già scorso fino in fondo. */
+            -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 34px), transparent 100%);
+            mask-image: linear-gradient(to right, #000 calc(100% - 34px), transparent 100%);
+        }
+        .card-list-scroll::-webkit-scrollbar { height: 6px; }
+        .card-list-scroll::-webkit-scrollbar-thumb { background: rgba(243,156,18,0.4); border-radius: 999px; }
+        .card-list-item {
+            /* Dimensione propria, non ereditata dal --card-w "ambiente"
+               (che sul campo mobile è volutamente piccolissimo): qui le
+               carte vanno guardate bene per scegliere, servono più grandi
+               a prescindere dallo schermo — lo scorrimento orizzontale
+               qui sopra (.card-list-scroll) è già pensato apposta per
+               ospitare carte comode invece di stiparle. */
+            --card-w: clamp(92px, 20vw, 170px);
+            /* --card-h va ridichiarata qui insieme a --card-w: non basta
+               che :root la definisca come calc(var(--card-w)/ var(--card-ratio)) (riga
+               ~37) — quel var(--card-w) annidato viene risolto con la
+               larghezza di :root al momento in cui --card-h viene
+               dichiarata, non con quella (più grande) impostata qui sotto,
+               quindi senza questa riga le carte qui dentro prendevano la
+               larghezza giusta ma l'altezza piccola del campo — "carte
+               schiacciate", verificato via Playwright (rapporto w/h
+               invertito, quasi il doppio del previsto). */
+            --card-h: calc(var(--card-w) / var(--card-ratio));
+            flex: 0 0 auto;
+            scroll-snap-align: center;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+            border-radius: 12px;
+        }
+        /* Si solleva E si accende d'oro: in una lista di carte tutte
+           uguali per dimensione, il solo spostamento verticale si nota
+           poco — il bagliore dice quale sta per essere scelta. */
+        .card-list-item:hover {
+            transform: translateY(-6px);
+            filter: drop-shadow(0 6px 16px rgba(243,156,18,0.45));
+        }
+        .card-list-item.not-selectable { cursor: default; }
+        .card-list-item.not-selectable:hover { transform: none; filter: none; }
+        /* Extra Deck aperto con qualcosa da Evocare (opzione `evocabili` di
+           openCardListPicker, actions.js): la Fusione evocabile ora pulsa
+           in viola, lo stesso viola della zona sul campo (.fusion-ready);
+           le altre restano leggibili ma spente, perché adesso non si
+           possono scegliere. */
+        .card-list-item--evocabile {
+            animation: evocabilePulse 1.6s ease-in-out infinite;
+        }
+        .card-list-item--evocabile:hover {
+            animation-play-state: paused;
+            filter: drop-shadow(0 0 6px #fff) drop-shadow(0 0 20px rgba(176, 108, 255, 0.95));
+        }
+        .card-list-item--spenta { opacity: 0.42; filter: grayscale(0.75); }
+        .card-list-item--spenta:hover { filter: grayscale(0.75); }
+        @keyframes evocabilePulse {
+            0%, 100% { filter: drop-shadow(0 0 3px rgba(176, 108, 255, 0.55)) drop-shadow(0 0 8px rgba(120, 52, 230, 0.35)); }
+            50%      { filter: drop-shadow(0 0 7px rgba(214, 170, 255, 0.95)) drop-shadow(0 0 22px rgba(140, 66, 245, 0.85)); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .card-list-item--evocabile { animation: none; filter: drop-shadow(0 0 6px rgba(214, 170, 255, 0.9)) drop-shadow(0 0 16px rgba(140, 66, 245, 0.7)); }
+        }
+        .card-list-empty { color: #e7dcc6; padding: 30px 14px; font-style: italic; }
+        /* Descrizione della carta sotto il mouse/tocco dentro il picker
+           (#cardListPickerInfo) — il pannello normale (#cardInfoPanel,
+           .battlefield-side.right) resta SEMPRE coperto da questo modale
+           (z-index 100000, vedi .modal-backdrop sopra), quindi qui serve
+           una copia inline dello stesso contenuto invece di aggiornare
+           quel pannello a vuoto. Riusa le classi .card-info-name/.card-info-meta
+           già esistenti (stesso identico look del pannello laterale) per
+           non duplicare lo stile, solo il contenitore/bordo sono nuovi. */
+        .card-list-info {
+            border-top: 1px solid rgba(243,156,18,0.35);
+            margin-top: 2px;
+            padding-top: 12px;
+            text-align: left;
+            min-height: 64px;
+        }
+        .card-list-info-hint { color: #b7c0d3; font-style: italic; font-size: 0.9rem; }
+        .card-list-info p { color: #e8eef9; font-size: 0.9rem; line-height: 1.35; margin: 0; }
+        /* .card ha touch-action:none di default (js/ui/card.css), necessario
+           per il trascinamento delle carte in mano/campo — ma qui dentro le
+           carte non si trascinano mai, sono solo un elenco da scorrere
+           (Cimitero, Extra Deck, scavo nel Deck, ecc.). Senza questa
+           riga, un dito che parte SOPRA una carta non riusciva mai a far
+           scorrere .card-list-scroll (overflow-x: auto qui sopra) su
+           telefono: touch-action:none blocca OGNI gesto touch nativo,
+           scorrimento incluso, non solo il trascinamento. pan-x (non
+           pan-y): questo scorrimento è orizzontale, stesso principio già
+           usato per le griglie verticali di cartoteca.html/creazione-deck.html
+           (touch-action: pan-y lì, l'asse opposto). */
+        .card-list-item .card { touch-action: pan-x; }
+
+        /* ============================================================
+           Popover "leggero": alternativa non invasiva ai modali a schermo
+           intero (#summonModal/#activateModal) per scelte rapide come
+           "Attacco o Difesa?" o "Confermi il cambio posizione?". Nessuno
+           scurimento a piena pagina: solo una piccola card ancorata vicino
+           alla carta interessata, con un click-catcher trasparente per
+           chiuderla cliccando altrove (vedi openQuickPopover in actions.js).
+           ============================================================ */
+        .quick-popover-catcher {
+            position: fixed;
+            inset: 0;
+            z-index: 100050;
+            background: transparent;
+            /* Le quattro zone create da openQuickPopover circondano il box
+               informazioni lasciandogli un foro reale. Il contenitore non
+               deve intercettare quel foro. */
+            pointer-events: none;
+        }
+        .quick-popover-catcher-zone { position: absolute; pointer-events: auto; }
+        .quick-popover {
+            position: fixed;
+            /* Sopra il box informazioni (100052), che a sua volta deve
+               restare sopra il catcher trasparente (100050): così i
+               pulsanti restano raggiungibili ma si può scorrere il testo
+               della carta mentre si decide se attivarne l'effetto. */
+            z-index: 100053;
+            width: min(80vw, 230px);
+            /* Stessa lingua dei modali (vedi .modal-card): vetro nero
+               caldo e doppia riga dorata, non il vecchio viola-blu. Qui
+               conta ancora di piu' che nei modali, perche' questo
+               riquadro compare ATTACCATO a una carta, cioe' a contatto
+               diretto con la grafica del gioco. */
+            background: linear-gradient(160deg, rgba(26,20,13,0.97) 0%, rgba(14,11,8,0.98) 100%);
+            border: 1px solid rgba(247,215,116,0.75);
+            border-radius: 10px;
+            padding: 10px 12px;
+            box-shadow:
+                inset 0 0 0 1px rgba(247,215,116,0.16),
+                0 16px 40px rgba(0,0,0,0.55),
+                0 0 22px rgba(243,156,18,0.12);
+            text-align: center;
+            /* Nasce INVISIBILE e senza animazione: openQuickPopover lo
+               inserisce nel documento per poterlo misurare, e solo dopo
+               averlo messo al suo posto gli aggiunge .is-placed. Senza
+               questo, il primo fotogramma lo mostrava nell'angolo in alto
+               a sinistra prima del salto al posto giusto — lo sfarfallio
+               all'apertura. `visibility` e non `display`, perché un
+               elemento con display:none non si può misurare. */
+            visibility: hidden;
+        }
+        .quick-popover.is-placed {
+            visibility: visible;
+            animation: quickPopoverIn 0.18s cubic-bezier(0.16, 0.84, 0.44, 1);
+        }
+        /* Solo i pulsanti che galleggiano sul campo, senza riquadro:
+           per una scelta fatta di sole AZIONI il pannello è ingombro, e
+           copre proprio il campo che serve guardare per decidere. Vedi
+           l'opzione `bare` di openQuickPopover (js/engine/actions.js),
+           che è esplicita e non dedotta dal contenuto. */
+        .quick-popover.quick-popover--bare {
+            background: none;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+            width: auto;
+        }
+        /* Scelta fra opzioni con etichetta (openOptionPicker, actions.js):
+           più largo del popover standard perché le voci hanno testo, e le
+           voci vanno a capo in due colonne. Un elenco lungo (i Tipi di
+           mostro per Il Cacciatore dalle 7 Armi) scorre dentro il
+           riquadro invece di uscire dallo schermo. */
+        /* RIFATTO (2026-11-07, "bruttino, anche come pulsanti"): riquadro di vetro scuro con filo d'oro in alto, titolo in
+           serif con un sottile divisore, voci come pulsanti larghi da pollice (almeno 52px) con un numero tondo a sinistra e una
+           freccia a destra. Il numero e la freccia sono CSS generato (counter + ::before/::after), NON markup: il testo del
+           pulsante resta la sola etichetta (gli spec e le carte leggono quello). Le liste lunghe (piu' di 5 voci: i Tipi di
+           mostro de Il Cacciatore dalle 7 Armi) vanno in due colonne, senza numeri. */
+        .quick-popover.quick-popover--options {
+            width: min(92vw, 380px);
+            padding: 20px 16px 14px;
+            border-radius: 18px;
+            border: 1px solid rgba(247,215,116,0.6);
+            background: linear-gradient(165deg, rgba(36,27,15,0.985) 0%, rgba(13,10,7,0.995) 100%);
+            box-shadow:
+                inset 0 0 0 1px rgba(247,215,116,0.12),
+                0 22px 54px rgba(0,0,0,0.65),
+                0 0 34px rgba(243,156,18,0.16);
+        }
+        .quick-popover.quick-popover--options::before {
+            content: '';
+            position: absolute;
+            left: 22px;
+            right: 22px;
+            top: -1px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #f7d774, transparent);
+        }
+        .quick-popover--options .quick-popover-title {
+            font-family: 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+            font-size: 1.12rem;
+            letter-spacing: 0.07em;
+            margin-bottom: 10px;
+        }
+        .quick-popover--options .quick-popover-title::after {
+            content: '';
+            display: block;
+            width: 64px;
+            height: 2px;
+            margin: 9px auto 0;
+            background: linear-gradient(90deg, transparent, rgba(247,215,116,0.9), transparent);
+        }
+        .quick-popover-text {
+            font-size: 0.72rem;
+            color: #e9dcbf;
+            line-height: 1.35;
+            margin: -2px 0 9px;
+        }
+        .quick-popover--options .quick-popover-text {
+            font-size: 0.86rem;
+            color: #cfc2a3;
+            line-height: 1.4;
+            margin: 0 0 14px;
+        }
+        .quick-popover-actions--options {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            gap: 9px;
+            counter-reset: opzione;
+            max-height: min(52vh, 360px);
+            overflow-y: auto;
+            padding: 2px;
+        }
+        .quick-popover.quick-popover--options .quick-popover-option {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            width: 100%;
+            min-height: 52px;
+            padding: 10px 38px 10px 12px;
+            border-radius: 13px;
+            text-align: left;
+            font-size: 0.96rem;
+            font-weight: 700;
+            line-height: 1.25;
+            color: #f6eedb;
+            background: linear-gradient(180deg, rgba(66,50,26,0.6) 0%, rgba(26,19,10,0.9) 100%);
+            border: 1px solid rgba(247,215,116,0.4);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 3px 10px rgba(0,0,0,0.4);
+            transition: transform 0.12s ease, border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Numero tondo (1, 2, 3...) generato dal CSS. */
+        .quick-popover.quick-popover--options .quick-popover-option::before {
+            counter-increment: opzione;
+            content: counter(opzione);
+            flex: 0 0 auto;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 0.86rem;
+            font-weight: 800;
+            color: #2a1c05;
+            background: radial-gradient(circle at 35% 30%, #fbe9a6, #f0b43a 70%);
+            box-shadow: 0 0 10px rgba(243,156,18,0.35);
+        }
+        /* Freccia a destra: dice che il tocco sceglie subito. */
+        .quick-popover.quick-popover--options .quick-popover-option::after {
+            content: '\203A';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-52%);
+            font-size: 1.6rem;
+            line-height: 1;
+            color: rgba(247,215,116,0.85);
+        }
+        .quick-popover.quick-popover--options .quick-popover-option:hover,
+        .quick-popover.quick-popover--options .quick-popover-option:focus-visible {
+            border-color: rgba(247,215,116,0.9);
+            background: linear-gradient(180deg, rgba(96,72,34,0.7) 0%, rgba(38,27,12,0.95) 100%);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 0 16px rgba(243,156,18,0.3);
+            outline: none;
+        }
+        .quick-popover.quick-popover--options .quick-popover-option:active { transform: scale(0.98); }
+        /* "Annulla": un pulsante secondario, piu' basso e senza numero ne' freccia. */
+        .quick-popover.quick-popover--options .quick-popover-option.cancel {
+            justify-content: center;
+            min-height: 44px;
+            margin-top: 4px;
+            padding: 8px 14px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #bdb6a4;
+            background: none;
+            border: 1px solid rgba(180,190,210,0.3);
+            box-shadow: none;
+        }
+        .quick-popover.quick-popover--options .quick-popover-option.cancel::before,
+        .quick-popover.quick-popover--options .quick-popover-option.cancel::after { content: none; }
+        .quick-popover.quick-popover--options .quick-popover-option.cancel:hover { color: #f6eedb; border-color: rgba(220,226,240,0.6); background: rgba(255,255,255,0.05); box-shadow: none; }
+        .quick-popover-option-icon { font-size: 1.05rem; line-height: 1; }
+        /* Piu' di 6 voci: due colonne, senza numero ne' freccia (sono categorie da scorrere, non una scelta fra pochi effetti). */
+        .quick-popover-actions--options:has(.quick-popover-option:nth-child(7)) {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        .quick-popover-actions--options:has(.quick-popover-option:nth-child(7)) .quick-popover-option { min-height: 44px; padding: 8px 10px; font-size: 0.86rem; justify-content: center; text-align: center; }
+        .quick-popover-actions--options:has(.quick-popover-option:nth-child(7)) .quick-popover-option::before,
+        .quick-popover-actions--options:has(.quick-popover-option:nth-child(7)) .quick-popover-option::after { content: none; }
+        .quick-popover-actions--options:has(.quick-popover-option:nth-child(7)) .quick-popover-option.cancel { grid-column: 1 / -1; }
+        @media (prefers-reduced-motion: reduce) {
+            .quick-popover.quick-popover--options .quick-popover-option { transition: none; }
+        }
+        @keyframes quickPopoverIn {
+            0% { opacity: 0; transform: scale(0.75); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .quick-popover-title {
+            font-size: 0.76rem;
+            font-weight: 800;
+            color: #f7d774;
+            letter-spacing: 0.06em;
+            text-shadow: 0 0 10px rgba(243,156,18,0.35);
+            margin-bottom: 8px;
+            line-height: 1.25;
+        }
+        .quick-popover-actions {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .quick-popover-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 7px 12px;
+            font-weight: 700;
+            font-size: 0.74rem;
+            color: #fff;
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform 0.15s ease;
+        }
+        .quick-popover-btn:hover { transform: translateY(-2px); }
+        /* Stessa lingua "vetro scuro + bordo luminoso" di .modal-btn qui
+           sopra, versione più sottile (bordo/bagliore più leggeri) per
+           adattarsi alla scala compatta di questi popover. */
+        .quick-popover-btn.attack {
+            background: linear-gradient(145deg, #3a1410, #1f0906);
+            border: 1px solid rgba(255,99,99,0.55);
+            box-shadow: 0 0 8px rgba(255,99,99,0.3);
+        }
+        .quick-popover-btn.defense {
+            background: linear-gradient(145deg, #0e2a1c, #081b12);
+            border: 1px solid rgba(80,220,140,0.5);
+            box-shadow: 0 0 8px rgba(80,220,140,0.28);
+        }
+        .quick-popover-btn.confirm {
+            background: linear-gradient(145deg, #0f1928, #0a2638);
+            border: 1px solid rgba(90,170,255,0.5);
+            box-shadow: 0 0 8px rgba(90,170,255,0.28);
+        }
+        .quick-popover-btn.cancel {
+            background: linear-gradient(145deg, #262b38, #171a22);
+            border: 1px solid rgba(180,190,210,0.3);
+        }
+        /* Pulsanti tondi a sola icona (spada/scudo a tema/✖), usati per la
+           scelta Attacco/Difesa in Evocazione: più compatti e immediati
+           dei pulsanti con etichetta testuale. */
+        .quick-popover-btn.icon-round {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            padding: 0;
+            font-size: 1.15rem;
+            /* Un <button> flex conserva comunque uno spazio da "riga di
+               testo" (line box) attorno al contenuto anche se è solo
+               un'icona SVG — misurato: l'SVG (spada/scudo) risultava
+               spostato di quasi 1px verso l'alto dentro il cerchio,
+               nonostante align-items:center, proprio per questo motivo
+               (non capita su un <div> come .position-badge, che non ha
+               questa quirk dei bottoni). line-height:0 azzera quello
+               spazio residuo. */
+            line-height: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card.destroying {
+            animation: destroyCard 0.6s ease forwards;
+        }
+        /* La distruzione generica parte da rotate(0deg): su un mostro in
+           Difesa questo annullava per 600 ms la sua rotate(90deg), dando
+           l'impressione che l'attacco lo avesse spostato in Attacco prima
+           di distruggerlo. Il keyframe gemello conserva invece sempre
+           l'orientamento orizzontale, anche quando la carta era coperta. */
+        .card.defense-pos.destroying {
+            animation-name: destroyCardDefense;
+        }
+        @keyframes destroyCard {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; }
+            30% { transform: scale(1.08) rotate(-4deg); filter: brightness(1.4); }
+            60% { transform: scale(0.9) rotate(8deg); opacity: 0.7; }
+            100% { transform: scale(0.2) rotate(20deg); opacity: 0; }
+        }
+        @keyframes destroyCardDefense {
+            0% { transform: rotate(90deg) scale(1); opacity: 1; }
+            30% { transform: rotate(86deg) scale(1.08); filter: brightness(1.4); }
+            60% { transform: rotate(98deg) scale(0.9); opacity: 0.7; }
+            100% { transform: rotate(110deg) scale(0.2); opacity: 0; }
+        }
+        .field-slot.impact {
+            animation: fieldImpact 0.45s ease;
+        }
+        @keyframes fieldImpact {
+            0% { box-shadow: inset 0 0 0 rgba(255,255,255,0); transform: scale(1); }
+            50% { box-shadow: inset 0 0 20px rgba(255,215,0,0.8), 0 0 18px rgba(255,215,0,0.6); transform: scale(1.03); }
+            100% { box-shadow: inset 0 0 0 rgba(255,255,255,0); transform: scale(1); }
+        }
+

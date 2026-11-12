@@ -1,0 +1,666 @@
+/* CSS del duello, parte 3 di 12, estratta da duelMonstersCore.html (righe 797-1459 del vecchio blocco <style>).
+   Le parti vanno caricate IN ORDINE (la cascata dipende dall'ordine): 01 ... 12. Non riordinare le regole fra le parti
+   senza ripetere tools/impronta-stili-duello.js. I percorsi url() sono relativi a questo file. */
+        /* ============================================================
+           PLANCIA A TRIANGOLO SFUMATO (richiesta dell'utente, dopo una
+           fascia e un pannello col bordo: "più a triangolo sfumato, e
+           senza bordo").
+           - Dietro avatar, nome e LP c'è solo un'ombra triangolare: scura
+             nell'angolo VERO dello schermo e trasparente man mano che si va
+             verso la diagonale. Nessun bordo, nessun lato netto.
+           - È un ::before che parte dall'angolo dello schermo (scavalca
+             l'offset del pannello con margini negativi) e sborda oltre il
+             contenuto, in percentuale del pannello stesso: un nome lungo
+             allarga anche l'ombra.
+           - Il gradiente è "to bottom right" e non un angolo fisso: così la
+             linea di metà sfumatura va sempre da un vertice all'altro del
+             riquadro, qualunque sia la sua forma, e il risultato resta un
+             triangolo anche quando il pannello è largo e basso.
+           - Col turno attivo l'angolo prende un velo caldo d'oro (oltre
+             alla corona accanto al nome).
+           - Il ritratto è quello scontornato delle pedine (vedi buildAvatar
+             in js/duel-session.js), senza anello. Le misure del riquadro del
+             ritratto NON cambiano (altri elementi si allineano a loro:
+             l'attesa Multiplayer, la mano su telefono in verticale).
+           Bot in alto a sinistra, giocatore in basso a destra, l'angolo di
+           sistema in alto a destra (.hud-sistema): stessa ombra, specchiata.
+           ============================================================ */
+        .player-info.side-player {
+            --plancia-x: clamp(8px, 2vw, 22px);
+            isolation: isolate;
+        }
+        /* Il giocatore sta APPOGGIATO al bordo basso dello schermo (richiesta
+           dell'utente): la pedina parte dal bordo, nome e LP restano sollevati
+           della solita distanza. L'avversario resta staccato dal bordo alto
+           di --duelist-box-offset, perché la sua pedina non venga troncata. */
+        #playerInfo.player-info.side-player {
+            bottom: 0;
+            align-items: flex-end;
+        }
+        #playerInfo.player-info.side-player .duelist-details {
+            padding-bottom: var(--duelist-box-offset);
+        }
+        .player-info.side-player::before {
+            content: '';
+            position: absolute;
+            pointer-events: none;
+            z-index: -1;
+            transition: background 0.5s ease;
+        }
+        /* Molte tappe nel gradiente invece di tre o quattro: la sfumatura
+           diventa una curva morbida, senza la "riga" che si vede dove due
+           tratti dritti si incontrano. Il colore di fondo ha un filo di
+           tinta per lato, la stessa della cinematica VS: rosso per
+           l'avversario, blu per il giocatore. */
+        #botInfo.player-info.side-player::before {
+            top: calc(-1 * var(--duelist-box-offset));
+            left: calc(-1 * var(--plancia-x));
+            right: -80%;
+            bottom: -75%;
+            background:
+                radial-gradient(circle at 0 0, var(--plancia-velo, transparent), transparent 55%),
+                linear-gradient(to bottom right,
+                    rgba(16, 5, 9, 0.95) 0%,
+                    rgba(16, 5, 9, 0.9) 16%,
+                    rgba(14, 5, 9, 0.76) 30%,
+                    rgba(12, 5, 9, 0.52) 42%,
+                    rgba(10, 5, 9, 0.26) 52%,
+                    rgba(10, 5, 9, 0.08) 59%,
+                    rgba(10, 5, 9, 0) 64%);
+        }
+        #playerInfo.player-info.side-player::before {
+            bottom: 0;
+            right: calc(-1 * var(--plancia-x));
+            left: -80%;
+            top: -75%;
+            background:
+                radial-gradient(circle at 100% 100%, var(--plancia-velo, transparent), transparent 55%),
+                linear-gradient(to top left,
+                    rgba(4, 8, 18, 0.95) 0%,
+                    rgba(4, 8, 18, 0.9) 16%,
+                    rgba(4, 8, 18, 0.76) 30%,
+                    rgba(4, 8, 18, 0.52) 42%,
+                    rgba(4, 8, 18, 0.26) 52%,
+                    rgba(4, 8, 18, 0.08) 59%,
+                    rgba(4, 8, 18, 0) 64%);
+        }
+        .player-info.side-player.active-turn {
+            --plancia-velo: rgba(247, 205, 96, 0.24);
+        }
+        /* Telefono in verticale: la mano ha una riga sua subito sopra (per
+           il giocatore) e subito sotto (per il bot) la riga dell'avatar.
+           L'ombra lì non deve allungarsi in verticale fino alle carte: si
+           allarga di lato, dove la riga è vuota. */
+        @media (orientation: portrait) and (max-width: 900px) {
+            #botInfo.player-info.side-player::before { bottom: -10px; right: -95%; }
+            #playerInfo.player-info.side-player::before { top: -10px; left: -95%; }
+        }
+        /* Il ritratto: niente anello, niente ritaglio, niente fondo. */
+        .player-info.side-player .duelist-avatar--corner {
+            border: none;
+            border-radius: 0;
+            background: none;
+            box-shadow: none;
+            clip-path: none;
+            overflow: visible;
+        }
+        /* Pedina scontornata, più larga del riquadro (le figure hanno spalle
+           e mantelli). Le due sono ancorate a lati opposti:
+           - il GIOCATORE in piedi sul fondo, quindi sul bordo dello schermo,
+             con la testa che sborda sopra il riquadro;
+           - l'AVVERSARIO appeso alla cima del riquadro e cresciuto verso il
+             basso: ancorato in fondo come l'altro, la testa usciva sopra il
+             riquadro e quindi fuori dallo schermo (Kaiba tagliato). */
+        .player-info.side-player .duelist-avatar--corner.is-pedina img {
+            width: 136%;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 1px rgba(247, 215, 116, 0.6));
+        }
+        #playerInfo .duelist-avatar--corner.is-pedina img {
+            inset: auto -18% 0 -18%;
+            height: 128%;
+            object-position: 50% 100%;
+        }
+        #botInfo .duelist-avatar--corner.is-pedina img {
+            inset: 0 -18% auto -18%;
+            height: 118%;
+            object-position: 50% 0;
+        }
+        /* Ripiego (nessuna pedina per quel personaggio): il ritratto normale
+           si sfuma ai bordi, così non torna a sembrare una cornice. */
+        .player-info.side-player .duelist-avatar--corner:not(.is-pedina) img {
+            -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+            mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+        }
+        /* Nome e LP: la fascia scura dietro basta a renderli leggibili, la
+           pillola dei LP diventa una cifra grande con l'etichetta "LP". */
+        /* NOME: serif di sistema piu' signorile, maiuscolo spaziato, riempimento oro chiaro -> oro caldo (come i titoli dei
+           menu) con ombra scura per restare leggibile su ogni arena. Il gradiente sta sul solo testo (.name-text): la corona del
+           turno e' un fratello e resta com'e'. L'ombra e' un filter sul contenitore perche' text-shadow non si vede su un testo
+           col riempimento ritagliato. */
+        .player-info.side-player .duelist-name {
+            font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, 'Times New Roman', serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            color: #fbefd0;
+            text-shadow: none;
+            filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 8px rgba(0, 0, 0, 0.5));
+        }
+        .player-info.side-player .duelist-name .name-text {
+            background: linear-gradient(180deg, #fff8e0 0%, #f6dd95 52%, #d4a940 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+        .player-info.side-player .life-points {
+            background: none;
+            border: none;
+            box-shadow: none;
+            padding: 0 2px;
+            /* font-size 0 nasconde il ❤️ dell'HTML, che è un nodo di testo
+               nudo e non si può selezionare: la cifra (lo span) e
+               l'etichetta "LP" qui sotto hanno la loro misura. */
+            font-size: 0;
+            gap: 5px;
+            letter-spacing: 0.02em;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+            border-radius: 6px;
+        }
+        .player-info.side-player .life-points > span {
+            font-size: clamp(0.95rem, 1.9vw, 1.55rem);
+        }
+        .player-info.side-player .life-points::before {
+            /* "LP" come una piccola incisione: stesso serif del nome, oro, e un filo verticale che lo separa dalla cifra. */
+            content: 'LP';
+            font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, 'Times New Roman', serif;
+            font-size: clamp(0.58rem, 1vw, 0.84rem);
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            color: #f7d774;
+            text-shadow: 0 0 8px rgba(247, 215, 116, 0.45), 0 1px 2px rgba(0, 0, 0, 0.85);
+            margin-right: 3px;
+            padding-right: 7px;
+            border-right: 1px solid rgba(247, 215, 116, 0.5);
+            align-self: center;
+            line-height: 1.5;
+        }
+        /* Tag Zona Bandite: stesso "pill" del Cimitero/LP ma viola, sotto
+           i LP nella colonna dei dettagli — vedi renderBanishedBadge() in
+           game-flow.js. Nascosto finché nessuna carta è bandita (nessun
+           lato ha bisogno di uno spazio riservato prima che serva
+           davvero), scoperto solo cliccando (stesso visualizzatore del
+           Cimitero, sempre informazione pubblica per entrambi i lati). */
+        .banished-badge {
+            display: none;
+            align-items: center;
+            gap: 4px;
+            font-size: clamp(0.68rem, 1.2vw, 0.92rem);
+            font-weight: 700;
+            color: #e8d6ff;
+            white-space: nowrap;
+            background: linear-gradient(135deg, rgba(30,10,45,0.92), rgba(60,20,80,0.85));
+            border: 1px solid rgba(155,89,182,0.55);
+            border-radius: 999px;
+            padding: 2px 10px 2px 8px;
+            margin-top: 4px;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.35);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .banished-badge.has-cards { display: inline-flex; }
+        .banished-badge:hover { transform: scale(1.06); box-shadow: 0 4px 12px rgba(155,89,182,0.5); }
+
+        .battlefield {
+            position: relative;
+            overflow: hidden;
+            display: grid;
+            /* Le colonne laterali usano --side-col-w, che si restringe con
+               vw: su schermi larghi restano ampie (fino a 200px), su
+               schermi stretti (mobile orizzontale) si comprimono per
+               lasciare tutto lo spazio possibile al terreno di gioco
+               centrale. Il pannello descrizione carta esce dal flusso della
+               griglia sotto i 900px (vedi media query più in basso) e
+               diventa un cassetto a scomparsa, quindi qui non serve più
+               riservargli 320px fissi. */
+            grid-template-columns: var(--side-col-w) 1fr var(--info-panel-w);
+            align-items: center;
+            gap: clamp(6px, 1.4vw, 16px);
+            background: transparent;
+            border: none;
+            padding: clamp(6px, 1.6vh, 20px) clamp(2px, 1vw, 20px);
+            margin: 0;
+            flex: 1 1 auto;
+            min-height: 0;
+        }
+        .battlefield::before,
+        .battlefield::after {
+            display: none;
+        }
+        .field-label { text-align: center; margin-bottom: 12px; font-size: 1.1em; font-weight: bold; text-transform: uppercase; letter-spacing: 0.06em; }
+        .battlefield-side {
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            min-height: 100px;
+        }
+        .battlefield-side.left {
+            justify-content: flex-start;
+            align-self: start;
+        }
+        .battlefield-side.right {
+            justify-content: flex-end;
+            align-self: end;
+        }
+        .battlefield-main {
+            height: 100%;
+            min-height: 0;
+            /* Colonna centrale di una grid (.battlefield): senza questo,
+               il min-width implicito "auto" di un grid item non lo lascia
+               mai restringere sotto il contenuto minimo dei suoi
+               discendenti (es. .field-row, 7 colonne fisse) — la traccia
+               1fr si allargava oltre lo spazio davvero disponibile e
+               sbordava a destra (nascosto solo da overflow:hidden su
+               .battlefield), spostando tutto il contenuto centrale
+               (incluso lo stepper) fuori centro. Verificato via Playwright:
+               prima del fix la colonna centrale era larga 436px e sbordava
+               di 84px a destra su un viewport di soli 412px. */
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: clamp(6px, 1.4vh, 18px);
+            position: relative;
+            z-index: 1;
+        }
+        /* Desktop: il pannello informazioni e' piu' largo della colonna
+           laterale sinistra. Se entrambe le colonne partecipano alla grid,
+           la traccia centrale viene inevitabilmente spinta verso sinistra
+           anche quando il pannello e' nascosto. Il terreno occupa quindi
+           l'intera larghezza della battlefield e resta centrato sul viewport;
+           le due fasce laterali gli si sovrappongono senza modificarne la
+           geometria. Il pannello conserva i click, la fascia vuota no. */
+        @media (min-width: 901px) {
+            .battlefield-main {
+                grid-column: 1 / -1;
+                grid-row: 1;
+            }
+            .battlefield-side.left {
+                grid-column: 1;
+                grid-row: 1;
+            }
+            .battlefield-side.right {
+                grid-column: 3;
+                grid-row: 1;
+                pointer-events: none;
+            }
+            .battlefield-side.right .card-info-panel {
+                pointer-events: auto;
+            }
+        }
+        .field-section {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(6px, 1.2vh, 12px);
+            position: relative;
+            z-index: 1;
+        }
+        .field-board {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(6px, 1.2vh, 12px);
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        .field-row {
+            display: grid;
+            grid-template-columns: var(--field-slot-w) repeat(5, var(--field-slot-w)) var(--field-slot-w);
+            gap: var(--field-gap);
+            justify-content: center;
+            align-items: center;
+        }
+        /* Spada Rivelatrice attiva contro questo lato: prima qui c'era un
+           fascio di luce verde animato che scorreva in continuo sopra
+           l'intera fila — tolto su richiesta (troppo "vivo" per un
+           effetto che deve durare 3 turni interi): resta solo un alone
+           FISSO, senza animazione, e le spade vere e proprie (vedi
+           .field-sword-mark più sotto, generate da renderFields() in
+           game-flow.js) restano infilzate nel terreno per tutta la durata,
+           a marcare concretamente la fila colpita. */
+        .field-row.monster-row-revealed {
+            position: relative;
+        }
+        .field-row.monster-row-revealed::before {
+            content: '';
+            position: absolute;
+            inset: clamp(-14px, -1.4vw, -8px);
+            z-index: 0;
+            pointer-events: none;
+            border-radius: 14px;
+            background: radial-gradient(ellipse at center, rgba(126,255,157,0.12), transparent 70%);
+            box-shadow: inset 0 0 28px rgba(116,255,150,0.28), 0 0 22px rgba(72,238,112,0.2);
+        }
+        /* Spada di luce verde INFILZATA DENTRO la casella Mostro stessa
+           (non sopra/fuori) — esattamente dove le spade mobili
+           dell'animazione di caduta si fermano (bordo inferiore ancorato
+           al fondo della fila, lama verso l'alto attraverso la carta),
+           ferma lì per tutta la durata dell'effetto (stile Forbidden
+           Memories). Stessa identica sagoma (clip-path + gradiente) di
+           .fx-sword-beam in effects.css: il passaggio dall'una all'altra
+           (vedi playSwordsOfRevealingLight in effects.js) è pensato per
+           essere impercettibile. z-index sopra la carta sottostante, così
+           sembra davvero conficcata nella carta, non solo affiancata. */
+        .field-sword-mark {
+            position: absolute;
+            bottom: 4%;
+            left: 50%;
+            width: 34px;
+            height: 88%;
+            transform: translateX(-50%);
+            transform-style: preserve-3d;
+            pointer-events: none;
+            z-index: 3;
+            filter: drop-shadow(0 0 9px rgba(241,255,243,0.96)) drop-shadow(0 0 22px rgba(77,246,118,0.74));
+            animation: persistentSwordAnimeGlow 1.9s ease-in-out infinite alternate;
+        }
+        .field-sword-mark .fx-sword-blade { width: 13px; }
+        .field-sword-mark .fx-sword-guard { width: 32px; height: 7px; }
+        .field-sword-mark .fx-sword-hilt { width: 7px; }
+        .field-sword-mark .fx-sword-gem { width: 6px; height: 6px; }
+        @keyframes persistentSwordAnimeGlow {
+            from { opacity: 0.72; transform: translateX(-50%) rotateY(-5deg) scale(0.98); }
+            to   { opacity: 1; transform: translateX(-50%) rotateY(5deg) scale(1.03); }
+        }
+        /* Caselle "quasi assenti" (richiesta dell'utente: "meno cella, quasi
+           come se non ci fossero, un po' d'ombra al posto della cella").
+           Nessun bordo e nessun riempimento: al posto della casella c'è solo
+           un'ombra morbida sull'arena, come l'impronta di dove si posa una
+           carta. Così si legge DOVE sono le zone senza disegnare una griglia
+           sopra lo sfondo, e sta bene su qualunque arena perché è solo un
+           velo scuro sfumato.
+           Il colore dell'arena (--campo-tinta, js/ui/tinta-campo.js) compare
+           solo sotto il mouse, come un alone leggero: è l'unico momento in
+           cui serve vedere il contorno della zona.
+           Misure, posizioni e icone delle zone invariate.
+           L'ombra NON sta sullo sfondo della casella ma su un ::before più
+           grande di lei: un gradiente dipinto dentro la casella viene tagliato
+           dai suoi bordi, e si vedeva ancora il rettangolo. Col ::before che
+           sborda e un gradiente "closest-side" (arriva a trasparente proprio
+           sul bordo del suo riquadro) la sfumatura è piena a 360 gradi.
+           Per lo stesso motivo l'alone del mouse non usa box-shadow, che
+           seguirebbe di nuovo il rettangolo. */
+        .field-slot {
+            --tinta: var(--campo-tinta, rgb(190 165 120));
+            --ombra-casella: radial-gradient(closest-side,
+                rgba(0, 0, 0, 0.62) 0%,
+                rgba(0, 0, 0, 0.46) 40%,
+                rgba(0, 0, 0, 0.18) 72%,
+                rgba(0, 0, 0, 0) 100%);
+            width: var(--field-slot-w);
+            height: var(--field-slot-h);
+            border: none;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            position: relative;
+            /* Il ::before qui sotto ha z-index -1: senza un contesto proprio
+               finirebbe dietro allo sfondo del Terreno (su desktop spariva). */
+            isolation: isolate;
+            cursor: pointer;
+            flex-shrink: 0;
+            box-shadow: none;
+        }
+        .field-slot::before {
+            content: '';
+            position: absolute;
+            inset: -14% -26%;
+            background: var(--ombra-casella);
+            pointer-events: none;
+            z-index: -1;
+            transition: opacity 0.25s ease;
+        }
+        /* Il contorno delle caselle compare SOLO durante la zoomata
+           d'ingresso (.camera-intro, vedi playCameraIntro in game-flow.js).
+           Le ombre tonde, da sole, non hanno lati dritti, e senza lati dritti
+           l'occhio non legge il campo inclinato che si raddrizza: l'effetto
+           3D dell'ingresso spariva. Il contorno ridà la griglia in
+           prospettiva finché la telecamera si muove, poi si dissolve e resta
+           il campo "quasi assente" voluto per la partita.
+           Il contorno c'è sempre ma trasparente: è solo il colore a cambiare,
+           così la dissolvenza in uscita è una transizione e non uno scatto
+           quando la classe viene tolta. Entra in fretta (la scena è ancora
+           in dissolvenza dal nero) ed esce lentamente. outline e non border:
+           non cambia le misure della casella. */
+        .field-slot {
+            outline: 1px solid transparent;
+            outline-offset: -1px;
+            transition: outline-color 0.7s ease;
+        }
+        .game-container.camera-intro .field-slot {
+            outline-color: color-mix(in srgb, var(--tinta) 55%, rgba(255, 255, 255, 0.55));
+            transition-duration: 0.2s;
+        }
+        .field-slot:hover {
+            --ombra-casella: radial-gradient(closest-side,
+                color-mix(in srgb, var(--tinta) 38%, rgba(0, 0, 0, 0.40)) 0%,
+                color-mix(in srgb, var(--tinta) 20%, rgba(0, 0, 0, 0.22)) 50%,
+                rgba(0, 0, 0, 0) 100%);
+            transform: none;
+        }
+        .field-slot.special-slot {
+            border: none;
+            background: transparent;
+            color: #eaf2ff;
+            font-size: 0.72rem;
+            text-align: center;
+            padding: 8px;
+            flex-direction: column;
+            gap: 6px;
+        }
+        /* Extra Deck con una Fusione evocabile ORA senza Polimerizzazione
+           (es. XYZ-Cannone Drago): la zona pulsa in viola per dire "toccami".
+           La classe la mette createSlotElement (game-flow.js) solo nella
+           propria Main Phase; si ricalcola a ogni render. */
+        .field-slot.fusion-ready {
+            border-color: rgba(190, 130, 255, 0.95);
+            animation: fusionReadyPulse 1.6s ease-in-out infinite;
+            cursor: pointer;
+        }
+        @keyframes fusionReadyPulse {
+            0%, 100% { box-shadow: 0 0 6px rgba(176, 108, 255, 0.55), inset 0 0 8px rgba(140, 66, 245, 0.35); }
+            50%      { box-shadow: 0 0 16px 3px rgba(190, 130, 255, 0.95), 0 0 30px 6px rgba(120, 52, 230, 0.55), inset 0 0 14px rgba(190, 130, 255, 0.6); }
+        }
+        /* Il bagliore della sola casella su telefono quasi non si vede (la
+           pila la copre e la casella è minuscola): pulsano anche i dorsi
+           della pila, con un drop-shadow che segue la loro sagoma. */
+        .field-slot.fusion-ready .deck-preview {
+            animation: fusionReadyCards 1.6s ease-in-out infinite;
+        }
+        @keyframes fusionReadyCards {
+            0%, 100% { filter: drop-shadow(0 0 3px rgba(190, 130, 255, 0.7)); }
+            50%      { filter: drop-shadow(0 0 6px #e3c8ff) drop-shadow(0 0 14px rgba(150, 70, 255, 0.95)); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .field-slot.fusion-ready { animation: none; box-shadow: 0 0 14px 2px rgba(190, 130, 255, 0.85), inset 0 0 12px rgba(190, 130, 255, 0.5); }
+            .field-slot.fusion-ready .deck-preview { animation: none; filter: drop-shadow(0 0 6px #e3c8ff) drop-shadow(0 0 12px rgba(150, 70, 255, 0.85)); }
+        }
+        .field-slot.deck-slot {
+            /*background: transparent;
+            border: none;
+            box-shadow: none;
+            overflow: visible;*/
+        }
+        /* Pescata vista DAL MAZZO: la carta in cima scivola verso il basso
+           e sparisce, come se il giocatore la sfilasse via, e subito dopo
+           riaffiora quella sotto. Prima era l'INTERO slot a dondolare su e
+           giu' all'infinito (deckDrawPulse), che non raccontava niente: il
+           mazzo non si muove quando peschi, si muove la carta che prendi.
+           L'animazione FINISCE tornando allo stato normale apposta: la
+           classe .draw-effect resta applicata per un tempo variabile (vedi
+           js/engine/game-flow.js), e un `forwards` che si fermasse sulla
+           carta sparita lascerebbe il mazzo visivamente vuoto. */
+        @keyframes deckTopCardSlide {
+            0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+            42%  { transform: translateY(30px) rotate(-4deg); opacity: 0; }
+            43%  { transform: translateY(0) rotate(0deg); opacity: 0; }
+            100% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        }
+        .field-slot.deck-slot.draw-effect .deck-preview {
+            animation: deckTopCardSlide 480ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* I dorsi della pila sono dimensionati e sfalsati in PERCENTUALE
+           della casella, non in pixel fissi.
+
+           Con misure fisse la pila sbordava sul telefono: gli offset
+           (fino a 19px per il quinto strato) erano tarati su una casella
+           da 82px, ma su uno schermo da 390px la stessa casella e' larga
+           48 — misurato, la pila usciva di 14px a destra e 6 in basso,
+           cioe' quasi un terzo della casella fuori dal suo posto. In
+           percentuale invece lo stesso disegno si adatta da solo a
+           qualunque dimensione, telefono o desktop.
+
+           I numeri non sono a caso: l'ultimo strato parte al 14% e il
+           dorso e' largo l'86%, quindi il suo bordo destro cade ESATTO
+           sul bordo della casella. Stesso ragionamento in verticale, con
+           un passo piu' corto perche' la casella e' piu' alta che larga.
+
+           `aspect-ratio` invece di un'altezza calcolata: cosi' il dorso
+           mantiene le proporzioni di una carta vera a prescindere da
+           quanto e' alta la casella. */
+        /* AGGIORNAMENTO 2026-10-16: il dorso in cima alla pila ha ora la
+           STESSA misura e la STESSA posizione di una carta nella casella
+           accanto. Prima era largo l'86% della casella e appoggiato al suo
+           angolo in alto a sinistra, mentre le carte stanno al centro della
+           loro casella: in una stessa riga carte e pile non partivano dallo
+           stesso punto (6,3px di scarto su desktop, 2,3px su telefono —
+           misurato, segnalato dall'utente). Lo spessore si disegna nel
+           margine che la casella lascia intorno alla carta, verso il basso
+           a destra: l'ultimo strato tocca esatto il bordo della casella.
+           --pila-x/--pila-y sono quel margine (metà dello spazio libero);
+           una percentuale dentro una variabile si risolve dove la si usa,
+           quindi in `left` vale sulla larghezza e in `top` sull'altezza. */
+        .field-slot.deck-slot {
+            --pila-x: calc((100% - var(--card-w)) / 2);
+            --pila-y: calc((100% - var(--card-h)) / 2);
+        }
+        .field-slot.deck-slot .deck-preview {
+            width: var(--card-w);
+            height: auto;
+            aspect-ratio: var(--card-ratio);
+            pointer-events: none;
+            position: absolute;
+            left: var(--pila-x);
+            top: var(--pila-y);
+            transform: rotate(0deg);
+            transform-origin: center center;
+            box-shadow: 0 5px 14px rgba(0,0,0,0.26);
+            z-index: 1;
+        }
+        /* Offset dei dorsi sfalsati che danno lo SPESSORE alla pila. Il
+           primo figlio è quello in cima (z-index più alto), gli altri
+           scendono dietro di lui, ognuno spostato di un quarto del margine.
+
+           Quanti se ne disegnano lo decide pileDepthForCount()
+           (js/engine/game-flow.js) in base alle carte davvero presenti:
+           prima erano sempre 3 appena la pila non era vuota, quindi un
+           Deck da 34 e uno da 3 si vedevano uguali. */
+        .field-slot.deck-slot .deck-preview:nth-child(1) { z-index: 5; }
+        .field-slot.deck-slot .deck-preview:nth-child(2) {
+            left: calc(var(--pila-x) * 1.25);
+            top: calc(var(--pila-y) * 1.25);
+            z-index: 4;
+        }
+        .field-slot.deck-slot .deck-preview:nth-child(3) {
+            left: calc(var(--pila-x) * 1.5);
+            top: calc(var(--pila-y) * 1.5);
+            z-index: 3;
+        }
+        .field-slot.deck-slot .deck-preview:nth-child(4) {
+            left: calc(var(--pila-x) * 1.75);
+            top: calc(var(--pila-y) * 1.75);
+            z-index: 2;
+        }
+        .field-slot.deck-slot .deck-preview:nth-child(5) {
+            left: calc(var(--pila-x) * 2);
+            top: calc(var(--pila-y) * 2);
+            z-index: 1;
+        }
+        /* Una carta è appena arrivata in questa pila (vedi
+           `pile-receive` in createSlotElement, js/engine/game-flow.js):
+           il dorso in cima CADE dentro invece di comparire e basta.
+           Solo transform e opacity, cioè le due cose che il browser sa
+           comporre senza ridisegnare nulla — con fino a sei pile a
+           schermo non è il posto dove spendere pittura. */
+        .field-slot.deck-slot.pile-receive .deck-preview:nth-child(1) {
+            animation: pileReceive 420ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        }
+        @keyframes pileReceive {
+            0%   { opacity: 0; transform: translateY(-16px) scale(1.06); }
+            60%  { opacity: 1; }
+            /* Si ferma a scala 1 senza sorpassarla: una carta che si posa
+               sulla pila non rimbalza. */
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .field-slot.bot-deck-slot > .deck-preview {
+            transform: scaleX(-1) rotate(0deg);
+            transform-origin: center center;
+        }
+        .field-slot.bot-deck-slot > .deck-preview:nth-child(1) {
+            transform: scaleX(-1) rotate(0deg);
+            transform-origin: center center;
+        }
+        .field-slot.bot-deck-slot > .deck-preview:nth-child(2) {
+            transform: scaleX(-1) rotate(0deg);
+            transform-origin: center center;
+        }
+        .field-slot.bot-deck-slot > .deck-preview:nth-child(3) {
+            transform: scaleX(-1) rotate(0deg);
+            transform-origin: center center;
+        }
+        .field-slot.deck-slot .deck-preview:hover {
+            transform: none;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.28);
+        }
+        .field-slot.deck-slot .field-slot-label,
+        .field-slot.deck-slot .field-slot-count {
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+        .field-slot-label {
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            /* Figlio flex di .field-slot.special-slot (flex-direction:
+               column): senza questo, il min-width implicito "auto" di un
+               flex item non lo lascia restringersi sotto la larghezza
+               della parola intera (es. "CIMITERO", una sola parola senza
+               spazi = niente punti di a-capo naturali) — su uno slot
+               mobile di ~46-54px il testo sbordava fuori dallo slot in
+               un'unica riga invece di andare a capo, tagliato solo
+               dall'overflow:hidden di .battlefield più esterno. */
+            min-width: 0;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        .field-slot-count { color: #f39c12; font-size: 0.95rem; font-weight: bold; }
+        /* Icona a tema al posto del nome testuale (Cimitero/Fusion/Terreno,
+           vedi FIELD_ZONE_ICONS in game-flow.js + js/ui/icon-library.js):
+           un'icona si legge bene molto più piccola di una parola intera,
+           quindi qui il font-size sale invece di scendere — la dimensione
+           reale dell'SVG (.themed-icon) è 1em, ereditata da qui. Colore
+           dorato esplicito (il colore di testo di .field-slot.special-slot
+           qui sopra è un azzurro chiaro, non in tema) dato che l'SVG usa
+           currentColor. */
+        .field-slot-icon {
+            font-size: clamp(1.1rem, 3vw, 1.6rem);
+            line-height: 1;
+            color: #f7d774;
+        }
+
