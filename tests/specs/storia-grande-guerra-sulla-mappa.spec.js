@@ -23,6 +23,7 @@
 //
 // `standalone`: serve storia.html, non la pagina del duello.
 const path = require('path');
+const { consentiTuttiIContenuti } = require('../helpers/contenuti');
 
 const CAMPAGNA = 'ww1';
 // Distanza minima fra due tappe nel mondo. Un nodo è largo 104px e il
@@ -44,6 +45,7 @@ module.exports = {
         const page = await context.newPage();
         const erroriPagina = [];
         page.on('pageerror', (e) => erroriPagina.push(e.message));
+        await consentiTuttiIContenuti(page);
 
         try {
             await page.goto(url);

@@ -37,15 +37,19 @@ module.exports = {
             // parallelo "Seeker contro Joey" si gioca dalla parte di Seeker,
             // che nell'anime vince (regola dei laterali dalla parte di chi
             // vince, vedi storia-anime-coerenza-narrativa).
-            const cacciatore = (entry) => {
-                if (wanted.includes(entry.characterId)) return entry.characterId;
+            const cacciatori = (entry) => {
+                const ids = [entry.characterId];
                 const nome = entry.protagonista && entry.protagonista.name;
                 const pg = nome && characterDatabase.find((c) => c.name === nome);
-                return pg && wanted.includes(pg.id) ? pg.id : null;
+                if (pg) ids.push(pg.id);
+                // Nei duelli Tag il secondo Rare Hunter è un avversario
+                // effettivo anche se il nodo ha Lumis come personaggio principale.
+                if (entry.tag) ids.push(entry.tag.compagno, entry.tag.avversario2);
+                return [...new Set(ids.filter((id) => wanted.includes(id)))];
             };
-            const duels = area.tappe.filter((entry) => entry.kind === 'duel' && cacciatore(entry));
+            const duels = area.tappe.filter((entry) => entry.kind === 'duel' && cacciatori(entry).length);
             return {
-                ids: duels.map(cacciatore),
+                ids: duels.flatMap(cacciatori),
                 dialogues: duels.every((entry) => Array.isArray(entry.dialogo) && entry.dialogo.length >= 2),
                 migrations: anime.separazioni.filter((entry) => [
                     'battle-city-seeker', 'battle-city-strings', 'battle-city-maschere'

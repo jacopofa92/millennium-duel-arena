@@ -37,7 +37,11 @@ module.exports = {
             const hologramSetting = window.HologramSetting;
             const holograms = window.MonsterHolograms;
             window.HologramSetting = { isAttivo: () => true };
-            window.MonsterHolograms = { zoom: (uid, ms) => { zoom = { uid, ms }; return true; } };
+            // game-flow chiama sync durante i ridisegni: sostituisci solo
+            // il metodo osservato e conserva gli altri metodi reali.
+            window.MonsterHolograms = Object.assign(Object.create(holograms), {
+                zoom: (uid, ms) => { zoom = { uid, ms }; return true; }
+            });
             const attivatoMostro = FX.playAutomaticFieldActivation({ uid: 'auto-trigger-test', type: 'monster' });
             const nienteSollevamento = source.getAnimations().length === 0;
             await new Promise((resolve) => setTimeout(resolve, 300));

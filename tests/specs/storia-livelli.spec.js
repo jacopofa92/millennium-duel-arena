@@ -13,6 +13,7 @@
 // `standalone`: la Storia vive su una pagina sua.
 const path = require('path');
 const { liberaLaPagina } = require('../helpers/harness.js');
+const { consentiTuttiIContenuti } = require('../helpers/contenuti');
 
 module.exports = {
     standalone: true,
@@ -24,6 +25,7 @@ module.exports = {
         const erroriPagina = [];
         page.on('pageerror', (e) => erroriPagina.push(e.message));
         await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
+        await consentiTuttiIContenuti(page);
 
         const livelliSulloSchermo = () => page.evaluate(() => ({
             visibile: !document.getElementById('livelliMount').hidden,

@@ -16,7 +16,9 @@ const AVVERSARI = ['yamiYugi', 'joey', 'pegasus', 'mako', 'bakura'];
 // le carte firma principali. Paladino/Rituale non fanno piu' parte della
 // baseline: l'audit Custom li ha identificati come pacchetto incoerente con
 // le altre linee costose di Kaiba Hard.
-const TAGLI = [431, 335, 454, 198, 320, 69, 631, 312, 40, 793, 8, 272, 607];
+// Il Mostro Trappola 312 non è più nella baseline Kaiba. Al suo posto
+// usiamo Tifone (607), una carta utility presente nel deck attuale.
+const TAGLI = [431, 335, 454, 198, 320, 69, 631, 607, 40, 793, 8, 272];
 
 function arg(name, fallback) {
     const index = process.argv.indexOf('--' + name);

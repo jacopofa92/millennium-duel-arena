@@ -14,13 +14,18 @@ const OSSERVATI = [472, 1273, 1274, 1275, 1276];
 function cambia(base, aggiunte) {
     const deck = JSON.parse(JSON.stringify(base));
     const tagli = [646, 439, 434, 25];
-    aggiunte.forEach((id, index) => {
-        const voce = deck.main.find((c) => Number(c.id) === tagli[index] && c.qty > 0);
-        if (!voce) throw new Error(`Taglio Marik non disponibile: ${tagli[index]}`);
+    let indiceTaglio = 0;
+    aggiunte.forEach((id) => {
+        // Il deck Hard pubblicato contiene già Incrocio di Anime (1274).
+        // La variante completa lo conta una volta sola e taglia solo le
+        // carte necessarie a inserire i supporti che mancavano davvero.
+        if (deck.main.some((c) => Number(c.id) === id && c.qty > 0)) return;
+        const taglio = tagli[indiceTaglio++];
+        const voce = deck.main.find((c) => Number(c.id) === taglio && c.qty > 0);
+        if (!voce) throw new Error(`Taglio Marik non disponibile: ${taglio}`);
         voce.qty--;
         if (!voce.qty) deck.main.splice(deck.main.indexOf(voce), 1);
-        const presente = deck.main.find((c) => Number(c.id) === id);
-        if (presente) presente.qty++; else deck.main.push({ id, qty: 1 });
+        deck.main.push({ id, qty: 1 });
     });
     return deck;
 }

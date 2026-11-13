@@ -10,7 +10,9 @@ const ROOT = path.join(__dirname, '..');
 const AVVERSARI = ['yamiYugi', 'joey', 'kaiba', 'mako', 'bakura'];
 const CONFIG = [
     { personaggio: 'strings', supporto: 1271, dio: 31, tagli: [6, 38, 35] },
-    { personaggio: 'kaiba', supporto: 1272, dio: 30, tagli: [506, 398, 607] },
+    // Rituale e Paladino del Drago Bianco non sono più nella baseline Kaiba:
+    // sostituiamo utility periferiche realmente presenti, preservando il nucleo.
+    { personaggio: 'kaiba', supporto: 1272, dio: 30, tagli: [454, 198, 607] },
     { personaggio: 'marik', supporto: 1273, dio: 472, tagli: [646, 439, 434] }
 ];
 

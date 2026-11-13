@@ -4,6 +4,7 @@
 //  - dopo una vittoria (nuova o su una tappa gia' superata) la pagina mostra la conversazione PRIMA della mappa, e solo allora la storia prosegue;
 //  - una sconfitta (anche in rivincita) non la mostra.
 const path = require('path');
+const { consentiTuttiIContenuti } = require('../helpers/contenuti');
 const RADICE = path.join(__dirname, '..', '..');
 const url = (f) => 'file:///' + path.join(RADICE, f).replace(/\\/g, '/');
 
@@ -19,6 +20,7 @@ module.exports = {
         const ctx = await browser.newContext({ viewport: { width: 1000, height: 700 }, serviceWorkers: 'block' });
         await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
         const page = await ctx.newPage();
+        await consentiTuttiIContenuti(page);
         page.on('pageerror', (e) => errori.push(e.message));
         try {
             await page.goto(url('storia.html'));

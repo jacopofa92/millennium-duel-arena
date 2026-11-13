@@ -18,6 +18,7 @@
 // `standalone`: servono più caricamenti della pagina del duello con URL
 // diversi, non la partita già aperta che l'harness prepara.
 const path = require('path');
+const { consentiTuttiIContenuti } = require('../helpers/contenuti');
 
 module.exports = {
     name: 'Storia: in una campagna il giocatore è il protagonista di quella storia',
@@ -36,6 +37,7 @@ module.exports = {
         const page = await context.newPage();
         const erroriPagina = [];
         page.on('pageerror', (e) => erroriPagina.push(e.message));
+        await consentiTuttiIContenuti(page);
 
         try {
             // --- Il catalogo: ogni campagna GIOCABILE ne dichiara uno ---

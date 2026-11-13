@@ -80,7 +80,9 @@ module.exports = {
             const onlyCandidate = { ...cardDatabase.find((c) => c.type === 'monster' && c.attribute === 'VENTO' && c.attack <= 1500 && !c.extraDeck), uid: 'only-wind-1' };
             gameState.playerDeck = [onlyCandidate];
             gameState.playerMonsterField = [null, null, null, null, null];
-            const ctx = DuelEngine.makeContext('player', { card: kamakiri });
+            // Kamakiri Volante si attiva solo se viene distrutto in
+            // battaglia: il test della scelta singola deve fornire quel contesto.
+            const ctx = DuelEngine.makeContext('player', { card: kamakiri, destroyedInBattle: true });
             DuelEngine.getDefinition(248).onDestroy(ctx);
             return {
                 modalOpen: document.getElementById('cardListPickerModal').classList.contains('open'),

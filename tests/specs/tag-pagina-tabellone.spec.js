@@ -69,6 +69,11 @@ module.exports = {
                     });
                     t.assert(await page.isHidden('#foglio'), `${w}px: scelto un personaggio, il pannello si chiude`);
                     t.assert((await page.textContent('#postiAvv .tg-posto:nth-child(2) .tg-posto-nome')) === scelto, `${w}px: il posto mostra chi hai scelto (${scelto})`);
+                } else {
+                    // Senza una scelta libera il foglio resta correttamente
+                    // aperto: chiudilo prima di provare il formato Boss.
+                    await page.click('#foglioChiudi');
+                    t.assert(await page.isHidden('#foglio'), `${w}px: il pannello si chiude anche senza una scelta libera`);
                 }
 
                 // Boss: un posto solo, e come livello solo Normale o Incubo.
