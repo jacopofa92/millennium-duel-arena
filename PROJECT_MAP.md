@@ -1,5 +1,12 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Pulsanti delle fasi più riconoscibili (1.6.65)
+
+Le fasi raggiungibili mostrano il cursore a mano e un sollevamento luminoso al
+passaggio del mouse; alla pressione si abbassano brevemente. Lo stesso feedback
+è applicato alle voci selezionabili del menu laterale desktop. Le fasi disattive
+e quella corrente non sembrano cliccabili. Solo CSS; cache v719.
+
 ## Ritorno dalla posa di danno senza bagliore (1.6.64)
 
 Resta il rinculo di 320 ms; rimossi il lampo sovrapposto e le variazioni di

@@ -178,6 +178,55 @@
             .phase-stepper .phase-step.clickable:not(.active) .step-label::after,
             .phase-stepper .phase-step.completed .step-label::after { content: attr(data-short); animation: none; }
         }
+
+        /* Le fasi raggiungibili devono sembrare davvero premibili. Sul desktop la
+           barra compatta è nascosta e si usa il menu laterale; sul touch resta la
+           barra. Il feedback usa solo trasformazioni leggere, senza cambiare gli
+           ingombri e senza animare le fasi disabilitate o quella corrente. */
+        .phase-stepper .phase-step.clickable:not(.active),
+        .phase-side-btn,
+        .phase-side-menu button:not(:disabled):not(.psm-attuale) {
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .phase-stepper .phase-step.clickable:not(.active) * { cursor: pointer; }
+        .phase-stepper .phase-step.clickable:not(.active) {
+            transition: transform 150ms cubic-bezier(.2,.75,.25,1), filter 150ms ease, box-shadow 150ms ease;
+        }
+        .phase-side-menu button:not(:disabled):not(.psm-attuale) {
+            transition: transform 120ms ease, filter 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .phase-stepper .phase-step.clickable:not(.active):hover {
+                transform: translateY(-3px) scale(1.045);
+                filter: brightness(1.16);
+                box-shadow: 0 7px 16px rgba(0,0,0,.3), 0 0 19px color-mix(in srgb, var(--fase-accento) 38%, transparent), inset 0 1px 0 rgba(255,255,255,.2);
+            }
+            .phase-stepper .phase-step.clickable:not(.active):hover .step-icon {
+                filter: brightness(1.3) drop-shadow(0 0 6px color-mix(in srgb, var(--fase-accento) 75%, white));
+            }
+            .phase-side-menu button:not(:disabled):not(.psm-attuale):hover {
+                transform: translateY(-2px) scale(1.035);
+                filter: brightness(1.2);
+                box-shadow: 0 6px 14px rgba(0,0,0,.42), 0 0 13px color-mix(in srgb, var(--fase-accento, #f7d774) 42%, transparent);
+            }
+        }
+        .phase-stepper .phase-step.clickable:not(.active):active {
+            transform: translateY(1px) scale(.93);
+            filter: brightness(1.28);
+            transition-duration: 70ms;
+        }
+        .phase-side-menu button:not(:disabled):not(.psm-attuale):active {
+            transform: translateY(1px) scale(.96);
+            filter: brightness(1.3);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,.35);
+            transition-duration: 70ms;
+        }
+        .phase-side-menu button:disabled { cursor: default; }
+        @media (prefers-reduced-motion: reduce) {
+            .phase-stepper .phase-step.clickable:not(.active),
+            .phase-side-menu button:not(:disabled):not(.psm-attuale) { transition: none; }
+        }
         /* Box info carta in ORIZZONTALE su telefono: a SINISTRA (come Master Duel: carta e testo a sinistra,
            comandi di turno a destra) e un po' piu' largo, cosi' il testo dell'effetto si scorre meno. Parte
            sotto la plancia dell'avversario (in alto a sinistra) e arriva quasi al fondo. Stessa condizione del

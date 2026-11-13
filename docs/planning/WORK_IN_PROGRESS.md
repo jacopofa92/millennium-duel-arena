@@ -1,5 +1,14 @@
 # Work in progress — miglioramenti da seguire
 
+## Feedback dei pulsanti delle fasi — chiuso in 1.6.65
+
+- [x] Cursore a mano e risposta visiva al passaggio del mouse sulle fasi
+      raggiungibili e sulle voci attive del menu laterale desktop.
+- [x] Pressione breve, senza cambiare dimensioni o logica delle fasi;
+      fasi disattive e fase corrente escluse. Cache v719.
+- [ ] Verificare manualmente sul telefono che le fasi raggiungibili rispondano
+      al tocco durante un duello.
+
 ## Ritorno dalla posa di danno senza bagliore — chiuso in 1.6.64
 
 - [x] Rimossi il lampo e le variazioni di luminosità; resta il rinculo e il
