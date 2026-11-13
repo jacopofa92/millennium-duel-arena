@@ -2,3 +2,21 @@
    La geometria della posa e' quella di ogni altra immagine del riquadro (stesse regole di .is-pedina). */
 .duelist-avatar.posa-danno-attiva img:not(.posa-danno) { opacity: 0; }
 .duelist-avatar img.posa-danno { transition: none; pointer-events: none; }
+.duelist-avatar.posa-danno-ritorno::after {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    inset: -18%;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,.88) 0%, rgba(224,244,255,.56) 30%, rgba(255,255,255,0) 72%);
+    animation: posa-danno-ritorno-lampo 420ms ease-out both;
+}
+@keyframes posa-danno-ritorno-lampo {
+    0% { opacity: 0; transform: scale(.78); }
+    38% { opacity: .82; transform: scale(1.08); }
+    74% { opacity: .48; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.12); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .duelist-avatar.posa-danno-ritorno::after { animation: none; }
+}

@@ -1,5 +1,12 @@
 # Work in progress — miglioramenti da seguire
 
+## Ritorno dalla posa di danno — chiuso in 1.6.63
+
+- [x] Rimossa la dissolvenza in uscita: rinculo breve, cambio coperto da un
+      lampo e ritorno immediato alla pedina normale; ingresso invariato.
+- [x] Gestito un nuovo danno durante la chiusura e rispettata la preferenza
+      di movimento ridotto. Spec `posa-danno` superato.
+
 ## Aura WebGL nelle attivazioni automatiche — chiuso in 1.6.62
 
 - [x] Carta fisica: alone bianco WebGL durante il sollevamento del nodo reale.

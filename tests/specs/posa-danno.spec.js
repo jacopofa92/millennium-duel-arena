@@ -34,7 +34,19 @@ module.exports = {
         t.assert(/pedine-danno-sorpresa\/thumbs\/[^/]+\.webp$/.test(src || ''), `La posa e' la miniatura WebP: ${src}`);
         t.assert(await page.evaluate(() => document.querySelector('#botInfo .duelist-avatar--corner').classList.contains('posa-danno-attiva')), 'La pedina normale si spegne mentre la posa e\' a vista');
 
-        // 3) Dopo ~2 secondi la posa sparisce e il riquadro torna com'era.
+        // 3) In uscita la posa rincula ma non sfuma: il cambio è coperto da un lampo breve.
+        await page.waitForFunction(() => {
+            const img = document.querySelector('#botInfo .duelist-avatar--corner img.posa-danno');
+            return img && img.getAnimations().some((a) => a.effect.getTiming().duration === 320);
+        }, null, { timeout: 5000 });
+        const ritorno = await page.evaluate(() => {
+            const img = document.querySelector('#botInfo .duelist-avatar--corner img.posa-danno');
+            return img && img.getAnimations().find((a) => a.effect.getTiming().duration === 320).effect.getKeyframes();
+        });
+        t.assert(ritorno && ritorno.every((f) => f.opacity === undefined || f.opacity === 1),
+            `La posa rientra con rinculo senza dissolvenza: ${JSON.stringify(ritorno)}`);
+        t.assert(await page.evaluate(() => document.querySelector('#botInfo .duelist-avatar--corner').classList.contains('posa-danno-ritorno')),
+            'Il cambio di posa è coperto dal lampo di ritorno');
         await page.waitForFunction(() => !document.querySelector('#botInfo .duelist-avatar--corner img.posa-danno'), null, { timeout: 5000 });
         t.assert(await page.evaluate(() => !document.querySelector('#botInfo .duelist-avatar--corner').classList.contains('posa-danno-attiva')), 'A posa finita la pedina normale torna visibile');
 

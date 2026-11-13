@@ -1,5 +1,13 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Ritorno dalla posa di danno (1.6.63)
+
+La posa danno continua a entrare con la transizione esistente. In uscita non
+sfuma più: rincula per 320 ms, un lampo tenue copre il cambio netto alla pedina
+normale e si spegne dopo 420 ms. Movimento ridotto: ritorno immediato. Un nuovo
+colpo durante la chiusura sostituisce la posa in uscita. Regressione:
+`tests/specs/posa-danno.spec.js`.
+
 ## Aura sulle attivazioni automatiche (1.6.62)
 
 Le carte fisiche che attivano automaticamente un effetto ricevono un'aura
