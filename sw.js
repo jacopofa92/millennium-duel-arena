@@ -548,7 +548,8 @@
 // v705: Strappa Possesso e Necropaura Oscura restituiscono il mostro quando l'Equip lascia il Terreno.
 // v706: correzioni agli effetti di Maga Oscura, Spada Celestiale - Eatos e Chiron il Mago.
 // v708: la vittoria di Elefante Volante scade dopo il suo turno utile.
-const CACHE_NAME = 'ygo-duel-arena-v713';
+// v714: versione 1.6.60, schermata fine duello compatta e controlli/audit riallineati.
+const CACHE_NAME = 'ygo-duel-arena-v714';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

@@ -1,5 +1,14 @@
 # Work in progress — miglioramenti da seguire
 
+## Schermata risultato e affidabilità dei test — chiuso in 1.6.60
+
+- [x] Schermata di fine duello compatta senza scroll residuo con pochi premi;
+      resta scorrevole quando i premi sono numerosi.
+- [x] Audit Marik/Kaiba aggiornati alle carte presenti nei deck Hard correnti;
+      fixture riallineate per Kamakiri, Rare Hunter Tag, contenuti opzionali,
+      selezione Tag Team e mock degli ologrammi.
+- [x] Spec mirati e sintassi passati; suite completa non eseguita.
+
 ## Accesso da un solo dispositivo — 1.6.59
 
 - [x] Il login registra nel database l'ID e l'ora server-side della sessione

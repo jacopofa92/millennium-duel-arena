@@ -483,7 +483,7 @@
        scorrimento vero — misurato, 14px di scorrimento comparivano anche
        dove non c'era niente da scorrere. Cambiando `gap` qui (o nel media
        query per gli schermi bassi) la fascia si riallinea da sola. */
-    --do-gap: 14px;
+    --do-gap: 12px;
     gap: var(--do-gap);
     text-align: center;
     width: min(100%, 560px);
@@ -588,7 +588,10 @@
 /* La pedina scontornata (vincitore): grande, entra dal basso. */
 .do-figura { display: flex; justify-content: center; }
 .do-figura img {
-    height: clamp(110px, 22vh, 200px); width: auto; max-width: 60vw;
+    /* La schermata normale con tre premi deve restare interamente visibile
+       su un desktop alto 900px: il ritratto da 200px lasciava uno scroll
+       inutile di pochi pixel. Con molti premi scorre ancora il contenuto. */
+    height: clamp(110px, 19vh, 172px); width: auto; max-width: 60vw;
     object-fit: contain; user-select: none;
     filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .7));
     opacity: 0;

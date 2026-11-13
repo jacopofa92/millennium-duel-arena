@@ -1,5 +1,14 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Schermata risultato e test riallineati (1.6.60)
+
+La schermata di fine duello usa un ritratto e spaziature più compatti: con tre
+premi su desktop non compare più uno scorrimento inutile; con molti premi il
+contenuto continua a scorrere e il pulsante resta raggiungibile. Aggiornati gli
+audit dei supporti di Marik/Kaiba alle liste Hard attuali e le fixture di
+Kamakiri, Rare Hunter Tag, campagne opzionali, selezione Tag Team e ologrammi.
+Spec mirati verdi; suite completa non eseguita.
+
 ## Accesso da un solo dispositivo (1.6.59, in lavorazione)
 
 Il login più recente registra nel database il `session_id` Supabase attivo.

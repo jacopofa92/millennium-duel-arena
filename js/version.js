@@ -37,6 +37,7 @@
  * 1.6.52 — Maga Oscura conta entrambi i mostri indicati in tutti e due i Cimiteri; Spada Celestiale - Eatos applica il suo effetto dal Cimitero; Chiron lascia scegliere anche le Magie/Trappole coperte e le Magie Terreno.
  * 1.6.56 — Gli effetti che colpiscono Magie/Trappole riconoscono i Mostri Trappola anche in Zona Mostri: selezione, distruzione, rientro in mano e animazioni usano la loro zona reale.
  * 1.6.59 — Un account usa una sola sessione di gioco attiva: il login più recente prevale e le scritture del dispositivo precedente vengono rifiutate senza perdere la copia locale.
+ * 1.6.60 — Schermata fine duello più compatta quando i premi sono pochi; fixture e audit riallineati alle regole Kamakiri, ai Rare Hunter Tag e ai mazzi Hard aggiornati.
  * 1.6.58 — Roccaforte usa il controllo pubblico del divieto di Evocazione; corretti due tipi del contesto e riallineate le note d'audit su Decreto Reale e Sentinella.
  * 1.6.57 — Oppressione Reale può rispondere alle Special Summon non generate da effetti senza far scattare trigger prima del tempo; Iniezione della Fata Giglio resta riutilizzabile nelle battaglie successive.
  * 1.6.55 — Virus Distruggi-Carte applica anche il controllo della mano e la scelta dei mostri nel Deck; Kotodama distrugge i mostri con lo stesso nome Evocati simultaneamente e i Token vengono Evocati scoperti; Roccaforte viene trasferita in Zona Mostri restando Trappola Continua.
@@ -832,4 +833,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.6.59';
+window.GAME_VERSION = '1.6.60';
