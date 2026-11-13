@@ -1,5 +1,12 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Feedback delle fasi più evidente (1.6.68)
+
+Hover desktop: il sigillo e l'icona si accendono nettamente col colore del
+campo, e le opzioni del menu laterale diventano luminose e contrastate.
+Pressione touch/mouse: il controllo affonda con luce interna, senza zoom.
+Cache v722.
+
 ## Feedback delle fasi senza zoom (1.6.67)
 
 Hover: leggero sollevamento, luce e bagliore sull'icona. Pressione: il controllo

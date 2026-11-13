@@ -1,5 +1,12 @@
 # Work in progress — miglioramenti da seguire
 
+## Feedback delle fasi più evidente — chiuso in 1.6.68
+
+- [x] Hover più leggibile su desktop e menu laterale: luce intensa e colore
+      del campo sull'icona e sul controllo.
+- [x] Pressione distinta anche al tocco, con effetto di affondamento e luce
+      interna, senza zoom. Cache v722.
+
 ## Feedback dei pulsanti delle fasi senza zoom — chiuso in 1.6.67
 
 - [x] Sostituito l'ingrandimento con rilievo, luce e ombra interna di pressione.

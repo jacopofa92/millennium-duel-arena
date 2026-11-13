@@ -191,44 +191,66 @@
         }
         .phase-stepper .phase-step.clickable:not(.active) * { cursor: pointer; }
         .phase-stepper .phase-step.clickable:not(.active) {
-            transition: transform 150ms cubic-bezier(.2,.75,.25,1), filter 150ms ease, box-shadow 150ms ease;
+            transition: transform 150ms cubic-bezier(.2,.75,.25,1), filter 150ms ease, box-shadow 150ms ease, background 150ms ease;
         }
+        .phase-stepper .phase-step.clickable:not(.active) .step-badge,
+        .phase-stepper .phase-step.clickable:not(.active) .step-icon,
+        .phase-stepper .phase-step.clickable:not(.active) .step-label { transition: color 150ms ease, background 150ms ease, filter 150ms ease, text-shadow 150ms ease, box-shadow 150ms ease; }
         .phase-side-menu button:not(:disabled):not(.psm-attuale) {
-            transition: transform 120ms ease, filter 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+            transition: transform 120ms ease, filter 120ms ease, color 120ms ease, border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
         }
         @media (hover: hover) and (pointer: fine) {
             .phase-stepper .phase-step.clickable:not(.active):hover {
                 transform: translateY(-3px);
-                filter: brightness(1.22) saturate(1.12);
-                box-shadow: 0 8px 18px rgba(0,0,0,.32), 0 0 23px color-mix(in srgb, var(--fase-accento) 48%, transparent), inset 0 1px 0 rgba(255,255,255,.24);
+                filter: brightness(1.34) saturate(1.2) drop-shadow(0 0 8px color-mix(in srgb, var(--fase-accento) 70%, transparent));
+                box-shadow: 0 8px 18px rgba(0,0,0,.38), 0 0 30px color-mix(in srgb, var(--fase-accento) 68%, transparent), inset 0 1px 0 rgba(255,255,255,.34);
             }
             .phase-stepper .phase-step.clickable:not(.active):hover .step-icon {
-                filter: brightness(1.4) drop-shadow(0 0 7px color-mix(in srgb, var(--fase-accento) 85%, white));
+                filter: brightness(1.65) drop-shadow(0 0 9px color-mix(in srgb, var(--fase-accento) 92%, white));
+            }
+            .phase-stepper .phase-step.clickable:not(.active):hover .step-badge {
+                color: #fff;
+                background: radial-gradient(circle at 35% 28%, color-mix(in srgb, var(--fase-accento) 72%, #fff), color-mix(in srgb, var(--fase-accento) 52%, #10131a) 72%);
+                box-shadow: 0 0 0 2px rgba(255,255,255,.94), 0 0 24px color-mix(in srgb, var(--fase-accento) 85%, transparent), inset 0 0 9px rgba(255,255,255,.34);
+            }
+            .phase-stepper .phase-step.clickable:not(.active):hover .step-label {
+                color: #fff;
+                text-shadow: 0 1px 3px #000, 0 0 10px color-mix(in srgb, var(--fase-accento) 88%, white);
             }
             .phase-side-menu button:not(:disabled):not(.psm-attuale):hover {
                 transform: translateY(-2px);
-                filter: brightness(1.2) saturate(1.12);
-                box-shadow: 0 7px 16px rgba(0,0,0,.46), 0 0 16px color-mix(in srgb, var(--fase-accento, #f7d774) 52%, transparent), inset 0 1px 0 rgba(255,255,255,.2);
+                color: #11131a;
+                border-color: #fff;
+                background: linear-gradient(135deg, color-mix(in srgb, var(--fase-accento, #f7d774) 90%, #fff), var(--fase-accento, #f7d774));
+                filter: brightness(1.12) saturate(1.15);
+                box-shadow: 0 8px 18px rgba(0,0,0,.5), 0 0 24px color-mix(in srgb, var(--fase-accento, #f7d774) 78%, transparent), inset 0 1px 0 rgba(255,255,255,.65);
             }
             .phase-side-btn:hover {
-                filter: brightness(1.22) saturate(1.12);
-                box-shadow: 0 0 18px color-mix(in srgb, var(--fase-accento, #f7d774) 75%, transparent), 0 0 32px color-mix(in srgb, var(--fase-accento, #f7d774) 38%, transparent), inset 0 0 8px rgba(255,255,255,.18);
+                filter: brightness(1.38) saturate(1.2);
+                box-shadow: 0 0 24px color-mix(in srgb, var(--fase-accento, #f7d774) 90%, transparent), 0 0 42px color-mix(in srgb, var(--fase-accento, #f7d774) 54%, transparent), inset 0 0 12px rgba(255,255,255,.34);
             }
         }
         .phase-stepper .phase-step.clickable:not(.active):active {
-            transform: translateY(2px);
-            filter: brightness(1.28) saturate(.92);
-            box-shadow: 0 1px 3px rgba(0,0,0,.35), inset 0 3px 7px rgba(0,0,0,.38);
+            transform: translateY(3px);
+            filter: brightness(1.18) saturate(1.08);
+            box-shadow: 0 1px 2px rgba(0,0,0,.42), inset 0 4px 10px rgba(0,0,0,.48), inset 0 0 14px color-mix(in srgb, var(--fase-accento) 50%, transparent);
             transition-duration: 70ms;
         }
+        .phase-stepper .phase-step.clickable:not(.active):active .step-badge {
+            color: #fff;
+            background: radial-gradient(circle at 35% 28%, color-mix(in srgb, var(--fase-accento) 78%, #fff), color-mix(in srgb, var(--fase-accento) 55%, #10131a) 72%);
+            box-shadow: 0 0 0 2px rgba(255,255,255,.96), 0 0 25px color-mix(in srgb, var(--fase-accento) 92%, transparent), inset 0 0 10px rgba(255,255,255,.38);
+        }
+        .phase-stepper .phase-step.clickable:not(.active):active .step-icon { filter: brightness(1.6) drop-shadow(0 0 9px #fff); }
         .phase-side-btn:active {
             filter: brightness(1.28) saturate(.92);
             box-shadow: inset 0 0 13px rgba(255,255,255,.28), 0 0 18px color-mix(in srgb, var(--fase-accento, #f7d774) 76%, transparent);
         }
         .phase-side-menu button:not(:disabled):not(.psm-attuale):active {
             transform: translateY(1px);
-            filter: brightness(1.25) saturate(.92);
-            box-shadow: inset 0 3px 7px rgba(0,0,0,.4), 0 1px 3px rgba(0,0,0,.3);
+            filter: brightness(1.08) saturate(1.05);
+            background: color-mix(in srgb, var(--fase-accento, #f7d774) 72%, #292211);
+            box-shadow: inset 0 4px 10px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.32);
             transition-duration: 70ms;
         }
         .phase-side-menu button:disabled { cursor: default; }
