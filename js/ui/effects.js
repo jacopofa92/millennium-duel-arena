@@ -202,13 +202,13 @@
      */
     function playSpellTrapDestroyEffect(card, owner, index, zone) {
         const boardId = owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard';
-        const type = zone === 'fieldSpell' ? 'field-spell' : 'st';
+        const type = zone === 'fieldSpell' ? 'field-spell' : zone === 'monster' ? 'monster' : 'st';
         const indexSelector = zone === 'fieldSpell' ? '' : `[data-index="${index}"]`;
         const source = document.querySelector(`#${boardId} .field-slot[data-type="${type}"]${indexSelector} .card`);
         if (!source) return false;
         const rect = source.getBoundingClientRect();
         if (!rect.width || !rect.height) return false;
-        const kind = card && card.type === 'trap' ? 'trap' : 'spell';
+        const kind = card && (card.type === 'trap' || card.isTrapMonster) ? 'trap' : 'spell';
         const scena = document.createElement('div');
         scena.className = `fx-st-shatter fx-st-shatter--${kind}` + (zone === 'fieldSpell' ? ' fx-st-shatter--field' : '');
         assegnaStile(scena.style, {
@@ -974,9 +974,10 @@
      * avvita sulla carta, la solleva e la strappa dal Terreno. Non usa la
      * vecchia implosione circolare (troppo simile a Buco Nero).
      */
-    function playMysticalSpaceTyphoon(owner, index, onImpact) {
+    function playMysticalSpaceTyphoon(owner, index, onImpact, zone) {
         const boardId = owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard';
-        const slot = document.querySelector(`#${boardId} .field-slot[data-owner="${owner}"][data-type="st"][data-index="${index}"]`);
+        const slotType = zone === 'monster' ? 'monster' : 'st';
+        const slot = document.querySelector(`#${boardId} .field-slot[data-owner="${owner}"][data-type="${slotType}"][data-index="${index}"]`);
         const rect = slot && slot.getBoundingClientRect();
         if (!rect || !rect.width) {
             if (typeof onImpact === 'function') onImpact();
@@ -994,7 +995,9 @@
         scene.innerHTML = '<div class="fx-mst-funnel"><i></i><i></i><i></i><i></i><b></b></div><div class="fx-mst-ground"></div><div class="fx-mst-shards"><i></i><i></i><i></i><i></i><i></i><i></i></div>';
         const cardEl = slot.querySelector('.card');
         if (cardEl && typeof window.createCardElement === 'function') {
-            const cardSlot = (owner === 'player' ? gameState.playerSTField : gameState.botSTField)[index];
+            const field = owner === 'player' ? gameState.playerField : gameState.botField;
+            const stField = owner === 'player' ? gameState.playerSTField : gameState.botSTField;
+            const cardSlot = (zone === 'monster' ? field : stField)[index];
             if (cardSlot && cardSlot.card) {
                 const ghost = window.createCardElement(cardSlot.card);
                 ghost.classList.add('fx-mst-card');

@@ -15,7 +15,7 @@
 (function () {
     'use strict';
 
-    const { collectEquipTargets, chooseFieldTargetsInSequence, chooseFieldCardTargetWaiting, attendiScelta, chooseOption, isHarpieLadySupport, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldMonsterTarget, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, chooseCardFromList, banishFromGraveyardWithChoice, resolveSpecialSummonBanishCost, maxRitualTributeLevel, performRitualTribute, releaseRelinquishedTarget, selfFlipToFaceDownDefense, findLevel7SpellcasterTarget, grantAttackAllEnemiesOncEach, destroyTargetingSpellIfItStays, victimChoosesDiscard } = window.CardEffectsShared;
+    const { collectEquipTargets, chooseFieldTargetsInSequence, chooseFieldCardTargetWaiting, attendiScelta, chooseOption, isHarpieLadySupport, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldMonsterTarget, collectFieldTargets, destroyFieldTarget, offerHandDiscardChoice, chooseCardFromHand, chooseCardFromList, banishFromGraveyardWithChoice, resolveSpecialSummonBanishCost, maxRitualTributeLevel, performRitualTribute, releaseRelinquishedTarget, selfFlipToFaceDownDefense, findLevel7SpellcasterTarget, grantAttackAllEnemiesOncEach, destroyTargetingSpellIfItStays, victimChoosesDiscard } = window.CardEffectsShared;
 
     // ================================================================
     // 835 — Ingranaggio Antico / Ancient Gear
@@ -2449,7 +2449,10 @@
     // Trappola, bandisce anche ogni copia rimasta in ENTRAMBI i Deck.
     CardEffects.register(881, {
         canActivate(ctx) {
-            return Tavolo.ordine().some((owner) => ctx.stField(owner).some((s) => s && s.isFaceDown));
+            return collectFieldTargets(ctx, {
+                zone: 'st', includiCoperte: true,
+                filter: (_card, _owner, slot) => !!slot.isFaceDown
+            }).length > 0;
         },
         activate(ctx) {
             // Avversarie prima: il bot prende il primo candidato.
@@ -2464,8 +2467,9 @@
                 onCancel: () => fine()
             }, (scelto) => {
                 try {
-                    const idx = ctx.stField(scelto.owner).findIndex((s) => s && s.card.uid === scelto.card.uid);
-                    if (idx !== -1) nobileSterminioColpisce(ctx, scelto.owner, idx);
+                    const field = scelto.fieldZone === 'monster' ? ctx.field(scelto.owner) : ctx.stField(scelto.owner);
+                    const idx = field.findIndex((s) => s && s.card.uid === scelto.card.uid);
+                    if (idx !== -1) nobileSterminioColpisce(ctx, scelto.owner, idx, scelto.fieldZone === 'monster');
                 } finally {
                     fine();
                 }
@@ -2473,13 +2477,13 @@
         }
     });
 
-    function nobileSterminioColpisce(ctx, targetOwner, targetIndex) {
+    function nobileSterminioColpisce(ctx, targetOwner, targetIndex, isTrapMonster) {
         {
-            const slot = ctx.stField(targetOwner)[targetIndex];
+            const slot = isTrapMonster ? ctx.field(targetOwner)[targetIndex] : ctx.stField(targetOwner)[targetIndex];
             if (!slot) return;
             const card = slot.card;
             card.mustBanishOnLeavingField = true;
-            ctx.destroySpellTrap(targetOwner, targetIndex);
+            destroyFieldTarget(ctx, { owner: targetOwner, index: targetIndex, zone: 'st', fieldZone: isTrapMonster ? 'monster' : 'st', card, slot });
             ctx.log(`⚔️ Nobiluomo dello Sterminio bandisce ${card.name}!`);
             if (card.type === 'trap') {
                 ['playerDeck', 'botDeck'].forEach((deckKey) => {

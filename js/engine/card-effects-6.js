@@ -15,7 +15,7 @@
 (function () {
     'use strict';
 
-    const { chooseOption, chooseFieldCardTargetWaiting, attendiScelta, blockBanishFromField, isHarpieLadySupport, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchZoneWithChoice, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, collectFieldTargets, offerHandDiscardChoice, resolveSpecialSummonBanishCost, attachUnionMonster, selfFlipToFaceDownDefense, findLevel7SpellcasterTarget, grantAttackAllEnemiesOncEach, victimChoosesDiscard } = window.CardEffectsShared;
+    const { chooseOption, chooseFieldCardTargetWaiting, attendiScelta, blockBanishFromField, isHarpieLadySupport, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchZoneWithChoice, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, collectFieldTargets, destroyFieldTarget, offerHandDiscardChoice, resolveSpecialSummonBanishCost, attachUnionMonster, selfFlipToFaceDownDefense, findLevel7SpellcasterTarget, grantAttackAllEnemiesOncEach, victimChoosesDiscard } = window.CardEffectsShared;
 
     // Nomi dei mostri "Arpia" per il conteggio di Cucciolo di Drago delle Arpie (id 786). I nomi ufficiali non contengono
     // sempre la parola "Arpia" ("Sorelle Arpie", "Cucciolo di Drago delle Arpie") e due Magie/Trappole hanno "dell'Arpia" nel
@@ -65,7 +65,7 @@
             }, (scelto) => {
                 if (scelto.zone === 'st') {
                     const nome = scelto.card.name;
-                    ctx.destroySpellTrap(scelto.owner, scelto.index);
+                    destroyFieldTarget(ctx, scelto);
                     ctx.log(`💥 Esplosione a Catena distrugge ${nome}!`);
                     return;
                 }
@@ -551,19 +551,15 @@
         canActivate(ctx) {
             const hasDarkMagician = ctx.field(ctx.owner).some((s) => s && !s.isFaceDown && s.card.id === 2);
             if (!hasDarkMagician) return false;
-            return ctx.stField(ctx.opponent).some((s) => s);
+            return collectFieldTargets(ctx, { zone: 'st', owner: 'opponent' }).length > 0;
         },
         activate(ctx) {
-            let count = 0;
             // batchToken condiviso, stesso motivo di Piumino delle Arpie
             // (id 291) qui sopra — vedi il commento su destroySpellTrap in
             // duel-engine.js.
             const batchToken = {};
-            ctx.stField(ctx.opponent).forEach((slot, index) => {
-                if (!slot) return;
-                ctx.destroySpellTrap(ctx.opponent, index, batchToken);
-                count++;
-            });
+            const count = collectFieldTargets(ctx, { zone: 'st', owner: 'opponent' })
+                .reduce((total, target) => total + (destroyFieldTarget(ctx, target, batchToken) ? 1 : 0), 0);
             ctx.log(`🧙 Attacco Mago Nero distrugge ${count} Magia/Trappola dell'avversario!`);
         }
     });
@@ -1554,7 +1550,7 @@
             }, (scelto) => {
                 if (scelto.zone === 'st') {
                     const nome = scelto.card.name;
-                    ctx.destroySpellTrap(scelto.owner, scelto.index);
+                    destroyFieldTarget(ctx, scelto);
                     ctx.log(`🐲 Cucciolo di Drago delle Arpie distrugge ${nome}!`);
                     return;
                 }

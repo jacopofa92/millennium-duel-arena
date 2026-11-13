@@ -15,7 +15,7 @@
 (function () {
     'use strict';
 
-    const { collectEquipTargets, chooseFieldCardTargetWaiting, attendiScelta, otherHandCards, blockBanishFromField, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldMonsterTarget, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, banishFromGraveyardWithChoice, resolveSpecialSummonBanishCost } = window.CardEffectsShared;
+    const { collectEquipTargets, chooseFieldCardTargetWaiting, attendiScelta, otherHandCards, blockBanishFromField, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldMonsterTarget, collectFieldTargets, destroyFieldTarget, offerHandDiscardChoice, chooseCardFromHand, banishFromGraveyardWithChoice, resolveSpecialSummonBanishCost } = window.CardEffectsShared;
 
     // ================================================================
     // 631 — Megamorfosi / Megamorph (Equipaggiamento)
@@ -665,18 +665,14 @@
     // ================================================================
     CardEffects.register(646, {
         canActivate(ctx) {
-            return Tavolo.ordine().some((owner) => ctx.stField(owner).some((s) => s));
+            return collectFieldTargets(ctx, { zone: 'st', includiCoperte: true }).length > 0;
         },
         activate(ctx) {
             const resolveStorm = () => {
                 let count = 0;
-                Tavolo.ordine().forEach((owner) => {
-                    ctx.stField(owner).forEach((slot, index) => {
-                        if (!slot) return;
-                        ctx.graveyard(owner).push(slot.card);
-                        ctx.stField(owner)[index] = null;
-                        count++;
-                    });
+                const batchToken = {};
+                collectFieldTargets(ctx, { zone: 'st', includiCoperte: true }).forEach((target) => {
+                    if (destroyFieldTarget(ctx, target, batchToken)) count++;
                 });
                 ctx.log(`🌪️ Tempesta Potente distrugge ${count} cart${count === 1 ? 'a' : 'e'} Magia/Trappola!`);
             };
@@ -700,7 +696,7 @@
         canActivate(ctx) {
             const hasDragon = ctx.field(ctx.owner).some((s) => s && !s.isFaceDown && s.card.race === 'Drago');
             if (!hasDragon) return false;
-            return Tavolo.ordine().some((owner) => ctx.stField(owner).some((s) => s));
+            return collectFieldTargets(ctx, { zone: 'st', includiCoperte: true }).length > 0;
         },
         activate(ctx) {
             // "Scegli come bersaglio 1 Magia/Trappola sul Terreno":
@@ -716,10 +712,7 @@
                 title: '🐾 Distruzione Schiacciante',
                 text: 'Scegli quale Magia/Trappola distruggere: il suo controllore subisce 500 danni.'
             }, (scelto) => {
-                const slot = ctx.stField(scelto.owner)[scelto.index];
-                if (slot && slot.isFaceDown) slot.isFaceDown = false;
-                ctx.stField(scelto.owner)[scelto.index] = null;
-                ctx.graveyard(scelto.owner).push(scelto.card);
+                destroyFieldTarget(ctx, scelto);
                 ctx.dealDamage(scelto.owner, 500);
                 ctx.log(`🐾 Distruzione Schiacciante distrugge ${scelto.card.name} e infligge 500 danni!`);
             });

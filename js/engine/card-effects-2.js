@@ -15,7 +15,7 @@
 (function () {
     'use strict';
 
-    const { chooseCardFromList, chooseUpToNFromList, otherHandCards, blockBanishFromField, isHarpieLadySupport, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldCardTargetWaiting, attendiScelta, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, findPetitMothReadyForCocoonSummon, releaseRelinquishedTarget } = window.CardEffectsShared;
+    const { chooseCardFromList, chooseUpToNFromList, destroyFieldTarget, returnFieldTargetToHand, otherHandCards, blockBanishFromField, isHarpieLadySupport, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldCardTargetWaiting, attendiScelta, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, findPetitMothReadyForCocoonSummon, releaseRelinquishedTarget } = window.CardEffectsShared;
 
     // ================================================================
     // 52 — Grande Falena / Great Moth
@@ -303,6 +303,7 @@
         canActivate(ctx) {
             const hasSpellInHand = ctx.hand(ctx.owner).some((c) => c.type === 'spell');
             const hasTarget = ctx.stField(ctx.opponent).some((slot) => slot)
+                || ctx.field(ctx.opponent).some((slot) => slot && slot.card.isTrapMonster)
                 || !!ctx.gameState[Tavolo.chiave(ctx.opponent, 'FieldSpell')];
             return hasSpellInHand && hasTarget;
         },
@@ -335,13 +336,13 @@
                         if (!ctx.gameState[key]) ctx.log(`🔮 Chiron il Mago scarta ${scartata.name} e distrugge ${name}!`);
                         return;
                     }
-                    const stField = ctx.stField(bersaglio.owner);
-                    const targetIndex = stField.findIndex((slot) => slot && slot.card.uid === bersaglio.card.uid);
-                    if (targetIndex === -1) return;
-                    const name = stField[targetIndex].card.name;
-                    const slot = stField[targetIndex];
-                    ctx.destroySpellTrap(bersaglio.owner, targetIndex);
-                    if (stField[targetIndex] !== slot) ctx.log(`🔮 Chiron il Mago scarta ${scartata.name} e distrugge ${name}!`);
+                    const slot = bersaglio.fieldZone === 'monster'
+                        ? ctx.field(bersaglio.owner)[bersaglio.index]
+                        : ctx.stField(bersaglio.owner)[bersaglio.index];
+                    if (!slot || slot.card.uid !== bersaglio.card.uid) return;
+                    const name = slot.card.name;
+                    destroyFieldTarget(ctx, bersaglio);
+                    ctx.log(`🔮 Chiron il Mago scarta ${scartata.name} e distrugge ${name}!`);
                 });
             });
         }
@@ -761,7 +762,7 @@
     // ================================================================
     CardEffects.register(219, {
         canActivate(ctx) {
-            return ctx.stField(ctx.opponent).some((slot) => slot !== null);
+            return collectFieldTargets(ctx, { zone: 'st', owner: 'opponent', includiCoperte: true }).length > 0;
         },
         activate(ctx) {
             // "Scegli come bersaglio 1 Magia/Trappola controllata dal tuo
@@ -782,7 +783,7 @@
                     // Passa dal distruttore condiviso (trigger, protezioni,
                     // Cimitero), ma senza sommare la frattura generica al
                     // vortice dedicato appena concluso.
-                    ctx.destroySpellTrap(scelto.owner, scelto.index, null, { skipVisual: true });
+                    destroyFieldTarget(ctx, scelto, null, { skipVisual: true });
                     ctx.log(`🌪️ Tornado di Polvere distrugge ${card.name}!`);
                     // La seconda metà ("poi puoi Set 1 Magia/Trappola dalla tua
                     // mano") vive DENTRO la callback: è asincrona come la
@@ -1057,30 +1058,11 @@
     // ================================================================
     CardEffects.register(262, {
         canActivate(ctx) {
-            return Tavolo.ordine().some((owner) => ctx.stField(owner).some((slot) => slot !== null));
+            return collectFieldTargets(ctx, { zone: 'st', owner: 'both' }).length > 0;
         },
         activate(ctx) {
-            let count = 0;
-            Tavolo.ordine().forEach((owner) => {
-                ctx.stField(owner).forEach((slot, index) => {
-                    if (slot) {
-                        const bouncedCard = slot.card;
-                        EventiDuello.emetti('transizione-carta', {
-                            carta: bouncedCard,
-                            da: { kind: 'field', owner: owner, index: index, type: 'st' },
-                            a: { kind: 'hand', owner: owner },
-                            variante: 'hand'
-                        });
-                        ctx.hand(owner).push(bouncedCard);
-                        ctx.stField(owner)[index] = null;
-                        count++;
-                        const selfDef = DuelEngine.getDefinition(bouncedCard.id);
-                        if (selfDef && typeof selfDef.onReturnedToHandSelf === 'function') {
-                            selfDef.onReturnedToHandSelf(DuelEngine.makeContext(owner, { card: bouncedCard, index: index }));
-                        }
-                    }
-                });
-            });
+            const targets = collectFieldTargets(ctx, { zone: 'st', owner: 'both' });
+            const count = targets.reduce((total, target) => total + (returnFieldTargetToHand(ctx, target) ? 1 : 0), 0);
             ctx.log(`🌪️ Ritorno Totale fa tornare in mano ${count} cart${count === 1 ? 'a' : 'e'} Magia/Trappola!`);
         }
     });
@@ -1258,7 +1240,7 @@
     // ================================================================
     CardEffects.register(291, {
         canActivate(ctx) {
-            return ctx.stField(ctx.opponent).some((slot) => slot !== null);
+            return collectFieldTargets(ctx, { zone: 'st', owner: 'opponent' }).length > 0;
         },
         activate(ctx) {
             const resolve = () => {
@@ -1266,15 +1248,11 @@
                 // batchToken condiviso da tutte le distruzioni di questa STESSA
                 // attivazione: Trappola Fasulla protegge ogni Trappola del lotto.
                 const batchToken = {};
-                ctx.stField(ctx.opponent).forEach((slot, index) => {
-                    if (slot) {
-                        // Senza skipVisual: il vento di piume apre la scena, ma le
-                        // carte colpite devono anche sbriciolarsi una per una
-                        // (frattura olografica generica), altrimenti sparivano
-                        // di colpo.
-                        ctx.destroySpellTrap(ctx.opponent, index, batchToken);
-                        count++;
-                    }
+                collectFieldTargets(ctx, { zone: 'st', owner: 'opponent', includiCoperte: true }).forEach((target) => {
+                    // Il vento di piume apre la scena; ogni carta colpita si
+                    // dissolve poi nella propria zona, incluse le Trappole
+                    // trasformate in Mostri.
+                    if (destroyFieldTarget(ctx, target, batchToken)) count++;
                 });
                 ctx.log(`🪶 Spolverino dell'Arpia distrugge ${count} cart${count === 1 ? 'a' : 'e'} Magia/Trappola dell'avversario!`);
             };

@@ -15,7 +15,7 @@
 (function () {
     'use strict';
 
-    const { destroyTargetingSpellIfItStays, attendiScelta, chooseOption, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldMonsterTarget, chooseFieldCardTarget, chooseFieldTargetsInSequence, collectFieldTargets, chooseCardFromHand, chooseCardFromList, offerHandDiscardChoice, resolveSpecialSummonBanishCost, maxRitualTributeLevel, performRitualTribute, returnSpellTrapToHand, chooseUpToNFromList, equipToChosenTarget, equippedTarget, cardHasArchetype, cardHasEffectiveName, cardMentionsName } = window.CardEffectsShared;
+    const { destroyTargetingSpellIfItStays, attendiScelta, chooseOption, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldMonsterTarget, chooseFieldCardTarget, chooseFieldTargetsInSequence, collectFieldTargets, chooseCardFromHand, chooseCardFromList, offerHandDiscardChoice, resolveSpecialSummonBanishCost, maxRitualTributeLevel, performRitualTribute, returnSpellTrapToHand, returnFieldTargetToHand, chooseUpToNFromList, equipToChosenTarget, equippedTarget, cardHasArchetype, cardHasEffectiveName, cardMentionsName } = window.CardEffectsShared;
 
     // ================================================================
     // 1001-1008 — Il ciclo di Mostri Spirito di Legacy of Darkness (LOD),
@@ -637,17 +637,9 @@
     // avversario poi dal proprio.
     CardEffects.register(1032, {
         onFlip(ctx) {
-            let count = 0;
-            for (const owner of [ctx.opponent, ctx.owner]) {
-                const stField = ctx.stField(owner);
-                for (let i = 0; i < stField.length && count < 2; i++) {
-                    if (stField[i]) {
-                        returnSpellTrapToHand(ctx, owner, i);
-                        count++;
-                    }
-                }
-                if (count >= 2) break;
-            }
+            const candidates = collectFieldTargets(ctx, { zone: 'st', owner: 'opponent' })
+                .concat(collectFieldTargets(ctx, { zone: 'st', owner: 'self' })).slice(0, 2);
+            const count = candidates.reduce((total, target) => total + (returnFieldTargetToHand(ctx, target) ? 1 : 0), 0);
             ctx.log(`🌪️ Uccello Tornado fa tornare in mano ${count} cart${count === 1 ? 'a' : 'e'} Magia/Trappola!`);
         }
     });
@@ -1355,12 +1347,8 @@
     // Gigante id 262).
     CardEffects.register(1061, {
         onSummon(ctx) {
-            Tavolo.ordine().forEach((owner) => {
-                const st = ctx.stField(owner);
-                for (let i = st.length - 1; i >= 0; i--) {
-                    if (st[i] && st[i].isFaceDown) returnSpellTrapToHand(ctx, owner, i);
-                }
-            });
+            const candidates = collectFieldTargets(ctx, { zone: 'st', owner: 'both', includiCoperte: true, filter: (_card, _owner, slot) => !!slot.isFaceDown });
+            candidates.forEach((target) => returnFieldTargetToHand(ctx, target));
             ctx.log('👹 Shock di Byser fa tornare in mano tutte le carte coperte sul Terreno!');
         }
     });

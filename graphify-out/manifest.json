@@ -381,9 +381,9 @@
     "semantic_hash": ""
   },
   "js/engine/actions.js": {
-    "mtime": 1794558632.8492804,
-    "seen": 1794559179.776456,
-    "ast_hash": "529b07afcd282a4d50867e1b21d1067b",
+    "mtime": 1794562886.8498218,
+    "seen": 1794563016.2754607,
+    "ast_hash": "3c343d8b3cd2c2a46a3102edca90f14c",
     "semantic_hash": ""
   },
   "js/engine/battaglia.js": {
@@ -405,51 +405,51 @@
     "semantic_hash": ""
   },
   "js/engine/card-effects-2.js": {
-    "mtime": 1794560264.1150966,
-    "seen": 1794560938.7787745,
-    "ast_hash": "77026a8185bc9468b2bdce9bfebec11c",
+    "mtime": 1794562611.21548,
+    "seen": 1794562843.0292296,
+    "ast_hash": "82dc9f01f25dee86128fa48b597e1760",
     "semantic_hash": ""
   },
   "js/engine/card-effects-3.js": {
-    "mtime": 1794558632.8516414,
-    "seen": 1794559179.776456,
-    "ast_hash": "ec40dc813d26956f47507d377a033d37",
+    "mtime": 1794562611.5281866,
+    "seen": 1794562843.0292296,
+    "ast_hash": "031c58e0c5c5545d4e1a4ee050222c51",
     "semantic_hash": ""
   },
   "js/engine/card-effects-4.js": {
-    "mtime": 1794558632.8516414,
-    "seen": 1794559179.776456,
-    "ast_hash": "1b72d8df6cb6bd1f10ca8c607beb03c7",
+    "mtime": 1794562887.16249,
+    "seen": 1794563016.278562,
+    "ast_hash": "835b80a25496eb9395eae3fbfc013ea3",
     "semantic_hash": ""
   },
   "js/engine/card-effects-5.js": {
-    "mtime": 1794558632.8516414,
-    "seen": 1794559179.776456,
-    "ast_hash": "28a2f59c4f1d24370a39d566f5c32b3f",
+    "mtime": 1794562751.1658843,
+    "seen": 1794562843.0292296,
+    "ast_hash": "5c5ba6921fe1964d8446a9d1057f9b56",
     "semantic_hash": ""
   },
   "js/engine/card-effects-6.js": {
-    "mtime": 1794558632.8670092,
-    "seen": 1794559179.776456,
-    "ast_hash": "d897fd848d1c6f4e61d343f690d62ce1",
+    "mtime": 1794562612.128032,
+    "seen": 1794562843.0292296,
+    "ast_hash": "4aa8922085d75f67617a74ac635df25e",
     "semantic_hash": ""
   },
   "js/engine/card-effects-7.js": {
-    "mtime": 1794560995.116639,
-    "seen": 1794561169.9399045,
-    "ast_hash": "ff392dde59a964656231efc30bc858f1",
+    "mtime": 1794562612.434117,
+    "seen": 1794562843.0292296,
+    "ast_hash": "0101eccba1d2475efecb27ca00409c29",
     "semantic_hash": ""
   },
   "js/engine/card-effects-8.js": {
-    "mtime": 1794561106.8475547,
-    "seen": 1794561169.9399045,
-    "ast_hash": "8d82b1c0f0d5bf84caf9b9d66f755cd4",
+    "mtime": 1794562523.306605,
+    "seen": 1794562843.0292296,
+    "ast_hash": "9d597b8b0663af9de4aadd2b10ed4950",
     "semantic_hash": ""
   },
   "js/engine/card-effects.js": {
-    "mtime": 1794560263.8120508,
-    "seen": 1794560938.7802892,
-    "ast_hash": "603188eb9cef0787a23913b104ba2120",
+    "mtime": 1794562049.1440542,
+    "seen": 1794562843.0292296,
+    "ast_hash": "6e7619c7799d7e54ad79365129050932",
     "semantic_hash": ""
   },
   "js/engine/casuale.js": {
@@ -471,9 +471,9 @@
     "semantic_hash": "dcd14125a9faf5071dedc66d14fd61d0"
   },
   "js/engine/duel-engine.js": {
-    "mtime": 1794561106.5093858,
-    "seen": 1794561169.9418566,
-    "ast_hash": "2cd40317c7e5728fa22f11f8473a46fd",
+    "mtime": 1794562886.5553842,
+    "seen": 1794563016.2792902,
+    "ast_hash": "7ab21d31bc24c67dcd670da990157d35",
     "semantic_hash": ""
   },
   "js/engine/duel-sandbox.js": {
@@ -843,9 +843,9 @@
     "semantic_hash": ""
   },
   "js/ui/effects.js": {
-    "mtime": 1794470288.8085148,
-    "seen": 1794470399.592538,
-    "ast_hash": "8d0fbe740e7422b907d8e30d5d33f378",
+    "mtime": 1794562751.4539664,
+    "seen": 1794562843.0694747,
+    "ast_hash": "eac25f35c8e223e123298bbd86fadc92",
     "semantic_hash": ""
   },
   "js/ui/error-recovery.js": {
@@ -879,9 +879,9 @@
     "semantic_hash": "02b5c2f6653db5904711bae268c195a5"
   },
   "js/ui/fx-webgl-scena.js": {
-    "mtime": 1793976124.1306386,
-    "seen": 1794049280.8452823,
-    "ast_hash": "e04841c6271cf1d821278622cac97aa5",
+    "mtime": 1794562258.724609,
+    "seen": 1794562843.0735252,
+    "ast_hash": "8197bdab572c93fed0956de308d794d7",
     "semantic_hash": ""
   },
   "js/ui/fx-webgl.js": {
@@ -1107,9 +1107,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794560825.1952615,
-    "seen": 1794560938.8429797,
-    "ast_hash": "bd138187d8fb5813d88e717f93334ee5",
+    "mtime": 1794562781.2785256,
+    "seen": 1794562843.0803242,
+    "ast_hash": "52a71ad4599a54168e248cba231cc7d9",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1526,9 +1526,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794560625.7705908,
-    "seen": 1794560938.878577,
-    "ast_hash": "113060dacbc7840baccc1446acfd857c",
+    "mtime": 1794562781.5748422,
+    "seen": 1794562843.1186776,
+    "ast_hash": "347450b9a126d3e58fa2c165ca549e2c",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {

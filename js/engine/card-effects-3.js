@@ -15,7 +15,7 @@
 (function () {
     'use strict';
 
-    const { chooseOption, chooseFieldCardTargetWaiting, attendiScelta, blockBanishFromField, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldMonsterTarget, collectFieldTargets, offerHandDiscardChoice, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, chooseCardFromList, chooseUpToNFromList } = window.CardEffectsShared;
+    const { chooseOption, chooseFieldCardTargetWaiting, attendiScelta, blockBanishFromField, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldMonsterTarget, collectFieldTargets, destroyFieldTarget, offerHandDiscardChoice, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, chooseCardFromList, chooseUpToNFromList } = window.CardEffectsShared;
 
     /**
      * Un Tributo legale per pagare l'effetto di Obelisk. I divieti già
@@ -1118,7 +1118,7 @@
                     ctx.log(`🐉 ${nome} scarta ${scartata.name} e distrugge ${esito.card.name}!`);
                 } else {
                     const nomeBersaglio = scelto.card.name;
-                    ctx.destroySpellTrap(scelto.owner, scelto.index);
+                    destroyFieldTarget(ctx, scelto);
                     ctx.log(`🐉 ${nome} scarta ${scartata.name} e distrugge ${nomeBersaglio}!`);
                 }
             });
@@ -1929,7 +1929,7 @@
             }, (scelto) => {
                 if (scelto.zone === 'st') {
                     const nome = scelto.card.name;
-                    ctx.destroySpellTrap(scelto.owner, scelto.index);
+                    destroyFieldTarget(ctx, scelto);
                     ctx.log(`⚔️ Cavaliere Mago Nero, appena Special Summonato, distrugge ${nome}!`);
                     return;
                 }

@@ -1271,6 +1271,18 @@
                 });
             }
             if (zone === 'st' || zone === 'both') {
+                // I Mostri Trappola occupano una Zona Mostri ma conservano
+                // la natura di Magia/Trappola: vanno inclusi negli effetti
+                // che scelgono una M/T senza fingere che occupino lo stField.
+                if (zone === 'st') {
+                    ctx.field(owner).forEach((slot, index) => {
+                        if (!slot || !slot.card || !slot.card.isTrapMonster) return;
+                        if (slot.isFaceDown && !includiCoperte) return;
+                        const targetAsTrap = Object.assign({}, slot.card, { type: 'trap' });
+                        if (!filtro(targetAsTrap, owner, slot)) return;
+                        out.push({ owner, index, zone: 'st', fieldZone: 'monster', card: slot.card, slot });
+                    });
+                }
                 ctx.stField(owner).forEach((slot, index) => {
                     if (!slot || !slot.card) return;
                     if (slot.isFaceDown && !includiCoperte) return;
@@ -1280,6 +1292,16 @@
             }
         });
         return out;
+    }
+
+    function destroyFieldTarget(ctx, target, batchToken, visualOptions) {
+        if (!target) return false;
+        if (target.fieldZone === 'monster' || target.card?.isTrapMonster) {
+            return ctx.destroyTrapMonster(target.owner, target.index, batchToken, visualOptions);
+        }
+        if (target.zone === 'fieldSpell') return ctx.destroyFieldSpell(target.owner);
+        ctx.destroySpellTrap(target.owner, target.index, batchToken, visualOptions);
+        return true;
     }
 
     /**
@@ -1926,6 +1948,14 @@
         return card;
     }
 
+    function returnFieldTargetToHand(ctx, target) {
+        if (!target) return null;
+        if (target.fieldZone === 'monster' || target.card?.isTrapMonster) {
+            return ctx.returnMonsterToHand(target.owner, target.index);
+        }
+        return returnSpellTrapToHand(ctx, target.owner, target.index);
+    }
+
     // Tutto quello che sta qui sopra serve a più file-parte, quindi non
     // può restare chiuso in questa funzione: le parti lo prendono da qui.
     /**
@@ -1948,5 +1978,5 @@
         return ctx.hand(ctx.owner).filter((c) => !selfUid || c.uid !== selfUid);
     }
 
-    window.CardEffectsShared = { NOMI_PRECEDENTI, direzioneDellEffetto, sceltaAutomaticaDelBot, piuForte, chooseFieldTargetsInSequence, attendiScelta, chooseOption, chooseFieldCardTargetWaiting, dichiaraBersaglioScelto, dichiaraBersaglioSceltoWaiting, otherHandCards, blockBanishFromField, isHarpieLadySupport, cardHasArchetype, cardHasEffectiveName, cardMentionsName, findEquipTarget, collectEquipTargets, equipToChosenTarget, riprendiDalCimitero, attachEquip, equippedTarget, searchZoneWithChoice, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldMonsterTarget, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, chooseCardFromList, chooseUpToNFromList, destroyTargetingSpellIfItStays, victimChoosesDiscard, banishFromGraveyardWithChoice, resolveSpecialSummonBanishCost, resolveSpecialSummonTributeCost, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, findPetitMothReadyForCocoonSummon, releaseRelinquishedTarget, selfFlipToFaceDownDefense, findLevel7SpellcasterTarget, grantAttackAllEnemiesOncEach, returnSpellTrapToHand };
+    window.CardEffectsShared = { NOMI_PRECEDENTI, direzioneDellEffetto, sceltaAutomaticaDelBot, piuForte, chooseFieldTargetsInSequence, attendiScelta, chooseOption, chooseFieldCardTargetWaiting, dichiaraBersaglioScelto, dichiaraBersaglioSceltoWaiting, otherHandCards, blockBanishFromField, isHarpieLadySupport, cardHasArchetype, cardHasEffectiveName, cardMentionsName, findEquipTarget, collectEquipTargets, equipToChosenTarget, riprendiDalCimitero, attachEquip, equippedTarget, searchZoneWithChoice, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldMonsterTarget, collectFieldTargets, destroyFieldTarget, returnFieldTargetToHand, offerHandDiscardChoice, chooseCardFromHand, chooseCardFromList, chooseUpToNFromList, destroyTargetingSpellIfItStays, victimChoosesDiscard, banishFromGraveyardWithChoice, resolveSpecialSummonBanishCost, resolveSpecialSummonTributeCost, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, findPetitMothReadyForCocoonSummon, releaseRelinquishedTarget, selfFlipToFaceDownDefense, findLevel7SpellcasterTarget, grantAttackAllEnemiesOncEach, returnSpellTrapToHand };
 })();

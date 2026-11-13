@@ -860,7 +860,7 @@
             return card;
         },
 
-        destroyMonster(owner, index) {
+        destroyMonster(owner, index, visualOptions) {
             const field = fieldOf(owner);
             const slot = field[index];
             if (!slot) return;
@@ -990,6 +990,7 @@
             // actions.js).
             if (tryRedirectUnionDestroy(owner, slot.card.uid, slot.card.name)) return;
             const destroyedCard = slot.card;
+            const wasTrapMonster = !!destroyedCard.isTrapMonster;
             // Posizione/coperta al momento della distruzione (es. Falena
             // della Sabbia, id 766: "se distrutta coperta in Posizione di
             // Difesa, tranne che in battaglia") — va letta QUI, PRIMA di
@@ -1001,10 +1002,14 @@
             // l'evento `distruzione` subito sotto avvia la disintegrazione
             // dedicata sulla carta vera. Far partire entrambe le copie nello
             // stesso istante mostrava due mostri durante la distruzione.
+            if (wasTrapMonster) {
+                destroyedCard.type = 'trap';
+                delete destroyedCard.isTrapMonster;
+            }
             graveyardOf(slot.originalOwner || owner).push(destroyedCard);
             redirectToBanishIfFlagged(slot.originalOwner || owner, destroyedCard);
             field[index] = null;
-            EventiDuello.emetti('distruzione', owner, index, 'monster');
+            EventiDuello.emetti('distruzione', owner, index, 'monster', wasTrapMonster ? 'trapMonster' : 'monster', destroyedCard, visualOptions);
             // ctx.card = la carta appena distrutta (serve a fireTrigger per
             // trovarne la definizione — vedi il ramo TRIGGER.ON_DESTROY qui
             // sotto), non più recuperabile da field[index] dato che è già
@@ -1019,6 +1024,17 @@
                 destroyedByOwner: destroyerOwner,
                 destroyedByCard: destroyerCard
             }));
+            if (wasTrapMonster) {
+                const trapDef = getDefinition(destroyedCard.id);
+                if (trapDef && typeof trapDef.onSTDestroyed === 'function') {
+                    safeCallCardHandler(destroyedCard, 'onSTDestroyed', () => trapDef.onSTDestroyed(makeContext(owner, {
+                        card: destroyedCard, wasFaceDown, destroyedByOwner: destroyerOwner
+                    })));
+                }
+                notifySpellTrapSentToGraveyardFromField(owner, destroyedCard, {
+                    motivo: 'distrutta', wasFaceDown, destroyedByOwner: destroyerOwner
+                });
+            }
         },
 
         /**
@@ -1205,6 +1221,29 @@
                     safeCallCardHandler(choice.card, 'onOwnSpellTrapDestroyed', () => choice.def.onOwnSpellTrapDestroyed(reactCtx(choice)));
                 }
             }
+        },
+
+        /** Distrugge un Mostro Trappola come M/T, pur essendo nella Zona Mostri. */
+        destroyTrapMonster(owner, index, batchToken, visualOptions) {
+            const slot = fieldOf(owner)[index];
+            if (!slot || !slot.card.isTrapMonster) return false;
+            const destroyerOwner = (this && this.owner) || null;
+            // Trappola Fasulla protegge anche una Trappola trasformata in
+            // mostro: conserva la sostituzione a livello del tipo originale.
+            if (destroyerOwner && destroyerOwner !== owner && batchToken && batchToken.redirected) return false;
+            if (destroyerOwner && destroyerOwner !== owner) {
+                const substituteIndex = stFieldOf(owner).findIndex((s, i) => s && s.isFaceDown
+                    && s.setOnTurn !== gameState.turn && getDefinition(s.card.id)?.redirectsTrapDestroyToSelf);
+                if (substituteIndex !== -1) {
+                    this.destroySpellTrap(owner, substituteIndex, batchToken, visualOptions);
+                    if (batchToken) batchToken.redirected = true;
+                    return false;
+                }
+            }
+            // destroyMonster applica immunità e redirect mostro; il flag
+            // conserva anche onSTDestroyed e la dissolvenza non esplosiva.
+            this.destroyMonster(owner, index, visualOptions);
+            return !fieldOf(owner)[index];
         },
 
         /** Distruzione della zona Magia Terreno: stesso effetto non
@@ -2540,6 +2579,10 @@
             // stessa regola che destroyMonster applica già al Cimitero.
             // Prima finiva nella mano di chi l'aveva rubato.
             const proprietario = slot.originalOwner || owner;
+            if (card.isTrapMonster) {
+                card.type = 'trap';
+                delete card.isTrapMonster;
+            }
             animaTransizioneCarta(card,
                 { kind: 'field', owner: owner, index: index, type: 'monster' },
                 { kind: card.mustBanishOnLeavingField ? 'banished' : 'hand', owner: proprietario },

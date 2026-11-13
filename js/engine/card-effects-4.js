@@ -15,7 +15,7 @@
 (function () {
     'use strict';
 
-    const { chooseFieldTargetsInSequence, chooseOption, chooseFieldCardTargetWaiting, attendiScelta, findEquipTarget, equipToChosenTarget, riprendiDalCimitero, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldMonsterTarget, collectFieldTargets, offerHandDiscardChoice, resolveSpecialSummonTributeCost, chooseCardFromList, maxRitualTributeLevel, performRitualTribute } = window.CardEffectsShared;
+    const { chooseFieldTargetsInSequence, chooseOption, chooseFieldCardTargetWaiting, attendiScelta, findEquipTarget, equipToChosenTarget, riprendiDalCimitero, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldMonsterTarget, collectFieldTargets, destroyFieldTarget, offerHandDiscardChoice, resolveSpecialSummonTributeCost, chooseCardFromList, maxRitualTributeLevel, performRitualTribute } = window.CardEffectsShared;
 
     // ================================================================
     // BATCH 7: rientro in campo dopo una distruzione (onOwnMonsterDestroyed,
@@ -678,7 +678,7 @@
                     try {
                         const destroyedName = scelto.card.name;
                         if (scelto.zone === 'monster') ctx.destroyMonster(scelto.owner, scelto.index);
-                        else ctx.destroySpellTrap(scelto.owner, scelto.index);
+                        else destroyFieldTarget(ctx, scelto);
                         ctx.log(`⚔️ Spada Sigillante di Orichalcos scarta ${discarded.name} e distrugge ${destroyedName}!`);
                     } finally {
                         fine();
@@ -2607,32 +2607,30 @@
     // ================================================================
     CardEffects.register(607, {
         canActivate(ctx) {
-            return [ctx.owner, ctx.opponent].some((owner) => ctx.stField(owner).some((slot) => slot));
+            return collectFieldTargets(ctx, { zone: 'st', includiCoperte: true }).length > 0;
         },
         activate(ctx) {
-            const candidates = [];
-            [ctx.owner, ctx.opponent].forEach((owner) => {
-                ctx.stField(owner).forEach((slot, index) => {
-                    if (slot) candidates.push({ owner, index, card: slot.card });
-                });
-            });
+            const candidates = collectFieldTargets(ctx, { zone: 'st', includiCoperte: true });
             if (candidates.length === 0) return;
             const destroy = (choice) => {
-                const slot = ctx.stField(choice.owner)[choice.index];
+                const slot = choice.fieldZone === 'monster'
+                    ? ctx.field(choice.owner)[choice.index]
+                    : ctx.stField(choice.owner)[choice.index];
                 if (!slot || slot.card.uid !== choice.card.uid) return;
                 const resolveTyphoon = () => {
-                    const current = ctx.stField(choice.owner)[choice.index];
+                    const current = choice.fieldZone === 'monster'
+                        ? ctx.field(choice.owner)[choice.index]
+                        : ctx.stField(choice.owner)[choice.index];
                     if (!current || current.card.uid !== choice.card.uid) return;
                     if (current.isFaceDown) {
                         current.isFaceDown = false;
                         ctx.log(`🔎 Tifone Spaziale Mistico rivela ${choice.card.name}!`);
                     }
-                    ctx.stField(choice.owner)[choice.index] = null;
-                    ctx.graveyard(choice.owner).push(choice.card);
+                    destroyFieldTarget(ctx, choice, null, { skipVisual: true });
                     ctx.log(`🌪️ Tifone Spaziale Mistico distrugge ${choice.card.name}!`);
                 };
                 if (window.FX && typeof FX.playMysticalSpaceTyphoon === 'function') {
-                    FX.playMysticalSpaceTyphoon(choice.owner, choice.index, resolveTyphoon);
+                    FX.playMysticalSpaceTyphoon(choice.owner, choice.index, resolveTyphoon, choice.fieldZone || 'st');
                 } else {
                     resolveTyphoon();
                 }

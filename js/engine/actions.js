@@ -2200,12 +2200,17 @@ function performAttackTribute(tributeIndex, attackerIndex, targetIndex) {
     Comandi.esegui('player', { tipo: 'attacca', attaccante: attackerIndex, bersaglio: targetIndex, tributo: tributeIndex });
 }
 
-function triggerDestroyEffect(owner, index, type) {
+function triggerDestroyEffect(owner, index, type, kind, card, visualOptions) {
+    if (visualOptions && visualOptions.skipVisual) return;
     const boardId = owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard';
     const slotEl = document.querySelector(`#${boardId} .field-slot[data-owner="${owner}"][data-type="${type}"][data-index="${index}"]`);
     if (!slotEl) return;
     const cardEl = slotEl.querySelector('.card');
     if (cardEl) {
+        if (kind === 'trapMonster' && window.FX && FX.playSpellTrapDestroyEffect(card, owner, index, 'monster')) {
+            if (window.SFX) SFX.destroy();
+            return;
+        }
         if (window.FX) FX.playBattleDestroyEffect(cardEl);
         if (window.SFX) SFX.destroy();
         cardEl.classList.add('destroying');

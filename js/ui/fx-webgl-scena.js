@@ -850,8 +850,9 @@ float dado(vec2 q,float v){
     };
 
     /** Tifone dello Spazio Mistico: un imbuto di vento solleva la carta e la strappa dal Terreno. */
-    imp.playMysticalSpaceTyphoon = function (owner, index, onImpact) {
-        const rect = rectDi(slotEl(owner, 'st', index));
+    imp.playMysticalSpaceTyphoon = function (owner, index, onImpact, zone) {
+        const fieldZone = zone === 'monster' ? 'monster' : 'st';
+        const rect = rectDi(slotEl(owner, fieldZone, index));
         if (!rect) { if (typeof onImpact === 'function') onImpact(); return 0; }
         const c = cen(rect); const s = new Scena(); const sz = Math.max(rect.width * 2.7, 150);
         s.add(T.SEAL, C.CIANO, 0, 1.5, [c.x, rect.bottom, sz * 0.5, 0], 0.3);
@@ -860,7 +861,12 @@ float dado(vec2 q,float v){
         s.add(T.FLASH, C.BIANCO, 0.78, 0.6, [c.x, c.y, rect.width * 1.5, 0]);
         s.add(T.BURST, C.GHIACCIO, 0.82, 0.7, [c.x, c.y, sz * 0.5, 30], 6);
         let carta = null;
-        try { const arr = owner === 'player' ? window.gameState.playerSTField : window.gameState.botSTField; carta = arr && arr[index] && arr[index].card; } catch (e) { carta = null; }
+        try {
+            const arr = owner === 'player'
+                ? (fieldZone === 'monster' ? window.gameState.playerField : window.gameState.playerSTField)
+                : (fieldZone === 'monster' ? window.gameState.botField : window.gameState.botSTField);
+            carta = arr && arr[index] && arr[index].card;
+        } catch (e) { carta = null; }
         if (carta) fantasma(carta, rect, (u) => { const k = u * u; return { x: rect.left + Math.sin(u * 14) * rect.width * 0.18 * u, y: rect.top - k * rect.height * 1.4, rot: u * 720, s: 1 - 0.55 * k, op: u > 0.7 ? (1 - u) / 0.3 : 1 }; }, 150, 750);
         const imp1 = unaVolta(onImpact); s.dopo(820, imp1); s.dopo(1540, imp1);
         const d = esegui(s, 1540); sfx('wind', 0); return d;
