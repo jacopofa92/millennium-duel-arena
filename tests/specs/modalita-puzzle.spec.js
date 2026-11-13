@@ -40,6 +40,7 @@ async function calma(page, scegli) {
                 return 'risposto';
             }
             const ferma = !(gameState.chain && gameState.chain.links && gameState.chain.links.length)
+                && !(gameState.chain && gameState.chain.resolving)
                 && !(DuelEngine.isChainActive && DuelEngine.isChainActive());
             return ferma ? 'ferma' : 'attesa';
         }, scegli ? scegli.toString() : null);
@@ -180,7 +181,11 @@ module.exports = {
                 t.assert(await page.evaluate(() => gameState.turn === 3 && !!document.getElementById('puzzleObiettivo')),
                     `Puzzle ${id}: si parte dal turno 3 con il riquadro dell'obiettivo`);
                 await SOLUZIONI[id](page);
-                await page.waitForFunction(() => gameState.gameOver, null, { timeout: 15000 });
+                try {
+                    await page.waitForFunction(() => gameState.gameOver, null, { timeout: 15000 });
+                } catch (e) {
+                    throw new Error(`Puzzle ${id}: la soluzione non ha concluso il duello entro 15 secondi (${e.message})`);
+                }
                 // Lo stato del puzzle lo scrive la fine del duello
                 // (DuelSession.finish), che arriva un attimo dopo gameOver.
                 try {

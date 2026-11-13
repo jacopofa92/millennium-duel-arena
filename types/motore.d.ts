@@ -119,7 +119,9 @@ interface TargetDeclaration {
  * duel-engine.js). Ognuna aggiorna gameState e fa log/refresh necessari.
  */
 interface EngineActions {
-    destroyMonster(owner: Owner, index: number): void;
+    destroyMonster(owner: Owner, index: number, visualOptions?: object): void;
+    /** Distrugge un Mostro Trappola nella Zona Mostri come carta M/T. */
+    destroyTrapMonster(owner: Owner, index: number, batchToken?: any, visualOptions?: object): boolean;
     destroySpellTrap(owner: Owner, index: number, batchToken?: any, visualOptions?: object): void;
     destroyFieldSpell(owner: Owner): void;
     changePosition(owner: Owner, index: number, newPosition: Position): void;

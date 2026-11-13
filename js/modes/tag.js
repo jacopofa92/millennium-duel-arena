@@ -63,6 +63,9 @@
         'discardHandBeforeDrawFor', 'pendingMaharaghiPeekFor', 'lockedMonsterZonesFor', 'lockedSTZonesFor',
         'cannotChangePositionFor', 'orgothActiveUidsFor', 'orichalcosExtendedNegationUidsFor',
         'untilOpponentTurnActiveUidsFor', 'soulCrossingActivationLimitFor',
+        // Carta dell'Oblio limita le Evocazioni Speciali del membro per il
+        // resto del suo turno, anche quando cambia il posto in Tag Team.
+        'specialSummonForbiddenTurnFor',
         // Il Sigillo di Orichalcos si attiva "una volta per Duello": per il membro che l'ha attivato.
         'orichalcosActivatedFor'
     ];

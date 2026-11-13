@@ -5,6 +5,7 @@
 //   - dal Negozio si prendono con un tocco, e poi risultano "Già acquistato";
 //   - gli altri mazzi restano a pagamento.
 const path = require('path');
+const { consentiTuttiIContenuti } = require('../helpers/contenuti');
 
 const RADICE = path.join(__dirname, '..', '..');
 const url = (f) => 'file:///' + path.join(RADICE, f).replace(/\\/g, '/');
@@ -16,6 +17,7 @@ module.exports = {
         const ctx = await browser.newContext({ viewport: { width: 1000, height: 900 }, serviceWorkers: 'block' });
         await ctx.addInitScript(() => { window.AUTH_GATE_SKIP = true; });
         const page = await ctx.newPage();
+        await consentiTuttiIContenuti(page);
         const errori = [];
         page.on('pageerror', (e) => errori.push(e.message));
         try {

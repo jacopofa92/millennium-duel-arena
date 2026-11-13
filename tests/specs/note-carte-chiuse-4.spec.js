@@ -238,7 +238,9 @@ module.exports = {
         const oppressione = await t.evaluate(() => {
             const def = DuelEngine.getDefinition(882);
             gameState.playerLP = 700;
-            const senzaLp = def.canActivate(DuelEngine.makeContext('player', { summonedVia: 'special', summonedCard: {} }));
+            // Oppressione è un trigger opzionale sull'Evocazione Speciale,
+            // non un'attivazione manuale: il motore la interroga con questo hook.
+            const senzaLp = def.canRespondToSpecialSummonAttempt(DuelEngine.makeContext('player', { summonedVia: 'special', summonedCard: {} }));
             gameState.playerLP = 99999;
             return { continua: !!def.continuous, senzaLp };
         });

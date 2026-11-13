@@ -42,7 +42,9 @@ module.exports = {
         const indice = fs.readFileSync(path.join(RADICE, 'index.html'), 'utf8');
         t.assert(/label: 'Demo Duello Sandbox'[^\n]*soloAdmin: true/.test(indice),
             'La voce del Sandbox nel menu deve essere marcata soloAdmin');
-        t.assert(/\.filter\(\(item\) => !item\.soloAdmin \|\| admin\)/.test(indice),
+        // Le voci passano anche dal filtro dei contenuti opzionali: controlla
+        // che la condizione soloAdmin resti parte del filtro complessivo.
+        t.assert(/\.filter\(\(\w+\) => \(!\w+\.soloAdmin \|\| admin\) &&/.test(indice),
             'Il sottomenu deve filtrare le voci soloAdmin per chi non è amministratore');
 
         let page = await apriCome(t, false);

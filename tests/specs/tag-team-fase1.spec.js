@@ -37,6 +37,7 @@ const PRELUDIO = () => {
 const CLASSIFICAZIONE = {
     // Per membro: durano più turni e colpiscono "un giocatore".
     coldWaveActiveFor: 'membro', skipDrawFor: 'membro', skipNextTurnFor: 'membro', skipMainPhase1For: 'membro',
+    specialSummonForbiddenTurnFor: 'membro',
     skipNextBattlePhaseFor: 'membro', discardHandBeforeDrawFor: 'membro', pendingMaharaghiPeekFor: 'membro',
     lockedMonsterZonesFor: 'membro', lockedSTZonesFor: 'membro', cannotChangePositionFor: 'membro',
     orgothActiveUidsFor: 'membro', orichalcosExtendedNegationUidsFor: 'membro', untilOpponentTurnActiveUidsFor: 'membro',
@@ -55,7 +56,7 @@ const CLASSIFICAZIONE = {
     mustBeAttackedUidsFor: 'ricalcolata', graveyardBanishBlockedFor: 'ricalcolata', piercingRacesFor: 'ricalcolata',
     piercingUidsFor: 'ricalcolata', monsterEffectsNegatedUidsFor: 'ricalcolata',
     // Non sono per posto: chiave = uid, oppure un unico oggetto.
-    damageStepOnlyBonusFor: 'uid', timeWizardCoinResultFor: 'oggetto'
+    damageStepOnlyBonusFor: 'uid', flyingElephantWinPendingTurnFor: 'uid', timeWizardCoinResultFor: 'oggetto'
 };
 
 module.exports = {
