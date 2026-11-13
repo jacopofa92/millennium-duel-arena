@@ -1,7 +1,7 @@
 # Graph Report - millennium-duel-arena  (2026-11-13)
 
 ## Corpus Check
-- 791 files · ~1,724,396 words
+- 791 files · ~1,724,478 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 75 file(s) not represented in the graph (top: .css 63, .log 5, .ttf 3)
 
@@ -509,7 +509,7 @@
 7. `openDuel()` - 52 edges
 8. `getDefinition()` - 51 edges
 9. `constructor()` - 49 edges
-10. `makeContext()` - 48 edges
+10. `EngineActions` - 48 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `disegna()` --indirect_call--> `opzioni()`  [INFERRED]
@@ -1949,8 +1949,8 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `pixi.min.js` be split into smaller, more focused modules?**
   _Cohesion score 0.007434259031703121 - nodes in this community are weakly interconnected._
 - **Why does `load()` connect `load` to `pixi.min.js`, `D`, `destroy`?**
-  _High betweenness centrality (0.166) - this node is a cross-community bridge._
+  _High betweenness centrality (0.164) - this node is a cross-community bridge._
 - **Should `supabase.min.js` be split into smaller, more focused modules?**
   _Cohesion score 0.016363636363636365 - nodes in this community are weakly interconnected._
 - **Why does `on()` connect `constructor` to `pixi.min.js`, `supabase.min.js`, `n`?**
-  _High betweenness centrality (0.082) - this node is a cross-community bridge._
+  _High betweenness centrality (0.055) - this node is a cross-community bridge._

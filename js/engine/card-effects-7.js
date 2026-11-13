@@ -1835,20 +1835,19 @@
     // segno (gameState.flyingElephantWinPendingUids -> onDealsBattleDamage
     // qui sotto -> gameState.flyingElephantWinnerOwner -> checkGameOver in
     // game-flow.js).
-    // SEMPLIFICAZIONE: la condizione di vittoria armata non ha una
-    // scadenza esplicita se il controllore non riesce ad attaccare
-    // direttamente nel turno successivo (il testo reale la vorrebbe valida
-    // solo per QUEL turno) — resta pendente indefinitamente finché non
-    // viene consumata; nessuna carta di questo dataset sfrutta questo
-    // margine.
+    // La finestra è legata al numero del prossimo turno: allo scadere,
+    // changeTurn() rimuove il flag. Un vecchio salvataggio senza il numero
+    // di turno associato non può quindi concedere una vittoria tardiva.
     // ------------------------------------------------------------------
     CardEffects.register(246, {
         preventsDestructionByOpponentEffectOncePerTurn: true,
         onDealsBattleDamage(ctx) {
             if (ctx.targetIndex !== -1) return;
             if (gameState.flyingElephantWinPendingUids && gameState.flyingElephantWinPendingUids.has(ctx.card.uid)) {
+                const expectedTurn = gameState.flyingElephantWinPendingTurnFor
+                    && gameState.flyingElephantWinPendingTurnFor[ctx.card.uid];
                 gameState.flyingElephantWinPendingUids.delete(ctx.card.uid);
-                gameState.flyingElephantWinnerOwner = ctx.owner;
+                if (expectedTurn === gameState.turn) gameState.flyingElephantWinnerOwner = ctx.owner;
             }
         }
     });

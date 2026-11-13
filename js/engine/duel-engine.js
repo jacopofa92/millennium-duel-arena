@@ -955,10 +955,10 @@
             // una nuova chiave per ogni turno è già "una volta a turno"
             // senza bisogno di azzerarla esplicitamente altrove, stesso
             // idioma di ctx.hasUsedOncePerTurn). Se la prevenzione scatta
-            // durante la End Phase dell'avversario, arma la condizione di
-            // vittoria automatica (gameState.flyingElephantWinPendingUids,
-            // consumata da onDealsBattleDamage in card-effects.js/id 246 e
-            // poi da checkGameOver in game-flow.js).
+            // durante la End Phase dell'avversario, arma la vittoria per
+            // il prossimo turno del controllore. La scadenza esplicita
+            // evita che un attacco diretto molti turni dopo possa vincere
+            // per un vecchio effetto rimasto pendente.
             const flyingElephantDef = getDefinition(slot.card.id);
             if (flyingElephantDef?.preventsDestructionByOpponentEffectOncePerTurn && destroyerOwner && destroyerOwner !== owner) {
                 gameState.flyingElephantUsedThisOpponentTurn = gameState.flyingElephantUsedThisOpponentTurn || {};
@@ -966,9 +966,11 @@
                 if (!gameState.flyingElephantUsedThisOpponentTurn[turnKey]) {
                     gameState.flyingElephantUsedThisOpponentTurn[turnKey] = true;
                     addToLog(`🐘 ${slot.card.name} non viene distrutta dall'effetto avversario!`);
-                    if (gameState.phase === 'end') {
+                    if (gameState.phase === 'end' && gameState.currentPlayer !== owner) {
                         gameState.flyingElephantWinPendingUids = gameState.flyingElephantWinPendingUids || new Set();
                         gameState.flyingElephantWinPendingUids.add(slot.card.uid);
+                        gameState.flyingElephantWinPendingTurnFor = gameState.flyingElephantWinPendingTurnFor || {};
+                        gameState.flyingElephantWinPendingTurnFor[slot.card.uid] = gameState.turn + 1;
                     }
                     return;
                 }

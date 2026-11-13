@@ -488,6 +488,19 @@ function changeTurn() {
     addToLog(`🔄 Turno ${gameState.turn} terminato.`);
     gameState.turn++;
     gameState.currentPlayer = Tavolo.avversario(gameState.currentPlayer);
+    // Elefante Volante (id 246): la vittoria diretta armata nella End
+    // Phase avversaria vale soltanto nel turno appena iniziato. Dopo quel
+    // turno eliminiamo uid e scadenza, anche se l'Elefante non ha attaccato.
+    const elefantePendenti = gameState.flyingElephantWinPendingUids;
+    const scadenzeElefante = gameState.flyingElephantWinPendingTurnFor;
+    if (elefantePendenti && scadenzeElefante) {
+        elefantePendenti.forEach((uid) => {
+            if (scadenzeElefante[uid] < gameState.turn) {
+                elefantePendenti.delete(uid);
+                delete scadenzeElefante[uid];
+            }
+        });
+    }
     // Avviso di REGOLA "comincia il turno di questo posto", senza ascoltatori
     // nel duello normale. Serve a una variante di regole fuori dal motore che
     // cambia CHI siede in un posto da un turno all'altro (aggancio A1 di
