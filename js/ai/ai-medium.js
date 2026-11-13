@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * ai-medium.js — Livello di difficoltà "Media": è l'euristica ORIGINALE
  * del bot (quella che questo gioco ha sempre avuto prima dell'IA
@@ -27,6 +28,7 @@
      * accettabile, anche se è l'unico Tributo disponibile in mano: meglio
      * non evocare nulla questo turno che indebolirsi da soli.
      */
+    /** @param {GameState} gameState @param {Owner} [io] @param {Parameters<AIMedium['chooseSummon']>[2]} [options] @returns {AISummonDecision | null} */
     function chooseSummon(gameState, io = 'bot', options) {
         options = options || {};
         const scoreMonster = typeof options.scoreMonster === 'function'
@@ -122,6 +124,7 @@
      *   - campo avversario vuoto -> sempre attacco diretto (-1);
      *   - nessun bersaglio conveniente -> null (trattiene il mostro).
      */
+    /** @param {MonsterSlot} attackerSlot @param {Array<{ slot: MonsterSlot; index: number }>} playerMonsters @param {Owner} [io] @returns {number | null} */
     function chooseAttackTarget(attackerSlot, playerMonsters, io = 'bot') {
         if (playerMonsters.length === 0) {
             // "Non può attaccare direttamente" (es. Zombyra l'Oscuro, id
@@ -180,6 +183,7 @@
      * senza rispondere — se anche una sola candidata non è pura
      * rimozione, risponde comunque con la prima come sempre.
      */
+    /** @param {AIResponseCandidate[]} candidates @param {Owner} [io] @returns {AIResponseCandidate | null} */
     function chooseChainResponse(candidates, io = 'bot') {
         // Prima si scartano le risposte che al bot costerebbero piu' di quanto rendono (veto della carta,
         // vedi AI_SHARED.attivazioneSensata): rispondere "sempre con la prima" attivava anche quelle.
@@ -219,6 +223,7 @@
      * sempre) — è proprio questa differenza di "quanto usa il proprio
      * retrocampo" a rendere Difficile percepibilmente più aggressivo.
      */
+    /** @param {GameState} gameState @param {Parameters<AIMedium['chooseNextSpellTrapAction']>[1]} usedThisTurn @param {Owner} [io] @param {Parameters<AIMedium['chooseNextSpellTrapAction']>[3]} [options] @returns {AIHandAction | null} */
     function chooseNextSpellTrapAction(gameState, usedThisTurn, io = 'bot', options) {
         options = options || {};
         const hand = Tavolo.mano(io, gameState);
@@ -299,6 +304,7 @@
      * sul retrocampo; fanno eccezione soltanto i boss il cui piano sarebbe
      * altrimenti morto (Abbandonato/Mille Occhi e Cannoni Drago).
      */
+    /** @param {GameState} gameState @param {Owner} [io] @returns {AIFieldAction | null} */
     function chooseSetCardActivation(gameState, io = 'bot') {
         // Abbandonato e Restrizione dai Mille Occhi sono il secondo piano
         // identitario di Pegasus, non un Ignition generico facoltativo: se
@@ -356,6 +362,7 @@
      * quanto i materiali, oppure il suo effetto scarto+rimozione può già
      * compensare la concentrazione di due corpi in uno.
      */
+    /** @param {GameState} gameState @param {Owner} [io] @returns {AIBanishFusionCandidate | null} */
     function chooseBanishFusion(gameState, io = 'bot') {
         if (!window.DuelEngine) return null;
         const candidates = DuelEngine.getBanishFusableExtraDeckMonsters(io);
@@ -379,6 +386,7 @@
     }
 
     /** Media gestisce i cambi di Posizione usando solo informazioni visibili. */
+    /** @param {GameState} gameState @param {Owner} [io] @returns {number[]} */
     function choosePositionChanges(gameState, io = 'bot') {
         return window.AI_SHARED ? AI_SHARED.choosePositionChanges(gameState, io, false) : [];
     }

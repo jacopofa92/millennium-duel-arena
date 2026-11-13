@@ -1,0 +1,307 @@
+/* CSS del duello, parte 2 di 12, estratta da duelMonstersCore.html (righe 493-796 del vecchio blocco <style>).
+   Le parti vanno caricate IN ORDINE (la cascata dipende dall'ordine): 01 ... 12. Non riordinare le regole fra le parti
+   senza ripetere tools/impronta-stili-duello.js. I percorsi url() sono relativi a questo file. */
+        /* ============================================================
+           Intro camera: all'avvio del duello il campo "arriva" con una
+           zoomata 3D dall'alto verso l'inquadratura definitiva (dall'alto,
+           piatta), invece di comparire già fermo — vedi playCameraIntro()
+           in js/game-flow.js, che aggiunge/rimuove questa classe.
+           ============================================================ */
+        .game-container.camera-intro {
+            transform-origin: 50% 68%;
+            animation: cameraIntroZoomOut 1700ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+            will-change: transform;
+            /* Quanto è "lontana" la telecamera all'inizio. Erano due
+               valori fissi dentro la keyframe, ed è da lì che nasceva
+               l'artefatto segnalato su mobile fra la fine dell'intro e la
+               comparsa del campo: su desktop il contenitore è più stretto
+               della finestra e a 1.7x ci sta ancora, su un telefono
+               riempie già tutta la larghezza e a 1.7x + rotazione
+               prospettica diventa enorme. Misurato su uno schermo largo
+               393px: il campo partiva da -241 a 634, cioè 875px, più del
+               DOPPIO dello schermo — tutto quello che stava ai bordi
+               (pila del Deck, Abbandona, contatore turni) veniva
+               tagliato e sembrava scivolare mentre la zoomata rientrava.
+               Su desktop questi valori restano quelli di sempre: la
+               riduzione vive solo nel @media mobile più sotto. */
+            --camera-intro-scale: 1.7;
+            --camera-intro-tilt: 58deg;
+        }
+        @keyframes cameraIntroZoomOut {
+            0% {
+                transform: perspective(1500px) rotateX(var(--camera-intro-tilt)) scale(var(--camera-intro-scale)) translateY(var(--camera-intro-shift, 4%));
+                opacity: 0;
+                filter: brightness(1.3) blur(3px);
+            }
+            32% {
+                opacity: 1;
+                filter: brightness(1.15) blur(0);
+            }
+            100% {
+                transform: perspective(1500px) rotateX(0deg) scale(1) translateY(0);
+                filter: brightness(1) blur(0);
+            }
+        }
+        /* Ogni carta della mano resta invisibile FINCHÉ non è il suo turno
+           di comparire (vedi dealHandWithStagger() in game-flow.js): la
+           classe vive sulla singola carta, non sul contenitore .hand,
+           altrimenti rimuovere la classe dal contenitore le farebbe
+           comparire TUTTE insieme invece che una alla volta. */
+        .hand .card.pending-deal { opacity: 0; pointer-events: none; }
+        /* Arrivo in mano. Prima questa keyframe faceva SCIVOLARE la carta
+           da destra mentre, in contemporanea, il backend GSAP
+           (playDrawEffect) faceva volare dal mazzo una carta coperta fino
+           allo stesso punto: due movimenti diversi sullo stesso arrivo,
+           che l'occhio legge come due oggetti invece che come uno solo.
+
+           Ora la carta vera non si muove affatto: resta invisibile per
+           tutto il volo e si MATERIALIZZA dove il fantasma atterra,
+           crescendo appena. Cosi' l'occhio segue un oggetto solo, dal
+           mazzo alla mano. Il 64% non e' un numero a caso: il volo dura
+           300ms e il fantasma comincia a svanire a 220ms, quindi su 340ms
+           di keyframe la carta vera compare proprio mentre l'altro si
+           spegne.
+
+           Niente overshoot nella curva (era cubic-bezier(0.22,1.2,...),
+           che sfora oltre la scala finale): una carta che si posa deve
+           fermarsi, non rimbalzare — stessa regola gia' seguita da ogni
+           atterraggio 3D di js/ui/fx-gsap.js.
+
+           Senza GSAP (backend non ancora caricato: viene tirato su dopo
+           l'evento 'load') non c'e' nessun fantasma e resta una comparsa
+           in dissolvenza: piu' sobria, ma corretta — mai due movimenti
+           che litigano. */
+        .card.deal-in {
+            animation: handDealIn 340ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        }
+        @keyframes handDealIn {
+            0%   { opacity: 0; transform: scale(0.94); }
+            64%  { opacity: 0; transform: scale(0.94); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .game-title { text-align: center; font-size: 2.5em; text-shadow: 0 0 20px #f39c12; margin-bottom: 20px; }
+        .players-info { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .player-info {
+            background: rgba(0,0,0,0.7);
+            padding: clamp(8px, 1.2vw, 15px);
+            border-radius: 6px;
+            border: 2px solid #f39c12;
+            width: 100%;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+        }
+        .player-info h3 {
+            font-size: clamp(0.7rem, 1.3vw, 1.17rem);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        /* Riquadro info duellante in stile "HUD" (rifatto sul riferimento
+           screenshot fornito dall'utente, non più sul cuneo obliquo di
+           prima): niente più box/triangolo di sfondo — solo il ritratto
+           circolare con anello dorato e nome/LP che "galleggiano" sul
+           campo, con ombra portata per restare leggibili su qualunque
+           sfondo sotto. Ancorato all'angolo vero dello schermo tramite
+           position:fixed su #botInfo/#playerInfo qui sotto. */
+        .player-info.side-player {
+            position: fixed;
+            display: flex;
+            align-items: center;
+            gap: clamp(8px, 1.6vw, 14px);
+            width: auto;
+            height: auto;
+            background: none;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+            z-index: 20;
+        }
+        #botInfo.player-info.side-player {
+            top: var(--duelist-box-offset);
+            left: clamp(8px, 2vw, 22px);
+            flex-direction: row;
+        }
+        #playerInfo.player-info.side-player {
+            bottom: var(--duelist-box-offset);
+            right: clamp(8px, 2vw, 22px);
+            flex-direction: row-reverse;
+        }
+        /* Attesa reale di una scelta Multiplayer. È un elemento separato
+           da #botInfo perché DuelSession ricostruisce i figli del pannello
+           all'avvio; come fratello resta stabile e non altera la geometria
+           dell'avatar. */
+        .remote-choice-wait {
+            position: fixed;
+            top: calc(var(--duelist-box-offset) + clamp(48px, 6.5vw, 176px) + 8px);
+            left: clamp(8px, 2vw, 22px);
+            z-index: 21;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            max-width: min(330px, calc(100vw - 16px));
+            padding: 7px 11px;
+            border: 1px solid rgba(247, 215, 116, 0.42);
+            border-radius: 999px;
+            color: #fff3c4;
+            background: rgba(9, 11, 19, 0.88);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.42), inset 0 0 14px rgba(247, 215, 116, 0.05);
+            font-size: clamp(0.68rem, 1vw, 0.82rem);
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+            pointer-events: none;
+            backdrop-filter: blur(7px);
+        }
+        .remote-choice-wait[hidden] { display: none; }
+        .remote-choice-wait__dots {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .remote-choice-wait__dots i {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #f7d774;
+            box-shadow: 0 0 6px rgba(247, 215, 116, 0.55);
+            animation: remoteChoiceDot 1.15s ease-in-out infinite;
+        }
+        .remote-choice-wait__dots i:nth-child(2) { animation-delay: 0.14s; }
+        .remote-choice-wait__dots i:nth-child(3) { animation-delay: 0.28s; }
+        @keyframes remoteChoiceDot {
+            0%, 60%, 100% { opacity: 0.32; transform: translateY(0); }
+            30% { opacity: 1; transform: translateY(-3px); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .remote-choice-wait__dots i { animation: none; opacity: 0.8; }
+        }
+        .duelist-avatar--corner {
+            width: clamp(48px, 6.5vw, 176px);
+            height: clamp(48px, 6.5vw, 176px);
+            border-radius: 50%;
+            border: 3px solid #f7d774;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.55), 0 0 0 2px rgba(0,0,0,0.35);
+            /* L'emoji di ripiego (nessuna immagine caricata) a piena
+               dimensione toccava/oltrepassava l'anello dorato (es. le
+               antenne del robot 🤖 tagliate proprio sul bordo) — ridotta
+               apposta così resta comoda dentro il cerchio invece di
+               "uscirne". Non tocca l'immagine reale (.duelist-avatar img),
+               già vincolata a inset:0 dentro il bordo. */
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            z-index: 2;
+            flex-shrink: 0;
+        }
+        .duelist-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 3px;
+            z-index: 2;
+        }
+        #playerInfo .duelist-details {
+            align-items: flex-end;
+            text-align: right;
+        }
+        .duelist-details .duelist-name {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #fff;
+            font-weight: 800;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.55);
+        }
+        /* Lato Giocatore: corona e nome invertiti (la corona resta
+           "esterna", verso il bordo destro dello schermo, coerente col
+           resto del box che è allineato a destra). */
+        #playerInfo .duelist-name {
+            flex-direction: row-reverse;
+        }
+        /* Turno attivo: NESSUN bagliore/pulsazione più — solo una corona
+           accanto al nome di chi è in turno, nascosta finché
+           .player-info.side-player non ha la classe .active-turn (vedi
+           game-flow.js, changeTurn()). */
+        .turn-crown {
+            display: none;
+            flex-shrink: 0;
+        }
+        /* Turno: una CORONA d'oro DAVANTI al nome di chi e' di turno (l'utente ha scartato badge, medaglione,
+           parola, nome evidenziato e Occhio: vuole la corona, in testa al nome, ben visibile). Ferma, senza
+           sfondo. Sul lato giocatore il nome e' allineato a destra con la corona esterna a DESTRA (row-reverse):
+           qui si rimette in riga normale, cosi' la corona sta sempre a sinistra del testo, cioe' davanti.
+           L'altro duellante non ha nulla e il suo ritratto e' un po' spento (vedi sotto). */
+        .player-info.side-player.active-turn .turn-crown {
+            display: inline-flex;
+            align-items: center;
+            width: 1.55em;
+            height: 1.55em;
+            margin: 0 5px 0 0;
+            color: #ffd45e;
+            filter: drop-shadow(0 0 3px rgba(255, 205, 70, 0.95)) drop-shadow(0 0 8px rgba(255, 180, 40, 0.6)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+        }
+        .player-info.side-player.active-turn .turn-crown svg { width: 100%; height: 100%; }
+        #playerInfo.player-info.side-player .duelist-name { flex-direction: row; }
+        /* Chi NON e' di turno: ritratto un po' piu' spento. */
+        .player-info.side-player:not(.active-turn) .duelist-avatar--corner {
+            filter: saturate(0.6) brightness(0.82);
+            transition: filter 0.4s ease;
+        }
+        /* Il NOME sta su UNA RIGA sola (richiesta dell'utente: "non andare a capo, Pegasus puo' estendersi ancora oltre").
+           Prima andava a capo su due o tre righe e spezzava le parole ("MAXIMILLIO / N PEGASUS"), perche' sul telefono il nome
+           era limitato a 32vw. Ora ha tutto lo spazio fino al bordo opposto (meno ~170px per l'avatar e il cluster Tempo/Turno/
+           Difficolta'/Abbandona dall'altra parte); se proprio non ci sta, ellissi, e il titolo (tooltip) ha il nome intero. */
+        .player-info.side-player .duelist-details { max-width: min(calc(100vw - 170px), 620px); min-width: 0; }
+        .player-info.side-player .duelist-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-wrap: nowrap;
+            line-height: 1.12;
+            max-width: 100%;
+        }
+        .player-info.side-player .duelist-name .name-text {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            min-width: 0;
+            /* Larghezza del testo (non del contenitore): la corona resta attaccata al nome. */
+            width: max-content;
+            max-width: 100%;
+        }
+        /* Tag LP a pillola, sotto il nome nella colonna dei dettagli. */
+        .life-points {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: clamp(0.72rem, 1.3vw, 1em);
+            font-weight: 800;
+            color: #fff;
+            white-space: nowrap;
+            background: linear-gradient(135deg, rgba(20,10,10,0.92), rgba(50,15,15,0.88));
+            border: 1px solid rgba(231,76,60,0.55);
+            border-radius: 999px;
+            padding: 3px 12px 3px 8px;
+            z-index: 2;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            transition: color 0.2s ease;
+        }
+        /* Impulso quando i LP cambiano: rosso e "colpo" verso il basso per
+           il danno, verde e verso l'alto per un eventuale recupero. Dura
+           quanto il conteggio animato in animateLifePoints() (game-flow.js)
+           così il numero resta "acceso" per tutta la discesa, non solo
+           un lampo iniziale — più vicino al conto alla rovescia dell'anime. */
+        .life-points.lp-hit { animation: lpHitPulse 1000ms ease; }
+        .life-points.lp-heal { animation: lpHealPulse 1000ms ease; }
+        @keyframes lpHitPulse {
+            0% { color: #e74c3c; text-shadow: none; }
+            15% { color: #ff5555; transform: scale(1.22); text-shadow: 0 0 14px rgba(255,85,85,0.8); }
+            70% { color: #ff5555; text-shadow: 0 0 14px rgba(255,85,85,0.8); }
+            100% { color: #e74c3c; transform: scale(1); text-shadow: none; }
+        }
+        @keyframes lpHealPulse {
+            0% { color: #e74c3c; text-shadow: none; }
+            15% { color: #2ecc71; transform: scale(1.22); text-shadow: 0 0 14px rgba(46,204,113,0.8); }
+            70% { color: #2ecc71; text-shadow: 0 0 14px rgba(46,204,113,0.8); }
+            100% { color: #e74c3c; transform: scale(1); text-shadow: none; }
+        }

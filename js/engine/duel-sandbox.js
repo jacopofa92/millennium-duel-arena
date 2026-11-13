@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * duel-sandbox.js — Avvio di un duello con uno stato di partenza
  * personalizzato invece del solito mazzo vero + pescata.

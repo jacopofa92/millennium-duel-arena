@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * card-effects-7.js — Effetti delle carte, parte 7 di 8.
  * =====================================================================
@@ -537,6 +538,11 @@
     // ================================================================
     CardEffects.register(849, {
         activate(ctx) {
+            if (ctx.gameState.specialSummonForbiddenTurnFor
+                && ctx.gameState.specialSummonForbiddenTurnFor[ctx.owner] === ctx.gameState.turn) {
+                ctx.log('🚫 Carta dell\'Oblio impedisce di trasformare Roccaforte della Fortezza Movente in un Mostro in questo turno.');
+                return;
+            }
             const grave = ctx.graveyard(ctx.owner);
             const graveIndex = grave.findIndex((c) => c.uid === ctx.card.uid);
             if (graveIndex !== -1) grave.splice(graveIndex, 1);
@@ -759,13 +765,10 @@
     // (Magia diversa, reale: 800 LP, solo mostri scoperti, controllo
     // fino alla End Phase) — il nome italiano è letteralmente "Mind
     // Control", carta reale diversa: nessun costo in LP, bersaglia
-    // QUALUNQUE mostro dell'avversario (anche coperto), controllo
-    // PERMANENTE (ctx.takeControl(..., true), nuovo 4° parametro
-    // "permanent" in duel-engine.js — non torna mai da solo a fine
-    // turno), e il mostro preso non può attaccare né essere sacrificato
-    // (gameState.cannotAttackUids già esistente + nuovo
-    // gameState.cannotBeTributedUids per uid, consultato in actions.js
-    // insieme al già esistente def.cannotBeTributed per definizione).
+    // QUALUNQUE mostro dell'avversario (anche coperto), controllo fino
+    // alla End Phase. Durante il controllo il mostro non può attaccare né
+    // essere offerto come Tributo; processTemporaryControlReturns rimuove
+    // entrambi i vincoli quando lo restituisce.
     // ------------------------------------------------------------------
     CardEffects.register(130, {
         declaredTargeting: { count: 1, cardType: 'monster' },
@@ -799,12 +802,12 @@
         if (window.FX && typeof FX.playMindControl === 'function') {
             FX.playMindControl(stolen, decl.targetOwner, decl.targetIndex, 'mind');
         }
-        if (ctx.takeControl(ctx.owner, decl.targetOwner, decl.targetIndex, true)) {
-            gameState.cannotAttackUidsPermanent = gameState.cannotAttackUidsPermanent || new Set();
-            gameState.cannotAttackUidsPermanent.add(stolen.uid);
+        if (ctx.takeControl(ctx.owner, decl.targetOwner, decl.targetIndex, false, 'endPhase')) {
+            gameState.cannotAttackUidsUntilEndPhase = gameState.cannotAttackUidsUntilEndPhase || new Set();
+            gameState.cannotAttackUidsUntilEndPhase.add(stolen.uid);
             gameState.cannotBeTributedUids = gameState.cannotBeTributedUids || new Set();
             gameState.cannotBeTributedUids.add(stolen.uid);
-            ctx.log(`🧠 Controllo della Mente prende il controllo permanente di ${stolenName}!`);
+            ctx.log(`🧠 Controllo della Mente prende il controllo di ${stolenName} fino alla End Phase!`);
         }
         });
     }
@@ -2356,14 +2359,15 @@
     });
 
     // 878 — Angelo Splendente / Shining Angel (Mostro Effetto): distrutto
-    // e mandato al Cimitero → Special Summon 1 mostro LUCE con 1500 ATK o
+    // distrutto in battaglia e mandato al Cimitero → Special Summon 1
+    // mostro LUCE con 1500 ATK o
     // meno dal Deck — vera scelta tramite searchDeckWithChoice, non più
     // il primo trovato nel Deck mescolato. Stesso identico schema
-    // (nessuna distinzione "in battaglia" vs "da effetto Carta") già
-    // usato da Ratto Gigante (id 614, la sua controparte TERRA di questa
-    // stessa famiglia di carte).
+    // distingue ora la battaglia dalle distruzioni da effetto, come gli
+    // altri mostri reclutatori.
     CardEffects.register(878, {
         onDestroy(ctx) {
+            if (!ctx.destroyedInBattle) return;
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return;
             searchDeckWithChoice(ctx, (c) => c.type === 'monster' && c.attribute === 'LUCE' && c.attack <= 1500, {
                 title: '👼 Angelo Splendente',
@@ -3053,10 +3057,9 @@
         const uid = ctx.card._necrofearControlledUid;
         if (!uid) return;
         ctx.card._necrofearControlledUid = null;
-        const idx = ctx.field(ctx.owner).findIndex((s) => s && s.card.uid === uid);
-        if (idx === -1) return; // il mostro controllato è già sparito per conto suo
-        ctx.takeControl(ctx.opponent, ctx.owner, idx);
-        ctx.log('🃏 Paura Oscura lascia il campo: il controllo del mostro torna al suo proprietario.');
+        if (ctx.returnControlToOriginalOwner(uid, ctx.opponent)) {
+            ctx.log('🃏 Paura Oscura lascia il campo: il controllo del mostro torna al suo proprietario.');
+        }
     }
     CardEffects.register(891, {
         cannotNormalSummon: true,

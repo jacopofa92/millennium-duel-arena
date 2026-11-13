@@ -1,0 +1,455 @@
+/* CSS del duello, parte 11 di 12, estratta da duelMonstersCore.html (righe 4833-5284 del vecchio blocco <style>).
+   Le parti vanno caricate IN ORDINE (la cascata dipende dall'ordine): 01 ... 12. Non riordinare le regole fra le parti
+   senza ripetere tools/impronta-stili-duello.js. I percorsi url() sono relativi a questo file. */
+        /* ============================================================
+           Mobile in VERTICALE (richiesta esplicita dell'utente, dopo aver
+           reso il duello giocabile anche in verticale — vedi CLAUDE.md):
+           .hand/.hand--bot sono centrate su TUTTA la larghezza di
+           .game-container — in verticale coincide quasi con l'intero
+           schermo, quindi le carte più esterne della mano finivano
+           esattamente sotto/sopra il box fisso nome+LP+avatar
+           (#botInfo/#playerInfo, position:fixed — vedi sopra), che
+           occupa la STESSA riga orizzontale della mano ("le carte della
+           mano vanno sopra l'avatar"). Un primo tentativo (padding
+           laterale per restringere l'area di centraggio) restava
+           comunque nella stessa riga dell'avatar — CORREZIONE
+           dell'utente dopo aver visto lo schermo reale del telefono:
+           la mano deve avere una riga TUTTA SUA, separata in verticale
+           dall'avatar, non condividerne lo spazio orizzontale. Un
+           margine verticale (margin-top per il bot, margin-bottom per il
+           giocatore) alto quanto il box avatar — 48px fisso su mobile,
+           vedi .duelist-avatar--corner qui sotto, più il suo offset dal
+           bordo schermo (--duelist-box-offset) — sposta l'intera riga
+           della mano SOTTO l'avatar del bot (rispettivamente SOPRA
+           quello del giocatore) invece che di lato: una vera riga
+           dedicata nello spazio vuoto tra l'inizio del campo e l'avatar,
+           non più in competizione con esso per lo stesso spazio. */
+        /* Telefono in verticale: carte in campo e pile (Deck, Cimitero,
+           Extra Deck) a misure vicine. Prima la carta riempiva quasi tutta
+           la casella (46px su 48) e la pila solo l'86% (41px), quindi le
+           pile sembravano più piccole delle carte (segnalato dall'utente,
+           2026-10-16). La carta scende un po' e il margine della casella
+           cresce di quanto lei cala, così la casella, e con lei la
+           larghezza del campo, resta la stessa. Le pile seguono da sole:
+           il dorso in cima ha la misura e la posizione di una carta (vedi
+           .deck-preview), lo spessore sta nel margine. Solo verticale
+           stretto: il desktop e l'orizzontale restano come prima. */
+        @media (orientation: portrait) and (max-width: 600px) {
+            :root {
+                --card-w: clamp(40px, 11vw, 46px);
+                --field-slot-pad: clamp(4px, 1.2vw, 8px);
+            }
+            /* Le pile non hanno più bisogno di misure proprie qui: il dorso
+               in cima prende la misura della carta (vedi .deck-preview). */
+        }
+        @media (orientation: portrait) and (max-width: 900px) {
+            /* + 12px e non più + 6px: il pannello d'angolo della plancia
+               sborda di qualche pixel oltre il riquadro dell'avatar
+               (--plancia-pad), e non deve arrivare sopra la mano. */
+            .hand--bot { margin-top: calc(var(--duelist-box-offset) + 48px + 12px); }
+            .hand { margin-bottom: calc(var(--duelist-box-offset) + 48px + 12px); }
+            /* CAMPO CENTRATO fra le due mani (segnalato dall'utente: "un po' piu' in basso, non centrato").
+               La mano del Bot ha anche la classe `.hand`, quindi la regola qui sopra le dava un margine SOTTO
+               di ~78px che non voleva: il campo si centrava fra "mano Bot + 78px" e "mano mia", cioe' 33px
+               sotto il punto di mezzo fra le due mani, e il vuoto sopra il campo era il doppio di quello
+               sotto. Il margine sotto la mano del Bot torna uguale a quello sopra la mia (stessa clamp di
+               `.hand` piu' in alto): i due vuoti si equivalgono su qualunque altezza di schermo, senza pixel
+               fissi. */
+            .hand--bot { margin-bottom: clamp(4px, 1.4vh, 12px); }
+        }
+
+        /* Schermi mobile ESTREMAMENTE bassi (es. telefoni piccoli in
+           landscape, ~350-420px di altezza, con la barra del browser che
+           mangia altri pixel preziosi): comprime ulteriormente le righe
+           del campo per evitare che le due file (mostri + magie/trappole)
+           di ciascun giocatore si sovrappongano o escano dallo schermo. */
+        @media (max-height: 420px) {
+            :root {
+                /* Carta in funzione dell'ALTEZZA (misurato su 7 schermi in orizzontale, da 320 a 412px): con la vecchia
+                   min(6.2vh, ...) il risultato stava SEMPRE sotto il minimo (28px) per altezze fino a 450px, quindi
+                   un telefono da 412px aveva carte da 28px come uno da 325. Qui cresce di 0,08px per ogni px di
+                   altezza oltre i 325 (35px a 412; con 0,19 erano 45px e all'utente sembravano troppo grandi): il tetto e' quanto le due mani coprono le file Magia/Trappola
+                   (al massimo ~30%, lo stesso dei telefoni piu' piccoli, dove la carta resta a 28px). */
+                --card-w: clamp(28px, min(calc(28px + (100vh - 325px) * 0.08), 6.4vw), 118px);
+                --field-slot-pad: clamp(8px, 0.6vh, 20px);
+                --field-gap: clamp(7px, 3vh, 24px);
+                --hand-card-w: clamp(50px, min(7.2vh, 7.4vw), 138px);
+                --hand-lift: clamp(2px, 1vh, 26px);
+                --bot-hand-card-w: clamp(28px, min(3vh, 3vw), 50px);
+            }
+            .game-container { padding: 2px; }
+            .battlefield { gap: 2px; padding: 2px; }
+            .battlefield-side.left { padding-top: 34px; }
+            /*.field-board { gap: 2px; }*/
+            .field-row { gap: var(--field-gap); }
+            /*.battlefield-main { gap: 1px; }*/
+            .hand--bot { margin-bottom: 2px; gap: 2px; }
+            /* Tempo/Difficoltà/Abbandona: compattati in .hud-sistema. */
+            .phase-stepper { width: min(100%, calc(var(--field-slot-w) + var(--field-slot-w) + var(--field-slot-w) + var(--field-slot-w) + var(--field-slot-w) + var(--field-slot-w) + var(--field-slot-w) + var(--field-gap) + var(--field-gap) + var(--field-gap) + var(--field-gap) + var(--field-gap) + var(--field-gap))); margin-top: 0; margin-bottom: 0; gap: 2px; padding: 2px 0; justify-content: space-between; }
+            /* Telefono basso in orizzontale: il campo non ci sta in altezza e
+               la barra, unica parte comprimibile della colonna, finiva
+               schiacciata a 9px con i pulsanti tagliati (misurato a 740x360).
+               Ora è alta 20px ma con margini negativi occupa in pagina lo
+               stesso spazio di prima: si allarga nello spazio libero fra le
+               due metà del campo, che quindi non si sposta di un pixel. */
+            .phase-stepper { height: 20px; padding: 0; margin-block: -5.5px; flex-shrink: 0; overflow: visible; }
+            .phase-step { flex: 0 0 auto; width: 26px; max-width: none; height: 20px; padding: 0; border-radius: 7px; }
+            .phase-step .step-badge { width: 20px; height: 20px; border-radius: 6px; }
+            .phase-step .step-num { width: 9px; min-width: 9px; height: 9px; font-size: 5px; }
+            .phase-step .step-icon { width: 66%; height: 66%; }
+            .hand { margin-top: 2px; gap: 3px; }
+            .player-info.side-player { gap: 3px; }
+            .remote-choice-wait { top: calc(var(--duelist-box-offset) + 54px); }
+            .duelist-avatar--corner { width: 48px; height: 48px; font-size: 0.55rem; }
+            .life-points { font-size: 0.6rem; padding: 2px 8px 2px 6px; }
+        }
+
+        /* Telefono in VERTICALE: il box info non resta più centrato a metà schermo (copriva le mie caselle):
+           parte in alto, poco sotto Abbandona (il HUD arriva a ~59px su un 411x750 misurato sul telefono),
+           e il suo tetto d'altezza lo tiene sopra la mia fila di Mostri (che comincia a ~55% dello schermo);
+           se il testo è più lungo il pannello scorre al suo interno. */
+        /* Il box info sta DENTRO .battlefield-side.right (z-index 1), mentre le carte delle due mani hanno 5:
+           aperto, il suo bordo finiva sotto l'ultima carta della mano avversaria. Finché è visibile, il
+           contenitore che lo ospita passa sopra le mani (resta comunque sotto modali e popover, che stanno fuori). */
+        .battlefield-side:has(.card-info-panel.visible) { z-index: 90; }
+        @media (max-width: 900px) and (orientation: portrait) {
+            .card-info-panel {
+                top: calc(var(--duelist-box-offset) + 58px);
+                transform: translate(110%, 0);
+                max-height: 44dvh;
+            }
+            .card-info-panel.visible { transform: translate(0, 0); }
+        }
+        /* Telefono in orizzontale: conserva il cassetto stretto che non
+           copriva il terreno. Il tentativo di affiancare carta e testo lo
+           rendeva largo fino al 72% del duello: più leggibile, ma troppo
+           invasivo. Qui resta verticale; la carta si riduce appena e SOLO
+           la parte testuale prende lo spazio rimasto e può scorrere. */
+        @media (max-width: 900px) and (max-height: 520px) and (orientation: landscape) and (pointer: coarse) {
+            .card-info-panel {
+                --info-card-w: clamp(82px, 24dvh, 108px);
+                width: calc(var(--info-card-w) + 28px);
+                height: min(78dvh, 320px);
+                max-height: 78dvh;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            }
+            /* `.visible` normalmente rimette display:block: sovrascriverlo
+               è indispensabile perché min-height:0 funzioni sul testo. */
+            .card-info-panel.visible { display: flex; }
+            .card-info-title { flex: 0 0 auto; padding-right: 30px; }
+            .card-info-preview {
+                flex: 0 0 auto;
+                margin: 0 auto 5px;
+            }
+            .card-info-preview .card {
+                width: var(--info-card-w);
+                height: calc(var(--info-card-w) / var(--card-ratio));
+            }
+            .card-info-content {
+                flex: 1 1 auto;
+                min-height: 0;
+                overflow-y: auto;
+                padding: 0 5px 12px;
+                overscroll-behavior: contain;
+                touch-action: pan-y;
+                -webkit-overflow-scrolling: touch;
+            }
+            .card-info-content p { margin-top: 5px; margin-bottom: 14px; }
+        }
+
+        /* Stepper senza pulsanti visibili: icona e nome formano una fase,
+           mentre ORA/VAI chiariscono lo stato e l'azione senza ricreare le
+           vecchie pillole. Il colore deriva dal field tramite --fase-accento;
+           nessuno stato modifica ingombro o posizione. */
+        .phase-stepper::before {
+            display: none;
+        }
+        .phase-stepper .phase-step,
+        .phase-stepper .phase-step.active,
+        .phase-stepper .phase-step.completed,
+        .phase-stepper .phase-step.clickable:not(.active),
+        .phase-stepper .phase-step.clickable:not(.active):hover,
+        .phase-stepper .phase-step.clickable:not(.active):active {
+            background: transparent;
+            border-color: transparent;
+            box-shadow: none;
+        }
+        .phase-stepper .phase-step {
+            transform: none;
+            overflow: visible;
+            isolation: isolate;
+            color: color-mix(in srgb, var(--fase-accento) 20%, #9b9991);
+            text-shadow: none;
+        }
+        .phase-stepper .phase-step .step-badge {
+            transform: none;
+            filter: none;
+            color: inherit;
+            background: transparent;
+            box-shadow: none;
+            border-radius: 50%;
+            position: relative;
+            isolation: isolate;
+        }
+        .phase-stepper .phase-step .step-badge::before {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            inset: -7px;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            background: radial-gradient(circle,
+                color-mix(in srgb, var(--fase-accento) 32%, transparent) 0 20%,
+                color-mix(in srgb, var(--fase-accento) 13%, transparent) 45%,
+                transparent 72%);
+            transition: opacity .22s ease, filter .22s ease;
+        }
+        .phase-stepper .phase-step .step-badge::after {
+            content: none;
+        }
+        .phase-stepper .phase-step .step-label {
+            color: inherit;
+            transition: color .2s ease, text-shadow .2s ease, opacity .2s ease;
+        }
+        .phase-stepper .phase-step .step-label::before {
+            margin-right: .28em;
+            color: color-mix(in srgb, currentColor 82%, var(--fase-accento));
+            font-size: .72em;
+            font-weight: 900;
+            letter-spacing: .09em;
+        }
+        .phase-stepper .phase-step.active .step-label::before {
+            content: 'ORA ·';
+        }
+        .phase-stepper .phase-step.clickable:not(.active) .step-label::before {
+            content: 'VAI ·';
+        }
+        .phase-stepper .phase-step.completed .step-label::before {
+            content: '✓';
+        }
+        .phase-stepper .phase-step.active {
+            color: color-mix(in srgb, var(--fase-accento) 12%, #fff);
+            background: transparent;
+            text-shadow: 0 0 7px color-mix(in srgb, var(--fase-accento) 24%, transparent);
+        }
+        .phase-stepper .phase-step.active .step-badge {
+            color: #fff;
+            background: transparent;
+            box-shadow: none;
+            border-color: transparent;
+            filter: none;
+        }
+        .phase-stepper .phase-step.active .step-badge::before {
+            opacity: 1;
+            filter: blur(.3px);
+            animation: phaseIconAura 2.4s ease-in-out infinite;
+        }
+        .phase-stepper .phase-step.active .step-icon {
+            color: #fff;
+            filter:
+                drop-shadow(0 0 2px #fff)
+                drop-shadow(0 0 6px color-mix(in srgb, var(--fase-accento) 82%, transparent))
+                drop-shadow(0 0 12px color-mix(in srgb, var(--fase-accento) 46%, transparent));
+            animation: phaseIconGlow 2.4s ease-in-out infinite;
+        }
+        .phase-stepper .phase-step.clickable:not(.active) {
+            color: color-mix(in srgb, var(--fase-accento) 26%, #d4d0c5);
+        }
+        .phase-stepper .phase-step.clickable:not(.active) .step-badge {
+            color: color-mix(in srgb, var(--fase-accento) 36%, #ddd);
+            background: transparent;
+            box-shadow: none;
+            border-color: transparent;
+        }
+        .phase-stepper .phase-step.clickable:not(.active) .step-label {
+            color: color-mix(in srgb, var(--fase-accento) 34%, #fff);
+            text-shadow: 0 0 6px color-mix(in srgb, var(--fase-accento) 24%, transparent);
+        }
+        .phase-stepper .phase-step.completed {
+            opacity: .62;
+            color: color-mix(in srgb, var(--fase-accento) 24%, #aaa69d);
+        }
+        .phase-stepper .phase-step.disabled {
+            opacity: .28;
+            filter: grayscale(.72) saturate(.35);
+        }
+        @keyframes phaseIconAura {
+            0%, 100% { opacity: .62; transform: scale(.88); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        @keyframes phaseIconGlow {
+            0%, 100% { filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 5px color-mix(in srgb, var(--fase-accento) 72%, transparent)) drop-shadow(0 0 9px color-mix(in srgb, var(--fase-accento) 38%, transparent)); }
+            50% { filter: drop-shadow(0 0 3px #fff) drop-shadow(0 0 8px color-mix(in srgb, var(--fase-accento) 90%, transparent)) drop-shadow(0 0 15px color-mix(in srgb, var(--fase-accento) 58%, transparent)); }
+        }
+        @keyframes phaseReadyCue {
+            0%, 72%, 100% { opacity: .76; transform: translateX(0); }
+            84% { opacity: 1; transform: translateX(2px); }
+        }
+        .phase-stepper .phase-step.clickable:not(.active) .step-label::before {
+            display: inline-block;
+            animation: phaseReadyCue 2.1s ease-in-out infinite;
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .phase-stepper .phase-step.clickable:not(.active):hover {
+                color: color-mix(in srgb, var(--fase-accento) 16%, #fff);
+                background: transparent;
+            }
+            .phase-stepper .phase-step.clickable:not(.active):hover .step-badge {
+                filter: none;
+            }
+            .phase-stepper .phase-step.clickable:not(.active):hover .step-badge::before {
+                opacity: .55;
+            }
+            .phase-stepper .phase-step.clickable:not(.active):hover .step-icon {
+                color: #fff;
+                filter: drop-shadow(0 0 5px color-mix(in srgb, var(--fase-accento) 58%, transparent));
+            }
+        }
+        .phase-stepper .phase-step.clickable:not(.active):active {
+            transform: none;
+        }
+        .phase-stepper .phase-step.clickable:not(.active):active .step-badge {
+            filter: none;
+        }
+        .phase-stepper .phase-step.clickable:not(.active):active .step-icon {
+            filter: brightness(1.22) drop-shadow(0 0 7px color-mix(in srgb, var(--fase-accento) 72%, transparent));
+        }
+        /* Quando il rail e' stretto i nomi non spariscono piu': diventano
+           sigle brevi dentro il sigillo. E' essenziale sul touch, dove non
+           esiste l'hover che spieghi l'icona. */
+        @container phase-rail (max-width: 570px) {
+            .phase-stepper .phase-step .step-badge {
+                align-items: flex-start;
+                padding-top: 3px;
+                box-sizing: border-box;
+            }
+            .phase-stepper .phase-step .step-icon {
+                width: 58%;
+                height: 58%;
+            }
+            .phase-stepper .phase-step .step-label {
+                display: block;
+                position: absolute;
+                z-index: 2;
+                left: 50%;
+                bottom: 1px;
+                width: max-content;
+                max-width: 100%;
+                transform: translateX(-50%);
+                overflow: visible;
+                font-size: 0;
+                line-height: 1;
+                pointer-events: none;
+            }
+            .phase-stepper .phase-step .step-label::before {
+                display: none;
+                animation: none;
+            }
+            .phase-stepper .phase-step .step-label::after {
+                content: attr(data-short);
+                font-size: clamp(5px, 1.75cqw, 7px);
+                font-weight: 900;
+                letter-spacing: .045em;
+                text-transform: uppercase;
+            }
+            .phase-stepper .phase-step.active .step-label::after {
+                content: '◆ ' attr(data-short);
+            }
+            .phase-stepper .phase-step.clickable:not(.active) .step-label::after {
+                content: '› ' attr(data-short);
+                animation: phaseReadyCue 2.1s ease-in-out infinite;
+            }
+            .phase-stepper .phase-step.completed .step-label::after {
+                content: '✓ ' attr(data-short);
+            }
+        }
+        @media (max-height: 420px) {
+            .phase-stepper .phase-step .step-badge { padding-top: 1px; }
+            .phase-stepper .phase-step .step-icon { width: 52%; height: 52%; }
+            .phase-stepper .phase-step .step-label { bottom: 0; }
+            .phase-stepper .phase-step .step-label::after { font-size: 4.5px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .phase-stepper .phase-step.active .step-badge::before,
+            .phase-stepper .phase-step.active .step-icon,
+            .phase-stepper .phase-step.clickable:not(.active) .step-label::before,
+            .phase-stepper .phase-step.clickable:not(.active) .step-label::after {
+                animation: none;
+            }
+        }
+
+        /* Pausa automatica offline quando browser/WebView perde il primo
+           piano. Il velo resta presente al ritorno: e' il tocco su Riprendi,
+           non visibilitychange, a liberare i timer dell'IA. */
+        html.duel-paused .game-container,
+        html.duel-paused .game-container * {
+            animation-play-state: paused !important;
+        }
+        .duel-pause-overlay {
+            position: fixed;
+            inset: 0;
+            /* Sopra anche ai filmati fullscreen (effects.css usa
+               2147483000): al ritorno il video resta fermo sotto al velo. */
+            z-index: 2147483600;
+            display: none;
+            place-content: center;
+            justify-items: center;
+            gap: 10px;
+            padding: 24px;
+            box-sizing: border-box;
+            color: #f7e8bd;
+            text-align: center;
+            background:
+                radial-gradient(circle at 50% 46%, rgba(75, 56, 24, .34), transparent 32%),
+                rgba(4, 6, 11, .94);
+        }
+        html.duel-paused .duel-pause-overlay { display: grid; }
+        .duel-pause-seal {
+            display: grid;
+            place-items: center;
+            width: clamp(58px, 8vw, 82px);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            color: #fff4d4;
+            font-family: Georgia, serif;
+            font-size: clamp(1.5rem, 3vw, 2.25rem);
+            letter-spacing: -.16em;
+            text-indent: -.16em;
+            background: radial-gradient(circle at 38% 30%, rgba(255,245,205,.2), rgba(87,61,18,.3) 46%, rgba(7,8,13,.72) 72%);
+            box-shadow: 0 0 28px color-mix(in srgb, var(--campo-tinta, #d6ad55) 35%, transparent), inset 0 0 0 1px rgba(247,215,116,.35);
+        }
+        .duel-pause-overlay strong {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: clamp(1.35rem, 4vw, 2.15rem);
+            letter-spacing: .055em;
+            text-shadow: 0 2px 12px rgba(0,0,0,.8);
+        }
+        .duel-pause-overlay p {
+            max-width: 430px;
+            margin: 0 0 8px;
+            color: rgba(235,229,211,.75);
+            font-size: clamp(.78rem, 2.1vw, .96rem);
+        }
+        .duel-pause-resume {
+            min-width: min(250px, 76vw);
+            padding: 11px 24px;
+            border: 0;
+            border-radius: 9px;
+            color: #231804;
+            background: linear-gradient(180deg, #ffe39a, #e8ad35);
+            box-shadow: 0 8px 24px rgba(0,0,0,.35), 0 0 18px rgba(232,173,53,.18);
+            font: 800 clamp(.8rem, 2.2vw, 1rem)/1.1 inherit;
+            letter-spacing: .035em;
+            cursor: pointer;
+        }
+        .duel-pause-resume:hover,
+        .duel-pause-resume:focus-visible {
+            filter: brightness(1.09);
+            outline: 2px solid rgba(255,242,197,.9);
+            outline-offset: 3px;
+        }
+        .duel-pause-resume:active { transform: translateY(1px); }
+

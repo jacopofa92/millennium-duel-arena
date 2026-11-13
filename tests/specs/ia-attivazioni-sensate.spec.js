@@ -158,6 +158,64 @@ module.exports = {
             assert(pos.position === 'defense', 'Idolo dai 1000 Occhi (0 ATK) va in Difesa, non in Attacco: ' + JSON.stringify(pos));
         }
 
+        // --- 3d) Le risposte costose e le Magie prese dal Cimitero valutano il risultato concreto ---
+        {
+            const { ex } = campo(89);
+            ex(`(function () {
+                gameState.turn = 6; gameState.currentPlayer = 'player'; gameState.phase = 'main1';
+                gameState.botLP = 8000;
+                gameState.botMonsterField = [window.__m(1800, 1000, 4, 'B1'), window.__m(1000, 2000, 4, 'B2'), window.__m(2200, 800, 5, 'B3'), null, null];
+                gameState.playerMonsterField = [window.__m(2400, 1500, 6, 'P1'), window.__m(1200, 900, 3, 'P2'), window.__m(1600, 1800, 5, 'P3'), null, null];
+                const buco = Object.assign({}, cardDatabase.find((c) => c.id === 7), { uid: 'BUCO' });
+                const anfora = Object.assign({}, cardDatabase.find((c) => /Anfora dell.Avidità/i.test(c.name) || /Vaso dell.Avidità/i.test(c.name)), { uid: 'ANFORA' });
+                gameState.playerGraveyard = [buco, anfora];
+                gameState.botSTField[0] = { card: Object.assign({}, cardDatabase.find((c) => c.id === 276), { uid: 'PREDATORE' }), isFaceDown: true, setOnTurn: 1 };
+                gameState.botDeck = [Object.assign({}, anfora, { uid: 'PESCA1' }), Object.assign({}, anfora, { uid: 'PESCA2' })];
+                DuelEngine.recomputeStaticEffects();
+            })()`);
+            const ctx = ex("DuelEngine.makeContext('bot', { card: gameState.botSTField[0].card, zone: 'st', index: 0 })");
+            const predatore = ex('DuelEngine.getDefinition(276)');
+            assert(predatore.aiCanActivate(ctx), 'Predatore delle Tombe resta attivabile se nel Cimitero c’è una Magia vantaggiosa, anche se preceduta da Buco Nero');
+            predatore.activate(ctx);
+            await new Promise((resolve) => setImmediate(resolve));
+            const usata = ex('__logDuello.join(" | ")');
+            assert(/Anfora dell.Avidità/.test(usata), 'L’IA deve scegliere Anfora dell’Avidità, non Buco Nero contro il proprio campo: ' + usata);
+            assert(ex('gameState.botMonsterField.filter(Boolean).length') === 3, 'La scelta del bot non deve spazzare via il suo campo');
+            ex("gameState.chain = { links: [{ card: gameState.playerGraveyard.find((c) => c.uid === 'ANFORA'), owner: 'player' }], active: true };");
+            assert(!predatore.aiCanActivate(ctx), 'Predatore non deve pagare 2000 LP per copiare l’Anfora che l’avversario sta già risolvendo');
+        }
+
+        {
+            const { ex } = campo(90);
+            const esito = ex(`(function () {
+                gameState.turn = 6; gameState.currentPlayer = 'bot'; gameState.phase = 'main1'; gameState.botLP = 8000;
+                const slot = (atk, def, uid, race) => {
+                    const s = window.__m(atk, def, 4, uid);
+                    s.card.uid = uid;
+                    if (race) s.card.race = race;
+                    return s;
+                };
+                gameState.botMonsterField = [slot(1000, 1000, 'B1'), slot(1000, 1000, 'B2'), slot(1000, 1000, 'B3'), null, null];
+                gameState.playerMonsterField = [slot(3000, 3000, 'P-drago', 'Drago'), slot(500, 500, 'P2'), null, null, null];
+                gameState.chain = { links: [{ card: cardDatabase.find((c) => c.id === 134), owner: 'player' }], active: true };
+                DuelEngine.recomputeStaticEffects();
+                const nonServe = [448, 599, 822].map((id) => {
+                    const card = Object.assign({}, cardDatabase.find((c) => c.id === id), { uid: 'NEG-' + id });
+                    return AI_MEDIUM.chooseChainResponse([{ card, zone: 'st', index: 0, round: 0 }], 'bot') === null;
+                });
+                gameState.botMonsterField = [slot(3000, 1000, 'B4'), slot(3000, 1000, 'B5'), slot(3000, 1000, 'B6'), null, null];
+                gameState.playerMonsterField = [slot(1500, 1000, 'P-drago2', 'Drago'), slot(500, 500, 'P2b'), null, null, null];
+                DuelEngine.recomputeStaticEffects();
+                const serve = [448, 599, 822].map((id) => {
+                    const card = Object.assign({}, cardDatabase.find((c) => c.id === id), { uid: 'NEG2-' + id });
+                    return AI_MEDIUM.chooseChainResponse([{ card, zone: 'st', index: 0, round: 0 }], 'bot') !== null;
+                });
+                return { nonServe, serve };
+            })()`);
+            assert(esito.nonServe.every(Boolean), 'Il bot non deve pagare una negazione quando Soffio Incendiario gli dà un vantaggio netto: ' + JSON.stringify(esito));
+            assert(esito.serve.every(Boolean), 'Il bot deve ancora poter negare Soffio Incendiario quando la risoluzione gli distruggerebbe più campo: ' + JSON.stringify(esito));
+        }
+
         // --- 4) L'audit a tappeto ----------------------------------------------------------
         let uscita = '';
         try {

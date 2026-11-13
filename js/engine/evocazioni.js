@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * evocazioni.js — Evocare, Posizionare, cambiare Posizione, sacrificare.
  * =====================================================================

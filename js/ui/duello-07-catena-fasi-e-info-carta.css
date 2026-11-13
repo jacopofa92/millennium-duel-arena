@@ -1,0 +1,856 @@
+/* CSS del duello, parte 7 di 12, estratta da duelMonstersCore.html (righe 2963-3815 del vecchio blocco <style>).
+   Le parti vanno caricate IN ORDINE (la cascata dipende dall'ordine): 01 ... 12. Non riordinare le regole fra le parti
+   senza ripetere tools/impronta-stili-duello.js. I percorsi url() sono relativi a questo file. */
+        /* ============================================================
+           BARRA DELLE FASI COL COLORE DEL CAMPO (richiesta dell'utente,
+           2026-10-16): le luci della barra prendono la tinta dell'arena
+           invece di essere sempre oro. La tinta è la stessa che colora già
+           le caselle, --campo-tinta, scritta da js/ui/tinta-campo.js (dai
+           valori pre-calcolati di js/data/tinte-campi.js, o letta
+           dall'immagine per un'arena nuova): un campo aggiunto domani
+           colora anche la barra senza toccare nulla qui.
+           Quella tinta è il colore PIENO dell'arena, spesso scuro (il blu
+           notte del Dirigibile, il grigio delle Rovine): usata così la
+           barra sparirebbe nel campo. --fase-accento ne è la versione
+           chiara, stessa tonalità ma luminosità e saturazione portate in
+           una fascia leggibile; dove il browser non conosce la sintassi
+           oklch "from", la si schiarisce mescolandola con un bianco caldo.
+           Senza --campo-tinta resta l'oro tenue di sempre.
+           Solo colori: forme e misure restano quelle delle regole sopra.
+           ============================================================ */
+        .phase-stepper {
+            --fase-accento: color-mix(in oklab, var(--campo-tinta, rgb(190 165 120)) 45%, #fff4d8);
+        }
+        @supports (color: oklch(from red l c h)) {
+            .phase-stepper {
+                --fase-accento: oklch(from var(--campo-tinta, rgb(190 165 120)) clamp(0.8, l, 0.88) clamp(0.06, c, 0.13) h);
+            }
+        }
+        /* Niente fascia scura dietro i pulsanti (all'utente non piaceva
+           quell'ombra a rettangolo, più larga dei pulsanti e con una riga
+           sotto): resta solo il filo sottile che unisce le fasi. flex-shrink
+           0: la barra non deve mai essere schiacciata dalla colonna. */
+        .phase-stepper {
+            background: none;
+            box-shadow: none;
+            flex-shrink: 0;
+        }
+        .phase-stepper::before {
+            background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--fase-accento) 14%, transparent) 18%, color-mix(in srgb, var(--fase-accento) 30%, transparent) 50%, color-mix(in srgb, var(--fase-accento) 14%, transparent) 82%, transparent);
+        }
+        .phase-step::after { background: color-mix(in srgb, var(--fase-accento) 16%, transparent); }
+        /* UN solo bordo per pulsante (richiesta dell'utente, 2026-10-16): il
+           cerchietto dell'icona non ha più la sua cornice, che dentro quella
+           del pulsante si leggeva come un doppio bordo (soprattutto sulle
+           fasi cliccabili). Resta solo il contorno del pulsante intero. */
+        .phase-step .step-badge,
+        .phase-step.active .step-badge,
+        .phase-step.completed .step-badge {
+            border-color: transparent;
+        }
+        .phase-step .step-badge {
+            background: radial-gradient(circle at 38% 30%, color-mix(in srgb, var(--fase-accento) 13%, transparent), rgba(5,7,12,.38) 68%);
+        }
+        .phase-step .step-num {
+            border-color: color-mix(in srgb, var(--fase-accento) 28%, transparent);
+            color: color-mix(in srgb, var(--fase-accento) 72%, #9a968c);
+        }
+        .phase-step.active {
+            background: radial-gradient(circle at 28% 24%, color-mix(in srgb, var(--fase-accento) 42%, transparent), transparent 48%), linear-gradient(145deg, color-mix(in srgb, var(--fase-accento) 30%, rgba(36,29,17,.8)), rgba(23,18,11,.52));
+            border-color: color-mix(in srgb, var(--fase-accento) 62%, transparent);
+            color: color-mix(in srgb, var(--fase-accento) 18%, #fff);
+            box-shadow: 0 5px 12px rgba(0,0,0,.22), 0 0 18px color-mix(in srgb, var(--fase-accento) 27%, transparent), inset 0 1px 0 rgba(255,255,255,.14);
+        }
+        .phase-step.active .step-badge {
+            color: var(--fase-accento);
+            background: radial-gradient(circle at 36% 26%, color-mix(in srgb, var(--fase-accento) 60%, #fff 4%), color-mix(in srgb, var(--fase-accento) 31%, rgba(35,25,11,.72)) 58%, rgba(23,17,9,.72));
+            box-shadow: 0 0 15px color-mix(in srgb, var(--fase-accento) 38%, transparent), inset 0 1px 1px rgba(255,255,255,.16);
+        }
+        .phase-step.active::before {
+            background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--fase-accento) 85%, transparent), transparent);
+        }
+        .phase-step.clickable:not(.active) {
+            background: radial-gradient(circle at 25% 22%, rgba(255,255,255,.1), transparent 45%), linear-gradient(135deg, color-mix(in srgb, var(--fase-accento) 26%, rgba(63,58,48,.9)), color-mix(in srgb, var(--fase-accento) 18%, rgba(43,39,32,.86)));
+            border-color: color-mix(in srgb, var(--fase-accento) 48%, transparent);
+            color: color-mix(in srgb, var(--fase-accento) 12%, #f5f1e8);
+            box-shadow: 0 3px 8px rgba(0,0,0,.18), 0 0 10px color-mix(in srgb, var(--fase-accento) 12%, transparent), inset 0 1px 0 rgba(255,255,255,.11);
+        }
+        .phase-step.clickable:not(.active) .step-badge {
+            color: color-mix(in srgb, var(--fase-accento) 65%, #fff);
+            background: radial-gradient(circle at 35% 28%, color-mix(in srgb, var(--fase-accento) 35%, rgba(255,255,255,.16)), color-mix(in srgb, var(--fase-accento) 18%, rgba(28,27,25,.68)) 68%);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.1);
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .phase-step.clickable:not(.active):hover {
+                border-color: color-mix(in srgb, var(--fase-accento) 52%, transparent);
+                background: radial-gradient(circle at 25% 20%, rgba(255,255,255,.16), transparent 47%), linear-gradient(135deg, color-mix(in srgb, var(--fase-accento) 38%, rgba(69,61,47,.94)), color-mix(in srgb, var(--fase-accento) 25%, rgba(45,39,30,.9)));
+                box-shadow: 0 6px 13px rgba(0,0,0,.24), 0 0 15px color-mix(in srgb, var(--fase-accento) 22%, transparent), inset 0 1px 0 rgba(255,255,255,.16);
+            }
+            .phase-step.clickable:not(.active):hover .step-badge {
+                color: color-mix(in srgb, var(--fase-accento) 48%, #fff);
+                filter: brightness(1.08);
+            }
+        }
+        .phase-step.clickable:not(.active):active {
+            transform: translateY(0) scale(.97);
+            box-shadow: 0 1px 4px rgba(0,0,0,.28), inset 0 2px 5px rgba(0,0,0,.2);
+            transition-duration: 80ms;
+        }
+        .phase-step.clickable:focus-visible {
+            outline: 2px solid color-mix(in srgb, var(--fase-accento) 72%, #fff);
+            outline-offset: 2px;
+        }
+        /* LEGGIBILITÀ delle fasi (richiesta dell'utente: "minimal va bene, ma si vedono troppo poco"). Forme,
+           misure e bordi restano quelli di sempre; cambiano solo contrasto e peso: testo e icona più chiari
+           nelle fasi non attive e in quelle già fatte, un fondo scuro dietro l'icona perché stacchi dai campi
+           chiari, un'ombra sul testo, numeretti più grandi. La fase attiva resta la più forte. */
+        .phase-step { color: rgba(244,238,222,.92); }
+        .phase-step.completed { color: rgba(226,221,208,.74); }
+        .phase-step .step-label { font-weight: 800; text-shadow: 0 1px 3px rgba(0,0,0,.9), 0 0 6px rgba(0,0,0,.55); }
+        .phase-stepper .phase-step:not(.active) .step-badge {
+            color: color-mix(in srgb, var(--fase-accento) 55%, #fff);
+            background: radial-gradient(circle at 38% 30%, rgba(40,38,34,.62), rgba(6,7,11,.74) 72%);
+        }
+        .phase-stepper .phase-step.completed .step-badge { color: color-mix(in srgb, var(--fase-accento) 38%, #e8e3d4); }
+        .phase-step .step-icon svg { stroke-width: 2.1; filter: drop-shadow(0 1px 2px rgba(0,0,0,.75)); }
+        .phase-step .step-num {
+            min-width: 14px; height: 14px; font-size: 9px; font-weight: 800;
+            color: color-mix(in srgb, var(--fase-accento) 70%, #fff);
+            background: rgba(10,10,13,.9);
+        }
+        .phase-step.active .step-num { color: #fff; border-color: color-mix(in srgb, var(--fase-accento) 70%, transparent); }
+        /* FRECCE DI SEQUENZA (richiesta dell'utente): una doppia freccia "››" nel colore del campo fra una fase e
+           la successiva, per dire che le fasi si percorrono in ordine. Quelle già percorse e quella che parte
+           dalla fase attiva sono accese (l'attiva ondeggia piano verso la prossima), le future restano spente.
+           Disegnate con una maschera, così prendono da sole --fase-accento di ogni arena. Per avere spazio le
+           fasi si staccano un po' di più, e il pulsante non ritaglia più ciò che sporge (il testo ha già il suo
+           ritaglio con i puntini). */
+        .phase-stepper { gap: clamp(12px, 1.7vw, 22px); }
+        .phase-step { overflow: visible; }
+        .phase-step::after {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 50%; right: auto; left: 100%;
+            width: clamp(12px, 1.7vw, 22px);
+            height: 12px;
+            transform: translateY(-50%);
+            background: var(--fase-accento);
+            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M1.5 1l4 4-4 4M6.5 1l4 4-4 4' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 11px 9px no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M1.5 1l4 4-4 4M6.5 1l4 4-4 4' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 11px 9px no-repeat;
+            opacity: .32;
+            pointer-events: none;
+        }
+        .phase-step.completed::after { opacity: .75; }
+        .phase-step.active::after { opacity: 1; filter: drop-shadow(0 0 4px color-mix(in srgb, var(--fase-accento) 70%, transparent)); animation: faseFrecciaAvanti 1.5s ease-in-out infinite; }
+        @keyframes faseFrecciaAvanti {
+            0%, 100% { transform: translate(0, -50%); }
+            50% { transform: translate(3px, -50%); }
+        }
+        @media (prefers-reduced-motion: reduce) { .phase-step.active::after { animation: none; } }
+        /* Promemoria Tributo: banda ben visibile in alto, non un semplice
+           messaggio nel log — resta a schermo finché la selezione non è
+           completa, con un contatore che segna quanti mostri mancano. */
+        .tribute-prompt {
+            position: fixed;
+            top: 14px;
+            left: 50%;
+            transform: translate(-50%, -140%);
+            z-index: 10090;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(60,20,20,0.95), rgba(40,14,14,0.92));
+            border: 1px solid rgba(231,76,60,0.55);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 20px rgba(231,76,60,0.25);
+            color: #ffe4de;
+            font-weight: 700;
+            font-size: clamp(0.72rem, 1.5vw, 0.9rem);
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.3s cubic-bezier(0.16,0.84,0.44,1), opacity 0.3s ease;
+        }
+        .tribute-prompt.show {
+            transform: translate(-50%, 0);
+            opacity: 1;
+        }
+        .tribute-prompt-icon { animation: tributePromptPulse 1.4s ease-in-out infinite; }
+        @keyframes tributePromptPulse {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.2); }
+        }
+        .tribute-prompt-count {
+            background: rgba(255,255,255,0.14);
+            border-radius: 999px;
+            padding: 2px 10px;
+            font-variant-numeric: tabular-nums;
+        }
+        /* Annulla la selezione: la banda è pointer-events:none, il solo
+           pulsante torna cliccabile. Prima non c'era alcun modo di
+           rinunciare a un'Evocazione Tributo già avviata. */
+        .tribute-prompt-cancel {
+            pointer-events: auto;
+            cursor: pointer;
+            font: inherit;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.55);
+            background: rgba(255,255,255,0.14);
+        }
+        .tribute-prompt-cancel:hover, .tribute-prompt-cancel:focus-visible { background: rgba(255,255,255,0.3); }
+        .tribute-prompt-cancel:active { transform: scale(0.95); }
+        /* Modalità Tributo ben evidente: banda più grande e pulsante di
+           bordo, e un velo scuro sul resto dello schermo (sotto i mostri
+           sacrificabili, che restano illuminati dal loro contorno). */
+        /* Schema UNICO per ogni scelta "clicca sul campo/in mano": banda
+           grande + velo scuro + elementi scelti sopra il velo + (solo dove
+           rinunciare ha senso) Annulla. Tributo, scarto a fine turno e
+           casella dopo un Sacrificio lo condividono tramite .selection-banner
+           e le classi su <body> (tribute-mode / discard-mode /
+           placement-mode). */
+        .tribute-prompt.selection-banner {
+            font-size: clamp(0.85rem, 2vw, 1.1rem);
+            padding: 12px 22px;
+            border-width: 2px;
+            animation: tributeBandGlow 1.6s ease-in-out infinite;
+        }
+        /* Schermi stretti (telefono in verticale): la banda va a capo invece
+           di uscire dallo schermo — a una riga sola il testo e "Obbligatorio"
+           venivano tagliati ai lati. */
+        @media (max-width: 600px) {
+            .tribute-prompt.selection-banner {
+                white-space: normal;
+                flex-wrap: wrap;
+                justify-content: center;
+                text-align: center;
+                width: calc(100vw - 20px);
+                max-width: 420px;
+                padding: 8px 14px;
+                border-radius: 18px;
+                gap: 6px 8px;
+                font-size: clamp(0.78rem, 3.4vw, 0.95rem);
+            }
+            .tribute-prompt.selection-banner .tribute-prompt-text { flex: 1 1 60%; }
+        }
+        @keyframes tributeBandGlow {
+            0%, 100% { box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 16px rgba(231,76,60,0.3); }
+            50%      { box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 34px rgba(231,76,60,0.85); }
+        }
+        .tribute-veil {
+            position: fixed;
+            inset: 0;
+            z-index: 10080;
+            background: radial-gradient(ellipse at 50% 55%, rgba(0,0,0,0.12), rgba(20,0,0,0.62));
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .25s ease;
+        }
+        body.tribute-mode .tribute-veil,
+        body.discard-mode .tribute-veil,
+        body.placement-mode .tribute-veil { opacity: 1; }
+        /* Etichetta "Obbligatorio" delle scelte che non si possono annullare. */
+        .tribute-prompt-note {
+            font-size: 0.72em;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+        /* Scarto a fine turno: la mano sta sopra il velo e le sue carte pulsano. */
+        body.discard-mode #playerHand {
+            position: relative;
+            z-index: 10085;
+        }
+        body.discard-mode #playerHand .card:not(.selected) {
+            animation: tributeCardPulse 1.2s ease-in-out infinite;
+            cursor: pointer;
+        }
+        /* Casella dopo un Sacrificio: le caselle libere sopra il velo. */
+        body.placement-mode #playerFieldBoard .field-slot.action-highlight {
+            position: relative;
+            z-index: 10085;
+            animation: tributeCardPulse 1.2s ease-in-out infinite;
+        }
+        /* I mostri sacrificabili stanno SOPRA il velo. */
+        body.tribute-mode #playerFieldBoard .field-slot.tribute-highlight {
+            position: relative;
+            z-index: 10085;
+        }
+        body.tribute-mode #playerFieldBoard .field-slot.tribute-highlight .card {
+            animation: tributeCardPulse 1.2s ease-in-out infinite;
+        }
+        @keyframes tributeCardPulse {
+            0%, 100% { box-shadow: 0 0 14px rgba(231,76,60,0.5); }
+            50%      { box-shadow: 0 0 30px rgba(231,76,60,1); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .tribute-prompt.selection-banner, body.tribute-mode #playerFieldBoard .field-slot.tribute-highlight .card,
+            body.discard-mode #playerHand .card:not(.selected), body.placement-mode #playerFieldBoard .field-slot.action-highlight { animation: none; }
+        }
+        /* Pila della Catena — vedi il commento HTML su #chainStack per il
+           perché. Riga orizzontale sotto il promemoria Tributo (che occupa
+           lo stesso centro-alto ma i due non compaiono mai insieme in
+           pratica): il primo Link attivato è il più a sinistra, ogni
+           risposta successiva si aggiunge a destra — la risoluzione vera
+           (LIFO) parte quindi SEMPRE dall'ultimo elemento a destra, quello
+           evidenziato da .resolving. Nascosta di default (nessun Chain in
+           corso): mostrata/svuotata da renderChainStack() in game-flow.js. */
+        /* IN ALTO AL CENTRO, in orizzontale — richiesta esplicita
+           dell'utente: una versione laterale a colonna è stata provata e
+           respinta ("le catene non devono essere mostrate lateralmente,
+           ma sopra come prima"). Il primo Link attivato è il più a
+           sinistra, ogni risposta si aggiunge a destra: la risoluzione
+           vera (LIFO) parte quindi sempre dall'ultimo a destra, quello
+           evidenziato da .resolving. */
+        .chain-stack {
+            position: fixed;
+            top: 58px;
+            left: 50%;
+            right: auto;
+            transform: translateX(-50%);
+            max-width: calc(100vw - 20px);
+            z-index: 10085;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 9px 14px 13px;
+            border-radius: 16px;
+            /* Vetro scuro con un filo di luce dorata in alto: la Catena e'
+               un momento solenne del duello, non un badge informativo. */
+            background:
+                radial-gradient(ellipse at 50% 110%, rgba(247,215,116,.22), transparent 58%),
+                linear-gradient(145deg, rgba(255,255,255,.11), transparent 28%),
+                linear-gradient(180deg, rgba(247,215,116,.16), rgba(10,14,24,.04) 48%),
+                rgba(8, 11, 20, .9);
+            border: 1px solid rgba(247, 215, 116, 0.4);
+            box-shadow: 0 16px 36px rgba(0,0,0,.62), inset 0 1px 0 rgba(255,255,255,.11), inset 0 -10px 18px rgba(0,0,0,.28);
+            /* La prospettiva vive QUI, sul contenitore: senza un antenato
+               che la dichiari, i rotateY dei singoli Link sarebbero una
+               deformazione piatta invece di una vera rotazione nello spazio. */
+            perspective: 700px;
+            pointer-events: none;
+        }
+        /* Cornice e base prospettica: due piani separati fanno leggere il
+           box come un piccolo espositore olografico, senza ingrandirlo. */
+        .chain-stack::before {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,.055);
+            pointer-events: none;
+        }
+        .chain-stack::after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            left: 10%; right: 10%; bottom: -12px;
+            height: 24px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse, rgba(247,215,116,.2), rgba(247,215,116,0) 68%);
+            transform: rotateX(72deg);
+            filter: blur(1px);
+            pointer-events: none;
+        }
+        .chain-stack.show { display: flex; animation: chainStackEnter 0.34s cubic-bezier(0.2,0.9,0.3,1); }
+        @keyframes chainStackEnter {
+            from { opacity: 0; transform: translateX(-50%) translateY(-14px); }
+            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        /* DOVE C'È LARGHEZZA DA VENDERE (schermo desktop, o un telefono
+           girato in orizzontale) la pila si sposta a SINISTRA, a metà
+           altezza — richiesta esplicita. In alto al centro rimane dove lo
+           spazio orizzontale è poco e quello verticale abbonda, cioè su un
+           telefono in verticale: lì un pannello contro il bordo sinistro
+           coprirebbe una colonna di caselle.
+           La posizione centrale in altezza non è un vezzo: è l'unico punto
+           del bordo sinistro che non è già occupato: in alto c'è il
+           riquadro dell'avversario e in basso quello del giocatore, ed
+           entrambi stanno negli angoli.
+           NOTA: una versione laterale era già stata provata e respinta
+           ("le catene non devono essere mostrate lateralmente, ma sopra
+           come prima") — ma era laterale OVUNQUE, telefono in verticale
+           compreso. Qui vale solo dove c'è spazio, ed è una richiesta
+           diversa, non un ritorno a quella. */
+        @media (min-width: 901px), (orientation: landscape) {
+            .chain-stack {
+                top: 50%;
+                left: 14px;
+                transform: translateY(-50%);
+                /* Contro il bordo non serve più tenersi larghi quanto lo
+                   schermo: si lascia respirare il campo che sta accanto. */
+                max-width: min(340px, 34vw);
+            }
+            .chain-stack.show { animation: chainStackEnterLato 0.34s cubic-bezier(0.2,0.9,0.3,1); }
+            @keyframes chainStackEnterLato {
+                from { opacity: 0; transform: translateY(-50%) translateX(-16px); }
+                to   { opacity: 1; transform: translateY(-50%) translateX(0); }
+            }
+        }
+        /* Riga: il DOM è già in ordine di attivazione (Link 1 per primo,
+           vedi renderChainStack), quindi basta lasciarli scorrere da
+           sinistra a destra. Se una Chain diventasse lunghissima la riga
+           scorre invece di sfondare i bordi dello schermo. */
+        .chain-stack-row {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 0;
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: visible;
+            padding: 14px 12px 18px;
+            perspective: 850px;
+            perspective-origin: 50% 35%;
+            transform-style: preserve-3d;
+            scrollbar-width: none;
+        }
+        .chain-stack-row::-webkit-scrollbar { display: none; }
+        /* Intestazione: il simbolo della catena, la scritta e il conteggio
+           dei Link accumulati. */
+        .chain-stack-head {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(247,215,116,0.22);
+            font-size: clamp(0.5rem, 1.3vw, 0.62rem);
+            font-weight: 900;
+            letter-spacing: 2.5px;
+            color: #ffe9b3;
+            text-shadow: 0 0 10px rgba(247,215,116,0.55);
+        }
+        .chain-stack-sigil {
+            font-size: 1em;
+            /* L'anello dell'intestazione gira lentamente su se stesso: e'
+               il segnale che la Catena e' VIVA, in corso di risoluzione. */
+            display: inline-block;
+            animation: chainSigilSpin 3.2s linear infinite;
+            filter: drop-shadow(0 0 6px rgba(247,215,116,0.8));
+        }
+        @keyframes chainSigilSpin {
+            from { transform: perspective(200px) rotateY(0deg); }
+            to   { transform: perspective(200px) rotateY(360deg); }
+        }
+        .chain-stack-count {
+            min-width: 16px;
+            padding: 0 5px;
+            border-radius: 999px;
+            background: rgba(247,215,116,0.18);
+            border: 1px solid rgba(247,215,116,0.45);
+            color: #fff3c4;
+            letter-spacing: 0;
+            font-variant-numeric: tabular-nums;
+        }
+        /* Un vero tratto di CATENA fra un Link e il successivo: due maglie
+           metalliche incastrate, disegnate in CSS (nessuna immagine da
+           caricare) e messe in prospettiva come il resto della pila.
+           Ora la pila è verticale, quindi la catena PENDE: le maglie si
+           impilano una sopra l'altra e sono allineate alla colonna dei
+           gettoni numerati, come se reggessero il Link appeso sotto. */
+        .chain-link-ring {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            flex: none;
+            /* Allineata all'altezza della MINIATURA (non del nome sotto):
+               la catena collega le carte fra loro, quindi resta a metà
+               della loro altezza. */
+            margin-top: calc((var(--chain-card-w) / var(--card-ratio)) / 2 - clamp(7px, 1.4vw, 10px) / 2);
+            transform-style: preserve-3d;
+        }
+        .chain-link-ring i {
+            display: block;
+            width: clamp(7px, 1.4vw, 10px);
+            height: clamp(10px, 2vw, 14px);
+            border: 2px solid #d8b455;
+            border-radius: 50%;
+            /* Riflesso metallico: chiaro in alto a sinistra, scuro sotto. */
+            background: linear-gradient(135deg, rgba(255,240,190,0.35), rgba(120,90,20,0.15));
+            box-shadow: 0 0 6px rgba(247,215,116,0.35), inset 0 1px 2px rgba(255,255,255,0.4);
+        }
+        /* La seconda maglia e' ruotata sull'asse Y e si sovrappone alla
+           prima: e' quello a far leggere "incastrate" invece di "due ovali
+           accostati". */
+        .chain-link-ring i:last-child {
+            margin-left: -3px;
+            transform: rotateY(72deg);
+        }
+        /* L'anello che precede il Link in risoluzione: sta per spezzarsi. */
+        .chain-link-ring.breaking i {
+            border-color: #fff3c4;
+            box-shadow: 0 0 14px rgba(247,215,116,0.95), inset 0 1px 3px rgba(255,255,255,0.7);
+            animation: chainRingStrain 0.6s ease-in-out infinite;
+        }
+        @keyframes chainRingStrain {
+            0%, 100% { transform: translateX(0) rotateZ(0deg); }
+            35%      { transform: translateX(-1.5px) rotateZ(-7deg); }
+            70%      { transform: translateX(1.5px) rotateZ(7deg); }
+        }
+        /* Keyframe gemello per la maglia RUOTATA: un'animazione che anima
+           `transform` sostituisce per intero quello della regola base, quindi
+           senza ripetere qui il rotateY(72deg) la seconda maglia si
+           raddrizzerebbe proprio mentre vibra, perdendo l'incastro. */
+        @keyframes chainRingStrainTurned {
+            0%, 100% { transform: rotateY(72deg) translateX(0) rotateZ(0deg); }
+            35%      { transform: rotateY(72deg) translateX(-1.5px) rotateZ(-7deg); }
+            70%      { transform: rotateY(72deg) translateX(1.5px) rotateZ(7deg); }
+        }
+        .chain-link-ring.breaking i:last-child {
+            animation-name: chainRingStrainTurned;
+            animation-delay: 0.12s;
+        }
+        /* Ogni Link è una colonnina: miniatura col gettone del numero
+           appoggiato sopra e il nome della carta sotto. In riga
+           orizzontale il nome non può stare a fianco (allargherebbe la
+           pila di un terzo di schermo per Link), quindi va sotto, su una
+           riga sola con i puntini di sospensione. */
+        .chain-stack-item {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 7px 8px 8px;
+            border-radius: 9px;
+            flex: none;
+            opacity: 0.84;
+            /* La transizione copre anche `filter`: i link in attesa si
+               scuriscono, quello che risolve torna a piena luce. */
+            transition: opacity 0.25s ease, transform 0.25s ease, filter 0.25s ease, background 0.25s ease;
+            transform-style: preserve-3d;
+            background: linear-gradient(150deg, rgba(255,255,255,.1), rgba(13,17,27,.78));
+            border: 1px solid rgba(247,215,116,.25);
+            box-shadow: 0 12px 20px rgba(0,0,0,.44), inset 0 1px rgba(255,255,255,.09);
+            animation: chainCardDock .38s cubic-bezier(.18,.82,.3,1) both;
+            animation-delay: var(--chain-delay, 0ms);
+        }
+        @keyframes chainCardDock {
+            from { opacity: 0; transform: translateY(-12px) translateZ(-45px) rotateY(var(--chain-yaw, 0deg)); }
+        }
+        /* Gettone col numero del Link, appoggiato sull'angolo della
+           miniatura come un segnalino — non a fianco, che in orizzontale
+           ruberebbe larghezza preziosa. */
+        .chain-stack-badge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3;
+            width: clamp(14px, 2.2vw, 18px);
+            height: clamp(14px, 2.2vw, 18px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(0.48rem, 1.1vw, 0.6rem);
+            font-weight: 900;
+            color: #1a1206;
+            background: linear-gradient(180deg, #ffe9b3, #e0b249);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.7);
+            font-variant-numeric: tabular-nums;
+        }
+        .chain-stack-item.chain-owner-bot .chain-stack-badge {
+            background: linear-gradient(180deg, #ffd0c8, #d9584a);
+            color: #2a0c08;
+        }
+        .chain-stack-name {
+            max-width: clamp(62px, 10vw, 92px);
+            font-size: clamp(0.5rem, 1.05vw, 0.64rem);
+            font-weight: 700;
+            line-height: 1.1;
+            text-align: center;
+            color: #e8d9b5;
+            /* Una riga sola: un nome lungo non deve allargare la pila. Il
+               nome per intero resta comunque nel `title` dell'elemento
+               (vedi renderChainStack). */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .chain-stack-owner {
+            font-size: clamp(.38rem, .8vw, .48rem);
+            font-weight: 900;
+            letter-spacing: .12em;
+            color: rgba(247,215,116,.7);
+        }
+        .chain-owner-bot .chain-stack-owner { color: rgba(255,139,123,.82); }
+        .chain-stack-item.chain-owner-player .chain-stack-thumb { border-color: #f7d774; }
+        .chain-stack-item.chain-owner-bot .chain-stack-thumb { border-color: #e74c3c; }
+        .chain-stack-thumb {
+            position: relative;
+            border: 2px solid #f7d774;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 5px 7px 0 rgba(0,0,0,.42), 0 11px 18px rgba(0,0,0,.55);
+            line-height: 0;
+            transform: translateZ(9px);
+            backface-visibility: hidden;
+        }
+        .chain-stack-thumb::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            background: linear-gradient(112deg, transparent 20%, rgba(255,255,255,.26) 43%, transparent 61%);
+            transform: translateX(-135%);
+            opacity: .55;
+        }
+        .chain-stack-energy {
+            position: absolute;
+            z-index: -1;
+            left: 50%; top: 43%;
+            width: 118%;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) translateZ(-8px) rotateX(68deg);
+            background: radial-gradient(circle, rgba(247,215,116,.24), transparent 66%);
+            border: 1px solid rgba(247,215,116,.2);
+            opacity: .52;
+        }
+        /* La dimensione vera della miniatura è impostata via --card-w
+           inline da renderChainStack() (stesso meccanismo già usato da
+           FX.playCardActivateCenterScreen per la carta a centro schermo):
+           .card calcola la propria height da --card-w/aspect-ratio da
+           solo, un width:100% qui non basterebbe (l'altezza resterebbe
+           quella del default --card-w:100px, sproporzionata). */
+        /* Il Link che sta risolvendo: non solo piu' grande, ma inclinato in
+           PROSPETTIVA verso chi guarda, come una carta che si alza dal
+           tavolo. Il contenitore fornisce la perspective (vedi
+           #chainStack), qui si usa solo la rotazione: senza un antenato con
+           perspective, un rotateY sarebbe una deformazione piatta e non una
+           rotazione vera nello spazio.
+           Gli ALTRI link, in attesa, restano leggermente inclinati
+           all'indietro e in secondo piano: e' quella differenza di
+           profondita' a dire a colpo d'occhio quale sta per partire. */
+        /* Il Link che sta risolvendo AVANZA verso chi guarda e si
+           raddrizza, mentre gli altri restano inclinati indietro in
+           secondo piano — la stessa lettura per profondità di Master Duel.
+           Movimento continuo e monotono, niente pulsazione avanti-indietro
+           di scala (l'utente ha respinto il "bounce" anche qui). */
+        .chain-stack-item.resolving {
+            opacity: 1;
+            transform: translateY(-11px) translateZ(64px) rotateX(-5deg) rotateY(0deg) scale(1.18);
+            background: linear-gradient(180deg, rgba(247,215,116,0.22), rgba(247,215,116,0.04));
+            box-shadow: inset 0 0 0 1px rgba(247,215,116,.75), 0 0 26px rgba(247,215,116,.3), 0 18px 28px rgba(0,0,0,.58);
+            z-index: 2;
+        }
+        .chain-stack-item.resolving .chain-stack-energy {
+            opacity: 1;
+            animation: chainEnergyTurn 1.4s linear infinite;
+            box-shadow: 0 0 18px rgba(247,215,116,.38);
+        }
+        .chain-stack-item.resolving .chain-stack-thumb::after {
+            animation: chainCardShine 1.35s ease-in-out infinite;
+        }
+        @keyframes chainEnergyTurn {
+            to { transform: translate(-50%, -50%) translateZ(-8px) rotateX(68deg) rotateZ(360deg); }
+        }
+        @keyframes chainCardShine {
+            0%, 28% { transform: translateX(-135%); opacity: 0; }
+            52% { opacity: .7; }
+            76%, 100% { transform: translateX(135%); opacity: 0; }
+        }
+        .chain-stack-item.resolving .chain-stack-thumb {
+            box-shadow:
+                0 0 0 2px rgba(255,255,255,0.6),
+                0 0 22px rgba(247,215,116,0.9),
+                0 10px 22px rgba(0,0,0,0.6);
+            animation: chainThumbGlow 1.2s ease-in-out infinite alternate;
+        }
+        .chain-stack-item.resolving .chain-stack-name {
+            color: #fff6d8;
+            text-shadow: 0 0 10px rgba(247,215,116,0.9);
+        }
+        /* Solo la LUCE respira, non la geometria: nessun movimento che
+           vada avanti e poi torni indietro. */
+        @keyframes chainThumbGlow {
+            from { box-shadow: 0 0 0 2px rgba(255,255,255,0.45), 0 0 14px rgba(247,215,116,0.6), 0 10px 22px rgba(0,0,0,0.6); }
+            to   { box-shadow: 0 0 0 2px rgba(255,255,255,0.8), 0 0 30px rgba(247,215,116,1), 0 10px 22px rgba(0,0,0,0.6); }
+        }
+        .chain-stack-item:not(.resolving) {
+            transform: rotateY(var(--chain-yaw, 11deg)) translateZ(-24px) rotateX(5deg) scale(.94);
+            filter: brightness(0.62) saturate(.8);
+        }
+        @media (max-width: 480px) {
+            .chain-stack { padding-inline: 8px; }
+            .chain-stack-row { padding-inline: 4px; }
+            .chain-stack-item { padding-inline: 5px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .chain-stack-item,
+            .chain-stack-item.resolving .chain-stack-energy,
+            .chain-stack-item.resolving .chain-stack-thumb::after { animation: none !important; }
+        }
+        /* Le carte della Catena fluttuano direttamente sul campo: il vecchio
+           espositore non può più ritagliarne bordi, ombre o avanzamento 3D. */
+        .chain-stack {
+            --chain-card-w: clamp(58px, 16vw, 72px);
+            padding: 0; border: 0; border-radius: 0;
+            background: transparent; box-shadow: none;
+            overflow: visible; isolation: auto;
+        }
+        .chain-stack::before, .chain-stack::after { display: none; }
+        .chain-stack-head {
+            padding: 3px 9px; border: 0; border-radius: 999px;
+            background: rgba(7,10,18,.72);
+            box-shadow: 0 4px 14px rgba(0,0,0,.4);
+            backdrop-filter: blur(5px);
+        }
+        .chain-stack-row { max-width: none; overflow: visible; padding: 18px 20px 31px; }
+        .chain-stack-item,
+        .chain-stack-item.resolving {
+            padding: 2px 5px 5px; border: 0;
+            background: transparent; box-shadow: none;
+        }
+        .chain-stack-meta {
+            position: relative;
+            z-index: 12;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            min-width: calc(var(--chain-card-w) + 20px);
+            max-width: calc(var(--chain-card-w) + 42px);
+            margin-top: 7px;
+            padding: 4px 7px 5px;
+            border: 1px solid rgba(247,215,116,.24);
+            border-radius: 7px;
+            background: rgba(5,8,15,.9);
+            box-shadow: 0 5px 13px rgba(0,0,0,.58);
+            transform: translateZ(82px);
+        }
+        .chain-stack-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+        .chain-stack-owner { line-height: 1; }
+        @media (min-width: 901px), (orientation: landscape) {
+            .chain-stack { --chain-card-w: clamp(86px, 7.2vw, 104px); max-width: none; }
+            .chain-stack-row { gap: 4px; padding: 25px 28px 38px; }
+            .chain-link-ring { margin-inline: 7px; }
+            .chain-stack-name { font-size: clamp(.62rem, .85vw, .78rem); }
+            .chain-stack-owner { font-size: clamp(.46rem, .62vw, .56rem); }
+        }
+        .game-log-container {
+            margin-top: 20px;
+            border: 2px solid #34495e;
+            border-radius: 10px;
+            background: rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+        .game-log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, rgba(52, 73, 94, 0.95), rgba(44, 62, 80, 0.95));
+            font-weight: 700;
+            color: #f1f5f9;
+        }
+        .log-toggle-btn {
+            border: 1px solid rgba(90,170,255,0.5);
+            border-radius: 999px;
+            padding: 7px 12px;
+            background: linear-gradient(145deg, #0f1928, #0a2638);
+            box-shadow: 0 0 8px rgba(90,170,255,0.25);
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+        .game-log {
+            padding: 12px 15px;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .log-entry { margin: 5px 0; padding-left: 10px; border-left: 3px solid #3498db; }
+        .card-info-panel {
+            display: none;
+            position: relative;
+            width: 100%;
+            min-height: 120px;
+            border: 2px solid rgba(243,156,18,0.45);
+            border-radius: 6px;
+            background: linear-gradient(145deg, rgba(28, 28, 36, 0.96), rgba(45, 46, 58, 0.94));
+            box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+            padding: 12px;
+            color: #f8f8f8;
+        }
+        .card-info-close {
+            display: none;
+        }
+        .card-info-panel.visible {
+            display: block;
+        }
+        .card-info-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #f1c40f;
+        }
+        .card-info-content {
+            font-size: 0.95rem;
+            line-height: 1.35;
+            color: #e8eef9;
+        }
+        .card-info-name {
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: white;
+        }
+        .card-info-meta {
+            font-size: 0.85rem;
+            color: #f1c40f;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .card-info-stats {
+            color: #7dd3fc;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .card-info-empty {
+            color: #b7c0d3;
+            font-style: italic;
+        }
+        .card-info-preview {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+            min-height: calc(var(--info-card-w) / var(--card-ratio));
+        }
+        .card-info-preview .card {
+            width: var(--info-card-w);
+            height: calc(var(--info-card-w) / var(--card-ratio));
+            cursor: default;
+        }
+        .card-info-preview .card:hover {
+            transform: none;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.28);
+        }
+        .right-panel-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: stretch;
+            width: 100%;
+        }
+        /* z-index: senza, una carta in mano selezionata (sollevata 20px e
+           ingrandita 15%) può finire visivamente SOTTO la riga Magie/
+           Trappole del campo appena sopra la mano — non c'è margine
+           verticale sufficiente perché non si tocchino, specialmente in
+           orizzontale su telefono (poca altezza). Il valore (80) sta
+           comodamente sopra ogni z-index già in uso dagli elementi del
+           campo (field-slot ecc., mai oltre 60) ma sotto agli overlay/
+           modali dell'interfaccia (9999+). */
+        .selected { transform: translateY(-20px) scale(1.15) !important; box-shadow: 0 10px 30px rgba(52, 152, 219, 0.8) !important; z-index: 80; }
+        .action-highlight { border: 3px solid #2ecc71 !important; background: rgba(46, 204, 113, 0.3) !important; }
+        .attack-target { border: 3px solid #e74c3c !important; background: rgba(231, 76, 60, 0.3) !important; }
+        .damage-shake { animation: shake 0.5s; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+        .victory-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        .victory-text { font-size: 3em; font-weight: bold; text-align: center; margin-bottom: 30px; }

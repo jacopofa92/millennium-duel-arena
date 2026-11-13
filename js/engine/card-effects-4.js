@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * card-effects-4.js — Effetti delle carte, parte 4 di 8.
  * =====================================================================
@@ -400,6 +401,9 @@
             const links = (ctx.gameState.chain && ctx.gameState.chain.links) || [];
             const ultima = links[links.length - 1];
             if (!ultima || !ultima.card) return true; // nessuna catena: e' un'Evocazione
+            if (ultima.card.id === 134 && window.AI_SHARED && AI_SHARED.shouldNegateSoffioIncendiario) {
+                return AI_SHARED.shouldNegateSoffioIncendiario(ctx, Math.ceil(Tavolo.lp(ctx.owner, ctx.gameState) / 2));
+            }
             // Si ferma solo una carta che COLPISCE (distrugge, bandisce, ruba, infligge danni, annulla): non una
             // pescata o un recupero, per i quali pagare meta' dei LP e' un pessimo affare.
             return /distrugg|bandisc|prende\w* il controllo|infligg|dann[oi]|nega|annull/i.test(ultima.card.effect || '');
@@ -452,7 +456,7 @@
     // ================================================================
     CardEffects.register(215, {
         onOwnSpellTrapDestroyed(ctx) {
-            let target = null;
+            let target = /** @type {{ owner: Owner, index: number } | null} */ (null);
             let targetOwner = null;
             [ctx.opponent, ctx.owner].forEach((owner) => {
                 if (target) return;
@@ -1337,14 +1341,9 @@
     // Pesca finché non hai 3 carte in mano; per il resto di questo turno
     // il tuo avversario non subisce danni; durante la End Phase di questo
     // turno, manda tutta la tua mano al Cimitero.
-    // SEMPLIFICAZIONE: "Non puoi Special Summonare nel turno in cui attivi
-    // questa carta" non applicato — imporlo dentro ACTIONS.specialSummon
-    // (duel-engine.js) rischierebbe di "perdere" una carta già tolta dalla
-    // sua zona d'origine da un altro effetto prima di chiamarlo (quella
-    // funzione presume sempre di riuscire), un rischio più grande del
-    // beneficio per un vincolo che qui non impedirebbe comunque nulla di
-    // concreto nel Duello Demo (il bot non ha Special Summon pianificate
-    // in risposta a questa carta).
+    // Il divieto di Special Summon è registrato sul turno di attivazione e
+    // verificato nel punto comune di evocazione; un tentativo rifiutato
+    // restituisce la carta alla zona da cui era stata prelevata.
     // ================================================================
     CardEffects.register(140, {
         activate(ctx) {
@@ -1358,6 +1357,12 @@
             }
             ctx.gameState.noDamageFor = ctx.gameState.noDamageFor || {};
             ctx.gameState.noDamageFor[ctx.opponent] = true;
+            // È un divieto per il resto del turno, non solo per la fase di
+            // risoluzione: il motore lo controlla prima di ogni Special
+            // Summon e la scadenza è il numero del turno, così non serve un
+            // reset fragile al cambio fase.
+            ctx.gameState.specialSummonForbiddenTurnFor = ctx.gameState.specialSummonForbiddenTurnFor || {};
+            ctx.gameState.specialSummonForbiddenTurnFor[ctx.owner] = ctx.gameState.turn;
             ctx.gameState.discardHandAtEndPhaseFor = ctx.gameState.discardHandAtEndPhaseFor || {};
             ctx.gameState.discardHandAtEndPhaseFor[ctx.owner] = true;
             ctx.log(`💀 Carta dell'Oblio: ${ctx.owner === 'player' ? 'peschi' : 'il bot pesca'} ${drawn} cart${drawn === 1 ? 'a' : 'e'} fino a 3 in mano. ${ctx.opponent === 'player' ? 'Non subisci' : 'Il bot non subisce'} danni per il resto del turno, ma a fine turno la mano finisce al Cimitero!`);
@@ -2267,6 +2272,14 @@
     // Trappole (ctx.negateActivation() in duel-engine.js).
     // ================================================================
     CardEffects.register(599, {
+        aiCanActivate(ctx) {
+            const links = (ctx.gameState.chain && ctx.gameState.chain.links) || [];
+            const ultima = links[links.length - 1];
+            if (ultima && ultima.card && ultima.card.id === 134 && window.AI_SHARED && AI_SHARED.shouldNegateSoffioIncendiario) {
+                return AI_SHARED.shouldNegateSoffioIncendiario(ctx, 1000);
+            }
+            return true;
+        },
         canActivate(ctx) {
             const chain = ctx.gameState.chain;
             return !!(chain && chain.links && chain.links.length > 0 && chain.links[chain.links.length - 1].card.type === 'trap');
@@ -2750,13 +2763,12 @@
     // schema di ricerca nel Deck di Strega della Foresta Nera (id 508)/
     // Uccello Sonico (id 601), ma qui il mostro finisce SUL TERRENO
     // invece che in mano.
-    // SEMPLIFICAZIONE residua: onDestroy scatta per QUALSIASI distruzione
-    // (non solo in battaglia) — stesso limite già accettato altrove in
-    // questo motore (nessuna distinzione battaglia/effetto per questo
-    // aggancio).
+    // onDestroy è condiviso con le distruzioni da effetto: il controllo
+    // destroyedInBattle mantiene questo effetto limitato alla battaglia.
     // ================================================================
     CardEffects.register(614, {
         onDestroy(ctx) {
+            if (!ctx.destroyedInBattle) return;
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return;
             searchDeckWithChoice(ctx, (c) => c.type === 'monster' && c.attribute === 'TERRA' && c.attack <= 1500, {
                 title: '🐀 Ratto Gigante',

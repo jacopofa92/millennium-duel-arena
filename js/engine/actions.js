@@ -1,3 +1,4 @@
+// @ts-check
 let dragState = null;
 
 // ============================================================
@@ -696,7 +697,7 @@ function handleDragEnd(event) {
         const moved = dragState.moved;
         const scorrimento = !!dragState.scrub;   // gesto di scorrimento della mano: la carta sollevata resta com'e', niente click ne' gioco
         if (!moved && !scorrimento && event.type !== 'pointercancel') armHandCompatibilityClick(event);
-        const dropTarget = document.elementFromPoint(event.clientX, event.clientY)?.closest('.field-slot');
+        const dropTarget = /** @type {HTMLElement | null | undefined} */ (document.elementFromPoint(event.clientX, event.clientY)?.closest('.field-slot'));
         // Rettangolo del fantasma esattamente dov'era al momento del
         // rilascio, PRIMA di rimuoverlo: è il punto di partenza che
         // l'eventuale animazione di volo verso lo slot userà al posto
@@ -1307,10 +1308,10 @@ function handleHandDiscardSelectClick(handIndex) {
  * (vedi openSummonModal/promptPositionChange sotto per un esempio),
  * richiamando closeQuickPopover() dentro ogni handler.
  */
-function openQuickPopover(anchorEl, innerHTML, { onDismiss, dismissible = true, bare = false, extraClass = '' } = {}) {
+function openQuickPopover(anchorEl, innerHTML, { onDismiss, dismissible = true, bare = false, extraClass = '' } = /** @type {{ onDismiss?: () => void, dismissible?: boolean, bare?: boolean, extraClass?: string }} */ ({})) {
     closeQuickPopover();
 
-    const catcher = document.createElement('div');
+    const catcher = /** @type {any} */ (document.createElement('div'));
     catcher.className = 'quick-popover-catcher';
     catcher.id = 'quickPopoverCatcher';
 
@@ -1457,7 +1458,7 @@ function openQuickPopover(anchorEl, innerHTML, { onDismiss, dismissible = true, 
 
 function closeQuickPopover() {
     const pop = document.getElementById('quickPopover');
-    const catcher = document.getElementById('quickPopoverCatcher');
+    const catcher = /** @type {any} */ (document.getElementById('quickPopoverCatcher'));
     if (pop) pop.remove();
     if (catcher) {
         if (catcher.__onResize) window.removeEventListener('resize', catcher.__onResize);
@@ -1585,7 +1586,7 @@ function maybeAskRaLpChoice(card, slotEl, proceed) {
             <button type="button" class="quick-popover-btn cancel" id="qpRaPayNo">Non pagare</button>
         </div>
     `, { dismissible: false });
-    const range = pop.querySelector('#qpRaRange');
+    const range = /** @type {HTMLInputElement} */ (pop.querySelector('#qpRaRange'));
     const info = pop.querySelector('#qpRaInfo');
     // Si arrotonda ai 50 (come i Life Point del gioco), salvo il tetto che può non esserlo.
     const valore = () => {
@@ -2317,7 +2318,7 @@ window.DuelEngineUI = {
         // nessuno ha attivato nulla, quindi non c'è una carta a cui
         // rispondere — si dice in che momento del turno ci si trova.
         if (testoMomento) {
-            this.openActivateModal(choice.card, {
+            /** @type {any} */ (this).openActivateModal(choice.card, {
                 title: '⚡ Effetto Veloce',
                 text: `${testoMomento}. Vuoi attivare ${choice.card.name}?`,
                 onConfirm: () => respond(choice),
@@ -2346,7 +2347,7 @@ window.DuelEngineUI = {
         // questo numero.
         const chainLinkNumber = (triggerCard && window.gameState && gameState.chain) ? gameState.chain.links.length + 1 : null;
         const title = chainLinkNumber ? `🛡️ Rispondere? (Catena — Link ${chainLinkNumber})` : '🛡️ Rispondere?';
-        this.openActivateModal(choice.card, {
+        /** @type {any} */ (this).openActivateModal(choice.card, {
             title: title,
             text: text,
             onConfirm: () => respond(choice),
@@ -2379,7 +2380,7 @@ window.DuelEngineUI = {
      * il riquadro si riapriva subito, e per un attimo si vedeva il campo (il velo spariva e tornava). Con l'elenco vuoto resta
      * il pulsante, o non ci sarebbe modo di uscire.
      */
-    openCardListPicker(cards, { title, text, selectable = true, emptyText, onSelect, onCancel, evocabili, obbligatoria = false } = {}) {
+    openCardListPicker(cards, { title, text, selectable = true, emptyText, onSelect, onCancel, evocabili, obbligatoria = false } = /** @type {any} */ ({})) {
         const uidEvocabili = Array.isArray(evocabili) ? new Set(evocabili) : null;
         const modal = document.getElementById('cardListPickerModal');
         const row = document.getElementById('cardListPickerRow');
@@ -2526,7 +2527,7 @@ window.DuelEngineUI = {
      * comunque di piazzarlo in una Posizione, non si può più fare
      * marcia indietro solo su questo secondo passaggio.
      */
-    openPositionPicker(anchorEl, { title, onSelect } = {}) {
+    openPositionPicker(anchorEl, { title, onSelect } = /** @type {any} */ ({})) {
         const pop = openQuickPopover(anchorEl, `
             <div class="quick-popover-actions">
                 <button type="button" class="quick-popover-btn attack icon-round" id="qpPositionAttack" title="Scoperta in Attacco"><span data-icon="attackPos"></span></button>
@@ -2558,7 +2559,7 @@ window.DuelEngineUI = {
      * openPositionPicker qui sopra (Attacco/Difesa fissi), riusabile per
      * qualunque coppia di azioni testuali con icona.
      */
-    openChoicePopover(anchorEl, { title, choiceA, choiceB } = {}) {
+    openChoicePopover(anchorEl, { title, choiceA, choiceB } = /** @type {any} */ ({})) {
         const pop = openQuickPopover(anchorEl, `
             <div class="quick-popover-title">${title || ''}</div>
             <div class="quick-popover-actions">
@@ -2595,7 +2596,7 @@ window.DuelEngineUI = {
      * (card-effects.js), che sa anche far scegliere il bot e far viaggiare
      * la scelta in Multiplayer.
      */
-    openOptionPicker(anchorEl, { title, text, options, onSelect, onCancel, cancelLabel } = {}) {
+    openOptionPicker(anchorEl, { title, text, options, onSelect, onCancel, cancelLabel } = /** @type {any} */ ({})) {
         const voci = (options || []).map((o, i) => `
             <button type="button" class="quick-popover-btn confirm quick-popover-option" data-option="${i}">
                 ${o.icon ? `<span class="quick-popover-option-icon">${o.icon}</span>` : ''}<span>${escapeHtml(o.label)}</span>

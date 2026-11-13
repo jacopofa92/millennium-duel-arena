@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * battaglia.js — la risoluzione di un attacco e del suo danno.
  * =====================================================================
@@ -232,14 +233,10 @@ function resolveAttack(attackerOwner, attackerIndex, targetIndex, onComplete) {
         done();
         return;
     }
-    // Divieto d'attacco PERMANENTE per uid (es. Controllo Mentale/Mind
-    // Control, id 130: "il mostro preso non può attaccare") — a
-    // differenza di cannotAttackUids qui sopra (ricalcolato/azzerato ad
-    // ogni render da un effetto continuo ancora sul Terreno), questo Set
-    // non si azzera mai da solo: la carta che l'ha imposto (una Magia
-    // Normale) è già finita nel Cimitero, quindi non c'è nessun effetto
-    // continuo che possa ricalcolarlo ogni volta.
-    if (gameState.cannotAttackUidsPermanent && gameState.cannotAttackUidsPermanent.has(attackerSlot.card.uid)) {
+    // Controllo della Mente (id 130) vieta l'attacco solo mentre il
+    // mostro resta sotto il controllo preso: il Set viene ripulito insieme
+    // al ritorno del mostro alla End Phase.
+    if (gameState.cannotAttackUidsUntilEndPhase && gameState.cannotAttackUidsUntilEndPhase.has(attackerSlot.card.uid)) {
         addToLog(`🚫 ${attackerSlot.card.name} non può attaccare.`);
         done();
         return;
@@ -828,12 +825,9 @@ function resolveBattleDamage(attackerOwner, defenderOwner, attackerIndex, target
     // distrutto; chi difendeva, se `card` era l'attaccante distrutto) —
     // esposto come ctx.destroyedByOpponentCard a onDestroy(ctx), es.
     // Ossigeddon (id 804): "se distrutta in battaglia da un mostro Tipo
-    // Piroico". SEMPLIFICAZIONE: presente SOLO per distruzioni in
-    // battaglia (qui in resolveBattleDamage) — una distruzione da
-    // effetto Carta (ACTIONS.destroyMonster, duel-engine.js) non ha un
-    // "altro mostro della battaglia" concettualmente, quindi
-    // ctx.destroyedByOpponentCard resta null in quel caso, distinguibile
-    // da chi legge il campo.
+    // Piroico". `destroyedInBattle` distingue questo evento dalle
+    // distruzioni da effetto; `destroyedWasFaceUpAtDamageStep` conserva lo
+    // stato precedente alla rivelazione del difensore coperto.
     // `destroyedWasAttackPosition` (opzionale, boolean): vera se `card`
     // era in Posizione di ATTACCO al momento della distruzione — serve
     // solo a def.onDestroysMonsterByBattle (es. Winged Sage Falcos, id
@@ -841,7 +835,7 @@ function resolveBattleDamage(attackerOwner, defenderOwner, attackerIndex, target
     // AVVERSARIO scoperto in Posizione di Attacco"), passata dai
     // chiamanti che già sanno la posizione (ognuno dei 6 punti sotto in
     // resolveBattleDamage), `undefined` altrove.
-    const fireOnDestroy = (owner, index, card, opponentBattleCard, destroyedWasAttackPosition) => {
+    const fireOnDestroy = (owner, index, card, opponentBattleCard, destroyedWasAttackPosition, destroyedWasFaceUpAtDamageStep) => {
         // 199 — Esplosione a Onde Soniche: "gli effetti dei mostri distrutti da
         // questi attacchi non possono attivarsi e vengono annullati" —
         // gameState.negatesEffectsOnForcedAttackFor (Set di uid attaccanti,
@@ -953,7 +947,13 @@ function resolveBattleDamage(attackerOwner, defenderOwner, attackerIndex, target
                 destroyerDef.onDestroysMonsterByBattle(DuelEngine.makeContext(destroyerOwner, { card: opponentBattleCard, destroyedCard: card, destroyedCardOwner: owner, destroyedWasAttackPosition: !!destroyedWasAttackPosition }));
             }
         }
-        DuelEngine.fireTrigger(DuelEngine.TRIGGER.ON_DESTROY, DuelEngine.makeContext(owner, { slotIndex: index, card: card, destroyedByOpponentCard: opponentBattleCard || null }));
+        DuelEngine.fireTrigger(DuelEngine.TRIGGER.ON_DESTROY, DuelEngine.makeContext(owner, {
+            slotIndex: index,
+            card: card,
+            destroyedInBattle: true,
+            destroyedWasFaceUpAtDamageStep: destroyedWasFaceUpAtDamageStep !== false,
+            destroyedByOpponentCard: opponentBattleCard || null
+        }));
     };
 
     /**
@@ -1225,7 +1225,12 @@ function resolveBattleDamage(attackerOwner, defenderOwner, attackerIndex, target
         // condizionati a un avversario specifico (es. Soldati Insetto del
         // Cielo) non si applicano mai qui, coerentemente con le regole vere.
         const attackerAtk = attackerBaseAtk + DuelEngine.getDamageStepBonus(attacker, null, 'attacker').atk;
-        const damage = Math.floor(attackerAtk * getOwnBattleDamageMultiplier(attacker));
+        // Sparatore Sonico (id 773) sostituisce il danno diretto con il suo
+        // ATK originale: bonus Equip e modifiche all'ATK effettivo non lo
+        // aumentano. Gli altri attaccanti usano il normale valore corrente.
+        const originalCard = attacker.id === 773 && cardDatabase.find((card) => card.id === attacker.id);
+        const damageAtk = originalCard && typeof originalCard.attack === 'number' ? originalCard.attack : attackerAtk;
+        const damage = Math.floor(damageAtk * getOwnBattleDamageMultiplier(attacker));
         const damageLanded = applyDamage(defenderOwner, damage);
         // Benedizione di Sebek (id 813): ricordato per proprietario
         // dell'ATTACCANTE (non del difensore che l'ha subito), azzerato
@@ -1241,6 +1246,11 @@ function resolveBattleDamage(attackerOwner, defenderOwner, attackerIndex, target
     } else {
         const targetSlot = defenderField[targetIndex];
         const target = targetSlot.card;
+        // Fox Fire distingue il mostro scoperto all'inizio del Damage Step
+        // da quello rivelato solo perché attaccato coperto. Conserviamo lo
+        // stato prima del flip: al momento della distruzione entrambi
+        // sembrerebbero scoperti.
+        const targetWasFaceUpAtDamageStep = !targetSlot.isFaceDown;
         // Bonus valido solo per QUESTO Damage Step, su entrambi i lati
         // della battaglia (es. Soldati Insetto del Cielo se attacca,
         // Soldato Cinetico se attacca O difende) — vedi damageStepBonus(ctx)
@@ -1293,7 +1303,7 @@ function resolveBattleDamage(attackerOwner, defenderOwner, attackerIndex, target
                     defenderField[targetIndex] = null;
                     addToLog(`💥 ${yourPrefix}${target.name} distrutto! ${defenderOwner === 'player' ? 'Perdi' : 'Il bot perde'} ${damage} LP.`);
                     applyBattleDestroyBonus(attacker, defenderOwner, attackerOwner, target);
-                    fireOnDestroy(defenderOwner, targetIndex, target, attacker, true);
+                fireOnDestroy(defenderOwner, targetIndex, target, attacker, true, targetWasFaceUpAtDamageStep);
                 }
                 fireOwnBattled(attacker, attackerOwner, target, targetSurvivesThisBattle);
             } else if (attackerAtk < targetAtk) {
@@ -1314,7 +1324,7 @@ function resolveBattleDamage(attackerOwner, defenderOwner, attackerIndex, target
                     if (window.DuelEngine) DuelEngine.redirectToBanishIfFlagged(attackerOwner, attacker);
                     attackerField[attackerIndex] = null;
                     addToLog(`💀 ${attackerIsPlayer ? '' : 'Il '}${attacker.name}${attackerIsPlayer ? '' : ' del bot'} distrutto! ${attackerOwner === 'player' ? 'Perdi' : 'Il bot perde'} ${damage} LP.`);
-                    fireOnDestroy(attackerOwner, attackerIndex, attacker, target, true);
+                fireOnDestroy(attackerOwner, attackerIndex, attacker, target, true, true);
                 }
                 fireOwnBattled(target, defenderOwner, attacker, attackerSurvivesThisBattle);
             } else {
@@ -1338,8 +1348,8 @@ function resolveBattleDamage(attackerOwner, defenderOwner, attackerIndex, target
                 addToLog(attackerSurvives || targetSurvives
                     ? `💫 Pareggio, ma ${attackerSurvives ? attacker.name : target.name} è immune e sopravvive!`
                     : '💫 Entrambe le carte sono distrutte!');
-                if (!attackerSurvives) fireOnDestroy(attackerOwner, attackerIndex, attacker, target, true);
-                if (!targetSurvives) fireOnDestroy(defenderOwner, targetIndex, target, attacker, true);
+                if (!attackerSurvives) fireOnDestroy(attackerOwner, attackerIndex, attacker, target, true, true);
+                if (!targetSurvives) fireOnDestroy(defenderOwner, targetIndex, target, attacker, true, targetWasFaceUpAtDamageStep);
                 if (attackerSurvives) fireOwnBattled(attacker, attackerOwner, target, targetSurvives);
                 if (targetSurvives) fireOwnBattled(target, defenderOwner, attacker, attackerSurvives);
             }
@@ -1357,7 +1367,7 @@ function resolveBattleDamage(attackerOwner, defenderOwner, attackerIndex, target
                 defenderField[targetIndex] = null;
                 addToLog(`⚔️ ${attacker.name} distrugge istantaneamente ${yourPrefix}il mostro coperto, senza calcolo dei danni!`);
                 applyBattleDestroyBonus(attacker, defenderOwner, attackerOwner, target);
-                fireOnDestroy(defenderOwner, targetIndex, target, attacker, false);
+                fireOnDestroy(defenderOwner, targetIndex, target, attacker, false, false);
                 fireOwnBattled(attacker, attackerOwner, target, false);
                 return;
             }
@@ -1487,7 +1497,7 @@ function resolveBattleDamage(attackerOwner, defenderOwner, attackerIndex, target
                     addToLog(`🧱 ${attackerIsPlayer ? '' : 'Il bot '}subisce comunque il rimbalzo del danno! ${attackerOwner === 'player' ? 'Perdi' : 'Il bot perde'} ${bounceDamage} LP.`);
                 }
                 applyBattleDestroyBonus(attacker, defenderOwner, attackerOwner, target);
-                fireOnDestroy(defenderOwner, targetIndex, target, attacker, false);
+                fireOnDestroy(defenderOwner, targetIndex, target, attacker, false, targetWasFaceUpAtDamageStep);
             } else if (attackerAtk < targetDef) {
                 let damage = targetDef - attackerAtk;
                 // Canyon (id 767): raddoppia questo danno se il difensore è

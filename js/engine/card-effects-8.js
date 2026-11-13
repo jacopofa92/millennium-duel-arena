@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * card-effects-8.js — Effetti delle carte, parte 8 di 8.
  * =====================================================================
@@ -573,6 +574,7 @@
         onFlip(ctx) {
             const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
             if (slotIndex === -1) return;
+            /** @type {Card} */
             const token = {
                 id: -1,
                 uid: ctx.newTokenUid('token'),

@@ -1,0 +1,237 @@
+/* CSS del duello, parte 9 di 12, estratta da duelMonstersCore.html (righe 4369-4602 del vecchio blocco <style>).
+   Le parti vanno caricate IN ORDINE (la cascata dipende dall'ordine): 01 ... 12. Non riordinare le regole fra le parti
+   senza ripetere tools/impronta-stili-duello.js. I percorsi url() sono relativi a questo file. */
+        /* ============================================================
+           Annunci epici di Fase / Turno (stile Master Duel)
+           ============================================================ */
+        #phaseAnnouncement {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10060;
+            pointer-events: none;
+            text-align: center;
+            opacity: 0;
+            white-space: nowrap;
+        }
+        #phaseAnnouncement.phase-announce-play {
+            animation-name: phaseAnnounceIn;
+            animation-timing-function: cubic-bezier(0.16, 0.84, 0.44, 1);
+            animation-fill-mode: forwards;
+            animation-duration: var(--phase-anim-duration, 1300ms);
+        }
+        .phase-announce-banner {
+            position: relative;
+            display: inline-block;
+            padding: clamp(8px, 1.6vh, 14px) clamp(20px, 6vw, 54px);
+            background: linear-gradient(90deg, rgba(10,10,18,0) 0%, rgba(8,8,14,0.82) 14%, rgba(8,8,14,0.82) 86%, rgba(10,10,18,0) 100%);
+            border-top: 2px solid var(--fx-gold, #f39c12);
+            border-bottom: 2px solid var(--fx-gold, #f39c12);
+            box-shadow: 0 0 44px rgba(243,156,18,0.35);
+            max-width: 92vw;
+        }
+        .phase-announce-title {
+            font-size: clamp(1.3rem, 6vw, 2.5rem);
+            font-weight: 900;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #fff6dc 0%, #f7d774 40%, #f39c12 72%, #c9770a 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 26px rgba(243,156,18,0.55);
+        }
+        .phase-announce-sub {
+            margin-top: 4px;
+            font-size: clamp(0.6rem, 2vw, 0.95rem);
+            letter-spacing: 0.34em;
+            text-transform: uppercase;
+            color: #7dd3fc;
+            text-shadow: 0 0 10px rgba(125,211,252,0.5);
+        }
+        #phaseAnnouncement.phase-announce--battle .phase-announce-banner {
+            border-color: #e74c3c;
+            box-shadow: 0 0 60px rgba(231,76,60,0.45);
+        }
+        #phaseAnnouncement.phase-announce--battle .phase-announce-title {
+            font-size: clamp(1.5rem, 6.6vw, 3rem);
+            background: linear-gradient(180deg, #fff0e0 0%, #f7d774 32%, #e74c3c 72%, #c0392b 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 34px rgba(231,76,60,0.6);
+        }
+        @keyframes phaseAnnounceIn {
+            0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.72) skewX(-8deg); filter: blur(6px); }
+            14%  { opacity: 1; transform: translate(-50%, -50%) scale(1.05) skewX(0deg); filter: blur(0); }
+            22%  { transform: translate(-50%, -50%) scale(1) skewX(0deg); }
+            80%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.08); filter: blur(2px); }
+        }
+
+        /* ============================================================
+           Annuncio epico "cinematografico" — dura 3 secondi. Usato dal
+           cambio turno (vedi showEpicSlamAnnouncement() in game-flow.js);
+           i nomi delle classi restano "battle-start-*" per non rinominare
+           tutto, ma il contenuto (le due parole) ora è generico.
+           ============================================================ */
+        #battleStartOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10070;
+            pointer-events: none;
+            overflow: hidden;
+            opacity: 0;
+        }
+        #battleStartOverlay.play { opacity: 1; }
+
+        .battle-start-flash {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.9), rgba(231,76,60,0.35) 40%, rgba(0,0,0,0) 75%);
+            opacity: 0;
+            animation: battleFlashPulse 3000ms ease-out forwards;
+        }
+        @keyframes battleFlashPulse {
+            0%   { opacity: 0; }
+            4%   { opacity: 1; }
+            14%  { opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        .battle-start-bar {
+            position: absolute;
+            left: -10%;
+            width: 120%;
+            height: 20%;
+            background: linear-gradient(90deg, rgba(20,10,10,0) 0%, rgba(18,10,10,0.92) 12%, rgba(18,10,10,0.92) 88%, rgba(20,10,10,0) 100%);
+            border-top: 2px solid rgba(231,76,60,0.7);
+            border-bottom: 2px solid rgba(231,76,60,0.7);
+            opacity: 0;
+        }
+        .bar-top { top: 30%; animation: barSlideTop 3000ms cubic-bezier(0.16,0.84,0.44,1) forwards; }
+        .bar-bottom { top: 52%; animation: barSlideBottom 3000ms cubic-bezier(0.16,0.84,0.44,1) forwards; }
+        @keyframes barSlideTop {
+            0%   { transform: translateX(-120%) skewY(-3deg); opacity: 0; }
+            10%  { opacity: 1; }
+            22%  { transform: translateX(0%) skewY(-3deg); opacity: 1; }
+            80%  { transform: translateX(0%) skewY(-3deg); opacity: 1; }
+            100% { transform: translateX(120%) skewY(-3deg); opacity: 0; }
+        }
+        @keyframes barSlideBottom {
+            0%   { transform: translateX(120%) skewY(-3deg); opacity: 0; }
+            10%  { opacity: 1; }
+            22%  { transform: translateX(0%) skewY(-3deg); opacity: 1; }
+            80%  { transform: translateX(0%) skewY(-3deg); opacity: 1; }
+            100% { transform: translateX(-120%) skewY(-3deg); opacity: 0; }
+        }
+
+        /* Il testo SEGUE le bande invece di stargli in mezzo dritto:
+           entrambe sono inclinate di skewY(-3deg) (vedi barSlideTop/
+           barSlideBottom qui sopra), e un titolo perfettamente orizzontale
+           in mezzo a due diagonali stonava. "TURNO + nome" sta ora
+           sopra la banda SUPERIORE (che copre 30%-50%: il suo centro e'
+           40%), il numero di turno sopra quella INFERIORE (52%-72%,
+           centro 62%) — richiesta esplicita dell'utente.
+           Lo skew vive sul CONTENITORE: le animazioni d'impatto delle
+           singole parole animano il transform dei FIGLI (vedi
+           wordSlamLeft/Right), quindi i due non si sovrascrivono a
+           vicenda — l'inclinazione resta per tutti i 3 secondi. */
+        .battle-start-title {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%) skewY(-3deg);
+            display: flex;
+            gap: clamp(6px, 2vw, 18px);
+            align-items: baseline;
+            white-space: nowrap;
+        }
+        .battle-start-word {
+            font-size: clamp(1.7rem, 9vw, 4.2rem);
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            opacity: 0;
+            text-shadow: 0 0 30px rgba(231,76,60,0.7);
+        }
+        /* Frase intera invece di due parole singole (es. "IT'S MY TURN!"):
+           molto più piccola, altrimenti una frase a 9vw esce dallo schermo. */
+        .battle-start-word--solo {
+            font-size: clamp(1.1rem, 5.4vw, 2.6rem);
+        }
+        /* Coppia "TURNO" + nome avversario quando il nome è lungo (es. un
+           personaggio con nome e cognome): più piccola della coppia
+           standard "TURNO"/"BOT", altrimenti esce dallo schermo. */
+        .battle-start-word--long {
+            font-size: clamp(1.3rem, 6vw, 2.9rem);
+        }
+        .battle-start-word--left {
+            background: linear-gradient(180deg, #fff0e0 0%, #f7d774 35%, #e74c3c 75%, #a52a1f 100%);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            animation: wordSlamLeft 3000ms cubic-bezier(0.16,0.84,0.44,1) forwards;
+        }
+        .battle-start-word--right {
+            background: linear-gradient(180deg, #eaf6ff 0%, #7dd3fc 35%, #3498db 75%, #1b6fb8 100%);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            animation: wordSlamRight 3000ms cubic-bezier(0.16,0.84,0.44,1) forwards;
+        }
+        @keyframes wordSlamLeft {
+            0%   { opacity: 0; transform: translateX(-160px) scale(1.4) skewX(10deg); filter: blur(8px); }
+            18%  { opacity: 1; transform: translateX(0) scale(1) skewX(0deg); filter: blur(0); }
+            82%  { opacity: 1; transform: translateX(0) scale(1); }
+            100% { opacity: 0; transform: translateX(-40px) scale(0.94); }
+        }
+        @keyframes wordSlamRight {
+            0%   { opacity: 0; transform: translateX(160px) scale(1.4) skewX(-10deg); filter: blur(8px); }
+            18%  { opacity: 1; transform: translateX(0) scale(1) skewX(0deg); filter: blur(0); }
+            82%  { opacity: 1; transform: translateX(0) scale(1); }
+            100% { opacity: 0; transform: translateX(40px) scale(0.94); }
+        }
+
+        /* Numero del turno, sopra la banda INFERIORE e con la stessa
+           inclinazione (vedi il commento su .battle-start-title). Un filo
+           più grande di prima: da sottotitolo ai piedi del titolo è
+           diventato l'altra metà della composizione, non una didascalia. */
+        .battle-start-sub {
+            position: absolute;
+            top: 62%;
+            left: 50%;
+            transform: translate(-50%, -50%) skewY(-3deg);
+            font-size: clamp(0.75rem, 3vw, 1.35rem);
+            font-weight: 800;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: #f7d774;
+            text-shadow: 0 0 12px rgba(247,215,116,0.6), 0 2px 6px rgba(0,0,0,0.85);
+            opacity: 0;
+            white-space: nowrap;
+            animation: subFadeInOut 3000ms ease-in-out forwards;
+        }
+        @keyframes subFadeInOut {
+            0%   { opacity: 0; }
+            24%  { opacity: 1; }
+            78%  { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        /* Su schermo stretto "TURNO" + un nome lungo (es. "Maximillion
+           Pegasus") su una riga sola usciva da ENTRAMBI i lati: il
+           contenitore è white-space:nowrap e il clamp a 6vw non basta a
+           rientrare. Le due parole vanno quindi una sopra l'altra, con un
+           corpo più piccolo — restano comunque dentro la banda superiore,
+           che è alta il 20% dello schermo. L'ingresso laterale delle due
+           parole (wordSlamLeft/Right) resta invariato: cambia solo come
+           sono impilate. */
+        @media (max-width: 620px) {
+            .battle-start-title {
+                flex-direction: column;
+                align-items: center;
+                gap: 0;
+                line-height: 1.05;
+            }
+            .battle-start-word { font-size: clamp(1.4rem, 8vw, 2.6rem); }
+            .battle-start-word--long { font-size: clamp(1rem, 6.2vw, 1.9rem); }
+            .battle-start-word--solo { font-size: clamp(1rem, 5.6vw, 2rem); }
+        }
+

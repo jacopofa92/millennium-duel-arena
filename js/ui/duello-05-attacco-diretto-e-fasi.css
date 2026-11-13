@@ -1,0 +1,595 @@
+/* CSS del duello, parte 5 di 12, estratta da duelMonstersCore.html (righe 2049-2640 del vecchio blocco <style>).
+   Le parti vanno caricate IN ORDINE (la cascata dipende dall'ordine): 01 ... 12. Non riordinare le regole fra le parti
+   senza ripetere tools/impronta-stili-duello.js. I percorsi url() sono relativi a questo file. */
+        /* ============================================================
+           Avviso "ATTACCO DIRETTO", stile Master Duel: due barre a
+           strisce diagonali che entrano dai lati dello schermo.
+           ============================================================ */
+        #directAttackWarning,
+        #directAttackHint {
+            position: fixed;
+            inset: 0;
+            z-index: 10054;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .daw-bar {
+            position: absolute;
+            top: 0;
+            /* Più strette e più soft (richiesta dell'utente: "troppo evidenti e invasive"): erano 70-130px con
+               strisce piene e un bagliore forte; ora una presenza leggera che sfuma anche verso l'interno. */
+            width: clamp(44px, 6vw, 86px);
+            height: 100%;
+            /* Giallo/nero a strisce diagonali, come il cartello "ATTACCO
+               DIRETTO" di Yu-Gi-Oh! Master Duel — non più rosso/nero. */
+            /* Le strisce NON stanno piu' sullo sfondo della barra (animare background-position ridipinge la barra, con maschera e
+               ombra, ad OGNI fotogramma, per tutto il trascinamento): stanno su ::before, piu' alto della barra e fatto scorrere con la
+               sola transform (compositor), tagliato da overflow:hidden. */
+            overflow: hidden;
+            /* Copre l'intero lato (sopra-sotto) invece di una fascia
+               centrale fissa, ma con una dissolvenza verso i due bordi
+               (sopra e sotto) tramite mask, altrimenti il taglio netto in
+               alto/basso sembrerebbe un rettangolo incollato allo schermo
+               invece di una "presenza" che sfuma nell'ambiente. */
+            --daw-lato: to right;   /* verso l'interno dello schermo: la barra destra lo inverte */
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%), linear-gradient(var(--daw-lato), black 0%, rgba(0,0,0,.55) 55%, transparent 100%);
+            -webkit-mask-composite: source-in;
+            mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%), linear-gradient(var(--daw-lato), black 0%, rgba(0,0,0,.55) 55%, transparent 100%);
+            mask-composite: intersect;
+            box-shadow: 0 0 26px rgba(241,196,15,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+        }
+        .daw-bar::before {
+            content: '';
+            position: absolute;
+            inset: -40px 0;
+            background: repeating-linear-gradient(45deg, rgba(15,12,2,0.34) 0 14px, rgba(241,196,15,0.42) 14px 28px);
+            animation: dawStripeScroll 650ms linear infinite;
+            will-change: transform;
+        }
+        .daw-bar > * { position: relative; z-index: 1; }
+        .daw-bar--left {
+            left: 0;
+            animation: dawSlideLeft 1400ms cubic-bezier(0.16, 0.84, 0.44, 1) forwards;
+        }
+        .daw-bar--right {
+            --daw-lato: to left;
+            right: 0;
+            /* Stesso verso di scorrimento (alto -> basso) del lato
+               sinistro, non più invertito: prima "reverse" faceva salire
+               le strisce su questo lato invece di scendere come l'altro. */
+            animation: dawSlideRight 1400ms cubic-bezier(0.16, 0.84, 0.44, 1) forwards;
+        }
+        .daw-bar-text {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            font-size: clamp(0.78rem, 1.8vw, 1.1rem);
+            font-weight: 800;
+            letter-spacing: 0.22em;
+            /* Chiaro e caldo, un po' trasparente: con le strisce ora tenui il rosso acceso di prima
+               sarebbe la cosa più rumorosa dello schermo. L'ombra scura lo tiene leggibile. */
+            color: rgba(255, 238, 196, 0.82);
+            text-shadow: 0 0 8px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.6);
+        }
+        @keyframes dawSlideLeft {
+            0%   { opacity: 0; transform: translateX(-100%); }
+            14%  { opacity: 1; transform: translateX(0); }
+            82%  { opacity: 1; transform: translateX(0); }
+            100% { opacity: 0; transform: translateX(-100%); }
+        }
+        @keyframes dawSlideRight {
+            0%   { opacity: 0; transform: translateX(100%); }
+            14%  { opacity: 1; transform: translateX(0); }
+            82%  { opacity: 1; transform: translateX(0); }
+            100% { opacity: 0; transform: translateX(100%); }
+        }
+        /* Scorrimento continuo dall'ALTO verso il BASSO (non più diagonale):
+           le strisce restano inclinate a 45° come forma, ma il movimento è
+           verticale puro. Il ciclo del pattern, misurato lungo l'asse a
+           45° ogni 28px, proiettato sul solo asse verticale è 28/cos(45°)
+           ≈ 39.6px — usando quel valore lo scorrimento in giù è
+           perfettamente senza cuciture (nessun "salto" visibile al loop). */
+        @keyframes dawStripeScroll {
+            from { transform: translateY(0); }
+            to   { transform: translateY(39.6px); }
+        }
+        /* Varianti "anteprima": entrano e RESTANO (nessun fade-out nella
+           keyframe) finché hideDirectAttackHint() non rimuove l'elemento
+           di netto — usate durante il trascinamento dell'attacco. */
+        .daw-bar--left.daw-bar--hint {
+            animation: dawSlideLeftHold 220ms ease-out forwards;
+        }
+        .daw-bar--right.daw-bar--hint {
+            animation: dawSlideRightHold 220ms ease-out forwards;
+        }
+        .daw-bar--right.daw-bar--hint::before { animation-direction: reverse; }
+        /* Attacco diretto POSSIBILE ma non ancora scelto (l'avversario ha
+           mostri, ma questo mostro può comunque colpire i Life Point): le
+           bande ci sono — dicono "puoi farlo" — ma più tenui. Tornano piene
+           quando la freccia si aggancia alla mano (.daw-agganciato tolto
+           l'attesa). La transizione è sul contenitore, così non disturba le
+           animazioni d'ingresso delle due barre. */
+        #directAttackHint { transition: opacity 160ms ease-out; }
+        #directAttackHint .daw-bar { transition: width 160ms ease-out; }
+        #directAttackHint.daw-in-attesa { opacity: 0.55; }
+        /* In attesa anche più strette: su un telefono le bande piene
+           coprono le colonne laterali del campo, e finché non hai scelto
+           l'attacco diretto quei mostri ti servono ancora (visto in foto). */
+        #directAttackHint.daw-in-attesa .daw-bar { width: clamp(20px, 2.8vw, 42px); }
+        #directAttackHint.daw-in-attesa .daw-bar-text { font-size: clamp(0.56rem, 1.2vw, 0.82rem); }
+        @keyframes dawSlideLeftHold {
+            0%   { opacity: 0; transform: translateX(-100%); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes dawSlideRightHold {
+            0%   { opacity: 0; transform: translateX(100%); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+        .daw-center-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.6);
+            font-size: clamp(1.4rem, 5vw, 2.6rem);
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #fff;
+            background: linear-gradient(180deg, #fff0e0 0%, #f7d774 30%, #e74c3c 78%, #a52a1f 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(231,76,60,0.65);
+            opacity: 0;
+            white-space: nowrap;
+            animation: dawCenterPop 1400ms cubic-bezier(0.16, 0.84, 0.44, 1) forwards;
+        }
+        @keyframes dawCenterPop {
+            0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            22%  { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+            30%  { transform: translate(-50%, -50%) scale(1); }
+            80%  { opacity: 1; }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+        }
+        .battle-hit {
+            position: fixed;
+            pointer-events: none;
+            border-radius: 16px;
+            background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255, 198, 0, 0.45) 22%, rgba(255, 80, 80, 0.18) 49%, transparent 74%);
+            animation: battleHitPulse 0.55s ease-out forwards;
+            z-index: 10000;
+        }
+        .drag-preview {
+            position: fixed; left: 0; top: 0; z-index: 100000; pointer-events: none; transform: rotate(3deg) scale(1.05); box-shadow: 0 10px 22px rgba(0,0,0,0.38);
+            opacity: 0.95;
+            /* La posizione la scrive actions.js a ogni fotogramma via transform: una transizione ereditata da
+               .card la farebbe inseguire il dito con 0,3 s di ritardo ("carta nel miele"). */
+            transition: none !important;
+            will-change: transform;
+            margin: 0;
+            /* Stessa dimensione della carta in mano (non var(--card-w) del
+               .card di base, più piccola): senza questo il fantasma cambia
+               taglia di scatto appena parte il trascinamento. */
+            width: var(--hand-card-w);
+            height: var(--hand-card-h);
+        }
+        @keyframes positionPop {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.08) rotate(-5deg); }
+            100% { transform: scale(1); }
+        }
+        /* L'impatto: il bollino arriva ruotato e si raddrizza schiantandosi
+           in posizione, invece di limitarsi a ingrandirsi. Il lampo di
+           brightness sul primo fotogramma e' quello che lo fa sembrare un
+           colpo invece di una comparsa. */
+        @keyframes badgePop {
+            0%   { transform: scale(0.3) rotate(-40deg); opacity: 0; filter: brightness(2.4); }
+            45%  { transform: scale(1.22) rotate(6deg); opacity: 1; filter: brightness(1.5); }
+            65%  { transform: scale(0.96) rotate(-2deg); filter: brightness(1); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; filter: brightness(1); }
+        }
+        .position-badge.badge-defense {
+            animation: badgePopDefense 0.7s ease forwards;
+        }
+        @keyframes floatDamage {
+            0% { transform: translateY(0) scale(0.7); opacity: 0; }
+            20% { transform: translateY(-8px) scale(1); opacity: 1; }
+            100% { transform: translateY(-42px) scale(1.04); opacity: 0; }
+        }
+        @keyframes battleHitPulse {
+            0% { transform: scale(0.8); opacity: 0; }
+            40% { transform: scale(1.08); opacity: 0.95; }
+            100% { transform: scale(1.22); opacity: 0; }
+        }
+        .hand {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 10px;
+            /* Margine superiore ridotto al minimo: solo quanto basta perché
+               la mano non risulti "attaccata" alla riga di Magie/Trappole,
+               lasciando il resto dello spazio verticale al terreno. */
+            margin: clamp(4px, 0.8vh, 10px) 0 0;
+            flex: 0 0 auto;
+            /* MAI più righe (richiesta esplicita dell'utente): prima
+               "wrap" lasciava che troppe carte andassero a capo su
+               schermi stretti — ora fitHandCardsInOneRow() (game-flow.js,
+               chiamata alla fine di renderPlayerHand/renderBotHand)
+               sovrappone leggermente le carte quando serve per farle
+               stare tutte su una riga sola, invece di andare a capo. */
+            flex-wrap: nowrap;
+            padding-top: var(--hand-lift);
+            overflow: visible;
+            /* Senza questo, una mano vuota (zero .card renderizzate da
+               renderPlayerHand/renderBotHand in game-flow.js) collassa a
+               solo padding-top: .battlefield (flex:1 1 auto) si allarga
+               per riempire lo spazio liberato e .battlefield-main
+               (justify-content:center) ricentra tutto il campo un po' più
+               in alto/basso — l'intera arena "sfasa" solo perché la mano
+               si è svuotata. Riservare sempre l'altezza di una carta
+               tiene la riga della mano a dimensione costante a prescindere
+               dal numero di carte. */
+            min-height: calc(var(--hand-card-h) + var(--hand-lift));
+        }
+        /* z-index sulle CARTE, non su .hand (il contenitore resta statico,
+           z-index:auto): .battlefield-side/.battlefield-main/.field-section/
+           .field-board hanno tutti z-index:1 e bollono fino allo stesso
+           stacking context di .game-container (l'unico vero ancestor
+           posizionato con uno z-index proprio) — .hand, essendo statico,
+           lascia bollire fin lì anche le proprie carte (.card è sempre
+           position:relative, vedi js/ui/card.css), quindi senza questo le
+           carte ferme in mano restavano SOTTO al campo ogni volta che lo
+           sfioravano (v-lift, bordo inferiore della riga Magie/Trappole).
+           5 basta a superare quell'1 senza toccare :hover/.selected (80,
+           sempre più alto, per restare sopra le altre carte in mano). */
+        .hand .card {
+            width: var(--hand-card-w);
+            height: var(--hand-card-h);
+            z-index: 5;
+        }
+        .hand .card.dragging-source {
+            opacity: 0;
+            pointer-events: none;
+            transition: none;
+        }
+        /* Stesso motivo dello z-index su .selected più sopra: al passaggio
+           del mouse/dito una carta in mano si solleva e ingrandisce
+           (.card:hover in js/ui/card.css, condivisa con Cartoteca/
+           Creazione Deck — qui la scopiamo SOLO alla mano del duello per
+           non toccare quegli altri contesti) e può finire sotto la riga
+           Magie/Trappole del campo appena sopra. */
+        .hand .card:hover { z-index: 80; }
+        /* VENTAGLIO (valori scritti da applicaVentaglioMano in game-flow.js). `rotate`/`translate` e non
+           `transform`: quello è della selezione, dell'hover e del volo del trascinamento. Il perno sta sotto la
+           carta, come in una mano vera. Una carta sfiorata o selezionata si raddrizza e perde l'abbassamento. */
+        .hand .card {
+            rotate: var(--fan-a, 0deg);
+            translate: 0 var(--fan-y, 0px);
+            transform-origin: 50% 130%;
+        }
+        .hand--bot .card { transform-origin: 50% -30%; }
+        .hand:not(.hand--bot) .card.selected,
+        .hand:not(.hand--bot) .card:hover { rotate: 0deg; translate: 0 0; }
+        .hand .card.dragging-source { rotate: 0deg; translate: 0 0; }
+        /* Telefono in ORIZZONTALE: la mano sta già sul bordo dello schermo e le carte laterali, abbassate,
+           verrebbero tagliate (misurato su 780x360 e 915x412): resta piatta come prima. */
+        @media (max-height: 520px) and (orientation: landscape) {
+            .hand .card, .hand--bot .card { rotate: 0deg; translate: 0 0; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .hand .card { transition: none; }
+        }
+        /* FLUIDITÀ della mano. La regola di base (.card in card.css) anima transform E box-shadow per 0,3 s
+           con `ease`: l'ombra costringe a ridipingere la carta (con il suo container query e l'overflow)
+           a ogni fotogramma, e 0,3 s di curva simmetrica fa partire il sollevamento piano e fermare
+           lentamente. Qui, solo per la mano: transform sul compositor, durata breve, partenza decisa e
+           arrivo morbido (curva di decelerazione), ombra che cambia di colpo. */
+        .hand .card {
+            /* Sollevare e abbassare condividono la stessa curva morbida (partenza dolce, arrivo che si posa);
+               l'alone cambia con lo stesso ritmo invece di comparire di scatto. */
+            transition: transform 0.3s cubic-bezier(0.22, 0.8, 0.25, 1), box-shadow 0.3s ease,
+                        rotate 0.3s cubic-bezier(0.22, 0.8, 0.25, 1), translate 0.3s cubic-bezier(0.22, 0.8, 0.25, 1);
+            will-change: transform;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Risposta immediata al tocco, prima ancora che la selezione si disegni. */
+        .hand .card:active:not(.selected):not(.dragging-source) {
+            transform: translateY(-6px) scale(1.04);
+            transition-duration: 0.12s;
+        }
+        /* Mano del Bot: solo dorsi (renderBotHand() in game-flow.js ricrea
+           tanti retro-carta quante sono le carte davvero in gameState.botHand),
+           sopra il campo invece che sotto — specchiando la mano del
+           giocatore, che sta sotto. Nessuna interazione: non si trascinano,
+           non hanno hover, sono solo informazione ("quante carte ha in
+           mano l'avversario"), mai il loro contenuto. */
+        .hand--bot {
+            align-items: flex-start;
+            gap: 5px;
+            margin: 0 0 clamp(3px, 0.7vh, 8px);
+            padding-top: 0;
+            /* Stesse dimensioni di .hand sopra, ma con la carta del Bot
+               (--bot-hand-card-h, più piccola) e senza --hand-lift (qui
+               padding-top è 0). */
+            min-height: var(--bot-hand-card-h);
+        }
+        .hand--bot .card {
+            width: var(--bot-hand-card-w);
+            height: var(--bot-hand-card-h);
+            cursor: default;
+            pointer-events: none;
+        }
+        .hand--bot .card:hover { transform: none; box-shadow: none; }
+        .controls { text-align: center; margin: 20px 0; display: flex; justify-content: center; gap: 10px; }
+        /* Vetro scuro + bordo luminoso invece del rosso/blu piatto: stessa
+           "famiglia" visiva dei bottoni dei modali (vedi .modal-btn/
+           .quick-popover-btn più sotto), colore del bagliore per
+           significato — oro per l'azione principale (es. "Nuova Partita"
+           a fine duello), zaffiro per i controlli di fase. */
+        .btn {
+            background: linear-gradient(145deg, #3a2c10, #201705);
+            color: white; border: 1px solid rgba(243,156,18,0.65); padding: 12px 25px; border-radius: 25px; cursor: pointer;
+            font-size: 1em; font-weight: bold; transition: all 0.3s ease;
+            box-shadow: 0 0 14px rgba(243,156,18,0.3), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 0 22px rgba(243,156,18,0.5), inset 0 1px 0 rgba(255,255,255,0.1); }
+        .btn:disabled { background: #555; border-color: transparent; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn.phase-btn {
+            background: linear-gradient(145deg, #0f1928, #0a2638);
+            border: 1px solid rgba(90,170,255,0.55);
+            box-shadow: 0 0 14px rgba(90,170,255,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+        .btn.phase-btn:hover { box-shadow: 0 0 20px rgba(90,170,255,0.45), inset 0 1px 0 rgba(255,255,255,0.1); }
+        .phase-stepper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: clamp(4px, 0.9vw, 14px);
+            flex-wrap: wrap;
+            margin: clamp(2px, 1vh, 10px) 0 clamp(4px, 1vh, 12px);
+            position: relative;
+        }
+        .phase-step {
+            position: relative;
+            z-index: 1;
+            min-width: clamp(34px, 8vw, 130px);
+            padding: clamp(5px, 0.9vh, 10px) clamp(6px, 1vw, 12px);
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.16);
+            color: #dfe7f7;
+            font-size: clamp(0.62rem, 1.3vw, 0.92rem);
+            transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+        .phase-step::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -14px;
+            width: 16px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(243,156,18,0.55), rgba(255,255,255,0.18));
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+        .phase-step:last-child::after {
+            display: none;
+        }
+        .phase-step .step-badge {
+            width: clamp(18px, 3.6vw, 26px);
+            height: clamp(18px, 3.6vw, 26px);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.16);
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+        /* Icona-emoji per fase (🎴 Pesca, ⏳ Standby, 🔮 Main, ⚔️ Battaglia,
+           🏁 Fine): su desktop il numero basta (c'è già la label per
+           esteso accanto), l'icona resta nascosta — su mobile si scambiano
+           (vedi @media più sotto), perché a badge piccolissimo un numero
+           nudo non dice nulla della fase senza leggere la label, che lì
+           era stata nascosta per spazio. */
+        .phase-step .step-icon { display: none; }
+        .phase-step.active {
+            background: linear-gradient(135deg, rgba(243,156,18,0.32), rgba(192, 57, 43, 0.24));
+            border-color: #f39c12;
+            box-shadow: 0 0 16px rgba(243,156,18,0.3);
+            color: white;
+            transform: translateY(-2px) scale(1.02);
+        }
+        .phase-step.completed {
+            background: linear-gradient(135deg, rgba(46,204,113,0.24), rgba(39,174,96,0.18));
+            border-color: #2ecc71;
+            color: white;
+            transform: translateY(-1px);
+        }
+        .phase-step .step-badge {
+            transition: transform 0.25s ease, background 0.25s ease;
+        }
+        .phase-step.active .step-badge,
+        .phase-step.completed .step-badge {
+            transform: scale(1.05);
+            background: rgba(255,255,255,0.24);
+        }
+        /* Barra fasi compatta, coerente con pannelli e menu del gioco. Queste regole sono
+           volutamente additive sopra il vecchio blocco: mantengono gli
+           stessi nodi e gli stessi click handler, ma rendono l'ingombro
+           prevedibile (una sola riga, flex:1, min-width:0) durante resize. */
+        .phase-stepper {
+            gap: clamp(3px, 0.55vw, 9px);
+            flex-wrap: nowrap;
+            /* Stessa impronta orizzontale esatta di .field-row: sette
+               slot (5 Mostri + le 2 zone speciali esterne) e sei gap.
+               min(100%, ...) impedisce comunque di uscire dalla colonna
+               centrale se un viewport anomalo la rende piu' stretta. */
+            width: min(100%, calc(var(--field-slot-w) + var(--field-slot-w) + var(--field-slot-w) + var(--field-slot-w) + var(--field-slot-w) + var(--field-slot-w) + var(--field-slot-w) + var(--field-gap) + var(--field-gap) + var(--field-gap) + var(--field-gap) + var(--field-gap) + var(--field-gap)));
+            box-sizing: border-box;
+            margin: clamp(2px, 0.75vh, 8px) auto clamp(3px, 0.8vh, 9px);
+            /* Niente padding ai lati e i pulsanti spinti ai due capi: il
+               primo comincia dove comincia la casella Terreno, l'ultimo
+               finisce dove finisce il Cimitero, anche quando i pulsanti
+               hanno raggiunto il loro max-width e avanzerebbe spazio. */
+            padding: clamp(4px, 0.55vw, 7px) 0;
+            justify-content: space-between;
+            isolation: isolate;
+            container-type: inline-size;
+            container-name: phase-rail;
+            overflow: hidden;
+            border: 0;
+            border-radius: 12px;
+            background: linear-gradient(90deg, transparent, rgba(7,8,13,.32) 8%, rgba(18,14,8,.34) 50%, rgba(7,8,13,.32) 92%, transparent);
+            box-shadow: inset 0 -1px 0 rgba(247,215,116,.12), 0 4px 14px rgba(0,0,0,.12);
+        }
+        .phase-stepper::before {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            left: 5.5%; right: 5.5%; top: 50%;
+            height: 1px;
+            transform: translateY(-50%);
+            background: linear-gradient(90deg, transparent, rgba(247,215,116,.12) 18%, rgba(247,215,116,.26) 50%, rgba(247,215,116,.12) 82%, transparent);
+            box-shadow: none;
+        }
+        .phase-step {
+            flex: 1 1 0;
+            min-width: 0;
+            max-width: 138px;
+            justify-content: center;
+            gap: clamp(4px, .55vw, 8px);
+            padding: clamp(4px, .55vh, 7px) clamp(5px, .65vw, 9px);
+            border-radius: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            background: linear-gradient(145deg, rgba(19,20,27,.28), rgba(35,27,16,.2));
+            border-color: transparent;
+            color: rgba(224,218,202,.7);
+            font-size: clamp(.58rem, .86vw, .78rem);
+            letter-spacing: .055em;
+            text-transform: none;
+            box-shadow: none;
+        }
+        .phase-step::after {
+            right: calc(clamp(3px, .55vw, 9px) * -1 - 1px);
+            width: calc(clamp(3px, .55vw, 9px) + 2px);
+            background: rgba(247,215,116,.15);
+        }
+        .phase-step .step-badge {
+            width: clamp(24px, 2.35vw, 32px);
+            height: clamp(24px, 2.35vw, 32px);
+            position: relative;
+            overflow: visible;
+            border-radius: 50%;
+            color: #c8bea3;
+            background: radial-gradient(circle at 38% 30%, rgba(247,215,116,.12), rgba(5,7,12,.38) 68%);
+            border: 1px solid rgba(247,215,116,.11);
+            box-shadow: inset 0 0 8px rgba(0,0,0,.18);
+        }
+        .phase-step .step-num {
+            position: absolute;
+            right: -4px; top: -5px;
+            min-width: 12px; height: 12px;
+            padding: 0 2px;
+            box-sizing: border-box;
+            display: grid;
+            place-items: center;
+            border-radius: 999px;
+            background: #18171a;
+            border: 1px solid rgba(247,215,116,.25);
+            color: #cbbd94;
+            font-size: 7px;
+            line-height: 1;
+        }
+        .phase-step .step-icon { display: inline-flex; width: 70%; height: 70%; }
+        .phase-step .step-icon svg {
+            display: block;
+            width: 100%; height: 100%;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            overflow: visible;
+        }
+        .phase-step .step-label { overflow: hidden; text-overflow: ellipsis; font-weight: 750; }
+        /* Responsive basato sul RAIL, non sul viewport: pannelli laterali,
+           aspect ratio e dimensioni delle carte possono lasciare al campo
+           larghezze molto diverse sullo stesso schermo. Nella fascia
+           intermedia usa nomi brevi completi; sotto 570px bastano le icone.
+           Nessuna fase deve mai apparire come "Battagl...". */
+        @container phase-rail (max-width: 860px) {
+            .phase-step .step-label {
+                font-size: 0;
+                text-overflow: clip;
+            }
+            .phase-step .step-label::after {
+                content: attr(data-compact);
+                font-size: clamp(.56rem, 1.15vw, .69rem);
+                letter-spacing: .035em;
+            }
+        }
+        @container phase-rail (max-width: 570px) {
+            .phase-step .step-label { display: none; }
+        }
+        .phase-step.completed {
+            background: rgba(18,18,20,.2);
+            border-color: transparent;
+            color: rgba(190,186,175,.54);
+            transform: none;
+        }
+        .phase-step.active {
+            background: radial-gradient(circle at 28% 30%, rgba(255,224,137,.18), transparent 42%), linear-gradient(135deg, rgba(71,47,13,.42), rgba(23,18,11,.28));
+            border-color: transparent;
+            color: #fff1ca;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 14px rgba(0,0,0,.18), 0 0 16px rgba(225,174,67,.12);
+        }
+        .phase-step.active .step-badge,
+        .phase-step.completed .step-badge {
+            transform: none;
+            color: #c7bd9f;
+            background: rgba(42,40,35,.22);
+            border-color: rgba(195,181,139,.1);
+            box-shadow: none;
+        }
+        .phase-step.active .step-badge {
+            color: #ead18d;
+            background: radial-gradient(circle at 38% 30%, rgba(255,240,190,.32), rgba(105,70,18,.5) 58%, rgba(25,18,8,.62));
+            border-color: rgba(247,215,116,.3);
+            box-shadow: 0 0 13px rgba(239,188,76,.22), inset 0 0 7px rgba(255,236,174,.08);
+            animation: phaseBadgePulse 2.6s ease-in-out infinite;
+        }
+        .phase-step.active::before {
+            content: '';
+            position: absolute;
+            inset: auto 18% -1px;
+            height: 2px;
+            border-radius: 999px;
+            pointer-events: none;
+            background: linear-gradient(90deg, transparent, rgba(255,232,165,.82), transparent);
+            transform: none;
+            animation: none;
+        }
+        @keyframes phaseBadgePulse {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.025); filter: brightness(1.06); }
+        }
+        @keyframes phaseEnergySweep {
+            0%, 38% { transform: translateX(-120%); opacity: 0; }
+            52% { opacity: 1; }
+            76%, 100% { transform: translateX(120%); opacity: 0; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .phase-step,
+            .phase-step .step-badge { transition: none; animation: none !important; }
+            .phase-step.active::before { display: none; }
+        }

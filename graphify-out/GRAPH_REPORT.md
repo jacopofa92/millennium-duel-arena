@@ -1,17 +1,17 @@
-# Graph Report - millennium-duel-arena  (2026-11-12)
+# Graph Report - millennium-duel-arena  (2026-11-13)
 
 ## Corpus Check
-- 787 files · ~1,740,532 words
+- 791 files · ~1,724,478 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 64 file(s) not represented in the graph (top: .css 51, .log 6, .ttf 3)
+- Unclassified: 75 file(s) not represented in the graph (top: .css 63, .log 5, .ttf 3)
 
 ## Summary
-- 8488 nodes · 15469 edges · 676 communities (346 shown, 330 thin omitted)
-- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 1373 edges (avg confidence: 0.85)
+- 8603 nodes · 15609 edges · 691 communities (351 shown, 340 thin omitted)
+- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 1375 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `4f1d9c9d`
+- Built from commit: `017ec36e`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -25,7 +25,7 @@
 - effects.js
 - Scena
 - mp-lobby.js
-- hi
+- D
 - .emit
 - J
 - artwork-alternativi.js
@@ -113,14 +113,14 @@
 - shop-catalog.js
 - mp-raid-campo.js
 - yn
-- jc
 - Sx
-- makeContext
+- mg
+- jc
 - duel-session.js
 - mp-raid.js
 - fx-webgl.js
-- _binaryDecode
-- nr
+- Pr
+- simula-economia.js
 - hu
 - audit-supporti-toon.js
 - audit-matrice-completa.js
@@ -130,21 +130,20 @@
 - audit-supporti-occhi-blu.js
 - modalita.d.ts
 - challenge-tracker.js
-- getDefinition
 - createNetworkClient
 - duel-feedback.js
 - Tween
 - harness.js
 - Co
 - uc
-- Xc
+- findTriggerCandidates
 - audit-kaiba-supporti-finali.js
 - audit-yami-supporti-finali.js
-- fireTrigger
+- makeContext
 - grido-evocazione.js
 - _0
 - fu
-- mg
+- hi
 - td
 - kn
 - audit-joey-supporti-finali.js
@@ -162,7 +161,7 @@
 - openDuel
 - Au
 - bt
-- Km
+- .execute
 - ja
 - ys
 - Xi
@@ -179,7 +178,7 @@
 - card-detail.js
 - conto-alla-rovescia.js
 - ce
-- li
+- _debug
 - zi
 - filters
 - Zu
@@ -198,12 +197,12 @@
 - abilitaZoom
 - la
 - Ec
-- pc
+- Ix
 - ho
-- Pr
+- lo
 - Qv
 - scripts
-- catalogo-campi-e-musiche.spec.js
+- AIShared
 - mcpServers
 - ai-hard.js
 - card-drop-animation.js
@@ -215,10 +214,10 @@
 - dn
 - evidenzia-giocabili.js
 - guardrail-azioni-del-motore-e-tipi.spec.js
-- ks
+- Xc
 - Ws
 - compilerOptions
-- build-cards-data.js
+- Dr
 - custom-cards.js
 - Fo
 - _bootstrapEvent
@@ -228,21 +227,21 @@
 - Zl
 - guardrail-script-delle-pagine.spec.js
 - modalita-puzzle.spec.js
-- $a
+- li
 - simula-farming-carte.js
 - initAudioManager
 - segnalini-webgl.js
 - decisioni.js
-- graveyardOf
+- DR
 - avviaDuelloPreparato
 - apri
 - duel-cinematics.js
 - inclinazione.js
 - lancio-webgl.js
 - recupero-copia.js
-- a1
-- Ue
-- ng
+- getDefinition
+- trigger
+- build-cards-data.js
 - login-bonus-giornaliero.spec.js
 - Se
 - Xs
@@ -260,15 +259,15 @@
 - onboarding.js
 - render
 - profile-stats.js
-- tu
+- Tween
 - run-all.js
 - guardrail-ia-da-ogni-posto.spec.js
 - fc
-- nv
-- Jl
+- Fr
+- ia-attivazioni-sensate.spec.js
 - .add
 - Ps
-- ._getGpuBitmapText
+- audit-supporti-divinita.js
 - poll
 - carte-vive-e-parallasse.spec.js
 - creaFintoCloud
@@ -283,18 +282,18 @@
 - effect-templates.js
 - multiplayer.js
 - story/story-ritocchi.js
-- audit-supporti-divinita.js
+- BotAI
 - An
 - Ls
-- sblocchi-progresso-tornei-settimana-caccia.spec.js
-- build-ui-thumbnails.js
-- gemello-posti.js
+- guardrail-pagine-con-carte.spec.js
+- AIHard
+- nv
 - Qu
-- ia-attivazioni-sensate.spec.js
+- gemello-posti.js
 - modalita-settimana-e-caccia.spec.js
-- DR
+- .addChild
 - guardrail-parti-card-effects.spec.js
-- guardrail-protocollo-multiplayer-unico.spec.js
+- Jl
 - impostazioni-default-alti-e-profondita-menu.spec.js
 - Kn
 - audio-library.js
@@ -303,20 +302,20 @@
 - rivincita-mode.js
 - splash-webgl.js
 - Bu
-- to
-- storia-stelle-per-arco.spec.js
+- Qa
+- ia.d.ts
 - sc
 - tag-team-fase1.spec.js
-- Fr
+- build-ui-thumbnails.js
 - sposta-funzioni.js
 - monta
 - guardrail-riferimenti-audio.spec.js
-- negozio-cambio-valute.spec.js
+- zs
 - na
 - storia-dopo-il-duello.spec.js
 - cancello-solo-approvati.spec.js
 - scheda-carta-unica.spec.js
-- hn
+- tu
 - character-unlocks.js
 - guardrail-necrovalley.spec.js
 - tag-senza-testa.js
@@ -338,17 +337,17 @@
 - carta-a-schermo-intero.spec.js
 - cartoteca-funziona-in-entrambe-le-forme.spec.js
 - equip-con-scelta-del-bersaglio.spec.js
-- guardrail-pagine-con-carte.spec.js
-- server-keepalive.spec.js
 - disegna
-- sblocchi-modalita-e-regole.spec.js
-- modalita-rivincite.spec.js
-- .getOptimalTexture
-- Qa
+- server-keepalive.spec.js
 - sync-script-groups.js
+- sblocchi-modalita-e-regole.spec.js
+- to
+- .getOptimalTexture
+- hn
+- catalogo-campi-e-musiche.spec.js
 - tutorial-tag-lezione.spec.js
 - n
-- build-card-effect-ids.js
+- Ue
 - deck-legality.js
 - story-admin-tools.js
 - stato.js
@@ -371,26 +370,26 @@
 - autowin-storie-solo-admin.spec.js
 - guardrail-vocabolario-effetti.spec.js
 - ambiente-mappe-storia.spec.js
-- guardrail-nucleo-senza-dom.spec.js
+- build-card-effect-ids.js
 - guardrail-estensione-immagini.spec.js
 - esito-duello-non-taglia.spec.js
-- guardrail-bersagli-dichiarati.spec.js
+- guardrail-nucleo-senza-dom.spec.js
 - multiplayer-sala-layout.spec.js
-- Tx
+- mh
 - tutorial-lezioni-brevi.spec.js
 - mappa-celebra-tappa.spec.js
 - menu-non-scorre-in-orizzontale.spec.js
 - negozio-admin-riacquisto-deck.spec.js
 - cartoteca-vedi-ologramma.spec.js
-- sandbox-solo-admin.spec.js
-- guardrail-passo-comune.spec.js
+- sblocchi-progresso-tornei-settimana-caccia.spec.js
+- audit-archetipi-classici.spec.js
 - pulsante-fasi-laterale.spec.js
-- profilo-testata.spec.js
-- guardrail-fromzone.spec.js
+- my
+- Xr
 - modalita-storia.spec.js
 - mp-pedina.js
-- webgl-catena-mappe-torre.spec.js
-- audit-archetipi-classici.spec.js
+- duello-gemello.js
+- guardrail-protocollo-multiplayer-unico.spec.js
 - salvataggio.d.ts
 - arena-options.js
 - keep-awake.js
@@ -406,21 +405,20 @@
 - ko
 - s0
 - run
-- impronta-funzioni.js
-- torneo-kaiba-preliminari.spec.js
-- .addChild
+- AIMedium
+- iv
+- guardrail-passo-comune.spec.js
 - duellanti-da-sbloccare.spec.js
-- du
-- g
-- dark-hole-vortex-revamp.spec.js
-- guardrail-ritocchi-storia.spec.js
-- W
+- tutorial-lezione-col-nonno.spec.js
+- modalita-rivincite.spec.js
+- ks
+- missioni-giornaliere-generiche.spec.js
 - posa-danno.js
 - guardrail-mp3-senza-copertina.spec.js
 - fine-duello-premi-non-sbordano.spec.js
-- guardrail-copertura-avvio.spec.js
+- impronta-stili-duello.js
 - service-worker-redirect-del-sito.spec.js
-- field-ambience-all-fields.spec.js
+- guardrail-url-dei-css.spec.js
 - salvataggio-non-si-perde.spec.js
 - sfide-nuove-famiglie.spec.js
 - emoji-tema.js
@@ -460,42 +458,58 @@
 - torre-db.js
 - annullaEDistruggiChiLaBersaglia
 - canReactToTargetDeclare
-- pedine-personaggi-ui.spec.js
+- negozio-cambio-valute.spec.js
+- globali.d.ts
 - sala-uscita.js
-- sandbox-field-switch-exit.spec.js
+- salvataggio-forma.spec.js
 - guardrail-scala-carte.spec.js
 - ologrammi-webgl.spec.js
 - carta-dettaglio-mobile-senza-inclinazione.spec.js
 - sala-tavolo-1v1.js
 - statistiche.js
-- iv
+- webgl-catena-mappe-torre.spec.js
 - lancio-moneta-dado-webgl.spec.js
-- rare-hunters-roster.spec.js
+- impronta-funzioni.js
 - tag-duellanti-bloccati.spec.js
-- summon-effect-card-anchor.spec.js
+- torneo-kaiba-preliminari.spec.js
 - negozio-buste-limite-giornaliero.spec.js
 - sala-ingresso.js
-- storia-scene-cinematiche.spec.js
-- tornei-difficolta-selezionata.spec.js
-- torneo-regno-castello-lineare.spec.js
-- apertura-post-morra-mobile.spec.js
-- cartoteca-fonti-acquisizione.spec.js
-- emoji-a-tema.spec.js
-- storie-admin-premi-unici.spec.js
+- audio-ww1-priorita.spec.js
+- cinematiche-carte-iconiche-quarto-gruppo.spec.js
+- storia-stelle-per-arco.spec.js
 - editor-mazzo-scheda-e-riscontro.spec.js
+- orologio-del-server.spec.js
+- passo-comune-a-posti.spec.js
+- raigeki-lightning-effect.spec.js
+- field-ambience-all-fields.spec.js
 - multiplayer-modalita-sala.spec.js
+- tag-team-fase2.spec.js
+- guardrail-gruppi-script.spec.js
+- kaiba-avatar-per-contesto.spec.js
+- multiplayer-ingresso-senza-scorrimento.spec.js
+- multiplayer-kaibacorp-connection-ui.spec.js
+- dark-hole-vortex-revamp.spec.js
+- nitemare-separato.spec.js
+- sbustamento-striscia-come-mano.spec.js
+- guardrail-elenco-effetti.spec.js
+- storia-scene-cinematiche.spec.js
+- guardrail-targeting-attendibile.spec.js
+- tag-pagina-tabellone.spec.js
+- ._getGpuBitmapText
+- ologrammi-visibili.spec.js
+- ParentNode
 
 ## God Nodes (most connected - your core abstractions)
 1. `load()` - 71 edges
 2. `U` - 65 edges
 3. `hr` - 61 edges
 4. `J()` - 61 edges
-5. `giocaPartita()` - 54 edges
-6. `fieldOf()` - 54 edges
-7. `getDefinition()` - 51 edges
-8. `openDuel()` - 51 edges
+5. `fieldOf()` - 56 edges
+6. `giocaPartita()` - 54 edges
+7. `openDuel()` - 52 edges
+8. `getDefinition()` - 51 edges
 9. `constructor()` - 49 edges
-10. `_returnResult()` - 48 edges
+10. `EngineActions` - 48 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `disegna()` --indirect_call--> `opzioni()`  [INFERRED]
@@ -504,31 +518,31 @@
   tests/specs/multiplayer-protocollo-obbligatorio.spec.js → js/ui/fx-webgl-scena.js
 - `makeContext()` --indirect_call--> `addToLog()`  [INFERRED]
   js/engine/duel-engine.js → js/engine/canale-partita.js
+- `fotografa()` --calls--> `openDuel()`  [EXTRACTED]
+  tools/impronta-stili-duello.js → tests/helpers/harness.js
 - `campo()` --calls--> `creaContesto()`  [EXTRACTED]
   tests/specs/ia-attivazioni-sensate.spec.js → tools/duello-senza-testa.js
-- `richiesti()` --calls--> `crea()`  [EXTRACTED]
-  server/accesso-contenuti.js → js/cloud/content-access.js
 
 ## Import Cycles
 - None detected.
 
-## Communities (676 total, 330 thin omitted)
+## Communities (691 total, 340 thin omitted)
 
 ### Community 0 - "pixi.min.js"
 Cohesion: 0.01
-Nodes (79): Ab(), apply(), _applyLegacy(), _applyOptimized(), Av(), $B(), bB(), bounds() (+71 more)
+Nodes (80): Ab(), Av(), $B(), bB(), BE(), bounds(), _canUseTintForStyle(), Ci() (+72 more)
 
 ### Community 1 - "supabase.min.js"
 Cohesion: 0.02
-Nodes (77): add(), appendParams(), applyTransformOptsToQuery(), At(), build(), catch(), cloneRequestState(), Cn() (+69 more)
+Nodes (88): add(), appendParams(), applyTransformOptsToQuery(), Ar(), assertFieldSize(), At(), _binaryDecode(), binaryEncode() (+80 more)
 
 ### Community 2 - "ref_path"
 Cohesion: 0.01
-Nodes (70): path, path, path, path, path, path, path, path (+62 more)
+Nodes (65): path, path, path, path, path, path, path, path (+57 more)
 
 ### Community 3 - "ref_fs"
 Cohesion: 0.02
-Nodes (66): fs, path, fs, path, RADICE, fs, path, fs (+58 more)
+Nodes (68): fs, path, fs, path, RADICE, fs, path, path (+60 more)
 
 ### Community 4 - "save-manager.js"
 Cohesion: 0.06
@@ -550,13 +564,17 @@ Nodes (38): Comandi, perChi(), ascolta(), ascoltato(), attendi(), chiedi(), cont
 Cohesion: 0.05
 Nodes (72): accessoConcesso(), aggiornaPremiSala(), aggiornaPronto(), aggiornaRaidPerRuolo(), aggiornaSetupPerRuolo(), aggiornaSpecchioPerRuolo(), annullaCollegamento(), annunciaStato() (+64 more)
 
+### Community 9 - "D"
+Cohesion: 0.07
+Nodes (27): _applyKerning(), buildGradient(), buildLinearGradient(), buildRadialGradient(), D, _drawGlyph(), _drawLetterSpacing(), EC() (+19 more)
+
 ### Community 10 - ".emit"
 Cohesion: 0.04
-Nodes (30): ao(), buildGradient(), buildLinearGradient(), buildRadialGradient(), ca, cv(), D, DA() (+22 more)
+Nodes (32): ao(), build(), ca, CT, cv(), DA(), EG, ei (+24 more)
 
 ### Community 11 - "J"
-Cohesion: 0.06
-Nodes (95): _acquireLock(), _adminDeletePasskey(), _adminListPasskeys(), _approveAuthorization(), _authenticate(), _autoRefreshTokenTick(), _callRefreshToken(), _challenge() (+87 more)
+Cohesion: 0.07
+Nodes (72): _adminDeletePasskey(), _adminListPasskeys(), _approveAuthorization(), _authenticate(), _challenge(), _challengeAndVerify(), _createCustomProvider(), _createOAuthClient() (+64 more)
 
 ### Community 12 - "artwork-alternativi.js"
 Cohesion: 0.05
@@ -564,7 +582,7 @@ Nodes (53): amministratore(), comeSiSblocca(), dimenticaStato(), elenco(), leggi
 
 ### Community 13 - "actions.js"
 Cohesion: 0.07
-Nodes (54): applicaPosizioneTrascinamento(), armHandCompatibilityClick(), attemptActivateCard(), attemptMonsterSummon(), chiudiSelezioneASchermo(), clearHandCardSelection(), closeQuickPopover(), consumeHandCompatibilityClick() (+46 more)
+Nodes (52): applicaPosizioneTrascinamento(), armHandCompatibilityClick(), attemptActivateCard(), attemptMonsterSummon(), chiudiSelezioneASchermo(), clearHandCardSelection(), closeQuickPopover(), consumeHandCompatibilityClick() (+44 more)
 
 ### Community 14 - "local-servers.js"
 Cohesion: 0.09
@@ -584,15 +602,15 @@ Nodes (17): CARTELLE, conteggio, controllaCacheServiceWorker(), DIST, elaboraCar
 
 ### Community 19 - "t"
 Cohesion: 0.06
-Nodes (45): ai(), createBucket(), createIndex(), createSignedUploadUrl(), createSignedUrl(), createSignedUrls(), D(), deleteBucket() (+37 more)
+Nodes (47): ai(), createBucket(), createIndex(), createSignedUploadUrl(), createSignedUrl(), createSignedUrls(), D(), deleteBucket() (+39 more)
 
 ### Community 20 - "story-map-editor.js"
 Cohesion: 0.12
 Nodes (49): agganciaEditorBattute(), agganciaInterazioni(), agganciaSceltaCampo(), agganciaSceltaMusica(), agganciaSceltaPersonaggio(), aggiornaCoordinate(), aggiornaLinee(), aggiornaStatoCollegamento() (+41 more)
 
 ### Community 21 - "log"
-Cohesion: 0.09
-Nodes (47): _cancelPendingDisconnect(), channel(), clearHeartbeats(), connect(), connectionState(), connectWithFallback(), disconnect(), flushSendBuffer() (+39 more)
+Cohesion: 0.08
+Nodes (50): _cancelPendingDisconnect(), channel(), clearHeartbeats(), connect(), connectionState(), connectWithFallback(), disconnect(), flushSendBuffer() (+42 more)
 
 ### Community 22 - "card-effects.js"
 Cohesion: 0.06
@@ -604,15 +622,11 @@ Nodes (41): aggiornaSospensione(), atmosfera(), attraversa(), avvia(), campoCorr
 
 ### Community 24 - "waitForOpeningCascade"
 Cohesion: 0.08
-Nodes (26): waitForOpeningCascade(), apri(), path, PRELUDIO(), RADICE, run(), path, PRELUDIO() (+18 more)
-
-### Community 25 - "Ee"
-Cohesion: 0.13
-Nodes (3): bc, Ee, Ic
+Nodes (25): waitForOpeningCascade(), path, RADICE, run(), apri(), path, PRELUDIO(), RADICE (+17 more)
 
 ### Community 26 - "$e"
-Cohesion: 0.09
-Nodes (4): $e, Ff, gp(), Yg
+Cohesion: 0.08
+Nodes (6): dedupeQueue(), $e, Ff, gp(), upload(), Yg
 
 ### Community 27 - "card-effects-4.js"
 Cohesion: 0.06
@@ -623,12 +637,12 @@ Cohesion: 0.05
 Nodes (12): activate(), canActivate(), fontiMagoNero(), onFlip(), onOwnAttackDeclare(), onOwnAttackDeclareBlockSpellsTraps(), onSpecialSummon(), onSummon() (+4 more)
 
 ### Community 30 - "freezeNaturalGameLoop"
-Cohesion: 0.10
-Nodes (17): freezeNaturalGameLoop(), run(), SCHERMI, run(), run(), run(), run(), fs (+9 more)
+Cohesion: 0.11
+Nodes (15): freezeNaturalGameLoop(), run(), SCHERMI, run(), SCHERMI, run(), run(), run() (+7 more)
 
 ### Community 31 - "U"
-Cohesion: 0.07
-Nodes (4): OT, U, Xr, XS()
+Cohesion: 0.08
+Nodes (3): OT, U, XS()
 
 ### Community 32 - "server.js"
 Cohesion: 0.09
@@ -651,20 +665,20 @@ Cohesion: 0.16
 Nodes (37): aggancia(), aggiornaUidInPanchina(), altro(), aPassoComune(), attaccoVietato(), avversarioDi(), avvisa(), avvisaSenzaAttacchi() (+29 more)
 
 ### Community 38 - "ue"
-Cohesion: 0.16
-Nodes (19): au(), Bo(), bR(), Ce(), db(), fb(), HB(), Hi() (+11 more)
+Cohesion: 0.06
+Nodes (38): cb(), au(), Bo(), bR(), Ce(), collectRenderables(), collectRenderablesWithEffects(), db() (+30 more)
 
 ### Community 39 - "duel-engine.js"
-Cohesion: 0.09
-Nodes (13): createTokens(), daSeme(), fusionSummon(), graveyardMoveNegated(), hashStringa(), isFaceUpDuplicateBlocked(), isNecrovalleyOnField(), isNecrovalleyProtectingGraveyard() (+5 more)
+Cohesion: 0.08
+Nodes (14): createTokens(), daSeme(), dealDamage(), fusionSummon(), graveyardMoveNegated(), hashStringa(), isNecrovalleyOnField(), isNecrovalleyProtectingGraveyard() (+6 more)
 
 ### Community 40 - "game-flow.js"
 Cohesion: 0.06
 Nodes (26): animateLifePoints(), attackArrowGlow, attackArrowGradient, attackArrowLine, attackArrowSVG, attackArrowTarget, attackDragStart, createSlotElement() (+18 more)
 
 ### Community 42 - "animaTransizioneCarta"
-Cohesion: 0.17
-Nodes (16): animaTransizioneCarta(), banish(), banishedOf(), banishFromGraveyard(), banishFromHandWithCountdown(), banishTemporarily(), dopoRegola(), legameInPanchina() (+8 more)
+Cohesion: 0.18
+Nodes (23): animaTransizioneCarta(), banish(), banishedOf(), banishFromGraveyard(), banishFromHandWithCountdown(), banishTemporarily(), callCardHandlerWaiting(), discardChosenFromHand() (+15 more)
 
 ### Community 43 - "onViewUpdate"
 Cohesion: 0.06
@@ -679,8 +693,8 @@ Cohesion: 0.09
 Nodes (57): buoniBusta(), chip(), el(), icona(), leggi(), mostra(), oggi(), riscuoti() (+49 more)
 
 ### Community 46 - "de"
-Cohesion: 0.10
-Nodes (39): basename(), BE(), C2(), _clamp(), _cloneSource(), de(), dirname(), extname() (+31 more)
+Cohesion: 0.11
+Nodes (35): basename(), C2(), _clamp(), _cloneSource(), de(), dirname(), extname(), getProtocol() (+27 more)
 
 ### Community 48 - "card-effects-1.js"
 Cohesion: 0.07
@@ -695,40 +709,40 @@ Cohesion: 0.12
 Nodes (27): afterBlockingUi(), autoDiscardHandExcess(), canConductSecondBattlePhase(), changeTurn(), checkGameOver(), clearPhaseTransitionTimeout(), dopoPausaDuello(), drawCardsToHand() (+19 more)
 
 ### Community 51 - "load"
-Cohesion: 0.07
-Nodes (32): cP(), D_(), Dg(), Di, dl(), e_(), _getLoadPromiseAndParser(), hS() (+24 more)
+Cohesion: 0.08
+Nodes (31): D_(), Dg(), Di, e_(), Ft(), $G(), _getLoadPromiseAndParser(), _isSourceReady() (+23 more)
 
 ### Community 52 - "xi"
-Cohesion: 0.11
-Nodes (33): aw(), bf(), Bw(), Cr(), Cw(), Dn(), Ew(), _f() (+25 more)
+Cohesion: 0.12
+Nodes (31): aw(), bf(), Bw(), Cr(), Cw(), Dn(), Ew(), _f() (+23 more)
 
 ### Community 53 - "fieldOf"
-Cohesion: 0.16
-Nodes (20): applyControlTransferBookkeeping(), areMonsterEffectsNegatedFor(), banishFusionSummon(), changePosition(), clearTemporaryAtkDefBonus(), fieldOf(), findEmptyMonsterSlot(), fireControlChangedTrigger() (+12 more)
+Cohesion: 0.14
+Nodes (29): applyControlTransferBookkeeping(), areMonsterEffectsNegatedFor(), banishFusionSummon(), canSpecialSummonFromHand(), changePosition(), clearTemporaryAtkDefBonus(), fieldOf(), findEmptyMonsterSlot() (+21 more)
 
 ### Community 54 - "audit-supporti-mago-nero.js"
 Cohesion: 0.09
 Nodes (29): arg(), average(), AVVERSARI, fs, main(), path, pct(), ROOT (+21 more)
 
 ### Community 55 - "card-effects-3.js"
-Cohesion: 0.07
+Cohesion: 0.06
 Nodes (4): activate(), attivaCannoneDrago(), bersagliCannoneDrago(), canActivate()
 
 ### Community 56 - "constructor"
-Cohesion: 0.05
-Nodes (43): Fa(), analytics(), Bn(), canPush(), constructor(), filterBindings(), ft(), _getPayloadRecords() (+35 more)
+Cohesion: 0.06
+Nodes (33): Fa(), analytics(), Bn(), constructor(), ft(), _getPayloadRecords(), _handleTokenChanged(), _initializeOptions() (+25 more)
 
 ### Community 57 - "ge"
 Cohesion: 0.07
-Nodes (4): beginPath(), ge, Nr(), tm()
+Nodes (3): beginPath(), ge, Nr()
 
 ### Community 59 - "card-effects-5.js"
 Cohesion: 0.07
 Nodes (6): despairFromTheDarkSpecialSummonSelf(), destroyAllOtherMonsters(), onFlip(), onSentToGraveyardFromDeck(), onSentToGraveyardFromHand(), onSummon()
 
 ### Community 60 - "gsap.min.js"
-Cohesion: 0.07
-Nodes (22): Context(), Db(), Eb(), fb(), Gc(), Gw(), Hc(), ia() (+14 more)
+Cohesion: 0.08
+Nodes (17): Context(), Db(), Eb(), fb(), Gc(), Gw(), Hc(), ia() (+9 more)
 
 ### Community 61 - "or"
 Cohesion: 0.07
@@ -752,15 +766,15 @@ Nodes (8): { chromium }, DIST, fs, main(), path, RADICE, url(), visita()
 
 ### Community 67 - "destroy"
 Cohesion: 0.06
-Nodes (37): _activate(), _addEvents(), _addPipes(), _addSystem(), _addSystems(), autoUpdate(), begin(), _configureAutoUpdate() (+29 more)
+Nodes (38): _activate(), _addEvents(), _addPipes(), _addSystem(), _addSystems(), autoUpdate(), begin(), _configureAutoUpdate() (+30 more)
 
 ### Community 68 - "onSourceUpdate"
-Cohesion: 0.07
-Nodes (30): _activateLocation(), _applyMipRange(), bind(), _bindSampler(), bindSource(), contextChange(), EG, _getGlSampler() (+22 more)
+Cohesion: 0.09
+Nodes (28): _activateLocation(), _applyMipRange(), bind(), _bindSampler(), bindSource(), contextChange(), _getGlSampler(), getGlSource() (+20 more)
 
 ### Community 69 - "xe"
-Cohesion: 0.05
-Nodes (28): alpha(), Bl(), Cf(), dv(), Ei(), execute(), fh, getGlobalTint() (+20 more)
+Cohesion: 0.07
+Nodes (24): alpha(), Bl(), Cf(), dv(), Ei(), execute(), fh, getGlobalTint() (+16 more)
 
 ### Community 70 - "pre-commit.js"
 Cohesion: 0.14
@@ -776,7 +790,7 @@ Nodes (25): aggiorna(), animaIngresso(), avvia(), chiudi(), colpo(), dettagliAlt
 
 ### Community 73 - "_renderTextToCanvas"
 Cohesion: 0.08
-Nodes (27): _applyKerning(), _drawGlyph(), _drawLetterSpacing(), ensureCharacters(), ev(), _fontString(), generateCanvas(), _getAlignmentOffset() (+19 more)
+Nodes (24): cP(), dl(), ev(), generateCanvas(), getCanvasAndContext(), getPixels(), Gp, hS() (+16 more)
 
 ### Community 74 - "mount"
 Cohesion: 0.18
@@ -784,15 +798,15 @@ Nodes (29): adminPuoRiacquistareMazzi(), applicaEmblema(), cartaPerId(), db(), e
 
 ### Community 76 - "ai-shared.js"
 Cohesion: 0.15
-Nodes (22): attivazioneSensata(), choosePositionChanges(), decideMonsterPosture(), distruggeSoloMagieTrappoleSue(), effAtk(), effDef(), estimateSummonedStats(), guadagnoRelativoCampo() (+14 more)
+Nodes (23): attivazioneSensata(), choosePositionChanges(), decideMonsterPosture(), distruggeSoloMagieTrappoleSue(), effAtk(), effDef(), estimateSummonedStats(), guadagnoRelativoCampo() (+15 more)
 
 ### Community 77 - "tag-mode.js"
 Cohesion: 0.18
 Nodes (26): aggiornaAmico(), aggiornaPannello(), aggiornaTutto(), aggiornaVelo(), allineaLp(), avvia(), chiudi(), chiudiInRete() (+18 more)
 
 ### Community 78 - "r"
-Cohesion: 0.10
-Nodes (26): _addChild(), addChildAt(), _capHitArea(), getChildAt(), getChildIndex(), getFastGlobalBounds(), _getGlobalBoundsRecursive(), _getPool() (+18 more)
+Cohesion: 0.11
+Nodes (25): _addChild(), addChildAt(), _capHitArea(), getChildAt(), getChildIndex(), getFastGlobalBounds(), _getGlobalBoundsRecursive(), _getPool() (+17 more)
 
 ### Community 79 - "simula-storia-deck.js"
 Cohesion: 0.15
@@ -858,17 +872,17 @@ Nodes (20): apriPannello(), avvia(), blocco(), cartaDa(), chiudiInfo(), chiudiPa
 Cohesion: 0.11
 Nodes (13): Aa(), add(), _addContainer(), _addListener(), addOnce(), _cancelIfNeeded(), remove(), _requestIfNeeded() (+5 more)
 
-### Community 99 - "jc"
-Cohesion: 0.17
-Nodes (4): Ar(), jc, K3(), q3()
-
-### Community 100 - "Sx"
+### Community 99 - "Sx"
 Cohesion: 0.13
 Nodes (3): gx, Sx, vc
 
-### Community 101 - "makeContext"
-Cohesion: 0.26
-Nodes (17): callCardHandlerWaiting(), canSpecialSummonFromHand(), dealDamage(), discardChosenFromHand(), discardRandomFromHand(), findHandQuickEffectCandidates(), handOf(), lpKeyOf() (+9 more)
+### Community 100 - "mg"
+Cohesion: 0.17
+Nodes (13): bp(), cg(), fg(), hg(), lg(), mg(), og(), svg() (+5 more)
+
+### Community 101 - "jc"
+Cohesion: 0.16
+Nodes (4): Ar(), jc, K3(), q3()
 
 ### Community 102 - "duel-session.js"
 Cohesion: 0.19
@@ -882,17 +896,13 @@ Nodes (16): MpPassoComune, avvia(), disegna(), formato(), invia(), inviaCampo(),
 Cohesion: 0.21
 Nodes (17): adattaDimensioni(), assicuraCanvas(), chiudiTutto(), ciclo(), compila(), compilabile(), fantasmiRisucchiati(), lancia() (+9 more)
 
-### Community 105 - "_binaryDecode"
-Cohesion: 0.14
-Nodes (15): assertFieldSize(), _binaryDecode(), binaryEncode(), _binaryEncodeUserBroadcastPush(), decode(), decodeBroadcast(), decodePush(), decodeReply() (+7 more)
-
-### Community 106 - "nr"
-Cohesion: 0.06
-Nodes (25): AT(), Ax(), build(), CT, cx(), Ex, ff(), GI() (+17 more)
+### Community 106 - "simula-economia.js"
+Cohesion: 0.12
+Nodes (13): ctx, deck, duelliTorneo, fs, giorni, livelli, path, poolSettimanale (+5 more)
 
 ### Community 107 - "hu"
-Cohesion: 0.14
-Nodes (4): fv(), hu, pu, Rn()
+Cohesion: 0.15
+Nodes (3): fv(), hu, pu
 
 ### Community 108 - "audit-supporti-toon.js"
 Cohesion: 0.15
@@ -907,8 +917,8 @@ Cohesion: 0.16
 Nodes (3): Js, qv(), Zv()
 
 ### Community 112 - "ref_vm"
-Cohesion: 0.02
-Nodes (61): path, vm, fs, NUMERI_AMMESSI, path, vm, fs, path (+53 more)
+Cohesion: 0.03
+Nodes (42): path, vm, fs, NUMERI_AMMESSI, path, vm, fs, path (+34 more)
 
 ### Community 113 - "audit-supporti-occhi-blu.js"
 Cohesion: 0.16
@@ -922,10 +932,6 @@ Nodes (18): FasciaTorre, IdentitaDuellante, LatoPuzzle, LivelloDuello, ModalitaD
 Cohesion: 0.25
 Nodes (15): announceCompletion(), chiavePeriodo(), contaSfideCompletate(), descrizione(), getAllWithProgress(), getDefinitions(), getMissionDefs(), getMissions() (+7 more)
 
-### Community 116 - "getDefinition"
-Cohesion: 0.17
-Nodes (24): activateCard(), activeToonWorldSlot(), areSpellsNegatedFor(), canActivate(), fieldSpellOf(), findFreeSTSlot(), findQuickPlaySpellCandidates(), findSetTrapCandidates() (+16 more)
-
 ### Community 117 - "createNetworkClient"
 Cohesion: 0.20
 Nodes (16): createNetworkClient(), close(), connect(), createRoom(), emit(), joinRoom(), leaveRoom(), lockRoom() (+8 more)
@@ -935,12 +941,16 @@ Cohesion: 0.28
 Nodes (17): aggancia(), artDi(), attivazioneNegata(), cartaBandita(), effimero(), elementoCarta(), escapeHtml(), fotografa() (+9 more)
 
 ### Community 119 - "Tween"
-Cohesion: 0.15
-Nodes (24): _a(), Ao(), _assertThisInitialized(), cc(), gb(), hb(), ib(), ic() (+16 more)
+Cohesion: 0.17
+Nodes (17): Ao(), cc(), gb(), hb(), jb(), kb(), ob(), r() (+9 more)
 
 ### Community 120 - "harness.js"
 Cohesion: 0.13
 Nodes (12): path, PROJECT_ROOT, run(), run(), run(), run(), run(), run() (+4 more)
+
+### Community 123 - "findTriggerCandidates"
+Cohesion: 0.13
+Nodes (25): activeToonWorldSlot(), areSpellsNegatedFor(), attendiUiBloccante(), buildResponseCtx(), dopoRegola(), ensureChainState(), fieldSpellOf(), findTriggerCandidates() (+17 more)
 
 ### Community 124 - "audit-kaiba-supporti-finali.js"
 Cohesion: 0.18
@@ -950,9 +960,9 @@ Nodes (14): CAMPIONI, eseguiAudit(), fs, main(), media(), opzioniDa(), OSSERVATI
 Cohesion: 0.17
 Nodes (15): cambiaSenzaNuclei(), CAMPIONI, eseguiAudit(), fs, main(), media(), opzioniDa(), OSSERVATI (+7 more)
 
-### Community 126 - "fireTrigger"
+### Community 126 - "makeContext"
 Cohesion: 0.16
-Nodes (22): askResponder(), attendiUiBloccante(), attivaDallaFinestraDiPriorita(), buildResponseCtx(), consumeCandidateCard(), ensureChainState(), findMonsterQuickEffectCandidates(), findSpellTrapQuickEffectCandidates() (+14 more)
+Nodes (26): activateCard(), askResponder(), attivaDallaFinestraDiPriorita(), beginCardActivation(), canActivate(), consumeCandidateCard(), findFreeSTSlot(), findHandQuickEffectCandidates() (+18 more)
 
 ### Community 127 - "grido-evocazione.js"
 Cohesion: 0.25
@@ -962,13 +972,9 @@ Nodes (15): adatta(), avvia(), avviaCaricamento(), carica(), costruisciVento(), 
 Cohesion: 0.15
 Nodes (3): _0, g0, hc
 
-### Community 130 - "mg"
-Cohesion: 0.07
-Nodes (29): cb(), bp(), cg(), collectRenderables(), collectRenderablesWithEffects(), ensureCanvasSize(), eR(), fg() (+21 more)
-
 ### Community 132 - "kn"
-Cohesion: 0.12
-Nodes (10): getContextRenderData(), getGpuContext(), Gu, _initContext(), _initContextRenderData(), kn(), Qc, qm (+2 more)
+Cohesion: 0.15
+Nodes (9): getContextRenderData(), getGpuContext(), Gu, _initContext(), _initContextRenderData(), kn(), qm, SE() (+1 more)
 
 ### Community 133 - "audit-joey-supporti-finali.js"
 Cohesion: 0.18
@@ -992,7 +998,7 @@ Nodes (16): cambia(), CAMPIONI, caricaDeck(), eseguiAudit(), fs, main(), media()
 
 ### Community 138 - "constructor"
 Cohesion: 0.05
-Nodes (31): addColorStop(), addResource(), constructor(), el, eP(), eT(), Fp(), from() (+23 more)
+Nodes (26): addColorStop(), addResource(), constructor(), Dx(), eP(), eT(), Fp(), from() (+18 more)
 
 ### Community 139 - "ai-controller.js"
 Cohesion: 0.33
@@ -1015,16 +1021,16 @@ Cohesion: 0.14
 Nodes (17): Hd(), he(), Md(), Nd(), Od(), Pd(), Rd(), Vd() (+9 more)
 
 ### Community 145 - "openDuel"
-Cohesion: 0.12
-Nodes (13): openDuel(), run(), run(), run(), SCHERMI, run(), run(), run() (+5 more)
+Cohesion: 0.13
+Nodes (12): openDuel(), run(), run(), run(), run(), run(), run(), run() (+4 more)
 
 ### Community 146 - "Au"
-Cohesion: 0.17
+Cohesion: 0.18
 Nodes (4): Au, Gs(), Kb, Za()
 
-### Community 148 - "Km"
-Cohesion: 0.13
-Nodes (19): al(), aP(), bm(), Dm(), il(), jG(), Km(), Ko() (+11 more)
+### Community 148 - ".execute"
+Cohesion: 0.07
+Nodes (25): Id(), $a, al(), aP(), bm(), Dm(), HR(), il() (+17 more)
 
 ### Community 152 - "check-syntax.js"
 Cohesion: 0.22
@@ -1043,8 +1049,8 @@ Cohesion: 0.30
 Nodes (16): aggiornaBadge(), aggiornaSilenzio(), apri(), attivaChat(), avvia(), chiudi(), inDuello(), inseguiTastiera() (+8 more)
 
 ### Community 156 - "motore.d.ts"
-Cohesion: 0.12
-Nodes (14): Card, CardDefinition, CardType, Condizione, FromZone, GameState, Hook, MonsterSlot (+6 more)
+Cohesion: 0.06
+Nodes (15): Card, CardDefinition, CardType, Condizione, FromZone, GameState, Hook, MonsterSlot (+7 more)
 
 ### Community 157 - "steps"
 Cohesion: 0.13
@@ -1076,11 +1082,15 @@ Nodes (14): aggiornaPosizioni(), calcolaPosizioni(), ciclo(), compila(), creaFS(
 
 ### Community 164 - "ce"
 Cohesion: 0.18
-Nodes (17): Ae(), ce(), $d(), ee(), ga(), ha(), ka(), le() (+9 more)
+Nodes (17): _a(), Ae(), ce(), $d(), ee(), ga(), ha(), ka() (+9 more)
 
-### Community 165 - "li"
-Cohesion: 0.20
-Nodes (9): cn(), cull(), _cullRecursive(), getBounds(), getGlobalTransform(), li(), pd(), toGlobal() (+1 more)
+### Community 165 - "_debug"
+Cohesion: 0.09
+Nodes (47): _acquireLock(), _autoRefreshTokenTick(), bi(), _callRefreshToken(), _debug(), dispose(), _emitInitialSession(), exchangeCodeForSession() (+39 more)
+
+### Community 166 - "zi"
+Cohesion: 0.17
+Nodes (3): Ir(), Yr(), zi
 
 ### Community 167 - "filters"
 Cohesion: 0.17
@@ -1139,20 +1149,20 @@ Cohesion: 0.28
 Nodes (11): abilitaTrascinamento(), abilitaZoom(), adattaAllaFinestra(), applica(), imposta(), limita(), zoomDiCopertura(), centraSu() (+3 more)
 
 ### Community 182 - "la"
-Cohesion: 0.60
-Nodes (5): Animation(), Da(), la(), Ua(), Va()
+Cohesion: 0.47
+Nodes (6): Animation(), Da(), la(), ma(), Ua(), Va()
 
 ### Community 183 - "Ec"
 Cohesion: 0.23
 Nodes (3): sa(), Ec, wx()
 
-### Community 185 - "ho"
-Cohesion: 0.21
-Nodes (3): co(), ho, uo()
+### Community 184 - "Ix"
+Cohesion: 0.09
+Nodes (19): AT(), Ax(), cx(), Ex, Gx(), Ie(), Ix(), Mx() (+11 more)
 
-### Community 186 - "Pr"
-Cohesion: 0.08
-Nodes (3): lo, mi(), Pr
+### Community 185 - "ho"
+Cohesion: 0.19
+Nodes (4): co(), ho, Rn(), uo()
 
 ### Community 187 - "Qv"
 Cohesion: 0.22
@@ -1161,10 +1171,6 @@ Nodes (3): h0(), nc, Qv
 ### Community 188 - "scripts"
 Cohesion: 0.20
 Nodes (10): scripts, build-ui-thumbnails, check, hooks, precommit, pubblica, sync-scripts, test (+2 more)
-
-### Community 189 - "catalogo-campi-e-musiche.spec.js"
-Cohesion: 0.28
-Nodes (8): elenca(), fs, leggi(), path, RADICE, run(), duelli(), vm
 
 ### Community 190 - "mcpServers"
 Cohesion: 0.17
@@ -1190,10 +1196,6 @@ Nodes (14): caricaCarte(), estraiRicerche(), FILE_REGISTRO, fs, funzioniAttuali(
 Cohesion: 0.38
 Nodes (11): conMovimento(), croce(), misuraSpazio(), mostra(), mostraBreve(), mostraTurno(), ridotto(), ritratto() (+3 more)
 
-### Community 197 - "cu"
-Cohesion: 0.13
-Nodes (3): cu, ql, xb
-
 ### Community 199 - "evidenzia-giocabili.js"
 Cohesion: 0.29
 Nodes (14): aggiorna(), aggiornaCaselleLibere(), anelliDiAtterraggio(), animazioniAttive(), attivo(), calcola(), giocatoreAgisce(), metti() (+6 more)
@@ -1206,9 +1208,9 @@ Nodes (8): chiavi(), contaParametri(), corpoInterfaccia(), fs, metodi(), path, r
 Cohesion: 0.17
 Nodes (11): compilerOptions, allowJs, checkJs, lib, noEmit, skipLibCheck, strict, target (+3 more)
 
-### Community 204 - "build-cards-data.js"
-Cohesion: 0.17
-Nodes (10): cards, eccezioni, fs, jsonPath, originiPath, outPath, path, problems (+2 more)
+### Community 204 - "Dr"
+Cohesion: 0.12
+Nodes (10): yc(), bc, Dr(), el, Ic, Tx(), _updateMaxTextures(), _x() (+2 more)
 
 ### Community 205 - "custom-cards.js"
 Cohesion: 0.42
@@ -1230,6 +1232,10 @@ Nodes (10): codiceInline(), fs, GLOBAL_RICHIEDE, pagineHtml(), path, RADICE, run
 Cohesion: 0.25
 Nodes (8): apriPuzzle(), attacca(), battaglia(), calma(), path, RADICE, run(), SOLUZIONI
 
+### Community 214 - "li"
+Cohesion: 0.20
+Nodes (9): cn(), cull(), _cullRecursive(), getBounds(), getGlobalTransform(), li(), pd(), toGlobal() (+1 more)
+
 ### Community 215 - "simula-farming-carte.js"
 Cohesion: 0.24
 Nodes (10): context, fs, path, quantile(), random(), result, root, sample() (+2 more)
@@ -1245,10 +1251,6 @@ Nodes (13): avvia(), badgeVisibili(), compila(), contestoPerso(), dettagliAlti()
 ### Community 218 - "decisioni.js"
 Cohesion: 0.33
 Nodes (6): chiedi(), interfacciaPerLaPersona(), passoComune(), posizioneDi(), rispondeUnaPersona(), sceltaAutomatica()
-
-### Community 219 - "graveyardOf"
-Cohesion: 0.13
-Nodes (23): areTrapsNegatedFor(), declareCardEffectTarget(), declareCardEffectTargetWaiting(), declareTarget(), declareTargetWaiting(), destroyAllCards(), destroyAllMonsters(), destroyFieldSpell() (+15 more)
 
 ### Community 220 - "avviaDuelloPreparato"
 Cohesion: 0.20
@@ -1274,17 +1276,17 @@ Nodes (9): assangolo(), dado(), dettagliAlti(), lancia(), menoMovimento(), monet
 Cohesion: 0.58
 Nodes (9): apri(), apriCopiaMessaDaParte(), el(), fmtData(), importa(), monta(), riassunto(), riquadro() (+1 more)
 
-### Community 226 - "a1"
-Cohesion: 0.22
-Nodes (9): a1(), _h(), kB(), Lb(), s1(), splitFn(), UB(), Wi (+1 more)
+### Community 226 - "getDefinition"
+Cohesion: 0.15
+Nodes (22): areTrapsNegatedFor(), declareCardEffectTarget(), declareCardEffectTargetWaiting(), declareTarget(), declareTargetWaiting(), destroyAllCards(), destroyAllMonsters(), destroyFieldSpell() (+14 more)
 
-### Community 227 - "Ue"
-Cohesion: 0.47
-Nodes (6): Ke(), onJoinPayload(), onLeavePayload(), transformState(), Ue(), We()
+### Community 227 - "trigger"
+Cohesion: 0.17
+Nodes (13): cancelRefEvent(), cancelTimeout(), canPush(), destroy(), filterBindings(), isJoined(), isMember(), joinRef() (+5 more)
 
-### Community 228 - "ng"
-Cohesion: 0.30
-Nodes (12): Ft(), $G(), j0(), kG(), ng(), i(), n(), s() (+4 more)
+### Community 228 - "build-cards-data.js"
+Cohesion: 0.17
+Nodes (10): cards, eccezioni, fs, jsonPath, originiPath, outPath, path, problems (+2 more)
 
 ### Community 229 - "login-bonus-giornaliero.spec.js"
 Cohesion: 0.50
@@ -1342,6 +1344,10 @@ Nodes (8): calcola(), data(), esc(), icona(), leggiSoloSbloccati(), render(), sc
 Cohesion: 0.39
 Nodes (11): calcola(), catalogo(), chiaveSettimana(), esc(), gruppo(), nomeDuellante(), render(), scheda() (+3 more)
 
+### Community 246 - "Tween"
+Cohesion: 0.25
+Nodes (11): _assertThisInitialized(), ic(), t(), ta(), Timeline(), Tween(), w(), x() (+3 more)
+
 ### Community 247 - "run-all.js"
 Cohesion: 0.24
 Nodes (10): AssertionError, makeAssert(), { chromium }, discoverSpecs(), fs, main(), path, runOne() (+2 more)
@@ -1350,17 +1356,21 @@ Nodes (10): AssertionError, makeAssert(), { chromium }, discoverSpecs(), fs, mai
 Cohesion: 0.40
 Nodes (5): fs, path, RADICE, run(), tuttiIJs()
 
-### Community 251 - "Jl"
-Cohesion: 0.23
-Nodes (3): Ir(), Jl, Yr()
+### Community 250 - "Fr"
+Cohesion: 0.27
+Nodes (6): Fr(), Qc, Uy, qr(), Ur(), Xn()
 
-### Community 255 - "._getGpuBitmapText"
-Cohesion: 0.21
-Nodes (4): Db, Ob(), Rb, xu
+### Community 251 - "ia-attivazioni-sensate.spec.js"
+Cohesion: 0.28
+Nodes (7): campo(), { execFileSync }, lascia(), path, RADICE, run(), vm
+
+### Community 255 - "audit-supporti-divinita.js"
+Cohesion: 0.22
+Nodes (12): arg(), average(), AVVERSARI, characterDeck(), CONFIG, fs, main(), path (+4 more)
 
 ### Community 256 - "poll"
-Cohesion: 0.11
-Nodes (22): ajax(), batchSend(), cancelRefEvent(), cancelTimeout(), close(), closeAndRetry(), destroy(), endpointURL() (+14 more)
+Cohesion: 0.15
+Nodes (16): ajax(), batchSend(), close(), closeAndRetry(), endpointURL(), _fetchWithTimeout(), hasReceived(), httpSend() (+8 more)
 
 ### Community 257 - "carte-vive-e-parallasse.spec.js"
 Cohesion: 0.36
@@ -1406,37 +1416,25 @@ Nodes (5): chiE(), posti(), showMpBanner(), squadraDelClient(), uscitaInTag()
 Cohesion: 0.46
 Nodes (5): applica(), clona(), contenitori(), differenze(), stessoContenitore()
 
-### Community 271 - "audit-supporti-divinita.js"
-Cohesion: 0.22
-Nodes (12): arg(), average(), AVVERSARI, characterDeck(), CONFIG, fs, main(), path (+4 more)
+### Community 274 - "guardrail-pagine-con-carte.spec.js"
+Cohesion: 0.40
+Nodes (5): caricatiDa(), fs, path, RADICE, run()
 
-### Community 274 - "sblocchi-progresso-tornei-settimana-caccia.spec.js"
-Cohesion: 0.33
-Nodes (6): fs, leggi(), path, RADICE, run(), vm
-
-### Community 275 - "build-ui-thumbnails.js"
-Cohesion: 0.25
-Nodes (6): { chromium }, fs, IMAGE_EXT, JOBS, path, ROOT
-
-### Community 276 - "gemello-posti.js"
+### Community 278 - "gemello-posti.js"
 Cohesion: 0.25
 Nodes (9): { creaContesto, creaOrologio, prng }, descrivi(), differenza(), giocaGemelloPosti(), main(), path, SCENARI_TAG, unoControUnoConSpettatore() (+1 more)
-
-### Community 278 - "ia-attivazioni-sensate.spec.js"
-Cohesion: 0.32
-Nodes (7): campo(), { execFileSync }, lascia(), path, RADICE, run(), vm
 
 ### Community 279 - "modalita-settimana-e-caccia.spec.js"
 Cohesion: 0.38
 Nodes (6): DUELLO, path, PRELUDIO(), RADICE, run(), url()
 
+### Community 280 - ".addChild"
+Cohesion: 0.21
+Nodes (8): a1(), gn(), _h(), s1(), splitFn(), t1(), UB(), Wi
+
 ### Community 281 - "guardrail-parti-card-effects.spec.js"
 Cohesion: 0.32
 Nodes (7): dichiarati(), DIR_MOTORE, fs, path, perNome(), RADICE, run()
-
-### Community 282 - "guardrail-protocollo-multiplayer-unico.spec.js"
-Cohesion: 0.29
-Nodes (7): CARTELLE_CLIENT, fileJsDentro(), fs, NOMI_VIETATI, path, RADICE, run()
 
 ### Community 283 - "impostazioni-default-alti-e-profondita-menu.spec.js"
 Cohesion: 0.39
@@ -1462,17 +1460,17 @@ Nodes (6): avvia(), chiudi(), giocatore(), personaggio(), prestaMazzo(), trovaRi
 Cohesion: 0.43
 Nodes (4): avvia(), creaMisuratore(), highpOk(), interruttoreSpento()
 
-### Community 292 - "storia-stelle-per-arco.spec.js"
-Cohesion: 0.50
-Nodes (4): path, RADICE, run(), url()
+### Community 292 - "ia.d.ts"
+Cohesion: 0.20
+Nodes (9): AIAttacker, AIBanishFusionCandidate, AIDecisioneRa, AIEstimateStats, AIFieldAction, AIHandAction, AILethalEstimate, AIResponseCandidate (+1 more)
 
 ### Community 294 - "tag-team-fase1.spec.js"
 Cohesion: 0.24
 Nodes (8): CLASSIFICAZIONE, DUELLO, fs, path, PRELUDIO(), RADICE, run(), TAG()
 
-### Community 295 - "Fr"
-Cohesion: 0.33
-Nodes (6): Dr(), Fr(), zn(), qr(), Ur(), Xn()
+### Community 295 - "build-ui-thumbnails.js"
+Cohesion: 0.25
+Nodes (6): { chromium }, fs, IMAGE_EXT, JOBS, path, ROOT
 
 ### Community 296 - "sposta-funzioni.js"
 Cohesion: 0.36
@@ -1486,13 +1484,9 @@ Nodes (13): monta(), cella(), disegna(), disegnaBarra(), disegnaInPiedi(), diseg
 Cohesion: 0.33
 Nodes (6): cammina(), CARTELLA, fs, path, RADICE, run()
 
-### Community 299 - "negozio-cambio-valute.spec.js"
-Cohesion: 0.50
-Nodes (4): path, RADICE, run(), url()
-
 ### Community 300 - "na"
-Cohesion: 0.20
-Nodes (6): Ca(), na(), Vb(), wb(), Xb(), Eu
+Cohesion: 0.25
+Nodes (5): Ca(), na(), Vb(), wb(), Xb()
 
 ### Community 301 - "storia-dopo-il-duello.spec.js"
 Cohesion: 0.40
@@ -1501,10 +1495,6 @@ Nodes (5): path, RADICE, run(), SENZA_DOPO, url()
 ### Community 303 - "scheda-carta-unica.spec.js"
 Cohesion: 0.33
 Nodes (5): fs, path, RADICE, run(), url()
-
-### Community 304 - "hn"
-Cohesion: 0.29
-Nodes (5): gd(), hn(), jE(), Pp(), wn()
 
 ### Community 305 - "character-unlocks.js"
 Cohesion: 0.33
@@ -1566,29 +1556,33 @@ Nodes (5): path, RADICE, run(), verifica(), verificaPassi()
 Cohesion: 0.33
 Nodes (4): path, RADICE, run(), SQUADRE
 
-### Community 326 - "guardrail-pagine-con-carte.spec.js"
-Cohesion: 0.40
-Nodes (5): caricatiDa(), fs, path, RADICE, run()
+### Community 326 - "disegna"
+Cohesion: 0.42
+Nodes (8): creaCarta(), esc(), miniaturaRitratto(), mount(), applicaFiltri(), disegna(), perSerie(), normale()
 
 ### Community 327 - "server-keepalive.spec.js"
 Cohesion: 0.14
 Nodes (9): findFreePort(), fs, path, run(), crypto, net, path, run() (+1 more)
 
-### Community 328 - "disegna"
-Cohesion: 0.42
-Nodes (8): creaCarta(), esc(), miniaturaRitratto(), mount(), applicaFiltri(), disegna(), perSerie(), normale()
+### Community 328 - "sync-script-groups.js"
+Cohesion: 0.32
+Nodes (6): fileCandidati(), fs, main(), path, RADICE, riscrivi()
 
 ### Community 329 - "sblocchi-modalita-e-regole.spec.js"
 Cohesion: 0.33
 Nodes (6): fs, leggi(), path, RADICE, run(), vm
 
-### Community 330 - "modalita-rivincite.spec.js"
-Cohesion: 0.40
-Nodes (5): fs, path, RADICE, run(), sbloccaRivincite()
+### Community 331 - ".getOptimalTexture"
+Cohesion: 0.18
+Nodes (5): apply(), _applyLegacy(), _applyOptimized(), _calculateInitialStrength(), Dd
 
-### Community 333 - "sync-script-groups.js"
-Cohesion: 0.32
-Nodes (6): fileCandidati(), fs, main(), path, RADICE, riscrivi()
+### Community 332 - "hn"
+Cohesion: 0.33
+Nodes (5): gd(), hn(), jE(), Pp(), wn()
+
+### Community 333 - "catalogo-campi-e-musiche.spec.js"
+Cohesion: 0.28
+Nodes (8): elenca(), fs, leggi(), path, RADICE, run(), duelli(), vm
 
 ### Community 334 - "tutorial-tag-lezione.spec.js"
 Cohesion: 0.50
@@ -1596,11 +1590,11 @@ Nodes (4): path, RADICE, run(), url()
 
 ### Community 335 - "n"
 Cohesion: 0.08
-Nodes (31): br(), Ci(), clone(), Dr(), fetchJwk(), Fr(), _getAuthenticatorAssuranceLevel(), getClaims() (+23 more)
+Nodes (31): br(), Ci(), clone(), gi(), hr(), ii(), invoke(), kr() (+23 more)
 
-### Community 336 - "build-card-effect-ids.js"
-Cohesion: 0.33
-Nodes (5): { chromium }, fs, path, RADICE, USCITA
+### Community 336 - "Ue"
+Cohesion: 0.47
+Nodes (6): Ke(), onJoinPayload(), onLeavePayload(), transformState(), Ue(), We()
 
 ### Community 337 - "deck-legality.js"
 Cohesion: 0.60
@@ -1678,9 +1672,9 @@ Nodes (6): fileJs(), fs, LETTE_IN_MODO_DINAMICO, path, RADICE, run()
 Cohesion: 0.40
 Nodes (5): fs, path, RADICE, run(), url()
 
-### Community 360 - "guardrail-nucleo-senza-dom.spec.js"
-Cohesion: 0.40
-Nodes (5): FILE_DI_REGOLA, fs, path, run(), senzaCommenti()
+### Community 360 - "build-card-effect-ids.js"
+Cohesion: 0.33
+Nodes (5): { chromium }, fs, path, RADICE, USCITA
 
 ### Community 361 - "guardrail-estensione-immagini.spec.js"
 Cohesion: 0.33
@@ -1690,17 +1684,13 @@ Nodes (6): cammina(), fs, OPZIONALI, path, RADICE, run()
 Cohesion: 0.40
 Nodes (3): path, RADICE, VISTE
 
-### Community 363 - "guardrail-bersagli-dichiarati.spec.js"
-Cohesion: 0.29
-Nodes (5): ECCEZIONI, fs, MOTIVI, path, RADICE
+### Community 363 - "guardrail-nucleo-senza-dom.spec.js"
+Cohesion: 0.40
+Nodes (5): FILE_DI_REGOLA, fs, path, run(), senzaCommenti()
 
 ### Community 364 - "multiplayer-sala-layout.spec.js"
 Cohesion: 0.17
 Nodes (6): net, path, RADICE, net, path, RADICE
-
-### Community 365 - "Tx"
-Cohesion: 0.40
-Nodes (4): yc(), Tx(), _x(), xx()
 
 ### Community 366 - "tutorial-lezioni-brevi.spec.js"
 Cohesion: 0.40
@@ -1722,41 +1712,33 @@ Nodes (4): path, run(), buyOnce(), itemForDeck()
 Cohesion: 0.50
 Nodes (4): apri(), path, RADICE, run()
 
-### Community 371 - "sandbox-solo-admin.spec.js"
-Cohesion: 0.40
-Nodes (5): apriCome(), fs, path, RADICE, run()
+### Community 371 - "sblocchi-progresso-tornei-settimana-caccia.spec.js"
+Cohesion: 0.33
+Nodes (6): fs, leggi(), path, RADICE, run(), vm
 
-### Community 372 - "guardrail-passo-comune.spec.js"
-Cohesion: 0.40
-Nodes (3): fs, path, RADICE
+### Community 372 - "audit-archetipi-classici.spec.js"
+Cohesion: 0.33
+Nodes (3): fs, os, path
 
 ### Community 373 - "pulsante-fasi-laterale.spec.js"
 Cohesion: 0.50
 Nodes (4): path, RADICE, run(), url()
 
-### Community 374 - "profilo-testata.spec.js"
-Cohesion: 0.40
-Nodes (3): fs, path, RADICE
-
-### Community 375 - "guardrail-fromzone.spec.js"
-Cohesion: 0.40
-Nodes (3): fs, path, ZONE_AMMESSE
-
 ### Community 376 - "modalita-storia.spec.js"
-Cohesion: 0.14
-Nodes (9): liberaLaPagina(), fs, path, run(), path, RADICE, run(), path (+1 more)
+Cohesion: 0.25
+Nodes (6): liberaLaPagina(), fs, path, run(), path, run()
 
 ### Community 377 - "mp-pedina.js"
 Cohesion: 0.40
 Nodes (9): elenco(), imposta(), monta(), aggiorna(), riempi(), pedinaDi(), personaggi(), risolvi() (+1 more)
 
-### Community 378 - "webgl-catena-mappe-torre.spec.js"
-Cohesion: 0.50
-Nodes (4): path, RADICE, run(), url()
+### Community 378 - "duello-gemello.js"
+Cohesion: 0.38
+Nodes (6): argomenti(), { creaContesto, creaOrologio, prng }, giocaGemello(), main(), path, vm
 
-### Community 379 - "audit-archetipi-classici.spec.js"
-Cohesion: 0.33
-Nodes (3): fs, os, path
+### Community 379 - "guardrail-protocollo-multiplayer-unico.spec.js"
+Cohesion: 0.29
+Nodes (7): CARTELLE_CLIENT, fileJsDentro(), fs, NOMI_VIETATI, path, RADICE, run()
 
 ### Community 380 - "salvataggio.d.ts"
 Cohesion: 0.40
@@ -1778,11 +1760,11 @@ Nodes (3): compila(), menoMovimento(), monta()
 Cohesion: 0.67
 Nodes (3): run(), resetBoard(), testCard()
 
-### Community 396 - "impronta-funzioni.js"
-Cohesion: 0.40
-Nodes (3): [cmd, x, y], fs, path
+### Community 397 - "iv"
+Cohesion: 0.28
+Nodes (3): Eu, iv, Pu()
 
-### Community 397 - "torneo-kaiba-preliminari.spec.js"
+### Community 398 - "guardrail-passo-comune.spec.js"
 Cohesion: 0.40
 Nodes (3): fs, path, RADICE
 
@@ -1790,21 +1772,17 @@ Nodes (3): fs, path, RADICE
 Cohesion: 0.53
 Nodes (4): consentiTuttiIContenuti(), assertUguali(), path, run()
 
-### Community 400 - "du"
-Cohesion: 0.28
-Nodes (3): du, kR(), uv()
+### Community 400 - "tutorial-lezione-col-nonno.spec.js"
+Cohesion: 0.38
+Nodes (6): apri(), fs, giocaLezione(), path, RADICE, run()
 
-### Community 401 - "g"
-Cohesion: 0.67
-Nodes (4): ee(), g(), h(), m()
+### Community 401 - "modalita-rivincite.spec.js"
+Cohesion: 0.40
+Nodes (5): fs, path, RADICE, run(), sbloccaRivincite()
 
-### Community 403 - "guardrail-ritocchi-storia.spec.js"
-Cohesion: 0.33
-Nodes (4): fs, ORDINE, path, RADICE
-
-### Community 404 - "W"
-Cohesion: 0.13
-Nodes (17): Ar(), _getCodeChallengeAndMethod(), _getUrlForProvider(), _handleProviderSignIn(), jr(), linkIdentity(), linkIdentityOAuth(), _maybeAppendFlowIdToRedirect() (+9 more)
+### Community 403 - "missioni-giornaliere-generiche.spec.js"
+Cohesion: 0.40
+Nodes (3): fs, path, RADICE
 
 ### Community 405 - "posa-danno.js"
 Cohesion: 0.50
@@ -1814,9 +1792,17 @@ Nodes (7): chiudi(), danno(), esiste(), mostra(), nomeDelRiquadro(), programmaFi
 Cohesion: 0.50
 Nodes (4): fs, mp3(), path, run()
 
+### Community 408 - "impronta-stili-duello.js"
+Cohesion: 0.29
+Nodes (6): { chromium }, fotografa(), fs, path, SCHERMI, SITUAZIONI
+
 ### Community 409 - "service-worker-redirect-del-sito.spec.js"
 Cohesion: 0.14
 Nodes (10): collega(), fs, http, path, run(), fs, http, MIME (+2 more)
+
+### Community 410 - "guardrail-url-dei-css.spec.js"
+Cohesion: 0.40
+Nodes (5): cammina(), fs, path, RADICE, run()
 
 ### Community 412 - "sfide-nuove-famiglie.spec.js"
 Cohesion: 0.50
@@ -1846,9 +1832,17 @@ Nodes (3): catenaDiDistruzione(), onOpponentSummon(), onOwnSummonResponse()
 Cohesion: 0.67
 Nodes (3): canSpecialSummonFromHand(), findMaterials(), paySpecialSummonCost()
 
+### Community 627 - "negozio-cambio-valute.spec.js"
+Cohesion: 0.50
+Nodes (4): path, RADICE, run(), url()
+
 ### Community 639 - "sala-uscita.js"
 Cohesion: 0.53
 Nodes (3): chiedi(), chiudi(), costruisci()
+
+### Community 640 - "salvataggio-forma.spec.js"
+Cohesion: 0.40
+Nodes (3): fs, path, TIPI
 
 ### Community 641 - "guardrail-scala-carte.spec.js"
 Cohesion: 0.33
@@ -1870,13 +1864,25 @@ Nodes (4): aggiorna(), costruisci(), messaggio(), monta()
 Cohesion: 0.70
 Nodes (4): di(), leggi(), modalitaDi(), registraDuello()
 
+### Community 646 - "webgl-catena-mappe-torre.spec.js"
+Cohesion: 0.50
+Nodes (4): path, RADICE, run(), url()
+
 ### Community 647 - "lancio-moneta-dado-webgl.spec.js"
 Cohesion: 0.50
 Nodes (4): path, RADICE, run(), url()
 
+### Community 648 - "impronta-funzioni.js"
+Cohesion: 0.40
+Nodes (3): [cmd, x, y], fs, path
+
 ### Community 649 - "tag-duellanti-bloccati.spec.js"
 Cohesion: 0.50
 Nodes (4): path, RADICE, run(), url()
+
+### Community 650 - "torneo-kaiba-preliminari.spec.js"
+Cohesion: 0.40
+Nodes (3): fs, path, RADICE
 
 ### Community 651 - "negozio-buste-limite-giornaliero.spec.js"
 Cohesion: 0.50
@@ -1886,37 +1892,65 @@ Nodes (4): path, RADICE, run(), url()
 Cohesion: 0.67
 Nodes (3): icona(), monta(), disegna()
 
-### Community 653 - "storia-scene-cinematiche.spec.js"
-Cohesion: 0.67
-Nodes (3): chiudiScena(), path, run()
+### Community 656 - "storia-stelle-per-arco.spec.js"
+Cohesion: 0.50
+Nodes (4): path, RADICE, run(), url()
 
-### Community 662 - "editor-mazzo-scheda-e-riscontro.spec.js"
+### Community 658 - "editor-mazzo-scheda-e-riscontro.spec.js"
 Cohesion: 0.67
 Nodes (3): path, prepara(), run()
+
+### Community 659 - "orologio-del-server.spec.js"
+Cohesion: 0.50
+Nodes (3): path, run(), tokenConIat()
+
+### Community 660 - "passo-comune-a-posti.spec.js"
+Cohesion: 0.40
+Nodes (3): A_POSTI, DUE_MOTORI, path
 
 ### Community 663 - "multiplayer-modalita-sala.spec.js"
 Cohesion: 0.50
 Nodes (3): fs, path, run()
 
+### Community 667 - "tag-team-fase2.spec.js"
+Cohesion: 0.50
+Nodes (4): path, PRELUDIO(), RADICE, run()
+
+### Community 679 - "multiplayer-ingresso-senza-scorrimento.spec.js"
+Cohesion: 0.67
+Nodes (3): path, run(), url()
+
+### Community 685 - "storia-scene-cinematiche.spec.js"
+Cohesion: 0.67
+Nodes (3): chiudiScena(), path, run()
+
+### Community 688 - "._getGpuBitmapText"
+Cohesion: 0.21
+Nodes (4): Db, Ob(), Rb, xu
+
+### Community 689 - "ologrammi-visibili.spec.js"
+Cohesion: 0.83
+Nodes (3): duello(), ologrammaDopoEvocazione(), run()
+
 ## Knowledge Gaps
 - **1 isolated node(s):** `RFC-6455`
-  These have ≤1 connection - possible missing edges. (Counts symbols only; 2993 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **330 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges. (Counts symbols only; 3094 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **340 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `f()` connect `load` to `check-syntax.js`?**
-  _High betweenness centrality (0.159) - this node is a cross-community bridge._
+  _High betweenness centrality (0.167) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `load()` (e.g. with `save-manager.js` and `comunicaAzzeramento()`) actually correct?**
   _`load()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `RFC-6455` to the rest of the system?**
   _1 weakly-connected nodes found - possible missing edges._
 - **Should `pixi.min.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.007440844257564515 - nodes in this community are weakly interconnected._
-- **Why does `load()` connect `load` to `pixi.min.js`, `.emit`, `destroy`, `ng`?**
-  _High betweenness centrality (0.156) - this node is a cross-community bridge._
+  _Cohesion score 0.007434259031703121 - nodes in this community are weakly interconnected._
+- **Why does `load()` connect `load` to `pixi.min.js`, `D`, `destroy`?**
+  _High betweenness centrality (0.164) - this node is a cross-community bridge._
 - **Should `supabase.min.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.016999260901699925 - nodes in this community are weakly interconnected._
-- **Why does `on()` connect `constructor` to `pixi.min.js`, `supabase.min.js`?**
-  _High betweenness centrality (0.070) - this node is a cross-community bridge._
+  _Cohesion score 0.016363636363636365 - nodes in this community are weakly interconnected._
+- **Why does `on()` connect `constructor` to `pixi.min.js`, `supabase.min.js`, `n`?**
+  _High betweenness centrality (0.055) - this node is a cross-community bridge._

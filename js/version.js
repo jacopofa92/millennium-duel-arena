@@ -32,6 +32,16 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.6.50 — Controllo della Mente scade alla End Phase; Scudo da Braccio Magico restituisce il mostro alla fine della Battle Phase.
+ * 1.6.51 — Strappa Possesso e Necropaura Oscura restituiscono il controllo quando l'Equip lascia il Terreno.
+ * 1.6.52 — Maga Oscura conta entrambi i mostri indicati in tutti e due i Cimiteri; Spada Celestiale - Eatos applica il suo effetto dal Cimitero; Chiron lascia scegliere anche le Magie/Trappole coperte e le Magie Terreno.
+ * 1.6.53 — I trigger legati alla distruzione in battaglia ora distinguono gli effetti Carta; corrette le scelte e i vincoli TCG di Tributo al Dannato, Virus Infetta-Tribù, Proiettile Sonico e Carta dell'Oblio.
+ * 1.6.48 — IA: Predatore delle Tombe valuta la Magia concreta da usare (evita Buco Nero quando il campo netto non ripaga i 2000 LP e non duplica l'Anfora in risoluzione); le negazioni di Giudizio Solenne, Sette Attrezzi e Malfunzionamento stimano se Soffio Incendiario danneggia davvero il bot.
+ * 1.6.47 — Divinità Egizie: Special Summon consentite con invio al Cimitero nella End Phase del turno di arrivo; Obelisk fa scegliere due Tributi legali; la reazione di Slifer all'Evocazione avversaria è un Link obbligatorio della Chain.
+ * 1.6.46 — Passo comune: un costo di Tributo per Special Summon (resolveSpecialSummonTributeCost, es. Drago Toon Occhi Blu) pagato dall'IA sceglieva il mostro da sacrificare con Tavolo.eIA: sull'altro client quel posto e' 'remoto', quindi ordinava diversamente e i due duelli divergevano (spec passo-comune-a-posti, seme 2003). Ora usa !Tavolo.giocaUnaPersona, uguale sui due client. In piu' // @ts-check su actions.js e game-flow.js (90 file controllati); types/motore.d.ts dice che querySelector trova HTMLElement.
+ * 1.6.45 — Tipi: // @ts-check anche su duel-engine.js, battaglia.js, fasi.js, evocazioni.js, passo-comune.js e duel-sandbox.js (restano actions.js e game-flow.js). GameState.playerDeck e chain sono facoltativi (come nel codice), chain.resolving dichiarato. Nessun cambiamento di comportamento.
+ * 1.6.44 — Tipi: i 9 file degli effetti delle carte (card-effects.js e card-effects-1..8.js) portano // @ts-check; types/motore.d.ts descrive Decisioni, Casuale, PortaUI e le firme vere di negateActivation/takeControl/drawCards/shuffleIntoDeck, e destroyedByOpponentCard e' Card|null. Nessun cambiamento di comportamento.
+ * 1.6.43 — Duello: il CSS di duelMonstersCore.html (275 KB) e' diviso in 12 file contigui js/ui/duello-NN-*.css, senza cambiare nessuno stile.
  * 1.6.42 — Duello: i ridisegni non interrompono il conteggio dei Life Points; i conteggi ravvicinati si sostituiscono senza gare.
  * 1.6.41 — Catena WebGL: uniformi e buffer riusati, misure del layout raggruppate per fotogramma.
  * 1.6.40 — Negozio: nella Busta Base i mostri vanilla hanno peso quadruplo negli slot comuni.
@@ -816,4 +826,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.6.42';
+window.GAME_VERSION = '1.6.53';

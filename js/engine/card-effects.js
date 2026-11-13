@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * card-effects.js — Gli effetti delle carte: helper condivisi e mappa.
  * =====================================================================
@@ -172,16 +173,15 @@
  *                           battaglia (es. Guerriero di Ardesia id 776:
  *                           "il mostro che l'ha distrutta perde 500
  *                           ATK/DEF"). Vedi fireOwnBattled in actions.js.
- *   onEnemyMonsterSummoned(ctx) — reazione MANDATORIA (non una Chain/
- *                           scelta come onOpponentSummon) di QUESTO
+ *   onEnemyMonsterSummoned(ctx) — trigger obbligatorio di QUESTO
  *                           mostro quando l'AVVERSARIO evoca un mostro,
  *                           Normalmente o Special — es. Slifer il Drago
- *                           del Cielo (id 31). ctx.summonedCard/
- *                           summonedOwner/summonedSlotIndex/
- *                           summonedPosition/summonedVia. SEMPLIFICAZIONE:
- *                           un solo rispondente automatico (il primo
- *                           eleggibile in campo), stesso schema di
- *                           onEnemyMonsterDestroyed.
+ *                           del Cielo (id 31). Viene inserito come Link
+ *                           iniziale della Chain; le risposte si
+ *                           aggiungono sopra e si risolvono prima.
+ *                           ctx.summonedCard/summonedOwner/
+ *                           summonedSlotIndex/summonedPosition/
+ *                           summonedVia.
  *   onFlip(ctx)            — si attiva quando QUESTO mostro viene girato
  *                           scoperto in battaglia (era coperto, l'ha
  *                           attaccato o è sopravvissuto rivelandosi) —
@@ -1671,7 +1671,11 @@
         }
         if (!indices) {
             const allIndices = field.map((s, i) => (s ? i : -1)).filter((i) => i !== -1);
-            if (Tavolo.eIA(ctx.owner)) {
+            // NON Tavolo.eIA: a passo comune l'IA gira su UN solo client, e sull'altro il suo posto e' 'remoto'.
+            // Con eIA il primo client sacrificava il mostro piu' debole e il secondo il primo per posizione: i due
+            // duelli divergevano (Drago Toon Occhi Blu, seme 2003 di passo-comune-a-posti). giocaUnaPersona da'
+            // lo stesso risultato su entrambi (una persona decide con pendingSpecialSummonTributeUids, sopra).
+            if (!Tavolo.giocaUnaPersona(ctx.owner)) {
                 // Per i costi automatici dell'IA non basta prendere la prima
                 // carta nello slot: con i Toon Pegasus sacrificava il Drago
                 // Toon Occhi Blu per pagare proprio un'altra copia. Prima si

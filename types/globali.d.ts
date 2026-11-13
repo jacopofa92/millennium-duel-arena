@@ -12,8 +12,8 @@
 declare var __authGatePending: any;
 declare var __pageLoaderStart: any;
 declare var AI_DEBUG: any;
-declare var AI_HARD: any;
-declare var AI_MEDIUM: any;
+declare var AI_HARD: AIHard;
+declare var AI_MEDIUM: AIMedium;
 declare var ArenaOptions: any;
 declare var ArtworkAlternativi: any;
 declare var AudioLibrary: any;
@@ -105,3 +105,7 @@ declare var SplashWebgl: any;
 declare var SPLASH_WEBGL_ERRORE: any;
 declare var ICONE_POSIZIONE_WEBGL_OFF: any;
 declare var IconePosizione: any;
+interface Window {
+    AI_MEDIUM: AIMedium;
+    AI_HARD: AIHard;
+}

@@ -1,5 +1,80 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Restituzione del controllo dagli Equip (1.6.51)
+
+Strappa Possesso (645) e Necropaura Oscura (891) restituiscono ora il mostro
+al proprietario reale quando l'Equip lascia il Terreno. La restituzione è
+immediata, elimina eventuali scadenze temporanee residue e, se il Terreno
+originale è pieno, manda il mostro al Cimitero del proprietario. Helper:
+`returnControlToOriginalOwner()` in `duel-engine.js`; regressione aggiunta a
+`tests/specs/temporary-control-durations.spec.js`.
+
+## Scadenze del cambio controllo (1.6.50)
+
+Controllo della Mente (130) prende il controllo fino alla End Phase; durante
+quel periodo il mostro non può attaccare né essere offerto come Tributo. I
+vincoli per UID vengono rimossi insieme al ritorno del mostro. Scudo da Braccio
+Magico (819) restituisce invece il mostro al termine della Battle Phase, prima
+della Main Phase 2. `temporaryControls` ora conserva la scadenza per ciascuna
+presa; `enterMainPhase2`, `enterEndPhase` e la chiusura della Chain processano
+il momento pertinente. Regressione: `tests/specs/temporary-control-durations.spec.js`.
+
+## Cambio controllo: carte e valutazione IA (1.6.49)
+
+Scatola Mistica e Anima Oscura Posseduta applicano ora il cambio di controllo
+permanente, come da testo TCG privo di una scadenza; Anima paga il costo con
+un vero Tributo e, quando le Zone libere non bastano, lascia scegliere i
+mostri da prendere e distrugge gli eccedenti. Doppio Controllo Magico e
+Controllore del Nemico usano anch'essi `ctx.tributeMonster` per i costi.
+L'IA della Scatola sceglie il bersaglio coerente con la valutazione di
+convenienza; Anima rifiuta scambi di valore insufficiente e seleziona le
+prese migliori senza leggere le statistiche dei mostri coperti. Regressioni
+in `tests/specs/ia-risorse-e-bersagli.spec.js`; suite completa non eseguita.
+
+## Scelte IA delle carte reattive (1.6.48)
+
+Predatore delle Tombe filtra e sceglie lo stesso pool di Magie utili: non
+attiva Buco Nero per un vantaggio di campo marginale a fronte dei 2000 LP,
+né copia una Anfora mentre l'avversario sta già risolvendo la stessa pescata.
+Giudizio Solenne, I Sette Attrezzi del Bandito e Malfunzionamento confrontano
+il campo previsto da Soffio Incendiario prima di decidere se pagare la
+negazione; l'euristica è circoscritta a questa Magia simmetrica. Regressioni
+in `tests/specs/ia-attivazioni-sensate.spec.js`. Audit reattivo: 131 Trappole,
+zero risposte peggiorative; typecheck e sintassi verdi. Lo spec Playwright
+non è partito perché manca Chromium, ma il suo percorso standalone Node è
+passato. Suite completa non eseguita.
+
+## Regole delle Divinità Egizie (1.6.47)
+
+Obelisk, Slifer e Ra possono essere Evocati Specialmente; ogni slot creato da
+`DuelEngine.specialSummon` registra il turno d'arrivo e l'handler `onEndPhase`
+li manda al Cimitero nella End Phase di quel turno. Obelisk usa una scelta
+obbligatoria di due mostri per il suo effetto: distingue i divieti specifici
+per gli effetti dai divieti solo per l'Evocazione Tributo, quindi i Token di
+Capro Espiatorio restano vietati per le Evocazioni Tributo ma possono pagare
+un costo effetto come da testo. Slifer entra nella Chain come trigger
+obbligatorio prima delle risposte all'Evocazione. Spec aggiornato in
+`tests/specs/egyptian-gods.spec.js`; `npm run typecheck` e sintassi passano.
+Lo spec Playwright è stato tentato ma l'ambiente non ha il binario Chromium
+headless richiesto. Suite completa non eseguita.
+
+## Tipizzazione dei moduli IA (2026-11-12)
+
+Il controllo TypeScript con `// @ts-check` copre ora anche il nucleo IA:
+`js/ai/ai-shared.js`, `ai-medium.js`, `ai-hard.js` e l'esecutore `bot.js`.
+I contratti pubblici condivisi sono in `types/ia.d.ts`; i tipi globali dei
+livelli e di `AI_SHARED` sono dichiarati in `types/globali.d.ts` e
+`types/motore.d.ts`. `ai-controller.js` annota i confini dei moduli e non
+passa più a `orderAttackers` un argomento che l'implementazione non usa.
+Il guardrail dei file controllati è 94. Queste annotazioni non cambiano le
+regole dell'IA; `npm run typecheck` e i controlli mirati vanno comunque
+rieseguiti dopo modifiche ai moduli.
+
+I contratti IA non usano più `any`: gli eventi e i dati diagnostici sono
+`unknown` finché non vengono ispezionati; i candidati di Catena e le fusioni
+dall'Extra Deck dichiarano i campi consumati dal codice; le definizioni carta
+usano `CardDefinition`.
+
 ## Artwork della pescata mantenuto a fine effetto (1.6.46)
 
 La firma del DOM usata da `reconcileHandCards` ignora `pending-deal` e

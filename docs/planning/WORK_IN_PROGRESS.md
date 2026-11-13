@@ -1,5 +1,80 @@
 # Work in progress — miglioramenti da seguire
 
+## Restituzione del controllo dagli Equip — 1.6.51
+
+- [x] Strappa Possesso (645): restituisce il mostro quando l'Equip viene
+      distrutto, bandito o rimandato in mano.
+- [x] Necropaura Oscura (891): la restituzione non lascia un ritorno differito
+      spurio; il controllo resta al proprietario finché l'Equip è presente.
+- [x] Terreno originale pieno: il mostro torna al Cimitero del proprietario.
+- [x] Regressione aggiornata in `tests/specs/temporary-control-durations.spec.js`.
+      Suite completa non eseguita.
+
+## Scadenze delle carte che prendono il controllo — 1.6.50
+
+- [x] Controllo della Mente (130): ritorno alla End Phase e divieti di attacco
+      e Tributo limitati alla durata del controllo.
+- [x] Scudo da Braccio Magico (819): ritorno alla fine della Battle Phase,
+      prima della Main Phase 2, anche se la Battle Phase viene terminata da
+      un effetto dopo la risoluzione della Chain.
+- [x] Regressione mirata in `tests/specs/temporary-control-durations.spec.js`;
+      suite completa non eseguita.
+
+## Cambio controllo e IA — 1.6.49
+
+- [x] Scatola Mistica trasferisce il mostro in modo permanente e l'IA
+      distrugge il bersaglio che ha effettivamente giudicato conveniente.
+- [x] Anima Oscura Posseduta paga il Tributo come costo, mantiene il controllo
+      e gestisce i mostri eccedenti quando mancano Zone libere.
+- [x] IA: non attiva Anima per un bersaglio di valore trascurabile; quando deve
+      scegliere, preferisce i mostri migliori e stima quelli coperti senza
+      usare le loro statistiche nascoste.
+- [x] Doppio Controllo Magico e Controllore del Nemico pagano i costi con il
+      percorso comune del motore.
+- [ ] Eseguire lo spec Playwright quando Chromium sarà disponibile; suite
+      completa non eseguita.
+
+## Scelte IA di Predatore delle Tombe e negazioni — 1.6.48
+
+- [x] Predatore delle Tombe considera l'impatto della Magia scelta, non solo
+      la presenza di una carta ad alto punteggio nel Cimitero; evita Buco Nero
+      quando il vantaggio netto non giustifica 2000 LP e non duplica una
+      pescata che l'avversario sta già risolvendo.
+- [x] Le negazioni di Giudizio Solenne, I Sette Attrezzi e Malfunzionamento
+      valutano il costo/beneficio contro Soffio Incendiario.
+- [x] Regressione standalone IA, typecheck, sintassi e audit reattivo: 131
+      Trappole provate, zero risposte peggiorative. Lo spec Playwright non ha
+      potuto avviarsi perché manca Chromium; suite completa non eseguita.
+- [ ] Rilanciare lo spec Playwright `ia-attivazioni-sensate` quando Chromium
+      sarà disponibile.
+
+## Divinità Egizie — correzioni TCG (1.6.47)
+
+- [x] Obelisk, Slifer e Ra accettano Special Summon e vengono mandati al
+      Cimitero nella End Phase del turno d'arrivo.
+- [x] Obelisk offre due mostri a scelta come Tributo; i divieti per la sola
+      Evocazione Tributo (come i Token di Capro Espiatorio) non vengono estesi
+      ai costi degli effetti.
+- [x] Il trigger di Slifer è un Link obbligatorio della Chain; regressione
+      aggiunta a `egyptian-gods.spec.js`.
+- [x] `npm run typecheck` e sintassi JavaScript superati.
+- [ ] Eseguire lo spec Playwright quando Chromium headless sarà disponibile:
+      il tentativo corrente si ferma prima dei test perché manca il binario
+      `chrome-headless-shell` nell'ambiente.
+- [x] Suite completa non eseguita, come richiesto dalle regole del progetto.
+
+## Tipizzazione IA — primo perimetro chiuso (2026-11-12)
+
+- [x] `ai-shared`, `ai-medium`, `ai-hard` e `bot.js` passano `npm run typecheck`;
+      i contratti sono raccolti in `types/ia.d.ts`.
+- [x] `ai-controller` usa gli stessi contratti; guardrail aggiornato a 94 file
+      JavaScript con `// @ts-check`.
+- [x] Rimossi gli `any` dai contratti e dalle firme IA: dati diagnostici/eventi
+      dinamici passano come `unknown`, i campi noti usano i tipi del motore.
+- [ ] Continuare con altri moduli IA solo dopo aver osservato il valore del
+      primo perimetro: priorità a confini e dati decisionali, non a conversioni
+      meccaniche di ogni variabile locale.
+
 ## Conteggio Life Points e transizione Magia dalla mano — chiuso in 1.6.42
 
 - [x] Un ridisegno con lo stesso valore LP non tronca il conteggio; una nuova

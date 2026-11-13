@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * duel-engine.js — Motore generico degli effetti-carta.
  * =====================================================================
@@ -834,6 +835,31 @@
             return card;
         },
 
+        /**
+         * Tributa un mostro come costo: l'immunità agli effetti non lo
+         * protegge, perché il Tributo non è un effetto applicato al mostro.
+         * Mantiene proprietario, sostituzioni del Cimitero e trigger, senza
+         * passare da destroyMonster (Tributare non significa distruggere).
+         */
+        tributeMonster(owner, index) {
+            const field = fieldOf(owner);
+            const slot = field[index];
+            if (!slot) return null;
+            const card = slot.card;
+            const proprietario = slot.originalOwner || owner;
+            if (window.FX && typeof FX.playCardToGraveyard === 'function') {
+                FX.playCardToGraveyard(card, owner, index, proprietario);
+            }
+            field[index] = null;
+            graveyardOf(proprietario).push(card);
+            redirectToBanishIfFlagged(proprietario, card);
+            if (graveyardOf(proprietario).includes(card)) {
+                notifyOwnMonsterSentToGraveyard(proprietario, card);
+            }
+            notifySacrificedForTribute(proprietario, card);
+            return card;
+        },
+
         destroyMonster(owner, index) {
             const field = fieldOf(owner);
             const slot = field[index];
@@ -981,7 +1007,16 @@
             // trovarne la definizione — vedi il ramo TRIGGER.ON_DESTROY qui
             // sotto), non più recuperabile da field[index] dato che è già
             // stato svuotato qui sopra.
-            fireTrigger(TRIGGER.ON_DESTROY, makeContext(owner, { slotIndex: index, card: destroyedCard, wasFaceDown: wasFaceDown, wasPosition: wasPosition, destroyedByOwner: destroyerOwner, destroyedByCard: destroyerCard }));
+            fireTrigger(TRIGGER.ON_DESTROY, makeContext(owner, {
+                slotIndex: index,
+                card: destroyedCard,
+                wasFaceDown: wasFaceDown,
+                wasPosition: wasPosition,
+                destroyedInBattle: false,
+                destroyedWasFaceUpAtDamageStep: false,
+                destroyedByOwner: destroyerOwner,
+                destroyedByCard: destroyerCard
+            }));
         },
 
         /**
@@ -1263,6 +1298,11 @@
         endBattlePhase() {
             if (gameState.phase !== 'battle') return;
             gameState.phase = 'main2';
+            // Scudo da Braccio Magico (id 819) dura fino alla fine della
+            // Battle Phase. Lascio che la Chain corrente finisca prima di
+            // restituire il mostro, così nessun altro Link della stessa
+            // risoluzione vede il controllo già cambiato.
+            gameState.pendingBattlePhaseControlReturns = true;
             addToLog('⏹️ La Battle Phase termina qui!');
         },
 
@@ -1673,6 +1713,30 @@
                 graveyardOf(owner).push(card);
                 return false;
             }
+            // Carta dell'Oblio (id 140) vieta le Special Summon al giocatore
+            // che l'ha attivata per tutto il turno. Il chiamante ha già
+            // tolto la carta dalla zona sorgente, quindi la rimettiamo lì
+            // invece di perderla quando il tentativo viene rifiutato.
+            if (gameState.specialSummonForbiddenTurnFor
+                && gameState.specialSummonForbiddenTurnFor[owner] === gameState.turn) {
+                addToLog(`🚫 Carta dell'Oblio impedisce a ${card.name} di essere Evocata Specialmente in questo turno.`);
+                if (fromZone === 'hand') handOf(owner).push(card);
+                else if (fromZone === 'graveyard') graveyardOf(owner).push(card);
+                else if (fromZone === 'banished') banishedOf(owner).push(card);
+                else if (fromZone === 'extra') Tavolo.extraDeck(owner).push(card);
+                else if (fromZone === 'deck') {
+                    const deck = Tavolo.mazzo(owner);
+                    if (Array.isArray(deck)) {
+                        deck.push(card);
+                        gameState[Tavolo.chiave(owner, 'DeckCount')] = deck.length;
+                    }
+                } else if (fromZone === 'token') {
+                    // Un Token non ha una zona in cui tornare e svanisce.
+                } else {
+                    graveyardOf(owner).push(card);
+                }
+                return false;
+            }
             // Capro Espiatorio (id 434): niente Evocazioni nel turno in cui
             // è stato attivato. I suoi stessi Token nascono PRIMA che il
             // divieto venga acceso, quindi non ne sono toccati.
@@ -1819,7 +1883,12 @@
                 // PERSISTENTE per-slot (mai letto da nessun'altra carta
                 // prima d'ora), l'unico modo per sapere DOPO il fatto come
                 // un mostro già sul Terreno sia arrivato lì.
-                wasSpecialSummoned: true
+                wasSpecialSummoned: true,
+                // Gli Dei Egizi non sono esclusi dalle Special Summon:
+                // vanno mandati al Cimitero nella End Phase del turno in
+                // cui sono arrivati. Il marcatore per turno evita che un
+                // vecchio Special Summon li faccia sparire in ogni turno.
+                specialSummonedOnTurn: gameState.turn
             };
             // Un mostro che arriva COPERTO (es. Momonga, Mago Apprendista: 'defense' senza `faceUp`) non si annuncia: niente dialogo,
             // grido, cinematica ne' suono dedicati alla carta, che rivelerebbero all'avversario cosa e' stato messo coperto.
@@ -2524,11 +2593,11 @@
          * possibile con più carte "prendi il controllo" in gioco) ricorda
          * comunque il proprietario ORIGINALE, non quello intermedio.
          * ACTIONS.destroyMonster manda già la carta al Cimitero giusto
-         * leggendo questo campo (vedi lì); il ritorno automatico a fine
-         * turno è gestito da processTemporaryControlReturns qui sotto,
+         * leggendo questo campo (vedi lì); la scadenza del controllo è
+         * gestita da processTemporaryControlReturns qui sotto,
          * stesso spirito di banishTemporarily/processTemporaryBanishmentReturns.
          */
-        takeControl(newOwner, fromOwner, fromIndex, permanent) {
+        takeControl(newOwner, fromOwner, fromIndex, permanent, returnAt) {
             const fromField = fieldOf(fromOwner);
             const slot = fromField[fromIndex];
             if (!slot) return false;
@@ -2545,7 +2614,7 @@
             const toIndex = toField.findIndex((s) => s === null);
             if (toIndex === -1) return false;
             fromField[fromIndex] = null;
-            applyControlTransferBookkeeping(slot, fromOwner, permanent);
+            applyControlTransferBookkeeping(slot, fromOwner, permanent, returnAt);
             // Bug reale segnalato dall'utente: "ho preso possesso del
             // mostro avversario, ma non fa attaccare l'avversario con
             // lui" — hasAttacked/canChangePosition si azzerano SOLO per
@@ -2585,6 +2654,11 @@
             }
             fireControlChangedTrigger(slot, fromOwner, newOwner);
             return true;
+        },
+
+        /** Restituisce al proprietario reale un mostro legato a un Equip. */
+        returnControlToOriginalOwner(uid, fallbackOwner) {
+            return returnControlledMonsterToOriginalOwner(uid, fallbackOwner);
         },
 
         /**
@@ -2655,20 +2729,23 @@
      * controllore un turno "pulito" di troppo — non distinguibile senza
      * un secondo flag dedicato.
      */
-    function applyControlTransferBookkeeping(slot, fromOwner, permanent) {
+    function applyControlTransferBookkeeping(slot, fromOwner, permanent, returnAt) {
         // Solo se non è già impostato: un mostro preso di nuovo mentre è
         // già sotto controllo altrui deve ricordare il proprietario
         // ORIGINALE, non quello intermedio.
         if (slot.originalOwner === undefined) slot.originalOwner = fromOwner;
         slot.hasAttacked = false;
         slot.canChangePosition = true;
-        // `permanent` (es. Controllo Mentale/Mind Control, id 130): il
-        // controllo NON torna mai da solo a fine turno — niente entry in
-        // gameState.temporaryControls, quindi processTemporaryControlReturns
-        // non la tocca mai più.
+        // `permanent` è riservato agli effetti senza scadenza. Gli altri
+        // possono indicare una scadenza diversa dalla End Phase (es. lo
+        // Scudo da Braccio Magico alla fine della Battle Phase).
         if (!permanent) {
             gameState.temporaryControls = gameState.temporaryControls || [];
-            gameState.temporaryControls.push({ uid: slot.card.uid, returnOwner: slot.originalOwner });
+            gameState.temporaryControls.push({
+                uid: slot.card.uid,
+                returnOwner: slot.originalOwner,
+                returnAt: returnAt || 'endPhase'
+            });
         }
     }
 
@@ -3010,10 +3087,9 @@
     /**
      * Restituisce ad ogni vero proprietario (`returnOwner`) i mostri presi
      * temporaneamente sotto controllo (vedi ACTIONS.takeControl) — chiamata
-     * da enterEndPhase() in game-flow.js, SEMPRE (non solo per il
-     * giocatore di turno): stessa scelta già fatta per
-     * clearTemporaryAtkDefBonus(), dato che "fino alla tua End Phase" è
-     * sempre quella dello stesso turno in cui il controllo è stato preso.
+     * alla scadenza registrata per ciascun trasferimento. Le carte normali
+     * scadono alla End Phase; alcune, come Scudo da Braccio Magico, alla
+     * fine della Battle Phase.
      * Se il Terreno del proprietario originale è pieno al momento del
      * ritorno, la carta finisce nel suo Cimitero invece di restare
      * bloccata (stessa semplificazione di processTemporaryBanishmentReturns
@@ -3021,9 +3097,17 @@
      * più trovato su nessun campo), la voce si rimuove senza fare nulla:
      * ACTIONS.destroyMonster l'ha già mandato al Cimitero giusto da sola.
      */
-    function processTemporaryControlReturns() {
+    function processTemporaryControlReturns(returnAt) {
         if (!gameState.temporaryControls || gameState.temporaryControls.length === 0) return;
+        const timing = returnAt || 'endPhase';
+        const daRestituire = [];
+        const inAttesa = [];
         gameState.temporaryControls.forEach((entry) => {
+            if ((entry.returnAt || 'endPhase') !== timing) {
+                inAttesa.push(entry);
+                return;
+            }
+            daRestituire.push(entry.uid);
             Tavolo.ordine().forEach((currentOwner) => {
                 const field = fieldOf(currentOwner);
                 const index = field.findIndex((s) => s && s.card.uid === entry.uid);
@@ -3052,14 +3136,74 @@
                 addToLog(`🔄 ${slot.card.name} torna sotto il controllo del suo proprietario originale.`);
             });
         });
-        gameState.temporaryControls = [];
+        gameState.temporaryControls = inAttesa;
+        // I vincoli imposti da Controllo della Mente durano quanto il
+        // controllo: rimuovi soltanto quelli degli UID appena restituiti,
+        // senza toccare restrizioni indipendenti (per esempio i Token).
+        daRestituire.forEach((uid) => {
+            if (gameState.cannotAttackUidsUntilEndPhase) gameState.cannotAttackUidsUntilEndPhase.delete(uid);
+            if (gameState.cannotBeTributedUids) gameState.cannotBeTributedUids.delete(uid);
+            if (gameState.grantDirectAttackWhileControlledUids) gameState.grantDirectAttackWhileControlledUids.delete(uid);
+        });
         // Vedi il commento su gameState.grantDirectAttackWhileControlledUids
         // in recomputeStaticEffects: il permesso di attacco diretto
         // concesso da un controllo temporaneo (es. id 1029) non deve
         // sopravvivere oltre il ritorno della carta al proprietario
         // originale — altrimenti resterebbe valido per sempre su
         // quell'uid, ben oltre "finché sotto il tuo controllo".
-        if (gameState.grantDirectAttackWhileControlledUids) gameState.grantDirectAttackWhileControlledUids.clear();
+        // Non svuotare l'intero Set: possono coesistere controlli temporanei
+        // con scadenze diverse (End Phase e fine Battle Phase).
+    }
+
+    /**
+     * Restituzione immediata quando un Equip che imponeva il controllo
+     * lascia il Terreno. Non è un nuovo effetto di cambio controllo e non
+     * deve essere fermato dalle immunità: rimuove il controllo già concesso
+     * dalla carta Equip. Se il campo originale è pieno, applica la stessa
+     * gestione dei ritorni temporanei e manda il mostro al Cimitero del
+     * proprietario invece di lasciarlo sotto il controllo sbagliato.
+     */
+    function returnControlledMonsterToOriginalOwner(uid, fallbackOwner) {
+        if (!uid) return false;
+        /** @type {{ owner: Owner, index: number, field: any[], slot: any } | null} */
+        let trovato = null;
+        for (const owner of Tavolo.ordine()) {
+            const field = fieldOf(owner);
+            const index = field.findIndex((slot) => slot && slot.card.uid === uid);
+            if (index === -1) continue;
+            trovato = { owner, index, field, slot: field[index] };
+            break;
+        }
+        if (!trovato) return false;
+
+        const returnOwner = trovato.slot.originalOwner || fallbackOwner;
+        if (!returnOwner) return false;
+        if (trovato.owner === returnOwner) {
+            delete trovato.slot.originalOwner;
+        } else {
+            trovato.field[trovato.index] = null;
+            delete trovato.slot.originalOwner;
+            const destinazione = fieldOf(returnOwner);
+            const freeIndex = destinazione.findIndex((slot) => slot === null);
+            if (freeIndex === -1) {
+                graveyardOf(returnOwner).push(trovato.slot.card);
+                addToLog(`⚠️ Il Terreno del proprietario è pieno: ${trovato.slot.card.name} va al suo Cimitero.`);
+            } else {
+                if (window.FX && typeof FX.playControlSwitch === 'function') {
+                    FX.playControlSwitch(trovato.slot.card, trovato.owner, trovato.index, returnOwner, freeIndex, true);
+                }
+                destinazione[freeIndex] = trovato.slot;
+                addToLog(`🔄 ${trovato.slot.card.name} torna sotto il controllo del suo proprietario originale.`);
+            }
+        }
+
+        // Il ritorno immediato consuma anche eventuali scadenze o vincoli
+        // temporanei rimasti da un precedente effetto sullo stesso mostro.
+        gameState.temporaryControls = (gameState.temporaryControls || []).filter((entry) => entry.uid !== uid);
+        if (gameState.cannotAttackUidsUntilEndPhase) gameState.cannotAttackUidsUntilEndPhase.delete(uid);
+        if (gameState.cannotBeTributedUids) gameState.cannotBeTributedUids.delete(uid);
+        if (gameState.grantDirectAttackWhileControlledUids) gameState.grantDirectAttackWhileControlledUids.delete(uid);
+        return true;
     }
 
     // ============================================================
@@ -3440,39 +3584,6 @@
                 }
                 if (summonReactCard) {
                     safeCallCardHandler(summonReactCard, 'onOwnMonsterSummoned', () => summonReactDef.onOwnMonsterSummoned(makeContext(summonReactOwner, { summonedCard: ctx.summonedCard, summonedVia: ctx.summonedVia })));
-                }
-            }
-
-            // 1.7) Reazione MANDATORIA (non una Chain/scelta come il punto 2
-            //      qui sotto) di un mostro scoperto sul campo
-            //      dell'AVVERSARIO di chi ha appena Evocato — es. Slifer
-            //      il Drago del Cielo (id 31): "se un mostro viene
-            //      Evocato scoperto in Attacco sul campo dell'avversario,
-            //      cambialo in Difesa; se viene Evocato in Difesa,
-            //      distruggilo" — succede sempre, non è una risposta
-            //      opzionale come Buco Trappola. Un solo rispondente
-            //      automatico (il primo eleggibile), stesso schema di
-            //      onEnemyMonsterDestroyed.
-            {
-                const enemyOfSummoner = opponentOf(ctx.owner);
-                let enemyReactCard = null;
-                let enemyReactDef = null;
-                fieldOf(enemyOfSummoner).forEach((slot) => {
-                    if (enemyReactCard || !slot || slot.isFaceDown) return;
-                    const rdef = getDefinition(slot.card.id);
-                    if (rdef && typeof rdef.onEnemyMonsterSummoned === 'function') {
-                        enemyReactCard = slot.card;
-                        enemyReactDef = rdef;
-                    }
-                });
-                if (enemyReactCard) {
-                    safeCallCardHandler(enemyReactCard, 'onEnemyMonsterSummoned', () => enemyReactDef.onEnemyMonsterSummoned(makeContext(enemyOfSummoner, {
-                        summonedCard: ctx.summonedCard,
-                        summonedOwner: ctx.owner,
-                        summonedSlotIndex: ctx.summonedSlotIndex,
-                        summonedPosition: ctx.summonedPosition,
-                        summonedVia: ctx.summonedVia
-                    })));
                 }
             }
 
@@ -4408,7 +4519,7 @@
             // L'IA ragiona su COSA e' successo (che mostro e' stato Evocato, chi attacca con quanto ATK) e su
             // quante risposte ha gia' dato a questo stesso evento: glieli dice il candidato. Non cambiano nulla
             // per la persona (il prompt legge solo carta/zona/indice).
-            candidates.forEach((c) => { c.evento = ctx; c.round = rounds; });
+            candidates.forEach((c) => { /** @type {any} */ (c).evento = ctx; /** @type {any} */ (c).round = rounds; });
             chain.active = true;
             askResponder(responderOwner, candidates, (choice) => {
                 if (!choice) {
@@ -4448,6 +4559,35 @@
      */
     function openSummonResponseWindows(ctx, onDone) {
         const finish = typeof onDone === 'function' ? onDone : function () {};
+        // Gli effetti obbligatori dei mostri che reagiscono a una Evocazione
+        // sono Link iniziali della Chain: una risposta come Buco Trappola
+        // si aggiunge sopra di loro e si risolve prima. Prima Slifer veniva
+        // applicato subito, fuori dalla Chain, rendendo impossibili
+        // negazioni e mostrando l'ordine sbagliato degli eventi.
+        const chain = ensureChainState();
+        const triggerOwner = ctx.opponent;
+        fieldOf(triggerOwner).forEach((slot, index) => {
+            if (!slot || slot.isFaceDown || isMonsterCardEffectsNegated(triggerOwner, slot.card.uid)) return;
+            const def = getDefinition(slot.card.id);
+            if (!def || typeof def.onEnemyMonsterSummoned !== 'function') return;
+            chain.links.push({
+                owner: triggerOwner,
+                card: slot.card,
+                handlerName: 'onEnemyMonsterSummoned',
+                def: def,
+                ctx: makeContext(triggerOwner, {
+                    card: slot.card,
+                    slot: slot,
+                    slotIndex: index,
+                    zone: 'monster',
+                    summonedCard: ctx.summonedCard,
+                    summonedOwner: ctx.owner,
+                    summonedSlotIndex: ctx.summonedSlotIndex,
+                    summonedPosition: ctx.summonedPosition,
+                    summonedVia: ctx.summonedVia
+                })
+            });
+        });
         openTriggerWindow('onOpponentSummon', ctx, () => {
             const summoner = ctx.owner;
             const ha = !window.MULTIPLAYER_MODE && stFieldOf(summoner).some((s) => s && s.isFaceDown
@@ -5017,6 +5157,10 @@
                 chain.active = false;
                 chain.resolving = false;
                 chainResolutionInFlight = false;
+                if (gameState.pendingBattlePhaseControlReturns) {
+                    gameState.pendingBattlePhaseControlReturns = false;
+                    processTemporaryControlReturns('battlePhaseEnd');
+                }
                 EventiDuello.emetti('catena');
                 // Svuotata PRIMA di chiamarli: un onDone può aprire a sua
                 // volta una nuova Chain, e quella deve partire pulita.
@@ -5404,9 +5548,9 @@
         // (gameState.grantDirectAttackWhileControlledUids, un Set),
         // ripopolato QUI ad ogni render invece che dentro il static()
         // della carta rubata (che non saprebbe nulla di questo bisogno,
-        // essendo un effetto imposto DALL'ESTERNO, non suo). Svuotato in
-        // processTemporaryControlReturns insieme a
-        // gameState.temporaryControls — riusabile SENZA modifiche da
+        // essendo un effetto imposto DALL'ESTERNO, non suo). Rimosso per
+        // UID in processTemporaryControlReturns alla scadenza del relativo
+        // controllo — riusabile SENZA modifiche da
         // qualunque futura carta con lo stesso bisogno "il mostro che
         // rubo può attaccare direttamente finché resta sotto controllo".
         if (gameState.grantDirectAttackWhileControlledUids) {
@@ -6471,6 +6615,26 @@
             : zone === 'fieldSpell' ? fieldSpellOf(owner).card
             : stFieldOf(owner)[index].card;
         const def = getDefinition(card.id);
+        // Alcuni effetti pagano il costo PRIMA di creare il Link (Obelisk:
+        // seleziona e Tributa 2 mostri). Il callback può arrivare dopo una
+        // scelta remota/UI; catturiamo carta e definizione ora, perché il
+        // costo può anche rimuovere dal Terreno la carta che ha attivato
+        // l'effetto. Senza questo passaggio il costo finirebbe per essere
+        // pagato in activate(), cioè soltanto in risoluzione e dopo le
+        // eventuali risposte: annullare il Link restituirebbe il costo.
+        if (typeof def.prepareActivation === 'function') {
+            let avviata = false;
+            def.prepareActivation(makeContext(owner, { card: card, zone: zone, index: index }), () => {
+                if (avviata) return;
+                avviata = true;
+                beginCardActivation(owner, zone, index, extra, card, def);
+            });
+            return true;
+        }
+        return beginCardActivation(owner, zone, index, extra, card, def);
+    }
+
+    function beginCardActivation(owner, zone, index, extra, card, def) {
         const soulLimit = gameState.soulCrossingActivationLimitFor
             && gameState.soulCrossingActivationLimitFor[owner];
         const isDivineBeastEffect = zone === 'monster'

@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * card-effects-2.js — Effetti delle carte, parte 2 di 8.
  * =====================================================================
@@ -117,7 +118,7 @@
         activate(ctx) {
             const ownField = ctx.field(ctx.owner);
             let tributeIndex = -1;
-            let tributeCard = null;
+            let tributeCard = /** @type {Card | null} */ (null);
             ownField.forEach((slot, i) => {
                 if (slot && !slot.isFaceDown && slot.card.attribute === 'OSCURITÀ' && slot.card.attack <= 1000) {
                     tributeIndex = i;
@@ -263,49 +264,68 @@
 
     // ================================================================
     // 150 — Chiron il Mago / Chiron the Mage (effetto Ignition)
-    // Una volta per turno: puoi scartare 1 Magia dalla mano, poi scegliere
-    // come bersaglio 1 Magia/Trappola controllata dal tuo avversario;
-    // distruggila.
-    // SEMPLIFICAZIONE residua: sceglie da sola il bersaglio da distruggere
-    // (il primo trovato), invece di un'interfaccia di selezione dedicata.
-    // La Magia da scartare è invece ora una vera scelta (offerHandDiscardChoice,
-    // filtrata alle sole Magie in mano) — bug reale corretto in questa
-    // sessione.
+    // Una volta per turno: scarta 1 Magia dalla mano, poi scegli come
+    // bersaglio una Magia/Trappola avversaria e distruggila. Il bersaglio
+    // viene dichiarato prima del costo e può essere coperto: il picker ne
+    // mostra il retro, senza rivelarne l'identità.
     // ================================================================
     CardEffects.register(150, {
         canActivate(ctx) {
             const hasSpellInHand = ctx.hand(ctx.owner).some((c) => c.type === 'spell');
-            const hasTarget = ctx.stField(ctx.opponent).some((slot) => slot);
+            const hasTarget = ctx.stField(ctx.opponent).some((slot) => slot)
+                || !!ctx.gameState[Tavolo.chiave(ctx.opponent, 'FieldSpell')];
             return hasSpellInHand && hasTarget;
         },
         activate(ctx) {
-            const stField = ctx.stField(ctx.opponent);
-            const targetIndex = stField.findIndex((slot) => slot);
-            if (targetIndex === -1) return;
-            offerHandDiscardChoice(ctx, {
-                filter: (c) => c.type === 'spell',
-                title: '🔮 Chiron il Saggio',
-                text: 'Scegli quale Magia scartare dalla mano.'
-            }, (discarded) => {
-                const target = stField[targetIndex];
-                if (!target) return;
-                ctx.graveyard(ctx.opponent).push(target.card);
-                stField[targetIndex] = null;
-                ctx.log(`🔮 Chiron il Saggio scarta ${discarded.name} e distrugge ${target.card.name} dell'avversario!`);
+            const candidati = collectFieldTargets(ctx, {
+                zone: 'st',
+                owner: 'opponent',
+                includiCoperte: true
+            });
+            const fieldSpell = ctx.gameState[Tavolo.chiave(ctx.opponent, 'FieldSpell')];
+            if (fieldSpell) candidati.push({ owner: ctx.opponent, index: -1, zone: 'fieldSpell', card: fieldSpell.card, slot: fieldSpell });
+            if (candidati.length === 0) return;
+            chooseFieldCardTarget(ctx, candidati, {
+                title: '🔮 Chiron il Mago',
+                text: 'Scegli quale Magia/Trappola dell\'avversario distruggere.',
+                dichiara: true,
+                totalTargetCount: 1
+            }, (bersaglio) => {
+                offerHandDiscardChoice(ctx, {
+                    filter: (c) => c.type === 'spell',
+                    title: '🔮 Chiron il Mago',
+                    text: 'Scegli quale Magia scartare dalla mano.'
+                }, (scartata) => {
+                    if (bersaglio.zone === 'fieldSpell') {
+                        const key = Tavolo.chiave(bersaglio.owner, 'FieldSpell');
+                        const slot = ctx.gameState[key];
+                        if (!slot || slot.card.uid !== bersaglio.card.uid) return;
+                        const name = slot.card.name;
+                        ctx.destroyFieldSpell(bersaglio.owner);
+                        if (!ctx.gameState[key]) ctx.log(`🔮 Chiron il Mago scarta ${scartata.name} e distrugge ${name}!`);
+                        return;
+                    }
+                    const stField = ctx.stField(bersaglio.owner);
+                    const targetIndex = stField.findIndex((slot) => slot && slot.card.uid === bersaglio.card.uid);
+                    if (targetIndex === -1) return;
+                    const name = stField[targetIndex].card.name;
+                    const slot = stField[targetIndex];
+                    ctx.destroySpellTrap(bersaglio.owner, targetIndex);
+                    if (stField[targetIndex] !== slot) ctx.log(`🔮 Chiron il Mago scarta ${scartata.name} e distrugge ${name}!`);
+                });
             });
         }
     });
 
     // ================================================================
-    // 188 — Maga Oscura / Dark Magician Girl (buff continuo)
-    // Guadagna 300 ATK per ogni "Mago Nero" nel Cimitero.
-    // SEMPLIFICAZIONE: l'effetto reale conta anche "Mago del Chaos Oscuro",
-    // carta non presente in questo database — qui conta solo "Mago Nero"
-    // (id 2).
+    // 188 — Maga Oscura / Dark Magician Girl (buff continuo): guadagna
+    // 300 ATK per ogni "Mago Nero" o "Mago del Chaos Oscuro" nei Cimiteri
+    // di entrambi i giocatori (il testo non restringe il conteggio al tuo).
     // ================================================================
     CardEffects.register(188, {
         static(ctx) {
-            const count = ctx.graveyard(ctx.owner).filter((c) => c.id === 2).length;
+            const count = Tavolo.ordine().reduce((totale, owner) =>
+                totale + ctx.graveyard(owner).filter((c) => c.id === 2 || c.id === 854).length, 0);
             gameState.atkDefBonus[ctx.card.uid] = { atk: count * 300, def: 0 };
         }
     });
@@ -921,11 +941,12 @@
     // Attacco, 1 mostro VENTO con 1500 o meno ATK. Vera scelta tra tutti
     // i candidati tramite searchDeckWithChoice (vedi il suo commento) —
     // prima prendeva il primo trovato nel Deck mescolato, non una scelta
-    // libera. SEMPLIFICAZIONE residua: funziona solo con un Deck reale
-    // in gameState.playerDeck/botDeck (non nel Duello Demo).
+    // libera. Il trigger è limitato alla distruzione in battaglia tramite
+    // ctx.destroyedInBattle.
     // ================================================================
     CardEffects.register(248, {
         onDestroy(ctx) {
+            if (!ctx.destroyedInBattle) return;
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return;
             searchDeckWithChoice(ctx, (c) => c.type === 'monster' && c.attribute === 'VENTO' && c.attack <= 1500, {
                 title: '🦗 Kamakiri Volante #1',
@@ -973,6 +994,7 @@
     // ================================================================
     CardEffects.register(259, {
         onDestroy(ctx) {
+            if (!ctx.destroyedInBattle) return;
             ctx.dealDamage(ctx.opponent, 500);
             ctx.log('🦠 Germe Gigante, distrutto in battaglia, infligge 500 danni!');
             const deck = Tavolo.mazzo(ctx.owner);
@@ -1877,6 +1899,7 @@
     // ================================================================
     CardEffects.register(390, {
         onDestroy(ctx) {
+            if (!ctx.destroyedInBattle) return;
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return;
             searchDeckWithChoice(ctx, (c) => c.type === 'monster' && c.attribute === 'OSCURITÀ' && c.attack <= 1500, {
                 title: '🍅 Pomodoro Mistico',
@@ -2811,9 +2834,13 @@
     }
 
     CardEffects.register(472, {
-        cannotBeSpecialSummoned: true,
         cannotBeSet: true,
         blocksActivationsOnOwnNormalSummon: true,
+        onEndPhase(ctx) {
+            if (!ctx.slot || ctx.slot.specialSummonedOnTurn !== gameState.turn) return;
+            const sent = ctx.sendMonsterToGraveyard(ctx.owner, ctx.slotIndex);
+            if (sent) ctx.log('☀️ Il Drago Alato di Ra, Evocato Specialmente, viene mandato al Cimitero nella End Phase.');
+        },
         onSummon(ctx) {
             // CORREZIONE: usava ctx.card, che qui è sempre undefined — il
             // ctx passato al self-handler da fireTrigger (duel-engine.js)
@@ -3005,34 +3032,34 @@
 
     // ================================================================
     // 492 — Tributo ai Dannati / Tribute to the Doomed (Magia Normale)
-    // Scarta 1 carta dalla mano, poi distruggi 1 mostro dell'avversario.
-    // SEMPLIFICAZIONE residua: la carta reale può bersagliare qualsiasi
-    // mostro sul Terreno (anche un proprio mostro coperto) — qui sceglie
-    // sempre un mostro scoperto dell'avversario. La carta da scartare è
-    // invece ora una vera scelta (offerHandDiscardChoice), non più sempre
-    // la prima in mano — bug reale corretto in questa sessione.
+    // Scarta 1 carta dalla mano, poi bersaglia e distrugge un mostro
+    // qualsiasi sul Terreno, anche proprio o coperto.
     // ================================================================
     CardEffects.register(492, {
         declaredTargeting: { count: 1, cardType: 'monster' },
         canActivate(ctx) {
             // Serve un'ALTRA carta da scartare: vedi otherHandCards.
             if (otherHandCards(ctx).length === 0) return false;
-            return ctx.field(ctx.opponent).some((slot) => slot && !slot.isFaceDown);
+            return Tavolo.ordine().some((owner) => ctx.field(owner).some((slot) => slot));
         },
         activate(ctx) {
             offerHandDiscardChoice(ctx, {
                 title: '⚰️ Tributo al Dannato',
                 text: 'Scegli quale carta scartare dalla mano.'
             }, (discarded) => {
-                const field = ctx.field(ctx.opponent);
-                const index = field.findIndex((slot) => slot && !slot.isFaceDown);
-                if (index === -1) return;
-                ctx.declareTargetWaiting(ctx.opponent, index, { totalTargetCount: 1 }, (decl) => {
-                    if (!decl.allowed) return;
-                    const target = ctx.field(decl.targetOwner)[decl.targetIndex];
-                    const name = target ? target.card.name : field[index].card.name;
-                    ctx.destroyMonster(decl.targetOwner, decl.targetIndex);
-                    ctx.log(`⚰️ Tributo al Dannato scarta ${discarded.name} e distrugge ${name}!`);
+                const candidates = collectFieldTargets(ctx, { zone: 'monster', owner: 'both', includiCoperte: true });
+                chooseFieldCardTarget(ctx, candidates, {
+                    title: '⚰️ Tributo al Dannato',
+                    text: 'Scegli quale mostro sul Terreno distruggere.',
+                    dichiara: true,
+                    totalTargetCount: 1
+                }, (target) => {
+                    const field = ctx.field(target.owner);
+                    const index = field.findIndex((slot) => slot && slot.card.uid === target.card.uid);
+                    if (index === -1) return;
+                    const name = field[index].card.name;
+                    ctx.destroyMonster(target.owner, index);
+                    if (!field[index]) ctx.log(`⚰️ Tributo al Dannato scarta ${discarded.name} e distrugge ${name}!`);
                 });
             });
         }

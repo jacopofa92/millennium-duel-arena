@@ -81,7 +81,7 @@
         if (E.cannotAttack('player')) return false;
         if (gameState.cannotAttackUidsThisTurn && gameState.cannotAttackUidsThisTurn.has(uid)) return false;
         if (gameState.cannotAttackUids && gameState.cannotAttackUids[uid]) return false;
-        if (gameState.cannotAttackUidsPermanent && gameState.cannotAttackUidsPermanent.has(uid)) return false;
+        if (gameState.cannotAttackUidsUntilEndPhase && gameState.cannotAttackUidsUntilEndPhase.has(uid)) return false;
         if (gameState.attackLockedUntilTurn && gameState.attackLockedUntilTurn[uid] === gameState.turn) return false;
         const def = E.getDefinition(slot.card.id);
         if (def && typeof def.canDeclareAttack === 'function' && !def.canDeclareAttack(E.makeContext('player', { card: slot.card, slotIndex: indice }))) return false;

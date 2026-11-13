@@ -543,7 +543,11 @@
 // v690: gli slot comuni della Busta Base privilegiano i mostri vanilla.
 // v691: la scena WebGL della Catena riduce le ricerche e le letture di layout per fotogramma.
 // v696: le classi temporanee della pescata non fanno ricreare le carte in mano dopo l'effetto.
-const CACHE_NAME = 'ygo-duel-arena-v696';
+// v702: l'IA sceglie Magie sensate con Predatore delle Tombe e valuta le negazioni di Soffio Incendiario.
+// v703: controllo permanente corretto per Scatola Mistica e Anima Oscura; IA di Scatola e Tributo valutano costi e bersagli.
+// v705: Strappa Possesso e Necropaura Oscura restituiscono il mostro quando l'Equip lascia il Terreno.
+// v706: correzioni agli effetti di Maga Oscura, Spada Celestiale - Eatos e Chiron il Mago.
+const CACHE_NAME = 'ygo-duel-arena-v707';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento
@@ -601,6 +605,19 @@ const APP_SHELL = [
     'js/ui/card.css',
     'js/ui/effects.css',
     'js/ui/duel-cinematics.css',
+    // CSS del duello, in 12 parti contigue estratte da duelMonstersCore.html (nell ordine della cascata, non riordinare).
+    'js/ui/duello-01-base-e-frecce.css',
+    'js/ui/duello-02-intro-e-mani.css',
+    'js/ui/duello-03-giocatori-e-campo.css',
+    'js/ui/duello-04-badge-impatti-e-danni.css',
+    'js/ui/duello-05-attacco-diretto-e-fasi.css',
+    'js/ui/duello-06-hud-di-sistema.css',
+    'js/ui/duello-07-catena-fasi-e-info-carta.css',
+    'js/ui/duello-08-modali-e-popover.css',
+    'js/ui/duello-09-annunci.css',
+    'js/ui/duello-10-mobile.css',
+    'js/ui/duello-11-mobile-verticale.css',
+    'js/ui/duello-12-pulsante-fasi-laterale.css',
     'js/ui/duel-rps.css',
     'js/ui/duel-dialogues.css',
     'js/tutorial/tutorial-duel.css',
