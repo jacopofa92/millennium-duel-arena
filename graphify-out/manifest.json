@@ -45,11 +45,10 @@
     "ast_empty": true
   },
   "data/cards.json": {
-    "mtime": 1793554400.3692975,
-    "seen": 1793910198.224682,
-    "ast_hash": "162784c3a5e8e364a699d5cba052c791",
-    "semantic_hash": "162784c3a5e8e364a699d5cba052c791",
-    "ast_empty": true
+    "mtime": 1794560264.413694,
+    "seen": 1794560938.7485652,
+    "ast_hash": "e887313a431b82195855b4e4fdd6b6a6",
+    "semantic_hash": ""
   },
   "js/ai/ai-controller.js": {
     "mtime": 1794558632.8419237,
@@ -160,8 +159,8 @@
     "semantic_hash": "550b0ba2e6495fa66c9ae2630b59cc5d"
   },
   "js/data/card-origins.generated.js": {
-    "mtime": 1793554400.4996538,
-    "seen": 1793910198.2344966,
+    "mtime": 1794560832.181315,
+    "seen": 1794560938.7566175,
     "ast_hash": "4814c0b55436e237986c7e5b77d88ac9",
     "semantic_hash": "4814c0b55436e237986c7e5b77d88ac9"
   },
@@ -172,10 +171,10 @@
     "semantic_hash": "1658c7a7aece29f7ac6eccae9890c140"
   },
   "js/data/cards-data.generated.js": {
-    "mtime": 1793554400.4928465,
-    "seen": 1793910198.2344966,
-    "ast_hash": "df7e9a49c227cf35949ecc9d06d21800",
-    "semantic_hash": "df7e9a49c227cf35949ecc9d06d21800"
+    "mtime": 1794560832.1755805,
+    "seen": 1794560938.7566175,
+    "ast_hash": "1e44d99591fbe2538bb12649b6d5b0a0",
+    "semantic_hash": ""
   },
   "js/data/cards-db.js": {
     "mtime": 1794426409.3137326,
@@ -406,9 +405,9 @@
     "semantic_hash": ""
   },
   "js/engine/card-effects-2.js": {
-    "mtime": 1794558632.8516414,
-    "seen": 1794559179.776456,
-    "ast_hash": "1e5db45f6a66940057efe93ef2c9f41c",
+    "mtime": 1794560264.1150966,
+    "seen": 1794560938.7787745,
+    "ast_hash": "77026a8185bc9468b2bdce9bfebec11c",
     "semantic_hash": ""
   },
   "js/engine/card-effects-3.js": {
@@ -436,21 +435,21 @@
     "semantic_hash": ""
   },
   "js/engine/card-effects-7.js": {
-    "mtime": 1794559041.677403,
-    "seen": 1794559179.776456,
-    "ast_hash": "331881c390f4ed96e94ada489963e395",
+    "mtime": 1794560995.116639,
+    "seen": 1794561169.9399045,
+    "ast_hash": "ff392dde59a964656231efc30bc858f1",
     "semantic_hash": ""
   },
   "js/engine/card-effects-8.js": {
-    "mtime": 1794558632.8721452,
-    "seen": 1794559179.776456,
-    "ast_hash": "6f2940dba9290121d5b30004d7ff37dc",
+    "mtime": 1794561106.8475547,
+    "seen": 1794561169.9399045,
+    "ast_hash": "8d82b1c0f0d5bf84caf9b9d66f755cd4",
     "semantic_hash": ""
   },
   "js/engine/card-effects.js": {
-    "mtime": 1794558632.8745334,
-    "seen": 1794559179.776456,
-    "ast_hash": "80625f4d53f73795d82381b0372e4f1c",
+    "mtime": 1794560263.8120508,
+    "seen": 1794560938.7802892,
+    "ast_hash": "603188eb9cef0787a23913b104ba2120",
     "semantic_hash": ""
   },
   "js/engine/casuale.js": {
@@ -472,9 +471,9 @@
     "semantic_hash": "dcd14125a9faf5071dedc66d14fd61d0"
   },
   "js/engine/duel-engine.js": {
-    "mtime": 1794559041.3682115,
-    "seen": 1794559179.7786157,
-    "ast_hash": "6add15cd6047168ada2b9669580a133b",
+    "mtime": 1794561106.5093858,
+    "seen": 1794561169.9418566,
+    "ast_hash": "2cd40317c7e5728fa22f11f8473a46fd",
     "semantic_hash": ""
   },
   "js/engine/duel-sandbox.js": {
@@ -1108,9 +1107,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794559042.2935193,
-    "seen": 1794559179.8327503,
-    "ast_hash": "63de6d8c7c0060cd922eb19edfbdac87",
+    "mtime": 1794560825.1952615,
+    "seen": 1794560938.8429797,
+    "ast_hash": "bd138187d8fb5813d88e717f93334ee5",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1527,9 +1526,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794559042.5896318,
-    "seen": 1794559179.8636863,
-    "ast_hash": "cf4b137c906dfe2447378447f2fc6ea7",
+    "mtime": 1794560625.7705908,
+    "seen": 1794560938.878577,
+    "ast_hash": "113060dacbc7840baccc1446acfd857c",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {

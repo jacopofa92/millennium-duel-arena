@@ -35,6 +35,7 @@
  * 1.6.50 — Controllo della Mente scade alla End Phase; Scudo da Braccio Magico restituisce il mostro alla fine della Battle Phase.
  * 1.6.51 — Strappa Possesso e Necropaura Oscura restituiscono il controllo quando l'Equip lascia il Terreno.
  * 1.6.52 — Maga Oscura conta entrambi i mostri indicati in tutti e due i Cimiteri; Spada Celestiale - Eatos applica il suo effetto dal Cimitero; Chiron lascia scegliere anche le Magie/Trappole coperte e le Magie Terreno.
+ * 1.6.55 — Virus Distruggi-Carte applica anche il controllo della mano e la scelta dei mostri nel Deck; Kotodama distrugge i mostri con lo stesso nome Evocati simultaneamente e i Token vengono Evocati scoperti; Roccaforte viene trasferita in Zona Mostri restando Trappola Continua.
  * 1.6.54 — Elefante Volante può vincere solo con un attacco diretto nel turno successivo all'effetto che ne ha impedito la distruzione.
  * 1.6.53 — I trigger legati alla distruzione in battaglia ora distinguono gli effetti Carta; corrette le scelte e i vincoli TCG di Tributo al Dannato, Virus Infetta-Tribù, Proiettile Sonico e Carta dell'Oblio.
  * 1.6.48 — IA: Predatore delle Tombe valuta la Magia concreta da usare (evita Buco Nero quando il campo netto non ripaga i 2000 LP e non duplica l'Anfora in risoluzione); le negazioni di Giudizio Solenne, Sette Attrezzi e Malfunzionamento stimano se Soffio Incendiario danneggia davvero il bot.
@@ -827,4 +828,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.6.54';
+window.GAME_VERSION = '1.6.55';

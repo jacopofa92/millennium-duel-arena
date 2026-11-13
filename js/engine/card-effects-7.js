@@ -517,59 +517,42 @@
 
     // ================================================================
     // 849 — Roccaforte la Fortezza Mobile / Fortress Whale's Oath
-    // Trappola Normale: quando si attiva, activateCard() (duel-engine.js)
-    // la manda già al Cimitero da sola (comportamento standard di ogni
-    // Trappola Normale, dato che questa carta NON dichiara
-    // continuous:true) — activate() qui sotto la ripesca subito e la
-    // Special Summona in Posizione di Difesa come Mostro con Effetto
-    // (Macchina/TERRA/Livello 4/ATK 0/DEF 2000), mutando i campi
-    // dell'istanza in campo direttamente (ogni copia giocata è un
-    // oggetto proprio, mai condiviso col resto di cardDatabase — stesso
-    // principio già usato altrove per modifiche dirette permanenti).
+    // Trappola Continua: al termine dell'attivazione si sposta dalla sua
+    // zona alla Zona Mostri mantenendo anche la natura di Trappola.
     // Finché controlli Gadget Verde/Rosso/Giallo (id 828/829/830):
     // guadagna 3000 ATK.
-    // SEMPLIFICAZIONE: la nota precedente ("questo motore non supporta
-    // una carta che esiste contemporaneamente come Trappola E come
-    // Mostro") descriveva un limite reale ma risolvibile senza una vera
-    // architettura a doppia natura: una volta Special Summonata, questa
-    // carta diventa un Mostro puro (perde la propria natura di Trappola
-    // ai fini di interazioni ipotetiche con altre carte che verificassero
-    // "è ancora una Trappola" — nessuna carta di questo dataset lo fa).
     // ================================================================
     CardEffects.register(849, {
+        continuous: true,
+        canActivate(ctx) {
+            return ctx.findEmptyMonsterSlot(ctx.owner) !== -1
+                && !(ctx.gameState.specialSummonBlockedFor && ctx.gameState.specialSummonBlockedFor[ctx.owner])
+                && !(ctx.gameState.otherMonsterSummonsBlockedFor && ctx.gameState.otherMonsterSummonsBlockedFor[ctx.owner])
+                && !(ctx.gameState.specialSummonForbiddenTurnFor
+                    && ctx.gameState.specialSummonForbiddenTurnFor[ctx.owner] === ctx.gameState.turn)
+                && !isSummonBannedThisTurn(ctx.owner);
+        },
         activate(ctx) {
-            if (ctx.gameState.specialSummonForbiddenTurnFor
-                && ctx.gameState.specialSummonForbiddenTurnFor[ctx.owner] === ctx.gameState.turn) {
-                ctx.log('🚫 Carta dell\'Oblio impedisce di trasformare Roccaforte della Fortezza Movente in un Mostro in questo turno.');
-                return;
-            }
-            const grave = ctx.graveyard(ctx.owner);
-            const graveIndex = grave.findIndex((c) => c.uid === ctx.card.uid);
-            if (graveIndex !== -1) grave.splice(graveIndex, 1);
             const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
             if (slotIndex === -1) {
-                grave.push(ctx.card);
-                ctx.log('⚠️ Il Terreno è pieno: Roccaforte della Fortezza Movente resta nel Cimitero.');
                 return;
             }
+            const stIndex = ctx.stField(ctx.owner).findIndex((slot) => slot && slot.card.uid === ctx.card.uid);
+            if (stIndex !== -1) ctx.stField(ctx.owner)[stIndex] = null;
             ctx.card.type = 'monster';
+            ctx.card.isTrapMonster = true;
             ctx.card.race = 'Macchina';
             ctx.card.attribute = 'TERRA';
             ctx.card.level = 4;
             ctx.card.attack = 0;
             ctx.card.defense = 2000;
-            // fromZone 'field' e non 'graveyard': è una Trappola ATTIVATA
-            // che diventa mostro, non una carta che lascia il Cimitero (che
-            // questo motore la parcheggi lì mentre si risolve è un dettaglio
-            // interno). Con 'graveyard' Necrovalley l'avrebbe fermata — e
-            // DOPO averla già trasformata in mostro qui sopra.
-            ctx.specialSummon(ctx.owner, ctx.card, slotIndex, 'defense', 'field');
+            // fromZone 'field' evita di trattare il trasferimento tra zone
+            // come una rianimazione dal Cimitero.
+            ctx.specialSummon(ctx.owner, ctx.card, slotIndex, 'defense', 'field', { faceUp: true });
             // specialSummon(): "difesa" implica coperta di default (stesso
             // comportamento usato da Mago Apprendista id 737) — questa
             // carta invece va Special Summonata SCOPERTA, va corretto qui.
-            const newSlot = ctx.field(ctx.owner)[slotIndex];
-            if (newSlot) newSlot.isFaceDown = false;
-            ctx.log('🐋 Roccaforte della Fortezza Movente si Special Summona come Mostro in Posizione di Difesa!');
+            ctx.log('🐋 Roccaforte della Fortezza Movente si Special Summona come Mostro e resta una Trappola!');
         },
         static(ctx) {
             const gadgetIds = [828, 829, 830];

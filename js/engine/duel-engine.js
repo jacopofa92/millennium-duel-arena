@@ -1898,7 +1898,7 @@
             if (window.DuelDialogues && !arrivaCoperta) DuelDialogues.summon(owner, card);
             fireTrigger(
                 TRIGGER.ON_SPECIAL_SUMMON,
-                makeContext(owner, { summonedCard: card, summonedSlotIndex: slotIndex, summonedPosition: position, summonedFromZone: fromZone }),
+                makeContext(owner, { summonedCard: card, summonedSlotIndex: slotIndex, summonedPosition: position, summonedFromZone: fromZone, simultaneousSummonBatch: visualOptions && visualOptions.simultaneousSummonBatch }),
                 () => {
                     if (typeof updateUI === 'function') updateUI();
                     // Le Evocazioni Speciali (Rinascita del Mostro, ecc. —
@@ -1974,6 +1974,7 @@
          */
         createTokens(owner, count, template, options) {
             let created = 0;
+            const simultaneousSummonBatch = { owner: owner, cards: [] };
             // Un contenitore solo per tutta la chiamata: i Token nati qui
             // condividono il contatore, quindi ricevono uid diversi fra
             // loro ma identici a quelli dell'altro client (vedi
@@ -1990,13 +1991,19 @@
                     type: 'monster',
                     isToken: true
                 });
-                ACTIONS.specialSummon(owner, token, slotIndex, 'defense', 'token');
+                const summoned = ACTIONS.specialSummon(owner, token, slotIndex, 'defense', 'token', {
+                    faceUp: true,
+                    simultaneousSummonBatch: simultaneousSummonBatch
+                });
+                if (!summoned) continue;
                 if (options && options.cannotBeTributed) {
                     gameState.cannotBeTributedUids = gameState.cannotBeTributedUids || new Set();
                     gameState.cannotBeTributedUids.add(token.uid);
                 }
+                simultaneousSummonBatch.cards.push(token);
                 created++;
             }
+            if (simultaneousSummonBatch.cards.length > 1) reactToSimultaneousSummonBatch(simultaneousSummonBatch);
             return created;
         },
 
@@ -3477,7 +3484,7 @@
             // MAI Special Summon).
             ctx.summonedVia = name === TRIGGER.ON_SPECIAL_SUMMON ? 'special' : 'normal';
             if (name === TRIGGER.ON_NORMAL_SUMMON) reactToAnyNormalOrFlipSummon(ctx.summonedCard, 'normal');
-            if (name === TRIGGER.ON_SPECIAL_SUMMON) reactToAnySpecialSummon(ctx.summonedCard);
+            if (name === TRIGGER.ON_SPECIAL_SUMMON) reactToAnySpecialSummon(ctx.summonedCard, ctx.simultaneousSummonBatch);
             // Sfide (js/data/challenges-db.js, tipo 'summonMonster'): solo
             // Evocazioni del GIOCATORE UMANO (mai del bot), Normali o
             // Speciali sommate insieme, e mai un Token (id -1, creato da
@@ -5628,7 +5635,9 @@
                     }
                 }
                 if (def && typeof def.static === 'function') {
-                    safeCallCardHandler(slot.card, 'static', () => def.static(makeContext(owner, { card: slot.card, slot: slot, slotIndex: index })));
+                    if (!(slot.card.isTrapMonster && areTrapsNegatedFor(owner))) {
+                        safeCallCardHandler(slot.card, 'static', () => def.static(makeContext(owner, { card: slot.card, slot: slot, slotIndex: index })));
+                    }
                 }
             });
             // Magie/Trappole Continue scoperte sul Terreno (es. Spada
@@ -5850,12 +5859,16 @@
      * a una Special Summon prima d'ora era quella ristretta "dal proprio
      * Cimitero" più sopra in fireTrigger, un caso diverso e più stretto).
      */
-    function reactToAnySpecialSummon(summonedCard) {
+    function reactToAnySpecialSummon(summonedCard, simultaneousSummonBatch) {
         Tavolo.ordine().forEach((owner) => {
             fieldOf(owner).forEach((slot, index) => {
                 if (!slot || slot.isFaceDown) return;
                 const def = getDefinition(slot.card.id);
                 if (def && typeof def.onAnySpecialSummon === 'function') {
+                    // Kotodama tratta insieme i mostri evocati nello stesso
+                    // effetto; non deve distruggere il primo Token prima che
+                    // siano comparsi gli altri membri del gruppo.
+                    if (simultaneousSummonBatch && simultaneousSummonBatch.cards.length > 1 && slot.card.id === 1078) return;
                     safeCallCardHandler(slot.card, 'onAnySpecialSummon', () => def.onAnySpecialSummon(makeContext(owner, { card: slot.card, slotIndex: index, summonedCard: summonedCard })));
                 }
             });
@@ -5874,6 +5887,20 @@
                 }
             }
         });
+    }
+
+    function reactToSimultaneousSummonBatch(batch) {
+        Tavolo.ordine().forEach((owner) => fieldOf(owner).forEach((slot, index) => {
+            if (!slot || slot.isFaceDown || slot.card.id !== 1078) return;
+            const def = getDefinition(slot.card.id);
+            if (def && typeof def.onSimultaneousSpecialSummon === 'function') {
+                safeCallCardHandler(slot.card, 'onSimultaneousSpecialSummon', () => def.onSimultaneousSpecialSummon(makeContext(owner, {
+                    card: slot.card,
+                    slotIndex: index,
+                    simultaneousSummonBatch: batch
+                })));
+            }
+        }));
     }
 
     /**

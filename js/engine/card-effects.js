@@ -1524,13 +1524,14 @@
      */
     function chooseUpToNFromList(ctx, cards, max, options, onDone) {
         const o = options || {};
+        const chooserOwner = o.chooserOwner || ctx.owner;
         const minimo = o.min || 0;
         const tetto = Math.min(max, (cards || []).length);
         if (!Array.isArray(cards) || cards.length === 0 || tetto <= 0) { onDone([]); return false; }
         // Il bot (o un duello senza interfaccia) sceglie l'insieme intero in
         // un colpo solo, con la sua euristica: chiedergli una carta alla
         // volta lo costringerebbe a decidere senza sapere quante ne vuole.
-        if (!Decisioni.rispondeUnaPersona(ctx.owner)) {
+        if (!Decisioni.rispondeUnaPersona(chooserOwner)) {
             const auto = typeof o.pickForBot === 'function' ? o.pickForBot(cards.slice(), tetto) : cards.slice(0, tetto);
             onDone((auto || []).slice(0, tetto));
             return true;
@@ -1541,7 +1542,7 @@
             if (scelte.length >= tetto || restanti.length === 0) { onDone(scelte); return; }
             const giaPrese = scelte.length ? ` Scelte finora: ${scelte.map((c) => c.name).join(', ')}.` : '';
             Decisioni.chiedi({
-                chi: ctx.owner,
+                chi: chooserOwner,
                 candidati: restanti,
                 titolo: o.title || '🔍 Scegli le carte',
                 testo: `${o.text || 'Scegli una carta alla volta.'} (${scelte.length}/${tetto}) ${scelte.length >= minimo ? 'Chiudi per finire.' : ''}${giaPrese}`,

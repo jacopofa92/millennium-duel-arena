@@ -15,7 +15,7 @@
 (function () {
     'use strict';
 
-    const { chooseCardFromList, otherHandCards, blockBanishFromField, isHarpieLadySupport, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldCardTargetWaiting, attendiScelta, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, findPetitMothReadyForCocoonSummon, releaseRelinquishedTarget } = window.CardEffectsShared;
+    const { chooseCardFromList, chooseUpToNFromList, otherHandCards, blockBanishFromField, isHarpieLadySupport, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldCardTargetWaiting, attendiScelta, collectFieldTargets, offerHandDiscardChoice, chooseCardFromHand, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, findPetitMothReadyForCocoonSummon, releaseRelinquishedTarget } = window.CardEffectsShared;
 
     // ================================================================
     // 52 — Grande Falena / Great Moth
@@ -94,22 +94,12 @@
     });
 
     // ================================================================
-    // 165 — Virus Distruggi-Carte / Crush Card Virus (Trappola Normale)
-    // Sacrifica 1 mostro OSCURITÀ con 1000 o meno ATK (auto-selezionato,
-    // stesso stile di Soffio Esplosivo id 134): il tuo avversario non
-    // subisce danni fino alla fine del turno successivo
-    // (gameState.pendingNoDamageExpiry, DuelEngine.processNoDamageExpiry
-    // — nuovo, un conteggio "N End Phase" invece del semplice flag
-    // noDamageFor esistente, dato che deve sopravvivere al cambio
-    // turno), poi distruggi i mostri dell'avversario con ATK effettivo
-    // 1500+. "Guarda la sua mano": DuelEngineUI.openCardListPicker con
-    // selectable:false (stesso componente già usato da id 86 Amazzone
-    // Maestra delle Catene per la stessa identica cosa) — SCOPERTA: la
-    // nota precedente diceva che questo effetto non esisteva in questo
-    // motore, ma esisteva già per un'altra carta. Il testo salvato per
-    // questa carta (semplificato rispetto alla vera Crush Card Virus)
-    // non menziona alcuna clausola sul Deck: nota rimossa, l'effetto
-    // così come descritto qui è ora completo.
+    // 165 — Virus Distruggi-Carte / Crush Card Virus (Trappola Normale).
+    // Dopo il costo e il danno zero fino a fine turno successivo, guarda
+    // la mano avversaria e i mostri sul suo Terreno; distrugge tutti quelli
+    // con 1500+ ATK. Poi l'avversario può scegliere fino a 3 mostri con
+    // 1500+ ATK dal proprio Deck e distruggerli. La scelta del Deck spetta
+    // alla vittima dell'effetto, non a chi ha attivato la Trappola.
     // ================================================================
     CardEffects.register(165, {
         canActivate(ctx) {
@@ -134,20 +124,60 @@
 
             const targetIndices = [];
             ctx.field(ctx.opponent).forEach((slot, index) => {
-                if (slot && !slot.isFaceDown && DuelEngine.getEffectiveAtk(slot.card) >= 1500) {
-                    targetIndices.push(index);
+                // Il testo include tutti i mostri controllati, anche coperti:
+                // qui l'effetto guarda davvero la loro identità e il loro ATK.
+                if (slot && DuelEngine.getEffectiveAtk(slot.card) >= 1500) targetIndices.push(index);
+            });
+            const handTargets = ctx.hand(ctx.opponent)
+                .filter((c) => c.type === 'monster' && (c.attack || 0) >= 1500)
+                .map((c) => c.uid);
+
+            const distruggiERisaliDalDeck = () => {
+                if (window.FX && typeof FX.playCrushCardVirus === 'function') {
+                    FX.playCrushCardVirus(ctx.owner, targetIndices);
                 }
-            });
-            if (window.FX && typeof FX.playCrushCardVirus === 'function') {
-                FX.playCrushCardVirus(ctx.owner, targetIndices);
-            }
-            let destroyed = 0;
-            targetIndices.forEach((index) => {
-                if (!ctx.field(ctx.opponent)[index]) return;
-                ctx.destroyMonster(ctx.opponent, index);
-                destroyed++;
-            });
-            ctx.log(`☠️ Virus Distruggi-Carte sacrifica ${tributeCard.name}: l'avversario non subisce danni fino alla fine del turno successivo, ${destroyed} mostr${destroyed === 1 ? 'o' : 'i'} con 1500+ ATK distrutt${destroyed === 1 ? 'o' : 'i'}!`);
+                let destroyedField = 0;
+                targetIndices.forEach((index) => {
+                    if (!ctx.field(ctx.opponent)[index]) return;
+                    ctx.destroyMonster(ctx.opponent, index);
+                    destroyedField++;
+                });
+                let destroyedHand = 0;
+                handTargets.forEach((uid) => {
+                    const index = ctx.hand(ctx.opponent).findIndex((c) => c.uid === uid);
+                    if (index < 0) return;
+                    // Questo invia la carta al Cimitero senza trattarla come
+                    // scartata: il Virus la distrugge dalla mano.
+                    if (ctx.sendChosenFromHandToGraveyard(ctx.opponent, index)) destroyedHand++;
+                });
+                ctx.log(`☠️ Virus Distruggi-Carte sacrifica ${tributeCard.name}: distrutti ${destroyedField} mostri sul Terreno e ${destroyedHand} dalla mano con 1500+ ATK.`);
+
+                const deck = Tavolo.mazzo(ctx.opponent);
+                if (!Array.isArray(deck)) {
+                    ctx.log('☠️ Nel Duello Demo non c’è un Deck avversario da cui scegliere mostri.');
+                    return;
+                }
+                const deckTargets = deck.filter((c) => c.type === 'monster' && (c.attack || 0) >= 1500);
+                if (deckTargets.length === 0) {
+                    ctx.log('☠️ L’avversario non ha mostri con 1500+ ATK nel Deck.');
+                    return;
+                }
+                chooseUpToNFromList(ctx, deckTargets, 3, {
+                    chooserOwner: ctx.opponent,
+                    title: '☠️ Virus Distruggi-Carte',
+                    text: 'Scegli fino a 3 mostri con 1500+ ATK dal tuo Deck da distruggere.',
+                    min: 0
+                }, (scelte) => {
+                    let destroyedDeck = 0;
+                    scelte.forEach((card) => {
+                        const mazzo = Tavolo.mazzo(ctx.opponent);
+                        const index = Array.isArray(mazzo) ? mazzo.findIndex((c) => c.uid === card.uid) : -1;
+                        if (index >= 0 && ctx.millCardFromDeck(ctx.opponent, index)) destroyedDeck++;
+                    });
+                    ctx.log(`☠️ L’avversario distrugge ${destroyedDeck} mostri con 1500+ ATK dal proprio Deck.`);
+                });
+            };
+
             if (Decisioni.rispondeUnaPersona(ctx.owner)) {
                 Decisioni.chiedi({
                     chi: ctx.owner,
@@ -156,8 +186,8 @@
                     titolo: '☠️ Virus Distruggi-Carte',
                     testo: "Guardi la mano dell'avversario.",
                     vuota: "L'avversario non ha carte in mano."
-                }, () => {});
-            }
+                }, distruggiERisaliDalDeck);
+            } else distruggiERisaliDalDeck();
         }
     });
 

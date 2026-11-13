@@ -1602,7 +1602,7 @@
     "name": "Virus Distruggi-Carte",
     "type": "trap",
     "subtype": "normal",
-    "effect": "Sacrifica 1 mostro OSCURITÀ con 1000 o meno ATK: il tuo avversario non subisce danni fino alla fine del turno successivo; guarda la sua mano e tutti i mostri che controlla, poi distruggi quelli con 1500 o più ATK.",
+    "effect": "Sacrifica 1 mostro OSCURITÀ con 1000 o meno ATK: il tuo avversario non subisce danni fino alla fine del turno successivo; guarda la sua mano e tutti i mostri che controlla, poi distruggi quelli con 1500 o più ATK. Poi il tuo avversario può distruggere fino a 3 mostri con 1500 o più ATK nel suo Deck.",
     "artOnly": true
   },
   {

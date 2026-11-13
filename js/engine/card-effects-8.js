@@ -1793,15 +1793,18 @@
         ctx.log(`🐯 Tigre Reale Wanghu distrugge ${summonedCard.name} (ATK 1400 o meno)!`);
     }
 
-    // 1078 — Kotodama: "se esistono mostri scoperti con lo stesso nome
-    // sul Terreno, distruggili" — semplificato al caso reale più comune
-    // (regola scritta sulla carta stessa): quando un mostro viene
-    // Evocato/girato scoperto E un ALTRO mostro con lo stesso nome è già
-    // scoperto, distruggi il NUOVO arrivato. Stesso schema di Tigre Re
-    // Wanghu (1077) qui sopra, stesso helper condiviso.
+    // 1078 — Kotodama: una singola Evocazione con duplicato distrugge il
+    // nuovo mostro; se più mostri con lo stesso nome vengono Evocati insieme,
+    // la regola ufficiale li distrugge tutti. createTokens raccoglie il gruppo
+    // prima di invocare il secondo caso, così il primo Token non sopravvive.
     CardEffects.register(1078, {
         onAnyNormalOrFlipSummon(ctx) { kotodamaDestroyIfDuplicate(ctx, ctx.summonedCard); },
-        onAnySpecialSummon(ctx) { kotodamaDestroyIfDuplicate(ctx, ctx.summonedCard); }
+        onAnySpecialSummon(ctx) {
+            if (!ctx.simultaneousSummonBatch) kotodamaDestroyIfDuplicate(ctx, ctx.summonedCard);
+        },
+        onSimultaneousSpecialSummon(ctx) {
+            kotodamaDestroySimultaneous(ctx, ctx.simultaneousSummonBatch);
+        }
     });
     function kotodamaDestroyIfDuplicate(ctx, summonedCard) {
         if (!summonedCard) return;
@@ -1811,6 +1814,23 @@
         if (!hasDuplicate) return;
         ctx.destroyMonster(loc.owner, loc.index);
         ctx.log(`📿 Kotodama distrugge ${summonedCard.name}: un'altra copia era già scoperta sul Terreno!`);
+    }
+    function kotodamaDestroySimultaneous(ctx, batch) {
+        const cards = (batch && batch.cards) || [];
+        const groups = new Map();
+        cards.forEach((card) => groups.set(card.name, (groups.get(card.name) || []).concat(card)));
+        groups.forEach((group, name) => {
+            const hasOldCopy = Tavolo.ordine().some((owner) => ctx.field(owner).some((slot) => slot && !slot.isFaceDown
+                && !cards.some((summoned) => summoned.uid === slot.card.uid) && slot.card.name === name));
+            if (group.length < 2 && !hasOldCopy) return;
+            // Solo i nuovi mostri coinvolti nella stessa Evocazione sono
+            // distrutti; una copia già presente sul Terreno resta al suo posto.
+            group.forEach((summoned) => {
+                const loc = findCardFieldLocation(summoned);
+                if (loc) ctx.destroyMonster(loc.owner, loc.index);
+            });
+            ctx.log(`📿 Kotodama distrugge tutti i mostri Evocati insieme con nome ${name}!`);
+        });
     }
 
     // 1079 — Kryuel: distrutta in battaglia, lancia una moneta — se
