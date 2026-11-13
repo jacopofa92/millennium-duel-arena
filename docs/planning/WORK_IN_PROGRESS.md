@@ -1,5 +1,11 @@
 # Work in progress — miglioramenti da seguire
 
+## Glitch controllato sui numeri ATK/DEF olografici — chiuso in 1.6.66
+
+- [x] Rimossa la riduzione periodica di opacità del badge.
+- [x] Aura stabile e glitch cromatico breve sulle cifre, ogni 4,8 secondi;
+      disattivato con movimento ridotto. Cache v720.
+
 ## Feedback dei pulsanti delle fasi — chiuso in 1.6.65
 
 - [x] Cursore a mano e risposta visiva al passaggio del mouse sulle fasi

@@ -575,18 +575,24 @@
             .field-stats-badge:not(.field-pile-badge) .fsb-def { font-style: normal; font-weight: 900; }
             .field-stats-badge:not(.field-pile-badge) .fsb-sep { display: none; }
         }
-        /* Solo con gli ologrammi accesi (classe holo-on sull'<html>, la mette monster-hologram.js a ogni
-           sync): bagliore azzurro e un leggero sfarfallio (niente righe di scansione: l'utente le ha tolte, mangiavano le cifre). L'animazione e' sull'opacita':
-           non tocca l'HTML del nodo, quindi il ridisegno incrementale del Terreno non lo sostituisce. Il
-           filtro lo legge duel-feedback.js per il lampo delle variazioni. */
+        /* Solo con gli ologrammi accesi: l'aura resta stabile, mentre un glitch
+           breve agisce solo sui numeri. Evitiamo di animare l'opacita' del badge:
+           il calo di luminosita' periodico sembrava uno sfarfallio e rendeva i
+           valori difficili da leggere durante il duello. */
         .holo-on .field-stats-badge:not(.field-pile-badge) {
             filter: drop-shadow(0 0 3px rgba(90, 215, 255, 0.95)) drop-shadow(0 0 8px rgba(40, 150, 255, 0.6));
-            animation: holoSfarfalla 3.2s steps(1, end) infinite;
         }
-        @keyframes holoSfarfalla {
-            0%, 91%, 95%, 100% { opacity: 1; }
-            93% { opacity: 0.55; }
+        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk,
+        .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-def {
+            animation: holoGlitchCifre 4.8s steps(1, end) infinite;
+        }
+        @keyframes holoGlitchCifre {
+            0%, 92%, 96%, 100% { text-shadow: none; }
+            93% { text-shadow: -1px 0 rgba(255, 70, 195, .8), 1px 0 rgba(80, 235, 255, .9); }
+            94% { text-shadow: 1px 0 rgba(255, 70, 195, .75), -1px 0 rgba(80, 235, 255, .85); }
+            95% { text-shadow: 0 0 5px rgba(130, 240, 255, .95); }
         }
         @media (prefers-reduced-motion: reduce) {
-            .holo-on .field-stats-badge:not(.field-pile-badge) { animation: none; }
+            .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk,
+            .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-def { animation: none; }
         }

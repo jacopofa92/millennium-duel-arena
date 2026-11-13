@@ -1,5 +1,12 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Glitch controllato sui numeri degli ologrammi (1.6.66)
+
+Con gli ologrammi attivi, i badge ATK/DEF mantengono un'aura azzurra stabile.
+Un glitch cromatico molto breve interessa le cifre ogni 4,8 secondi; il badge
+non cambia opacità e i numeri non sfarfallano. Movimento ridotto disattiva
+l'animazione. Cache v720.
+
 ## Pulsanti delle fasi più riconoscibili (1.6.65)
 
 Le fasi raggiungibili mostrano il cursore a mano e un sollevamento luminoso al
