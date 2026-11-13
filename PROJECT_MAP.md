@@ -1,5 +1,10 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Ritorno dalla posa di danno senza bagliore (1.6.64)
+
+Resta il rinculo di 320 ms; rimossi il lampo sovrapposto e le variazioni di
+luminosità. La pedina normale riappare senza bagliore. Spec `posa-danno`.
+
 ## Ritorno dalla posa di danno (1.6.63)
 
 La posa danno continua a entrare con la transizione esistente. In uscita non

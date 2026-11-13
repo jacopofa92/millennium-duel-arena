@@ -1,5 +1,11 @@
 # Work in progress — miglioramenti da seguire
 
+## Ritorno dalla posa di danno senza bagliore — chiuso in 1.6.64
+
+- [x] Rimossi il lampo e le variazioni di luminosità; resta il rinculo e il
+      cambio alla pedina normale è netto.
+- [x] Spec `posa-danno` aggiornato.
+
 ## Ritorno dalla posa di danno — chiuso in 1.6.63
 
 - [x] Rimossa la dissolvenza in uscita: rinculo breve, cambio coperto da un

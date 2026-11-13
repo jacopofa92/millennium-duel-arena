@@ -3,7 +3,7 @@
  * =====================================================================
  * Quando un duellante (tu o l'avversario) subisce una perdita pesante di Life Point, per qualche secondo la sua pedina nel riquadro
  * ad angolo viene sostituita dalla posa "danno/sorpresa" (images/characters/pedine-danno-sorpresa/thumbs/<nome-file>.webp), che entra
- * con un breve scatto; al ritorno la posa rincula e un lampo copre il cambio secco.
+ * con un breve scatto; al ritorno rincula e lascia posto senza bagliori.
  *
  * SOLO GRAFICA: legge gameState.playerLP/botLP; la chiama renderLifePoints (game-flow.js) a ogni disegno dei Life Point (questo file\n * carica PRIMA di eventi-duello.js, quindi non puo' ascoltare gli eventi da solo); nessuna regola, il
  * motore e l'IA non sanno che esiste e in Multiplayer ogni client la disegna dai propri Life Point.
@@ -24,7 +24,6 @@
     const DURATA_MS = 1800;
     const DISSOLVENZA_ENTRATA_MS = 150;
     const RITORNO_MS = 320;
-    const LAMPO_RITORNO_MS = 420;
 
     const SELETTORE = {
         player: '#playerInfo .duelist-avatar--corner',
@@ -67,32 +66,24 @@
         attive[lato] = undefined;
         clearTimeout(a.timer);
         const avatar = a.img.parentElement;
-        const finito = (conLampo) => {
+        const finito = () => {
             a.img.remove();
             if (!avatar) return;
-            if (avatar.querySelector('img.posa-danno')) {
-                avatar.classList.remove('posa-danno-ritorno');
-                return; // Un nuovo colpo ha già mostrato una posa più recente.
-            }
-            avatar.classList.remove('posa-danno-attiva');
-            if (conLampo) setTimeout(() => avatar.classList.remove('posa-danno-ritorno'), LAMPO_RITORNO_MS);
-            else avatar.classList.remove('posa-danno-ritorno');
+            if (!avatar.querySelector('img.posa-danno')) avatar.classList.remove('posa-danno-attiva');
         };
-        if (!a.img.animate || riduciMovimento()) { finito(false); return; }
+        if (!a.img.animate || riduciMovimento()) { finito(); return; }
 
-        // Il ritorno non dissolve il personaggio: la posa fa un breve
-        // rinculo, il lampo copre il cambio e la pedina normale riappare
-        // già pienamente visibile dietro di lei.
-        if (avatar) avatar.classList.add('posa-danno-ritorno');
+        // Il ritorno non dissolve né illumina il personaggio: la posa fa
+        // solo un breve rinculo e lascia posto alla pedina normale.
         const verso = lato === 'bot' ? -1 : 1;
         const uscita = a.img.animate([
-            { transform: 'translate3d(0,0,0) scale(1)', filter: 'brightness(1)' },
-            { offset: 0.38, transform: `translate3d(0,${verso * 5}px,0) scale(.96)`, filter: 'brightness(1.2)' },
-            { offset: 0.72, transform: `translate3d(0,${verso * -2}px,0) scale(1.025)`, filter: 'brightness(1.45)' },
-            { transform: 'translate3d(0,0,0) scale(1)', filter: 'brightness(1.12)' }
+            { transform: 'translate3d(0,0,0) scale(1)' },
+            { offset: 0.38, transform: `translate3d(0,${verso * 5}px,0) scale(.96)` },
+            { offset: 0.72, transform: `translate3d(0,${verso * -2}px,0) scale(1.025)` },
+            { transform: 'translate3d(0,0,0) scale(1)' }
         ], { duration: RITORNO_MS, easing: 'cubic-bezier(.2,.72,.25,1)', fill: 'both' });
-        uscita.onfinish = () => finito(true);
-        uscita.oncancel = () => finito(false);
+        uscita.onfinish = finito;
+        uscita.oncancel = finito;
     }
 
     function programmaFine(lato) {
@@ -119,9 +110,8 @@
             const gia = attive[lato];
             if (gia && gia.img.parentElement === riquadro) { programmaFine(lato); scatto(gia.img); return; }
             if (gia) chiudi(lato);
-            // Un nuovo colpo durante il lampo di ritorno sostituisce la posa
-            // in chiusura, senza lasciare sovrapposte due immagini.
-            riquadro.classList.remove('posa-danno-ritorno');
+            // Un nuovo colpo durante la chiusura sostituisce la posa in
+            // uscita, senza lasciare sovrapposte due immagini.
             riquadro.querySelectorAll('img.posa-danno').forEach((vecchia) => vecchia.remove());
             const img = document.createElement('img');
             img.className = 'posa-danno';

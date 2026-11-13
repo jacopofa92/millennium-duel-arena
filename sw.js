@@ -552,7 +552,8 @@
 // v715: stato del Divieto di Evocazione Speciale conservato per membro in Tag Team.
 // v716: aura WebGL bianca sulle attivazioni automatiche, anche sugli ologrammi.
 // v717: ritorno dalla posa danno con rinculo e lampo, senza dissolvenza.
-const CACHE_NAME = 'ygo-duel-arena-v717';
+// v718: ritorno dalla posa danno senza bagliore.
+const CACHE_NAME = 'ygo-duel-arena-v718';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento
