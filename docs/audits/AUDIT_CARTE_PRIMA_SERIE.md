@@ -81,7 +81,7 @@ trattare come blocco unico dopo Necrovalley, non prima.
 | Artigliere dei Guardiani della Tomba | Gravekeeper's Cannonholder | PGD | Mostro Effetto | ✅ fatta | 896 | Ignition dalla zona Mostro: tributa 1 altro Guardiani della Tomba per infliggere 700 danni — "una volta a turno" già garantito automaticamente da `gameState.usedIgnitionThisTurn` per OGNI Ignition di questo motore. Tributo scritto a mano (field=null + graveyard.push + notifySacrificedForTribute), stesso schema di Metamorfosi (id 886). Verificato: tributo confermato, 700 danni inflitti. |
 | Lanciere dei Guardiani della Tomba | Gravekeeper's Spear Soldier | PGD | Mostro Effetto | ✅ fatta | 894 | "Se attacca un mostro in Difesa: danno perforante" — `def.piercing: true`, stesso flag fisso già usato da Parshath il Cavaliere Alato (id 82). Zero codice nuovo. Verificato: 1000 danni perforanti (1500 ATK - 500 DEF) confermati. |
 | Vassallo dei Guardiani della Tomba | Gravekeeper's Vassal | PGD | Mostro Effetto | ✅ fatta | 893 | "Il danno da battaglia inflitto da questa carta è trattato come danno da effetto" — nuovo flag `def.treatBattleDamageAsEffect`, consultato in `fireOwnBattleDamageDealt` (actions.js) per saltare le reazioni specifiche al danno da BATTAGLIA (es. Goblin Ladro id 610) quando è questa carta a infliggerlo. Verificato: un vero Goblin Ladro scoperto sul Terreno NON scarta la mano avversaria quando Vassallo infligge danno diretto (mano invariata), mentre i Life Points scendono regolarmente. |
-| Sentinella dei Guardiani della Tomba | Gravekeeper's Watcher | PGD | Mostro Effetto | ⏳ SEMPLIFICAZIONE non implementata | 900 | Registrata con dati/statistiche reali ma nessun codice per l'abilità (`CardEffects.register(900, {})`, vanilla di fatto). Richiederebbe una vera finestra di risposta attivabile da una carta ancora in MANO (mai da campo — nessun'altra carta di questo motore ha una finestra del genere: findMonsterQuickEffectCandidates/findSpellTrapQuickEffectCandidates coprono solo carte già scoperte in campo), apribile in QUALUNQUE momento del turno di uno dei due giocatori (non solo quando una Chain è già aperta, a differenza della Categoria B esistente), PIÙ una capacità di riconoscere in anticipo se un'attivazione "potrebbe far scartare" l'avversario — sproporzionato per una carta sola, stesso principio già accettato per Categoria B (id 192/396/459), ma un requisito ancora più ampio (quelle rispondono comunque solo a Chain già aperta). |
+| Sentinella dei Guardiani della Tomba | Gravekeeper's Watcher | PGD | Mostro Effetto | ✅ fatta | 900 | Si scarta dalla mano come costo per rispondere a un'attivazione avversaria il cui testo indica un effetto di scarto; annulla l'attivazione e distrugge la carta se è un Mostro. Usa `canRespondFromHand` e la finestra Chain esistente. Limite: il riconoscimento del testo è euristico e può non coprire formulazioni non standard. |
 
 ## Legenda stato
 - ⏳ da fare
@@ -89,8 +89,9 @@ trattare come blocco unico dopo Necrovalley, non prima.
 - ✅ fatta (dati + effetto implementato + verificata) — include quelle con una SEMPLIFICAZIONE onestamente documentata via missingEffectNote in cards.json, segnalata nella colonna Note
 - ⏳ rimandata (bloccata da una dipendenza non ancora chiarita, vedi Note)
 
-## Bug scoperti mentre si lavorava a questo backlog (fuori scope, da riprendere a parte)
-- **Decreto Reale (id 426, Royal Decree)**: manca un vero `activate()` nella propria registrazione in `card-effects.js` — ha solo `static()`. Per come è scritto `DuelEngine.canActivate` (duel-engine.js, riga ~3714: `if (!def || typeof def.activate !== 'function') return false;`), QUALUNQUE carta senza un proprio `activate()` non risulta MAI legalmente attivabile, Trappola Continua o no. Risultato pratico: Decreto Reale, una volta Settato, non può mai essere girato scoperto per davvero tramite il normale flusso di gioco — resta bloccato coperto per sempre. Fix banale (aggiungere un `activate(ctx) { ctx.log(...); }` minimo, stesso pattern REALMENTE funzionante di Legame di Gravità id 707), ma volutamente non toccato in questa sessione per restare a fuoco sul backlog di carte nuove. Scoperto verificando Desideri Solenni (id 876, Livello 1), che inizialmente avevo registrato copiando lo stesso pattern incompleto di id 426.
+## Note d'audit riallineate (2026-11-13)
+- Decreto Reale (id 426) possiede `activate()` in `card-effects-2.js`; la vecchia nota che lo indicava come non attivabile era obsoleta.
+- Sentinella dei Guardiani della Tomba (id 900) ha la risposta dalla mano implementata in `card-effects-7.js`; resta la limitazione euristica documentata nella riga della carta.
 
 ## Log di sessione
 - Sessione 1: creato questo file, ricognizione completa (823 carte
@@ -104,8 +105,8 @@ trattare come blocco unico dopo Necrovalley, non prima.
   Fusione non ancora presenti/da chiarire). Nuovo trigger condiviso
   DuelEngine.TRIGGER.ON_DRAW_CARDS (duel-engine.js + game-flow.js),
   riusabile da qualunque futura carta reattiva alla propria pesca — non
-  esisteva nulla di simile prima. Scoperto (ma non corretto, fuori
-  scope) un bug preesistente su Decreto Reale (id 426), vedi sopra.
+  esisteva nulla di simile prima. La precedente segnalazione su Decreto
+  Reale (id 426) è superata dalla successiva implementazione di `activate()`.
   Prossimo passo: Livello 2 rimanente (Uniti Vinceremo, Messaggero della
   Pace, Freed il Generale Senza Rivali, Nobile dello Sterminio,
   Oppressione Reale, Angelo Splendente, Il Pescatore Leggendario, Don
@@ -656,8 +657,7 @@ Mostri Fusione hanno un vero effetto proprio, quindi vale la pena
 aggiungere anche i loro 4 materiali (tutti con un effetto reale, non
 vanilla): Saggio della Frontiera (1039, Frontier Wiseman) e Drago della
 Caverna (1040, Cave Dragon) e Demone Minore (1041, Lesser Fiend) sono
-registrati SENZA codice funzionale (`CardEffects.register(id, {})`,
-stesso schema di Sentinella dei Guardiani della Tomba id 900) — vedi
+registrati SENZA codice funzionale (`CardEffects.register(id, {})`) — vedi
 missingEffectNote per il perché di ciascuno, principalmente serviti da
 materiali. Maryokutai (1042) ha invece un vero Effetto Veloce
 implementato per intero: risponde SOLO durante il turno dell'avversario
@@ -797,8 +797,9 @@ nessun hook funzionale (`CardEffects.register(1059, {})`) — il testo
 reale richiede un'attivazione dalla mano a velocità istantanea durante
 il turno di UNO QUALUNQUE dei due giocatori, e questo motore non ha
 alcuna finestra di priorità per un'attivazione dalla mano fuori da una
-Chain già aperta o da un trigger nominato (stesso limite già accettato
-per Sentinella dei Guardiani della Tomba, id 900).
+Chain già aperta o da un trigger nominato. Sentinella dei Guardiani della
+Tomba (id 900) copre invece il caso più ristretto di risposta a una Chain
+già attiva.
 
 Verificato con un vero test attraverso il motore reale
 (`tests/specs/lod-srl-battle-control-effects-batch6.spec.js`): cambio di

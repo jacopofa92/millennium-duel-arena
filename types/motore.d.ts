@@ -233,6 +233,8 @@ interface CardContext extends EngineActions {
     opponentCard?: Card;
     opponentSurvived?: boolean;
     destroyedInBattle?: boolean;
+    /** La carta era scoperta all'inizio del Damage Step, prima di un eventuale Flip. */
+    destroyedWasFaceUpAtDamageStep?: boolean;
     cancel?: () => void;
     cancelAttack?: () => void;
     redirectAttack?: (...args: any[]) => void;

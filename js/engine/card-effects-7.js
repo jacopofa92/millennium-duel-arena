@@ -530,7 +530,7 @@
                 && !(ctx.gameState.otherMonsterSummonsBlockedFor && ctx.gameState.otherMonsterSummonsBlockedFor[ctx.owner])
                 && !(ctx.gameState.specialSummonForbiddenTurnFor
                     && ctx.gameState.specialSummonForbiddenTurnFor[ctx.owner] === ctx.gameState.turn)
-                && !isSummonBannedThisTurn(ctx.owner);
+                && !DuelEngine.isSummonBannedThisTurn(ctx.owner);
         },
         activate(ctx) {
             const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
