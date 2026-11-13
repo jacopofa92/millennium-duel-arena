@@ -1,5 +1,12 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Glitch laterale delle cifre ATK/DEF olografiche (1.6.71)
+
+Le cifre si spostano per un istante di un pixel a sinistra/destra e lasciano
+una scia ciano, in linea con le bande laterali degli ologrammi mostro. Rimossi
+il flash rosso/magenta e il bagliore frontale; aura stabile e opacita' restano
+invariate. Cache v725.
+
 ## Preriscaldamento prima della VS (1.6.70)
 
 Il layout di prova per font e carte viene eseguito mentre il loader è ancora

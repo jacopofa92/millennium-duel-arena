@@ -584,13 +584,16 @@
         }
         .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk,
         .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-def {
+            position: relative;
             animation: holoGlitchCifre 4.8s steps(1, end) infinite;
         }
         @keyframes holoGlitchCifre {
-            0%, 92%, 96%, 100% { text-shadow: none; }
-            93% { text-shadow: -1px 0 rgba(255, 70, 195, .8), 1px 0 rgba(80, 235, 255, .9); }
-            94% { text-shadow: 1px 0 rgba(255, 70, 195, .75), -1px 0 rgba(80, 235, 255, .85); }
-            95% { text-shadow: 0 0 5px rgba(130, 240, 255, .95); }
+            0%, 92%, 96%, 100% { left: 0; text-shadow: none; }
+            /* Un breve salto laterale e una scia ciano richiamano le bande
+               che slittano nell'ologramma; niente flash rosso o variazioni di opacita'. */
+            93% { left: -1px; text-shadow: 2px 0 rgba(80, 235, 255, .85); }
+            94% { left: 1px; text-shadow: -2px 0 rgba(80, 235, 255, .7); }
+            95% { left: 0; text-shadow: 1px 0 rgba(130, 240, 255, .65); }
         }
         @media (prefers-reduced-motion: reduce) {
             .holo-on .field-stats-badge:not(.field-pile-badge) .fsb-atk,

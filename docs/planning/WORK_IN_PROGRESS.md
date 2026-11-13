@@ -1,5 +1,10 @@
 # Work in progress — miglioramenti da seguire
 
+## Glitch laterale delle cifre ATK/DEF olografiche — chiuso in 1.6.71
+
+- [x] Sostituito il flash rosso con un breve scarto laterale e una scia ciano,
+      senza lampeggi o variazioni di opacita'. Cache v725.
+
 ## Scatto all'ingresso della VS — preriscaldamento spostato prima del sipario (1.6.70)
 
 - [x] Il layout di prova font/carte ora termina prima di nascondere il loader;
