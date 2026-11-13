@@ -23,7 +23,6 @@
     const SOGLIA_RELATIVA = 0.10;
     const DURATA_MS = 1800;
     const DISSOLVENZA_ENTRATA_MS = 150;
-    const RITORNO_MS = 320;
 
     const SELETTORE = {
         player: '#playerInfo .duelist-avatar--corner',
@@ -67,23 +66,21 @@
         clearTimeout(a.timer);
         const avatar = a.img.parentElement;
         const finito = () => {
-            a.img.remove();
             if (!avatar) return;
-            if (!avatar.querySelector('img.posa-danno')) avatar.classList.remove('posa-danno-attiva');
+            const normale = avatar.querySelector('img:not(.posa-danno)');
+            if (normale) avatar.classList.add('posa-danno-ritorno-netto');
+            a.img.remove();
+            if (!avatar.querySelector('img.posa-danno')) {
+                avatar.classList.remove('posa-danno-attiva');
+                // Lascia che il browser disegni la pedina normale senza
+                // transizione, poi ripristina il fade globale usato al
+                // caricamento iniziale dell'avatar.
+                if (normale) requestAnimationFrame(() => avatar.classList.remove('posa-danno-ritorno-netto'));
+            }
         };
-        if (!a.img.animate || riduciMovimento()) { finito(); return; }
-
-        // Il ritorno non dissolve né illumina il personaggio: la posa fa
-        // solo un breve rinculo e lascia posto alla pedina normale.
-        const verso = lato === 'bot' ? -1 : 1;
-        const uscita = a.img.animate([
-            { transform: 'translate3d(0,0,0) scale(1)' },
-            { offset: 0.38, transform: `translate3d(0,${verso * 5}px,0) scale(.96)` },
-            { offset: 0.72, transform: `translate3d(0,${verso * -2}px,0) scale(1.025)` },
-            { transform: 'translate3d(0,0,0) scale(1)' }
-        ], { duration: RITORNO_MS, easing: 'cubic-bezier(.2,.72,.25,1)', fill: 'both' });
-        uscita.onfinish = finito;
-        uscita.oncancel = finito;
+        // Nessuna animazione in uscita: la posa sparisce e quella normale
+        // torna visibile nello stesso frame, senza rinculo né dissolvenza.
+        finito();
     }
 
     function programmaFine(lato) {

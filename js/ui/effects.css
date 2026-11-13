@@ -533,7 +533,7 @@
     pointer-events: none;
 }
 .card.fx-auto-field-lift-real {
-    animation: fxAutoFieldLiftReal 2s cubic-bezier(.22,.72,.24,1) both;
+    animation: fxAutoFieldLiftReal 2.3s cubic-bezier(.22,.72,.24,1) both;
 }
 @keyframes fxAutoFieldLiftReal {
     0%, 100% { translate: 0 0; scale: 1; filter: brightness(1); }

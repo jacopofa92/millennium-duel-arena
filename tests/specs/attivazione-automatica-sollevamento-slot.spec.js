@@ -25,7 +25,7 @@ module.exports = {
                 tryPlayCardSound: () => { suono++; return true; }
             });
 
-            const durata = FX.ACTIVATE_CENTER_DURATION_MS;
+            const durata = FX.AUTO_FIELD_ACTIVATION_DURATION_MS;
             const cardBefore = document.querySelectorAll('.card[data-uid="auto-trigger-test"]').length;
             const partito = FX.playAutomaticFieldActivation({ uid: 'auto-trigger-test', type: 'spell' });
             const stessoNodoAnimato = source.getAnimations().length > 0;
@@ -61,12 +61,12 @@ module.exports = {
         });
         assert(risultato.partito && risultato.stessoNodoAnimato && risultato.nessunClone && risultato.nessunPrimoPiano,
             `Si anima la carta reale senza clone né overlay centrale: ${JSON.stringify(risultato)}`);
-        assert(risultato.suonoAlMomentoGiusto && risultato.durata === 2000 && risultato.animazioneTerminata,
-            `Stesso suono e durata di 2 secondi: ${JSON.stringify(risultato)}`);
-        assert(risultato.aura && risultato.aura.stessoNodo && risultato.aura.ms === 2000,
+        assert(risultato.suonoAlMomentoGiusto && risultato.durata === 2300 && risultato.animazioneTerminata,
+            `Stesso suono e sollevamento automatico prolungato a 2,3 secondi: ${JSON.stringify(risultato)}`);
+        assert(risultato.aura && risultato.aura.stessoNodo && risultato.aura.ms === 2300,
             `L'aura WebGL segue il nodo reale per la stessa durata: ${JSON.stringify(risultato)}`);
         assert(risultato.attivatoMostro && risultato.nienteSollevamento
-            && risultato.zoom && risultato.zoom.ms === 2000 && risultato.stessoSuono,
-        `Con l'ologramma attivo si ingrandisce la proiezione per 2 secondi: ${JSON.stringify(risultato)}`);
+            && risultato.zoom && risultato.zoom.ms === 2300 && risultato.stessoSuono,
+        `Con l'ologramma attivo si ingrandisce la proiezione per 2,3 secondi: ${JSON.stringify(risultato)}`);
     }
 };

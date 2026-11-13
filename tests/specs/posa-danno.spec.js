@@ -34,21 +34,22 @@ module.exports = {
         t.assert(/pedine-danno-sorpresa\/thumbs\/[^/]+\.webp$/.test(src || ''), `La posa e' la miniatura WebP: ${src}`);
         t.assert(await page.evaluate(() => document.querySelector('#botInfo .duelist-avatar--corner').classList.contains('posa-danno-attiva')), 'La pedina normale si spegne mentre la posa e\' a vista');
 
-        // 3) In uscita la posa rincula senza sfumare né illuminarsi.
-        await page.waitForFunction(() => {
-            const img = document.querySelector('#botInfo .duelist-avatar--corner img.posa-danno');
-            return img && img.getAnimations().some((a) => a.effect.getTiming().duration === 320);
-        }, null, { timeout: 5000 });
-        const ritorno = await page.evaluate(() => {
-            const img = document.querySelector('#botInfo .duelist-avatar--corner img.posa-danno');
-            return img && img.getAnimations().find((a) => a.effect.getTiming().duration === 320).effect.getKeyframes();
-        });
-        t.assert(ritorno && ritorno.every((f) => f.opacity === undefined || f.opacity === 1),
-            `La posa rientra con rinculo senza dissolvenza: ${JSON.stringify(ritorno)}`);
-        t.assert(ritorno.every((f) => f.filter === undefined),
-            `Il rinculo non applica bagliore: ${JSON.stringify(ritorno)}`);
-        t.assert(await page.evaluate(() => !document.querySelector('#botInfo .duelist-avatar--corner').classList.contains('posa-danno-ritorno')),
-            'Non c’è un livello di bagliore nel ritorno');
+        // 3) Al ritorno non c'e' una seconda animazione: la pedina normale
+        // ricompare senza fade, disattivando per un frame la transizione globale.
+        const controlloRitorno = page.evaluate(() => new Promise((resolve) => {
+            const avatar = document.querySelector('#botInfo .duelist-avatar--corner');
+            const osservatore = new MutationObserver(() => {
+                if (!avatar.classList.contains('posa-danno-ritorno-netto')) return;
+                const normale = avatar.querySelector('img:not(.posa-danno)');
+                osservatore.disconnect();
+                resolve({ transition: getComputedStyle(normale).transitionDuration, opacita: getComputedStyle(normale).opacity });
+            });
+            osservatore.observe(avatar, { attributes: true, attributeFilter: ['class'] });
+            setTimeout(() => { osservatore.disconnect(); resolve(null); }, 4000);
+        }));
+        const ritorno = await controlloRitorno;
+        t.assert(ritorno && ritorno.transition === '0s' && ritorno.opacita === '1',
+            `La pedina normale riappare netta, senza fade: ${JSON.stringify(ritorno)}`);
         await page.waitForFunction(() => !document.querySelector('#botInfo .duelist-avatar--corner img.posa-danno'), null, { timeout: 5000 });
         t.assert(await page.evaluate(() => !document.querySelector('#botInfo .duelist-avatar--corner').classList.contains('posa-danno-attiva')), 'A posa finita la pedina normale torna visibile');
 

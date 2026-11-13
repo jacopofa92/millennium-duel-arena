@@ -1,5 +1,13 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Ritorno avatar netto e attivazioni automatiche più lunghe (1.6.69)
+
+Quando scade la posa danno, l'immagine viene sostituita senza animazione e
+senza la dissolvenza globale dell'avatar (disabilitata per un solo frame).
+Il sollevamento automatico della carta sul terreno, l'aura WebGL e lo zoom
+dell'ologramma durano 2,3 s invece di 2 s; le animazioni centrali e l'attesa
+delle Catene restano a 2 s. Regressioni mirate aggiornate. Cache v723.
+
 ## Feedback delle fasi più evidente (1.6.68)
 
 Hover desktop: il sigillo e l'icona si accendono nettamente col colore del

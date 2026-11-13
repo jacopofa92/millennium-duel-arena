@@ -1810,6 +1810,10 @@
     // prima di iniziare, invece di sovrapporsi: vedi il commento sull'uso
     // di questa costante in js/engine/card-effects.js (id 7 e id 8).
     const ACTIVATE_CENTER_DURATION_MS = 2000;
+    // Le reazioni automatiche che restano sul Terreno hanno un sollevamento
+    // dedicato: si prolunga di 300 ms senza allungare le attivazioni grandi
+    // al centro schermo o l'attesa di risoluzione delle Catene.
+    const AUTO_FIELD_ACTIVATION_DURATION_MS = ACTIVATE_CENTER_DURATION_MS + 300;
     // Coordinate della carta reale in mano, salvate PRIMA che il motore la
     // tolga dallo stato all'attivazione. Il primo piano centrale è un clone:
     // la successiva animazione verso il Cimitero deve partire dallo slot
@@ -1908,7 +1912,7 @@
         // quel livello è attivo, enfatizziamo la figura stessa: sollevare la
         // carta romperebbe l'illusione di un ologramma ancorato allo slot.
         if (card.type === 'monster' && window.HologramSetting && HologramSetting.isAttivo()
-            && window.MonsterHolograms && MonsterHolograms.zoom(card.uid, ACTIVATE_CENTER_DURATION_MS)) {
+            && window.MonsterHolograms && MonsterHolograms.zoom(card.uid, AUTO_FIELD_ACTIVATION_DURATION_MS)) {
             setTimeout(() => {
                 const kind = 'magie';
                 if (window.AudioLibrary && AudioLibrary.tryPlayCardSound(card, kind)) return;
@@ -1917,7 +1921,7 @@
             return true;
         }
 
-        const durata = ACTIVATE_CENTER_DURATION_MS;
+        const durata = AUTO_FIELD_ACTIVATION_DURATION_MS;
         if (window.FX && typeof FX.playFieldActivationAura === 'function') {
             FX.playFieldActivationAura(source, durata);
         }
@@ -2860,6 +2864,7 @@
         playInstantWinCinematic,
         playCardActivateEffect,
         ACTIVATE_CENTER_DURATION_MS,
+        AUTO_FIELD_ACTIVATION_DURATION_MS,
         spawnParticles
     };
 })();

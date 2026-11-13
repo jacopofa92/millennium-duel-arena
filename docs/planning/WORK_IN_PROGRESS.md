@@ -1,5 +1,13 @@
 # Work in progress — miglioramenti da seguire
 
+## Ritorno posa danno senza fade e sollevamento +300 ms — chiuso in 1.6.69
+
+- [x] Ritorno alla pedina normale netto: nessun rinculo o dissolvenza; la
+      transizione globale dell'avatar è sospesa per un frame.
+- [x] Sollevamento della carta sul terreno, aura e zoom ologramma allungati
+      a 2,3 s. Durata centrale e Catene invariate.
+- [x] Spec mirati aggiornati per entrambi i comportamenti. Cache v723.
+
 ## Feedback delle fasi più evidente — chiuso in 1.6.68
 
 - [x] Hover più leggibile su desktop e menu laterale: luce intensa e colore

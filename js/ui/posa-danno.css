@@ -2,3 +2,10 @@
    La geometria della posa e' quella di ogni altra immagine del riquadro (stesse regole di .is-pedina). */
 .duelist-avatar.posa-danno-attiva img:not(.posa-danno) { opacity: 0; }
 .duelist-avatar img.posa-danno { transition: none; pointer-events: none; }
+/* Alla scadenza la pedina normale deve ricomparire con un taglio netto.
+   Il suo stile globale ha una dissolvenza per il caricamento iniziale; qui
+   la disattiviamo per un frame, altrimenti il ritorno sembra ancora un fade. */
+.duelist-avatar.posa-danno-ritorno-netto img:not(.posa-danno) {
+    opacity: 1;
+    transition: none !important;
+}
