@@ -1486,9 +1486,7 @@
     transform-style: preserve-3d;
     pointer-events: none;
     z-index: 1;
-    opacity: 0;
-    animation: wabokuShieldArrive 620ms cubic-bezier(.16,.78,.2,1) forwards,
-               wabokuShieldBreathe 2.8s ease-in-out 620ms infinite;
+    opacity: .82;
     filter: drop-shadow(0 0 13px rgba(132, 230, 255, .78))
             drop-shadow(0 0 34px rgba(67, 126, 255, .52));
 }
@@ -1535,14 +1533,12 @@
 .waboku-shield-ring.ring-a {
     width: 64%; height: 64%;
     transform: translate(-50%, -50%) rotateX(62deg) rotateZ(8deg);
-    animation: wabokuRingA 7s linear infinite;
 }
 
 .waboku-shield-ring.ring-b {
     width: 43%; height: 43%;
     transform: translate(-50%, -50%) rotateY(64deg) rotateZ(-12deg);
     border-style: dashed;
-    animation: wabokuRingB 5.2s linear infinite reverse;
 }
 
 .waboku-shield-sigil {
@@ -1570,31 +1566,12 @@
     border-radius: 50%;
     background: #efffff;
     box-shadow: 0 0 8px 3px #8ae3ff, 0 0 20px 7px rgba(83, 126, 255, .7);
-    animation: wabokuSpark 2.2s ease-in-out infinite;
 }
 .waboku-shield-spark.spark-a { left: 12%; top: 35%; animation-delay: -.4s; }
 .waboku-shield-spark.spark-b { right: 13%; top: 28%; animation-delay: -1.5s; }
 .waboku-shield-spark.spark-c { right: 25%; bottom: 10%; animation-delay: -.9s; }
 
-@keyframes wabokuShieldArrive {
-    0% { opacity: 0; transform: translate(-50%, -45%) rotateX(24deg) scale(.48); filter: brightness(2.4) blur(4px); }
-    58% { opacity: 1; transform: translate(-50%, -53%) rotateX(4deg) scale(1.08); filter: brightness(1.65) blur(0); }
-    100% { opacity: .88; transform: translate(-50%, -51%) rotateX(7deg) scale(1); }
-}
-@keyframes wabokuShieldBreathe {
-    0%, 100% { opacity: .72; filter: drop-shadow(0 0 11px rgba(132,230,255,.68)) drop-shadow(0 0 29px rgba(67,126,255,.42)); }
-    50% { opacity: .96; filter: drop-shadow(0 0 18px rgba(205,252,255,.94)) drop-shadow(0 0 46px rgba(75,139,255,.64)); }
-}
-@keyframes wabokuRingA {
-    to { transform: translate(-50%, -50%) rotateX(62deg) rotateZ(368deg); }
-}
-@keyframes wabokuRingB {
-    to { transform: translate(-50%, -50%) rotateY(64deg) rotateZ(348deg); }
-}
-@keyframes wabokuSpark {
-    0%, 100% { opacity: .25; transform: scale(.55) translateZ(0); }
-    45% { opacity: 1; transform: scale(1.35) translateZ(34px); }
-}
+.waboku-webgl-attivo .waboku-field-shield { display: none; }
 
 /* ============================================================
    Carte iconiche: ogni scena usa forme CSS autonome e sta sopra al campo,

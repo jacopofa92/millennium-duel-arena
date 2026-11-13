@@ -1,5 +1,14 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Glitch Life Points e scudo WebGL di Waboku (1.6.72)
+
+Con gli ologrammi attivi, i Life Points condividono lo scarto laterale ciano
+delle cifre ATK/DEF, senza sovrascrivere l'aura e gli impulsi di danno/cura.
+Lo scudo di Waboku e' disegnato dal canvas WebGL sopra la fila protetta e
+ritaglia i rettangoli delle carte per non coprirne le illustrazioni. Si
+sincronizza con la protezione effettiva e scompare a fine turno o se Waboku
+viene distrutta; senza WebGL resta uno scudo statico CSS. Cache v726.
+
 ## Glitch laterale delle cifre ATK/DEF olografiche (1.6.71)
 
 Le cifre si spostano per un istante di un pixel a sinistra/destra e lasciano

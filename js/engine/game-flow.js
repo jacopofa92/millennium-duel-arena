@@ -1401,6 +1401,15 @@ function renderFields() {
         CardRenderer.caricaImmaginiDifferite(document.getElementById('playerFieldBoard'));
         CardRenderer.caricaImmaginiDifferite(document.getElementById('botFieldBoard'));
     }
+    // Lo scudo WebGL si sincronizza DOPO la riconciliazione dei nodi: le
+    // coordinate includono cosi' le carte effettivamente visibili, da
+    // ritagliare dal canvas per non coprirne illustrazioni e ologrammi.
+    if (window.FxWebgl && typeof window.FxWebgl.sincronizzaWaboku === 'function') {
+        window.FxWebgl.sincronizzaWaboku({
+            player: !!(gameState.noBattleDamageFor && gameState.noBattleDamageFor.player),
+            bot: !!(gameState.noBattleDamageFor && gameState.noBattleDamageFor.bot)
+        });
+    }
 }
 
 /**

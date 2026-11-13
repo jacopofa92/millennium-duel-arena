@@ -1,5 +1,12 @@
 # Work in progress — miglioramenti da seguire
 
+## Life Points olografici e Waboku WebGL — chiuso in 1.6.72
+
+- [x] Glitch LP laterale ciano allineato alle cifre ATK/DEF, mantenendo gli
+      impulsi di danno/cura e l'aura esistenti.
+- [x] Scudo WebGL persistente ritagliato sulle carte; fallback statico e
+      rimozione legata ai flag reali di fine turno/distruzione. Cache v726.
+
 ## Glitch laterale delle cifre ATK/DEF olografiche — chiuso in 1.6.71
 
 - [x] Sostituito il flash rosso con un breve scarto laterale e una scia ciano,

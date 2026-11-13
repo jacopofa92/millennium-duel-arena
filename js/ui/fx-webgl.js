@@ -648,6 +648,118 @@ void main(){
     });
 
     // ---------------------------------------------------------------------
+    // Waboku — cupola di protezione persistente sulla fila Mostri protetta.
+    // Il canvas WebGL e' sopra il campo; lo shader ritaglia quindi le carte
+    // reali per lasciare artwork e ologrammi completamente leggibili.
+    // ---------------------------------------------------------------------
+
+    const FS_WABOKU = BASE + `
+uniform vec4 area; // sinistra, alto, destra, basso dello scudo
+uniform vec4 carte[5]; // bounds delle carte reali: sinistra, alto, destra, basso
+uniform float nCarte;
+void main(){
+  vec2 P=css();
+  vec2 misura=max(area.zw-area.xy,vec2(1.));
+  vec2 q=(P-area.xy)/misura*2.-1.;
+  float d=q.x*q.x+q.y*q.y*.92;
+  if(d>1.08) discard;
+  for(int i=0;i<5;i++){
+    if(float(i)>=nCarte) break;
+    vec4 c=carte[i];
+    if(P.x>=c.x-3.&&P.x<=c.z+3.&&P.y>=c.y-3.&&P.y<=c.w+3.) discard;
+  }
+  float interno=smoothstep(1.04,.38,d);
+  float bordo=exp(-abs(d-.96)*115.);
+  float sigillo=exp(-abs(d-.70)*150.);
+  float sweep=exp(-pow((q.x-(fract(t*.105)*2.-1.))/.055,2.))*interno;
+  float filigrana=pow(.5+.5*sin(atan(q.y,q.x)*12.+t*.9),12.)*interno;
+  float alpha=interno*.095+bordo*(.30+.08*sin(t*1.7))+sigillo*.10+sweep*.20+filigrana*.035;
+  vec3 ciano=mix(vec3(.25,.72,.95),vec3(.78,.98,1.),clamp(bordo+sigillo+sweep,0.,1.));
+  gl_FragColor=vec4(ciano*alpha,alpha);
+}`;
+
+    const stopWaboku = { player: null, bot: null };
+    const firmaWaboku = { player: '', bot: '' };
+    const richiestaWaboku = { player: false, bot: false };
+
+    function spegniWaboku(owner) {
+        if (stopWaboku[owner]) stopWaboku[owner]();
+        stopWaboku[owner] = null;
+        firmaWaboku[owner] = '';
+    }
+
+    function datiFilaWaboku(owner) {
+        const boardId = owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard';
+        const slots = Array.from(document.querySelectorAll(`#${boardId} .field-slot[data-owner="${owner}"][data-type="monster"]`));
+        const visibili = slots.map((slot) => ({ slot, rect: slot.getBoundingClientRect() }))
+            .filter((item) => item.rect.width > 0 && item.rect.height > 0);
+        if (!visibili.length) return null;
+        const sinistra = Math.min(...visibili.map((item) => item.rect.left));
+        const destra = Math.max(...visibili.map((item) => item.rect.right));
+        const alto = Math.min(...visibili.map((item) => item.rect.top));
+        const basso = Math.max(...visibili.map((item) => item.rect.bottom));
+        const h = basso - alto;
+        const area = [sinistra - 8, alto - h * .22, destra + 8, basso + h * .22];
+        const carte = visibili.map(({ slot }) => slot.querySelector('.card'))
+            .filter(Boolean).map((c) => c.getBoundingClientRect())
+            .filter((r) => r.width > 0 && r.height > 0).slice(0, 5);
+        const rettangoli = new Float32Array(20);
+        carte.forEach((r, i) => rettangoli.set([r.left, r.top, r.right, r.bottom], i * 4));
+        return { area, carte, rettangoli };
+    }
+
+    function sincronizzaWaboku(attive) {
+        richiestaWaboku.player = !!(attive && attive.player);
+        richiestaWaboku.bot = !!(attive && attive.bot);
+        const presenti = ['player', 'bot'].filter((owner) => richiestaWaboku[owner]);
+        const movimentoRidotto = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!presenti.length) {
+            spegniWaboku('player'); spegniWaboku('bot');
+            document.body.classList.remove('waboku-webgl-attivo');
+            return true;
+        }
+        if (movimentoRidotto || (/** @type {any} */ (window)).FX_BACKEND === 'css' || !window.FxWebglPronto
+            || !compilabile('waboku-shield', FS_WABOKU)) {
+            spegniWaboku('player'); spegniWaboku('bot');
+            document.body.classList.remove('waboku-webgl-attivo');
+            return false;
+        }
+
+        try {
+            presenti.forEach((owner) => {
+                const dati = datiFilaWaboku(owner);
+                if (!dati) throw new Error('fila-mostri-non-disponibile');
+                const firma = [...dati.area, ...dati.rettangoli].map((v) => Math.round(v)).join(':');
+                if (stopWaboku[owner] && firma === firmaWaboku[owner]) return;
+                spegniWaboku(owner);
+                firmaWaboku[owner] = firma;
+                stopWaboku[owner] = lancia('waboku-shield', FS_WABOKU, 86400, null, null, (tempo, disegno) => {
+                    const bbox = [dati.area[0] - 2, dati.area[1] - 2, dati.area[2] + 2, dati.area[3] + 2];
+                    disegno.passata('waboku-shield', FS_WABOKU, tempo, bbox, (u, g) => {
+                        g.uniform4fv(u('area'), dati.area);
+                        g.uniform4fv(u('carte[0]'), dati.rettangoli);
+                        g.uniform1f(u('nCarte'), dati.carte.length);
+                    });
+                });
+            });
+            ['player', 'bot'].filter((owner) => !richiestaWaboku[owner]).forEach(spegniWaboku);
+            const riuscito = presenti.every((owner) => !!stopWaboku[owner]);
+            document.body.classList.toggle('waboku-webgl-attivo', riuscito);
+            return riuscito;
+        } catch (errore) {
+            spegniWaboku('player'); spegniWaboku('bot');
+            document.body.classList.remove('waboku-webgl-attivo');
+            console.warn('[FX webgl] Scudo di Waboku non disponibile:', errore);
+            return false;
+        }
+    }
+
+    window.addEventListener('resize', () => {
+        if (!richiestaWaboku.player && !richiestaWaboku.bot) return;
+        requestAnimationFrame(() => requestAnimationFrame(() => sincronizzaWaboku(richiestaWaboku)));
+    });
+
+    // ---------------------------------------------------------------------
     // Raigeki
     // ---------------------------------------------------------------------
 
@@ -782,6 +894,7 @@ void main(){
         compilabile: compilabile,
         lancia: lancia,
         chiudi: chiudiTutto,
+        sincronizzaWaboku: sincronizzaWaboku,
         attivi: () => attivi.length,
         BASE: BASE,
         Z_INDEX: Z_INDEX
