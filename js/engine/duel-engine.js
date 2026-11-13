@@ -1931,47 +1931,91 @@
                 // vecchio Special Summon li faccia sparire in ogni turno.
                 specialSummonedOnTurn: gameState.turn
             };
-            // Un mostro che arriva COPERTO (es. Momonga, Mago Apprendista: 'defense' senza `faceUp`) non si annuncia: niente dialogo,
-            // grido, cinematica ne' suono dedicati alla carta, che rivelerebbero all'avversario cosa e' stato messo coperto.
+            // Oppressione Reale deve poter annullare la Special Summon prima
+            // dei trigger che richiedono che l'Evocazione sia riuscita. Il
+            // mostro è prenotato nello slot, ma non viene annunciato né
+            // attivato finché la finestra di negazione non si è chiusa.
             const arrivaCoperta = !!field[slotIndex].isFaceDown;
-            if (window.DuelDialogues && !arrivaCoperta) DuelDialogues.summon(owner, card);
-            fireTrigger(
-                TRIGGER.ON_SPECIAL_SUMMON,
-                makeContext(owner, { summonedCard: card, summonedSlotIndex: slotIndex, summonedPosition: position, summonedFromZone: fromZone, simultaneousSummonBatch: visualOptions && visualOptions.simultaneousSummonBatch }),
-                () => {
-                    if (typeof updateUI === 'function') updateUI();
-                    // Le Evocazioni Speciali (Rinascita del Mostro, ecc. —
-                    // OGNI carta che chiama questa funzione) non avevano
-                    // ALCUN feedback visivo: la carta appariva sul Terreno
-                    // col solo re-render, a differenza dell'Evocazione
-                    // Normale (summonMonster, js/engine/actions.js) che ha
-                    // volo dalla mano + cerchio + shockwave + audio.
-                    // Centralizzato QUI (non per singola carta) perché
-                    // corregge d'un colpo ogni Evocazione Speciale del
-                    // motore, non solo una.
-                    const visualDelay = visualOptions && Number.isFinite(visualOptions.delayMs)
-                        ? Math.max(0, visualOptions.delayMs)
-                        : 30;
-                    setTimeout(() => {
-                        const mostraEvocazione = () => {
-                            EventiDuello.emetti('impatto-campo', owner, slotIndex, 'monster');
-                            EventiDuello.emetti('cambio-posizione', owner, slotIndex, position);
-                            if (arrivaCoperta) { if (window.SFX) SFX.place(); return; }
-                            const cardEl = PortaUI.query(`#${owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard'} .field-slot[data-type="monster"][data-index="${slotIndex}"] .card`);
-                            // Una Fusione in WebGL ha gia' mostrato la sua seconda parte (illustrazione, nome, stelle, ATK/DEF): niente doppione.
-                            const giaMostrata = !!(window.FX && FX.rivelazioneFusioneFatta && FX.rivelazioneFusioneFatta(card));
-                            if (cardEl && window.FX && !giaMostrata) FX.playMonsterSummonEffect(card, cardEl);
-                            if (!giaMostrata && (card.level || 0) < 7 && !(window.AudioLibrary && AudioLibrary.tryPlayCardSound(card, 'evocazioni')) && window.SFX) SFX.summon(position);
-                        };
-                        // Il grido del duellante per la sua carta simbolo precede
-                        // la parte VISIVA dell'Evocazione (lo stato è già
-                        // cambiato: la Special Summon è sincrona, vedi
-                        // js/ui/grido-evocazione.js). Senza grido parte subito.
-                        if (arrivaCoperta) mostraEvocazione();
-                        else EventiDuello.attendi('grido-evocazione', { posto: owner, carta: card, speciale: true }, mostraEvocazione);
-                    }, visualDelay);
-                }
-            );
+            const sourceCard = this && this.card || null;
+            const continuaDopoNegazione = () => {
+                let tentativo;
+                const marcaEvocazioneNegata = () => { tentativo.summonNegated = true; };
+                tentativo = makeContext(owner, {
+                    summonedCard: card,
+                    summonedSlotIndex: slotIndex,
+                    summonedPosition: position,
+                    summonedVia: 'special',
+                    sourceCard: sourceCard,
+                    summonNegated: false,
+                    negateSummon: marcaEvocazioneNegata
+                });
+                const completaEvocazione = () => {
+                    if (tentativo.summonNegated) {
+                        const slot = field[slotIndex];
+                        if (slot && slot.card.uid === card.uid) {
+                            field[slotIndex] = null;
+                            graveyardOf(owner).push(card);
+                        }
+                        if (typeof updateUI === 'function') updateUI();
+                        return;
+                    }
+                    if (window.DuelDialogues && !arrivaCoperta) DuelDialogues.summon(owner, card);
+                    fireTrigger(
+                        TRIGGER.ON_SPECIAL_SUMMON,
+                        makeContext(owner, { summonedCard: card, summonedSlotIndex: slotIndex, summonedPosition: position, summonedFromZone: fromZone, simultaneousSummonBatch: visualOptions && visualOptions.simultaneousSummonBatch }),
+                        () => {
+                            if (typeof updateUI === 'function') updateUI();
+                            // Le Evocazioni Speciali (Rinascita del Mostro, ecc. —
+                            // OGNI carta che chiama questa funzione) non avevano
+                            // ALCUN feedback visivo: la carta appariva sul Terreno
+                            // col solo re-render, a differenza dell'Evocazione
+                            // Normale (summonMonster, js/engine/actions.js) che ha
+                            // volo dalla mano + cerchio + shockwave + audio.
+                            // Centralizzato QUI (non per singola carta) perché
+                            // corregge d'un colpo ogni Evocazione Speciale del
+                            // motore, non solo una.
+                            const visualDelay = visualOptions && Number.isFinite(visualOptions.delayMs)
+                                ? Math.max(0, visualOptions.delayMs)
+                                : 30;
+                            setTimeout(() => {
+                                const mostraEvocazione = () => {
+                                    EventiDuello.emetti('impatto-campo', owner, slotIndex, 'monster');
+                                    EventiDuello.emetti('cambio-posizione', owner, slotIndex, position);
+                                    if (arrivaCoperta) { if (window.SFX) SFX.place(); return; }
+                                    const cardEl = PortaUI.query(`#${owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard'} .field-slot[data-type="monster"][data-index="${slotIndex}"] .card`);
+                                    // Una Fusione in WebGL ha gia' mostrato la sua seconda parte (illustrazione, nome, stelle, ATK/DEF): niente doppione.
+                                    const giaMostrata = !!(window.FX && FX.rivelazioneFusioneFatta && FX.rivelazioneFusioneFatta(card));
+                                    if (cardEl && window.FX && !giaMostrata) FX.playMonsterSummonEffect(card, cardEl);
+                                    if (!giaMostrata && (card.level || 0) < 7 && !(window.AudioLibrary && AudioLibrary.tryPlayCardSound(card, 'evocazioni')) && window.SFX) SFX.summon(position);
+                                };
+                                // Il grido del duellante per la sua carta simbolo precede
+                                // la parte VISIVA dell'Evocazione (lo stato è già
+                                // cambiato: la Special Summon è sincrona, vedi
+                                // js/ui/grido-evocazione.js). Senza grido parte subito.
+                                if (arrivaCoperta) mostraEvocazione();
+                                else EventiDuello.attendi('grido-evocazione', { posto: owner, carta: card, speciale: true }, mostraEvocazione);
+                            }, visualDelay);
+                        }
+                    );
+                };
+                // Questa finestra può negare solo un'Evocazione Speciale
+                // non avviata dalla risoluzione di un effetto. Quando
+                // `specialSummon` è chiamata dal contesto di una carta,
+                // quell'effetto è già in risoluzione: aprire una risposta
+                // qui permetterebbe di annullarne illegalmente il risultato
+                // dopo averne pagato i costi. La risposta all'attivazione
+                // dell'effetto evocante richiede un checkpoint separato.
+                const haOppressione = !sourceCard && Tavolo.ordine().some((lato) =>
+                    stFieldOf(lato).some((s) => s && !s.isFaceDown && s.card.id === 882));
+                if (haOppressione) openTriggerWindow('onSpecialSummonAttempt', tentativo, completaEvocazione);
+                else completaEvocazione();
+            };
+            // Avviare la finestra prima degli effetti di Evocazione evita
+            // che un mostro la cui Evocazione viene negata attivi comunque
+            // il proprio trigger. Tutti i controlli della Special Summon
+            // sono già passati; il chiamante continua a usare il ritorno
+            // sincrono storico mentre l'eventuale scelta resta asincrona.
+            continuaDopoNegazione();
             return true;
         },
 
@@ -4085,6 +4129,13 @@
             if (slot.card.type === 'trap' && areTrapsNegatedFor(responderOwner)) return;
             const def = getDefinition(slot.card.id);
             if (def && typeof def[handlerName] === 'function') {
+                if (handlerName === 'onSpecialSummonAttempt'
+                    && typeof def.canRespondToSpecialSummonAttempt === 'function'
+                    && !def.canRespondToSpecialSummonAttempt(makeContext(responderOwner, {
+                        card: slot.card,
+                        summonedCard: ctx.summonedCard,
+                        summonedVia: ctx.summonedVia
+                    }))) return;
                 candidates.push({ zone: 'st', index: index, card: slot.card, def: def });
             }
         });

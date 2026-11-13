@@ -2499,35 +2499,20 @@
         }
     }
 
-    // 882 — Oppressione Reale / Royal Oppression (Trappola CONTINUA): nega
-    // e distrugge un'Evocazione Speciale altrui pagando 800 LP, stesso
-    // schema reattivo di Giudizio Solenne (id 448) filtrato a
-    // ctx.summonedVia === 'special'. `continuous: true`: alla prima
-    // risposta resta scoperta sul Terreno (consumeCandidateCard) invece di
-    // finire al Cimitero, e da scoperta findTriggerCandidates la offre di
-    // nuovo a ogni Special Summon successiva, pagando ogni volta.
-    // "Uno dei due giocatori può pagare": una volta scoperta, la può usare
-    // anche l'avversario di chi la controlla, contro una Special Summon di
-    // quest'ultimo (`usableByEitherPlayer`, findTriggerCandidates in
-    // duel-engine.js). In quel caso ctx.owner è chi risponde: paga lui e il
-    // mostro distrutto è di ctx.opponent, cioè di chi ha Evocato — lo
-    // stesso codice vale per entrambi i lati.
+    // 882 — Oppressione Reale: la finestra dedicata precede i trigger di
+    // Evocazione, così il mostro negato non attiva effetti "quando Evocato".
+    // Una volta scoperta resta sul campo e può essere usata da entrambi.
     CardEffects.register(882, {
         continuous: true,
         usableByEitherPlayer: true,
-        canActivate(ctx) {
-            const lp = Tavolo.lp(ctx.owner);
-            return ctx.summonedVia === 'special' && typeof ctx.summonedCard !== 'undefined' && lp > 800;
+        canRespondToSpecialSummonAttempt(ctx) {
+            return ctx.summonedVia === 'special' && !!ctx.summonedCard && Tavolo.lp(ctx.owner) > 800;
         },
-        onOpponentSummon(ctx) {
-            if (ctx.summonedVia !== 'special') return;
-            ctx.declareTargetWaiting(ctx.opponent, ctx.summonedSlotIndex, { totalTargetCount: 1 }, (decl) => {
-                if (!decl.allowed) return;
-                const target = ctx.field(decl.targetOwner)[decl.targetIndex];
-                ctx.dealDamage(ctx.owner, 800);
-                ctx.destroyMonster(decl.targetOwner, decl.targetIndex);
-                ctx.log(`👑 Oppressione Reale paga 800 Life Points per annullare e distruggere ${target ? target.card.name : ctx.summonedCard.name}, appena Special Summonato!`);
-            });
+        onSpecialSummonAttempt(ctx) {
+            if (ctx.summonedVia !== 'special' || Tavolo.lp(ctx.owner) <= 800) return;
+            ctx.dealDamage(ctx.owner, 800);
+            ctx.negateSummon();
+            ctx.log(`👑 Oppressione Reale paga 800 Life Points e annulla l'Evocazione Speciale di ${ctx.summonedCard.name}!`);
         }
     });
 
@@ -2903,16 +2888,8 @@
     // Life Points giusti da dentro un hook che prima era solo un calcolo
     // puro. Vedi missingEffectNote in data/cards.json: la decisione di
     // pagare è automatica, non una vera scelta libera del giocatore.
-    // `usedInjectionThisBattle` è un flag PER-ISTANZA (non per-definizione:
-    // ogni copia della carta ha il proprio "già usato"), resettato a fine
-    // Battle Phase (onBattlePhaseEnd, stesso hook già usato da Cavaliere
-    // del Miraggio id 381) — la granularità più fine disponibile in questo
-    // motore è "per Battle Phase", non "per singola battaglia": se questa
-    // carta combattesse più di una volta nella STESSA Battle Phase (raro,
-    // richiederebbe un effetto esterno che conceda un attacco extra),
-    // l'effetto resterebbe disponibile solo alla prima di quelle battaglie
-    // invece che ad ognuna — una sotto-stima accettabile, mai una carta
-    // che si attiva più spesso del reale.
+    // Questo hook gira una volta per ciascuna battaglia, quindi la regola
+    // "una volta per battaglia" non richiede un flag esteso alla Battle Phase.
     // La decisione di pagare è del giocatore. Vive in
     // beforeDamageCalculation (runBeforeDamageCalculation, duel-engine.js)
     // e non più in damageStepBonus: quello è un calcolo che gira in mezzo a
@@ -2924,7 +2901,6 @@
     CardEffects.register(889, {
         beforeDamageCalculation(ctx) {
             if (!ctx.opponentCard) return; // "se combatte contro un mostro avversario" — mai per un attacco diretto
-            if (ctx.card.usedInjectionThisBattle) return;
             const ownerLP = Tavolo.lp(ctx.owner);
             if (ownerLP <= 2000) return; // mai scendere a 0 o sotto pagando questo costo
             const mioSlot = ctx.field(ctx.owner)[ctx.slotIndex];
@@ -2948,7 +2924,6 @@
             }, (scelta) => {
                 try {
                     if (scelta !== 'paga') return;
-                    ctx.card.usedInjectionThisBattle = true;
                     // Non ctx.dealDamage: è un COSTO, non danno da un
                     // effetto, e chiamato dal ctx farebbe scattare chi
                     // reagisce al danno da effetto (Camera Oscura degli
@@ -2963,9 +2938,6 @@
                     fine();
                 }
             });
-        },
-        onBattlePhaseEnd(ctx) {
-            ctx.card.usedInjectionThisBattle = false;
         }
     });
 

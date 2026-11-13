@@ -36,6 +36,7 @@
  * 1.6.51 — Strappa Possesso e Necropaura Oscura restituiscono il controllo quando l'Equip lascia il Terreno.
  * 1.6.52 — Maga Oscura conta entrambi i mostri indicati in tutti e due i Cimiteri; Spada Celestiale - Eatos applica il suo effetto dal Cimitero; Chiron lascia scegliere anche le Magie/Trappole coperte e le Magie Terreno.
  * 1.6.56 — Gli effetti che colpiscono Magie/Trappole riconoscono i Mostri Trappola anche in Zona Mostri: selezione, distruzione, rientro in mano e animazioni usano la loro zona reale.
+ * 1.6.57 — Oppressione Reale può rispondere alle Special Summon non generate da effetti senza far scattare trigger prima del tempo; Iniezione della Fata Giglio resta riutilizzabile nelle battaglie successive.
  * 1.6.55 — Virus Distruggi-Carte applica anche il controllo della mano e la scelta dei mostri nel Deck; Kotodama distrugge i mostri con lo stesso nome Evocati simultaneamente e i Token vengono Evocati scoperti; Roccaforte viene trasferita in Zona Mostri restando Trappola Continua.
  * 1.6.54 — Elefante Volante può vincere solo con un attacco diretto nel turno successivo all'effetto che ne ha impedito la distruzione.
  * 1.6.53 — I trigger legati alla distruzione in battaglia ora distinguono gli effetti Carta; corrette le scelte e i vincoli TCG di Tributo al Dannato, Virus Infetta-Tribù, Proiettile Sonico e Carta dell'Oblio.
