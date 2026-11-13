@@ -1,5 +1,10 @@
 # Work in progress — miglioramenti da seguire
 
+## Feedback dei pulsanti delle fasi senza zoom — chiuso in 1.6.67
+
+- [x] Sostituito l'ingrandimento con rilievo, luce e ombra interna di pressione.
+- [x] Applicato anche al tondo e alle voci del menu laterale; cache v721.
+
 ## Glitch controllato sui numeri ATK/DEF olografici — chiuso in 1.6.66
 
 - [x] Rimossa la riduzione periodica di opacità del badge.

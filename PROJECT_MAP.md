@@ -1,5 +1,11 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Feedback delle fasi senza zoom (1.6.67)
+
+Hover: leggero sollevamento, luce e bagliore sull'icona. Pressione: il controllo
+si abbassa e mostra un'ombra interna; il tondo laterale riceve un alone. Nessuna
+scala o variazione di dimensione. Cache v721.
+
 ## Glitch controllato sui numeri degli ologrammi (1.6.66)
 
 Con gli ologrammi attivi, i badge ATK/DEF mantengono un'aura azzurra stabile.

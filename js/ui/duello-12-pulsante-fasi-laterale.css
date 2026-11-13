@@ -37,14 +37,14 @@
                     radial-gradient(circle at 50% 50%, rgba(8, 12, 22, 0.92) 0 62%, transparent 63%),
                     conic-gradient(var(--fase-accento, #f7d774) var(--psb-p, 0%), rgba(255, 255, 255, 0.16) 0);
                 box-shadow: 0 0 12px color-mix(in srgb, var(--fase-accento, #f7d774) 45%, transparent), 0 3px 8px rgba(0, 0, 0, 0.55);
-                transition: box-shadow 0.25s ease, opacity 0.25s ease;
+                transition: box-shadow 0.25s ease, opacity 0.25s ease, filter 0.16s ease;
             }
             .phase-side-btn[hidden], .phase-side-menu[hidden] { display: none; }
             .phase-side-btn .psb-icon { display: inline-flex; width: 19px; height: 19px; }
             .phase-side-btn .psb-icon svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
             .phase-side-btn .psb-label { font: 900 8px/1 system-ui, 'Segoe UI', sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
             .phase-side-btn.psb-attendi { opacity: 0.55; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.55); }
-            .phase-side-btn:active { transform: translateY(-50%) scale(0.94); }
+            .phase-side-btn:active { filter: brightness(1.2); box-shadow: inset 0 0 10px rgba(255,255,255,.2), 0 0 16px color-mix(in srgb, var(--fase-accento, #f7d774) 70%, transparent); }
             .phase-side-menu {
                 position: fixed;
                 left: var(--psb-menu-left, 78vw);
@@ -82,7 +82,7 @@
                 width: 46px;
                 height: 46px;
             }
-            .phase-side-btn:active { transform: translate(-50%, -50%) scale(0.94); }
+            .phase-side-btn:active { filter: brightness(1.2); box-shadow: inset 0 0 10px rgba(255,255,255,.2), 0 0 16px color-mix(in srgb, var(--fase-accento, #f7d774) 70%, transparent); }
             .phase-side-menu {
                 left: var(--psb-cx, 50vw);
                 top: auto;
@@ -198,28 +198,37 @@
         }
         @media (hover: hover) and (pointer: fine) {
             .phase-stepper .phase-step.clickable:not(.active):hover {
-                transform: translateY(-3px) scale(1.045);
-                filter: brightness(1.16);
-                box-shadow: 0 7px 16px rgba(0,0,0,.3), 0 0 19px color-mix(in srgb, var(--fase-accento) 38%, transparent), inset 0 1px 0 rgba(255,255,255,.2);
+                transform: translateY(-3px);
+                filter: brightness(1.22) saturate(1.12);
+                box-shadow: 0 8px 18px rgba(0,0,0,.32), 0 0 23px color-mix(in srgb, var(--fase-accento) 48%, transparent), inset 0 1px 0 rgba(255,255,255,.24);
             }
             .phase-stepper .phase-step.clickable:not(.active):hover .step-icon {
-                filter: brightness(1.3) drop-shadow(0 0 6px color-mix(in srgb, var(--fase-accento) 75%, white));
+                filter: brightness(1.4) drop-shadow(0 0 7px color-mix(in srgb, var(--fase-accento) 85%, white));
             }
             .phase-side-menu button:not(:disabled):not(.psm-attuale):hover {
-                transform: translateY(-2px) scale(1.035);
-                filter: brightness(1.2);
-                box-shadow: 0 6px 14px rgba(0,0,0,.42), 0 0 13px color-mix(in srgb, var(--fase-accento, #f7d774) 42%, transparent);
+                transform: translateY(-2px);
+                filter: brightness(1.2) saturate(1.12);
+                box-shadow: 0 7px 16px rgba(0,0,0,.46), 0 0 16px color-mix(in srgb, var(--fase-accento, #f7d774) 52%, transparent), inset 0 1px 0 rgba(255,255,255,.2);
+            }
+            .phase-side-btn:hover {
+                filter: brightness(1.22) saturate(1.12);
+                box-shadow: 0 0 18px color-mix(in srgb, var(--fase-accento, #f7d774) 75%, transparent), 0 0 32px color-mix(in srgb, var(--fase-accento, #f7d774) 38%, transparent), inset 0 0 8px rgba(255,255,255,.18);
             }
         }
         .phase-stepper .phase-step.clickable:not(.active):active {
-            transform: translateY(1px) scale(.93);
-            filter: brightness(1.28);
+            transform: translateY(2px);
+            filter: brightness(1.28) saturate(.92);
+            box-shadow: 0 1px 3px rgba(0,0,0,.35), inset 0 3px 7px rgba(0,0,0,.38);
             transition-duration: 70ms;
         }
+        .phase-side-btn:active {
+            filter: brightness(1.28) saturate(.92);
+            box-shadow: inset 0 0 13px rgba(255,255,255,.28), 0 0 18px color-mix(in srgb, var(--fase-accento, #f7d774) 76%, transparent);
+        }
         .phase-side-menu button:not(:disabled):not(.psm-attuale):active {
-            transform: translateY(1px) scale(.96);
-            filter: brightness(1.3);
-            box-shadow: inset 0 2px 5px rgba(0,0,0,.35);
+            transform: translateY(1px);
+            filter: brightness(1.25) saturate(.92);
+            box-shadow: inset 0 3px 7px rgba(0,0,0,.4), 0 1px 3px rgba(0,0,0,.3);
             transition-duration: 70ms;
         }
         .phase-side-menu button:disabled { cursor: default; }
