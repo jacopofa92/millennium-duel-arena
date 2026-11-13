@@ -17,6 +17,27 @@
 
     const { chooseOption, chooseFieldCardTargetWaiting, attendiScelta, blockBanishFromField, findEquipTarget, equipToChosenTarget, attachEquip, equippedTarget, searchDeckWithChoice, searchGraveyardWithChoice, chooseFieldCardTarget, chooseFieldMonsterTarget, collectFieldTargets, offerHandDiscardChoice, attachUnionMonster, maxRitualTributeLevel, performRitualTribute, chooseCardFromList, chooseUpToNFromList } = window.CardEffectsShared;
 
+    /**
+     * Un Tributo legale per pagare l'effetto di Obelisk. I divieti già
+     * implementati `cannotBeTributed` e `cannotBeTributedUids` riguardano
+     * l'Evocazione Tributo (es. Token di Capro Espiatorio e Fuoco Fatuo):
+     * non impediscono di pagare un effetto. Un eventuale divieto assoluto
+     * usa invece `cannotBeTributedForEffect`.
+     * @param {MonsterSlot | null} slot
+     */
+    function isValidObeliskTribute(slot) {
+        if (!slot) return false;
+        // Un divieto assoluto si applica solo da scoperto: una carta coperta
+        // non applica il proprio effetto continuo al Tributo.
+        if (!slot.isFaceDown) {
+            const def = DuelEngine.getDefinition(slot.card.id);
+            if (def && def.cannotBeTributedForEffect) return false;
+            if (gameState.cannotBeTributedForEffectUids
+                && gameState.cannotBeTributedForEffectUids.has(slot.card.uid)) return false;
+        }
+        return true;
+    }
+
     // ================================================================
     // 517 — Rituale di Zera / Zera Ritual (Magia Rituale)
     // Sacrifica mostri dal Terreno per un Livello totale di almeno 8,
@@ -492,13 +513,11 @@
     // Questa carta non può dichiarare un attacco nel turno in cui viene
     // attivato questo effetto."
     // Implementato: 3 Tributi (getTributesRequired, cards-db.js), non
-    // può essere Settato (cannotBeSet, actions.js/bot.js), Ignition
-    // sacrifica-2-distruggi-tutto con blocco d'attacco per il resto del
-    // turno (gameState.cannotAttackUidsThisTurn). Non Special Summonabile
-    // (cannotBeSpecialSummoned — approssima "se Special Summonato va al
-    // Cimitero in End Phase": qui bloccato a monte, stesso risultato
-    // pratico dato che nessun'altra carta di questo dataset potrebbe
-    // comunque Special Summonarlo legalmente). "L'Evocazione Normale non
+    // può essere Settato (cannotBeSet, actions.js/bot.js), Ignition che
+    // permette di scegliere 2 Tributi legali e distrugge tutto il campo
+    // avversario, con blocco d'attacco per il resto del turno. Se viene
+    // Special Summonato, è mandato al Cimitero nella sua End Phase.
+    // "L'Evocazione Normale non
     // può essere annullata" non ha bisogno di codice: nessuna carta di
     // questo dataset nega mai un'Evocazione (il motore non ha ancora quel
     // meccanismo per NESSUNA carta), quindi la clausola è già rispettata
@@ -509,24 +528,49 @@
     // duel-engine.js/declareCardEffectTarget).
     // ================================================================
     CardEffects.register(30, {
-        cannotBeSpecialSummoned: true,
         cannotBeSet: true,
         blocksActivationsOnOwnNormalSummon: true,
         cannotBeTargetedByCardEffects: true,
         canActivate(ctx) {
-            return ctx.field(ctx.owner).filter((slot) => slot && slot.card.uid !== ctx.card.uid).length >= 2;
+            return ctx.field(ctx.owner).filter((slot) => slot && isValidObeliskTribute(slot)).length >= 2;
+        },
+        prepareActivation(ctx, onReady) {
+            // Il costo si paga prima di aprire la Chain: se l'avversario
+            // annulla l'attivazione, i Tributi restano comunque pagati.
+            const candidates = ctx.field(ctx.owner)
+                .filter((slot) => slot && isValidObeliskTribute(slot))
+                .map((slot) => slot.card);
+            if (candidates.length < 2) return;
+            chooseUpToNFromList(ctx, candidates, 2, {
+                min: 2,
+                title: 'Obelisk il Tormentatore',
+                text: 'Scegli 2 mostri da offrire come Tributo. La scelta è obbligatoria.'
+            }, (chosen) => {
+                if (chosen.length !== 2) return;
+                const field = ctx.field(ctx.owner);
+                const indices = chosen.map((card) => field.findIndex((slot) => slot && slot.card.uid === card.uid));
+                // La scelta può essere asincrona: ricontrolla gli slot e le
+                // restrizioni prima di pagare il costo.
+                if (indices.some((index) => index < 0 || !isValidObeliskTribute(field[index]))) return;
+                chosen.slice().sort((a, b) => field.findIndex((slot) => slot && slot.card.uid === b.uid)
+                    - field.findIndex((slot) => slot && slot.card.uid === a.uid))
+                    .forEach((card) => {
+                        const index = field.findIndex((slot) => slot && slot.card.uid === card.uid);
+                        if (index !== -1) ctx.tributeMonster(ctx.owner, index);
+                    });
+                onReady();
+            });
         },
         activate(ctx) {
-            const field = ctx.field(ctx.owner);
-            const others = field.map((slot, i) => ({ slot, i })).filter((s) => s.slot && s.slot.card.uid !== ctx.card.uid);
-            others.slice(0, 2).forEach(({ slot, i }) => {
-                ctx.graveyard(ctx.owner).push(slot.card);
-                field[i] = null;
-            });
             ctx.destroyAllMonsters(ctx.opponent);
             gameState.cannotAttackUidsThisTurn = gameState.cannotAttackUidsThisTurn || new Set();
             gameState.cannotAttackUidsThisTurn.add(ctx.card.uid);
-            ctx.log("🗿 Obelisk il Tormentatore sacrifica 2 mostri e distrugge tutti i mostri dell'avversario! Non può attaccare in questo turno.");
+            ctx.log('🗿 Obelisk il Tormentatore distrugge tutti i mostri dell’avversario! Non può attaccare in questo turno.');
+        },
+        onEndPhase(ctx) {
+            if (!ctx.slot || ctx.slot.specialSummonedOnTurn !== gameState.turn) return;
+            const sent = ctx.sendMonsterToGraveyard(ctx.owner, ctx.slotIndex);
+            if (sent) ctx.log('🗿 Obelisk il Tormentatore, Evocato Specialmente, viene mandato al Cimitero nella End Phase.');
         }
     });
 
@@ -563,7 +607,6 @@
     // solo delle altre due carte.
     // ================================================================
     CardEffects.register(31, {
-        cannotBeSpecialSummoned: true,
         cannotBeSet: true,
         blocksActivationsOnOwnNormalSummon: true,
         static(ctx) {
@@ -582,6 +625,11 @@
             } else {
                 ctx.log(`⚡ Slifer il Drago del Cielo fa perdere 2000 ATK a ${ctx.summonedCard.name}!`);
             }
+        },
+        onEndPhase(ctx) {
+            if (!ctx.slot || ctx.slot.specialSummonedOnTurn !== gameState.turn) return;
+            const sent = ctx.sendMonsterToGraveyard(ctx.owner, ctx.slotIndex);
+            if (sent) ctx.log('⚡ Slifer il Drago del Cielo, Evocato Specialmente, viene mandato al Cimitero nella End Phase.');
         }
     });
 
@@ -2275,7 +2323,7 @@
                 .filter((x) => x.slot)
                 .sort((a, b) => atkEff(a.slot) - atkEff(b.slot))
                 .slice(0, 2)
-                .forEach((x) => { ctx.destroyMonster(ctx.owner, x.index); sacrificed++; });
+                .forEach((x) => { ctx.tributeMonster(ctx.owner, x.index); sacrificed++; });
             // ...e si prendono per primi i 2 avversari PIU' FORTI.
             const ordineAvversario = ctx.field(ctx.opponent)
                 .map((slot, index) => ({ slot, index }))
@@ -2346,9 +2394,7 @@
                     // targeting, e va al Cimitero come ogni Tributo.
                     const slot = ctx.field(ctx.owner)[tributo.index];
                     if (!slot || slot.card.uid !== tributo.card.uid) return;
-                    ctx.field(ctx.owner)[tributo.index] = null;
-                    ctx.graveyard(ctx.owner).push(tributo.card);
-                    DuelEngine.notifySacrificedForTribute(ctx.owner, tributo.card);
+                    ctx.tributeMonster(ctx.owner, tributo.index);
                     scegliBersaglioControllore(ctx, 'controllo');
                 });
             });
@@ -2397,7 +2443,9 @@
         aiCanActivate(ctx) {
             const valore = (s) => DuelEngine.getEffectiveAtk(s.card) + 0.5 * DuelEngine.getEffectiveDef(s.card);
             const propri = ctx.field(ctx.owner).filter(Boolean).map(valore);
-            const loro = ctx.field(ctx.opponent).filter(Boolean).map(valore);
+            // Un mostro coperto e' valutato con una stima neutra: il bot non
+            // deve conoscere statistiche e identita' che non ha rivelato.
+            const loro = ctx.field(ctx.opponent).filter(Boolean).map((slot) => slot.isFaceDown ? 1200 : valore(slot));
             if (!propri.length || !loro.length) return false;
             return Math.max.apply(null, loro) - Math.min.apply(null, propri) >= 1500;
         },
@@ -2405,6 +2453,7 @@
             return ctx.field(ctx.opponent).some((s) => s) && ctx.field(ctx.owner).some((s) => s);
         },
         activate(ctx) {
+            const valore = (c) => DuelEngine.getEffectiveAtk(c.card) + 0.5 * DuelEngine.getEffectiveDef(c.card);
             // DUE scelte in sequenza, come dice il testo: prima quale
             // mostro avversario distruggere, poi quale dei propri cedergli.
             // La seconda va dentro la callback della prima — i picker sono
@@ -2422,8 +2471,8 @@
                 chooseFieldMonsterTarget(ctx, miei, {
                     title: '🎁 Scatola Magica',
                     text: 'Scegli quale TUO mostro cedere in cambio all\'avversario.',
-                    // Il bot cede il proprio mostro PIU' DEBOLE (prima il primo del campo, spesso il migliore).
-                    pickForBot: (el) => el.reduce((m, c) => (DuelEngine.getEffectiveAtk(c.card) < DuelEngine.getEffectiveAtk(m.card) ? c : m), el[0]),
+                    // La soglia e la scelta usano lo stesso valore: ATK + metà DEF.
+                    pickForBot: (el) => el.reduce((m, c) => (valore(c) < valore(m) ? c : m), el[0]),
                     // Anche il secondo bersaglio passa dal checkpoint, col
                     // conteggio totale: la carta ne bersaglia due.
                     dichiara: true,
@@ -2436,7 +2485,9 @@
                     if (distrutto && window.FX && typeof FX.playMysticBox === 'function') {
                         FX.playMysticBox(distrutto, { owner: mio.owner, index: mio.index, card: slot.card });
                     }
-                    if (ctx.takeControl(ctx.opponent, ctx.owner, mio.index)) {
+                    // Il testo non dà una scadenza al cambio di controllo: il mostro
+                    // resta all'avversario finché un altro effetto non lo sposta.
+                    if (ctx.takeControl(ctx.opponent, ctx.owner, mio.index, true)) {
                         ctx.log(`⚠️ ${name} passa sotto il controllo dell'avversario!`);
                     }
                 });
@@ -2445,8 +2496,14 @@
             chooseFieldMonsterTarget(ctx, suoi, {
                 title: '🎁 Scatola Magica',
                 text: 'Scegli quale mostro avversario distruggere.',
-                // Il bot distrugge il mostro avversario PIU' FORTE.
-                pickForBot: (el) => el.reduce((m, c) => (DuelEngine.getEffectiveAtk(c.card) > DuelEngine.getEffectiveAtk(m.card) ? c : m), el[0])
+                // La stessa valutazione usata da aiCanActivate determina il bersaglio reale.
+                pickForBot: (el) => el.reduce((m, c) => {
+                    const valoreVisibile = (x) => {
+                        const slot = ctx.field(x.owner)[x.index];
+                        return slot && slot.isFaceDown ? 1200 : valore(x);
+                    };
+                    return valoreVisibile(c) > valoreVisibile(m) ? c : m;
+                }, el[0])
             }, (suo) => {
                 // totalTargetCount 2: la carta bersaglia due mostri, quindi
                 // non scatenano le reazioni a un bersaglio singolo
@@ -2463,26 +2520,69 @@
         }
     });
 
-    // 405 — Anima Oscura Posseduta: effetto Ignition (sacrifica questa
-    // carta scoperta; prendi il controllo di tutti i mostri scoperti di
-    // Livello 3 o inferiore dell'avversario).
+    // 405 — Anima Oscura Posseduta: Tributa questa carta scoperta come costo;
+    // il controllo acquisito non ha una scadenza nel testo ufficiale.
     CardEffects.register(405, {
+        aiCanActivate(ctx) {
+            const eligible = ctx.field(ctx.opponent)
+                .filter((slot) => slot && !slot.isFaceDown && slot.card.level <= 3)
+                .map((slot) => DuelEngine.getEffectiveAtk(slot.card) + 0.5 * DuelEngine.getEffectiveDef(slot.card))
+                .sort((a, b) => b - a);
+            if (!eligible.length) return false;
+            const spacesAfterTribute = ctx.field(ctx.owner).filter((slot) => slot === null).length + 1;
+            const taken = eligible.slice(0, spacesAfterTribute);
+            const destroyed = eligible.slice(spacesAfterTribute);
+            const advantage = taken.reduce((sum, value) => sum + value * 2, 0)
+                + destroyed.reduce((sum, value) => sum + value, 0);
+            const cost = DuelEngine.getEffectiveAtk(ctx.card) + 0.5 * DuelEngine.getEffectiveDef(ctx.card);
+            return advantage >= cost + 300;
+        },
         canActivate(ctx) {
             return ctx.field(ctx.opponent).some((s) => s && !s.isFaceDown && s.card.level <= 3);
         },
         activate(ctx) {
-            ctx.destroyMonster(ctx.owner, ctx.index);
+            ctx.tributeMonster(ctx.owner, ctx.index);
             const targets = [];
             ctx.field(ctx.opponent).forEach((slot, i) => {
                 if (slot && !slot.isFaceDown && slot.card.level <= 3) targets.push(i);
             });
-            targets.forEach((i) => {
-                const slot = ctx.field(ctx.opponent)[i];
-                if (slot) {
-                    const name = slot.card.name;
-                    if (ctx.takeControl(ctx.owner, ctx.opponent, i)) ctx.log(`💫 Preso il controllo di ${name}!`);
+            const liberi = ctx.field(ctx.owner).filter((slot) => slot === null).length;
+            const candidates = targets.map((i) => ({ owner: ctx.opponent, index: i, card: ctx.field(ctx.opponent)[i]?.card }))
+                .filter((entry) => entry.card);
+            if (candidates.length <= liberi) {
+                candidates.forEach((entry) => {
+                    const index = ctx.field(ctx.opponent).findIndex((slot) => slot && slot.card.uid === entry.card.uid);
+                    if (index !== -1 && ctx.takeControl(ctx.owner, ctx.opponent, index, true)) {
+                        ctx.log(`💫 Preso il controllo di ${entry.card.name}!`);
+                    }
+                });
+                return;
+            }
+            const scegliMostriDaPrendere = (remaining, taken) => {
+                if (taken >= liberi || remaining.length === 0) {
+                    // Con più mostri idonei delle Zone disponibili, quelli non
+                    // scelti vengono distrutti; le immunità restano rispettate dal motore.
+                    remaining.slice().reverse().forEach((entry) => {
+                        const index = ctx.field(ctx.opponent).findIndex((slot) => slot && slot.card.uid === entry.card.uid);
+                        if (index !== -1) ctx.destroyMonster(ctx.opponent, index);
+                    });
+                    return;
                 }
-            });
+                chooseFieldMonsterTarget(ctx, remaining, {
+                    title: '👹 Anima Oscura Posseduta',
+                    text: 'Scegli quale mostro prendere sotto controllo; gli altri non possono restare sul Terreno.',
+                    pickForBot: (el) => el.reduce((m, c) => {
+                        const power = (x) => DuelEngine.getEffectiveAtk(x.card) + 0.5 * DuelEngine.getEffectiveDef(x.card);
+                        return power(c) > power(m) ? c : m;
+                    }, el[0])
+                }, (chosen) => {
+                    const index = ctx.field(ctx.opponent).findIndex((slot) => slot && slot.card.uid === chosen.card.uid);
+                    const moved = index !== -1 && ctx.takeControl(ctx.owner, ctx.opponent, index, true);
+                    if (moved) ctx.log(`💫 Preso il controllo di ${chosen.card.name}!`);
+                    return scegliMostriDaPrendere(remaining.filter((entry) => entry.card.uid !== chosen.card.uid), taken + (moved ? 1 : 0));
+                });
+            };
+            scegliMostriDaPrendere(candidates, 0);
         }
     });
 

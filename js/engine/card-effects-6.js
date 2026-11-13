@@ -276,6 +276,7 @@
             ctx.log(`🧙 Mago Apprendista posiziona 1 Segnalino Magia su ${target.card.name}!`);
         },
         onDestroy(ctx) {
+            if (!ctx.destroyedInBattle) return;
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return;
             searchDeckWithChoice(ctx, (c) => c.type === 'monster' && c.race === 'Incantatore' && (c.level || 0) <= 2, {
                 title: '🧙 Mago Apprendista',
@@ -885,6 +886,7 @@
             return resolveSpecialSummonBanishCost(ctx, [(c) => c.type === 'monster' && c.attribute === 'TERRA'], '🗿 Gigantes bandisce 1 mostro TERRA per essere Special Summonato!');
         },
         onDestroy(ctx) {
+            if (!ctx.destroyedInBattle) return;
             let count = 0;
             Tavolo.ordine().forEach((owner) => {
                 ctx.stField(owner).forEach((slot, index) => {
@@ -1271,11 +1273,8 @@
 
     // ================================================================
     // 773 — Sparatore Sonico / Sonic Shooter (statico)
-    // Se la zona Magia/Trappola dell'avversario è vuota: questa carta può
-    // attaccare direttamente (gameState.directAttackAllowedUids).
-    // SEMPLIFICAZIONE: manca "il danno da attacco diretto è pari all'ATK
-    // ORIGINALE" (invece che effettivo) — nessun impatto pratico senza
-    // buff ATK attivi su questa carta.
+    // Se la zona Magia/Trappola dell'avversario è vuota, può attaccare
+    // direttamente; il ramo dell'attacco diretto applica il suo ATK originale.
     // ================================================================
     CardEffects.register(773, {
         static(ctx) {
@@ -1359,6 +1358,7 @@
     // ================================================================
     CardEffects.register(778, {
         onDestroy(ctx) {
+            if (!ctx.destroyedInBattle) return;
             searchDeckWithChoice(ctx, (c) => isHarpieLadySupport(c), {
                 title: '🐦 Faccia da Uccello',
                 text: 'Scegli quale carta "Lady Arpia" aggiungere alla mano dal Deck.'
@@ -1386,6 +1386,7 @@
             return resolveSpecialSummonBanishCost(ctx, [(c) => c.type === 'monster' && c.attribute === 'VENTO'], '🌪️ Silpheed bandisce 1 mostro VENTO per essere Special Summonata!');
         },
         onDestroy(ctx) {
+            if (!ctx.destroyedInBattle) return;
             const discarded = ctx.discardRandomFromHand(ctx.opponent);
             if (!discarded) return;
             ctx.log(`🌪️ Silpheed forza l'avversario a scartare ${discarded.name}!`);
@@ -2609,10 +2610,8 @@
     // controlli un mostro. Prendi il controllo di 1 mostro scoperto
     // dell'avversario, eccetto quello attaccante; viene attaccato al
     // suo posto. Combina 2 meccanismi generici già esistenti — ctx.takeControl
-    // (il controllo torna al vero proprietario alla End Phase,
-    // processTemporaryControlReturns in duel-engine.js — SEMPLIFICAZIONE
-    // già nota di quel meccanismo: "fine Battle Phase" reale diventa
-    // "fine turno") e ctx.redirectAttack (già usato da Ragno della
+    // (il controllo torna al vero proprietario alla fine della Battle
+    // Phase, prima della Main Phase 2) e ctx.redirectAttack (già usato da Ragno della
     // Roulette id 425) — calcolando PRIMA lo slot libero su cui il
     // mostro rubato atterrerà, dato che takeControl non restituisce
     // l'indice scelto.
@@ -2705,7 +2704,7 @@
                 const targetSlot = ctx.field(scelto.owner)[scelto.index];
                 if (!targetSlot) return;
                 const stolenName = targetSlot.card.name;
-                if (!ctx.takeControl(ctx.owner, scelto.owner, scelto.index)) return;
+                if (!ctx.takeControl(ctx.owner, scelto.owner, scelto.index, false, 'battlePhaseEnd')) return;
                 // takeControl mette il mostro nella prima casella libera:
                 // è quella letta qui sopra.
                 ctx.redirectAttack(freeIndex, ctx.owner);
@@ -2830,6 +2829,14 @@
     // già avvenuta non deve MAI subire di nuovo.
     // ================================================================
     CardEffects.register(822, {
+        aiCanActivate(ctx) {
+            const links = (ctx.gameState.chain && ctx.gameState.chain.links) || [];
+            const ultima = links[links.length - 1];
+            if (ultima && ultima.card && ultima.card.id === 134 && window.AI_SHARED && AI_SHARED.shouldNegateSoffioIncendiario) {
+                return AI_SHARED.shouldNegateSoffioIncendiario(ctx, 500);
+            }
+            return true;
+        },
         canActivate(ctx) {
             const chain = ctx.gameState.chain;
             return !!(chain && chain.links && chain.links.length > 0 && chain.links[chain.links.length - 1].card.type === 'trap' && chain.links[chain.links.length - 1].owner === ctx.opponent);

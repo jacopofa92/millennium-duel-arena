@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * ai-hard.js — Livello Difficile.
  *
@@ -17,6 +18,7 @@
     'use strict';
 
     /** Punteggio diagnostico dello stato, conservato per strumenti e test. */
+    /** @param {GameState} gameState @param {Owner} [io] @returns {number} */
     function evaluateBoard(gameState, io = 'bot') {
         const avversario = Tavolo.avversario(io);
         let score = (Tavolo.lp(io, gameState) - Tavolo.lp(avversario, gameState)) / 100;
@@ -29,6 +31,7 @@
         return score;
     }
 
+    /** @param {GameState} gameState @param {Owner} [io] @returns {AISummonDecision | null} */
     function chooseSummon(gameState, io = 'bot') {
         const personaggio = gameState.personaggioPerPosto && gameState.personaggioPerPosto[io];
         if (personaggio === 'kaiba') {
@@ -163,6 +166,7 @@
      * valide ORA e preferisce il corpo con la statistica migliore. Facile e
      * Media non ricevono gratuitamente questa linea avanzata.
      */
+    /** @param {GameState} gameState @param {Owner} [io] @returns {{ card: Card; handIndex: number } | null} */
     function chooseHandSpecialSummon(gameState, io = 'bot') {
         if (!window.DuelEngine) return null;
         return Tavolo.mano(io, gameState)
@@ -187,6 +191,7 @@
      * blocchi ai danni o Draw Phase saltate. Quelle richiedono una vera
      * valutazione del costo e restano nel flusso normale.
      */
+    /** @param {GameState} gameState @param {Owner} [io] @returns {AIHandAction | null} */
     function choosePreSummonSpellAction(gameState, io = 'bot') {
         const mano = Tavolo.mano(io, gameState);
         const candidate = mano
@@ -212,6 +217,7 @@
      * ogni rimozione e conserva il mostro più forte per l'ultimo bersaglio
      * o per l'attacco diretto che può chiudere il duello.
      */
+    /** @param {AIAttacker[]} attackers @returns {AIAttacker[]} */
     function orderAttackers(attackers) {
         return [...attackers].sort((a, b) => {
             const differenza = AI_SHARED.effAtk(a.slot.card) - AI_SHARED.effAtk(b.slot.card);
@@ -226,6 +232,7 @@
      * Trappole: serve a riconoscere una linea disponibile, non a barare sulla
      * futura Chain.
      */
+    /** @param {AIAttacker[]} attackers @param {AIAttacker[]} defenders @param {number} opponentLp @param {Owner} [io] @returns {AILethalEstimate} */
     function estimateLethal(attackers, defenders, opponentLp, io = 'bot') {
         const attacchi = orderAttackers(attackers).map((item) => AI_SHARED.effAtk(item.slot.card));
         const difese = defenders.map((item) => ({
@@ -250,6 +257,7 @@
      * canChangePosition mantiene tutte le regole su Evocazione e cambio già
      * effettuato; l'esecutore del comando resta l'ultima autorità.
      */
+    /** @param {GameState} gameState @param {Owner} [io] @returns {number[]} */
     function choosePositionChanges(gameState, io = 'bot') {
         const personaggio = gameState.personaggioPerPosto && gameState.personaggioPerPosto[io];
         // Gansley e Noah rendono meglio seguendo il proprio piano di campo
@@ -259,6 +267,7 @@
         return AI_SHARED.choosePositionChanges(gameState, io, !seguePianoVisibile);
     }
 
+    /** @param {MonsterSlot} attackerSlot @param {AIAttacker[]} opponentMonsters @param {Owner} [io] @returns {number | null} */
     function chooseAttackTarget(attackerSlot, opponentMonsters, io = 'bot') {
         const sceltaMedia = AI_MEDIUM.chooseAttackTarget(attackerSlot, opponentMonsters, io);
         if (sceltaMedia === null || sceltaMedia === -1) return sceltaMedia;
@@ -273,10 +282,12 @@
         return sceltaMedia;
     }
 
+    /** @param {AIResponseCandidate[]} candidates @param {Owner} [io] @returns {AIResponseCandidate | null} */
     function chooseChainResponse(candidates, io = 'bot') {
         return AI_MEDIUM.chooseChainResponse(candidates, io);
     }
 
+    /** @param {GameState} gameState @param {{ activateCount?: number; setCount?: number }} [usedThisTurn] @param {Owner} [io] @returns {AIHandAction | null} */
     function chooseNextSpellTrapAction(gameState, usedThisTurn, io = 'bot') {
         usedThisTurn = usedThisTurn || {};
         const personaggio = gameState.personaggioPerPosto && gameState.personaggioPerPosto[io];
@@ -311,6 +322,7 @@
     // rimettersi coperti è precisamente la preparazione del loro prossimo
     // effetto e non consuma altre risorse. Il riconoscimento dal testo rende
     // la regola disponibile anche a future carte custom equivalenti.
+    /** @param {GameState} gameState @param {Owner} [io] @returns {AIFieldAction | null} */
     function chooseSetCardActivation(gameState, io = 'bot') {
         const campo = Tavolo.mostri(io, gameState);
         const personaggio = gameState.personaggioPerPosto && gameState.personaggioPerPosto[io];

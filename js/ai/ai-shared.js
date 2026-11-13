@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * ai-shared.js — Euristiche condivise tra i livelli di difficoltà
  * dell'IA (js/ai/ai-medium.js, js/ai/ai-hard.js). Vanno caricate PRIMA
@@ -16,6 +17,7 @@
 
     // Parola chiave -> punti d'impatto stimato. Più alto = più forte.
     // L'ordine di controllo conta poco: si sommano tutti i match trovati.
+    /** @type {Array<[RegExp, number]>} */
     const KEYWORD_WEIGHTS = [
         [/distrugg/i, 4],           // rimozione permanente
         [/bandisc/i, 4],            // rimozione ancora più definitiva
@@ -41,17 +43,20 @@
      * (ancora) alcun bonus, e per quelli si resta sul valore stampato.
      * Se il motore non è caricato ripiega sul valore stampato.
      */
+    /** @param {Card | null | undefined} card @returns {number} */
     function effAtk(card) {
         if (!card) return 0;
         if (window.DuelEngine && typeof DuelEngine.getEffectiveAtk === 'function') return DuelEngine.getEffectiveAtk(card) || 0;
         return card.attack || 0;
     }
+    /** @param {Card | null | undefined} card @returns {number} */
     function effDef(card) {
         if (!card) return 0;
         if (window.DuelEngine && typeof DuelEngine.getEffectiveDef === 'function') return DuelEngine.getEffectiveDef(card) || 0;
         return card.defense || 0;
     }
     /** La statistica con cui un mostro SCOPERTO si difende in battaglia: ATK se in Attacco, DEF se in Difesa (entrambi effettivi). */
+    /** @param {MonsterSlot} slot @returns {number} */
     function statRilevante(slot) {
         return slot.position === 'attack' ? effAtk(slot.card) : effDef(slot.card);
     }
@@ -64,6 +69,7 @@
      * punteggio base pari al suo ATK diviso 500, così un vanilla forte
      * non risulta mai "zero" rispetto a una Magia/Trappola debole.
      */
+    /** @param {Card | null | undefined} card @returns {number} */
     function scoreCardImpact(card) {
         if (!card) return 0;
         if (card.type === 'monster') return (card.attack || 0) / 500;
@@ -118,6 +124,7 @@
      *      la stessa nozione di rischio già usata per gli attacchi anche
      *      alla scelta Evocazione scoperta/coperta.
      */
+    /** @param {Card | null | undefined} card @param {GameState} gameState @param {Owner} owner @returns {AIEstimateStats} */
     function estimateSummonedStats(card, gameState, owner) {
         if (card && card.id === 31) {
             const hand = Tavolo.mano(owner, gameState) || [];
@@ -159,6 +166,7 @@
     const RA_LP_MINIMI = 1000;
     const RA_PASSO = 50;
 
+    /** @param {GameState} gameState @param {Owner} owner @param {{ tributi?: number[] }} [opzioni] @returns {AIDecisioneRa} */
     function raLpDecisione(gameState, owner, opzioni) {
         const arrotondaSu = (n) => Math.ceil(n / RA_PASSO) * RA_PASSO;
         const arrotondaGiu = (n) => Math.floor(n / RA_PASSO) * RA_PASSO;
@@ -202,15 +210,18 @@
     }
 
     /** La somma di LP che il bot paga per Ra (0 = non paga). La usano sia la stima (estimateSummonedStats) sia l'esecuzione (bot.js). */
+    /** @param {GameState} gameState @param {Owner} owner @param {{ tributi?: number[] }} [opzioni] @returns {number} */
     function raLpDaPagare(gameState, owner, opzioni) {
         return raLpDecisione(gameState, owner, opzioni).paga;
     }
 
     /** Compatibilita': "paga qualcosa?". */
+    /** @param {GameState} gameState @param {Owner} owner @param {{ tributi?: number[] }} [opzioni] @returns {boolean} */
     function shouldPayRaLp(gameState, owner, opzioni) {
         return raLpDaPagare(gameState, owner, opzioni) > 0;
     }
 
+    /** @param {Card | null | undefined} card @param {GameState} gameState @param {Owner} owner @param {number} [riskAversion] @returns {{ position: Position; faceDown: boolean }} */
     function decideMonsterPosture(card, gameState, owner, riskAversion) {
         if (!card) return { position: 'attack', faceDown: false };
         const previste = estimateSummonedStats(card, gameState, owner);
@@ -258,6 +269,7 @@
      *   più forte pronta a distruggerlo; anche se la DEF non basta a salvarlo,
      *   la posizione evita almeno il danno da combattimento agli LP.
      */
+    /** @param {GameState} gameState @param {Owner} owner @param {boolean} [conosceCoperti] @returns {number[]} */
     function choosePositionChanges(gameState, owner, conosceCoperti) {
         const avversario = Tavolo.avversario(owner);
         const campoAvversario = Tavolo.mostri(avversario, gameState).filter(Boolean);
@@ -299,6 +311,7 @@
     const MASS_EFFECT_KEYWORD = /tutti i mostri|ogni mostro|tutte le carte/i;
 
     /** Vero se `card` è una Magia/Trappola che rimuove UN mostro bersaglio (non un effetto di massa) — usata per decidere se vale la pena trattenerla per un bersaglio migliore invece di sprecarla subito. */
+    /** @param {Card | null | undefined} card @returns {boolean} */
     function isSingleTargetRemoval(card) {
         if (!card || card.type === 'monster') return false;
         const text = card.effect || '';
@@ -323,6 +336,7 @@
      * partita (vedi AI_HARD.evaluateBoard) — più prudente da in vantaggio,
      * più disposta a "bruciare" pur di stabilizzarsi se in svantaggio.
      */
+    /** @param {Card | null | undefined} card @param {GameState} gameState @param {Owner} owner @param {number} threshold @returns {boolean} */
     function isRemovalWorthwhile(card, gameState, owner, threshold) {
         if (!isSingleTargetRemoval(card)) return true;
         const opponentField = Tavolo.mostri(Tavolo.avversario(owner), gameState);
@@ -358,6 +372,7 @@
     const OPPONENT_ONLY_OWNERSHIP = /(che |dal )?(il )?tuo avversario (ne )?controlla|controllat[ei] dal tuo avversario/i;
 
     /** Vero se `card` è un effetto di distruzione di massa che colpisce ANCHE il proprio Terreno (non solo quello dell'avversario). */
+    /** @param {Card | null | undefined} card @returns {boolean} */
     function hasOwnSideCost(card) {
         if (!card || card.type === 'monster') return false;
         const text = card.effect || '';
@@ -378,6 +393,7 @@
      * Se non ha alcun costo per il proprio lato (hasOwnSideCost falso),
      * torna sempre vero — nessuna restrizione, esattamente come prima.
      */
+    /** @param {Card | null | undefined} card @param {GameState} gameState @param {Owner} owner @returns {boolean} */
     function isMassDestructionWorthwhile(card, gameState, owner) {
         // Distruzione di massa di MAGIE E TRAPPOLE (Tempesta Potente, Spolverino dell'Arpia, Attacco Mago Nero...): il confronto
         // dei mostri qui sotto non c'entra, conta quante carte Magia/Trappola ha ciascuno. Segnalato giocando: Bakura Difficile
@@ -403,6 +419,52 @@
     }
 
     /**
+     * Stima se annullare Soffio Incendiario (id 134) protegge davvero il
+     * bot. È un caso delicato perché la carta distrugge mostri di ENTRAMBI
+     * i lati, ma solo dopo aver sacrificato un Drago: una valutazione basata
+     * sulla parola "distruggi" faceva pagare le negazioni per salvare il
+     * campo dell'avversario o per fermare un effetto che conveniva lasciare
+     * risolvere. `null` significa che il link è un'altra carta e lascia alle
+     * euristiche preesistenti la decisione.
+     *
+     * Qui si replica il filtro reale del suo effetto (mostri scoperti con
+     * DEF <= ATK del Drago sacrificato), poi si confrontano i valori persi
+     * sui due lati, includendo il Drago che l'attivatore paga. Il costo
+     * della negazione usa la stessa equivalenza LP/campo dell'audit IA.
+     * Non si anticipano trigger distruzione: la stima serve solo a decidere
+     * se spendere la Trappola, non a simulare l'intera Chain.
+     * @param {{ owner: Owner, gameState: GameState }} ctx
+     * @param {number} costoLp
+     * @returns {boolean | null}
+     */
+    function shouldNegateSoffioIncendiario(ctx, costoLp) {
+        const links = (ctx.gameState.chain && ctx.gameState.chain.links) || [];
+        const link = links[links.length - 1];
+        if (!link || !link.card || link.card.id !== 134) return null;
+        if (link.negated || link.activationNegated) return false;
+
+        const effectOwner = link.owner;
+        const dragons = Tavolo.mostri(effectOwner, ctx.gameState).filter((slot) =>
+            slot && !slot.isFaceDown && slot.card.race === 'Drago'
+        );
+        if (dragons.length === 0) return false;
+        // Il motore attuale sceglie il Drago scoperto con ATK stampato più
+        // alto come Tributo; la stima deve usare lo stesso criterio per non
+        // attribuire alla Chain un risultato diverso da quello che avverrà.
+        const tribute = dragons.reduce((best, slot) => slot.card.attack > best.card.attack ? slot : best);
+        const atkSoglia = tribute.card.attack || 0;
+        const valore = (slot) => effAtk(slot.card) + 0.5 * effDef(slot.card);
+        const perdita = (owner) => Tavolo.mostri(owner, ctx.gameState).reduce((totale, slot) => {
+            if (!slot || slot.isFaceDown || slot.card.uid === tribute.card.uid) return totale;
+            return (slot.card.defense || 0) <= atkSoglia ? totale + valore(slot) : totale;
+        }, 0);
+
+        const dannoProprio = perdita(ctx.owner);
+        const dannoAvversario = perdita(effectOwner) + valore(tribute);
+        return dannoProprio - dannoAvversario > Math.max(0, costoLp) * 0.5;
+    }
+
+    /**
      * Vero se `card` è normalmente Evocabile ORA da parte di `owner` —
      * SOLO per il vincolo "non può essere Evocata a meno che tu non
      * controlli scoperta [altra carta specifica]" (def.requiresFieldPresenceId,
@@ -413,6 +475,7 @@
      * l'IA non spreca un turno tentando un'Evocazione che verrebbe
      * comunque rifiutata da attemptMonsterSummon (actions.js).
      */
+    /** @param {Card | null | undefined} card @param {GameState} gameState @param {Owner} owner @returns {boolean} */
     function canNormalSummonNow(card, gameState, owner) {
         // Guardiano Falce del Terrore (id 282): "non puoi Evocare
         // Normalmente/Set altri mostri finché questa carta è in campo" —
@@ -454,6 +517,7 @@
      * "il bot ha in mano un pezzo di Exodia", non "il bot è un
      * personaggio specifico", quindi nessun controllo per nome qui.
      */
+    /** @param {Card | null | undefined} card @param {GameState} gameState @param {Owner} owner @returns {boolean} */
     function shouldHoldForExodia(card, gameState, owner) {
         if (!(card && typeof EXODIA_PIECE_IDS !== 'undefined' && EXODIA_PIECE_IDS.includes(card.id))) return false;
         // Senza il contesto (chiamata storica) il pezzo si tiene sempre; con il contesto si tiene solo finche' il piano e' vivo.
@@ -501,6 +565,7 @@
      * resta quindi trattato come normalmente distruttibile, comportamento
      * INVARIATO rispetto a prima di questa modifica.
      */
+    /** @param {Card} defenderCard @param {Owner} defenderOwner @param {number} attackerAtk @returns {boolean} */
     function canBeDestroyedByBattle(defenderCard, defenderOwner, attackerAtk) {
         if (gameState.noBattleDestructionFor && gameState.noBattleDestructionFor[defenderOwner]) return false;
         const def = window.DuelEngine && DuelEngine.getDefinition(defenderCard.id);
@@ -526,6 +591,7 @@
      * da decideMonsterPosture qui sopra, per non duplicarne la logica in
      * modo incoerente.
      */
+    /** @param {Card} card @param {number} sacrificedValue @param {GameState} gameState @param {Owner} owner @returns {boolean} */
     function isTributeSummonWorthwhile(card, sacrificedValue, gameState, owner) {
         const previste = estimateSummonedStats(card, gameState, owner);
         // Slifer non è uno 0/0: il valore stampato è "?" e il motore lo
@@ -615,6 +681,7 @@
      * richiesta esplicita dell'utente ("non tutte [le carte punitive]
      * subito").
      */
+    /** @param {GameState} gameState @param {Owner} owner @returns {number} */
     function getSpellTrapRestraint(gameState, owner) {
         // L'identità appartiene al POSTO, non alla sessione globale. È
         // indispensabile nei duelli IA contro IA: prima entrambi i lati
@@ -648,6 +715,7 @@
      * non cambia QUANTE carte l'IA gioca per turno (i limiti MAX_ATTIVA/
      * MAX_SET e usedThisTurn restano invariati), solo QUALE tra quelle idonee.
      */
+    /** @template {{ card: Card }} T @param {T[]} candidates @param {number} restraint @returns {T | null} */
     function pickWeightedByImpact(candidates, restraint) {
         if (!candidates || candidates.length === 0) return null;
         if (candidates.length === 1) return candidates[0];
@@ -683,6 +751,7 @@
      * misura, si rimette tutto com'era e si ricalcola di nuovo — cosi' vale per qualunque Magia Terreno
      * (anche una nuova) senza leggerne il testo. Torna 0 se la carta non tocca le statistiche.
      */
+    /** @param {Card} card @param {Owner} io @returns {{ mio: number; loro: number }} */
     function guadagnoRelativoCampo(card, io) {
         if (!window.DuelEngine || typeof DuelEngine.recomputeStaticEffects !== 'function') return { mio: 0, loro: 0 };
         const chiave = Tavolo.chiave(io, 'FieldSpell');
@@ -714,6 +783,7 @@
      * non vieta se la carta libera una casella (Sacrifica, Tributa, Rituale, Fusione, distruggi) o
      * decide a caso/dichiara, e non tocca le Magie Terreno.
      */
+    /** @param {Card | null | undefined} card @param {Owner} io @param {CardDefinition} [def] @returns {boolean} */
     function haSpazioPerEvocare(card, io, def) {
         if (!card || (card.type !== 'spell' && card.type !== 'trap')) return true;
         if (card.subtype === 'field' || card.subtype === 'ritual' || card.subtype === 'counter') return true;
@@ -744,6 +814,7 @@
      * le distruzioni di massa (Tempesta Pesante, Piumino...) hanno il loro controllo (isMassDestructionWorthwhile).
      * Torna true se la carta va VIETATA.
      */
+    /** @param {Card | null | undefined} card @param {Owner} io @returns {boolean} */
     function distruggeSoloMagieTrappoleSue(card, io) {
         if (!card || (card.type !== 'spell' && card.type !== 'trap')) return false;
         if (card.subtype === 'continuous' || card.subtype === 'field' || card.subtype === 'equip') return false;
@@ -767,6 +838,7 @@
      * Prima ognuna di queste carte si attivava ad ogni occasione, perche' "le carte di risposta sono tutte
      * puro vantaggio": non e' vero (Kaiba che si sacrificava un mostro forte per una Fusione scarsa).
      */
+    /** @param {Card | null | undefined} card @param {Owner} io @param {string} [zona] @param {number} [indice] @param {Record<string, unknown>} [evento] @returns {boolean} */
     function attivazioneSensata(card, io, zona, indice, evento) {
         if (!card) return false;
         const def = window.DuelEngine && DuelEngine.getDefinition(card.id);
@@ -818,6 +890,7 @@
         isRemovalWorthwhile: isRemovalWorthwhile,
         hasOwnSideCost: hasOwnSideCost,
         isMassDestructionWorthwhile: isMassDestructionWorthwhile,
+        shouldNegateSoffioIncendiario: shouldNegateSoffioIncendiario,
         shouldHoldForExodia: shouldHoldForExodia,
         canBeDestroyedByBattle: canBeDestroyedByBattle,
         estimateSummonedStats: estimateSummonedStats,

@@ -1127,7 +1127,11 @@ function startSecondBattlePhase(owner) {
 
 function enterMainPhase2() {
     clearPhaseTransitionTimeout();
+    const wasInBattlePhase = gameState.phase === 'battle';
     gameState.phase = 'main2';
+    if (wasInBattlePhase && window.DuelEngine) {
+        DuelEngine.processTemporaryControlReturns('battlePhaseEnd');
+    }
     EventiDuello.emetti('annuncio-fase', 'Main Phase 2');
     addToLog('⚡ Main Phase 2');
     if (canConductSecondBattlePhase('player')) {
@@ -1297,6 +1301,10 @@ function enterEndPhase() {
                 });
                 gameState.pendingMagicalHatsDestroy[owner] = [];
             });
+            // Scudo da Braccio Magico (id 819) restituisce il mostro
+            // appena terminano i trigger della Battle Phase, prima che
+            // inizi la End Phase vera e propria.
+            DuelEngine.processTemporaryControlReturns('battlePhaseEnd');
         }
         // Bonus ATK/DEF "fino a fine turno" (es. Drenaggio di Energia id
         // 227, Rimozione del Limitatore id 350): scadono qui, con le

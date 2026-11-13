@@ -43,6 +43,7 @@
      * `gameState.botDifficulty`, il livello scelto per l'avversario, come
      * prima che l'IA potesse sedersi anche dall'altra parte.
      */
+    /** @param {Owner} [io] @returns {string} */
     function currentLevelName(io) {
         if (typeof gameState === 'undefined') return 'medium';
         const perPosto = gameState.livelloIA && io && gameState.livelloIA[io];
@@ -50,12 +51,14 @@
     }
 
     /** Il modulo IA del livello attivo, con ripiego su IA_MEDIA se quel livello non è caricato per qualche motivo. */
+    /** @param {Owner} [io] @returns {AIHard | AIMedium | null} */
     function currentLevel(io) {
         const name = currentLevelName(io);
         if (name === 'hard' && window.AI_HARD) return window.AI_HARD;
         return window.AI_MEDIUM || window.AI_HARD || null;
     }
 
+    /** @param {string} label @param {unknown} data @param {Owner} [io] */
     function debugLog(label, data, io) {
         if (window.AI_DEBUG) {
             console.log(`[BotAI:${io || 'bot'}:${currentLevelName(io)}] ${label}`, data);
@@ -64,6 +67,7 @@
 
     // `io`, in ogni funzione qui sotto: il posto da cui gioca l'IA ('bot'
     // se omesso, come sempre). Vedi js/engine/tavolo.js.
+    /** @param {GameState} gameStateArg @param {Owner} [io] @returns {AISummonDecision | null} */
     function chooseSummon(gameStateArg, io = 'bot') {
         const level = currentLevel(io);
         const decision = level ? level.chooseSummon(gameStateArg, io) : null;
@@ -71,6 +75,7 @@
         return decision;
     }
 
+    /** @param {GameState} gameStateArg @param {Owner} [io] @returns {{ card: Card; handIndex: number } | null} */
     function chooseHandSpecialSummon(gameStateArg, io = 'bot') {
         const level = currentLevel(io);
         const decision = level && typeof level.chooseHandSpecialSummon === 'function'
@@ -79,6 +84,7 @@
         return decision;
     }
 
+    /** @param {GameState} gameStateArg @param {Owner} [io] @returns {AIHandAction | null} */
     function choosePreSummonSpellAction(gameStateArg, io = 'bot') {
         const level = currentLevel(io);
         const decision = level && typeof level.choosePreSummonSpellAction === 'function'
@@ -87,14 +93,16 @@
         return decision;
     }
 
+    /** @param {AIAttacker[]} attackers @param {Owner} [io] @returns {AIAttacker[]} */
     function orderAttackers(attackers, io = 'bot') {
         const level = currentLevel(io);
         const ordered = level && typeof level.orderAttackers === 'function'
-            ? level.orderAttackers(attackers, io) : attackers;
+            ? level.orderAttackers(attackers) : attackers;
         debugLog('orderAttackers', ordered.map((item) => item.slot.card.name), io);
         return ordered;
     }
 
+    /** @param {AIAttacker[]} attackers @param {AIAttacker[]} defenders @param {number} opponentLp @param {Owner} [io] @returns {AILethalEstimate} */
     function estimateLethal(attackers, defenders, opponentLp, io = 'bot') {
         const level = currentLevel(io);
         return level && typeof level.estimateLethal === 'function'
@@ -102,6 +110,7 @@
             : { possible: false, damage: 0 };
     }
 
+    /** @param {GameState} gameStateArg @param {Owner} [io] @returns {number[]} */
     function choosePositionChanges(gameStateArg, io = 'bot') {
         const level = currentLevel(io);
         const changes = level && typeof level.choosePositionChanges === 'function'
@@ -110,6 +119,7 @@
         return changes;
     }
 
+    /** @param {GameState} gameStateArg @param {Owner} [io] @returns {AIBanishFusionCandidate | null} */
     function chooseBanishFusion(gameStateArg, io = 'bot') {
         const level = currentLevel(io);
         const decision = level && typeof level.chooseBanishFusion === 'function'
@@ -118,6 +128,7 @@
         return decision;
     }
 
+    /** @param {MonsterSlot} attackerSlot @param {AIAttacker[]} playerMonsters @param {Owner} [io] @returns {number | null} */
     function chooseAttackTarget(attackerSlot, playerMonsters, io = 'bot') {
         const level = currentLevel(io);
         const decision = level ? level.chooseAttackTarget(attackerSlot, playerMonsters, io) : null;
@@ -125,6 +136,7 @@
         return decision;
     }
 
+    /** @param {AIResponseCandidate[]} candidates @param {Owner} [io] @returns {AIResponseCandidate | null} */
     function chooseChainResponse(candidates, io = 'bot') {
         const level = currentLevel(io);
         const decision = level ? level.chooseChainResponse(candidates, io) : (candidates[0] || null);
@@ -141,6 +153,7 @@
      * tenere il proprio conteggio (es. IA_MEDIA si ferma dopo 1 Set + 1
      * Magia) senza che i livelli si condizionino a vicenda.
      */
+    /** @param {GameState} gameStateArg @param {{ activateCount?: number; setCount?: number }} [usedThisTurn] @param {Owner} [io] @returns {AIHandAction | null} */
     function chooseNextSpellTrapAction(gameStateArg, usedThisTurn, io = 'bot') {
         const level = currentLevel(io);
         const decision = level && typeof level.chooseNextSpellTrapAction === 'function'
@@ -150,6 +163,7 @@
     }
 
     /** Vero se conviene attivare ORA una propria carta già Set o l'effetto Ignition di un proprio mostro in campo (decision.zone dice quale), durante la propria Main Phase (non in risposta a un trigger) — solo IA_DIFFICILE lo fa mai. */
+    /** @param {GameState} gameStateArg @param {Owner} [io] @returns {AIFieldAction | null} */
     function chooseSetCardActivation(gameStateArg, io = 'bot') {
         const level = currentLevel(io);
         const decision = level && typeof level.chooseSetCardActivation === 'function'

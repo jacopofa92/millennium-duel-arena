@@ -557,6 +557,7 @@
     // ================================================================
     CardEffects.register(644, {
         onDestroy(ctx) {
+            if (!ctx.destroyedInBattle) return;
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return;
             searchDeckWithChoice(ctx, (c) => c.type === 'monster' && c.race === 'Drago' && c.attack <= 1500, {
                 title: '🐲 Drago Mascherato',
@@ -602,21 +603,31 @@
     // della carta (il ladro) quando vive la Standby Phase dell'AVVERSARIO
     // (ctx.standbyOwner) — esattamente il proprietario originale del
     // mostro rubato in una partita 1v1.
+    function releaseSnatchStealControl(ctx) {
+        const uid = ctx.card.snatchStealTargetUid;
+        if (!uid) return;
+        delete ctx.card.snatchStealTargetUid;
+        if (ctx.returnControlToOriginalOwner(uid, ctx.opponent)) {
+            ctx.log('🦹 Strappa Possesso lascia il Terreno: il mostro torna al suo proprietario.');
+        }
+    }
+
     CardEffects.register(645, {
         continuous: true,
         canActivate(ctx) {
             return ctx.field(ctx.opponent).some((s) => s && !s.isFaceDown);
         },
         activate(ctx) {
-            // Controllo PERMANENTE: a maggior ragione quale mostro rubare
-            // non può deciderlo la carta al posto del giocatore.
+            // Il controllo dura finché Strappa Possesso resta equipaggiata:
+            // il ritorno non è una scadenza di turno, ma viene gestito dai
+            // tre hook sotto quando l'Equip lascia il Terreno.
             const candidati = [];
             ctx.field(ctx.opponent).forEach((slot, index) => {
                 if (slot && !slot.isFaceDown) candidati.push({ owner: ctx.opponent, index, card: slot.card });
             });
             chooseFieldMonsterTarget(ctx, candidati, {
                 title: '🦹 Strappa Possesso',
-                text: 'Scegli quale mostro avversario rubare (controllo permanente).',
+                text: 'Scegli quale mostro avversario rubare finché Strappa Possesso resta equipaggiata.',
                 dichiara: true
             }, (scelta) => {
                 const targetSlot = ctx.field(scelta.owner)[scelta.index];
@@ -624,7 +635,7 @@
                 const stolen = targetSlot.card;
                 if (ctx.takeControl(ctx.owner, scelta.owner, scelta.index, true)) {
                     ctx.card.snatchStealTargetUid = stolen.uid;
-                    ctx.log(`🦹 Strappa Possesso prende il controllo permanente di ${stolen.name}!`);
+                    ctx.log(`🦹 Strappa Possesso prende il controllo di ${stolen.name} finché resta equipaggiata!`);
                 }
             });
         },
@@ -641,7 +652,10 @@
                 ctx.graveyard(ctx.owner).push(ctx.card);
                 ctx.log('🦹 Strappa Possesso va al Cimitero: il mostro rubato ha lasciato il Terreno.');
             }
-        }
+        },
+        onSTDestroyed: releaseSnatchStealControl,
+        onBanished: releaseSnatchStealControl,
+        onReturnedToHandSelf: releaseSnatchStealControl
     });
 
     // ================================================================
@@ -1172,6 +1186,7 @@
     // ================================================================
     CardEffects.register(660, {
         onDestroy(ctx) {
+            if (!ctx.destroyedInBattle) return;
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return;
             searchDeckWithChoice(ctx, (c) => c.type === 'monster' && c.race === 'Zombie' && c.defense <= 2000, {
                 title: '🐢 Tartaruga Piramide',
@@ -1499,6 +1514,7 @@
     // ================================================================
     CardEffects.register(675, {
         onDestroy(ctx) {
+            if (!ctx.destroyedInBattle) return;
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return;
             searchDeckWithChoice(ctx, (c) => c.type === 'monster' && c.attribute === 'FUOCO' && c.attack <= 1500, {
                 title: '🐢 Tartaruga UFO',
@@ -1694,6 +1710,10 @@
     CardEffects.register(684, {
         cannotBeTributed: true,
         onDestroy(ctx) {
+            // Serve che fosse scoperta all'inizio del Damage Step; un mostro
+            // rivelato solo dopo essere stato attaccato coperto non soddisfa
+            // questa condizione.
+            if (!ctx.destroyedInBattle || !ctx.destroyedWasFaceUpAtDamageStep) return;
             ctx.card._foxFireReviveTurn = gameState.turn;
         },
         onEndPhase(ctx) {
@@ -2051,6 +2071,7 @@
     // ================================================================
     CardEffects.register(695, {
         onDestroy(ctx) {
+            if (!ctx.destroyedInBattle) return;
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return;
             searchDeckWithChoice(ctx, (c) => c.type === 'monster' && c.attribute === 'ACQUA' && c.attack <= 1500, {
                 title: '🐻 Madre Grizzly',
@@ -2086,37 +2107,72 @@
     // 697 — Virus Infetta-Tribù / Tribe-Infecting Virus (Ignition)
     // Scarta 1 carta e dichiara 1 Tipo; distruggi tutti i mostri
     // scoperti di quel Tipo sul Terreno.
-    // SEMPLIFICAZIONE residua: dichiara automaticamente il Tipo più diffuso
-    // tra i mostri scoperti dell'avversario, invece di lasciar scegliere.
-    // La carta da scartare come costo è invece ora una vera scelta
-    // (offerHandDiscardChoice) — bug reale corretto in questa sessione.
+    // Il Tipo dichiarato è una scelta esplicita; i mostri scoperti di quel
+    // Tipo vengono poi distrutti su entrambi i Terreni.
     // ================================================================
     CardEffects.register(697, {
         canActivate(ctx) {
-            return ctx.hand(ctx.owner).length > 0 && ctx.field(ctx.opponent).some((s) => s && !s.isFaceDown);
+            return ctx.hand(ctx.owner).length > 0
+                && Tavolo.ordine().some((owner) => ctx.field(owner).some((s) => s && !s.isFaceDown));
+        },
+        aiCanActivate(ctx) {
+            const counts = new Map();
+            Tavolo.ordine().forEach((owner) => ctx.field(owner).forEach((slot) => {
+                if (!slot || slot.isFaceDown || !slot.card.race) return;
+                const value = counts.get(slot.card.race) || { self: 0, opponent: 0 };
+                value[owner === ctx.owner ? 'self' : 'opponent']++;
+                counts.set(slot.card.race, value);
+            }));
+            return [...counts.values()].some((value) => value.opponent > value.self);
         },
         activate(ctx) {
             offerHandDiscardChoice(ctx, {
                 title: '🦠 Virus Infetta-Tribù',
                 text: 'Scegli quale carta scartare dalla mano.'
             }, (discarded) => {
-                const raceCounts = {};
-                ctx.field(ctx.opponent).forEach((s) => {
-                    if (s && !s.isFaceDown) raceCounts[s.card.race] = (raceCounts[s.card.race] || 0) + 1;
-                });
-                const declaredRace = Object.keys(raceCounts).sort((a, b) => raceCounts[b] - raceCounts[a])[0];
-                if (!declaredRace) return;
-
-                let destroyed = 0;
-                Tavolo.ordine().forEach((owner) => {
-                    ctx.field(owner).forEach((slot, index) => {
-                        if (slot && !slot.isFaceDown && slot.card.race === declaredRace) {
-                            ctx.destroyMonster(owner, index);
-                            destroyed++;
-                        }
+                const types = [...new Set(cardDatabase
+                    .filter((card) => card.type === 'monster' && card.race)
+                    .map((card) => card.race))]
+                    .sort((a, b) => a.localeCompare(b, 'it'));
+                const options = types.map((type) => ({ value: type, label: type }));
+                const countsOnField = () => {
+                    const counts = new Map();
+                    Tavolo.ordine().forEach((owner) => ctx.field(owner).forEach((slot) => {
+                        if (!slot || slot.isFaceDown || !slot.card.race) return;
+                        const value = counts.get(slot.card.race) || { self: 0, opponent: 0 };
+                        value[owner === ctx.owner ? 'self' : 'opponent']++;
+                        counts.set(slot.card.race, value);
+                    }));
+                    return counts;
+                };
+                Decisioni.chiedi({
+                    chi: ctx.owner,
+                    tipo: 'opzioni',
+                    candidati: options,
+                    titolo: '🦠 Virus Infetta-Tribù',
+                    testo: 'Dichiara un Tipo di mostro. Tutti i mostri scoperti di quel Tipo saranno distrutti.',
+                    automatica: (elenco) => {
+                        const counts = countsOnField();
+                        const vantaggio = (option) => {
+                            const value = counts.get(option.value) || { self: 0, opponent: 0 };
+                            return value.opponent - value.self;
+                        };
+                        return elenco.reduce((best, option) => vantaggio(option) > vantaggio(best) ? option : best, elenco[0]);
+                    }
+                }, (choice) => {
+                    const declaredRace = choice && choice.value;
+                    if (!declaredRace) return;
+                    let destroyed = 0;
+                    Tavolo.ordine().forEach((owner) => {
+                        ctx.field(owner).forEach((slot, index) => {
+                            if (slot && !slot.isFaceDown && slot.card.race === declaredRace) {
+                                ctx.destroyMonster(owner, index);
+                                destroyed++;
+                            }
+                        });
                     });
+                    ctx.log(`🦠 Virus Infetta-Tribù scarta ${discarded.name}, dichiara "${declaredRace}" e distrugge ${destroyed} mostr${destroyed === 1 ? 'o' : 'i'}!`);
                 });
-                ctx.log(`🦠 Virus Infetta-Tribù scarta ${discarded.name}, dichiara "${declaredRace}" e distrugge ${destroyed} mostr${destroyed === 1 ? 'o' : 'i'}!`);
             });
         }
     });
@@ -2445,6 +2501,7 @@
     // ================================================================
     CardEffects.register(710, {
         onDestroy(ctx) {
+            if (!ctx.destroyedInBattle) return;
             if (ctx.findEmptyMonsterSlot(ctx.owner) === -1) return;
             searchDeckWithChoice(ctx, (c) => c.type === 'monster' && c.race === 'Guerriero' && c.attribute === 'TERRA' && c.attack <= 1500, {
                 title: '⚔️ Signora Guerriera delle Terre Desolate',

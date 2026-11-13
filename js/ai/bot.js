@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Il turno completo dell'IA che gioca dal posto `io` ('player' o 'bot', vedi
  * js/engine/tavolo.js): pescata, Standby, Evocazione, Magie/Trappole,
@@ -462,6 +463,7 @@ function evocaSeConviene(io) {
  * che l'eventuale finestra di risposta dell'avversario (es. Buco Trappola)
  * si è chiusa per davvero.
  */
+/** @param {Card} card @param {number[]} tributeIndices @param {number} emptySlotHint @param {Position} position @param {boolean} faceDown @param {Owner} [io] */
 function botSummonMonster(card, tributeIndices, emptySlotHint, position, faceDown, io = 'bot') {
     segnaMossa();
     position = position === 'defense' ? 'defense' : 'attack';

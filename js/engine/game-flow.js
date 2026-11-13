@@ -1,3 +1,4 @@
+// @ts-check
 const attackArrowSVG = document.getElementById('attack-arrow-svg');
 const attackArrowLine = document.getElementById('attack-arrow-line');
 const attackArrowGlow = document.getElementById('attack-arrow-glow');
@@ -296,9 +297,10 @@ document.addEventListener('click', (event) => {
         && consumeHandCompatibilityClick(event)) return;
 
     const panel = document.getElementById('cardInfoPanel');
-    const clickedInfo = panel && panel.contains(event.target);
-    const clickedPlayerHandCard = event.target.closest('#playerHand .card');
-    const clickedQuickAction = event.target.closest('#quickPopover');
+    const bersaglio = /** @type {HTMLElement} */ (event.target);
+    const clickedInfo = panel && panel.contains(bersaglio);
+    const clickedPlayerHandCard = bersaglio.closest('#playerHand .card');
+    const clickedQuickAction = bersaglio.closest('#quickPopover');
 
     // I pulsanti flottanti appartengono ancora all'interazione con la
     // carta: non abbassarla prima che il relativo handler abbia concluso.
@@ -311,7 +313,7 @@ document.addEventListener('click', (event) => {
     }
 
     if (!panel || !panel.classList.contains('visible')) return;
-    if (clickedInfo || event.target.closest('.card') || clickedQuickAction) return;
+    if (clickedInfo || bersaglio.closest('.card') || clickedQuickAction) return;
     updateCardInfoPanel(null);
 });
 
@@ -492,7 +494,7 @@ function preparaManiIniziali() {
         // In multiplayer "player" significa sempre "io" e "bot" significa
         // sempre "l'avversario": chi inizia per primo lo decide il server
         // al momento dell'accoppiamento nella stanza.
-        gameState.currentPlayer = window.MP_startingRole;
+        gameState.currentPlayer = /** @type {Owner} */ (window.MP_startingRole);
     } else if (typeof window.DUEL_STARTING_ROLE === 'string') {
         // Esito della morra cinese pre-duello (js/ui/duel-rps.js, lanciata
         // da DuelSession.start()): stesso identico punto d'innesto del
@@ -884,17 +886,17 @@ function renderEquipLinks() {
             const x2 = r2.left + r2.width * 0.28;
             const y2 = r2.top + r2.height / 2;
             const line = document.createElementNS(SVG_NS, 'line');
-            line.setAttribute('x1', x1);
-            line.setAttribute('y1', y1);
-            line.setAttribute('x2', x2);
-            line.setAttribute('y2', y2);
+            line.setAttribute('x1', String(x1));
+            line.setAttribute('y1', String(y1));
+            line.setAttribute('x2', String(x2));
+            line.setAttribute('y2', String(y2));
             line.setAttribute('class', 'equip-link-line');
             svg.appendChild(line);
             [[x1, y1], [x2, y2]].forEach(([cx, cy]) => {
                 const dot = document.createElementNS(SVG_NS, 'circle');
-                dot.setAttribute('cx', cx);
-                dot.setAttribute('cy', cy);
-                dot.setAttribute('r', 3.5);
+                dot.setAttribute('cx', String(cx));
+                dot.setAttribute('cy', String(cy));
+                dot.setAttribute('r', '3.5');
                 dot.setAttribute('class', 'equip-link-dot');
                 svg.appendChild(dot);
             });
@@ -1231,7 +1233,7 @@ function renderFields() {
                     // La sorgente è normalmente sul lato opposto al mostro,
                     // quindi cerchiamo entrambi i posti invece di assumere
                     // che appartenga allo stesso proprietario del bersaglio.
-                    let shadowSource = null;
+                    let shadowSource = /** @type {{ owner: string, index: number } | null} */ (null);
                     Tavolo.ordine().some((sourceOwner) => {
                         const sourceIndex = Tavolo.magieTrappole(sourceOwner).findIndex((stSlot) => stSlot
                             && !stSlot.isFaceDown
@@ -1386,7 +1388,7 @@ function renderFields() {
     // Firma dello stato di render, prima che caricamenti immagini,
     // compressione dei nomi o FX modifichino classi e stili del DOM vivo.
     [...righeGiocatore, ...righeBot].forEach((riga) => {
-        Array.from(riga.children).forEach((casella) => { casella.__renderSignature = firmaRenderStabile(casella); });
+        Array.from(riga.children).forEach((casella) => { /** @type {any} */ (casella).__renderSignature = firmaRenderStabile(casella); });
     });
 
     riconciliaBoard(playerBoard, righeGiocatore);
@@ -1543,11 +1545,11 @@ function aggiornaFrecciaAttacco(x2, y2) {
     attackArrowLine.setAttribute('d', d);
     if (attackArrowGlow) attackArrowGlow.setAttribute('d', d);
     if (attackArrowGradient) {
-        attackArrowGradient.setAttribute('x1', x1);
-        attackArrowGradient.setAttribute('y1', y1);
+        attackArrowGradient.setAttribute('x1', String(x1));
+        attackArrowGradient.setAttribute('y1', String(y1));
         // Un gradiente a lunghezza zero non si dipinge: serve almeno un pixel di distanza.
-        attackArrowGradient.setAttribute('x2', len > 1 ? x2 : x1 + 1);
-        attackArrowGradient.setAttribute('y2', y2);
+        attackArrowGradient.setAttribute('x2', String(len > 1 ? x2 : x1 + 1));
+        attackArrowGradient.setAttribute('y2', String(y2));
     }
     if (attackArrowTarget) {
         attackArrowTarget.setAttribute('cx', x2);
@@ -1581,8 +1583,8 @@ function startAttackDrag(event, attackerIndex) {
     // differenza della punta, l'origine non segue mai il puntatore.
     const originCircle = document.getElementById('attack-arrow-origin');
     if (originCircle) {
-        originCircle.setAttribute('cx', attackDragStart.x);
-        originCircle.setAttribute('cy', attackDragStart.y);
+        originCircle.setAttribute('cx', String(attackDragStart.x));
+        originCircle.setAttribute('cy', String(attackDragStart.y));
     }
     attackArrowSVG.style.display = 'block';
 
@@ -1690,8 +1692,8 @@ function aggiornaAggancioDiretto(x, y) {
 let attackHoverTargetEl = null;
 function updateAttackTargetHighlight(x, y) {
     let nextEl = null;
-    const elAtPoint = document.elementFromPoint(x, y);
-    const directSlot = elAtPoint ? elAtPoint.closest('.field-slot[data-owner="bot"][data-type="monster"]') : null;
+    const elAtPoint = /** @type {HTMLElement | null} */ (document.elementFromPoint(x, y));
+    const directSlot = /** @type {HTMLElement | null} */ (elAtPoint ? elAtPoint.closest('.field-slot[data-owner="bot"][data-type="monster"]') : null);
     if (directSlot && gameState.botMonsterField[parseInt(directSlot.dataset.index, 10)]) {
         nextEl = directSlot;
     } else if (gameState.botMonsterField.some((m) => m !== null)) {
@@ -1733,7 +1735,7 @@ function endAttackDrag(event) {
     }
 
     const targetElement = document.elementFromPoint(event.clientX, event.clientY);
-    const targetSlot = targetElement ? targetElement.closest('.field-slot') : null;
+    const targetSlot = /** @type {HTMLElement | null} */ (targetElement ? targetElement.closest('.field-slot') : null);
     const hasBotMonsters = gameState.botMonsterField.some(monster => monster !== null);
 
     if (targetSlot && targetSlot.dataset.owner === 'bot' && targetSlot.dataset.type === 'monster' && gameState.botMonsterField[parseInt(targetSlot.dataset.index, 10)]) {
@@ -1839,7 +1841,8 @@ function sospendiMediaDuello() {
 function riprendiMediaDuello() {
     if (window.DuelMusic && typeof DuelMusic.riprendi === 'function') DuelMusic.riprendi();
     if (window.FieldAmbience && typeof FieldAmbience.riprendi === 'function') FieldAmbience.riprendi('app-background');
-    document.querySelectorAll('video[data-paused-by-duel-lifecycle="1"]').forEach((video) => {
+    document.querySelectorAll('video[data-paused-by-duel-lifecycle="1"]').forEach((el) => {
+        const video = /** @type {HTMLVideoElement} */ (el);
         delete video.dataset.pausedByDuelLifecycle;
         const tentativo = video.play();
         if (tentativo && typeof tentativo.catch === 'function') tentativo.catch(() => {});
@@ -3272,7 +3275,7 @@ function posizionaPulsanteFasi() {
         // Un tocco fuori dal menu lo chiude.
         document.addEventListener('pointerdown', (e) => {
             const menu = document.getElementById('phaseSideMenu');
-            if (menu && !menu.hidden && !menu.contains(e.target) && e.target !== btn && !btn.contains(e.target)) chiudiMenuFasi();
+            if (menu && !menu.hidden && !menu.contains(/** @type {Node} */ (e.target)) && e.target !== btn && !btn.contains(/** @type {Node} */ (e.target))) chiudiMenuFasi();
         }, true);
     };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', aggancia); else aggancia();

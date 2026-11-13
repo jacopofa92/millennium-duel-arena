@@ -178,8 +178,11 @@
         }
     });
 
-    // 145 — Spada Celeste - Eatos / Sky Sword - Eatos: +500 ATK, qualsiasi mostro.
-    // SEMPLIFICAZIONE: manca la clausola legata a "Guardiano Eatos", non presente in questo database.
+    // 145 — Spada Celeste - Eatos / Celestial Sword - Eatos: +500 ATK a
+    // qualsiasi mostro. Quando lascia il Terreno per il Cimitero, puoi
+    // scegliere un tuo Guardiano Eatos scoperto: guadagna 500 ATK per ogni
+    // mostro attualmente bandito. Il bonus è permanente; il conteggio usa
+    // entrambe le Zone Bandite e non dipende da chi ha bandito le carte.
     CardEffects.register(145, {
         continuous: true,
         canActivate(ctx) { return findEquipTarget(ctx) !== -1; },
@@ -189,6 +192,28 @@
             const t = equippedTarget(ctx);
             const e = gameState.atkDefBonus[t.uid] || { atk: 0, def: 0 };
             gameState.atkDefBonus[t.uid] = { atk: e.atk + 500, def: e.def };
+        },
+        onSentToGraveyardFromField(ctx) {
+            const candidati = collectFieldTargets(ctx, {
+                zone: 'monster',
+                owner: 'self',
+                filter: (card) => card.id === 523
+            });
+            if (candidati.length === 0) return;
+            chooseFieldCardTarget(ctx, candidati, {
+                title: '👼 Spada Celestiale - Eatos',
+                text: 'Scegli il tuo Guardiano Eatos da potenziare.',
+                dichiara: true,
+                totalTargetCount: 1
+            }, (scelto) => {
+                const slot = ctx.field(ctx.owner)[scelto.index];
+                if (!slot || slot.card.uid !== scelto.card.uid) return;
+                const mostriBanditi = Tavolo.ordine().reduce((totale, owner) =>
+                    totale + Tavolo.banditi(owner).filter((card) => card.type === 'monster').length, 0);
+                const bonus = mostriBanditi * 500;
+                slot.card.attack = (slot.card.attack || 0) + bonus;
+                ctx.log(`👼 ${scelto.card.name} guadagna permanentemente ${bonus} ATK grazie alla Spada Celestiale - Eatos!`);
+            });
         }
     });
 
@@ -387,12 +412,47 @@
     // guadagno. Limitata a Magie Normali/Rapide (non Continue/Rituali/
     // Terreno, pensate per restare in campo, non per un uso singolo).
     // ================================================================
+    const cartaUtilePerPredatore = (ctx, card) => {
+        if (!window.AI_SHARED) return true;
+        const impact = AI_SHARED.scoreCardImpact(card);
+        const links = (ctx.gameState.chain && ctx.gameState.chain.links) || [];
+        const ultima = links[links.length - 1];
+        const effettoCarta = String(card.effect || '').trim();
+        const effettoInRisoluzione = String(ultima && ultima.card && ultima.card.effect || '').trim();
+        // Copiare una seconda Anfora mentre l'avversario sta già risolvendo
+        // la stessa pescata fa pescare entrambi due volte: il vantaggio
+        // relativo è zero e restano da pagare 2000 LP.
+        if (ultima && ultima.owner === ctx.opponent && effettoCarta && effettoCarta === effettoInRisoluzione
+            && /pesca\s+2\s+carte/i.test(effettoCarta)) return false;
+        // Buco Nero può essere un buon bersaglio solo se il valore netto
+        // del campo avversario supera chiaramente quello del bot: Predatore
+        // delle Tombe fa comunque pagare 2000 LP quando la Magia si risolve.
+        // Il semplice "loro hanno un po' più ATK" lo faceva scegliere anche
+        // quando lo scambio simmetrico costava più del vantaggio ottenuto.
+        if (card.id === 7) {
+            const valoreCampo = (owner) => Tavolo.mostri(owner, ctx.gameState).reduce((sum, slot) =>
+                slot ? sum + AI_SHARED.effAtk(slot.card) + 0.5 * AI_SHARED.effDef(slot.card) : sum, 0);
+            if (valoreCampo(ctx.opponent) - valoreCampo(ctx.owner) < 2000) return false;
+        }
+        return impact >= 3
+            && AI_SHARED.isRemovalWorthwhile(card, ctx.gameState, ctx.owner, 1500)
+            && AI_SHARED.isMassDestructionWorthwhile(card, ctx.gameState, ctx.owner);
+    };
     CardEffects.register(276, {
         // Costa 2000 LP: il bot la usa solo con LP abbondanti (almeno 6000) e se nel Cimitero avversario c'e'
-        // una Magia che vale davvero (impatto stimato alto), non per una qualunque.
+        // una Magia che vale davvero. Il filtro e la scelta automatica devono
+        // concordare: altrimenti può passare il controllo grazie a una buona
+        // carta nel Cimitero e poi attivare la prima, anche se è Buco Nero
+        // contro il proprio campo.
         aiCanActivate(ctx) {
             if (Tavolo.lp(ctx.owner, gameState) < 6000) return false;
-            return ctx.graveyard(ctx.opponent).some((c) => c.type === 'spell' && window.AI_SHARED && AI_SHARED.scoreCardImpact(c) >= 3);
+            return ctx.graveyard(ctx.opponent).some((c) => {
+                if (c.type !== 'spell' || !['normal', 'quick-play'].includes(c.subtype)) return false;
+                const def = DuelEngine.getDefinition(c.id);
+                if (!def || typeof def.activate !== 'function') return false;
+                if (typeof def.canActivate === 'function' && !def.canActivate(DuelEngine.makeContext(ctx.owner, { card: c }))) return false;
+                return cartaUtilePerPredatore(ctx, c);
+            });
         },
         canActivate(ctx) {
             const grave = ctx.graveyard(ctx.opponent);
@@ -416,9 +476,16 @@
                 return def.canActivate(DuelEngine.makeContext(ctx.owner, { card: c }));
             });
             if (utilizzabili.length === 0) return;
+            const scelteBot = Decisioni.rispondeUnaPersona(ctx.owner)
+                ? utilizzabili
+                : utilizzabili.filter((c) => cartaUtilePerPredatore(ctx, c));
+            if (scelteBot.length === 0) return;
             chooseCardFromList(ctx, utilizzabili, {
                 title: '🪦 Tombarolo',
-                text: 'Scegli quale Magia del Cimitero avversario usare.'
+                text: 'Scegli quale Magia del Cimitero avversario usare.',
+                pickForBot: (elenco) => elenco
+                    .filter((c) => scelteBot.includes(c))
+                    .sort((a, b) => (window.AI_SHARED ? AI_SHARED.scoreCardImpact(b) - AI_SHARED.scoreCardImpact(a) : 0))[0]
             }, (chosenCard) => {
                 const chosenDef = DuelEngine.getDefinition(chosenCard.id);
                 ctx.log(`🪦 Tombarolo usa ${chosenCard.name} dal Cimitero dell'avversario come se fosse in mano!`);
@@ -2384,6 +2451,7 @@
     // CORREZIONE di fedeltà: il costo reale è 1500 LP, non 1000.
     CardEffects.register(86, {
         onDestroy(ctx) {
+            if (!ctx.destroyedInBattle) return;
             const lpKey = Tavolo.chiave(ctx.owner, 'LP');
             if (gameState[lpKey] <= 1500) return;
             const opponentMonstersInHand = ctx.hand(ctx.opponent).filter((c) => c.type === 'monster');

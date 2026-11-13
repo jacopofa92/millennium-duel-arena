@@ -52,33 +52,33 @@
     "ast_empty": true
   },
   "js/ai/ai-controller.js": {
-    "mtime": 1792320742.1710443,
-    "seen": 1793910198.224682,
-    "ast_hash": "889335089c67178f91835b3b8590fa2c",
-    "semantic_hash": "889335089c67178f91835b3b8590fa2c"
+    "mtime": 1794517555.2751222,
+    "seen": 1794517658.5695355,
+    "ast_hash": "68bbb019555b9ea2a495b9a1e16943be",
+    "semantic_hash": ""
   },
   "js/ai/ai-hard.js": {
-    "mtime": 1793561512.9641657,
-    "seen": 1793910198.2314875,
-    "ast_hash": "f986617c6fec72fe2651bc8abdc63744",
-    "semantic_hash": "f986617c6fec72fe2651bc8abdc63744"
+    "mtime": 1794516700.348912,
+    "seen": 1794516874.5913155,
+    "ast_hash": "a24f1e0c8ab73f4324115f979346765c",
+    "semantic_hash": ""
   },
   "js/ai/ai-medium.js": {
-    "mtime": 1793915298.1495864,
-    "seen": 1793915850.8738735,
-    "ast_hash": "6589561d55e59ed3510bd80182459699",
+    "mtime": 1794516607.5390153,
+    "seen": 1794516874.5913155,
+    "ast_hash": "72676f4bf2471bfe062194263766457d",
     "semantic_hash": ""
   },
   "js/ai/ai-shared.js": {
-    "mtime": 1794060828.7554297,
-    "seen": 1794145245.7891262,
-    "ast_hash": "6ee50679a8b4d9d1761093790a4d142d",
+    "mtime": 1794517555.5917423,
+    "seen": 1794517658.5706089,
+    "ast_hash": "252f1153463ca165dc25461d3ed22ce2",
     "semantic_hash": ""
   },
   "js/ai/bot.js": {
-    "mtime": 1794060804.7122402,
-    "seen": 1794145245.7891262,
-    "ast_hash": "e65947411e0455476da698b3c6314678",
+    "mtime": 1794516976.0364034,
+    "seen": 1794517169.7068086,
+    "ast_hash": "b5a64c7337a4be18534e052c505698a9",
     "semantic_hash": ""
   },
   "js/audio/audio-library.js": {
@@ -382,15 +382,15 @@
     "semantic_hash": ""
   },
   "js/engine/actions.js": {
-    "mtime": 1794263912.385326,
-    "seen": 1794332687.5631988,
-    "ast_hash": "062d5e3071f07df7d41600a2ee768bf1",
+    "mtime": 1794514643.7317152,
+    "seen": 1794515886.5940173,
+    "ast_hash": "529b07afcd282a4d50867e1b21d1067b",
     "semantic_hash": ""
   },
   "js/engine/battaglia.js": {
-    "mtime": 1793982211.8764102,
-    "seen": 1794049280.829189,
-    "ast_hash": "22e422c976cdac8bb0d64dd5893b952a",
+    "mtime": 1794514161.528859,
+    "seen": 1794515886.5940173,
+    "ast_hash": "88f769297551a57f8ababb6336c8d8c9",
     "semantic_hash": ""
   },
   "js/engine/canale-partita.js": {
@@ -400,57 +400,57 @@
     "semantic_hash": "bd179f5417bf939cd3da633175c79a93"
   },
   "js/engine/card-effects-1.js": {
-    "mtime": 1793482354.420139,
-    "seen": 1793910198.2543685,
-    "ast_hash": "9bbdd25e907fe71412442a453eb510a6",
-    "semantic_hash": "9bbdd25e907fe71412442a453eb510a6"
+    "mtime": 1794514160.7376132,
+    "seen": 1794515886.5940173,
+    "ast_hash": "e9b1153a6e9ddb378c156aee7f53f148",
+    "semantic_hash": ""
   },
   "js/engine/card-effects-2.js": {
-    "mtime": 1793571936.8356528,
-    "seen": 1793910198.2543685,
-    "ast_hash": "bb32ab803508ae23d34447b6200af06d",
-    "semantic_hash": "bb32ab803508ae23d34447b6200af06d"
+    "mtime": 1794519203.046446,
+    "seen": 1794520354.8514357,
+    "ast_hash": "e6ff454cb4c2fdb099fa016b7771d96d",
+    "semantic_hash": ""
   },
   "js/engine/card-effects-3.js": {
-    "mtime": 1792609045.8001719,
-    "seen": 1793910198.2543685,
-    "ast_hash": "a0d0ee4a5830ff7351a541eed7591355",
-    "semantic_hash": "a0d0ee4a5830ff7351a541eed7591355"
+    "mtime": 1794520614.427355,
+    "seen": 1794520801.3972926,
+    "ast_hash": "8e74df950aa2ae0842cba3f90cb1f2f1",
+    "semantic_hash": ""
   },
   "js/engine/card-effects-4.js": {
-    "mtime": 1794440792.3405995,
-    "seen": 1794469661.8993924,
-    "ast_hash": "f3ba9b722b7492b5cf15031733d7b4ff",
+    "mtime": 1794514160.7709982,
+    "seen": 1794515886.5940173,
+    "ast_hash": "597b6434a8a4bc026ed8eda3b546747e",
     "semantic_hash": ""
   },
   "js/engine/card-effects-5.js": {
-    "mtime": 1792604170.7087324,
-    "seen": 1793910198.2543685,
-    "ast_hash": "a8cfe268352fc7915865fd72c59231bd",
-    "semantic_hash": "a8cfe268352fc7915865fd72c59231bd"
+    "mtime": 1794514160.7801123,
+    "seen": 1794515886.5940173,
+    "ast_hash": "d11b556ead8ef8ef5b270e8f8c99eab5",
+    "semantic_hash": ""
   },
   "js/engine/card-effects-6.js": {
-    "mtime": 1792608281.7908032,
-    "seen": 1793910198.2543685,
-    "ast_hash": "1082781f6209990a9f75a1720ef79ce5",
-    "semantic_hash": "1082781f6209990a9f75a1720ef79ce5"
+    "mtime": 1794514160.7900233,
+    "seen": 1794515886.5940173,
+    "ast_hash": "a2c41f89a2ea1dc6740a26e4e7c66c38",
+    "semantic_hash": ""
   },
   "js/engine/card-effects-7.js": {
-    "mtime": 1794439879.0099883,
-    "seen": 1794469661.9013867,
-    "ast_hash": "6dcfd759fb5246c97dbfc314b78e9139",
+    "mtime": 1794514160.8011463,
+    "seen": 1794515886.5940173,
+    "ast_hash": "2350b77e8c02f3a6012c15d25bd68c72",
     "semantic_hash": ""
   },
   "js/engine/card-effects-8.js": {
-    "mtime": 1794469691.7989597,
-    "seen": 1794469779.9283826,
-    "ast_hash": "a7c84669f69c287493d4792d6359ea62",
+    "mtime": 1794514160.8117235,
+    "seen": 1794515886.5940173,
+    "ast_hash": "6f2940dba9290121d5b30004d7ff37dc",
     "semantic_hash": ""
   },
   "js/engine/card-effects.js": {
-    "mtime": 1794469683.494186,
-    "seen": 1794469779.9283826,
-    "ast_hash": "d03b04e6048318f5b857fc44ae52b354",
+    "mtime": 1794519999.634619,
+    "seen": 1794520354.853518,
+    "ast_hash": "80625f4d53f73795d82381b0372e4f1c",
     "semantic_hash": ""
   },
   "js/engine/casuale.js": {
@@ -472,20 +472,20 @@
     "semantic_hash": "dcd14125a9faf5071dedc66d14fd61d0"
   },
   "js/engine/duel-engine.js": {
-    "mtime": 1794469498.3068993,
-    "seen": 1794469661.9028964,
-    "ast_hash": "1af7a6f8b6e931f77586e22163cd4372",
+    "mtime": 1794520567.2481234,
+    "seen": 1794520801.402677,
+    "ast_hash": "c6ccc64bfcd3628fb6222d863bce81be",
     "semantic_hash": ""
   },
   "js/engine/duel-sandbox.js": {
-    "mtime": 1792586049.8961203,
-    "seen": 1793910198.2642758,
-    "ast_hash": "8653ad574ce10585cbcbccb41a5caf1c",
-    "semantic_hash": "8653ad574ce10585cbcbccb41a5caf1c"
+    "mtime": 1794514161.5351264,
+    "seen": 1794515886.5962698,
+    "ast_hash": "6ab98dd0413d62dabda5e553ed77b1fe",
+    "semantic_hash": ""
   },
   "js/engine/effect-templates.js": {
-    "mtime": 1789914011.5709684,
-    "seen": 1793910198.2642758,
+    "mtime": 1794513523.0995588,
+    "seen": 1794515886.5962698,
     "ast_hash": "1c7cb717738e9fde28c85bc8104918d8",
     "semantic_hash": "1c7cb717738e9fde28c85bc8104918d8"
   },
@@ -496,28 +496,28 @@
     "semantic_hash": ""
   },
   "js/engine/evocazioni.js": {
-    "mtime": 1794439868.4829144,
-    "seen": 1794469661.9054165,
-    "ast_hash": "e7d2b2661f59754ee3c71e214b5394e7",
+    "mtime": 1794514161.5362866,
+    "seen": 1794515886.5962698,
+    "ast_hash": "3d69c422bb32f5983b743352d2dbb686",
     "semantic_hash": ""
   },
   "js/engine/fasi.js": {
-    "mtime": 1793482354.427735,
-    "seen": 1793910198.2642758,
-    "ast_hash": "d42a1978c3cc7eebca874eb6aff40c39",
-    "semantic_hash": "d42a1978c3cc7eebca874eb6aff40c39"
+    "mtime": 1794514161.5377944,
+    "seen": 1794515886.5962698,
+    "ast_hash": "17a421a18591e79a80cc07ed01326b06",
+    "semantic_hash": ""
   },
   "js/engine/game-flow.js": {
-    "mtime": 1794438155.3514404,
-    "seen": 1794438261.1395714,
-    "ast_hash": "a6aa86943a6f0e574bb6ebfbee5b730c",
+    "mtime": 1794514643.7765222,
+    "seen": 1794515886.5962698,
+    "ast_hash": "326d397250b52d2588daa5ec5bd7147e",
     "semantic_hash": ""
   },
   "js/engine/passo-comune.js": {
-    "mtime": 1793482354.4297478,
-    "seen": 1793910198.2642758,
-    "ast_hash": "be3d1387f15f3aed0cdd232f169f1ac9",
-    "semantic_hash": "be3d1387f15f3aed0cdd232f169f1ac9"
+    "mtime": 1794514161.538806,
+    "seen": 1794515886.5962698,
+    "ast_hash": "28889f4cdc2df073d038be906148252a",
+    "semantic_hash": ""
   },
   "js/engine/pausa-duello.js": {
     "mtime": 1792320813.0523033,
@@ -1108,9 +1108,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794438199.1803517,
-    "seen": 1794438261.2205858,
-    "ast_hash": "d5091879d3e079a78646213000f61e3d",
+    "mtime": 1794519584.4858518,
+    "seen": 1794520354.9276032,
+    "ast_hash": "a028531ff1bdd21b330d1656c154d296",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1126,9 +1126,9 @@
     "semantic_hash": "57357a46c1d07a0fa18bbcd83581aaa6"
   },
   "package.json": {
-    "mtime": 1794470333.0620937,
-    "seen": 1794470399.6169028,
-    "ast_hash": "2b5a5787a2b586bea85daadc6ef1ba1f",
+    "mtime": 1794484636.9050586,
+    "seen": 1794484699.4072273,
+    "ast_hash": "4f4efde709adf6341f536d0486b34a05",
     "semantic_hash": ""
   },
   "render.yaml": {
@@ -1527,9 +1527,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794470333.3903093,
-    "seen": 1794470399.646027,
-    "ast_hash": "43cb11efe9be7cdebf091c89151a4f09",
+    "mtime": 1794519597.3000994,
+    "seen": 1794520354.963974,
+    "ast_hash": "ca6d0559046b918362adc09c503202f8",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -1540,10 +1540,10 @@
     "ast_empty": true
   },
   "tests/data/vocabolario-effetti.js": {
-    "mtime": 1792318120.0723705,
-    "seen": 1793910198.3229165,
-    "ast_hash": "452acd649c1c0dd13126c9f58245bd5d",
-    "semantic_hash": "452acd649c1c0dd13126c9f58245bd5d"
+    "mtime": 1794514160.9517636,
+    "seen": 1794515886.6995265,
+    "ast_hash": "858b7695f29a51c7d30c235442453b91",
+    "semantic_hash": ""
   },
   "tests/fixtures/custom-deck.json": {
     "mtime": 1792172240.865097,
@@ -2249,10 +2249,10 @@
     "semantic_hash": "a8344d71bfd469e3f3b925d50d7427f1"
   },
   "tests/specs/egyptian-gods.spec.js": {
-    "mtime": 1788369329.0,
-    "seen": 1793910198.3810222,
-    "ast_hash": "7e452caf73101ddc594b286552fd9ea3",
-    "semantic_hash": "7e452caf73101ddc594b286552fd9ea3"
+    "mtime": 1794520640.0856912,
+    "seen": 1794520801.5741873,
+    "ast_hash": "0abbc2d4a4420bbab0756d4686bf796f",
+    "semantic_hash": ""
   },
   "tests/specs/equip-con-scelta-del-bersaglio.spec.js": {
     "mtime": 1791754764.3691375,
@@ -2579,10 +2579,10 @@
     "semantic_hash": "eb8aec016621c8139bc806f5b05ac802"
   },
   "tests/specs/guardrail-tipi.spec.js": {
-    "mtime": 1792320823.6357956,
-    "seen": 1793910198.407733,
-    "ast_hash": "e5a1deabc3ae28e8450a403ecadac41c",
-    "semantic_hash": "e5a1deabc3ae28e8450a403ecadac41c"
+    "mtime": 1794517092.0320063,
+    "seen": 1794517169.9421782,
+    "ast_hash": "caa34b86a32ae6efe5d4dc9e6dc18b4e",
+    "semantic_hash": ""
   },
   "tests/specs/guardrail-vocabolario-effetti.spec.js": {
     "mtime": 1792318094.6791337,
@@ -3263,10 +3263,10 @@
     "semantic_hash": "ff8187f8b09efaef1877cc366951ad6f"
   },
   "tests/specs/pescata-effetto-nessun-flash-preanimazione.spec.js": {
-    "mtime": 1790672122.9011588,
-    "seen": 1793910198.4620101,
-    "ast_hash": "0246957a8f6ac46afe388474f22b321a",
-    "semantic_hash": "0246957a8f6ac46afe388474f22b321a"
+    "mtime": 1794484578.9711971,
+    "seen": 1794484699.621342,
+    "ast_hash": "ee37e50a4e106fd19f82217cf7c75f62",
+    "semantic_hash": ""
   },
   "tests/specs/pescata-una-carta-alla-volta.spec.js": {
     "mtime": 1789820090.958978,
@@ -4307,9 +4307,9 @@
     "semantic_hash": "9cc7066ea941499e707bfa199743e6a7"
   },
   "types/globali.d.ts": {
-    "mtime": 1794426409.3644803,
-    "seen": 1794427421.4540942,
-    "ast_hash": "cdf1aac1163b855935773893010339cc",
+    "mtime": 1794516681.0417593,
+    "seen": 1794516875.0324187,
+    "ast_hash": "744f1af6b3b5b22719e36f551bdf8fca",
     "semantic_hash": ""
   },
   "types/modalita.d.ts": {
@@ -4319,10 +4319,10 @@
     "semantic_hash": "2e4f8504aa510dc73571b0ad2eb26052"
   },
   "types/motore.d.ts": {
-    "mtime": 1792320328.6165562,
-    "seen": 1793910198.5460026,
-    "ast_hash": "3e0f99a9b26d2e26e301d164ef6f22c1",
-    "semantic_hash": "3e0f99a9b26d2e26e301d164ef6f22c1"
+    "mtime": 1794519542.7388923,
+    "seen": 1794520355.2880962,
+    "ast_hash": "7c92e4244e087e217d790564857f1228",
+    "semantic_hash": ""
   },
   "types/salvataggio.d.ts": {
     "mtime": 1792593404.433755,
@@ -4955,15 +4955,15 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1794259727.7995088,
-    "seen": 1794332687.9264905,
-    "ast_hash": "bebd5cd6bb56b3185ef7d9cac98c5253",
+    "mtime": 1794505965.2379823,
+    "seen": 1794515887.005445,
+    "ast_hash": "322922155942f6954807d8850c778645",
     "semantic_hash": ""
   },
   "PROJECT_MAP.md": {
-    "mtime": 1794470333.754083,
-    "seen": 1794470399.93191,
-    "ast_hash": "d284424d60d372f7c6d7683f9c3f9c46",
+    "mtime": 1794520041.8800051,
+    "seen": 1794520355.2910912,
+    "ast_hash": "b6164d24866bde8e0f041fd3fdfb8c7a",
     "semantic_hash": ""
   },
   "PUBBLICAZIONE.md": {
@@ -5249,9 +5249,9 @@
     "semantic_hash": ""
   },
   "docs/planning/TODO.md": {
-    "mtime": 1792278064.3975654,
-    "seen": 1793912297.4187498,
-    "ast_hash": "7f1afffab2d9bb51f31bdbb1fdfab479",
+    "mtime": 1794505965.2872114,
+    "seen": 1794515887.035196,
+    "ast_hash": "617d638daeaca2ee28ddc2fb57eee61e",
     "semantic_hash": ""
   },
   "docs/planning/TODOLIST_BUGS.md": {
@@ -5261,15 +5261,15 @@
     "semantic_hash": ""
   },
   "docs/planning/WORK_IN_PROGRESS.md": {
-    "mtime": 1794438200.891032,
-    "seen": 1794438261.6003473,
-    "ast_hash": "8f597ea8c7cae8fbc0965d29c1166f52",
+    "mtime": 1794520059.6925845,
+    "seen": 1794520355.319715,
+    "ast_hash": "203042d2d44f7d2e83542a2e2991a8d7",
     "semantic_hash": ""
   },
   "duelMonstersCore.html": {
-    "mtime": 1794426409.2309916,
-    "seen": 1794427421.482806,
-    "ast_hash": "b4124fcc1e76ddb8b43465c7b7751819",
+    "mtime": 1794514160.725056,
+    "seen": 1794515887.0363078,
+    "ast_hash": "051d000b75be601eaf214ffc7fbea9a3",
     "semantic_hash": ""
   },
   "duello-libero.html": {
@@ -25070,6 +25070,60 @@
     "mtime": 1794469547.0381148,
     "seen": 1794469662.3619273,
     "ast_hash": "950868ec672015121b201955df1a3af1",
+    "semantic_hash": ""
+  },
+  "tests/specs/guardrail-url-dei-css.spec.js": {
+    "mtime": 1794514160.9626656,
+    "seen": 1794515886.8079512,
+    "ast_hash": "d515072b6d0d6dba3bc36f986eb46584",
+    "semantic_hash": ""
+  },
+  "tools/impronta-stili-duello.js": {
+    "mtime": 1794514160.9740324,
+    "seen": 1794515886.9983137,
+    "ast_hash": "315a239ede5afe7ad346c3574981734d",
+    "semantic_hash": ""
+  },
+  "docs/planning/VALUTAZIONE_2026-11-12.md": {
+    "mtime": 1794505564.2538261,
+    "seen": 1794515887.0363078,
+    "ast_hash": "bd173cf0e7c996fdf482ae02f95d20a9",
+    "semantic_hash": ""
+  },
+  "docs/storia/AUDIT_E_INSIDIE_TEST.md": {
+    "mtime": 1794505753.9029543,
+    "seen": 1794515887.0363078,
+    "ast_hash": "79e345602f6643c3d766c322127e46d0",
+    "semantic_hash": ""
+  },
+  "docs/storia/CARTE_CON_LIMITI_NOTI.md": {
+    "mtime": 1794505720.5114906,
+    "seen": 1794515887.0363078,
+    "ast_hash": "e5546418799bb3686760685fcf700851",
+    "semantic_hash": ""
+  },
+  "docs/storia/INFRASTRUTTURA_E_DECISIONI.md": {
+    "mtime": 1794505833.8105133,
+    "seen": 1794515887.0363078,
+    "ast_hash": "a2c0277836fdd5dd9de4403a454f035d",
+    "semantic_hash": ""
+  },
+  "docs/storia/VERSIONI_1.4.md": {
+    "mtime": 1794505720.5094876,
+    "seen": 1794515887.0363078,
+    "ast_hash": "beec1f52f7eabfa109e4bbac74f860af",
+    "semantic_hash": ""
+  },
+  "docs/storia/VERSIONI_1.5.md": {
+    "mtime": 1794505720.4918025,
+    "seen": 1794515887.0363078,
+    "ast_hash": "68b72a8e9442935732acdc2d54d81caa",
+    "semantic_hash": ""
+  },
+  "types/ia.d.ts": {
+    "mtime": 1794517554.9632702,
+    "seen": 1794517658.9981525,
+    "ast_hash": "3823cfcf46238c1ae0386485330afdfc",
     "semantic_hash": ""
   },
   "package-lock.json": {

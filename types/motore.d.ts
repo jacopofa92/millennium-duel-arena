@@ -55,6 +55,8 @@ interface MonsterSlot {
     hasAttacked?: boolean;
     canChangePosition?: boolean;
     summonedOnTurn?: number;
+    /** Turno in cui è arrivata tramite Special Summon (per effetti di End Phase). */
+    specialSummonedOnTurn?: number;
     /** Il vero proprietario di un mostro preso sotto controllo (Cambio di Cuore...). */
     originalOwner?: Owner;
     [chiave: string]: any;
@@ -170,11 +172,15 @@ interface EngineActions {
     /** Rimette un mostro dal Terreno nel Deck del vero proprietario. */
     returnMonsterToDeck(owner: Owner, index: number, options?: object): void;
     /** Manda un mostro dal Terreno al Cimitero SENZA distruggerlo (per i testi che dicono "manda"). */
-    sendMonsterToGraveyard(owner: Owner, index: number): void;
+    sendMonsterToGraveyard(owner: Owner, index: number): Card | null;
+    /** Tributa un mostro come costo, ignorando immunità agli effetti e senza distruggerlo. */
+    tributeMonster(owner: Owner, index: number): Card | null;
     /** Manda dalla mano al Cimitero senza considerare la carta scartata. */
     sendChosenFromHandToGraveyard(owner: Owner, handIndex: number): any;
     /** Falso se la presa non e' avvenuta (casella vuota, mostro immune alla carta, nessuna casella libera). */
-    takeControl(newOwner: Owner, fromOwner: Owner, fromIndex: number, permanent?: boolean): boolean;
+    takeControl(newOwner: Owner, fromOwner: Owner, fromIndex: number, permanent?: boolean, returnAt?: 'endPhase' | 'battlePhaseEnd'): boolean;
+    /** Rimuove un controllo legato a un Equip e restituisce il mostro al proprietario originale. */
+    returnControlToOriginalOwner(uid: string, fallbackOwner?: Owner): boolean;
     swapControl(ownerA: Owner, indexA: number, ownerB: Owner, indexB: number, permanent?: boolean): boolean | void;
 }
 
@@ -191,6 +197,7 @@ interface CardContext extends EngineActions {
     card: Card;
     zone?: 'hand' | 'monster' | 'st' | 'fieldSpell' | 'graveyard' | 'stAltrui' | string;
     index?: number;
+    slotIndex?: number;
     slot?: MonsterSlot | SpellTrapSlot;
     gameState: GameState;
     log(messaggio: string): void;
@@ -382,6 +389,18 @@ declare var Casuale: {
     condivisa(): boolean;
 };
 /** L'unico punto da cui le regole toccano la pagina (js/engine/porta-ui.js): senza pagina risponde "nessun elemento". */
+/**
+ * Nelle pagine del gioco un selettore CSS trova sempre un HTMLElement (mai un SVG o un nodo a se'): TypeScript di
+ * suo risponde `Element`, che non ha onclick, dataset, style, focus... e costringerebbe a un cast per ogni
+ * querySelector. Questi overload (che vengono PRIMA di quelli della libreria) lo dicono una volta sola.
+ * Un selettore che puo' trovare un SVG si tipa a mano con querySelector<SVGElement>(...).
+ */
+interface ParentNode {
+    querySelector<K extends keyof HTMLElementTagNameMap>(selectors: K): HTMLElementTagNameMap[K] | null;
+    querySelector(selectors: string): HTMLElement | null;
+    querySelectorAll<K extends keyof HTMLElementTagNameMap>(selectors: K): NodeListOf<HTMLElementTagNameMap[K]>;
+    querySelectorAll(selectors: string): NodeListOf<HTMLElement>;
+}
 declare var PortaUI: {
     presente: boolean;
     query(selettore: string): any;
@@ -389,6 +408,22 @@ declare var PortaUI: {
     byId(id: string): any;
 };
 declare var CardRenderer: any;
+declare var DuelMusic: any;
+declare var DUEL_CINEMATIC_LOCK: any;
+declare var DUEL_FAST_OPENING: any;
+declare var MpPassoComune: any;
+declare var MP_startingRole: any;
+declare var __handFitResizeTimeout: any;
+declare var __miniatureAnticipate: any;
+declare var MonsterHolograms: any;
+declare var SegnaliniGL: any;
+declare var PosaDanno: any;
+declare var EvidenziaGiocabili: any;
+declare var DuelFeedback: any;
+declare var ContoAllaRovescia: any;
+declare var TavolaDestino: any;
+declare var DuelHistory: any;
+declare var AnnuncioTurnoModalita: any;
 declare var StatsDuello: any;
 declare var FieldAmbience: any;
 declare var DUEL_ARENA_CUSTOM_FIELD: any;
@@ -399,8 +434,8 @@ declare var DuelDialogues: any;
 declare var DuelEngine: any;
 declare var DuelEngineUI: any;
 declare var CardEffectsShared: any;
-declare var AI_SHARED: any;
-declare var BotAI: any;
+declare var AI_SHARED: AIShared;
+declare var BotAI: BotAI;
 declare var FX: any;
 declare var SaveManager: any;
 declare var CloudSync: any;
@@ -409,8 +444,8 @@ interface Window {
     DuelEngineUI: any;
     CardEffectsShared: any;
     CardEffects: typeof CardEffects;
-    AI_SHARED: any;
-    BotAI: any;
+    AI_SHARED: AIShared;
+    BotAI: BotAI;
     FX: any;
     /** Vero nella pagina del Multiplayer: i due client simulano lo stesso duello. */
     MULTIPLAYER_MODE?: boolean;

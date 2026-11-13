@@ -543,7 +543,11 @@
 // v690: gli slot comuni della Busta Base privilegiano i mostri vanilla.
 // v691: la scena WebGL della Catena riduce le ricerche e le letture di layout per fotogramma.
 // v696: le classi temporanee della pescata non fanno ricreare le carte in mano dopo l'effetto.
-const CACHE_NAME = 'ygo-duel-arena-v699';
+// v702: l'IA sceglie Magie sensate con Predatore delle Tombe e valuta le negazioni di Soffio Incendiario.
+// v703: controllo permanente corretto per Scatola Mistica e Anima Oscura; IA di Scatola e Tributo valutano costi e bersagli.
+// v705: Strappa Possesso e Necropaura Oscura restituiscono il mostro quando l'Equip lascia il Terreno.
+// v706: correzioni agli effetti di Maga Oscura, Spada Celestiale - Eatos e Chiron il Mago.
+const CACHE_NAME = 'ygo-duel-arena-v707';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento
