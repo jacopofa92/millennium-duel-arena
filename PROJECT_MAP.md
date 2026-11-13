@@ -1,5 +1,12 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Preriscaldamento prima della VS (1.6.70)
+
+Il layout di prova per font e carte viene eseguito mentre il loader è ancora
+visibile e rimosso subito dopo il flush del layout. Non parte più 350 ms dopo
+l'avvio della VS, evitando di sovrapporre quel lavoro all'animazione iniziale.
+Resta prima della morra e del primo render del campo. Cache v724.
+
 ## Ritorno avatar netto e attivazioni automatiche più lunghe (1.6.69)
 
 Quando scade la posa danno, l'immagine viene sostituita senza animazione e

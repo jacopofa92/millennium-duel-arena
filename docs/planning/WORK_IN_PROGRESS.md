@@ -1,5 +1,12 @@
 # Work in progress — miglioramenti da seguire
 
+## Scatto all'ingresso della VS — preriscaldamento spostato prima del sipario (1.6.70)
+
+- [x] Il layout di prova font/carte ora termina prima di nascondere il loader;
+      rimosso il timeout che lo faceva partire durante l'animazione della VS.
+- [x] Il contenitore fuori schermo viene eliminato subito dopo il flush layout.
+- [ ] Verifica visiva su un telefono lento: ingresso VS, morra e apertura campo.
+
 ## Ritorno posa danno senza fade e sollevamento +300 ms — chiuso in 1.6.69
 
 - [x] Ritorno alla pedina normale netto: nessun rinculo o dissolvenza; la

@@ -714,20 +714,11 @@
         // e rientrare qualcuno mentre si giocava), il risultato NON si scrive nel salvataggio di chi c'e' adesso.
         session.accountId = accountDelDuello();
 
-        // Nasconde la schermata di caricamento condivisa (js/ui/page-loader.js,
-        // PAGE_LOADER_MANUAL_HIDE=true in duelMonstersCore.html — al posto
-        // del vecchio #preIntroCover statico) — SEMPRE, sia che segua la
-        // cinematica (playIntro qui sotto, che crea subito il proprio
-        // overlay: la dissolvenza del loader rivela quello, mai il campo
-        // grezzo) sia in modalità sandbox (beginMatch diretto, nessun
-        // overlay a sostituirla: deve sparire comunque, altrimenti
-        // resterebbe a coprire il campo per sempre).
-        if (window.PageLoader) PageLoader.hide();
-
-        // UX fluida: il PRIMO layout di testo con kanji e simboli e' lento (il browser cerca il font di ripiego per
-        // ogni glifo: misurato ~40 ms per i kanji e ~45 per le emoji a CPU 4x, e il campo ne usa decine fra Attributi,
-        // Magie, Trappole). Succedeva dentro la costruzione del campo, cioe' nel freeze dopo la morra. Qui si
-        // "assaggiano" una volta sola durante la schermata VS, quando lo schermo e' coperto e la CPU e' libera.
+        // Prepara i font mentre il loader e' ancora sullo schermo. Farlo dopo
+        // 350 ms significava forzare layout e stili mentre la VS animava,
+        // causando un possibile scatto proprio nel suo ingresso sui telefoni.
+        // La preparazione resta prima della morra, così il campo non paga il
+        // lavoro dopo la scelta del giocatore.
         const scaldaFont = () => {
             try {
                 const d = document.createElement('div');
@@ -748,10 +739,15 @@
                 d.style.whiteSpace = 'normal';
                 document.body.appendChild(d);
                 d.getBoundingClientRect();   // forza il layout: e' qui che il browser sceglie i font
-                setTimeout(() => d.remove(), 50);
+                d.remove();
             } catch (e) { /* e' solo un'ottimizzazione */ }
         };
-        setTimeout(scaldaFont, 350);
+        scaldaFont();
+
+        // Nasconde il loader solo dopo il preriscaldamento. La cinematica VS
+        // crea subito il proprio overlay, quindi non si vede mai il campo
+        // grezzo; Sandbox e modalità dirette continuano a rivelare il campo.
+        if (window.PageLoader) PageLoader.hide();
 
         // Restrizione di provenienza (?origin=): se il mazzo attivo non è
         // ammesso il duello non comincia affatto — niente cinematica,

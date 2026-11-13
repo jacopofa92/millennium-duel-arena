@@ -1,7 +1,7 @@
 # Graph Report - millennium-duel-arena  (2026-11-14)
 
 ## Corpus Check
-- 792 files · ~1,728,396 words
+- 792 files · ~1,728,447 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 75 file(s) not represented in the graph (top: .css 63, .log 5, .ttf 3)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a2cfd1b8`
+- Built from commit: `fc245cee`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -2029,7 +2029,7 @@ Nodes (3): path, RADICE, run()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `f()` connect `load` to `check-syntax.js`?**
-  _High betweenness centrality (0.158) - this node is a cross-community bridge._
+  _High betweenness centrality (0.161) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `load()` (e.g. with `save-manager.js` and `comunicaAzzeramento()`) actually correct?**
   _`load()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `RFC-6455` to the rest of the system?**
@@ -2037,8 +2037,8 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `pixi.min.js` be split into smaller, more focused modules?**
   _Cohesion score 0.007387293854570139 - nodes in this community are weakly interconnected._
 - **Why does `load()` connect `load` to `pixi.min.js`, `ng`, `_mediaReady`, `D`?**
-  _High betweenness centrality (0.155) - this node is a cross-community bridge._
+  _High betweenness centrality (0.159) - this node is a cross-community bridge._
 - **Should `supabase.min.js` be split into smaller, more focused modules?**
   _Cohesion score 0.016187392877547134 - nodes in this community are weakly interconnected._
 - **Why does `on()` connect `constructor` to `pixi.min.js`, `supabase.min.js`, `log`, `n`?**
-  _High betweenness centrality (0.073) - this node is a cross-community bridge._
+  _High betweenness centrality (0.069) - this node is a cross-community bridge._
