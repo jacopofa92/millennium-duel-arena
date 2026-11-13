@@ -110,6 +110,7 @@
         inCorso = true;
         segna(true);
         const conCarte = carteInSospeso();
+        let sessioneSostituita = false;
         const salvataggio = CloudSync.pushSave()
             .then(() => { ultimoTentativoFallito = false; segna(false); return true; })
             // Silenzioso di proposito: questo gira mentre si gioca, e un
@@ -122,12 +123,13 @@
             // vorrebbe dire ritentare all'infinito. Ci pensa la
             // riconciliazione a portare qui la copia buona.
             .catch((e) => {
+                sessioneSostituita = !!(e && e.details === 'DEVICE_SESSION_SUPERSEDED');
                 // Rifiuti "di merito" (cloud più recente, profilo azzerato...) non
                 // sono un guasto di rete: non devono accendere l'avviso di errore.
-                ultimoTentativoFallito = !(e && (e.code === 'CLOUD_PIU_RECENTE' || e.code === 'PROFILO_AZZERATO' || e.code === 'CLOUD_CAMBIATO'));
+                ultimoTentativoFallito = !(e && (e.code === 'CLOUD_PIU_RECENTE' || e.code === 'PROFILO_AZZERATO' || e.code === 'CLOUD_CAMBIATO' || sessioneSostituita));
                 // Stesso discorso se il profilo è stato azzerato altrove:
                 // i dati da mandare non esistono più.
-                if (e && (e.code === 'CLOUD_PIU_RECENTE' || e.code === 'PROFILO_AZZERATO')) segna(false);
+                if (e && (e.code === 'CLOUD_PIU_RECENTE' || e.code === 'PROFILO_AZZERATO' || sessioneSostituita)) segna(false);
                 // Un altro dispositivo ha scritto dopo l'ultimo allineamento
                 // di questo: niente da ritentare (sovrascriverebbe i suoi
                 // progressi). Si scarica il cloud, e le modifiche di qui
@@ -140,7 +142,7 @@
         // alla volta il secondo trova la situazione già sistemata dal primo.
         // Partono anche se il salvataggio è stato rifiutato perché il cloud ne
         // ha uno più recente: le carte cambiate sono quelle fatte QUI.
-        const tutto = !conCarte || typeof CloudSync.pushCustomCards !== 'function' || !window.CustomCards
+        const tutto = sessioneSostituita || !conCarte || typeof CloudSync.pushCustomCards !== 'function' || !window.CustomCards
             ? salvataggio
             : salvataggio.then((esito) => CloudSync.pushCustomCards()
                 .then(() => { segnaChiave(CHIAVE_CARTE_IN_SOSPESO, false); return esito; })

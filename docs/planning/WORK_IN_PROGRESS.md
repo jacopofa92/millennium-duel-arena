@@ -1,5 +1,20 @@
 # Work in progress — miglioramenti da seguire
 
+## Accesso da un solo dispositivo — 1.6.59
+
+- [x] Il login registra nel database l'ID e l'ora server-side della sessione
+      Supabase; i rinnovi della vecchia sessione non possono riprendersi il
+      posto dopo un accesso più recente.
+- [x] Il client controlla il dispositivo prima di sincronizzare; trigger DB
+      bloccano anche scritture dirette su salvataggi e carte custom.
+- [x] Al primo tentativo rifiutato, il vecchio dispositivo fa logout e torna
+      al menu con un avviso. Il salvataggio locale resta disponibile.
+- [x] Migrazione applicata al progetto DuelArena; tabella RLS, RPC con
+      esecuzione negata ad anon e trigger su `saves`/`custom_cards` verificati.
+- [ ] Prova manuale con due sessioni: login sul dispositivo B, poi tentativo
+      di sincronizzazione da A; confermare blocco cloud, avviso e copia locale.
+- Branch dedicato: `codex/accesso-un-dispositivo`; suite completa non eseguita.
+
 ## Restituzione del controllo dagli Equip — 1.6.51
 
 - [x] Strappa Possesso (645): restituisce il mostro quando l'Equip viene

@@ -1804,6 +1804,9 @@
             if (!blockedMessage && new URLSearchParams(window.location.search).get('blocked') === 'admin') {
                 blockedMessage = 'Questa funzione è riservata agli amministratori.';
             }
+            if (!blockedMessage && new URLSearchParams(window.location.search).get('blocked') === 'another-device') {
+                blockedMessage = 'Hai effettuato l’accesso da un altro dispositivo. Per proteggere i progressi, questo dispositivo è stato scollegato; il salvataggio locale è rimasto disponibile.';
+            }
             // Sessione chiusa perché durava da più di 48 ore (cloud-sync.js):
             // lo si dice, invece di far sembrare un'uscita senza motivo.
             if (!blockedMessage && window.CloudSync && CloudSync.consumaAvvisoScadenza && CloudSync.consumaAvvisoScadenza()) {

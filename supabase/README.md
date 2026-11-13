@@ -62,6 +62,22 @@ Nessun account è admin per default (altrimenti chiunque potrebbe auto-approvars
 - Nessuna notifica automatica (email/push) agli admin quando arriva una nuova registrazione: bisogna aprire `admin.html` per accorgersene (stesso limite del progetto Fioxify, da cui questo meccanismo è replicato).
 # Gestione utenze e note amministratore
 
+## Accesso da un solo dispositivo
+
+La migrazione `migrations/20261113120000_accesso_da_un_dispositivo.sql`
+registra l'ultima sessione Supabase creata al login. Il database confronta
+il `session_id` firmato nel token, quindi il rinnovo automatico del vecchio
+dispositivo non gli permette di riprendersi l'accesso. Alla prima scrittura
+successiva al nuovo login, salvataggi e carte personalizzate del dispositivo
+precedente vengono rifiutati; il client lo riporta al login e mantiene la
+copia locale per la riconciliazione futura. Le sessioni già aperte prima
+dell'aggiornamento restano compatibili finché l'account non esegue un nuovo
+login col client aggiornato.
+
+La tabella delle sessioni ha RLS attiva senza accesso diretto ai client; il
+claim passa da una RPC autenticata e i trigger del database proteggono tutte
+le scritture su `saves` e `custom_cards`.
+
 ## Contenuti opzionali per account
 
 Per un database esistente eseguire `contenuti-per-utente.sql`. La migrazione

@@ -1,5 +1,21 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Accesso da un solo dispositivo (1.6.59, in lavorazione)
+
+Il login più recente registra nel database il `session_id` Supabase attivo.
+`claim_active_device_session()` accetta sessioni più recenti usando il loro
+`created_at` server-side; `is_active_device_session()` controlla il client
+prima della riconciliazione e i trigger bloccano comunque INSERT/UPDATE/DELETE
+su `saves` e `custom_cards`. Se il vecchio dispositivo tenta di salvare,
+conserva il salvataggio locale, fa logout e torna al menu con un avviso.
+Migrazione: `supabase/migrations/20261113130623_accesso_da_un_dispositivo.sql`;
+schema per installazioni nuove: `supabase/schema.sql`.
+
+**Stato:** implementazione sul branch `codex/accesso-un-dispositivo`.
+La migrazione è applicata e verificata sul progetto DuelArena. Le sessioni
+preesistenti restano compatibili finché l'account non effettua un nuovo login
+col client aggiornato.
+
 ## Restituzione del controllo dagli Equip (1.6.51)
 
 Strappa Possesso (645) e Necropaura Oscura (891) restituiscono ora il mostro

@@ -571,9 +571,52 @@
                 // Da qui partono le 48 ore (vedi "Durata della sessione").
                 segnaInizioSessione(data.user.id);
                 try { localStorage.removeItem(CHIAVE_AVVISO_SCADENZA); } catch (e) { /* noop */ }
-                // Prima di far entrare nel gioco il SERVER deve avere il cookie: altrimenti la prima pagina aperta verrebbe respinta.
-                return aggiornaAccessoServer(data.session && data.session.access_token, true).then(() => data.user);
+                // Il claim è lato database e usa il session_id firmato da
+                // Supabase: un vecchio dispositivo che si risveglia o rinnova
+                // il token non può rimpiazzare un login creato più di recente.
+                return client.rpc('claim_active_device_session').then(({ error }) => {
+                    if (error) {
+                        const messaggio = error.details === 'DEVICE_SESSION_SUPERSEDED'
+                            ? 'Un accesso più recente è già attivo su un altro dispositivo.'
+                            : 'Non riesco a verificare il dispositivo attivo. Controlla la connessione e riprova.';
+                        return client.auth.signOut().then(() => { throw new Error(messaggio); });
+                    }
+                    // Prima di far entrare nel gioco il SERVER deve avere il cookie: altrimenti la prima pagina aperta verrebbe respinta.
+                    return aggiornaAccessoServer(data.session && data.session.access_token, true).then(() => data.user);
+                });
             });
+        });
+    }
+
+    let uscitaPerSessioneSostituita = false;
+    function erroreSessioneSostituita(error) {
+        return !!(error && error.details === 'DEVICE_SESSION_SUPERSEDED');
+    }
+    function verificaSessioneDispositivo() {
+        return client.rpc('is_active_device_session').then(({ data, error }) => {
+            if (error) {
+                if (error.details === 'DEVICE_SESSION_SUPERSEDED') {
+                    const e = new Error('Questo account è attivo su un altro dispositivo.');
+                    e.details = 'DEVICE_SESSION_SUPERSEDED';
+                    throw e;
+                }
+                throw error;
+            }
+            if (data === false) {
+                const e = new Error('Questo account è attivo su un altro dispositivo.');
+                e.details = 'DEVICE_SESSION_SUPERSEDED';
+                throw e;
+            }
+            return true;
+        });
+    }
+    function espelliSessioneSostituita() {
+        if (uscitaPerSessioneSostituita) return;
+        uscitaPerSessioneSostituita = true;
+        // Il salvataggio locale non viene toccato: al prossimo accesso la
+        // normale riconciliazione lo conserverà come copia se differisce dal cloud.
+        signOut().catch(() => client.auth.signOut().catch(() => null)).then(() => {
+            if (window.location) window.location.replace('index.html?blocked=another-device');
         });
     }
 
@@ -1370,8 +1413,11 @@
         if (!available) return rejectUnavailable();
         if (!cachedUser) return Promise.reject(new Error('Devi accedere prima di sincronizzare.'));
         if (!window.SaveManager || !SaveManager.hasSave()) return Promise.reject(new Error('Nessun salvataggio locale da caricare.'));
-        if (opzioni && opzioni.forza) return scriviSalvataggio(SaveManager.load(), undefined);
-        return leggiCloud().then(({ cloud, azzerato, segnoUpdatedAt }) => {
+        if (opzioni && opzioni.forza) return verificaSessioneDispositivo().then(() => scriviSalvataggio(SaveManager.load(), undefined)).catch((e) => {
+            if (erroreSessioneSostituita(e)) espelliSessioneSostituita();
+            throw e;
+        });
+        return verificaSessioneDispositivo().then(() => leggiCloud()).then(({ cloud, azzerato, segnoUpdatedAt }) => {
             // Il salvataggio si rilegge DOPO aver guardato il cloud: se il
             // profilo è stato azzerato altrove, leggiCloud l'ha appena tolto.
             if (!azzerato && !SaveManager.hasSave()) {
@@ -1403,6 +1449,9 @@
             // `null`: nessuna riga sul cloud (si inserisce); una stringa: la
             // versione che si è appena vista, che deve essere ancora quella.
             return scriviSalvataggio(base, cloud ? cloud.updatedAt : (segnoUpdatedAt || null));
+        }).catch((e) => {
+            if (erroreSessioneSostituita(e)) espelliSessioneSostituita();
+            throw e;
         });
     }
 
@@ -1653,9 +1702,12 @@
         // Prima si guarda il cloud: se il profilo è stato azzerato altrove,
         // le carte di qui sono del profilo di prima e non vanno ricaricate
         // (leggiCloud le ha appena tolte).
-        return leggiCloud().then(({ azzerato }) => {
+        return verificaSessioneDispositivo().then(() => leggiCloud()).then(({ azzerato }) => {
             if (azzerato) return [];
             return sostituisciCarteSulCloud(CustomCards.list());
+        }).catch((e) => {
+            if (erroreSessioneSostituita(e)) espelliSessioneSostituita();
+            throw e;
         });
     }
 
