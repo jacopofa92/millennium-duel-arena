@@ -45,8 +45,8 @@
     "ast_empty": true
   },
   "data/cards.json": {
-    "mtime": 1794560264.413694,
-    "seen": 1794560938.7485652,
+    "mtime": 1794570382.0257435,
+    "seen": 1794570486.8483377,
     "ast_hash": "e887313a431b82195855b4e4fdd6b6a6",
     "semantic_hash": ""
   },
@@ -171,9 +171,9 @@
     "semantic_hash": "1658c7a7aece29f7ac6eccae9890c140"
   },
   "js/data/cards-data.generated.js": {
-    "mtime": 1794560832.1755805,
-    "seen": 1794560938.7566175,
-    "ast_hash": "1e44d99591fbe2538bb12649b6d5b0a0",
+    "mtime": 1794570382.119067,
+    "seen": 1794570486.8576198,
+    "ast_hash": "1ad1b0c54ecd099ca16f22fbcfa73195",
     "semantic_hash": ""
   },
   "js/data/cards-db.js": {
@@ -381,8 +381,8 @@
     "semantic_hash": ""
   },
   "js/engine/actions.js": {
-    "mtime": 1794562886.8498218,
-    "seen": 1794563016.2754607,
+    "mtime": 1794570382.1221907,
+    "seen": 1794570486.8774354,
     "ast_hash": "3c343d8b3cd2c2a46a3102edca90f14c",
     "semantic_hash": ""
   },
@@ -405,50 +405,50 @@
     "semantic_hash": ""
   },
   "js/engine/card-effects-2.js": {
-    "mtime": 1794562611.21548,
-    "seen": 1794562843.0292296,
+    "mtime": 1794570382.1241386,
+    "seen": 1794570486.879064,
     "ast_hash": "82dc9f01f25dee86128fa48b597e1760",
     "semantic_hash": ""
   },
   "js/engine/card-effects-3.js": {
-    "mtime": 1794562611.5281866,
-    "seen": 1794562843.0292296,
+    "mtime": 1794570382.1266806,
+    "seen": 1794570486.879064,
     "ast_hash": "031c58e0c5c5545d4e1a4ee050222c51",
     "semantic_hash": ""
   },
   "js/engine/card-effects-4.js": {
-    "mtime": 1794562887.16249,
-    "seen": 1794563016.278562,
+    "mtime": 1794570382.1288135,
+    "seen": 1794570486.879064,
     "ast_hash": "835b80a25496eb9395eae3fbfc013ea3",
     "semantic_hash": ""
   },
   "js/engine/card-effects-5.js": {
-    "mtime": 1794562751.1658843,
-    "seen": 1794562843.0292296,
+    "mtime": 1794570382.1288135,
+    "seen": 1794570486.879064,
     "ast_hash": "5c5ba6921fe1964d8446a9d1057f9b56",
     "semantic_hash": ""
   },
   "js/engine/card-effects-6.js": {
-    "mtime": 1794562612.128032,
-    "seen": 1794562843.0292296,
+    "mtime": 1794570382.1288135,
+    "seen": 1794570486.879064,
     "ast_hash": "4aa8922085d75f67617a74ac635df25e",
     "semantic_hash": ""
   },
   "js/engine/card-effects-7.js": {
-    "mtime": 1794567300.9260554,
-    "seen": 1794567981.8478248,
+    "mtime": 1794570382.1354375,
+    "seen": 1794570486.879064,
     "ast_hash": "a7519020d53f139126621ffd84d7f0db",
     "semantic_hash": ""
   },
   "js/engine/card-effects-8.js": {
-    "mtime": 1794562523.306605,
-    "seen": 1794562843.0292296,
+    "mtime": 1794570382.1354375,
+    "seen": 1794570486.879064,
     "ast_hash": "9d597b8b0663af9de4aadd2b10ed4950",
     "semantic_hash": ""
   },
   "js/engine/card-effects.js": {
-    "mtime": 1794562049.1440542,
-    "seen": 1794562843.0292296,
+    "mtime": 1794570382.1354375,
+    "seen": 1794570486.879064,
     "ast_hash": "6e7619c7799d7e54ad79365129050932",
     "semantic_hash": ""
   },
@@ -471,8 +471,8 @@
     "semantic_hash": "dcd14125a9faf5071dedc66d14fd61d0"
   },
   "js/engine/duel-engine.js": {
-    "mtime": 1794568098.52861,
-    "seen": 1794568171.8088539,
+    "mtime": 1794570382.1442733,
+    "seen": 1794570486.8803613,
     "ast_hash": "9f164e39acc415104c5e146dc44d75ba",
     "semantic_hash": ""
   },
@@ -843,8 +843,8 @@
     "semantic_hash": ""
   },
   "js/ui/effects.js": {
-    "mtime": 1794562751.4539664,
-    "seen": 1794562843.0694747,
+    "mtime": 1794570382.1462834,
+    "seen": 1794570486.9158208,
     "ast_hash": "eac25f35c8e223e123298bbd86fadc92",
     "semantic_hash": ""
   },
@@ -879,8 +879,8 @@
     "semantic_hash": "02b5c2f6653db5904711bae268c195a5"
   },
   "js/ui/fx-webgl-scena.js": {
-    "mtime": 1794562258.724609,
-    "seen": 1794562843.0735252,
+    "mtime": 1794570382.1483312,
+    "seen": 1794570486.9158208,
     "ast_hash": "8197bdab572c93fed0956de308d794d7",
     "semantic_hash": ""
   },
@@ -1107,9 +1107,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794567923.642881,
-    "seen": 1794567981.9106247,
-    "ast_hash": "ab1909791f71e2842bb551f16a5de733",
+    "mtime": 1794570442.0409374,
+    "seen": 1794570486.9394443,
+    "ast_hash": "77f0559f54fd8b177ec750edd38280d8",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1125,8 +1125,8 @@
     "semantic_hash": "57357a46c1d07a0fa18bbcd83581aaa6"
   },
   "package.json": {
-    "mtime": 1794567565.0617685,
-    "seen": 1794567981.9123735,
+    "mtime": 1794570382.149383,
+    "seen": 1794570486.94018,
     "ast_hash": "a613f80e28db79db8b48e0362f6d6667",
     "semantic_hash": ""
   },
@@ -1526,8 +1526,8 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794567565.3750308,
-    "seen": 1794567981.9423625,
+    "mtime": 1794570382.1503868,
+    "seen": 1794570486.9666162,
     "ast_hash": "fcdc2f7768b83c4529db5ed66c1943b1",
     "semantic_hash": ""
   },
@@ -3214,9 +3214,9 @@
     "semantic_hash": "8d18b667f05a43100ebb13c2b60e2bd4"
   },
   "tests/specs/oppressione-reale-per-entrambi.spec.js": {
-    "mtime": 1794567902.4477103,
-    "seen": 1794567982.097193,
-    "ast_hash": "b0926b4522f420b047cc12c232fd867a",
+    "mtime": 1794570382.153084,
+    "seen": 1794570487.1151812,
+    "ast_hash": "77fa4029de292c31e309b0b93149bb36",
     "semantic_hash": ""
   },
   "tests/specs/orichalcos-sword-extension.spec.js": {
@@ -5056,8 +5056,8 @@
     "semantic_hash": ""
   },
   "docs/audits/AUDIT_CARTE_PRIMA_SERIE.md": {
-    "mtime": 1794568120.234771,
-    "seen": 1794568172.182079,
+    "mtime": 1794570382.0257435,
+    "seen": 1794570487.2182128,
     "ast_hash": "f58f42ff8fb7b7174f958bb2bd9ffff7",
     "semantic_hash": ""
   },
