@@ -94,8 +94,8 @@ void main(){
 
   // PROFONDITA': due copie piu' grandi e scure, appena spostate, dietro la figura.
   vec2 off=vec2(sin(uT*.8+uSeed)*.012,.018);
-  vec4 l1=campiona((u2-.5)*1.06+.5+off);
-  vec4 l2=campiona((u2-.5)*1.12+.5+off*2.);
+  vec4 l1=campiona((u2-.5)*(1.06+.025*uActivate)+.5+off);
+  vec4 l2=campiona((u2-.5)*(1.12+.05*uActivate)+.5+off*2.);
   vec3 dietro=(l1.rgb*.22+l2.rgb*.12)*vec3(.5,.9,1.1);
   float cb=max(l1.a*.5,l2.a*.35);
 
@@ -103,8 +103,10 @@ void main(){
   float lum=dot(col,vec3(.299,.587,.114));
   col=mix(vec3(lum),col,.68)*vec3(.88,1.04,1.16)*1.12;
   col+=dietro*(1.-cov);
-  // L'attivazione deve leggersi anche su schermi piccoli: illumina la figura
-  // e il suo alone per un solo impulso, senza lampeggiare l'intero campo.
+  // L'attivazione illumina figura e proiezione con un'aura bianca WebGL;
+  // l'alone si allarga solo durante lo zoom e non lampeggia sul campo.
+  float aloneBianco=max(cb-cov*.45,0.);
+  col+=vec3(1.,.98,.92)*(.52*aloneBianco+.10*cov)*uActivate;
   col+=vec3(.20,.72,1.)*(.20*cov+.52*max(cb-cov*.45,0.))*uActivate;
   float coperto=max(cov,cb*.6);
 

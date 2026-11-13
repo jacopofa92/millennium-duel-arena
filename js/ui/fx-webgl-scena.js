@@ -1485,6 +1485,23 @@ float dado(vec2 q,float v){
         breve(s, 2.0);
     };
 
+    /** Alone WebGL bianco ancorato allo slot durante l'attivazione automatica.
+     * @param {HTMLElement} cardElement
+     * @param {number} [durataMs]
+     */
+    imp.playFieldActivationAura = function (cardElement, durataMs) {
+        const r = rectDi(cardElement); if (!r) return;
+        const c = cen(r); const lato = Math.max(r.width, r.height);
+        const durata = Math.max(0.5, Math.min(2.5, (durataMs || 2000) / 1000));
+        const s = new Scena();
+        s.add(T.FLASH, C.BIANCO, 0, 0.52, [c.x, c.y, lato * 0.48, 0]);
+        s.add(T.RING, C.BIANCO, 0.06, durata * 0.72, [c.x, c.y, lato * 0.78, 2.8]);
+        s.add(T.RING, C.GHIACCIO, 0.22, durata * 0.78, [c.x, c.y, lato * 1.02, 2.2]);
+        s.add(T.RING, C.BIANCO, 0.72, durata * 0.48, [c.x, c.y, lato * 0.88, 1.8]);
+        verifica(s);
+        breve(s, durata);
+    };
+
     /**
      * Un Link della Catena: all'AGGIUNTA un'energia corre dal Link precedente al nuovo (rossa se e' dell'avversario,
      * azzurra se e' tua); alla RISOLUZIONE il Link si accende con un lampo oro e un anello.

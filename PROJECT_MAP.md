@@ -1,5 +1,15 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Aura sulle attivazioni automatiche (1.6.62)
+
+Le carte fisiche che attivano automaticamente un effetto ricevono un'aura
+bianca WebGL ancorata allo slot durante il sollevamento. Se sono mostri
+olografici, l'aura bianca segue invece la proiezione durante lo zoom, senza
+duplicare la carta o aggiungere un secondo canvas. L'effetto passa dalla stessa
+selezione backend e rispetta la preferenza di movimento ridotto. Regressione:
+`tests/specs/attivazione-automatica-sollevamento-slot.spec.js`; sintassi e
+typecheck verdi, suite completa non eseguita.
+
 ## Schermata risultato e test riallineati (1.6.60)
 
 La schermata di fine duello usa un ritratto e spaziature più compatti: con tre

@@ -1918,6 +1918,9 @@
         }
 
         const durata = ACTIVATE_CENTER_DURATION_MS;
+        if (window.FX && typeof FX.playFieldActivationAura === 'function') {
+            FX.playFieldActivationAura(source, durata);
+        }
         const preferisceMovimentoRidotto = window.matchMedia
             && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (typeof source.animate === 'function' && !preferisceMovimentoRidotto) {
@@ -2695,6 +2698,7 @@
         // Posizione scelta per un mostro (barriera in Difesa, carica in Attacco): solo WebGL, senza base (chi chiama
         // controlla backendFor e, se manca, usa le icone di sempre).
         playActivationAura: viaBackend('playActivationAura', function () {}),
+        playFieldActivationAura: viaBackend('playFieldActivationAura', function () {}),
         playChainLink: viaBackend('playChainLink', function () {}),
         playPositionDefense: viaBackend('playPositionDefense', function () {}),
         playPositionAttack: viaBackend('playPositionAttack', function () {}),

@@ -16,6 +16,9 @@ module.exports = {
             window.findFieldCardElementByUid = (uid) => uid === 'auto-trigger-test' ? source : null;
             let suono = 0;
             const audio = window.AudioLibrary;
+            let aura = null;
+            const playAura = window.FX.playFieldActivationAura;
+            window.FX.playFieldActivationAura = (elemento, ms) => { aura = { stessoNodo: elemento === source, ms }; };
             // Conserva gli altri metodi usati dal normale ciclo del duello
             // (es. annunci di fase), sostituendo solo la riproduzione carta.
             window.AudioLibrary = Object.assign(Object.create(audio), {
@@ -49,16 +52,19 @@ module.exports = {
 
             window.findFieldCardElementByUid = lookup;
             window.AudioLibrary = audio;
+            window.FX.playFieldActivationAura = playAura;
             window.HologramSetting = hologramSetting;
             window.MonsterHolograms = holograms;
             source.remove();
             return { partito, stessoNodoAnimato, nessunClone, nessunPrimoPiano, suonoAlMomentoGiusto, durata, animazioneTerminata,
-                attivatoMostro, nienteSollevamento, stessoSuono, zoom };
+                aura, attivatoMostro, nienteSollevamento, stessoSuono, zoom };
         });
         assert(risultato.partito && risultato.stessoNodoAnimato && risultato.nessunClone && risultato.nessunPrimoPiano,
             `Si anima la carta reale senza clone né overlay centrale: ${JSON.stringify(risultato)}`);
         assert(risultato.suonoAlMomentoGiusto && risultato.durata === 2000 && risultato.animazioneTerminata,
             `Stesso suono e durata di 2 secondi: ${JSON.stringify(risultato)}`);
+        assert(risultato.aura && risultato.aura.stessoNodo && risultato.aura.ms === 2000,
+            `L'aura WebGL segue il nodo reale per la stessa durata: ${JSON.stringify(risultato)}`);
         assert(risultato.attivatoMostro && risultato.nienteSollevamento
             && risultato.zoom && risultato.zoom.ms === 2000 && risultato.stessoSuono,
         `Con l'ologramma attivo si ingrandisce la proiezione per 2 secondi: ${JSON.stringify(risultato)}`);

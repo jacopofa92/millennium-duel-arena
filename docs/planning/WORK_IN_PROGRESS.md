@@ -1,5 +1,12 @@
 # Work in progress — miglioramenti da seguire
 
+## Aura WebGL nelle attivazioni automatiche — chiuso in 1.6.62
+
+- [x] Carta fisica: alone bianco WebGL durante il sollevamento del nodo reale.
+- [x] Ologramma: alone bianco e leggero allargamento del bagliore nello shader
+      durante lo zoom della proiezione.
+- [x] Spec mirato, sintassi e typecheck superati; suite completa non eseguita.
+
 ## Schermata risultato e affidabilità dei test — chiuso in 1.6.60
 
 - [x] Schermata di fine duello compatta senza scroll residuo con pochi premi;
