@@ -37,7 +37,7 @@
 <link rel="stylesheet" href="js/modes/mode-pages.css">
 <link rel="stylesheet" href="js/modes/rotazione.css">
 <link rel="stylesheet" href="js/economy/rewards.css">
-<title>Yu-Gi-Oh! Millennium Duel Arena — Caccia al Boss</title>
+<title>Yu-Gi-Oh! Millennium Duel Arena — Assalto al Campione</title>
 </head>
 <body>
     <script src="js/ui/page-loader.js"></script>
@@ -47,7 +47,7 @@
         <!-- Copertina del Boss: pedina grande, barra Life Point e turni (stile condiviso: js/modes/rotazione.css). -->
         <section class="rz-hero rz-hero--caccia">
             <div class="rz-hero-sfondo"></div>
-            <div class="rz-top"><span class="rz-kicker">Caccia al Boss</span><span class="rz-etichetta" id="rzTempoEtichetta"></span></div>
+            <div class="rz-top"><span class="rz-kicker">Assalto al Campione</span><span class="rz-etichetta" id="rzTempoEtichetta"></span></div>
             <div class="rz-boss-scena">
                 <div class="rz-boss-testi">
                     <div id="boss" class="rz-boss-nome"></div>
@@ -56,7 +56,7 @@
                 <div class="rz-boss-figura" id="rzBossFigura" aria-hidden="true"></div>
             </div>
             <div class="rz-lp">
-                <div class="rz-lp-testa"><span>Life Point del Boss</span><b id="rzLp"></b></div>
+                <div class="rz-lp-testa"><span>Life Point del Campione</span><b id="rzLp"></b></div>
                 <div class="rz-lp-barra"><i></i></div>
             </div>
             <div class="rz-turni">
@@ -67,7 +67,7 @@
             <p class="rz-sotto" id="regole"></p>
         </section>
 
-        <div class="rz-statistiche" id="riepilogo" role="group" aria-label="I tuoi risultati nella Caccia al Boss"></div>
+        <div class="rz-statistiche" id="riepilogo" role="group" aria-label="I tuoi risultati nell'Assalto al Campione"></div>
 
         <details class="rz-come rz-premi">
             <summary>Premi</summary>
@@ -76,10 +76,10 @@
 
         <details class="rz-come">
             <summary>Come funziona</summary>
-            <p>Un Boss nuovo ogni lunedì, uguale per tutti. Ha molti più Life Point del solito e il suo mazzo più forte, ma tu hai un numero limitato di turni: se non lo batti in tempo, la caccia è persa. Puoi riprovare quante volte vuoi.</p>
+            <p>Ogni lunedì ti attende un nuovo Duellante, uguale per tutti. Ha molti più Life Point del solito e un mazzo potente, ma tu hai un numero limitato di turni: se non lo batti in tempo, l'assalto fallisce. Puoi riprovare quante volte vuoi.</p>
         </details>
 
-        <button type="button" class="mp-btn rz-cta" id="vai">🏹 Inizia la caccia</button>
+        <button type="button" class="mp-btn rz-cta" id="vai">🏹 Inizia l'assalto</button>
     </main>
 
 <script src="js/data/cards-data.generated.js"></script>
@@ -102,7 +102,7 @@
     <script src="js/ui/tab-bar.js"></script>
 <script src="js/economy/rewards.js"></script>
 <script>
-    PageTopbar.render('#topbarMount', { icon: 'skull', title: 'Caccia al Boss' });
+    PageTopbar.render('#topbarMount', { icon: 'target', title: 'Assalto al Campione' });
     initAudioManager();
     Icons.hydrate();
 
@@ -115,12 +115,12 @@
         const ore = Math.floor((ms % 86400000) / 3600000);
         document.getElementById('riepilogo').innerHTML =
             `<div class="rz-stat"><span>Tentativi</span><strong>${stato.tentativi}</strong></div>` +
-            `<div class="rz-stat ${stato.vinta ? 'is-battuto' : ''}"><span>${stato.vinta ? 'Boss battuto' : 'Record personale'}</span><strong>${stato.migliorTurni != null ? stato.migliorTurni + ' turni' : '—'}</strong><small>${stato.vinta ? 'Miglior risultato' : stato.migliorTurni != null ? 'Miglior tentativo' : 'Ancora da battere'}</small></div>`;
+            `<div class="rz-stat ${stato.vinta ? 'is-battuto' : ''}"><span>${stato.vinta ? 'Campione battuto' : 'Record personale'}</span><strong>${stato.migliorTurni != null ? stato.migliorTurni + ' turni' : '—'}</strong><small>${stato.vinta ? 'Miglior risultato' : stato.migliorTurni != null ? 'Miglior tentativo' : 'Ancora da battere'}</small></div>`;
 
         const el = document.getElementById('boss');
         el.innerHTML = '<div class="mp-titolo"></div><div class="mp-desc"></div>';
         el.querySelector('.mp-titolo').textContent = pers.name;
-        el.querySelector('.mp-desc').textContent = pers.title || 'Boss della settimana';
+        el.querySelector('.mp-desc').textContent = pers.title || 'Campione della settimana';
         // La pedina grande del Boss (scontornata); se il file manca resta il riquadro vuoto, la scheda si legge lo stesso.
         const fig = document.getElementById('rzBossFigura');
         fig.innerHTML = '';
@@ -144,13 +144,13 @@
         document.getElementById('rzTurniNota').textContent = stato.migliorTurni != null
             ? `Record: ${stato.migliorTurni} su ${cacciaDatabase.turni}` : `${cacciaDatabase.turni} turni tuoi`;
         document.getElementById('bossFrase').textContent = b.titolo;
-        document.getElementById('regole').textContent = `Hai ${cacciaDatabase.turni} turni tuoi per portare il Boss a zero. Comincia sempre tu. I tuoi Life Point sono quelli di un duello normale.`;
+        document.getElementById('regole').textContent = `Hai ${cacciaDatabase.turni} turni tuoi per portare a zero i Life Point del Campione. Cominci sempre tu. I tuoi Life Point sono quelli di un duello normale.`;
 
         // Lo stato (premio gia' preso o no) in una riga, poi l'elenco completo dei premi da Rewards.modalitaHtml.
         const premio = document.getElementById('premio');
         premio.innerHTML = '<p></p>';
         premio.firstChild.textContent = stato.vinta
-            ? 'Premio di questa settimana già preso. Puoi comunque tornare a cacciare per battere il tuo record di turni: ogni vittoria paga comunque come un duello normale.'
+            ? 'Premio di questa settimana già preso. Puoi comunque affrontare di nuovo il Campione per migliorare il tuo record di turni: ogni vittoria paga comunque come un duello normale.'
             : 'Il premio della settimana è ancora da prendere.';
         premio.insertAdjacentHTML('beforeend', Rewards.modalitaHtml('caccia'));
         Rewards.idrata(premio);

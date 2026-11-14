@@ -16,9 +16,9 @@ window.MP_MODI = [
         descrizione: 'Stesso mazzo per tutti e due: niente collezione, vince chi gioca meglio.'
     },
     {
-        id: 'raid', nome: 'Assalto al Boss', icona: 'tower',
-        titolo: 'Assalto al Boss',
-        descrizione: 'Cooperativa: ognuno duella contro lo stesso Boss e i suoi Life Point sono in comune. Vittoria: da 500 Crediti e 2 Stelle dell\'Esagono, secondo il Boss (fino a 2 volte al giorno, su Boss diversi).'
+        id: 'raid', nome: 'Assalto al Campione', icona: 'target',
+        titolo: 'Assalto al Campione',
+        descrizione: 'Cooperativa: ognuno affronta lo stesso Duellante e i suoi Life Point sono in comune. Vittoria: da 500 Crediti e 2 Stelle dell\'Esagono, secondo il Campione (fino a 2 volte al giorno, contro Campioni diversi).'
     },
     {
         // Tag Team in rete (js/multiplayer/mp-tag-sala.js): una stanza da 3 o 4 posti, non una regola di room-config.

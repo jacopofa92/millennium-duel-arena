@@ -30,7 +30,7 @@
         'storia.html': ['duelli', 'Storia', 'story'],
         'tornei.html': ['duelli', 'Tornei', 'tournament'],
         'settimana.html': ['duelli', 'Settimana', 'star'],
-        'caccia-boss.html': ['duelli', 'Caccia al Boss', 'skull'],
+        'caccia-boss.html': ['duelli', 'Assalto al Campione', 'target'],
         'duello-libero.html': ['duelli', 'Duello Libero', 'freeDuel'],
         'puzzle.html': ['duelli', 'Puzzle', 'puzzle'],
         'tag.html': ['duelli', 'Tag Team', 'multiplayer'],

@@ -1,5 +1,12 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Nome unificato Assalto al Campione (1.6.85)
+
+La sfida settimanale locale e il Raid multiplayer si chiamano entrambi
+«Assalto al Campione». Il Tag Team locale «Contro un Boss» resta distinto;
+gli identificativi interni `caccia` e `raid` e il protocollo online non
+cambiano. Cache v739.
+
 ## Slot Cacciatori in Assalto al Boss (1.6.84)
 
 Su mobile i due posti della squadra A usano due colonne fluide e figure più

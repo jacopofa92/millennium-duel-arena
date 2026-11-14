@@ -8,7 +8,7 @@
 //    a un livello paga una volta sola;
 //  - la caccia vera: il Boss parte con i Life Point della caccia, comincia il giocatore, finiti i turni la
 //    caccia è persa, e la prima vittoria della settimana paga una volta sola (con bonus se veloce);
-//  - le pagine: mostrano la regola/il Boss e lanciano il duello con l'URL giusto.
+//  - le pagine: mostrano la regola/il Campione e lanciano il duello con l'URL giusto.
 const path = require('path');
 
 const RADICE = path.join(__dirname, '..', '..');
@@ -19,7 +19,7 @@ const PRELUDIO = () => { window.AUTH_GATE_SKIP = true; window.DUEL_FAST_OPENING 
 
 module.exports = {
     standalone: true,
-    name: 'Duello della Settimana e Caccia al Boss: rotazione, regola sui mazzi, premi una volta a settimana, pagine',
+    name: 'Duello della Settimana e Assalto al Campione: rotazione, regola sui mazzi, premi una volta a settimana, pagine',
     async run(t) {
         const errori = [];
         const apri = async (viewport) => {

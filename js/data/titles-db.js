@@ -100,11 +100,11 @@ const titoliSpecialiDatabase = [
         richiede: { sfide: ['settimana-venti'] } },
     { id: 't-settimana-tripletta', gruppo: 'Modalità', nome: 'Maestro della Settimana', come: 'Prendi i premi di tutti e 3 i livelli nella stessa settimana',
         richiede: { sfide: ['settimana-tutti-i-livelli'] } },
-    { id: 't-caccia-1', gruppo: 'Modalità', nome: 'Cacciatore di Boss', come: 'Sconfiggi un Boss nella Caccia al Boss',
+    { id: 't-caccia-1', gruppo: 'Modalità', nome: 'Sfidante del Campione', come: 'Vinci un Assalto al Campione',
         richiede: { sfide: ['caccia-prima'] } },
-    { id: 't-caccia-veloce', gruppo: 'Modalità', nome: 'Cacciatore Fulmineo', come: 'Sconfiggi un Boss entro 8 turni',
+    { id: 't-caccia-veloce', gruppo: 'Modalità', nome: 'Assalto Fulmineo', come: 'Vinci l\'Assalto al Campione entro 8 turni',
         richiede: { sfide: ['caccia-veloce'] } },
-    { id: 't-caccia-10', gruppo: 'Modalità', nome: 'Cacciatore Leggendario', come: 'Sconfiggi 10 Boss nella Caccia al Boss',
+    { id: 't-caccia-10', gruppo: 'Modalità', nome: 'Sfidante Leggendario', come: 'Vinci 10 Assalti al Campione',
         richiede: { sfide: ['caccia-dieci'] } },
 
     // --- Traguardi di gioco --------------------------------------------

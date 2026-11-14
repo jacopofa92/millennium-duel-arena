@@ -96,7 +96,7 @@
         }
         if (modeId === 'caccia') {
             const ok = capitoloAnimeCompletato('virtuale');
-            return { sbloccato: ok, motivo: ok ? '' : 'Completa l\'arco "Il Mondo Virtuale" nella Storia anime per sbloccare la Caccia al Boss.' };
+            return { sbloccato: ok, motivo: ok ? '' : 'Completa l\'arco "Il Mondo Virtuale" nella Storia anime per sbloccare l\'Assalto al Campione.' };
         }
         if (modeId === 'torneo-regno') {
             const ok = torneoIniziato('duelistKingdom') || capitoloAnimeCompletato('regno');

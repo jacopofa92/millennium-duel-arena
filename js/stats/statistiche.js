@@ -27,7 +27,7 @@
         { id: 'torre', nome: 'Torre dei Duellanti', icona: 'tower', mode: ['torre'] },
         { id: 'rivincita', nome: 'Rivincite', icona: 'rematch', mode: ['rivincita'] },
         { id: 'settimana', nome: 'Duello della Settimana', icona: 'calendar', mode: ['settimana'] },
-        { id: 'caccia', nome: 'Caccia al Boss', icona: 'target', mode: ['caccia'] },
+        { id: 'caccia', nome: 'Assalto al Campione', icona: 'target', mode: ['caccia'] },
         { id: 'tag', nome: 'Tag Team', icona: 'multiplayer', mode: ['tag'] },
         { id: 'online', nome: 'Battaglie online', icona: 'multiplayer', mode: ['multiplayer'] }
     ];

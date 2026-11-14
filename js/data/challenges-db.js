@@ -1208,29 +1208,29 @@ const challengesDatabase = [
     },
     {
         id: 'caccia-prima', sezione: 'modalita', modalita: 'caccia',
-        icon: '🏹', label: 'Prima preda',
-        description: 'Sconfiggi un Boss nella Caccia al Boss',
+        icon: '🏹', label: 'Prima vittoria',
+        description: 'Vinci un Assalto al Campione',
         type: 'cacciaWin', match: {}, target: 1,
         reward: { credits: 300 }
     },
     {
         id: 'caccia-cinque', sezione: 'modalita', modalita: 'caccia',
-        icon: '🐺', label: 'Cacciatore esperto',
-        description: 'Sconfiggi 5 Boss nella Caccia al Boss',
+        icon: '🐺', label: 'Sfidante esperto',
+        description: 'Vinci 5 Assalti al Campione',
         type: 'cacciaWin', match: {}, target: 5,
         reward: { credits: 600 }
     },
     {
         id: 'caccia-dieci', sezione: 'modalita', modalita: 'caccia',
-        icon: '🦅', label: 'Cacciatore leggendario',
-        description: 'Sconfiggi 10 Boss nella Caccia al Boss',
+        icon: '🦅', label: 'Sfidante leggendario',
+        description: 'Vinci 10 Assalti al Campione',
         type: 'cacciaWin', match: {}, target: 10,
         reward: { credits: 1000 }
     },
     {
         id: 'caccia-veloce', sezione: 'modalita', modalita: 'caccia',
-        icon: '⚡', label: 'Caccia lampo',
-        description: 'Sconfiggi un Boss entro 8 turni',
+        icon: '⚡', label: 'Assalto lampo',
+        description: 'Vinci l\'Assalto al Campione entro 8 turni',
         type: 'cacciaVeloce', match: {}, target: 1,
         reward: { credits: 500 }
     },
@@ -1458,15 +1458,15 @@ const challengesDatabase = [
     },
     {
         id: 'online-raid-tre', sezione: 'modalita', modalita: 'online',
-        icon: '🐉', label: 'Cacciatori di Boss',
-        description: 'Batti 3 Boss diversi in Assalto al Boss',
+        icon: '🐉', label: 'Campioni affrontati',
+        description: 'Batti 3 Campioni diversi nell\'Assalto al Campione',
         type: 'raidBossBattuto', match: {}, target: 3,
         reward: { credits: 600 }
     },
     {
         id: 'online-raid-tutti', sezione: 'modalita', modalita: 'online',
-        icon: '🐲', label: 'Nessun Boss sopravvive',
-        description: 'Batti tutti i Boss di Assalto al Boss, ciascuno almeno una volta',
+        icon: '🐲', label: 'Assalto completo',
+        description: 'Batti tutti i Campioni dell\'Assalto al Campione almeno una volta',
         type: 'raidBossBattuto', match: {}, target: 5,
         reward: { credits: 1200 }
     },

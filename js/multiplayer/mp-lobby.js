@@ -797,7 +797,7 @@
         aggiornaListaBoss();
         const attuale = () => bossPerId(menu.value) || elenco[0];
         tesseraBoss = MpScelte.tessera(gruppo, {
-            corpo, titolo: 'Il Boss', titoloModale: 'Scegli il Boss', icona: 'dragon', glifo: () => '🐉',
+            corpo, titolo: 'Il Campione', titoloModale: 'Scegli il Campione', icona: 'dragon', glifo: () => '🐉',
             img: () => pedinaDi(attuale().id),
             contieni: true,
             valore: () => attuale().nome,
@@ -809,7 +809,7 @@
         riga.className = 'mp-incubo-riga';
         riga.id = 'mpRaidIncuboRiga';
         riga.innerHTML = '<input type="checkbox" id="mpRaidIncubo"><span><b>Livello Incubo</b>'
-            + '<small>Il Boss gioca a copione: mano sempre giocabile e, ogni tanto, la sua carta simbolo entra in campo. Premi +25% e, una volta al giorno, Carta Locazione e Carta del Millennio.</small></span>';
+            + '<small>Il Campione gioca a copione: mano sempre giocabile e, ogni tanto, la sua carta simbolo entra in campo. Premi +25% e, una volta al giorno, Carta Locazione e Carta del Millennio.</small></span>';
         gruppo.appendChild(riga);
         const incubo = riga.querySelector('input');
         incubo.onchange = () => {
@@ -843,7 +843,7 @@
                 // Raid e specchio si escludono: nel Raid ognuno gioca il proprio mazzo.
                 const sp = $('mpSpecchioOn');
                 if (sp && sp.checked) { sp.checked = false; if (sp.onchange) sp.onchange(); }
-                showStatus('🐉 Raid: affrontate insieme il Boss, i suoi Life Point sono in comune.');
+                showStatus('🐉 Assalto al Campione: affrontate insieme lo stesso Duellante, i suoi Life Point sono in comune.');
             }
             mostraRegolaRaid(scelta.raid);
             if (sonoHost && avversarioInStanza && !duelloGiaAvviato) inviaConfigHost();
@@ -910,7 +910,7 @@
         // L'emblema dell'intestazione: l'icona a tema della modalita' (stessa tabella del menu e della barra in basso).
         const emblema = $('mpHeroIcon');
         if (emblema && modo.icona && window.Icons) { emblema.dataset.icon = modo.icona; Icons.hydrate(emblema.parentNode); }
-        // I premi della modalita' (Rewards.modalitaHtml): oggi solo l'Assalto al Boss ne ha di suoi.
+        // I premi della modalita' (Rewards.modalitaHtml): oggi solo l'Assalto al Campione ne ha di suoi.
         // Ogni modalita' dice cosa paga PRIMA di aprire la stanza (riga di riassunto sempre visibile, tocco per l'elenco), come in Duello Libero.
         if (sotto && window.Rewards && Rewards.montaPremiSala && !$('mpPremiModo')) {
             const box = document.createElement('div');
@@ -1589,7 +1589,7 @@
         scheda('cards', 'Carte ammesse', window.DuelSetup.originLabel(config.origin));
         if (config.raid) {
             const b = bossPerId(config.raid);
-            scheda('target', 'Assalto al Boss', b ? b.nome : config.raid);
+            scheda('target', 'Campione', b ? b.nome : config.raid);
         }
         if (config.specchio) scheda('clone', 'Duello a specchio', nomeMazzoSpecchio(config.specchio));
         let n = CONTO_ALLA_ROVESCIA_DA;

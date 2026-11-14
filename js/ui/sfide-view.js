@@ -66,7 +66,7 @@
         { id: 'rivincite', titolo: '⚔️ Rivincite' },
         { id: 'torre', titolo: '🗼 Torre dei Duellanti' },
         { id: 'settimana', titolo: '📅 Duello della Settimana' },
-        { id: 'caccia', titolo: '🏹 Caccia al Boss' },
+        { id: 'caccia', titolo: '🏹 Assalto al Campione' },
         { id: 'tag', titolo: '🤝 Tag Team' },
         { id: 'online', titolo: '🌐 Battaglie online' }
     ];

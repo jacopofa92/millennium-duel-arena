@@ -72,7 +72,7 @@ module.exports = {
             const rh = await apri('raid', 'raid-host');
             const ro = await apri('duello', 'raid-ospite-da-duello');
             s = await stato(rh);
-            assert(s.titolo === 'Assalto al Boss' && s.raidVisibile && !s.specchioVisibile, `Raid: gruppi: ${JSON.stringify(s)}`);
+            assert(s.titolo === 'Assalto al Campione' && s.raidVisibile && !s.specchioVisibile, `Raid: gruppi: ${JSON.stringify(s)}`);
             await entrano(rh, ro);
             s = await stato(rh);
             assert(s.raidOn && !s.specchioOn, `L'host ha il raid gia' acceso: ${JSON.stringify(s)}`);

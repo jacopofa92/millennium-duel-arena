@@ -102,10 +102,10 @@
                 nota: true,
                 icon: '🏹',
                 rule: abbandono
-                    ? 'Caccia abbandonata. Puoi riprovare quando vuoi fino a lunedì.'
+                    ? 'Assalto abbandonato. Puoi riprovare quando vuoi fino a lunedì.'
                     : (finitaPerTempo
-                        ? `Tempo scaduto: avevi ${LIMITE} turni per battere il Boss. Puoi riprovare quando vuoi fino a lunedì.`
-                        : 'Caccia fallita: i tuoi Life Point sono finiti. Puoi riprovare quando vuoi fino a lunedì.')
+                        ? `Tempo scaduto: avevi ${LIMITE} turni per battere il Campione. Puoi riprovare quando vuoi fino a lunedì.`
+                        : 'Assalto fallito: i tuoi Life Point sono finiti. Puoi riprovare quando vuoi fino a lunedì.')
             }];
         }
         const esito = Caccia.registraVittoria(turniGiocati);
@@ -115,10 +115,10 @@
             if (turniGiocati <= cacciaDatabase.premio.bonusVeloce.entroTurni) ChallengeTracker.recordProgress('cacciaVeloce', { turni: turniGiocati });
         }
         if (!esito.primaVolta || !esito.premio) {
-            return [{ nota: true, icon: '🏹', rule: `Boss battuto di nuovo in ${turniGiocati} turni: il premio di questa settimana l'hai già preso.` }];
+            return [{ nota: true, icon: '🏹', rule: `Campione battuto di nuovo in ${turniGiocati} turni: il premio di questa settimana l'hai già preso.` }];
         }
         const voci = [];
-        const spiegazione = `Caccia al Boss vinta in ${turniGiocati} turni${esito.premio.veloce ? ' (bonus caccia veloce)' : ''}: il premio si prende una volta a settimana.`;
+        const spiegazione = `Assalto al Campione vinto in ${turniGiocati} turni${esito.premio.veloce ? ' (bonus assalto veloce)' : ''}: il premio si prende una volta a settimana.`;
         if (window.SaveManager) {
             SaveManager.addCurrency('credits', esito.premio.crediti);
             voci.push({ currency: 'credits', amount: esito.premio.crediti, icon: '💰', nome: 'Crediti', rule: spiegazione });

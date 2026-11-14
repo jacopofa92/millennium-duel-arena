@@ -1,5 +1,11 @@
 # Work in progress — miglioramenti da seguire
 
+## Nome Assalto al Campione — chiuso in 1.6.85
+
+- [x] Nome unificato per la sfida settimanale locale e il Raid multiplayer;
+      menu, premi, sfide, statistiche e titoli aggiornati. Il Tag Team
+      «Contro un Boss» resta distinto. Cache v739.
+
 ## Slot Cacciatori in Assalto al Boss — chiuso in 1.6.84
 
 - [x] Due posti affiancati nella lobby mobile, con larghezza e figura adattive.

@@ -563,7 +563,8 @@
 // v732: ripristinato antialiasing disattivato, la prova causava scatti.
 // v733: riepilogo Caccia compatto, premi richiudibili e timer non duplicato.
 // v738: i due posti Cacciatori del Raid restano affiancati su schermi stretti.
-const CACHE_NAME = 'ygo-duel-arena-v738';
+// v739: nome unificato Assalto al Campione per la sfida settimanale e il Raid online.
+const CACHE_NAME = 'ygo-duel-arena-v739';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

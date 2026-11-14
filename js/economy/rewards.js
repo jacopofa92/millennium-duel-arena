@@ -587,7 +587,7 @@
         const contributo = typeof o.contributo === 'number' ? o.contributo : 1;
         const soglia = Math.round(RAID_CONTRIBUTO_MINIMO * 100);
         if (contributo < RAID_CONTRIBUTO_MINIMO) {
-            return [nota('🐉', `Hai inflitto meno del ${soglia}% della barra del Boss (${Math.round(contributo * 100)}%): per il premio del Raid serve fare almeno la tua parte`)];
+            return [nota('🐉', `Hai inflitto meno del ${soglia}% della barra del Campione (${Math.round(contributo * 100)}%): per il premio dell'Assalto serve fare almeno la tua parte`)];
         }
         if (!vinto) {
             SaveManager.addCurrency('credits', LOSS_CREDITS);
@@ -597,21 +597,21 @@
         const st = statoOnline(giorno);
         const boss = o.bossId || '';
         const premio = premioRaid(o.lp || lpBossRaid(boss));
-        const spiegazione = `Raid cooperativo vinto${o.bossNome ? ': ' + o.bossNome : ''}`;
+        const spiegazione = `Assalto al Campione vinto${o.bossNome ? ': ' + o.bossNome : ''}`;
         const primaVolta = !!boss && !st.bossBattuti[boss];
         // Il bonus della prima volta e' una conquista del Boss, non del giorno: spetta anche se i premi di oggi sono finiti.
         if (primaVolta) {
             st.bossBattuti[boss] = true;
             SaveManager.addCurrency('credits', RAID_PRIMO_BOSS.crediti);
             SaveManager.addCurrency('starChips', RAID_PRIMO_BOSS.stelle);
-            rewards.push(voce('credits', RAID_PRIMO_BOSS.crediti, `Prima volta che batti ${o.bossNome || 'questo Boss'} in Raid (una volta sola)`));
-            rewards.push(voce('starChips', RAID_PRIMO_BOSS.stelle, `Prima volta che batti ${o.bossNome || 'questo Boss'} in Raid (una volta sola)`));
+            rewards.push(voce('credits', RAID_PRIMO_BOSS.crediti, `Prima volta che batti ${o.bossNome || 'questo Campione'} nell'Assalto (una volta sola)`));
+            rewards.push(voce('starChips', RAID_PRIMO_BOSS.stelle, `Prima volta che batti ${o.bossNome || 'questo Campione'} nell'Assalto (una volta sola)`));
             if (window.ChallengeTracker) ChallengeTracker.recordProgress('raidBossBattuto', { bossId: boss });
         }
         if (st.raidBoss.length >= RAID_AL_GIORNO) {
             rewards.push(nota('🐉', `Premio del Raid già riscosso ${RAID_AL_GIORNO} volte oggi: torna domani`));
         } else if (boss && st.raidBoss.indexOf(boss) !== -1) {
-            rewards.push(nota('🐉', 'Oggi hai già riscosso il premio per questo Boss: prova un Boss diverso (se ne riscuotono 2 al giorno, su Boss diversi)'));
+            rewards.push(nota('🐉', 'Oggi hai già riscosso il premio per questo Campione: scegline un altro (se ne riscuotono 2 al giorno, contro Campioni diversi)'));
         } else {
             if (boss) st.raidBoss.push(boss); else st.raidBoss.push('?' + st.raidBoss.length);
             SaveManager.addCurrency('credits', premio.crediti);
@@ -1012,9 +1012,9 @@
         if (id === 'caccia') {
             const db = window.cacciaDatabase;
             if (!db) return '';
-            titolo = 'Premi della Caccia al Boss';
+            titolo = 'Premi dell\'Assalto al Campione';
             const p = db.premio;
-            speciali.push(riga('🏹', `Prima caccia vinta della settimana: <b>+${n(p.crediti)} crediti</b> e <b>+${stelle(p.stelle)}</b>, più, se vinci entro ${p.bonusVeloce.entroTurni} turni (caccia veloce): <b>+${stelle(p.bonusVeloce.stelle)}</b>, <b>+${p.bonusVeloce.locazione || 0} Carta Locazione</b> e <b>+${p.bonusVeloce.millennio || 0} Carta del Millennio</b>. Una volta a settimana.`));
+            speciali.push(riga('🏹', `Prima vittoria nell'Assalto di questa settimana: <b>+${n(p.crediti)} crediti</b> e <b>+${stelle(p.stelle)}</b>, più, se vinci entro ${p.bonusVeloce.entroTurni} turni (assalto rapido): <b>+${stelle(p.bonusVeloce.stelle)}</b>, <b>+${p.bonusVeloce.locazione || 0} Carta Locazione</b> e <b>+${p.bonusVeloce.millennio || 0} Carta del Millennio</b>. Una volta a settimana.`));
             standard = () => riga('⚔️', `Come ogni duello, a ${NOME_LIVELLO[db.livello] || db.livello}:`, 'rw-sottotitolo').concat(righeVittoria(db.livello).join(''));
         } else if (id === 'settimana') {
             const db = window.settimanaDatabase;
@@ -1045,7 +1045,7 @@
             speciali.push(riga('🖼️', 'Illustrazioni alternative di alcune carte: una a sorte superando il piano 15 e una conquistando la Torre, finché ne restano da sbloccare.'));
             standard = () => righeVittoriaTuttiILivelli().join('');
         } else if (id === 'raid') {
-            titolo = 'Premi dell\'Assalto al Boss';
+            titolo = 'Premi dell\'Assalto al Campione';
             const soglia = Math.round(RAID_CONTRIBUTO_MINIMO * 100);
             // Il premio dipende dal Boss (la sua barra comune): si elencano i Boss veri se la pagina li conosce.
             const bossNomi = (window.RAID_BOSSES && window.characterDatabase)
@@ -1055,9 +1055,9 @@
                 const prec = i === 0 ? 0 : RAID_PREMI[i - 1].finoALp;
                 const dentro = bossNomi.filter((b) => b.lp > prec && b.lp <= p.finoALp);
                 const chi = dentro.length ? dentro.map((b) => `${b.nome} (${n(b.lp)} LP)`).join(', ') : (isFinite(p.finoALp) ? `barra fino a ${n(p.finoALp)} LP` : `barra oltre ${n(prec)} LP`);
-                speciali.push(riga(i === 0 ? '🗼' : '🏆', `${chi}: <b>+${n(p.crediti)} crediti</b> e <b>+${stelle(p.stelle)}</b>${i === 0 ? ` — Boss a zero e tu hai tolto almeno il <b>${soglia}%</b> della barra, fino a <b>${RAID_AL_GIORNO} volte al giorno</b> su Boss diversi` : ''}`));
+                speciali.push(riga(i === 0 ? '🗼' : '🏆', `${chi}: <b>+${n(p.crediti)} crediti</b> e <b>+${stelle(p.stelle)}</b>${i === 0 ? ` — Campione sconfitto e almeno il <b>${soglia}%</b> della barra tolta da te, fino a <b>${RAID_AL_GIORNO} volte al giorno</b> contro Campioni diversi` : ''}`));
             });
-            speciali.push(riga('✨', `La prima volta che batti ciascun Boss: <b>+${RAID_PRIMO_BOSS.crediti} crediti</b> e <b>+${stelle(RAID_PRIMO_BOSS.stelle)}</b>, una volta sola.`));
+            speciali.push(riga('✨', `La prima volta che sconfiggi ciascun Campione: <b>+${RAID_PRIMO_BOSS.crediti} crediti</b> e <b>+${stelle(RAID_PRIMO_BOSS.stelle)}</b>, una volta sola.`));
             speciali.push(riga('ℹ️', 'Questo premio prende il posto di quello di un Duello Libero: niente bonus della prima vittoria, Stelle ogni 10 vittorie o ritrovamenti.'));
             speciali.push(riga('🤝', `Se perdi ma hai tolto almeno il ${soglia}% della barra: +${LOSS_CREDITS} crediti di partecipazione. Sotto il ${soglia}% (o se abbandoni): niente.`, 'rw-nota'));
         } else if (id === 'online-duello') {
