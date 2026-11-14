@@ -685,15 +685,42 @@
         color: rgba(247,215,116,0.46);
         pointer-events: none;
     }
+    .gate-password-toggle {
+        position: absolute;
+        right: 6px;
+        top: 50%;
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        transform: translateY(-50%);
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: rgba(247,215,116,0.62);
+        cursor: pointer;
+        transition: color 0.18s ease, background 0.18s ease;
+    }
+    .gate-password-toggle:hover { color: var(--gold, #f7d774); background: rgba(247,215,116,0.08); }
+    .gate-password-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .gate-tab:focus-visible,
+    .gate-btn:focus-visible,
+    .gate-forgot-link:focus-visible,
+    .gate-exit-link:focus-visible,
+    .gate-password-toggle:focus-visible {
+        outline: 2px solid rgba(247,215,116,0.92);
+        outline-offset: 3px;
+    }
     @keyframes gatePanelIn {
         from { opacity: 0; transform: translateY(4px); }
         to   { opacity: 1; transform: translateY(0); }
     }
     .gate-register-hint {
         text-align: center;
-        font-size: 0.72rem;
-        color: rgba(255,255,255,0.45);
-        line-height: 1.4;
+        font-size: 0.75rem;
+        color: rgba(230,235,247,0.72);
+        line-height: 1.45;
         margin-top: -2px;
     }
     .gate-btn {
@@ -1012,20 +1039,20 @@
             </div>
 
             <div class="gate-panel active" id="gateLoginPanel">
-                <label class="gate-field" for="gateEmailInput"><span class="gate-field-label">Email</span><span class="gate-field-control"><input type="email" id="gateEmailInput" class="menu-name-input" placeholder="duellante@email.it" autocomplete="username"><span class="gate-input-icon" data-icon="profile"></span></span></label>
-                <label class="gate-field" for="gatePasswordInput"><span class="gate-field-label">Password</span><span class="gate-field-control"><input type="password" id="gatePasswordInput" class="menu-name-input" placeholder="La tua password" autocomplete="current-password"><span class="gate-input-icon" data-icon="login"></span></span></label>
+                <div class="gate-field"><label class="gate-field-label" for="gateEmailInput">Email</label><span class="gate-field-control"><input type="email" id="gateEmailInput" class="menu-name-input" placeholder="duellante@email.it" autocomplete="username"><span class="gate-input-icon" data-icon="profile"></span></span></div>
+                <div class="gate-field"><label class="gate-field-label" for="gatePasswordInput">Password</label><span class="gate-field-control"><input type="password" id="gatePasswordInput" class="menu-name-input" placeholder="La tua password" autocomplete="current-password"><button type="button" class="gate-password-toggle" aria-label="Mostra password" aria-pressed="false" aria-controls="gatePasswordInput"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.3-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.3 6.5-9.5 6.5S2.5 12 2.5 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></span></div>
                 <button type="button" class="gate-btn signin" id="gateSignInBtn"><span data-icon="login"></span> Accedi</button>
                 <button type="button" class="gate-forgot-link" id="gateForgotLink">Password dimenticata?</button>
-                <div class="gate-status" id="gateLoginStatus"></div>
+                <div class="gate-status" id="gateLoginStatus" role="status" aria-live="polite" aria-atomic="true"></div>
             </div>
 
             <div class="gate-panel" id="gateRegisterPanel">
-                <label class="gate-field" for="gateRegisterEmailInput"><span class="gate-field-label">Email</span><span class="gate-field-control"><input type="email" id="gateRegisterEmailInput" class="menu-name-input" placeholder="duellante@email.it" autocomplete="username"><span class="gate-input-icon" data-icon="profile"></span></span></label>
-                <label class="gate-field" for="gateRegisterPasswordInput"><span class="gate-field-label">Password</span><span class="gate-field-control"><input type="password" id="gateRegisterPasswordInput" class="menu-name-input" placeholder="Minimo 6 caratteri" autocomplete="new-password"><span class="gate-input-icon" data-icon="login"></span></span></label>
-                <label class="gate-field" for="gateRegisterPasswordConfirmInput"><span class="gate-field-label">Conferma password</span><span class="gate-field-control"><input type="password" id="gateRegisterPasswordConfirmInput" class="menu-name-input" placeholder="Ripeti la password" autocomplete="new-password"><span class="gate-input-icon" data-icon="login"></span></span></label>
+                <div class="gate-field"><label class="gate-field-label" for="gateRegisterEmailInput">Email</label><span class="gate-field-control"><input type="email" id="gateRegisterEmailInput" class="menu-name-input" placeholder="duellante@email.it" autocomplete="username"><span class="gate-input-icon" data-icon="profile"></span></span></div>
+                <div class="gate-field"><label class="gate-field-label" for="gateRegisterPasswordInput">Password</label><span class="gate-field-control"><input type="password" id="gateRegisterPasswordInput" class="menu-name-input" placeholder="Minimo 6 caratteri" autocomplete="new-password"><button type="button" class="gate-password-toggle" aria-label="Mostra password" aria-pressed="false" aria-controls="gateRegisterPasswordInput"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.3-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.3 6.5-9.5 6.5S2.5 12 2.5 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></span></div>
+                <div class="gate-field"><label class="gate-field-label" for="gateRegisterPasswordConfirmInput">Conferma password</label><span class="gate-field-control"><input type="password" id="gateRegisterPasswordConfirmInput" class="menu-name-input" placeholder="Ripeti la password" autocomplete="new-password"><button type="button" class="gate-password-toggle" aria-label="Mostra password" aria-pressed="false" aria-controls="gateRegisterPasswordConfirmInput"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.3-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.3 6.5-9.5 6.5S2.5 12 2.5 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></span></div>
                 <button type="button" class="gate-btn signup" id="gateSignUpBtn"><span data-icon="signup"></span> Crea account</button>
                 <p class="gate-register-hint">Dopo la registrazione un amministratore dovrà approvare il tuo account prima che tu possa accedere.</p>
-                <div class="gate-status" id="gateRegisterStatus"></div>
+                <div class="gate-status" id="gateRegisterStatus" role="status" aria-live="polite" aria-atomic="true"></div>
             </div>
         </div>
 
@@ -1796,6 +1823,24 @@
         }
         document.getElementById('gateTabLogin').onclick = () => switchGateTab('login');
         document.getElementById('gateTabRegister').onclick = () => switchGateTab('register');
+
+        const iconaMostraPassword = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.3-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.3 6.5-9.5 6.5S2.5 12 2.5 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+        const iconaNascondiPassword = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18"></path><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path><path d="M9.9 5.7A10.8 10.8 0 0 1 12 5.5c6.2 0 9.5 6.5 9.5 6.5a16 16 0 0 1-3 3.8M6.2 6.2C3.8 7.8 2.5 12 2.5 12s3.3 6.5 9.5 6.5a10 10 0 0 0 4.2-.9"></path></svg>';
+        document.querySelectorAll('.gate-password-toggle').forEach((toggle) => {
+            const input = document.getElementById(toggle.getAttribute('aria-controls'));
+            if (!input) return;
+            toggle.addEventListener('click', () => {
+                const mostra = input.type === 'password';
+                input.type = mostra ? 'text' : 'password';
+                toggle.setAttribute('aria-pressed', String(mostra));
+                toggle.setAttribute('aria-label', mostra ? 'Nascondi password' : 'Mostra password');
+                toggle.innerHTML = mostra ? iconaNascondiPassword : iconaMostraPassword;
+                // Il tap non deve lasciare la tastiera mobile senza il campo
+                // attivo: il controllo mostra/nasconde, poi il cursore resta
+                // pronto per continuare a scrivere.
+                input.focus({ preventScroll: true });
+            });
+        });
 
         function showGate(blockedMessage) {
             if (!blockedMessage && new URLSearchParams(window.location.search).get('blocked') === 'suspended') {

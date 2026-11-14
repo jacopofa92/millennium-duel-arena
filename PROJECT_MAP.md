@@ -1,5 +1,12 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Ritocchi accessibili alla login (1.6.73)
+
+Il gate conserva pannello, colori e impaginazione. La nota di approvazione
+account è più leggibile, i tre campi password hanno un controllo mostra/nascondi
+che mantiene il focus anche su mobile, gli stati vengono annunciati agli screen
+reader e tab/pulsanti mostrano un anello di focus da tastiera. Cache v727.
+
 ## Glitch Life Points e scudo WebGL di Waboku (1.6.72)
 
 Con gli ologrammi attivi, i Life Points condividono lo scarto laterale ciano

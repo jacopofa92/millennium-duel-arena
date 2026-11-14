@@ -555,7 +555,8 @@
 // v724: preriscaldamento font prima della cinematica VS.
 // v725: glitch laterale ciano sui numeri ATK/DEF degli ologrammi.
 // v726: stesso glitch sui Life Points e scudo persistente Waboku in WebGL.
-const CACHE_NAME = 'ygo-duel-arena-v726';
+// v727: accessibilità del gate: visibilità password, focus e stato annunciato.
+const CACHE_NAME = 'ygo-duel-arena-v727';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

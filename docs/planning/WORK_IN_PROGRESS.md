@@ -1,5 +1,11 @@
 # Work in progress — miglioramenti da seguire
 
+## Ritocchi accessibili alla login — chiuso in 1.6.73
+
+- [x] Nota approvazione più leggibile, mostra/nascondi password in accesso e
+      registrazione, feedback di focus da tastiera e stato annunciato.
+- [x] Layout e palette invariati. Cache v727.
+
 ## Life Points olografici e Waboku WebGL — chiuso in 1.6.72
 
 - [x] Glitch LP laterale ciano allineato alle cifre ATK/DEF, mantenendo gli
