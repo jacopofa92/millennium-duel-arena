@@ -557,7 +557,8 @@
 // v726: stesso glitch sui Life Points e scudo persistente Waboku in WebGL.
 // v727: accessibilità del gate: visibilità password, focus e stato annunciato.
 // v728: gate leggermente più alto su mobile, rispettando la safe area.
-const CACHE_NAME = 'ygo-duel-arena-v728';
+// v729: schede account compatte ed espandibili nella gestione utenti.
+const CACHE_NAME = 'ygo-duel-arena-v729';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

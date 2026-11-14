@@ -1,5 +1,12 @@
 # Work in progress — miglioramenti da seguire
 
+## Gestione utenti compatta — chiuso in 1.6.75
+
+- [x] Riepilogo account con email, stato e ultimo accesso; sospendi/riattiva
+      disponibili senza aprire il dettaglio.
+- [x] Note e permessi contenuti dentro dettagli espandibili per account,
+      responsive a una o due colonne. Cache v729.
+
 ## Posizione login su mobile — chiuso in 1.6.74
 
 - [x] Spostato il contenuto 3vh più in alto mantenendo la safe area superiore

@@ -1,5 +1,12 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Gestione utenti compatta (1.6.75)
+
+Ogni account mostra subito email, stato e ultimo accesso; sospensione o
+riattivazione restano disponibili senza aprire la scheda. Note private e
+permessi WW1/WW2/Extra si modificano nel pannello espandibile del singolo
+account, disposto su due colonne in schermi larghi e una su mobile. Cache v729.
+
 ## Posizione login su mobile (1.6.74)
 
 Il gate parte 3vh più in alto sui telefoni, mantenendo un margine minimo

@@ -189,6 +189,57 @@
     .admin-status { min-height: 1.2em; font-size: 0.85rem; margin-top: 8px; }
     .admin-status.error { color: var(--danger); }
     .admin-status.success { color: var(--success); }
+    .admin-user-card { padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .admin-user-card:last-child { border-bottom: 0; }
+    .admin-user-summary { display: flex; align-items: center; gap: 10px; }
+    .admin-user-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex: 1;
+        min-width: 0;
+        gap: 12px;
+        padding: 5px 0;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        text-align: left;
+        font: inherit;
+        cursor: pointer;
+    }
+    .admin-user-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 5px; }
+    .admin-user-main { display: block; min-width: 0; }
+    .admin-user-email { display: block; overflow-wrap: anywhere; font-size: 0.9rem; color: var(--ink); }
+    .admin-user-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+    .admin-user-meta .admin-row-seen { margin: 0; }
+    .admin-user-chevron { flex: 0 0 9px; width: 9px; height: 9px; margin-right: 4px; border-right: 2px solid rgba(247,215,116,0.75); border-bottom: 2px solid rgba(247,215,116,0.75); transform: rotate(45deg) translateY(-2px); transition: transform 160ms ease; }
+    .admin-user-card.is-expanded .admin-user-chevron { transform: rotate(225deg) translate(-1px,-1px); }
+    .admin-user-summary .admin-row-actions { flex: 0 0 auto; }
+    .admin-user-details {
+        display: grid;
+        grid-template-columns: minmax(0,1.15fr) minmax(0,0.85fr);
+        gap: 14px;
+        margin: 10px 0 2px 12px;
+        padding: 12px 0 5px 14px;
+        border-left: 2px solid rgba(247,215,116,0.28);
+    }
+    .admin-user-details[hidden] { display: none; }
+    .admin-user-detail-block { display: grid; align-content: start; gap: 8px; min-width: 0; min-inline-size: 0; padding: 0; }
+    .admin-user-detail-title { color: var(--ink-dim); font-size: 0.76rem; font-weight: 700; }
+    .admin-user-note { width: 100%; min-height: 76px; resize: vertical; background: rgba(0,0,0,0.25); color: var(--ink); border: 1px solid rgba(255,255,255,0.16); border-radius: 8px; padding: 9px 10px; font: inherit; font-size: 0.86rem; }
+    .admin-user-note:focus-visible { outline: 2px solid rgba(247,215,116,0.72); outline-offset: 2px; }
+    .admin-user-content-list { display: grid; gap: 7px; }
+    .admin-user-content-list label { display: flex; align-items: center; gap: 8px; color: var(--ink); font-size: 0.84rem; }
+    .admin-user-content-list input { accent-color: var(--gold-strong); }
+    .admin-user-detail-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+    @media (max-width: 560px) {
+        .admin-user-summary { align-items: flex-start; flex-wrap: wrap; }
+        .admin-user-toggle { gap: 7px; }
+        .admin-user-summary .admin-row-actions { width: 100%; justify-content: flex-end; }
+        .admin-user-details { grid-template-columns: minmax(0,1fr); gap: 13px; margin-left: 5px; padding-left: 11px; }
+        .admin-user-details .admin-btn { min-height: 38px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .admin-user-chevron { transition: none; } }
 </style>
 </head>
 <body>
@@ -450,16 +501,26 @@
         }
 
         function buildRow(profile, showActions) {
-            const row = document.createElement('div');
-            row.className = 'admin-row';
+            const row = document.createElement('article');
+            row.className = 'admin-user-card';
 
-            const left = document.createElement('div');
+            const header = document.createElement('div');
+            header.className = 'admin-user-summary';
+            const expand = document.createElement('button');
+            expand.type = 'button';
+            expand.className = 'admin-user-toggle';
+            expand.setAttribute('aria-expanded', 'false');
+            const detailsId = 'admin-user-details-' + String(profile.id).replace(/[^a-zA-Z0-9_-]/g, '');
+            expand.setAttribute('aria-controls', detailsId);
+
+            const left = document.createElement('span');
+            left.className = 'admin-user-main';
             const email = document.createElement('div');
-            email.className = 'admin-row-email';
+            email.className = 'admin-user-email';
             email.textContent = profile.email;
             left.appendChild(email);
             const meta = document.createElement('div');
-            meta.style.marginTop = '4px';
+            meta.className = 'admin-user-meta';
             const pill = document.createElement('span');
             pill.className = 'admin-pill status-' + profile.status;
             pill.textContent = statusLabel(profile.status);
@@ -479,8 +540,19 @@
             visto.textContent = quando.testo;
             if (profile.last_seen_at) visto.title = formatDate(profile.last_seen_at);
             if (quando.online) visto.classList.add('is-online');
-            left.appendChild(visto);
-            row.appendChild(left);
+            meta.appendChild(visto);
+            left.appendChild(meta);
+            const chevron = document.createElement('span');
+            chevron.className = 'admin-user-chevron';
+            chevron.setAttribute('aria-hidden', 'true');
+            expand.append(left, chevron);
+            expand.addEventListener('click', () => {
+                const aperti = expand.getAttribute('aria-expanded') !== 'true';
+                expand.setAttribute('aria-expanded', String(aperti));
+                details.hidden = !aperti;
+                row.classList.toggle('is-expanded', aperti);
+            });
+            header.appendChild(expand);
 
             if (showActions) {
                 const actions = document.createElement('div');
@@ -495,9 +567,11 @@
                 rejectBtn.onclick = () => setStatus(profile.id, 'rejected', profile.email);
                 actions.appendChild(approveBtn);
                 actions.appendChild(rejectBtn);
-                row.appendChild(actions);
+                header.appendChild(actions);
             }
             if (!showActions && !profile.is_admin) {
+                const actions = document.createElement('div');
+                actions.className = 'admin-row-actions';
                 const action = document.createElement('button');
                 action.className = 'admin-btn ' + (profile.status === 'approved' ? 'reject' : 'approve');
                 action.textContent = profile.status === 'approved' ? 'Sospendi' : 'Riattiva';
@@ -506,17 +580,29 @@
                     setStatus(profile.id, profile.status === 'approved' ? 'suspended' : 'approved', profile.email)
                         .finally(() => { action.disabled = false; });
                 };
-                row.appendChild(action);
+                actions.appendChild(action);
+                header.appendChild(actions);
             }
+            row.appendChild(header);
+
+            const details = document.createElement('div');
+            details.className = 'admin-user-details';
+            details.id = detailsId;
+            details.hidden = true;
             const notes = document.createElement('div');
-            notes.className = 'admin-note';
-            notes.appendChild(document.createTextNode('Note private amministratore'));
+            notes.className = 'admin-user-detail-block';
+            const noteTitle = document.createElement('label');
+            noteTitle.className = 'admin-user-detail-title';
+            noteTitle.textContent = 'Nota privata amministratore';
             const input = document.createElement('textarea');
+            input.className = 'admin-user-note';
             input.maxLength = 4000;
             input.setAttribute('aria-label', 'Note private per ' + profile.email);
             input.value = noteInModifica.has(profile.id) ? noteInModifica.get(profile.id) : (profile.admin_note || '');
             input.oninput = () => noteInModifica.set(profile.id, input.value);
-            notes.appendChild(input);
+            noteTitle.htmlFor = detailsId + '-note';
+            input.id = detailsId + '-note';
+            notes.append(noteTitle, input);
             const save = document.createElement('button');
             save.type = 'button';
             save.className = 'admin-btn approve';
@@ -532,14 +618,21 @@
                     .catch((e) => showStatus(e.message, 'error'))
                     .finally(() => { save.disabled = false; });
             };
-            notes.appendChild(save);
-            row.appendChild(notes);
+            const noteActions = document.createElement('div');
+            noteActions.className = 'admin-user-detail-actions';
+            noteActions.appendChild(save);
+            notes.appendChild(noteActions);
+            details.appendChild(notes);
+
             const contents = document.createElement('fieldset');
-            contents.className = 'admin-note';
+            contents.className = 'admin-user-detail-block';
             contents.style.border = '0';
             const legend = document.createElement('legend');
+            legend.className = 'admin-user-detail-title';
             legend.textContent = 'Contenuti abilitati';
             contents.appendChild(legend);
+            const contentList = document.createElement('div');
+            contentList.className = 'admin-user-content-list';
             const checks = {};
             ['ww1', 'ww2', 'extra'].forEach((pack) => {
                 const label = document.createElement('label');
@@ -548,10 +641,12 @@
                 check.checked = profile.is_admin || profile['content_' + pack] === true;
                 check.disabled = !!profile.is_admin;
                 check.setAttribute('data-content-pack', pack);
+                check.setAttribute('aria-label', (pack === 'extra' ? 'Extra e Freedom' : pack.toUpperCase()) + ' per ' + profile.email);
                 checks[pack] = check;
                 label.append(check, document.createTextNode(' ' + (pack === 'extra' ? 'Extra e Freedom' : pack.toUpperCase())));
-                contents.appendChild(label);
+                contentList.appendChild(label);
             });
+            contents.appendChild(contentList);
             if (!profile.is_admin) {
                 const saveContents = document.createElement('button');
                 saveContents.className = 'admin-btn approve';
@@ -565,9 +660,13 @@
                         .catch((e) => showStatus(e.message, 'error'))
                         .finally(() => { saveContents.disabled = false; });
                 };
-                contents.appendChild(saveContents);
+                const contentActions = document.createElement('div');
+                contentActions.className = 'admin-user-detail-actions';
+                contentActions.appendChild(saveContents);
+                contents.appendChild(contentActions);
             }
-            row.appendChild(contents);
+            details.appendChild(contents);
+            row.appendChild(details);
             return row;
         }
 
