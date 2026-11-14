@@ -564,7 +564,8 @@
 // v733: riepilogo Caccia compatto, premi richiudibili e timer non duplicato.
 // v738: i due posti Cacciatori del Raid restano affiancati su schermi stretti.
 // v739: nome unificato Assalto al Campione per la sfida settimanale e il Raid online.
-const CACHE_NAME = 'ygo-duel-arena-v739';
+// v740: Dettagli video parte da Alti anche su telefoni e APK.
+const CACHE_NAME = 'ygo-duel-arena-v740';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

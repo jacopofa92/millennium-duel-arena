@@ -1,5 +1,10 @@
 # Work in progress — miglioramenti da seguire
 
+## Preset grafico Alto — chiuso in 1.6.86
+
+- [x] «Dettagli video» parte da Alti anche su telefoni e APK; le preferenze
+      esplicite salvate restano invariate. Cache v740.
+
 ## Nome Assalto al Campione — chiuso in 1.6.85
 
 - [x] Nome unificato per la sfida settimanale locale e il Raid multiplayer;

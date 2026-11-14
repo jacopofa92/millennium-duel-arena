@@ -183,9 +183,9 @@
     "semantic_hash": ""
   },
   "js/data/challenges-db.js": {
-    "mtime": 1793980032.405289,
-    "seen": 1794049280.829189,
-    "ast_hash": "142b08cc089ac9e3754a5a9e847c2bea",
+    "mtime": 1794662014.5773625,
+    "seen": 1794662154.2803912,
+    "ast_hash": "6cb17111e65aac3f48072f020a2e6949",
     "semantic_hash": ""
   },
   "js/data/character-decks.js": {
@@ -297,9 +297,9 @@
     "semantic_hash": "ae9012a553505193cad9585be5e9a9bc"
   },
   "js/data/titles-db.js": {
-    "mtime": 1793980032.405289,
-    "seen": 1794049280.829189,
-    "ast_hash": "ea229f7f4946d1f626d832b299bd5e3b",
+    "mtime": 1794661914.3290644,
+    "seen": 1794662154.288315,
+    "ast_hash": "1cf0582af08a4153d2274e3f9dc4d81e",
     "semantic_hash": ""
   },
   "js/data/torre-db.js": {
@@ -363,9 +363,9 @@
     "semantic_hash": "da1f921c202848f8237a2be80492f3ed"
   },
   "js/economy/rewards.js": {
-    "mtime": 1794072804.5165792,
-    "seen": 1794145245.8148255,
-    "ast_hash": "d428324d9d6df106c9d635eec9421ba6",
+    "mtime": 1794662340.333505,
+    "seen": 1794662387.1241739,
+    "ast_hash": "ee9c5ac5d8d4e0baec88307556bc13ca",
     "semantic_hash": ""
   },
   "js/economy/shop-catalog.js": {
@@ -543,9 +543,9 @@
     "semantic_hash": "e2d6c8d8b1265f2c546dcae67d003dfc"
   },
   "js/modes/caccia-mode.js": {
-    "mtime": 1794247836.3100383,
-    "seen": 1794256471.8692555,
-    "ast_hash": "6b592204fa6ff4c2bfc98df682a9ba67",
+    "mtime": 1794662014.3345964,
+    "seen": 1794662154.3049126,
+    "ast_hash": "f6ae27f24b8d2398730e24c476303dbb",
     "semantic_hash": ""
   },
   "js/modes/caccia.js": {
@@ -555,9 +555,9 @@
     "semantic_hash": ""
   },
   "js/modes/mode-unlocks.js": {
-    "mtime": 1794000103.5223205,
-    "seen": 1794049280.829189,
-    "ast_hash": "e36512e63358f723863a41fc8f1f25dd",
+    "mtime": 1794661913.5721054,
+    "seen": 1794662154.3053918,
+    "ast_hash": "2c38b82a6e989793dd2d2a2401177875",
     "semantic_hash": ""
   },
   "js/modes/puzzle-mode.js": {
@@ -609,15 +609,15 @@
     "semantic_hash": "4c0aee312e8103fd15bfe30fddcdc681"
   },
   "js/multiplayer/mp-lobby.js": {
-    "mtime": 1794133251.2870183,
-    "seen": 1794145245.8319201,
-    "ast_hash": "6f65e20ccde506c7bb9c0ffbc06cc04f",
+    "mtime": 1794662198.849465,
+    "seen": 1794662387.140407,
+    "ast_hash": "71906d10de040e242e3476c7dc405e6a",
     "semantic_hash": ""
   },
   "js/multiplayer/mp-modi.js": {
-    "mtime": 1793970084.5873046,
-    "seen": 1794049280.8452823,
-    "ast_hash": "5076ad2c431afa56cc3fb9879ccd2aef",
+    "mtime": 1794662340.0732439,
+    "seen": 1794662387.140407,
+    "ast_hash": "9a4196d71c679b7ea8523146bd6f5931",
     "semantic_hash": ""
   },
   "js/multiplayer/mp-passo-comune.js": {
@@ -939,9 +939,9 @@
     "semantic_hash": "d2a806751beed626a23d1594e2b83e60"
   },
   "js/ui/menu-mobile.js": {
-    "mtime": 1794348876.427533,
-    "seen": 1794348924.9239867,
-    "ast_hash": "8bedb4d271da8fee53be1dd8888f955f",
+    "mtime": 1794661751.567319,
+    "seen": 1794662154.3353856,
+    "ast_hash": "03e93f63eb54ba01babf78cec3fcb751",
     "semantic_hash": ""
   },
   "js/ui/monster-hologram-webgl.js": {
@@ -1011,9 +1011,9 @@
     "semantic_hash": ""
   },
   "js/ui/sfide-view.js": {
-    "mtime": 1794005436.008123,
-    "seen": 1794049280.8452823,
-    "ast_hash": "e68e4ad9dbde63ac0b99d233b8ef4d5a",
+    "mtime": 1794661751.838624,
+    "seen": 1794662154.3409038,
+    "ast_hash": "c734a547af574139c21dc641b9983ac4",
     "semantic_hash": ""
   },
   "js/ui/splash-webgl.js": {
@@ -1035,9 +1035,9 @@
     "semantic_hash": ""
   },
   "js/ui/tab-bar.js": {
-    "mtime": 1794348768.9240203,
-    "seen": 1794348924.9323099,
-    "ast_hash": "21a8b8d2ac1bc8cff6330b2488b67f9b",
+    "mtime": 1794662339.8113427,
+    "seen": 1794662387.1742039,
+    "ast_hash": "4345d7db64a59cefd7cabe6367270999",
     "semantic_hash": ""
   },
   "js/ui/tag-scambio.js": {
@@ -1107,9 +1107,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794658335.649218,
-    "seen": 1794658376.8525863,
-    "ast_hash": "9c0ac70cef802b561ada72542aeb9a1a",
+    "mtime": 1794662104.5387192,
+    "seen": 1794662154.3467622,
+    "ast_hash": "bae905a2fcdc199e7a542a9590ffa4a7",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1125,9 +1125,9 @@
     "semantic_hash": "57357a46c1d07a0fa18bbcd83581aaa6"
   },
   "package.json": {
-    "mtime": 1794659903.442521,
-    "seen": 1794659939.756999,
-    "ast_hash": "a00b0467f0a6b052bad191dc0e930b25",
+    "mtime": 1794662015.0514483,
+    "seen": 1794662154.3467622,
+    "ast_hash": "556536a5b7c86eff549b6931406b836f",
     "semantic_hash": ""
   },
   "render.yaml": {
@@ -1526,9 +1526,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794659903.6816611,
-    "seen": 1794659939.792463,
-    "ast_hash": "f99ad7ad1b7b3e7b87b220d3147ee7d1",
+    "mtime": 1794661971.2105715,
+    "seen": 1794662154.3745513,
+    "ast_hash": "7e7a5968a5da295e29a65841f84e14b7",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -2974,9 +2974,9 @@
     "semantic_hash": "f6cb71cf292c7cbe28c4cebe626d82ea"
   },
   "tests/specs/modalita-settimana-e-caccia.spec.js": {
-    "mtime": 1794005831.0104291,
-    "seen": 1794049280.92507,
-    "ast_hash": "71618ff4151f0e5219cfeeec64899c08",
+    "mtime": 1794662015.2984886,
+    "seen": 1794662154.495446,
+    "ast_hash": "d79c161d375c8ff9dc1a1719e72e3384",
     "semantic_hash": ""
   },
   "tests/specs/modalita-storia.spec.js": {
@@ -3034,9 +3034,9 @@
     "semantic_hash": ""
   },
   "tests/specs/multiplayer-modalita-sala.spec.js": {
-    "mtime": 1794134439.171946,
-    "seen": 1794145246.0431442,
-    "ast_hash": "d6921c8e6545d3cc1bcef03e10e215f1",
+    "mtime": 1794661752.937339,
+    "seen": 1794662154.5009618,
+    "ast_hash": "b65cc094b7d15d3586179eed6edebc8d",
     "semantic_hash": ""
   },
   "tests/specs/multiplayer-morra-cinese.spec.js": {
@@ -4960,9 +4960,9 @@
     "semantic_hash": ""
   },
   "PROJECT_MAP.md": {
-    "mtime": 1794659903.9201372,
-    "seen": 1794659939.9947462,
-    "ast_hash": "97411a65015b67d13e48ea5f8cdde1a5",
+    "mtime": 1794661971.4676476,
+    "seen": 1794662154.6057417,
+    "ast_hash": "173e2da527ecc64b72d7e74ae7288802",
     "semantic_hash": ""
   },
   "PUBBLICAZIONE.md": {
@@ -5008,9 +5008,9 @@
     "semantic_hash": ""
   },
   "caccia-boss.html": {
-    "mtime": 1794658155.6831615,
-    "seen": 1794658238.9156845,
-    "ast_hash": "8b9f060d8355d4ad65cc2e13f44d0cac",
+    "mtime": 1794662339.5568585,
+    "seen": 1794662387.4207168,
+    "ast_hash": "49d1061ffd3a87a065dfb295fcecc596",
     "semantic_hash": ""
   },
   "cartoteca.html": {
@@ -5260,9 +5260,9 @@
     "semantic_hash": ""
   },
   "docs/planning/WORK_IN_PROGRESS.md": {
-    "mtime": 1794659904.157593,
-    "seen": 1794659940.0108147,
-    "ast_hash": "871bfbeaa518749fe598f174c37f51c8",
+    "mtime": 1794661971.741104,
+    "seen": 1794662154.6292284,
+    "ast_hash": "a00b6d86468fb4b332387e16ad75a2ee",
     "semantic_hash": ""
   },
   "duelMonstersCore.html": {
@@ -5296,9 +5296,9 @@
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1794653785.8679934,
-    "seen": 1794653841.276989,
-    "ast_hash": "596f0cd432ac0d24a26787a35f6aaa87",
+    "mtime": 1794662339.2901137,
+    "seen": 1794662387.443307,
+    "ast_hash": "dc8dd0bebd9cfda5b72d4a5466db71c2",
     "semantic_hash": ""
   },
   "multiplayer.html": {
@@ -23650,9 +23650,9 @@
     "semantic_hash": ""
   },
   "js/stats/statistiche.js": {
-    "mtime": 1794143254.2248173,
-    "seen": 1794145245.8400295,
-    "ast_hash": "76386a6dc69e5d3f08ad443af3def2c1",
+    "mtime": 1794661752.118468,
+    "seen": 1794662154.3182886,
+    "ast_hash": "f34c973610228f3331481eec892b653b",
     "semantic_hash": ""
   },
   "js/ui/posa-danno.js": {

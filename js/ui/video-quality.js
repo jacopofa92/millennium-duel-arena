@@ -4,9 +4,8 @@
  * ------------------------------------------------------------------
  * Due soli livelli, deliberatamente:
  *   'normali'           — il gioco più leggero, per i dispositivi lenti;
- *   'alti' (default su desktop; su touch/APK il default è 'normali',
- *                         vedi dispositivoLeggero) — effetti aggiuntivi
- *                         sul Terreno di gioco.
+ *   'alti' (default su tutti i dispositivi) — effetti aggiuntivi sul
+ *                         Terreno di gioco.
  *
  * DEFAULT "ALTI", su richiesta esplicita dell'utente (prima era
  * "Normali"). Il cambio di default doveva valere anche per chi c'era già,
@@ -46,23 +45,9 @@
     const CHIAVE_SCELTA = 'ygoVideoDetailScelto';
     const NORMALI = 'normali';
     const ALTI = 'alti';
-    /**
-     * Il livello di partenza per chi non ha mai scelto: "Alti" sul
-     * desktop, "Normali" su touch/APK. Misurato (CPU x4, 844x390@2x): gli
-     * strati con mix-blend-mode di field-ambience.js portano il duello da
-     * ~57 a ~17 fps, ed è su telefono e WebView Capacitor che pesano di più.
-     * Una scelta esplicita del giocatore (CHIAVE_SCELTA) vince sempre.
-     */
-    function dispositivoLeggero() {
-        try {
-            if (window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function'
-                && window.Capacitor.isNativePlatform()) return true;
-            return !!(window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches);
-        } catch (e) {
-            return false;
-        }
-    }
-    const DEFAULT = dispositivoLeggero() ? NORMALI : ALTI;
+    // Il preset Alto è il punto di partenza richiesto. La scelta esplicita
+    // del giocatore resta memorizzata e prevale su ogni dispositivo.
+    const DEFAULT = ALTI;
 
     const LIVELLI = [
         { valore: NORMALI, nome: 'Normali', descrizione: 'Il gioco più leggero: massima fluidità sui dispositivi meno potenti.' },

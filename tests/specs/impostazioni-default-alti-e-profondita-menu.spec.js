@@ -1,5 +1,5 @@
 // Due impostazioni richieste dall'utente:
-//   - "Dettagli video" parte da "Alti" (prima "Normali"), anche per chi
+//   - "Dettagli video" parte da "Alti" su ogni dispositivo, anche per chi
 //     aveva "Normali" scritto in cache o nel salvataggio solo perché era il
 //     vecchio default; una scelta FATTA dal giocatore resta la sua;
 //   - "Profondità del menu" (la parallasse di index.html) si spegne e si
@@ -31,7 +31,7 @@ async function muoviVersoAngolo(page) {
 }
 
 module.exports = {
-    name: 'Impostazioni: Dettagli video "Alti" di default, Profondità del menu attivabile',
+    name: 'Impostazioni: Dettagli video "Alti" su tutti i dispositivi, Profondità del menu attivabile',
     standalone: true,
     async run({ browser, assert }) {
         // --- Dettagli video ----------------------------------------------
@@ -58,11 +58,10 @@ module.exports = {
             }
         }
 
-        // Su un dispositivo touch (telefono, WebView dell'APK) il default è
-        // "Normali": gli strati di field-ambience.js pesano ~3x sulla GPU
-        // mobile (misurato). Una scelta esplicita vale comunque.
+        // Il preset Alto è iniziale anche su touch/APK; una scelta salvata
+        // dall'utente continua a prevalere.
         for (const caso of [
-            { nome: 'touch, mai scelto', storage: {}, atteso: 'normali' },
+            { nome: 'touch, mai scelto', storage: {}, atteso: 'alti' },
             { nome: 'touch, "Alti" scelto dal giocatore', storage: { ygoVideoDetail: 'alti', ygoVideoDetailScelto: '1' }, atteso: 'alti' }
         ]) {
             const ctx = await browser.newContext({ viewport: { width: 844, height: 390 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });

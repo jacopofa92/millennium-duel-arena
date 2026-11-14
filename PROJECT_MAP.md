@@ -1,5 +1,10 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Dettagli video Alti come preset iniziale (1.6.86)
+
+Il default è «Alti» su desktop, telefoni e APK; una preferenza esplicita già
+salvata («Normali» o «Alti») continua a prevalere. Cache v740.
+
 ## Nome unificato Assalto al Campione (1.6.85)
 
 La sfida settimanale locale e il Raid multiplayer si chiamano entrambi
