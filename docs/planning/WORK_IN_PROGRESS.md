@@ -1,5 +1,11 @@
 # Work in progress — miglioramenti da seguire
 
+## Sezioni admin indipendenti — chiuso in 1.6.76
+
+- [x] In Impostazioni admin e Gestione utenti non compare il collegamento
+      all'altra sezione; resta il ritorno al menu con entrambe le scelte.
+- [x] URL diretti e vecchi link senza parametro restano compatibili. Cache v730.
+
 ## Gestione utenti compatta — chiuso in 1.6.75
 
 - [x] Riepilogo account con email, stato e ultimo accesso; sospendi/riattiva

@@ -158,6 +158,8 @@
     .admin-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
     .admin-nav a { flex: 1 1 160px; text-align: center; text-decoration: none; color: var(--ink); background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; }
     .admin-nav a[aria-current="page"] { color: var(--gold); background: rgba(247,215,116,0.12); }
+    .admin-nav a[hidden] { display: none; }
+    .admin-menu-prompt { margin: 4px 0 12px; color: var(--ink-dim); font-size: 0.88rem; }
     .admin-pill.status-suspended { background: rgba(231,76,60,0.18); color: var(--danger); }
     .admin-note { flex-basis: 100%; display: grid; gap: 6px; }
     .admin-note textarea { width: 100%; box-sizing: border-box; min-height: 65px; resize: vertical; background: rgba(0,0,0,0.25); color: var(--ink); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 8px; font: inherit; }
@@ -247,9 +249,11 @@
     <div id="topbarMount"></div>
 
     <div class="admin-shell">
+        <p class="admin-menu-prompt" id="adminMenuPrompt" hidden>Scegli una sezione amministrativa</p>
         <nav class="admin-nav" aria-label="Amministrazione">
             <a href="admin.html?sezione=impostazioni" data-admin-link="impostazioni">Impostazioni admin</a>
             <a href="admin.html?sezione=utenti" data-admin-link="utenti">Gestione utenti</a>
+            <a href="admin.html?sezione=menu" data-admin-home hidden>← Menu amministrazione</a>
         </nav>
         <div class="admin-section" data-admin-sezione="utenti" hidden>
             <div class="admin-section-title">
@@ -339,14 +343,27 @@
 <script src="js/story/story-ritocchi.js"></script>
 <script src="js/dev/story-admin-tools.js"></script>
 <script>
-    // Due voci di menu, una sola implementazione: conserva anche i vecchi link
-    // ad admin.html, che continuano ad aprire la gestione delle utenze.
-    const adminSezione = new URLSearchParams(location.search).get('sezione') === 'impostazioni' ? 'impostazioni' : 'utenti';
-    const adminTitolo = adminSezione === 'impostazioni' ? 'Impostazioni admin' : 'Gestione utenti';
+    // Le due aree restano pagine distinte: dentro ciascuna mostriamo solo un
+    // ritorno al menu amministrativo, mai il tab dell'altra area. I vecchi
+    // link admin.html senza query continuano ad aprire Gestione utenti.
+    const sezioneRichiesta = new URLSearchParams(location.search).get('sezione');
+    const adminSezione = ['impostazioni', 'utenti'].includes(sezioneRichiesta)
+        ? sezioneRichiesta
+        : (sezioneRichiesta === 'menu' ? 'menu' : 'utenti');
+    const adminTitolo = adminSezione === 'impostazioni' ? 'Impostazioni admin'
+        : (adminSezione === 'menu' ? 'Amministrazione' : 'Gestione utenti');
     document.title = 'Millennium Duel Arena — ' + adminTitolo;
-    document.querySelector('[data-admin-link="' + adminSezione + '"]').setAttribute('aria-current', 'page');
-    PageTopbar.render('#topbarMount', { icon: adminSezione === 'impostazioni' ? 'settings' : 'users', title: adminTitolo,
-        subtitle: adminSezione === 'impostazioni' ? 'Autowin e strumenti di collaudo' : 'Approvazioni, sospensioni e note private' });
+    const menuAmministrazione = adminSezione === 'menu';
+    document.getElementById('adminMenuPrompt').hidden = !menuAmministrazione;
+    document.querySelectorAll('[data-admin-link]').forEach((link) => {
+        link.hidden = !menuAmministrazione;
+        link.removeAttribute('aria-current');
+    });
+    const ritornoAdmin = document.querySelector('[data-admin-home]');
+    ritornoAdmin.hidden = menuAmministrazione;
+    PageTopbar.render('#topbarMount', { icon: adminSezione === 'utenti' ? 'users' : 'settings', title: adminTitolo,
+        subtitle: adminSezione === 'impostazioni' ? 'Autowin e strumenti di collaudo'
+            : (menuAmministrazione ? 'Scegli la sezione da aprire' : 'Approvazioni, sospensioni e note private') });
     if (window.Icons) Icons.hydrate();
 </script>
 <script>

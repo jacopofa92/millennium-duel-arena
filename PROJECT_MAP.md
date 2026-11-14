@@ -1,5 +1,12 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Navigazione Gestione utenti / Impostazioni admin (1.6.76)
+
+Le pagine amministrative non espongono più l'altra sezione come tab: ciascuna
+mostra un solo link di ritorno al menu amministrativo, dove si sceglie la
+sezione. I vecchi URL senza parametro continuano ad aprire Gestione utenti.
+Cache v730.
+
 ## Gestione utenti compatta (1.6.75)
 
 Ogni account mostra subito email, stato e ultimo accesso; sospensione o
