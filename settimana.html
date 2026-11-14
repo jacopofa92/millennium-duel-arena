@@ -53,6 +53,14 @@
                 <h1 class="rz-titolo" id="regolaTitolo"></h1>
             </div>
             <p class="rz-sotto" id="regolaDesc"></p>
+            <div class="rz-boss-scena rz-boss-scena--settimana" id="avversario" aria-label="Avversario della settimana">
+                <div class="rz-boss-testi">
+                    <span class="rz-kicker">Avversario della settimana</span>
+                    <h2 class="rz-avversario-nome" id="avversarioNome"></h2>
+                    <p class="rz-avversario-titolo" id="avversarioTitolo"></p>
+                </div>
+                <div class="rz-boss-figura" id="rzAvversarioFigura" aria-hidden="true"></div>
+            </div>
             <div class="rz-tempo"><div class="rz-tempo-barra"><i id="rzTempoBarra"></i></div><span id="rzTempoTesto"></span></div>
         </section>
 
@@ -60,9 +68,6 @@
 
         <!-- Se col mazzo attivo la regola non si puo' rispettare, qui compare un avviso ben visibile con cosa fare (scrivi()). -->
         <details class="rz-avviso" id="avviso" hidden></details>
-
-        <div class="mp-sezione">Il tuo avversario</div>
-        <div class="rz-faccia" id="avversario"></div>
 
         <div class="mp-sezione">Scegli il livello</div>
         <div class="mp-scelte rz-livelli" id="livelli"></div>
@@ -105,29 +110,6 @@
         { id: 'Difficile', nome: 'Difficile', icona: '🥇', desc: 'Il mazzo completo e l\'IA più attenta.' }
     ];
 
-    /**
-     * Scala un'immagine con trasparenza in modo che la figura VISIBILE (non il file) occupi sempre la stessa frazione
-     * dell'altezza del riquadro, coi piedi sul fondo. Legge l'alfa su una miniatura 96px; se il browser non lo permette
-     * (file:// tratta le immagini locali come "tainted") resta l'immagine com'e'.
-     */
-    function pareggiaAltezza(im) {
-        try {
-            const N = 96;
-            const c = document.createElement('canvas'); c.width = N; c.height = N;
-            const g = c.getContext('2d');
-            g.drawImage(im, 0, 0, N, N);
-            const d = g.getImageData(0, 0, N, N).data;
-            let alto = N, basso = -1;
-            for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (d[(y * N + x) * 4 + 3] > 24) { if (y < alto) alto = y; if (y > basso) basso = y; }
-            if (basso < 0) return;
-            const visibile = (basso - alto + 1) / N;           // frazione d'altezza occupata dalla figura nel file
-            const piedi = (basso + 1) / N;                      // dove stanno i piedi (1 = proprio sul fondo)
-            const s = Math.max(0.8, Math.min(1.3, 0.9 / visibile));
-            im.style.transformOrigin = `50% ${(piedi * 100).toFixed(1)}%`;
-            im.style.transform = `translateY(${((1 - piedi) * 100).toFixed(1)}%) scale(${s.toFixed(3)})`;
-        } catch (e) { /* e' solo un ritocco: senza, le pedine restano come nei file */ }
-    }
-
     function scrivi() {
         const r = Settimana.regola();
         const idAvv = Settimana.avversario();
@@ -152,30 +134,18 @@
         document.getElementById('riepilogo').innerHTML =
             `<span>🏅 Premi presi <strong>${vinte}/3</strong></span>`;
 
-        // Faccia a faccia: tu a sinistra, l'avversario della settimana a destra (pedine scontornate).
-        const a = document.getElementById('avversario');
-        const lato = (cls, nome, sotto, immagine) => {
-            const d = document.createElement('div');
-            d.className = 'rz-lato ' + cls;
-            const p = document.createElement('div');
-            p.className = 'rz-lato-pedina';
-            if (immagine) {
-                const im = document.createElement('img'); im.alt = ''; im.draggable = false;
-                // Le pedine hanno margini diversi dentro il loro file: la figura di uno risultava piu' alta dell'altro.
-                // Appena caricata si misura la parte visibile e si scala perche' tutte abbiano la stessa altezza, coi piedi in basso.
-                im.onload = () => pareggiaAltezza(im);
-                im.src = immagine; p.appendChild(im);
-            }
-            const n = document.createElement('div'); n.className = 'rz-lato-nome'; n.textContent = nome;
-            const s = document.createElement('div'); s.className = 'rz-lato-sotto'; s.textContent = sotto;
-            d.append(p, n, s);
-            return d;
-        };
-        a.innerHTML = '';
-        const io = (window.SaveManager && SaveManager.hasSave() && SaveManager.getPlayerName()) || 'Tu';
-        const vs = document.createElement('div'); vs.className = 'rz-vs'; vs.textContent = 'VS';
-        a.append(lato('rz-lato--io', io, 'Il tuo mazzo attivo', 'images/characters/pedine/mirror.png'), vs,
-            lato('rz-lato--loro', avv.name, avv.title || 'Duellante', avv.image ? getCharacterPawnImage(avv.image) : null));
+        // Scenario e avversario condividono la stessa copertina: niente pedina specchio o confronto VS.
+        document.getElementById('avversarioNome').textContent = avv.name;
+        document.getElementById('avversarioTitolo').textContent = avv.title || 'Duellante';
+        const figuraAvversario = document.getElementById('rzAvversarioFigura');
+        figuraAvversario.innerHTML = '';
+        if (avv.image) {
+            const pedina = document.createElement('img');
+            pedina.alt = '';
+            pedina.draggable = false;
+            pedina.src = getCharacterPawnImage(avv.image);
+            figuraAvversario.appendChild(pedina);
+        }
 
         // Il giocatore usa solo carte che possiede: se col suo mazzo attivo la regola non si può rispettare, non si gioca.
         const verifica = Settimana.verificaMazzo(SaveManager.getActiveDeck());

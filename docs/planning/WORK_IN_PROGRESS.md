@@ -1,5 +1,10 @@
 # Work in progress — miglioramenti da seguire
 
+## Scheda Duello della Settimana — chiusa in 1.6.81
+
+- [x] Unita la presentazione di mappa e avversario nella copertina; rimossa la
+      pedina del giocatore e il confronto VS separato. Cache v735.
+
 ## Timer duplicato Duello della Settimana — chiuso in 1.6.80
 
 - [x] Rimosso «Cambia tra» accanto a «Premi presi»; resta il timer nella

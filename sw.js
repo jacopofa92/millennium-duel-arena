@@ -562,8 +562,8 @@
 // v731: prova antialiasing WebGL nel Puzzle dello splash.
 // v732: ripristinato antialiasing disattivato, la prova causava scatti.
 // v733: riepilogo Caccia compatto, premi richiudibili e timer non duplicato.
-// v734: rimosso il timer duplicato dal riepilogo Duello della Settimana.
-const CACHE_NAME = 'ygo-duel-arena-v734';
+// v735: scheda unica mappa + avversario per il Duello della Settimana.
+const CACHE_NAME = 'ygo-duel-arena-v735';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

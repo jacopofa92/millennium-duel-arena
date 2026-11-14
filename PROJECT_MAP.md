@@ -1,5 +1,11 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Scheda Duello della Settimana (1.6.81)
+
+Mappa, regola e avversario sono riuniti nella stessa copertina; resta visibile
+solo la pedina dell'avversario, senza pedina del giocatore o confronto VS.
+Cache v735.
+
 ## Riepilogo Duello della Settimana (1.6.80)
 
 Nel riepilogo resta solo «Premi presi»: il cambio della rotazione è già
