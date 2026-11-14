@@ -1,5 +1,10 @@
 # Work in progress — miglioramenti da seguire
 
+## Timer duplicato Duello della Settimana — chiuso in 1.6.80
+
+- [x] Rimosso «Cambia tra» accanto a «Premi presi»; resta il timer nella
+      scheda della regola settimanale. Cache v734.
+
 ## HUD Caccia al Boss — chiuso in 1.6.79
 
 - [x] Riepilogo compatto per tentativi e record/miglior tentativo in turni.

@@ -1,5 +1,10 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Riepilogo Duello della Settimana (1.6.80)
+
+Nel riepilogo resta solo «Premi presi»: il cambio della rotazione è già
+indicato nella scheda principale della regola. Cache v734.
+
 ## Riepilogo e premi Caccia al Boss (1.6.79)
 
 La pagina Caccia mostra Tentativi e record turni in due schede compatte; il
