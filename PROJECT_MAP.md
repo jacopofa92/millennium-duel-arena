@@ -1,5 +1,10 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Slot Cacciatori in Assalto al Boss (1.6.84)
+
+Su mobile i due posti della squadra A usano due colonne fluide e figure più
+compatte, così non si impilano né escono dal tavolo. Cache v738.
+
 ## Intestazione Rivincite (1.6.83)
 
 Rimosso il paragrafo introduttivo; «Duelli celebri» precede i contatori Vinte

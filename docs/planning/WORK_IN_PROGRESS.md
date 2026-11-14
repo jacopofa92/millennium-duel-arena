@@ -1,5 +1,10 @@
 # Work in progress — miglioramenti da seguire
 
+## Slot Cacciatori in Assalto al Boss — chiuso in 1.6.84
+
+- [x] Due posti affiancati nella lobby mobile, con larghezza e figura adattive.
+      Cache v738.
+
 ## Intestazione Rivincite — chiusa in 1.6.83
 
 - [x] Sostituita la descrizione iniziale con il titolo «Duelli celebri» e

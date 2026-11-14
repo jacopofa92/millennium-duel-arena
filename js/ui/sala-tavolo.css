@@ -158,6 +158,19 @@
     .st-sala { --st-fig: 112px; }
     .st-riga { gap: 8px; }
     .st-slot { width: calc(var(--st-fig) * 1.3); padding: 10px 6px 8px; }
+    /* In Assalto al Boss i due Cacciatori condividono la stessa squadra:
+       su un telefono non devono andare a capo come una normale riga flessibile.
+       La larghezza delle colonne segue il tavolo e le figure si riducono qui,
+       così nomi e stato restano leggibili anche sugli schermi più stretti. */
+    .st-sala.st-fissa .st-squadra--a[data-n="2"] { --st-fig: clamp(84px, 29vw, 118px); }
+    .st-sala.st-fissa .st-squadra--a[data-n="2"] .st-riga {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        width: 100%;
+    }
+    .st-sala.st-fissa .st-squadra--a[data-n="2"] .st-cella,
+    .st-sala.st-fissa .st-squadra--a[data-n="2"] .st-slot { min-width: 0; width: 100%; }
     .st-base { bottom: 62px; }
     .st-centro { min-height: calc(var(--st-fig) * .78 + 60px); }
     .st-conto { font-size: 4rem; }
