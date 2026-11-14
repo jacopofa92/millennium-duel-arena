@@ -67,10 +67,12 @@
             <p class="rz-sotto" id="regole"></p>
         </section>
 
-        <div class="mp-riepilogo" id="riepilogo"></div>
+        <div class="rz-statistiche" id="riepilogo" role="group" aria-label="I tuoi risultati nella Caccia al Boss"></div>
 
-        <div class="mp-sezione">Premi</div>
-        <section class="mp-pannello" id="premio"></section>
+        <details class="rz-come rz-premi">
+            <summary>Premi</summary>
+            <section class="mp-pannello" id="premio"></section>
+        </details>
 
         <details class="rz-come">
             <summary>Come funziona</summary>
@@ -112,9 +114,8 @@
         const giorni = Math.floor(ms / 86400000);
         const ore = Math.floor((ms % 86400000) / 3600000);
         document.getElementById('riepilogo').innerHTML =
-            `<span>🏹 Tentativi <strong>${stato.tentativi}</strong></span>` +
-            `<span>${stato.vinta ? '✅ Battuto' : '⚔️ Da battere'}${stato.migliorTurni != null ? ' in <strong>' + stato.migliorTurni + '</strong> turni' : ''}</span>` +
-            `<span>⏳ Cambia tra <strong>${giorni > 0 ? giorni + ' g ' : ''}${ore} h</strong></span>`;
+            `<div class="rz-stat"><span>Tentativi</span><strong>${stato.tentativi}</strong></div>` +
+            `<div class="rz-stat ${stato.vinta ? 'is-battuto' : ''}"><span>${stato.vinta ? 'Boss battuto' : 'Record personale'}</span><strong>${stato.migliorTurni != null ? stato.migliorTurni + ' turni' : '—'}</strong><small>${stato.vinta ? 'Miglior risultato' : stato.migliorTurni != null ? 'Miglior tentativo' : 'Ancora da battere'}</small></div>`;
 
         const el = document.getElementById('boss');
         el.innerHTML = '<div class="mp-titolo"></div><div class="mp-desc"></div>';

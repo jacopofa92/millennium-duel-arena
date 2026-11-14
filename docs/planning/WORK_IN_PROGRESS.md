@@ -1,5 +1,11 @@
 # Work in progress — miglioramenti da seguire
 
+## HUD Caccia al Boss — chiuso in 1.6.79
+
+- [x] Riepilogo compatto per tentativi e record/miglior tentativo in turni.
+- [x] Rimosso il timer duplicato; resta nel badge della scheda Boss.
+- [x] Premi richiudibili, chiusi di default come «Come funziona». Cache v733.
+
 ## Prova antialiasing Puzzle dello splash — respinta in 1.6.78
 
 - [x] La prova isolata con `antialias: true` causava più scatti: ripristinato

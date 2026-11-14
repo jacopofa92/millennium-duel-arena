@@ -1,5 +1,11 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Riepilogo e premi Caccia al Boss (1.6.79)
+
+La pagina Caccia mostra Tentativi e record turni in due schede compatte; il
+timer resta solo nel badge in cima alla scheda del Boss. I premi sono in un
+`details` chiuso di default, con lo stile di «Come funziona». Cache v733.
+
 ## Antialiasing standard dello splash respinto (1.6.78)
 
 La prova con `antialias: true` sul canvas WebGL del Puzzle ha peggiorato la
