@@ -558,7 +558,12 @@
         /* In fondo, lo spazio della tastiera (--tastiera, vedi lo script
            "tastiera" più sotto): senza, il box dell'ultimo campo finiva
            SOTTO la tastiera di Android e non si poteva scorrere fin lì. */
-        padding: max(16px, 12vh) 16px calc(16px + var(--tastiera, 0px));
+        /* Il blocco resta sotto la zona fotocamera/notch, ma il margine
+           verticale piu' compatto evita che la schermata sembri troppo
+           bassa sui telefoni in verticale. La safe area prevale quando
+           il browser la espone; 9vh lascia comunque respiro sui device
+           che non la comunicano. */
+        padding: max(16px, 9vh, env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom) + var(--tastiera, 0px));
         gap: clamp(14px, 3vh, 26px);
     }
     /* Col gate visibile la pagina deve poter scorrere (body è overflow:hidden
@@ -868,7 +873,7 @@
         .menu-item-icon { font-size: 1rem; }
         .menu-item-arrow { font-size: 1rem; }
         .menu-footer { position: static; margin-top: 10px; transform: none; }
-        .gate-shell { min-height: auto; padding: 10px 16px calc(18px + var(--tastiera, 0px)); gap: 4px; }
+        .gate-shell { min-height: auto; padding: max(10px, env(safe-area-inset-top)) 16px calc(18px + env(safe-area-inset-bottom) + var(--tastiera, 0px)); gap: 4px; }
         .gate-card { gap: 8px; padding: 13px 16px; }
         .gate-copy { display: none; }
         .gate-kicker { margin-bottom: 2px; }

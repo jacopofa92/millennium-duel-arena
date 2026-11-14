@@ -1,5 +1,11 @@
 # Work in progress — miglioramenti da seguire
 
+## Posizione login su mobile — chiuso in 1.6.74
+
+- [x] Spostato il contenuto 3vh più in alto mantenendo la safe area superiore
+      per foro fotocamera/notch e quella inferiore per i controlli di sistema.
+- [x] Anche il layout a schermo basso rispetta la safe area. Cache v728.
+
 ## Ritocchi accessibili alla login — chiuso in 1.6.73
 
 - [x] Nota approvazione più leggibile, mostra/nascondi password in accesso e

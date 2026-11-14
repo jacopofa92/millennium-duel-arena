@@ -1,5 +1,11 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Posizione login su mobile (1.6.74)
+
+Il gate parte 3vh più in alto sui telefoni, mantenendo un margine minimo
+rispetto alla zona fotocamera/notch tramite safe area CSS. Anche il layout
+compatto in orizzontale rispetta la safe area. Cache v728.
+
 ## Ritocchi accessibili alla login (1.6.73)
 
 Il gate conserva pannello, colori e impaginazione. La nota di approvazione
