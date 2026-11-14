@@ -1,5 +1,11 @@
 # Work in progress — miglioramenti da seguire
 
+## Prova antialiasing Puzzle dello splash — 1.6.77
+
+- [x] Attivato solo `antialias: true` nel contesto WebGL, senza cambiare
+      risoluzione o shader, per poter valutare l'effetto isolato. Cache v731.
+- [ ] Confrontare contorni e fluidità su desktop e telefono.
+
 ## Sezioni admin indipendenti — chiuso in 1.6.76
 
 - [x] In Impostazioni admin e Gestione utenti non compare il collegamento

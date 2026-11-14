@@ -419,7 +419,7 @@ void main(){
             const canvas = document.createElement('canvas');
             canvas.setAttribute('aria-hidden', 'true');
             canvas.className = 'splash-webgl-canvas';
-            const gl = /** @type {WebGLRenderingContext|null} */ (canvas.getContext('webgl', { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance' }));
+            const gl = /** @type {WebGLRenderingContext|null} */ (canvas.getContext('webgl', { alpha: false, antialias: true, depth: false, stencil: false, powerPreference: 'high-performance' }));
             if (!gl) return false;
             const comp = (tipo, src) => { const o = /** @type {WebGLShader} */ (gl.createShader(tipo)); gl.shaderSource(o, src); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) { window.SPLASH_WEBGL_ERRORE = String(gl.getShaderInfoLog(o)); return null; } return o; };
             const vs = comp(gl.VERTEX_SHADER, VS), fs = comp(gl.FRAGMENT_SHADER, FS);
