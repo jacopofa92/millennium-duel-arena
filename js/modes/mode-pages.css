@@ -169,27 +169,32 @@ body::before {
     --fuga: rgba(0, 0, 0, 0.38);
     --luce: rgba(247, 215, 116, 0.85);
     position: relative;
-    width: min(100%, 440px);
+    box-sizing: border-box;
+    width: min(100%, 460px);
+    min-width: 0;
+    padding-inline: 8px;
     margin: 6px auto 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.55));
 }
-/* La cima: una piramide d'oro con la corona. */
+/* La cima richiama una torre fortificata: merli e pietra, con un sigillo dorato. */
 .tw-cima {
     position: relative;
-    width: 74%;
-    height: 92px;
+    width: 58%;
+    height: 76px;
     display: grid;
     place-items: end center;
-    padding-bottom: 8px;
-    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+    padding-bottom: 7px;
+    clip-path: polygon(0 36%, 16% 36%, 16% 18%, 29% 18%, 29% 36%, 40% 36%, 50% 0, 60% 36%, 71% 36%, 71% 18%, 84% 18%, 84% 36%, 100% 36%, 100% 100%, 0 100%);
     background:
-        linear-gradient(115deg, rgba(255, 244, 200, 0.55) 0 30%, transparent 60%),
-        linear-gradient(180deg, #f7d774, #b8862b 70%, #7a5418);
+        linear-gradient(90deg, transparent 8%, rgba(255, 226, 155, .3) 50%, transparent 92%),
+        repeating-linear-gradient(90deg, transparent 0 27%, rgba(0,0,0,.28) 27.5% 28.5%, transparent 29% 50%),
+        linear-gradient(180deg, #78603a, #3a2b19 70%, #21180e);
+    box-shadow: 0 0 0 1px rgba(247, 215, 116, .42), 0 12px 28px rgba(0,0,0,.55);
 }
-.tw-cima-corona { font-size: 1.6rem; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5)); margin-bottom: 4px; }
+.tw-cima-corona { font-size: 1.45rem; filter: drop-shadow(0 0 9px rgba(247,215,116,.65)); margin-bottom: 2px; }
 .tw-cima-scritta {
     margin-top: 6px;
     font-family: Georgia, 'Times New Roman', serif;
@@ -198,50 +203,57 @@ body::before {
     text-transform: uppercase;
     color: var(--gold);
 }
-.tw-piani { list-style: none; width: 100%; display: flex; flex-direction: column; align-items: center; }
+.tw-piani { box-sizing: border-box; position: relative; isolation: isolate; list-style: none; width: 100%; margin: 0; padding: 12px 0; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.tw-piani::before {
+    content: ''; position: absolute; z-index: -1; inset: 0 7%;
+    border-inline: 1px solid rgba(220, 187, 120, .25);
+    background: linear-gradient(90deg, rgba(4,5,8,.58), rgba(116,91,53,.14) 12%, rgba(8,8,10,.08) 50%, rgba(116,91,53,.14) 88%, rgba(4,5,8,.58));
+    box-shadow: inset 12px 0 18px rgba(0,0,0,.28), inset -12px 0 18px rgba(0,0,0,.28);
+}
 .tw-piano {
     position: relative;
+    box-sizing: border-box;
     width: var(--largo, 100%);
-    height: 74px;
+    height: 68px;
     display: grid;
     grid-template-columns: 44px 58px 1fr;
     align-items: center;
     gap: 10px;
     padding: 0 12px;
     color: var(--ink-dim);
-    border-left: 3px solid var(--pietra-scura);
-    border-right: 3px solid var(--pietra-scura);
+    border: 1px solid rgba(210, 183, 126, .16);
+    border-inline-width: 3px;
     background:
-        /* due file di mattoni sfalsati per piano */
-        repeating-linear-gradient(90deg, transparent 0 46px, var(--fuga) 46px 48px) 0 0 / 100% 37px no-repeat,
-        repeating-linear-gradient(90deg, transparent 0 22px, var(--fuga) 22px 24px, transparent 24px 46px) 0 37px / 100% 37px no-repeat,
-        linear-gradient(180deg, var(--fuga) 0 2px, transparent 2px 35px, var(--fuga) 35px 37px, transparent 37px),
-        linear-gradient(90deg, var(--pietra-scura), var(--pietra) 22%, #5b4a2e 50%, var(--pietra) 78%, var(--pietra-scura));
-    transition: filter 0.2s;
+        linear-gradient(90deg, rgba(8,7,6,.72), transparent 10% 90%, rgba(8,7,6,.72)),
+        repeating-linear-gradient(90deg, transparent 0 68px, rgba(0,0,0,.17) 69px 71px),
+        linear-gradient(180deg, rgba(255,232,178,.13), transparent 13px 78%, rgba(0,0,0,.28)),
+        linear-gradient(90deg, #21190f, #57452b 18%, #3b2e1c 50%, #57452b 82%, #21190f);
+    transition: filter .2s, box-shadow .2s;
 }
 /* Il cornicione sotto ogni piano. */
 .tw-piano::after {
     content: '';
     position: absolute;
-    left: -8px;
-    right: -8px;
+    left: 0;
+    right: 0;
     bottom: -3px;
-    height: 6px;
-    border-radius: 2px;
-    background: linear-gradient(180deg, #7a6440, #3a2c18);
+    height: 5px;
+    border-radius: 1px;
+    background: linear-gradient(180deg, rgba(214,184,121,.72), #342717 78%);
     z-index: 1;
 }
 .tw-piano.is-futuro { filter: brightness(0.62) saturate(0.7); }
 .tw-piano.is-fatto { filter: brightness(0.85); }
 .tw-piano.is-boss {
-    width: calc(var(--largo, 100%) + 9%);
-    height: 86px;
-    border-color: #8a6420;
+    width: min(calc(var(--largo, 100%) + 5%), 100%);
+    height: 80px;
+    border-color: rgba(225, 184, 91, .7);
     background:
-        linear-gradient(180deg, rgba(243, 156, 18, 0.16), transparent 40%),
-        repeating-linear-gradient(90deg, transparent 0 46px, var(--fuga) 46px 48px) 0 0 / 100% 43px no-repeat,
-        repeating-linear-gradient(90deg, transparent 0 22px, var(--fuga) 22px 24px, transparent 24px 46px) 0 43px / 100% 43px no-repeat,
-        linear-gradient(90deg, #3a2a12, #6b5128 30%, #7d6131 50%, #6b5128 70%, #3a2a12);
+        linear-gradient(180deg, rgba(243, 190, 73, .2), transparent 42%),
+        linear-gradient(90deg, rgba(8,7,6,.72), transparent 10% 90%, rgba(8,7,6,.72)),
+        repeating-linear-gradient(90deg, transparent 0 68px, rgba(0,0,0,.2) 69px 71px),
+        linear-gradient(180deg, #72562c, #49351b 72%, #281d10);
+    box-shadow: inset 0 1px rgba(255,239,185,.42), inset 0 -5px rgba(0,0,0,.22), 0 0 18px rgba(209,162,67,.12);
 }
 .tw-targa {
     width: 40px;
@@ -302,17 +314,18 @@ body::before {
 .tw-piano.is-attuale {
     filter: none;
     z-index: 3;
-    box-shadow: 0 0 0 2px var(--gold), 0 0 26px rgba(247, 215, 116, 0.45);
+    padding-right: 58px;
+    box-shadow: 0 0 0 1px var(--gold), 0 0 22px rgba(247, 215, 116, 0.38), inset 0 0 22px rgba(247,215,116,.1);
 }
 .tw-piano.is-attuale .tw-finestra { border-color: var(--gold); box-shadow: 0 0 16px rgba(247, 215, 116, 0.6), inset 0 0 8px rgba(0,0,0,0.6); }
 .tw-pedina {
     position: absolute;
-    right: -20px;
+    right: 8px;
     top: 50%;
     z-index: 4;
-    width: 46px;
-    height: 46px;
-    margin-top: -23px;
+    width: 38px;
+    height: 38px;
+    margin-top: -19px;
     border-radius: 50%;
     border: 2px solid var(--gold);
     background: #120d07;
@@ -372,12 +385,14 @@ body::before {
     transform: translateY(-46px);
 }
 @media (max-width: 520px) {
-    .tw-piano { grid-template-columns: 38px 48px 1fr; gap: 8px; padding: 0 10px; height: 66px; }
-    .tw-piano.is-boss { height: 76px; }
+    .tw { padding-inline: 3px; }
+    .tw-piano { grid-template-columns: 34px 44px minmax(0, 1fr); gap: 7px; padding: 0 7px; height: 62px; }
+    .tw-piano.is-boss { height: 72px; }
+    .tw-piano.is-attuale { padding-right: 52px; }
     .tw-finestra { width: 46px; height: 50px; border-radius: 23px 23px 4px 4px; }
     .tw-targa { width: 34px; height: 26px; font-size: 0.85rem; }
     .tw-nome { font-size: 0.85rem; }
-    .tw-pedina { right: -14px; width: 40px; height: 40px; margin-top: -20px; }
+    .tw-pedina { right: 5px; width: 34px; height: 34px; margin-top: -17px; }
 }
 @media (prefers-reduced-motion: reduce) { .tw-pedina { animation: none; } }
 .mp-carte { display: flex; flex-direction: column; gap: 6px; max-height: 50vh; overflow-y: auto; }
@@ -476,7 +491,7 @@ body::before {
     -webkit-backdrop-filter: blur(1.5px);
     backdrop-filter: blur(1.5px);
 }
-.torre-main { width: min(1120px, 100%); gap: 18px; }
+.torre-main { box-sizing: border-box; width: min(1120px, 100%); min-width: 0; gap: 18px; overflow-x: clip; }
 .modalita-torre .mp-riepilogo {
     width: min(650px, 100%);
     margin: 0 auto;
@@ -509,6 +524,7 @@ body::before {
     align-items: start;
     gap: clamp(24px, 5vw, 64px);
 }
+.torre-layout > * { min-width: 0; }
 .torre-layout > .mp-pannello {
     position: sticky;
     top: 82px;
@@ -621,20 +637,18 @@ body::before {
 .modalita-torre .mp-btn--secondario { background: rgba(0,0,0,.2); color: var(--ink-dim); box-shadow: none; }
 .modalita-torre .mp-btn--pericolo { color: var(--danger); }
 
-/* La torre acquisisce profondità con cornicioni e ombre alternati, senza
-   muovere la struttura: il riferimento spaziale deve restare stabile. */
-.modalita-torre .tw { width: min(100%, 500px); perspective: 900px; margin-top: 0; }
+/* Piani leggibili e stabili: la profondità viene dai cornicioni, non da
+   trasformazioni che allargano la pagina sui telefoni. */
+.modalita-torre .tw { width: min(100%, 500px); perspective: none; margin-top: 0; }
 .modalita-torre .tw-piano {
-    transform: rotateX(1.2deg) translateZ(0);
-    transform-origin: 50% 100%;
     box-shadow: inset 18px 0 22px rgba(0,0,0,.2), inset -18px 0 22px rgba(0,0,0,.2);
 }
 .modalita-torre .tw-piano:nth-child(even) { filter: brightness(.96); }
 .modalita-torre .tw-piano.is-futuro { filter: brightness(.48) saturate(.62); }
 .modalita-torre .tw-piano.is-fatto { filter: brightness(.72) saturate(.72); }
 .modalita-torre .tw-piano.is-attuale {
-    transform: translateZ(12px) scale(1.012);
-    box-shadow: 0 0 0 1px #f1d17c, 0 0 34px rgba(247, 215, 116, .35), inset 18px 0 22px rgba(0,0,0,.15), inset -18px 0 22px rgba(0,0,0,.15);
+    transform: none;
+    box-shadow: 0 0 0 1px #f1d17c, 0 0 26px rgba(247, 215, 116, .32), inset 18px 0 22px rgba(0,0,0,.15), inset -18px 0 22px rgba(0,0,0,.15);
 }
 .modalita-torre .tw-piano.is-attuale::before {
     content: '';

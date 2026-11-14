@@ -1,5 +1,11 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Interfaccia Torre dei Duellanti (1.6.82)
+
+Rifatti i piani in pietra e la sommità della torre; corretti spaziatura e
+dimensioni dei piani per impedire overflow orizzontale. La posizione attuale
+non si allarga più con trasformazioni. Cache v736.
+
 ## Scheda Duello della Settimana (1.6.81)
 
 Mappa, regola e avversario sono riuniti nella stessa copertina; resta visibile

@@ -1,5 +1,10 @@
 # Work in progress — miglioramenti da seguire
 
+## Interfaccia Torre dei Duellanti — chiusa in 1.6.82
+
+- [x] Ridisegnata la torre con piani in pietra più leggibili; azzerati padding
+      predefiniti della lista e sconfinamenti dei piani/marker su mobile. Cache v736.
+
 ## Scheda Duello della Settimana — chiusa in 1.6.81
 
 - [x] Unita la presentazione di mappa e avversario nella copertina; rimossa la
