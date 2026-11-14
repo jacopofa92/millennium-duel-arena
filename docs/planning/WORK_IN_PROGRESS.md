@@ -1,5 +1,10 @@
 # Work in progress — miglioramenti da seguire
 
+## Intestazione Rivincite — chiusa in 1.6.83
+
+- [x] Sostituita la descrizione iniziale con il titolo «Duelli celebri» e
+      portati subito sotto i contatori Vinte e Medaglie, nel flusso sicuro. Cache v737.
+
 ## Interfaccia Torre dei Duellanti — chiusa in 1.6.82
 
 - [x] Ridisegnata la torre con piani in pietra più leggibili; azzerati padding

@@ -1,5 +1,10 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Intestazione Rivincite (1.6.83)
+
+Rimosso il paragrafo introduttivo; «Duelli celebri» precede i contatori Vinte
+e Medaglie, che restano nel flusso sotto l'area sicura del telefono. Cache v737.
+
 ## Interfaccia Torre dei Duellanti (1.6.82)
 
 Rifatti i piani in pietra e la sommità della torre; corretti spaziatura e

@@ -42,6 +42,10 @@ body::before {
     gap: 16px;
 }
 .mp-intro { color: var(--ink-dim); font-size: 0.95rem; line-height: 1.45; }
+.rv-main { gap: 14px; }
+.rv-intestazione { display: grid; gap: 10px; padding-top: 2px; }
+.rv-intestazione h1 { color: var(--gold); font: 700 clamp(1.45rem, 5vw, 2rem)/1.1 Georgia, 'Times New Roman', serif; letter-spacing: .04em; text-shadow: 0 2px 12px rgba(0,0,0,.72), 0 0 20px rgba(247,215,116,.16); }
+.rv-intestazione .mp-riepilogo { width: fit-content; max-width: 100%; }
 .mp-riepilogo {
     display: flex;
     flex-wrap: wrap;
