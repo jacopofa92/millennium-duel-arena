@@ -1,5 +1,11 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Antialiasing standard dello splash respinto (1.6.78)
+
+La prova con `antialias: true` sul canvas WebGL del Puzzle ha peggiorato la
+fluidità; ripristinato `antialias: false`. Shader e budget di risoluzione non
+sono cambiati. Cache v732.
+
 ## Prova antialiasing Puzzle dello splash (1.6.77)
 
 Il contesto WebGL di `js/ui/splash-webgl.js` richiede ora `antialias: true`.

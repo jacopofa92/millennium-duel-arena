@@ -1,7 +1,7 @@
 # Graph Report - millennium-duel-arena  (2026-11-14)
 
 ## Corpus Check
-- 792 files · ~1,730,606 words
+- 792 files · ~1,730,663 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 75 file(s) not represented in the graph (top: .css 63, .log 5, .ttf 3)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d29182be`
+- Built from commit: `3ffa65dd`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

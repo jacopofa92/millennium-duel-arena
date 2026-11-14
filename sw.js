@@ -560,7 +560,8 @@
 // v729: schede account compatte ed espandibili nella gestione utenti.
 // v730: menu admin separati, con ritorno alla scelta delle sezioni.
 // v731: prova antialiasing WebGL nel Puzzle dello splash.
-const CACHE_NAME = 'ygo-duel-arena-v731';
+// v732: ripristinato antialiasing disattivato, la prova causava scatti.
+const CACHE_NAME = 'ygo-duel-arena-v732';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

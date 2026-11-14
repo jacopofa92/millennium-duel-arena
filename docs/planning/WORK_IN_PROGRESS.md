@@ -1,10 +1,11 @@
 # Work in progress — miglioramenti da seguire
 
-## Prova antialiasing Puzzle dello splash — 1.6.77
+## Prova antialiasing Puzzle dello splash — respinta in 1.6.78
 
-- [x] Attivato solo `antialias: true` nel contesto WebGL, senza cambiare
-      risoluzione o shader, per poter valutare l'effetto isolato. Cache v731.
-- [ ] Confrontare contorni e fluidità su desktop e telefono.
+- [x] La prova isolata con `antialias: true` causava più scatti: ripristinato
+      `antialias: false`, senza modificare shader o risoluzione. Cache v732.
+- [ ] Se servirà una nuova prova, valutare un antialias mirato nello shader
+      e misurare la fluidità sui telefoni prima di pubblicarlo.
 
 ## Sezioni admin indipendenti — chiuso in 1.6.76
 
