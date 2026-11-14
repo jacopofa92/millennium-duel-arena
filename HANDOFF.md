@@ -6,7 +6,8 @@
 ## Stato del repository
 
 - **Branch attivo:** `main`
-- **Ultimo commit:** `3284b40` — `ui: imposta dettagli video alti di default`
+- **Ultimo commit del repository:** `60ce790` — `docs: aggiunge passaggio di consegne Ubuntu` (questo documento).
+- **Ultimo commit applicativo:** `3284b40` — `ui: imposta dettagli video alti di default`.
 - **Sincronizzazione:** `main` è allineato a `origin/main` al momento di questo aggiornamento.
 - **Modifiche non committate:** nessuna; il working tree era pulito.
 - **Versione gioco:** `1.6.86`
