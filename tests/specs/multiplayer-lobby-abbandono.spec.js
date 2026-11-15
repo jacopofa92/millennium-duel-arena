@@ -64,6 +64,13 @@ module.exports = {
             await pageA.waitForSelector('#mpReadyBar:not([hidden])', { timeout: 20000 });
             await pageB.waitForSelector('#mpReadyBar:not([hidden])', { timeout: 20000 });
 
+            // Entrambi i ruoli, host e ospite entrato con il codice, possono
+            // verificare la connessione al rientro senza cambiare stanza.
+            const hostAttivo = await pageA.evaluate(() => DuelNetwork.resumeRoomConnection());
+            const ospiteAttivo = await pageB.evaluate(() => DuelNetwork.resumeRoomConnection());
+            assert(hostAttivo === true, 'Il controllo di ripresa deve confermare la stessa stanza per chi l’ha creata');
+            assert(ospiteAttivo === true, 'Il controllo di ripresa deve confermare la stessa stanza anche per chi è entrato col codice');
+
             // Se ne va A, cioè proprio chi ha creato la stanza, e se ne va
             // DOPO essersi dichiarato pronto: è la sequenza peggiore delle
             // due possibili — lasciava B a un solo click da un duello

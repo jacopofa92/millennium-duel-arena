@@ -40,7 +40,7 @@ module.exports = {
     standalone: true,
     name: 'Server Multiplayer: stanze da 3-4 posti per il Tag Team (e quella da 2 invariata)',
     async run(t) {
-        const relay = await startRoomServer();
+        const relay = await startRoomServer({ ROOM_TTL_MS: '150', ROOM_CLEANUP_INTERVAL_MS: '30' });
         const aperti = [];
         const nuovo = async () => { const c = await client(relay.wsUrl); aperti.push(c); return c; };
         try {
@@ -50,6 +50,10 @@ module.exports = {
             const creata = await a.aspetta(tipo('room-created'));
             t.assert(creata.capienza === 4 && creata.tu === 'g1', 'room-created dice capienza e id pubblico: ' + JSON.stringify(creata));
             const code = creata.code;
+            await pausa(250); // supera il TTL di prova: una sala con client collegati non deve scadere
+            a.manda({ type: 'room-resume-check', probeId: 17 });
+            const verificaHost = await a.aspetta(tipo('room-resume-result', (m) => m.probeId === 17));
+            t.assert(verificaHost.active === true, 'Il controllo di rientro conferma il client host ancora collegato');
             const primo = await a.aspetta(tipo('room-update'));
             t.assert(primo.host === 'g1' && primo.giocatori.length === 1, 'Chi crea riceve subito l\'elenco della stanza');
 
@@ -92,6 +96,9 @@ module.exports = {
             const d2 = await nuovo(); d2.manda({ type: 'rejoin-room', code, playerId: segretoD });
             const rientro = await d2.aspetta(tipo('rejoined'));
             t.assert(rientro.tu === 'g4', 'Chi rientra torna g4');
+            d2.manda({ type: 'room-resume-check', probeId: 18 });
+            const verificaRientrato = await d2.aspetta(tipo('room-resume-result', (m) => m.probeId === 18));
+            t.assert(verificaRientrato.active === true, 'Il client rientrato può verificare la stessa sessione di sala');
             const su = await c.aspetta(tipo('opponent-reconnected'));
             t.assert(su.da === 'g4', 'Il rientro dice chi');
 

@@ -1429,16 +1429,41 @@
         $('mpJoinBtn').disabled = false;
     });
 
+    // I browser mobili possono sospendere timer e WebSocket mentre l'app e'
+    // in background. Al ritorno chiediamo una conferma al relay: se il socket
+    // era solo apparentemente aperto, network.js lo chiude e riprende la
+    // riconnessione usando codice stanza e playerId esistenti.
+    let salaNascostaDal = 0;
+    function segnaSalaNascosta() {
+        if (!salaNascostaDal) salaNascostaDal = Date.now();
+    }
+    function verificaRientroInSala() {
+        if (document.visibilityState === 'hidden' || !salaNascostaDal) return;
+        const attesaMs = Date.now() - salaNascostaDal;
+        salaNascostaDal = 0;
+        if (attesaMs < 5000) return; // evita ping aggiuntivi per cambi di focus brevissimi
+        net.resumeRoomConnection().then((attiva) => {
+            if (attiva) showStatus('✅ Connessione alla stanza ripristinata.');
+        });
+    }
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') segnaSalaNascosta();
+        else verificaRientroInSala();
+    });
+    window.addEventListener('blur', segnaSalaNascosta);
+    window.addEventListener('focus', verificaRientroInSala);
+    window.addEventListener('pageshow', verificaRientroInSala);
+
     /**
      * Uscire dalla pagina = uscire dalla stanza, subito.
      *
      * Senza questo, chiudere la scheda o tornare al menu lasciava
      * semplicemente cadere il socket, e il server lo tratta come una
-     * disconnessione momentanea: tiene il posto occupato per 45 secondi
+     * disconnessione momentanea: tiene il posto occupato per 5 minuti
      * (RECONNECT_GRACE_MS, server/server.js) aspettando un rientro che in
      * questo caso non arriverà MAI — il playerId per il 'rejoin-room' vive
      * solo in memoria (js/multiplayer/network.js) e muore con la pagina.
-     * Chi restava vedeva quindi per tre quarti di minuto "in attesa che
+     * Chi restava vedeva quindi per cinque minuti "in attesa che
      * torni" invece della verità.
      *
      * `pagehide` e non `beforeunload`: è l'unico dei due su cui si può

@@ -15,7 +15,7 @@
  * server (vedi server/server.js) per tornare nella STESSA stanza invece
  * di finire in una nuova. Copre il caso comune di una disconnessione
  * breve con la scheda del browser rimasta aperta (Wi-Fi che sfarfalla,
- * laptop in sospensione) — NON la chiusura vera della scheda, dopo la
+ * app mobile sospesa) — NON la chiusura vera della scheda, dopo la
  * quale questo stato in memoria è comunque perso (limite dichiarato,
  * vedi il commento in cima a server/server.js).
  *
@@ -28,9 +28,10 @@
 (function () {
     'use strict';
 
-    // Sei tentativi in ~31 s di attese (piu' il tempo di ogni tentativo): il server tiene il posto 45 s (RECONNECT_GRACE_MS), quindi
-    // arrendersi dopo 15 s (i quattro di prima) lasciava metà della finestra inutilizzata su una linea che stava solo tornando.
-    const RECONNECT_DELAYS_MS = [1000, 2000, 4000, 8000, 8000, 8000];
+    // I tentativi coprono circa 4 minuti e mezzo, restando entro i 5 minuti
+    // di posto riservato dal relay. Su mobile il timer puo' restare sospeso
+    // insieme all'app: resumeRoomConnection() riparte subito al rientro.
+    const RECONNECT_DELAYS_MS = [1000, 2000, 4000, 8000, 15000, 25000, 25000, 25000, 25000, 25000, 25000, 25000];
 
     // Un singolo tentativo di apertura resta breve: se il server non c'è,
     // o l'indirizzo è sbagliato, l'errore deve arrivare subito.
@@ -90,6 +91,9 @@
         let idPubblico = null;
         let intentionalClose = false;
         let reconnectTimer = null;
+        let reconnectInCorso = false;
+        let resumeProbeId = 0;
+        let resumeProbe = null;
         /** Stato del collegamento in corso (vedi connect/annullaConnessione), null quando non ce n'e' uno. */
         let connessioneInCorso = null;
         const listeners = {};
@@ -243,28 +247,90 @@
          */
         function tryAutoReconnect(attempt) {
             attempt = attempt || 0;
-            if (reconnectTimer) return; // un ciclo di riconnessione è già in corso
-            if (attempt >= RECONNECT_DELAYS_MS.length) {
-                emit('reconnect-failed');
-                return;
+            if (intentionalClose || reconnectInCorso) return;
+            reconnectInCorso = true;
+            const riprova = (indice) => {
+                if (intentionalClose) { reconnectInCorso = false; return; }
+                if (indice >= RECONNECT_DELAYS_MS.length) {
+                    reconnectInCorso = false;
+                    emit('reconnect-failed');
+                    return;
+                }
+                emit('reconnecting', indice + 1);
+                reconnectTimer = setTimeout(() => {
+                    reconnectTimer = null;
+                    if (intentionalClose) { reconnectInCorso = false; return; }
+                    openSocket(lastUrl).then((socket) => {
+                        if (intentionalClose) { socket.close(); reconnectInCorso = false; return; }
+                        ws = socket;
+                        const savedCode = roomCode;
+                        const savedPlayerId = playerId;
+                        let timeoutRientro = null;
+                        const pulisciHandlers = () => {
+                            if (timeoutRientro) clearTimeout(timeoutRientro);
+                            off('rejoined', onRejoined);
+                            off('error', onRejoinError);
+                        };
+                        const onRejoined = () => {
+                            pulisciHandlers();
+                            reconnectInCorso = false;
+                            emit('reconnected');
+                        };
+                        const onRejoinError = () => {
+                            pulisciHandlers();
+                            reconnectInCorso = false;
+                            emit('reconnect-failed');
+                        };
+                        on('rejoined', onRejoined);
+                        on('error', onRejoinError);
+                        timeoutRientro = setTimeout(() => {
+                            pulisciHandlers();
+                            try { socket.close(); } catch (e) { /* gia' chiuso */ }
+                            riprova(indice + 1);
+                        }, CONNECT_ATTEMPT_TIMEOUT_MS);
+                        send({ type: 'rejoin-room', code: savedCode, playerId: savedPlayerId, accessToken: window.CloudSync ? CloudSync.getAccessToken() : null });
+                    }).catch(() => riprova(indice + 1));
+                }, RECONNECT_DELAYS_MS[indice]);
+            };
+            riprova(attempt);
+        }
+
+        /**
+         * Verifica il socket quando la sala torna in primo piano. Il ping
+         * applicativo riceve conferma dal relay; se il WebSocket era rimasto
+         * apparentemente aperto ma la rete si e' addormentata, il timeout lo
+         * chiude e lascia partire il normale rientro con lo stesso playerId.
+         */
+        function resumeRoomConnection() {
+            if (intentionalClose || !roomCode || !playerId) return Promise.resolve(null);
+            if (reconnectInCorso) return Promise.resolve(false);
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                tryAutoReconnect();
+                return Promise.resolve(false);
             }
-            emit('reconnecting', attempt + 1);
-            reconnectTimer = setTimeout(() => {
-                reconnectTimer = null;
-                if (intentionalClose) return;
-                openSocket(lastUrl).then((socket) => {
-                    ws = socket;
-                    const savedCode = roomCode;
-                    const savedPlayerId = playerId;
-                    const onRejoined = () => { off('rejoined', onRejoined); off('error', onRejoinError); emit('reconnected'); };
-                    const onRejoinError = () => { off('rejoined', onRejoined); off('error', onRejoinError); emit('reconnect-failed'); };
-                    on('rejoined', onRejoined);
-                    on('error', onRejoinError);
-                    send({ type: 'rejoin-room', code: savedCode, playerId: savedPlayerId, accessToken: window.CloudSync ? CloudSync.getAccessToken() : null });
-                }).catch(() => {
-                    tryAutoReconnect(attempt + 1);
-                });
-            }, RECONNECT_DELAYS_MS[attempt]);
+            if (resumeProbe) return resumeProbe.promise;
+
+            const id = ++resumeProbeId;
+            let resolveProbe;
+            const promise = new Promise((resolve) => { resolveProbe = resolve; });
+            const termina = (attiva) => {
+                if (!resumeProbe || resumeProbe.id !== id) return;
+                clearTimeout(resumeProbe.timer);
+                off('room-resume-result', resumeProbe.handler);
+                resumeProbe = null;
+                resolveProbe(attiva);
+                if (attiva) emit('room-resume-verified');
+                else if (ws && ws.readyState === WebSocket.OPEN) ws.close();
+                else tryAutoReconnect();
+            };
+            const handler = (msg) => {
+                if (msg && msg.probeId === id) termina(msg.active === true);
+            };
+            const timer = setTimeout(() => termina(false), 4000);
+            resumeProbe = { id, promise, timer, handler, resolveProbe };
+            on('room-resume-result', handler);
+            if (!send({ type: 'room-resume-check', probeId: id })) termina(false);
+            return promise;
         }
 
         /** Rimuove un singolo handler registrato con `on` — serve solo internamente, per non accumulare i listener temporanei di tryAutoReconnect ad ogni tentativo. */
@@ -277,8 +343,14 @@
             // Token sempre attuale, compresi i rinnovi di Supabase durante una partita lunga.
             if (window.CloudSync && CloudSync.getAccessToken()) obj = { ...obj, accessToken: CloudSync.getAccessToken() };
             if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify(obj));
+                try {
+                    ws.send(JSON.stringify(obj));
+                    return true;
+                } catch (err) {
+                    return false;
+                }
             }
+            return false;
         }
 
         /** `capienza` (2-4) facoltativa: senza, la stanza da 2 di sempre. Un relay vecchio la ignora e risponde senza `capienza`. */
@@ -306,6 +378,13 @@
         function leaveRoom() {
             intentionalClose = true;
             if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
+            reconnectInCorso = false;
+            if (resumeProbe) {
+                clearTimeout(resumeProbe.timer);
+                off('room-resume-result', resumeProbe.handler);
+                resumeProbe.resolveProbe(false);
+                resumeProbe = null;
+            }
             send({ type: 'leave-room' });
             roomCode = null;
             playerId = null;
@@ -315,6 +394,13 @@
         function close() {
             intentionalClose = true;
             if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
+            reconnectInCorso = false;
+            if (resumeProbe) {
+                clearTimeout(resumeProbe.timer);
+                off('room-resume-result', resumeProbe.handler);
+                resumeProbe.resolveProbe(false);
+                resumeProbe = null;
+            }
             if (ws) ws.close();
         }
 
@@ -331,7 +417,7 @@
             if (ws) ws.close();
         }
 
-        return { connect, annullaConnessione, on, createRoom, joinRoom, sendAction, leaveRoom, lockRoom, close, normalizeServerUrl, idPubblico: () => idPubblico, _simulateUnexpectedDisconnect };
+        return { connect, annullaConnessione, on, createRoom, joinRoom, sendAction, leaveRoom, lockRoom, close, resumeRoomConnection, normalizeServerUrl, idPubblico: () => idPubblico, _simulateUnexpectedDisconnect };
     }
 
     window.DuelNetwork = createNetworkClient();

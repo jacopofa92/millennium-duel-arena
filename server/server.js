@@ -71,7 +71,8 @@ function richiestiStanza(room, escludi) {
 const PORT = process.env.PORT || 8787;
 const WS_MAGIC = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
 const ROOM_CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // niente caratteri ambigui (0/O, 1/I/L)
-const ROOM_TTL_MS = 30 * 60 * 1000; // le stanze inutilizzate scadono dopo 30 minuti
+const ROOM_TTL_MS = Number(process.env.ROOM_TTL_MS) || 30 * 60 * 1000; // limite di sicurezza per stanze vecchie senza client collegati
+const ROOM_CLEANUP_INTERVAL_MS = Number(process.env.ROOM_CLEANUP_INTERVAL_MS) || 60 * 1000;
 // Quanto aspettare, dopo che la connessione di un giocatore cade, prima di
 // considerarlo DAVVERO uscito dalla stanza — copre il caso comune di una
 // disconnessione breve (Wi-Fi che sfarfalla, laptop in sospensione) con la
@@ -81,7 +82,7 @@ const ROOM_TTL_MS = 30 * 60 * 1000; // le stanze inutilizzate scadono dopo 30 mi
 // (SEMPLIFICAZIONE DELIBERATA, vedi il piano/commento in cima al file):
 // farlo richiederebbe salvare l'intera partita lato server, che oggi resta
 // solo un relay cieco tra due client autorevoli.
-const RECONNECT_GRACE_MS = 45 * 1000;
+const RECONNECT_GRACE_MS = Number(process.env.RECONNECT_GRACE_MS) || 5 * 60 * 1000;
 // Ping verso i client (vedi KEEPALIVE piu' sotto). Configurabile solo per le prove.
 const PING_INTERVAL_MS = Number(process.env.PING_INTERVAL_MS) || 25 * 1000;
 const SILENZIO_MAX_MS = PING_INTERVAL_MS * 3;
@@ -338,13 +339,14 @@ function leaveRoomVoluntarily(socket) {
 // troppo in fretta.
 // ============================================================
 
-const KNOWN_MESSAGE_TYPES = new Set(['create-room', 'join-room', 'rejoin-room', 'game-action', 'leave-room', 'lock-room']);
+const KNOWN_MESSAGE_TYPES = new Set(['create-room', 'join-room', 'rejoin-room', 'room-resume-check', 'game-action', 'leave-room', 'lock-room']);
 
 function isValidMessageShape(msg) {
     if (!msg || typeof msg !== 'object' || Array.isArray(msg)) return false;
     if (typeof msg.type !== 'string' || !KNOWN_MESSAGE_TYPES.has(msg.type)) return false;
     if (msg.type === 'join-room' && typeof msg.code !== 'string') return false;
     if (msg.type === 'rejoin-room' && (typeof msg.code !== 'string' || typeof msg.playerId !== 'string')) return false;
+    if (msg.type === 'room-resume-check' && !Number.isSafeInteger(msg.probeId)) return false;
     if (msg.type === 'game-action' && (typeof msg.action !== 'object' || msg.action === null || Array.isArray(msg.action))) return false;
     return true;
 }
@@ -504,6 +506,14 @@ async function handleClientMessage(socket, raw) {
             break;
         }
 
+        case 'room-resume-check': {
+            const room = rooms.get(socket.roomCode);
+            const slot = room && room.players.get(socket.playerId);
+            const active = !!(slot && slot.socket === socket);
+            sendJSON(socket, { type: 'room-resume-result', probeId: msg.probeId, active });
+            break;
+        }
+
         case 'game-action': {
             if (!socket.roomCode || !socket.playerId) return;
             const room = rooms.get(socket.roomCode);
@@ -649,7 +659,11 @@ keepaliveInterval.unref();
 const cleanupInterval = setInterval(() => {
     const now = Date.now();
     for (const [code, room] of rooms.entries()) {
-        if (now - room.createdAt > ROOM_TTL_MS) {
+        const nessunClientConnesso = [...room.players.values()].every((slot) => !slot.socket || slot.socket.destroyed);
+        // La stanza non scade mentre qualcuno la sta usando o aspettando:
+        // il TTL serve solo a ripulire residui senza connessioni. I posti
+        // disconnessi hanno gia' la propria finestra di rientro di 5 minuti.
+        if (nessunClientConnesso && now - room.createdAt > ROOM_TTL_MS) {
             room.players.forEach((slot) => {
                 if (slot.disconnectTimer) clearTimeout(slot.disconnectTimer);
                 sendJSON(slot.socket, { type: 'error', message: 'La stanza è scaduta per inattività.' });
@@ -657,7 +671,7 @@ const cleanupInterval = setInterval(() => {
             rooms.delete(code);
         }
     }
-}, 60 * 1000);
+}, ROOM_CLEANUP_INTERVAL_MS);
 cleanupInterval.unref(); // non deve impedire la chiusura del processo (es. durante i test)
 
 if (require.main === module) {
