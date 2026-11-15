@@ -35,17 +35,6 @@
         if (Array.isArray(gameState[chiaveExtra])) gameState[chiaveExtra] = Settimana.conformaExtra(gameState[chiaveExtra], r);
     }
 
-    /** Il riquadro con la regola: piccolo, in alto, senza intercettare i tocchi. */
-    function mostraRegola(r) {
-        const el = document.createElement('div');
-        el.id = 'settimanaRegola';
-        el.textContent = r.icona + ' ' + r.titolo;
-        el.style.cssText = 'position:fixed;top:4px;left:50%;transform:translateX(-50%);z-index:5000;pointer-events:none;'
-            + 'padding:3px 12px;border-radius:999px;font:700 11px/1.4 system-ui,sans-serif;letter-spacing:.04em;white-space:nowrap;'
-            + 'color:#f7d774;background:rgba(8,12,22,.78);border:1px solid rgba(247,215,116,.45);max-width:62vw;overflow:hidden;text-overflow:ellipsis';
-        document.body.appendChild(el);
-    }
-
     function avvia() {
         const r = Settimana.regola();
         // Un link vecchio (altra settimana, altro avversario): si torna alla pagina, che sa cosa è in gioco adesso.
@@ -65,7 +54,6 @@
             originale();
         };
         initGame();
-        mostraRegola(r);
     }
 
     /**

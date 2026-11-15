@@ -573,9 +573,9 @@
     "semantic_hash": "5b92228820259c518316477d600a9c50"
   },
   "js/modes/settimana-mode.js": {
-    "mtime": 1794773069.1845193,
-    "seen": 1794773123.0035334,
-    "ast_hash": "ccf5a11daf67301ef97577509ca40512",
+    "mtime": 1794773469.1884923,
+    "seen": 1794773516.1339226,
+    "ast_hash": "18d51d5d702df750f8465dd84b309a0a",
     "semantic_hash": ""
   },
   "js/modes/settimana.js": {
@@ -1107,9 +1107,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794773069.8936362,
-    "seen": 1794773123.0437987,
-    "ast_hash": "430a30e1c20f553490d1114cd834279f",
+    "mtime": 1794773469.4256077,
+    "seen": 1794773516.1731203,
+    "ast_hash": "38fd80fafcea81a185cd1d6521caf951",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1526,9 +1526,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794773070.1318595,
-    "seen": 1794773123.0679243,
-    "ast_hash": "8df57b2bad8d9d4e0493e1f3569b8f0b",
+    "mtime": 1794773469.6634986,
+    "seen": 1794773516.1972215,
+    "ast_hash": "582519cf6629dc9f423c8da8c0343db7",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {

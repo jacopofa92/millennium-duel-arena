@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.6.96 — Rimosso il badge della regola dalla HUD dei duelli settimanali; resta nella schermata di preparazione.
  * 1.6.95 — Premi settimanali: Facile 600 crediti; Normale 800 + 1 Stella; Difficile 300 + 1 Stella + una valuta rara.
  * 1.6.94 — Audio dedicato alle scene grido; Nitemare annuncia le sue carte boss anche in modalità Incubo.
  * 1.6.93 — Il loader completo condiviso parte dall'head: stessa carta, aure, scintille e barra fin dal caricamento.
@@ -844,4 +845,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.6.95';
+window.GAME_VERSION = '1.6.96';

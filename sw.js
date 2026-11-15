@@ -562,7 +562,8 @@
 // v746: il loader condiviso completo parte dall'head prima degli script applicativi.
 // v747: le scene grido usano il nuovo audio standard, comprese le evocazioni simbolo di Nitemare in Incubo.
 // v748: aggiornati premi della modalità Duello della Settimana.
-const CACHE_NAME = 'ygo-duel-arena-v748';
+// v749: rimossa dalla HUD la targhetta della regola del Duello della Settimana.
+const CACHE_NAME = 'ygo-duel-arena-v749';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento
