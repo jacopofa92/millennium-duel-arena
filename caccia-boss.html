@@ -85,6 +85,7 @@
 <script src="js/data/cards-data.generated.js"></script>
 <script src="js/data/characters-db.js"></script>
 <script src="js/data/caccia-db.js"></script>
+<script src="js/data/arena-options.js"></script>
 <script src="js/save-manager.js"></script>
 <script src="js/modes/mode-unlocks.js"></script>
 <script>ModeUnlocks.proteggiPagina('caccia');</script>
@@ -108,8 +109,10 @@
 
     function scrivi() {
         const b = Caccia.boss();
+        const scenario = Caccia.scenario();
         const stato = Caccia.stato();
         const pers = characterDatabase.find((c) => c.id === b.id) || { id: b.id, name: b.id };
+        document.querySelector('.rz-hero--caccia .rz-hero-sfondo').style.backgroundImage = `url("${ArenaOptions.imageForDisplay(scenario.field)}")`;
         const ms = Caccia.msAlProssimo();
         const giorni = Math.floor(ms / 86400000);
         const ore = Math.floor((ms % 86400000) / 3600000);
@@ -159,7 +162,9 @@
             if (window.NativeHaptics) NativeHaptics.light();
             window.location.href = 'duelMonstersCore.html?mode=caccia'
                 + '&character=' + encodeURIComponent(b.id)
-                + '&difficulty=' + encodeURIComponent(cacciaDatabase.livello);
+                + '&difficulty=' + encodeURIComponent(cacciaDatabase.livello)
+                + '&field=' + encodeURIComponent(scenario.field)
+                + '&music=' + encodeURIComponent(scenario.music);
         };
     }
 

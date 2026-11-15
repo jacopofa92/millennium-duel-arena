@@ -83,6 +83,7 @@
 <script src="js/data/cards-data.generated.js"></script>
 <script src="js/data/characters-db.js"></script>
 <script src="js/data/settimana-db.js"></script>
+<script src="js/data/arena-options.js"></script>
 <script src="js/save-manager.js"></script>
 <script src="js/modes/mode-unlocks.js"></script>
 <script>ModeUnlocks.proteggiPagina('settimana');</script>
@@ -113,8 +114,10 @@
     function scrivi() {
         const r = Settimana.regola();
         const idAvv = Settimana.avversario();
+        const scenario = Settimana.scenario();
         const stato = Settimana.stato();
         const avv = characterDatabase.find((c) => c.id === idAvv) || { id: idAvv, name: idAvv };
+        document.querySelector('.rz-hero--settimana .rz-hero-sfondo').style.backgroundImage = `url("${ArenaOptions.imageForDisplay(scenario.field)}")`;
 
         // Titolo e medaglione separati: il medaglione e' l'icona della regola, il titolo la regola in parole.
         document.getElementById('regolaTitolo').textContent = r.titolo;
@@ -183,14 +186,16 @@
             b.className = 'mp-scelta';
             b.dataset.livello = l.id;
             b.innerHTML = '<span class="mp-scelta-icona"></span><span><span class="mp-scelta-nome"></span><span class="mp-scelta-desc"></span></span>';
-            b.querySelector('.mp-scelta-icona').textContent = preso ? '✅' : l.icona;
+            const medaglione = b.querySelector('.mp-scelta-icona');
+            medaglione.textContent = l.icona;
+            if (preso) medaglione.classList.add('is-preso');
             b.querySelector('.mp-scelta-nome').textContent = l.nome;
             // Descrizione del livello e, sotto, il premio come "gettone": oro se e' ancora da prendere, verde se e' gia' preso.
             b.querySelector('.mp-scelta-desc').textContent = !verifica.ok ? 'Serve un mazzo che rispetti la regola: vedi l\'avviso qui sopra.' : l.desc;
             if (verifica.ok) {
                 const chip = document.createElement('span');
                 chip.className = 'rz-premio-chip' + (preso ? ' is-preso' : '');
-                chip.textContent = preso ? '✅ Premio preso'
+                chip.textContent = preso ? '✓ Premio preso'
                     : `🏆 ${premio.crediti} Crediti${premio.stelle ? ' + ' + premio.stelle + ' Stella' : ''}${premio.valutaRara ? ' + 1 Carta Locazione o Carta del Millennio' : ''}`;
                 b.querySelector('.mp-scelta-desc').parentNode.appendChild(chip);
             }
@@ -201,7 +206,9 @@
                 if (window.NativeHaptics) NativeHaptics.light();
                 window.location.href = 'duelMonstersCore.html?mode=settimana'
                     + '&character=' + encodeURIComponent(idAvv)
-                    + '&difficulty=' + encodeURIComponent(l.id);
+                    + '&difficulty=' + encodeURIComponent(l.id)
+                    + '&field=' + encodeURIComponent(scenario.field)
+                    + '&music=' + encodeURIComponent(scenario.music);
             });
             box.appendChild(b);
         });

@@ -65,6 +65,11 @@ const Settimana = (function () {
         return a[(indiceSettimana() * 3 + 1) % a.length];
     }
 
+    /** Campo e musica condivisi dalla scheda e dal duello di questa settimana. */
+    function scenario() {
+        return window.ArenaOptions.rotazioneSettimanale(indiceSettimana(), 'settimana');
+    }
+
     /** @returns {{ chiave: string, vinte: Object<string, boolean> }} */
     function stato() {
         const s = window.SaveManager ? SaveManager.getModeState('settimana') : null;
@@ -204,6 +209,7 @@ const Settimana = (function () {
         chiave: chiave,
         regola: regola,
         avversario: avversario,
+        scenario: scenario,
         stato: stato,
         registraVittoria: registraVittoria,
         ammette: ammette,

@@ -33,6 +33,11 @@ const Caccia = (function () {
         return b[indiceSettimana() % b.length];
     }
 
+    /** Campo e musica condivisi dalla scheda e dall'Assalto al Campione di questa settimana. */
+    function scenario() {
+        return window.ArenaOptions.rotazioneSettimanale(indiceSettimana(), 'caccia');
+    }
+
     function stato() {
         const s = window.SaveManager ? SaveManager.getModeState('caccia') : null;
         if (!s || s.chiave !== chiave()) return { chiave: chiave(), tentativi: 0, vinta: false, migliorTurni: null };
@@ -75,6 +80,7 @@ const Caccia = (function () {
         msAlProssimo: msAlProssimo,
         chiave: chiave,
         boss: boss,
+        scenario: scenario,
         stato: stato,
         registraTentativo: registraTentativo,
         registraVittoria: registraVittoria

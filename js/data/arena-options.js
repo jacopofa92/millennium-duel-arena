@@ -111,6 +111,47 @@
     // volta sola, e nessuno di loro deve saperne nulla.
     const TRACKS = TRACKS_CATALOGO.map((t) => ({ file: t.file, nome: nomeVisibile(t) }));
 
+    // Pool comune, sempre disponibile a tutti gli account: le rotazioni
+    // settimanali non devono cambiare se un utente ha contenuti extra disabilitati.
+    const CAMPI_ROTANTI = [
+        'arenaRegnoDeiDuellanti.jpg', 'arenaCastelloPegasus.jpg', 'stadioKaiba.jpg',
+        'dirigibileKaibaCorp.jpg', 'torreDeiDuelli.jpg', 'torreDeiDuelliColosseo.jpg',
+        'torreDeiDuelliShadow.jpg', 'mondoVirtualeArenaGozaburo.jpg', 'citta.jpg',
+        'campoPrato.jpg', 'campoGhiaccio.jpg', 'campoAcquatico.jpg', 'campoForesta.jpg',
+        'campoMontagna.jpg', 'rovineAntiche.jpg', 'rovineAnticoEgittoGiorno.jpg',
+        'rovineAnticoEgittoNotte.jpg', 'arenaAnticoEgittoGiorno.jpg', 'arenaAnticoEgittoNotte.jpg',
+        'arenaAnticoEgittoZorc.jpg', 'industriaKaibaCorp.jpg'
+    ].map((file) => ({ file }));
+
+    // Mescola l'indice della settimana senza dipendere dall'orologio casuale
+    // del client: tutti vedono lo stesso campo e brano. La sequenza evita anche
+    // di ripetere la stessa voce in due settimane consecutive.
+    function indiceSettimanale(indice, sale, lunghezza) {
+        let x = (Math.trunc(Number(indice) || 0) + 1) ^ sale;
+        x = Math.imul(x ^ (x >>> 16), 0x45d9f3b);
+        x = Math.imul(x ^ (x >>> 16), 0x45d9f3b);
+        return ((x ^ (x >>> 16)) >>> 0) % lunghezza;
+    }
+
+    function sceltaSettimanale(lista, indice, sale) {
+        const settimana = Math.max(0, Math.trunc(Number(indice) || 0));
+        let scelta = indiceSettimanale(0, sale, lista.length);
+        for (let i = 1; i <= settimana; i++) {
+            let prossima = indiceSettimanale(i, sale, lista.length);
+            if (prossima === scelta) prossima = (prossima + 1) % lista.length;
+            scelta = prossima;
+        }
+        return lista[scelta].file;
+    }
+
+    function rotazioneSettimanale(indice, modalita) {
+        const sale = modalita === 'caccia' ? 0x51f15e : 0x2c9277;
+        return {
+            field: sceltaSettimanale(CAMPI_ROTANTI, indice, sale),
+            music: sceltaSettimanale(TRACKS_CATALOGO, indice, sale ^ 0x6d2b79f5)
+        };
+    }
+
     /** Il valore con cui un'opzione dichiara "scegline una a caso al momento del duello". */
     const RANDOM = 'random';
 
@@ -135,6 +176,7 @@
         TRACKS: TRACKS,
         RANDOM: RANDOM,
         imageFor: (file) => `images/fields/${file}`,
+        imageForDisplay: (file) => `images/fields/${window.matchMedia && matchMedia('(pointer: coarse)').matches ? 'mobile/' : ''}${file}`,
         // I selettori mostrano rettangoli di circa 150x90 px: caricare qui
         // il fondale da 1,5 megapixel spreca banda e memoria di decodifica.
         // Il duello continua invece a usare imageFor() e quindi l'originale.
@@ -142,6 +184,7 @@
         audioFor: (file) => `audio/soundtracks/${file}`,
         nomeCampo: (file) => (FIELDS.find((f) => f.file === file) || {}).nome || 'Arena',
         nomeTraccia: (file) => (TRACKS.find((t) => t.file === file) || {}).nome || 'Colonna sonora',
+        rotazioneSettimanale: rotazioneSettimanale,
         risolviCampo: (scelta) => risolvi(scelta, window.ArenaOptions.FIELDS),
         risolviTraccia: (scelta) => risolvi(scelta, TRACKS)
     };

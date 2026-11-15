@@ -10,7 +10,7 @@
  *    della settimana il duello non parte (Settimana.verificaMazzo) e la pagina dice quali.
  *    Solo i mostri fuori regola del mazzo dell'AVVERSARIO (costruito dal gioco) sono
  *    sostituiti (Settimana.conformaMazzo).
- *  - Un riquadro in alto ricorda la regola per tutta la durata del duello.
+ *  - La regola resta nella scheda pre-duello; non occupa la HUD durante la partita.
  * Premi di fine duello: i soliti di un duello vinto, più il premio della
  * settimana la prima volta che si vince a quel livello (Settimana.registraVittoria).
  */
@@ -40,6 +40,13 @@
         // Un link vecchio (altra settimana, altro avversario): si torna alla pagina, che sa cosa è in gioco adesso.
         if (params.get('character') !== Settimana.avversario()) {
             window.location.replace('settimana.html');
+            return;
+        }
+        const scenario = Settimana.scenario();
+        if (params.get('field') !== scenario.field || params.get('music') !== scenario.music) {
+            params.set('field', scenario.field);
+            params.set('music', scenario.music);
+            window.location.replace('duelMonstersCore.html?' + params.toString());
             return;
         }
         // Il mazzo del giocatore deve rispettare la regola cosi' com'e': se non la rispetta il duello non parte (nessuna carta

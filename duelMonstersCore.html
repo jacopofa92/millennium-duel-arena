@@ -224,7 +224,10 @@
         const tappaEsclusa = avversarioDelDuello && Array.isArray(avversarioDelDuello.duelTrackEscludiTappe)
             && avversarioDelDuello.duelTrackEscludiTappe.includes(tappaDelDuello);
         const temaStoricoAmmesso = modalitaDelDuello === 'tournament' || modalitaDelDuello === 'story';
-        const usaTemaAvversario = avversarioDelDuello && !tappaEsclusa
+        // Le due sfide settimanali hanno un brano di scenario passato nell'URL:
+        // non lasciare che il tema musicale automatico del personaggio lo sovrascriva.
+        const musicaDiRotazioneSettimanale = ['settimana', 'caccia'].includes(modalitaDelDuello);
+        const usaTemaAvversario = !musicaDiRotazioneSettimanale && avversarioDelDuello && !tappaEsclusa
             && (avversarioDelDuello.duelTrackAutomatico
                 || (temaStoricoAmmesso && avversarioDelDuello.duelTrackSempre));
         const temaFisso = usaTemaAvversario ? avversarioDelDuello.duelTrack : null;

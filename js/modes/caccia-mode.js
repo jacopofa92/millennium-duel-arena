@@ -75,6 +75,13 @@
             window.location.replace('caccia-boss.html');
             return;
         }
+        const scenario = Caccia.scenario();
+        if (params.get('field') !== scenario.field || params.get('music') !== scenario.music) {
+            params.set('field', scenario.field);
+            params.set('music', scenario.music);
+            window.location.replace('duelMonstersCore.html?' + params.toString());
+            return;
+        }
         Caccia.registraTentativo();
         const originale = window.preparaManiIniziali;
         window.preparaManiIniziali = function () {

@@ -135,9 +135,9 @@
     "semantic_hash": ""
   },
   "js/data/arena-options.js": {
-    "mtime": 1794426409.3137326,
-    "seen": 1794427420.9782474,
-    "ast_hash": "0c3974a9dacffa1d5e3ede5986637ead",
+    "mtime": 1794774568.7941449,
+    "seen": 1794774626.7501457,
+    "ast_hash": "91220ab8e1c2885e2cb8b81fadb6b72e",
     "semantic_hash": ""
   },
   "js/data/artwork-alternativi.js": {
@@ -543,15 +543,15 @@
     "semantic_hash": "e2d6c8d8b1265f2c546dcae67d003dfc"
   },
   "js/modes/caccia-mode.js": {
-    "mtime": 1794662014.3345964,
-    "seen": 1794662154.3049126,
-    "ast_hash": "f6ae27f24b8d2398730e24c476303dbb",
+    "mtime": 1794774468.9562747,
+    "seen": 1794774514.3163548,
+    "ast_hash": "192406036a80af7cd0dec8bff486e3c6",
     "semantic_hash": ""
   },
   "js/modes/caccia.js": {
-    "mtime": 1793980295.8528204,
-    "seen": 1794049280.829189,
-    "ast_hash": "d65a9837760d60fc666e3739b56b8e10",
+    "mtime": 1794774295.1215482,
+    "seen": 1794774420.807353,
+    "ast_hash": "485b364f3bb7a7c43776ecf37dcac93e",
     "semantic_hash": ""
   },
   "js/modes/mode-unlocks.js": {
@@ -573,15 +573,15 @@
     "semantic_hash": "5b92228820259c518316477d600a9c50"
   },
   "js/modes/settimana-mode.js": {
-    "mtime": 1794773469.1884923,
-    "seen": 1794773516.1339226,
-    "ast_hash": "18d51d5d702df750f8465dd84b309a0a",
+    "mtime": 1794774588.3026311,
+    "seen": 1794774626.7782936,
+    "ast_hash": "8e301aee9cabb7ea9b8056ab7f111907",
     "semantic_hash": ""
   },
   "js/modes/settimana.js": {
-    "mtime": 1794005747.526081,
-    "seen": 1794049280.8452823,
-    "ast_hash": "54ee4decfc11678250bdde40275f9554",
+    "mtime": 1794774294.8838627,
+    "seen": 1794774420.8093574,
+    "ast_hash": "93a6222a46a4756c48d06c32bb4e77b7",
     "semantic_hash": ""
   },
   "js/modes/tag-mode.js": {
@@ -1107,9 +1107,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794773469.4256077,
-    "seen": 1794773516.1731203,
-    "ast_hash": "38fd80fafcea81a185cd1d6521caf951",
+    "mtime": 1794774345.148606,
+    "seen": 1794774420.8486924,
+    "ast_hash": "385f15d1da2ad58634a2ba178434c658",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1526,9 +1526,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794773469.6634986,
-    "seen": 1794773516.1972215,
-    "ast_hash": "582519cf6629dc9f423c8da8c0343db7",
+    "mtime": 1794774345.388905,
+    "seen": 1794774420.872823,
+    "ast_hash": "e481c39cbfcfe98fd33915e8fedc31f2",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -5008,9 +5008,9 @@
     "semantic_hash": ""
   },
   "caccia-boss.html": {
-    "mtime": 1794761910.0116317,
-    "seen": 1794762086.5272138,
-    "ast_hash": "c711853bd2e0e9967385291fa2f36fe5",
+    "mtime": 1794774344.6653433,
+    "seen": 1794774421.0774987,
+    "ast_hash": "9630a0c0897f5e71313780efce0585e6",
     "semantic_hash": ""
   },
   "cartoteca.html": {
@@ -5266,9 +5266,9 @@
     "semantic_hash": ""
   },
   "duelMonstersCore.html": {
-    "mtime": 1794762008.241181,
-    "seen": 1794762086.545856,
-    "ast_hash": "77f48cac8f5073ad1730c2a49b49097e",
+    "mtime": 1794774344.9093883,
+    "seen": 1794774421.0966427,
+    "ast_hash": "ee34f7fdec4192ae6920a574ef53c055",
     "semantic_hash": ""
   },
   "duello-libero.html": {
@@ -5350,9 +5350,9 @@
     "semantic_hash": ""
   },
   "settimana.html": {
-    "mtime": 1794773069.418079,
-    "seen": 1794773123.2946446,
-    "ast_hash": "b09a813eff77202e3732291003fb1fb9",
+    "mtime": 1794774344.4297402,
+    "seen": 1794774421.101643,
+    "ast_hash": "af340d6486aa58c1e76c57833d3b13dd",
     "semantic_hash": ""
   },
   "sfide.html": {

@@ -115,15 +115,20 @@
 .rz-livelli .mp-scelta::after { content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .13), transparent); transform: skewX(-18deg); transition: left .6s ease; pointer-events: none; }
 .rz-livelli .mp-scelta:hover:not(:disabled)::after { left: 130%; }
 .rz-livelli .mp-scelta-icona {
-    width: 62px; height: 62px; display: grid; place-items: center; font-size: 1.9rem; border-radius: 50%;
+    position: relative; width: 62px; height: 62px; display: grid; place-items: center; font-size: 1.9rem; border-radius: 50%;
     background: radial-gradient(circle at 35% 28%, color-mix(in srgb, var(--lv) 85%, #fff), var(--lv2) 75%);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--lv) 30%, transparent), 0 6px 14px rgba(0, 0, 0, .5), inset 0 -4px 8px rgba(0, 0, 0, .35);
+}
+.rz-livelli .mp-scelta-icona.is-preso::after {
+    content: '✓'; position: absolute; right: -4px; bottom: -3px; width: 21px; height: 21px; display: grid; place-items: center;
+    border: 1px solid rgba(247, 215, 116, .62); border-radius: 50%; color: #f6e6b5; background: #27251c;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, .65); font: 800 13px/1 system-ui, sans-serif;
 }
 .rz-livelli .mp-scelta-nome { font-size: 1.12rem; color: color-mix(in srgb, var(--lv) 80%, #fff); }
 .rz-livelli .mp-scelta-desc { margin: 0; font-size: .78rem; line-height: 1.4; }
 .rz-livelli .mp-scelta > span:last-child { display: flex; flex-direction: column; gap: 6px; }
 .rz-premio-chip { align-self: center; display: inline-flex; gap: 5px; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: .78rem; font-weight: 800; color: #1a1306; background: linear-gradient(180deg, color-mix(in srgb, var(--lv) 90%, #fff), var(--lv2)); }
-.rz-premio-chip.is-preso { background: rgba(127, 209, 139, .18); color: var(--done, #7fd18b); border: 1px solid rgba(127, 209, 139, .5); }
+.rz-premio-chip.is-preso { background: rgba(247, 215, 116, .11); color: #f0dfa9; border: 1px solid rgba(247, 215, 116, .3); }
 .rz-livelli .mp-scelta:disabled { filter: saturate(.4); }
 
 /* ---------- invito a giocare (Caccia) ---------- */
