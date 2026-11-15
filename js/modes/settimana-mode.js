@@ -100,6 +100,21 @@
             SaveManager.addCurrency('starChips', esito.premio.stelle);
             voci.push({ currency: 'starChips', amount: esito.premio.stelle, icon: '⭐', nome: 'Stelle dell\'Esagono', rule: spiegazione });
         }
+        // La ricompensa rara è una sola valuta a scelta casuale: entrambe
+        // restano possibili, ma la vittoria non concede mai tutte e due.
+        const valuteRare = esito.premio.valutaRara || [];
+        if (valuteRare.length && window.SaveManager) {
+            const valuta = valuteRare[Math.floor(Math.random() * valuteRare.length)];
+            const premiRari = {
+                locatorCards: { icon: '🃏', nome: 'Carta Locazione' },
+                millenniumCards: { icon: '🔱', nome: 'Carta del Millennio' }
+            };
+            const dettaglio = premiRari[valuta];
+            if (dettaglio) {
+                SaveManager.addCurrency(valuta, 1);
+                voci.push({ currency: valuta, amount: 1, icon: dettaglio.icon, nome: dettaglio.nome, rule: spiegazione });
+            }
+        }
         return voci;
     }
 

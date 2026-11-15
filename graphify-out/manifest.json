@@ -255,9 +255,9 @@
     "semantic_hash": "324c3b650e4b12fcbe74e60c62e8f8a2"
   },
   "js/data/settimana-db.js": {
-    "mtime": 1794005747.526081,
-    "seen": 1794049280.829189,
-    "ast_hash": "da246f04679e973834f646cd01c76e65",
+    "mtime": 1794773068.946135,
+    "seen": 1794773122.9833853,
+    "ast_hash": "721110f8dc0bcd84a17a29969b048192",
     "semantic_hash": ""
   },
   "js/data/starter-structure-decks.js": {
@@ -363,9 +363,9 @@
     "semantic_hash": "da1f921c202848f8237a2be80492f3ed"
   },
   "js/economy/rewards.js": {
-    "mtime": 1794662340.333505,
-    "seen": 1794662387.1241739,
-    "ast_hash": "ee9c5ac5d8d4e0baec88307556bc13ca",
+    "mtime": 1794773069.6549923,
+    "seen": 1794773122.9903853,
+    "ast_hash": "e0171754b20f7b505f0889446dc877d7",
     "semantic_hash": ""
   },
   "js/economy/shop-catalog.js": {
@@ -573,10 +573,10 @@
     "semantic_hash": "5b92228820259c518316477d600a9c50"
   },
   "js/modes/settimana-mode.js": {
-    "mtime": 1793573648.1648283,
-    "seen": 1793910198.2695239,
-    "ast_hash": "4786b2f6bd4cda56c107f1515eed9ab0",
-    "semantic_hash": "4786b2f6bd4cda56c107f1515eed9ab0"
+    "mtime": 1794773069.1845193,
+    "seen": 1794773123.0035334,
+    "ast_hash": "ccf5a11daf67301ef97577509ca40512",
+    "semantic_hash": ""
   },
   "js/modes/settimana.js": {
     "mtime": 1794005747.526081,
@@ -1107,9 +1107,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794764945.0486424,
-    "seen": 1794765037.8572836,
-    "ast_hash": "ee19166569771fc43a2daa63ff9c7e12",
+    "mtime": 1794773069.8936362,
+    "seen": 1794773123.0437987,
+    "ast_hash": "430a30e1c20f553490d1114cd834279f",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1526,9 +1526,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794764944.798482,
-    "seen": 1794765037.8823597,
-    "ast_hash": "10ce23d2f513d1ab703965b3577ca50a",
+    "mtime": 1794773070.1318595,
+    "seen": 1794773123.0679243,
+    "ast_hash": "8df57b2bad8d9d4e0493e1f3569b8f0b",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -5350,9 +5350,9 @@
     "semantic_hash": ""
   },
   "settimana.html": {
-    "mtime": 1794761910.135359,
-    "seen": 1794762086.5478084,
-    "ast_hash": "c1a9a973fe6d2650b0f8966722df6b74",
+    "mtime": 1794773069.418079,
+    "seen": 1794773123.2946446,
+    "ast_hash": "b09a813eff77202e3732291003fb1fb9",
     "semantic_hash": ""
   },
   "sfide.html": {

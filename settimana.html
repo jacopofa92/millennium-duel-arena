@@ -191,7 +191,7 @@
                 const chip = document.createElement('span');
                 chip.className = 'rz-premio-chip' + (preso ? ' is-preso' : '');
                 chip.textContent = preso ? '✅ Premio preso'
-                    : `🏆 ${premio.crediti} Crediti${premio.stelle ? ' + ' + premio.stelle + ' Stella' : ''}`;
+                    : `🏆 ${premio.crediti} Crediti${premio.stelle ? ' + ' + premio.stelle + ' Stella' : ''}${premio.valutaRara ? ' + 1 Carta Locazione o Carta del Millennio' : ''}`;
                 b.querySelector('.mp-scelta-desc').parentNode.appendChild(chip);
             }
             b.disabled = !verifica.ok;

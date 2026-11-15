@@ -1021,8 +1021,11 @@
             if (!db) return '';
             titolo = 'Premi del Duello della Settimana';
             const livelli = ['Facile', 'Medio', 'Difficile'];
-            const premio = (l) => { const x = db.premi[l]; return `${n(x.crediti)}${x.stelle ? ` + ${stelle(x.stelle)}` : ''}`; };
-            speciali.push(riga('📅', `Prima vittoria della settimana a ogni livello: <b>${livelli.map((l) => `${NOME_LIVELLO[l]} ${premio(l)}`).join(' · ')}</b> (crediti). Una volta a settimana per livello.`));
+            const premio = (l) => {
+                const x = db.premi[l];
+                return `${n(x.crediti)} crediti${x.stelle ? ` + ${stelle(x.stelle)}` : ''}${x.valutaRara ? ' + 1 Carta Locazione o Carta del Millennio' : ''}`;
+            };
+            speciali.push(riga('📅', `Prima vittoria della settimana a ogni livello: <b>${livelli.map((l) => `${NOME_LIVELLO[l]} ${premio(l)}`).join(' · ')}</b>. A Difficile ricevi una sola delle due valute rare, scelta a caso. Una volta a settimana per livello.`));
             standard = () => righeVittoriaTuttiILivelli().join('');
         } else if (id === 'rivincite') {
             titolo = 'Premi delle Rivincite';

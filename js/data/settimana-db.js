@@ -48,9 +48,9 @@ const settimanaDatabase = {
         'ishizu', 'espaRoba', 'duke', 'seeker', 'marik', 'pegasus', 'kaiba', 'noah'],
     /** Premio della PRIMA vittoria della settimana a ciascun livello (poi resta la vittoria normale). */
     premi: {
-        Facile: { crediti: 300, stelle: 0 },
-        Medio: { crediti: 600, stelle: 0 },
-        Difficile: { crediti: 1000, stelle: 1 }
+        Facile: { crediti: 600, stelle: 0 },
+        Medio: { crediti: 800, stelle: 1 },
+        Difficile: { crediti: 300, stelle: 1, valutaRara: ['locatorCards', 'millenniumCards'] }
     }
 };
 window.settimanaDatabase = settimanaDatabase;
