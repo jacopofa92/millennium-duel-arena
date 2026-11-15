@@ -609,9 +609,9 @@
     "semantic_hash": "4c0aee312e8103fd15bfe30fddcdc681"
   },
   "js/multiplayer/mp-lobby.js": {
-    "mtime": 1794662198.849465,
-    "seen": 1794662387.140407,
-    "ast_hash": "71906d10de040e242e3476c7dc405e6a",
+    "mtime": 1794745657.6780496,
+    "seen": 1794746165.301666,
+    "ast_hash": "6157334cb2de706f48be51817b5428b0",
     "semantic_hash": ""
   },
   "js/multiplayer/mp-modi.js": {
@@ -663,9 +663,9 @@
     "semantic_hash": "d84ffb24ad7e2b11ba808ff07bd3cdb9"
   },
   "js/multiplayer/network.js": {
-    "mtime": 1794426409.3137326,
-    "seen": 1794427421.0327916,
-    "ast_hash": "66270852dde6ef194f471bd9744a7434",
+    "mtime": 1794745804.7361207,
+    "seen": 1794746165.3055723,
+    "ast_hash": "033a3012625add660b44dd5e07a44d8d",
     "semantic_hash": ""
   },
   "js/multiplayer/protocollo-mp.js": {
@@ -975,9 +975,9 @@
     "semantic_hash": ""
   },
   "js/ui/page-loader.js": {
-    "mtime": 1793974415.6189015,
-    "seen": 1794049280.8452823,
-    "ast_hash": "91dc04bf00b217ef81b25b5e026e1050",
+    "mtime": 1794749814.7154334,
+    "seen": 1794749855.066716,
+    "ast_hash": "7d6a373738d99c5d381b1d036be323e7",
     "semantic_hash": ""
   },
   "js/ui/profile-hero.js": {
@@ -1107,9 +1107,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794662721.4347553,
-    "seen": 1794662771.771947,
-    "ast_hash": "fe9314d68399a4ff8d3ce839e4af5c0d",
+    "mtime": 1794752693.2951126,
+    "seen": 1794753146.2664676,
+    "ast_hash": "6ec3368134af27db792895bea69a721f",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1125,9 +1125,9 @@
     "semantic_hash": "57357a46c1d07a0fa18bbcd83581aaa6"
   },
   "package.json": {
-    "mtime": 1794662721.7202432,
-    "seen": 1794662771.7730052,
-    "ast_hash": "164f8151fad41c4f7879ab9f86a0bb19",
+    "mtime": 1794745945.8213053,
+    "seen": 1794746165.3393974,
+    "ast_hash": "1f40d292adebcffc6dc256b723c73b14",
     "semantic_hash": ""
   },
   "render.yaml": {
@@ -1520,15 +1520,15 @@
     "semantic_hash": "3c1dc032fddc77fac99a834af70ab47b"
   },
   "server/server.js": {
-    "mtime": 1794426409.3293712,
-    "seen": 1794427421.1196742,
-    "ast_hash": "6f69d624fb40c7325de588691c18386e",
+    "mtime": 1794745827.7243428,
+    "seen": 1794746165.3624818,
+    "ast_hash": "388bdbdc583da66c164c71b5d825a6ce",
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794662721.990399,
-    "seen": 1794662771.801116,
-    "ast_hash": "3160a0d1dca6da3c2195c5c8f51abdca",
+    "mtime": 1794752795.9650314,
+    "seen": 1794753146.2940464,
+    "ast_hash": "91518bed326b226234bf31e326419ee7",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -3028,9 +3028,9 @@
     "semantic_hash": ""
   },
   "tests/specs/multiplayer-lobby-abbandono.spec.js": {
-    "mtime": 1794134439.16995,
-    "seen": 1794145246.0431442,
-    "ast_hash": "d04b15ce3dc3578a933910d23e75a612",
+    "mtime": 1794745692.7567315,
+    "seen": 1794746165.4703462,
+    "ast_hash": "90fec74570e4660e5b1a89d4287098bd",
     "semantic_hash": ""
   },
   "tests/specs/multiplayer-modalita-sala.spec.js": {
@@ -3568,22 +3568,22 @@
     "semantic_hash": "b9a42e6be89020c234d57b63c043233d"
   },
   "tests/specs/server-stanze-grandi.spec.js": {
-    "mtime": 1793482354.4533439,
-    "seen": 1793910198.4847014,
-    "ast_hash": "c4d5c24968b2940e139194370f86b12a",
-    "semantic_hash": "c4d5c24968b2940e139194370f86b12a"
+    "mtime": 1794745834.9446816,
+    "seen": 1794746165.5115404,
+    "ast_hash": "239479ded03f1ecb19ea131afb1c225e",
+    "semantic_hash": ""
   },
   "tests/specs/service-worker-cache.spec.js": {
-    "mtime": 1792795907.5119734,
-    "seen": 1793910198.4847014,
-    "ast_hash": "a507f7ace0133a3bb6e62b72317bdbbf",
-    "semantic_hash": "a507f7ace0133a3bb6e62b72317bdbbf"
+    "mtime": 1794753174.7695,
+    "seen": 1794753240.4422004,
+    "ast_hash": "76534b64d5b1f19c608827a3cf7d2add",
+    "semantic_hash": ""
   },
   "tests/specs/service-worker-redirect-del-sito.spec.js": {
-    "mtime": 1792797833.5082166,
-    "seen": 1793910198.4847014,
-    "ast_hash": "4eb11b6c9eb4463ff015d8765f7405b3",
-    "semantic_hash": "4eb11b6c9eb4463ff015d8765f7405b3"
+    "mtime": 1794753174.7695,
+    "seen": 1794753240.4431841,
+    "ast_hash": "44148e35fda4aa729b2106540cc6b982",
+    "semantic_hash": ""
   },
   "tests/specs/sessione-48-ore.spec.js": {
     "mtime": 1792254199.0134706,
@@ -25131,10 +25131,16 @@
     "ast_hash": "af70f0bbfdeb190c26e9b59b7f7b78dd",
     "semantic_hash": ""
   },
+  "HANDOFF.md": {
+    "mtime": 1794677688.5121841,
+    "seen": 1794746165.5631347,
+    "ast_hash": "1ad75273e8faba92ab2a467df9bc6467",
+    "semantic_hash": ""
+  },
   "package-lock.json": {
-    "mtime": 1794438199.8428154,
-    "seen": 1794438263.5068667,
-    "ast_hash": "8898c239acc60b877bb873978657798e",
+    "mtime": 1794745946.0575716,
+    "seen": 1794746166.8373713,
+    "ast_hash": "80e30fb3640859b8f543f04eba163fc5",
     "semantic_hash": ""
   }
 }

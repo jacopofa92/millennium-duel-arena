@@ -32,6 +32,9 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.6.90 — Il loader dei link interni aspetta 180 ms prima di apparire, evitando il lampo nelle navigazioni rapide.
+ * 1.6.89 — Le pagine e gli script già in cache si aprono subito senza aspettare la rete.
+ * 1.6.88 — Il loader appare subito quando si apre una pagina interna; i tocchi su azioni SPA e link esterni non vengono coperti.
  * 1.6.50 — Controllo della Mente scade alla End Phase; Scudo da Braccio Magico restituisce il mostro alla fine della Battle Phase.
  * 1.6.51 — Strappa Possesso e Necropaura Oscura restituiscono il controllo quando l'Equip lascia il Terreno.
  * 1.6.52 — Maga Oscura conta entrambi i mostri indicati in tutti e due i Cimiteri; Spada Celestiale - Eatos applica il suo effetto dal Cimitero; Chiron lascia scegliere anche le Magie/Trappole coperte e le Magie Terreno.
@@ -836,4 +839,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.6.87';
+window.GAME_VERSION = '1.6.90';

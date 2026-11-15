@@ -1,11 +1,6 @@
-// Il Service Worker non deve mai rispondere a una navigazione con una risposta "redirected".
-//
-// Il sito pubblicato (Cloudflare Workers) gira `/pagina.html` a `/pagina` con un 307. L'installazione scarica
-// `pagina.html` seguendo il redirect, quindi in Cache Storage c'e' una risposta con `redirected: true`; il browser
-// rifiuta una risposta cosi' per una navigazione (net::ERR_FAILED). In 1.4.74 la scadenza di rete serviva proprio
-// quella copia al posto del redirect, e l'app mostrava "Pagina web non disponibile" su ogni pagina (visto sul
-// telefono subito dopo il push). Qui un server che si comporta come Cloudflare, e il Service Worker VERO in un
-// browser vero: con la rete pronta e con la rete lenta (scadenza che scatta).
+// Il Service Worker deve preservare i redirect puliti del sito anche con cache-first.
+// Il precache memorizza un 307 sintetico sull'URL .html e il contenuto sulla URL
+// canonica, evitando di consegnare al browser una risposta già marcata `redirected`.
 //
 // `standalone: true`: serve un server proprio e un contesto con i Service Worker abilitati.
 const http = require('http');
@@ -16,7 +11,7 @@ const RADICE = path.join(__dirname, '..', '..');
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.jpg': 'image/jpeg', '.png': 'image/png', '.ttf': 'font/ttf', '.txt': 'text/plain' };
 
 module.exports = {
-    name: 'Service worker: con i redirect del sito (.html -> senza estensione) le pagine si aprono, anche a rete lenta',
+    name: 'Service worker: le pagine con URL pulite si aprono dalla cache, anche a rete lenta',
     standalone: true,
     async run({ browser, assert }) {
         let ritardoMs = 0;
@@ -47,7 +42,7 @@ module.exports = {
         page.on('requestfailed', (r) => problemi.push('fallita ' + r.url()));
         page.on('response', (r) => { if (r.status() >= 400) problemi.push(r.status() + ' ' + r.url()); });
         try {
-            // 1) Prima visita (passa dal redirect) e attesa dell'installazione: la cache si riempie di risposte "redirected".
+            // 1) Prima visita e attesa dell'installazione del nuovo app shell.
             await page.goto(origine + '/sfide.html', { waitUntil: 'domcontentloaded' });
             await page.evaluate(() => Promise.race([navigator.serviceWorker.ready.then(() => true), new Promise((r) => setTimeout(() => r(false), 30000))])).then((ok) => assert(ok, 'Il Service Worker non si e\' installato'));
             const stato = () => page.evaluate(async () => { const k = await caches.keys(); return { chiavi: k, voci: k.length ? (await (await caches.open(k[0])).keys()).length : 0 }; });
@@ -57,23 +52,32 @@ module.exports = {
                 const cache = await caches.open(chiavi[0]);
                 return (await cache.keys()).length > 100;
             }, null, { timeout: 40000 }).catch(async (e) => { throw new Error('Cache non riempita: ' + JSON.stringify(await stato()) + ' problemi: ' + problemi.slice(0, 8).join(' | ')); });
-            const marcate = await page.evaluate(async () => {
+            const redirectCache = await page.evaluate(async () => {
                 const cache = await caches.open((await caches.keys())[0]);
-                const r = await cache.match('duello-libero.html');
-                return !!r && r.redirected;
+                const redirect = await cache.match('duello-libero.html');
+                const canonica = await cache.match(new URL('duello-libero', location.href).href);
+                return {
+                    statoRedirect: redirect && redirect.status,
+                    posizione: redirect && redirect.headers.get('location'),
+                    statoPagina: canonica && canonica.status,
+                    paginaRedirected: canonica && canonica.redirected
+                };
             });
-            assert(marcate, 'Il caso da provare non si e\' creato: la copia in cache dovrebbe essere "redirected" (il server finto non redirige?)');
+            assert(redirectCache.statoRedirect === 307 && /\/duello-libero$/.test(redirectCache.posizione || ''),
+                'L\'URL .html deve avere in cache il redirect verso la pagina canonica');
+            assert(redirectCache.statoPagina === 200 && redirectCache.paginaRedirected,
+                'Il contenuto della pagina canonica deve essere disponibile in cache');
 
-            // 2) Rete pronta: la navigazione a /pagina.html deve riuscire (il redirect lo segue il browser).
-            await page.goto(origine + '/duello-libero.html', { waitUntil: 'domcontentloaded' });
+            // 2) La URL .html in cache conserva il redirect e il browser resta sull'indirizzo pulito.
+            await page.goto(origine + '/duello-libero.html?cacheProbe=1', { waitUntil: 'domcontentloaded' });
             assert(/\/duello-libero$/.test(page.url()), `Dopo il redirect si dovrebbe essere su /duello-libero, non su ${page.url()}`);
+            assert(new URL(page.url()).searchParams.get('cacheProbe') === '1', 'Il redirect deve conservare i parametri della navigazione');
             assert((await page.title()).length > 0, 'La pagina dopo il redirect non si e\' caricata');
 
-            // 3) Rete lenta: scatta la scadenza e si serve la copia in cache, ma una navigazione non puo' ricevere
-            // una risposta "redirected": il Service Worker la ricostruisce.
+            // 3) Rete lenta: la cache immediata deve comunque mantenere la URL pulita.
             ritardoMs = 4000;
             await page.goto(origine + '/storia.html', { waitUntil: 'commit' });
-            // Con ~100 file e 1,5 s di scadenza ciascuno la pagina intera ci mette molto: basta che il documento sia arrivato.
+            // La risposta del server ora impiega 4 s: la pagina già installata deve comunque aprirsi subito.
             await page.waitForFunction(() => document.title.length > 0, null, { timeout: 30000 });
             assert((await page.title()).length > 0, 'A rete lenta la pagina servita dalla cache non si e\' aperta');
         } finally {

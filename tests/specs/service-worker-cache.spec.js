@@ -1,15 +1,15 @@
 // Strategia della cache PWA verificata senza browser: esegue sw.js in un
 // contesto con Cache Storage e rete finte. Protegge due invarianti che una
 // semplice ricerca nel sorgente non dimostrerebbe:
-//  - un 404/500 non deve avvelenare una copia valida già installata;
-//  - la risposta intercettata resta pendente finché cache.put non termina,
-//    così il browser non può sospendere il worker a scrittura incompleta.
+//  - una risorsa già installata viene restituita senza chiamare la rete;
+//  - una cache miss non aspetta la scrittura locale prima di mostrare il file;
+//  - i 404/500 e i segmenti 206 non vengono memorizzati.
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
 module.exports = {
-    name: 'Service worker: risposte valide attese in cache, errori HTTP mai persistiti',
+    name: 'Service worker: app shell cache-first, cache miss non bloccanti e redirect coerenti',
     standalone: true,
     async run({ assert }) {
         const sorgente = fs.readFileSync(path.join(__dirname, '..', '..', 'sw.js'), 'utf8');
@@ -17,13 +17,23 @@ module.exports = {
         const scritture = [];
         let rispostaInCache = null;
         let rispostaDiRete = null;
+        let rispostaAliasHtml = null;
+        let rispostaRedirect = null;
         let risolviScrittura = null;
         let chiamateRete = 0;
-        let reteBloccata = null; // se impostata, la fetch non risponde finche' non la si risolve
-        const timer = [];
+        const atteseBackground = [];
+        const ricercheCache = [];
 
         const cache = {
-            match: async () => rispostaInCache,
+            match: async (richiesta, opzioni) => {
+                const url = typeof richiesta === 'string' ? richiesta : richiesta.url;
+                ricercheCache.push({ url, opzioni });
+                const percorso = new URL(url).pathname;
+                if (rispostaAliasHtml && percorso.endsWith('/storia.html')) return rispostaAliasHtml;
+                if (rispostaRedirect && percorso.endsWith('/duello-libero.html')) return rispostaRedirect;
+                if (rispostaInCache && percorso.endsWith('/js/version.js')) return rispostaInCache;
+                return null;
+            },
             put: (richiesta, risposta) => {
                 scritture.push({ richiesta, risposta });
                 return new Promise((resolve) => { risolviScrittura = resolve; });
@@ -33,6 +43,7 @@ module.exports = {
             console,
             URL,
             Request,
+            Response: { redirect: (url, status) => ({ status, headers: { get: () => url } }) },
             self: {
                 location: { origin: 'https://gioco.test' },
                 addEventListener: (nome, fn) => { gestori[nome] = fn; },
@@ -45,13 +56,35 @@ module.exports = {
                 keys: async () => [],
                 delete: async () => true
             },
-            // Orologio finto: la scadenza dell'app shell si fa scattare a mano, senza attese vere.
-            setTimeout: (fn, ms) => { timer.push({ fn, ms, attivo: true }); return timer.length - 1; },
-            clearTimeout: (id) => { if (timer[id]) timer[id].attivo = false; },
-            fetch: async () => { chiamateRete++; if (reteBloccata) await reteBloccata; return rispostaDiRete; }
+            setTimeout,
+            clearTimeout,
+            fetch: async () => { chiamateRete++; return rispostaDiRete; }
         };
         vm.runInNewContext(sorgente, contesto, { filename: 'sw.js' });
         assert(typeof gestori.fetch === 'function', 'sw.js deve registrare il gestore fetch');
+
+        // Il redirect .html -> URL pulita va conservato come risposta 307
+        // sintetica, con il corpo cacheato anche sulla destinazione finale.
+        const redirectScritti = [];
+        await contesto.salvaRispostaAppShell({
+            put: async (richiesta, risposta) => { redirectScritti.push({ richiesta, risposta }); }
+        }, new Request('https://gioco.test/duello-libero.html'), {
+            ok: true,
+            redirected: true,
+            url: 'https://gioco.test/duello-libero',
+            clone: () => ({ copia: 'pagina' })
+        });
+        assert(redirectScritti.length === 2, 'Un redirect seguito deve creare le due voci cache');
+        assert(redirectScritti[0].risposta.status === 307, 'La URL .html deve mantenere il redirect canonico');
+        assert(redirectScritti[1].richiesta === 'https://gioco.test/duello-libero',
+            'La pagina pulita deve avere una voce cache diretta');
+        rispostaRedirect = { status: 307, headers: { get: () => 'https://gioco.test/duello-libero' } };
+        const redirectConParametri = await intercetta('duello-libero.html?mode=tournament&difficulty=hard');
+        assert(redirectConParametri.status === 307
+            && redirectConParametri.headers.get('location') === 'https://gioco.test/duello-libero?mode=tournament&difficulty=hard',
+        'Il redirect cache-first deve conservare i parametri della modalità');
+        await atteseBackground.shift();
+        rispostaRedirect = null;
 
         function risposta(ok, etichetta, status) {
             return { ok, etichetta, status: status || (ok ? 200 : 500), clone: () => ({ copiaDi: etichetta }) };
@@ -65,23 +98,22 @@ module.exports = {
                     url: `https://gioco.test/${percorso}`,
                     headers: { get: (nome) => nome.toLowerCase() === 'range' ? range || null : null }
                 },
-                respondWith: (p) => { promessa = Promise.resolve(p); }
+                respondWith: (p) => { promessa = Promise.resolve(p); },
+                waitUntil: (p) => { atteseBackground.push(Promise.resolve(p)); }
             });
             return promessa;
         }
 
-        // App shell valida: viene scritta e la risposta non si conclude
-        // finché la scrittura controllata non è stata risolta.
+        // Una cache miss restituisce subito la rete, mentre la scrittura
+        // resta in background per non bloccare il primo accesso online.
         rispostaDiRete = risposta(true, 'js-nuovo');
         const richiestaJs = intercetta('js/version.js');
-        let jsConcluso = false;
-        richiestaJs.then(() => { jsConcluso = true; });
         await new Promise((resolve) => setImmediate(resolve));
+        assert((await richiestaJs) === rispostaDiRete, 'La cache miss deve mostrare subito la risposta di rete');
         assert(scritture.length === 1, 'Un JS valido deve aggiornare la Cache Storage');
-        assert(!jsConcluso, 'La risposta JS deve attendere cache.put');
+        assert(atteseBackground.length === 1, 'La scrittura deve restare sotto waitUntil');
         risolviScrittura();
-        const jsRestituito = await richiestaJs;
-        assert(jsConcluso && jsRestituito === rispostaDiRete, 'Dopo cache.put viene restituita la risposta di rete originale');
+        await atteseBackground.shift();
 
         // App shell non valida: passa al chiamante, ma non sovrascrive la
         // copia buona che servirà al prossimo avvio offline.
@@ -91,39 +123,25 @@ module.exports = {
         assert(erroreRestituito === rispostaDiRete, 'Online resta visibile la risposta HTTP non valida');
         assert(scritture.length === primaErrore, 'Una risposta HTTP non valida non deve entrare in cache');
 
-        // Rete lenta con la copia gia' in cache: dopo la scadenza si parte dalla cache, e la rete che arriva
-        // dopo aggiorna comunque la copia per la volta successiva.
+        // Una risorsa installata parte dalla cache senza toccare la rete,
+        // anche se la rete è lenta o assente.
         rispostaInCache = risposta(true, 'js-in-cache');
-        rispostaDiRete = risposta(true, 'js-arrivato-tardi');
-        let sbloccaRete = null;
-        reteBloccata = new Promise((resolve) => { sbloccaRete = resolve; });
-        const prima = timer.length;
-        const scrittureLente = scritture.length;
+        const retePrimaCacheHit = chiamateRete;
         const lenta = intercetta('js/version.js');
-        let lentaConclusa = false;
-        lenta.then(() => { lentaConclusa = true; });
-        await new Promise((resolve) => setImmediate(resolve));
-        assert(timer.length === prima + 1 && timer[prima].ms === 1500, 'Con la copia in cache la rete ha una scadenza di 1,5 secondi');
-        assert(!lentaConclusa, 'Prima della scadenza si aspetta ancora la rete');
-        timer[prima].fn();
-        assert((await lenta) === rispostaInCache, 'Scaduta l\'attesa si serve la copia in cache');
-        sbloccaRete();
-        await new Promise((resolve) => setImmediate(resolve));
-        assert(scritture.length === scrittureLente + 1, 'La rete arrivata dopo la scadenza aggiorna comunque la cache');
-        risolviScrittura();
+        assert((await lenta) === rispostaInCache, 'Una risorsa già installata si serve dalla cache');
+        assert(chiamateRete === retePrimaCacheHit, 'Una cache hit non deve fare richieste di rete');
 
-        // Rete veloce con la copia in cache: vince la rete (e la scadenza viene annullata).
-        reteBloccata = null;
-        rispostaDiRete = risposta(true, 'js-fresco');
-        const veloce = intercetta('js/version.js');
-        await new Promise((resolve) => setImmediate(resolve));
-        risolviScrittura();
-        assert((await veloce) === rispostaDiRete, 'Se la rete risponde in tempo vince la rete, non la copia');
+        // Gli URL puliti /storia recuperano la pagina precaricata come
+        // /storia.html, ignorando i parametri di modalità nella chiave.
+        rispostaInCache = null;
+        rispostaAliasHtml = risposta(true, 'storia-precaricata');
+        assert((await intercetta('storia?mode=anime')) === rispostaAliasHtml,
+            'Un URL pulito deve trovare il corrispondente file .html anche con query');
+        assert(ricercheCache.some((r) => new URL(r.url).pathname.endsWith('/storia.html') && r.opzioni.ignoreSearch),
+            'La ricerca dell\'alias .html deve ignorare i parametri della navigazione');
+        rispostaAliasHtml = null;
 
-        // Rete che risponde con un errore, copia buona in cache: resta la copia.
-        rispostaDiRete = risposta(false, 'errore-503', 503);
-        const conErrore = await intercetta('js/version.js');
-        assert(conErrore === rispostaInCache, 'Un errore HTTP non batte una copia buona in cache');
+        // I media restano cache-first e non dipendono dal cambiamento app shell.
         rispostaInCache = null;
 
         // Media già presente: cache-first puro, senza chiamare la rete.

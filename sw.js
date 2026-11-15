@@ -8,19 +8,10 @@
  * <link href> nelle pagine HTML: NON aggiungere mai uno "/" iniziale.
  *
  * Strategia in due parti, diverse per tipo di file:
- *   - APP SHELL (HTML/CSS/JS, ~8,3 MB non compressi al 2026-10-06):
- *     "network-first" — prova
- *     sempre la rete per avere subito l'ultima versione pubblicata (utile
- *     visto lo sviluppo continuo del progetto), e ripiega sulla cache
- *     SOLO se offline. Così un aggiornamento pubblicato arriva sempre al
- *     prossimo avvio online, senza bisogno di incrementare a mano un
- *     numero di versione della cache per invalidarla (un errore classico
- *     nei Service Worker: dimenticarsi di farlo lascia gli utenti
- *     bloccati su una versione vecchia per sempre).
- *     Con una rete LENTA (non assente) la fetch non fallisce mai e aspettarla
- *     faceva pagare ad ogni pagina l'intera lentezza anche con tutto in cache:
- *     se la copia c'e' e la rete non risponde entro ATTESA_RETE_APP_SHELL_MS
- *     si parte dalla cache, e la rete continua in sottofondo ad aggiornarla.
+ *   - APP SHELL (HTML/CSS/JS): "cache-first". Una versione nuova si prepara
+ *     in una cache separata durante l'installazione; il worker la attiva solo
+ *     quando l'intero app shell è pronto. Finché non lo è, resta attiva la
+ *     versione precedente. Le schermate già coperte partono subito dal dispositivo.
  *   - MEDIA (immagini/audio, centinaia di MB in tutto — troppi per
  *     precaricarli tutti in un colpo solo): "cache-first" — una volta
  *     scaricato un file la prima volta, resta in cache e non viene
@@ -566,7 +557,9 @@
 // v739: nome unificato Assalto al Campione per la sfida settimanale e il Raid online.
 // v740: Dettagli video parte da Alti anche su telefoni e APK.
 // v741: ripresa della connessione alle sale multiplayer dopo la sospensione dell'app.
-const CACHE_NAME = 'ygo-duel-arena-v741';
+// v742: feedback immediato del loader quando si apre una pagina interna dal menu.
+// v743: le pagine e gli script già in cache non aspettano la rete ad ogni navigazione.
+const CACHE_NAME = 'ygo-duel-arena-v743';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento
@@ -900,8 +893,8 @@ self.addEventListener('install', (event) => {
             // addAll fallisce TUTTO se anche un solo file manca (404): meglio
             // così, un file dimenticato dalla lista qui sopra si nota subito
             // invece di restare un buco silenzioso nella cache offline.
-            // cache: 'reload' su ogni richiesta per lo stesso motivo per cui
-            // lo usa la strategia network-first più sotto: queste fetch le
+            // cache: 'reload' durante l'installazione impedisce che la cache
+            // HTTP del browser riusi copie stantie: queste fetch le
             // fa il Service Worker, quindi NON passano dal proprio handler e
             // userebbero la cache HTTP del browser — una cache appena creata
             // si riempirebbe di copie vecchie fino a qualche minuto, e
@@ -913,11 +906,11 @@ self.addEventListener('install', (event) => {
             // cancello (worker/gate.mjs) che risponde 401 ai file riservati finche' non si e' fatto l'accesso: prima del login
             // quei file non si possono scaricare, e un'installazione che fallisse per questo non partirebbe mai. Si salta e
             // la cache si riempie dopo: appena c'e' il cookie, la prossima installazione/aggiornamento prende tutto, e nel
-            // frattempo le pagine passano comunque dalla rete (network-first).
+            // frattempo le risorse protette mancanti passano comunque dalla rete.
             .then((cache) => Promise.all(APP_SHELL.map((url) => {
                 const req = new Request(url, { cache: 'reload' });
                 return fetch(req).then((risposta) => {
-                    if (risposta.ok) return cache.put(req, risposta);
+                    if (risposta.ok) return salvaRispostaAppShell(cache, req, risposta);
                     if (risposta.status === 401) return undefined;
                     throw new Error('Impossibile mettere in cache ' + url + ' (' + risposta.status + ')');
                 });
@@ -938,7 +931,7 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-/** Vero per le richieste dell'app shell (HTML/CSS/JS) — vedi la strategia network-first sopra. */
+/** Vero per le richieste dell'app shell (HTML/CSS/JS). */
 function isAppShellRequest(url) {
     // Un percorso senza estensione e' una pagina: il sito pubblicato gira `/pagina.html` a `/pagina`, e quella
     // seconda richiesta finiva nel ramo "media" (cache-first), cioe' con la pagina servita dalla cache fino al
@@ -947,77 +940,86 @@ function isAppShellRequest(url) {
 }
 
 /**
- * Quanto si aspetta la RETE per un file dell'app shell che in cache c'e' gia'.
- * Su una connessione lenta ma non assente la fetch non fallisce mai: resta in attesa, e il
- * "network-first" puro faceva aspettare ogni pagina anche con tutto gia' in cache (misurato a
- * 300 ms di latenza: duello pronto dopo 11 s sia a freddo sia con il Service Worker installato).
- * Passato questo tempo, se la copia in cache c'e' si parte da quella, e la rete continua in
- * sottofondo ad aggiornare la cache per la volta dopo. Conta solo l'ARRIVO DELLE INTESTAZIONI:
- * una risposta che e' cominciata ad arrivare si aspetta fino in fondo. Senza copia in cache
- * non c'e' scadenza: non c'e' niente di meglio da servire.
- */
-const ATTESA_RETE_APP_SHELL_MS = 1500;
-
-/**
- * App shell (HTML/CSS/JS): rete per prima, scadenza breve, poi la copia in cache.
- *
- * cache: 'reload' forza il bypass della cache HTTP del BROWSER (quella governata dagli header
- * Cache-Control del server, uno strato SOTTO la Cache Storage di questo Service Worker):
- * senza, un fetch() "network-first" può comunque tornare una risposta stantia se il browser la
- * considera ancora valida per i suoi header — proprio il caso che questa strategia vuole
- * escludere, un aggiornamento appena pubblicato deve arrivare SEMPRE al prossimo avvio online.
+ * Le risorse già installate partono dalla cache senza una richiesta di rete.
+ * Ogni rilascio usa un CACHE_NAME nuovo: install() riempie quella cache prima
+ * di attivare il worker, quindi una pagina non può mescolare versioni. Una
+ * risorsa assente (401 prima del login o contenuto non precacheato) viene
+ * scaricata e memorizzata senza bloccare la risposta sulla scrittura.
  */
 function rispostaAppShell(event, req) {
-    const rete = fetch(req, { cache: 'reload' })
-        .then((response) => {
-            // Un 404/500 è comunque una fetch risolta: senza questo controllo sostituirebbe nella
-            // Cache Storage una copia buona, rendendo guasto anche il successivo avvio offline.
-            // La risposta di rete resta visibile online, ma non viene resa persistente.
-            if (!response || !response.ok) return response;
-            const copy = response.clone();
-            // La Promise di put fa parte della risposta: se la si lasciasse staccata, il worker
-            // potrebbe essere sospeso dopo aver consegnato `response` ma prima di aver
-            // terminato l'aggiornamento della cache.
-            return caches.open(CACHE_NAME)
-                .then((cache) => cache.put(req, copy).catch(() => {}))
-                .then(() => response);
-        });
-    // Se la rete arriva dopo la scadenza nessuno la sta piu' aspettando: tiene vivo il worker
-    // finche' la cache non e' aggiornata.
-    if (event && typeof event.waitUntil === 'function') event.waitUntil(rete.catch(() => {}));
+    let completaBackground;
+    const background = new Promise((resolve) => { completaBackground = resolve; });
+    if (event && typeof event.waitUntil === 'function') event.waitUntil(background);
 
-    return caches.match(req).then((inCache) => {
-        if (!inCache) return rete.catch(() => caches.match(req).then(senzaRedirect));
-        return new Promise((resolve) => {
-            let consegnata = false;
-            const consegna = (risposta) => {
-                if (consegnata) return;
-                consegnata = true;
-                clearTimeout(timer);
-                resolve(risposta);
-            };
-            const dallaCache = () => consegna(senzaRedirect(inCache));
-            const timer = setTimeout(dallaCache, ATTESA_RETE_APP_SHELL_MS);
-            // Una risposta d'errore (404/500) non batte una copia buona: si resta su quella. Un REDIRECT
-            // invece e' una risposta valida e va consegnata cosi' com'e': il sito pubblicato risponde 307 a
-            // /pagina.html (verso /pagina) e il browser deve seguirlo da solo. Scambiarlo con la copia in cache
-            // (che e' proprio la pagina dopo il redirect) significava rispondere a una navigazione con una
-            // risposta "redirected", che il browser rifiuta: net::ERR_FAILED su ogni pagina (1.4.74, visto sul telefono).
-            rete.then((response) => (utilizzabile(response) ? consegna(response) : dallaCache()), dallaCache);
-        });
+    return caches.open(CACHE_NAME).then((cache) => trovaRispostaAppShell(cache, req).then((inCache) => {
+        if (inCache) {
+            completaBackground();
+            return senzaRedirect(inCache);
+        }
+
+        const rete = fetch(req, { cache: 'reload' });
+        rete.then((response) => {
+            if (!response || !response.ok || response.status === 206) return;
+            return salvaRispostaAppShell(cache, req, response);
+        }).then(completaBackground, completaBackground);
+        return rete.catch(() => trovaRispostaAppShell(cache, req).then(senzaRedirect));
+    })).catch(() => {
+        completaBackground();
+        return fetch(req, { cache: 'reload' });
     });
 }
 
-/** Una risposta che si puo' consegnare a chi ha chiesto il file: riuscita, oppure un redirect da seguire. */
-function utilizzabile(response) {
-    return !!response && (response.ok || response.type === 'opaqueredirect');
+/**
+ * Il sito pubblicato usa URL puliti: /pagina.html reindirizza a /pagina.
+ * Cerca prima l'URL richiesto, poi la sua voce .html precaricata; ignora la
+ * query perché mode, deck e difficoltà cambiano i dati della schermata, non
+ * il documento HTML. La cache media è esclusa perché si apre quella app shell.
+ */
+function trovaRispostaAppShell(cache, req) {
+    return cache.match(req, { ignoreSearch: true }).then((risposta) => {
+        if (risposta) return redirectConQuery(risposta, req);
+        const url = new URL(req.url);
+        if (url.pathname.endsWith('/') || /\.[A-Za-z0-9]+$/.test(url.pathname)) return null;
+        url.pathname += '.html';
+        return cache.match(new Request(url.href), { ignoreSearch: true })
+            .then((alias) => alias ? redirectConQuery(alias, req) : null);
+    });
+}
+
+/** Un redirect precacheato senza query deve mantenere i parametri della richiesta corrente. */
+function redirectConQuery(risposta, req) {
+    if (!risposta || risposta.status < 300 || risposta.status >= 400) return risposta;
+    const posizione = risposta.headers && risposta.headers.get('location');
+    if (!posizione) return risposta;
+    const richiesta = new URL(req.url);
+    const destinazione = new URL(posizione, richiesta.href);
+    if (!richiesta.search || destinazione.search) return risposta;
+    destinazione.search = richiesta.search;
+    return Response.redirect(destinazione.href, risposta.status);
 }
 
 /**
- * Cache Storage conserva le risposte COME ERANO, comprese quelle ottenute attraverso un redirect (l'installazione
- * scarica `pagina.html` e il sito la gira a `/pagina`): `redirected` resta vero. Il browser rifiuta una risposta
- * "redirected" per una richiesta di navigazione (che chiede i redirect in modo manuale) con ERR_FAILED. Si
- * ricostruisce quindi la risposta senza quel segno, con lo stesso contenuto.
+ * Memorizza un redirect esplicito sul vecchio URL e il contenuto sulla URL
+ * canonica. Cache Storage conserva il flag `redirected` della risposta di
+ * rete, che il browser non può riusare come risposta di navigazione.
+ */
+function salvaRispostaAppShell(cache, req, response) {
+    const urlRichiesta = new URL(req.url);
+    let urlFinale;
+    try { urlFinale = response.url ? new URL(response.url) : null; }
+    catch (_) { urlFinale = null; }
+    if (response.redirected && urlFinale && urlFinale.origin === urlRichiesta.origin
+        && urlFinale.href !== urlRichiesta.href) {
+        return cache.put(req, Response.redirect(urlFinale.href, 307))
+            .then(() => cache.put(urlFinale.href, response.clone()));
+    }
+    return cache.put(req, response.clone());
+}
+
+/**
+ * Il contenuto conservato sotto la URL canonica può mantenere il flag
+ * `redirected` del fetch originale. Il browser non accetta quel flag come
+ * risposta a una navigazione, quindi lo ricostruiamo con il corpo identico.
  */
 function senzaRedirect(risposta) {
     if (!risposta || !risposta.redirected) return risposta;

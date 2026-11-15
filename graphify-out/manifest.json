@@ -975,9 +975,9 @@
     "semantic_hash": ""
   },
   "js/ui/page-loader.js": {
-    "mtime": 1793974415.6189015,
-    "seen": 1794049280.8452823,
-    "ast_hash": "91dc04bf00b217ef81b25b5e026e1050",
+    "mtime": 1794754142.8834572,
+    "seen": 1794754202.8425415,
+    "ast_hash": "434ddbe0f205ff11a2556d2ac998d287",
     "semantic_hash": ""
   },
   "js/ui/profile-hero.js": {
@@ -1107,9 +1107,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794745945.348541,
-    "seen": 1794746165.3384213,
-    "ast_hash": "07e33cdf13c5a67e7eafc8ae1accc6e4",
+    "mtime": 1794754149.8693511,
+    "seen": 1794754202.8518703,
+    "ast_hash": "8d415efd672d5025de4e5f6b87519626",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1526,9 +1526,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794745945.5851276,
-    "seen": 1794746165.3624818,
-    "ast_hash": "dd98c31beaf86ee4b850903f76c65568",
+    "mtime": 1794753285.4872925,
+    "seen": 1794753413.2443383,
+    "ast_hash": "90984b463590e17aefcea9a619b32e2d",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -3574,16 +3574,16 @@
     "semantic_hash": ""
   },
   "tests/specs/service-worker-cache.spec.js": {
-    "mtime": 1792795907.5119734,
-    "seen": 1793910198.4847014,
-    "ast_hash": "a507f7ace0133a3bb6e62b72317bdbbf",
-    "semantic_hash": "a507f7ace0133a3bb6e62b72317bdbbf"
+    "mtime": 1794753351.7416973,
+    "seen": 1794753413.401836,
+    "ast_hash": "f49a2a22529060c7f564c746b7cac69a",
+    "semantic_hash": ""
   },
   "tests/specs/service-worker-redirect-del-sito.spec.js": {
-    "mtime": 1792797833.5082166,
-    "seen": 1793910198.4847014,
-    "ast_hash": "4eb11b6c9eb4463ff015d8765f7405b3",
-    "semantic_hash": "4eb11b6c9eb4463ff015d8765f7405b3"
+    "mtime": 1794753334.1113477,
+    "seen": 1794753413.401836,
+    "ast_hash": "48d615851d676ad8cf5e42f5d508cc45",
+    "semantic_hash": ""
   },
   "tests/specs/sessione-48-ore.spec.js": {
     "mtime": 1792254199.0134706,

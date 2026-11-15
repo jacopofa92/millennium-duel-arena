@@ -45,6 +45,7 @@
     // invocarla, quindi funziona senza altre modifiche.
     // document.currentScript esiste solo MENTRE lo script gira: lo si prende subito, serve anche all'avvio ritardato qui sotto.
     var currentScript = document.currentScript;
+    var navigazioneCollegata = false;
 
     // PAGE_LOADER_SKIP: niente overlay ora (index.html alla PRIMISSIMA apertura mostra solo lo splash). Ma le viste del menu
     // (Cartoteca, Negozio, Duello Libero...) non cambiano documento e vogliono comunque il loader quando caricano moduli
@@ -56,6 +57,7 @@
             hide: function () { /* niente da nascondere: non e' mai stato mostrato */ },
             hideWhenReady: function () { /* idem */ }
         };
+        collegaLoaderAllaNavigazione();
         return;
     }
     avvia(false);
@@ -175,6 +177,7 @@
     }
 
     window.PageLoader = { show: show, hide: hide, hideWhenReady: hideWhenReady };
+    collegaLoaderAllaNavigazione();
 
     if (dopo) {
         // Avvio ritardato: la pagina c'e' gia' e a nascondere il loader ci pensa chi lo ha mostrato (hideWhenReady).
@@ -213,4 +216,68 @@
         safetyTimer = setTimeout(hide, 10000);
     }
     }   // fine di avvia()
+
+    /**
+     * Il loader della nuova pagina non può apparire finché il suo HTML e i
+     * suoi script non sono arrivati. Sulle reti lente questo lascia la
+     * schermata precedente apparentemente bloccata dopo il tocco. Mostriamo
+     * quindi lo stesso loader prima della navigazione nativa, ma solo per i
+     * normali link interni: i pulsanti SPA, gli hash e le azioni annullate
+     * restano senza overlay. Se il browser non completa la navigazione,
+     * l'ancora temporale evita di lasciare il gioco coperto per sempre.
+     */
+    function collegaLoaderAllaNavigazione() {
+        if (navigazioneCollegata) return;
+        navigazioneCollegata = true;
+        var ritardoNavigazione = null;
+        var scadenzaNavigazione = null;
+        // In ascolto su window (bubble), dopo i normali handler delegati su
+        // document: così le navigazioni SPA che chiamano preventDefault()
+        // vengono riconosciute e non ricevono un overlay fuori contesto.
+        window.addEventListener('click', function (event) {
+            if (event.defaultPrevented || (event.button != null && event.button !== 0)
+                || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+            var bersaglio = event.target;
+            if (bersaglio && bersaglio.nodeType !== 1) bersaglio = bersaglio.parentElement;
+            var link = bersaglio && bersaglio.closest ? bersaglio.closest('a[href]') : null;
+            if (!link || link.hasAttribute('download') || link.dataset.noPageLoader !== undefined) return;
+            var target = (link.getAttribute('target') || '').toLowerCase();
+            if (target && target !== '_self') return;
+
+            var destinazione;
+            try { destinazione = new URL(link.href, window.location.href); }
+            catch (_) { return; }
+            var protocolloInterno = destinazione.protocol === 'http:'
+                || destinazione.protocol === 'https:'
+                || destinazione.protocol === 'file:';
+            if (destinazione.origin !== window.location.origin
+                || !protocolloInterno || destinazione.protocol !== window.location.protocol) return;
+            if (destinazione.pathname === window.location.pathname
+                && destinazione.search === window.location.search
+                && (destinazione.hash || '') !== '') return;
+            if (destinazione.href === window.location.href) return;
+
+            clearTimeout(ritardoNavigazione);
+            clearTimeout(scadenzaNavigazione);
+            // I cambi rapidi non devono mostrare un lampo di overlay: se la
+            // pagina non è ancora partita dopo 180 ms, il loader dà feedback
+            // durante l'attesa. pagehide annulla questo timer quando la
+            // navigazione si completa prima.
+            ritardoNavigazione = setTimeout(function () {
+                ritardoNavigazione = null;
+                window.PageLoader.show();
+                scadenzaNavigazione = setTimeout(function () {
+                    window.PageLoader.hide();
+                    scadenzaNavigazione = null;
+                }, 15000);
+            }, 180);
+        });
+        window.addEventListener('pagehide', function () {
+            clearTimeout(ritardoNavigazione);
+            ritardoNavigazione = null;
+            clearTimeout(scadenzaNavigazione);
+            scadenzaNavigazione = null;
+        });
+    }
 })();
