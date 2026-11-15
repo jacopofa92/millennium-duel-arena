@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.6.93 — Il loader completo condiviso parte dall'head: stessa carta, aure, scintille e barra fin dal caricamento.
  * 1.6.92 — La copertura immediata di avvio usa la stessa carta animata del loader, senza il passaggio dal cerchio.
  * 1.6.91 — Il loader dei link interni aspetta 180 ms prima di apparire, evitando il lampo nelle navigazioni rapide.
  * 1.6.91 — La copertura iniziale resta finché il loader appare o la schermata è pronta: niente titolo isolato prima del contenuto.
@@ -841,4 +842,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.6.92';
+window.GAME_VERSION = '1.6.93';

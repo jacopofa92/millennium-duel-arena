@@ -38,21 +38,15 @@
          solo su schermi touch (pointer coarse, telefoni/tablet, dove il
          risparmio di banda/CPU conta davvero — vedi images/fields/mobile/,
          stessa ricompressione qualità 78 di images/characters). -->
-    <!-- AVVIO SU CONNESSIONE LENTA. Il browser dipinge il <body> appena lo vede, ma lo
-         script del loader (js/ui/page-loader.js) sta DENTRO il body ed e' un file esterno:
-         con 300 ms di latenza il campo di default compariva per secondi, nudo, prima di
-         ogni loader (misurato: campo a 2,2 s, loader a 2,5 s, campo vero a 6,4 s).
-         Tre cose, tutte INLINE perche' non devono aspettare nessun file:
-         1) una copertura scura con la carta animata, sull'<html> (`avvio-in-corso`), che blocca
-            anche i tocchi; se la leva il loader vero (page-loader.js), che le subentra;
+    <!-- AVVIO SU CONNESSIONE LENTA. La copertura inline evita che il campo
+         richiesto compaia nudo mentre si caricano gli script; il loader
+         condiviso viene avviato nell'head, prima degli script applicativi:
+         1) una copertura scura sull'<html> (`avvio-in-corso`) blocca anche i tocchi;
+            page-loader.js la sostituisce con la stessa animazione completa usata nel resto del gioco;
          2) il campo RICHIESTO dall'URL (?field=) scritto subito come sfondo e scaricato
             subito, al posto del campo di default scaricato a vuoto;
          3) niente preload del dirigibile se il campo e' un altro. -->
-    <style>
-        html.avvio-in-corso::before { content: ''; position: fixed; inset: 0; z-index: 2147483000; background: #0b0d14; }
-        html.avvio-in-corso::after { content: ''; position: fixed; z-index: 2147483001; left: calc(50% - 36px); top: calc(50% - 72px); width: 72px; height: 105px; box-sizing: border-box; border: 2px solid #b87927; border-radius: 4px; background: radial-gradient(ellipse 20% 25% at 50% 50%, rgb(29 29 29) 0 95%, transparent 100%), linear-gradient(#080808, #080808) 3.4% 2.3% / 93.2% 95.4% no-repeat, linear-gradient(#563121, #563121) 4.8% 4% / 90.4% 92.8% no-repeat, rgb(185 137 91); box-shadow: inset 0 0 0 2px #15100a, inset 0 0 0 3px rgba(255, 223, 135, .4), 0 18px 42px rgba(0, 0, 0, .55); transform-style: preserve-3d; animation: avvio-in-corso-giro 1.75s cubic-bezier(.55, .08, .35, .95) infinite; }
-        @keyframes avvio-in-corso-giro { 0% { transform: perspective(760px) translateY(7px) rotateX(-7deg) rotateY(0); } 45%, 55% { transform: perspective(760px) translateY(-7px) rotateX(5deg) rotateY(180deg); } 100% { transform: perspective(760px) translateY(7px) rotateX(-7deg) rotateY(360deg); } }
-    </style>
+    <style>html.avvio-in-corso::before{content:"";position:fixed;inset:0;z-index:2147483000;background:#0b0d14}</style>
     <script>
         (function () {
             var radice = document.documentElement;
@@ -85,6 +79,9 @@
             }
         })();
     </script>
+    <link rel="stylesheet" href="js/ui/page-loader.css">
+    <script>window.PAGE_LOADER_MANUAL_HIDE = true;</script>
+    <script src="js/ui/page-loader.js"></script>
     <link rel="preload" as="image" href="images/characters/mirror.jpg">
     <script src="js/ui/error-recovery.js"></script>
     <!-- Accesso obbligatorio (js/cloud/auth-gate.js) — vedi il commento
@@ -126,8 +123,7 @@
 <link rel="stylesheet" href="js/ui/tag-scambio.css">
 <link rel="stylesheet" href="js/ui/conto-alla-rovescia.css">
 <link rel="stylesheet" href="js/ui/tavola-del-destino.css">
-    <link rel="stylesheet" href="js/ui/page-loader.css">
-    <!-- CSS del duello, diviso in 12 parti CONTIGUE (era un unico <style> da ~275 KB). L'ordine dei <link> e' l'ordine della cascata:
+<!-- CSS del duello, diviso in 12 parti CONTIGUE (era un unico <style> da ~275 KB). L'ordine dei <link> e' l'ordine della cascata:
          non riordinarli. Il Multiplayer copia questi <link> nell'arena (mp-lobby.js, loadDuelArena). -->
     <link rel="stylesheet" href="js/ui/duello-01-base-e-frecce.css">
     <link rel="stylesheet" href="js/ui/duello-02-intro-e-mani.css">
@@ -141,25 +137,10 @@
     <link rel="stylesheet" href="js/ui/duello-10-mobile.css">
     <link rel="stylesheet" href="js/ui/duello-11-mobile-verticale.css">
     <link rel="stylesheet" href="js/ui/duello-12-pulsante-fasi-laterale.css">
+
 </head>
 <body>
-    <!-- Schermata di caricamento condivisa (js/ui/page-loader.js/.css) al
-         posto del vecchio #preIntroCover statico: stessa identica
-         garanzia (primissimo elemento di <body>, copre tutto il resto
-         del markup dal primo frame dipinto), ma ora con l'animazione a
-         tema invece di un semplice sfondo scuro — nascosta da
-         PageLoader.hide(), chiamata da js/duel-session.js#start() nello
-         STESSO punto in cui prima veniva rimosso #preIntroCover, quindi
-         non rischia di restare bloccata a coprire per sempre.
-         PAGE_LOADER_MANUAL_HIDE=true: qui NON deve mai scattare il
-         minimo di 2 secondi né aspettare window.load come nelle altre
-         pagine — regola già esistente e voluta per questa pagina, "il
-         caricamento del duello non deve mai aspettare nulla", vedi il
-         commento in playIntro() su showTimeout/INTRO_SHOW_MS. -->
-    <script>window.PAGE_LOADER_MANUAL_HIDE = true;</script>
-    <script src="js/ui/page-loader.js"></script>
-
-    <!-- Dettagli video scelti dal giocatore (js/ui/video-quality.js):
+<!-- Dettagli video scelti dal giocatore (js/ui/video-quality.js):
          caricato QUI, fra i primissimi, perché scrive `data-dettagli` su
          <html> e il Terreno di gioco deve nascere già con il livello
          giusto — applicarlo più tardi farebbe comparire per un istante gli

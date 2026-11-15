@@ -3,13 +3,9 @@
  * pagina del gioco (menu, Cartoteca, Creazione Deck, ecc.) — vedi il
  * commento in cima a page-loader.js per il quadro completo. Stessa
  * palette oro/ambra dello splash d'apertura di index.html (.splash-screen)
- * e del menu (--gold/--gold-strong, #f7d774/#f39c12) — un ciano/blu
- * usato in una sessione precedente per distinguerla dallo splash è stato
- * segnalato dall'utente come stonato rispetto al resto del gioco, quindi
- * tolto: restano diverse per FORMA (disco vs anello) e frequenza (ad
- * ogni cambio pagina, non solo all'apertura), non per colore. La carta
- * CSS a due facce sostituisce il vecchio glifo statico: non richiede asset
- * e quindi resta disponibile anche mentre immagini e cache si caricano.
+ * e del menu (--gold/--gold-strong, #f7d774/#f39c12). La carta in finto
+ * 3D e i suoi effetti sono la scena condivisa per i cambi pagina; lo splash
+ * iniziale di index.html resta invece dedicato all'apertura dell'app.
  */
 .page-loader {
     position: fixed;
@@ -27,7 +23,7 @@
     pointer-events: none;
 }
 /* In attesa della comparsa (vedi RITARDO_COMPARSA_MS in page-loader.js): invisibile e senza dissolvenza, cosi'
-   scade il ritardo e il disco entra con la transizione normale, mentre una pagina veloce non lo mostra mai. */
+   scade il ritardo e il loader entra con la transizione normale, mentre una pagina veloce non lo mostra mai. */
 .page-loader.page-loader-attesa {
     opacity: 0;
     pointer-events: none;

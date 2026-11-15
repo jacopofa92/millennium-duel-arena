@@ -3,10 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <!-- Copertura d'avvio (identica in ogni pagina col loader: la sorveglia guardrail-copertura-avvio). Fino a quando
-     js/ui/page-loader.js -- che sta nel body e arriva dopo gli script bloccanti dell'head -- non prende il suo posto,
+     js/ui/page-loader.js, anticipato nell'head -- non prende il suo posto,
      lo schermo restava vuoto e i tocchi cadevano nel nulla. La toglie page-loader.js; 15 s di rete di sicurezza. -->
-<style>html.avvio-in-corso::before{content:"";position:fixed;inset:0;z-index:2147483000;background:#0b0d14}html.avvio-in-corso::after{content:"";position:fixed;z-index:2147483001;left:calc(50% - 36px);top:calc(50% - 72px);width:72px;height:105px;box-sizing:border-box;border:2px solid #b87927;border-radius:4px;background:radial-gradient(ellipse 20% 25% at 50% 50%,rgb(29 29 29) 0 95%,transparent 100%),linear-gradient(#080808,#080808) 3.4% 2.3%/93.2% 95.4% no-repeat,linear-gradient(#563121,#563121) 4.8% 4%/90.4% 92.8% no-repeat,rgb(185 137 91);box-shadow:inset 0 0 0 2px #15100a,inset 0 0 0 3px rgba(255,223,135,.4),0 18px 42px rgba(0,0,0,.55);transform-style:preserve-3d;animation:avvio-in-corso-giro 1.75s cubic-bezier(.55,.08,.35,.95) infinite}@keyframes avvio-in-corso-giro{0%{transform:perspective(760px) translateY(7px) rotateX(-7deg) rotateY(0)}45%,55%{transform:perspective(760px) translateY(-7px) rotateX(5deg) rotateY(180deg)}100%{transform:perspective(760px) translateY(7px) rotateX(-7deg) rotateY(360deg)}}</style>
+<style>html.avvio-in-corso::before{content:"";position:fixed;inset:0;z-index:2147483000;background:#0b0d14}</style>
 <script>(function(){var r=document.documentElement;r.classList.add("avvio-in-corso");setTimeout(function(){r.classList.remove("avvio-in-corso")},15000)})();</script>
+<link rel="stylesheet" href="js/ui/page-loader.css">
+<script src="js/ui/page-loader.js"></script>
 <!-- Opt-in STATICO alla View Transitions API — deve stare qui, non iniettato via JS in ritardo (vedi js/audio/audio-manager.js per la storia completa del bug che questo risolve). -->
 <style>@view-transition { navigation: auto; }</style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +32,6 @@
 <script src="js/cloud/auto-sync.js"></script>
 <script src="js/cloud/auth-gate.js"></script>
 <script src="js/pwa-register.js"></script>
-<link rel="stylesheet" href="js/ui/page-loader.css">
 <link rel="stylesheet" href="js/ui/topbar.css">
     <link rel="stylesheet" href="js/ui/menu-mobile.css">
 <link rel="stylesheet" href="js/ui/deck-switcher.css">
@@ -39,8 +40,7 @@
 <title>Yu-Gi-Oh! Millennium Duel Arena — Puzzle</title>
 </head>
 <body>
-    <script src="js/ui/page-loader.js"></script>
-    <div id="topbarMount"></div>
+<div id="topbarMount"></div>
 
     <main class="mp-main">
         <div class="mp-riepilogo mp-riepilogo--fisso" id="riepilogo"></div>

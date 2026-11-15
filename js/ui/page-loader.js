@@ -10,14 +10,13 @@
  * dello splash, ma un componente condiviso (come js/ui/topbar.js) invece
  * di duplicare markup/CSS/JS in ogni pagina.
  *
- * USO: in ogni pagina che deve mostrarla,
- *   <head>: <link rel="stylesheet" href="js/ui/page-loader.css">
- *   <body>: <script src="js/ui/page-loader.js"></script>  ← PRIMISSIMO
- *           elemento di <body> (prima di qualunque altro markup), così
- *           copre il resto della pagina dal primissimo frame dipinto,
- *           esattamente come faceva #preIntroCover in duelMonstersCore.html
- *           (ora sostituito da questo stesso componente, vedi
- *           duel-session.js#start()).
+ * USO: nelle pagine con copertura di avvio, il foglio e questo script sono
+ *   nell'<head>, subito dopo il bootstrap inline che aggiunge
+ *   `avvio-in-corso`. Il loader inserisce la scena completa fuori da <head>
+ *   (i browser non dipingono i suoi discendenti), così appare prima degli
+ *   script applicativi e riusa sempre questo stesso markup e CSS.
+ *   index.html lo carica invece nel body con PAGE_LOADER_SKIP: lo splash
+ *   dedicato resta l'unica schermata della prima apertura.
  *
  * Per default si nasconde da sola dopo ALMENO 1 secondo (MIN_MS più
  * sotto — richiesta esplicita dell'utente, prima erano 2s) dal momento
@@ -43,7 +42,7 @@
     // resta undefined). Ogni chiamante di PageLoader.hide()/hideWhenReady()
     // in questo progetto controlla già `if (window.PageLoader)` prima di
     // invocarla, quindi funziona senza altre modifiche.
-    // document.currentScript esiste solo MENTRE lo script gira: lo si prende subito, serve anche all'avvio ritardato qui sotto.
+    // document.currentScript esiste solo MENTRE lo script gira: lo si prende subito per montare la scena nel documento.
     var currentScript = document.currentScript;
     var navigazioneCollegata = false;
     var coperturaAvvioAttiva = false;
@@ -99,18 +98,21 @@
         '<div class="page-loader-bar"><div class="page-loader-bar-fill"></div></div>' +
         '<p class="page-loader-text">Caricamento…</p>';
 
-    // document.currentScript è questo stesso tag <script> (un classico
-    // script sincrono, mai async/defer/module) — inserire SUBITO DOPO
-    // di lui, invece che in coda a document.body, è l'unico modo per
-    // garantire che l'overlay compaia PRIMA che il resto del body (che
-    // deve ancora essere parsato, essendo questo il primissimo script)
-    // venga dipinto — stesso principio di #preIntroCover/.splash-screen,
-    // che invece erano markup HTML letterale per lo stesso identico
-    // motivo: qui l'unico modo di restare un componente condiviso
-    // (niente markup duplicato in ogni pagina) senza perdere quella
-    // garanzia.
+    // Quando lo script e' nel head, la pagina non ha ancora un body in cui
+    // montare il loader. Il nodo viene aggiunto a <html> (mai dentro head,
+    // che il browser nasconde); quando lo script e' nel body, resta accanto
+    // al tag chiamante come prima.
     if (!dopo && currentScript && currentScript.parentNode) {
-        currentScript.parentNode.insertBefore(el, currentScript.nextSibling);
+        // Il loader viene caricato presto nell'<head> per mostrare la stessa
+        // animazione completa anche mentre gli altri script della pagina
+        // sono ancora in attesa. Non inserirlo dentro <head>: il browser
+        // nasconde quel sottoalbero, quindi lo agganciamo direttamente a
+        // <html>, prima che il parser costruisca <body>.
+        if (currentScript.parentNode === document.head) {
+            document.documentElement.appendChild(el);
+        } else {
+            currentScript.parentNode.insertBefore(el, currentScript.nextSibling);
+        }
     } else if (document.body) {
         document.body.insertBefore(el, document.body.firstChild);
     }
@@ -128,21 +130,25 @@
     // lo schermo resta nero). Solo CSS.
     var glAttivo = null;
 
-    // ESPERIMENTO "UX fluida" (branch feature/ux-fluida). Prima il disco compariva SEMPRE e restava almeno 1 s
+    // ESPERIMENTO "UX fluida" (branch feature/ux-fluida). Prima il loader compariva SEMPRE e restava almeno 1 s
     // (richiesta esplicita dell'utente, 2 s -> 1 s) anche su una pagina pronta in 80 ms: ogni passaggio fra
-    // schermate costava un secondo di attesa finta. Ora il disco entra solo se la pagina e' DAVVERO lenta
+    // schermate costava un secondo di attesa finta. Ora il loader entra solo se la pagina e' DAVVERO lenta
     // (RITARDO_COMPARSA_MS) e, una volta comparso, resta un minimo breve (MIN_MS) per non lampeggiare.
     // Per tornare al comportamento di prima: SOLO_SE_LENTO = false e MIN_MS = 1000.
     var SOLO_SE_LENTO = true;
-    var RITARDO_COMPARSA_MS = 220;
+    // All'avvio la copertura inline sta già proteggendo la pagina: mostrare
+    // subito il loader completo evita di far vedere un surrogato diverso.
+    // Per i loader richiesti durante una vista già aperta resta il ritardo
+    // che evita il lampo nei passaggi rapidi.
+    var RITARDO_COMPARSA_MS = coperturaAvvioAttiva ? 0 : 220;
     var MIN_MS = 450;
     var hidden = false;
     var hideTimer = null;
     var safetyTimer = null;
     var comparsaTimer = null;
-    var mostratoAlle = 0; // istante in cui il disco e' diventato visibile (0 = mai, ancora in attesa)
+    var mostratoAlle = 0; // istante in cui il loader e' diventato visibile (0 = mai, ancora in attesa)
 
-    // Il disco e' nel DOM dal primo frame (copre la pagina mezza costruita) ma resta invisibile finche' non
+    // Il loader e' nel DOM dal primo frame (copre la pagina mezza costruita) ma resta invisibile finche' non
     // scade il ritardo: se la pagina e' pronta prima, l'utente non lo vede mai e il cambio pagina e' immediato.
     // La modalita' manuale (duello) e le chiamate show() esplicite lo vogliono subito.
     function programmaComparsa() {
@@ -200,7 +206,7 @@
         // SOLO allora far partire il conto alla rovescia del minimo di
         // visualizzazione — altrimenti la propria dissolvenza (0.5s) può
         // già essere a metà quando l'overlay nero di auth-gate sparisce
-        // sopra di lei, e per un istante il disco animato "flasha" da
+        // sopra di lei, e per un istante il loader animato "flasha" da
         // sotto prima del vero contenuto della pagina (bug reale
         // segnalato dall'utente su Cartoteca). Su una pagina senza
         // auth-gate (es. index.html) __authGatePending resta undefined:
