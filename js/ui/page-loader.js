@@ -46,6 +46,7 @@
     // document.currentScript esiste solo MENTRE lo script gira: lo si prende subito, serve anche all'avvio ritardato qui sotto.
     var currentScript = document.currentScript;
     var navigazioneCollegata = false;
+    var coperturaAvvioAttiva = false;
 
     // PAGE_LOADER_SKIP: niente overlay ora (index.html alla PRIMISSIMA apertura mostra solo lo splash). Ma le viste del menu
     // (Cartoteca, Negozio, Duello Libero...) non cambiano documento e vogliono comunque il loader quando caricano moduli
@@ -64,6 +65,7 @@
 
     /** Costruisce l'overlay e il suo ciclo. `dopo`: la pagina e' gia' caricata (avvio ritardato da un show()). */
     function avvia(dopo) {
+    coperturaAvvioAttiva = !dopo && document.documentElement.classList.contains('avvio-in-corso');
     // Catturato SUBITO (primo statement eseguibile di questo script,
     // che è già il primissimo elemento del body): stesso identico scopo
     // di window.__splashStart in index.html, per garantire ALMENO 2
@@ -112,10 +114,15 @@
     } else if (document.body) {
         document.body.insertBefore(el, document.body.firstChild);
     }
-    // Le pagine con la copertura inline nell'<head> (duelMonstersCore.html: `avvio-in-corso`) la tengono
-    // finche' questo loader non esiste: da qui in poi lo schermo e' coperto da lui, e la levano nello
-    // stesso istante per non lasciare ne' un vuoto ne' due strati sovrapposti.
-    document.documentElement.classList.remove('avvio-in-corso');
+    // La copertura inline nell'<head> resta finché il loader non è davvero
+    // visibile o la pagina è pronta. Toglierla appena il loader nasce crea
+    // un intervallo in cui si vede l'HTML parziale (per esempio solo il titolo
+    // della Storia) mentre gli script in fondo al body devono ancora partire.
+    function rilasciaCoperturaAvvio() {
+        if (!coperturaAvvioAttiva) return;
+        coperturaAvvioAttiva = false;
+        document.documentElement.classList.remove('avvio-in-corso');
+    }
 
     // Nessun WebGL qui: il loader e' sul percorso critico di OGNI pagina (se un contesto GL fallisce su un telefono
     // lo schermo resta nero). Solo CSS.
@@ -143,6 +150,7 @@
         comparsaTimer = setTimeout(function () {
             el.classList.remove('page-loader-attesa');
             mostratoAlle = performance.now();
+            rilasciaCoperturaAvvio();
         }, RITARDO_COMPARSA_MS);
     }
 
@@ -150,6 +158,7 @@
         if (hidden) return;
         hidden = true;
         clearTimeout(comparsaTimer);
+        rilasciaCoperturaAvvio();
         el.classList.add('page-loader-hidden');
         if (glAttivo) setTimeout(function () { if (hidden) glAttivo.ferma(); }, 600);
         clearTimeout(hideTimer);
@@ -173,6 +182,7 @@
         hidden = false;
         el.classList.remove('page-loader-attesa');
         el.classList.remove('page-loader-hidden');
+        rilasciaCoperturaAvvio();
         if (glAttivo) glAttivo.via();
     }
 
