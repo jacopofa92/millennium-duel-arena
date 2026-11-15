@@ -212,6 +212,11 @@
                 tone(f, 0.55, { type: 'triangle', sweepTo: f * 1.45, gain: 0.12, delay: i * 0.13 });
             });
         },
+        /** Grido del duellante: suono sintetico di scorta se il file standard non è disponibile. */
+        duelistShout() {
+            noiseBurst(0.7, { gain: 0.18, filterFreq: 650, filterSweepTo: 2600 });
+            [220, 330, 495, 740].forEach((f, i) => tone(f, 0.42, { type: 'triangle', sweepTo: f * 1.28, gain: 0.11, delay: i * 0.075 }));
+        },
         /** Buco Nero: un risucchio grave e crescente (rumore filtrato che
          *  sale di frequenza, come aria aspirata) seguito da un impatto
          *  sordo quando il vortice raggiunge il centro. */

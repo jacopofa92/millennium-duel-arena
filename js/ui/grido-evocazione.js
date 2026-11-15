@@ -320,6 +320,7 @@
         // Il tempo comprende l'uscita: la scena dura `durata` in totale.
         setTimeout(() => chiudi(false), Math.max(300, durata - USCITA_MS));
         scena.getBoundingClientRect(); // forza il primo disegno prima di avviare
+        if (window.SFX && typeof SFX.duelistShout === 'function') SFX.duelistShout();
         scena.classList.add('ge--play');
     }
 

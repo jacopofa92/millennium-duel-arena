@@ -99,6 +99,8 @@
         { chi: ['makoTsunami'], carta: 879, grido: 'Pescatore Leggendario, getta la rete!' },
         { chi: ['yamiBakura'], carta: 1118, grido: 'Ha Des Sovrano Oscuro, risvegliati dal nulla!' },
         { chi: ['yamiBakura'], carta: 891, grido: 'Paura Oscura, divora la loro anima!' },
+        { chi: ['nitemare'], carta: 1126, grido: 'Drago Nero Meteora, incendia il campo!' },
+        { chi: ['nitemare'], carta: 102, grido: 'Drago Teschio Nero, annienta ogni speranza!' },
         { chi: ['banditKeith', 'heishin'], carta: 377, grido: 'Metalzoa, macchina di morte, avanti!' },
         { chi: ['banditKeith'], carta: 104, grido: 'Drago Revolver, tira a sorte e spara!' },
         { chi: ['teaGardner'], carta: 188, grido: 'Ragazza Maga Nera, proteggi i miei amici!' },
