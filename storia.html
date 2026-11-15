@@ -1516,7 +1516,7 @@
             // campagna: è una sua prova come le altre.
             if (torneoId) {
                 const salita = StoryProgress.avanzaTorneo(campaignId, torneoId);
-                if (salita.torneoVinto) { tornaDalTorneo(campaignId, salita); return; }
+                if (salita.torneoVinto) { tornaDalTorneo(campaignId, salita, torneoId); return; }
                 // La scena appena letta era la prova da giocare: la mappa da
                 // mostrare torna quella della prova successiva, anche se
                 // questa chiudeva una mappa e la prossima sta sull'altra.
@@ -1726,12 +1726,12 @@
     });
 
     /**
-     * Torneo vinto: si esce dalla sua mappa e si torna su quella della
-     * campagna, che nel frattempo è avanzata di quella tappa. Passa dal
-     * cartello del capitolo come qualunque altra vittoria, così il
-     * ritorno non è un salto secco.
+     * Percorso concluso: si esce dalla sua mappa e si torna su quella della
+     * campagna, che nel frattempo è avanzata. I veri tornei mostrano il
+     * riepilogo testuale; le aree narrative passano invece al capitolo
+     * successivo senza chiamarle tornei.
      */
-    function tornaDalTorneo(campaignId, esito) {
+    function tornaDalTorneo(campaignId, esito, percorsoId) {
         torneoAperto = null;
         // Via il torneo anche dall'URL, non solo dalla variabile:
         // altrimenti un ricaricamento rientrerebbe in un tabellone finito,
@@ -1740,15 +1740,24 @@
         try {
             history.replaceState(null, '', 'storia.html?campaign=' + encodeURIComponent(campaignId));
         } catch (e) { /* su file:// può non essere permesso: pazienza */ }
-        const torneo = esito.torneoId ? StoryProgress.getTorneo(campaignId, esito.torneoId) : null;
-        const nome = torneo ? (torneo.nome || torneo.label) : 'il torneo';
+        const idPercorso = esito.torneoId || percorsoId;
+        const percorso = idPercorso ? StoryProgress.getTorneo(campaignId, idPercorso) : null;
+        const nome = percorso ? (percorso.nome || percorso.label) : 'il torneo';
         // Rifarlo da capo è permesso, ma va detto che la storia resta
         // dov'è: vincere un intero tabellone e vedere la mappa ferma
         // sembrerebbe un difetto, mentre è il comportamento voluto —
         // stesso principio di una tappa qualunque rigiocata.
-        mostraAvviso(esito.rigiocata
-            ? `Hai rifatto ${nome} e l'hai rivinto. La storia resta dov'era: l'avevi già superato.`
-            : `Hai vinto ${nome}. La storia riprende da dove l'avevi lasciata.`);
+        // Gli archi narrativi (kind "area") sono capitoli della Storia,
+        // non tornei: il cartello del capitolo successivo racconta già il
+        // passaggio. Mostrare qui un generico "Hai vinto il torneo" li
+        // descrive in modo falso e duplica la transizione narrativa.
+        if (percorso && percorso.kind === 'area') {
+            mostraAvviso('');
+        } else {
+            mostraAvviso(esito.rigiocata
+                ? `Hai rifatto ${nome} e l'hai rivinto. La storia resta dov'era: l'avevi già superato.`
+                : `Hai vinto ${nome}. La storia riprende da dove l'avevi lasciata.`);
+        }
         renderMappa(campaignId);
         cartelloSeNuovoCapitolo(campaignId).then(() => {
             if (esito.appenaFinita) festeggiaFine(campaignId);
@@ -1819,7 +1828,7 @@
         // --- Si sta giocando un TORNEO dentro la campagna -------------
         if (esito.torneoId || torneoAperto) {
             const idTorneo = esito.torneoId || torneoAperto;
-            if (esito.torneoVinto) { tornaDalTorneo(campagnaAperta, esito); return; }
+            if (esito.torneoVinto) { tornaDalTorneo(campagnaAperta, esito, idTorneo); return; }
             const dentroUnArea = (StoryProgress.getTorneo(campagnaAperta, idTorneo) || {}).kind === 'area';
             if (dentroUnArea && esito.rigiocata) {
                 // Una tappa già superata dell'area, rigiocata: si resta
