@@ -1107,9 +1107,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794756935.8257468,
-    "seen": 1794756975.0689328,
-    "ast_hash": "70bfea9d8bbd80b91240140cc19354e9",
+    "mtime": 1794757657.5028615,
+    "seen": 1794757696.66767,
+    "ast_hash": "8f44d82aff86659fe116768dde68b23c",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1526,9 +1526,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794756853.6058185,
-    "seen": 1794756905.601586,
-    "ast_hash": "1cbd2dea1e353c1814b29088bf79e502",
+    "mtime": 1794757657.7791073,
+    "seen": 1794757696.695653,
+    "ast_hash": "412ad530ef04a2ea3b37b5b2683962da",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -4978,9 +4978,9 @@
     "semantic_hash": ""
   },
   "admin.html": {
-    "mtime": 1794655530.36079,
-    "seen": 1794655570.8341556,
-    "ast_hash": "244b5d3d8d02978232d503a609d4a4de",
+    "mtime": 1794757567.1030598,
+    "seen": 1794757696.9262347,
+    "ast_hash": "ac7664ef85a39fe619cf76599d7cad9b",
     "semantic_hash": ""
   },
   "assets/fonts/cinzel-decorative/OFL.txt": {
@@ -5008,27 +5008,27 @@
     "semantic_hash": ""
   },
   "caccia-boss.html": {
-    "mtime": 1794662339.5568585,
-    "seen": 1794662387.4207168,
-    "ast_hash": "49d1061ffd3a87a065dfb295fcecc596",
+    "mtime": 1794757567.1059885,
+    "seen": 1794757696.9272106,
+    "ast_hash": "69f07311ab55bfdfa449f6b75ba9d318",
     "semantic_hash": ""
   },
   "cartoteca.html": {
-    "mtime": 1794426409.2229803,
-    "seen": 1794427421.4616868,
-    "ast_hash": "c96079b8b1d2163db0174d670ed90965",
+    "mtime": 1794757567.1069665,
+    "seen": 1794757696.9272106,
+    "ast_hash": "3874ec8ba8cfb643e59a683bc591e799",
     "semantic_hash": ""
   },
   "crea-carta.html": {
-    "mtime": 1794429621.377233,
-    "seen": 1794429848.6567435,
-    "ast_hash": "bc51326ef47e7b6f40ca8da7296b4e66",
+    "mtime": 1794757567.1104264,
+    "seen": 1794757696.9272106,
+    "ast_hash": "6bccb06773deb0b13387465d2e2130a2",
     "semantic_hash": ""
   },
   "creazione-deck.html": {
-    "mtime": 1794426409.224983,
-    "seen": 1794427421.4616868,
-    "ast_hash": "c66dca9e2398bb6d79444962b58e72f5",
+    "mtime": 1794757567.1207273,
+    "seen": 1794757696.9272106,
+    "ast_hash": "66f36904d7e1126d6f774c8a752f916a",
     "semantic_hash": ""
   },
   "docs/README.md": {
@@ -5266,21 +5266,21 @@
     "semantic_hash": ""
   },
   "duelMonstersCore.html": {
-    "mtime": 1794558632.6972141,
-    "seen": 1794559180.1463947,
-    "ast_hash": "051d000b75be601eaf214ffc7fbea9a3",
+    "mtime": 1794757648.8474493,
+    "seen": 1794757696.9468668,
+    "ast_hash": "6cdd14debc7bcd6ce5fcf33502a62924",
     "semantic_hash": ""
   },
   "duello-libero.html": {
-    "mtime": 1794427330.2603655,
-    "seen": 1794427421.482806,
-    "ast_hash": "7bdc3fe427d2959f2dde686a4dbea5b9",
+    "mtime": 1794757567.1217096,
+    "seen": 1794757696.9468668,
+    "ast_hash": "00079d3319d05131e80fb2bdab214fbd",
     "semantic_hash": ""
   },
   "duello-sandbox.html": {
-    "mtime": 1794426409.2309916,
-    "seen": 1794427421.482806,
-    "ast_hash": "53b17423a9771f7547758ae4975a85f9",
+    "mtime": 1794757567.123663,
+    "seen": 1794757696.9468668,
+    "ast_hash": "979e716cd385535134b371976b7c956a",
     "semantic_hash": ""
   },
   "images/cards/non-ygo/CREDITI.md": {
@@ -5290,9 +5290,9 @@
     "semantic_hash": ""
   },
   "impostazioni.html": {
-    "mtime": 1794426409.3137326,
-    "seen": 1794427421.482806,
-    "ast_hash": "fc702f5014958dd5328a7e3b94161805",
+    "mtime": 1794757567.125615,
+    "seen": 1794757696.947849,
+    "ast_hash": "4bef27d8bfd8f62e07d7b66b7c025164",
     "semantic_hash": ""
   },
   "index.html": {
@@ -5302,33 +5302,33 @@
     "semantic_hash": ""
   },
   "multiplayer.html": {
-    "mtime": 1794426409.3293712,
-    "seen": 1794427421.482806,
-    "ast_hash": "73545a77092c6e6dd28aa7f83f1f0788",
+    "mtime": 1794757567.1275682,
+    "seen": 1794757696.947849,
+    "ast_hash": "14b1845420bfbbcd9fefa2d1aa58f0b2",
     "semantic_hash": ""
   },
   "negozio.html": {
-    "mtime": 1794426409.3293712,
-    "seen": 1794427421.482806,
-    "ast_hash": "3ae80cc87c45a48b1f9f5740c887d59b",
+    "mtime": 1794757567.1285458,
+    "seen": 1794757696.947849,
+    "ast_hash": "c5232922522a3fab1f164f56e46c0459",
     "semantic_hash": ""
   },
   "profilo.html": {
-    "mtime": 1794426409.3293712,
-    "seen": 1794427421.482806,
-    "ast_hash": "e78a07f2b0e08f761e96617971eb6fe3",
+    "mtime": 1794757567.1295218,
+    "seen": 1794757696.947849,
+    "ast_hash": "5be8c524aeb949531c1b2b19318916cd",
     "semantic_hash": ""
   },
   "puzzle.html": {
-    "mtime": 1794426409.3293712,
-    "seen": 1794427421.482806,
-    "ast_hash": "073e1d6bde4342498dcd6bd5eb3b5f28",
+    "mtime": 1794757567.1310284,
+    "seen": 1794757696.947849,
+    "ast_hash": "d05de9e95ee4ae48c03f659888f2ede6",
     "semantic_hash": ""
   },
   "regole.html": {
-    "mtime": 1794426409.3293712,
-    "seen": 1794427421.482806,
-    "ast_hash": "da43a69caba5c2b58bb6e8eea4520812",
+    "mtime": 1794757567.1329887,
+    "seen": 1794757696.947849,
+    "ast_hash": "fe74e0df5699214e3e06f72126520cdd",
     "semantic_hash": ""
   },
   "reports/README.md": {
@@ -5338,9 +5338,9 @@
     "semantic_hash": ""
   },
   "rivincite.html": {
-    "mtime": 1794659721.9464576,
-    "seen": 1794659769.4450464,
-    "ast_hash": "a6998ab790e48c11ec479ffb86e529d5",
+    "mtime": 1794757567.1339648,
+    "seen": 1794757696.9488254,
+    "ast_hash": "b3af682dd087b36760670e935a3ffb89",
     "semantic_hash": ""
   },
   "server/README.md": {
@@ -5350,21 +5350,21 @@
     "semantic_hash": ""
   },
   "settimana.html": {
-    "mtime": 1794658693.441343,
-    "seen": 1794658782.1151633,
-    "ast_hash": "5ef6c3dec3f95eeea5802fb0ea76f7b7",
+    "mtime": 1794757567.13494,
+    "seen": 1794757696.9488254,
+    "ast_hash": "74b98e2b7f02eaae520bced1f49de165",
     "semantic_hash": ""
   },
   "sfide.html": {
-    "mtime": 1794426409.3293712,
-    "seen": 1794427421.483804,
-    "ast_hash": "6c9f655f34210d6eade29be597211832",
+    "mtime": 1794757567.1359167,
+    "seen": 1794757696.9488254,
+    "ast_hash": "315d23999b6ea7b8cc67c3c15d19d2c8",
     "semantic_hash": ""
   },
   "storia.html": {
-    "mtime": 1794426409.345055,
-    "seen": 1794427421.483804,
-    "ast_hash": "1730a3df715879a1cde30595562d5f59",
+    "mtime": 1794757567.1398232,
+    "seen": 1794757696.9488254,
+    "ast_hash": "02441f76dddac437aec51ff9f321f5d3",
     "semantic_hash": ""
   },
   "supabase/README.md": {
@@ -5374,9 +5374,9 @@
     "semantic_hash": ""
   },
   "tag.html": {
-    "mtime": 1794426409.345055,
-    "seen": 1794427421.483804,
-    "ast_hash": "445144b04aa4ba16d1fbd979b0ce529c",
+    "mtime": 1794757567.1413293,
+    "seen": 1794757696.9488254,
+    "ast_hash": "cf73681a1f5abfd3d1c618b688e8d3ef",
     "semantic_hash": ""
   },
   "tests/README.md": {
@@ -5386,45 +5386,45 @@
     "semantic_hash": ""
   },
   "tornei.html": {
-    "mtime": 1794426409.345055,
-    "seen": 1794427421.484801,
-    "ast_hash": "c2c659147d47605221aba204c1820323",
+    "mtime": 1794757567.1432881,
+    "seen": 1794757696.9488254,
+    "ast_hash": "3578da207aac12938ca21e9ec43206de",
     "semantic_hash": ""
   },
   "torneo-battle-city.html": {
-    "mtime": 1794426409.345055,
-    "seen": 1794427421.484801,
-    "ast_hash": "62b8c4ed27afb0a2e692574aa872b8bc",
+    "mtime": 1794757567.1501236,
+    "seen": 1794757696.9488254,
+    "ast_hash": "df0400e2dc2e64823d16cf0064fc4920",
     "semantic_hash": ""
   },
   "torneo-kaiba.html": {
-    "mtime": 1794426409.345055,
-    "seen": 1794427421.484801,
-    "ast_hash": "6e38d81c09c475dbd03dfa57870a9d90",
+    "mtime": 1794757567.1526122,
+    "seen": 1794757696.9488254,
+    "ast_hash": "7347d5c9390927906018779b5e09c3b5",
     "semantic_hash": ""
   },
   "torneo-regno-duellanti.html": {
-    "mtime": 1794426409.360945,
-    "seen": 1794427421.484801,
-    "ast_hash": "03cfd16630bc0c140239f94a39aacc7a",
+    "mtime": 1794757567.1584692,
+    "seen": 1794757696.9488254,
+    "ast_hash": "dec81d2b92eb8100dac4ea8fd78a4bb2",
     "semantic_hash": ""
   },
   "torre.html": {
-    "mtime": 1794426409.360945,
-    "seen": 1794427421.484801,
-    "ast_hash": "ed772fa649cfe3a083bd4a8dc26af032",
+    "mtime": 1794757567.1599743,
+    "seen": 1794757696.9488254,
+    "ast_hash": "a5ce77b261cb9b43224e29c96d7d86b1",
     "semantic_hash": ""
   },
   "tutorial-tag.html": {
-    "mtime": 1794426409.360945,
-    "seen": 1794427421.484801,
-    "ast_hash": "d36d0e052d3f76fc6dfc9feee8361f16",
+    "mtime": 1794757567.1609583,
+    "seen": 1794757696.9488254,
+    "ast_hash": "3054cb13c4c2bb6125fde8e1cdb30ec7",
     "semantic_hash": ""
   },
   "tutorial.html": {
-    "mtime": 1794426409.360945,
-    "seen": 1794427421.484801,
-    "ast_hash": "993c58de247501278e6df9ce576983cc",
+    "mtime": 1794757567.161963,
+    "seen": 1794757696.9488254,
+    "ast_hash": "1491e7f7e3a129487c1f9c15f2978960",
     "semantic_hash": ""
   },
   ".codex-attachments/1c337cc0-b5c1-485f-b16a-7fed6e9369fd/c374096f-b3a4-4d59-a728-10363f21d26f/1000067755.png": {

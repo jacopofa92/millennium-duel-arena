@@ -559,8 +559,8 @@
 // v741: ripresa della connessione alle sale multiplayer dopo la sospensione dell'app.
 // v742: feedback immediato del loader quando si apre una pagina interna dal menu.
 // v743: le pagine e gli script già in cache non aspettano la rete ad ogni navigazione.
-// v744: la copertura iniziale resta finché il loader o il contenuto pronto sono visibili.
-const CACHE_NAME = 'ygo-duel-arena-v744';
+// v745: la copertura iniziale usa la carta animata del loader anche prima del caricamento degli script.
+const CACHE_NAME = 'ygo-duel-arena-v745';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento
