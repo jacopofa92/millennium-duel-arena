@@ -73,6 +73,7 @@
         'impatto-campo': '(owner, indice, zona) una carta è atterrata in una casella',
         'distruzione': '(owner, indice, zona) una carta in campo viene distrutta',
         'attacco-bloccato': '(owner, indice, zona, elementoAttaccante) un attacco non ha distrutto il bersaglio',
+        'attacco-animazione': '(inCorso) la sequenza visiva di un attacco blocca le nuove mosse manuali fino al suo completamento',
         'attivazione-negata': '(carta, owner, zona, indice) un\'attivazione è stata annullata in Catena',
         'transizione-carta': '({ carta, da, a, variante? }) una carta si sposta visivamente fra due zone',
         'effetto-battaglia': '(...) gli stessi argomenti di showBattleEffect',
@@ -87,6 +88,8 @@
         'scarto-fine-turno': '(eccesso, fatto) il giocatore sceglie cosa scartare a fine turno',
         // --- domande (chiedi) ---
         'interfaccia-occupata': '() → true se a schermo c\'è una scelta o una cinematica che il duello deve aspettare',
+        'azioni-bloccate-da-animazione': '() → true mentre un attacco o una cinematica lunga impedisce nuove mosse manuali',
+        'scelta-utente-in-sospeso': '() → true mentre una decisione obbligatoria del giocatore attende una risposta',
         'evocazione-in-sospeso': '() → true se la persona ha GIA\' pagato i Tributi di un\'Evocazione e non l\'ha ancora completata: nessun cambio di fase finche\' non finisce',
         'decisioni-a-schermo': '(tipo) → false se l\'interfaccia non può mostrare adesso una decisione di quel tipo',
         'lato-sconfitto': '(posto, motivo) → false se quel posto NON ha perso anche se i suoi Life Point sono a 0 (aggancio A3, docs/planning/PIANO_TAG_TEAM.md). Predefinito: true, il duello finisce come sempre',

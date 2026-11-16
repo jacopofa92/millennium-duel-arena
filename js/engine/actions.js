@@ -223,6 +223,12 @@ function handleCardClickInner(card, sourceType, sourceIndex, sourceOwner, isFace
     // una selezione/Evocazione diversa azzererebbe la scelta in corso (clearSelection) e il mostro sacrificato andrebbe perso.
     if (gameState.pendingTributePlacement) return;
 
+    // Le carte restano consultabili durante una cinematica, ma un click
+    // ordinario non deve avviare una nuova mossa finché questa termina.
+    // Le selezioni obbligatorie sopra hanno invece precedenza.
+    if (EventiDuello.chiedi('azioni-bloccate-da-animazione', false)
+        && !EventiDuello.chiedi('scelta-utente-in-sospeso', false)) return;
+
     // Un tap/click su una carta della propria mano la rende il riferimento
     // visivo corrente anche nei rami che aprono subito pulsanti flottanti
     // (Attiva, Special Summon, ecc.). Prima quei rami non impostavano
@@ -373,6 +379,9 @@ function attemptActivateCard(owner, zone, index) {
 }
 
 function startHandCardDrag(event, card, sourceIndex, sourceOwner) {
+    // Non iniziare un trascinamento durante le sequenze visive; il click
+    // semplice resta libero e continua a mostrare le informazioni carta.
+    if (EventiDuello.chiedi('azioni-bloccate-da-animazione', false)) return;
     if (isDraggingAttack) return;
     if (gameState.pendingTributeSummon) return;
     if (gameState.pendingTributePlacement) return;   // Tributi gia' pagati: ora si sceglie solo la casella (vedi handleCardClickInner)
@@ -790,6 +799,8 @@ function handleSlotClick(owner, type, index) {
         }
         return;
     }
+    if (EventiDuello.chiedi('azioni-bloccate-da-animazione', false)
+        && !EventiDuello.chiedi('scelta-utente-in-sospeso', false)) return;
     // Zona Magia Terreno: se non c'è una selezione di mano in corso, il
     // click serve solo ad attivare l'eventuale Magia Terreno già piazzata
     // (gestito da handleCardClick sopra tramite sourceType 'field-spell',
@@ -2124,6 +2135,7 @@ function promptHandMonsterSpecialSummon(card, handIndex) {
  * "l'attacco è già stato dichiarato, può procedere?").
  */
 function executeAttack(attackerIndex, targetIndex) {
+    if (EventiDuello.chiedi('azioni-bloccate-da-animazione', false)) return;
     // Niente attacchi con una Catena o una finestra di priorità ancora
     // aperta (es. il bot ha attivato un Effetto Veloce all'inizio della tua
     // Battle Phase, vedi DuelEngine.openPriorityWindow): l'attacco

@@ -12,6 +12,7 @@ let duelStartTime = null;
 let duelTimerInterval = null;
 let duelPauseStartedAt = null;
 let lifecyclePauseActive = false;
+let animazioneAttaccoInCorso = false;
 const lifePointAnimations = new WeakMap();
 const lifePointPulseTimers = new WeakMap();
 
@@ -37,6 +38,18 @@ function interfacciaOccupata() {
     if (window.FX && typeof FX.isCinematicPlaying === 'function' && FX.isCinematicPlaying()) return true;
     return undefined;
 }
+
+EventiDuello.ascolta('attacco-animazione', (inCorso) => { animazioneAttaccoInCorso = !!inCorso; });
+EventiDuello.ascolta('azioni-bloccate-da-animazione', () => {
+    return animazioneAttaccoInCorso
+        || !!window.DUEL_CINEMATIC_LOCK
+        || !!(window.FX && typeof FX.isCinematicPlaying === 'function' && FX.isCinematicPlaying());
+});
+EventiDuello.ascolta('scelta-utente-in-sospeso', () => {
+    return !!(gameState.pendingTributeSummon || gameState.pendingTributePlacement
+        || gameState.pendingHandDiscard || gameState.pendingSummon
+        || (window.Decisioni && typeof Decisioni.inSospeso === 'function' && Decisioni.inSospeso()));
+});
 
 // ============================================================
 // Ascoltatori del canale delle regole (js/engine/eventi-duello.js).
@@ -94,6 +107,7 @@ EventiDuello.ascolta('partita-azzerata', () => {
     // solo nascendo. Stesso motivo per gli agganci Equip.
     Object.keys(pileCountsAtLastRender).forEach((k) => delete pileCountsAtLastRender[k]);
     equipLinksAtLastRender.clear();
+    animazioneAttaccoInCorso = false;
     mostraAttesaDecisioneRemota(false);
 });
 
@@ -1572,6 +1586,7 @@ function segnaFrecciaAgganciata(agganciata) {
 }
 
 function startAttackDrag(event, attackerIndex) {
+    if (EventiDuello.chiedi('azioni-bloccate-da-animazione', false)) return;
     event.preventDefault();
     event.stopPropagation();
     const attackerSlot = gameState.playerMonsterField[attackerIndex];
@@ -3053,6 +3068,7 @@ function setupPhaseStepper() {
 }
 
 function handlePhaseStepperClick(targetPhase) {
+    if (EventiDuello.chiedi('azioni-bloccate-da-animazione', false)) return;
     if (gameState.currentPlayer !== 'player') return;
     // Stesse guardie di nextPhase(): niente salti di fase a Catena o
     // finestra di priorità ancora aperta.

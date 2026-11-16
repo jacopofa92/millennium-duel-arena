@@ -172,6 +172,13 @@ const Comandi = (function () {
             console.error(`Comandi: tipo sconosciuto "${comando && comando.tipo}"`);
             return false;
         }
+        // Guardia finale per pulsanti flottanti e altri ingressi UI: vale
+        // solo per la persona locale, così IA e comandi remoti non dipendono
+        // dalla durata delle animazioni del dispositivo. Le decisioni
+        // obbligatorie restano eseguibili mentre attendono una risposta.
+        if (Tavolo.ePersona(posto)
+            && EventiDuello.chiedi('azioni-bloccate-da-animazione', false)
+            && !EventiDuello.chiedi('scelta-utente-in-sospeso', false)) return false;
         // La pausa automatica esiste soltanto offline. Bloccare anche qui e'
         // la cintura di sicurezza per un timer dell'IA gia' scaduto nello
         // stesso istante in cui Android nasconde la WebView.

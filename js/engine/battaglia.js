@@ -129,6 +129,7 @@ function resolveAttack(attackerOwner, attackerIndex, targetIndex, onComplete) {
     const doneUtente = typeof onComplete === 'function' ? onComplete : function () {};
     /** @type {{ turno: number, dal: number } | null} */
     let blocco = null;
+    let lockAnimazioneAttacco = false;
     // Ogni uscita di questa funzione passa da qui: rilascia il blocco "un attacco alla volta" e poi avvisa chi aspettava.
     const rilascia = function () {
         if (blocco) {
@@ -137,6 +138,10 @@ function resolveAttack(attackerOwner, attackerIndex, targetIndex, onComplete) {
         }
     };
     const done = function () {
+        if (lockAnimazioneAttacco) {
+            lockAnimazioneAttacco = false;
+            EventiDuello.emetti('attacco-animazione', false);
+        }
         rilascia();
         doneUtente();
     };
@@ -311,6 +316,11 @@ function resolveAttack(attackerOwner, attackerIndex, targetIndex, onComplete) {
     }
     blocco = { turno: gameState.turn, dal: Date.now() };
     gameState.attaccoInCorso = blocco;
+    // Il blocco logico dell'attacco può terminare quando il danno è già
+    // applicato, ma la scena visiva continua ancora. Il lock UI dura fino
+    // alla callback finale e non entra nello stato sincronizzato del duello.
+    lockAnimazioneAttacco = true;
+    EventiDuello.emetti('attacco-animazione', true);
     // Divieto di essere scelto come BERSAGLIO per QUESTO SOLO mostro
     // difensore (es. Capitano Predone id 714: "l'avversario non può
     // bersagliare i Guerrieri con gli attacchi, eccetto questa carta") —
