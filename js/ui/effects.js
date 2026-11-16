@@ -1583,8 +1583,15 @@
         // Il renderer degli ologrammi riparte al termine del video quando
         // il uid è ancora in attesa; rimuoverlo dal Set dopo quel sync non
         // basta: riallineiamo ora la proiezione alla carta appena rivelata.
-        if (window.MonsterHolograms && typeof MonsterHolograms.sync === 'function') {
-            MonsterHolograms.sync();
+        try {
+            if (window.MonsterHolograms && typeof MonsterHolograms.sync === 'function') {
+                MonsterHolograms.sync();
+            }
+        } catch (e) {
+            // La proiezione WebGL è decorativa: un contesto perso o un
+            // errore di riallineamento non deve annullare il reveal e
+            // soprattutto non deve impedire l'impatto della carta.
+            console.warn('[FX] riallineamento ologramma dopo Evocazione:', e);
         }
         return el;
     }
@@ -1681,7 +1688,10 @@
             // La carta appare solo a scena conclusa; l'impatto parte subito
             // dopo sul vero elemento nello slot (mai su una copia animata).
             monsterElement = rivelaCartaEvocata(card, monsterElement);
-            if (typeof onReveal === 'function') onReveal(monsterElement);
+            if (typeof onReveal === 'function') {
+                try { onReveal(monsterElement); }
+                catch (e) { console.warn("[FX] callback d'impatto sullo slot:", e); }
+            }
             runSummonImpact(monsterElement, !!(card && (card.level || 0) >= 7));
             setTimeout(fineScena, 900);
         };
