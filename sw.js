@@ -564,8 +564,8 @@
 // v748: aggiornati premi della modalità Duello della Settimana.
 // v749: rimossa dalla HUD la targhetta della regola del Duello della Settimana.
 // v750: mappa e musica settimanali condivise fra scheda e duello; medaglione premio preso più discreto.
-// v752: le mosse manuali attendono la fine delle animazioni critiche del duello.
-const CACHE_NAME = 'ygo-duel-arena-v752';
+// v753: prototipo grafico KaibaCorp nella scena di fine duello contro Seto.
+const CACHE_NAME = 'ygo-duel-arena-v753';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

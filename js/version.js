@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.7.1 — Prototipo di esito KaibaCorp per i duelli contro Seto Kaiba.
  * 1.7.0 — Durante attacchi e cinematiche blocca le nuove mosse manuali fino alla fine delle animazioni, lasciando disponibili consultazione carte e scelte obbligatorie.
  * 1.6.98 — La conclusione degli archi narrativi non viene più presentata come vittoria di un torneo; il rientro conserva l'identificativo del percorso.
  * 1.6.97 — Sfide settimanali con mappa e musica in rotazione condivisa; badge premio preso ridisegnato senza spunta verde invasiva.
@@ -848,4 +849,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.7.0';
+window.GAME_VERSION = '1.7.1';
