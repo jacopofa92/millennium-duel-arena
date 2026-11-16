@@ -335,11 +335,6 @@
         const overlay = document.createElement('div');
         overlay.id = 'duelOutcomeOverlay';
         overlay.className = isDraw ? 'draw' : (playerWon ? 'won' : 'lost');
-        // Prototipo circoscritto: nei duelli contro Seto aggiunge un sigillo
-        // KaibaCorp dietro all'esito. La classe non cambia il vincitore,
-        // la pedina mostrata o la palette semantica vittoria/sconfitta.
-        if (!isDraw && opponent.id === 'kaiba') overlay.classList.add('kaiba-prototype');
-
         // Sfondo animato in WebGL (al posto dei raggi che ruotavano): oro che sale, cenere che cade, pulviscolo.
         if (window.DuelFxWebgl) DuelFxWebgl.monta(overlay, isDraw ? 'draw' : (playerWon ? 'won' : 'lost'));
 

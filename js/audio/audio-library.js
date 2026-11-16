@@ -59,6 +59,10 @@
 
     // path -> 'pending' (caricamento in corso) | 'missing' (file non trovato) | Howl (pronto)
     const cache = new Map();
+    // Alcuni suoni accompagnano una scena che può partire prima del preload
+    // (per esempio il grido durante un'Evocazione). In quel caso aspettiamo
+    // il file invece di sostituirlo subito con il sintetizzatore.
+    const loadWaiters = new Map();
 
     // La campagna Grande Guerra usa il paesaggio sonoro dedicato WW1. La priorita' vive
     // nel resolver, non nei singoli effetti: ogni file omonimo presente in
@@ -92,7 +96,14 @@
      */
     function startLoading(basePath) {
         cache.set(basePath, 'pending');
-        tryFormat(basePath, 'mp3', () => tryFormat(basePath, 'ogg', () => cache.set(basePath, 'missing')));
+        tryFormat(basePath, 'mp3', () => tryFormat(basePath, 'ogg', () => finishLoading(basePath, 'missing')));
+    }
+
+    function finishLoading(basePath, state) {
+        cache.set(basePath, state);
+        const callbacks = loadWaiters.get(basePath) || [];
+        loadWaiters.delete(basePath);
+        callbacks.forEach((callback) => callback(state));
     }
 
     function tryFormat(basePath, ext, onMissing) {
@@ -100,7 +111,7 @@
             src: [`${basePath}.${ext}`],
             format: [ext],
             html5: true,
-            onload: () => cache.set(basePath, howl),
+            onload: () => finishLoading(basePath, howl),
             onloaderror: onMissing
         });
     }
@@ -121,6 +132,37 @@
         state.volume(vol);
         state.play();
         return true;
+    }
+
+    function playLoaded(howl) {
+        const vol = masterVolume();
+        if (vol <= 0) return true;
+        howl.volume(vol);
+        howl.play();
+        return true;
+    }
+
+    function playWhenReady(basePath, onMissing) {
+        const state = cache.get(basePath);
+        if (state && state !== 'pending' && state !== 'missing') return playLoaded(state);
+        if (state === 'missing') return onMissing();
+        if (state === undefined) startLoading(basePath);
+        const callbacks = loadWaiters.get(basePath) || [];
+        callbacks.push((loaded) => loaded === 'missing' ? onMissing() : playLoaded(loaded));
+        loadWaiters.set(basePath, callbacks);
+        return true;
+    }
+
+    /**
+     * Suono di scena non sacrificabile: attende la verifica/caricamento del
+     * file e solo se entrambi i formati mancano usa il fallback sintetizzato.
+     * Le altre SFX mantengono il fallback immediato per non ritardare i feedback.
+     */
+    function playStandardWhenReady(effectName, onMissing) {
+        const standardPath = `audio/standard/${effectName}`;
+        if (!campaignStandardFolder) return playWhenReady(standardPath, onMissing);
+        const themedPath = `audio/standard/${campaignStandardFolder}/${effectName}`;
+        return playWhenReady(themedPath, () => playWhenReady(standardPath, onMissing));
     }
 
     function tryPlayStandard(effectName) {
@@ -179,6 +221,7 @@
 
     window.AudioLibrary = {
         tryPlayStandard: tryPlayStandard,
+        playStandardWhenReady: playStandardWhenReady,
         tryPlayCardSound: tryPlayCardSound,
         // Diagnostica usata dal guardrail: non cambia durante il duello.
         campaignStandardFolder: campaignStandardFolder

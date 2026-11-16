@@ -254,6 +254,13 @@
     window.SFX = {};
     Object.keys(synthesizedSFX).forEach((name) => {
         window.SFX[name] = function (...args) {
+            // Il grido coincide con una scena breve ma importante. Se il file
+            // è ancora in rete, aspettiamo il suo caricamento: il fallback
+            // immediato qui faceva perdere proprio l'audio scelto dall'utente.
+            if (name === 'duelistShout' && window.AudioLibrary && typeof AudioLibrary.playStandardWhenReady === 'function') {
+                AudioLibrary.playStandardWhenReady(name, () => synthesizedSFX[name].apply(null, args));
+                return;
+            }
             if (window.AudioLibrary && AudioLibrary.tryPlayStandard(name)) return;
             synthesizedSFX[name].apply(null, args);
         };

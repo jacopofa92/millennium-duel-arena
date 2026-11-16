@@ -469,57 +469,6 @@
 }
 #duelOutcomeOverlay.is-in { opacity: 1; }
 
-/* Prototipo Kaiba: sigillo tecnologico e anello di energia dietro la scena.
-   Rimane decorativo, non intercetta i tocchi e lascia intatti gli stati
-   oro/blu-grigio di vittoria e sconfitta. Le sole animazioni sono opacity e
-   transform, quindi non aggiungono un canvas o un ciclo di disegno continuo. */
-#duelOutcomeOverlay.kaiba-prototype::before,
-#duelOutcomeOverlay.kaiba-prototype::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 42%;
-    pointer-events: none;
-}
-#duelOutcomeOverlay.kaiba-prototype::before {
-    content: 'KC';
-    z-index: 0;
-    color: rgba(83, 205, 255, 0.035);
-    -webkit-text-stroke: 1px rgba(111, 218, 255, 0.1);
-    font: 900 clamp(12rem, 39vw, 30rem)/0.8 Arial, sans-serif;
-    letter-spacing: -0.16em;
-    padding-right: 0.16em;
-    transform: translate(-50%, -50%);
-    animation: kaibaMarkReveal 1.1s cubic-bezier(.16,.84,.44,1) both;
-}
-#duelOutcomeOverlay.kaiba-prototype::after {
-    z-index: 0;
-    width: min(76vmin, 680px);
-    aspect-ratio: 1;
-    border: 1px solid rgba(101, 211, 255, 0.14);
-    border-radius: 50%;
-    background: conic-gradient(from 205deg, transparent 0 24%, rgba(67, 198, 255, .58) 29%, transparent 35% 62%, rgba(132, 226, 255, .34) 68%, transparent 74%);
-    -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 1px));
-    mask: radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 1px));
-    box-shadow: 0 0 38px rgba(34, 166, 255, .12), inset 0 0 38px rgba(34, 166, 255, .08);
-    transform: translate(-50%, -50%) scale(.72) rotate(-18deg);
-    opacity: 0;
-    animation: kaibaSealReveal 1.25s cubic-bezier(.16,.84,.44,1) 100ms forwards;
-}
-#duelOutcomeOverlay.kaiba-prototype .do-content { z-index: 1; }
-@keyframes kaibaMarkReveal {
-    from { opacity: 0; filter: blur(12px); }
-    to { opacity: 1; filter: blur(0); }
-}
-@keyframes kaibaSealReveal {
-    35% { opacity: .85; }
-    to { opacity: .58; transform: translate(-50%, -50%) scale(1) rotate(0); }
-}
-@media (prefers-reduced-motion: reduce) {
-    #duelOutcomeOverlay.kaiba-prototype::before,
-    #duelOutcomeOverlay.kaiba-prototype::after { animation: none; opacity: .58; transform: translate(-50%, -50%); }
-}
-
 /* Dietro Vittoria/Sconfitta/Pareggio: sfondo WebGL (js/ui/duel-fx-webgl.js), niente piu' raggi che ruotano. */
 
 .do-content {
