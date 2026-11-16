@@ -96,6 +96,31 @@
     z-index: 10035;
     animation: fxShockwaveExpand 0.7s cubic-bezier(0.16, 0.84, 0.44, 1) forwards;
 }
+
+/* Onda d'urto sul tappeto sotto il mostro, dopo l'arrivo (non sulla carta). */
+.fx-summon-impact-ring {
+    position: fixed;
+    border: 2px solid rgba(216, 240, 255, 0.9);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10035;
+    transform: translate(-50%, -50%) scale(0.2, 0.12);
+    box-shadow: 0 0 14px 3px rgba(163, 221, 255, 0.42), inset 0 0 10px rgba(255, 255, 255, 0.32);
+    animation: fxSummonImpact 680ms cubic-bezier(0.16, 0.84, 0.44, 1) forwards;
+}
+.fx-summon-impact-ring--epic {
+    border-color: rgba(255, 226, 151, 0.98);
+    box-shadow: 0 0 24px 6px rgba(255, 202, 93, 0.55), inset 0 0 14px rgba(255, 255, 255, 0.52);
+    animation-duration: 820ms;
+}
+@keyframes fxSummonImpact {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.2, 0.12); }
+    22%  { opacity: 0.92; }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1, 0.46); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .fx-summon-impact-ring { animation: none; opacity: 0; }
+}
 @keyframes fxShockwaveExpand {
     0%   { width: 12px; height: 12px; opacity: 0.95; border-width: 3px; }
     70%  { opacity: 0.55; }

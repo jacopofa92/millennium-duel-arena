@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.7.3 — Impatto d'Evocazione dopo filmati e convergenze; riusati i feedback esistenti per attacco respinto e LP critici.
  * 1.7.2 — Rimosso il prototipo KaibaCorp; il grido attende il caricamento del file audio dedicato.
  * 1.7.1 — Prototipo di esito KaibaCorp per i duelli contro Seto Kaiba.
  * 1.7.0 — Durante attacchi e cinematiche blocca le nuove mosse manuali fino alla fine delle animazioni, lasciando disponibili consultazione carte e scelte obbligatorie.
@@ -850,4 +851,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.7.2';
+window.GAME_VERSION = '1.7.3';

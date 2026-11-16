@@ -289,6 +289,27 @@
         spawnParticles(x, y, { count: 16, colors: ['#f7d774', '#3498db', '#ffffff'], speed: 3, life: 500, gravity: -0.02 });
     }
 
+    // Impatto conclusivo distinto dal riassetto di Posizione: non anima né
+    // ricrea la carta, che dopo un video deve restare ferma sul suo slot.
+    function playSummonImpact(monsterElement, epica) {
+        if (!monsterElement) return;
+        const { x, rect } = centerOf(monsterElement);
+        const y = rect.bottom - rect.height * 0.08;
+        const size = Math.max(rect.width * (epica ? 2.25 : 1.65), epica ? 210 : 150);
+        const ring = spawnDomFx('fx-summon-impact-ring', x, y, size, size * 0.42, epica ? 820 : 680);
+        if (epica) ring.classList.add('fx-summon-impact-ring--epic');
+        if (!fxPrefersReducedMotion()) {
+            monsterElement.classList.add('fx-summon-glow');
+            setTimeout(() => monsterElement.classList.remove('fx-summon-glow'), 800);
+            spawnParticles(x, y, {
+                count: epica ? 20 : 9,
+                colors: epica ? ['#ffe7a0', '#ffffff', '#85deff'] : ['#ffffff', '#c8eaff', '#e9d9a4'],
+                speed: epica ? 4.2 : 2.8, life: epica ? 620 : 460, size: epica ? 2.7 : 2,
+                spread: 150, baseAngle: -90, gravity: 0.05
+            });
+        }
+    }
+
     // ============================================================
     // 3) Evocazione mostro — cerchio magico + flare
     // ============================================================
@@ -1583,11 +1604,17 @@
         }
         if (!monsterElement) { fineScena(); return; }
 
-        // Il contatore e' gia' stato alzato alla richiesta (playMonsterSummonEffect):
-        // la ricerca del filmato dedicato e' ASINCRONA (VisualEffects.getVideoFor)
-        // e chi deve aspettare — il ciclo del bot — interroga il flag subito
-        // dopo la chiamata. Se poi basta il cerchio generico, si chiude subito.
-        const chiudi = fineScena;
+        // Il contatore e' gia' stato alzato alla richiesta (playMonsterSummonEffect).
+        // Dopo il filmato o la convergenza, l'onda d'impatto segna l'arrivo:
+        // la scena resta occupata per i 620 ms del feedback, evitando mosse
+        // sovrapposte mentre la carta si materializza.
+        let impattoAvviato = false;
+        const chiudi = () => {
+            if (impattoAvviato) return;
+            impattoAvviato = true;
+            runSummonImpact(monsterElement, !!(card && (card.level || 0) >= 7));
+            setTimeout(fineScena, 620);
+        };
 
         const fallback = () => {
             const theme = card && (card.level || 0) >= 7 ? ATTRIBUTE_SUMMON_THEMES[card.attribute] : null;
@@ -2618,8 +2645,9 @@
      * Evocazione di Livello 7+ puo' essere rimpiazzata da un backend.
      */
     const runElementalConvergence = viaBackend('playElementalConvergence', playElementalConvergence);
-    /** Idem per il cerchio di Evocazione, chiamato anche da playMonsterSummonEffect qui dentro. */
+    /** Cerchio generico e impatto finale: entrambi rispettano il backend FX selezionato. */
     const runSummonCircle = viaBackend('playSummonCircle', playSummonCircle);
+    const runSummonImpact = viaBackend('playSummonImpact', playSummonImpact);
 
     /**
      * Spade Rivelatrici via backend, ma con una RETE DI SICUREZZA: il
