@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.7.7 — L'impatto resta visibile anche con movimento ridotto ed è sopra gli effetti del campo.
  * 1.7.6 — Ripristinati subito gli ologrammi al reveal; la coda aspetta la fine completa dell'impatto.
  * 1.7.5 — L'impatto d'Evocazione illumina lo slot senza scalarlo o spostare visivamente la carta.
  * 1.7.4 — Evocazioni di Livello 7+ rivelate dopo video/convergenza, seguite dall'impatto sullo slot.
@@ -854,4 +855,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.7.6';
+window.GAME_VERSION = '1.7.7';
