@@ -81,9 +81,9 @@
     "semantic_hash": ""
   },
   "js/audio/audio-library.js": {
-    "mtime": 1794764913.5415604,
-    "seen": 1794765037.780221,
-    "ast_hash": "31f295f523133febfc8729d809866b05",
+    "mtime": 1794864775.4128919,
+    "seen": 1794868683.879538,
+    "ast_hash": "97e22c594f17da67acbf2275b68535d9",
     "semantic_hash": ""
   },
   "js/audio/audio-manager.js": {
@@ -93,9 +93,9 @@
     "semantic_hash": "630be3fce5ddc0f3fc9797c95a1d7c1b"
   },
   "js/audio/sfx.js": {
-    "mtime": 1794764913.7816741,
-    "seen": 1794765037.780221,
-    "ast_hash": "746049cee2896bc285d5726ff88b3a4a",
+    "mtime": 1794864775.6519735,
+    "seen": 1794868683.879538,
+    "ast_hash": "442ff5d3b8c4fdd46b1775835e39407f",
     "semantic_hash": ""
   },
   "js/challenges/challenge-tracker.js": {
@@ -381,15 +381,15 @@
     "semantic_hash": ""
   },
   "js/engine/actions.js": {
-    "mtime": 1794570382.1221907,
-    "seen": 1794570486.8774354,
-    "ast_hash": "3c343d8b3cd2c2a46a3102edca90f14c",
+    "mtime": 1794859886.5543885,
+    "seen": 1794868683.907075,
+    "ast_hash": "4e1b1f27c32391fe7a3f85174364f577",
     "semantic_hash": ""
   },
   "js/engine/battaglia.js": {
-    "mtime": 1794558632.8516414,
-    "seen": 1794559179.776456,
-    "ast_hash": "1f068ee51fca75bf26d6ff525ac1280f",
+    "mtime": 1794859827.2768416,
+    "seen": 1794868683.907075,
+    "ast_hash": "69c28c516e850dc0b64f9bdcbf11b640",
     "semantic_hash": ""
   },
   "js/engine/canale-partita.js": {
@@ -441,9 +441,9 @@
     "semantic_hash": ""
   },
   "js/engine/card-effects-8.js": {
-    "mtime": 1794570382.1354375,
-    "seen": 1794570486.879064,
-    "ast_hash": "9d597b8b0663af9de4aadd2b10ed4950",
+    "mtime": 1794868866.2548013,
+    "seen": 1794868942.9934611,
+    "ast_hash": "6a2026815f18614720ddc22557d37882",
     "semantic_hash": ""
   },
   "js/engine/card-effects.js": {
@@ -459,9 +459,9 @@
     "semantic_hash": "b81f214e6d8b1ae8ec35fa9e75d80ca7"
   },
   "js/engine/comandi.js": {
-    "mtime": 1793982046.460553,
-    "seen": 1794049280.829189,
-    "ast_hash": "b962c0a0fd860ca3838f1bf629a35d0a",
+    "mtime": 1794859816.0034945,
+    "seen": 1794868683.9122188,
+    "ast_hash": "963a59f4d70682115b6ebc7b3309998c",
     "semantic_hash": ""
   },
   "js/engine/decisioni.js": {
@@ -471,9 +471,9 @@
     "semantic_hash": "dcd14125a9faf5071dedc66d14fd61d0"
   },
   "js/engine/duel-engine.js": {
-    "mtime": 1794570382.1442733,
-    "seen": 1794570486.8803613,
-    "ast_hash": "9f164e39acc415104c5e146dc44d75ba",
+    "mtime": 1794868865.9611433,
+    "seen": 1794868942.9955492,
+    "ast_hash": "c8c84fddf45268201ec365f39351c936",
     "semantic_hash": ""
   },
   "js/engine/duel-sandbox.js": {
@@ -489,15 +489,15 @@
     "semantic_hash": "1c7cb717738e9fde28c85bc8104918d8"
   },
   "js/engine/eventi-duello.js": {
-    "mtime": 1794078281.024717,
-    "seen": 1794145245.823113,
-    "ast_hash": "0aef93ed0f7819a8d2b8da2f4e70fdfa",
+    "mtime": 1794859666.7303197,
+    "seen": 1794868683.9132187,
+    "ast_hash": "a35eba94ecbe92e9abdd69cef008b966",
     "semantic_hash": ""
   },
   "js/engine/evocazioni.js": {
-    "mtime": 1794558632.8819847,
-    "seen": 1794559179.7796168,
-    "ast_hash": "3d69c422bb32f5983b743352d2dbb686",
+    "mtime": 1794868865.6478446,
+    "seen": 1794868942.9965506,
+    "ast_hash": "cdbf80d5287593892ba24d440647bede",
     "semantic_hash": ""
   },
   "js/engine/fasi.js": {
@@ -507,9 +507,9 @@
     "semantic_hash": ""
   },
   "js/engine/game-flow.js": {
-    "mtime": 1794614083.5419605,
-    "seen": 1794614207.8416262,
-    "ast_hash": "ab49c250d86fd494ef687e37b1ed8609",
+    "mtime": 1794868621.7578936,
+    "seen": 1794868683.9132187,
+    "ast_hash": "9d7ae5975720b7f9b11b267c6e4c967c",
     "semantic_hash": ""
   },
   "js/engine/passo-comune.js": {
@@ -807,9 +807,9 @@
     "semantic_hash": ""
   },
   "js/ui/duel-cinematics.js": {
-    "mtime": 1794249657.136145,
-    "seen": 1794256471.8853958,
-    "ast_hash": "44c1ee7d24d9a217b85c39ae72f72654",
+    "mtime": 1794864775.8742437,
+    "seen": 1794868683.9457126,
+    "ast_hash": "fcc60865d9c7b5b2bd65f77cbbebead3",
     "semantic_hash": ""
   },
   "js/ui/duel-dialogues.js": {
@@ -843,9 +843,9 @@
     "semantic_hash": ""
   },
   "js/ui/effects.js": {
-    "mtime": 1794611258.3348877,
-    "seen": 1794611326.4043787,
-    "ast_hash": "1a5692ed7016c23219f6d5c69296462b",
+    "mtime": 1794868865.373749,
+    "seen": 1794868943.0255523,
+    "ast_hash": "a418ee280ffa1738b0fc45557fa9577b",
     "semantic_hash": ""
   },
   "js/ui/error-recovery.js": {
@@ -951,9 +951,9 @@
     "semantic_hash": ""
   },
   "js/ui/monster-hologram.js": {
-    "mtime": 1794431076.9209857,
-    "seen": 1794431196.0035176,
-    "ast_hash": "aee4bcaaf5debcd31bf631924a203b5f",
+    "mtime": 1794868588.2924588,
+    "seen": 1794868683.9587555,
+    "ast_hash": "fb25c8e0bfdc6beec6e0cbf88c5051f5",
     "semantic_hash": ""
   },
   "js/ui/node-map.js": {
@@ -1107,9 +1107,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794775111.286522,
-    "seen": 1794775151.4812853,
-    "ast_hash": "4dda1a1ded115a04de6887ed51763cee",
+    "mtime": 1794868588.787604,
+    "seen": 1794868683.970599,
+    "ast_hash": "1e030fea8260ac6e10512ef97a0ea39c",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1526,9 +1526,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794775111.5239182,
-    "seen": 1794775151.5055697,
-    "ast_hash": "c8c56235c2f1c5301c86463e1c281bcd",
+    "mtime": 1794868589.0486991,
+    "seen": 1794868684.0033524,
+    "ast_hash": "c1dc472c7262f900c285c71294786cc7",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -5362,9 +5362,9 @@
     "semantic_hash": ""
   },
   "storia.html": {
-    "mtime": 1794775086.6855614,
-    "seen": 1794775151.7449515,
-    "ast_hash": "d357f58bfd69d0245393f5ffcfa8e358",
+    "mtime": 1794775150.4684482,
+    "seen": 1794868684.2977414,
+    "ast_hash": "2d979b2b4f17e3ed96287aadddf54dda",
     "semantic_hash": ""
   },
   "supabase/README.md": {

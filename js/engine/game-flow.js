@@ -1206,6 +1206,11 @@ function renderFields() {
                 const visuallyFaceDown = slot.isFaceDown && !(isMonsterRow && window.DuelEngine && DuelEngine.isRevealedFor(owner));
                 // Carta piccola sul campo: basta la miniatura da 256px (13 KB contro 76 KB dell'intera), vedi card-renderer.js.
                 const cardEl = createCardElement(slot.card, visuallyFaceDown, slot.position, { miniatura: true });
+                if (isMonsterRow && window.FX && typeof FX.evocazioneInAttesa === 'function') {
+                    const evocazioneNascosta = FX.evocazioneInAttesa(slot.card.uid);
+                    cardEl.classList.toggle('summon-cinematic-hidden', evocazioneNascosta);
+                    slotEl.classList.toggle('summon-cinematic-hidden', evocazioneNascosta);
+                }
                 cardEl.onclick = (event) => {
                     event.stopPropagation();
                     if (!dragState) {

@@ -1547,8 +1547,53 @@
      * tempo d'attesa in coda il bot non deve credere che sia tutto libero.
      */
     const codaEvocazioni = [];
+    // Il motore registra la carta nello slot subito, così regole e trigger
+    // vedono lo stato corretto; la UI però la tiene nascosta finché la sua
+    // scena di Livello 7+ non termina. Il Set per uid sopravvive ai render
+    // completi del campo che avvengono durante video e convergenze.
+    const evocazioniInAttesaDiRivelazione = new Set();
     let evocazioneInCorso = false;
     let generazioneCoda = 0;
+
+    function preparaRivelazioneEvocazione(card) {
+        if (!card || (card.level || 0) < 7 || card.uid == null) return;
+        const uid = String(card.uid);
+        evocazioniInAttesaDiRivelazione.add(uid);
+        const el = typeof window.findFieldCardElementByUid === 'function'
+            ? window.findFieldCardElementByUid(card.uid) : null;
+        if (el) {
+            el.classList.add('summon-cinematic-hidden');
+            el.closest('.field-slot')?.classList.add('summon-cinematic-hidden');
+        }
+    }
+
+    function evocazioneInAttesa(uid) {
+        return uid != null && evocazioniInAttesaDiRivelazione.has(String(uid));
+    }
+
+    function rivelaCartaEvocata(card, fallbackElement) {
+        if (!card || card.uid == null) return fallbackElement;
+        evocazioniInAttesaDiRivelazione.delete(String(card.uid));
+        const el = typeof window.findFieldCardElementByUid === 'function'
+            ? window.findFieldCardElementByUid(card.uid) || fallbackElement : fallbackElement;
+        if (el) {
+            el.classList.remove('summon-cinematic-hidden');
+            el.closest('.field-slot')?.classList.remove('summon-cinematic-hidden');
+        }
+        return el;
+    }
+
+    function annullaRivelazioneEvocazione(card) {
+        if (!card || card.uid == null) return;
+        const uid = String(card.uid);
+        evocazioniInAttesaDiRivelazione.delete(uid);
+        const el = typeof window.findFieldCardElementByUid === 'function'
+            ? window.findFieldCardElementByUid(card.uid) : null;
+        if (el) {
+            el.classList.remove('summon-cinematic-hidden');
+            el.closest('.field-slot')?.classList.remove('summon-cinematic-hidden');
+        }
+    }
 
     /**
      * Butta via la coda e la scena in corso (duello ricominciato, test): le scene
@@ -1559,13 +1604,23 @@
         codaEvocazioni.length = 0;
         evocazioneInCorso = false;
         generazioneCoda++;
+        evocazioniInAttesaDiRivelazione.forEach((uid) => {
+            const el = typeof window.findFieldCardElementByUid === 'function'
+                ? window.findFieldCardElementByUid(uid) : null;
+            if (el) {
+                el.classList.remove('summon-cinematic-hidden');
+                el.closest('.field-slot')?.classList.remove('summon-cinematic-hidden');
+            }
+        });
+        evocazioniInAttesaDiRivelazione.clear();
         for (let i = 0; i < daChiudere; i++) endSummonCinematic();
     }
 
-    function playMonsterSummonEffect(card, monsterElement) {
+    function playMonsterSummonEffect(card, monsterElement, onReveal) {
         if (!card && !monsterElement) return;
+        preparaRivelazioneEvocazione(card);
         beginSummonCinematic();
-        codaEvocazioni.push({ card: card, monsterElement: monsterElement });
+        codaEvocazioni.push({ card: card, monsterElement: monsterElement, onReveal: onReveal });
         avviaProssimaEvocazione();
     }
 
@@ -1585,14 +1640,14 @@
             avviaProssimaEvocazione();
         };
         try {
-            eseguiEvocazione(prossima.card, prossima.monsterElement, fine);
+            eseguiEvocazione(prossima.card, prossima.monsterElement, fine, prossima.onReveal);
         } catch (e) {
             console.error('[FX] cinematica di Evocazione:', e);
             fine();
         }
     }
 
-    function eseguiEvocazione(card, monsterElement, fineScena) {
+    function eseguiEvocazione(card, monsterElement, fineScena, onReveal) {
         // Ancora sempre la cinematica alla carta REALE sul Terreno tramite
         // uid. Il nodo ricevuto dal chiamante puo' essere obsoleto dopo un
         // updateUI oppure, nei percorsi bot/multiplayer, risolvere una copia
@@ -1602,7 +1657,11 @@
         if (card && card.uid && typeof window.findFieldCardElementByUid === 'function') {
             monsterElement = window.findFieldCardElementByUid(card.uid) || monsterElement;
         }
-        if (!monsterElement) { fineScena(); return; }
+        if (!monsterElement) {
+            annullaRivelazioneEvocazione(card);
+            fineScena();
+            return;
+        }
 
         // Il contatore e' gia' stato alzato alla richiesta (playMonsterSummonEffect).
         // Dopo il filmato o la convergenza, l'onda d'impatto segna l'arrivo:
@@ -1612,6 +1671,10 @@
         const chiudi = () => {
             if (impattoAvviato) return;
             impattoAvviato = true;
+            // La carta appare solo a scena conclusa; l'impatto parte subito
+            // dopo sul vero elemento nello slot (mai su una copia animata).
+            monsterElement = rivelaCartaEvocata(card, monsterElement);
+            if (typeof onReveal === 'function') onReveal(monsterElement);
             runSummonImpact(monsterElement, !!(card && (card.level || 0) >= 7));
             setTimeout(fineScena, 620);
         };
@@ -2877,6 +2940,9 @@
         /** Per chi mostra una scena di Evocazione propria (js/ui/grido-evocazione.js): il bot aspetta finché il contatore non torna a zero. */
         beginSummonCinematic,
         endSummonCinematic,
+        preparaRivelazioneEvocazione,
+        evocazioneInAttesa,
+        annullaRivelazioneEvocazione,
         playSummonCircle: runSummonCircle,
         playElementalConvergence: runElementalConvergence,
         playVideoOverlay,

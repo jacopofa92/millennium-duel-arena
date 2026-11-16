@@ -113,6 +113,14 @@
     box-shadow: 0 0 24px 6px rgba(255, 202, 93, 0.55), inset 0 0 14px rgba(255, 255, 255, 0.52);
     animation-duration: 820ms;
 }
+.summon-cinematic-hidden {
+    /* Mantiene la geometria dello slot come ancora del video/ologramma,
+       ma impedisce che il mostro appaia prima del termine della scena. */
+    visibility: hidden !important;
+}
+.field-slot.summon-cinematic-hidden > * {
+    visibility: hidden !important;
+}
 @keyframes fxSummonImpact {
     0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.2, 0.12); }
     22%  { opacity: 0.92; }

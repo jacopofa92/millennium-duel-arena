@@ -1907,6 +1907,10 @@
             // degli effetti "quando viene Evocato", che scattano dopo e
             // possono quindi metterne di nuovi.
             if (card.counters) card.counters = 0;
+            const isFaceDown = position === 'defense' && !(visualOptions && visualOptions.faceUp);
+            if (!isFaceDown && window.FX && typeof FX.preparaRivelazioneEvocazione === 'function') {
+                FX.preparaRivelazioneEvocazione(card);
+            }
             field[slotIndex] = {
                 card: card,
                 position: position,
@@ -1916,7 +1920,7 @@
                 // Rinascita del Mostro, le Special Summon dalla mano) il mostro
                 // resta SCOPERTO in Difesa, come da regolamento: lo chiede
                 // isualOptions.faceUp.
-                isFaceDown: position === 'defense' && !(visualOptions && visualOptions.faceUp),
+                isFaceDown: isFaceDown,
                 hasAttacked: false,
                 canChangePosition: false,
                 // Jowgen lo Spiritualista (id 1075): "distruggi tutti i
@@ -1956,6 +1960,9 @@
                             field[slotIndex] = null;
                             graveyardOf(owner).push(card);
                         }
+                        if (window.FX && typeof FX.annullaRivelazioneEvocazione === 'function') {
+                            FX.annullaRivelazioneEvocazione(card);
+                        }
                         if (typeof updateUI === 'function') updateUI();
                         return;
                     }
@@ -1979,13 +1986,18 @@
                                 : 30;
                             setTimeout(() => {
                                 const mostraEvocazione = () => {
-                                    EventiDuello.emetti('impatto-campo', owner, slotIndex, 'monster');
                                     EventiDuello.emetti('cambio-posizione', owner, slotIndex, position);
-                                    if (arrivaCoperta) { if (window.SFX) SFX.place(); return; }
+                                    if (arrivaCoperta) {
+                                        EventiDuello.emetti('impatto-campo', owner, slotIndex, 'monster');
+                                        if (window.SFX) SFX.place();
+                                        return;
+                                    }
                                     const cardEl = PortaUI.query(`#${owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard'} .field-slot[data-type="monster"][data-index="${slotIndex}"] .card`);
                                     // Una Fusione in WebGL ha gia' mostrato la sua seconda parte (illustrazione, nome, stelle, ATK/DEF): niente doppione.
                                     const giaMostrata = !!(window.FX && FX.rivelazioneFusioneFatta && FX.rivelazioneFusioneFatta(card));
-                                    if (cardEl && window.FX && !giaMostrata) FX.playMonsterSummonEffect(card, cardEl);
+                                    if (cardEl && window.FX && !giaMostrata) {
+                                        FX.playMonsterSummonEffect(card, cardEl, () => EventiDuello.emetti('impatto-campo', owner, slotIndex, 'monster'));
+                                    } else EventiDuello.emetti('impatto-campo', owner, slotIndex, 'monster');
                                     if (!giaMostrata && (card.level || 0) < 7 && !(window.AudioLibrary && AudioLibrary.tryPlayCardSound(card, 'evocazioni')) && window.SFX) SFX.summon(position);
                                 };
                                 // Il grido del duellante per la sua carta simbolo precede

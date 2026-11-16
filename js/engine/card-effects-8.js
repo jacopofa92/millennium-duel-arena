@@ -5100,6 +5100,9 @@
             summonedOnTurn: gameState.turn
         };
         if (destinationOwner !== ctx.owner) slot.originalOwner = ctx.owner;
+        if (window.FX && typeof FX.preparaRivelazioneEvocazione === 'function') {
+            FX.preparaRivelazioneEvocazione(card);
+        }
         destinationField[slotIndex] = slot;
         if (options && options.returnAtNextEndPhase) card._sphereReturnAfterTurn = gameState.turn + 1;
         // Un'Evocazione Tributo pagata dall'effetto di una Magia (Incrocio di Anime) non usa l'Evocazione Normale del turno.
@@ -5125,10 +5128,11 @@
             updateUI();
             setTimeout(() => {
                 const mostraEvocazione = () => {
-                    EventiDuello.emetti('impatto-campo', destinationOwner, slotIndex, 'monster');
                     EventiDuello.emetti('cambio-posizione', destinationOwner, slotIndex, 'attack');
                     const cardEl = PortaUI.query(`#${destinationOwner}FieldBoard .field-slot[data-type="monster"][data-index="${slotIndex}"] .card`);
-                    if (cardEl && window.FX) FX.playMonsterSummonEffect(card, cardEl);
+                    if (cardEl && window.FX) {
+                        FX.playMonsterSummonEffect(card, cardEl, () => EventiDuello.emetti('impatto-campo', destinationOwner, slotIndex, 'monster'));
+                    } else EventiDuello.emetti('impatto-campo', destinationOwner, slotIndex, 'monster');
                     if ((card.level || 0) < 7
                         && !(window.AudioLibrary && AudioLibrary.tryPlayCardSound(card, 'evocazioni'))
                         && window.SFX) SFX.summon('attack');

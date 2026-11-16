@@ -253,6 +253,11 @@
                 // Solo mostri SCOPERTI: una carta coperta è
                 // un'informazione nascosta, proiettarla la rivelerebbe.
                 if (!slot || slot.isFaceDown || !slot.card || !slot.card.uid) return;
+                // Durante il filmato/convergenza il mostro è già presente
+                // nello stato del duello, ma non deve materializzarsi in
+                // anticipo nemmeno come ologramma.
+                if (window.FX && typeof FX.evocazioneInAttesa === 'function'
+                    && FX.evocazioneInAttesa(slot.card.uid)) return;
                 // MAI un querySelector sull'intero documento: lo stesso
                 // uid vive anche nelle carte che il picker delle scelte
                 // lascia nel DOM a modale chiuso, larghe zero — e

@@ -335,6 +335,9 @@ function eseguiEvocazioneNormale(posto, c, extra) {
         const manoOra = Tavolo.mano(posto);
         const indiceOra = manoOra.indexOf(card);
         if (indiceOra !== -1) manoOra.splice(indiceOra, 1);
+        if (!isFaceDown && window.FX && typeof FX.preparaRivelazioneEvocazione === 'function') {
+            FX.preparaRivelazioneEvocazione(card);
+        }
         Tavolo.mostri(posto)[slotIndex] = { card: card, position: position, isFaceDown: isFaceDown, hasAttacked: false, canChangePosition: false, summonedOnTurn: gameState.turn };
         if (!isFaceDown && window.DuelDialogues) DuelDialogues.summon(posto, card);
         consumeNormalSummonQuota(posto, card);
@@ -343,20 +346,20 @@ function eseguiEvocazioneNormale(posto, c, extra) {
             : `${usedTribute ? '🔺 Evocazione Tributo: ' : ''}${perChi(posto, 'Hai Posizionato un mostro.', 'L\'avversario ha Posizionato un mostro.')}`);
         chiudi();
         setTimeout(() => {
-            EventiDuello.emetti('impatto-campo', posto, slotIndex, 'monster');
             EventiDuello.emetti('cambio-posizione', posto, slotIndex, position);
             // Un mostro piazzato COPERTO (Set, anche con Tributo: Tribute Set) non si annuncia: l'avversario non deve sapere cosa
             // e' stato messo. Niente cinematica di Evocazione (per i Livelli 7+ mostrerebbe nome e Attributo), niente video o
             // suono dedicati alla carta (rivelerebbero quale e'): solo il suono generico del Set, come per una Magia/Trappola
             // coperta. (Il grido del duellante e il dialogo sono gia' esclusi piu' sopra.)
             if (isFaceDown) {
+                EventiDuello.emetti('impatto-campo', posto, slotIndex, 'monster');
                 if (window.SFX) SFX.place();
                 return;
             }
             if (window.FX) {
                 const cardEl = PortaUI.query(`#${posto}FieldBoard .field-slot[data-type="monster"][data-index="${slotIndex}"] .card`);
-                FX.playMonsterSummonEffect(card, cardEl);
-            }
+                FX.playMonsterSummonEffect(card, cardEl, () => EventiDuello.emetti('impatto-campo', posto, slotIndex, 'monster'));
+            } else EventiDuello.emetti('impatto-campo', posto, slotIndex, 'monster');
             // Effetto audio DEDICATO per questa carta (audio/evocazioni/<id>.mp3
             // — vedi js/audio/audio-library.js), se esiste; altrimenti il suono
             // di Evocazione standard di sempre.
