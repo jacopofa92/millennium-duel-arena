@@ -1107,9 +1107,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794868588.787604,
-    "seen": 1794868683.970599,
-    "ast_hash": "1e030fea8260ac6e10512ef97a0ea39c",
+    "mtime": 1794869498.3836267,
+    "seen": 1794869558.5452204,
+    "ast_hash": "be056d0e925d2ba2b3b5629b69b130c7",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1526,9 +1526,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794868589.0486991,
-    "seen": 1794868684.0033524,
-    "ast_hash": "c1dc472c7262f900c285c71294786cc7",
+    "mtime": 1794869498.6319952,
+    "seen": 1794869558.5708985,
+    "ast_hash": "6c8a508b16a723541fbafa67e2056de7",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
