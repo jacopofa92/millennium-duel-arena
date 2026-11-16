@@ -565,7 +565,7 @@
 // v749: rimossa dalla HUD la targhetta della regola del Duello della Settimana.
 // v750: mappa e musica settimanali condivise fra scheda e duello; medaglione premio preso più discreto.
 // v755: onda d'impatto dopo la scena d'Evocazione.
-const CACHE_NAME = 'ygo-duel-arena-v757';
+const CACHE_NAME = 'ygo-duel-arena-v758';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

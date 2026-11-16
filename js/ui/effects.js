@@ -1580,6 +1580,12 @@
             el.classList.remove('summon-cinematic-hidden');
             el.closest('.field-slot')?.classList.remove('summon-cinematic-hidden');
         }
+        // Il renderer degli ologrammi riparte al termine del video quando
+        // il uid è ancora in attesa; rimuoverlo dal Set dopo quel sync non
+        // basta: riallineiamo ora la proiezione alla carta appena rivelata.
+        if (window.MonsterHolograms && typeof MonsterHolograms.sync === 'function') {
+            MonsterHolograms.sync();
+        }
         return el;
     }
 
@@ -1664,9 +1670,10 @@
         }
 
         // Il contatore e' gia' stato alzato alla richiesta (playMonsterSummonEffect).
-        // Dopo il filmato o la convergenza, l'onda d'impatto segna l'arrivo:
-        // la scena resta occupata per i 620 ms del feedback, evitando mosse
-        // sovrapposte mentre la carta si materializza.
+        // Dopo il filmato o la convergenza, l'onda d'impatto segna l'arrivo.
+        // Il lock copre tutta la durata dell'impatto epico (820 ms) con un
+        // piccolo margine: altrimenti un'altra azione poteva coprirne i primi
+        // fotogrammi appena la coda si sbloccava a 620 ms.
         let impattoAvviato = false;
         const chiudi = () => {
             if (impattoAvviato) return;
@@ -1676,7 +1683,7 @@
             monsterElement = rivelaCartaEvocata(card, monsterElement);
             if (typeof onReveal === 'function') onReveal(monsterElement);
             runSummonImpact(monsterElement, !!(card && (card.level || 0) >= 7));
-            setTimeout(fineScena, 620);
+            setTimeout(fineScena, 900);
         };
 
         const fallback = () => {
