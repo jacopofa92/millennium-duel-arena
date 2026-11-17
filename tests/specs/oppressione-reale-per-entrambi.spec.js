@@ -60,6 +60,43 @@ module.exports = {
         t.assert(!esito.mostroVivo && esito.mostroNelCimitero, `La Special Summon viene annullata prima che il mostro entri nel campo (${JSON.stringify(esito)})`);
         t.assert(esito.cartaAlBot, `La carta resta scoperta sul Terreno del bot: è Continua e non viene consumata (${JSON.stringify(esito)})`);
 
+        // La prova manuale usa proprio questo verso: il giocatore evoca
+        // dalla mano e l'IA deve attivare la propria Oppressione senza un
+        // prompt umano. Fissiamo i controllori perché la sandbox è usata
+        // anche da strumenti che possono assegnare posti diversi.
+        const rispostaBot = await t.evaluate(() => {
+            if (typeof clearPhaseTransitionTimeout === 'function') clearPhaseTransitionTimeout();
+            Tavolo.azzera();
+            Tavolo.imposta({ player: 'persona', bot: 'ia' });
+            gameState.turn = 3;
+            gameState.currentPlayer = 'player';
+            gameState.phase = 'main1';
+            gameState.playerLP = 8000;
+            gameState.botLP = 8000;
+            gameState.botDifficulty = 'hard';
+            gameState.gameOver = false;
+            gameState.playerMonsterField = [null, null, null, null, null];
+            gameState.botMonsterField = [null, null, null, null, null];
+            gameState.playerSTField = [null, null, null, null, null];
+            gameState.botSTField = [null, null, null, null, null];
+            gameState.playerHand = [{ ...cardDatabase.find((c) => c.id === 266), uid: 'gilasaurus-player' }];
+            gameState.botGraveyard = [];
+            gameState.chain = { links: [], active: false };
+            gameState.botSTField[0] = {
+                card: { ...cardDatabase.find((c) => c.id === 882), uid: 'oppression-bot' },
+                isFaceDown: false, setOnTurn: gameState.turn - 1
+            };
+            DuelEngine.recomputeStaticEffects();
+            updateUI();
+            return DuelEngine.trySpecialSummonFromHand('player', 0);
+        });
+        t.assert(rispostaBot, 'Il giocatore riesce ad avviare la Special Summon di prova');
+        await t.page.waitForSelector('.fx-summon-negated', { timeout: 5000 });
+        await t.page.waitForFunction(() => gameState.botLP === 7200
+            && gameState.playerGraveyard.some((c) => c.uid === 'gilasaurus-player'), null, { timeout: 10000 });
+        t.assert(await t.evaluate(() => !gameState.playerMonsterField.some((s) => s && s.card.uid === 'gilasaurus-player')),
+            'L’IA paga 800 LP, annulla Gilasaurus e avvia la scena dedicata');
+
         // Una risposta dopo la risoluzione non può annullare retroattivamente
         // l'effetto di una carta che ha già prodotto la Special Summon.
         await prepara(false, true);

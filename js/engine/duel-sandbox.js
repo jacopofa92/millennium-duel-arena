@@ -240,6 +240,14 @@
         gameState.playerLP = Math.max(0, parseInt(config.playerLP, 10) || 8000);
         gameState.botLP = Math.max(0, parseInt(config.botLP, 10) || 8000);
         gameState.hasNormalSummoned = !!config.hasNormalSummoned;
+        if (config.botDifficulty) gameState.botDifficulty = config.botDifficulty;
+        // Le prove possono dichiarare chi controlla ogni posto: senza questo
+        // dato, una risposta automatica può finire assegnata al controllore
+        // residuo di un altro test invece che all'IA attesa.
+        if (window.Tavolo) {
+            Tavolo.azzera();
+            if (config.controllers) Tavolo.imposta(config.controllers);
+        }
 
         ['player', 'bot'].forEach((owner) => {
             const cfg = config[owner] || {};

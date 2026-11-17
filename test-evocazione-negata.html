@@ -49,7 +49,7 @@
     <ol>
         <li>Avvia il duello di prova.</li>
         <li>Tocca Gilasaurus nella tua mano e scegli <strong>Evocazione Speciale</strong>.</li>
-        <li>Quando Oppressione Reale risponde, conferma il pagamento di 800 LP.</li>
+        <li>Il bot attiva Oppressione Reale automaticamente: osserva il sigillo e la carta che viene respinta nel Cimitero.</li>
     </ol>
     <button id="startTest" type="button">Avvia la prova</button>
     <p class="nota">Strumento di test riservato all’amministratore. Il duello non salva progressi o ricompense.</p>
@@ -61,6 +61,8 @@ document.getElementById('startTest').addEventListener('click', function () {
         phase: 'main1',
         currentPlayer: 'player',
         hasNormalSummoned: false,
+        botDifficulty: 'hard',
+        controllers: { player: 'persona', bot: 'ia' },
         playerLP: 8000,
         botLP: 8000,
         field: 'dirigibileKaibaCorp.jpg',

@@ -572,7 +572,8 @@
 // v767: rimossa anche la scheda dati duplicata dopo la cinematica WebGL originale.
 // v768: il fallback 7+ non avvia più la seconda proiezione WebGL; reveal originale e impatto restano.
 // v771: scena dell'Evocazione Speciale annullata e pagina di prova amministratore.
-const CACHE_NAME = 'ygo-duel-arena-v771';
+// v772: controllori e livello IA espliciti nella sandbox di prova.
+const CACHE_NAME = 'ygo-duel-arena-v772';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento
