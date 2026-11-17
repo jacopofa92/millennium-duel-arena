@@ -1,12 +1,12 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
-## Dati evocazione senza duplicare l'ologramma (1.7.14)
+## Evocazione epica senza seconda scheda (1.7.15)
 
-Per le Evocazioni 7+ si conserva la sequenza e l'ologramma originali del
-gioco: dopo il reveal compare per un istante una scheda con stelle, nome,
-ATK e DEF vicino al mostro; poi parte l'impatto sul tavolo. Non viene creata
-una seconda immagine/ologramma. Implementazione in `js/ui/effects.js` e
-`js/ui/effects.css`; cache app shell v766.
+Per le Evocazioni 7+ resta solo la cinematica originale di
+`js/ui/evocazione-epica-webgl.js`, che contiene già illustrazione, nome,
+stelle e statistiche. Rimossa la scheda duplicata di `effects.js`; dopo la
+cinematica resta il reveal della carta reale e l'impatto sul campo. Cache
+app shell v767.
 
 ## Dettagli video Alti come preset iniziale (1.6.86)
 

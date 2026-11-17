@@ -316,81 +316,6 @@
         }
     }
 
-    function valoreStatPresentazione(card, metodo, proprieta) {
-        let valore = card && card[proprieta];
-        try {
-            if (window.DuelEngine && typeof DuelEngine[metodo] === 'function') {
-                valore = DuelEngine[metodo](card);
-            }
-        } catch (_) { /* La presentazione non deve interferire con le regole del duello. */ }
-        const numero = Number(valore);
-        return Number.isFinite(numero) && numero >= 0
-            ? new Intl.NumberFormat('it-IT').format(numero)
-            : '?';
-    }
-
-    /** Scheda evocazione sopra l'ologramma originale; non crea un secondo mostro. */
-    function mostraSchedaEvocazioneEpica(card, monsterElement, dopo) {
-        const livello = Math.max(0, Math.min(13, Number(card && card.level) || 0));
-        const pannello = document.createElement('div');
-        pannello.className = 'fx-summon-nameplate';
-        pannello.setAttribute('aria-hidden', 'true');
-
-        const stelle = document.createElement('div');
-        stelle.className = 'fx-summon-nameplate-stars';
-        for (let i = 0; i < livello; i++) {
-            const stella = document.createElement('span');
-            stella.textContent = '★';
-            stella.style.animationDelay = `${i * 32}ms`;
-            stelle.appendChild(stella);
-        }
-
-        const nome = document.createElement('div');
-        nome.className = 'fx-summon-nameplate-name';
-        nome.textContent = String((card && card.name) || 'Mostro evocato');
-
-        const statistiche = document.createElement('div');
-        statistiche.className = 'fx-summon-nameplate-stats';
-        [['ATK', valoreStatPresentazione(card, 'getEffectiveAtk', 'attack')],
-            ['DEF', valoreStatPresentazione(card, 'getEffectiveDef', 'defense')]].forEach(([etichetta, valore]) => {
-            const cella = document.createElement('span');
-            const label = document.createElement('b');
-            const numero = document.createElement('strong');
-            label.textContent = etichetta;
-            numero.textContent = valore;
-            cella.append(label, numero);
-            statistiche.appendChild(cella);
-        });
-
-        pannello.append(stelle, nome, statistiche);
-
-        // Il mostro è già stato rivelato: la scheda accompagna il SUO
-        // ologramma originale e non ne duplica l'immagine in una scena nuova.
-        const rect = monsterElement && monsterElement.getBoundingClientRect();
-        const altezza = window.innerHeight || document.documentElement.clientHeight || 720;
-        const altezzaScheda = window.matchMedia && window.matchMedia('(max-width: 700px)').matches ? 100 : 112;
-        const sottoMostro = rect && rect.height ? rect.bottom + 10 : altezza * .62;
-        const sopraMostro = rect && rect.height ? rect.top - altezzaScheda - 10 : sottoMostro;
-        const top = rect && rect.top + rect.height / 2 > altezza / 2 ? sopraMostro : sottoMostro;
-        pannello.style.top = `${Math.max(10, Math.min(altezza - altezzaScheda - 10, top))}px`;
-        const larghezzaSchermo = window.innerWidth || 720;
-        const larghezzaScheda = Math.min(560, Math.max(240, larghezzaSchermo - 24));
-        const centroMostro = rect && rect.width ? rect.left + rect.width / 2 : larghezzaSchermo / 2;
-        const centroScheda = Math.max(larghezzaScheda / 2 + 12,
-            Math.min(larghezzaSchermo - larghezzaScheda / 2 - 12, centroMostro));
-        pannello.style.left = `${centroScheda}px`;
-        document.body.appendChild(pannello);
-
-        const attesa = fxPrefersReducedMotion() ? 700 : 1050;
-        setTimeout(() => {
-            pannello.classList.add('fx-summon-nameplate-leaving');
-            setTimeout(() => {
-                pannello.remove();
-                dopo();
-            }, 220);
-        }, attesa);
-    }
-
     function atterraMostroEvocato(monsterElement, uid) {
         const slot = monsterElement && monsterElement.closest('.field-slot');
         const carta = slot && slot.querySelector(':scope > .card');
@@ -1845,13 +1770,7 @@
                     runSummonImpact(monsterElement, epica, card && card.uid);
                     setTimeout(fineScena, 900);
                 };
-                requestAnimationFrame(() => {
-                    if (card && card.uid != null && typeof window.findFieldCardElementByUid === 'function') {
-                        monsterElement = window.findFieldCardElementByUid(card.uid) || monsterElement;
-                    }
-                    if (epica) mostraSchedaEvocazioneEpica(card, monsterElement, avviaImpatto);
-                    else avviaImpatto();
-                });
+                requestAnimationFrame(() => avviaImpatto());
             };
             rivelaEImpatta();
         };

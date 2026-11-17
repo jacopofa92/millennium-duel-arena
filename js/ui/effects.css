@@ -131,102 +131,9 @@
     filter: blur(2px);
     animation: fxSummonImpactCore 520ms cubic-bezier(.12,.75,.22,1) forwards;
 }
-/* La scheda accompagna l'ologramma di gioco gia' presente sullo slot: non
-   crea un'altra illustrazione o una seconda proiezione sovrapposta. */
-.fx-summon-nameplate {
-    position: fixed;
-    z-index: 10078;
-    width: min(560px, calc(100vw - 24px));
-    box-sizing: border-box;
-    padding: 10px 16px 9px;
-    color: #fff8e8;
-    text-align: center;
-    pointer-events: none;
-    background: linear-gradient(110deg, rgba(15, 12, 15, .9), rgba(71, 21, 23, .96) 45%, rgba(18, 13, 16, .92));
-    border: 1px solid rgba(255, 218, 147, .82);
-    border-bottom: 2px solid rgba(226, 117, 82, .92);
-    border-radius: 8px;
-    box-shadow: 0 7px 20px rgba(0,0,0,.46), 0 0 18px rgba(255, 177, 91, .22);
-    transform: translate(-50%, 14px) scale(.96);
-    opacity: 0;
-    animation: fxSummonNameplateIn 300ms cubic-bezier(.16,.84,.32,1) both;
-}
-.fx-summon-nameplate::before,
-.fx-summon-nameplate::after {
-    content: '';
-    position: absolute;
-    top: -1px;
-    width: 15%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, #fff0bf, transparent);
-}
-.fx-summon-nameplate::before { left: 8%; }
-.fx-summon-nameplate::after { right: 8%; }
-.fx-summon-nameplate-stars {
-    display: flex;
-    min-height: 18px;
-    justify-content: center;
-    gap: clamp(1px, .25vw, 4px);
-    color: #ffd66c;
-    font: 700 clamp(12px, 1.8vw, 19px)/1 Georgia, serif;
-    text-shadow: 0 0 7px rgba(255, 192, 61, .9), 0 1px 2px #291206;
-}
-.fx-summon-nameplate-stars span {
-    animation: fxSummonStarIn 320ms cubic-bezier(.16,.84,.32,1) both;
-}
-.fx-summon-nameplate-name {
-    max-width: 100%;
-    overflow: hidden;
-    color: #fff5d8;
-    font: 700 clamp(16px, 2.4vw, 25px)/1.2 Georgia, 'Times New Roman', serif;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-shadow: 0 2px 5px #170b08, 0 0 12px rgba(255, 224, 159, .42);
-}
-.fx-summon-nameplate-stats {
-    display: flex;
-    justify-content: center;
-    gap: clamp(22px, 8vw, 66px);
-    margin: 7px auto 0;
-    padding: 5px 12px 3px;
-    width: min(340px, 90%);
-    color: #fff;
-    background: linear-gradient(90deg, transparent, rgba(139, 35, 38, .95) 16%, rgba(91, 24, 28, .98) 50%, rgba(139, 35, 38, .95) 84%, transparent);
-    border-top: 1px solid rgba(255, 211, 145, .58);
-    font: 700 clamp(11px, 1.6vw, 15px)/1.2 Arial, sans-serif;
-    letter-spacing: .04em;
-}
-.fx-summon-nameplate-stats span {
-    display: flex;
-    align-items: baseline;
-    gap: 7px;
-}
-.fx-summon-nameplate-stats b {
-    color: #f6cf7d;
-    font-size: .82em;
-    letter-spacing: .12em;
-}
-.fx-summon-nameplate-stats strong {
-    font-size: 1.12em;
-    font-variant-numeric: tabular-nums;
-}
-.fx-summon-nameplate-leaving {
-    animation: fxSummonNameplateOut 220ms ease-in forwards;
-}
 .card.fx-summon-card-land,
 .mh-item.fx-summon-card-land {
     animation: fxSummonCardLand 520ms cubic-bezier(.18,.78,.28,1) both;
-}
-@keyframes fxSummonNameplateIn {
-    0% { opacity: 0; transform: translate(-50%, 14px) scale(.96); }
-    100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
-}
-@keyframes fxSummonNameplateOut {
-    to { opacity: 0; transform: translate(-50%, 8px) scale(.98); }
-}
-@keyframes fxSummonStarIn {
-    0% { opacity: 0; scale: .5; translate: 0 -8px; }
-    100% { opacity: 1; scale: 1; translate: 0 0; }
 }
 @keyframes fxSummonCardLand {
     0% { translate: 0 -18px; scale: 1.16; }
@@ -281,13 +188,10 @@
         animation: none;
         opacity: .88;
     }
-    .fx-summon-nameplate,
-    .fx-summon-nameplate-stars span,
     .card.fx-summon-card-land,
     .mh-item.fx-summon-card-land {
         animation: none;
     }
-    .fx-summon-nameplate-leaving { animation: none; opacity: 0; }
     .field-slot.fx-summon-board-rattle,
     .mh-item.fx-summon-board-rattle {
         animation-duration: 260ms;
@@ -299,12 +203,6 @@
         62% { translate: -1px 0; }
         82% { translate: 1px 0; }
     }
-}
-@media (max-width: 700px) {
-    .fx-summon-nameplate { padding: 9px 10px 8px; }
-    .fx-summon-nameplate-name { font-size: clamp(18px, 5.2vw, 27px); }
-    .fx-summon-nameplate-stars { min-height: 20px; font-size: clamp(13px, 4vw, 20px); }
-    .fx-summon-nameplate-stats { margin-top: 5px; gap: clamp(18px, 9vw, 54px); }
 }
 @keyframes fxShockwaveExpand {
     0%   { width: 12px; height: 12px; opacity: 0.95; border-width: 3px; }
