@@ -1,5 +1,14 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Cut-in cinematografico per le Evocazioni 7+ (1.7.13)
+
+La presentazione usa una scena a schermo intero: il campo si oscura,
+l'illustrazione della carta domina il centro, nome/livello/ATK/DEF entrano
+in una fascia inferiore; l'illustrazione rientra nello slot prima che la
+carta reale venga mostrata e parta l'impatto sul tavolo. Implementazione in
+`js/ui/effects.js` e `js/ui/effects.css`; cache app shell v765. Usa l'artwork
+esistente della carta, non un modello 3D o un video dedicato.
+
 ## Dettagli video Alti come preset iniziale (1.6.86)
 
 Il default è «Alti» su desktop, telefoni e APK; una preferenza esplicita già

@@ -329,12 +329,27 @@
             : '?';
     }
 
-    /** Fascia stile Master Duel, sovrapposta all'ologramma già presente. */
+    /** Cut-in della carta: oscura il campo, ingrandisce l'ologramma e mostra i dati prima del rientro nello slot. */
     function mostraSchedaEvocazioneEpica(card, monsterElement, dopo) {
         const livello = Math.max(0, Math.min(13, Number(card && card.level) || 0));
+        const scena = document.createElement('div');
+        scena.className = 'fx-summon-cutin';
+        scena.setAttribute('aria-hidden', 'true');
+
+        const fondale = document.createElement('div');
+        fondale.className = 'fx-summon-cutin-backdrop';
+        const figura = document.createElement('div');
+        figura.className = 'fx-summon-cutin-figure';
+        const immagine = document.createElement('img');
+        immagine.className = 'fx-summon-cutin-art';
+        immagine.alt = '';
+        immagine.decoding = 'async';
+        immagine.src = window.getCardImagePath ? getCardImagePath(card) : '';
+        figura.appendChild(immagine);
+
         const pannello = document.createElement('div');
         pannello.className = 'fx-summon-nameplate';
-        pannello.setAttribute('aria-hidden', 'true');
+        pannello.style.animationDelay = '220ms';
 
         const stelle = document.createElement('div');
         stelle.className = 'fx-summon-nameplate-stars';
@@ -363,19 +378,40 @@
         });
 
         pannello.append(stelle, nome, statistiche);
-        const rect = monsterElement && monsterElement.getBoundingClientRect();
-        const altezza = window.innerHeight || document.documentElement.clientHeight || 720;
-        const sottoMostro = rect && rect.height ? rect.bottom + 12 : altezza * 0.62;
-        pannello.style.top = `${Math.max(8, Math.min(altezza - 112, Math.max(altezza * 0.55, sottoMostro)))}px`;
-        document.body.appendChild(pannello);
+        scena.append(fondale, figura, pannello);
+        document.body.appendChild(scena);
 
-        const attesa = fxPrefersReducedMotion() ? 1050 : 1230;
+        // Il modello del riferimento qui è sostituito dall'illustrazione
+        // olografica della carta: resta grande al centro durante il cut-in e
+        // poi viene risucchiata nello slot reale, prima del contraccolpo.
+        const attesa = fxPrefersReducedMotion() ? 850 : 1420;
         setTimeout(() => {
-            pannello.classList.add('fx-summon-nameplate-leaving');
-            setTimeout(() => {
-                pannello.remove();
+            const slot = monsterElement && monsterElement.getBoundingClientRect();
+            const figuraRect = figura.getBoundingClientRect();
+            const rientra = () => {
+                scena.remove();
                 dopo();
-            }, 220);
+            };
+            if (!slot || !slot.width || !figuraRect.width || !figura.animate) {
+                setTimeout(rientra, 320);
+                return;
+            }
+            const dx = slot.left + slot.width / 2 - (figuraRect.left + figuraRect.width / 2);
+            const dy = slot.top + slot.height / 2 - (figuraRect.top + figuraRect.height / 2);
+            const scala = Math.max(.06, Math.min(.28, Math.min(slot.width / figuraRect.width, slot.height / figuraRect.height)));
+            const destinazione = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scala})`;
+            pannello.classList.add('fx-summon-nameplate-leaving');
+            scena.classList.add('fx-summon-cutin-returning');
+            try {
+                const corsa = figura.animate([
+                    { transform: 'translate(-50%, -50%) scale(1)', opacity: 1, offset: 0 },
+                    { transform: `translate(calc(-50% + ${dx * .72}px), calc(-50% + ${dy * .72}px)) scale(${Math.min(.42, scala * 1.5)})`, opacity: 1, offset: .72 },
+                    { transform: destinazione, opacity: 0, offset: 1 }
+                ], { duration: fxPrefersReducedMotion() ? 220 : 460, easing: 'cubic-bezier(.25,.72,.22,1)', fill: 'forwards' });
+                corsa.finished.then(rientra, rientra);
+            } catch (_) {
+                setTimeout(rientra, 460);
+            }
         }, attesa);
     }
 
@@ -1809,40 +1845,33 @@
         const chiudi = () => {
             if (impattoAvviato) return;
             impattoAvviato = true;
-            // La carta appare solo a scena conclusa; l'impatto parte subito
-            // dopo sul vero elemento nello slot (mai su una copia animata).
-            monsterElement = rivelaCartaEvocata(card, monsterElement);
-            if (typeof onReveal === 'function') {
-                try { onReveal(monsterElement); }
-                catch (e) { console.warn("[FX] callback d'impatto sullo slot:", e); }
-            }
-            // `onReveal` ridisegna il campo. Il nodo appena rivelato può quindi
-            // essere già stato rimosso: misurarne il rect dà (0, 0) e l'impatto
-            // sparisce nell'angolo. Aspettiamo il frame del nuovo render e
-            // riagganciamo la carta tramite uid prima di calcolare il punto d'urto.
-            const avviaImpatto = (tentativi = 0) => {
-                if (card && card.uid != null && typeof window.findFieldCardElementByUid === 'function') {
-                    monsterElement = window.findFieldCardElementByUid(card.uid) || monsterElement;
+            const epica = !!(card && (card.level || 0) >= 7);
+            const rivelaEImpatta = () => {
+                // La carta resta nascosta durante il cut-in: viene rivelata
+                // solo dopo che l'illustrazione è rientrata nel suo slot.
+                monsterElement = rivelaCartaEvocata(card, monsterElement);
+                if (typeof onReveal === 'function') {
+                    try { onReveal(monsterElement); }
+                    catch (e) { console.warn("[FX] callback d'impatto sullo slot:", e); }
                 }
-                const rect = monsterElement && monsterElement.isConnected && monsterElement.getBoundingClientRect();
-                // Su mobile il render del campo può arrivare un frame dopo la
-                // fine del video: attendi brevemente invece di perdere l'effetto.
-                if ((!rect || !rect.width || !rect.height) && tentativi < 3) {
-                    requestAnimationFrame(() => avviaImpatto(tentativi + 1));
-                    return;
-                }
-                const epica = !!(card && (card.level || 0) >= 7);
-                const impatto = () => {
+                // `onReveal` può ridisegnare il campo: aspetta il frame nuovo
+                // e aggancia il vero elemento tramite uid prima dell'impatto.
+                const avviaImpatto = (tentativi = 0) => {
                     if (card && card.uid != null && typeof window.findFieldCardElementByUid === 'function') {
                         monsterElement = window.findFieldCardElementByUid(card.uid) || monsterElement;
+                    }
+                    const rect = monsterElement && monsterElement.isConnected && monsterElement.getBoundingClientRect();
+                    if ((!rect || !rect.width || !rect.height) && tentativi < 3) {
+                        requestAnimationFrame(() => avviaImpatto(tentativi + 1));
+                        return;
                     }
                     runSummonImpact(monsterElement, epica, card && card.uid);
                     setTimeout(fineScena, 900);
                 };
-                if (epica) mostraSchedaEvocazioneEpica(card, monsterElement, impatto);
-                else impatto();
+                requestAnimationFrame(() => avviaImpatto());
             };
-            requestAnimationFrame(() => avviaImpatto());
+            if (epica) mostraSchedaEvocazioneEpica(card, monsterElement, rivelaEImpatta);
+            else rivelaEImpatta();
         };
 
         const fallback = () => {

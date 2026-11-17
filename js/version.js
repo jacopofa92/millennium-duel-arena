@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.7.13 — Le Evocazioni 7+ usano un cut-in a schermo intero: campo oscurato, illustrazione dominante, dati in fascia e rientro nello slot prima dell'impatto.
  * 1.7.12 — Le Evocazioni 7+ mostrano nome, stelle e ATK/DEF prima dell'assestamento dell'ologramma e dell'impatto sul campo.
  * 1.7.11 — Impatto 7+ agganciato alla carta effettiva dopo il render; contraccolpo più leggibile su campo e ologrammi.
  * 1.7.10 — L'atterraggio dei mostri 7+ scuote per un istante le altre carte sul campo, ologrammi inclusi.
@@ -860,4 +861,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.7.12';
+window.GAME_VERSION = '1.7.13';
