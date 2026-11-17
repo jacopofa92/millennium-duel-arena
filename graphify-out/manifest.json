@@ -237,10 +237,10 @@
     "semantic_hash": "8a0fbe13ff4eb23d4dcc65b912308bd6"
   },
   "js/data/puzzles-db.js": {
-    "mtime": 1792586049.836317,
-    "seen": 1793910198.2445717,
-    "ast_hash": "9f9b7076fe3f98e743b12c9053749a66",
-    "semantic_hash": "9f9b7076fe3f98e743b12c9053749a66"
+    "mtime": 1794929012.2216272,
+    "seen": 1794929124.3047187,
+    "ast_hash": "e123a21011f8d9f5eb78b4b5f0c28cb9",
+    "semantic_hash": ""
   },
   "js/data/raid-db.js": {
     "mtime": 1793047957.946628,
@@ -1107,9 +1107,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794928410.5563788,
-    "seen": 1794928467.1491444,
-    "ast_hash": "307bb7743380b9717b670b929a0a8e22",
+    "mtime": 1794929067.0890656,
+    "seen": 1794929124.369785,
+    "ast_hash": "7ddfb5e168accd4899618285d69c7104",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1526,9 +1526,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794928410.8162606,
-    "seen": 1794928467.175452,
-    "ast_hash": "79b88134b80fedb317fe7d855c18ee47",
+    "mtime": 1794929067.3318245,
+    "seen": 1794929124.394626,
+    "ast_hash": "2f2be4ca8a49b699e912d1f262895749",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -2962,9 +2962,9 @@
     "semantic_hash": "6f113d50b74a781e03551e02a95cb401"
   },
   "tests/specs/modalita-puzzle.spec.js": {
-    "mtime": 1794603127.0900526,
-    "seen": 1794603492.6323166,
-    "ast_hash": "18933fa8733ce49f0b032c05a162de39",
+    "mtime": 1794929032.1573727,
+    "seen": 1794929124.4999716,
+    "ast_hash": "d2786b5f8001b60d9d3222921ad00363",
     "semantic_hash": ""
   },
   "tests/specs/modalita-rivincite.spec.js": {

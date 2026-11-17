@@ -571,8 +571,8 @@
 // v766: rimossa l'illustrazione duplicata; la scheda dati resta sopra l'ologramma originale.
 // v767: rimossa anche la scheda dati duplicata dopo la cinematica WebGL originale.
 // v768: il fallback 7+ non avvia più la seconda proiezione WebGL; reveal originale e impatto restano.
-// v769: ripristinata la convergenza WebGL originale, senza la scheda duplicata post-scena.
-const CACHE_NAME = 'ygo-duel-arena-v769';
+// v770: tre nuovi puzzle avanzati e soluzioni registrate nello spec dedicato.
+const CACHE_NAME = 'ygo-duel-arena-v770';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

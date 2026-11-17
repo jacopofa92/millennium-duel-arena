@@ -179,6 +179,38 @@ const puzzlesDatabase = [
         mano: [55, 56],
         mostri: [[14, 'attacco'], [526, 'difesa']],
         avversario: {}
+    },
+    {
+        id: 'furto-senza-rischi', titolo: 'Prima disarma, poi colpisci', emblema: '🗝️', difficolta: 3, personaggio: 'kaiba',
+        descrizione: 'Hai abbastanza forza per vincere, ma una Forza Riflessa coperta fermerebbe i tuoi attacchi. Il Drago Bianco avversario può diventare tuo per un turno.',
+        suggerimento: 'Rimuovi la Trappola prima della Battle Phase; poi usa Cambiare Idea sul Drago.',
+        lpAvversario: 4900,
+        mano: [607, 147],
+        mostri: [[24, 'attacco']],
+        avversario: {
+            mostri: [[1, 'attacco']],
+            magieTrappole: [[382, 'coperta']]
+        }
+    },
+    {
+        id: 'ultimo-risveglio', titolo: 'La forza della disperazione', emblema: '💥', difficolta: 3, personaggio: 'marik',
+        descrizione: 'Il Mago Nero è la tua unica speranza. Con 1000 Life Point, la Megamorfosi ne raddoppia l’ATK, ma non basta contro i 6000 avversari.',
+        suggerimento: 'Sei ancora in svantaggio di Life Point: equipaggia il Mago con entrambe le carte e attacca direttamente.',
+        lp: 1000,
+        lpAvversario: 6000,
+        mano: [631, 618],
+        mostri: [[2, 'attacco']],
+        avversario: {}
+    },
+    {
+        id: 'due-evocazioni-dal-cimitero', titolo: 'Il campo si rialza', emblema: '♻️', difficolta: 3, personaggio: 'darknite',
+        descrizione: 'L’avversario ha 6900 Life Point. Nei due Cimiteri riposano il Mago Nero e il Drago Bianco: riportali entrambi sul tuo campo.',
+        suggerimento: 'Mostro Resuscitato può scegliere un bersaglio da uno qualsiasi dei due Cimiteri. Evoca prima, poi usa il secondo.',
+        lpAvversario: 6900,
+        mano: [35, 35],
+        mostri: [[24, 'attacco']],
+        cimitero: [2],
+        avversario: { cimitero: [1] }
     }
 ];
 

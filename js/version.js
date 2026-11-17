@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.8.0 — Aggiunti tre puzzle avanzati: pulizia della Trappola prima del furto, doppio Equipaggiamento in svantaggio e due rianimazioni dai Cimiteri.
  * 1.7.17 — Ripristinata la convergenza WebGL originale delle Evocazioni 7+; resta rimossa la scheda duplicata.
  * 1.7.16 — Esclusa la convergenza WebGL duplicata dalle Evocazioni 7+ senza video: resta il reveal originale e poi l'impatto.
  * 1.7.15 — Rimossa la scheda duplicata post-evocazione; resta la cinematica WebGL originale e poi l'impatto sul campo.
@@ -865,4 +866,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.7.17';
+window.GAME_VERSION = '1.8.0';

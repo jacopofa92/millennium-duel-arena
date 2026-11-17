@@ -142,6 +142,33 @@ const SOLUZIONI = {
         await calma(page);
         await battaglia(page);
         await attacca(page, await casellaDi(page, 55), -1);
+    },
+    'furto-senza-rischi': async (page) => {
+        await attiva(page, 607);
+        await calma(page, (c) => (c.card || c).id === 382);
+        await attiva(page, 147);
+        await calma(page, (c) => (c.card || c).id === 1);
+        await battaglia(page);
+        await attacca(page, await casellaDi(page, 24), -1);
+        await attacca(page, await casellaDi(page, 1), -1);
+    },
+    'ultimo-risveglio': async (page) => {
+        await attiva(page, 631);
+        await calma(page, (c) => (c.card || c).id === 2);
+        await attiva(page, 618);
+        await calma(page, (c) => (c.card || c).id === 2);
+        await battaglia(page);
+        await attacca(page, await casellaDi(page, 2), -1);
+    },
+    'due-evocazioni-dal-cimitero': async (page) => {
+        await attiva(page, 35);
+        await calma(page, (c) => (c.card || c).id === 2);
+        await attiva(page, 35);
+        await calma(page, (c) => (c.card || c).id === 1);
+        await battaglia(page);
+        await attacca(page, await casellaDi(page, 24), -1);
+        await attacca(page, await casellaDi(page, 2), -1);
+        await attacca(page, await casellaDi(page, 1), -1);
     }
 };
 
