@@ -1,11 +1,10 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
-## Evocazioni 7+ senza la scena duplicata (1.7.16)
+## Ripristino della cinematica originale 7+ (1.7.17)
 
-Per le Evocazioni 7+ si mantiene il video dedicato se esiste; senza video,
-non parte più la convergenza WebGL che duplicava l'illustrazione e i dati.
-Resta il normale reveal della carta/ologramma e poi l'impatto sul campo.
-L'animazione WebGL dei materiali di Fusione non cambia. Cache app shell v768.
+La convergenza WebGL originale resta attiva: è la cinematica di Evocazione,
+non la scheda aggiunta e rimossa da `effects.js`. Dopo la scena si rivela la
+carta reale e parte l'impatto sul campo. Cache app shell v769.
 
 ## Dettagli video Alti come preset iniziale (1.6.86)
 
