@@ -316,6 +316,83 @@
         }
     }
 
+    function valoreStatPresentazione(card, metodo, proprieta) {
+        let valore = card && card[proprieta];
+        try {
+            if (window.DuelEngine && typeof DuelEngine[metodo] === 'function') {
+                valore = DuelEngine[metodo](card);
+            }
+        } catch (_) { /* La presentazione non deve interferire con le regole del duello. */ }
+        const numero = Number(valore);
+        return Number.isFinite(numero) && numero >= 0
+            ? new Intl.NumberFormat('it-IT').format(numero)
+            : '?';
+    }
+
+    /** Fascia stile Master Duel, sovrapposta all'ologramma già presente. */
+    function mostraSchedaEvocazioneEpica(card, monsterElement, dopo) {
+        const livello = Math.max(0, Math.min(13, Number(card && card.level) || 0));
+        const pannello = document.createElement('div');
+        pannello.className = 'fx-summon-nameplate';
+        pannello.setAttribute('aria-hidden', 'true');
+
+        const stelle = document.createElement('div');
+        stelle.className = 'fx-summon-nameplate-stars';
+        for (let i = 0; i < livello; i++) {
+            const stella = document.createElement('span');
+            stella.textContent = '★';
+            stella.style.animationDelay = `${i * 32}ms`;
+            stelle.appendChild(stella);
+        }
+
+        const nome = document.createElement('div');
+        nome.className = 'fx-summon-nameplate-name';
+        nome.textContent = String((card && card.name) || 'Mostro evocato');
+
+        const statistiche = document.createElement('div');
+        statistiche.className = 'fx-summon-nameplate-stats';
+        [['ATK', valoreStatPresentazione(card, 'getEffectiveAtk', 'attack')],
+            ['DEF', valoreStatPresentazione(card, 'getEffectiveDef', 'defense')]].forEach(([etichetta, valore]) => {
+            const cella = document.createElement('span');
+            const label = document.createElement('b');
+            const numero = document.createElement('strong');
+            label.textContent = etichetta;
+            numero.textContent = valore;
+            cella.append(label, numero);
+            statistiche.appendChild(cella);
+        });
+
+        pannello.append(stelle, nome, statistiche);
+        const rect = monsterElement && monsterElement.getBoundingClientRect();
+        const altezza = window.innerHeight || document.documentElement.clientHeight || 720;
+        const sottoMostro = rect && rect.height ? rect.bottom + 12 : altezza * 0.62;
+        pannello.style.top = `${Math.max(8, Math.min(altezza - 112, Math.max(altezza * 0.55, sottoMostro)))}px`;
+        document.body.appendChild(pannello);
+
+        const attesa = fxPrefersReducedMotion() ? 1050 : 1230;
+        setTimeout(() => {
+            pannello.classList.add('fx-summon-nameplate-leaving');
+            setTimeout(() => {
+                pannello.remove();
+                dopo();
+            }, 220);
+        }, attesa);
+    }
+
+    function atterraMostroEvocato(monsterElement, uid) {
+        const slot = monsterElement && monsterElement.closest('.field-slot');
+        const carta = slot && slot.querySelector(':scope > .card');
+        if (carta) {
+            carta.classList.remove('fx-summon-card-land');
+            void carta.offsetWidth;
+            carta.classList.add('fx-summon-card-land');
+            setTimeout(() => carta.classList.remove('fx-summon-card-land'), 520);
+        }
+        if (window.MonsterHolograms && typeof MonsterHolograms.atterra === 'function') {
+            MonsterHolograms.atterra(uid, 520);
+        }
+    }
+
     function playSummonImpact(monsterElement, epica, uidDaEscludere) {
         if (!monsterElement) return;
         // Un callback di render può aver sostituito il nodo fra il reveal e
@@ -329,7 +406,10 @@
         const { x, rect } = centerOf(monsterElement);
         if (!rect.width || !rect.height) return;
         const y = rect.bottom - rect.height * 0.08;
-        if (epica) scuotiCarteSulCampo(monsterElement, uidDaEscludere);
+        if (epica) {
+            atterraMostroEvocato(monsterElement, uidDaEscludere);
+            scuotiCarteSulCampo(monsterElement, uidDaEscludere);
+        }
         const size = Math.max(rect.width * (epica ? 3.1 : 1.65), epica ? 270 : 150);
         const ring = spawnDomFx('fx-summon-impact-ring', x, y, size, size * (epica ? 0.5 : 0.42), epica ? 820 : 680);
         if (epica) {
@@ -1751,8 +1831,16 @@
                     requestAnimationFrame(() => avviaImpatto(tentativi + 1));
                     return;
                 }
-                runSummonImpact(monsterElement, !!(card && (card.level || 0) >= 7), card && card.uid);
-                setTimeout(fineScena, 900);
+                const epica = !!(card && (card.level || 0) >= 7);
+                const impatto = () => {
+                    if (card && card.uid != null && typeof window.findFieldCardElementByUid === 'function') {
+                        monsterElement = window.findFieldCardElementByUid(card.uid) || monsterElement;
+                    }
+                    runSummonImpact(monsterElement, epica, card && card.uid);
+                    setTimeout(fineScena, 900);
+                };
+                if (epica) mostraSchedaEvocazioneEpica(card, monsterElement, impatto);
+                else impatto();
             };
             requestAnimationFrame(() => avviaImpatto());
         };

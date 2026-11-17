@@ -384,6 +384,24 @@
         });
     }
 
+    /** Assesta la proiezione sullo slot quando termina la presentazione epica. */
+    function atterra(uid, durataMs) {
+        if (uid == null) return false;
+        const chiave = String(uid);
+        if (window.MonsterHologramGL && typeof MonsterHologramGL.atterra === 'function') {
+            MonsterHologramGL.atterra(chiave, durataMs);
+        }
+        const item = vivi.get(chiave);
+        if (!item) return false;
+        item.classList.remove('fx-summon-card-land');
+        void item.offsetWidth;
+        item.classList.add('fx-summon-card-land');
+        setTimeout(() => {
+            if (vivi.get(chiave) === item) item.classList.remove('fx-summon-card-land');
+        }, durataMs || 520);
+        return true;
+    }
+
     // Un video fullscreen non deve contendersi la GPU con trasparenze e
     // scansioni nascoste dietro di lui. Il layer viene escluso dal layout e
     // riallineato al Terreno quando la cinematica termina.
@@ -405,7 +423,7 @@
     window.MonsterHolograms = {
         /** Il contenitore (creato se manca): ci disegna dentro anche il WebGL, ereditando opacità e nascondimenti. */
         layer: layer,
-        sync: sync, isAttivo: attivo, nascondiPer: nascondiPer, zoom: zoom, scuotiTavolo: scuotiTavolo,
+        sync: sync, isAttivo: attivo, nascondiPer: nascondiPer, zoom: zoom, scuotiTavolo: scuotiTavolo, atterra: atterra,
         sospendi: sospendi, riprendi: riprendi, isSospeso: () => sospeso
     };
 })();

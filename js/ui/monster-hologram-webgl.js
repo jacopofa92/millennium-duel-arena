@@ -400,6 +400,17 @@ void main(){
                     oy += Math.cos(fase) * ampiezza * 0.28;
                 }
             }
+            if (o.atterraggio) {
+                const p = Math.max(0, Math.min(1, (ora - o.atterraggio.t0) / o.atterraggio.dur));
+                if (p >= 1) o.atterraggio = null;
+                else {
+                    const rientro = 1 - p;
+                    // La proiezione arriva leggermente sollevata e più ampia,
+                    // poi si assesta con un piccolo contraccolpo sullo slot.
+                    oy += -18 * rientro * rientro + Math.sin(p * Math.PI * 3) * 3 * rientro;
+                    sc *= 1 + 0.16 * rientro * rientro;
+                }
+            }
             let activationGlow = 0;
             if (o.zoom && ora < o.zoom.finoA) {
                 const progresso = Math.max(0, Math.min(1, (ora - o.zoom.inizio) / o.zoom.durata));
@@ -439,7 +450,7 @@ void main(){
                 if (!o) {
                     const src = srcDi(e.card);
                     if (!src) return;
-                    o = { uid: e.uid, voce: caricaTexture(src), nato: ora, seme: Math.random() * 10, segno: 1, rect: e.rect, nascostoFinoA: 0, volo: null, morente: null, scossa: null };
+                    o = { uid: e.uid, voce: caricaTexture(src), nato: ora, seme: Math.random() * 10, segno: 1, rect: e.rect, nascostoFinoA: 0, volo: null, morente: null, scossa: null, atterraggio: null };
                     vivi.set(e.uid, o);
                 }
                 if (o.morente) return;   // si sta disintegrando: resta dov'e', non lo si riposiziona
@@ -477,6 +488,14 @@ void main(){
                 o.scossa = { t0, dur };
             });
             avvia();
+        },
+        /** Ingresso finale della proiezione nello slot dopo la scheda evocazione. */
+        atterra(uid, durataMs) {
+            const o = vivi.get(String(uid));
+            if (!o || !this.visibile(String(uid))) return false;
+            o.atterraggio = { t0: performance.now(), dur: durataMs || 520 };
+            avvia();
+            return true;
         },
         /** Si vede adesso? (esiste, la texture e' pronta, non e' nascosto): serve a decidere se la carta deve restare ferma. */
         visibile(uid) {
