@@ -387,6 +387,19 @@ void main(){
                 }
                 ox = volo.ox; oy = volo.oy; sc = volo.sc;
             }
+            // Il contraccolpo si somma dopo ingresso e volo: così le proiezioni
+            // sul campo ricevono lo stesso scossone delle carte senza perdere
+            // la posa, mentre quella appena evocata viene esclusa a monte.
+            if (o.scossa) {
+                const p = Math.max(0, Math.min(1, (ora - o.scossa.t0) / o.scossa.dur));
+                if (p >= 1) o.scossa = null;
+                else {
+                    const ampiezza = (1 - p) * 3;
+                    const fase = p * Math.PI * 10;
+                    ox += Math.sin(fase) * ampiezza;
+                    oy += Math.cos(fase) * ampiezza * 0.28;
+                }
+            }
             let activationGlow = 0;
             if (o.zoom && ora < o.zoom.finoA) {
                 const progresso = Math.max(0, Math.min(1, (ora - o.zoom.inizio) / o.zoom.durata));
@@ -426,7 +439,7 @@ void main(){
                 if (!o) {
                     const src = srcDi(e.card);
                     if (!src) return;
-                    o = { uid: e.uid, voce: caricaTexture(src), nato: ora, seme: Math.random() * 10, segno: 1, rect: e.rect, nascostoFinoA: 0, volo: null, morente: null };
+                    o = { uid: e.uid, voce: caricaTexture(src), nato: ora, seme: Math.random() * 10, segno: 1, rect: e.rect, nascostoFinoA: 0, volo: null, morente: null, scossa: null };
                     vivi.set(e.uid, o);
                 }
                 if (o.morente) return;   // si sta disintegrando: resta dov'e', non lo si riposiziona
@@ -453,6 +466,17 @@ void main(){
             o.zoom = { inizio, durata, finoA: inizio + durata };
             avvia();
             return true;
+        },
+        /** Breve contraccolpo delle proiezioni, lasciando ferma quella evocata. */
+        scuotiTavolo(uidDaEscludere, durataMs) {
+            const escluso = uidDaEscludere == null ? null : String(uidDaEscludere);
+            const t0 = performance.now();
+            const dur = durataMs || 470;
+            vivi.forEach((o, uid) => {
+                if (escluso !== null && String(uid) === escluso) return;
+                o.scossa = { t0, dur };
+            });
+            avvia();
         },
         /** Si vede adesso? (esiste, la texture e' pronta, non e' nascosto): serve a decidere se la carta deve restare ferma. */
         visibile(uid) {

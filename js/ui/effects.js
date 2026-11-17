@@ -291,10 +291,36 @@
 
     // Impatto conclusivo distinto dal riassetto di Posizione: non anima né
     // ricrea la carta, che dopo un video deve restare ferma sul suo slot.
-    function playSummonImpact(monsterElement, epica) {
+    function scuotiCarteSulCampo(mostroAppenaEvocato, uidDaEscludere) {
+        const durata = 470;
+        const slotEvocazione = mostroAppenaEvocato && mostroAppenaEvocato.closest('.field-slot');
+        const slotDaScuotere = [];
+        document.querySelectorAll('#playerFieldBoard .field-slot > .card, #botFieldBoard .field-slot > .card').forEach((carta) => {
+            const slot = carta.closest('.field-slot');
+            if (!slot || slot === slotEvocazione) return;
+            slot.classList.remove('fx-summon-board-rattle');
+            slotDaScuotere.push(slot);
+        });
+        // Una sola lettura di layout riavvia l'animazione dell'intero campo:
+        // evitare un reflow per carta limita gli scatti sui telefoni.
+        if (slotDaScuotere.length) void slotDaScuotere[0].offsetWidth;
+        slotDaScuotere.forEach((slot) => {
+            slot.classList.add('fx-summon-board-rattle');
+            setTimeout(() => slot.classList.remove('fx-summon-board-rattle'), durata);
+        });
+        // Le proiezioni sono su un livello separato dalle carte: le scuotiamo
+        // per uid, altrimenti l'ologramma sembrerebbe galleggiare fermo mentre
+        // la carta sotto si muove. L'uid appena evocato resta escluso.
+        if (window.MonsterHolograms && typeof MonsterHolograms.scuotiTavolo === 'function') {
+            MonsterHolograms.scuotiTavolo(uidDaEscludere, durata);
+        }
+    }
+
+    function playSummonImpact(monsterElement, epica, uidDaEscludere) {
         if (!monsterElement) return;
         const { x, rect } = centerOf(monsterElement);
         const y = rect.bottom - rect.height * 0.08;
+        if (epica) scuotiCarteSulCampo(monsterElement, uidDaEscludere);
         const size = Math.max(rect.width * (epica ? 3.1 : 1.65), epica ? 270 : 150);
         const ring = spawnDomFx('fx-summon-impact-ring', x, y, size, size * (epica ? 0.5 : 0.42), epica ? 820 : 680);
         if (epica) {
@@ -1701,7 +1727,7 @@
                 try { onReveal(monsterElement); }
                 catch (e) { console.warn("[FX] callback d'impatto sullo slot:", e); }
             }
-            runSummonImpact(monsterElement, !!(card && (card.level || 0) >= 7));
+            runSummonImpact(monsterElement, !!(card && (card.level || 0) >= 7), card && card.uid);
             setTimeout(fineScena, 900);
         };
 

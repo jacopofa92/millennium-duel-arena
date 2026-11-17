@@ -566,7 +566,8 @@
 // v750: mappa e musica settimanali condivise fra scheda e duello; medaglione premio preso più discreto.
 // v755: onda d'impatto dopo la scena d'Evocazione.
 // v761: impatto epico più visibile, sopra lo stepper e con onde concentriche.
-const CACHE_NAME = 'ygo-duel-arena-v761';
+// v762: contraccolpo di campo sulle carte e proiezioni quando atterra un mostro 7+.
+const CACHE_NAME = 'ygo-duel-arena-v762';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

@@ -362,6 +362,28 @@
         return true;
     }
 
+    /** Contraccolpo breve delle proiezioni quando atterra un mostro di Livello 7+. */
+    function scuotiTavolo(uidDaEscludere, durataMs) {
+        if (window.MonsterHologramGL && typeof MonsterHologramGL.scuotiTavolo === 'function') {
+            MonsterHologramGL.scuotiTavolo(uidDaEscludere, durataMs);
+        }
+        const escluso = uidDaEscludere == null ? null : String(uidDaEscludere);
+        const daScuotere = [];
+        vivi.forEach((item, uid) => {
+            if (escluso !== null && String(uid) === escluso) return;
+            item.classList.remove('fx-summon-board-rattle');
+            daScuotere.push([item, uid]);
+        });
+        // Riavviare con un solo reflow evita di forzare layout ripetuti.
+        if (daScuotere.length) void daScuotere[0][0].offsetWidth;
+        daScuotere.forEach(([item, uid]) => {
+            item.classList.add('fx-summon-board-rattle');
+            setTimeout(() => {
+                if (vivi.get(uid) === item) item.classList.remove('fx-summon-board-rattle');
+            }, durataMs || 470);
+        });
+    }
+
     // Un video fullscreen non deve contendersi la GPU con trasparenze e
     // scansioni nascoste dietro di lui. Il layer viene escluso dal layout e
     // riallineato al Terreno quando la cinematica termina.
@@ -383,7 +405,7 @@
     window.MonsterHolograms = {
         /** Il contenitore (creato se manca): ci disegna dentro anche il WebGL, ereditando opacità e nascondimenti. */
         layer: layer,
-        sync: sync, isAttivo: attivo, nascondiPer: nascondiPer, zoom: zoom,
+        sync: sync, isAttivo: attivo, nascondiPer: nascondiPer, zoom: zoom, scuotiTavolo: scuotiTavolo,
         sospendi: sospendi, riprendi: riprendi, isSospeso: () => sospeso
     };
 })();
