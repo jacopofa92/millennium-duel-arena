@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.7.9 — Impatto epico delle Evocazioni 7+: onde e nucleo luminoso sopra il campo e lo stepper.
  * 1.7.8 — Errori del renderer olografico non possono interrompere reveal e impatto dell'Evocazione.
  * 1.7.7 — L'impatto resta visibile anche con movimento ridotto ed è sopra gli effetti del campo.
  * 1.7.6 — Ripristinati subito gli ologrammi al reveal; la coda aspetta la fine completa dell'impatto.
@@ -856,4 +857,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.7.8';
+window.GAME_VERSION = '1.7.9';

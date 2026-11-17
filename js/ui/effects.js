@@ -295,9 +295,18 @@
         if (!monsterElement) return;
         const { x, rect } = centerOf(monsterElement);
         const y = rect.bottom - rect.height * 0.08;
-        const size = Math.max(rect.width * (epica ? 2.25 : 1.65), epica ? 210 : 150);
-        const ring = spawnDomFx('fx-summon-impact-ring', x, y, size, size * 0.42, epica ? 820 : 680);
-        if (epica) ring.classList.add('fx-summon-impact-ring--epic');
+        const size = Math.max(rect.width * (epica ? 3.1 : 1.65), epica ? 270 : 150);
+        const ring = spawnDomFx('fx-summon-impact-ring', x, y, size, size * (epica ? 0.5 : 0.42), epica ? 820 : 680);
+        if (epica) {
+            ring.classList.add('fx-summon-impact-ring--epic');
+            // La seconda onda rende leggibile l'impatto anche quando il
+            // campo è piccolo: prima c'era un solo anello sottile, spesso
+            // coperto dallo stepper mobile (z-index 10066).
+            const secondaOnda = spawnDomFx('fx-summon-impact-ring fx-summon-impact-ring--epic fx-summon-impact-ring--second', x, y, size * 0.78, size * 0.39, 900);
+            secondaOnda.setAttribute('aria-hidden', 'true');
+            const nucleo = spawnDomFx('fx-summon-impact-core', x, y, Math.max(rect.width * 2.1, 180), Math.max(rect.height * 0.7, 100), 520);
+            nucleo.setAttribute('aria-hidden', 'true');
+        }
         if (!fxPrefersReducedMotion()) {
             monsterElement.classList.add('fx-summon-glow');
             setTimeout(() => monsterElement.classList.remove('fx-summon-glow'), 800);
