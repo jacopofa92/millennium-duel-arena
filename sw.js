@@ -568,7 +568,8 @@
 // v761: impatto epico più visibile, sopra lo stepper e con onde concentriche.
 // v764: scheda nome/stelle/ATK/DEF, assestamento dell'ologramma e impatto finale per le Evocazioni 7+.
 // v765: cut-in a schermo intero per le Evocazioni 7+, con illustrazione grande, dati e rientro nello slot.
-const CACHE_NAME = 'ygo-duel-arena-v765';
+// v766: rimossa l'illustrazione duplicata; la scheda dati resta sopra l'ologramma originale.
+const CACHE_NAME = 'ygo-duel-arena-v766';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

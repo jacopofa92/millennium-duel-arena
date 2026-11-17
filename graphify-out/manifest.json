@@ -843,9 +843,9 @@
     "semantic_hash": ""
   },
   "js/ui/effects.js": {
-    "mtime": 1794911574.7805717,
-    "seen": 1794911768.6394317,
-    "ast_hash": "3ec3cc5632ad2850da7b1f35da14dce9",
+    "mtime": 1794917824.462141,
+    "seen": 1794917932.2162359,
+    "ast_hash": "54ebbceec5ae2ef59b553289da577dc5",
     "semantic_hash": ""
   },
   "js/ui/error-recovery.js": {
@@ -1107,9 +1107,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794911724.6453702,
-    "seen": 1794911768.6451662,
-    "ast_hash": "14b7e489153be1afcd0bb89f1ff78248",
+    "mtime": 1794917861.4965897,
+    "seen": 1794917932.23204,
+    "ast_hash": "db916c21e30bc7646df5bffc559894eb",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1526,9 +1526,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794911724.8908637,
-    "seen": 1794911768.6787992,
-    "ast_hash": "8411b1dd4721c6ec6364e101b1e69224",
+    "mtime": 1794917861.7348216,
+    "seen": 1794917932.2478225,
+    "ast_hash": "95bd6abbda3888698850bc6ed15d368c",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -4960,9 +4960,9 @@
     "semantic_hash": ""
   },
   "PROJECT_MAP.md": {
-    "mtime": 1794662722.2736564,
-    "seen": 1794662772.0231698,
-    "ast_hash": "98f27a00002be57f0f7909749f0b732f",
+    "mtime": 1794917861.2579896,
+    "seen": 1794917932.4385526,
+    "ast_hash": "d4fb5bd41551525048c3397fb0c8ce49",
     "semantic_hash": ""
   },
   "PUBBLICAZIONE.md": {

@@ -329,27 +329,12 @@
             : '?';
     }
 
-    /** Cut-in della carta: oscura il campo, ingrandisce l'ologramma e mostra i dati prima del rientro nello slot. */
+    /** Scheda evocazione sopra l'ologramma originale; non crea un secondo mostro. */
     function mostraSchedaEvocazioneEpica(card, monsterElement, dopo) {
         const livello = Math.max(0, Math.min(13, Number(card && card.level) || 0));
-        const scena = document.createElement('div');
-        scena.className = 'fx-summon-cutin';
-        scena.setAttribute('aria-hidden', 'true');
-
-        const fondale = document.createElement('div');
-        fondale.className = 'fx-summon-cutin-backdrop';
-        const figura = document.createElement('div');
-        figura.className = 'fx-summon-cutin-figure';
-        const immagine = document.createElement('img');
-        immagine.className = 'fx-summon-cutin-art';
-        immagine.alt = '';
-        immagine.decoding = 'async';
-        immagine.src = window.getCardImagePath ? getCardImagePath(card) : '';
-        figura.appendChild(immagine);
-
         const pannello = document.createElement('div');
         pannello.className = 'fx-summon-nameplate';
-        pannello.style.animationDelay = '220ms';
+        pannello.setAttribute('aria-hidden', 'true');
 
         const stelle = document.createElement('div');
         stelle.className = 'fx-summon-nameplate-stars';
@@ -378,40 +363,31 @@
         });
 
         pannello.append(stelle, nome, statistiche);
-        scena.append(fondale, figura, pannello);
-        document.body.appendChild(scena);
 
-        // Il modello del riferimento qui è sostituito dall'illustrazione
-        // olografica della carta: resta grande al centro durante il cut-in e
-        // poi viene risucchiata nello slot reale, prima del contraccolpo.
-        const attesa = fxPrefersReducedMotion() ? 850 : 1420;
+        // Il mostro è già stato rivelato: la scheda accompagna il SUO
+        // ologramma originale e non ne duplica l'immagine in una scena nuova.
+        const rect = monsterElement && monsterElement.getBoundingClientRect();
+        const altezza = window.innerHeight || document.documentElement.clientHeight || 720;
+        const altezzaScheda = window.matchMedia && window.matchMedia('(max-width: 700px)').matches ? 100 : 112;
+        const sottoMostro = rect && rect.height ? rect.bottom + 10 : altezza * .62;
+        const sopraMostro = rect && rect.height ? rect.top - altezzaScheda - 10 : sottoMostro;
+        const top = rect && rect.top + rect.height / 2 > altezza / 2 ? sopraMostro : sottoMostro;
+        pannello.style.top = `${Math.max(10, Math.min(altezza - altezzaScheda - 10, top))}px`;
+        const larghezzaSchermo = window.innerWidth || 720;
+        const larghezzaScheda = Math.min(560, Math.max(240, larghezzaSchermo - 24));
+        const centroMostro = rect && rect.width ? rect.left + rect.width / 2 : larghezzaSchermo / 2;
+        const centroScheda = Math.max(larghezzaScheda / 2 + 12,
+            Math.min(larghezzaSchermo - larghezzaScheda / 2 - 12, centroMostro));
+        pannello.style.left = `${centroScheda}px`;
+        document.body.appendChild(pannello);
+
+        const attesa = fxPrefersReducedMotion() ? 700 : 1050;
         setTimeout(() => {
-            const slot = monsterElement && monsterElement.getBoundingClientRect();
-            const figuraRect = figura.getBoundingClientRect();
-            const rientra = () => {
-                scena.remove();
-                dopo();
-            };
-            if (!slot || !slot.width || !figuraRect.width || !figura.animate) {
-                setTimeout(rientra, 320);
-                return;
-            }
-            const dx = slot.left + slot.width / 2 - (figuraRect.left + figuraRect.width / 2);
-            const dy = slot.top + slot.height / 2 - (figuraRect.top + figuraRect.height / 2);
-            const scala = Math.max(.06, Math.min(.28, Math.min(slot.width / figuraRect.width, slot.height / figuraRect.height)));
-            const destinazione = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scala})`;
             pannello.classList.add('fx-summon-nameplate-leaving');
-            scena.classList.add('fx-summon-cutin-returning');
-            try {
-                const corsa = figura.animate([
-                    { transform: 'translate(-50%, -50%) scale(1)', opacity: 1, offset: 0 },
-                    { transform: `translate(calc(-50% + ${dx * .72}px), calc(-50% + ${dy * .72}px)) scale(${Math.min(.42, scala * 1.5)})`, opacity: 1, offset: .72 },
-                    { transform: destinazione, opacity: 0, offset: 1 }
-                ], { duration: fxPrefersReducedMotion() ? 220 : 460, easing: 'cubic-bezier(.25,.72,.22,1)', fill: 'forwards' });
-                corsa.finished.then(rientra, rientra);
-            } catch (_) {
-                setTimeout(rientra, 460);
-            }
+            setTimeout(() => {
+                pannello.remove();
+                dopo();
+            }, 220);
         }, attesa);
     }
 
@@ -1847,8 +1823,9 @@
             impattoAvviato = true;
             const epica = !!(card && (card.level || 0) >= 7);
             const rivelaEImpatta = () => {
-                // La carta resta nascosta durante il cut-in: viene rivelata
-                // solo dopo che l'illustrazione è rientrata nel suo slot.
+                // Prima si rivela la carta e si riallinea il suo ologramma
+                // originale; il pannello informativo viene dopo, senza
+                // sostituire o duplicare la proiezione del gioco.
                 monsterElement = rivelaCartaEvocata(card, monsterElement);
                 if (typeof onReveal === 'function') {
                     try { onReveal(monsterElement); }
@@ -1868,10 +1845,15 @@
                     runSummonImpact(monsterElement, epica, card && card.uid);
                     setTimeout(fineScena, 900);
                 };
-                requestAnimationFrame(() => avviaImpatto());
+                requestAnimationFrame(() => {
+                    if (card && card.uid != null && typeof window.findFieldCardElementByUid === 'function') {
+                        monsterElement = window.findFieldCardElementByUid(card.uid) || monsterElement;
+                    }
+                    if (epica) mostraSchedaEvocazioneEpica(card, monsterElement, avviaImpatto);
+                    else avviaImpatto();
+                });
             };
-            if (epica) mostraSchedaEvocazioneEpica(card, monsterElement, rivelaEImpatta);
-            else rivelaEImpatta();
+            rivelaEImpatta();
         };
 
         const fallback = () => {

@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.7.14 — Le Evocazioni 7+ mantengono l'ologramma originale; la scheda stelle/nome/ATK/DEF lo accompagna senza duplicare la scena.
  * 1.7.13 — Le Evocazioni 7+ usano un cut-in a schermo intero: campo oscurato, illustrazione dominante, dati in fascia e rientro nello slot prima dell'impatto.
  * 1.7.12 — Le Evocazioni 7+ mostrano nome, stelle e ATK/DEF prima dell'assestamento dell'ologramma e dell'impatto sul campo.
  * 1.7.11 — Impatto 7+ agganciato alla carta effettiva dopo il render; contraccolpo più leggibile su campo e ologrammi.
@@ -861,4 +862,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.7.13';
+window.GAME_VERSION = '1.7.14';

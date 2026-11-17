@@ -1,13 +1,12 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
-## Cut-in cinematografico per le Evocazioni 7+ (1.7.13)
+## Dati evocazione senza duplicare l'ologramma (1.7.14)
 
-La presentazione usa una scena a schermo intero: il campo si oscura,
-l'illustrazione della carta domina il centro, nome/livello/ATK/DEF entrano
-in una fascia inferiore; l'illustrazione rientra nello slot prima che la
-carta reale venga mostrata e parta l'impatto sul tavolo. Implementazione in
-`js/ui/effects.js` e `js/ui/effects.css`; cache app shell v765. Usa l'artwork
-esistente della carta, non un modello 3D o un video dedicato.
+Per le Evocazioni 7+ si conserva la sequenza e l'ologramma originali del
+gioco: dopo il reveal compare per un istante una scheda con stelle, nome,
+ATK e DEF vicino al mostro; poi parte l'impatto sul tavolo. Non viene creata
+una seconda immagine/ologramma. Implementazione in `js/ui/effects.js` e
+`js/ui/effects.css`; cache app shell v766.
 
 ## Dettagli video Alti come preset iniziale (1.6.86)
 
