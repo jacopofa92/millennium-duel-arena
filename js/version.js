@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.9.2 — Le Fusioni WebGL di Livello 7+ tornano visibili nello slot dopo la scena.
  * 1.9.1 — Il bot della prova di Evocazione annullata è impostato in modo esplicito.
  * 1.9.0 — Scena dedicata all'Evocazione Speciale annullata e pagina di prova amministratore.
  * 1.8.0 — Aggiunti tre puzzle avanzati: pulizia della Trappola prima del furto, doppio Equipaggiamento in svantaggio e due rianimazioni dai Cimiteri.
@@ -868,4 +869,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.9.1';
+window.GAME_VERSION = '1.9.2';

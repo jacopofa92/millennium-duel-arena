@@ -52,5 +52,45 @@ module.exports = {
         }));
         t.assert(!end.scene && end.fusionOnField && end.summonDelay >= 2850,
             'Il mostro evocato deve iniziare la propria animazione solo dopo il collasso dei materiali');
+
+        const rivelazioneFusioneGiaMostrata = await t.evaluate(async () => {
+            const originale = FX.rivelazioneFusioneFatta;
+            const fxMateriali = FX.playFusionMaterialEffect;
+            const MagoNero = cardDatabase.find((c) => c.id === 2);
+            const RagazzaMagaNera = cardDatabase.find((c) => c.id === 188);
+            const MaghiNeri = { ...cardDatabase.find((c) => c.id === 1260), uid: 'fusion-maghi-neri' };
+            gameState.playerHand = [
+                { ...MagoNero, uid: 'fusion-material-mago-nero' },
+                { ...RagazzaMagaNera, uid: 'fusion-material-ragazza-maga-nera' }
+            ];
+            gameState.playerMonsterField = [null, null, null, null, null];
+            gameState.playerExtraDeck = [MaghiNeri];
+            gameState.playerGraveyard = [];
+            gameState.botSTField = [null, null, null, null, null];
+            // Simula la scena WebGL: la Fusion ha già mostrato il mostro e
+            // quindi il motore salta il reveal standard, ma deve comunque
+            // togliere la classe che lo teneva nascosto nello slot.
+            FX.rivelazioneFusioneFatta = () => true;
+            FX.playFusionMaterialEffect = (_materiali, _fusione, _owner, onDone) => { onDone(); return 0; };
+            try {
+                const option = DuelEngine.getFusableExtraDeckMonsters('player').find((v) => v.card.id === 1260);
+                const ok = option && DuelEngine.actions.fusionSummon('player', option.extraDeckIndex, option.materialLocations);
+                await new Promise((resolve) => setTimeout(resolve, 120));
+                const slot = gameState.playerMonsterField.find((s) => s && s.card.uid === MaghiNeri.uid);
+                const element = window.findFieldCardElementByUid(MaghiNeri.uid);
+                return {
+                    ok: !!ok,
+                    sulCampo: !!slot,
+                    nascosta: !!(element && element.classList.contains('summon-cinematic-hidden')),
+                    revealInAttesa: FX.evocazioneInAttesa(MaghiNeri.uid)
+                };
+            } finally {
+                FX.rivelazioneFusioneFatta = originale;
+                FX.playFusionMaterialEffect = fxMateriali;
+            }
+        });
+        t.assert(rivelazioneFusioneGiaMostrata.ok && rivelazioneFusioneGiaMostrata.sulCampo
+            && !rivelazioneFusioneGiaMostrata.nascosta && !rivelazioneFusioneGiaMostrata.revealInAttesa,
+            `La scena WebGL di I Maghi Neri deve lasciare la carta visibile nello slot: ${JSON.stringify(rivelazioneFusioneGiaMostrata)}`);
     }
 };

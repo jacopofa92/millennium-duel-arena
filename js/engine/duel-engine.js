@@ -2007,7 +2007,15 @@
                                     const giaMostrata = !!(window.FX && FX.rivelazioneFusioneFatta && FX.rivelazioneFusioneFatta(card));
                                     if (cardEl && window.FX && !giaMostrata) {
                                         FX.playMonsterSummonEffect(card, cardEl, () => EventiDuello.emetti('impatto-campo', owner, slotIndex, 'monster'));
-                                    } else EventiDuello.emetti('impatto-campo', owner, slotIndex, 'monster');
+                                    } else {
+                                        // La Fusione WebGL ha già mostrato il mostro nella sua scena e salta
+                                        // il reveal standard. Rimuoviamo comunque il nascondimento preparato
+                                        // prima che la carta entrasse nello slot, altrimenti resta invisibile.
+                                        if (giaMostrata && window.FX && typeof FX.rivelaCartaEvocata === 'function') {
+                                            FX.rivelaCartaEvocata(card, cardEl);
+                                        }
+                                        EventiDuello.emetti('impatto-campo', owner, slotIndex, 'monster');
+                                    }
                                     if (!giaMostrata && (card.level || 0) < 7 && !(window.AudioLibrary && AudioLibrary.tryPlayCardSound(card, 'evocazioni')) && window.SFX) SFX.summon(position);
                                 };
                                 // Il grido del duellante per la sua carta simbolo precede

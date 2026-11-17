@@ -3104,6 +3104,7 @@
         endSummonCinematic,
         preparaRivelazioneEvocazione,
         evocazioneInAttesa,
+        rivelaCartaEvocata,
         annullaRivelazioneEvocazione,
         playSummonCircle: runSummonCircle,
         playElementalConvergence: runElementalConvergence,
