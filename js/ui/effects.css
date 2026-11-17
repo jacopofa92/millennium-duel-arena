@@ -14,6 +14,22 @@
     --fx-purple: #8e44ad;
 }
 
+/* Il sigillo annulla l'Evocazione sul suo slot; la carta vera si muove
+   come fantasma solo durante il tragitto e il motore la trasferisce dopo. */
+.fx-summon-negated{position:fixed;inset:0;z-index:10062;pointer-events:none;overflow:hidden}
+.fx-summon-negated-seal{position:fixed;transform:translate(-50%,-50%) perspective(600px) rotateX(62deg) scale(.12);border:3px double rgba(226,205,255,.96);border-radius:50%;background:radial-gradient(circle,rgba(248,241,255,.8) 0 4%,rgba(143,86,206,.48) 9%,rgba(63,25,102,.18) 42%,transparent 70%);box-shadow:0 0 14px 4px rgba(238,220,255,.8),0 0 42px 12px rgba(139,76,209,.7),inset 0 0 24px rgba(255,255,255,.58);animation:fxSummonNegatedSeal .92s cubic-bezier(.18,.78,.22,1) forwards}
+.fx-summon-negated-seal::before,.fx-summon-negated-seal::after{content:'';position:absolute;inset:12%;border:2px solid rgba(255,248,255,.9);border-radius:50%;box-shadow:0 0 12px rgba(212,178,255,.9)}
+.fx-summon-negated-seal::after{inset:28%;border-style:dashed;border-color:rgba(255,221,157,.95)}
+.fx-summon-negated-seal i{position:absolute;left:5%;right:5%;height:12%;border:3px ridge rgba(224,203,255,.95);border-radius:50%;background:linear-gradient(90deg,transparent,rgba(215,181,255,.9),rgba(255,255,255,.95),rgba(215,181,255,.9),transparent);box-shadow:0 0 12px rgba(193,139,255,.9)}
+.fx-summon-negated-seal i:first-child{top:22%;transform:rotate(30deg)}
+.fx-summon-negated-seal i:nth-child(2){top:62%;transform:rotate(-30deg)}
+.fx-summon-negated-seal b{position:absolute;inset:43%;border-radius:50%;background:#fff;box-shadow:0 0 18px 9px #e8d5ff,0 0 36px 18px #9c67d5;animation:fxSummonNegatedCore .48s ease-out .27s forwards}
+.fx-summon-negated-seal span{position:absolute;inset:-8%;border:2px solid rgba(255,241,212,.9);border-radius:50%;box-shadow:0 0 18px rgba(255,255,255,.7);animation:fxSummonNegatedSnap .42s ease-in .36s forwards}
+.fx-summon-negated-card{filter:drop-shadow(0 0 14px rgba(210,174,255,.95)) drop-shadow(0 0 5px rgba(255,255,255,.8));will-change:transform,opacity}
+@keyframes fxSummonNegatedSeal{0%{opacity:0;transform:translate(-50%,-50%) perspective(600px) rotateX(72deg) scale(.12)}24%{opacity:1;transform:translate(-50%,-50%) perspective(600px) rotateX(62deg) scale(1.12)}48%{transform:translate(-50%,-50%) perspective(600px) rotateX(62deg) scale(.92)}75%{opacity:1;transform:translate(-50%,-50%) perspective(600px) rotateX(62deg) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) perspective(600px) rotateX(62deg) scale(1.18)}}
+@keyframes fxSummonNegatedCore{to{opacity:0;transform:scale(.15)}}
+@keyframes fxSummonNegatedSnap{0%{opacity:0;transform:scale(.65)}45%{opacity:1}100%{opacity:0;transform:scale(.78)}}
+
 /* ============================================================
    1) Distruzione carta — flash + esplosione + frammenti
    ============================================================ */
@@ -2185,6 +2201,10 @@
     .fx-mystic-box *, .fx-limiter-removal *, .fx-shadow-bind *,
     .shadow-spell-link *, .fx-spellbinding-burst *, .spellbinding-circle-link *,
     .fx-magical-hats *, .fx-multiply *, .fx-enemy-controller *, .fx-dimension-hole *, .fx-dimension-card {
+        animation-duration: .01ms !important;
+        animation-delay: 0ms !important;
+    }
+    .fx-summon-negated-seal, .fx-summon-negated-seal * {
         animation-duration: .01ms !important;
         animation-delay: 0ms !important;
     }

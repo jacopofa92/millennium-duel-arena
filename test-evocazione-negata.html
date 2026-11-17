@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0d14">
+<title>Prova Evocazione annullata — Millennium Duel Arena</title>
+<style>
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; margin: 0; }
+    body { display: grid; place-items: center; padding: 24px; color: #f7e8bd; background: radial-gradient(ellipse at 50% 20%, #302044, #0b0d14 68%); font: 16px/1.5 Arial, sans-serif; }
+    main { width: min(100%, 540px); padding: clamp(24px, 6vw, 42px); border: 1px solid rgba(233,195,105,.42); border-radius: 18px; background: rgba(15,14,22,.9); box-shadow: 0 18px 70px #0009, inset 0 0 36px #a27a2910; }
+    .sigillo { width: 76px; height: 76px; display: grid; place-items: center; margin: 0 auto 18px; border: 2px double #e9c369; border-radius: 50%; color: #e9c369; font-size: 36px; box-shadow: 0 0 24px #be8f4a50, inset 0 0 16px #be8f4a30; }
+    h1 { margin: 0; text-align: center; color: #f5d681; font: 700 clamp(1.35rem, 5vw, 2rem) Georgia, serif; }
+    .intro { margin: 12px 0 24px; text-align: center; color: #d2c9bc; }
+    ol { display: grid; gap: 10px; margin: 0 0 26px; padding-left: 22px; color: #e8dfd0; }
+    li::marker { color: #e9c369; font-weight: 700; }
+    button { width: 100%; min-height: 54px; border: 1px solid #f5d681; border-radius: 10px; color: #24190a; background: linear-gradient(135deg, #ffe38a, #d9952e); box-shadow: 0 8px 24px #c7893038; font: 800 1rem Arial, sans-serif; cursor: pointer; transition: transform .16s, filter .16s; }
+    button:hover { filter: brightness(1.1); transform: translateY(-2px); }
+    button:active { transform: translateY(1px) scale(.99); }
+    button:focus-visible { outline: 3px solid #fff1bd; outline-offset: 3px; }
+    .nota { margin: 16px 0 0; color: #a9a198; font-size: .82rem; text-align: center; }
+</style>
+<script src="js/vendor/supabase.min.js"></script>
+<script src="js/cloud/supabase-config.js"></script>
+<script src="js/cloud/cloud-sync.js"></script>
+<script src="js/cloud/auth-gate.js"></script>
+<script>
+(function () {
+    if (window.AUTH_GATE_SKIP) return;
+    document.documentElement.style.visibility = 'hidden';
+    function tornaAlMenu() { window.location.replace('index.html'); }
+    if (!window.CloudSync || !CloudSync.available) { tornaAlMenu(); return; }
+    CloudSync.waitForUser().then(function (user) {
+        if (!user) { tornaAlMenu(); return; }
+        return CloudSync.ensureApprovedSession().then(function (ok) {
+            if (!ok || !CloudSync.isAdmin()) { tornaAlMenu(); return; }
+            document.documentElement.style.visibility = '';
+        });
+    }).catch(tornaAlMenu);
+})();
+</script>
+</head>
+<body>
+<main>
+    <div class="sigillo" aria-hidden="true">✧</div>
+    <h1>Evocazione annullata</h1>
+    <p class="intro">Prova la nuova scena con Gilasaurus e Oppressione Reale già pronti sul campo.</p>
+    <ol>
+        <li>Avvia il duello di prova.</li>
+        <li>Tocca Gilasaurus nella tua mano e scegli <strong>Evocazione Speciale</strong>.</li>
+        <li>Quando Oppressione Reale risponde, conferma il pagamento di 800 LP.</li>
+    </ol>
+    <button id="startTest" type="button">Avvia la prova</button>
+    <p class="nota">Strumento di test riservato all’amministratore. Il duello non salva progressi o ricompense.</p>
+</main>
+<script>
+document.getElementById('startTest').addEventListener('click', function () {
+    const scenario = {
+        turn: 3,
+        phase: 'main1',
+        currentPlayer: 'player',
+        hasNormalSummoned: false,
+        playerLP: 8000,
+        botLP: 8000,
+        field: 'dirigibileKaibaCorp.jpg',
+        player: { hand: [{ id: 266 }] },
+        bot: { spellsTraps: [{ id: 882, faceUp: true }] }
+    };
+    sessionStorage.setItem('ygoSandboxConfig', JSON.stringify(scenario));
+    window.location.href = 'duelMonstersCore.html?mode=sandbox';
+});
+</script>
+</body>
+</html>

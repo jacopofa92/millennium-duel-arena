@@ -1955,15 +1955,25 @@
                 });
                 const completaEvocazione = () => {
                     if (tentativo.summonNegated) {
-                        const slot = field[slotIndex];
-                        if (slot && slot.card.uid === card.uid) {
-                            field[slotIndex] = null;
-                            graveyardOf(owner).push(card);
-                        }
-                        if (window.FX && typeof FX.annullaRivelazioneEvocazione === 'function') {
-                            FX.annullaRivelazioneEvocazione(card);
-                        }
-                        if (typeof updateUI === 'function') updateUI();
+                        // La carta resta nello slot durante la scena: il renderer
+                        // la sostituisce al prossimo aggiornamento, perciò prima
+                        // lasciamo finire il sigillo e il viaggio verso il Cimitero.
+                        EventiDuello.attendi('evocazione-speciale-negata', {
+                            owner: owner,
+                            index: slotIndex,
+                            card: card,
+                            faceDown: !!(field[slotIndex] && field[slotIndex].isFaceDown)
+                        }, () => {
+                            const slot = field[slotIndex];
+                            if (slot && slot.card.uid === card.uid) {
+                                field[slotIndex] = null;
+                                graveyardOf(owner).push(card);
+                            }
+                            if (window.FX && typeof FX.annullaRivelazioneEvocazione === 'function') {
+                                FX.annullaRivelazioneEvocazione(card);
+                            }
+                            if (typeof updateUI === 'function') updateUI();
+                        });
                         return;
                     }
                     if (window.DuelDialogues && !arrivaCoperta) DuelDialogues.summon(owner, card);

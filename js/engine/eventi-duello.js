@@ -75,6 +75,7 @@
         'attacco-bloccato': '(owner, indice, zona, elementoAttaccante) un attacco non ha distrutto il bersaglio',
         'attacco-animazione': '(inCorso) la sequenza visiva di un attacco blocca le nuove mosse manuali fino al suo completamento',
         'attivazione-negata': '(carta, owner, zona, indice) un\'attivazione è stata annullata in Catena',
+        'evocazione-speciale-negata': '({ owner, index, card }, fatto) una Special Summon annullata: la scena termina prima di spostare il mostro al Cimitero',
         'transizione-carta': '({ carta, da, a, variante? }) una carta si sposta visivamente fra due zone',
         'effetto-battaglia': '(...) gli stessi argomenti di showBattleEffect',
         'danno-fluttuante': '(...) gli stessi argomenti di showFloatingDamage',

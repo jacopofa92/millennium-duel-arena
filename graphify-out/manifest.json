@@ -381,9 +381,9 @@
     "semantic_hash": ""
   },
   "js/engine/actions.js": {
-    "mtime": 1794859886.5543885,
-    "seen": 1794868683.907075,
-    "ast_hash": "4e1b1f27c32391fe7a3f85174364f577",
+    "mtime": 1794934199.5812807,
+    "seen": 1794934247.2599018,
+    "ast_hash": "c4256d3e7b74e7101966950bf0e3a82a",
     "semantic_hash": ""
   },
   "js/engine/battaglia.js": {
@@ -471,9 +471,9 @@
     "semantic_hash": "dcd14125a9faf5071dedc66d14fd61d0"
   },
   "js/engine/duel-engine.js": {
-    "mtime": 1794868865.9611433,
-    "seen": 1794868942.9955492,
-    "ast_hash": "c8c84fddf45268201ec365f39351c936",
+    "mtime": 1794933951.6889014,
+    "seen": 1794934088.6974533,
+    "ast_hash": "f0a5ccf3cbc7c3a4adfffcf496ec88bb",
     "semantic_hash": ""
   },
   "js/engine/duel-sandbox.js": {
@@ -489,9 +489,9 @@
     "semantic_hash": "1c7cb717738e9fde28c85bc8104918d8"
   },
   "js/engine/eventi-duello.js": {
-    "mtime": 1794859666.7303197,
-    "seen": 1794868683.9132187,
-    "ast_hash": "a35eba94ecbe92e9abdd69cef008b966",
+    "mtime": 1794933816.3783822,
+    "seen": 1794934088.6974533,
+    "ast_hash": "4a41fb2a1c75fc2c033013d22ce3ce66",
     "semantic_hash": ""
   },
   "js/engine/evocazioni.js": {
@@ -843,9 +843,9 @@
     "semantic_hash": ""
   },
   "js/ui/effects.js": {
-    "mtime": 1794928367.9568658,
-    "seen": 1794928467.1332364,
-    "ast_hash": "4d09630be26320f69a1582d93d44242c",
+    "mtime": 1794933952.2888029,
+    "seen": 1794934088.7248838,
+    "ast_hash": "841b9d682deb02048433844c0c06ad17",
     "semantic_hash": ""
   },
   "js/ui/error-recovery.js": {
@@ -1107,9 +1107,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794929067.0890656,
-    "seen": 1794929124.369785,
-    "ast_hash": "7ddfb5e168accd4899618285d69c7104",
+    "mtime": 1794933860.4066622,
+    "seen": 1794934088.7455983,
+    "ast_hash": "272107c77f739fece094f6cfd71506bf",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1526,9 +1526,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794929067.3318245,
-    "seen": 1794929124.394626,
-    "ast_hash": "2f2be4ca8a49b699e912d1f262895749",
+    "mtime": 1794933860.170302,
+    "seen": 1794934088.7707472,
+    "ast_hash": "4eaec07995895383873d4dbe14a7f636",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
@@ -3214,9 +3214,9 @@
     "semantic_hash": "8d18b667f05a43100ebb13c2b60e2bd4"
   },
   "tests/specs/oppressione-reale-per-entrambi.spec.js": {
-    "mtime": 1794570382.153084,
-    "seen": 1794570487.1151812,
-    "ast_hash": "77fa4029de292c31e309b0b93149bb36",
+    "mtime": 1794933975.5085354,
+    "seen": 1794934088.8945835,
+    "ast_hash": "379efbe3396f5ff81077ef6b6e2c47f7",
     "semantic_hash": ""
   },
   "tests/specs/orichalcos-sword-extension.spec.js": {
@@ -25141,6 +25141,12 @@
     "mtime": 1794764539.3223376,
     "seen": 1794765039.49695,
     "ast_hash": "1735ff7e209cdfc8c5a91001e0a50d58",
+    "semantic_hash": ""
+  },
+  "test-evocazione-negata.html": {
+    "mtime": 1794933991.0824516,
+    "seen": 1794934089.011981,
+    "ast_hash": "d682d7c167f80a88ebb7ea49eaf9a60f",
     "semantic_hash": ""
   },
   "package-lock.json": {

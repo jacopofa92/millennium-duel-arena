@@ -14,6 +14,21 @@ EventiDuello.ascolta('evocazione-in-sospeso', evocazioneTributoInSospeso);
 EventiDuello.ascolta('impatto-campo', triggerFieldImpact);
 EventiDuello.ascolta('distruzione', triggerDestroyEffect);
 EventiDuello.ascolta('attacco-bloccato', triggerBlockedEffect);
+EventiDuello.ascolta('evocazione-speciale-negata', (evento, fatto) => {
+    const boardId = evento.owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard';
+    const selettore = `#${boardId} .field-slot[data-owner="${evento.owner}"][data-type="monster"][data-index="${evento.index}"] .card`;
+    let cartaNelCampo = document.querySelector(selettore);
+    // Nella risposta a una Catena, lo slot può essere già nello stato ma non
+    // ancora nel DOM. Un render sincrono prima del primo frame rende visibile
+    // la carta di partenza senza mostrarla un fotogramma nella casella.
+    if (!cartaNelCampo && typeof updateUI === 'function') {
+        updateUI();
+        cartaNelCampo = document.querySelector(selettore);
+    }
+    if (cartaNelCampo && window.FX && typeof FX.playSummonNegated === 'function'
+        && FX.playSummonNegated(evento.card, evento.owner, evento.index, fatto, evento.faceDown)) return;
+    fatto();
+});
 EventiDuello.ascolta('scarto-fine-turno', startHandDiscardSelection);
 EventiDuello.ascolta('volo-carta', (volo, fatto) => {
     flyCardToSlot(volo.carta, volo.partenza, volo.casella, fatto, volo.daNascondere, volo.coperta, volo.posizione);

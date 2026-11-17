@@ -2551,6 +2551,79 @@
     }
 
     /**
+     * Evocazione Speciale annullata: il sigillo si chiude sullo slot e
+     * respinge la carta verso il Cimitero. La carta vera resta nello stato
+     * e nel DOM fino al callback, così non lampeggia né viene duplicata al
+     * render intermedio. Il fallback del motore prosegue se manca un nodo.
+     */
+    function playSummonNegated(card, owner, index, onDone, faceDown) {
+        const boardId = owner === 'player' ? 'playerFieldBoard' : 'botFieldBoard';
+        const slot = document.querySelector(`#${boardId} .field-slot[data-owner="${owner}"][data-type="monster"][data-index="${index}"]`);
+        const original = slot && slot.querySelector('.card');
+        const from = cardRect(card);
+        const to = zoneRect(owner, 'graveyard');
+        if (!card || !original || !from || !to || typeof window.createCardElement !== 'function') return false;
+
+        beginSummonCinematic();
+        const scene = document.createElement('div');
+        scene.className = 'fx-summon-negated';
+        const seal = document.createElement('div');
+        seal.className = 'fx-summon-negated-seal';
+        seal.innerHTML = '<i></i><i></i><b></b><span></span>';
+        assegnaStile(seal.style, {
+            left: `${from.left + from.width / 2}px`,
+            top: `${from.top + from.height / 2}px`,
+            width: `${Math.max(92, from.width * 1.75)}px`,
+            height: `${Math.max(92, from.width * 1.75)}px`
+        });
+        scene.appendChild(seal);
+        document.body.appendChild(scene);
+
+        const visibilitaOriginale = original.style.visibility;
+        original.style.visibility = 'hidden';
+        let ghost = null;
+        let concluso = false;
+        const completa = () => {
+            if (concluso) return;
+            concluso = true;
+            if (ghost && ghost.isConnected) ghost.remove();
+            if (original.isConnected) original.style.visibility = visibilitaOriginale;
+            scene.remove();
+            endSummonCinematic();
+            if (typeof onDone === 'function') onDone();
+        };
+        ghost = window.createCardElement(card, !!faceDown, faceDown ? 'defense' : 'attack');
+        ghost.classList.add('fx-summon-negated-card');
+        assegnaStile(ghost.style, {
+            position: 'fixed', left: `${from.left}px`, top: `${from.top}px`,
+            width: `${from.width}px`, height: `${from.height}px`, margin: '0',
+            zIndex: '10064', pointerEvents: 'none', transformOrigin: 'center center'
+        });
+        document.body.appendChild(ghost);
+
+        const ridotta = fxPrefersReducedMotion();
+        const durata = ridotta ? 180 : 850;
+        const fallback = setTimeout(completa, durata + 850);
+        try {
+            const animazione = ghost.animate([
+                { transform: 'translate(0, 0) scale(1) rotate(0)', opacity: 1, offset: 0 },
+                { transform: 'translate(0, -18px) scale(1.04) rotate(-3deg)', opacity: 1, offset: 0.28 },
+                { transform: `translate(${to.left - from.left}px, ${to.top - from.top}px) scale(.42) rotate(12deg)`, opacity: .12, offset: 1 }
+            ], { duration: durata, delay: ridotta ? 0 : 170, easing: 'cubic-bezier(.2,.75,.25,1)', fill: 'forwards' });
+            animazione.finished.then(() => {
+                ghost.remove();
+                clearTimeout(fallback);
+                setTimeout(completa, ridotta ? 0 : 140);
+            }).catch(() => {});
+        } catch (e) {
+            ghost.remove();
+            clearTimeout(fallback);
+            setTimeout(completa, 220);
+        }
+        return true;
+    }
+
+    /**
      * Una carta lascia il Terreno e finisce nel Cimitero. Va chiamata
      * PRIMA di svuotare la casella, finché la carta è ancora a schermo:
      * dopo, il rettangolo di partenza non esiste più.
@@ -2893,6 +2966,7 @@
         playCardTravel: viaBackend('playCardTravel', playCardTravel),
         playZoneTransition,
         playCardToGraveyard: viaBackend('playCardToGraveyard', playCardToGraveyard),
+        playSummonNegated: playSummonNegated,
         playCardFromGraveyard: viaBackend('playCardFromGraveyard', playCardFromGraveyard),
         fieldSlotRect: fieldSlotRect,
         zoneRect: zoneRect,

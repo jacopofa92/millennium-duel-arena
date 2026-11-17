@@ -39,7 +39,16 @@ module.exports = {
         const testo = await t.evaluate(() => document.getElementById('activateModal').textContent);
         t.assert(testo.includes('Oppressione Reale'), `Il giocatore si vede offrire la carta del bot (${testo.slice(0, 120)})`);
         await t.page.click('#activateConfirmBtn');
+        await t.page.waitForSelector('.fx-summon-negated', { timeout: 5000 });
+        const duranteScena = await t.evaluate(() => ({
+            sigillo: !!document.querySelector('.fx-summon-negated-seal'),
+            cartaAncoraSulCampo: gameState.botMonsterField.some((s) => s && s.card.uid === 'evocato-bot'),
+            nonAncoraAlCimitero: !gameState.botGraveyard.some((c) => c.uid === 'evocato-bot')
+        }));
+        t.assert(duranteScena.sigillo && duranteScena.cartaAncoraSulCampo && duranteScena.nonAncoraAlCimitero,
+            `La carta resta nello slot mentre si chiude il sigillo (${JSON.stringify(duranteScena)})`);
         await t.page.waitForFunction(() => !DuelEngine.isChainActive(), null, { timeout: 15000 });
+        await t.page.waitForFunction(() => gameState.botGraveyard.some((c) => c.uid === 'evocato-bot'), null, { timeout: 5000 });
         const esito = await t.evaluate(() => ({
             lpPlayer: gameState.playerLP,
             lpBot: gameState.botLP,
