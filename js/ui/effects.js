@@ -460,10 +460,10 @@
     }
 
     // ============================================================
-    // 3bis) Evocazione con "convergenza elementale" — sequenza dedicata
-    // di ~4s (energia che converge, flash, cartiglio col nome) al posto
-    // del cerchio magico generico, per QUALSIASI mostro di Livello 7+
-    // (vedi ATTRIBUTE_SUMMON_THEMES/playMonsterSummonEffect più sotto):
+    // 3bis) Backend "convergenza elementale", mantenuto disponibile per
+    // anteprime/usi espliciti. Il flusso standard 7+ non lo invoca perché
+    // proietta una seconda illustrazione sopra l'ologramma del campo.
+    // La scena resta generica per Attributo, non cablata su id carta:
     // generica per Attributo, non più cablata su un elenco fisso di id
     // carta. Un unico motore, `playElementalConvergence`, orchestrato a
     // orari fissi (uguali per ogni tema, così restano sempre
@@ -785,16 +785,15 @@
      *      VisualEffects.getVideoFor) — controllato per OGNI Evocazione,
      *      qualunque Livello/Attributo: se esiste, vince sempre su tutto
      *      il resto.
-     *   2) Altrimenti, se il mostro è di Livello 7+ ed ha un Attributo
-     *      con un tema in ATTRIBUTE_SUMMON_THEMES: la sequenza "a
-     *      convergenza elementale" (playElementalConvergence), colorata
-     *      in base all'Attributo.
+     *   2) Altrimenti, per un mostro di Livello 7+ si riproduce il suono
+     *      dedicato, poi si rivela la carta/ologramma e parte l'impatto.
      *   3) Altrimenti, il cerchio magico generico di sempre.
      */
     /**
      * Quante cinematiche di Evocazione "lunghe" sono in corso in questo
-     * momento: un filmato dedicato, o la convergenza elementale di un
-     * Livello 7+. Il cerchio magico generico NON conta — dura un attimo e
+     * momento: un filmato dedicato o una scena propria del duellante. Il
+     * reveal breve e l'impatto NON contano come blocco lungo; il cerchio
+     * magico generico NON conta — dura un attimo e
      * bloccare il duello per lui darebbe solo l'impressione di un gioco
      * lento.
      *
@@ -812,9 +811,6 @@
      * mai da un `= false` sparso.
      */
     let summonCinematicCount = 0;
-    /** Durata reale della convergenza elementale: il suo backdrop viene rimosso a 4000ms (vedi playElementalConvergence). */
-    const ELEMENTAL_CONVERGENCE_MS = 4000;
-
     function beginSummonCinematic() { summonCinematicCount++; }
     function endSummonCinematic() { summonCinematicCount = Math.max(0, summonCinematicCount - 1); }
     function isCinematicPlaying() { return summonCinematicCount > 0; }
@@ -1788,20 +1784,13 @@
                 if (!hasDedicatedAudio && window.SFX && typeof SFX.evocation === 'function') {
                     SFX.evocation();
                 }
-                // runElementalConvergence, non la funzione diretta: cosi'
-                // anche questa sequenza passa dal backend attivo (vedi il
-                // commento su quella costante).
-                const durataVera = runElementalConvergence(monsterElement, card, theme);
-                // La convergenza non ha un callback di completamento (ne'
-                // quella CSS ne' quella GSAP): si sblocca a durata nota, ed
-                // e' per questo che le versioni di base devono stare dentro
-                // ELEMENTAL_CONVERGENCE_MS. Una versione piu' lunga (il
-                // Risveglio in WebGL, js/ui/evocazione-epica-webgl.js) DICHIARA
-                // la sua durata tornandola in millisecondi. Anche fosse
-                // sbagliata, il duello ripartirebbe un po' prima o un po' dopo
-                // — mai restando bloccato per sempre.
-                const attesa = (typeof durataVera === 'number' && durataVera > 0 && durataVera < 12000) ? durataVera : ELEMENTAL_CONVERGENCE_MS;
-                setTimeout(chiudi, attesa);
+                // Non avviare la vecchia convergenza WebGL: quella scena
+                // proietta una seconda illustrazione con titolo e statistiche
+                // mentre il gioco possiede già il proprio ologramma sul campo.
+                // Dopo il suono si rivela l'ologramma originale e si applica
+                // solo l'impatto al posizionamento. Gli eventuali video dedicati
+                // hanno già avuto priorità sopra questo fallback.
+                chiudi();
                 return;
             }
             // Cerchio magico generico: dura un attimo, non blocca nulla.
@@ -3031,7 +3020,7 @@
         //   completamento da cui dipende il gioco (il filmato che finisce,
         //   endDuel): un backend che se ne dimenticasse bloccherebbe il
         //   duello. Restano deliberatamente fuori finche' non serviranno.
-        /** true finche' un filmato di Evocazione o una convergenza di Livello 7+ e' a schermo — vedi il commento su summonCinematicCount. */
+        /** true finché è in corso un filmato o una scena propria del duellante — vedi summonCinematicCount. */
         isCinematicPlaying: isCinematicPlaying,
         /** Per chi mostra una scena di Evocazione propria (js/ui/grido-evocazione.js): il bot aspetta finché il contatore non torna a zero. */
         beginSummonCinematic,

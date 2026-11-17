@@ -570,7 +570,8 @@
 // v765: cut-in a schermo intero per le Evocazioni 7+, con illustrazione grande, dati e rientro nello slot.
 // v766: rimossa l'illustrazione duplicata; la scheda dati resta sopra l'ologramma originale.
 // v767: rimossa anche la scheda dati duplicata dopo la cinematica WebGL originale.
-const CACHE_NAME = 'ygo-duel-arena-v767';
+// v768: il fallback 7+ non avvia più la seconda proiezione WebGL; reveal originale e impatto restano.
+const CACHE_NAME = 'ygo-duel-arena-v768';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento
