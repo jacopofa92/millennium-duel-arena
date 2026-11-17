@@ -843,9 +843,9 @@
     "semantic_hash": ""
   },
   "js/ui/effects.js": {
-    "mtime": 1794907853.1012688,
-    "seen": 1794907904.1112251,
-    "ast_hash": "b4ac5e25010038c23b78fef3a6c1ff5b",
+    "mtime": 1794908539.0404928,
+    "seen": 1794908610.1054857,
+    "ast_hash": "72c3c70265d9388dda3e7f7bd71d739e",
     "semantic_hash": ""
   },
   "js/ui/error-recovery.js": {
@@ -945,9 +945,9 @@
     "semantic_hash": ""
   },
   "js/ui/monster-hologram-webgl.js": {
-    "mtime": 1794907770.7146807,
-    "seen": 1794907814.628948,
-    "ast_hash": "8700e16e7c8b89c7b0f0eb15874fefd4",
+    "mtime": 1794908557.205867,
+    "seen": 1794908610.1124856,
+    "ast_hash": "ebf1007da33abfb7d8b5ab87db5caeed",
     "semantic_hash": ""
   },
   "js/ui/monster-hologram.js": {
@@ -1107,9 +1107,9 @@
     "semantic_hash": "c1d8e632461f730874351e0e835c7f9e"
   },
   "js/version.js": {
-    "mtime": 1794907635.0790446,
-    "seen": 1794907814.6403,
-    "ast_hash": "51fc6e65deb7dbcce3539a902dbc55a0",
+    "mtime": 1794908563.7629116,
+    "seen": 1794908610.1226664,
+    "ast_hash": "b9e1b3b85252c5ef3b251b9347a0cec1",
     "semantic_hash": ""
   },
   "jsconfig.json": {
@@ -1526,9 +1526,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1794907635.3472323,
-    "seen": 1794907814.6651728,
-    "ast_hash": "017b8e458d63770e1706f84abf14a8ea",
+    "mtime": 1794908568.8727317,
+    "seen": 1794908610.1472168,
+    "ast_hash": "9169cc8330a15503e080401d58723e4f",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {

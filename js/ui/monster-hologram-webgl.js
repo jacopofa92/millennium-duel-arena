@@ -394,7 +394,7 @@ void main(){
                 const p = Math.max(0, Math.min(1, (ora - o.scossa.t0) / o.scossa.dur));
                 if (p >= 1) o.scossa = null;
                 else {
-                    const ampiezza = (1 - p) * 3;
+                    const ampiezza = (1 - p) * 6;
                     const fase = p * Math.PI * 10;
                     ox += Math.sin(fase) * ampiezza;
                     oy += Math.cos(fase) * ampiezza * 0.28;

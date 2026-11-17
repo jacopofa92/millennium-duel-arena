@@ -318,7 +318,16 @@
 
     function playSummonImpact(monsterElement, epica, uidDaEscludere) {
         if (!monsterElement) return;
+        // Un callback di render può aver sostituito il nodo fra il reveal e
+        // l'impatto. Non disegnare mai l'onda usando il rect di una carta
+        // staccata dal DOM (che vale 0,0): recupera la carta visibile via uid.
+        if (!monsterElement.isConnected && uidDaEscludere != null
+            && typeof window.findFieldCardElementByUid === 'function') {
+            monsterElement = window.findFieldCardElementByUid(uidDaEscludere);
+        }
+        if (!monsterElement || !monsterElement.isConnected) return;
         const { x, rect } = centerOf(monsterElement);
+        if (!rect.width || !rect.height) return;
         const y = rect.bottom - rect.height * 0.08;
         if (epica) scuotiCarteSulCampo(monsterElement, uidDaEscludere);
         const size = Math.max(rect.width * (epica ? 3.1 : 1.65), epica ? 270 : 150);
@@ -1727,8 +1736,25 @@
                 try { onReveal(monsterElement); }
                 catch (e) { console.warn("[FX] callback d'impatto sullo slot:", e); }
             }
-            runSummonImpact(monsterElement, !!(card && (card.level || 0) >= 7), card && card.uid);
-            setTimeout(fineScena, 900);
+            // `onReveal` ridisegna il campo. Il nodo appena rivelato può quindi
+            // essere già stato rimosso: misurarne il rect dà (0, 0) e l'impatto
+            // sparisce nell'angolo. Aspettiamo il frame del nuovo render e
+            // riagganciamo la carta tramite uid prima di calcolare il punto d'urto.
+            const avviaImpatto = (tentativi = 0) => {
+                if (card && card.uid != null && typeof window.findFieldCardElementByUid === 'function') {
+                    monsterElement = window.findFieldCardElementByUid(card.uid) || monsterElement;
+                }
+                const rect = monsterElement && monsterElement.isConnected && monsterElement.getBoundingClientRect();
+                // Su mobile il render del campo può arrivare un frame dopo la
+                // fine del video: attendi brevemente invece di perdere l'effetto.
+                if ((!rect || !rect.width || !rect.height) && tentativi < 3) {
+                    requestAnimationFrame(() => avviaImpatto(tentativi + 1));
+                    return;
+                }
+                runSummonImpact(monsterElement, !!(card && (card.level || 0) >= 7), card && card.uid);
+                setTimeout(fineScena, 900);
+            };
+            requestAnimationFrame(() => avviaImpatto());
         };
 
         const fallback = () => {
