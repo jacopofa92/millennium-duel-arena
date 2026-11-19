@@ -18,10 +18,13 @@ completo di cosa è cambiato il 2026-10-11.
    **«Passaggio di consegne (2026-10-06)»**: cosa è stato rifatto negli
    ultimi giorni, dove sta, cosa resta da fare.
 2. `docs/planning/WORK_IN_PROGRESS.md` — il piano di attacco con le voci aperte `[ ]`.
-3. `CLAUDE.md` — la memoria lunga delle decisioni e dei bug passati. È un
-   diario: cerca la parola chiave dell'area che tocchi invece di leggerlo
-   tutto. Dove contraddice il codice, ha ragione il codice.
+3. `CLAUDE.md` — dal 2026-11-12 è BREVE (regole e convenzioni): la cronologia
+   vecchia è in `docs/storia/` (cerca la parola chiave dell'area che tocchi
+   con grep invece di leggere tutto). Dove contraddice il codice, ha ragione
+   il codice.
 4. `docs/architecture/GUIDA_RIUTILIZZO.md` prima di un refactor ampio.
+5. `docs/planning/VALUTAZIONE_2026-11-12.md` — stato dei lavori aperti e
+   consigli su quale lavoro conviene a quale modello.
 
 ## Regole dell'utente (non negoziabili)
 
@@ -51,7 +54,8 @@ node tests/run-all.js <nome>          # spec mirati (Playwright)
 node scripts/sync-script-groups.js    # riscrive i gruppi di <script> nelle pagine
 npm run typecheck                     # tsc sui file con // @ts-check
 node scripts/build-cards-data.js      # dopo OGNI modifica a data/cards.json
-node tools/duello-senza-testa.js      # duelli IA contro IA in Node
+node tools/duello-senza-testa.js      # duelli IA contro IA in Node (--avversario X --livello hard --partite 12 --seme 100)
+node tools/audit-attivazioni-ia.js    # controllo a tappeto delle attivazioni del bot (--reattive, --mostri, --mai)
 node tools/duello-gemello.js          # due motori a passo comune in Node
 node tools/impronta-partite.js f.txt  # impronta di 60 partite (prima/dopo un refactor)
 npm run pubblica                      # copia minificata in dist/ (la fa anche Cloudflare a ogni push)
@@ -78,6 +82,55 @@ npm run verifica-pubblicazione        # confronta ogni pagina di dist/ con l'ori
   e si riscrivono con `sync-script-groups.js` (il pre-commit lo controlla).
 - `sw.js` precarica l'app: un file nuovo va nella sua lista, e dopo una
   modifica visibile ai giocatori si alza `CACHE_NAME`.
+
+## Lezioni dalla verifica del 2026-11-19 (1.9.3-1.9.5)
+
+Un controllo a tappeto dopo ~100 commit ha trovato quasi solo **test rimasti
+indietro**, e pochi bug veri. Per non ripeterlo:
+
+- **Cambiando una durata, un testo o un premio, cerca gli spec che li
+  assumevano**: `grep -rn "<testo vecchio>" tests/specs`. Erano rossi per
+  questo: premi della Settimana (Facile 600), testo «Raid cooperativo vinto»
+  (ora «Assalto al Campione vinto»), badge della regola tolto dalla HUD,
+  `DuelEngine.specialSummon` (esiste solo `DuelEngine.actions.specialSummon`),
+  attese fisse di 400/680 ms.
+- **Non usare attese fisse dopo una mossa**: una persona non muove mentre una
+  scena è in corso (`Comandi.esegui` rifiuta, di proposito, vedi
+  `azioni-bloccate-da-animazione`). Un test che gioca come una persona deve
+  aspettare che il duello sia libero e poi riprovare (esempio:
+  `fineTurnoQuandoLibero` in `multiplayer-passo-comune.spec.js`).
+- **Più scene = più blocco**: ogni Evocazione di Livello 7+ blocca il duello
+  per sollevamento + impatto (~1,5 s); tre di fila ~25 s. Gli spec che
+  aspettano la Catena devono tenerne conto.
+- **Un invio di rete scartato in silenzio**: `net.sendAction` non manda un
+  messaggio che `Contenuti.azioneMultiplayer` giudica non consentito
+  all'account (carte WW1/WW2/Extra). Una scelta casuale (mazzo, campo) deve
+  pescare SOLO fra le opzioni consentite, o l'altro client non riceve nulla.
+  Un test Multiplayer instabile (1 volta su 5) va riprodotto in ciclo con i
+  fotogrammi WebSocket (`page.on('websocket')`), non rilanciato finché passa.
+- **Un test che passava e ora no**: `git bisect run` con uno script che lancia
+  lo spec (~1 minuto a passo) trova il commit in pochi minuti. Mai da `main`
+  sporco: prima `git stash`.
+- **I test non devono dipendere da internet**: «Crea stanza» senza indirizzo
+  usa il server di produzione su Render. Negli spec si passa un relay locale
+  (`startRoomServer()` in `tests/helpers/local-servers.js`).
+- **Un effetto visivo si prova con fotogrammi, non solo col DOM**: si
+  mettono in pausa le animazioni (`document.getAnimations()`, `currentTime`)
+  e si fotografa. Gli ologrammi WebGL esistono solo da http/https, non da
+  `file://`: per provarli serve un piccolo server statico.
+- **Tipi**: `// @ts-check` copre ormai tutti i file del motore e degli effetti
+  (90 file, il minimo sale solo: `guardrail-tipi`). Un file nuovo del motore
+  parte con `// @ts-check`; i globali nuovi si dichiarano in
+  `types/motore.d.ts` o `types/globali.d.ts`. `querySelector` restituisce
+  `HTMLElement` (dichiarato in `types/motore.d.ts`).
+- **IA e carte che negano**: `AI_MEDIUM.chooseChainResponse` non deve
+  trattare come «rimozione a bersaglio» una carta che nega un'Evocazione
+  (Oppressione Reale): il testo dice «distruggerli» ma non è una rimozione.
+  `node tools/audit-attivazioni-ia.js --reattive --non-scattate` elenca le
+  Trappole che il bot non usa mai: guardare i `!!` è un buon lavoro aperto.
+- **Impatto delle Evocazioni 7+**: blocco `IMPATTO_EPICO` in `js/ui/effects.js`
+  (sollevamento, caduta senza rimbalzo, onda sulle carte dei due lati);
+  la descrizione è in `PROJECT_MAP.md`. Spec `impatto-evocazione-epica`.
 
 ## Regole del motore che i guardrail fanno rispettare
 
