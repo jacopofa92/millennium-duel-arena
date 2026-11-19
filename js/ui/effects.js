@@ -289,45 +289,168 @@
         spawnParticles(x, y, { count: 16, colors: ['#f7d774', '#3498db', '#ffffff'], speed: 3, life: 500, gravity: -0.02 });
     }
 
-    // Impatto conclusivo distinto dal riassetto di Posizione: non anima né
-    // ricrea la carta, che dopo un video deve restare ferma sul suo slot.
-    function scuotiCarteSulCampo(mostroAppenaEvocato, uidDaEscludere) {
-        const durata = 470;
-        const slotEvocazione = mostroAppenaEvocato && mostroAppenaEvocato.closest('.field-slot');
-        const slotDaScuotere = [];
-        document.querySelectorAll('#playerFieldBoard .field-slot > .card, #botFieldBoard .field-slot > .card').forEach((carta) => {
-            const slot = carta.closest('.field-slot');
-            if (!slot || slot === slotEvocazione) return;
-            slot.classList.remove('fx-summon-board-rattle');
-            slotDaScuotere.push(slot);
-        });
-        // Una sola lettura di layout riavvia l'animazione dell'intero campo:
-        // evitare un reflow per carta limita gli scatti sui telefoni.
-        if (slotDaScuotere.length) void slotDaScuotere[0].offsetWidth;
-        slotDaScuotere.forEach((slot) => {
-            slot.classList.add('fx-summon-board-rattle');
-            setTimeout(() => slot.classList.remove('fx-summon-board-rattle'), durata);
-        });
-        // Le proiezioni sono su un livello separato dalle carte: le scuotiamo
-        // per uid, altrimenti l'ologramma sembrerebbe galleggiare fermo mentre
-        // la carta sotto si muove. L'uid appena evocato resta escluso.
-        if (window.MonsterHolograms && typeof MonsterHolograms.scuotiTavolo === 'function') {
-            MonsterHolograms.scuotiTavolo(uidDaEscludere, durata);
+    // ============================================================
+    // Impatto delle Evocazioni di Livello 7+ (ispirato a Master Duel, ma a modo nostro):
+    //   1. la carta si stacca dal Terreno e resta un attimo sospesa (l'ombra sotto di lei si restringe);
+    //   2. cade ACCELERANDO e senza rimbalzi (e' una scelta dell'utente per ogni atterraggio 3D del gioco);
+    //   3. all'urto: lampo sulla casella, onde e scintille, il Terreno trema e le altre carte di ENTRAMBI
+    //      i lati saltano e oscillano, piu' forte vicino all'urto, con l'onda che arriva un attimo dopo
+    //      alle piu' lontane.
+    // Tutto con Web Animations e proprieta' INDIVIDUALI (translate/rotate/scale): si sommano alla rotazione
+    // delle carte in Difesa invece di sostituirla, e non toccano il layout.
+    // ============================================================
+    const IMPATTO_EPICO = {
+        saliMs: 340,        // la carta si stacca dal Terreno
+        sostaMs: 70,        // resta sospesa un istante
+        cadutaMs: 125,      // cade (accelera)
+        quota: 0.2,         // altezza raggiunta: frazione dell'altezza della carta, poi limitata a 16-34 px
+        scala: 0.09,        // si ingrandisce un poco mentre e' piu' vicina a chi guarda
+        scossaMs: 760,      // durata dell'oscillazione di ogni carta colpita
+        ritardoPerPx: 0.2,  // l'onda viaggia: ogni 100 px di distanza arriva 20 ms dopo
+        ritardoMaxMs: 150,
+        forzaPx: 13         // salto massimo (px) di una carta vicina all'urto
+    };
+
+    function durataSollevamentoEpico() {
+        return IMPATTO_EPICO.saliMs + IMPATTO_EPICO.sostaMs + IMPATTO_EPICO.cadutaMs;
+    }
+
+    /**
+     * Quanto si sposta una carta colpita dall'onda d'urto. `p` va da 0 (arriva l'onda) a 1 (ferma), `forza`
+     * da 0 a 1 (piu' vicina = piu' forte), `segno` e' +1/-1 (da che parte dell'urto sta la carta: la inclina
+     * in verso opposto). La carta SALTA un po' (il Terreno e' stato colpito), poi ricade oscillando
+     * sempre meno: sono pochi periodi smorzati, non un tremolio continuo.
+     * Funzione pura, esposta anche agli ologrammi WebGL (FX.scossaImpatto) per muoverli IDENTICI alle carte.
+     */
+    function scossaImpatto(p, forza, segno) {
+        const decadimento = Math.exp(-4.4 * p);
+        const fase = p * Math.PI * 2 * 3.1;
+        const ampiezza = forza * IMPATTO_EPICO.forzaPx;
+        const s = segno >= 0 ? 1 : -1;
+        return {
+            x: Math.sin(fase * 0.93 + 0.9) * ampiezza * 0.42 * decadimento * s,
+            y: -Math.sin(fase) * ampiezza * decadimento,
+            rot: Math.sin(fase * 0.9 + 0.6) * 2.4 * forza * decadimento * s
+        };
+    }
+
+    /** Forza (0.4-1) e ritardo (ms) con cui l'onda raggiunge un punto a `distanza` px dall'urto. */
+    function ondaDiImpatto(distanza) {
+        return {
+            forza: Math.max(0.4, Math.min(1, 1 / (1 + distanza / 520))),
+            ritardo: Math.min(IMPATTO_EPICO.ritardoMaxMs, distanza * IMPATTO_EPICO.ritardoPerPx)
+        };
+    }
+
+    /** Animazione di scossa di un elemento (translate + rotate), campionata a 16 passi. */
+    function animaScossa(el, forza, segno, ritardo, conRotazione) {
+        const passi = 16;
+        const kf = [];
+        for (let i = 0; i <= passi; i++) {
+            const p = i / passi;
+            const s = scossaImpatto(p, forza, segno);
+            const f = { translate: `${s.x.toFixed(2)}px ${s.y.toFixed(2)}px`, offset: p };
+            if (conRotazione) f.rotate = `${s.rot.toFixed(3)}deg`;
+            kf.push(f);
+        }
+        try {
+            return el.animate(kf, { duration: IMPATTO_EPICO.scossaMs, delay: ritardo, easing: 'linear', fill: 'backwards' });
+        } catch (e) {
+            return null; // senza Web Animations il tavolo resta fermo: e' solo decorazione
         }
     }
 
-    function atterraMostroEvocato(monsterElement, uid) {
+    /**
+     * Fase 1+2: la carta appena evocata si solleva e cade. Torna dopo quanti ms arriva l'urto. Se un render del
+     * campo sostituisce il nodo della carta a meta' (un trigger dell'Evocazione che ridisegna), l'animazione
+     * passa al nodo nuovo allo stesso punto, invece di fermarsi e far scattare la carta a terra.
+     */
+    function sollevaMostroEvocato(monsterElement, uid) {
+        const C = IMPATTO_EPICO;
+        const totale = durataSollevamentoEpico();
+        const rect = monsterElement.getBoundingClientRect();
+        const quota = Math.max(16, Math.min(34, rect.height * C.quota));
+        const alto = { translate: `0 ${-quota}px`, scale: String(1 + C.scala) };
+        const kf = [
+            Object.assign({ translate: '0 0', scale: '1', offset: 0, easing: 'cubic-bezier(.2,.75,.3,1)' }),
+            Object.assign({ offset: C.saliMs / totale, easing: 'linear' }, alto),
+            Object.assign({ offset: (C.saliMs + C.sostaMs) / totale, easing: 'cubic-bezier(.55,.05,.95,.5)' }, alto),
+            { translate: '0 0', scale: '1', offset: 1 }
+        ];
+        const trovaCarta = () => (uid != null && typeof window.findFieldCardElementByUid === 'function'
+            ? window.findFieldCardElementByUid(uid) : null);
+        let el = monsterElement;
+        const t0 = performance.now();
+        let anim = null;
+        try { anim = el.animate(kf, { duration: totale }); } catch (e) { return 0; }
+        const controlla = () => {
+            const trascorso = performance.now() - t0;
+            if (trascorso >= totale) return;
+            const attuale = trovaCarta();
+            if (attuale && attuale !== el && attuale.isConnected) {
+                try { anim.cancel(); } catch (e) { /* gia' finita */ }
+                el = attuale;
+                try { anim = el.animate(kf, { duration: totale }); anim.currentTime = trascorso; } catch (e) { return; }
+            }
+            requestAnimationFrame(controlla);
+        };
+        requestAnimationFrame(controlla);
+
+        // L'ombra del Terreno sotto la carta (il ::before della casella): piu' piccola e chiara mentre e' in alto,
+        // di nuovo piena quando e' a terra. Via pseudoElement: senza supporto resta com'e', e va bene.
+        const slot = monsterElement.closest('.field-slot');
+        if (slot) {
+            try {
+                slot.animate([
+                    { opacity: 1, transform: 'scale(1)', offset: 0 },
+                    { opacity: 0.5, transform: 'scale(0.78)', offset: C.saliMs / totale },
+                    { opacity: 0.5, transform: 'scale(0.78)', offset: (C.saliMs + C.sostaMs) / totale },
+                    { opacity: 1, transform: 'scale(1)', offset: 1 }
+                ], { duration: totale, pseudoElement: '::before' });
+            } catch (e) { /* ombra non animabile */ }
+        }
+        // La proiezione olografica (WebGL o DOM) sta su un livello separato: sale e cade con la carta.
+        if (window.MonsterHolograms && typeof MonsterHolograms.solleva === 'function') {
+            MonsterHolograms.solleva(uid, quota, C.saliMs, C.sostaMs, C.cadutaMs, C.scala);
+        }
+        return totale;
+    }
+
+    /**
+     * Fase 3: l'urto. Le altre carte dei DUE lati (e le loro proiezioni) saltano e oscillano, il Terreno intero
+     * riceve il colpo. L'onda parte dal punto d'impatto: piu' vicina = piu' forte, piu' lontana = piu' tardi.
+     */
+    function scuotiCampoDaImpatto(slotEvocazione, origine, uidDaEscludere) {
+        const colpite = [];
+        document.querySelectorAll('#playerFieldBoard .field-slot, #botFieldBoard .field-slot').forEach((slot) => {
+            if (slot === slotEvocazione || !slot.querySelector(':scope > .card')) return;
+            const r = slot.getBoundingClientRect();
+            if (!r.width || !r.height) return;
+            colpite.push({ slot, cx: r.left + r.width / 2, cy: r.top + r.height / 2 });
+        });
+        // Prima si legge il layout di tutte, poi si scrive: un solo ricalcolo, non uno per carta (telefoni).
+        colpite.forEach(({ slot, cx, cy }) => {
+            const distanza = Math.hypot(cx - origine.x, cy - origine.y);
+            const onda = ondaDiImpatto(distanza);
+            animaScossa(slot, onda.forza, cx - origine.x, onda.ritardo, true);
+        });
+        // Il Terreno: le due metà del campo ricevono il colpo (solo un sobbalzo, senza inclinarsi).
+        document.querySelectorAll('#playerFieldBoard, #botFieldBoard').forEach((board) => {
+            animaScossa(board, 0.5, 1, 0, false);
+        });
+        if (window.MonsterHolograms && typeof MonsterHolograms.scuotiTavolo === 'function') {
+            MonsterHolograms.scuotiTavolo(uidDaEscludere, IMPATTO_EPICO.scossaMs, origine);
+        }
+    }
+
+    /** Il lampo della casella all'urto (stessa classe che usa triggerFieldImpact in actions.js). */
+    function lampoCasella(monsterElement) {
         const slot = monsterElement && monsterElement.closest('.field-slot');
-        const carta = slot && slot.querySelector(':scope > .card');
-        if (carta) {
-            carta.classList.remove('fx-summon-card-land');
-            void carta.offsetWidth;
-            carta.classList.add('fx-summon-card-land');
-            setTimeout(() => carta.classList.remove('fx-summon-card-land'), 520);
-        }
-        if (window.MonsterHolograms && typeof MonsterHolograms.atterra === 'function') {
-            MonsterHolograms.atterra(uid, 520);
-        }
+        if (!slot) return;
+        slot.classList.remove('impact');
+        void slot.offsetWidth;
+        slot.classList.add('impact');
+        setTimeout(() => slot.classList.remove('impact'), 700);
     }
 
     function playSummonImpact(monsterElement, epica, uidDaEscludere) {
@@ -343,9 +466,20 @@
         const { x, rect } = centerOf(monsterElement);
         if (!rect.width || !rect.height) return;
         const y = rect.bottom - rect.height * 0.08;
-        if (epica) {
-            atterraMostroEvocato(monsterElement, uidDaEscludere);
-            scuotiCarteSulCampo(monsterElement, uidDaEscludere);
+        if (epica && !fxPrefersReducedMotion()) {
+            scuotiCampoDaImpatto(monsterElement.closest('.field-slot'), { x, y }, uidDaEscludere);
+            // L'ombra della casella si allarga di colpo all'urto e poi si assesta.
+            const slot = monsterElement.closest('.field-slot');
+            if (slot) {
+                try {
+                    slot.animate([
+                        { transform: 'scale(1.45)', opacity: 1, offset: 0 },
+                        { transform: 'scale(1)', opacity: 1, offset: 1 }
+                    ], { duration: 360, easing: 'cubic-bezier(.2,.8,.3,1)', pseudoElement: '::before' });
+                } catch (e) { /* ombra non animabile */ }
+            }
+            // Sull'APK il colpo si sente anche nella mano.
+            if (window.NativeHaptics && typeof NativeHaptics.heavy === 'function') NativeHaptics.heavy();
         }
         const size = Math.max(rect.width * (epica ? 3.1 : 1.65), epica ? 270 : 150);
         const ring = spawnDomFx('fx-summon-impact-ring', x, y, size, size * (epica ? 0.5 : 0.42), epica ? 820 : 680);
@@ -371,6 +505,32 @@
         }
     }
 
+    /**
+     * Impatto di una Evocazione di Livello 7+ GIA' mostrata da una scena propria (la Fusione WebGL): la carta e'
+     * sul Terreno, qui si solleva, cade e scuote il campo come per ogni altra. `alImpatto` e' il lampo della
+     * casella, che scatta all'urto. Senza Livello 7+ (o con movimento ridotto) fa solo `alImpatto`.
+     */
+    function impattoEvocazione(card, monsterElement, alImpatto) {
+        const fai = () => { if (typeof alImpatto === 'function') { try { alImpatto(); } catch (e) { console.warn('[FX] lampo di impatto:', e); } } };
+        const epica = !!(card && (card.level || 0) >= 7);
+        const uid = card && card.uid;
+        if (!epica || fxPrefersReducedMotion() || !monsterElement) { fai(); return; }
+        beginSummonCinematic();
+        requestAnimationFrame(() => {
+            let el = (uid != null && typeof window.findFieldCardElementByUid === 'function'
+                ? window.findFieldCardElementByUid(uid) : null) || monsterElement;
+            const attesa = el && el.isConnected && el.getBoundingClientRect().width ? sollevaMostroEvocato(el, uid) : 0;
+            setTimeout(() => {
+                fai();
+                requestAnimationFrame(() => {
+                    el = (uid != null && typeof window.findFieldCardElementByUid === 'function'
+                        ? window.findFieldCardElementByUid(uid) : null) || el;
+                    runSummonImpact(el, true, uid);
+                    setTimeout(endSummonCinematic, 900);
+                });
+            }, attesa);
+        });
+    }
     // ============================================================
     // 3) Evocazione mostro — cerchio magico + flare
     // ============================================================
@@ -1750,25 +1910,39 @@
                 // originale; il pannello informativo viene dopo, senza
                 // sostituire o duplicare la proiezione del gioco.
                 monsterElement = rivelaCartaEvocata(card, monsterElement);
-                if (typeof onReveal === 'function') {
-                    try { onReveal(monsterElement); }
-                    catch (e) { console.warn("[FX] callback d'impatto sullo slot:", e); }
-                }
-                // `onReveal` può ridisegnare il campo: aspetta il frame nuovo
-                // e aggancia il vero elemento tramite uid prima dell'impatto.
-                const avviaImpatto = (tentativi = 0) => {
+                // L'URTO: lampo sulla casella (onReveal) e poi onde, scintille e scossa del campo.
+                const urto = () => {
+                    if (typeof onReveal === 'function') {
+                        try { onReveal(monsterElement); }
+                        catch (e) { console.warn("[FX] callback d'impatto sullo slot:", e); }
+                    }
+                    // `onReveal` può ridisegnare il campo: aspetta il frame nuovo
+                    // e aggancia il vero elemento tramite uid prima dell'impatto.
+                    const avviaImpatto = (tentativi = 0) => {
+                        if (card && card.uid != null && typeof window.findFieldCardElementByUid === 'function') {
+                            monsterElement = window.findFieldCardElementByUid(card.uid) || monsterElement;
+                        }
+                        const rect = monsterElement && monsterElement.isConnected && monsterElement.getBoundingClientRect();
+                        if ((!rect || !rect.width || !rect.height) && tentativi < 3) {
+                            requestAnimationFrame(() => avviaImpatto(tentativi + 1));
+                            return;
+                        }
+                        runSummonImpact(monsterElement, epica, card && card.uid);
+                        setTimeout(fineScena, 900);
+                    };
+                    requestAnimationFrame(() => avviaImpatto());
+                };
+                if (!epica || fxPrefersReducedMotion()) { urto(); return; }
+                // Livello 7+: prima la carta si solleva dal Terreno e cade; il lampo e l'urto arrivano a fine caduta,
+                // non appena la carta compare (il lampo e' la conseguenza dell'urto, non il suo annuncio).
+                requestAnimationFrame(() => {
                     if (card && card.uid != null && typeof window.findFieldCardElementByUid === 'function') {
                         monsterElement = window.findFieldCardElementByUid(card.uid) || monsterElement;
                     }
                     const rect = monsterElement && monsterElement.isConnected && monsterElement.getBoundingClientRect();
-                    if ((!rect || !rect.width || !rect.height) && tentativi < 3) {
-                        requestAnimationFrame(() => avviaImpatto(tentativi + 1));
-                        return;
-                    }
-                    runSummonImpact(monsterElement, epica, card && card.uid);
-                    setTimeout(fineScena, 900);
-                };
-                requestAnimationFrame(() => avviaImpatto());
+                    const attesa = rect && rect.width ? sollevaMostroEvocato(monsterElement, card && card.uid) : 0;
+                    setTimeout(urto, attesa);
+                });
             };
             rivelaEImpatta();
         };
@@ -3110,6 +3284,11 @@
         playElementalConvergence: runElementalConvergence,
         playVideoOverlay,
         playMonsterSummonEffect,
+        /** Impatto di una Evocazione di Livello 7+ gia' mostrata da una scena propria (Fusione WebGL): vedi impattoEvocazione. */
+        impattoEvocazione,
+        /** La scossa di una carta colpita dall'onda d'urto: la usano anche gli ologrammi WebGL per muoversi come le carte. */
+        scossaImpatto,
+        ondaDiImpatto,
         azzeraCodaEvocazioni,
         playFusionMaterialEffect: viaBackend('playFusionMaterialEffect', playFusionMaterialEffect),
         /** I temi per Attributo delle Evocazioni di Livello 7+ (colori): li riusa anche la Fusione in WebGL. */

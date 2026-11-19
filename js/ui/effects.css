@@ -147,32 +147,6 @@
     filter: blur(2px);
     animation: fxSummonImpactCore 520ms cubic-bezier(.12,.75,.22,1) forwards;
 }
-.card.fx-summon-card-land,
-.mh-item.fx-summon-card-land {
-    animation: fxSummonCardLand 520ms cubic-bezier(.18,.78,.28,1) both;
-}
-@keyframes fxSummonCardLand {
-    0% { translate: 0 -18px; scale: 1.16; }
-    38% { translate: 0 2px; scale: .94; }
-    64% { translate: 0 -4px; scale: 1.035; }
-    100% { translate: 0 0; scale: 1; }
-}
-/* Il contraccolpo dell'Evocazione muove gli slot gia' occupati, non il
-   mostro appena arrivato. La proprieta' individuale `translate` conserva
-   la rotazione delle carte in Difesa e non ricalcola la griglia. */
-.field-slot.fx-summon-board-rattle,
-.mh-item.fx-summon-board-rattle {
-    animation: fxSummonBoardRattle 500ms cubic-bezier(.2,.7,.3,1) both;
-}
-@keyframes fxSummonBoardRattle {
-    0%, 100% { translate: 0 0; }
-    10% { translate: -7px 2px; }
-    24% { translate: 6px -2px; }
-    40% { translate: -5px 1px; }
-    57% { translate: 4px -1px; }
-    74% { translate: -2px 1px; }
-    88% { translate: 1px 0; }
-}
 @keyframes fxSummonImpactCore {
     0% { opacity: 0; transform: translate(-50%, -50%) scale(.22, .35); }
     22% { opacity: 1; }
@@ -203,21 +177,6 @@
     .fx-summon-impact-core {
         animation: none;
         opacity: .88;
-    }
-    .card.fx-summon-card-land,
-    .mh-item.fx-summon-card-land {
-        animation: none;
-    }
-    .field-slot.fx-summon-board-rattle,
-    .mh-item.fx-summon-board-rattle {
-        animation-duration: 260ms;
-    }
-    @keyframes fxSummonBoardRattle {
-        0%, 100% { translate: 0 0; }
-        18% { translate: -1px 0; }
-        38% { translate: 1px 0; }
-        62% { translate: -1px 0; }
-        82% { translate: 1px 0; }
     }
 }
 @keyframes fxShockwaveExpand {

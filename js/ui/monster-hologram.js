@@ -362,46 +362,62 @@
         return true;
     }
 
-    /** Contraccolpo breve delle proiezioni quando atterra un mostro di Livello 7+. */
-    function scuotiTavolo(uidDaEscludere, durataMs) {
+    /**
+     * Contraccolpo delle proiezioni quando atterra un mostro di Livello 7+: si muovono come le carte sotto di
+     * loro (stessa funzione di scossa, FX.scossaImpatto), piu' forte vicino all'urto e con l'onda che arriva
+     * dopo alle piu' lontane. `origine` {x, y} e' il punto d'impatto sullo schermo.
+     */
+    function scuotiTavolo(uidDaEscludere, durataMs, origine) {
         if (window.MonsterHologramGL && typeof MonsterHologramGL.scuotiTavolo === 'function') {
-            MonsterHologramGL.scuotiTavolo(uidDaEscludere, durataMs);
+            MonsterHologramGL.scuotiTavolo(uidDaEscludere, durataMs, origine);
         }
         const escluso = uidDaEscludere == null ? null : String(uidDaEscludere);
+        if (!window.FX || typeof FX.scossaImpatto !== 'function' || typeof FX.ondaDiImpatto !== 'function') return;
         const daScuotere = [];
         vivi.forEach((item, uid) => {
             if (escluso !== null && String(uid) === escluso) return;
-            item.classList.remove('fx-summon-board-rattle');
-            daScuotere.push([item, uid]);
+            const r = item.getBoundingClientRect();
+            if (!r.width) return;
+            daScuotere.push({ item, cx: r.left + r.width / 2, cy: r.top + r.height / 2 });
         });
-        // Riavviare con un solo reflow evita di forzare layout ripetuti.
-        if (daScuotere.length) void daScuotere[0][0].offsetWidth;
-        daScuotere.forEach(([item, uid]) => {
-            item.classList.add('fx-summon-board-rattle');
-            setTimeout(() => {
-                if (vivi.get(uid) === item) item.classList.remove('fx-summon-board-rattle');
-            }, durataMs || 470);
+        daScuotere.forEach(({ item, cx, cy }) => {
+            const dx = origine ? cx - origine.x : 0;
+            const onda = FX.ondaDiImpatto(origine ? Math.hypot(dx, cy - origine.y) : 0);
+            const passi = 16;
+            const kf = [];
+            for (let i = 0; i <= passi; i++) {
+                const p = i / passi;
+                const s = FX.scossaImpatto(p, onda.forza, dx);
+                kf.push({ translate: `${s.x.toFixed(2)}px ${s.y.toFixed(2)}px`, rotate: `${s.rot.toFixed(3)}deg`, offset: p });
+            }
+            try { item.animate(kf, { duration: durataMs || 760, delay: onda.ritardo, easing: 'linear', fill: 'backwards' }); }
+            catch (e) { /* senza Web Animations resta fermo: e' solo decorazione */ }
         });
     }
 
-    /** Assesta la proiezione sullo slot quando termina la presentazione epica. */
-    function atterra(uid, durataMs) {
+    /**
+     * La proiezione sale e cade insieme alla carta (alt px in alto, `saliMs` per salire, `sostaMs` sospesa,
+     * `cadutaMs` per cadere accelerando, senza rimbalzo). Torna false se non c'e' una proiezione da muovere.
+     */
+    function solleva(uid, alt, saliMs, sostaMs, cadutaMs, scala) {
         if (uid == null) return false;
         const chiave = String(uid);
-        if (window.MonsterHologramGL && typeof MonsterHologramGL.atterra === 'function') {
-            MonsterHologramGL.atterra(chiave, durataMs);
-        }
+        if (window.MonsterHologramGL && typeof MonsterHologramGL.solleva === 'function'
+            && MonsterHologramGL.solleva(chiave, alt, saliMs, sostaMs, cadutaMs, scala)) return true;
         const item = vivi.get(chiave);
         if (!item) return false;
-        item.classList.remove('fx-summon-card-land');
-        void item.offsetWidth;
-        item.classList.add('fx-summon-card-land');
-        setTimeout(() => {
-            if (vivi.get(chiave) === item) item.classList.remove('fx-summon-card-land');
-        }, durataMs || 520);
+        const totale = saliMs + sostaMs + cadutaMs;
+        const alto = { translate: `0 ${-alt}px`, scale: String(1 + (scala || 0)) };
+        try {
+            item.animate([
+                { translate: '0 0', scale: '1', offset: 0, easing: 'cubic-bezier(.2,.75,.3,1)' },
+                Object.assign({ offset: saliMs / totale, easing: 'linear' }, alto),
+                Object.assign({ offset: (saliMs + sostaMs) / totale, easing: 'cubic-bezier(.55,.05,.95,.5)' }, alto),
+                { translate: '0 0', scale: '1', offset: 1 }
+            ], { duration: totale });
+        } catch (e) { return false; }
         return true;
     }
-
     // Un video fullscreen non deve contendersi la GPU con trasparenze e
     // scansioni nascoste dietro di lui. Il layer viene escluso dal layout e
     // riallineato al Terreno quando la cinematica termina.
@@ -423,7 +439,7 @@
     window.MonsterHolograms = {
         /** Il contenitore (creato se manca): ci disegna dentro anche il WebGL, ereditando opacità e nascondimenti. */
         layer: layer,
-        sync: sync, isAttivo: attivo, nascondiPer: nascondiPer, zoom: zoom, scuotiTavolo: scuotiTavolo, atterra: atterra,
+        sync: sync, isAttivo: attivo, nascondiPer: nascondiPer, zoom: zoom, scuotiTavolo: scuotiTavolo, solleva: solleva,
         sospendi: sospendi, riprendi: riprendi, isSospeso: () => sospeso
     };
 })();

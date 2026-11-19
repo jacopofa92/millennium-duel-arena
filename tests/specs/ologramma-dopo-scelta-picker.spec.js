@@ -55,7 +55,11 @@ module.exports = {
         // Il SECONDO è Genesi del Vampiro: sceglierlo distingue una
         // scelta vera da un auto-pick del primo.
         await t.page.locator('#cardListPickerRow .card-list-item').nth(1).click();
-        await t.page.waitForTimeout(400);
+        // Genesi e' di Livello 8: la sua proiezione compare solo a fine cinematica di Evocazione (filmato o convergenza,
+        // poi la carta si solleva e cade), non subito dopo la scelta. Si aspetta la comparsa vera; se non arriva,
+        // l'asserzione sotto lo dice.
+        await t.page.waitForFunction(() => !!document.querySelector('#monsterHologramLayer .mh-item[data-uid="GENESI"]'), null, { timeout: 30000 }).catch(() => {});
+        await t.page.waitForTimeout(200);
 
         const esito = await t.evaluate(() => ({
             inCampo: (gameState.playerMonsterField || []).some((s) => s && s.card && s.card.uid === 'GENESI'),

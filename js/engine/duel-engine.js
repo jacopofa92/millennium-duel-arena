@@ -2014,7 +2014,14 @@
                                         if (giaMostrata && window.FX && typeof FX.rivelaCartaEvocata === 'function') {
                                             FX.rivelaCartaEvocata(card, cardEl);
                                         }
-                                        EventiDuello.emetti('impatto-campo', owner, slotIndex, 'monster');
+                                        const lampo = () => EventiDuello.emetti('impatto-campo', owner, slotIndex, 'monster');
+                                        // Una Fusione di Livello 7+ ha lo stesso impatto di ogni altra Evocazione epica: la carta si
+                                        // solleva, cade e scuote il campo; il lampo della casella scatta all'urto.
+                                        if (giaMostrata && cardEl && window.FX && typeof FX.impattoEvocazione === 'function') {
+                                            FX.impattoEvocazione(card, cardEl, lampo);
+                                        } else {
+                                            lampo();
+                                        }
                                     }
                                     if (!giaMostrata && (card.level || 0) < 7 && !(window.AudioLibrary && AudioLibrary.tryPlayCardSound(card, 'evocazioni')) && window.SFX) SFX.summon(position);
                                 };

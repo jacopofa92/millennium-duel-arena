@@ -391,24 +391,30 @@ void main(){
             // sul campo ricevono lo stesso scossone delle carte senza perdere
             // la posa, mentre quella appena evocata viene esclusa a monte.
             if (o.scossa) {
-                const p = Math.max(0, Math.min(1, (ora - o.scossa.t0) / o.scossa.dur));
+                // La stessa scossa delle carte (FX.scossaImpatto, js/ui/effects.js): piu' forte vicino all'urto e con
+                // l'onda che arriva dopo alle piu' lontane. Prima del ritardo la proiezione resta ferma.
+                const S = o.scossa;
+                const p = (ora - S.t0 - S.ritardo) / S.dur;
                 if (p >= 1) o.scossa = null;
-                else {
-                    const ampiezza = (1 - p) * 6;
-                    const fase = p * Math.PI * 10;
-                    ox += Math.sin(fase) * ampiezza;
-                    oy += Math.cos(fase) * ampiezza * 0.28;
+                else if (p > 0 && window.FX && typeof FX.scossaImpatto === 'function') {
+                    const s = FX.scossaImpatto(p, S.forza, S.segno);
+                    ox += s.x;
+                    oy += s.y;
                 }
             }
-            if (o.atterraggio) {
-                const p = Math.max(0, Math.min(1, (ora - o.atterraggio.t0) / o.atterraggio.dur));
-                if (p >= 1) o.atterraggio = null;
+            if (o.sollevamento) {
+                // Sale con la carta, resta sospesa e cade ACCELERANDO (niente rimbalzo: vedi js/ui/effects.js, IMPATTO_EPICO).
+                const S = o.sollevamento;
+                const t = ora - S.t0;
+                const totale = S.saliMs + S.sostaMs + S.cadutaMs;
+                if (t >= totale) o.sollevamento = null;
                 else {
-                    const rientro = 1 - p;
-                    // La proiezione arriva leggermente sollevata e più ampia,
-                    // poi si assesta con un piccolo contraccolpo sullo slot.
-                    oy += -18 * rientro * rientro + Math.sin(p * Math.PI * 3) * 3 * rientro;
-                    sc *= 1 + 0.16 * rientro * rientro;
+                    let e;
+                    if (t < S.saliMs) { const u = Math.max(0, t) / S.saliMs; e = 1 - Math.pow(1 - u, 3); }
+                    else if (t < S.saliMs + S.sostaMs) e = 1;
+                    else { const u = (t - S.saliMs - S.sostaMs) / S.cadutaMs; e = 1 - u * u; }
+                    oy -= S.alt * e;
+                    sc *= 1 + S.scala * e;
                 }
             }
             let activationGlow = 0;
@@ -450,7 +456,7 @@ void main(){
                 if (!o) {
                     const src = srcDi(e.card);
                     if (!src) return;
-                    o = { uid: e.uid, voce: caricaTexture(src), nato: ora, seme: Math.random() * 10, segno: 1, rect: e.rect, nascostoFinoA: 0, volo: null, morente: null, scossa: null, atterraggio: null };
+                    o = { uid: e.uid, voce: caricaTexture(src), nato: ora, seme: Math.random() * 10, segno: 1, rect: e.rect, nascostoFinoA: 0, volo: null, morente: null, scossa: null, sollevamento: null };
                     vivi.set(e.uid, o);
                 }
                 if (o.morente) return;   // si sta disintegrando: resta dov'e', non lo si riposiziona
@@ -478,22 +484,30 @@ void main(){
             avvia();
             return true;
         },
-        /** Breve contraccolpo delle proiezioni, lasciando ferma quella evocata. */
-        scuotiTavolo(uidDaEscludere, durataMs) {
+        /**
+         * Contraccolpo delle proiezioni, lasciando ferma quella evocata. `origine` {x, y} e' il punto d'impatto sullo
+         * schermo: piu' una proiezione e' vicina, piu' salta forte; piu' e' lontana, piu' tardi arriva l'onda.
+         */
+        scuotiTavolo(uidDaEscludere, durataMs, origine) {
             const escluso = uidDaEscludere == null ? null : String(uidDaEscludere);
             const t0 = performance.now();
-            const dur = durataMs || 470;
+            const dur = durataMs || 760;
+            const conOnda = window.FX && typeof FX.ondaDiImpatto === 'function';
             vivi.forEach((o, uid) => {
                 if (escluso !== null && String(uid) === escluso) return;
-                o.scossa = { t0, dur };
+                const r = o.rect;
+                const dx = origine && r ? (r.left + r.w / 2) - origine.x : 0;
+                const dy = origine && r ? (r.top + r.h / 2) - origine.y : 0;
+                const onda = conOnda ? FX.ondaDiImpatto(origine ? Math.hypot(dx, dy) : 0) : { forza: 0.7, ritardo: 0 };
+                o.scossa = { t0, dur, forza: onda.forza, ritardo: onda.ritardo, segno: dx };
             });
             avvia();
         },
-        /** Ingresso finale della proiezione nello slot dopo la scheda evocazione. */
-        atterra(uid, durataMs) {
+        /** La proiezione sale con la carta, resta sospesa e cade accelerando (`alt` px, durate in ms). */
+        solleva(uid, alt, saliMs, sostaMs, cadutaMs, scala) {
             const o = vivi.get(String(uid));
             if (!o || !this.visibile(String(uid))) return false;
-            o.atterraggio = { t0: performance.now(), dur: durataMs || 520 };
+            o.sollevamento = { t0: performance.now(), alt, saliMs, sostaMs, cadutaMs, scala: scala || 0 };
             avvia();
             return true;
         },

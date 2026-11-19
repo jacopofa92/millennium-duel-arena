@@ -29,7 +29,9 @@ module.exports = {
                 during.preload = player.preload;
             }
             if (backdrop) backdrop.querySelector('video').dispatchEvent(new Event('ended'));
-            await new Promise((resolve) => setTimeout(resolve, 680));
+            // Dopo il filmato la scena prosegue con l'impatto (onda e scintille, 900 ms di blocco): il duello
+            // riparte solo a impatto finito, non nell'istante in cui il video si chiude.
+            await new Promise((resolve) => setTimeout(resolve, 1300));
             const after = {
                 exists: !!document.querySelector('.fx-video-backdrop'),
                 lock: window.DUEL_CINEMATIC_LOCK === true,

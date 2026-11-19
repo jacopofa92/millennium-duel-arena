@@ -1,5 +1,18 @@
 # Yu-Gi-Oh! Millennium Duel Arena — mappa tecnica persistente
 
+## Impatto delle Evocazioni 7+: sollevamento, caduta, onda (1.9.4)
+
+Tutto in `js/ui/effects.js` (blocco `IMPATTO_EPICO`): la carta si solleva (340 ms), resta sospesa (70 ms) e cade
+accelerando (125 ms, niente rimbalzo); all'urto scattano lampo della casella (`onReveal`, che prima partiva alla
+rivelazione), anello, scintille e `scuotiCampoDaImpatto`, che anima con Web Animations (proprieta' individuali
+`translate`/`rotate`) tutte le caselle con carta dei DUE lati e i due tabelloni; forza e ritardo dipendono dalla
+distanza dall'urto (`FX.scossaImpatto`/`FX.ondaDiImpatto`, funzioni pure usate anche dagli ologrammi). Gli
+ologrammi seguono con `MonsterHolograms.solleva/scuotiTavolo` (DOM) e `MonsterHologramGL.solleva/scuotiTavolo`
+(WebGL, solo da http/https). Percorsi: video, convergenza e cerchio passano da `eseguiEvocazione`; la Fusione WebGL
+(carta gia' mostrata dalla sua scena) da `FX.impattoEvocazione`, chiamata in `specialSummon` (duel-engine.js).
+Il blocco del duello dura sollevamento + 900 ms. Movimento ridotto: nessun sollevamento ne' scossa. Spec
+`impatto-evocazione-epica`. Per ritoccare le sensazioni (altezza, durate, forza) basta `IMPATTO_EPICO`. Cache v775.
+
 ## Ripristino della cinematica originale 7+ (1.7.17)
 
 La convergenza WebGL originale resta attiva: è la cinematica di Evocazione,
