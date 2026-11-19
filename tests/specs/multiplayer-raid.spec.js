@@ -140,7 +140,8 @@ module.exports = {
             // il premio del Raid ci sia, intero, e che sia spiegato; non che sia l'unico accredito.
             assert(dopo.crediti - prima.crediti >= 500, `Il Raid paga almeno 500 crediti: ${prima.crediti} -> ${dopo.crediti}`);
             assert(dopo.stelle - prima.stelle >= 2, `Il Raid paga almeno 2 Stelle dell'Esagono: ${prima.stelle} -> ${dopo.stelle}`);
-            const righe = (dopo.testo.match(/Raid cooperativo vinto/g) || []).length;
+            // Il motivo del premio dice «Assalto al Campione vinto» dalla 1.6.85 (prima «Raid cooperativo vinto»).
+            const righe = (dopo.testo.match(/Assalto al Campione vinto/g) || []).length;
             assert(righe === 2, `La schermata finale mostra le due voci (crediti e Stelle) col loro motivo: ${righe}`);
             assert(!/Premio di partecipazione|Prima vittoria di oggi/.test(dopo.testo), 'Il premio di un Duello Libero normale non si somma a quello del Raid');
             // LIMITE GIORNALIERO: 2 al giorno. La prima e' appena stata pagata dal duello; la seconda paga, la terza no (e lo dice).

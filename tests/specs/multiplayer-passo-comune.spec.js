@@ -107,6 +107,34 @@ module.exports = {
             };
             const impronta = (page) => page.evaluate(() => PassoComune.impronta());
 
+            // Il duello e' libero quando nessuna scena lo tiene occupato (la stessa domanda che Comandi.esegui fa a una persona).
+            // Subito dopo una mossa la scena non e' ancora partita (volo della carta, grido): si aspetta che resti libero
+            // in modo CONTINUO per un po', non soltanto "adesso".
+            const scenaFinita = (page) => page.waitForFunction(() => {
+                const occupato = EventiDuello.chiedi('azioni-bloccate-da-animazione', false);
+                const ora = performance.now();
+                if (occupato) { window.__liberoDa = null; return false; }
+                if (window.__liberoDa == null) window.__liberoDa = ora;
+                return ora - window.__liberoDa > 1500;
+            }, null, { timeout: 30000, polling: 100 });
+
+            // Dopo un'Evocazione la scena (volo, grido, impatto, a volte l'effetto del mostro) tiene il duello occupato e una
+            // persona non puo' finire il turno finche' dura: Comandi.esegui lo rifiuta, di proposito, e non ricorda la richiesta.
+            // Come chi gioca, si riprova finche' il duello e' libero (stabilmente) e solo allora si chiude il turno.
+            const fineTurnoQuandoLibero = async (page, turno) => {
+                const fine = Date.now() + 45000;
+                const libero = () => page.evaluate(() => !EventiDuello.chiedi('azioni-bloccate-da-animazione', false));
+                while (Date.now() < fine) {
+                    const stato = await page.evaluate((t) => (gameState.turn !== t ? 'cambiato' : gameState.pendingHandDiscard ? 'scarto' : 'ok'), turno);
+                    if (stato !== 'ok') return;
+                    if (await libero()) {
+                        await page.waitForTimeout(500);
+                        if (await libero()) { await page.evaluate(() => endTurn()); return; }
+                    }
+                    await page.waitForTimeout(150);
+                }
+                throw new Error('Turno ' + turno + ': il duello resta occupato da una scena e il turno non si puo\' chiudere.');
+            };
             let ripresaFatta = false;
             for (let turno = 1; turno <= TURNI; turno++) {
                 await Promise.all([fermoInMain1(pageA, turno), fermoInMain1(pageB, turno)]);
@@ -126,6 +154,8 @@ module.exports = {
                     ripresaFatta = true;
                 }
 
+                await scenaFinita(diTurno);
+
                 // Una mossa vera: Evocare un mostro di Livello 4 o meno che sia
                 // davvero in mano, nella prima casella libera.
                 await diTurno.evaluate(() => {
@@ -136,8 +166,7 @@ module.exports = {
                     if (i !== -1 && casella !== -1 && !gameState.hasNormalSummoned) summonMonster(mano[i], casella, 'attack', i);
                 });
                 await diTurno.waitForFunction(() => PassoComune.fermo(), null, { timeout: 30000 });
-                await diTurno.waitForTimeout(400);
-                await diTurno.evaluate(() => endTurn());
+                await fineTurnoQuandoLibero(diTurno, turno);
                 // Più di 6 carte in mano: lo scarto di fine turno lo sceglie la
                 // persona (startHandDiscardSelection), e l'altro client lo
                 // aspetta. Si scartano le ultime, come farebbe chi clicca.

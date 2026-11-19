@@ -1,5 +1,6 @@
 const net = require('net');
 const path = require('path');
+const { startRoomServer } = require('../helpers/local-servers');
 
 // Le schermate "Apri stanza" (ingresso e sala d'attesa) di tutte le modalita': nessuno sbordo laterale, la console KaibaCorp di
 // connessione resta dentro la colonna e sopra la barra in basso, due colonne su desktop, posti affiancati su telefono.
@@ -14,6 +15,9 @@ module.exports = {
         const muto = net.createServer((s) => s.on('error', () => {}));
         await new Promise((r) => muto.listen(0, '127.0.0.1', r));
         const porta = muto.address().port;
+        // Un relay VERO ma locale per le sale d'attesa: senza, "Crea stanza" usava l'indirizzo predefinito della pagina,
+        // cioe' il server di produzione su Render (freddo, lento, autenticato), e il test dipendeva da internet.
+        const room = await startRoomServer();
         const browser = t.browser;
         const nuova = async (w, h, modo) => {
             const ctx = await browser.newContext({ viewport: { width: w, height: h }, serviceWorkers: 'block' });
@@ -93,6 +97,7 @@ module.exports = {
             // --- Sala d'attesa (server vero del test): due colonne su desktop, posti affiancati su telefono ---
             const sala = async (w, h) => {
                 const { ctx, page } = await nuova(w, h, 'duello');
+                await page.evaluate((url) => { document.getElementById('mpServerUrl').value = url; }, room.wsUrl);
                 await page.click('#mpCreateBtn');
                 await page.waitForSelector('#mpCodeTiles .mp-code-tile', { timeout: 30000 });
                 return { ctx, page };
@@ -164,6 +169,7 @@ module.exports = {
                     try {
                         const ingresso = await page.evaluate(() => document.querySelector('.mp-hero').getBoundingClientRect().top);
                         t.assert(ingresso >= 30, `ingresso: l'intestazione comincia a ${ingresso}px, sotto il foro della fotocamera (minimo 30)`);
+                        await page.evaluate((url) => { document.getElementById('mpServerUrl').value = url; }, room.wsUrl);
                         await page.click('#mpCreateBtn');
                         await page.waitForSelector('#mpCodeTiles .mp-code-tile', { timeout: 30000 });
                         await page.evaluate(() => window.scrollTo(0, 0));
@@ -179,6 +185,6 @@ module.exports = {
                     } finally { await ctx.close(); }
                 }
             }
-        } finally { muto.close(); }
+        } finally { muto.close(); await room.close(); }
     }
 };

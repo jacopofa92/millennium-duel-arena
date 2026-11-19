@@ -64,6 +64,14 @@ module.exports = {
             await entrano(sh, so);
             s = await stato(sh);
             assert(s.specchioOn && !s.raidOn, `L'host ha lo specchio gia' acceso: ${JSON.stringify(s)}`);
+            // Ogni mazzo proponibile deve essere consentito all'account: net.sendAction scarta in silenzio un room-config
+            // con un mazzo vietato, e l'ospite non riceverebbe mai le regole (era l'instabilita' di questo spec).
+            const vietati = await sh.evaluate(() => [...document.querySelectorAll('#mpSpecchioMazzo option')]
+                .filter((o) => o.value !== '__casuale')
+                .map((o) => starterStructureDeckDatabase.find((d) => d.packId === o.value))
+                .filter((d) => d && window.Contenuti && Contenuti.carteVietate(d).length)
+                .map((d) => d.packId));
+            assert(vietati.length === 0, `Il menu dello Specchio propone mazzi non consentiti all'account: ${vietati.join(', ')}`);
             await so.waitForFunction(() => document.getElementById('mpSpecchioOn').checked, null, { timeout: 10000 });
             const rigaNascosta = await sh.evaluate(() => getComputedStyle(document.querySelector('#mpSpecchioGroup .mp-specchio-riga')).display === 'none');
             assert(rigaNascosta, 'La spunta della regola e\' nascosta: la modalita\' la fissa');

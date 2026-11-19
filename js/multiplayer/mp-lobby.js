@@ -615,7 +615,12 @@
     /** I mazzi giocabili a specchio: quelli del catalogo con una lista vera (non lo scheletro vuoto). */
     function mazziPerSpecchio() {
         if (typeof starterStructureDeckDatabase === 'undefined') return [];
-        return starterStructureDeckDatabase.filter((d) => Array.isArray(d.main) && d.main.reduce((s, c) => s + (c.qty || 0), 0) >= 30);
+        return starterStructureDeckDatabase.filter((d) => Array.isArray(d.main) && d.main.reduce((s, c) => s + (c.qty || 0), 0) >= 30
+            // Un mazzo con carte che QUESTO account non puo' usare (WW1, WW2, Extra senza permesso) non si propone ne' si
+            // estrae a caso: net.sendAction scarta in silenzio un `room-config` con un mazzo non consentito
+            // (Contenuti.azioneMultiplayer), e l'ospite non riceverebbe mai le regole della stanza. Senza questo filtro
+            // «Un mazzo a caso» falliva una volta su cinque (test multiplayer-modalita-sala instabile).
+            && !(window.Contenuti && typeof Contenuti.carteVietate === 'function' && Contenuti.carteVietate(d).length));
     }
 
     /** Il mazzo a specchio scelto da questo lato, già risolto (mai SPECCHIO_CASUALE), o null se la regola è spenta. */
