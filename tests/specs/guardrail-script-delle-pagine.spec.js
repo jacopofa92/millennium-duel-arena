@@ -157,7 +157,10 @@ module.exports = {
             `File dichiarati in APP_SHELL ma inesistenti: ${inesistentiShell.join(', ')}`);
 
         const estensioneMedia = /\.(?:avif|gif|jpe?g|mp3|mp4|ogg|png|webm|webp)$/i;
-        const mediaPesanti = vociShell.filter((voce) => estensioneMedia.test(voce) && !voce.startsWith('images/icons/'));
+        // Eccezione voluta: il grido del duellante (40 KB) deve suonare alla prima Evocazione anche offline o a rete lenta;
+        // il ripiego sintetico faceva perdere l'audio scelto (vedi SFX.play / AudioLibrary.playStandardWhenReady).
+        const MEDIA_LEGGERI_NELLA_SHELL = ['audio/standard/duelistShout.mp3'];
+        const mediaPesanti = vociShell.filter((voce) => estensioneMedia.test(voce) && !voce.startsWith('images/icons/') && !MEDIA_LEGGERI_NELLA_SHELL.includes(voce));
         t.assert(mediaPesanti.length === 0,
             `Media da lasciare cache-on-demand entrati in APP_SHELL: ${mediaPesanti.join(', ')}`);
 

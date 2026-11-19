@@ -254,7 +254,8 @@
             if (event.defaultPrevented || (event.button != null && event.button !== 0)
                 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
 
-            var bersaglio = event.target;
+            // event.target e' un EventTarget (puo' essere anche un nodo di testo): si risale al primo elemento.
+            var bersaglio = /** @type {any} */ (event.target);
             if (bersaglio && bersaglio.nodeType !== 1) bersaglio = bersaglio.parentElement;
             var link = bersaglio && bersaglio.closest ? bersaglio.closest('a[href]') : null;
             if (!link || link.hasAttribute('download') || link.dataset.noPageLoader !== undefined) return;

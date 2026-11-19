@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.9.3 — Verifica dopo Codex: il bot attiva Oppressione Reale anche contro mostri sotto soglia (era classificata come rimozione a bersaglio); le Sfide "Risolvi tutti i puzzle" e "tutti a tre stelle" valgono 15 come i puzzle; fix di tipo in page-loader.js; test aggiornati (Dei Egizi, puzzle Tributo al Dannato, premi e HUD del Duello della Settimana, grido in APP_SHELL, pagina di prova con lo scheletro comune).
  * 1.9.2 — Le Fusioni WebGL di Livello 7+ tornano visibili nello slot dopo la scena.
  * 1.9.1 — Il bot della prova di Evocazione annullata è impostato in modo esplicito.
  * 1.9.0 — Scena dedicata all'Evocazione Speciale annullata e pagina di prova amministratore.
@@ -869,4 +870,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.9.2';
+window.GAME_VERSION = '1.9.3';

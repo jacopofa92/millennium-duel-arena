@@ -1057,7 +1057,7 @@ const challengesDatabase = [
         id: 'puzzle-tutti', sezione: 'modalita', modalita: 'puzzle',
         icon: '🔺', label: 'Il Puzzle completato',
         description: 'Risolvi tutti i puzzle',
-        type: 'puzzleSolved', match: {}, target: 12,
+        type: 'puzzleSolved', match: {}, target: 15,
         reward: { credits: 700 }
     },
     {
@@ -1071,7 +1071,7 @@ const challengesDatabase = [
         id: 'puzzle-tre-stelle-tutti', sezione: 'modalita', modalita: 'puzzle',
         icon: '🌟', label: 'Nessun errore',
         description: 'Porta tutti i puzzle a tre stelle',
-        type: 'puzzleThreeStars', match: {}, target: 12,
+        type: 'puzzleThreeStars', match: {}, target: 15,
         reward: { credits: 900 }
     },
 

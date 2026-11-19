@@ -21,10 +21,13 @@
     button:focus-visible { outline: 3px solid #fff1bd; outline-offset: 3px; }
     .nota { margin: 16px 0 0; color: #a9a198; font-size: .82rem; text-align: center; }
 </style>
+<script src="js/ui/page-loader.js"></script>
+<script src="js/ui/error-recovery.js"></script>
 <script src="js/vendor/supabase.min.js"></script>
 <script src="js/cloud/supabase-config.js"></script>
 <script src="js/cloud/cloud-sync.js"></script>
 <script src="js/cloud/auth-gate.js"></script>
+<script src="js/pwa-register.js"></script>
 <script>
 (function () {
     if (window.AUTH_GATE_SKIP) return;

@@ -126,7 +126,9 @@ const SOLUZIONI = {
     },
     'tributo-dannati': async (page) => {
         await attiva(page, 492);
-        await calma(page, (c) => (c.card || c).id === 526);
+        // Due scelte di fila: la carta da scartare (526) e il mostro da distruggere (Drago Bianco id 1, non il proprio 13).
+        // Senza il secondo id il predicato non trova nulla e calma() prende il PRIMO candidato: il proprio mostro.
+        await calma(page, (c) => [526, 1].includes((c.card || c).id));
         await battaglia(page);
         await attacca(page, 0, -1);
     },

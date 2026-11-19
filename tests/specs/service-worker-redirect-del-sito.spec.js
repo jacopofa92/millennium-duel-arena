@@ -70,7 +70,8 @@ module.exports = {
 
             // 2) La URL .html in cache conserva il redirect e il browser resta sull'indirizzo pulito.
             await page.goto(origine + '/duello-libero.html?cacheProbe=1', { waitUntil: 'domcontentloaded' });
-            assert(/\/duello-libero$/.test(page.url()), `Dopo il redirect si dovrebbe essere su /duello-libero, non su ${page.url()}`);
+            // Solo il PERCORSO: l'URL intero porta ?cacheProbe=1, che la riga sotto verifica proprio che si conservi.
+            assert(/\/duello-libero$/.test(new URL(page.url()).pathname), `Dopo il redirect si dovrebbe essere su /duello-libero, non su ${page.url()}`);
             assert(new URL(page.url()).searchParams.get('cacheProbe') === '1', 'Il redirect deve conservare i parametri della navigazione');
             assert((await page.title()).length > 0, 'La pagina dopo il redirect non si e\' caricata');
 

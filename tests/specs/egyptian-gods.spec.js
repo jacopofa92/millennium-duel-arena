@@ -47,7 +47,7 @@ module.exports = {
             const gods = [30, 31, 472].map((id) => ({
                 ...cardDatabase.find((card) => card.id === id), uid: `god-special-${id}`
             }));
-            const summonResults = gods.map((god, index) => DuelEngine.specialSummon('player', god, index, 'attack', 'hand'));
+            const summonResults = gods.map((god, index) => DuelEngine.actions.specialSummon('player', god, index, 'attack', 'hand'));
             const summonMarkers = gameState.playerMonsterField.slice(0, 3).map((slot) => slot && slot.specialSummonedOnTurn);
             gameState.turn = 8;
             DuelEngine.firePhaseTrigger(DuelEngine.TRIGGER.ON_END_PHASE, 'player');
@@ -90,9 +90,11 @@ module.exports = {
             const costPaidBeforeResolution = gameState.botGraveyard.some((card) => card.uid === obelisk.uid)
                 && gameState.botGraveyard.some((card) => card.uid === token.uid)
                 && gameState.botMonsterField[3]?.card.uid === altroValido.uid;
+            // 45 s e non 10: le Special Summon di Dei (Livello 10) fatte prima nello stesso test lasciano in coda scene
+            // epiche, e la Catena aspetta che finiscano (circa 25 s per tre). In un duello vero non succede.
             const started = Date.now();
             const waitForChain = () => {
-                if ((!gameState.chain || (!gameState.chain.active && !gameState.chain.resolving)) || Date.now() - started > 10000) {
+                if ((!gameState.chain || (!gameState.chain.active && !gameState.chain.resolving)) || Date.now() - started > 45000) {
                     resolve({
                         canActivate,
                         activationStarted,
@@ -126,10 +128,12 @@ module.exports = {
                 window.__sliferEffectResolvedInsideChain = !!(gameState.chain && gameState.chain.resolving);
                 return original(ctx);
             };
-            DuelEngine.specialSummon('player', summoned, 0, 'attack', 'hand');
+            DuelEngine.actions.specialSummon('player', summoned, 0, 'attack', 'hand');
+            // 45 s e non 10: le Special Summon di Dei (Livello 10) fatte prima nello stesso test lasciano in coda scene
+            // epiche, e la Catena aspetta che finiscano (circa 25 s per tre). In un duello vero non succede.
             const started = Date.now();
             const waitForChain = () => {
-                if ((!gameState.chain || (!gameState.chain.active && !gameState.chain.resolving)) || Date.now() - started > 10000) {
+                if ((!gameState.chain || (!gameState.chain.active && !gameState.chain.resolving)) || Date.now() - started > 45000) {
                     def.onEnemyMonsterSummoned = original;
                     resolve({
                         resolvedInsideChain: window.__sliferEffectResolvedInsideChain,

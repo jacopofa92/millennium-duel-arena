@@ -193,7 +193,12 @@
         if (window.AI_SHARED) candidates = candidates.filter((c) => AI_SHARED.attivazioneSensata(c.card, io, c.zone, c.index, c.evento));
         if (candidates.length === 0) return null;
         if (window.AI_SHARED) {
-            const allPureRemoval = candidates.every((c) => AI_SHARED.isSingleTargetRemoval(c.card));
+            // Una negazione di Evocazione (Oppressione Reale, def.onSpecialSummonAttempt) non e' una rimozione a bersaglio:
+            // il testo dice "distruggerli", quindi il classificatore la prendeva per tale e, contro un mostro sotto soglia
+            // (es. Gilasaurus, 1400 ATK), il bot la lasciava in campo senza usarla mai. Il costo in LP lo vaglia gia'
+            // attivazioneSensata (non scende sotto 2000 LP).
+            const allPureRemoval = candidates.every((c) => !(c.def && typeof c.def.onSpecialSummonAttempt === 'function')
+                && AI_SHARED.isSingleTargetRemoval(c.card));
             if (allPureRemoval && !candidates.some((c) => AI_SHARED.isRemovalWorthwhile(c.card, gameState, io, REMOVAL_WORTH_THRESHOLD))) {
                 return null;
             }
