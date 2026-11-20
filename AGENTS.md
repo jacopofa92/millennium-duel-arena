@@ -162,6 +162,28 @@ indietro**, e pochi bug veri. Per non ripeterlo:
   minuto di distanza e un `OPTIONS claim_active_device_session` senza il `POST` che lo segue. Lezione: **un
   ricaricamento di pagina non deve mai partire dentro un flusso asincrono che deve ancora scrivere sul server**; chi
   ricarica (`location.reload`) va cercato quando una richiesta ha il preflight ma non il corpo.
+- **Meno distruzione nei mazzi Difficile + regia della mano (1.9.11)**: segnalazione «in difficile ogni avversario ha
+  sempre Armatura Sakuretsu, Cilindro Magico...: frustrante e ripetitivo». In 51 mazzi Difficile Sakuretsu e/o Cilindro sono
+  sostituiti da carte che non distruggono (tabella `RITOCCHI_MENO_DISTRUZIONE` in `character-decks.js`, applicata dopo
+  `CORREZIONI_LIMITI`). **Vincolo dell'utente: il Difficile non deve diventare piu' facile.** Le sole sostituzioni lo rendevano
+  piu' facile di ~2,6 punti; per 34 duellanti lo rimette la REGIA DELLA MANO (`js/modes/regia-mano.js`, lista in
+  `js/data/regia-mano-db.js`, stessa logica e stessi agganci dell'Incubo: `partita-azzerata` + `inizio-turno`, nessun
+  aggancio nuovo nel motore). Attiva solo in Difficile, in Duello Libero/Storia/Torneo, mai in Multiplayer (i due client devono
+  riordinare il Mazzo allo stesso modo: servirebbe il seme di `Casuale` e un test a due client), Tag (anche `mode=story&tag=1`),
+  Torre, Caccia, Puzzle, Rivincite, Settimana, Tutorial, Incubo. **Misura** (strumento: copia di `tools/audit-matrice-completa.js`
+  solo Difficile, 17 deck giocatore x 61 duellanti x 50 duelli, semi nuovi 770000, codice vero): vittorie del giocatore
+  30,8% -> 30,2%; trappole che distruggono o rimandano il danno attivate per duello 0,74 -> 0,42; nessun duellante piu' facile
+  di 4 punti (Odion -8,0, Rex -5,6, Alto Mago Martis -4,4 diventano piu' duri: accettato dall'utente). Cosa NON va toccato:
+  **Forza Riflessa (+11 punti se tolta) e Buco Trappola (+8) reggono la difficolta'**, Annulla Attacco, Sakuretsu e Cilindro
+  valgono 1-3 punti. Non ritoccati: Gansley (Cilindro e' il suo Deck Master), Yami Yugi (Cilindro a Battle City, ep. 66),
+  Bandit Keith, Dark Nite, Gozaburo, Alto Mago Anubisius (+4 o piu' con la sostituzione), Tristan, Esparoba, Desert Mage,
+  Crump (nessuna alternativa a parita'). **Metodo che ha funzionato** (riusabile per ogni ritocco ai mazzi): misurare prima
+  carta per carta cosa vale ogni carta toccata; scegliere le alternative su un giro di semi e CONVALIDARE su semi nuovi (la
+  scelta sullo stesso giro sovrastima: alcuni duellanti «a posto» risultavano +4/+6); riportare al mazzo attuale chi resta
+  fuori; i numeri per singolo duellante hanno un rumore di 2-3 punti a 850 duelli per lato. **Bug trovato per caso e NON
+  corretto**: Macchina del Tempo (478) fa rientrare «Roccaforte della Fortezza Movente» (849, Trappola-mostro) e la lascia
+  nella zona Mostri come carta non-mostro (invariante del duello senza testa: mazzo di Odion contro lo Starter di Yugi, ~4-8
+  duelli su 51.000).
 - **Chi chiede l'attesa deve poterla chiudere su OGNI strada**
   (`attendiScelta`): `chooseFieldCardTarget` può rifiutare in silenzio (il bot
   non distrugge una sua carta) e allora senza `onNessunaScelta` la Catena resta

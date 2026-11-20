@@ -574,7 +574,7 @@
 // v771: scena dell'Evocazione Speciale annullata e pagina di prova amministratore.
 // v772: controllori e livello IA espliciti nella sandbox di prova.
 // v773: le Fusioni WebGL di Livello 7+ vengono rivelate nello slot dopo la scena.
-const CACHE_NAME = 'ygo-duel-arena-v781';
+const CACHE_NAME = 'ygo-duel-arena-v782';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento
@@ -759,6 +759,8 @@ const APP_SHELL = [
     'js/modes/tag-mode.js',
     'js/data/incubo-db.js',
     'js/modes/incubo.js',
+    'js/data/regia-mano-db.js',
+    'js/modes/regia-mano.js',
     'js/ui/effects.js',
     'js/ui/error-recovery.js',
     'js/ui/icon-library.js',

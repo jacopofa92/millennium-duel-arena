@@ -7277,6 +7277,88 @@ const CORREZIONI_LIMITI = {
     });
 })();
 
+// ================================================================
+// MENO DISTRUZIONE NEI MAZZI DIFFICILI (1.9.11)
+// ================================================================
+// Segnalazione dell'utente: in Difficile quasi ogni avversario aveva pronte le stesse trappole, e quelle che distruggono
+// o rimandano indietro il mostro (Armatura Sakuretsu, Cilindro Magico) erano la fonte di frustrazione e di ripetitivita'.
+// In 51 mazzi Difficile una o entrambe sono sostituite da carte che non distruggono (Magia Ombra, Kunai con Catena,
+// Scudo da Braccio Magico, Scatola Fatata, Muro a Specchio, Waboku, Cambio, Lancia Incantata). Forza Riflessa, Buco Trappola e
+// Annulla Attacco restano: sono quelle che reggono la difficolta' (togliere Forza Riflessa da sola vale +11 punti di vittorie
+// del giocatore, Sakuretsu e Cilindro +3).
+//
+// REGOLA CHE NON SI TOCCA: il Difficile non deve diventare piu' facile. Senza altro le sostituzioni lo renderebbero piu' facile
+// di circa 2,6 punti; per 34 duellanti la differenza la rimette la REGIA DELLA MANO (js/modes/regia-mano.js, lista in
+// js/data/regia-mano-db.js). Misura finale (17 deck giocatore x 61 duellanti x 50 duelli, semi nuovi, solo Difficile): vittorie
+// del giocatore 30,8% -> 30,4%; trappole che distruggono o rimandano il danno attivate per duello 0,74 -> 0,38.
+// Le liste di Facile e Normale non cambiano.
+//
+// NON RITOCCATI (decisione presa con l'utente, misure alla mano):
+//  - Gansley: Cilindro Magico e' il suo Deck Master ("Buco Riflettore", vedi il commento del suo mazzo);
+//  - Yami Yugi: usa Cilindro Magico nel duello di Battle City contro Strings (episodio 66, Yugipedia);
+//  - Bandit Keith, Dark Nite, Gozaburo, Alto Mago Anubisius: con la sostituzione diventavano piu' facili di oltre 4 punti;
+//  - Tristan, Esparoba, Desert Mage, Crump: nessuna alternativa mantiene la difficolta' (nessuna combinazione provata resta
+//    entro un punto dal mazzo attuale).
+// Va applicata DOPO tutti gli altri ritocchi (CORREZIONI_LIMITI compresi): la misura e' stata fatta sul mazzo finale.
+const RITOCCHI_MENO_DISTRUZIONE = {
+    albertoAngela: { rimosse: { 793: 1 }, aggiunte: { 439: 1 } },   // -Armatura Sakuretsu +Magia Ombra
+    alessandroBarbero: { rimosse: { 793: 1 }, aggiunte: { 383: 1 } },   // -Armatura Sakuretsu +Muro a Specchio (con regia della mano)
+    arkana: { rimosse: { 10: 1 }, aggiunte: { 333: 1 } },   // -Cilindro Magico +Kunai con Catena
+    bakura: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 232: 1, 439: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Scatola Fatata +Magia Ombra (con regia della mano)
+    bonz: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 819: 1, 232: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Scudo da Braccio Magico +Scatola Fatata (con regia della mano)
+    duke: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 819: 1, 439: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Scudo da Braccio Magico +Magia Ombra (con regia della mano)
+    forestMage: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 232: 1, 503: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Scatola Fatata +Waboku (con regia della mano)
+    heishin: { rimosse: { 10: 1 }, aggiunte: { 383: 1 } },   // -Cilindro Magico +Muro a Specchio
+    highMageAtenza: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 503: 1, 819: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Waboku +Scudo da Braccio Magico (con regia della mano)
+    highMageKepura: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 439: 1, 611: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Magia Ombra +Lancia Incantata (con regia della mano)
+    highMageMartis: { rimosse: { 10: 1 }, aggiunte: { 232: 1 } },   // -Cilindro Magico +Scatola Fatata (con regia della mano)
+    highMageSecmeton: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 383: 1, 333: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Muro a Specchio +Kunai con Catena (con regia della mano)
+    ishizu: { rimosse: { 10: 1 }, aggiunte: { 232: 1 } },   // -Cilindro Magico +Scatola Fatata (con regia della mano)
+    joey: { rimosse: { 793: 1 }, aggiunte: { 383: 1 } },   // -Armatura Sakuretsu +Muro a Specchio
+    johnson: { rimosse: { 10: 1 }, aggiunte: { 622: 1 } },   // -Cilindro Magico +Cambio (con regia della mano)
+    jono: { rimosse: { 10: 1 }, aggiunte: { 819: 1 } },   // -Cilindro Magico +Scudo da Braccio Magico (con regia della mano)
+    kaiba: { rimosse: { 793: 1 }, aggiunte: { 333: 1 } },   // -Armatura Sakuretsu +Kunai con Catena (con regia della mano)
+    labyrinthMage: { rimosse: { 10: 1 }, aggiunte: { 333: 1 } },   // -Cilindro Magico +Kunai con Catena (con regia della mano)
+    lector: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 503: 1, 819: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Waboku +Scudo da Braccio Magico (con regia della mano)
+    lumis: { rimosse: { 10: 1 }, aggiunte: { 439: 1 } },   // -Cilindro Magico +Magia Ombra
+    mageSoldier: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 333: 1, 383: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Kunai con Catena +Muro a Specchio
+    mai: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 819: 1, 333: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Scudo da Braccio Magico +Kunai con Catena (con regia della mano)
+    mako: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 333: 1, 383: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Kunai con Catena +Muro a Specchio (con regia della mano)
+    marik: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 611: 1, 232: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Lancia Incantata +Scatola Fatata (con regia della mano)
+    meadowMage: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 383: 1, 232: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Muro a Specchio +Scatola Fatata (con regia della mano)
+    mountainMage: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 333: 1, 503: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Kunai con Catena +Waboku (con regia della mano)
+    neku: { rimosse: { 10: 1 }, aggiunte: { 333: 1 } },   // -Cilindro Magico +Kunai con Catena (con regia della mano)
+    nesbitt: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 611: 1, 819: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Lancia Incantata +Scudo da Braccio Magico (con regia della mano)
+    nitemare: { rimosse: { 10: 1 }, aggiunte: { 622: 1 } },   // -Cilindro Magico +Cambio
+    noah: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 439: 1, 333: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Magia Ombra +Kunai con Catena (con regia della mano)
+    oceanMage: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 439: 1, 383: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Magia Ombra +Muro a Specchio
+    odion: { rimosse: { 10: 1 }, aggiunte: { 503: 1 } },   // -Cilindro Magico +Waboku (con regia della mano)
+    panik: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 819: 1, 383: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Scudo da Braccio Magico +Muro a Specchio (con regia della mano)
+    paradoxBrothers: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 611: 1, 232: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Lancia Incantata +Scatola Fatata (con regia della mano)
+    pegasus: { rimosse: { 10: 1 }, aggiunte: { 819: 1 } },   // -Cilindro Magico +Scudo da Braccio Magico
+    priestessIsis: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 819: 1, 383: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Scudo da Braccio Magico +Muro a Specchio (con regia della mano)
+    priestSeto: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 622: 1, 611: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Cambio +Lancia Incantata (con regia della mano)
+    rex: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 232: 1, 611: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Scatola Fatata +Lancia Incantata (con regia della mano)
+    robertoGiacobbo: { rimosse: { 10: 1 }, aggiunte: { 333: 1 } },   // -Cilindro Magico +Kunai con Catena
+    sebek: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 383: 1, 503: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Muro a Specchio +Waboku (con regia della mano)
+    seeker: { rimosse: { 10: 1 }, aggiunte: { 232: 1 } },   // -Cilindro Magico +Scatola Fatata
+    serenity: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 439: 1, 232: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Magia Ombra +Scatola Fatata
+    shadi: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 232: 1, 611: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Scatola Fatata +Lancia Incantata (con regia della mano)
+    simonMuran: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 439: 1, 819: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Magia Ombra +Scudo da Braccio Magico (con regia della mano)
+    solomonMuto: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 333: 1, 383: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Kunai con Catena +Muro a Specchio
+    strings: { rimosse: { 10: 1 }, aggiunte: { 333: 1 } },   // -Cilindro Magico +Kunai con Catena (con regia della mano)
+    tea: { rimosse: { 10: 1 }, aggiunte: { 383: 1 } },   // -Cilindro Magico +Muro a Specchio
+    teana: { rimosse: { 793: 1, 10: 1 }, aggiunte: { 333: 1, 383: 1 } },   // -Armatura Sakuretsu -Cilindro Magico +Kunai con Catena +Muro a Specchio (con regia della mano)
+    umbra: { rimosse: { 10: 1 }, aggiunte: { 439: 1 } },   // -Cilindro Magico +Magia Ombra
+    weevil: { rimosse: { 10: 1 }, aggiunte: { 819: 1 } },   // -Cilindro Magico +Scudo da Braccio Magico
+    yugiMuto: { rimosse: { 10: 1 }, aggiunte: { 819: 1 } }    // -Cilindro Magico +Scudo da Braccio Magico
+};
+Object.keys(RITOCCHI_MENO_DISTRUZIONE).forEach((personaggio) => {
+    const { rimosse, aggiunte } = RITOCCHI_MENO_DISTRUZIONE[personaggio];
+    ritoccaDeckHard(personaggio, rimosse, aggiunte);
+});
+
+
 
 // ================================================================
 // REGOLE DEI TRE LIVELLI — verificate carta per carta su ogni mazzo

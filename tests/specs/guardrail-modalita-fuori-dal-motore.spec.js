@@ -27,6 +27,8 @@ const ASSEGNAZIONI_AMMESSE = new Set([
     'TagTeam', 'ModeUnlocks',
     // Livello Incubo dei Boss (js/modes/incubo.js): espone solo `attivo()`, letto da duel-session.js per i premi.
     'Incubo',
+    // Regia della mano dei Duellanti Difficili (js/modes/regia-mano.js): espone solo attiva() e le due funzioni di sistemazione, per i test.
+    'RegiaMano',
     // Aggancio generico dell'annuncio del cambio turno (letto da game-flow.js senza sapere quale modalita' lo usa).
     'AnnuncioTurnoModalita',
     // Aggancio con cui la lezione guidata del Tutorial (js/tutorial/tutorial-duel.js) avvia la preparazione del Tag Team.
