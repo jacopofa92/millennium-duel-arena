@@ -20,7 +20,15 @@ module.exports = {
                 gameState.playerHand = [];
                 gameState.hasNormalSummoned = false;
             };
-            const guarda = () => new Promise((r2) => setTimeout(r2, 1800));
+            // Non un'attesa fissa: dopo Capro Espiatorio l'animazione dei Token blocca le azioni della persona
+            // ('azioni-bloccate-da-animazione', Comandi.esegui) per piu' di 1,8 s e il Set veniva rifiutato.
+            const guarda = async () => {
+                await new Promise((r2) => setTimeout(r2, 300));
+                const t0 = performance.now();
+                while (EventiDuello.chiedi('azioni-bloccate-da-animazione', false) && performance.now() - t0 < 20000) {
+                    await new Promise((r2) => setTimeout(r2, 100));
+                }
+            };
             gameState.currentPlayer = 'player';
             gameState.phase = 'main1';
 
@@ -68,6 +76,8 @@ module.exports = {
             out.tributiHard = conMostriValidi ? conMostriValidi.tributeIndices : null;
 
             gameState.playerMonsterField = [null, null, null, null, null];
+            // Prima si aspetta la fine dell'animazione: altrimenti il rifiuto verrebbe dal blocco delle azioni e non dal divieto.
+            await guarda();
             const a = mostro('scoperto'); gameState.playerHand = [a];
             summonMonster(a, 0, 'attack', 0);
             await guarda();
@@ -75,6 +85,9 @@ module.exports = {
             gameState.hasNormalSummoned = false;
             const b = mostro('set'); gameState.playerHand = [b];
             summonMonster(b, 0, 'defense', 0);
+            // Il Set e' permesso: la carta arriva in campo a fine volo, quindi si aspetta la casella occupata.
+            const tSet = performance.now();
+            while (!gameState.playerMonsterField[0] && performance.now() - tSet < 15000) await new Promise((r2) => setTimeout(r2, 100));
             await guarda();
             out.setRiuscito = !!gameState.playerMonsterField[0] && gameState.playerMonsterField[0].isFaceDown === true;
             out.specialRifiutata = DuelEngine.actions.specialSummon('player', mostro('ss3'), 1, 'attack');

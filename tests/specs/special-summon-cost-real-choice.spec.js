@@ -29,6 +29,9 @@ module.exports = {
     async run(t) {
         // Inferno (677): richiede 1 solo mostro FUOCO, ma il Cimitero ne
         // ha 2 diversi -> deve aprirsi una vera scelta, non il primo trovato.
+        // Fra una scena e l'altra il blocco cala per un attimo: si controlla due volte a distanza, altrimenti il comando finale cadrebbe nel vuoto.
+        const sbloccato = () => t.page.waitForFunction(() => !EventiDuello.chiedi('azioni-bloccate-da-animazione', false), null, { timeout: 30000 });
+        const libera = async () => { await sbloccato(); await t.page.waitForTimeout(700); await sbloccato(); };
         const infernoOpen = await t.evaluate(() => {
             const filler = cardDatabase.find((c) => c.type === 'monster' && !c.extraDeck);
             const inferno = { ...cardDatabase.find((c) => c.id === 677), uid: 'inferno-1' };
@@ -59,6 +62,7 @@ module.exports = {
 
         // Fenrir (698): richiede 2 mostri ACQUA, il Cimitero ne ha 3 ->
         // 2 scelte vere in sequenza (il pool si restringe ad ogni passo).
+        await libera();
         const fenrirOpen = await t.evaluate(() => {
             const filler = cardDatabase.find((c) => c.type === 'monster' && !c.extraDeck);
             const fenrir = { ...cardDatabase.find((c) => c.id === 698), uid: 'fenrir-1' };
@@ -81,7 +85,8 @@ module.exports = {
         count = await t.page.locator('#cardListPickerRow .card-list-item').count();
         t.assert(count === 2, `Secondo picker di Fenrir deve mostrare i 2 candidati rimasti (rilevati ${count})`);
         await t.page.locator('#cardListPickerRow .card-list-item').nth(0).click();
-        await t.page.waitForTimeout(150);
+        // Si aspetta l'effetto della scelta, non un tempo fisso: il bando avviene dopo che la scena d'Evocazione ha fatto il suo.
+        await t.page.waitForFunction(() => gameState.playerBanished.length >= 2, null, { timeout: 15000 }).catch(() => {});
         const afterFenrir = await t.evaluate(() => ({
             banishedUids: gameState.playerBanished.map((c) => c.uid).sort(),
             onField: gameState.playerMonsterField.some((s) => s && s.card.uid === 'fenrir-1')
@@ -92,6 +97,7 @@ module.exports = {
         // Stregone del Caos (740): 1 LUCE + 1 OSCURITÀ, requisiti DIVERSI
         // (non un conteggio omogeneo come Fenrir) -> ogni passo del
         // picker deve mostrare SOLO i candidati del proprio Attributo.
+        await libera();
         const chaosOpen = await t.evaluate(() => {
             const filler = cardDatabase.find((c) => c.type === 'monster' && !c.extraDeck);
             const chaos = { ...cardDatabase.find((c) => c.id === 740), uid: 'chaos-1' };
@@ -126,6 +132,7 @@ module.exports = {
         // Drago Toon Occhi Blu (123), deroga anime controllata: tributa
         // 1 mostro Toon. Tre Toon sul Terreno devono produrre una vera
         // scelta singola, senza coinvolgere mostri non Toon.
+        await libera();
         const dragonOpen = await t.evaluate(() => {
             const filler = cardDatabase.find((c) => c.id === 481);
             const dragon = { ...cardDatabase.find((c) => c.id === 123), uid: 'dragon-1' };

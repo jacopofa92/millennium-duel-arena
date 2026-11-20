@@ -62,8 +62,15 @@ module.exports = {
                 `la Sfera entra sul Terreno avversario e segna il ritorno al turno dopo: ${JSON.stringify(iniziale)}`);
 
             // Si passa il turno e si lascia giocare il bot. Durante il suo turno la Sfera e' sua ma non attacca.
+            // endTurn() viene scartato finche' l'animazione dell'Evocazione blocca le azioni (Comandi.esegui): si riprova fino a che
+            // il turno cambia davvero, invece di un'attesa fissa seguita da una sola chiamata.
             await page.waitForTimeout(2500);
-            await page.evaluate(() => endTurn());
+            for (let tentativo = 0; tentativo < 30; tentativo++) {
+                await page.evaluate(() => { if (!EventiDuello.chiedi('azioni-bloccate-da-animazione', false)) endTurn(); });
+                await page.waitForTimeout(500);
+                if (await page.evaluate(() => gameState.currentPlayer !== 'player' || gameState.turn > 1)) break;
+                await chiudiScelte();
+            }
             let durante = null;
             let finale = null;
             const scadenza = Date.now() + 120000;

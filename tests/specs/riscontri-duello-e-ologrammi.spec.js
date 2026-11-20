@@ -123,6 +123,9 @@ module.exports = {
             gameState.playerMonsterField[4] = { card: Object.assign({}, base, { uid: 'rd-flip' }), position: 'defense', isFaceDown: true, canChangePosition: true, hasAttacked: false, summonedOnTurn: 0 };
             updateUI();
         });
+        // Il cambio di Posizione e' una mossa della persona: con un'animazione in corso (Comandi.esegui) verrebbe scartato e
+        // l'ologramma non nascerebbe mai. Si aspetta lo sblocco, non un tempo fisso.
+        await page.waitForFunction(() => !EventiDuello.chiedi('azioni-bloccate-da-animazione', false), null, { timeout: 30000 });
         await page.waitForTimeout(200);
         const subito = await t.evaluate(() => {
             changeMonsterPosition(4);

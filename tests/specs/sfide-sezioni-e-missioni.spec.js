@@ -51,7 +51,9 @@ module.exports = {
                 assert(sezioni.schede.indexOf(nome) !== -1, `Manca la sezione "${nome}"`);
             });
             assert(sezioni.generiche > 40, `Poche Sfide generiche (${sezioni.generiche})`);
-            assert(sezioni.storie >= 4, `Le Sfide delle storie devono coprire le campagne giocabili (${sezioni.storie})`);
+            // Solo le campagne ammesse al profilo (Regno delle Ombre, Memorie Proibite): Freedom e Grande Guerra stanno dietro un
+            // pacchetto (js/cloud/content-access.js) e ChallengeTracker.getSezioni le nasconde finche' non sono sbloccate.
+            assert(sezioni.storie >= 2, `Le Sfide delle storie devono coprire le campagne giocabili (${sezioni.storie})`);
             assert(sezioni.giornaliere === 4, `Le missioni di oggi devono essere 4 (rilevate ${sezioni.giornaliere})`);
             assert(sezioni.settimanali === 8, `Le missioni della settimana devono essere 8 (rilevate ${sezioni.settimanali})`);
 

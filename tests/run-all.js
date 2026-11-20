@@ -67,6 +67,10 @@ async function runOne(browser, specPath) {
     // fuori solo in certe partite casuali (es. "Cannot read properties of
     // null") senza sapere DA DOVE arriva non si ritrova più.
     page.on('pageerror', (err) => {
+        // "AbortError: Transition was skipped": rifiuto standard della View Transitions API (@view-transition in ogni pagina) quando
+        // si naviga via prima che la transizione finisca. Il gioco lo giudica innocuo e lo filtra (duel-engine.js, error-recovery.js):
+        // contarlo qui rendeva instabili gli spec che premono Indietro/Abbandona (es. duello-finito-non-rientra-con-indietro).
+        if (/transition was skipped/i.test(err.message || '')) return;
         const dove = err.stack ? err.stack.split('\n').slice(1, 4).map((r) => r.trim()).join(' <- ') : '';
         pageErrors.push(dove ? `${err.message} [${dove}]` : err.message);
     });

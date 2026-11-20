@@ -34,7 +34,7 @@ module.exports = {
         const segnali = () => cloud.richieste.filter((r) => r === 'rpc:segna_visto').length;
         try {
             await page.goto(ADMIN);
-            await page.waitForFunction(() => document.querySelectorAll('#adminPendingList .admin-row, #adminUsersList .admin-row').length >= 5, null, { timeout: 30000 });
+            await page.waitForFunction(() => document.querySelectorAll('#adminPendingList .admin-user-card, #adminUsersList .admin-user-card').length >= 5, null, { timeout: 30000 });
 
             // 1) Il segnale parte all'apertura della pagina, una volta sola.
             await page.waitForFunction(() => true);
@@ -42,8 +42,8 @@ module.exports = {
             assert(segnali() === 1, `All'apertura il gioco deve segnare l'accesso UNA volta (segnali: ${segnali()})`);
 
             // 2) Le righe: testo giusto per ognuno.
-            const righe = await page.evaluate(() => Array.from(document.querySelectorAll('#adminPendingList .admin-row, #adminUsersList .admin-row')).map((r) => ({
-                email: r.querySelector('.admin-row-email').textContent,
+            const righe = await page.evaluate(() => Array.from(document.querySelectorAll('#adminPendingList .admin-user-card, #adminUsersList .admin-user-card')).map((r) => ({
+                email: r.querySelector('.admin-row-email, .admin-user-email').textContent,
                 visto: r.querySelector('.admin-row-seen').textContent,
                 online: r.querySelector('.admin-row-seen').classList.contains('is-online')
             })));
@@ -55,14 +55,14 @@ module.exports = {
             assert(per('attesa@prova.it').visto === 'Ultimo accesso: 45 min fa', `Anche chi e' in attesa ha l'ultimo accesso: ${per('attesa@prova.it').visto}`);
 
             // 3) L'elenco degli altri account e' ordinato dal visto piu' di recente al mai visto.
-            const ordine = await page.evaluate(() => Array.from(document.querySelectorAll('#adminUsersList .admin-row-email')).map((e) => e.textContent));
+            const ordine = await page.evaluate(() => Array.from(document.querySelectorAll('#adminUsersList .admin-user-email')).map((e) => e.textContent));
             const sotto = ordine.filter((e) => e !== 'attesa@prova.it');
             assert(sotto.join(',') === 'online@prova.it,ieri@prova.it,tregiorni@prova.it,mai@prova.it',
                 `Ordine per ultimo accesso: ${sotto.join(',')}`);
 
             // 4) Riaprire subito la pagina NON richiama il server: il limite e' per dispositivo.
             await page.reload();
-            await page.waitForFunction(() => document.querySelectorAll('#adminPendingList .admin-row, #adminUsersList .admin-row').length >= 5, null, { timeout: 30000 });
+            await page.waitForFunction(() => document.querySelectorAll('#adminPendingList .admin-user-card, #adminUsersList .admin-user-card').length >= 5, null, { timeout: 30000 });
             await page.waitForTimeout(800);
             assert(segnali() === 1, `Entro 5 minuti non si segna di nuovo (segnali: ${segnali()})`);
 

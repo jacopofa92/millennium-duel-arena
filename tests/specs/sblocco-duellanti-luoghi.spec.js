@@ -56,7 +56,10 @@ module.exports = {
             await page.waitForSelector('.sd-barra .sd-conta strong');
             const pagina = await page.evaluate(() => ({
                 conta: document.querySelector('.sd-conta strong').textContent,
-                attesi: String(CharacterUnlocks.INIZIALI.length + CharacterUnlocks.EXTRA_DISPONIBILI.length),
+                // Gli "extra" (Angela, Barbero) stanno dietro un pacchetto (js/cloud/content-access.js): senza, la pagina non li mostra
+                // e non li conta. Si conta quindi cio' che il gioco ammette, non l'elenco grezzo.
+                attesi: String(CharacterUnlocks.INIZIALI.concat(CharacterUnlocks.EXTRA_DISPONIBILI)
+                    .filter((id) => !window.Contenuti || Contenuti.personaggio(id)).length),
                 bonz: document.querySelector('.cube[data-id="bonz"] .cube-locked').textContent.replace(/\s+/g, ' ').trim(),
                 medaglia: (document.querySelector('.cube[data-id="yugiMuto"] .sd-medaglia') || {}).textContent || '',
                 bonzFrase: CharacterUnlocks.comeSbloccare(characterDatabase.find((c) => c.id === 'bonz'))

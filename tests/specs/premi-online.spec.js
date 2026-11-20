@@ -107,7 +107,7 @@ module.exports = {
             t.assert(r.raidYami.crediti === 600 + 300 && r.raidYami.stelle === 2 + 1, `Raid Boss da 18.000: ${JSON.stringify(r.raidYami)}`);
             t.assert(r.raidNitemare.crediti === 750 + 300 && r.raidNitemare.stelle === 3 + 1, `Raid Boss da 20.000: ${JSON.stringify(r.raidNitemare)}`);
             t.assert(r.raidTre[0].pagato && r.raidTre[1].pagato && !r.raidTre[2].pagato && r.raidTre[2].note.some((n) => /gi. riscosso/.test(n)), `Raid: 2 al giorno su Boss diversi: ${JSON.stringify(r.raidTre)}`);
-            t.assert(r.raidStessoBoss.crediti === 0 && r.raidStessoBoss.note.some((n) => /Boss diverso/.test(n)), `Raid: lo stesso Boss due volte non paga: ${JSON.stringify(r.raidStessoBoss)}`);
+            t.assert(r.raidStessoBoss.crediti === 0 && r.raidStessoBoss.note.some((n) => /(Boss|Campion[ei]) divers[oi]/.test(n)), `Raid: lo stesso Boss due volte non paga: ${JSON.stringify(r.raidStessoBoss)}`);
             t.assert(r.raidPoco.crediti === 0 && r.raidPoco.note.some((n) => /meno del 25%/.test(n)), `Raid: sotto il 25% della barra niente premio: ${JSON.stringify(r.raidPoco)}`);
             t.assert(r.raidPersaBene.crediti === 15 && r.raidPersaPoco.crediti === 0, `Raid perso: partecipazione solo con il 25%: ${r.raidPersaBene.crediti}/${r.raidPersaPoco.crediti}`);
             t.assert(r.raidAbbandono.crediti === 0, 'Raid abbandonato: niente');

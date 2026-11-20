@@ -18,36 +18,42 @@ module.exports = {
         page.on('pageerror', (e) => errori.push(e.message));
         try {
             await page.goto(url('admin.html'));
-            const row = () => page.locator('#adminUsersList .admin-row').filter({ hasText: 'giocatore@prova.it' });
+            const row = () => page.locator('#adminUsersList .admin-user-card').filter({ hasText: 'giocatore@prova.it' });
             await row().getByRole('button', { name: 'Sospendi', exact: true }).waitFor();
+            // Le schede degli account si aprono con .admin-user-toggle: note e contenuti stanno nel riquadro aperto.
+            const espandi = async () => {
+                if (!(await row().evaluate((e) => e.classList.contains('is-expanded')))) await row().locator('.admin-user-toggle').click();
+            };
             const nota = 'Contattato per assistenza <nessun markup>.';
+            await espandi();
             await row().locator('textarea').fill(nota);
             await row().getByRole('button', { name: 'Sospendi', exact: true }).click();
             await row().getByRole('button', { name: 'Riattiva', exact: true }).waitFor();
             assert(cloud.profili[1].status === 'suspended', 'Sospensione persistita nel cloud');
             assert(await row().locator('textarea').inputValue() === nota, 'Cambio stato conserva la bozza delle note');
+            await espandi();
             await row().getByRole('button', { name: 'Salva note', exact: true }).click();
             await page.waitForFunction(() => document.getElementById('adminGlobalStatus').textContent.includes('Note salvate'));
             await page.reload();
-            await row().locator('textarea').waitFor();
+            await row().locator('.admin-user-toggle').waitFor(); await espandi(); await row().locator('textarea').waitFor();
             assert(await row().locator('textarea').inputValue() === nota, 'Note ritrovate dopo ricaricamento');
             await row().getByRole('button', { name: 'Riattiva', exact: true }).click();
             await row().getByRole('button', { name: 'Sospendi', exact: true }).waitFor();
             assert(cloud.profili[1].status === 'approved', 'Riattivazione persistita');
-            const admin = page.locator('#adminUsersList .admin-row').filter({ hasText: 'admin@prova.it' });
+            const admin = page.locator('#adminUsersList .admin-user-card').filter({ hasText: 'admin@prova.it' });
             assert(await admin.getByRole('button', { name: 'Sospendi', exact: true }).count() === 0, 'Admin protetto da sospensione accidentale');
 
             const lettureNote = () => cloud.richieste.filter((r) => r === 'admin_profile_notes:select').length;
             const prima = lettureNote();
-            await page.getByRole('link', { name: 'Impostazioni admin', exact: true }).click();
+            await page.locator('[data-admin-home]').click(); await page.getByRole('link', { name: 'Impostazioni admin', exact: true }).click();
             await page.locator('#autowinToggle').waitFor({ state: 'visible' });
             assert(!await page.locator('#adminUsersList').isVisible(), 'Impostazioni separate dalle utenze');
             assert(lettureNote() === prima, 'Impostazioni non caricano elenco utenti e note');
             const autowinPrima = await page.evaluate(() => StoryAutowin.acceso());
             await page.locator('#autowinToggle').click();
             assert(await page.evaluate(() => StoryAutowin.acceso()) !== autowinPrima, 'Autowin funziona nelle impostazioni admin');
-            await page.getByRole('link', { name: 'Gestione utenti', exact: true }).click();
-            await row().locator('textarea').waitFor();
+            await page.locator('[data-admin-home]').click(); await page.getByRole('link', { name: 'Gestione utenti', exact: true }).click();
+            await row().locator('.admin-user-toggle').waitFor(); await espandi(); await row().locator('textarea').waitFor();
             assert(!await page.locator('#autowinToggle').isVisible(), 'Gestione utenti senza strumenti di collaudo');
             assert(await row().locator('textarea').inputValue() === nota, 'Note conservate passando tra i due menu');
             await row().locator('[data-content-pack="ww1"]').check();
