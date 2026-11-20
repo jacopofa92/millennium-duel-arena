@@ -137,6 +137,23 @@ indietro**, e pochi bug veri. Per non ripeterlo:
   un Set coperto non ne apre la finestra (ora `onOpponentSet`). Lezione:
   `findTriggerCandidates` filtra OGNI candidata con `def.canActivate`: una
   carta con due metà (attacco ed effetto) deve riconoscere entrambi i contesti.
+- **Una carta «morta» si riconosce dal testo contro il codice**: un hook
+  che nessuna finestra apre (Ombra degli Occhi aspettava un'Evocazione, ma un
+  Set non la apre), un `canActivate` che non conta le carte Set (Spolverino
+  dell'Arpia, Ritorno Totale, Attacco Magico Oscuro: «tutte le Magie/Trappole»
+  includono quelle coperte, serve `includiCoperte: true`), una Trappola
+  Continua senza `activate` che nulla può girare (Oppressione Reale da Set),
+  un nome rimasto nel testo di un'altra carta dopo una rinomina. Ancora
+  morta, da decidere: **Eruzione Vulcanica (817)**, un'azione di End Phase di
+  una Trappola Normale Set che `firePhaseTrigger` (solo carte scoperte) non fa
+  mai scattare.
+- **Chi chiede l'attesa deve poterla chiudere su OGNI strada**
+  (`attendiScelta`): `chooseFieldCardTarget` può rifiutare in silenzio (il bot
+  non distrugge una sua carta) e allora senza `onNessunaScelta` la Catena resta
+  «in risoluzione» per sempre. Uno stallo si cerca con
+  `node tools/duello-senza-testa.js --avversario X --livello hard --partite 12
+  --seme S` (ora stampa Catena, decisioni in sospeso, retrocampo e mani) e,
+  con `--traccia`, ogni decisione e risposta del bot.
 - **Impatto delle Evocazioni 7+**: blocco `IMPATTO_EPICO` in `js/ui/effects.js`
   (sollevamento, caduta senza rimbalzo, onda sulle carte dei due lati);
   la descrizione è in `PROJECT_MAP.md`. Spec `impatto-evocazione-epica`.

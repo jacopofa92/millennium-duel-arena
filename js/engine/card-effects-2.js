@@ -1057,11 +1057,13 @@
     // non solo a distruzione/bando.
     // ================================================================
     CardEffects.register(262, {
+        // «TUTTE le Magie/Trappole sul Terreno»: anche quelle Set. Senza includiCoperte la carta non si poteva attivare con
+        // solo carte coperte in campo e, attivata, lasciava dov'erano proprio le Trappole Set (il caso tipico).
         canActivate(ctx) {
-            return collectFieldTargets(ctx, { zone: 'st', owner: 'both' }).length > 0;
+            return collectFieldTargets(ctx, { zone: 'st', owner: 'both', includiCoperte: true }).length > 0;
         },
         activate(ctx) {
-            const targets = collectFieldTargets(ctx, { zone: 'st', owner: 'both' });
+            const targets = collectFieldTargets(ctx, { zone: 'st', owner: 'both', includiCoperte: true });
             const count = targets.reduce((total, target) => total + (returnFieldTargetToHand(ctx, target) ? 1 : 0), 0);
             ctx.log(`🌪️ Ritorno Totale fa tornare in mano ${count} cart${count === 1 ? 'a' : 'e'} Magia/Trappola!`);
         }
@@ -1239,8 +1241,10 @@
     // Distrugge tutte le Magie/Trappole controllate dall'avversario.
     // ================================================================
     CardEffects.register(291, {
+        // includiCoperte come in activate: l'avversario ha di solito SOLO Magie/Trappole Set, ed e' proprio il motivo per cui
+        // si gioca questa carta. Senza, non risultava attivabile in quel caso.
         canActivate(ctx) {
-            return collectFieldTargets(ctx, { zone: 'st', owner: 'opponent' }).length > 0;
+            return collectFieldTargets(ctx, { zone: 'st', owner: 'opponent', includiCoperte: true }).length > 0;
         },
         activate(ctx) {
             const resolve = () => {

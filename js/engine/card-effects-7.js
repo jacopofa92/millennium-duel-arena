@@ -2464,7 +2464,9 @@
             chooseFieldCardTarget(ctx, candidati, {
                 title: '⚔️ Nobiluomo dello Sterminio',
                 text: 'Scegli la Magia o Trappola coperta da distruggere e bandire.',
-                onCancel: () => fine()
+                onCancel: () => fine(),
+                // Se restano solo carte PROPRIE il bot non sceglie nulla: l'attesa della Catena si chiude lo stesso.
+                onNessunaScelta: () => fine()
             }, (scelto) => {
                 try {
                     const field = scelto.fieldZone === 'monster' ? ctx.field(scelto.owner) : ctx.stField(scelto.owner);
@@ -2507,6 +2509,11 @@
         usableByEitherPlayer: true,
         canRespondToSpecialSummonAttempt(ctx) {
             return ctx.summonedVia === 'special' && !!ctx.summonedCard && Tavolo.lp(ctx.owner) > 800;
+        },
+        // Il testo dice «pagare 800 Life Points», che la regola generale del bot («Paga N Life Points») non riconosce: senza
+        // questo veto avrebbe potuto scendere a 1 LP per negare un mostro qualunque. Stessa soglia degli altri costi in LP.
+        aiCanActivate(ctx) {
+            return Tavolo.lp(ctx.owner) - 800 >= 2000;
         },
         onSpecialSummonAttempt(ctx) {
             if (ctx.summonedVia !== 'special' || Tavolo.lp(ctx.owner) <= 800) return;

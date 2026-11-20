@@ -84,6 +84,25 @@ EventiDuello.ascolta('fine-duello', (esito) => { if (__esitoDuello === null) __e
 });
 `;
 
+/**
+ * --traccia: scrive nel registro ogni richiesta di decisione e ogni risposta del bot in Catena, per inseguire uno stallo
+ * ("Catena aperta per sempre"). Va installata DOPO il caricamento di tutti gli script: Decisioni e BotAI non esistono ancora
+ * quando parte ASCOLTO.
+ */
+const TRACCIA = `
+(function () {
+    const chiediOrig = Decisioni.chiedi;
+    Decisioni.chiedi = function (richiesta, onDeciso) {
+        __logDuello.push('[traccia] decisione ' + richiesta.tipo + ' chi=' + richiesta.chi + ' candidati=' + ((richiesta.candidati || []).length) + ' titolo=' + (richiesta.titolo || ''));
+        return chiediOrig.call(this, richiesta, function (scelta) { __logDuello.push('[traccia] -> risposta ' + (scelta === null || scelta === undefined ? 'nessuna' : 'data')); return onDeciso(scelta); });
+    };
+    if (typeof BotAI !== 'undefined') {
+        const orig = BotAI.chooseChainResponse;
+        BotAI.chooseChainResponse = function (c, io) { const r = orig.apply(this, arguments); __logDuello.push('[traccia] bot (' + io + ') offerte=' + c.map((x) => x.card.id + ' ' + x.card.name).join(',') + ' scelta=' + (r ? r.card.name : 'passa')); return r; };
+    }
+})();
+`;
+
 function argomenti() {
     const a = process.argv.slice(2);
     const val = (k, d) => { const i = a.indexOf('--' + k); return i >= 0 && a[i + 1] ? a[i + 1] : d; };
@@ -209,6 +228,7 @@ function creaContesto(opz) {
         // Subito dopo il canale, prima di chiunque emetta.
         if (f === 'js/engine/eventi-duello.js') vm.runInContext(ASCOLTO, contesto, { filename: 'ascolto.js' });
     });
+    if (process.argv.includes('--traccia')) vm.runInContext(TRACCIA, contesto, { filename: 'traccia.js' });
     return { contesto, orologio, erroriCarte };
 }
 
@@ -418,6 +438,20 @@ async function giocaPartita(opz, n) {
         fasi: gameState.phase, chi: gameState.currentPlayer, log: __logDuello.slice(-12),
         eventi: Object.assign({}, __eventi),
         catena: DuelEngine.isChainActive(), finestra: DuelEngine.isPriorityWindowOpen && DuelEngine.isPriorityWindowOpen(),
+        // Per uno stallo: cosa c'e' dentro la Catena e se una decisione aspetta una risposta che nessuno dara'.
+        dettaglioCatena: (function () {
+            const c = gameState.chain;
+            if (!c) return null;
+            return { attiva: !!c.active, inRisoluzione: !!c.resolving, link: (c.links || []).map((l) => (l.card ? l.card.name : '?') + '/' + l.owner + '/' + (l.handlerName || 'manuale')) };
+        })(),
+        decisioneInSospeso: (window.Decisioni && Decisioni.inSospeso) ? Decisioni.inSospeso() : null,
+        // Chi potrebbe rispondere: Magie/Trappole (c = coperta) e mani di entrambi i lati.
+        retrocampo: {
+            giocatore: gameState.playerSTField.map((s) => s && (s.card.id + ' ' + s.card.name + (s.isFaceDown ? ' (c)' : ''))),
+            bot: gameState.botSTField.map((s) => s && (s.card.id + ' ' + s.card.name + (s.isFaceDown ? ' (c)' : ''))),
+            manoGiocatore: gameState.playerHand.map((c) => c.id + ' ' + c.name),
+            manoBot: gameState.botHand.map((c) => c.id + ' ' + c.name)
+        },
         campoG: gameState.playerMonsterField.map((s) => s && (s.card.name + (s.hasAttacked ? '*' : ''))),
         campoB: gameState.botMonsterField.map((s) => s && s.card.name),
         deckBotIniziale: __deckBotIniziale,
@@ -481,7 +515,9 @@ async function main() {
         if ((r.esito === null || r.esito === undefined) && !r.alLimite) {
             ok = false;
             console.log(`  fermo in fase ${r.fasi}, di turno ${r.chi}; catena ${r.catena}, finestra ${r.finestra}`);
+            console.log(`  catena in dettaglio: ${JSON.stringify(r.dettaglioCatena)}; decisione in sospeso: ${JSON.stringify(r.decisioneInSospeso)}`);
             console.log(`  campo giocatore ${JSON.stringify(r.campoG)} / avversario ${JSON.stringify(r.campoB)}`);
+            console.log(`  retrocampo e mani: ${JSON.stringify(r.retrocampo)}`);
             console.log(`  Ultime righe del log:\n    ${r.log.join('\n    ')}`);
         }
         if (opz.superficie) {

@@ -2042,8 +2042,12 @@
                 // qui permetterebbe di annullarne illegalmente il risultato
                 // dopo averne pagato i costi. La risposta all'attivazione
                 // dell'effetto evocante richiede un checkpoint separato.
+                // Oppressione Reale (882) puo' rispondere SCOPERTA (di chiunque, la usano entrambi) oppure da SET, ma solo a
+                // chi la controlla: una copia coperta dell'avversario di chi Evoca e' sua da attivare, quella di chi Evoca no.
+                // Prima serviva per forza una copia scoperta, e nulla poteva girarla (non ha `activate`): da Set era
+                // una carta morta, per la persona e per il bot.
                 const haOppressione = !sourceCard && Tavolo.ordine().some((lato) =>
-                    stFieldOf(lato).some((s) => s && !s.isFaceDown && s.card.id === 882));
+                    stFieldOf(lato).some((s) => s && s.card.id === 882 && (!s.isFaceDown || lato === opponentOf(owner))));
                 if (haOppressione) openTriggerWindow('onSpecialSummonAttempt', tentativo, completaEvocazione);
                 else completaEvocazione();
             };

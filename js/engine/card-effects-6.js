@@ -551,14 +551,15 @@
         canActivate(ctx) {
             const hasDarkMagician = ctx.field(ctx.owner).some((s) => s && !s.isFaceDown && s.card.id === 2);
             if (!hasDarkMagician) return false;
-            return collectFieldTargets(ctx, { zone: 'st', owner: 'opponent' }).length > 0;
+            // «tutte le Magie/Trappole»: anche quelle Set (come Piumino/Spolverino delle Arpie, id 291).
+            return collectFieldTargets(ctx, { zone: 'st', owner: 'opponent', includiCoperte: true }).length > 0;
         },
         activate(ctx) {
             // batchToken condiviso, stesso motivo di Piumino delle Arpie
             // (id 291) qui sopra — vedi il commento su destroySpellTrap in
             // duel-engine.js.
             const batchToken = {};
-            const count = collectFieldTargets(ctx, { zone: 'st', owner: 'opponent' })
+            const count = collectFieldTargets(ctx, { zone: 'st', owner: 'opponent', includiCoperte: true })
                 .reduce((total, target) => total + (destroyFieldTarget(ctx, target, batchToken) ? 1 : 0), 0);
             ctx.log(`🧙 Attacco Mago Nero distrugge ${count} Magia/Trappola dell'avversario!`);
         }

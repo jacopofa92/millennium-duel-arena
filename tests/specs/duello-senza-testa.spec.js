@@ -71,20 +71,45 @@ module.exports = {
             && deckEasy.deckBotIniziale !== deckHard.deckBotIniziale,
         'Il duello senza testa deve poter cambiare il deck avversario senza cambiare il livello della sua IA');
 
-        // Il bersaglio di un attacco che lascia il campo prima del calcolo
-        // dei danni (battaglia.js, resolveAttack): prima resolveBattleDamage
-        // leggeva la sua casella vuota ed esplodeva ("Cannot read properties
-        // of null (reading 'card')", l'errore raro del test del bot). Questa
-        // partita passa da lì: deve arrivare in fondo e averlo attraversato.
-        // Il bilanciamento dei mazzi/IA può cambiare quali semi attraversano
-        // il caso. Il 235 è la riproduzione corrente verificata sul roster
-        // attuale (2026-10-21: il 235 con Pegasus/Joey non lo attraversava più,
-        // trovato Bandit Keith/Mai col seme 8); l'asserzione `trovate` impedisce
-        // che il test passi se in futuro il percorso non viene più esercitato.
-        // 2026-11-09: il seme 8 non attraversava piu' il caso (mazzi e IA cambiati, lo stesso era successo al 235); cercato di nuovo
-        // sulle coppie del roster, Bandit Keith/Mai a Normale lo attraversa col seme 37.
-        const bersaglioSparito = await giocaPartita({ avversario: 'bandit_keith', giocatore: 'mai', livello: 'medium', seme: 37, turni: 60, cerca: 'non è più sul Terreno' }, 0);
-        assert(bersaglioSparito.trovate >= 1 && bersaglioSparito.esito !== null && !bersaglioSparito.erroriCarte.length,
-            `La partita col bersaglio sparito prima del calcolo dei danni deve attraversare il caso e finire: ${JSON.stringify({ trovate: bersaglioSparito.trovate, esito: bersaglioSparito.esito })}`);
-    }
+        // Il bersaglio di un attacco che lascia il campo prima del calcolo dei danni (battaglia.js, resolveAttack): prima
+        // resolveBattleDamage leggeva la sua casella vuota ed esplodeva ("Cannot read properties of null (reading 'card')", l'errore
+        // raro del test del bot). Dal 2026-11-20 la situazione e' COSTRUITA A MANO: una Trappola di prova del bot distrugge il
+        // proprio mostro attaccato in risposta all'attacco. Prima la si cercava in una partita a seme fisso, e ogni ritocco ai
+        // mazzi o all'IA (anche una correzione di una carta) poteva far smettere di attraversarla: lo si era dovuto ricercare
+        // due volte (2026-10-21, 2026-11-09).
+        const vm = require('vm');
+        const { creaContesto } = require(path.join(__dirname, '..', '..', 'tools', 'duello-senza-testa.js'));
+        const { contesto, orologio, erroriCarte } = creaContesto({ avversario: 'kaiba', livello: 'hard', seme: 21 });
+        const esegui = (c) => vm.runInContext(c, contesto);
+        esegui('resetGameState(); Tavolo.imposta({ player: "ia", bot: "ia" }); gameState.livelloIA = { player: "hard", bot: "hard" };');
+        esegui(`(function () {
+            const vuoto = () => [null, null, null, null, null];
+            const base = cardDatabase.find((c) => c.type === 'monster' && !c.extraDeck && !DuelEngine.getDefinition(c.id) && c.level === 4);
+            const m = (uid, atk) => ({ card: Object.assign({}, base, { uid, attack: atk, defense: 1000 }), position: 'attack', isFaceDown: false, hasAttacked: false, canChangePosition: true, summonedOnTurn: 0 });
+            // Trappola di prova: in risposta a un attacco distrugge il mostro attaccato (il bersaglio sparisce prima del calcolo).
+            cardDatabase.push({ id: 99100, name: 'Trappola di prova (toglie il bersaglio)', type: 'trap', subtype: 'normal', effect: 'Prova.', attribute: '', race: '', level: 0, attack: 0, defense: 0, origin: 'yu-gi-oh' });
+            CardEffects.register(99100, {
+                canActivate(ctx) { return typeof ctx.targetIndex === 'number' && ctx.targetIndex !== -1; },
+                onAttackDeclare(ctx) { ctx.destroyMonster(ctx.owner, ctx.targetIndex); ctx.log('Trappola di prova: il mostro attaccato lascia il campo.'); }
+            });
+            gameState.turn = 6; gameState.currentPlayer = 'player'; gameState.phase = 'battle';
+            gameState.playerLP = 8000; gameState.botLP = 8000;
+            gameState.playerMonsterField = vuoto(); gameState.botMonsterField = vuoto(); gameState.playerSTField = vuoto(); gameState.botSTField = vuoto();
+            gameState.playerMonsterField[0] = m('ATT', 2400);
+            gameState.botMonsterField[0] = m('BER', 1000);
+            gameState.botSTField[0] = { card: Object.assign({}, cardDatabase.find((c) => c.id === 99100), { uid: 'TRAPPOLA' }), isFaceDown: true, setOnTurn: 1 };
+            DuelEngine.recomputeStaticEffects();
+        })()`);
+        esegui('__logDuello.length = 0;');
+        esegui("Comandi.esegui('player', { tipo: 'attacca', attaccante: 0, bersaglio: 0 })");
+        const respiro = () => new Promise((r) => setImmediate(r));
+        for (let giri = 0, vuoti = 0; giri < 1500 && vuoti < 4; giri++) {
+            await respiro();
+            if (orologio.inCoda > 0) { orologio.passo(); vuoti = 0; } else if (esegui('DuelEngine.isChainActive()')) vuoti = 0; else vuoti++;
+        }
+        const logSparito = esegui('__logDuello.slice()').join(' | ');
+        assert(/Il bersaglio non è più sul Terreno/.test(logSparito),
+            `L'attacco con il bersaglio sparito deve attraversare il caso e fermarsi senza errori (log: ${logSparito})`);
+        assert(!erroriCarte.length && !esegui('DuelEngine.isChainActive()') && esegui('gameState.playerMonsterField[0] && gameState.playerMonsterField[0].hasAttacked === true'),
+            `Nessun errore di carta, Catena chiusa e l'attaccante segnato come "ha attaccato" (errori: ${erroriCarte.join(' | ')})`);    }
 };

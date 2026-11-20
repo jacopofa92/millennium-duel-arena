@@ -971,6 +971,11 @@
         if (ctx && ctx.card && !Decisioni.rispondeUnaPersona(ctx.owner)
             && /\bdistrugg/i.test(ctx.card.effect || '') && !/che controlli/i.test(ctx.card.effect || '')
             && candidates.every((c) => c.zone === 'st') && !candidates.some((c) => c.owner !== ctx.owner)) {
+            // «Nessuna scelta»: chi aspetta (attendiScelta) DEVE essere liberato, o la Catena resta «in risoluzione» per sempre.
+            // Non si usa onCancel: parecchi chiamanti lo usano per RIAPRIRE la lista (e qui ricomincerebbero all'infinito).
+            // Trovato da un duello senza testa (pegasus/hard seme 1311): Nobiluomo dello Sterminio con un'unica Trappola Set
+            // e quella del bot appena girata in risposta lasciava la Catena aperta e il duello fermo.
+            if (options && typeof options.onNessunaScelta === 'function') options.onNessunaScelta();
             return false;
         }
         // `options.dichiara`: il bersaglio scelto passa dal checkpoint di
@@ -1068,6 +1073,8 @@
         const negatoOriginale = options && options.onNegato;
         const apri = () => chooseFieldCardTarget(ctx, candidati, Object.assign({}, options, {
             onCancel: apri,
+            // Il bot rifiuta (non distrugge una sua carta): l'attesa va chiusa, non resta appesa (vedi chooseFieldCardTarget).
+            onNessunaScelta: fine,
             onNegato: () => { try { if (typeof negatoOriginale === 'function') negatoOriginale(); } finally { fine(); } }
         }), (scelto) => {
             try { onChosen(scelto); } finally { fine(); }
@@ -1120,6 +1127,8 @@
                     dichiara: passo.dichiara !== false,
                     totalTargetCount: totale,
                     onNegato: prossimo,
+                    // Il bot rifiuta questo passo: si passa oltre invece di fermare la sequenza (e chi la aspetta).
+                    onNessunaScelta: prossimo,
                     onCancel: apri
                 }, (scelto) => { finali.push(scelto); prossimo(); });
                 apri();

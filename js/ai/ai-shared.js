@@ -308,7 +308,10 @@
     // trattenuto in attesa di un bersaglio "che valga abbastanza", colpisce
     // comunque tutto ciò che c'è.
     const REMOVAL_KEYWORD = /distrugg|bandisc|prende il controllo|controllo del/i;
-    const MASS_EFFECT_KEYWORD = /tutti i mostri|ogni mostro|tutte le carte/i;
+    // «tutte le Magie e Trappole» / «tutte le Magie/Trappole» (Spolverino dell'Arpia, Attacco Magico Oscuro, Ali di Grifone) e'
+    // un effetto di massa come gli altri: prima non lo riconosceva, e il bot lo trattava da «rimozione di UN mostro»,
+    // trattenendolo finche' il nemico non avesse un mostro forte, o scartandolo in risposta (Ali di Grifone).
+    const MASS_EFFECT_KEYWORD = /tutti i mostri|ogni mostro|tutte le carte|tutte le Magie|tutte le Trappole/i;
 
     /** Vero se `card` è una Magia/Trappola che rimuove UN mostro bersaglio (non un effetto di massa) — usata per decidere se vale la pena trattenerla per un bersaglio migliore invece di sprecarla subito. */
     /** @param {Card | null | undefined} card @returns {boolean} */
