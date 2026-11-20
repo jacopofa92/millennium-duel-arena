@@ -378,7 +378,13 @@ function eseguiEvocazioneNormale(posto, c, extra) {
         if (isFaceDown) {
             if (window.DuelEngine && typeof DuelEngine.notifyNormalSet === 'function') DuelEngine.notifyNormalSet(card);
             updateUI();
-            fine();
+            // Le carte che parlano proprio dei mostri Set (Ombra degli Occhi, id 438) hanno una finestra tutta loro: si apre
+            // solo se l'avversario ne ha una, quindi un normale Set non cambia (vedi DuelEngine.openSetResponseWindow).
+            if (window.DuelEngine && typeof DuelEngine.openSetResponseWindow === 'function') {
+                DuelEngine.openSetResponseWindow(posto, card, slotIndex, () => { updateUI(); fine(); });
+            } else {
+                fine();
+            }
             return;
         }
 

@@ -125,6 +125,7 @@ module.exports = [
     "onGainLifePoints",
     "onOpponentEndPhase",
     "onOpponentNormalDraw",
+    "onOpponentSet",
     "onOpponentStandbyPhase",
     "onOpponentSummon",
     "onOwnAttackDeclare",

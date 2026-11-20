@@ -2569,7 +2569,9 @@
             const slot = ctx.field(ctx.opponent)[ctx.summonedSlotIndex];
             return !!slot && slot.isFaceDown;
         },
-        onOpponentSummon(ctx) {
+        // `onOpponentSet`, NON onOpponentSummon: un mostro Set coperto non apre la finestra delle Evocazioni (non va
+        // rivelato), quindi con quell'hook la carta non scattava mai. La finestra dedicata e' DuelEngine.openSetResponseWindow.
+        onOpponentSet(ctx) {
             const prima = ctx.field(ctx.opponent)[ctx.summonedSlotIndex];
             if (!prima || !prima.isFaceDown) return;
             // "Scegli come bersaglio 1 di quei mostri Set": checkpoint di

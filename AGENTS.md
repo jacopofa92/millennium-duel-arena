@@ -127,7 +127,16 @@ indietro**, e pochi bug veri. Per non ripeterlo:
   trattare come «rimozione a bersaglio» una carta che nega un'Evocazione
   (Oppressione Reale): il testo dice «distruggerli» ma non è una rimozione.
   `node tools/audit-attivazioni-ia.js --reattive --non-scattate` elenca le
-  Trappole che il bot non usa mai: guardare i `!!` è un buon lavoro aperto.
+  Trappole che il bot non usa mai e ora distingue `[OFFERTA e scartata dal
+  bot]` (veto dell'IA, di solito voluto) da `[mai offerta]` (il motore non la
+  propone: qui stanno i bug). Prima di leggere un elenco, controlla quali
+  carte stanno davvero in un mazzo di duellante (le altre contano meno).
+  Trovate così due carte morte: **Spostamento (622)**, il cui `canActivate`
+  guardava solo l'effetto di Magie/Trappole e non rispondeva mai a un
+  attacco, e **Ombra degli Occhi (438)**, che aspettava un'Evocazione mentre
+  un Set coperto non ne apre la finestra (ora `onOpponentSet`). Lezione:
+  `findTriggerCandidates` filtra OGNI candidata con `def.canActivate`: una
+  carta con due metà (attacco ed effetto) deve riconoscere entrambi i contesti.
 - **Impatto delle Evocazioni 7+**: blocco `IMPATTO_EPICO` in `js/ui/effects.js`
   (sollevamento, caduta senza rimbalzo, onda sulle carte dei due lati);
   la descrizione è in `PROJECT_MAP.md`. Spec `impatto-evocazione-epica`.

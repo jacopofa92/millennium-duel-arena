@@ -2971,10 +2971,19 @@
         },
         canActivate(ctx) {
             if (ctx.zone !== 'st') return false;
+            // Serve un ALTRO mostro del proprio campo verso cui ridirigere, in entrambe le meta'.
+            if (!ctx.field(ctx.owner).some((s, i) => s && i !== ctx.targetIndex)) return false;
+            // Meta' ATTACCO (onAttackDeclare): un mostro avversario ha preso di mira UN mostro mio (non un attacco diretto).
+            // findTriggerCandidates filtra ogni candidata con questo canActivate: se qui si guardasse solo l'effetto di una
+            // Magia/Trappola (sourceType), la meta' d'attacco non verrebbe MAI offerta, ne' a una persona ne' al bot
+            // (regressione della "correzione di fedelta'" che ha aggiunto la meta' dell'effetto).
+            if (typeof ctx.attackerIndex === 'number') {
+                return ctx.attackerOwner !== ctx.owner && typeof ctx.targetIndex === 'number' && ctx.targetIndex !== -1;
+            }
+            // Meta' EFFETTO (onCardEffectTargetDeclare): una Magia/Trappola dell'avversario ha UN solo bersaglio, un mio mostro.
             if (ctx.sourceType !== 'spell' && ctx.sourceType !== 'trap') return false;
             if (ctx.sourceOwner === ctx.owner) return false;
-            if (ctx.totalTargetCount !== 1) return false;
-            return ctx.field(ctx.owner).some((s, i) => s && i !== ctx.targetIndex);
+            return ctx.totalTargetCount === 1;
         },
         onCardEffectTargetDeclare(ctx) {
             const field = ctx.field(ctx.owner);

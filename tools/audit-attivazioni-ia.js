@@ -208,6 +208,7 @@ const SCENARI_REATTIVI = [
 async function passoReattive(PARTITE, ids, nomiCarte) {
     const risposte = [];
     const usate = []; // le Trappole che il bot ha davvero attivato in almeno uno scenario
+    const offerte = {}; // id -> scenari in cui la Trappola e' stata OFFERTA al bot come risposta (scelta o no)
     const respiro = () => new Promise((r) => setImmediate(r));
     async function gioca(vi, scenario, trapId) {
         const { esegui, orologio } = PARTITE[vi];
@@ -254,16 +255,22 @@ async function passoReattive(PARTITE, ids, nomiCarte) {
         })()`);
         const prima = esegui(FOTO);
         esegui('__logDuello.length = 0;'); // il registro e' della partita intera: si riparte da zero per ogni mossa
+        // La SPIA: cosa viene davvero offerto a chi risponde (BotAI.chooseChainResponse) e cosa sceglie. Il registro di testo
+        // non basta: la risposta data da una finestra di Evocazione la scrive la carta stessa, con parole sue.
+        esegui('window.__scelte = []; if (!BotAI.__spiato) { const orig = BotAI.chooseChainResponse; BotAI.chooseChainResponse = function (c, io) { const r = orig.apply(this, arguments); window.__scelte.push({ offerti: c.map((x) => x.card.id), scelto: r ? r.card.id : null }); return r; }; BotAI.__spiato = true; }');
         esegui(`Comandi.esegui('player', ${scenario.comando})`);
         for (let giri = 0, vuoti = 0; giri < 1500 && vuoti < 4; giri++) {
             await respiro();
             if (orologio.inCoda > 0) { orologio.passo(); vuoti = 0; } else if (esegui('DuelEngine.isChainActive()')) vuoti = 0; else vuoti++;
         }
         const dopo = esegui(FOTO);
-        const usata = esegui("__logDuello.some((r) => /Il bot ha attivato/.test(r))");
+        const scelte = esegui('window.__scelte.slice()');
+        // «usata» = il registro lo dice, oppure la carta e' stata davvero scelta dal bot; «offerta» = era fra le candidate.
+        const usata = esegui("__logDuello.some((r) => /Il bot ha attivato/.test(r))") || (trapId != null && scelte.some((s) => s.scelto === trapId));
+        const offerta = trapId != null && scelte.some((s) => s.offerti.includes(trapId));
         const valore = (f) => f.bot.reduce((s, m) => s + m.atk + 0.5 * m.def, 0) - f.gio.reduce((s, m) => s + m.atk + 0.5 * m.def, 0) + 0.5 * (f.botLP - f.gioLP);
         const registro = argv.includes('--log') ? esegui('__logDuello.slice()') : null;
-        return { punteggio: valore(dopo), usata, prima: valore(prima), registro, dopo };
+        return { punteggio: valore(dopo), usata, offerta, prima: valore(prima), registro, dopo };
     }
     for (const id of ids) {
         const peggiori = [];
@@ -273,6 +280,7 @@ async function passoReattive(PARTITE, ids, nomiCarte) {
                 let base, con;
                 try { base = await gioca(vi, scenario, null); con = await gioca(vi, scenario, id); } catch (e) { continue; }
                 if (con.usata) usataUnaVolta = true;
+                if (con.offerta) { (offerte[id] = offerte[id] || new Set()).add(scenario.nome); }
                 if (argv.includes('--log') && con.usata && con.punteggio < base.punteggio - 500) console.log(`--- #${id} ${scenario.nome} v${vi}\nBASE: ${(base.registro || []).join(' | ')}\nCON: ${(con.registro || []).join(' | ')}\n${JSON.stringify(base.dopo.bot.length)} vs ${JSON.stringify(con.dopo.bot.length)}`);
                 if (con.usata && con.punteggio < base.punteggio - 500) {
                     peggiori.push(`${scenario.nome} (${VARIANTI[vi].bot[0]}/${VARIANTI[vi].gio[0]}): senza la Trappola ${Math.round(base.punteggio)}, con la Trappola ${Math.round(con.punteggio)}`);
@@ -283,6 +291,7 @@ async function passoReattive(PARTITE, ids, nomiCarte) {
         if (usataUnaVolta) usate.push(id);
     }
     risposte.usate = usate;
+    risposte.offerte = offerte;
     return risposte;
 }
 
@@ -504,7 +513,12 @@ async function main() {
             console.log('Trappole che nessuno scenario ha fatto scattare:');
             const scoperte = trappole.filter((id) => !peggiori.usate.includes(id) && mai.includes(id));
             console.log(`(di cui NEMMENO il passo proattivo le ha mai viste attivarsi: ${scoperte.length})`);
-            trappole.filter((id) => !peggiori.usate.includes(id)).forEach((id) => { const c = nomi.get(id); console.log(`${mai.includes(id) ? '!!' : '  '} #${id} ${c.name} [${c.subtype || ''}] ${String(c.effect).slice(0, 150)}`); });
+            trappole.filter((id) => !peggiori.usate.includes(id)).forEach((id) => {
+                const c = nomi.get(id);
+                const off = peggiori.offerte[id];
+                // «offerta» = il motore l'ha proposta al bot come risposta in quegli scenari e il bot ha detto no: e' il caso da leggere.
+                console.log(`${mai.includes(id) ? '!!' : '  '} #${id} ${c.name} [${c.subtype || ''}] ${off ? '[OFFERTA e scartata dal bot in: ' + [...off].join(', ') + '] ' : '[mai offerta] '}${String(c.effect).slice(0, 110)}`);
+            });
         }
         // 276 Predatore delle Tombe: costa 2000 danni ma il bot (con piu' di 6000 LP e una Magia forte nel Cimitero del
         // giocatore) ci guadagna una Magia: il campo di prova non la rende utile, quindi sembra solo un costo.

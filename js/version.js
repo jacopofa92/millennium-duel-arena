@@ -32,6 +32,7 @@
  * in avanti si incrementa DAVVERO ad ogni sessione con cambiamenti
  * visibili, e l'elenco qui sotto tiene traccia di cosa c'è dentro.
  *
+ * 1.9.6 — Due carte che non potevano scattare, trovate dall'audit delle Trappole reattive: Spostamento/Cambio (622) non rispondeva MAI a un attacco (il suo canActivate guardava solo l'effetto di Magie/Trappole) e Ombra degli Occhi (438) non poteva mai scattare (un Set coperto non apre la finestra delle Evocazioni): ora ha una finestra dedicata, onOpponentSet, che si apre solo se l'avversario ha una carta che reagisce a un Set. Spec spostamento-ridirige-attacco e ombra-degli-occhi-risponde-al-set.
  * 1.9.5 — Multiplayer: la regola Duello a Specchio con 'Un mazzo a caso' non estrae piu' mazzi con carte che l'account non puo' usare (WW1, WW2, Extra): net.sendAction scartava in silenzio il room-config e l'ospite non riceveva mai le regole (circa 1 volta su 5). Test: passo comune a due client (la persona chiude il turno solo a scena finita), Raid (testo del premio), layout della sala (relay locale).
  * 1.9.4 — Impatto delle Evocazioni di Livello 7+ (normale, Tributo, Speciale, Rituale, Fusione, dopo il video): prima la carta si solleva dal Terreno (e la sua ombra si restringe), poi cade accelerando senza rimbalzi, e all'urto scattano il lampo della casella, le onde e il sobbalzo del Terreno; le altre carte di ENTRAMBI i lati (e le loro proiezioni olografiche) saltano e oscillano, piu' forte vicino all'urto e con l'onda che arriva dopo alle piu' lontane. La Fusione WebGL ora ha lo stesso impatto (prima aveva solo il lampo). Spec impatto-evocazione-epica; aggiornati video-evocazione-priorita e ologramma-dopo-scelta-picker.
  * 1.9.3 — Verifica dopo Codex: il bot attiva Oppressione Reale anche contro mostri sotto soglia (era classificata come rimozione a bersaglio); le Sfide "Risolvi tutti i puzzle" e "tutti a tre stelle" valgono 15 come i puzzle; fix di tipo in page-loader.js; test aggiornati (Dei Egizi, puzzle Tributo al Dannato, premi e HUD del Duello della Settimana, grido in APP_SHELL, pagina di prova con lo scheletro comune).
@@ -872,4 +873,4 @@
  *   torneo paga solo la propria valuta; niente più stiramento elastico
  *   a fine scroll su nessuna pagina.
  */
-window.GAME_VERSION = '1.9.5';
+window.GAME_VERSION = '1.9.6';

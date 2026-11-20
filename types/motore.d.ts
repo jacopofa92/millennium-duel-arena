@@ -314,6 +314,8 @@ interface CardDefinition {
     onDestroy?: Hook;
     onAttackDeclare?: Hook;
     onOwnAttackDeclare?: Hook;
+    /** Risposta a un mostro appena Set COPERTO dall'avversario (finestra dedicata: DuelEngine.openSetResponseWindow). */
+    onOpponentSet?: Hook;
     onStandbyPhase?: Hook;
     onEndPhase?: Hook;
     onDealsBattleDamage?: Hook;

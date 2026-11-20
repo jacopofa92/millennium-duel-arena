@@ -4762,6 +4762,27 @@
         openTriggerWindow('onOpponentNormalDraw', ctx, onDone);
     }
 
+    /**
+     * Finestra di risposta a un mostro appena Set COPERTO (Ombra degli Occhi, id 438: "quando 1 o piu' mostri vengono Set
+     * sul Terreno del tuo avversario: gira scoperto 1 di quei mostri in Posizione di Attacco").
+     *
+     * Un Set coperto non apre la finestra delle Evocazioni (onOpponentSummon): niente effetti "quando Evocato", niente
+     * Buco Trappola, perche' il mostro non va rivelato. Ma una carta che parla proprio dei mostri Set non poteva mai
+     * scattare (il suo vecchio hook era onOpponentSummon e il suo canActivate voleva un mostro coperto: due richieste
+     * che non si incontravano mai). Qui ha un hook suo, `onOpponentSet`.
+     *
+     * Si apre SOLO se l'avversario ha davvero una carta che reagisce a un Set: ogni altro Set resta com'era, senza attese
+     * (e quindi nemmeno un attimo in piu' di Catena aperta nel passo comune del Multiplayer).
+     */
+    function openSetResponseWindow(setterOwner, setCard, slotIndex, onDone) {
+        const finish = typeof onDone === 'function' ? onDone : function () {};
+        const ctx = makeContext(setterOwner, {
+            summonedCard: setCard, summonedSlotIndex: slotIndex, summonedPosition: 'defense', summonedVia: 'set'
+        });
+        if (findTriggerCandidates('onOpponentSet', ctx, ctx.opponent, new Set()).length === 0) { finish(); return; }
+        openTriggerWindow('onOpponentSet', ctx, finish);
+    }
+
     /** Cerca, sul campo Set di `owner`, le Trappole che si possono attivare ORA, escluse quelle già usate in questa finestra (`usedUids`). */
     function findSetTrapCandidates(owner, usedUids) {
         const results = [];
@@ -7044,6 +7065,7 @@
         canActivate: canActivate,
         activateCard: activateCard,
         openDrawResponseWindow: openDrawResponseWindow,
+        openSetResponseWindow: openSetResponseWindow,
         isChainActive: isChainActive,
         isSummonBannedThisTurn: isSummonBannedThisTurn,
         isFaceUpDuplicateBlocked: isFaceUpDuplicateBlocked,
