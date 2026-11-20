@@ -143,10 +143,14 @@ indietro**, e pochi bug veri. Per non ripeterlo:
   dell'Arpia, Ritorno Totale, Attacco Magico Oscuro: «tutte le Magie/Trappole»
   includono quelle coperte, serve `includiCoperte: true`), una Trappola
   Continua senza `activate` che nulla può girare (Oppressione Reale da Set),
-  un nome rimasto nel testo di un'altra carta dopo una rinomina. Ancora
-  morta, da decidere: **Eruzione Vulcanica (817)**, un'azione di End Phase di
-  una Trappola Normale Set che `firePhaseTrigger` (solo carte scoperte) non fa
-  mai scattare.
+  un nome rimasto nel testo di un'altra carta dopo una rinomina, una Trappola
+  Normale con un'azione di fase che `firePhaseTrigger` (solo carte scoperte) non
+  fa scattare da Set: **Eruzione Vulcanica (817)**, risolta con l'opt-in
+  `firesFromFaceDown` sulla definizione (+ `includiCoperte` per Uccello Tornado).
+  **Rete di sicurezza permanente (1.9.9)**: `tests/data/carte-mai-attivabili.json`
+  congela l'elenco `--mai`; lo spec `ia-attivazioni-sensate` fallisce se una carta
+  NUOVA ci compare (nessun campo di prova la rende attivabile = sospetta carta morta).
+  Dopo averla guardata, `node tools/audit-attivazioni-ia.js --mai --aggiorna-registro`.
 - **Chi chiede l'attesa deve poterla chiudere su OGNI strada**
   (`attendiScelta`): `chooseFieldCardTarget` può rifiutare in silenzio (il bot
   non distrugge una sua carta) e allora senza `onNessunaScelta` la Catena resta

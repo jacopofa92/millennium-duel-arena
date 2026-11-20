@@ -535,6 +535,14 @@ async function main() {
     if (argv.includes('--mai')) {
         console.log(`\nMai attivabili sui campi di prova (${mai.length}):`);
         mai.forEach((id) => { const c = nomi.get(id); console.log(`#${id} ${c.name} [${c.type}/${c.subtype || ''}] ${String(c.effect).slice(0, 110)}`); });
+        // Registro congelato: tests/specs/ia-attivazioni-sensate.spec.js fallisce se una carta NUOVA finisce in questo elenco
+        // (una carta morta nasce cosi': nessuno scenario la rende attivabile). Dopo aver guardato la carta, si rigenera con
+        // `node tools/audit-attivazioni-ia.js --mai --aggiorna-registro`.
+        if (argv.includes('--aggiorna-registro')) {
+            const file = require('path').join(__dirname, '..', 'tests', 'data', 'carte-mai-attivabili.json');
+            fs.writeFileSync(file, JSON.stringify({ nota: 'Carte che nessun campo di prova di tools/audit-attivazioni-ia.js rende attivabili (--mai). Rigenerare con --aggiorna-registro dopo aver verificato a mano la carta nuova.', ids: mai.slice().sort((a, b) => a - b) }, null, 1) + '\n');
+            console.log('Registro aggiornato: ' + file);
+        }
     }
     if (val('json')) fs.writeFileSync(val('json'), JSON.stringify(sospetti, null, 1));
 }

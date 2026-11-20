@@ -223,5 +223,20 @@ module.exports = {
         } catch (e) { uscita = String(e.stdout || '') + String(e.stderr || e.message); }
         assert(/Sospette: 0\b/.test(uscita), 'L\'audit delle attivazioni dell\'IA deve tornare zero carte sospette:\n' + uscita.split('\n').slice(0, 24).join('\n'));
         assert(!/ERRORE/.test(uscita), 'L\'audit non deve avere errori: ' + uscita.slice(0, 400));
+
+        // --- 5) Carte morte: una carta NUOVA che nessun campo di prova rende attivabile -----------------------
+        // Il registro congela l'elenco `--mai` di oggi (Trappole reattive e carte da scenari rari incluse: sono
+        // giudicate da --reattive/--mostri). Una carta che compare e non e' nel registro puo' essere una carta
+        // morta (senza `activate`, con un `canActivate` che non scatta mai, coperta e filtrata...): va guardata.
+        let mai = '';
+        try {
+            mai = execFileSync(process.execPath, [path.join(RADICE, 'tools', 'audit-attivazioni-ia.js'), '--mai'], { cwd: RADICE, encoding: 'utf8', timeout: 240000 });
+        } catch (e) { mai = String(e.stdout || '') + String(e.stderr || e.message); }
+        const registro = new Set(require('../data/carte-mai-attivabili.json').ids);
+        const nuove = mai.split('\n').filter((r) => /^#\d+ .*\[[a-z]+\/[^\]]*\]/.test(r))
+            .map((r) => ({ id: Number(r.match(/^#(\d+)/)[1]), riga: r.slice(0, 110) }))
+            .filter((c) => !registro.has(c.id));
+        assert(nuove.length === 0, 'Carte mai attivabili sui campi di prova e NON nel registro (carta morta?): guardarle una per una; se sono volute '
+            + '`node tools/audit-attivazioni-ia.js --mai --aggiorna-registro`.\n' + nuove.map((c) => c.riga).join('\n'));
     }
 };
