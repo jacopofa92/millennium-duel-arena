@@ -155,6 +155,22 @@
 
     const CONTENT_PACKS = ['ww1', 'ww2', 'extra'];
     const CONTENTS_ACTIVE_UID_KEY = 'ygoContentAccessActiveUid';
+
+    // `contenuti:aggiornati` RICARICA la pagina (content-access.js). Durante signIn() non deve succedere: l'accesso finisce con
+    // la registrazione del dispositivo attivo (claim_active_device_session) e un ricaricamento a meta' ne taglia la richiesta
+    // in volo. Il server allora non sa qual e' il dispositivo attivo e, al controllo dopo, tratta questa sessione come
+    // "sostituita": logout globale e "accesso da un altro dispositivo" senza che ce ne sia un altro (bug reale su APK dopo
+    // "cancella dati": la cache dei permessi e' vuota, quindi al primo accesso i contenuti risultano sempre cambiati).
+    // Se un cambio arriva mentre si accede, si ricorda e si lancia a registrazione finita.
+    let accessoInCorso = false;
+    let ricaricaContenutiInAttesa = false;
+    function segnalaContenutiAggiornati(userId) {
+        setTimeout(() => {
+            if (userId && !(cachedUser && cachedUser.id === userId)) return;
+            if (accessoInCorso) { ricaricaContenutiInAttesa = true; return; }
+            window.dispatchEvent(new Event('contenuti:aggiornati'));
+        }, 0);
+    }
     function cachedContents(userId) {
         try { return userId ? JSON.parse(localStorage.getItem('ygoContentAccess:' + userId) || '{}') : {}; }
         catch (e) { return {}; }
@@ -168,9 +184,7 @@
         CONTENT_PACKS.forEach((p) => { dopo[p] = profile['content_' + p]; });
         try { localStorage.setItem('ygoContentAccess:' + userId, JSON.stringify(dopo)); } catch (e) { /* cache indisponibile */ }
         if (CONTENT_PACKS.some((p) => !!(primaAdmin || prima[p]) !== !!(dopo.is_admin || dopo[p]))) {
-            setTimeout(() => {
-                if (cachedUser && cachedUser.id === userId) window.dispatchEvent(new Event('contenuti:aggiornati'));
-            }, 0);
+            segnalaContenutiAggiornati(userId);
         }
     }
 
@@ -208,7 +222,7 @@
             // reload a ogni cambio account non interferisce con il salvataggio.
             // Se differiscono, una pagina già disegnata potrebbe mostrare il
             // catalogo precedente; la ricarichiamo prima di usarlo.
-            if (cambiaCatalogo) setTimeout(() => window.dispatchEvent(new Event('contenuti:aggiornati')), 0);
+            if (cambiaCatalogo) segnalaContenutiAggiornati(null);
         }
         try { localStorage.setItem(CONTENTS_ACTIVE_UID_KEY, user.id); } catch (e) { /* noop */ }
     }
@@ -545,8 +559,7 @@
      * approvato da un admin o è stato rifiutato — stesso comportamento
      * del progetto Fioxify.
      */
-    function signIn(email, password) {
-        if (!available) return rejectUnavailable();
+    function accedi(email, password) {
         return client.auth.signInWithPassword({ email, password }).then(({ data, error }) => {
             if (error) throw error;
             return fetchProfile(data.user.id).then((profile) => {
@@ -586,6 +599,40 @@
                 });
             });
         });
+    }
+
+    /**
+     * L'accesso vero (vedi accedi()). Finche' dura, un ricaricamento per cambio contenuti e' rimandato (segnalaContenutiAggiornati):
+     * a registrazione del dispositivo finita parte, se serve. Se l'accesso fallisce non c'e' nessuna sessione da aggiornare.
+     */
+    function signIn(email, password) {
+        if (!available) return rejectUnavailable();
+        accessoInCorso = true;
+        return accedi(email, password).then((user) => {
+            // Il dispositivo e' registrato, ma l'accesso NON e' ancora concluso: chi ha chiamato signIn deve ancora caricare
+            // il salvataggio (index.html: afterGateSignIn). Un ricaricamento a meta' di quel caricamento lo interromperebbe,
+            // quindi si aspetta concludiAccesso(); il timer e' solo una rete di sicurezza per chi non la chiama.
+            setTimeout(concludiAccesso, 30000);
+            return user;
+        }, (errore) => {
+            accessoInCorso = false;
+            ricaricaContenutiInAttesa = false;
+            throw errore;
+        });
+    }
+
+    /**
+     * Chiude l'accesso aperto da signIn(): se durante l'accesso i contenuti dell'account sono cambiati, adesso la pagina puo'
+     * ricaricarsi con il catalogo giusto. Si chiama quando il chiamante ha finito di caricare i dati dell'account (anche se e'
+     * fallito); chiamarla piu' volte, o senza un accesso in corso, non fa niente.
+     */
+    function concludiAccesso() {
+        if (!accessoInCorso) return;
+        accessoInCorso = false;
+        if (ricaricaContenutiInAttesa) {
+            ricaricaContenutiInAttesa = false;
+            segnalaContenutiAggiornati(null);
+        }
     }
 
     let uscitaPerSessioneSostituita = false;
@@ -1759,6 +1806,7 @@
         getRememberedEmail: getRememberedEmail,
         signUp: signUp,
         signIn: signIn,
+        concludiAccesso: concludiAccesso,
         signOut: signOut,
         resetPassword: resetPassword,
         updatePassword: updatePassword,

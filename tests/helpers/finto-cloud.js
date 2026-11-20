@@ -79,7 +79,7 @@ function creaFintoCloud() {
         // dispositivo) e getSession risponde senza sessione finché non si
         // rifà signInWithPassword. Spento di default: gli spec nati prima
         // contano su una sessione che torna sempre.
-        await context.addInitScript(({ ricordaUscita, utentiProva }) => {
+        await context.addInitScript(({ ricordaUscita, utentiProva, ritardoRpc }) => {
             window.AUTH_GATE_SKIP = false;
             window.__fintoRicordaUscita = !!ricordaUscita;
             // Piu' account sullo stesso dispositivo: l'utente collegato e' quello scelto dall'ultimo signInWithPassword, ricordato
@@ -126,12 +126,16 @@ function creaFintoCloud() {
                             }
                         },
                         from: query,
-                        rpc: (nome) => window.__fintoCloud(JSON.stringify({ table: 'rpc', op: nome, filters: {}, payload: null })).then((r) => JSON.parse(r))
+                        // `ritardoRpc` (ms): la latenza di rete di una chiamata a funzione. Il ritardo sta DENTRO la pagina: se la pagina viene
+                        // ricaricata nel frattempo la chiamata non arriva mai al "server", come una richiesta vera interrotta dal ricaricamento.
+                        rpc: (nome) => new Promise((ok) => setTimeout(ok, ritardoRpc || 0))
+                            .then(() => window.__fintoCloud(JSON.stringify({ table: 'rpc', op: nome, filters: {}, payload: null })))
+                            .then((r) => JSON.parse(r))
                     };
                 }
             };
             Object.defineProperty(window, 'supabase', { configurable: false, get: () => finto, set: () => { /* la libreria vera non passa */ } });
-        }, { ricordaUscita: !!(opzioni && opzioni.ricordaUscita), utentiProva: (opzioni && opzioni.utenti) || null });
+        }, { ricordaUscita: !!(opzioni && opzioni.ricordaUscita), utentiProva: (opzioni && opzioni.utenti) || null, ritardoRpc: (opzioni && opzioni.ritardoRpc) || 0 });
     }
 
     return { cloud, collega };

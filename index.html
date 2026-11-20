@@ -1966,6 +1966,8 @@
                         // restituisce la propria catena.
                         .then(() => { setGateStatus('login', ''); return afterGateSignIn(); })
                         .catch((e) => { setGateStatus('login', `⚠️ ${e.message}`, 'error'); })
+                        // Salvataggio caricato (o fallito): ora un eventuale cambio di contenuti puo' ricaricare la pagina.
+                        .then(() => { if (CloudSync.concludiAccesso) CloudSync.concludiAccesso(); })
                         .then(() => { setGateButtonBusy(btn, false); });
                 };
 

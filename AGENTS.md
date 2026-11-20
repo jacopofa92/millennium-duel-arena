@@ -151,6 +151,17 @@ indietro**, e pochi bug veri. Per non ripeterlo:
   congela l'elenco `--mai`; lo spec `ia-attivazioni-sensate` fallisce se una carta
   NUOVA ci compare (nessun campo di prova la rende attivabile = sospetta carta morta).
   Dopo averla guardata, `node tools/audit-attivazioni-ia.js --mai --aggiorna-registro`.
+- **Accesso e registrazione del dispositivo (1.9.10)**: «accesso da un altro dispositivo» senza un altro dispositivo
+  era un ricaricamento di pagina che tagliava `claim_active_device_session` ancora in volo. Dopo «cancella dati» la
+  cache dei permessi (`ygoContentAccess:<uid>`) e' vuota, quindi al primo accesso i contenuti risultano cambiati,
+  `rememberContents` lancia `contenuti:aggiornati` e `content-access.js` ricarica. Ora `signIn` tiene l'evento fermo
+  (`accessoInCorso`, `segnalaContenutiAggiornati`) finche' il chiamante non chiama `CloudSync.concludiAccesso()`, cioe'
+  a salvataggio caricato (index.html, dopo `afterGateSignIn`); un timer di 30 s e' solo la rete di sicurezza. Come
+  l'abbiamo visto: i log di Supabase
+  (`query_logs`, sorgenti `auth_audit_logs` e `edge_logs`) mostravano login e logout dallo STESSO telefono a un
+  minuto di distanza e un `OPTIONS claim_active_device_session` senza il `POST` che lo segue. Lezione: **un
+  ricaricamento di pagina non deve mai partire dentro un flusso asincrono che deve ancora scrivere sul server**; chi
+  ricarica (`location.reload`) va cercato quando una richiesta ha il preflight ma non il corpo.
 - **Chi chiede l'attesa deve poterla chiudere su OGNI strada**
   (`attendiScelta`): `chooseFieldCardTarget` può rifiutare in silenzio (il bot
   non distrugge una sua carta) e allora senza `onNessunaScelta` la Catena resta
