@@ -637,8 +637,10 @@
     // avversario poi dal proprio.
     CardEffects.register(1032, {
         onFlip(ctx) {
-            const candidates = collectFieldTargets(ctx, { zone: 'st', owner: 'opponent' })
-                .concat(collectFieldTargets(ctx, { zone: 'st', owner: 'self' })).slice(0, 2);
+            // includiCoperte: il testo dice "Magie/Trappole sul Terreno", non "scoperte"; senza, le Trappole Set
+            // dell'avversario (il bersaglio piu' utile) restavano escluse in silenzio.
+            const candidates = collectFieldTargets(ctx, { zone: 'st', owner: 'opponent', includiCoperte: true })
+                .concat(collectFieldTargets(ctx, { zone: 'st', owner: 'self', includiCoperte: true })).slice(0, 2);
             const count = candidates.reduce((total, target) => total + (returnFieldTargetToHand(ctx, target) ? 1 : 0), 0);
             ctx.log(`🌪️ Uccello Tornado fa tornare in mano ${count} cart${count === 1 ? 'a' : 'e'} Magia/Trappola!`);
         }

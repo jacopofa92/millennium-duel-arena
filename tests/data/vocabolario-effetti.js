@@ -126,6 +126,7 @@ module.exports = [
     "onOpponentEndPhase",
     "onOpponentNormalDraw",
     "onOpponentSet",
+    "firesFromFaceDown",
     "onOpponentStandbyPhase",
     "onOpponentSummon",
     "onOwnAttackDeclare",

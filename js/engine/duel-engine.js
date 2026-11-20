@@ -6205,8 +6205,12 @@
             }
         });
         stFieldOf(owner).forEach((slot, index) => {
-            if (!slot || slot.isFaceDown) return;
+            if (!slot) return;
             const def = getDefinition(slot.card.id);
+            // Una Trappola Normale che scatta da sola in una fase (Eruzione Vulcanica, 817) sta COPERTA: senza
+            // questo opt-in `firesFromFaceDown` il filtro "solo scoperte" la lasciava morta. L'handler decide se
+            // le condizioni ci sono, cosi' una carta coperta non si rivela per niente quando non scatta.
+            if (slot.isFaceDown && !(def && def.firesFromFaceDown)) return;
             if (def && typeof def[handlerName] === 'function') {
                 if (window.FX) FX.playAutomaticFieldActivation(slot.card);
                 safeCallCardHandler(slot.card, handlerName, () => def[handlerName](makeContext(owner, { card: slot.card, slot: slot, index: index, zone: 'st' })));

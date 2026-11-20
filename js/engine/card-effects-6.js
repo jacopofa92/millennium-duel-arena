@@ -2578,9 +2578,13 @@
     // (id 812): distruggi tutte le carte sul Terreno.
     // ================================================================
     CardEffects.register(817, {
+        // Trappola Normale: sta Set e scatta da sola nella End Phase del proprietario (scelta dell'autore: nessuna
+        // domanda al giocatore). Dal turno dopo la posa, come ogni Trappola; se manca Mondo Giurassico resta coperta.
+        firesFromFaceDown: true,
         onEndPhase(ctx) {
             const fieldSpell = Tavolo.magiaTerreno(ctx.owner);
             if (!fieldSpell || fieldSpell.isFaceDown || fieldSpell.card.id !== 812) return;
+            if (ctx.slot && ctx.slot.isFaceDown && ctx.slot.setOnTurn === gameState.turn) return;
             let count = 0;
             Tavolo.ordine().forEach((owner) => {
                 ctx.field(owner).forEach((slot, index) => {
