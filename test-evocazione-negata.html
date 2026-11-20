@@ -21,6 +21,10 @@
     button:focus-visible { outline: 3px solid #fff1bd; outline-offset: 3px; }
     .nota { margin: 16px 0 0; color: #a9a198; font-size: .82rem; text-align: center; }
 </style>
+<!-- Copertura d'avvio inline (stessa di ogni pagina col loader): la toglie page-loader.js; 15 s di rete di sicurezza. -->
+<style>html.avvio-in-corso::before{content:"";position:fixed;inset:0;z-index:2147483000;background:#0b0d14}</style>
+<script>(function(){var r=document.documentElement;r.classList.add("avvio-in-corso");setTimeout(function(){r.classList.remove("avvio-in-corso")},15000)})();</script>
+<link rel="stylesheet" href="js/ui/page-loader.css">
 <script src="js/ui/page-loader.js"></script>
 <script src="js/ui/error-recovery.js"></script>
 <script src="js/vendor/supabase.min.js"></script>
