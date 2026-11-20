@@ -318,6 +318,12 @@ interface CardDefinition {
     onOpponentSet?: Hook;
     onStandbyPhase?: Hook;
     onEndPhase?: Hook;
+    /** Trappola Normale che scatta da sola in una fase (onStandbyPhase/onEndPhase) stando COPERTA: senza questo opt-in
+     *  firePhaseTrigger salta le carte Set. L'handler decide se le condizioni ci sono (Eruzione Vulcanica, 817). */
+    firesFromFaceDown?: boolean;
+    /** Veto dell'IA: la carta e' attivabile ma al bot non conviene (costo o scelta che non sa valutare). Passa dal filtro
+     *  unico AI_SHARED.attivazioneSensata (mano, carte Set, risposte in Catena). Non cambia cio' che puo' fare il giocatore. */
+    aiCanActivate?: Condizione;
     onDealsBattleDamage?: Hook;
     onDestroysMonsterInBattle?: Hook;
     onSTDestroyed?: Hook;
