@@ -456,7 +456,7 @@
     /**
      * Le crepe nel Terreno dell'impatto epico, viste dall'alto: linee spezzate che partono dai bordi della carta e
      * corrono verso l'esterno (con qualche ramo), si aprono insieme all'onda e poi si richiudono sfumando.
-     * Due tracciati sovrapposti: uno scuro largo (la fessura) e uno chiaro sottile (la luce che ne esce).
+     * Nere, spesse vicino alla carta e sempre piu' sottili e trasparenti verso l'esterno.
      * Solo grafica: Math.random qui non tocca lo stato del duello.
      */
     let contatoreCrepe = 0;
@@ -471,37 +471,53 @@
         svg.setAttribute('aria-hidden', 'true');
         svg.style.left = `${x}px`;
         svg.style.top = `${y}px`;
-        const N = 9 + Math.floor(Math.random() * 4);
-        let d = '';
+        // Poche crepe (5-6). Ognuna e' fatta di tratti separati: spessi e scuri vicino alla carta, sottili e quasi
+        // trasparenti lontano (come una crepa vera che si assottiglia). Il tratto piu' lontano si apre piu' tardi.
+        const N = 5 + Math.floor(Math.random() * 2);
+        const tratti = [];
+        const aggiungi = (x0, y0, x1, y1, t, scala, ritardo) => tratti.push({
+            d: `M${x0.toFixed(1)} ${y0.toFixed(1)} L${x1.toFixed(1)} ${y1.toFixed(1)}`,
+            w: (0.7 + 3.9 * Math.pow(1 - t, 1.3)) * scala,
+            o: (0.12 + 0.78 * (1 - t)) * (scala < 1 ? 0.8 : 1),
+            ritardo
+        });
         for (let i = 0; i < N; i++) {
-            const a0 = (i / N) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+            const a0 = (i / N) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
             // Distanza dal centro al bordo del rettangolo carta lungo questo angolo: la crepa nasce da li'.
             const c = Math.abs(Math.cos(a0)) || 0.001, s = Math.abs(Math.sin(a0)) || 0.001;
             const r0 = Math.min(mezzaLarghezza / c, mezzaAltezza / s) * 0.98;
-            const fine = Math.max(r0 + 20, raggioMax * (0.5 + Math.random() * 0.5));
+            const fine = Math.max(r0 + 20, raggioMax * (0.55 + Math.random() * 0.45));
             // Molti passi con deviazioni piccole che si sommano (cammino casuale): una crepa, non un fulmine a zigzag.
             const passi = 9;
-            let a = a0;
-            let p = `M${(Math.cos(a) * r0).toFixed(1)} ${(Math.sin(a) * r0).toFixed(1)}`;
-            let rami = '';
+            let ang = a0;
+            let px = Math.cos(ang) * r0, py = Math.sin(ang) * r0;
             for (let k = 1; k <= passi; k++) {
-                a += (Math.random() - 0.5) * 0.18;
+                ang += (Math.random() - 0.5) * 0.18;
                 const r = r0 + (fine - r0) * (k / passi);
-                const px = (Math.cos(a) * r).toFixed(1), py = (Math.sin(a) * r).toFixed(1);
-                p += ` L${px} ${py}`;
-                if ((k === 3 || k === 6) && Math.random() < 0.6) {
-                    // Ramo corto che si stacca di lato e prosegue con due passi.
-                    const ar = a + (Math.random() < 0.5 ? -1 : 1) * (0.5 + Math.random() * 0.35);
+                const nx = Math.cos(ang) * r, ny = Math.sin(ang) * r;
+                const tk = (k - 0.5) / passi;
+                aggiungi(px, py, nx, ny, tk, 1, tk * 200);
+                if ((k === 3 || k === 6) && Math.random() < 0.5) {
+                    // Ramo corto che si stacca di lato (due tratti, piu' sottili del tronco).
+                    const ar = ang + (Math.random() < 0.5 ? -1 : 1) * (0.5 + Math.random() * 0.35);
                     const r1 = r + (fine - r0) * 0.12, r2 = r + (fine - r0) * 0.24;
-                    rami += ` M${px} ${py} L${(Math.cos(ar) * r1).toFixed(1)} ${(Math.sin(ar) * r1).toFixed(1)} L${(Math.cos(ar + 0.12) * r2).toFixed(1)} ${(Math.sin(ar + 0.12) * r2).toFixed(1)}`;
+                    const bx = Math.cos(ar) * r1, by = Math.sin(ar) * r1;
+                    aggiungi(nx, ny, bx, by, tk, 0.6, tk * 200 + 30);
+                    aggiungi(bx, by, Math.cos(ar + 0.12) * r2, Math.sin(ar + 0.12) * r2, Math.min(1, tk + 0.15), 0.6, tk * 200 + 60);
                 }
+                px = nx; py = ny;
             }
-            d += p + rami;
         }
-        const fessura = document.createElementNS(NS, 'path');
-        fessura.setAttribute('class', 'fx-impact-crepa-fessura');
-        fessura.setAttribute('d', d);
-        fessura.setAttribute('pathLength', '1');
+        const fessure = tratti.map((tr) => {
+            const p = document.createElementNS(NS, 'path');
+            p.setAttribute('class', 'fx-impact-crepa-fessura');
+            p.setAttribute('d', tr.d);
+            p.setAttribute('pathLength', '1');
+            p.style.strokeWidth = tr.w.toFixed(2);
+            p.style.strokeOpacity = tr.o.toFixed(2);
+            p.style.animationDelay = `${Math.round(tr.ritardo)}ms`;
+            return p;
+        });
         // Le crepe stanno SOTTO le carte: una maschera toglie i rettangoli di ogni carta visibile (campo, mano...).
         // (L'overlay e' sopra il campo per costruzione, quindi non si puo' semplicemente metterlo dietro.)
         const maschera = document.createElementNS(NS, 'mask');
@@ -527,7 +543,7 @@
         });
         const gruppo = document.createElementNS(NS, 'g');
         gruppo.setAttribute('mask', `url(#${idMaschera})`);
-        gruppo.appendChild(fessura);
+        fessure.forEach((p) => gruppo.appendChild(p));
         svg.appendChild(maschera);
         svg.appendChild(gruppo);
         document.body.appendChild(svg);

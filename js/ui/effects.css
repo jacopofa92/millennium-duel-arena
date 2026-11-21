@@ -177,7 +177,8 @@
     animation: fxCrepeApri 320ms cubic-bezier(.1,.75,.2,1) forwards;
 }
 /* Solo una fessura nera e sottile, discreta: niente luce ne' alone (e sta sotto le carte: maschera in effects.js). */
-.fx-impact-crepa-fessura { stroke: rgba(0, 0, 0, 0.82); stroke-width: 2.2; }
+/* Spessore e trasparenza di ogni tratto sono inline (effects.js): spessi vicino alla carta, sottili e chiari lontano. */
+.fx-impact-crepa-fessura { stroke: #000; animation-duration: 110ms; }
 @keyframes fxCrepeApri { to { stroke-dashoffset: 0; } }
 @keyframes fxCrepeSvanisce {
     0%, 55% { opacity: 1; }
