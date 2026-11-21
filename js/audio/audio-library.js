@@ -123,13 +123,20 @@
      * trovato, o ancora in corso di verifica la primissima volta — vedi
      * il commento in testa).
      */
+    // Effetti il cui file e' registrato piu' piano degli altri: moltiplicano il volume generale (tetto 1).
+    const GUADAGNO_EFFETTO = { impattoEpico: 1.6 };
+    function guadagnoDi(basePath) {
+        return GUADAGNO_EFFETTO[String(basePath).split('/').pop()] || 1;
+    }
+
     function tryPlay(basePath) {
         const state = cache.get(basePath);
         if (state === undefined) { startLoading(basePath); return false; }
         if (state === 'pending' || state === 'missing') return false;
         const vol = masterVolume();
         if (vol <= 0) return true; // muto: "suonato" (silenziosamente), niente fallback sopra
-        state.volume(vol);
+        // Howler non va oltre 1: il guadagno per-effetto alza solo chi ha margine sotto il volume generale.
+        state.volume(Math.min(1, vol * guadagnoDi(basePath)));
         state.play();
         return true;
     }
