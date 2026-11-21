@@ -176,10 +176,8 @@
     stroke-dashoffset: 1;
     animation: fxCrepeApri 320ms cubic-bezier(.1,.75,.2,1) forwards;
 }
-/* Tre strati: alone caldo largo (la polvere e la luce che escono), fessura scura, filo di luce al centro. */
-.fx-impact-crepa-alone { stroke: rgba(255, 170, 70, 0.28); stroke-width: 9; }
-.fx-impact-crepa-fessura { stroke: rgba(8, 5, 2, 0.95); stroke-width: 4.2; }
-.fx-impact-crepa-luce { stroke: #ffb255; stroke-width: 1.6; filter: drop-shadow(0 0 3px rgba(255, 150, 50, 0.95)); }
+/* Solo una fessura nera e sottile, discreta: niente luce ne' alone (e sta sotto le carte: maschera in effects.js). */
+.fx-impact-crepa-fessura { stroke: rgba(0, 0, 0, 0.82); stroke-width: 2.2; }
 @keyframes fxCrepeApri { to { stroke-dashoffset: 0; } }
 @keyframes fxCrepeSvanisce {
     0%, 55% { opacity: 1; }

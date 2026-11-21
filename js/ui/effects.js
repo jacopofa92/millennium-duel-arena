@@ -459,6 +459,7 @@
      * Due tracciati sovrapposti: uno scuro largo (la fessura) e uno chiaro sottile (la luce che ne esce).
      * Solo grafica: Math.random qui non tocca lo stato del duello.
      */
+    let contatoreCrepe = 0;
     function creaCrepeDalImpatto(x, y, raggioMax, mezzaLarghezza, mezzaAltezza) {
         const NS = 'http://www.w3.org/2000/svg';
         const lato = raggioMax * 2;
@@ -497,21 +498,38 @@
             }
             d += p + rami;
         }
-        const alone = document.createElementNS(NS, 'path');
-        alone.setAttribute('class', 'fx-impact-crepa-alone');
-        alone.setAttribute('d', d);
-        alone.setAttribute('pathLength', '1');
         const fessura = document.createElementNS(NS, 'path');
         fessura.setAttribute('class', 'fx-impact-crepa-fessura');
         fessura.setAttribute('d', d);
         fessura.setAttribute('pathLength', '1');
-        const luce = document.createElementNS(NS, 'path');
-        luce.setAttribute('class', 'fx-impact-crepa-luce');
-        luce.setAttribute('d', d);
-        luce.setAttribute('pathLength', '1');
-        svg.appendChild(alone);
-        svg.appendChild(fessura);
-        svg.appendChild(luce);
+        // Le crepe stanno SOTTO le carte: una maschera toglie i rettangoli di ogni carta visibile (campo, mano...).
+        // (L'overlay e' sopra il campo per costruzione, quindi non si puo' semplicemente metterlo dietro.)
+        const maschera = document.createElementNS(NS, 'mask');
+        const idMaschera = `fx-crepe-maschera-${++contatoreCrepe}`;
+        maschera.setAttribute('id', idMaschera);
+        maschera.setAttribute('maskUnits', 'userSpaceOnUse');
+        maschera.setAttribute('x', -raggioMax); maschera.setAttribute('y', -raggioMax);
+        maschera.setAttribute('width', lato); maschera.setAttribute('height', lato);
+        const sfondo = document.createElementNS(NS, 'rect');
+        sfondo.setAttribute('x', -raggioMax); sfondo.setAttribute('y', -raggioMax);
+        sfondo.setAttribute('width', lato); sfondo.setAttribute('height', lato);
+        sfondo.setAttribute('fill', '#fff');
+        maschera.appendChild(sfondo);
+        document.querySelectorAll('.card').forEach((carta) => {
+            const r = carta.getBoundingClientRect();
+            if (!r.width || !r.height) return;
+            if (r.right < x - raggioMax || r.left > x + raggioMax || r.bottom < y - raggioMax || r.top > y + raggioMax) return;
+            const buco = document.createElementNS(NS, 'rect');
+            buco.setAttribute('x', r.left - x); buco.setAttribute('y', r.top - y);
+            buco.setAttribute('width', r.width); buco.setAttribute('height', r.height);
+            buco.setAttribute('fill', '#000');
+            maschera.appendChild(buco);
+        });
+        const gruppo = document.createElementNS(NS, 'g');
+        gruppo.setAttribute('mask', `url(#${idMaschera})`);
+        gruppo.appendChild(fessura);
+        svg.appendChild(maschera);
+        svg.appendChild(gruppo);
         document.body.appendChild(svg);
         setTimeout(() => svg.remove(), 1700);
         return svg;
