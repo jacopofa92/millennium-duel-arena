@@ -453,6 +453,70 @@
         setTimeout(() => slot.classList.remove('impact'), 700);
     }
 
+    /**
+     * Le crepe nel Terreno dell'impatto epico, viste dall'alto: linee spezzate che partono dai bordi della carta e
+     * corrono verso l'esterno (con qualche ramo), si aprono insieme all'onda e poi si richiudono sfumando.
+     * Due tracciati sovrapposti: uno scuro largo (la fessura) e uno chiaro sottile (la luce che ne esce).
+     * Solo grafica: Math.random qui non tocca lo stato del duello.
+     */
+    function creaCrepeDalImpatto(x, y, raggioMax, mezzaLarghezza, mezzaAltezza) {
+        const NS = 'http://www.w3.org/2000/svg';
+        const lato = raggioMax * 2;
+        const svg = document.createElementNS(NS, 'svg');
+        svg.setAttribute('class', 'fx-impact-crepe');
+        svg.setAttribute('viewBox', `${-raggioMax} ${-raggioMax} ${lato} ${lato}`);
+        svg.setAttribute('width', lato);
+        svg.setAttribute('height', lato);
+        svg.setAttribute('aria-hidden', 'true');
+        svg.style.left = `${x}px`;
+        svg.style.top = `${y}px`;
+        const N = 9 + Math.floor(Math.random() * 4);
+        let d = '';
+        for (let i = 0; i < N; i++) {
+            const a0 = (i / N) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+            // Distanza dal centro al bordo del rettangolo carta lungo questo angolo: la crepa nasce da li'.
+            const c = Math.abs(Math.cos(a0)) || 0.001, s = Math.abs(Math.sin(a0)) || 0.001;
+            const r0 = Math.min(mezzaLarghezza / c, mezzaAltezza / s) * 0.98;
+            const fine = Math.max(r0 + 20, raggioMax * (0.5 + Math.random() * 0.5));
+            // Molti passi con deviazioni piccole che si sommano (cammino casuale): una crepa, non un fulmine a zigzag.
+            const passi = 9;
+            let a = a0;
+            let p = `M${(Math.cos(a) * r0).toFixed(1)} ${(Math.sin(a) * r0).toFixed(1)}`;
+            let rami = '';
+            for (let k = 1; k <= passi; k++) {
+                a += (Math.random() - 0.5) * 0.18;
+                const r = r0 + (fine - r0) * (k / passi);
+                const px = (Math.cos(a) * r).toFixed(1), py = (Math.sin(a) * r).toFixed(1);
+                p += ` L${px} ${py}`;
+                if ((k === 3 || k === 6) && Math.random() < 0.6) {
+                    // Ramo corto che si stacca di lato e prosegue con due passi.
+                    const ar = a + (Math.random() < 0.5 ? -1 : 1) * (0.5 + Math.random() * 0.35);
+                    const r1 = r + (fine - r0) * 0.12, r2 = r + (fine - r0) * 0.24;
+                    rami += ` M${px} ${py} L${(Math.cos(ar) * r1).toFixed(1)} ${(Math.sin(ar) * r1).toFixed(1)} L${(Math.cos(ar + 0.12) * r2).toFixed(1)} ${(Math.sin(ar + 0.12) * r2).toFixed(1)}`;
+                }
+            }
+            d += p + rami;
+        }
+        const alone = document.createElementNS(NS, 'path');
+        alone.setAttribute('class', 'fx-impact-crepa-alone');
+        alone.setAttribute('d', d);
+        alone.setAttribute('pathLength', '1');
+        const fessura = document.createElementNS(NS, 'path');
+        fessura.setAttribute('class', 'fx-impact-crepa-fessura');
+        fessura.setAttribute('d', d);
+        fessura.setAttribute('pathLength', '1');
+        const luce = document.createElementNS(NS, 'path');
+        luce.setAttribute('class', 'fx-impact-crepa-luce');
+        luce.setAttribute('d', d);
+        luce.setAttribute('pathLength', '1');
+        svg.appendChild(alone);
+        svg.appendChild(fessura);
+        svg.appendChild(luce);
+        document.body.appendChild(svg);
+        setTimeout(() => svg.remove(), 1700);
+        return svg;
+    }
+
     function playSummonImpact(monsterElement, epica, uidDaEscludere) {
         if (!monsterElement) return;
         // Un callback di render può aver sostituito il nodo fra il reveal e
@@ -484,7 +548,7 @@
             // Sull'APK il colpo si sente anche nella mano.
             if (window.NativeHaptics && typeof NativeHaptics.heavy === 'function') NativeHaptics.heavy();
         }
-        const size = Math.max(rect.width * (epica ? 3.1 : 1.65), epica ? 270 : 150);
+        const size = Math.max(rect.width * (epica ? 4.2 : 1.65), epica ? 340 : 150);
         const ring = spawnDomFx('fx-summon-impact-ring', x, y, size, size, epica ? 820 : 680);
         if (epica) {
             ring.classList.add('fx-summon-impact-ring--epic');
@@ -493,6 +557,13 @@
             // coperto dallo stepper mobile (z-index 10066).
             const secondaOnda = spawnDomFx('fx-summon-impact-ring fx-summon-impact-ring--epic fx-summon-impact-ring--second', x, y, size * 0.78, size * 0.78, 900);
             secondaOnda.setAttribute('aria-hidden', 'true');
+            // Terza onda, piu' larga e piu' lenta: l'urto si propaga sul Terreno e non finisce con la prima.
+            const terzaOnda = spawnDomFx('fx-summon-impact-ring fx-summon-impact-ring--epic fx-summon-impact-ring--third', x, y, size * 1.3, size * 1.3, 1100);
+            terzaOnda.setAttribute('aria-hidden', 'true');
+            // Lampo a terra e crepe nel Terreno (niente crepe con movimento ridotto: restano le onde).
+            const lampoTerra = spawnDomFx('fx-summon-impact-flash', x, y, size * 0.9, size * 0.9, 420);
+            lampoTerra.setAttribute('aria-hidden', 'true');
+            if (!fxPrefersReducedMotion()) creaCrepeDalImpatto(x, y, size * 0.62, rect.width / 2, rect.height / 2);
             const nucleo = spawnDomFx('fx-summon-impact-core', x, y, Math.max(rect.width * 2.1, 180), Math.max(rect.width * 2.1, 180), 520);
             nucleo.setAttribute('aria-hidden', 'true');
         }

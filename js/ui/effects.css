@@ -137,6 +137,54 @@
     box-shadow: 0 0 28px 8px rgba(115, 218, 255, 0.76), inset 0 0 18px rgba(255, 255, 255, 0.7);
     animation-delay: 90ms;
 }
+.fx-summon-impact-ring--third {
+    border-width: 2px;
+    border-color: rgba(255, 238, 190, 0.8);
+    box-shadow: 0 0 22px 6px rgba(255, 202, 93, 0.5);
+    animation-duration: 1100ms;
+    animation-delay: 170ms;
+}
+/* Lampo a terra all'urto: un disco di luce che si apre di colpo e si spegne. */
+.fx-summon-impact-flash {
+    position: fixed;
+    z-index: 10074;
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.2);
+    background: radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(255,222,140,.7) 30%, rgba(255,190,80,0) 70%);
+    animation: fxSummonImpactFlash 420ms cubic-bezier(.1,.8,.2,1) forwards;
+}
+@keyframes fxSummonImpactFlash {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+    18%  { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.1); }
+}
+/* Crepe nel Terreno (creaCrepeDalImpatto in effects.js): si aprono verso l'esterno, restano un attimo, sfumano. */
+.fx-impact-crepe {
+    position: fixed;
+    z-index: 10074;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    overflow: visible;
+    animation: fxCrepeSvanisce 1600ms linear forwards;
+}
+.fx-impact-crepe path {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: fxCrepeApri 320ms cubic-bezier(.1,.75,.2,1) forwards;
+}
+/* Tre strati: alone caldo largo (la polvere e la luce che escono), fessura scura, filo di luce al centro. */
+.fx-impact-crepa-alone { stroke: rgba(255, 170, 70, 0.28); stroke-width: 9; }
+.fx-impact-crepa-fessura { stroke: rgba(8, 5, 2, 0.95); stroke-width: 4.2; }
+.fx-impact-crepa-luce { stroke: #ffb255; stroke-width: 1.6; filter: drop-shadow(0 0 3px rgba(255, 150, 50, 0.95)); }
+@keyframes fxCrepeApri { to { stroke-dashoffset: 0; } }
+@keyframes fxCrepeSvanisce {
+    0%, 55% { opacity: 1; }
+    100%    { opacity: 0; }
+}
 .fx-summon-impact-core {
     position: fixed;
     z-index: 10075;

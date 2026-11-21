@@ -129,9 +129,10 @@
         return GUADAGNO_EFFETTO[String(basePath).split('/').pop()] || 1;
     }
 
-    // Secondi di "rincorsa" da saltare all'inizio del file: il colpo di impattoEpico.mp3 comincia a ~0,3 s (picco a 0,52 s,
-    // misurato sul file), e suonato dall'inizio arrivava in ritardo rispetto all'urto sul Terreno.
-    const INIZIO_EFFETTO = { impattoEpico: 0.3 };
+    // Secondi di "rincorsa" da saltare all'inizio del file: il colpo di impattoEpico.mp3 comincia a ~0,3 s (attacco a 0,30 s, meta' della
+    // forza a 0,39 s, picco a 0,52 s: misurato sul file) e suonato dall'inizio arrivava in ritardo rispetto all'urto sul
+    // Terreno. 0,42 s lascia ~100 ms per la latenza di avvio dell'audio HTML5 (Howler html5:true).
+    const INIZIO_EFFETTO = { impattoEpico: 0.42 };
     function inizioDi(basePath) {
         return INIZIO_EFFETTO[String(basePath).split('/').pop()] || 0;
     }
