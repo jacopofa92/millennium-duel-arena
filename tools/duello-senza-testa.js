@@ -220,6 +220,9 @@ function creaContesto(opz) {
     // mazzo dopo il reset consumerebbe altri numeri casuali e renderebbe i
     // semi non confrontabili con una partita naturale dello stesso livello.
     vm.runInContext(`window.DuelSession = { opponent: { id: ${JSON.stringify(opz.avversario)}, name: ${JSON.stringify(opz.avversario)} }, aiDifficultyKey: ${JSON.stringify(opz.livelloDeckAvversario || opz.livello)} };`, contesto);
+    // opz.preludio: codice eseguito PRIMA di caricare gli script, per passare una configurazione a un
+    // scriptAggiuntivi (che gira nel vm e non ha altro modo di riceverla). Vedi tools/cernita-effetti.js.
+    if (opz.preludio) vm.runInContext(opz.preludio, contesto, { filename: 'preludio.js' });
     // opz.scriptAggiuntivi: file caricati dopo le regole e l'IA (per esempio una
     // variante di js/modes/ che gira senza interfaccia, come il Tag Team).
     SCRIPT.concat(opz.scriptAggiuntivi || []).forEach((f) => {
