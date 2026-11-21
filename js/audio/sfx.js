@@ -212,6 +212,12 @@
                 tone(f, 0.55, { type: 'triangle', sweepTo: f * 1.45, gain: 0.12, delay: i * 0.13 });
             });
         },
+        /** Impatto al terreno di un mostro di Livello 7+ (effects.js, playSummonImpact con epica): normalmente
+         *  sostituito da audio/standard/impattoEpico.mp3; qui un colpo sordo con coda di rumore di scorta. */
+        impattoEpico() {
+            noiseBurst(0.5, { gain: 0.34, filterFreq: 900, filterSweepTo: 90 });
+            tone(70, 0.45, { type: 'sine', sweepTo: 26, gain: 0.36 });
+        },
         /** Grido del duellante: suono sintetico di scorta se il file standard non è disponibile. */
         duelistShout() {
             noiseBurst(0.7, { gain: 0.18, filterFreq: 650, filterSweepTo: 2600 });

@@ -478,6 +478,8 @@
                     ], { duration: 360, easing: 'cubic-bezier(.2,.8,.3,1)', pseudoElement: '::before' });
                 } catch (e) { /* ombra non animabile */ }
             }
+            // Il tonfo del Livello 7+ (audio/standard/impattoEpico.mp3): suona all'urto, insieme a scossa e onda.
+            if (window.SFX && typeof SFX.impattoEpico === 'function') SFX.impattoEpico();
             // Sull'APK il colpo si sente anche nella mano.
             if (window.NativeHaptics && typeof NativeHaptics.heavy === 'function') NativeHaptics.heavy();
         }

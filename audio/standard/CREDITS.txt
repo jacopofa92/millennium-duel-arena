@@ -10,6 +10,9 @@ tracciabilità della provenienza. Rinominati da js/audio-library.js
 (che carica <nomeEffetto>.ogg — vedi PRELOAD_STANDARD_NAMES lì) a
 partire dai file originali dei pacchetti citati sopra.
 
+impattoEpico.mp3 (impatto al terreno dei mostri di Livello 7+) e' un altro suono custom fornito dall'utente
+(audiopapkin, "impact sfx ps 059"), non Kenney/CC0.
+
 lifePointsLost.mp3 fa eccezione: NON è un file Kenney/CC0, è un
 suono custom fornito direttamente dall'utente. Essendo .mp3 vince
 sempre su lifePointsLost.ogg (Kenney, tenuto come solo fallback) —

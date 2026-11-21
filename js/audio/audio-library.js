@@ -207,7 +207,7 @@
         'draw', 'place', 'summon', 'tribute', 'attackSwing', 'clash', 'destroy',
         'directHit', 'lifePointsLost', 'lifePointsGained', 'turnChange', 'phaseChange',
         'activateSpell', 'activateTrap', 'activateChain', 'tagSwitch', 'swordsOfRevealingLight', 'darkHole',
-        'fusion', 'evocation', 'duelistShout', 'victory', 'defeat'
+        'fusion', 'evocation', 'impattoEpico', 'duelistShout', 'victory', 'defeat'
     ];
     const startPreload = () => PRELOAD_STANDARD_NAMES.forEach((name) => {
         if (campaignStandardFolder) startLoading(`audio/standard/${campaignStandardFolder}/${name}`);
