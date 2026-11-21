@@ -595,6 +595,11 @@
             const terzaOnda = spawnDomFx('fx-summon-impact-ring fx-summon-impact-ring--epic fx-summon-impact-ring--third', x, y, size * 1.3, size * 1.3, 1100);
             terzaOnda.setAttribute('aria-hidden', 'true');
             // Lampo a terra e crepe nel Terreno (niente crepe con movimento ridotto: restano le onde).
+            // Fronte d'onda semitrasparente: una fascia morbida (non un filo) che si allarga sul Terreno, due volte.
+            const fronte = spawnDomFx('fx-summon-impact-fronte', x, y, size * 1.25, size * 1.25, 950);
+            fronte.setAttribute('aria-hidden', 'true');
+            const fronte2 = spawnDomFx('fx-summon-impact-fronte fx-summon-impact-fronte--tardo', x, y, size * 1.7, size * 1.7, 1250);
+            fronte2.setAttribute('aria-hidden', 'true');
             const lampoTerra = spawnDomFx('fx-summon-impact-flash', x, y, size * 0.9, size * 0.9, 420);
             lampoTerra.setAttribute('aria-hidden', 'true');
             if (!fxPrefersReducedMotion()) creaCrepeDalImpatto(x, y, size * 0.62, rect.width / 2, rect.height / 2);
