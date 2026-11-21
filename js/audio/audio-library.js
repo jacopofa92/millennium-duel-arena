@@ -129,6 +129,13 @@
         return GUADAGNO_EFFETTO[String(basePath).split('/').pop()] || 1;
     }
 
+    // Secondi di "rincorsa" da saltare all'inizio del file: il colpo di impattoEpico.mp3 comincia a ~0,3 s (picco a 0,52 s,
+    // misurato sul file), e suonato dall'inizio arrivava in ritardo rispetto all'urto sul Terreno.
+    const INIZIO_EFFETTO = { impattoEpico: 0.3 };
+    function inizioDi(basePath) {
+        return INIZIO_EFFETTO[String(basePath).split('/').pop()] || 0;
+    }
+
     function tryPlay(basePath) {
         const state = cache.get(basePath);
         if (state === undefined) { startLoading(basePath); return false; }
@@ -137,7 +144,9 @@
         if (vol <= 0) return true; // muto: "suonato" (silenziosamente), niente fallback sopra
         // Howler non va oltre 1: il guadagno per-effetto alza solo chi ha margine sotto il volume generale.
         state.volume(Math.min(1, vol * guadagnoDi(basePath)));
-        state.play();
+        const id = state.play();
+        const inizio = inizioDi(basePath);
+        if (inizio > 0) state.seek(inizio, id);
         return true;
     }
 
