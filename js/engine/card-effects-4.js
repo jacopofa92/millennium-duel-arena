@@ -34,6 +34,11 @@
     CardEffects.register(478, {
         onOwnMonsterDestroyed(ctx) {
             const revived = ctx.destroyedCard;
+            // Un Mostro-Trappola (Roccaforte della Fortezza Movente, 849) distrutto va al Cimitero come TRAPPOLA (duel-engine.js:
+            // wasTrapMonster, type torna 'trap' prima di ON_DESTROY): una Trappola nel Cimitero non si puo' Special Summonare.
+            // Senza questo controllo finiva nella zona Mostri con type 'trap' (invariante del duello rotto). Va fatto PRIMA di
+            // toglierla dal Cimitero, altrimenti la carta andrebbe persa.
+            if (!revived || revived.type !== 'monster') return;
             const slotIndex = ctx.findEmptyMonsterSlot(ctx.owner);
             if (slotIndex === -1) return;
             const graveyard = ctx.graveyard(ctx.owner);

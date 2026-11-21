@@ -180,8 +180,8 @@ indietro**, e pochi bug veri. Per non ripeterlo:
   Crump (nessuna alternativa a parita'). **Metodo che ha funzionato** (riusabile per ogni ritocco ai mazzi): misurare prima
   carta per carta cosa vale ogni carta toccata; scegliere le alternative su un giro di semi e CONVALIDARE su semi nuovi (la
   scelta sullo stesso giro sovrastima: alcuni duellanti «a posto» risultavano +4/+6); riportare al mazzo attuale chi resta
-  fuori; i numeri per singolo duellante hanno un rumore di 2-3 punti a 850 duelli per lato. **Bug trovato per caso e NON
-  corretto**: Macchina del Tempo (478) fa rientrare «Roccaforte della Fortezza Movente» (849, Trappola-mostro) e la lascia
+  fuori; i numeri per singolo duellante hanno un rumore di 2-3 punti a 850 duelli per lato. **Bug trovato per caso, corretto
+  in 1.9.12 (`card-effects-4.js`, spec `macchina-del-tempo-mostro-trappola`)**: Macchina del Tempo (478) faceva rientrare «Roccaforte della Fortezza Movente» (849, Trappola-mostro) e la lascia
   nella zona Mostri come carta non-mostro (invariante del duello senza testa: mazzo di Odion contro lo Starter di Yugi, ~4-8
   duelli su 51.000).
 - **Chi chiede l'attesa deve poterla chiudere su OGNI strada**
