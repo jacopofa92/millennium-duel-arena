@@ -997,7 +997,14 @@
             gameState.cannotAttackUids[t.uid] = true;
         },
         onStandbyPhase(ctx) {
-            const t = equippedTarget(ctx);
+            // Il gancio puo' partire quando il mostro equipaggiato e' GIA' andato via: il motore manda al Cimitero l'Equip orfana solo
+            // al prossimo ricalcolo degli effetti (recomputeStaticEffects), e fra uno e l'altro puo' arrivare la Standby Phase.
+            // Senza questo controllo equippedTarget() lanciava un TypeError e l'effetto veniva saltato con un errore in console.
+            // Si controlla anche l'uid: se la casella e' stata riusata da un altro mostro, il danno non e' per lui.
+            if (ctx.card.equippedToOwner == null) return;
+            const casella = ctx.field(ctx.card.equippedToOwner)[ctx.card.equippedToIndex];
+            if (!casella || casella.card.uid !== ctx.card.equippedToUid) return;
+            const t = casella.card;
             const targetOwnerLpKey = Tavolo.chiave(ctx.card.equippedToOwner, 'LP');
             gameState[targetOwnerLpKey] -= 500;
             ctx.log(`💀 Maschera del Maledetto infligge 500 danni al controllore di ${t.name}!`);

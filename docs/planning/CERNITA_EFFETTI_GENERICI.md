@@ -11,17 +11,17 @@ a un archetipo o ai materiali di una Fusione. Un riferimento a se stessa non la 
 ## Risultato (832 carte con un effetto reale)
 | Gruppo | Carte | Per tipo |
 |---|---|---|
-| **A** generico puro | 407 | mostri: 220, Magie: 104, Trappole: 83 |
+| **A** generico puro | 408 | mostri: 220, Magie: 104, Trappole: 84 |
 | **B** generico, con Tipo/Attributo come parametro | 131 | mostri: 73, Magie: 44, Trappole: 14 |
 | **M** meccanica propria senza nomi (Spirit, Contatori Magia, Toon, Union) | 18 | mostri: 17, Trappole: 1 |
-| **D** generico ma con il PROPRIO id scritto nel codice (si ripara sostituendo il numero con ctx.card.id) | 1 | Trappole: 1 |
+| **D** generico ma con il PROPRIO id scritto nel codice (si ripara sostituendo il numero con ctx.card.id) | 0 |  |
 | **C3** Yu-Gi-Oh only dal motore/IA (la carta e' pulita, ma il motore o l'IA la nomina per id o nome) | 32 | mostri: 16, Magie: 9, Trappole: 7 |
 | **C2** Yu-Gi-Oh only probabile (il testo cita carte per nome) | 69 | mostri: 57, Magie: 7, Trappole: 5 |
 | **C1** Yu-Gi-Oh only certo (id o nomi nel codice, materiali di Fusione) | 174 | mostri: 103, Magie: 59, Trappole: 12 |
 
-**Bacino riusabile subito (A + B): 538 carte, il 65%.**
+**Bacino riusabile subito (A + B): 539 carte, il 65%.**
 
-Forme del bacino: reattivo - mostro: 187, solo attivazione - spell: 88, solo attivazione - mostro: 69, solo attivazione - trap: 49, passivo - spell: 40, reattivo - trap: 38, passivo - mostro: 37, reattivo - spell: 20, passivo - trap: 10.
+Forme del bacino: reattivo - mostro: 187, solo attivazione - spell: 88, solo attivazione - mostro: 69, solo attivazione - trap: 49, passivo - spell: 40, reattivo - trap: 38, passivo - mostro: 37, reattivo - spell: 20, passivo - trap: 11.
 
 Ganci piu' usati nel bacino: onFlip 47, onDestroy 38, onSummon 25, onStandbyPhase 22, onAttackDeclare 21, onDealsBattleDamage 14, onEndPhase 10, onCardEffectTargetDeclare 8, onSTDestroyed 8, onSpecialSummon 8, onOpponentSummon 7, onBattled 7, onSentToGraveyardFromHand 6, onOwnAttackDeclare 5.
 
@@ -38,7 +38,7 @@ Il gruppo **C2** e' una stima dal testo (alcune carte potrebbero essere generich
 
 ## Carte "pulite" ma con il proprio id nel codice (gruppo D)
 Vanno bene per qualunque tema **dopo** aver sostituito il numero con ctx.card.id; senza, un controllo come slot.card.id !== 426 smette di funzionare appena la carta ha un id diverso.
-426 Decreto Reale
+(nessuna)
 
 ## Carte "pulite" che il motore o l'IA nominano (gruppo C3)
 - 8 Spada Rivelatrice: js/engine/duel-engine.js: const spade = stFieldOf(controller).filter((slot) => slot && !slot.isFaceDown && slot.card.id === 8); | js/engine/fasi.js: if (slot.card.id === 8 && gameState.revealedSwordsLanded) {

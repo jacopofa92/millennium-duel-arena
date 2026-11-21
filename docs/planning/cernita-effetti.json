@@ -1,13 +1,12 @@
 {
  "criterio": "vedi tools/cernita-effetti.js",
  "totali": {
-  "A": 407,
+  "A": 408,
   "C3": 32,
   "C1": 174,
   "B": 131,
   "C2": 69,
-  "M": 18,
-  "D": 1
+  "M": 18
  },
  "carte": [
   {
@@ -6197,14 +6196,14 @@
    "tipo": "trap",
    "sottotipo": "continuous",
    "livello": 0,
-   "gruppo": "D",
+   "gruppo": "A",
    "forma": "passivo - trap",
    "ganci": [
     "activate"
    ],
    "motivi": {
     "id": [],
-    "idProprio": true,
+    "idProprio": false,
     "nome": [],
     "motore": [],
     "razzaAttr": false,

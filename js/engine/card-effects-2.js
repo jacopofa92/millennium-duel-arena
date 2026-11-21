@@ -2278,7 +2278,7 @@
         activate(ctx) { ctx.log('📜 Decreto Reale si attiva: gli altri effetti Trappola sono negati!'); },
         // Nega le Trappole di ENTRAMBI: all'IA conviene solo se non ne ha altre e il nemico ne ha di Set.
         aiCanActivate(ctx) {
-            const trappole = (owner) => ctx.stField(owner).filter((slot) => slot && slot.card.type === 'trap' && slot.card.id !== 426).length;
+            const trappole = (owner) => ctx.stField(owner).filter((slot) => slot && slot.card.type === 'trap' && slot.card.id !== ctx.card.id).length; // ctx.card.id, non 426: la definizione puo' servire una carta con un altro id
             return trappole(ctx.owner) === 0 && trappole(ctx.opponent) >= 2;
         },
         static(ctx) {
