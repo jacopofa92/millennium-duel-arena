@@ -253,10 +253,10 @@ const storyDopoDuello = {
         { chi: 'lector', testo: 'Allora il nostro tempo è finito. Facci uscire da qui, Kaiba.' }
     ],
     'anime-6-cinque-uniti': [
-        { chi: 'gansley', testo: 'Cinque teste e ancora non basta. Separati abbiamo perso, uniti abbiamo perso.' },
-        { chi: 'joey', testo: 'Vuol dire che due amici valgono più di cinque dirigenti, no?' },
-        { io: true, testo: 'Vuol dire che la forza di un duellante non sta nel numero delle teste, ma in chi gli sta accanto.' },
-        { chi: 'gansley', testo: 'Il Drago a Cinque Teste si dissolve. Vi lasciamo passare.' }
+        { chi: 'tristanBigFive', testo: 'No… il nostro controllo sta cedendo. Non riusciamo più a tenere Tristan.' },
+        { chi: 'tristan', testo: 'Yugi… Joey… siete riusciti a fermarli. Il Drago a Cinque Teste è sparito.' },
+        { chi: 'joey', testo: 'Cinque teste e non sono bastate. Due amici, invece, sì.' },
+        { io: true, testo: 'I Cinque sono stati separati da Tristan. Ma i nostri corpi sono ancora prigionieri: dobbiamo raggiungere Noah.' }
     ],
     'anime-6-noah': [
         { chi: 'noah', testo: 'Perché? Avevo tutto: la KaibaCorp, un mondo intero, il potere di mio padre… e tu lo hai distrutto.' },

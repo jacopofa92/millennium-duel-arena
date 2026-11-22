@@ -659,6 +659,7 @@
     // ognuno. Le chiavi sono gli stessi id di js/data/characters-db.js.
     const CHARACTER_AGGRESSION = {
         kaiba: 0.9,        // gioca quasi sempre la carta oggettivamente più forte disponibile
+        tristanBigFive: 0.82, // i Cinque coordinano le mosse attraverso il corpo di Tristan
         bandit_keith: 0.85,
         marik: 0.8,
         pegasus: 0.75,     // calcolato e spietato, ma con qualche mossa "a effetto" invece della più ovvia

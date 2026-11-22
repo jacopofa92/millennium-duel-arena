@@ -1,7 +1,7 @@
 // Tre duelli della Storia anime che nell'anime erano in coppia (js/data/story-campaigns.js, campo `tag` del nodo):
 //  - anime-2-paradox: Yugi e Joey contro i Fratelli Paradosso (2 contro 1, i due fratelli sono un solo Duellante del roster);
 //  - anime-3-lumis: Yugi e Kaiba contro Lumis E Umbra (2 contro 2); il nodo di Umbra e' ora una scena (stessa posizione);
-//  - anime-6-cinque-uniti: Yugi e Joey contro Gansley con 12000 Life Point (Boss).
+//  - anime-6-cinque-uniti: Yugi e Joey contro Tristan posseduto dai Big Five, con 12000 LP (Boss).
 // Si controlla il catalogo e l'URL (StoryProgress.urlDuello), poi la squadra che nasce nel duello vero (mode=story&tag=1) e che
 // a fine duello anche il SECONDO avversario conta come battuto (record e Sfida).
 const path = require('path');
@@ -27,7 +27,7 @@ async function apri(browser, url, errori) {
 
 module.exports = {
     standalone: true,
-    name: 'Storia anime: i duelli che nell\'anime erano in coppia sono duelli Tag (Paradosso, Lumis e Umbra, Cinque uniti)',
+    name: 'Storia anime: i duelli in coppia sono duelli Tag (Paradosso, Lumis e Umbra, Tristan posseduto)',
     async run(t) {
         const errori = [];
         // ---------- 1) Catalogo e URL, a pagina del menu Storia (carica catalogo e StoryProgress)
@@ -57,8 +57,8 @@ module.exports = {
             `Lumis e Umbra: URL di un 2 contro 2 della Storia: ${JSON.stringify(L.p)}`);
         t.assert(P.p.tag === '1' && P.p.partner === 'joey' && P.p.character === 'paradoxBrothers' && !P.p.character2 && !P.p.boss,
             `Paradosso: URL di un 2 contro 1: ${JSON.stringify(P.p)}`);
-        t.assert(C.p.tag === '1' && C.p.partner === 'joey' && C.p.character === 'gansley' && C.p.boss === '1' && !C.p.character2,
-            `Cinque uniti: URL di un 2 contro 1 contro il Boss: ${JSON.stringify(C.p)}`);
+        t.assert(C.p.tag === '1' && C.p.partner === 'joey' && C.p.character === 'tristanBigFive' && C.p.boss === '1' && !C.p.character2,
+            `Cinque uniti: Yugi e Joey contro Tristan posseduto, 2 contro 1 contro il Boss: ${JSON.stringify(C.p)}`);
         t.assert(catalogo.umbra.kind === 'scene', 'Il nodo di Umbra resta (come scena) per non spostare l\'avanzamento di chi ha gia\' giocato');
 
         // ---------- 2) Il duello vero: Lumis e Umbra (2 contro 2)
@@ -105,7 +105,7 @@ module.exports = {
                     tuoLP: TagTeam.riassunto('player').membri.map((m) => m.lp)
                 }));
                 t.assert(d.tu.length === 2 && /Joey/.test(d.tu[1]), `Tu e Joey: ${JSON.stringify(d.tu)}`);
-                t.assert(d.botEsquadra === false && d.botLP === 12000, `Gansley da solo con 12000 Life Point: ${JSON.stringify(d)}`);
+                t.assert(d.botEsquadra === false && d.botLP === 12000, `Tristan posseduto dai Big Five da solo con 12000 Life Point: ${JSON.stringify(d)}`);
             } finally { await page.close(); }
         }
 

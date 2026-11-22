@@ -1348,24 +1348,23 @@ const storyCampaignsDatabase = [
                                     { io: true, testo: 'Vi ho licenziati perché avete tradito la società. Ora cancellerò anche le vostre copie digitali.' }
                                 ]
                             },
-                            // Battuti uno per uno, i Cinque si fondono nel Drago
-                            // a Cinque Teste e sfidano Yugi e Joey insieme.
-                            // Parla Gansley, che era il loro capo: è lui
-                            // l'avversario sul tavolo.
+                            // Dopo le sconfitte individuali i Big Five prendono
+                            // il controllo del corpo digitale di Tristan. Yugi e
+                            // Joey li affrontano insieme; il Drago a Cinque Teste
+                            // resta la loro manifestazione nel Mondo Virtuale.
                             {
                                 id: 'anime-6-cinque-uniti', kind: 'duel', icona: '🐲',
-                                label: 'I Cinque uniti', x: 905, y: 575,
-                                field: 'images/fields/mobile/campoPrato.jpg',
+                                label: 'Tristan, posseduto dai Cinque', x: 905, y: 575,
+                                field: 'images/fields/mobile/mondoVirtualeArenaGozaburo.jpg',
                                 music: '35. High Mages.mp3',
-                                characterId: 'gansley',
-                                // Nell'anime Yugi e Joey affrontano i Cinque insieme (5 contro 2). Per ora i Cinque sono UN avversario,
-                                // Gansley, con i Life Point del Boss (12000: boss, vedi tagDatabase.lpBoss); un mazzo "Cinque uniti"
-                                // vero verra' dopo.
+                                characterId: 'tristanBigFive',
                                 tag: { compagno: 'joey', boss: true },
                                 dialogo: [
-                                    { nome: 'I Cinque', icona: '🐲', testo: 'Separati ci avete battuti. Uniti siamo il Drago a Cinque Teste, e nessun mostro con un solo cuore può fermarlo.' },
+                                    { chi: 'tristanBigFive', testo: 'Il corpo di Tristan ci appartiene. Cinque volontà, una sola mente: affrontateci se ne avete il coraggio.' },
+                                    { chi: 'yugiMuto', testo: 'Tristan! Siamo qui per liberarti. Joey, dobbiamo separare i Cinque da lui.' },
                                     { chi: 'joey', testo: 'Cinque contro due? Tipico di voi dirigenti. Yugi, io ci sono.' },
-                                    { io: true, testo: 'Il vostro drago ha cinque teste e nessuna amicizia, Gansley. Joey ed io ne abbiamo abbastanza per tutti e due.' }
+                                    { chi: 'tristanBigFive', testo: 'Il Drago a Cinque Teste veglia su di noi. Vediamo se la vostra amicizia può superare cinque menti.' },
+                                    { io: true, testo: 'Non combatteremo contro Tristan, ma contro chi lo tiene prigioniero. Joey, insieme!' }
                                 ]
                             },
                             {

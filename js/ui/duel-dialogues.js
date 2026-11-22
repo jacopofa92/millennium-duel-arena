@@ -76,7 +76,7 @@
     };
 
     const CHARACTER_PROFILE = {
-        yugiMuto: 'hero', yamiYugi: 'mystic', joey: 'wild', tea: 'hero', tristan: 'hero', serenity: 'hero', solomonMuto: 'mystic',
+        yugiMuto: 'hero', yamiYugi: 'mystic', joey: 'wild', tea: 'hero', tristan: 'hero', tristanBigFive: 'dark', serenity: 'hero', solomonMuto: 'mystic',
         kaiba: 'proud', gozaburo: 'proud', priestSeto: 'proud', rex: 'wild', weevil: 'trickster', mako: 'warrior', panik: 'dark', bonz: 'dark',
         paradoxBrothers: 'mystic', mai: 'proud', bandit_keith: 'proud', pegasus: 'trickster', duke: 'trickster', espaRoba: 'mystic', arkana: 'dark',
         seeker: 'trickster', strings: 'cold', lumis: 'trickster', umbra: 'dark',
@@ -93,6 +93,14 @@
         kaiba: {
             battleStart: ['Preparati alla sconfitta!', 'Il tuo deck non può competere col mio.', 'Ti schiaccerò con la pura potenza!'],
             victory: ['Esattamente come previsto.', 'Nessuno supera Seto Kaiba.', 'Torna quando avrai un vero deck.']
+        },
+        tristanBigFive: {
+            battleStart: ['Il corpo è di Tristan. La volontà è dei Cinque.', 'Ora parliamo con una sola voce.', 'Non c’è più un Tristan da salvare.'],
+            victory: ['Cinque menti, una sola vittoria.', 'Il vostro legame non ci ha fermati.', 'Tristan resterà con noi.'],
+            attack: ['Colpisci per tutti noi!', 'Cinque strategie, un solo attacco!', 'Non lasciargli scampo!'],
+            turnStart: ['I Cinque hanno deciso.', 'È il nostro turno.', 'La prossima mossa è già calcolata.'],
+            damaged: ['Un colpo solo non ci dividerà.', 'Tristan, resta al tuo posto!', 'Le nostre volontà resistono.'],
+            activate: ['Attiviamo la nostra contromossa.', 'I Cinque hanno previsto tutto.', 'Questa carta chiude la partita.']
         },
         yugiMuto: { battleStart: ['Giochiamo!', 'Mi fido del cuore delle carte.', 'Darò tutto me stesso!'] },
         yamiYugi: { battleStart: ['È tempo di duellare!', 'Il destino delle carte ci attende.', 'Mostrami la forza del tuo cuore.'] },

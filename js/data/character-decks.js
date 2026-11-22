@@ -6850,6 +6850,55 @@ const characterDeckDatabase = {
     }
 };
 
+// Tristan posseduto dai Big Five: il mazzo rappresenta l'unione dei loro
+// cinque Deck Master (Gansley, Johnson, Nesbitt, Crump e Lector). Il Drago a
+// Cinque Teste è nella scena e nel ritratto, ma non è presente nel database
+// attuale delle carte: non lo inseriamo nel mazzo come carta fantasma.
+characterDeckDatabase.tristanBigFive = {
+    flagship: 1068, // Guerriero degli Abissi: presenza di Gansley in ogni livello
+    easy: {
+        main: [
+            { id: 1068, qty: 1 }, { id: 239, qty: 2 }, { id: 314, qty: 2 }, { id: 582, qty: 1 },
+            { id: 907, qty: 2 }, { id: 904, qty: 2 }, { id: 935, qty: 2 }, { id: 959, qty: 2 },
+            { id: 505, qty: 1 }, { id: 955, qty: 1 }, { id: 497, qty: 1 }, { id: 489, qty: 1 },
+            { id: 8, qty: 1 }, { id: 820, qty: 2 }, { id: 434, qty: 1 }, { id: 611, qty: 1 },
+            { id: 503, qty: 2 }, { id: 143, qty: 2 }, { id: 35, qty: 1 }, { id: 36, qty: 1 },
+            { id: 272, qty: 1 }, { id: 40, qty: 1 }, { id: 595, qty: 1 }, { id: 546, qty: 1 },
+            { id: 704, qty: 1 }, { id: 439, qty: 1 }, { id: 875, qty: 1 },
+            { id: 317, qty: 1 }, { id: 359, qty: 1 }, { id: 17, qty: 1 }, { id: 1088, qty: 1 }
+        ],
+        extra: []
+    },
+    medium: {
+        main: [
+            { id: 1068, qty: 1 }, { id: 955, qty: 2 }, { id: 958, qty: 1 }, { id: 279, qty: 2 },
+            { id: 962, qty: 1 }, { id: 940, qty: 1 }, { id: 239, qty: 1 }, { id: 314, qty: 1 },
+            { id: 505, qty: 1 }, { id: 582, qty: 1 }, { id: 945, qty: 1 }, { id: 692, qty: 1 },
+            { id: 956, qty: 1 }, { id: 907, qty: 1 }, { id: 497, qty: 1 }, { id: 489, qty: 1 },
+            { id: 79, qty: 1 }, { id: 35, qty: 1 }, { id: 36, qty: 2 }, { id: 272, qty: 1 },
+            { id: 40, qty: 1 }, { id: 793, qty: 1 }, { id: 7, qty: 1 }, { id: 8, qty: 1 },
+            { id: 820, qty: 2 }, { id: 10, qty: 1 }, { id: 434, qty: 1 }, { id: 503, qty: 1 },
+            { id: 143, qty: 1 }, { id: 646, qty: 1 }, { id: 704, qty: 1 }, { id: 595, qty: 1 },
+            { id: 317, qty: 1 }, { id: 359, qty: 1 }, { id: 260, qty: 1 }, { id: 17, qty: 1 }
+        ],
+        extra: []
+    },
+    hard: {
+        main: [
+            { id: 1068, qty: 1 }, { id: 955, qty: 2 }, { id: 958, qty: 1 }, { id: 279, qty: 2 },
+            { id: 962, qty: 2 }, { id: 940, qty: 2 }, { id: 239, qty: 1 }, { id: 314, qty: 1 },
+            { id: 505, qty: 1 }, { id: 945, qty: 1 }, { id: 692, qty: 2 }, { id: 956, qty: 1 },
+            { id: 497, qty: 1 }, { id: 489, qty: 1 }, { id: 79, qty: 1 }, { id: 35, qty: 1 },
+            { id: 36, qty: 2 }, { id: 272, qty: 1 }, { id: 40, qty: 1 }, { id: 793, qty: 1 },
+            { id: 7, qty: 1 }, { id: 8, qty: 1 }, { id: 820, qty: 2 }, { id: 10, qty: 1 },
+            { id: 434, qty: 1 }, { id: 143, qty: 1 }, { id: 646, qty: 1 }, { id: 704, qty: 1 },
+            { id: 382, qty: 1 }, { id: 317, qty: 1 }, { id: 359, qty: 1 }, { id: 260, qty: 1 },
+            { id: 17, qty: 1 }
+        ],
+        extra: []
+    }
+};
+
 // Rare Hunters di Battle City. Le liste restano esplicite per livello come
 // il resto del roster: Seeker accelera Exodia; Strings costruisce il ciclo
 // Melma/Carte Infinite e riceve Slifer solo a Difficile; Lumis privilegia
