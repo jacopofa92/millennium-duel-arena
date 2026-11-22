@@ -1526,9 +1526,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1795387938.8619215,
-    "seen": 1795388608.8763535,
-    "ast_hash": "f946cf3b76d0dadc67436cfdfeb4fe27",
+    "mtime": 1795388639.9209864,
+    "seen": 1795388692.6204975,
+    "ast_hash": "86d08c0c791f707fe2f349c047623988",
     "semantic_hash": ""
   },
   "tests/data/ricerche-per-nome.json": {
