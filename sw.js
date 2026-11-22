@@ -576,7 +576,8 @@
 // v773: le Fusioni WebGL di Livello 7+ vengono rivelate nello slot dopo la scena.
 // v794: Tristan posseduto dai Big Five, mazzi a difficoltà, dialoghi e nuove pedine.
 // v799: posa danno di Tristan frontale, con reazione chiara al colpo ai Life Point.
-const CACHE_NAME = 'ygo-duel-arena-v799';
+// v800: ritratto di Tristan Big Five rialzato e ordine del roster del Mondo Virtuale.
+const CACHE_NAME = 'ygo-duel-arena-v800';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento
@@ -585,7 +586,7 @@ const CACHE_NAME = 'ygo-duel-arena-v799';
 // REGOLA NUOVA: un'immagine NUOVA (nome nuovo) non richiede nulla; un'immagine che CAMBIA contenuto tenendo lo STESSO nome si vedrebbe
 // vecchia per sempre (cache-first): in quel caso, e solo in quel caso, si cambia il suffisso qui sotto (-v1 -> -v2), che scarta
 // l'intera cache dei media. Tutti i commenti storici qui sopra che dicono "il bump serve" per un media vanno letti cosi'.
-const MEDIA_CACHE = 'ygo-duel-arena-media-v6';
+const MEDIA_CACHE = 'ygo-duel-arena-media-v7';
 
 // L'intera "app shell": tutte le pagine HTML + tutto il codice JS/CSS che
 // le fa funzionare. Leggero (pochi MB in tutto), quindi si può precaricare

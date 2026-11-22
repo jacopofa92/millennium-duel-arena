@@ -63,7 +63,6 @@ const characterDatabase = [
     { id: 'bandit_keith', name: 'Bandit Keith', title: 'Il Duellante Imbroglione', image: 'images/characters/banditKeith.jpg', series: 'main' },
     { id: 'pegasus', name: 'Maximillion Pegasus', title: 'Creatore del Duel Monsters', image: 'images/characters/maximillionPegasus.jpg', series: 'main', duelTrack: '57. Duel of Shadows – The Millennium Mind.mp3', duelTrackAutomatico: true, duelTrackEscludiTappe: ['anime-1-pegasus-video'] },
     { id: 'tristan', name: 'Tristan Taylor', title: "L'Amico Leale", image: 'images/characters/tristanTaylor.jpg', series: 'main' },
-    { id: 'tristanBigFive', name: 'Tristan Big Five', title: 'Il Corpo dei Cinque', image: 'images/characters/tristanBigFive.png', series: 'main' },
     { id: 'serenity', name: 'Serenity Wheeler', title: 'La Sorella di Joey', image: 'images/characters/serenityWheeler.jpg', series: 'main' },
     { id: 'duke', name: 'Duke Devlin', title: 'Il Creatore di Dungeon Dice Monsters', image: 'images/characters/dukeDevlin.jpg', series: 'main' },
     { id: 'espaRoba', name: 'Espa Roba', title: 'Il Duellante Psichico', image: 'images/characters/espaRoba.jpg', series: 'main' },
@@ -93,6 +92,9 @@ const characterDatabase = [
     // condannati a restare bloccati per sempre (vedi
     // js/data/character-unlocks.js: si sblocca SOLO vincendo in un
     // Torneo o nella Storia).
+    // Tristan posseduto apre il blocco del Mondo Virtuale; Noah e' il
+    // passaggio successivo prima dello scontro conclusivo con Gozaburo.
+    { id: 'tristanBigFive', name: 'Tristan Big Five', title: 'Il Corpo dei Cinque', image: 'images/characters/tristanBigFive.png', series: 'main' },
     { id: 'noah', name: 'Noah Kaiba', title: 'Il Ragazzo del Mondo Virtuale', image: 'images/characters/noah.jpg', series: 'main' },
     { id: 'gansley', name: 'Gansley', title: 'Il Burattinaio della Rete', image: 'images/characters/gansley.jpg', series: 'main' },
     { id: 'johnson', name: 'Johnson', title: "Il Cacciatore della Giungla Virtuale", image: 'images/characters/johnson.jpg', series: 'main' },
