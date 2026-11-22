@@ -238,6 +238,12 @@
         border: none;
         box-shadow: inset 0 0 90px rgba(0,0,0,0.55);
     }
+    /* Contenitore delle dimensioni REALI (già scalate) del mondo: serve perché una trasformazione scale() NON cambia lo spazio che
+       l'elemento occupa nel layout, e lo scorrimento del viewport si misura sul layout. Il canvas dentro resta nelle sue coordinate
+       "di mondo" (tutti i pallini in px veri) e viene solo rimpicciolito da renderMap (vedi scalaMondo). overflow hidden: la parte
+       del canvas che sporge dopo la scala non deve allungare lo scorrimento. */
+    .map-mondo { position: relative; overflow: hidden; }
+    .map-mondo > .map-canvas { transform-origin: 0 0; }
     .map-canvas {
         position: relative;
         isolation: isolate;
@@ -1805,8 +1811,26 @@
      * in alto: la legenda fissa occupa l'ultimo tratto). Dipende solo dalla finestra, non dal percorso: il mondo cresce verso destra, il falo' no.
      */
     function centroFalo() {
-        const alt = Math.max(MAP_ISOLA_ALTEZZA, window.innerHeight);
-        return { x: Math.max(121, window.innerWidth / 2), y: alt - (window.innerHeight > window.innerWidth ? 150 : 90) };
+        // La finestra in UNITA' DI MONDO: su telefono il mondo e' rimpicciolito (scalaMondo), quindi nello stesso schermo ne entra di piu'.
+        const k = scalaMondo(false);
+        const alt = Math.max(MAP_ISOLA_ALTEZZA, Math.ceil(window.innerHeight / k));
+        return { x: Math.max(121, window.innerWidth / k / 2), y: alt - (window.innerHeight > window.innerWidth ? 150 : 90) };
+    }
+    /**
+     * Quanto si rimpicciolisce il mondo dell'isola (1 = grandezza vera). Lo sfondo del bosco e' 1536x1024 a grandezza nativa e il mondo
+     * e' alto 900px: su un telefono in verticale (390px di larghezza) se ne vedeva circa un quarto, "troppo zoomato", e si scorreva
+     * in tutte le direzioni (in verticale per i 56px che mancavano all'altezza dello schermo, in orizzontale per il resto).
+     * Rimpicciolendo il mondo ne entra di piu' nello schermo e l'altezza del canvas si adatta a quella dello schermo, cosi' in verticale
+     * non si scorre piu': resta solo l'avanzare verso destra, che e' il senso della mappa. Solo telefono in verticale e solo l'isola:
+     * il Castello (sale di Pegasus, una sola schermata) e gli schermi larghi restano a grandezza vera.
+     */
+    const MAP_LARGHEZZA_TELEFONO = 620;
+    const MAP_SCALA_MINIMA = 0.6;
+    function scalaMondo(castello) {
+        if (castello) return 1;
+        const w = window.innerWidth;
+        if (window.innerHeight <= w || w >= 600) return 1;
+        return Math.max(MAP_SCALA_MINIMA, Math.min(1, w / MAP_LARGHEZZA_TELEFONO));
     }
     /**
      * Dove parte il giocatore sull'isola: A SINISTRA, poco sotto il fiume (la sponda sud, a sinistra, sta a y~590 sul fondale 1536x1024).
@@ -2200,8 +2224,9 @@
             }
             // La camera segue (se il mondo e' piu' grande della finestra): si avvicina al punto, senza strattoni.
             if (viewport && !calma) {
-                viewport.scrollLeft += (p.x - viewport.clientWidth / 2 - viewport.scrollLeft) * 0.14;
-                viewport.scrollTop += (p.y - viewport.clientHeight / 2 - viewport.scrollTop) * 0.14;
+                const k = parseFloat(canvas.dataset.scala) || 1;   // il mondo puo' essere rimpicciolito (scalaMondo)
+                viewport.scrollLeft += (p.x * k - viewport.clientWidth / 2 - viewport.scrollLeft) * 0.14;
+                viewport.scrollTop += (p.y * k - viewport.clientHeight / 2 - viewport.scrollTop) * 0.14;
             }
             if (t < 1) requestAnimationFrame(passo);
             else { cam.remove(); onDone(); }
@@ -2294,8 +2319,14 @@
         // dall'utente: "i nodi e le linee sono sfasate"). Calcolare QUI la
         // dimensione finale e usarla identica per canvas E viewBox elimina
         // il problema alla radice: 1 unità SVG = 1px CSS reale, sempre.
-        const canvasWidth = Math.max(contentWidth, window.innerWidth);
-        const canvasHeight = Math.max(contentHeight, window.innerHeight);
+        // Con il mondo rimpicciolito (scalaMondo) la finestra copre piu' unita' di mondo: innerWidth/k, innerHeight/k.
+        const scala = scalaMondo(castleOnly);
+        const canvasWidth = Math.max(contentWidth, Math.ceil(window.innerWidth / scala));
+        const canvasHeight = Math.max(contentHeight, Math.ceil(window.innerHeight / scala));
+        // Dimensioni VERE sullo schermo. Se l'altezza combacia con quella della finestra (a meno dell'arrotondamento) la si fa
+        // esattamente uguale, altrimenti resterebbe 1px di scorrimento verticale.
+        const mondoW = Math.round(canvasWidth * scala);
+        const mondoH = (scala !== 1 && Math.abs(canvasHeight * scala - window.innerHeight) < 2) ? window.innerHeight : Math.round(canvasHeight * scala);
         // Camera: la vista di prima (se c'e') si ripristina e poi scivola verso il nuovo centro, invece di saltare. La luce del mondo e
         // l'ambiente (foglie, lucciole) si aggiornano qui, sul <body>, cosi' cambiano con dolcezza fra un render e l'altro.
         const vecchioViewport = document.getElementById('mapViewport');
@@ -2305,8 +2336,10 @@
 
         content.innerHTML = `
             <div class="map-viewport" id="mapViewport">
-                <div class="map-canvas" id="mapCanvas" style="width:${canvasWidth}px; height:${canvasHeight}px;">
-                    <svg class="map-lines" viewBox="0 0 ${canvasWidth} ${canvasHeight}" preserveAspectRatio="none"></svg>
+                <div class="map-mondo" id="mapMondo" style="width:${mondoW}px; height:${mondoH}px;">
+                    <div class="map-canvas" id="mapCanvas" data-scala="${scala}" style="width:${canvasWidth}px; height:${canvasHeight}px;${scala !== 1 ? ' transform: scale(' + scala + ');' : ''}">
+                        <svg class="map-lines" viewBox="0 0 ${canvasWidth} ${canvasHeight}" preserveAspectRatio="none"></svg>
+                    </div>
                 </div>
             </div>
             ${castleOnly ? '' : '<div class="map-legend"><span><b>⚔️ Duello</b> sfidante già noto</span><span><b>❔ Ignoto</b> premio, insidia o vicolo cieco</span></div>'}
@@ -2580,7 +2613,7 @@
         const focus = castleOnly && choices[0] ? choices[0]
             : { x: (current.x + mediaScelte) / 2, y: current.y };
         const centraSu = (p, morbido) => viewport.scrollTo({
-            left: Math.max(0, p.x - viewport.clientWidth / 2), top: Math.max(0, p.y - viewport.clientHeight / 2),
+            left: Math.max(0, p.x * scala - viewport.clientWidth / 2), top: Math.max(0, p.y * scala - viewport.clientHeight / 2),
             behavior: (morbido && !riduciMovimento()) ? 'smooth' : 'auto'
         });
         requestAnimationFrame(() => {
