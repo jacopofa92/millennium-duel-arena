@@ -1,168 +1,151 @@
 # Passaggio di consegne — Millennium Duel Arena
 
-**Aggiornato:** 14 novembre 2026  
-**Scopo:** riprendere il progetto su una macchina virtuale Ubuntu senza dipendere dall'ambiente Windows usato in precedenza.
+**Aggiornato:** 23 novembre 2026<br>
+**Destinazione:** ripresa dello sviluppo su una VM Ubuntu/Linux<br>
+**Repository:** privato, `jacopofa92/millennium-duel-arena`
 
-## Stato del repository
+## Stato Git al passaggio
 
-- **Branch attivo:** `main`
-- **Ultimo commit del repository:** `60ce790` — `docs: aggiunge passaggio di consegne Ubuntu` (questo documento).
-- **Ultimo commit applicativo:** `3284b40` — `ui: imposta dettagli video alti di default`.
-- **Sincronizzazione:** `main` è allineato a `origin/main` al momento di questo aggiornamento.
-- **Modifiche non committate:** nessuna; il working tree era pulito.
-- **Versione gioco:** `1.6.86`
-- **Cache Service Worker:** `v740`
+- **Branch:** `main`, tracciato su `origin/main`.
+- **Ultimo commit applicativo:** `5f3867d` — `Rende raro Potere del Mago`.
+- **Allineamento:** il branch era allineato al remoto; il working tree era pulito prima di aggiornare questo documento.
+- **Modifiche applicative non committate:** nessuna. Questo passaggio di consegne è l’unica modifica di documentazione di questa sessione; sarà committata separatamente.
+- **Versione gioco:** `1.9.32`.
+- **Cache Service Worker:** `ygo-duel-arena-v803`.
 
-Gli ultimi cambiamenti visibili sono:
+Il commit `5f3867d` rende **Potere del Mago (ID 746)** Leggendaria e la esclude da negozio e buste finché non si possiede la prima copia. La prima copia è nello Structure Deck *Spellcaster’s Judgment* (SD6), disponibile dopo Battle City I al costo previsto per gli Structure Deck. Dopo il primo ottenimento può tornare raramente nelle offerte e nelle buste di fascia alta. La fonte è mostrata nella Cartoteca. La modifica è coperta dallo spec `nuove-carte-economia`.
 
-1. `9abb208 ui: rinomina Assalto al Campione`: uniforma il nome della sfida settimanale e del raid multiplayer in **Assalto al Campione**. Gli identificativi interni `caccia` e `raid`, il protocollo multiplayer e il Tag Team locale «Contro un Boss» restano invariati.
-2. `3284b40 ui: imposta dettagli video alti di default`: imposta **Alti** come qualità video iniziale su desktop, telefoni e APK. Le preferenze salvate esplicitamente dall'utente continuano a prevalere.
+## Ultimi cambiamenti rilevanti
+
+- `5f3867d` — rarità e prima fonte di Potere del Mago; versione `1.9.32`, cache `v803`.
+- `1fc1207` — aggiunti cinque puzzle, con duellanti reali come avversari (nei puzzle non va introdotto un bot generico).
+- `ef22f30`, `42f39d3` e commit immediatamente precedenti — ordinamento coerente dei duellanti del Mondo Virtuale, collocazione di Tristan posseduto dai Big Five prima di Noah, e di Noah prima di Gozaburo; aggiornate le pedine di Tristan.
+- Il recente lavoro scenico include l’impatto delle Evocazioni di Livello 7+, con sollevamento/caduta della carta reale e onda sul campo. Riferimento tecnico in `PROJECT_MAP.md`.
+
+Per ricostruire la cronologia precisa, usare `git log --oneline --decorate` e consultare i commit, non assumere che le vecchie sezioni di `WORK_IN_PROGRESS.md` riflettano il codice attuale.
 
 ## Che progetto è
 
-Millennium Duel Arena è un gioco di duelli Yu-Gi-Oh! realizzato con HTML, CSS e JavaScript senza framework né bundler applicativo. Le pagine usano script classici (`<script src>`) in un ordine significativo. Il gioco può essere aperto come sito statico; autenticazione, salvataggi sincronizzati e multiplayer richiedono i rispettivi servizi remoti.
+Gioco di duelli Yu-Gi-Oh! in HTML, CSS e JavaScript classico, senza framework e senza bundler applicativo. Le pagine caricano script con `<script src>` in un ordine esplicito e possono essere aperte direttamente; per WebGL, audio/video e flussi autenticati è preferibile un server HTTP locale. La copia `dist/` è generata e ignorata da Git.
 
-Il repository comprende il gioco, test Playwright, strumenti di pubblicazione e un relay multiplayer Node. Non serve compilare il gioco per modificarne il codice sorgente. La cartella `dist/` è una copia generata e non va mantenuta a mano.
+Il gioco pubblicato è su Cloudflare Workers (`millennium-duel-arena.core10games.workers.dev`); a ogni push su `main` Cloudflare esegue `npm run pubblica` e pubblica la copia minificata. Il relay multiplayer è su Render. L’APK Android è un contenitore del sito e usa un progetto nativo separato: il normale lavoro web non richiede la build APK.
 
-### Architettura in breve
+## Architettura da preservare
 
-- **Regole e stato del duello:** `js/engine/` (motore, fasi, battaglia, evocazioni, comandi, flusso e risoluzione degli effetti).
-- **Effetti delle carte:** `js/engine/card-effects*.js`; le carte e le relative definizioni sorgente sono in `data/cards.json`, con dati compilati generati in `js/data/cards-data.generated.js`.
-- **IA:** `js/ai/`.
-- **Interfaccia e audio:** `js/ui/` e `js/audio/`.
-- **Multiplayer:** client in `js/multiplayer/`, protocollo condiviso e relay in `server/server.js`.
-- **Pagine:** file HTML alla radice e in cartelle dedicate; la sequenza dei loro script è gestita da `scripts/gruppi-script.js`.
-- **Test:** `tests/`, eseguiti con Playwright.
-- **Mappa del progetto e decisioni storiche:** `PROJECT_MAP.md` e `CLAUDE.md`.
-- **Lavori aperti e verifiche manuali:** `docs/planning/WORK_IN_PROGRESS.md`.
+- `js/engine/`: stato, regole, azioni, fasi, battaglia, evocazioni, risoluzione e comandi.
+- `js/engine/card-effects*.js`: implementazioni degli effetti per carta.
+- `js/ai/`: IA Facile/Media/Difficile e criteri condivisi.
+- `js/data/`: cataloghi dei personaggi, deck, sfide, rarità e dati generati.
+- `data/cards.json`: sorgente delle carte; `js/data/cards-data.generated.js` è generato e **non va modificato a mano**. Dopo una modifica al JSON eseguire `node scripts/build-cards-data.js`.
+- `js/ui/` e `js/audio/`: interfaccia, animazioni, WebGL e audio.
+- `js/multiplayer/`, `server/`: client, protocollo a passo comune e relay WebSocket.
+- `scripts/gruppi-script.js`: fonte dei gruppi/ordine degli script HTML. Dopo averlo cambiato eseguire `node scripts/sync-script-groups.js`.
+- `tests/specs/`: test Playwright; `tools/`: simulazioni e audit riproducibili.
+- `graphify-out/`: grafo persistente. Per una domanda sul codice consultare prima la skill Graphify e il grafo (`graphify query`, `path` o `explain`); dopo modifiche al codice eseguire `graphify update .`.
 
-## Decisioni tecniche da preservare
+Prima di intervenire seguire l’ordine in `AGENTS.md`: `PUBBLICAZIONE.md`, `PROJECT_MAP.md`, `docs/planning/WORK_IN_PROGRESS.md`, quindi cercare per argomento in `CLAUDE.md` e in `docs/storia/`. `docs/architecture/GUIDA_RIUTILIZZO.md` è richiesta prima di refactor ampi. La roadmap sugli archetipi è in `docs/planning/CLASSIC_ARCHETYPES_ROADMAP.md`.
 
-1. **Script classici e ordine esplicito.** Non introdurre bundler o moduli senza una decisione progettuale. Se cambia un gruppo di script, modificare `scripts/gruppi-script.js` e rigenerare le liste con `node scripts/sync-script-groups.js`.
-2. **Motore separato dall'interfaccia.** Le regole non devono manipolare direttamente il DOM né chiamare il renderer: usano `PortaUI` ed `EventiDuello`.
-3. **Le scelte passano dal sistema condiviso.** Usare `Decisioni.chiedi` e il posto reale del tavolo; evitare identificativi fissi come `player`/`bot` nelle regole.
-4. **Le azioni sono comandi.** Le mosse passano da `Comandi.esegui`; il multiplayer e i test a passo comune dipendono dalla riproducibilità dello stato.
-5. **Casualità deterministica.** Nelle regole usare `Casuale` o `ctx.random()`, non `Math.random()`.
-6. **Avanzamento temporizzato delle regole.** Usare `PassoComune.dopo`/`dopoRegola`, non timer indipendenti che possano divergere tra client.
-7. **Dati carte generati.** Non modificare a mano `js/data/cards-data.generated.js`: dopo una modifica a `data/cards.json`, lanciare `node scripts/build-cards-data.js`.
-8. **Pubblicazione e cache.** Ogni risorsa statica nuova va inclusa in `CARTELLE` in `scripts/pubblica.js`; se una modifica cambia ciò che vede il giocatore, aggiornare `CACHE_NAME` in `sw.js`.
-9. **Graphify.** Il repository contiene `graphify-out/`. Per domande sull'architettura o sul codice, consultare prima il grafo; dopo modifiche al codice eseguire `graphify update .`.
-10. **Riferimento effetti carte.** Per verifiche TCG usare YGOPRODeck come riferimento primario e rispettare le decisioni specifiche già documentate per il gioco, ad esempio le regole personalizzate dei Toon.
+## Decisioni e vincoli importanti
 
-## Ambiente Ubuntu
+1. **Italiano** per comunicazione, commenti e documentazione.
+2. **Non eseguire `npm test` o la suite completa senza richiesta esplicita.** Eseguire solo gli spec coinvolti: `node tests/run-all.js <filtro>`; nel commit scrivere `Suite completa non eseguita.`
+3. Commit mirati su `main` e push immediato quando il lavoro è autorizzato. Refactor grandi o rischiosi su branch dedicato; merge in `main` solo quando richiesto.
+4. Il motore non manipola il DOM e non chiama il renderer: usare `PortaUI` ed `EventiDuello`. Le decisioni passano da `Decisioni.chiedi` e le mosse da `Comandi.esegui`.
+5. Per Multiplayer e riproducibilità: usare `Casuale`/`ctx.random()`, `Tavolo` e `PassoComune`; niente `Math.random()` nelle regole e niente timer indipendenti per avanzare il motore.
+6. Le Trappole devono essere Set prima dell’attivazione. Per effetti e rulings TCG il riferimento primario è YGOPRODeck, salvo regole personalizzate già deliberate (per esempio i Toon).
+7. Starter e Structure Deck sono riferimenti fissi nei bilanciamenti: non cambiarli durante gli audit difficoltà senza richiesta. I deck degli avversari devono restare coerenti con la lore. Per l’IA, il deck `Custom` è una metrica aggiuntiva, non il solo criterio.
+8. Le acquisizioni carta devono rispettare limiti copie e fonti dichiarate. Divinità Egizie, pezzi di Exodia e carte speciali hanno regole dedicate e non vanno reintrodotte nei pool generici.
+9. Modifica visibile ai giocatori: aumentare `CACHE_NAME` in `sw.js`. Una risorsa nuova letta dal gioco va inclusa in `CARTELLE` in `scripts/pubblica.js` e, se deve essere precaricata, nell’`APP_SHELL` del service worker.
+10. Evitare test con attese fisse dopo mosse: le scene bloccano intenzionalmente i comandi finché terminano. I test di interfaccia devono aspettare lo stato libero reale.
 
-### Prerequisiti
+## Ambiente Ubuntu: avvio
 
-- Git
-- Node.js **24** (è la versione usata dalla CI; verificare con `node --version`)
-- npm incluso con Node
-- Chromium e dipendenze di sistema per i test Playwright
-- Accesso autorizzato al repository privato tramite il normale meccanismo Git configurato sulla VM. Non inserire credenziali nei file del progetto o in questo documento.
+Il repository è privato: configurare l’accesso Git sulla VM con il metodo autorizzato (SSH o credential helper già approvato). Non inserire segreti nella repository, nei comandi salvati o in questo documento.
 
-### Avvio da una VM pulita
+Prerequisiti consigliati: Git, **Node.js 24**, npm, Python 3 e Chromium con le dipendenze di sistema per Playwright.
 
 ```bash
 git clone <URL-del-repository-privato>
 cd millennium-duel-arena
 git switch main
 git pull --ff-only
+git status --short --branch
+git log -1 --oneline
 node --version
 npm ci
 npx playwright install --with-deps chromium
+npm run hooks
 ```
 
-L'URL di clone va ottenuto dall'account Git già autorizzato sulla VM. Non salvare password o token nel repository, nella history dei comandi o in `HANDOFF.md`.
+**Nota sul lockfile da risolvere/valutare:** al passaggio `package.json` è alla `1.9.32`, mentre i metadati radice in `package-lock.json` risultano `1.6.87`. Le dipendenze dichiarate coincidono, ma non è stato verificato `npm ci` su Ubuntu. Se `npm ci` fallisce, aggiornare il lockfile con Node/npm della VM e committare la correzione; se riesce, decidere comunque se riallineare i metadati in un commit dedicato.
 
-**Controllo da fare al primo `npm ci`:** al momento `package.json` dichiara `millennium-duel-arena` versione `1.6.86`, mentre i metadati radice di `package-lock.json` risultano ancora `yugioh-game` versione `1.6.42`. Questa incoerenza era già presente e non è stata modificata in questo passaggio. Verificare se `npm ci` termina correttamente su Ubuntu; se fallisce, riallineare il lockfile con una versione Node/npm compatibile e committare la correzione separatamente.
-
-### Comandi utili
-
-```bash
-# Controllo sintassi JavaScript (rapido)
-npm run check
-
-# Un gruppo mirato di test Playwright; usare una parte del nome dello spec
-node tests/run-all.js impostazioni-default-alti-e-profondita-menu
-
-# Controllo dei file JavaScript annotati con @ts-check
-npm run typecheck
-
-# Rigenerare gli script delle pagine dopo aver cambiato i gruppi
-node scripts/sync-script-groups.js
-
-# Rigenerare i dati carte dopo aver cambiato data/cards.json
-node scripts/build-cards-data.js
-
-# Generare la copia statica di pubblicazione e confrontarla con le sorgenti
-npm run pubblica
-npm run verifica-pubblicazione
-
-# Avviare localmente il relay multiplayer, se necessario
-node server/server.js
-```
-
-Per un'anteprima web locale si può usare, dalla radice del repository:
+Per anteprima HTTP locale:
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Poi aprire `http://localhost:8000/`. I flussi che richiedono account o servizi remoti non diventano disponibili per il solo fatto di avviare il server statico.
+Poi aprire `http://localhost:8000/`. Il server statico non fornisce autenticazione Supabase né relay multiplayer.
 
-## Test eseguiti e risultati noti
+## Comandi di lavoro e test
 
-### Ultimo aggiornamento, commit `3284b40`
+```bash
+npm run check                         # sintassi di tutti i file JavaScript
+node tests/run-all.js <filtro>        # solo gli spec pertinenti (Playwright)
+npm run typecheck                     # TypeScript check sui file con @ts-check
+node scripts/sync-script-groups.js    # rigenera gli script HTML dai gruppi
+node scripts/build-cards-data.js      # rigenera i dati carte dopo cards.json
+npm run pubblica                      # genera dist/ per controllo locale
+npm run verifica-pubblicazione        # confronta dist/ e sorgenti
+node tools/duello-senza-testa.js --avversario <id> --livello hard --partite 12 --seme 100
+node tools/audit-attivazioni-ia.js --reattive --non-scattate
+node tools/duello-gemello.js
+```
 
-- `node --check js/ui/video-quality.js` — **superato**.
-- `node --check tests/specs/impostazioni-default-alti-e-profondita-menu.spec.js` — **superato**.
-- `git diff --check` — **superato**.
-- `npm run pubblica` — **superato**; copia `dist/` generata con 193 file JS, 63 CSS, 27 HTML e 3.314 risorse statiche copiate. I 291 asset previsti dal Service Worker erano presenti.
-- Test mirato `node tests/run-all.js impostazioni-default-alti-e-profondita-menu` — **non arrivato alle asserzioni**: mancava il binario Chromium di Playwright nell'ambiente di esecuzione. Installarlo sulla VM con `npx playwright install --with-deps chromium`, poi rilanciare.
-- Suite completa — **non eseguita**, in linea con le istruzioni del progetto.
+`npm run hooks` configura l’hook pre-commit nel clone locale. Non usare `--no-verify`: correggere l’errore segnalato dall’hook.
 
-### Commit `9abb208`
+## Test: ultimo stato noto
 
-- `node scripts/check-syntax.js` — **superato** su 717 file JavaScript.
-- `npm run pubblica` — **superato**; verifica dei 291 asset del Service Worker completata.
-- Test Playwright mirati — **bloccati prima delle asserzioni** dalla stessa assenza del binario Chromium.
-- Hook pre-commit — **superato**.
-- Suite completa — **non eseguita**.
+Sul commit applicativo `5f3867d`:
 
-## Pubblicazione
+- `node --check js/data/card-rarity.js`, `js/economy/card-acquisition.js` e `tests/specs/nuove-carte-economia.spec.js` — **superati**.
+- `node scripts/check-syntax.js` — **superato**, 733 file JavaScript controllati.
+- Smoke test Node isolato per rarità e blocco/sblocco della prima copia di Potere del Mago — **superato**.
+- `graphify update .` — **completato**; avvisi non bloccanti per parser SQL mancante e file non classificati.
+- Hook pre-commit — **superato** sul commit.
+- `node tests/run-all.js nuove-carte-economia` — **non ha raggiunto le asserzioni**: Playwright non trovava l’eseguibile Chromium (`chrome-headless-shell`). Installare Chromium nella VM e rilanciare questo spec.
+- Suite completa — **non eseguita**, come richiesto dalle regole.
 
-- Il sito statico viene pubblicato da Cloudflare a seguito del push su `main`; il processo remoto genera la copia minificata. La build locale `npm run pubblica` è utile per controllarla, ma non sostituisce il push.
-- Il relay multiplayer è ospitato separatamente su Render. Il deploy del relay dipende dai file server/protocollo indicati in `render.yaml`; una modifica puramente grafica non dovrebbe richiederne il redeploy.
-- L'APK Android è un contenitore del sito e il suo flusso nativo dipende da un ambiente Android separato. Non è necessario per il normale lavoro web su Ubuntu; serviranno Android SDK e configurazione dedicata per ricompilarla.
-- Consultare `PUBBLICAZIONE.md` prima di cambiare hosting, file pubblicati o processo di release. È stato aggiornato in precedenza e contiene ancora istruzioni specifiche Windows per l'APK, non necessarie alla procedura Ubuntu qui descritta.
+Il check automatico su push esegue la sintassi; la suite completa è configurata per avvio manuale o pull request. Consultare `.github/workflows/test.yml` se la configurazione cambia.
 
-## Problemi aperti e verifiche da pianificare
+## Problemi aperti e attività da riprendere
 
-Questi punti sono attività di controllo, non blocchi per avviare il progetto sulla VM:
+Priorità pratiche per la VM:
 
-1. Installare Chromium Playwright e ripetere i due spec mirati all'ultimo cambio UI.
-2. Verificare su un dispositivo mobile reale i flicker residui durante sessioni di duello lunghe; i test desktop non sostituiscono questa verifica.
-3. Completare la verifica manuale su telefono della risposta e dell'accessibilità dello stepper delle fasi.
-4. Eseguire il test multi-dispositivo dell'accesso allo stesso account e della protezione dei salvataggi, descritto in `docs/planning/WORK_IN_PROGRESS.md`.
-5. Proseguire gli audit IA/deck e archetipi classici riportati nella sezione dedicata di `docs/planning/WORK_IN_PROGRESS.md`; il benchmark del deck `Custom` è già documentato lì e in `docs/audits/CLASSIC_ARCHETYPES_CUSTOM_BENCHMARK.md`.
-6. Verificare il lockfile su Ubuntu con `npm ci` e decidere se riallinearne i metadati in un commit dedicato.
+1. Installare Chromium e rilanciare `node tests/run-all.js nuove-carte-economia`; è la verifica Playwright sospesa dall’ambiente precedente.
+2. Verificare `npm ci` su Ubuntu e sistemare, se necessario, i metadati obsoleti del lockfile (`1.6.87` contro `1.9.32`).
+3. Fare la prova manuale richiesta con due dispositivi sul controllo della sessione: accesso del dispositivo B, poi tentativo di salvataggio dal dispositivo A; verificare logout/avviso e conservazione della copia locale.
+4. Indagare i flicker residui su un telefono reale durante un duello prolungato, distinguendo morra/animazioni, cambio orientamento, laminati e video. I test desktop non chiudono questo punto.
+5. Proseguire gli audit di bilanciamento e ottenibilità, tracciati in `docs/planning/WORK_IN_PROGRESS.md`: audit economico globale di carte precedenti; bilanciamento post-aggiunte dei deck avversari lasciando invariati Starter/Structure; confronto deck avversari da 40/45/50 carte; audit Strings per i supporti; misurare Custom come metrica aggiuntiva.
+6. Il piano carte pre-GX di Yugi/Yami Yugi rimanda a una decisione successiva Gandora, Maghi Silenti, Spadaccini Silenti, Marshmallon e Sarcofago d’Oro; leggere la roadmap prima di riprenderlo.
+7. Restano richieste di verifica manuale su telefono per ingresso VS/morra/apertura campo e feedback al tocco dello stepper.
 
-Per aggiornare la lista, leggere `docs/planning/WORK_IN_PROGRESS.md`: è la fonte corrente, mentre `CLAUDE.md` conserva decisioni storiche e può contenere appunti datati.
+`WORK_IN_PROGRESS.md` conserva molta cronologia, anche pregressa. Alcune sue checkbox non sono più allineate alle versioni recenti: verificare codice e log Git prima di riaprire un punto. Per lo stato degli archetipi usare anche `CLASSIC_ARCHETYPES_ROADMAP.md` e i report citati lì; per l’economia usare `docs/economy/` e `docs/audits/`.
 
-## Prossimi passi consigliati sulla VM
+## Pubblicazione e Android
 
-1. Ottenere accesso al repository privato con il metodo Git già approvato per la VM; clonare `main` e confermare `git status --short --branch` e `git log -1 --oneline`.
-2. Installare Node 24 e dipendenze con `npm ci`; risolvere l'eventuale incoerenza del lockfile solo se impedisce l'installazione.
-3. Installare Chromium per Playwright e rilanciare il test mirato dell'impostazione grafica predefinita.
-4. Eseguire `npm run check`; eseguire i soli test pertinenti al lavoro. **Non lanciare la suite completa (`npm test`) senza richiesta esplicita.**
-5. Prima di un intervento, consultare nell'ordine `PUBBLICAZIONE.md`, `PROJECT_MAP.md`, `docs/planning/WORK_IN_PROGRESS.md` e cercare in `CLAUDE.md` la parola chiave dell'area.
-6. Per modifiche visibili, aggiornare versione/cache secondo le convenzioni correnti; mantenere i cambi mirati, usare branch dedicati per refactor grandi e seguire la procedura di commit/push descritta in `AGENTS.md`.
+- Push su `main` → Actions esegue il check di sintassi; Cloudflare genera `dist/` e pubblica il sito; Render ridistribuisce il relay.
+- Per controllare una build locale: `npm run pubblica` seguito da `npm run verifica-pubblicazione`.
+- Una modifica solo web non richiede normalmente una nuova APK: l’APK di produzione carica il sito remoto. Serve il progetto Android separato solo per cambiare configurazione nativa, indirizzo o risorse native.
+- Per dettagli aggiornati su hosting, file statici, service worker e relay leggere `PUBBLICAZIONE.md`; alcune sue istruzioni APK sono specifiche Windows e non sono requisiti per lo sviluppo Ubuntu.
 
-## Documenti da tenere come riferimenti
+## Riferimenti da tenere aperti
 
-- `AGENTS.md` — istruzioni operative e guardrail.
-- `PUBBLICAZIONE.md` — hosting e deploy.
-- `PROJECT_MAP.md` — architettura e passaggi di consegne precedenti.
-- `docs/planning/WORK_IN_PROGRESS.md` — attività aperte e controlli richiesti.
-- `CLAUDE.md` — diario storico, da consultare per argomento.
-- `docs/architecture/GUIDA_RIUTILIZZO.md` — da leggere prima di refactor ampi.
-
+- `AGENTS.md` — procedure e vincoli per agenti.
+- `PUBBLICAZIONE.md` — deploy Cloudflare/Render e cache.
+- `PROJECT_MAP.md` — architettura e decisioni tecniche.
+- `docs/planning/WORK_IN_PROGRESS.md` — backlog storico e stato dei lavori.
+- `docs/planning/CLASSIC_ARCHETYPES_ROADMAP.md` — roadmap supporti e benchmark.
+- `docs/planning/VALUTAZIONE_2026-11-12.md` — valutazione generale, da leggere tenendo conto che alcune sezioni sono datate.
+- `CLAUDE.md` e `docs/storia/` — memoria storica da consultare per parola chiave.
+- `docs/architecture/GUIDA_RIUTILIZZO.md` — prima di refactor ampi.
