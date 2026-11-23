@@ -576,8 +576,8 @@
 // v773: le Fusioni WebGL di Livello 7+ vengono rivelate nello slot dopo la scena.
 // v794: Tristan posseduto dai Big Five, mazzi a difficoltà, dialoghi e nuove pedine.
 // v799: posa danno di Tristan frontale, con reazione chiara al colpo ai Life Point.
-// v800: ritratto di Tristan Big Five rialzato e ordine del roster del Mondo Virtuale.
-const CACHE_NAME = 'ygo-duel-arena-v800';
+// v801: sequenza del Mondo Virtuale: Big Five, Tristan posseduto, Noah, Gozaburo.
+const CACHE_NAME = 'ygo-duel-arena-v801';
 
 // CACHE DEI MEDIA (immagini, e tutto cio' che non e' app shell), SEPARATA e con un nome che NON cambia a ogni rilascio.
 // Prima stavano nella stessa cache dell'app shell, e `activate` butta ogni cache che non sia quella corrente: ad ogni aggiornamento

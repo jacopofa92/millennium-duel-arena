@@ -92,15 +92,14 @@ const characterDatabase = [
     // condannati a restare bloccati per sempre (vedi
     // js/data/character-unlocks.js: si sblocca SOLO vincendo in un
     // Torneo o nella Storia).
-    // Tristan posseduto apre il blocco del Mondo Virtuale; Noah e' il
-    // passaggio successivo prima dello scontro conclusivo con Gozaburo.
-    { id: 'tristanBigFive', name: 'Tristan Big Five', title: 'Il Corpo dei Cinque', image: 'images/characters/tristanBigFive.png', series: 'main' },
-    { id: 'noah', name: 'Noah Kaiba', title: 'Il Ragazzo del Mondo Virtuale', image: 'images/characters/noah.jpg', series: 'main' },
     { id: 'gansley', name: 'Gansley', title: 'Il Burattinaio della Rete', image: 'images/characters/gansley.jpg', series: 'main' },
     { id: 'johnson', name: 'Johnson', title: "Il Cacciatore della Giungla Virtuale", image: 'images/characters/johnson.jpg', series: 'main' },
     { id: 'nesbitt', name: 'Nesbitt', title: 'La Furia del Cantiere', image: 'images/characters/nesbitt.jpg', series: 'main' },
     { id: 'crump', name: 'Crump', title: "La Linea di Montaggio", image: 'images/characters/crump.jpg', series: 'main' },
     { id: 'lector', name: 'Lector', title: "L'Illusionista dei Cinque", image: 'images/characters/lector.jpg', series: 'main' },
+    // Ordine della saga: i cinque Big Five, Tristan posseduto, Noah e infine Gozaburo.
+    { id: 'tristanBigFive', name: 'Tristan Big Five', title: 'Il Corpo dei Cinque', image: 'images/characters/tristanBigFive.png', series: 'main' },
+    { id: 'noah', name: 'Noah Kaiba', title: 'Il Ragazzo del Mondo Virtuale', image: 'images/characters/noah.jpg', series: 'main' },
     { id: 'gozaburo', name: 'Gozaburo Kaiba', title: 'Il Padrone della KaibaCorp', image: 'images/characters/gozaburo.jpg', series: 'main' },
     // ===== Yu-Gi-Oh! Forbidden Memories (PS1, 2002) =====
     // L'antico Egitto e il torneo moderno del videogioco: personaggi
