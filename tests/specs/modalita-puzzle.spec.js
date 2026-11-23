@@ -171,6 +171,37 @@ const SOLUZIONI = {
         await attacca(page, await casellaDi(page, 24), -1);
         await attacca(page, await casellaDi(page, 2), -1);
         await attacca(page, await casellaDi(page, 1), -1);
+    },
+    'raigeki-varco': async (page) => {
+        await attiva(page, 409);
+        await calma(page);
+        await battaglia(page);
+        await attacca(page, 0, -1);
+    },
+    'tempesta-sgombera': async (page) => {
+        await attiva(page, 646);
+        await calma(page);
+        await battaglia(page);
+        await attacca(page, 0, -1);
+    },
+    'furto-del-drago': async (page) => {
+        await attiva(page, 147);
+        await calma(page, (c) => (c.card || c).id === 1);
+        await battaglia(page);
+        await attacca(page, await casellaDi(page, 1), -1);
+    },
+    'tributo-a-due': async (page) => {
+        await attiva(page, 492);
+        await calma(page, (c) => [526, 1].includes((c.card || c).id));
+        await battaglia(page);
+        await attacca(page, 0, -1);
+        await attacca(page, 1, -1);
+    },
+    'drago-teschio-nero': async (page) => {
+        await attiva(page, 38);
+        await calma(page);
+        await battaglia(page);
+        await attacca(page, await casellaDi(page, 102), -1);
     }
 };
 
@@ -179,7 +210,7 @@ async function apriPuzzle(t, id) {
     const errori = [];
     page.on('pageerror', (e) => errori.push(e.message));
     await page.addInitScript(() => { window.AUTH_GATE_SKIP = true; window.DUEL_FAST_OPENING = true; });
-    await page.goto(DUELLO + '?mode=puzzle&puzzle=' + id + '&character=kaiba');
+    await page.goto(DUELLO + '?mode=puzzle&puzzle=' + id);
     try { await page.click('.di-skip', { timeout: 4000 }); } catch (e) { /* nessuna intro */ }
     await page.waitForFunction(() => typeof gameState !== 'undefined' && gameState.phase === 'main1' && gameState.currentPlayer === 'player', null, { timeout: 30000 });
     await page.waitForTimeout(300);
@@ -209,6 +240,10 @@ module.exports = {
             try {
                 t.assert(await page.evaluate(() => gameState.turn === 3 && !!document.getElementById('puzzleObiettivo')),
                     `Puzzle ${id}: si parte dal turno 3 con il riquadro dell'obiettivo`);
+                const identita = await page.evaluate(() => ({ id: DuelSession.opponent.id, name: DuelSession.opponent.name }));
+                const duellanteAtteso = await page.evaluate((id) => puzzlesDatabase.find((p) => p.id === id).personaggio, id);
+                t.assert(identita.id === duellanteAtteso && identita.name !== 'Bot',
+                    `Puzzle ${id}: l'avversario è il duellante dichiarato, non un Bot (${JSON.stringify(identita)})`);
                 await SOLUZIONI[id](page);
                 try {
                     await page.waitForFunction(() => gameState.gameOver, null, { timeout: 15000 });

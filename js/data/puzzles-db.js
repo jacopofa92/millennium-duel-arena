@@ -20,7 +20,8 @@
  *   pescata           la carta che peschi a inizio turno (Dian Keto, che
  *                     non infligge danni, se assente: così la pescata non
  *                     risolve mai un puzzle per caso);
- *   personaggio       chi si fa vedere come avversario (characters-db.js).
+ *   personaggio       il Duellante reale mostrato come avversario
+ *                     (characters-db.js), mai il Bot generico.
  *
  * Una regola per tenerli onesti: la soluzione deve essere UNA idea, e le
  * strade "ovvie" sbagliate devono restare corte di almeno un po' di LP.
@@ -163,7 +164,7 @@ const puzzlesDatabase = [
         avversario: { mostri: [[1, 'attacco']] }
     },
     {
-        id: 'libro-luna', titolo: 'La forza ha due facce', emblema: '🌙', difficolta: 2, personaggio: 'darknite',
+        id: 'libro-luna', titolo: 'La forza ha due facce', emblema: '🌙', difficolta: 2, personaggio: 'darkNite',
         descrizione: 'Un Drago Berserk da 3500 ATK sembra invalicabile, ma la sua Difesa racconta un\'altra storia.',
         suggerimento: 'Gira il mostro coperto, distruggilo combattendo sulla DEF e conserva il secondo attacco per i Life Point.',
         lpAvversario: 300,
@@ -203,7 +204,7 @@ const puzzlesDatabase = [
         avversario: {}
     },
     {
-        id: 'due-evocazioni-dal-cimitero', titolo: 'Il campo si rialza', emblema: '♻️', difficolta: 3, personaggio: 'darknite',
+        id: 'due-evocazioni-dal-cimitero', titolo: 'Il campo si rialza', emblema: '♻️', difficolta: 3, personaggio: 'darkNite',
         descrizione: 'L’avversario ha 6900 Life Point. Nei due Cimiteri riposano il Mago Nero e il Drago Bianco: riportali entrambi sul tuo campo.',
         suggerimento: 'Mostro Resuscitato può scegliere un bersaglio da uno qualsiasi dei due Cimiteri. Evoca prima, poi usa il secondo.',
         lpAvversario: 6900,
@@ -211,6 +212,50 @@ const puzzlesDatabase = [
         mostri: [[24, 'attacco']],
         cimitero: [2],
         avversario: { cimitero: [1] }
+    },
+    {
+        id: 'raigeki-varco', titolo: 'Il lampo apre la strada', emblema: '⚡', difficolta: 1, personaggio: 'kaiba',
+        descrizione: 'Il Drago Bianco protegge gli ultimi 2500 Life Point. Hai una sola Magia per liberare il passaggio.',
+        suggerimento: 'Raigeki colpisce soltanto i mostri controllati dall’avversario.',
+        lpAvversario: 2500,
+        mano: [409],
+        mostri: [[2, 'attacco']],
+        avversario: { mostri: [[1, 'attacco']] }
+    },
+    {
+        id: 'tempesta-sgombera', titolo: 'Prima il retrocampo', emblema: '🌪️', difficolta: 1, personaggio: 'mai',
+        descrizione: 'Il Mago Nero può infliggere esattamente i danni necessari, ma una Trappola coperta aspetta il tuo attacco.',
+        suggerimento: 'Sgombera il retrocampo prima di entrare nella Battle Phase.',
+        lpAvversario: 2500,
+        mano: [646],
+        mostri: [[2, 'attacco']],
+        avversario: { magieTrappole: [[382, 'coperta']] }
+    },
+    {
+        id: 'furto-del-drago', titolo: 'Il drago cambia schieramento', emblema: '💗', difficolta: 2, personaggio: 'kaiba',
+        descrizione: 'Il Drago Bianco è pronto ad attaccare per te: all’avversario resta un solo colpo da 3000 Life Point.',
+        suggerimento: 'Cambiare Idea prende il controllo del mostro fino alla fine del turno.',
+        lpAvversario: 3000,
+        mano: [147],
+        avversario: { mostri: [[1, 'attacco']] }
+    },
+    {
+        id: 'tributo-a-due', titolo: 'Pagare il costo, poi colpire', emblema: '⚖️', difficolta: 3, personaggio: 'darkNite',
+        descrizione: 'Il Drago Bianco ferma i tuoi due attaccanti. Hai abbastanza forza per vincere, ma la rimozione chiede un costo.',
+        suggerimento: 'Scarta il Servitore del Teschio per Tributo al Dannato; poi attacca con entrambi i mostri.',
+        lpAvversario: 3300,
+        mano: [492, 526],
+        mostri: [[24, 'attacco'], [4, 'attacco']],
+        avversario: { mostri: [[1, 'attacco']] }
+    },
+    {
+        id: 'drago-teschio-nero', titolo: 'La fusione delle tenebre', emblema: '🌀', difficolta: 3, personaggio: 'yamiYugi',
+        descrizione: 'I due draghi in mano non possono entrare senza Tributi. Nell’Extra Deck li attende una forma più potente.',
+        suggerimento: 'Unisci Drago Nero Occhi Rossi e Teschio Evocato con Polimerizzazione.',
+        lpAvversario: 3200,
+        mano: [38, 12, 13],
+        extra: [102],
+        avversario: {}
     }
 ];
 

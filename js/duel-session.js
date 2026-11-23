@@ -188,7 +188,13 @@
      * esiste, ricade sul Bot generico invece di rompere il duello.
      */
     function resolveOpponent() {
-        const characterId = params.get('character');
+        // Nei Puzzle il personaggio viene dal puzzle stesso: un parametro URL
+        // vecchio o alterato non deve trasformare un duellante in un Bot generico.
+        const puzzle = mode === 'puzzle' && Array.isArray(window.puzzlesDatabase)
+            ? puzzlesDatabase.find((p) => p.id === params.get('puzzle')) : null;
+        const characterId = mode === 'puzzle'
+            ? ((puzzle && puzzle.personaggio) || 'yamiYugi')
+            : params.get('character');
         if (characterId && typeof characterDatabase !== 'undefined') {
             const character = characterDatabase.find((c) => c.id === characterId);
             if (character) {

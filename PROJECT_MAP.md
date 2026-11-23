@@ -758,11 +758,13 @@ Catena, Fusione e Flip, ci sono Equipaggiamenti, Evocazione Rituale e Magie
 Rapide. Restano sandbox guidate isolate in `js/tutorial/tutorial-duel.js`:
 preparano uno stato controllato, ma fanno eseguire le azioni al motore reale.
 
-I Puzzle "vinci in questo turno" sono dodici. I quattro nuovi scenari
-insegnano l'ordine corretto con Buco Nero, il costo di Tributo ai Dannati, il
-cambio ATK/DEF con Libro della Luna e la somma dei Livelli per il Rito del
-Fulgore Nero. Ogni soluzione viene giocata realmente dallo spec
-`modalita-puzzle`; i traguardi delle Sfide sono stati riallineati a 12.
+I Puzzle "vinci in questo turno" sono venti. Gli scenari aggiuntivi coprono
+Buco Nero, il costo di Tributo ai Dannati, Libro della Luna, Rito del Fulgore,
+Raigeki, Tempesta Potente, Cambiare Idea, Polimerizzazione e rimozione con costo.
+Ogni voce dichiara un duellante reale: l'identita' arriva dal puzzle e non da
+un parametro generico, mentre l'IA resta solo il motore che gestisce il lato
+avversario. Ogni soluzione viene giocata dallo spec `modalita-puzzle` e i
+traguardi delle Sfide sono allineati a 20.
 
 ## Completamento carte TCG prima serie (2026-10-12)
 

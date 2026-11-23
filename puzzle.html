@@ -71,7 +71,7 @@
     // Le icone di ogni puzzle sono quelle del tema (js/ui/icon-library.js), scelte per cio' che il puzzle insegna; i dati (puzzles-db.js)
     // tengono l'emoji storica come chiave, un puzzle nuovo senza voce qui prende il Puzzle del Millennio.
     const ICONA_PUZZLE = { '🪓': 'attackPos', '🌀': 'crown', '🐛': 'defensePos', '🎩': 'eye', '💗': 'exchange', '♻️': 'graveyard',
-        '🔮': 'target', '🌪️': 'fieldSpell', '◉': 'arena', '⚖️': 'rules', '🌙': 'duel', '🕯️': 'tower' };
+        '🔮': 'target', '🌪️': 'fieldSpell', '◉': 'arena', '⚖️': 'rules', '🌙': 'duel', '🕯️': 'tower', '⚡': 'attackPos' };
     const nomeDi = (id) => {
         const c = (typeof characterDatabase !== 'undefined') ? characterDatabase.find((x) => x.id === id) : null;
         return c ? c.name : '';
