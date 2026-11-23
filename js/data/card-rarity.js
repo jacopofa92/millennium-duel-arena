@@ -50,6 +50,7 @@
     const LEGENDARY_IDS = new Set([
         1, 2, 12, 17, 29, 102, 123, 167, 188, 207, 409,
         291, 382, 656, 886,
+        746,  // Potere del Mago — potente Equipaggiamento, prima copia nello Structure Deck SD6
         1133, // Golem di Lava — carta firma/boss di Marik
         // Boss e mosse firma dei pacchetti moderni classici. Restano
         // comunque fuori dai pool finché la prima copia non viene meritata.

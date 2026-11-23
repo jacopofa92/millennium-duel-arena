@@ -12,7 +12,7 @@
     const EXODIA = [11, 41, 42, 43, 44];
     const SPIRIT_BY_CHAPTER = { regno: 867, battlecity1: 868, virtuale: 869, battlecity2: 870 };
     const SIGNATURE_GATED = new Set([
-        1, 2, 12, 123, 291,
+        1, 2, 12, 123, 291, 746,
         1133, // Golem di Lava: prima copia da Marik
         1139, // Insetto Parassita: prima copia da Weevil
         1250, 1251, 1252, 1253, 1254, 1255, 1256, 1257, 1258, 1259,
@@ -317,6 +317,7 @@
     function isPackUnlocked(id) { return !!state().unlockedPacks[id]; }
 
     const SOURCES = {
+        746: 'Prima copia: acquista lo Structure Deck Spellcaster\'s Judgment (SD6), disponibile dopo aver completato Battle City I e al costo elevato previsto per gli Structure Deck. Dopo averla ottenuta, può comparire raramente come Leggendaria nelle rotazioni e nelle buste di fascia alta, fino al limite di copie.',
         30: 'Completa tutta la storia anime a Normale o Difficile.',
         31: 'Completa Battle City I a Difficile; batti Strings 30 volte a Difficile e almeno una volta termina con 4000 LP.',
         472: 'Completa Battle City II a Difficile, vinci 3 tornei Battle City a Difficile e batti Marik 40 volte a Difficile; in 10 vittorie perdi al massimo 2000 LP.',

@@ -20,10 +20,17 @@ module.exports = {
                     rare: [1132, 1134, 1135, 1136, 1138, 1140, 1142, 1143, 1144, 1145, 1147, 1149, 1150, 1151, 1152, 1154, 1156],
                     super: [1131, 1137, 1139, 1153],
                     ultra: [1155],
-                    legendary: [1133]
+                    legendary: [746, 1133]
                 };
                 const wrongRarities = Object.entries(expected).flatMap(([rarity, ids]) =>
                     ids.filter((id) => CardRarity.of(id) !== rarity).map((id) => ({ id, expected: rarity, actual: CardRarity.of(id) })));
+
+                const magePowerLockedBefore = !CardAcquisition.isSignatureUnlocked(746);
+                const magePowerSource = CardAcquisition.sourceFor(746);
+                const spellcastersDeck = starterStructureDeckDatabase.find((deck) => deck.packId === 'structure_sd6_spellcasters_judgment');
+                const magePowerInDeck = !!spellcastersDeck && spellcastersDeck.main.some((entry) => entry.id === 746);
+                SaveManager.addOwnedCards(746, 1);
+                const magePowerUnlockedAfterDeck = CardAcquisition.isSignatureUnlocked(746);
 
                 const parasiteLockedBefore = !CardAcquisition.isSignatureUnlocked(1139);
                 for (let i = 0; i < 14; i++) CardAcquisition.onDuelWin({ difficulty: 'Difficile', opponentId: 'weevil', playerLP: 8000, lpLost: 0 });
@@ -54,6 +61,7 @@ module.exports = {
                 return {
                     wrongRarities, parasiteLockedBefore, parasiteAt14, parasiteAt15,
                     lavaAt19, lavaAt20, lavaAfterMore, noSource: noSource.map((c) => c.id),
+                    magePowerLockedBefore, magePowerUnlockedAfterDeck, magePowerInDeck, magePowerSource,
                     forgeContainsWholeFusionLot, forgeCoherent,
                     parasiteUnlockedAfter: CardAcquisition.isSignatureUnlocked(1139),
                     lavaUnlockedAfter: CardAcquisition.isSignatureUnlocked(1133)
@@ -61,6 +69,10 @@ module.exports = {
             });
 
             assert(result.wrongRarities.length === 0, `Rarità errate: ${JSON.stringify(result.wrongRarities)}`);
+            assert(result.magePowerLockedBefore && result.magePowerUnlockedAfterDeck && result.magePowerInDeck,
+                'Potere del Mago deve restare fuori dai pool commerciali finché la prima copia non arriva dallo Structure Deck SD6');
+            assert(result.magePowerSource.includes('Battle City I') && result.magePowerSource.includes('Leggendaria'),
+                'La Cartoteca deve spiegare il percorso raro di Potere del Mago');
             assert(result.parasiteLockedBefore && result.parasiteAt14 === 0 && result.parasiteAt15 === 1 && result.parasiteUnlockedAfter,
                 'Parassita Paracida deve sbloccarsi esattamente alla 15ª vittoria difficile su Weevil');
             assert(result.lavaAt19 === 0 && result.lavaAt20 === 1 && result.lavaAfterMore === 1 && result.lavaUnlockedAfter,
