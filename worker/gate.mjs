@@ -93,6 +93,50 @@ function risposta(corpo, stato, extra = {}) {
     return new Response(corpo, { status: stato, headers: Object.assign({ 'Cache-Control': 'no-store' }, extra) });
 }
 
+/** La configurazione mancante e' un errore di distribuzione, non un errore dell'utente: sulle navigazioni mostriamo una pagina leggibile. */
+function rispostaCancelloNonConfigurato(request) {
+    const messaggio = 'Cancello non configurato: manca COOKIE_SECRET';
+    if (!eNavigazione(request)) return risposta(messaggio, 503);
+    const pagina = `<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0d14">
+<title>Accesso non disponibile — Millennium Duel Arena</title>
+<style>
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; margin: 0; }
+    body {
+        display: grid; place-items: center; min-height: 100svh; padding: max(24px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom));
+        color: #eee6d2; background: radial-gradient(ellipse at 50% 28%, rgba(107, 77, 29, .22), transparent 42%), #090b10;
+        font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    main { width: min(100%, 500px); text-align: center; padding: clamp(26px, 7vw, 44px); border: 1px solid rgba(218, 185, 101, .32); border-radius: 22px; background: linear-gradient(150deg, rgba(30, 27, 24, .96), rgba(14, 15, 20, .98)); box-shadow: 0 24px 70px rgba(0,0,0,.55), inset 0 1px rgba(255,255,255,.04); }
+    .sigillo { display: grid; place-items: center; width: 68px; height: 68px; margin: 0 auto 20px; border: 1px solid rgba(230, 194, 101, .5); border-radius: 50%; color: #e8cb7c; background: rgba(171, 128, 43, .12); }
+    .sigillo svg { width: 34px; height: 34px; }
+    .soprattitolo { margin: 0 0 8px; color: #c5ad71; font-size: .7rem; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
+    h1 { margin: 0; color: #f4df9f; font: 700 clamp(1.45rem, 6vw, 2rem)/1.18 Georgia, "Times New Roman", serif; }
+    p { margin: 16px 0 0; color: #c9c3b7; }
+    .codice { display: inline-block; margin: 20px 0 0; padding: 7px 12px; border: 1px solid rgba(224, 193, 113, .25); border-radius: 9px; color: #f0d98e; background: rgba(5, 6, 9, .5); font: 600 .82rem/1.4 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    a { display: inline-flex; justify-content: center; margin-top: 26px; min-height: 46px; align-items: center; padding: 0 20px; border: 1px solid rgba(226, 193, 108, .55); border-radius: 12px; color: #f5dfa0; background: rgba(159, 118, 35, .16); font-weight: 750; text-decoration: none; transition: background .18s ease, transform .18s ease; }
+    a:hover { background: rgba(159, 118, 35, .28); transform: translateY(-1px); }
+    a:focus-visible { outline: 2px solid #f5dfa0; outline-offset: 3px; }
+    @media (prefers-reduced-motion: reduce) { a { transition: none; } }
+</style>
+</head>
+<body><main>
+    <div class="sigillo" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5c-5 0-8 3-8 7s3 7 8 7 8-3 8-7-3-7-8-7Z"/><path d="M20 19v16M13 24h14M15 35h10M10 19l10 5 10-5"/></svg></div>
+    <p class="soprattitolo">Millennium Duel Arena</p>
+    <h1>Accesso temporaneamente non disponibile</h1>
+    <p>Il cancello di accesso non è configurato correttamente. Riprova più tardi o torna alla pagina iniziale.</p>
+    <div class="codice">Configurazione mancante: COOKIE_SECRET</div>
+    <div><a href="/">Torna alla pagina iniziale</a></div>
+</main></body>
+</html>`;
+    return risposta(pagina, 503, { 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex' });
+}
+
 function cookieHeader(valore, durata) {
     return `${NOME_COOKIE}=${valore}; Path=/; Max-Age=${durata}; HttpOnly; Secure; SameSite=Lax`;
 }
@@ -147,7 +191,7 @@ export default {
         // modalita' e SOLO senza COOKIE_SECRET il sito resta aperto com'era. Appena il segreto c'e' il cancello si chiude da
         // solo; poi si porta CANCELLO_MODO a "attivo", e senza segreto i file riservati restano chiusi (503).
         if (!env.COOKIE_SECRET && env.CANCELLO_MODO === 'transizione') return env.ASSETS.fetch(request);
-        if (!env.COOKIE_SECRET) return risposta('Cancello non configurato: manca COOKIE_SECRET', 503);
+        if (!env.COOKIE_SECRET) return rispostaCancelloNonConfigurato(request);
         if (await cookieValido(env.COOKIE_SECRET, leggiCookie(request, NOME_COOKIE))) {
             const r = await env.ASSETS.fetch(request);
             // Contenuto riservato: niente copie in cache condivise, e la copia del browser si rivalida sempre (ETag).

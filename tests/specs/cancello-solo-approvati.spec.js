@@ -50,7 +50,15 @@ module.exports = {
         t.assert(con.status === 200 && (await con.text()).includes('duel-engine') && /private/.test(con.headers.get('Cache-Control')), 'Con il cookie giusto il motore si consegna, solo come contenuto privato');
         const falso = await chiedi('/js/engine/duel-engine.js', { headers: { Cookie: 'ygo_acc=' + await G.creaCookie('altro', ID, adesso + 600) } });
         t.assert(falso.status === 401, 'Un cookie firmato con un altro segreto e\' respinto');
-        t.assert((await chiedi('/js/engine/duel-engine.js', {}, Object.assign({}, env, { COOKIE_SECRET: undefined }))).status === 503, 'Senza segreto configurato il cancello resta CHIUSO per i file riservati (mai aperto)');
+        const senzaSegreto = Object.assign({}, env, { COOKIE_SECRET: undefined });
+        t.assert((await chiedi('/js/engine/duel-engine.js', {}, senzaSegreto)).status === 503, 'Senza segreto configurato il cancello resta CHIUSO per i file riservati (mai aperto)');
+        const erroreVisibile = await chiedi('/duelMonstersCore.html', { headers: { Accept: 'text/html' } }, senzaSegreto);
+        const paginaErrore = await erroreVisibile.text();
+        t.assert(erroreVisibile.status === 503 && /text\/html/.test(erroreVisibile.headers.get('Content-Type') || '')
+            && paginaErrore.includes('Accesso temporaneamente non disponibile') && paginaErrore.includes('COOKIE_SECRET')
+            && paginaErrore.includes('border-radius'), 'Una navigazione senza COOKIE_SECRET mostra la pagina di errore curata e responsive');
+        const erroreRisorsa = await chiedi('/js/engine/duel-engine.js', {}, senzaSegreto);
+        t.assert(erroreRisorsa.status === 503 && await erroreRisorsa.text() === 'Cancello non configurato: manca COOKIE_SECRET', 'Le richieste non HTML mantengono una risposta testuale breve');
         // Transizione: senza segreto E con CANCELLO_MODO = transizione il sito resta aperto (prima pubblicazione); con il segreto no.
         const transizione = await chiedi('/js/engine/duel-engine.js', {}, Object.assign({}, env, { COOKIE_SECRET: undefined, CANCELLO_MODO: 'transizione' }));
         t.assert(transizione.status === 200, 'In transizione, senza segreto, il sito resta aperto');
