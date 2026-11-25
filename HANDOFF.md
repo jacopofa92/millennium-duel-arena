@@ -7,11 +7,11 @@
 ## Stato Git al passaggio
 
 - **Branch:** `main`, tracciato su `origin/main`.
-- **Ultimo commit applicativo:** `80c3ab2` — `Rifinisce filtri possedute e barra Storia`.
+- **Ultimo commit applicativo:** `e8a6db0` — `Stilizza errore di configurazione del cancello`.
 - **Allineamento:** `main` è stato pubblicato su `origin/main` dopo i controlli pre-commit.
 - **Modifiche non committate:** questo aggiornamento del passaggio di consegne; nessuna modifica applicativa pendente.
-- **Versione gioco:** `1.9.34`.
-- **Cache Service Worker:** `ygo-duel-arena-v805`.
+- **Versione gioco:** `1.9.35`.
+- **Cache Service Worker:** `ygo-duel-arena-v806`.
 
 Il commit `5f3867d` rende **Potere del Mago (ID 746)** Leggendaria e la esclude da negozio e buste finché non si possiede la prima copia. La prima copia è nello Structure Deck *Spellcaster’s Judgment* (SD6), disponibile dopo Battle City I al costo previsto per gli Structure Deck. Dopo il primo ottenimento può tornare raramente nelle offerte e nelle buste di fascia alta. La fonte è mostrata nella Cartoteca. La modifica è coperta dallo spec `nuove-carte-economia`.
 
@@ -19,13 +19,16 @@ Il commit `bdfe05e` corregge gli sblocchi delle sfide legate alla storia, aggiun
 
 Il commit `80c3ab2` ridisegna l’opzione “Solo possedute” in Cartoteca e Creazione Deck come interruttore coerente con il tema, con stato attivo e ripristino visibili. La barra contestuale della Storia mostra il selettore del deck con etichetta “Mazzo”. Versione `1.9.34`, cache `v805`.
 
-**Verifiche degli ultimi commit:** `node scripts/check-syntax.js` ha controllato 733 file JavaScript senza errori; i controlli pre-commit sono passati. Gli spec mirati `challenge-tracker-hooks`, `filtri-possedute-admin-utenze` e `barra-di-tab-menu-e-pagine` non sono partiti perché l’eseguibile Chromium di Playwright manca in questa macchina. La suite completa non è stata eseguita. Installare Chromium sulla VM con `npx playwright install --with-deps chromium` e rilanciare gli spec mirati.
+Il commit `e8a6db0` mostra una pagina HTML responsiva e in tema quando una navigazione protetta viene bloccata perché manca `COOKIE_SECRET`; le richieste di script e risorse mantengono una risposta testuale 503. Lo spec del Worker è passato eseguendolo direttamente senza browser. Versione `1.9.35`, cache `v806`.
+
+**Verifiche degli ultimi commit:** `node scripts/check-syntax.js` ha controllato 733 file JavaScript senza errori; i controlli pre-commit sono passati. Lo spec `cancello-solo-approvati` è passato eseguito direttamente. Gli spec UI recenti non sono partiti perché in questa macchina manca Chromium di Playwright. La suite completa non è stata eseguita. Installare Chromium sulla VM con `npx playwright install --with-deps chromium` per eseguire gli spec UI.
 
 ## Ultimi cambiamenti rilevanti
 
 - `5f3867d` — rarità e prima fonte di Potere del Mago; versione `1.9.32`, cache `v803`.
 - `bdfe05e` — progressione delle sfide e della storia, Tag Team contro Nesbitt; versione `1.9.33`, cache `v804`.
 - `80c3ab2` — interruttori possedute e selettore deck nella barra Storia; versione `1.9.34`, cache `v805`.
+- `e8a6db0` — pagina di errore stilizzata per la configurazione mancante del cancello; versione `1.9.35`, cache `v806`.
 - `1fc1207` — aggiunti cinque puzzle, con duellanti reali come avversari (nei puzzle non va introdotto un bot generico).
 - `ef22f30`, `42f39d3` e commit immediatamente precedenti — ordinamento coerente dei duellanti del Mondo Virtuale, collocazione di Tristan posseduto dai Big Five prima di Noah, e di Noah prima di Gozaburo; aggiornate le pedine di Tristan.
 - Il recente lavoro scenico include l’impatto delle Evocazioni di Livello 7+, con sollevamento/caduta della carta reale e onda sul campo. Riferimento tecnico in `PROJECT_MAP.md`.
@@ -85,7 +88,7 @@ npx playwright install --with-deps chromium
 npm run hooks
 ```
 
-Il lockfile è stato riallineato alla versione `1.9.34`. `npm ci` non è ancora stato verificato su Ubuntu.
+Il lockfile è stato riallineato alla versione `1.9.35`. `npm ci` non è ancora stato verificato su Ubuntu.
 
 Per anteprima HTTP locale:
 
