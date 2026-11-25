@@ -140,6 +140,8 @@ module.exports = {
                         topbar: document.querySelector('.topbar').getBoundingClientRect().height,
                         titoloVisibile: Array.from(document.querySelectorAll('.topbar .topbar-title')).some((e) => e.getBoundingClientRect().height > 0),
                         avatarVisibile: !!(av && getComputedStyle(av).display !== 'none'),
+                        selettoreMazzo: !!document.querySelector('.mm-ctx-slot .dsw-current'),
+                        etichettaMazzo: (() => { const e = document.querySelector('.mm-ctx-slot .dsw-current'); return e ? getComputedStyle(e, '::after').content : ''; })(),
                         badge: (() => { const e = document.querySelector('.mm-ctx-slot #resultCount'); return e && e.getBoundingClientRect().height > 0 ? e.textContent.trim() : ''; })(),
                         filtri: (() => { const f = document.querySelector('.cartoteca-filters'); return f ? f.getBoundingClientRect().top : null; })(),
                         extra: document.documentElement.scrollWidth - document.documentElement.clientWidth
@@ -152,6 +154,7 @@ module.exports = {
                 assert(!r.avatarVisibile, file + ': il ritratto del giocatore non deve stare nella barra in basso');
                 assert(r.spazio, file + ': manca lo spazio in fondo (.mm-spazio)');
                 if (file === 'cartoteca.html') assert(/carte/i.test(r.badge), 'cartoteca.html: il badge con il numero di carte deve stare nella barra in basso');
+                if (file === 'storia.html') assert(r.selettoreMazzo && r.etichettaMazzo.includes('Mazzo'), 'storia.html: il selettore del deck deve stare nella bottom bar con etichetta visibile');
                 assert(!r.backVisibile, file + ': il medaglione Indietro flottante non serve piu (la voce madre della barra fa da Indietro)');
                 if (r.filtri !== null) assert(r.filtri <= 32, file + ': i filtri sticky devono stare in cima, sotto la fotocamera (top ' + r.filtri + ')');
                 assert(r.extra <= 1, file + ': scorre di lato di ' + r.extra + 'px');

@@ -85,11 +85,13 @@ module.exports = {
                 const owned = page.locator(editor ? '#editorOwnedOnly' : '[data-ct="ownedOnly"]');
                 await page.locator(editor ? '#editorFilterToggleBtn' : '[data-ct="filterToggleBtn"]').click();
                 await owned.check();
+                assert(await page.locator('.owned-filter-toggle').evaluate((e) => e.classList.contains('is-active')), file + ': interruttore tematico evidenzia lo stato attivo');
                 const grid = editor ? '#editorResultsGrid' : '[data-ct="cartotecaGrid"]';
                 await page.waitForFunction((s) => document.querySelector(s).querySelectorAll('.card').length === 1, grid);
                 assert(await owned.isChecked(), file + ': filtro attivo');
                 await page.locator(editor ? '#editorResetBtn' : '[data-ct="resetBtn"]').click();
                 assert(!await owned.isChecked(), file + ': azzera spegne il filtro');
+                assert(!await page.locator('.owned-filter-toggle').evaluate((e) => e.classList.contains('is-active')), file + ': azzera ripristina anche l’aspetto del filtro');
                 await page.waitForFunction((s) => document.querySelector(s).querySelectorAll('.card').length > 1, grid);
             }
             // Un account già entrato viene fermato alla riconferma online,

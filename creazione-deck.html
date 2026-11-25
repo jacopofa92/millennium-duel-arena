@@ -736,6 +736,26 @@
         transition: max-height 0.3s cubic-bezier(0.16,0.84,0.44,1), opacity 0.25s ease;
     }
     .filter-panel.open { max-height: 1000px; opacity: 1; }
+    .owned-filter-toggle {
+        position: relative; display: inline-flex; align-items: center; gap: 10px; min-height: 56px;
+        width: fit-content; max-width: 100%; margin: 0 0 12px; padding: 8px 12px 8px 9px;
+        border: 1px solid rgba(214,192,131,.3); border-radius: 14px;
+        background: linear-gradient(115deg, rgba(24,26,32,.86), rgba(14,16,21,.72));
+        color: #ded7c5; cursor: pointer; transition: .18s ease; -webkit-tap-highlight-color: transparent;
+    }
+    .owned-filter-toggle:hover { border-color: rgba(247,215,116,.58); }
+    .owned-filter-toggle.is-active { border-color: rgba(247,215,116,.78); background: linear-gradient(115deg,rgba(80,60,23,.55),rgba(30,25,17,.82)); box-shadow: 0 0 16px rgba(211,163,55,.12); }
+    .owned-filter-toggle > input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    .owned-filter-toggle:focus-within { outline: 2px solid rgba(247,215,116,.85); outline-offset: 3px; }
+    .owned-filter-seal { display:grid; place-items:center; width:36px; height:36px; flex:0 0 36px; border-radius:11px; color:#c4a64f; background:rgba(190,155,70,.11); }
+    .owned-filter-seal svg { width:19px; height:19px; }
+    .owned-filter-copy { display:flex; flex-direction:column; gap:2px; min-width:0; }
+    .owned-filter-copy strong { color:#fff2c2; font-size:.8rem; }
+    .owned-filter-copy small { color:#9d9aa0; font-size:.66rem; line-height:1.25; }
+    .owned-filter-switch { display:flex; align-items:center; width:36px; height:20px; flex:0 0 36px; margin-left:5px; padding:3px; border:1px solid rgba(208,200,180,.25); border-radius:99px; background:rgba(4,5,8,.72); transition:.18s ease; }
+    .owned-filter-switch > span { width:12px; height:12px; border-radius:50%; background:#8a8580; box-shadow:0 1px 4px #0008; transition:.18s ease; }
+    .owned-filter-toggle.is-active .owned-filter-switch { border-color:rgba(247,215,116,.65); background:rgba(124,91,28,.55); }
+    .owned-filter-toggle.is-active .owned-filter-switch > span { transform:translateX(16px); background:#ffe18a; box-shadow:0 0 8px rgba(255,215,105,.75); }
     .filter-row { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 14px; }
     .filter-group { display: flex; flex-direction: column; gap: 5px; }
     .filter-group-label {
@@ -1398,7 +1418,12 @@
                     </button>
                 </div>
                 <div class="filter-panel" id="editorFilterPanel">
-                    <label class="filter-group"><span><input type="checkbox" id="editorOwnedOnly"> Solo possedute</span></label>
+                    <label class="owned-filter-toggle">
+                        <input type="checkbox" id="editorOwnedOnly" aria-describedby="editorOwnedHint">
+                        <span class="owned-filter-seal" data-icon="collection" aria-hidden="true"></span>
+                        <span class="owned-filter-copy"><strong>Solo possedute</strong><small id="editorOwnedHint">Mostra solo le carte nella tua collezione</small></span>
+                        <span class="owned-filter-switch" aria-hidden="true"><span></span></span>
+                    </label>
                     <div class="filter-row">
                         <div class="filter-group">
                             <span class="filter-group-label">Tipo</span>
@@ -2655,6 +2680,7 @@
     function resetEditorFilters() {
         editorFilters.ownedOnly = false;
         $('editorOwnedOnly').checked = false;
+        $('editorOwnedOnly').closest('.owned-filter-toggle').classList.remove('is-active');
         editorFilters.text = '';
         editorFilters.types.clear();
         editorFilters.levels.clear();
@@ -2728,7 +2754,11 @@
     }
 
     function renderEditorFilterChips() {
-        $('editorOwnedOnly').onchange = (e) => { editorFilters.ownedOnly = e.target.checked; renderEditorResults(); };
+        $('editorOwnedOnly').onchange = (e) => {
+            editorFilters.ownedOnly = e.target.checked;
+            e.target.closest('.owned-filter-toggle').classList.toggle('is-active', editorFilters.ownedOnly);
+            renderEditorResults();
+        };
         buildChipGroup($('editorTypeChips'), ['monster', 'spell', 'trap'], (v) => TYPE_ICON[v] + ' ' + TYPE_LABELS[v], editorFilters.types);
 
         const levels = [...new Set(cardDatabase.filter(c => c.type === 'monster').map(c => c.level))].sort((a, b) => a - b);

@@ -259,7 +259,10 @@ body.ha-tab-bar .topbar > :not(.back-btn) { display: none !important; }
 .mm-ctx-figlio { color: #f7d774; cursor: default; min-width: 0; max-width: 42vw; }
 .mm-ctx-figlio .mm-tab-icona { transform: translateY(-2px) scale(1.1); filter: drop-shadow(0 0 8px rgba(247, 215, 116, 0.6)); }
 .mm-ctx-figlio .mm-tab-nome { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }.mm-ctx-slot { margin-left: auto; flex: 0 1 auto; min-width: 0; display: flex; align-items: center; gap: 8px; }
-.mm-ctx-slot > .dsw-topbar { margin-left: 0; gap: 8px; }
+.mm-ctx-slot > .dsw-topbar { margin-left: 0; gap: 8px; flex: 0 0 auto; min-width: 0; }
+.mm-ctx-slot .dsw-current { display: inline-flex; align-items: center; gap: 6px; width: auto; min-height: 42px; }
+.mm-ctx-slot .dsw-current .deck-box-stage { width: 32px; flex: 0 0 32px; }
+.mm-ctx-slot .dsw-current::after { content: 'Mazzo'; color: #e7d9ae; font-size: .66rem; font-weight: 800; letter-spacing: .04em; }
 /* Il ritratto del giocatore (apre il Profilo) non serve piu' nella barra in basso (richiesta dell'utente): resta il selettore del mazzo. */
 .mm-ctx-slot .dsw-avatar { display: none; }
 .mm-ctx-slot .cartoteca-count, .mm-ctx-slot .deck-count-badge { font-size: 0.74rem; padding: 4px 9px; border-radius: 999px; color: #f7d774; background: rgba(247, 215, 116, 0.14); border: 1px solid rgba(247, 215, 116, 0.35); white-space: nowrap; margin: 0; }

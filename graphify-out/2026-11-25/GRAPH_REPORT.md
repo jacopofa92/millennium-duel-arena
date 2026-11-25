@@ -1,7 +1,7 @@
 # Graph Report - millennium-duel-arena  (2026-11-25)
 
 ## Corpus Check
-- 810 files · ~1,803,367 words
+- 810 files · ~1,803,417 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 75 file(s) not represented in the graph (top: .css 63, .log 5, .ttf 3)
 

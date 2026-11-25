@@ -49,7 +49,12 @@
         </div>
     
         <div class="filter-panel" data-ct="filterPanel">
-            <label class="filter-group"><span><input type="checkbox" data-ct="ownedOnly"> Solo possedute</span></label>
+            <label class="owned-filter-toggle">
+                <input type="checkbox" data-ct="ownedOnly" aria-describedby="ownedFilterHint">
+                <span class="owned-filter-seal" data-icon="collection" aria-hidden="true"></span>
+                <span class="owned-filter-copy"><strong>Solo possedute</strong><small id="ownedFilterHint">Nascondi le carte non ancora ottenute</small></span>
+                <span class="owned-filter-switch" aria-hidden="true"><span></span></span>
+            </label>
             <div class="filter-row">
                 <div class="filter-group">
                     <span class="filter-group-label">Tipo Carta</span>
@@ -210,6 +215,7 @@
         function initFilters() {
             q('ownedOnly').addEventListener('change', (e) => {
                 state.ownedOnly = e.target.checked;
+                q('ownedOnly').closest('.owned-filter-toggle').classList.toggle('is-active', state.ownedOnly);
                 renderGrid();
             });
             // Tipo carta
@@ -345,6 +351,7 @@
             q('resetBtn').onclick = () => {
                 state.ownedOnly = false;
                 q('ownedOnly').checked = false;
+                q('ownedOnly').closest('.owned-filter-toggle').classList.remove('is-active');
                 state.text = '';
                 state.types.clear();
                 state.levels.clear();

@@ -471,9 +471,9 @@
     "semantic_hash": "dcd14125a9faf5071dedc66d14fd61d0"
   },
   "js/engine/duel-engine.js": {
-    "mtime": 1795626776.9052453,
-    "seen": 1795626951.477611,
-    "ast_hash": "000afe2f06bd6d637f4cac7b89f414f1",
+    "mtime": 1795627006.6436958,
+    "seen": 1795627127.5977643,
+    "ast_hash": "99e3fe146fcdfb1c266558e946e74e6d",
     "semantic_hash": ""
   },
   "js/engine/duel-sandbox.js": {
@@ -2014,9 +2014,9 @@
     "semantic_hash": "79dc5c3798b6afb4673d88587a0f78bd"
   },
   "tests/specs/challenge-tracker-hooks.spec.js": {
-    "mtime": 1795626824.1280713,
-    "seen": 1795626951.56869,
-    "ast_hash": "a05159fea38bcaabd7d7b29773b851bc",
+    "mtime": 1795626993.9368212,
+    "seen": 1795627127.6881087,
+    "ast_hash": "ee35c479f22b42462329bca279d9a8f1",
     "semantic_hash": ""
   },
   "tests/specs/checkpoint-targeting-dichiara.spec.js": {
