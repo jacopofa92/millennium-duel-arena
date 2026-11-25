@@ -929,6 +929,7 @@
             const lpFinali = (typeof gameState !== 'undefined' && gameState) ? gameState.playerLP : 0;
             const parametriVittoria = {
                 characterId: session.opponent.id,
+                mode: mode,
                 difficulty: session.difficulty,
                 playerLP: lpFinali,
                 lpLost: Math.max(0, 8000 - lpFinali)

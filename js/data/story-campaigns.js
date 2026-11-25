@@ -1314,8 +1314,9 @@ const storyCampaignsDatabase = [
                                 music: '35. High Mages.mp3',
                                 // Nell'anime è un tre contro uno: Tristan cade per
                                 // primo, e a battere Nesbitt sono Duke e Serenity.
-                                // Si gioca con Serenity, che chiude il duello.
+                                // Il giocatore guida Serenity, con Duke come compagno IA.
                                 protagonista: { name: 'Serenity Wheeler', title: 'Prigioniera del mondo virtuale', image: 'images/characters/serenityWheeler.jpg', icon: '🌸' },
+                                tag: { compagno: 'duke' },
                                 dialogo: [
                                     { chi: 'nesbitt', testo: 'Il vostro amico Tristan è già caduto. Quando avrò finito con voi due, prenderò il tuo corpo e abbandonerò per sempre questa macchina.' },
                                     { chi: 'duke', testo: 'Non sei sola, Serenity. Io copro le tue spalle: tu pensa a vincere.' },

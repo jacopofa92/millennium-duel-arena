@@ -1,17 +1,17 @@
-# Graph Report - millennium-duel-arena  (2026-11-23)
+# Graph Report - millennium-duel-arena  (2026-11-25)
 
 ## Corpus Check
-- 810 files · ~1,802,731 words
+- 810 files · ~1,803,417 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 75 file(s) not represented in the graph (top: .css 63, .log 5, .ttf 3)
 
 ## Summary
-- 8734 nodes · 15900 edges · 694 communities (362 shown, 332 thin omitted)
+- 8734 nodes · 15900 edges · 693 communities (361 shown, 332 thin omitted)
 - Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 1402 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1fc12078`
+- Built from commit: `85e68549`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -50,7 +50,6 @@
 - U
 - server.js
 - tutorial-duel.js
-- freezeNaturalGameLoop
 - giocaPartita
 - tag.js
 - mb
@@ -504,8 +503,8 @@
 4. `J()` - 61 edges
 5. `fieldOf()` - 58 edges
 6. `openDuel()` - 54 edges
-7. `giocaPartita()` - 53 edges
-8. `getDefinition()` - 53 edges
+7. `getDefinition()` - 53 edges
+8. `giocaPartita()` - 53 edges
 9. `makeContext()` - 51 edges
 10. `EngineActions` - 49 edges
 
@@ -516,15 +515,15 @@
   tests/specs/multiplayer-protocollo-obbligatorio.spec.js → js/ui/fx-webgl-scena.js
 - `richiesti()` --calls--> `crea()`  [EXTRACTED]
   server/accesso-contenuti.js → js/cloud/content-access.js
-- `fotografa()` --calls--> `openDuel()`  [EXTRACTED]
-  tools/impronta-stili-duello.js → tests/helpers/harness.js
 - `makeContext()` --indirect_call--> `addToLog()`  [INFERRED]
   js/engine/duel-engine.js → js/engine/canale-partita.js
+- `fotografa()` --calls--> `freezeNaturalGameLoop()`  [EXTRACTED]
+  tools/impronta-stili-duello.js → tests/helpers/harness.js
 
 ## Import Cycles
 - None detected.
 
-## Communities (694 total, 332 thin omitted)
+## Communities (693 total, 332 thin omitted)
 
 ### Community 0 - "pixi.min.js"
 Cohesion: 0.01
@@ -653,10 +652,6 @@ Nodes (34): RFC-6455, annunciaStanza(), autorizzaSocket(), capienzaValida(), cle
 ### Community 33 - "tutorial-duel.js"
 Cohesion: 0.11
 Nodes (35): accendi(), aggiornaTesto(), avvia(), barraFasi(), bersaglioPiazzamento(), cancello(), carte(), chiudi() (+27 more)
-
-### Community 34 - "freezeNaturalGameLoop"
-Cohesion: 0.12
-Nodes (15): freezeNaturalGameLoop(), run(), SCHERMI, run(), SCHERMI, run(), run(), fs (+7 more)
 
 ### Community 35 - "giocaPartita"
 Cohesion: 0.04
@@ -875,8 +870,8 @@ Cohesion: 0.07
 Nodes (26): bp(), cg(), collectRenderables(), collectRenderablesWithEffects(), du, ensureCanvasSize(), fg(), getFont() (+18 more)
 
 ### Community 101 - "openDuel"
-Cohesion: 0.10
-Nodes (19): openDuel(), path, PROJECT_ROOT, run(), run(), run(), run(), run() (+11 more)
+Cohesion: 0.08
+Nodes (28): freezeNaturalGameLoop(), openDuel(), run(), run(), run(), SCHERMI, run(), SCHERMI (+20 more)
 
 ### Community 102 - "duel-session.js"
 Cohesion: 0.19
@@ -915,8 +910,8 @@ Cohesion: 0.02
 Nodes (72): path, vm, fs, NUMERI_AMMESSI, path, vm, fs, path (+64 more)
 
 ### Community 113 - "harness.js"
-Cohesion: 0.11
-Nodes (11): run(), run(), run(), run(), run(), run(), run(), run() (+3 more)
+Cohesion: 0.09
+Nodes (17): path, PROJECT_ROOT, run(), run(), run(), run(), run(), run() (+9 more)
 
 ### Community 114 - "modalita.d.ts"
 Cohesion: 0.11
@@ -1983,7 +1978,7 @@ Nodes (4): path, RADICE, run(), url()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `f()` connect `load` to `check-syntax.js`?**
-  _High betweenness centrality (0.150) - this node is a cross-community bridge._
+  _High betweenness centrality (0.152) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `load()` (e.g. with `save-manager.js` and `comunicaAzzeramento()`) actually correct?**
   _`load()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `RFC-6455` to the rest of the system?**
@@ -1991,8 +1986,8 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `pixi.min.js` be split into smaller, more focused modules?**
   _Cohesion score 0.00747468420503184 - nodes in this community are weakly interconnected._
 - **Why does `load()` connect `load` to `pixi.min.js`, `D`, `_mediaReady`, `ng`?**
-  _High betweenness centrality (0.147) - this node is a cross-community bridge._
+  _High betweenness centrality (0.150) - this node is a cross-community bridge._
 - **Should `supabase.min.js` be split into smaller, more focused modules?**
   _Cohesion score 0.016809753986003897 - nodes in this community are weakly interconnected._
 - **Why does `on()` connect `constructor` to `pixi.min.js`, `supabase.min.js`, `log`?**
-  _High betweenness centrality (0.072) - this node is a cross-community bridge._
+  _High betweenness centrality (0.075) - this node is a cross-community bridge._

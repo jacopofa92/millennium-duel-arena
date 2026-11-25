@@ -7,8 +7,8 @@
  * dati/motore già usato per characters-db.js/cards-db.js.
  *
  * Ogni sfida ha un `type` che dice A COSA si aggancia:
- *   - 'defeatCharacter': N vittorie contro un personaggio specifico di
- *     Duello Libero/Storia (match: { characterId }, id da
+ *   - 'defeatCharacter': N vittorie contro un personaggio specifico
+ *     (match: { characterId, mode? }, id da
  *     js/data/characters-db.js) — incrementata in js/duel-session.js
  *     (funzione finish()), MAI contro il Bot generico del Duello Demo
  *     (che non ha un characterId).
@@ -69,7 +69,7 @@ const challengesDatabase = [
         label: 'Il Re dei Giochi',
         description: 'Sconfiggi Yugi Muto 5 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'yugiMuto' },
+        match: { characterId: 'yugiMuto', mode: 'free' },
         target: 5,
         reward: { credits: 400, starChips: 2 }
     },
@@ -79,7 +79,7 @@ const challengesDatabase = [
         label: 'Il Presidente Battuto',
         description: 'Sconfiggi Seto Kaiba 10 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'kaiba' },
+        match: { characterId: 'kaiba', mode: 'free' },
         target: 10,
         reward: { credits: 700, starChips: 4 }
     },
@@ -89,7 +89,7 @@ const challengesDatabase = [
         label: 'Occhio del Millennio',
         description: 'Sconfiggi Maximillion Pegasus 5 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'pegasus' },
+        match: { characterId: 'pegasus', mode: 'free' },
         target: 5,
         reward: { credits: 400, starChips: 2 }
     },
@@ -99,7 +99,7 @@ const challengesDatabase = [
         label: 'Padrone delle Ombre',
         description: 'Sconfiggi Marik Ishtar 5 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'marik' },
+        match: { characterId: 'marik', mode: 'free' },
         target: 5,
         reward: { credits: 400, starChips: 2 }
     },
@@ -109,7 +109,7 @@ const challengesDatabase = [
         label: 'Più Fortuna che Bravura',
         description: 'Sconfiggi Joey Wheeler 5 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'joey' },
+        match: { characterId: 'joey', mode: 'free' },
         target: 5,
         reward: { credits: 300 }
     },
@@ -119,7 +119,7 @@ const challengesDatabase = [
         label: 'Il Profumo delle Carte',
         description: 'Sconfiggi Mai Valentine 5 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'mai' },
+        match: { characterId: 'mai', mode: 'free' },
         target: 5,
         reward: { credits: 300 }
     },
@@ -129,7 +129,7 @@ const challengesDatabase = [
         label: 'L\'Anello del Millennio',
         description: 'Sconfiggi Ryo Bakura 5 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'bakura' },
+        match: { characterId: 'bakura', mode: 'free' },
         target: 5,
         reward: { credits: 350 }
     },
@@ -139,7 +139,7 @@ const challengesDatabase = [
         label: 'Contro la Profezia',
         description: 'Sconfiggi Ishizu Ishtar 3 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'ishizu' },
+        match: { characterId: 'ishizu', mode: 'free' },
         target: 3,
         reward: { credits: 350 }
     },
@@ -149,7 +149,7 @@ const challengesDatabase = [
         label: 'Battere il Faraone',
         description: 'Sconfiggi Yami Yugi 10 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'yamiYugi' },
+        match: { characterId: 'yamiYugi', mode: 'free' },
         target: 10,
         reward: { credits: 800, starChips: 4 }
     },
@@ -159,7 +159,7 @@ const challengesDatabase = [
         label: 'Niente Trucchi',
         description: 'Sconfiggi Bandit Keith 5 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'bandit_keith' },
+        match: { characterId: 'bandit_keith', mode: 'free' },
         target: 5,
         reward: { credits: 300 }
     },
@@ -169,7 +169,7 @@ const challengesDatabase = [
         label: 'Il Cacciatore di Dinosauri',
         description: 'Sconfiggi Rex Raptor 5 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'rex' },
+        match: { characterId: 'rex', mode: 'free' },
         target: 5,
         reward: { credits: 250 }
     },
@@ -179,7 +179,7 @@ const challengesDatabase = [
         label: 'Disinfestazione',
         description: 'Sconfiggi Weevil Underwood 5 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'weevil' },
+        match: { characterId: 'weevil', mode: 'free' },
         target: 5,
         reward: { credits: 250 }
     },
@@ -189,7 +189,7 @@ const challengesDatabase = [
         label: 'Pesca Grossa',
         description: 'Sconfiggi Mako Tsunami 5 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'mako' },
+        match: { characterId: 'mako', mode: 'free' },
         target: 5,
         reward: { credits: 250 }
     },
@@ -199,7 +199,7 @@ const challengesDatabase = [
         label: 'Nessuna Paura',
         description: 'Sconfiggi Panik 3 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'panik' },
+        match: { characterId: 'panik', mode: 'free' },
         target: 3,
         reward: { credits: 250 }
     },
@@ -209,7 +209,7 @@ const challengesDatabase = [
         label: 'Riposino in Pace',
         description: 'Sconfiggi Bonz 3 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'bonz' },
+        match: { characterId: 'bonz', mode: 'free' },
         target: 3,
         reward: { credits: 250 }
     },
@@ -219,7 +219,7 @@ const challengesDatabase = [
         label: 'Il Labirinto Risolto',
         description: 'Sconfiggi i Fratelli Paradosso 3 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'paradoxBrothers' },
+        match: { characterId: 'paradoxBrothers', mode: 'free' },
         target: 3,
         reward: { credits: 300 }
     },
@@ -229,7 +229,7 @@ const challengesDatabase = [
         label: 'L\'Usurpatore',
         description: 'Sconfiggi Heishin 3 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'heishin' },
+        match: { characterId: 'heishin', mode: 'free' },
         target: 3,
         reward: { credits: 450, locatorCards: 1 }
     },
@@ -239,7 +239,7 @@ const challengesDatabase = [
         label: 'Oltre l\'Ultimo Duellante',
         description: 'Sconfiggi DarkNite',
         type: 'defeatCharacter',
-        match: { characterId: 'darkNite' },
+        match: { characterId: 'darkNite', mode: 'free' },
         target: 1,
         reward: { credits: 700, millenniumCards: 1 }
     },
@@ -249,7 +249,7 @@ const challengesDatabase = [
         label: 'Il Sacerdote del Passato',
         description: 'Sconfiggi il Sacerdote Seto 3 volte in Duello Libero',
         type: 'defeatCharacter',
-        match: { characterId: 'priestSeto' },
+        match: { characterId: 'priestSeto', mode: 'free' },
         target: 3,
         reward: { credits: 400 }
     },
@@ -259,7 +259,7 @@ const challengesDatabase = [
         label: 'Conosci Te Stesso',
         description: 'Sconfiggi Te Stesso',
         type: 'defeatCharacter',
-        match: { characterId: 'mirror' },
+        match: { characterId: 'mirror', mode: 'free' },
         target: 1,
         reward: { credits: 400, starChips: 1 }
     },
@@ -848,7 +848,7 @@ const challengesDatabase = [
     // (contaTappaPerLeSfide): ogni tappa superata, scena o duello che
     // sia. `target` è quindi un numero di tappe. Una campagna fatta di
     // AREE (l'anime) conta le tappe DENTRO le aree, non i nodi della mappa
-    // grande: il Regno delle Ombre ne ha 45. Si contano solo nella
+    // grande: il Regno delle Ombre ne ha 78. Si contano solo nella
     // prima partita (a Facile): rigiocare a Normale e Difficile non le
     // ricalcola (vedi contaTappaPerLeSfide). Un TORNEO invece vale una
     // tappa sola. Aggiungendo tappe a una campagna, ricontare qui.
@@ -860,16 +860,16 @@ const challengesDatabase = [
     {
         id: 'storia-anime-meta', sezione: 'storia', campaignId: 'anime',
         icon: '🧩', label: 'Il Regno delle Ombre: a metà strada',
-        description: 'Supera 20 tappe de Il Regno delle Ombre',
+        description: 'Supera 39 tappe de Il Regno delle Ombre',
         type: 'storyProgress', match: { campaignId: 'anime' },
-        target: 20, reward: { credits: 700, starChips: 1 }
+        target: 39, reward: { credits: 700, starChips: 1 }
     },
     {
         id: 'storia-anime-fine', sezione: 'storia', campaignId: 'anime',
         icon: '👑', label: 'Il Duello Cerimoniale',
         description: 'Completa Il Regno delle Ombre (a Facile, la prima partita)',
         type: 'storyProgress', match: { campaignId: 'anime' },
-        target: 45, reward: { credits: 2000, starChips: 4, millenniumCards: 2 }
+        target: 78, reward: { credits: 2000, starChips: 4, millenniumCards: 2 }
     },
     {
         id: 'storia-fm-presente', sezione: 'storia', campaignId: 'forbiddenMemories',
@@ -890,7 +890,7 @@ const challengesDatabase = [
         icon: '🌑', label: 'Le memorie ritrovate',
         description: 'Completa Memorie Proibite (a Facile, la prima partita)',
         type: 'storyProgress', match: { campaignId: 'forbiddenMemories' },
-        target: 40, reward: { credits: 2500, starChips: 4, millenniumCards: 3 }
+        target: 49, reward: { credits: 2500, starChips: 4, millenniumCards: 3 }
     },
     {
         id: 'storia-freedom-corridoio', sezione: 'storia', campaignId: 'freedom',
@@ -904,7 +904,7 @@ const challengesDatabase = [
         icon: '👑', label: 'La Corona del Millennio',
         description: 'Completa Freedom (a Facile, la prima partita)',
         type: 'storyProgress', match: { campaignId: 'freedom' },
-        target: 16, reward: { credits: 1800, starChips: 3, millenniumCards: 2 }
+        target: 20, reward: { credits: 1800, starChips: 3, millenniumCards: 2 }
     },
     {
         id: 'storia-ww1-piave', sezione: 'storia', campaignId: 'ww1',

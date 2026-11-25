@@ -3617,7 +3617,7 @@
             // Evocazioni del GIOCATORE UMANO (mai del bot), Normali o
             // Speciali sommate insieme, e mai un Token (id -1, creato da
             // ACTIONS.createTokens — non è "evocare una carta specifica").
-            if (ctx.owner === 'player' && ctx.summonedCard && ctx.summonedCard.id !== -1 && window.ChallengeTracker) {
+            if (ctx.owner === 'player' && Tavolo.giocaUnaPersona(ctx.owner) && ctx.summonedCard && ctx.summonedCard.id !== -1 && window.ChallengeTracker) {
                 ChallengeTracker.recordProgress('summonMonster', { cardId: ctx.summonedCard.id });
             }
             // Numeri della schermata di fine duello (js/stats/stats-duello.js): stessa condizione di sopra, senza dipendere dalle Sfide.
@@ -6824,6 +6824,11 @@
     }
 
     function beginCardActivation(owner, zone, index, extra, card, def) {
+        // L'attivazione si conclude dopo la finestra e la risoluzione della
+        // Catena: in Tag Team nel frattempo può cambiare il membro attivo.
+        // Fotografiamo chi ha iniziato la mossa, altrimenti la sfida potrebbe
+        // attribuire al compagno umano un'attivazione partita dall'IA (o viceversa).
+        const activationCountsForChallenge = owner === 'player' && Tavolo.giocaUnaPersona(owner);
         const soulLimit = gameState.soulCrossingActivationLimitFor
             && gameState.soulCrossingActivationLimitFor[owner];
         const isDivineBeastEffect = zone === 'monster'
@@ -6928,7 +6933,7 @@
             isManualActivation: true,
             alreadyAnnounced: true, // log/FX di attivazione già fatti qui sopra
             activatedAt: activatedAt
-        }, () => finishActivateCard(owner, card, zone, index, extra, replacedFieldSpell));
+        }, () => finishActivateCard(owner, card, zone, index, extra, replacedFieldSpell, activationCountsForChallenge));
 
         return true;
     }
@@ -6940,14 +6945,14 @@
      * ordine di prima, solo spostato a dopo la risoluzione della Chain
      * invece che subito dopo def.activate(ctx).
      */
-    function finishActivateCard(owner, card, zone, index, extra, replacedFieldSpell) {
+    function finishActivateCard(owner, card, zone, index, extra, replacedFieldSpell, activationCountsForChallenge) {
         // Sfide di tipo 'activateCard' (js/data/challenges-db.js): solo
         // attivazioni del GIOCATORE, come per 'summonMonster' — una sfida
         // che avanzasse anche quando la carta la gioca il bot non
         // sarebbe un traguardo di nessuno. Qui e non in activateCard
         // perche' questo e' il punto in cui l'attivazione e' davvero
         // andata a buon fine, non solo tentata.
-        if (owner === 'player' && card && window.ChallengeTracker) {
+        if (activationCountsForChallenge && card && window.ChallengeTracker) {
             // cardType ('spell'|'trap'|'monster') serve alle missioni generiche ("attiva 2 carte Magia o Trappola"): senza, l'unico
             // modo di contarle sarebbe elencare gli id di tutte le Magie.
             ChallengeTracker.recordProgress('activateCard', { cardId: card.id, cardType: card.type });

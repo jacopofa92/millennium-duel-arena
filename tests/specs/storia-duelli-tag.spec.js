@@ -1,6 +1,7 @@
-// Tre duelli della Storia anime che nell'anime erano in coppia (js/data/story-campaigns.js, campo `tag` del nodo):
+// Quattro duelli della Storia anime che nell'anime erano in coppia (js/data/story-campaigns.js, campo `tag` del nodo):
 //  - anime-2-paradox: Yugi e Joey contro i Fratelli Paradosso (2 contro 1, i due fratelli sono un solo Duellante del roster);
 //  - anime-3-lumis: Yugi e Kaiba contro Lumis E Umbra (2 contro 2); il nodo di Umbra e' ora una scena (stessa posizione);
+//  - anime-6-nesbitt: Serenity e Duke contro Nesbitt;
 //  - anime-6-cinque-uniti: Yugi e Joey contro Tristan posseduto dai Big Five, con 12000 LP (Boss).
 // Si controlla il catalogo e l'URL (StoryProgress.urlDuello), poi la squadra che nasce nel duello vero (mode=story&tag=1) e che
 // a fine duello anche il SECONDO avversario conta come battuto (record e Sfida).
@@ -41,25 +42,42 @@ module.exports = {
                 const tutte = anime.capitoli.flatMap((c) => c.tappe).flatMap((a) => [a].concat(a.tappe || []));
                 const nodo = (id) => tutte.find((n) => n.id === id);
                 const out = {};
-                ['anime-2-paradox', 'anime-3-lumis', 'anime-6-cinque-uniti'].forEach((id) => {
+                ['anime-2-paradox', 'anime-3-lumis', 'anime-6-nesbitt', 'anime-6-cinque-uniti'].forEach((id) => {
                     const n = nodo(id);
                     const url = new URL(StoryProgress.urlDuello('anime', n), 'http://x/');
                     out[id] = { tag: n.tag, p: Object.fromEntries(url.searchParams.entries()), kind: n.kind };
                 });
                 out.umbra = { kind: nodo('anime-3-umbra').kind };
+                const campagne = ['anime', 'forbiddenMemories', 'freedom', 'ww1'];
+                out.conteggiSfideStoria = Object.fromEntries(campagne.map((id) => {
+                    const conteggio = StoryProgress.getTappe(id).reduce((somma, tappa) => somma
+                        + (tappa.kind === 'area'
+                            ? (tappa.tappe || []).filter((prova) => prova.parallelo !== true).length
+                            : 1), 0);
+                    const idSfidaFinale = id === 'forbiddenMemories' ? 'storia-fm-fine' : `storia-${id}-fine`;
+                    const finale = challengesDatabase.find((c) => c.id === idSfidaFinale);
+                    return [id, { conteggio, sogliaFinale: finale && finale.target }];
+                }));
                 return out;
             });
             await page.close();
             return r;
         })();
-        const L = catalogo['anime-3-lumis'], P = catalogo['anime-2-paradox'], C = catalogo['anime-6-cinque-uniti'];
+        const L = catalogo['anime-3-lumis'], P = catalogo['anime-2-paradox'], N = catalogo['anime-6-nesbitt'], C = catalogo['anime-6-cinque-uniti'];
         t.assert(L.p.mode === 'story' && L.p.tag === '1' && L.p.partner === 'kaiba' && L.p.character === 'lumis' && L.p.character2 === 'umbra' && !L.p.boss,
             `Lumis e Umbra: URL di un 2 contro 2 della Storia: ${JSON.stringify(L.p)}`);
         t.assert(P.p.tag === '1' && P.p.partner === 'joey' && P.p.character === 'paradoxBrothers' && !P.p.character2 && !P.p.boss,
             `Paradosso: URL di un 2 contro 1: ${JSON.stringify(P.p)}`);
+        t.assert(N.p.mode === 'story' && N.p.tag === '1' && N.p.partner === 'duke' && N.p.character === 'nesbitt',
+            `Nesbitt: Serenity e Duke contro Nesbitt in Tag Team di Storia: ${JSON.stringify(N.p)}`);
         t.assert(C.p.tag === '1' && C.p.partner === 'joey' && C.p.character === 'tristanBigFive' && C.p.boss === '1' && !C.p.character2,
             `Cinque uniti: Yugi e Joey contro Tristan posseduto, 2 contro 1 contro il Boss: ${JSON.stringify(C.p)}`);
         t.assert(catalogo.umbra.kind === 'scene', 'Il nodo di Umbra resta (come scena) per non spostare l\'avanzamento di chi ha gia\' giocato');
+        Object.entries({ anime: 78, forbiddenMemories: 49, freedom: 20, ww1: 23 }).forEach(([id, conteggio]) => {
+            const dati = catalogo.conteggiSfideStoria[id];
+            t.assert(dati.conteggio === conteggio && dati.sogliaFinale === conteggio,
+                `La sfida finale di ${id} deve sbloccarsi all'ultima tappa (${JSON.stringify(dati)})`);
+        });
 
         // ---------- 2) Il duello vero: Lumis e Umbra (2 contro 2)
         {
@@ -109,7 +127,22 @@ module.exports = {
             } finally { await page.close(); }
         }
 
-        // ---------- 4) Paradosso: 2 contro 1 senza Boss (i due fratelli, 8000 contro i 4000 a testa della coppia)
+        // ---------- 4) Nesbitt: Serenity affronta il duello con Duke come compagno IA.
+        {
+            const page = await apri(t.browser, DUELLO + '?' + new URLSearchParams(N.p).toString(), errori);
+            try {
+                const d = await page.evaluate(() => ({
+                    player: TagTeam.riassunto('player').membri.map((m) => m.nome),
+                    bot: TagTeam.riassunto('bot').membri.map((m) => m.nome)
+                }));
+                t.assert(d.player.length === 2 && /Serenity/.test(d.player[0]) && /Duke/.test(d.player[1]),
+                    `La squadra della storia deve essere Serenity e Duke: ${JSON.stringify(d)}`);
+                t.assert(d.bot.length === 1 && /Nesbitt/.test(d.bot[0]),
+                    `La squadra avversaria deve essere Nesbitt: ${JSON.stringify(d)}`);
+            } finally { await page.close(); }
+        }
+
+        // ---------- 5) Paradosso: 2 contro 1 senza Boss (i due fratelli, 8000 contro i 4000 a testa della coppia)
         {
             const page = await apri(t.browser, DUELLO + '?' + new URLSearchParams(P.p).toString(), errori);
             try {

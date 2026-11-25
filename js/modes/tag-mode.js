@@ -558,7 +558,13 @@
         if (typeof g.recordCharacterResult === 'function') g.recordCharacterResult(idAvversario2, true, difficolta);
         if (g.ChallengeTracker && typeof gameState !== 'undefined' && gameState) {
             const lp = gameState.playerLP || 0;
-            g.ChallengeTracker.recordProgress('defeatCharacter', { characterId: idAvversario2, difficulty: difficolta, playerLP: lp, lpLost: Math.max(0, 8000 - lp) });
+            g.ChallengeTracker.recordProgress('defeatCharacter', {
+                characterId: idAvversario2,
+                mode: sessione.mode || 'tag',
+                difficulty: difficolta,
+                playerLP: lp,
+                lpLost: Math.max(0, 8000 - lp)
+            });
         }
         const secondo = identitaDi(idAvversario2, '⚔️');
         if (g.CharacterUnlocks && g.CharacterUnlocks.modalitaSblocca('story') && g.CharacterUnlocks.sblocca(idAvversario2)) {
